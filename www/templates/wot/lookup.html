@@ -1,10 +1,19 @@
-<div class="list list-inset">
-    <label class="item item-input">
-        <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" placeholder="Search" ng-model="search.text" ng-change="searchChanged()">
-    </label>
-    <ion-spinner icon="android"></ion-spinner>
-    <a class="item item-text-wrap" ng-repeat="found in search.results">
-        {{found}}
-    </a>
-</div>
+<ion-content class="lookupForm">
+    <div class="list list-inset">
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="Search" ng-model="search.text" ng-change="searchChanged()">
+        </label>
+
+        <label class="item" ng-if="search.looking">
+            <ion-spinner icon="android"></ion-spinner>
+        </label>
+
+        <a class="item item-icon-left" ng-repeat="found in search.results">
+            <i class="icon ion-person"></i>
+            <h2>{{found.uid}}</h2>
+            <p>pubkey: {{found.pub.substr(0,24)}}</p>
+            <span class="badge item-note">{{found.sigDate | formatDate}}</span>
+        </a>
+    </div>
+</ion-content>

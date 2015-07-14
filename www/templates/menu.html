@@ -1,4 +1,4 @@
-<ion-side-menus enable-menu-with-back-views="false">
+<ion-side-menus enable-menu-with-back-views="true">
 
   <!-- MENU -->
   <ion-side-menu side="left">
@@ -7,11 +7,17 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()">
-          Login
-        </ion-item>
+        <!--<ion-item menu-close ng-click="login()">-->
+          <!--Login-->
+        <!--</ion-item>-->
         <ion-item menu-close href="#/app/home">
           Home
+        </ion-item>
+        <ion-item menu-close href="#/app/home/explore">
+          Explore
+        </ion-item>
+        <ion-item menu-close ng-click="addAccount()">
+          Add account
         </ion-item>
       </ion-list>
     </ion-content>

@@ -12,6 +12,12 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
     }
   })
 
+  .filter('formatDate', function() {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).format('YYYY-MM-DD HH:mm') : '';
+    }
+  })
+
   .filter('abbreviate', function() {
     return function(input) {
       var unit = '', sepChars = ['-', '_', ' '], currency = input || '';
@@ -46,7 +52,7 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
       url: "/app",
       abstract: true,
       templateUrl: "templates/menu.html",
-      controller: 'AppCtrl'
+      controller: 'HomeCtrl'
     })
 
     .state('app.home', {

@@ -79,11 +79,6 @@ function ExploreController($scope, $state, BMA, $q, UIUtils) {
   $scope.knownCurrencies = ['meta_brouzouf'];
   $scope.formData = { useRelative: false };
 
-  // Called to navigate to the main app
-  $scope.startApp = function() {
-    $scope.modal.hide();
-  };
-
   $scope.$on('currencySelected', function() {
     if (!dataDone) {
       UIUtils.loading.show();
@@ -160,7 +155,7 @@ function ExploreController($scope, $state, BMA, $q, UIUtils) {
     });
 }
 
-function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA) {
+function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA, $timeout) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -177,8 +172,14 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA) {
   $scope.knownCurrencies = ['meta_brouzouf'];
 
   // Called to navigate to the main app
-  $scope.startApp = function() {
+  $scope.cancel = function() {
     $scope.modal.hide();
+    $timeout(function(){
+      $scope.selectedCurrency = '';
+      $scope.accountTypeMember = null;
+      $scope.search.text = '';
+      $scope.search.results = [];
+    }, 200);
   };
 
   $scope.$on('currencySelected', function() {
@@ -191,15 +192,26 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA) {
   };
 
   $scope.searchChanged = function() {
-    console.log('Search %s', $scope.search.text);
-    if ($scope.search.text.length > 2) {
-      BMA.wot.lookup.get({ search: $scope.search.text })
+    $scope.search.text = $scope.search.text.toLowerCase();
+    if ($scope.search.text.length > 1) {
+      $scope.search.looking = true;
+      return BMA.wot.lookup.get({ search: $scope.search.text })
         .$promise
         .then(function(res){
+          $scope.search.looking = false;
           $scope.search.results = res.results.reduce(function(idties, res) {
-            return idties.concat([res.pubkey]);
+            return idties.concat(res.uids.reduce(function(uids, idty) {
+              return uids.concat({
+                uid: idty.uid,
+                pub: res.pubkey,
+                sigDate: idty.meta.timestamp
+              })
+            }, []));
           }, []);
         });
+    }
+    else {
+      $scope.search.results = [];
     }
   };
 
@@ -212,7 +224,6 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA) {
 
   // Called each time the slide changes
   $scope.slideChanged = function(index) {
-    console.log('Changed to %s', index);
     $scope.slideIndex = index;
     $scope.nextStep = $scope.slideIndex == 2 ? 'Start using MyApp' : 'Next';
   };
@@ -221,13 +232,16 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA) {
     $scope.modal.show();
     $scope.slideChanged(0);
     $ionicSlideBoxDelegate.slide(0);
+    $ionicSlideBoxDelegate.enableSlide(false);
     // TODO: remove default
-    //$scope.selectedCurrency = $scope.knownCurrencies[0];
-    //$scope.accountTypeMember = true;
     //$timeout(function() {
+    //  $scope.selectedCurrency = $scope.knownCurrencies[0];
+    //  $scope.accountTypeMember = true;
+    //  $scope.searchChanged();
+    //  $scope.search.text = 'cgeek';
     //  $ionicSlideBoxDelegate.next();
     //  $ionicSlideBoxDelegate.next();
-    //}, 10);
+    //}, 300);
   };
 
   // Create the account modal that we will use later
@@ -236,31 +250,9 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA) {
   }).then(function(modal) {
     $scope.modal = modal;
     $scope.modal.hide();
-    //$scope.addAccount();
+    // TODO: remove auto add account when done
+    //$timeout(function() {
+    //  $scope.addAccount();
+    //}, 400);
   });
-
-  //// Form data for the login modal
-  //$scope.loginData = {};
-  //
-  //
-  //// Triggered in the login modal to close it
-  //$scope.closeLogin = function() {
-  //  $scope.modal.hide();
-  //};
-  //
-  //// Open the login modal
-  //$scope.login = function() {
-  //  $scope.modal.show();
-  //};
-  //
-  //// Perform the login action when the user submits the login form
-  //$scope.doLogin = function() {
-  //  console.log('Doing login', $scope.loginData);
-  //
-  //  // Simulate a login delay. Remove this and replace with your login
-  //  // code if using a login system
-  //  $timeout(function() {
-  //    $scope.closeLogin();
-  //  }, 1000);
-  //};
 }

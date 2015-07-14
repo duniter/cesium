@@ -26,6 +26,26 @@ body {
     line-height: inherit;
 }
 
+.lookupForm .list a {
+    text-align: left;
+}
+
+#home h1 {
+    padding-top: 15px;
+    text-align: center;
+}
+
+#home h2 {
+    font-size: 22px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+#home button, #home a {
+    margin-top: 20px;
+    height: 40px;
+}
 /*.button {*/
     /*height: 50px !important;*/
     /*font-size: 18px !important;*/
