@@ -1,0 +1,10 @@
+<div class="list list-inset">
+    <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Search" ng-model="search.text" ng-change="searchChanged()">
+    </label>
+    <ion-spinner icon="android"></ion-spinner>
+    <a class="item item-text-wrap" ng-repeat="found in search.results">
+        {{found}}
+    </a>
+</div>

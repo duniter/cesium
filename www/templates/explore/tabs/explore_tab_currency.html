@@ -1,0 +1,94 @@
+<ion-content class="has-header">
+    <div class="list">
+
+        <a href="#" class="item item-icon-left">
+            <i class="icon ion-android-bookmark"></i>
+            Currency name
+            <span class="item-note">{{selectedCurrency}} meta_brouzouf ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-person-stalker"></i>
+            Members
+            <span class="badge badge-assertive">{{Nprev | formatInteger}}</span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-person-add"></i>
+            Incoming members
+            <span ng-if="N > Nprev" class="badge badge-balanced">+{{N-Nprev | formatInteger}}</span>
+            <span ng-if="N < Nprev" class="badge badge-calm">-{{N-Nprev | formatInteger}}</span>
+            <span ng-if="N == Nprev" class="badge badge-stable">{{0}}</span>
+        </a>
+
+        <div class="item item-divider">
+            Money
+        </div>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-record"></i>
+            Monetary mass
+            <span class="badge badge-stable">{{M | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-pie-graph"></i>
+            Money share
+            <span class="badge badge-energized">{{MoverN | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-load-c"></i>
+            Universal Dividend
+            <span class="badge badge-royal">{{UD | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-arrow-graph-up-right"></i>
+            c<sub>actual</sub>
+            <span class="badge badge-stable">{{cactual | formatInteger}} %</span>
+        </a>
+
+        <div class="item item-toggle dark">
+            Use Relative Units (UD)
+            <label class="toggle toggle-royal">
+                <input type="checkbox" ng-model="formData.useRelative">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </div>
+
+        <div class="item item-divider">
+            Blockchain
+        </div>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-clock"></i>
+            Current time
+            <span class="item-note">{{time}}</span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-lock-combination"></i>
+            Common difficulty
+            <span class="badge badge-stable">{{difficulty | formatInteger}}</span>
+        </a>
+
+        <div class="item item-divider">
+            Rules
+        </div>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-arrow-graph-up-right"></i>
+            c
+            <span class="badge badge-stable">{{c*100 | formatInteger}}%</span>
+        </a>
+
+        <a class="item item-icon-left" href="#">
+            <i class="icon ion-load-c"></i>
+            Universal Dividend
+            <span class="item-note">MAX(UD<sub>t-1</sub>, c*M/N)</span>
+        </a>
+    </div>
+</ion-content>

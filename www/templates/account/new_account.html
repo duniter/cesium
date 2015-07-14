@@ -1,0 +1,33 @@
+<ion-view class="modal slide-in-up ng-enter active ng-enter-active padding">
+
+    <ion-header-bar class="bar-positive">
+
+        <button class="button button-positive icon ion-chevron-left" ng-click="previous()" ng-show="slideIndex > 0"> Back</button>
+
+        <h1 class="title">New account</h1>
+
+        <button class="button button-positive" ng-click="startApp()">Cancel</button>
+
+        </ion-nav-buttons>
+    </ion-header-bar>
+
+    <ion-slide-box on-slide-changed="slideChanged(index)" id="newAccount">
+        <ion-slide>
+            <ng-include src="'templates/currency/select_currency.html'"></ng-include>
+        </ion-slide>
+        <ion-slide>
+            <h1>Kind of account:</h1>
+            <button class="button button-block button-stable icon ion-person" ng-click="selectAccountTypeMember(true)" ng-class="{ selected: accountTypeMember != null && accountTypeMember }"> Member account</button>
+            <button class="button button-block button-stable icon ion-card" ng-click="selectAccountTypeMember(false)" ng-class="{ selected: accountTypeMember != null && !accountTypeMember }"> Wallet account</button>
+        </ion-slide>
+        <ion-slide>
+            <ng-include src="'templates/wot/lookup.html'"></ng-include>
+        </ion-slide>
+        <ion-slide>
+            <h3>Any questions?</h3>
+            <p>
+                Too bad!
+            </p>
+        </ion-slide>
+    </ion-slide-box>
+</ion-view>
