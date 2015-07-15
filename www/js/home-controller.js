@@ -62,14 +62,8 @@ function CurrenciesController($scope) {
 
 function ExploreController($scope, $state, BMA, $q, UIUtils) {
 
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
   CurrenciesController.call(this, $scope);
+  LookupController.call(this, $scope, BMA);
 
   var dataDone = false;
 
@@ -156,6 +150,33 @@ function ExploreController($scope, $state, BMA, $q, UIUtils) {
     });
 }
 
+function LookupController($scope, BMA) {
+
+  $scope.searchChanged = function() {
+    $scope.search.text = $scope.search.text.toLowerCase();
+    if ($scope.search.text.length > 1) {
+      $scope.search.looking = true;
+      return BMA.wot.lookup.get({ search: $scope.search.text })
+        .$promise
+        .then(function(res){
+          $scope.search.looking = false;
+          $scope.search.results = res.results.reduce(function(idties, res) {
+            return idties.concat(res.uids.reduce(function(uids, idty) {
+              return uids.concat({
+                uid: idty.uid,
+                pub: res.pubkey,
+                sigDate: idty.meta.timestamp
+              })
+            }, []));
+          }, []);
+        });
+    }
+    else {
+      $scope.search.results = [];
+    }
+  };
+}
+
 function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA, $timeout) {
 
   // With the new view caching in Ionic, Controllers are only called
@@ -166,6 +187,7 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA, $timeo
   //});
 
   CurrenciesController.call(this, $scope);
+  LookupController.call(this, $scope, BMA);
 
   $scope.accountTypeMember = null;
   $scope.accounts = [];
@@ -190,30 +212,6 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA, $timeo
   $scope.selectAccountTypeMember = function(bool) {
     $scope.accountTypeMember = bool;
     $ionicSlideBoxDelegate.slide(2);
-  };
-
-  $scope.searchChanged = function() {
-    $scope.search.text = $scope.search.text.toLowerCase();
-    if ($scope.search.text.length > 1) {
-      $scope.search.looking = true;
-      return BMA.wot.lookup.get({ search: $scope.search.text })
-        .$promise
-        .then(function(res){
-          $scope.search.looking = false;
-          $scope.search.results = res.results.reduce(function(idties, res) {
-            return idties.concat(res.uids.reduce(function(uids, idty) {
-              return uids.concat({
-                uid: idty.uid,
-                pub: res.pubkey,
-                sigDate: idty.meta.timestamp
-              })
-            }, []));
-          }, []);
-        });
-    }
-    else {
-      $scope.search.results = [];
-    }
   };
 
   $scope.next = function() {

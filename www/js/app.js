@@ -82,11 +82,6 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
           templateUrl: "templates/explore/explore_tabs.html",
           controller: 'ExploreCtrl'
         }
-        ,
-        'currency-tab': {
-          templateUrl: "templates/explore/tabs/explore_tab_currency.html",
-          controller: 'ExploreCtrl2'
-        }
       }
     });
   // if none of the above states are matched, use this as the fallback
