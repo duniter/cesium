@@ -79,11 +79,12 @@ function ExploreController($scope, $state, BMA, $q, UIUtils) {
   $scope.knownCurrencies = ['meta_brouzouf'];
   $scope.formData = { useRelative: false };
 
-  $scope.$on('currencySelected', function() {
+  $scope.$on('currencySelected', function(e) {
     if (!dataDone) {
       UIUtils.loading.show();
     }
     $state.go('app.explore_tabs');
+    e.stopPropagation();
   });
 
   $scope.$watch('formData.useRelative', function() {
