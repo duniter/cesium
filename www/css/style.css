@@ -50,6 +50,10 @@ body {
 .center {
     text-align: center;
 }
+
+.light {
+    color: grey;
+}
 /*.button {*/
     /*height: 50px !important;*/
     /*font-size: 18px !important;*/

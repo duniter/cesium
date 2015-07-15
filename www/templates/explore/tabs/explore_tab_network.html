@@ -1,3 +1,24 @@
 <ion-content class="has-header padding">
-    <h1>Network</h1>
+    <div class="list list-inset">
+
+        <div class="item item-divider">
+            Peers
+        </div>
+
+        <label class="item center" ng-if="search.lookingForPeers">
+            Looking for peers...
+        </label>
+
+        <label class="item center" ng-if="search.lookingForPeers">
+            <ion-spinner icon="android"></ion-spinner>
+        </label>
+
+        <a class="item item-icon-left" ng-repeat="peer in search.peers">
+            <i class="icon ion-android-globe"></i>
+            <h3>{{peer.pubkey.substr(0,8)}} <span class="light">{{peer.dns && ' | ' + peer.dns}}</span></h3>
+            <h4>{{peer.getURL()}}</h4>
+            <h4><span class="light">Signed on block</span> #{{peer.blockNumber}}</h4>
+            <span class="badge badge-balanced">{{peer.current.number}}</span>
+        </a>
+    </div>
 </ion-content>

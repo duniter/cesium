@@ -1,25 +1,32 @@
-var server = 'metab.ucoin.io';
-//var server = '192.168.1.35:8033';
-
 angular.module('cesium.services', ['ngResource'])
 
 .factory('BMA', function($resource) {
-  return {
-    wot: {
-      lookup: $resource('http://' + server + '/wot/lookup/:search')
-    },
-    currency: {
-      parameters: $resource('http://' + server + '/blockchain/parameters')
-    },
-    blockchain: {
-      current: $resource('http://' + server + '/blockchain/current'),
-      block: $resource('http://' + server + '/blockchain/block/:block'),
-      stats: {
-        ud: $resource('http://' + server + '/blockchain/with/ud'),
-        tx: $resource('http://' + server + '/blockchain/with/tx')
+    function BMA(server) {
+      return {
+        wot: {
+          lookup: $resource('http://' + server + '/wot/lookup/:search')
+        },
+        network: {
+          peering: {
+            peers: $resource('http://' + server + '/network/peering/peers')
+          }
+        },
+        currency: {
+          parameters: $resource('http://' + server + '/blockchain/parameters')
+        },
+        blockchain: {
+          current: $resource('http://' + server + '/blockchain/current'),
+          block: $resource('http://' + server + '/blockchain/block/:block'),
+          stats: {
+            ud: $resource('http://' + server + '/blockchain/with/ud'),
+            tx: $resource('http://' + server + '/blockchain/with/tx')
+          }
+        }
       }
     }
-  };
+    var service = BMA('metab.ucoin.io');
+    service.instance = BMA;
+  return service;
 })
 
 .factory('UIUtils', function($ionicLoading, $ionicPopup) {
