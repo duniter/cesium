@@ -108,3 +108,8 @@ body {
 .button.ng-hide{
     display:none;
 }
+
+.peer-item {
+    padding-top: 10px;
+    padding-bottom: 5px;
+}

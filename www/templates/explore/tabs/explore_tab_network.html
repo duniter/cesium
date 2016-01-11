@@ -1,24 +1,18 @@
-<ion-content class="has-header padding">
-    <div class="list list-inset">
 
-        <div class="item item-divider">
+<ion-content class="has-header padding">
+    <div class="list">
+
+        <div class="item item-divider item-icon-right">
             Peers
+            <ion-spinner class="icon" icon="android"></ion-spinner>
         </div>
 
-        <label class="item center" ng-if="search.lookingForPeers">
-            Looking for peers...
-        </label>
-
-        <label class="item center" ng-if="search.lookingForPeers">
-            <ion-spinner icon="android"></ion-spinner>
-        </label>
-
-        <a class="item item-icon-left" ng-repeat="peer in search.peers">
+        <a class="peer-item item item-icon-left" collection-repeat="peer in search.peers" ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock) }">
             <i class="icon ion-android-globe"></i>
-            <h3>{{peer.pubkey.substr(0,8)}} <span class="light">{{peer.dns && ' | ' + peer.dns}}</span></h3>
+            <h3><span ng-class="{ positive: peer.uid }">{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="light">{{peer.dns && ' | ' + peer.dns}}</span></h3>
             <h4>{{peer.getURL()}}</h4>
             <h4><span class="light">Signed on block</span> #{{peer.blockNumber}}</h4>
-            <span class="badge badge-balanced">{{peer.current.number}}</span>
+            <span class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.current.number}}</span>
         </a>
     </div>
 </ion-content>

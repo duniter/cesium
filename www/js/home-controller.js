@@ -60,13 +60,11 @@ function CurrenciesController($scope) {
   };
 }
 
-function ExploreController($scope, $state, BMA, $q, UIUtils) {
+function ExploreController($scope, $state, BMA, $q, UIUtils, $interval) {
 
   CurrenciesController.call(this, $scope);
   LookupController.call(this, $scope, BMA);
-  PeersController.call(this, $scope, BMA, UIUtils, $q);
-
-  var dataDone = false;
+  PeersController.call(this, $scope, BMA, UIUtils, $q, $interval);
 
   $scope.accountTypeMember = null;
   $scope.accounts = [];
@@ -75,9 +73,6 @@ function ExploreController($scope, $state, BMA, $q, UIUtils) {
   $scope.formData = { useRelative: false };
 
   $scope.$on('currencySelected', function(e) {
-    if (!dataDone) {
-      UIUtils.loading.show();
-    }
     $state.go('app.explore_tabs');
     e.stopPropagation();
   });
@@ -98,60 +93,75 @@ function ExploreController($scope, $state, BMA, $q, UIUtils) {
     }
   }, true);
 
-  $q.all([
+  BMA.websocket.block().on('block', function() {
+    $scope.updateExploreView();
+  });
 
-    // Get the currency parameters
-    BMA.currency.parameters.get()
+  $scope.doUpdate = function() {
+    $scope.updateExploreView();
+  };
 
-      .$promise
-      .then(function(json){
-        $scope.c = json.c;
-        $scope.baseUnit = json.currency;
-        $scope.unit = json.currency;
-      }),
+  $scope.updateExploreView = function() {
 
-    // Get the current block informations
-    BMA.blockchain.current.get()
-      .$promise
-      .then(function(block){
-        $scope.M = block.monetaryMass;
-        $scope.N = block.membersCount;
-        $scope.time  = moment(block.medianTime*1000).format('YYYY-MM-DD HH:mm');
-        $scope.difficulty  = block.powMin;
-      }),
-
-    // Get the UD informations
-    BMA.blockchain.stats.ud.get()
-      .$promise
-      .then(function(res){
-        if (res.result.blocks.length) {
-          var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-          return BMA.blockchain.block.get({ block: lastBlockWithUD })
-            .$promise
-            .then(function(block){
-              $scope.currentUD = block.dividend;
-              $scope.UD = block.dividend;
-              $scope.Nprev = block.membersCount;
-            });
-        }
-      }),
+    UIUtils.loading.show();
+    $scope.formData.useRelative = false;
 
     // Network
-    $scope.searchPeers()
-  ])
+    $scope.searchPeers();
 
-    // Done
-    .then(function(){
-      $scope.M = $scope.M - $scope.UD*$scope.Nprev;
-      $scope.MoverN = $scope.M / $scope.Nprev;
-      $scope.cactual = 100 * $scope.UD / $scope.MoverN;
-      UIUtils.loading.hide();
-      dataDone = true;
-    })
-    .catch(function() {
-      UIUtils.alert.error('Could not fetch informations from remote uCoin node.');
-      UIUtils.loading.hide();
-    });
+    $q.all([
+
+      // Get the currency parameters
+      BMA.currency.parameters.get()
+
+        .$promise
+        .then(function(json){
+          $scope.c = json.c;
+          $scope.baseUnit = json.currency;
+          $scope.unit = json.currency;
+        }),
+
+      // Get the current block informations
+      BMA.blockchain.current.get()
+        .$promise
+        .then(function(block){
+          $scope.M = block.monetaryMass;
+          $scope.N = block.membersCount;
+          $scope.time  = moment(block.medianTime*1000).format('YYYY-MM-DD HH:mm');
+          $scope.difficulty  = block.powMin;
+        }),
+
+      // Get the UD informations
+      BMA.blockchain.stats.ud.get()
+        .$promise
+        .then(function(res){
+          if (res.result.blocks.length) {
+            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+            return BMA.blockchain.block.get({ block: lastBlockWithUD })
+              .$promise
+              .then(function(block){
+                $scope.currentUD = block.dividend;
+                $scope.UD = block.dividend;
+                $scope.Nprev = block.membersCount;
+              });
+          }
+        })
+    ])
+
+      // Done
+      .then(function(){
+        $scope.M = $scope.M - $scope.UD*$scope.Nprev;
+        $scope.MoverN = $scope.M / $scope.Nprev;
+        $scope.cactual = 100 * $scope.UD / $scope.MoverN;
+        UIUtils.loading.hide();
+      })
+      .catch(function() {
+        UIUtils.alert.error('Could not fetch informations from remote uCoin node.');
+        UIUtils.loading.hide();
+      });
+  };
+
+  $scope.updateExploreView();
 }
 
 function LookupController($scope, BMA) {
@@ -173,6 +183,10 @@ function LookupController($scope, BMA) {
               })
             }, []));
           }, []);
+        })
+        .catch(function() {
+          $scope.search.looking = false;
+          $scope.search.results = [];
         });
     }
     else {
@@ -181,16 +195,68 @@ function LookupController($scope, BMA) {
   };
 }
 
-function PeersController($scope, BMA, UIUtils, $q) {
+function PeersController($scope, BMA, UIUtils, $q, $interval) {
 
+  var newPeers = [], interval;
   $scope.search.lookingForPeers = false;
   $scope.search.peers = [];
 
+  $scope.overviewPeers = function() {
+    var currents = {}, block;
+    for (var i = 0, len = $scope.search.peers.length; i < len; i++) {
+      block = $scope.search.peers[i].current;
+      if (block) {
+        var bid = fpr(block);
+        currents[bid] = currents[bid] || 0;
+        currents[bid]++;
+      }
+    }
+    var fprs = _.keys(currents).map(function(key) {
+      return { fpr: key, qty: currents[key] };
+    });
+    var best = _.max(fprs, function(obj) {
+      return obj.qty;
+    });
+    var p;
+    for (var j = 0, len2 = $scope.search.peers.length; j < len2; j++) {
+      p = $scope.search.peers[j];
+      p.hasMainConsensusBlock = fpr(p.current) == best.fpr;
+      p.hasConsensusBlock = !p.hasMainConsensusBlock && currents[fpr(p.current)] > 1;
+    }
+    $scope.search.peers = _.sortBy($scope.search.peers, function(p) {
+      var score = 1
+        + 10000 * (p.online ? 1 : 0)
+        + 1000  * (p.hasMainConsensusBlock ? 1 : 0) +
+        + 100   * (p.uid ? 1 : 0);
+      return -score;
+    });
+  };
+
   $scope.searchPeers = function() {
+
+    if (interval) {
+      $interval.cancel(interval);
+    }
+
+    interval = $interval(function() {
+      if (newPeers.length) {
+        $scope.search.peers = $scope.search.peers.concat(newPeers.splice(0));
+        $scope.overviewPeers();
+      }
+    }, 2000);
+
+    var known = {}, members;
     $scope.search.peers = [];
     $scope.search.lookingForPeers = true;
     return BMA.network.peering.peers.get({ leaves: true })
       .$promise
+      .then(function(res){
+        return BMA.wot.members.get().$promise
+          .then(function(json){
+            members = json.results;
+            return res;
+          });
+      })
       .then(function(res){
         return $q.all(res.leaves.map(function(leaf) {
           return BMA.network.peering.peers.get({ leaf: leaf })
@@ -199,17 +265,24 @@ function PeersController($scope, BMA, UIUtils, $q) {
               var peer = subres.leaf.value;
               if (peer) {
                 peer = new Peer(peer);
-                peer.dns = peer.getDns();
-                peer.blockNumber = peer.block.replace(/-.+$/, '');
-                $scope.search.peers.push(peer);
-                var node = BMA.instance(peer.getURL());
-                return node.blockchain.current.get()
-                  .$promise
-                  .then(function(block){
-                    peer.current = block;
-                  })
-                  .catch(function() {
-                  })
+                // Test each peer only once
+                if (!known[peer.getURL()]) {
+                  peer.dns = peer.getDns();
+                  peer.blockNumber = peer.block.replace(/-.+$/, '');
+                  var member = _.findWhere(members, { pubkey: peer.pubkey });
+                  peer.uid = member && member.uid;
+                  newPeers.push(peer);
+                  var node = BMA.instance(peer.getURL());
+                  return node.blockchain.current.get()
+                    .$promise
+                    .then(function(block){
+                      peer.current = block;
+                      peer.online = true;
+                    })
+                    .catch(function(err) {
+                      console.error('>>>>>>> ERR: %s', err);
+                    })
+                }
               }
             })
         }))
@@ -218,11 +291,15 @@ function PeersController($scope, BMA, UIUtils, $q) {
           })
       })
       .catch(function(err) {
-        console.log(err);
+        //console.log(err);
         UIUtils.alert.error('Could get peers from remote uCoin node.');
         //$scope.search.lookingForPeers = false;
       });
   };
+}
+
+function fpr(block) {
+  return block && [block.number, block.hash].join('-');
 }
 
 function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, BMA, $timeout) {

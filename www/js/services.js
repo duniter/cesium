@@ -2,24 +2,40 @@ angular.module('cesium.services', ['ngResource'])
 
 .factory('BMA', function($resource) {
     function BMA(server) {
+
+      function getResource(uri) {
+        return $resource(uri, null, null, {
+          timeout: 4000
+        });
+      }
+
       return {
         wot: {
-          lookup: $resource('http://' + server + '/wot/lookup/:search')
+          lookup: getResource('http://' + server + '/wot/lookup/:search'),
+          members: getResource('http://' + server + '/wot/members')
         },
         network: {
           peering: {
-            peers: $resource('http://' + server + '/network/peering/peers')
+            peers: getResource('http://' + server + '/network/peering/peers')
           }
         },
         currency: {
-          parameters: $resource('http://' + server + '/blockchain/parameters')
+          parameters: getResource('http://' + server + '/blockchain/parameters')
         },
         blockchain: {
-          current: $resource('http://' + server + '/blockchain/current'),
-          block: $resource('http://' + server + '/blockchain/block/:block'),
+          current: getResource('http://' + server + '/blockchain/current'),
+          block: getResource('http://' + server + '/blockchain/block/:block'),
           stats: {
-            ud: $resource('http://' + server + '/blockchain/with/ud'),
-            tx: $resource('http://' + server + '/blockchain/with/tx')
+            ud: getResource('http://' + server + '/blockchain/with/ud'),
+            tx: getResource('http://' + server + '/blockchain/with/tx')
+          }
+        },
+        websocket: {
+          block: function() {
+            return io('http://' + server + '/websocket/block');
+          },
+          peer: function() {
+            return io('http://' + server + '/websocket/peer');
           }
         }
       }
