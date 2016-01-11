@@ -70,7 +70,7 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
       views: {
         'menuContent': {
           templateUrl: "templates/explore/explore_currency.html",
-          controller: 'ExploreCtrl'
+          controller: 'CurrenciesCtrl'
         }
       }
     })

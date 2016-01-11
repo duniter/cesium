@@ -1,12 +1,35 @@
 angular.module('cesium.services', ['ngResource'])
 
-.factory('BMA', function($resource) {
+.factory('BMA', function($http, $q) {
+
     function BMA(server) {
 
       function getResource(uri) {
-        return $resource(uri, null, null, {
-          timeout: 4000
-        });
+        return function(params) {
+          return $q(function(resolve, reject) {
+            var config = {
+              timeout: 4000
+            }, suffix = '', pkeys = [], queryParams = {};
+            if (typeof params == 'object') {
+              pkeys = _.keys(params);
+            }
+            pkeys.forEach(function(pkey){
+              var prevURI = uri;
+              uri = uri.replace(new RegExp(':' + pkey), params[pkey]);
+              if (prevURI == uri) {
+                queryParams[pkey] = params[pkey];
+              }
+            });
+            config.params = queryParams;
+            $http.get(uri + suffix, config)
+              .success(function(data, status, headers, config) {
+                resolve(data);
+              })
+              .error(function(data, status, headers, config) {
+                reject(data);
+              });
+          });
+        }
       }
 
       return {

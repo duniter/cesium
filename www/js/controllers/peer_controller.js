@@ -8,8 +8,7 @@ function PeerController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal,
   $scope.showPeer = function(server) {
     $scope.node = BMA.instance(server);
     // Get the peers
-    BMA.network.peers.get()
-      .$promise
+    $scope.node.network.peers()
       .then(function(json){
         $scope.loaded = true;
         var peers = json.peers.map(function(p) {
