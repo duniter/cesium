@@ -14,7 +14,6 @@
             <i class="icon ion-android-globe"></i>
             <h3><span ng-class="{ positive: peer.uid }">{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="light">{{peer.dns && ' | ' + peer.dns}}</span></h3>
             <h4>{{peer.getURL()}}</h4>
-            <h4><span class="light">Signed on block</span> #{{peer.blockNumber}}</h4>
             <span class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.current.number}}</span>
         </a>
     </div>
