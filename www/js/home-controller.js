@@ -92,7 +92,7 @@ function ExploreController($scope, $rootScope, $state, BMA, $q, UIUtils, $interv
       $scope.startListeningOnSocket();
     }
     $timeout(function() {
-      if (!$scope.search.peers || $scope.search.peers.length == 0){
+      if ((!$scope.search.peers || $scope.search.peers.length == 0) && $scope.search.lookingForPeers){
         $scope.updateExploreView();
       }
     }, 2000);
