@@ -60,7 +60,7 @@ function CurrenciesController($scope) {
   };
 }
 
-function ExploreController($scope, $state, BMA, $q, UIUtils, $interval) {
+function ExploreController($scope, $state, BMA, $q, UIUtils, $interval, $timeout) {
 
   CurrenciesController.call(this, $scope);
   LookupController.call(this, $scope, BMA);
@@ -71,6 +71,7 @@ function ExploreController($scope, $state, BMA, $q, UIUtils, $interval) {
   $scope.search = { text: '', results: {} };
   $scope.knownCurrencies = ['meta_brouzouf'];
   $scope.formData = { useRelative: false };
+  $scope.knownBlocks = [];
 
   $scope.$on('currencySelected', function(e) {
     $state.go('app.explore_tabs');
@@ -93,8 +94,14 @@ function ExploreController($scope, $state, BMA, $q, UIUtils, $interval) {
     }
   }, true);
 
-  BMA.websocket.block().on('block', function() {
-    $scope.updateExploreView();
+  BMA.websocket.block().on('block', function(block) {
+    var theFPR = fpr(block);
+    if ($scope.knownBlocks.indexOf(theFPR) === -1) {
+      $scope.knownBlocks.push(theFPR);
+      $timeout(function() {
+        $scope.updateExploreView();
+      }, 2000);
+    }
   });
 
   $scope.doUpdate = function() {
@@ -223,6 +230,9 @@ function PeersController($scope, BMA, UIUtils, $q, $interval) {
       p.hasMainConsensusBlock = fpr(p.current) == best.fpr;
       p.hasConsensusBlock = !p.hasMainConsensusBlock && currents[fpr(p.current)] > 1;
     }
+    $scope.search.peers = _.uniq($scope.search.peers, false, function(peer) {
+      return peer.pubkey;
+    });
     $scope.search.peers = _.sortBy($scope.search.peers, function(p) {
       var score = 1
         + 10000 * (p.online ? 1 : 0)
@@ -280,7 +290,6 @@ function PeersController($scope, BMA, UIUtils, $q, $interval) {
                       peer.online = true;
                     })
                     .catch(function(err) {
-                      console.error('>>>>>>> ERR: %s', err);
                     })
                 }
               }
