@@ -17,7 +17,8 @@ angular.module('cesium.services', ['ngResource'])
         network: {
           peering: {
             peers: getResource('http://' + server + '/network/peering/peers')
-          }
+          },
+          peers: getResource('http://' + server + '/network/peers')
         },
         currency: {
           parameters: getResource('http://' + server + '/blockchain/parameters')

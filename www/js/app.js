@@ -83,6 +83,16 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
           controller: 'ExploreCtrl'
         }
       }
+    })
+
+    .state('app.view_peer', {
+      url: "/peer/:server",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/explore/view_peer.html",
+          controller: 'PeerCtrl'
+        }
+      }
     });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
