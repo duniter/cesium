@@ -13,7 +13,7 @@
             <a class="peer-item item item-icon-left"
                collection-repeat="peer in peers"
                ng-class="{ assertive: !peer.online, balanced: peer.online }"
-               ui-sref="app.view_peer(peer)">
+               ng-href="http://{{peer.getURL()}}/blockchain/current">
                 <i class="icon ion-android-globe"></i>
                 <h3><span ng-class="{ positive: peer.uid }">{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="light">{{peer.dns && ' | ' + peer.dns}}</span></h3>
                 <h4>{{peer.getURL()}} <span class="light">| Signed on block</span> #{{peer.blockNumber}}</h4>
