@@ -90,9 +90,12 @@ function ExploreController($scope, $rootScope, $state, BMA, $q, UIUtils, $interv
     if (!$scope.entered) {
       $scope.entered = true;
       $scope.startListeningOnSocket();
-    } else {
-      //$scope.updateExploreView();
     }
+    $timeout(function() {
+      if (!$scope.search.peers || $scope.search.peers.length == 0){
+        $scope.updateExploreView();
+      }
+    }, 2000);
   });
 
   $scope.startListeningOnSocket = function() {
