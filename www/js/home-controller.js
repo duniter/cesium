@@ -76,7 +76,7 @@ function ExploreController($scope, $rootScope, $state, BMA, $q, UIUtils, $interv
 
   CurrenciesController.call(this, $scope);
   LookupController.call(this, $scope, BMA);
-  PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval);
+  PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
 
   $scope.accountTypeMember = null;
   $scope.accounts = [];
@@ -223,9 +223,9 @@ function LookupController($scope, BMA) {
   };
 }
 
-function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval) {
+function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout) {
 
-  var newPeers = [], interval;
+  var newPeers = [], interval, lookingForPeers;
   $scope.search.lookingForPeers = false;
   $scope.search.peers = [];
 
@@ -273,6 +273,12 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval) {
       if (newPeers.length) {
         $scope.search.peers = $scope.search.peers.concat(newPeers.splice(0));
         $scope.overviewPeers();
+      } else if (lookingForPeers && !$scope.search.lookingForPeers) {
+        // The peer lookup endend, we can make a clean final report
+        $timeout(function(){
+          lookingForPeers = false;
+          $scope.overviewPeers();
+        }, 1000);
       }
     }, 1000);
 
@@ -280,6 +286,7 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval) {
     $rootScope.members = [];
     $scope.search.peers = [];
     $scope.search.lookingForPeers = true;
+    lookingForPeers = true;
     return BMA.network.peering.peers({ leaves: true })
       .then(function(res){
         return BMA.wot.members()
