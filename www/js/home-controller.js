@@ -21,30 +21,85 @@ angular.module('cesium.controllers', ['cesium.services'])
   .controller('WalletCtrl', WalletController)
 ;
 
-function WalletController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state) {
+function WalletController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout, BMA) {
 
-  LoginController.call(this, $scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state);
+  var USE_RELATIVE_DEFAULT = true;
 
-  $scope.wallet = Wallet.data;
+  LoginController.call(this, $scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout);
 
-  $scope.$on('$ionicView.enter', function(e, $state, $rootScope) {
+  $scope.formData = Wallet.data;
+  $scope.formData.useRelative = false;
+  $scope.currentUD = 1;
+  $scope.convertedBalance = 0;
+  $scope.balance = 0;
+
+  $scope.$on('$ionicView.enter', function(e, $state) {
     if (!Wallet.isLogin()) {
-       // TODO: Open login UI
-       //$scope.login();
+      $q(function () {
+        $scope.login();
+      });
     }
     else {
-      $scope.loadBalance();
+      $scope.updateWalletView();
     }
   });
 
-  // Load balance
-  $scope.loadBalance= function() {
+  $scope.$watch('formData.useRelative', function() {
+    if ($scope.formData.useRelative) {
+      $scope.convertedBalance = $scope.balance / $scope.currentUD;
+      $scope.unit = 'universal_dividend';
+      $scope.udUnit = $scope.baseUnit;
+    } else {
+      $scope.convertedBalance = $scope.balance;
+      $scope.unit = $scope.baseUnit;
+      $scope.udUnit = '';
+    }
+  }, true);
+
+  // Update view
+  $scope.updateWalletView = function() {
 
     UIUtils.loading.show();
-    Wallet.loadBalance()
-      .then(function(balance){
-        $scope.wallet.balance = balance;
-        UIUtils.loading.hide();
+
+    $scope.formData.useRelative = false;
+
+    $q.all([
+
+      // Get the currency parameters
+      BMA.currency.parameters()
+        .then(function(json){
+          $scope.baseUnit = json.currency;
+          $scope.unit = json.currency;
+        }),
+
+      // Get the UD informations
+      BMA.blockchain.stats.ud()
+        .then(function(res){
+          if (res.result.blocks.length) {
+            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+            return BMA.blockchain.block({ block: lastBlockWithUD })
+              .then(function(block){
+                $scope.currentUD = block.dividend;
+              });
+          }
+        }),
+
+       // Load wallet balance
+       Wallet.loadBalance()
+        .then(function(balance){
+          $scope.balance = balance;
+        })
+    ])
+
+    // Done
+    .then(function(){
+      $scope.formData.useRelative = USE_RELATIVE_DEFAULT;
+      UIUtils.loading.hide();
+    })
+    .catch(function(err) {
+      console.error('>>>>>>>' , err);
+      UIUtils.alert.error('Could not fetch informations from remote uCoin node.');
+      UIUtils.loading.hide();
     });
   };
 
@@ -55,12 +110,12 @@ function WalletController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, 
 }
 
 
-function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state) {
+function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout) {
   // Form data for the login modal
   $scope.loginData = {};
 
   // Login modal
-  $scope.loginModal = null;
+  $scope.loginModal = "undefined";
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -72,8 +127,13 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
 
   // Login form submit
   $scope.login = function() {
-    $scope.loginModal.show();
-  }
+    if ($scope.loginModal != "undefined" && $scope.loginModal != null) {
+      $scope.loginModal.show();
+    }
+    else{
+      $timeout($scope.login, 2000);
+    }    
+  };
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
@@ -82,19 +142,19 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
 
   // Login form submit
   $scope.doLogin = function() {
+    $scope.loginModal.hide();
+    UIUtils.loading.show(); 
 
-    UIUtils.loading.show();
-
-    // Call wallet login
-    Wallet.login($scope.loginData.username, $scope.loginData.password)
-
-    // Login succeed
-    .then(function(){
-        //$scope.wallet = wallet;
-        $scope.loginData = {}; // Reset login data
-        UIUtils.loading.hide();
-        $scope.closeLogin();
-    })
+    $q.all([
+        // Call wallet login
+        Wallet.login($scope.loginData.username, $scope.loginData.password)
+        .then(function(){
+            $scope.loginData = {}; // Reset login data
+            $scope.loginModal.hide();
+            UIUtils.loading.hide();
+            
+        })
+      ])
 
     .catch(function(err) {
       console.error('>>>>>>>' , err);
@@ -104,6 +164,7 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
 
     // Redirect to wallet
     .then(function(){
+        $scope.loginModal.hide();
         $state.go('app.view_wallet');
     })
     ;
@@ -457,7 +518,7 @@ function HomeController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal,
 
   CurrenciesController.call(this, $scope, $state);
   LookupController.call(this, $scope, BMA);
-  LoginController.call(this, $scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state);
+  LoginController.call(this, $scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout);
 
   $scope.accountTypeMember = null;
   $scope.accounts = [];
