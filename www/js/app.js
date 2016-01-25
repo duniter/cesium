@@ -93,7 +93,28 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
           controller: 'PeerCtrl'
         }
       }
-    });
+    })
+
+    .state('app.view_identity', {
+      url: "/wot/:pub",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/wot/view_identity.html",
+          controller: 'IdentityCtrl'
+        }
+      }
+    })
+
+    .state('app.view_wallet', {
+          url: "/wallet",
+          views: {
+            'menuContent': {
+              templateUrl: "templates/account/view_wallet.html",
+              controller: 'WalletCtrl'
+            }
+          }
+     })
+    ;
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
 });

@@ -1,0 +1,35 @@
+<ion-view view-title="Identity {{identity.uid}}" left-buttons="leftButtons">
+<ion-content>
+    <div class="scroll">
+        <div class="list">
+            <span class="item item-icon-left">
+                <i class="icon ion-person"></i>
+                Uid
+                <span class="badge badge-calm">{{identity.uid}}</span>
+            </span>
+
+            <span class="item item-icon-left">
+                <i class="icon ion-key"></i>
+                Public key
+                <span class="badge">{{identity.pub}}</span>
+            </span>
+
+            <span class="item item-icon-left">
+                <i class="icon ion-calendar"></i>
+                Registration date
+                <span class="badge badge-calm">{{identity.sigDate | formatDate}}</span>
+            </span>
+
+            <div class="item item-divider">
+                Last transactions
+            </div>
+
+        </div>
+        <a class="button icon-right ion-chevron-right button-calm" ng-click="signIdentity()">
+            Sign
+            </a>
+
+    <div class="scroll-bar scroll-bar-v"></div>
+    </div>
+</ion-content>
+</ion-view>

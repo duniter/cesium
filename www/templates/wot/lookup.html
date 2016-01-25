@@ -9,7 +9,7 @@
             <ion-spinner icon="android"></ion-spinner>
         </label>
 
-        <a class="item item-icon-left" ng-repeat="found in search.results">
+        <a class="item item-icon-left" ng-repeat="found in search.results" ui-sref="app.view_identity(found)">
             <i class="icon ion-person"></i>
             <h2>{{found.uid}}</h2>
             <p>pubkey: {{found.pub.substr(0,24)}}</p>

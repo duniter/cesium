@@ -1,0 +1,18 @@
+<ion-view view-title="Wallet {{wallet.pubkey}}" left-buttons="leftButtons">
+    <ion-content>
+        <div class="scroll">
+            <div class="list">
+            <span class="item item-icon-left">
+                <i class="icon ion-person"></i>
+                Pubkey
+                <span class="badge badge-calm">{{wallet.pubkey}}</span>
+            </span>
+
+            <a class="button icon-right ion-chevron-right button-calm" ng-click="transfer()">
+                Transfer
+            </a>
+
+            <div class="scroll-bar scroll-bar-v"></div>
+        </div>
+    </ion-content>
+</ion-view>
