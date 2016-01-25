@@ -28,11 +28,25 @@ function WalletController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, 
   $scope.wallet = Wallet.data;
 
   $scope.$on('$ionicView.enter', function(e, $state, $rootScope) {
-    if (!Wallet.isConnected()) {
+    if (!Wallet.isLogin()) {
        // TODO: Open login UI
        //$scope.login();
     }
+    else {
+      $scope.loadBalance();
+    }
   });
+
+  // Load balance
+  $scope.loadBalance= function() {
+
+    UIUtils.loading.show();
+    Wallet.loadBalance()
+      .then(function(balance){
+        $scope.wallet.balance = balance;
+        UIUtils.loading.hide();
+    });
+  };
 
   // Login form submit
   $scope.transfer= function() {
@@ -72,7 +86,7 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
     UIUtils.loading.show();
 
     // Call wallet login
-    Wallet.connect($scope.loginData.username, $scope.loginData.password)
+    Wallet.login($scope.loginData.username, $scope.loginData.password)
 
     // Login succeed
     .then(function(){
@@ -90,7 +104,6 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
 
     // Redirect to wallet
     .then(function(){
-        //$localstorage.setObject('wallet', $scope.wallet);
         $state.go('app.view_wallet');
     })
     ;
@@ -99,7 +112,7 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
   // Logout
   $scope.logout = function() {
     UIUtils.loading.show();
-    Wallet.close().then(
+    Wallet.logout().then(
         function() {
             UIUtils.loading.hide();
         }
@@ -108,12 +121,12 @@ function LoginController($scope, $rootScope, $ionicModal, Wallet, UIUtils, $q, $
 
   // Is connected
   $scope.isConnected = function() {
-      return Wallet.isConnected();
+      return Wallet.isLogin();
   };
 
   // Is not connected
   $scope.isNotConnected = function() {
-    return !Wallet.isConnected();
+    return !Wallet.isLogin();
   };
 }
 
@@ -294,7 +307,6 @@ function IdentityController($scope, $state, BMA) {
 
      BMA.wot.lookup({ search: pub })
         .then(function(res){
-          console.log(res);
           $scope.identity = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
               return uids.concat({

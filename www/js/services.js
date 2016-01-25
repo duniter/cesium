@@ -1,4 +1,4 @@
-var scrypt_module_factory = null, nacl_factory = null;
+//var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
 angular.module('cesium.services', ['ngResource'])
 
@@ -11,19 +11,20 @@ angular.module('cesium.services', ['ngResource'])
           return $q(function(resolve, reject) {
             var config = {
               timeout: 4000
-            }, suffix = '', pkeys = [], queryParams = {};
+            }, suffix = '', pkeys = [], queryParams = {}, newUri = uri;
             if (typeof params == 'object') {
               pkeys = _.keys(params);
             }
+
             pkeys.forEach(function(pkey){
-              var prevURI = uri;
-              uri = uri.replace(new RegExp(':' + pkey), params[pkey]);
-              if (prevURI == uri) {
+              var prevURI = newUri;
+              newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
+              if (prevURI == newUri) {
                 queryParams[pkey] = params[pkey];
               }
             });
             config.params = queryParams;
-            $http.get(uri + suffix, config)
+            $http.get(newUri + suffix, config)
               .success(function(data, status, headers, config) {
                 resolve(data);
               })
@@ -55,6 +56,10 @@ angular.module('cesium.services', ['ngResource'])
             ud: getResource('http://' + server + '/blockchain/with/ud'),
             tx: getResource('http://' + server + '/blockchain/with/tx')
           }
+        },
+
+        tx: {
+          sources: getResource('http://' + server + '/tx/sources/:pubkey')
         },
         websocket: {
           block: function() {
@@ -181,6 +186,9 @@ angular.module('cesium.services', ['ngResource'])
             for (i = 0; i < d.length; i++) b[i] = d.charCodeAt(i);
             return b;
         },
+        encode_base58 = function(a) {
+            return base58.encode(a);
+        },
 
        /**
         * Create a key pair, from salt+password, and  return a wallet object
@@ -193,10 +201,7 @@ angular.module('cesium.services', ['ngResource'])
                                               4096, 16, 1, 32 // TODO: put in var SCRYPT_PARAMS
                                            );
                    var keypair = nacl.crypto_sign_keypair_from_seed(seed);
-                   var pubkey = base58.encode(keypair.signPk);
-                   var wallet = { keypair: keypair, pubkey: pubkey};
-                   console.log('connect result pubkey: ' + pubkey);
-                   resolve(wallet);
+                   resolve(keypair);
                 })
           },
 
@@ -223,54 +228,19 @@ angular.module('cesium.services', ['ngResource'])
         /**
         * Sign a message, from a wallet
         */
-        sign = function(message, wallet) {
+        sign = function(message, keypair) {
           return $q(function(resolve, reject) {
               var m = decode_utf8(message);
-              var sk = wallet.keypair.signSk;
+              var sk = keypair.signSk;
               var signedMsg = nacl.crypto_sign(m, sk);
               var sig = new Uint8Array(crypto_sign_BYTES);
               for (var i = 0; i < sig.length; i++) sig[i] = signedMsg[i];
               var signature = base64.encode(sig);
               resolve(signature);
             })
-        },
+        }
 
-        /**
-        * Serialize to JSON string
-        */
-        toJson = function(wallet) {
-          return $q(function(resolve, reject) {
-              var json = JSON.stringify(wallet);
-              resolve(json);
-            })
-        },
-
-        /**
-        * Serialize to JSON string
-        */
-        fromJson = function(json) {
-          return $q(function(resolve, reject) {
-              var wallet = JSON.parse(json || '{}');
-              if (wallet.keypair != "undefined"
-                  && wallet.keypair != null) {
-                  var keypair = wallet.keypair;
-
-                  // Convert to Uint8Array type
-                  var signPk = new Uint8Array(32);
-                  for (var i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
-                  keypair.signPk = signPk;
-
-                  var signSk = new Uint8Array(64);
-                  for (var i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
-                  keypair.signSk = signSk;
-
-                  resolve(wallet);
-              }
-              else {
-                resolve(wallet);
-              }
-            })
-        };
+        ;
 
       // Service's exposed methods
       return {
@@ -279,17 +249,17 @@ angular.module('cesium.services', ['ngResource'])
           nacl: nacl,
           scrypt: scrypt,
           base58: base58,
-          base64: base64,
+          base64: base64,*/
           util: {
             encode_utf8: nacl.encode_utf8,
-            decode_utf8: decode_utf8
+            decode_utf8: decode_utf8,
+            encode_base58: encode_base58
           },
-          */
+          
 
           connect: connect,
           sign: sign,
-          verify: verify,
-          fromJson: fromJson
+          verify: verify
           //,isCompatible: isCompatible
        }
     }
@@ -311,29 +281,11 @@ angular.module('cesium.services', ['ngResource'])
     },
     getObject: function(key) {
       return JSON.parse($window.localStorage[key] || '{}');
-    },
-    loadWallet: function() {
-        return $q(function(resolve, reject) {
-            var json = $window.localStorage['wallet'];
-            if (json == "undefined" || json == null) {
-                resolve(null);
-            }
-            else {
-                CryptoUtils.fromJson(json).then(
-                    function(wallet) {
-                        resolve(wallet);
-                    },
-                    function() {
-                        reject('Could not load wallet from local storage');
-                    }
-                );
-            }
-        });
     }
   }
 }])
 
-.factory('Wallet', ['$localstorage', 'CryptoUtils', '$q', function($localstorage, CryptoUtils, $q) {
+.factory('Wallet', ['CryptoUtils', 'BMA', '$q', function(CryptoUtils, BMA, $q) {
   Wallet = function(id) {
 
     var
@@ -345,23 +297,20 @@ angular.module('cesium.services', ['ngResource'])
         }
     },
 
-    connect = function(username, password) {
+    login = function(salt, password) {
         return $q(function(resolve, reject) {
-            CryptoUtils.connect(username, password).then(
-                function(newWallet) {
+            CryptoUtils.connect(salt, password).then(
+                function(keypair) {
                     // Copy result to properties
-                    data.pubkey = newWallet.pubkey;
-                    data.keypair.signSk = newWallet.keypair.signSk;
-                    data.keypair.signPk = newWallet.keypair.signPk;
-                    newWallet = {};
-
+                    data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+                    data.keypair = keypair;
                     resolve();
                 }
             );
         });
     },
 
-    close = function(username, password) {
+    logout = function(username, password) {
         return $q(function(resolve, reject) {
             data.pubkey = null;
             data.keypair.signSk = null;
@@ -370,18 +319,76 @@ angular.module('cesium.services', ['ngResource'])
         });
     },
 
-    isConnected = function() {
+    isLogin = function() {
         return data.pubkey != "undefined"
             && data.pubkey != null;
+    },
+
+    loadBalance = function() {
+        return $q(function(resolve, reject){
+          BMA.tx.sources({pubkey: data.pubkey})
+          .then(function(result){
+            data.sources = result.sources;
+
+            var balance = 0;
+            if (result.sources != "undefined" && result.sources != null) {
+              for (var i=0; i<result.sources.length; i++) balance += result.sources[i].amount;
+            }
+            resolve(balance);
+          });
+        });
+    },
+
+    /**
+    * Serialize to JSON string
+    */
+    toJson = function() {
+      return $q(function(resolve, reject) {
+          var json = JSON.stringify(data);
+          resolve(json);
+        })
+    },
+
+    /**
+    * De-serialize from JSON string
+    */
+    fromJson = function(json) {
+      return $q(function(resolve, reject) {
+          var obj = JSON.parse(json || '{}');
+          if (obj.keypair != "undefined"
+              && obj.keypair != null) {
+              var keypair = obj.keypair;
+
+              // Convert to Uint8Array type
+              var signPk = new Uint8Array(32);
+              for (var i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
+              keypair.signPk = signPk;
+
+              var signSk = new Uint8Array(64);
+              for (var i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
+              keypair.signSk = signSk;
+
+              data.pubkey = obj.pubkey;
+              data.keypair = keypair;
+
+              resolve();
+          }
+          else {
+            reject('Not a valid Wallet.data object');
+          }
+        })
     };
 
     return {
         id: id,
         data: data,
 
-        connect: connect,
-        close: close,
-        isConnected: isConnected
+        login: login,
+        logout: logout,
+        isLogin: isLogin,
+        toJson: toJson,
+        fromJson: fromJson,
+        loadBalance: loadBalance
     }
   }
   var service = Wallet('default');
