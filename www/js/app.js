@@ -114,6 +114,16 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
             }
           }
      })
+
+     .state('app.view_transfer', {
+            url: "/transfer",
+            views: {
+              'menuContent': {
+                templateUrl: "templates/account/view_transfer.html",
+                controller: 'TransferCtrl'
+              }
+            }
+       })
     ;
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');

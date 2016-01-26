@@ -294,7 +294,12 @@ angular.module('cesium.services', ['ngResource'])
         keypair: {
             signSk: null,
             signPk: null
-        }
+        },
+        balance: 0,
+        sources: null,
+        useRelative: true,
+        currency: null,
+        currentUD: null
     },
 
     login = function(salt, password) {
@@ -324,20 +329,55 @@ angular.module('cesium.services', ['ngResource'])
             && data.pubkey != null;
     },
 
-    loadBalance = function() {
+    loadData = function() {
         return $q(function(resolve, reject){
-          BMA.tx.sources({pubkey: data.pubkey})
-          .then(function(result){
-            data.sources = result.sources;
+          $q.all([
 
-            var balance = 0;
-            if (result.sources != "undefined" && result.sources != null) {
-              for (var i=0; i<result.sources.length; i++) balance += result.sources[i].amount;
-            }
-            resolve(balance);
+            // Get currency parameters
+            BMA.currency.parameters()
+              .then(function(json){
+                data.currency = json.currency;
+              }),
+
+            // Get the UD informations
+            BMA.blockchain.stats.ud()
+              .then(function(res){
+                if (res.result.blocks.length) {
+                  var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+                  return BMA.blockchain.block({ block: lastBlockWithUD })
+                    .then(function(block){
+                      data.currentUD = block.dividend;
+                    });
+                  }
+              }),
+
+            // Get sources
+            BMA.tx.sources({pubkey: data.pubkey})
+              .then(function(result){
+                data.sources = result.sources;
+
+                var balance = 0;
+                if (result.sources != "undefined" && result.sources != null) {
+                  for (var i=0; i<result.sources.length; i++) balance += result.sources[i].amount;
+                }
+                data.balance = balance;
+              })
+          ])
+          .then(function() {
+            resolve();
           });
         });
     },
+
+    /**
+    * Send a new transaction
+    */
+    transfer = function(destPub, amount, comments) {
+        return $q(function(resolve, reject) {
+            alert('sending transfert...');
+            resolve(true);
+        });
+    }
 
     /**
     * Serialize to JSON string
@@ -388,7 +428,8 @@ angular.module('cesium.services', ['ngResource'])
         isLogin: isLogin,
         toJson: toJson,
         fromJson: fromJson,
-        loadBalance: loadBalance
+        loadData: loadData,
+        transfer: transfer
     }
   }
   var service = Wallet('default');

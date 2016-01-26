@@ -2,33 +2,36 @@
     <ion-content>
         <div class="scroll">
             <div class="list">
-            <span class="item item-icon-left">
-                <i class="icon ion-key"></i>
-                Pubkey
-                <span class="badge">{{formData.pubkey}}</span>
-            </span>
+                <span class="item item-icon-left">
+                    <i class="icon ion-key"></i>
+                    Pubkey
+                    <span class="badge">{{walletData.pubkey.substr(0,24)}}</span>
+                </span>
 
-            <span class="item item-icon-left">
-                <i class="icon ion-card"></i>
-                Balance
-                <span class="badge badge-royal">{{convertedBalance}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
-            </span>
+                <span class="item item-icon-left">
+                    <i class="icon ion-card"></i>
+                    Balance
+                    <span class="badge badge-balanced">{{convertedBalance}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                </span>
 
 
-            <div class="item item-toggle dark">
-                Use Relative Units (UD)
-                <label class="toggle toggle-royal">
-                    <input type="checkbox" ng-model="formData.useRelative">
-                    <div class="track">
-                        <div class="handle"></div>
-                    </div>
-                </label>
+                <div class="item item-toggle dark">
+                    Use Relative Units (UD)
+                    <label class="toggle toggle-royal">
+                        <input type="checkbox" ng-model="walletData.useRelative">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="item item-button-right" ng-if="hasCredit">
+                    Send money
+                    <a class="button button-right ion-chevron-right button-positive" ng-click="transfer()">
+                        Transfer
+                    </a>
+                </div>
             </div>
-
-            <a class="button icon-right ion-chevron-right button-calm" ng-click="transfer()">
-                Transfer
-            </a>
-
             <div class="scroll-bar scroll-bar-v"></div>
         </div>
     </ion-content>

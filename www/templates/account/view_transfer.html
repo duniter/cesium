@@ -1,0 +1,48 @@
+<ion-view view-title="Transfer" left-buttons="leftButtons">
+    <ion-nav-buttons side="secondary">
+        <button class="button button-positive" ng-click="doTransfer()">
+            Send
+            <i class="icon ion-chevron-right"></i>
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <div class="scroll">
+            <div class="list">
+            <span class="item item-icon-left">
+                <i class="icon ion-key"></i>
+                From
+                <span class="badge badge-calm">{{walletData.pubkey.substr(0,24)}}</span>
+            </span>
+
+            <span class="item item-icon-left item-icon-right" ng-click="openSearch()">
+                <i class="icon ion-person"></i>
+                To
+                <span class="badge badge-royal">{{dest}}</span>&nbsp;
+                <i class="icon ion-chevron-right"></i>
+            </span>
+
+                <div class="item item-input item-floating-label">
+                    <span class="input-label">Amount {{unit | abbreviate}} {{udUnit | abbreviate}}</span>
+                    <input type="text" placeholder="Amount {{unit | abbreviate}}{{udUnit | abbreviate}}" value="{{amount}}">
+                </div>
+
+                <div class="item item-toggle dark">
+                    Use Relative Units (UD)
+                    <label class="toggle toggle-royal">
+                        <input type="checkbox" ng-model="walletData.useRelative">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <label class="item item-input">
+                    <textarea placeholder="Comments">{{comments}}</textarea>
+                </label>
+            </div>
+
+            <div class="scroll-bar scroll-bar-v"></div>
+        </div>
+    </ion-content>
+</ion-view>

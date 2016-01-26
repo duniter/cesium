@@ -8,16 +8,16 @@
   <ion-content>
     <form ng-submit="doLogin()">
       <div class="list">
-        <label class="item item-input">
+        <label class="item item-input item-floating-label">
           <span class="input-label">Username</span>
-          <input type="text" ng-model="loginData.username">
+          <input type="text" placeholder="Username" ng-model="loginData.username">
         </label>
-        <label class="item item-input">
+        <label class="item item-input item-floating-label">
           <span class="input-label">Password</span>
-          <input type="password" ng-model="loginData.password">
+          <input type="password" placeholder="Password" ng-model="loginData.password">
         </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
+          <button class="button button-block button-positive activated" type="submit">Log in</button>
         </label>
       </div>
     </form>
