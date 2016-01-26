@@ -24,7 +24,7 @@
 
                 <div class="item item-input item-floating-label">
                     <span class="input-label">Amount ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-                    <input type="number" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" value="{{amount}}">
+                    <input type="number" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount">
                 </div>
 
                 <div class="item item-toggle dark">
@@ -38,7 +38,7 @@
                 </div>
 
                 <label class="item item-input">
-                    <textarea placeholder="Comments">{{comments}}</textarea>
+                    <textarea placeholder="Comments" ng-model="formData.comments"></textarea>
                 </label>
             </div>
 

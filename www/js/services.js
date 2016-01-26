@@ -6,31 +6,59 @@ angular.module('cesium.services', ['ngResource'])
 
     function BMA(server) {
 
+      function prepare(uri, params, config, callback) {
+        var pkeys = [], queryParams = {}, newUri = uri;
+        if (typeof params == 'object') {
+          pkeys = _.keys(params);
+        }
+
+        pkeys.forEach(function(pkey){
+          var prevURI = newUri;
+          newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
+          if (prevURI == newUri) {
+            queryParams[pkey] = params[pkey];
+          }
+        });
+        config.params = queryParams;
+        callback(newUri, config);
+      };
+
       function getResource(uri) {
         return function(params) {
           return $q(function(resolve, reject) {
             var config = {
               timeout: 4000
-            }, suffix = '', pkeys = [], queryParams = {}, newUri = uri;
-            if (typeof params == 'object') {
-              pkeys = _.keys(params);
-            }
+            };
 
-            pkeys.forEach(function(pkey){
-              var prevURI = newUri;
-              newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
-              if (prevURI == newUri) {
-                queryParams[pkey] = params[pkey];
-              }
+            prepare(uri, params, config, function(uri, config) {
+                $http.get(uri, config)
+                .success(function(data, status, headers, config) {
+                  resolve(data);
+                })
+                .error(function(data, status, headers, config) {
+                  reject(data);
+                });
             });
-            config.params = queryParams;
-            $http.get(newUri + suffix, config)
-              .success(function(data, status, headers, config) {
-                resolve(data);
-              })
-              .error(function(data, status, headers, config) {
-                reject(data);
-              });
+          });
+        }
+      };
+
+      function postResource(uri) {
+        return function(data, params) {
+          return $q(function(resolve, reject) {
+            var config = {
+              timeout: 4000
+            };
+
+            prepare(uri, params, config, function(uri, config) {
+                $http.post(uri, data, config)
+                .success(function(data, status, headers, config) {
+                  resolve(data);
+                })
+                .error(function(data, status, headers, config) {
+                  reject(data);
+                });
+            });
           });
         }
       }
@@ -59,7 +87,8 @@ angular.module('cesium.services', ['ngResource'])
         },
 
         tx: {
-          sources: getResource('http://' + server + '/tx/sources/:pubkey')
+          sources: getResource('http://' + server + '/tx/sources/:pubkey'),
+          process: postResource('http://' + server + '/tx/process')
         },
         websocket: {
           block: function() {
@@ -292,7 +321,8 @@ angular.module('cesium.services', ['ngResource'])
 
     USE_RELATIVE_DEFAULT = true,
 
-    data = {
+    createData = function() {
+      return {
         pubkey: null,
         keypair: {
             signSk: null,
@@ -302,8 +332,12 @@ angular.module('cesium.services', ['ngResource'])
         sources: null,
         useRelative: USE_RELATIVE_DEFAULT,
         currency: null,
-        currentUD: null
+        currentUD: null,
+        loaded: false
+      };
     },
+
+    data = createData(),
 
     login = function(salt, password) {
         return $q(function(resolve, reject) {
@@ -320,9 +354,7 @@ angular.module('cesium.services', ['ngResource'])
 
     logout = function(username, password) {
         return $q(function(resolve, reject) {
-            data.pubkey = null;
-            data.keypair.signSk = null;
-            data.keypair.signPk = null;
+            data = createData();
             resolve();
         });
     },
@@ -334,6 +366,8 @@ angular.module('cesium.services', ['ngResource'])
 
     loadData = function() {
         return $q(function(resolve, reject){
+          data.loaded = false;
+
           $q.all([
 
             // Get currency parameters
@@ -367,7 +401,12 @@ angular.module('cesium.services', ['ngResource'])
               })
           ])
           .then(function() {
+            data.loaded = true;
             resolve();
+          })
+          .catch(function(err) {
+            data.loaded = false;
+            reject(err);
           });
         });
     },
@@ -377,8 +416,74 @@ angular.module('cesium.services', ['ngResource'])
     */
     transfer = function(destPub, amount, comments) {
         return $q(function(resolve, reject) {
-            alert('sending transfert...');
-            resolve(true);
+
+            if (!isLogin()){
+              reject('Wallet required to be login first.');
+              return;
+            }
+            if (amount == null) {
+              reject('amount must not be null or < 0');
+              return;
+            }
+
+            if (amount > data.balance) {
+              reject('Not enought credit');
+              return;
+            }
+
+            var tx = "Version: 1\n"
+              + "Type: Transaction\n"
+              + "Currency: " + data.currency + "\n"
+              + "Issuers:\n"
+              + data.pubkey + "\n"
+              + "Inputs:\n";
+            var sourceAmount = 0; 
+            for (var i = 0; i<data.sources.length; i++) {
+              var input = data.sources[i];
+              if (input.consumed == "undefined" || !input.consumed){
+                // INDEX:SOURCE:NUMBER:FINGERPRINT:AMOUNT
+                tx += "0:"+input.type+":"+ input.number+":"
+                   + input.fingerprint+":"
+                   + input.amount+"\n";
+                sourceAmount += input.amount;
+                data.sources[i].consumed=true;
+                if (sourceAmount >= amount) {
+                  break;
+                }
+              }
+            }
+
+            if (sourceAmount < amount) {
+              reject('Not enought credit');
+              return;
+            }
+
+            // Output
+            tx += "Outputs:\n"
+               // ISSUERS:AMOUNT
+               + destPub +":" + amount + "\n"; 
+            if (sourceAmount > amount) {
+              tx += data.pubkey+":"+(sourceAmount-amount)+"\n";
+            }
+
+            // Comment
+            tx += "Comment: "+ (comments!=null?comments:"") + "\n";
+
+            CryptoUtils.sign(tx, data.keypair)
+              .then(function(signature) {
+                var signedTx = tx + signature + "\n";
+                BMA.tx.process({transaction: signedTx})
+                  .then(function(result) {
+                    data.balance -= amount;
+                    resolve(result);
+                  })
+                  .catch(function(err){
+                    reject(err);
+                  });
+              })
+              .catch(function(err){
+                reject(err);
+              });
         });
     }
 

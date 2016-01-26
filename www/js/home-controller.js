@@ -40,14 +40,50 @@ function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $time
     $scope.loginModal.hide();
   });
 
-  // Login form submit
-  $scope.login = function() {
+  // Open login modal
+  $scope.login = function(callback) {
     if ($scope.loginModal != "undefined" && $scope.loginModal != null) {
       $scope.loginModal.show();
+      $scope.loginData.callback = callback;
     }
     else{
       $timeout($scope.login, 2000);
     }    
+  };
+
+  // Login and load wallet
+  $scope.loadWallet = function() {
+    return $q(function(resolve, reject){
+      if (!Wallet.isLogin()) {
+        $scope.login(function() {
+          Wallet.loadData()
+            .then(function(){
+              resolve(Wallet.data);
+            })
+            .catch(function(err) {
+              console.error('>>>>>>>' , err);
+              UIUtils.alert.error('Your braower is not compatible with cryptographic features.');
+              UIUtils.loading.hide();
+              reject(err);
+            });
+        });
+      }
+      else if (!Wallet.data.loaded) {
+        Wallet.loadData()
+          .then(function(){
+            resolve(Wallet.data);
+          })
+          .catch(function(err) {
+            console.error('>>>>>>>' , err);
+            UIUtils.alert.error('Could not fetch wallet informations from remote uCoin node.');
+            UIUtils.loading.hide();
+            reject(err);
+          });
+      }
+      else {
+        resolve(Wallet.data);
+      }
+    });
   };
 
   // Triggered in the login modal to close it
@@ -57,38 +93,31 @@ function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $time
 
   // Login form submit
   $scope.doLogin = function() {
-    $scope.loginModal.hide();
+    $scope.closeLogin();
     UIUtils.loading.show(); 
 
-    $q.all([
-        // Call wallet login
-        Wallet.login($scope.loginData.username, $scope.loginData.password)
-        .then(function(){
-            $scope.loginData = {}; // Reset login data
-            $scope.loginModal.hide();
-            UIUtils.loading.hide();
-            
-        })
-      ])
-
+    // Call wallet login
+    Wallet.login($scope.loginData.username, $scope.loginData.password)
     .catch(function(err) {
+      $scope.loginData = {}; // Reset login data
+      UIUtils.loading.hide();
       console.error('>>>>>>>' , err);
       UIUtils.alert.error('Your browser is not compatible with cryptographic libraries.');
-      UIUtils.loading.hide();
     })
-
-    // Redirect to wallet
     .then(function(){
-        $scope.loginModal.hide();
-        $scope.onAfterLogin();
+      UIUtils.loading.hide();
+      var callback = $scope.loginData.callback;
+      $scope.loginData = {}; // Reset login data
+      if (callback != "undefined" && callback != null) {
+        callback();
+      }
+      // Default: redirect to wallet view
+      else {
+        $state.go('app.view_wallet');    
+      }
     })
     ;
   };
-
-  // After login : could be override by parent controller
-  $scope.onAfterLogin = function() {    
-    $state.go('app.view_wallet');
-  }
 
   // Logout
   $scope.logout = function() {
@@ -528,25 +557,17 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
 }
 
 
-function WalletController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout, BMA) {
+function WalletController($scope, $state) {
 
-
-  LoginController.call(this, $scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout);
-  TransferController.call(this, $scope, $ionicModal, BMA, Wallet, UIUtils, $q, $state, $timeout)
-
-  $scope.data = Wallet.data;
+  $scope.walletData = {};
   $scope.convertedBalance = 0;
   $scope.hasCredit = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!Wallet.isLogin()) {
-      $q(function () {
-        $scope.login();
+    $scope.loadWallet()
+      .then(function(wallet) {
+        $scope.updateWalletView(wallet);
       });
-    }
-    else {
-      $scope.updateWalletView();
-    }
   });
 
   $scope.onUseRelativeChanged = function() {
@@ -563,22 +584,9 @@ function WalletController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $tim
   $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
 
   // Update view
-  $scope.updateWalletView = function() {
-
-    UIUtils.loading.show();
-
-    // Load wallet data
-    Wallet.loadData()
-      .then(function(){
-        $scope.hasCredit = Wallet.data.balance != "undefined" && (Wallet.data.balance > 0);
-        $scope.onUseRelativeChanged();
-      UIUtils.loading.hide();
-    })
-    .catch(function(err) {
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('Could not fetch informations from remote uCoin node.');
-      UIUtils.loading.hide();
-    });
+  $scope.updateWalletView = function(wallet) {
+    $scope.walletData = wallet;
+    $scope.hasCredit = $scope.walletData.balance != "undefined" && ($scope.walletData.balance > 0);
   };
 
   // Has credit
@@ -590,26 +598,20 @@ function WalletController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $tim
   $scope.transfer= function() {
     $state.go('app.view_transfer');
   };
-
-  // Override after login action
-  $scope.onAfterLogin = function() {
-    $scope.updateWalletView();
-  };
 }
 
 
 
-function TransferController($scope, $ionicModal, BMA, Wallet, UIUtils, $q, $state, $timeout, $ionicHistory) {
+function TransferController($scope, $ionicModal, Wallet, UIUtils, $state, $ionicHistory) {
 
-  LookupController.call(this, $scope, BMA, $state);
-  LoginController.call(this, $scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout);
-
-  $scope.walletData = Wallet.data;
-  $scope.dest= null;
-  $scope.destPub= null;
-  $scope.amount= null;
-  $scope.udAmount= null;
-  $scope.comments= null;
+  $scope.walletData = {};
+  $scope.formData = {
+    destPub: null,
+    amount: null,
+    comments: null
+  };
+  $scope.dest = null;
+  $scope.udAmount = null;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams != null 
@@ -625,14 +627,12 @@ function TransferController($scope, $ionicModal, BMA, Wallet, UIUtils, $q, $stat
       }
     }
 
-    if (!Wallet.isLogin()) {
-      $q(function () {
-        $scope.login();
+    // Login and load wallet
+    $scope.loadWallet()
+      .then(function(wallet) {
+        $scope.walletData = wallet;
+        $scope.onUseRelativeChanged();
       });
-    }
-    else {
-      $scope.onUseRelativeChanged();
-    }
   });
 
   // When chaing use relative UD
@@ -649,13 +649,6 @@ function TransferController($scope, $ionicModal, BMA, Wallet, UIUtils, $q, $stat
   };
   $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
 
-  // Override after login action
-  $scope.onAfterLogin = function() {
-    Wallet.loadData().then(function(){
-       $scope.onUseRelativeChanged();
-    });
-  };
-
   $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
       scope: $scope,
       focusFirstInput: true
@@ -671,10 +664,19 @@ function TransferController($scope, $ionicModal, BMA, Wallet, UIUtils, $q, $stat
   $scope.doTransfer = function() {
     UIUtils.loading.show();
 
-    Wallet.transfer($scope.destPub, $scope.amount, $scope.comments)
+    var amount = $scope.walletData.useRelative 
+      ? ($scope.formData.amount * $scope.walletData.currentUD) 
+      : $scope.formData.amount;
+
+    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comments)
     .then(function() {
       UIUtils.loading.hide();
       $ionicHistory.goBack()
+    })
+    .catch(function(err) {
+      console.error('>>>>>>>' , err);
+      UIUtils.alert.error('Could not send transaction: ' + err);
+      UIUtils.loading.hide();
     });
   };
 
@@ -689,7 +691,7 @@ function TransferController($scope, $ionicModal, BMA, Wallet, UIUtils, $q, $stat
     else {
         $scope.dest = uid;
     }
-    $scope.destPub = pub;
+    $scope.formData.destPub = pub;
     $scope.lookupModal.hide();
   }
 }
