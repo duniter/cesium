@@ -1,10 +1,11 @@
 <ion-modal-view>
-  <ion-header-bar>
+  <ion-header-bar class="bar-positive">
     <h1 class="title">Login</h1>
-    <div class="buttons">
-      <button class="button button-clear" ng-click="closeLogin()">Close</button>
-    </div>
+    <button class="button button-positive" ng-click="closeLogin()">Cancel</button>
+
+    </ion-nav-buttons>
   </ion-header-bar>
+
   <ion-content>
     <form ng-submit="doLogin()">
       <div class="list">

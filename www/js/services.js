@@ -289,6 +289,9 @@ angular.module('cesium.services', ['ngResource'])
   Wallet = function(id) {
 
     var
+
+    USE_RELATIVE_DEFAULT = true,
+
     data = {
         pubkey: null,
         keypair: {
@@ -297,7 +300,7 @@ angular.module('cesium.services', ['ngResource'])
         },
         balance: 0,
         sources: null,
-        useRelative: true,
+        useRelative: USE_RELATIVE_DEFAULT,
         currency: null,
         currentUD: null
     },

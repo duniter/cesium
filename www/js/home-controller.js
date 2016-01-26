@@ -80,10 +80,15 @@ function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $time
     // Redirect to wallet
     .then(function(){
         $scope.loginModal.hide();
-        $state.go('app.view_wallet');
+        $scope.onAfterLogin();
     })
     ;
   };
+
+  // After login : could be override by parent controller
+  $scope.onAfterLogin = function() {    
+    $state.go('app.view_wallet');
+  }
 
   // Logout
   $scope.logout = function() {
@@ -96,12 +101,12 @@ function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $time
   };
 
   // Is connected
-  $scope.isConnected = function() {
+  $scope.isLogged = function() {
       return Wallet.isLogin();
   };
 
   // Is not connected
-  $scope.isNotConnected = function() {
+  $scope.isNotLogged = function() {
     return !Wallet.isLogin();
   };
 }
@@ -303,6 +308,16 @@ function IdentityController($scope, $state, BMA) {
   $scope.signIdentity = function() {
     alert('signIdentity');
   };
+
+  // Transfer click
+  $scope.transfer = function() {
+    $state.go('app.view_transfer', {
+      uid: $scope.identity.uid,
+      pubkey: $scope.identity.pubkey
+      });
+  };
+
+   
 }
 
 function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout) {
@@ -515,7 +530,6 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
 
 function WalletController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout, BMA) {
 
-  var USE_RELATIVE_DEFAULT = true;
 
   LoginController.call(this, $scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout);
   TransferController.call(this, $scope, $ionicModal, BMA, Wallet, UIUtils, $q, $state, $timeout)
@@ -535,30 +549,29 @@ function WalletController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $tim
     }
   });
 
-  $scope.$watch('walletData.useRelative', function() {
+  $scope.onUseRelativeChanged = function() {
     if ($scope.walletData.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
       $scope.unit = 'universal_dividend';
-      $scope.udUnit = $scope.baseUnit;
+      $scope.udUnit = $scope.walletData.currency;
     } else {
       $scope.convertedBalance = $scope.walletData.balance;
-      $scope.unit = $scope.baseUnit;
+      $scope.unit = $scope.walletData.currency;
       $scope.udUnit = '';
     }
-  }, true);
+  };
+  $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
 
   // Update view
   $scope.updateWalletView = function() {
 
     UIUtils.loading.show();
 
-    $scope.data.useRelative = false;
-
     // Load wallet data
     Wallet.loadData()
       .then(function(){
         $scope.hasCredit = Wallet.data.balance != "undefined" && (Wallet.data.balance > 0);
-        $scope.walletData.useRelative = USE_RELATIVE_DEFAULT;
+        $scope.onUseRelativeChanged();
       UIUtils.loading.hide();
     })
     .catch(function(err) {
@@ -577,6 +590,11 @@ function WalletController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $tim
   $scope.transfer= function() {
     $state.go('app.view_transfer');
   };
+
+  // Override after login action
+  $scope.onAfterLogin = function() {
+    $scope.updateWalletView();
+  };
 }
 
 
@@ -592,25 +610,51 @@ function TransferController($scope, $ionicModal, BMA, Wallet, UIUtils, $q, $stat
   $scope.amount= null;
   $scope.udAmount= null;
   $scope.comments= null;
-  if ($scope.walletData.useRelative) {
-    $scope.unit = 'universal_dividend';
-    $scope.udUnit = $scope.baseUnit;
-  } else {
-    $scope.unit = $scope.baseUnit;
-    $scope.udUnit = '';
-  }
 
-  $scope.$watch('walletData.useRelative', function() {
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    if ($state.stateParams != null 
+        && $state.stateParams.pubkey != null
+        && $state.stateParams.pubkey != "undefined") {
+      $scope.destPub = $state.stateParams.pubkey;
+      if ($state.stateParams.uid != null
+        && $state.stateParams.uid != "undefined") {
+        $scope.dest = $state.stateParams.uid;
+      }
+      else {
+        $scope.dest = $scope.destPub; 
+      }
+    }
+
+    if (!Wallet.isLogin()) {
+      $q(function () {
+        $scope.login();
+      });
+    }
+    else {
+      $scope.onUseRelativeChanged();
+    }
+  });
+
+  // When chaing use relative UD
+  $scope.onUseRelativeChanged = function() {
     if ($scope.walletData.useRelative) {
       $scope.udAmount = $scope.amount * $scope.walletData.currentUD;
       $scope.unit = 'universal_dividend';
-      $scope.udUnit = $scope.baseUnit;
+      $scope.udUnit = $scope.walletData.currency;
     } else {
       $scope.udAmount = $scope.amount / $scope.walletData.currentUD;
-      $scope.unit = $scope.baseUnit;
+      $scope.unit = $scope.walletData.currency;
       $scope.udUnit = '';
     }
-  }, true);
+  };
+  $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
+
+  // Override after login action
+  $scope.onAfterLogin = function() {
+    Wallet.loadData().then(function(){
+       $scope.onUseRelativeChanged();
+    });
+  };
 
   $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
       scope: $scope,

@@ -7,20 +7,23 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()" ng-if="isNotConnected()">
-          Login
-        </ion-item>
-        <ion-item menu-close ng-click="logout()" ng-if="isConnected()">
-          Logout
-        </ion-item>
         <ion-item menu-close href="#/app/home">
           Home
         </ion-item>
         <ion-item menu-close href="#/app/home/explore">
           Explore
         </ion-item>
+         <ion-item menu-close ng-click="login()" ng-if="!isLogged()">
+          My account
+        </ion-item>
+        <ion-item menu-close href="#/app/wallet" ng-if="isLogged()">
+          My account
+        </ion-item>
         <ion-item menu-close ng-click="addAccount()">
           Add account
+        </ion-item>
+        <ion-item menu-close ng-click="logout()" ng-if="isLogged()">
+          Logout
         </ion-item>
       </ion-list>
     </ion-content>

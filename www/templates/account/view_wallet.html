@@ -1,4 +1,4 @@
-<ion-view view-title="Wallet" left-buttons="leftButtons">
+<ion-view view-title="My Account" left-buttons="leftButtons">
     <ion-content>
         <div class="scroll">
             <div class="list">
@@ -16,7 +16,7 @@
 
 
                 <div class="item item-toggle dark">
-                    Use Relative Units (UD)
+                    Use Relative Unit (UD)
                     <label class="toggle toggle-royal">
                         <input type="checkbox" ng-model="walletData.useRelative">
                         <div class="track">
@@ -27,8 +27,9 @@
 
                 <div class="item item-button-right" ng-if="hasCredit">
                     Send money
-                    <a class="button button-right ion-chevron-right button-positive" ng-click="transfer()">
-                        Transfer
+                    <a class="button button-calm" ng-click="transfer()">
+                        Transfer&nbsp;
+                        <i class="icon-right ion-android-send"></i>
                     </a>
                 </div>
             </div>

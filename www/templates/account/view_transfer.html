@@ -2,7 +2,7 @@
     <ion-nav-buttons side="secondary">
         <button class="button button-positive" ng-click="doTransfer()">
             Send
-            <i class="icon ion-chevron-right"></i>
+            <i class="icon ion-android-send"></i>
         </button>
     </ion-nav-buttons>
 
@@ -23,12 +23,12 @@
             </span>
 
                 <div class="item item-input item-floating-label">
-                    <span class="input-label">Amount {{unit | abbreviate}} {{udUnit | abbreviate}}</span>
-                    <input type="text" placeholder="Amount {{unit | abbreviate}}{{udUnit | abbreviate}}" value="{{amount}}">
+                    <span class="input-label">Amount ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+                    <input type="number" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" value="{{amount}}">
                 </div>
 
                 <div class="item item-toggle dark">
-                    Use Relative Units (UD)
+                    Use Relative Unit (UD)
                     <label class="toggle toggle-royal">
                         <input type="checkbox" ng-model="walletData.useRelative">
                         <div class="track">
