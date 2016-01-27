@@ -32,6 +32,17 @@ angular.module('cesium.services', ['ngResource'])
         }
       }
 
+      function ws(uri) {
+        var sock = new WebSocket(uri);
+        return {
+          on: function(type, callback) {
+            sock.onmessage = function(e) {
+              callback(JSON.parse(e.data));
+            };
+          }
+        };
+      }
+
       return {
         wot: {
           lookup: getResource('http://' + server + '/wot/lookup/:search'),
@@ -56,10 +67,10 @@ angular.module('cesium.services', ['ngResource'])
         },
         websocket: {
           block: function() {
-            return io('http://' + server + '/websocket/block');
+            return ws('ws://' + server + '/ws/block');
           },
           peer: function() {
-            return io('http://' + server + '/websocket/peer');
+            return ws('ws://' + server + '/ws/peer');
           }
         }
       }

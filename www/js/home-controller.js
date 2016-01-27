@@ -112,6 +112,9 @@ function ExploreController($scope, $rootScope, $state, BMA, $q, UIUtils, $interv
         }, wait);
       }
     });
+    BMA.websocket.peer().on('peer', function(peer) {
+      console.log(peer);
+    });
   };
 
   $scope.$watch('formData.useRelative', function() {
