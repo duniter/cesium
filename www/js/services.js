@@ -56,7 +56,12 @@ angular.module('cesium.services', ['ngResource'])
                   resolve(data);
                 })
                 .error(function(data, status, headers, config) {
-                  reject(data);
+                  if (data != null && data.message != "undefined" && data.message != null) {
+                    reject(data.ucode + ": " + data.message);
+                  }
+                  else {
+                    reject();
+                  }
                 });
             });
           });
@@ -468,6 +473,8 @@ angular.module('cesium.services', ['ngResource'])
 
             // Comment
             tx += "Comment: "+ (comments!=null?comments:"") + "\n";
+
+
 
             CryptoUtils.sign(tx, data.keypair)
               .then(function(signature) {
