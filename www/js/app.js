@@ -31,6 +31,12 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
     }
   })
 
+  .filter('formatPubkey', function() {
+    return function(input) {
+      return input ? input.substr(0,8) : '';
+    }
+  })
+
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

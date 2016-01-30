@@ -194,6 +194,9 @@ function ExploreController($scope, $rootScope, $state, BMA, $q, UIUtils, $interv
         }, wait);
       }
     });
+    BMA.websocket.peer().on('peer', function(peer) {
+      console.log(peer);
+    });
   };
 
   $scope.$watch('formData.useRelative', function() {
@@ -570,7 +573,7 @@ function WalletController($scope, $state) {
       });
   });
 
-  $scope.onUseRelativeChanged = function() {
+  $scope.refreshConvertedBalance = function() {
     if ($scope.walletData.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
       $scope.unit = 'universal_dividend';
@@ -581,7 +584,8 @@ function WalletController($scope, $state) {
       $scope.udUnit = '';
     }
   };
-  $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
+  $scope.$watch('walletData.useRelative', $scope.refreshConvertedBalance, true);
+  $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
   $scope.updateWalletView = function(wallet) {

@@ -11,7 +11,7 @@
             <span class="item item-icon-left">
                 <i class="icon ion-key"></i>
                 Public key
-                <span class="badge">{{identity.pub.substr(0,24)}}</span>
+                <span class="badge">{{identity.pub | formatPubkey}}</span>
             </span>
 
             <span class="item item-icon-left">
@@ -20,18 +20,28 @@
                 <span class="badge badge-calm">{{identity.sigDate | formatDate}}</span>
             </span>
 
-            <div class="item item-divider">
+            <div class="item ">
+                &nbsp;
+            </div>
+
+            <div class="item item-button-right positive" ng-click="transfer()">
+                Send money
+                <a class="button button-clear button-positive" >
+                    <i class="icon-right ion-chevron-right"></i>
+                </a>
+            </div>
+            <div class="item item-button-right positive" ng-click="signIdentity()">
+                Certify
+                <a class="button button-clear button-positive" >
+                    <i class="icon-right ion-chevron-right"></i>
+                </a>
+            </div>
+            
+            <div class="item item-divider" ng-if="isLogged()">
                 Last transactions
             </div>
 
         </div>
-        <a class="button button-full icon-right ion-chevron-right button-calm" ng-click="signIdentity()">
-            Sign
-        </a>
-        <a class="button button-full icon-right ion-android-send button-positive" ng-click="transfer()">
-            Send money
-        </a>
-
     <div class="scroll-bar scroll-bar-v"></div>
     </div>
 </ion-content>

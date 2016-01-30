@@ -6,6 +6,15 @@ angular.module('cesium.services', ['ngResource'])
 
     function BMA(server) {
 
+      function processError(reject, data) {
+        if (data != null && data.message != "undefined" && data.message != null) {
+          reject(data.ucode + ": " + data.message);
+        }
+        else {
+          reject();
+        }
+      }
+
       function prepare(uri, params, config, callback) {
         var pkeys = [], queryParams = {}, newUri = uri;
         if (typeof params == 'object') {
@@ -21,7 +30,7 @@ angular.module('cesium.services', ['ngResource'])
         });
         config.params = queryParams;
         callback(newUri, config);
-      };
+      }
 
       function getResource(uri) {
         return function(params) {
@@ -36,12 +45,12 @@ angular.module('cesium.services', ['ngResource'])
                   resolve(data);
                 })
                 .error(function(data, status, headers, config) {
-                  reject(data);
+                  processError(reject, data);
                 });
             });
           });
         }
-      };
+      }
 
       function postResource(uri) {
         return function(data, params) {
@@ -56,16 +65,22 @@ angular.module('cesium.services', ['ngResource'])
                   resolve(data);
                 })
                 .error(function(data, status, headers, config) {
-                  if (data != null && data.message != "undefined" && data.message != null) {
-                    reject(data.ucode + ": " + data.message);
-                  }
-                  else {
-                    reject();
-                  }
+                  processError(reject, data);
                 });
             });
           });
         }
+      }
+
+      function ws(uri) {
+        var sock = new WebSocket(uri);
+        return {
+          on: function(type, callback) {
+            sock.onmessage = function(e) {
+              callback(JSON.parse(e.data));
+            };
+          }
+        };
       }
 
       return {
@@ -97,10 +112,10 @@ angular.module('cesium.services', ['ngResource'])
         },
         websocket: {
           block: function() {
-            return io('http://' + server + '/websocket/block');
+            return ws('ws://' + server + '/ws/block');
           },
           peer: function() {
-            return io('http://' + server + '/websocket/peer');
+            return ws('ws://' + server + '/ws/peer');
           }
         }
       }
@@ -369,10 +384,22 @@ angular.module('cesium.services', ['ngResource'])
             && data.pubkey != null;
     },
 
+    isSourceEquals = function(arg1, arg2) {
+        return arg1.type == arg2.type
+            && arg1.fingerprint == arg2.fingerprint
+            && arg1.number == arg2.number
+            && arg1.amount == arg2.amount;
+    },
+
     loadData = function() {
+        if (data.loaded) {
+          return refreshData();
+        }
+
         return $q(function(resolve, reject){
           data.loaded = false;
 
+          console.log('calling loadData');
           $q.all([
 
             // Get currency parameters
@@ -395,12 +422,15 @@ angular.module('cesium.services', ['ngResource'])
 
             // Get sources
             BMA.tx.sources({pubkey: data.pubkey})
-              .then(function(result){
-                data.sources = result.sources;
+              .then(function(res){
+                data.sources = res.sources; 
 
                 var balance = 0;
-                if (result.sources != "undefined" && result.sources != null) {
-                  for (var i=0; i<result.sources.length; i++) balance += result.sources[i].amount;
+                if (res.sources.length) {
+                  for (var i=0; i<res.sources.length; i++) {
+                    balance += res.sources[i].amount;
+                    res.sources[i].consumed = false;
+                  }
                 }
                 data.balance = balance;
               })
@@ -416,6 +446,59 @@ angular.module('cesium.services', ['ngResource'])
         });
     },
 
+    refreshData = function() {
+        return $q(function(resolve, reject){
+          console.log('calling refreshData');
+
+          $q.all([
+
+            // Get the UD informations
+            BMA.blockchain.stats.ud()
+              .then(function(res){
+                if (res.result.blocks.length) {
+                  var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+                  return BMA.blockchain.block({ block: lastBlockWithUD })
+                    .then(function(block){
+                      data.currentUD = block.dividend;
+                    });
+                  }
+              }),
+
+            // Get sources
+            BMA.tx.sources({pubkey: data.pubkey})
+              .then(function(res){
+
+                var balance = 0;
+                if (res.sources.length) {
+                  for (var i=0; i<res.sources.length; i++) {
+                    res.sources[i].consumed = false;
+                    if (data.sources.length) {
+                      for (var j=0; j<data.sources.length; j++) {
+                        if (isSourceEquals(res.sources[i], data.sources[j])
+                          && data.sources[j].consumed){
+                          res.sources[i].consumed = true;
+                          break;
+                        }
+                      }
+                    }
+                    if (!res.sources[i].consumed){
+                      balance += res.sources[i].amount;
+                    }
+                  }
+                  data.sources = res.sources;
+                }                
+                data.balance = balance;
+              })
+          ])
+          .then(function() {
+            resolve();
+          })
+          .catch(function(err) {
+            reject(err);
+          });
+        });
+    },
+
     /**
     * Send a new transaction
     */
@@ -423,17 +506,14 @@ angular.module('cesium.services', ['ngResource'])
         return $q(function(resolve, reject) {
 
             if (!isLogin()){
-              reject('Wallet required to be login first.');
-              return;
+              reject('Wallet required to be login first.'); return;
             }
             if (amount == null) {
-              reject('amount must not be null or < 0');
-              return;
+              reject('amount must not be null or < 0'); return;
             }
-
+            amount = Math.round(amount);
             if (amount > data.balance) {
-              reject('Not enought credit');
-              return;
+              reject('Not enought credit'); return;
             }
 
             var tx = "Version: 1\n"
@@ -443,6 +523,7 @@ angular.module('cesium.services', ['ngResource'])
               + data.pubkey + "\n"
               + "Inputs:\n";
             var sourceAmount = 0; 
+            var inputs = [];
             for (var i = 0; i<data.sources.length; i++) {
               var input = data.sources[i];
               if (input.consumed == "undefined" || !input.consumed){
@@ -451,7 +532,7 @@ angular.module('cesium.services', ['ngResource'])
                    + input.fingerprint+":"
                    + input.amount+"\n";
                 sourceAmount += input.amount;
-                data.sources[i].consumed=true;
+                inputs.push(input);
                 if (sourceAmount >= amount) {
                   break;
                 }
@@ -459,11 +540,9 @@ angular.module('cesium.services', ['ngResource'])
             }
 
             if (sourceAmount < amount) {
-              reject('Not enought credit');
-              return;
+              reject('Not enought sources (max amount: '+sourceAmount+'). Please wait next block computation.'); return;
             }
 
-            // Output
             tx += "Outputs:\n"
                // ISSUERS:AMOUNT
                + destPub +":" + amount + "\n"; 
@@ -471,7 +550,6 @@ angular.module('cesium.services', ['ngResource'])
               tx += data.pubkey+":"+(sourceAmount-amount)+"\n";
             }
 
-            // Comment
             tx += "Comment: "+ (comments!=null?comments:"") + "\n";
 
 
@@ -482,6 +560,7 @@ angular.module('cesium.services', ['ngResource'])
                 BMA.tx.process({transaction: signedTx})
                   .then(function(result) {
                     data.balance -= amount;
+                    for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
                     resolve(result);
                   })
                   .catch(function(err){
@@ -544,6 +623,7 @@ angular.module('cesium.services', ['ngResource'])
         toJson: toJson,
         fromJson: fromJson,
         loadData: loadData,
+        refreshData: refreshData,
         transfer: transfer
     }
   }

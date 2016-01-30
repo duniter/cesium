@@ -5,7 +5,7 @@
                 <span class="item item-icon-left">
                     <i class="icon ion-key"></i>
                     Pubkey
-                    <span class="badge">{{walletData.pubkey.substr(0,24)}}</span>
+                    <span class="badge">{{walletData.pubkey | formatPubkey}}</span>
                 </span>
 
                 <span class="item item-icon-left">
@@ -25,12 +25,23 @@
                     </label>
                 </div>
 
-                <div class="item item-button-right" ng-if="hasCredit">
+                <div class="item">
+                    &nbsp;
+                </div>
+
+                <div class="item item-button-right positive" ng-if="hasCredit" ng-click="transfer()">
                     Send money
-                    <a class="button button-calm" ng-click="transfer()">
-                        Transfer&nbsp;
-                        <i class="icon-right ion-android-send"></i>
+                    <a class="button button-clear button-positive" >
+                        <i class="icon-right ion-chevron-right"></i>
                     </a>
+                </div>
+
+                <div class="item">
+                    &nbsp;
+                </div>
+
+                <div class="item item-divider">
+                    Last transactions
                 </div>
             </div>
             <div class="scroll-bar scroll-bar-v"></div>
