@@ -119,8 +119,8 @@ angular.module('cesium.services', ['ngResource'])
           }
         }
       }
-    }
-    var service = BMA('metab.ucoin.fr');
+    } 
+    var service = BMA('metab.ucoin.io');
     service.instance = BMA;
   return service;
 })
@@ -509,9 +509,12 @@ angular.module('cesium.services', ['ngResource'])
               reject('Wallet required to be login first.'); return;
             }
             if (amount == null) {
-              reject('amount must not be null or < 0'); return;
+              reject('amount must not be null'); return;
             }
             amount = Math.round(amount);
+            if (amount <= 0) {
+              reject('amount must be greater than zero'); return;
+            }
             if (amount > data.balance) {
               reject('Not enought credit'); return;
             }
@@ -540,7 +543,11 @@ angular.module('cesium.services', ['ngResource'])
             }
 
             if (sourceAmount < amount) {
-              reject('Not enought sources (max amount: '+sourceAmount+'). Please wait next block computation.'); return;
+              var maxAmount = sourceAmount;
+              if (useRelative)
+              reject('Not enought sources (max amount: '
+                +(data.useRelative ? (maxAmount / data.currentUD)+' UD' : sourceAmount)
+                +'). Please wait next block computation.'); return;
             }
 
             tx += "Outputs:\n"

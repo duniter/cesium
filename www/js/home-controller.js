@@ -24,7 +24,7 @@ angular.module('cesium.controllers', ['cesium.services'])
   .controller('TransferCtrl', TransferController)
 ;
 
-function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout) {
+function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout) {
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -88,7 +88,7 @@ function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $time
 
   // Triggered in the login modal to close it
   $scope.closeLogin = function() {
-    $scope.loginModal.hide();
+    return $scope.loginModal.hide();
   };
 
   // Login form submit
@@ -115,8 +115,28 @@ function LoginController($scope, $ionicModal, Wallet, UIUtils, $q, $state, $time
       else {
         $state.go('app.view_wallet');    
       }
-    })
-    ;
+    });
+  };
+
+  $scope.loginDataChanged = function() {
+    $scope.loginData.computing=false;
+    $scope.loginData.pubkey=null;
+  };
+
+  $scope.showLoginPubkey = function() {
+    $scope.loginData.computing=true;
+    CryptoUtils.connect($scope.loginData.username, $scope.loginData.password).then(
+        function(keypair) {
+            $scope.loginData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            $scope.loginData.computing=false;
+        }
+    )
+    .catch(function(err) {
+      $scope.loginData.computing=false;
+      UIUtils.loading.hide();
+      console.error('>>>>>>>' , err);
+      UIUtils.alert.error('Your browser is not compatible with cryptographic libraries.');
+    });
   };
 
   // Logout
@@ -474,7 +494,7 @@ function fpr(block) {
   return block && [block.number, block.hash].join('-');
 }
 
-function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA, UIUtils, $q, $timeout, Wallet) {
+function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA, UIUtils, $q, $timeout, Wallet, CryptoUtils) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -485,7 +505,7 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
 
   CurrenciesController.call(this, $scope, $state);
   LookupController.call(this, $scope, BMA, $state);
-  LoginController.call(this, $scope, $ionicModal, Wallet, UIUtils, $q, $state, $timeout);
+  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout);
 
   $scope.accountTypeMember = null;
   $scope.accounts = [];
