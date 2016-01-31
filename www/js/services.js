@@ -544,10 +544,10 @@ angular.module('cesium.services', ['ngResource'])
 
             if (sourceAmount < amount) {
               var maxAmount = sourceAmount;
-              if (useRelative)
               reject('Not enought sources (max amount: '
                 +(data.useRelative ? (maxAmount / data.currentUD)+' UD' : sourceAmount)
-                +'). Please wait next block computation.'); return;
+                +'). Please wait next block computation.'); 
+              return;
             }
 
             tx += "Outputs:\n"
