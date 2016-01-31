@@ -120,7 +120,7 @@ angular.module('cesium.services', ['ngResource'])
         }
       }
     } 
-    var service = BMA('metab.ucoin.io');
+    var service = BMA('metab.ucoin.fr');
     service.instance = BMA;
   return service;
 })
@@ -542,7 +542,7 @@ angular.module('cesium.services', ['ngResource'])
               }
             }
 
-            if (sourceAmount < amount) {
+            if (sourceAmount-amountt < amount) {
               var maxAmount = sourceAmount;
               reject('Not enought sources (max amount: '
                 +(data.useRelative ? (maxAmount / data.currentUD)+' UD' : sourceAmount)
