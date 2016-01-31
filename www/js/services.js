@@ -11,7 +11,7 @@ angular.module('cesium.services', ['ngResource'])
           reject(data.ucode + ": " + data.message);
         }
         else {
-          reject();
+          reject('Unknown error from ucoin node');
         }
       }
 

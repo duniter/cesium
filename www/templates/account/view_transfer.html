@@ -21,9 +21,14 @@
                 <i class="button button-clear ion-chevron-right"></i>
             </span>
 
-                <div class="item item-input item-floating-label">
+                <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
                     <span class="input-label">Amount ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-                    <input type="number" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount">
+                    <input type="number" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
+                </div>
+
+                <div class="item item-input item-floating-label" ng-if="walletData.useRelative">
+                    <span class="input-label">Amount ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+                    <input type="text" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
                 </div>
 
                 <div class="item item-toggle dark">

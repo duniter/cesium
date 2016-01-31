@@ -688,9 +688,13 @@ function TransferController($scope, $ionicModal, Wallet, UIUtils, $state, $ionic
   $scope.doTransfer = function() {
     UIUtils.loading.show();
 
-    var amount = $scope.walletData.useRelative 
-      ? ($scope.formData.amount * $scope.walletData.currentUD) 
-      : $scope.formData.amount;
+    var amount = $scope.formData.amount;
+    if ($scope.walletData.useRelative 
+      && amount != "undefined" 
+      && amount != null) {
+      amount = $scope.walletData.currentUD 
+               * amount.replace(new RegExp('[.,]'), '.');
+    }
 
     Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comments)
     .then(function() {
