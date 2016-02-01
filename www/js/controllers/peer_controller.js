@@ -1,6 +1,7 @@
 
 function PeerController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal, BMA, $controller) {
 
+
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.showPeer($state.stateParams.server);
   });

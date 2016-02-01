@@ -1,0 +1,57 @@
+<ion-view view-title="My Account" left-buttons="leftButtons">
+    <ion-content>
+        <div class="scroll">
+            <div class="list">
+                <span class="item item-icon-left">
+                    <i class="icon ion-key"></i>
+                    Pubkey
+                    <span class="badge">{{walletData.pubkey | formatPubkey}}</span>
+                </span>
+
+                <span class="item item-icon-left">
+                    <i class="icon ion-card"></i>
+                    Balance
+                    <span class="badge badge-balanced">{{convertedBalance}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                </span>
+
+
+                <div class="item item-toggle dark">
+                    Use Relative Unit (UD)
+                    <label class="toggle toggle-royal">
+                        <input type="checkbox" ng-model="walletData.useRelative">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="item">
+                    &nbsp;
+                </div>
+
+                <div class="item item-button-right positive" ng-if="hasCredit" ng-click="transfer()">
+                    Send money
+                    <a class="button button-clear button-positive" >
+                        <i class="icon-right ion-chevron-right"></i>
+                    </a>
+                </div>
+
+                <div class="item">
+                    &nbsp;
+                </div>
+
+                <div class="item item-divider">
+                    Last transactions
+                </div>
+
+                <!--div class="item item-icon-left" ng-repeat="found in walletData.history.sent" ng-if="walletData.history">
+                    <i class="icon ion-person"></i>
+                    <h2>Amount</h2>
+                    <p>pubkey: </p>
+                    <span class="badge item-note">{{found.time | formatDate}}</span>
+                </div-->
+            </div>
+            <div class="scroll-bar scroll-bar-v"></div>
+        </div>
+    </ion-content>
+</ion-view>

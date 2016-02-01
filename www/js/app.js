@@ -31,6 +31,12 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
     }
   })
 
+  .filter('formatPubkey', function() {
+    return function(input) {
+      return input ? input.substr(0,8) : '';
+    }
+  })
+
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -93,7 +99,41 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
           controller: 'PeerCtrl'
         }
       }
-    });
+    })
+
+    .state('app.view_identity', {
+      url: "/wot/:pub",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/wot/view_identity.html",
+          controller: 'IdentityCtrl'
+        }
+      }
+    })
+
+    .state('app.view_wallet', {
+          url: "/wallet",
+          views: {
+            'menuContent': {
+              templateUrl: "templates/account/view_wallet.html",
+              controller: 'WalletCtrl'
+            }
+          }
+     })
+
+     .state('app.view_transfer', {
+            url: "/transfer/:pubkey/:uid",
+            /*params: [
+               'pubkey', 'uid'
+            ],*/
+            views: {
+              'menuContent': {
+                templateUrl: "templates/account/view_transfer.html",
+                controller: 'TransferCtrl'
+              }
+            }
+       })
+    ;
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
 });
