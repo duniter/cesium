@@ -2,11 +2,16 @@
 
   <!-- MENU -->
   <ion-side-menu side="left">
-    <ion-header-bar class="bar-assertive">
-      <h1 class="title">Menu</h1>
+    <ion-header-bar class="bar-royal">
+      <h1 class="title">
+        Cesium
+      </h1>
+       <button class="button button-assertive" ng-click="logout()" ng-if="isLogged()">
+         <i class="icon ion-log-out"></i>
+         Logout
+    </button>
     </ion-header-bar>
-    <ion-content>
-      <ion-list>
+    <ion-content scroll="false">
         <ion-item menu-close href="#/app/home">
           Home
         </ion-item>
@@ -16,15 +21,12 @@
          <ion-item menu-close ng-click="login()" ng-if="!isLogged()">
           My account
         </ion-item>
-        <ion-item menu-close href="#/app/wallet" ng-if="isLogged()">
+        <ion-item menu-close href="#" ui-sref="app.view_wallet" ng-if="isLogged()">
           My account
         </ion-item>
         <!-- <ion-item menu-close ng-click="addAccount()">
           Add account
         </ion-item> -->
-        <ion-item menu-close ng-click="logout()" ng-if="isLogged()">
-          Logout
-        </ion-item>
       </ion-list>
     </ion-content>
   </ion-side-menu>

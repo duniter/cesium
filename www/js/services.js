@@ -108,7 +108,12 @@ angular.module('cesium.services', ['ngResource'])
 
         tx: {
           sources: getResource('http://' + server + '/tx/sources/:pubkey'),
-          process: postResource('http://' + server + '/tx/process')
+          process: postResource('http://' + server + '/tx/process'),
+          history: {
+            all: getResource('http://' + server + '/tx/history/:pubkey'),
+            times: getResource('http://' + server + '/tx/history/:pubkey/times/:from/:to'),
+            blocks: getResource('http://' + server + '/tx/history/:pubkey/blocks/:from/:to')
+          }
         },
         websocket: {
           block: function() {
@@ -120,7 +125,7 @@ angular.module('cesium.services', ['ngResource'])
         }
       }
     } 
-    var service = BMA('metab.ucoin.fr');
+    var service = BMA('metab.ucoin.io');
     service.instance = BMA;
   return service;
 })
@@ -353,6 +358,8 @@ angular.module('cesium.services', ['ngResource'])
         useRelative: USE_RELATIVE_DEFAULT,
         currency: null,
         currentUD: null,
+        /*currentTime: null,*/
+        history: {},
         loaded: false
       };
     },
@@ -433,11 +440,18 @@ angular.module('cesium.services', ['ngResource'])
                   }
                 }
                 data.balance = balance;
+              }),
+
+            // Get transactions
+            BMA.tx.history.all({
+                  pubkey: data.pubkey})
+              .then(function(res){
+                data.history = res.history; 
               })
           ])
           .then(function() {
             data.loaded = true;
-            resolve();
+            resolve(data);            
           })
           .catch(function(err) {
             data.loaded = false;
@@ -491,7 +505,7 @@ angular.module('cesium.services', ['ngResource'])
               })
           ])
           .then(function() {
-            resolve();
+            resolve(data);
           })
           .catch(function(err) {
             reject(err);

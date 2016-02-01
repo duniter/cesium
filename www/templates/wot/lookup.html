@@ -12,7 +12,7 @@
         <a class="item item-icon-left" ng-repeat="found in search.results" ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
             <i class="icon ion-person"></i>
             <h2>{{found.uid}}</h2>
-            <p>pubkey: {{found.pub.substr(0,24)}}</p>
+            <p>pubkey: {{found.pub | formatPubkey}}</p>
             <span class="badge item-note">{{found.sigDate | formatDate}}</span>
         </a>
     </div>

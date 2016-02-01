@@ -24,7 +24,7 @@ angular.module('cesium.controllers', ['cesium.services'])
   .controller('TransferCtrl', TransferController)
 ;
 
-function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout) {
+function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate) {
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -57,8 +57,8 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
       if (!Wallet.isLogin()) {
         $scope.login(function() {
           Wallet.loadData()
-            .then(function(){
-              resolve(Wallet.data);
+            .then(function(walletData){
+              resolve(walletData);
             })
             .catch(function(err) {
               console.error('>>>>>>>' , err);
@@ -70,8 +70,8 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
-          .then(function(){
-            resolve(Wallet.data);
+          .then(function(walletData){
+            resolve(walletData);
           })
           .catch(function(err) {
             console.error('>>>>>>>' , err);
@@ -144,7 +144,9 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
     UIUtils.loading.show();
     Wallet.logout().then(
         function() {
-            UIUtils.loading.hide();
+          UIUtils.loading.hide();
+          $ionicSideMenuDelegate.toggleLeft();
+          $state.go('app.home');
         }
     );
   };
@@ -494,7 +496,7 @@ function fpr(block) {
   return block && [block.number, block.hash].join('-');
 }
 
-function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA, UIUtils, $q, $timeout, Wallet, CryptoUtils) {
+function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA, UIUtils, $q, $timeout, Wallet, CryptoUtils, $ionicSideMenuDelegate) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -505,7 +507,7 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
 
   CurrenciesController.call(this, $scope, $state);
   LookupController.call(this, $scope, BMA, $state);
-  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout);
+  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
 
   $scope.accountTypeMember = null;
   $scope.accounts = [];
