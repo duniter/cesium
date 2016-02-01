@@ -28,7 +28,7 @@
           </label>
 
           <span class="badge badge-energized" ng-if="loginData.pubkey">
-            {{loginData.pubkey}}
+            {{loginData.pubkey | formatPubkey}}
           </span>
         </div>
       </div>
