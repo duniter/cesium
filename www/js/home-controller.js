@@ -3,10 +3,10 @@ angular.module('cesium.controllers', ['cesium.services'])
 
   .config(function($httpProvider) {
     //Enable cross domain calls
-    $httpProvider.defaults.useXDomain = true;
+    //$httpProvider.defaults.useXDomain = true;
 
     //Remove the header used to identify ajax call  that would prevent CORS from working
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     //
     //$httpProvider.defaults.withCredentials = false;
@@ -663,8 +663,8 @@ function TransferController($scope, $ionicModal, Wallet, UIUtils, $state, $ionic
 
     // Login and load wallet
     $scope.loadWallet()
-      .then(function(wallet) {
-        $scope.walletData = wallet;
+      .then(function(walletData) {
+        $scope.walletData = walletData;
         $scope.onUseRelativeChanged();
       });
   });
@@ -676,6 +676,9 @@ function TransferController($scope, $ionicModal, Wallet, UIUtils, $state, $ionic
       $scope.unit = 'universal_dividend';
       $scope.udUnit = $scope.walletData.currency;
     } else {
+      $scope.formData.amount = ($scope.formData.amount != "undefined" && $scope.formData.amount != null)
+        ? Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.')))
+        : null;
       $scope.udAmount = $scope.amount / $scope.walletData.currentUD;
       $scope.unit = $scope.walletData.currency;
       $scope.udUnit = '';
