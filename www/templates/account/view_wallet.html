@@ -11,7 +11,8 @@
                 <span class="item item-icon-left">
                     <i class="icon ion-card"></i>
                     Balance
-                    <span class="badge badge-balanced">{{convertedBalance}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                    <span class="badge badge-balanced" ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+                    <span class="badge badge-balanced" ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
                 </span>
 
 
@@ -44,12 +45,12 @@
                     Last transactions
                 </div>
 
-                <!--div class="item item-icon-left" ng-repeat="found in walletData.history.sent" ng-if="walletData.history">
-                    <i class="icon ion-person"></i>
-                    <h2>Amount</h2>
-                    <p>pubkey: </p>
-                    <span class="badge item-note">{{found.time | formatDate}}</span>
-                </div-->
+                <a href="#" class="item" ng-repeat="tx in walletData.history" ng-if="walletData.history">
+                    <h3>{{tx.time | formatDate}}</h3>
+                    <p ng-if="tx.issuer">pubkey: {{tx.issuer | formatPubkey}}</p>
+                    <span class="badge item-note" ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
+                    <span class="badge item-note" ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
+                </a>
             </div>
             <div class="scroll-bar scroll-bar-v"></div>
         </div>

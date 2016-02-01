@@ -56,7 +56,8 @@ angular.module('cesium.services', ['ngResource'])
         return function(data, params) {
           return $q(function(resolve, reject) {
             var config = {
-              timeout: 4000
+              timeout: 4000,
+              headers : {'Content-Type' : 'application/json'}
             };
 
             prepare(uri, params, config, function(uri, config) {
@@ -365,6 +366,38 @@ angular.module('cesium.services', ['ngResource'])
 
     data = createData(),
 
+    reduceTx = function(txArray) {
+        var list = [];
+        txArray.forEach(function(tx) {
+            var issuerIndex = -1;
+            var issuer = tx.issuers.reduce(function(issuer, res, index) {
+                issuerIndex = (res == data.pubkey) ? index : issuerIndex;
+                return issuer + ((res != data.pubkey) ? ', ' + res : '');
+            }, ', ').substring(2);
+            var amount =
+                tx.inputs.reduce(function(sum, input) {
+                    var inputArray = input.split(':',5);
+                    return sum - ((inputArray[0] == issuerIndex) ? parseInt(inputArray[4]) : 0);
+                }, 0);
+            amount += tx.outputs.reduce(function(sum, output) {
+                    var outputArray = output.split(':',2);
+                    return sum + ((outputArray[0] == data.pubkey) ? parseInt(outputArray[1]) : 0);
+                }, 0);
+
+            list.push({
+              time: ((tx.time != null && tx.time != "undefined") ? tx.time : 9999999),
+              amount: amount,
+              issuer: issuer,
+              comments: 'comments',
+              isUD: false,
+              hash: tx.hash,
+              block_number: tx.block_number
+            });
+        });
+
+        return list;
+    },
+
     login = function(salt, password) {
         return $q(function(resolve, reject) {
             CryptoUtils.connect(salt, password).then(
@@ -444,7 +477,23 @@ angular.module('cesium.services', ['ngResource'])
             // Get transactions
             BMA.tx.history.all({pubkey: data.pubkey})
               .then(function(res){
-                data.history = res.history; 
+                var list = reduceTx(res.history.sent);
+                list.push(reduceTx(res.history.received));
+                list.push(reduceTx(res.history.sending));
+                list.push(reduceTx(res.history.receiving));
+                list.push(reduceTx(res.history.pending));
+
+                var history = [];
+                list.forEach(function(tx){
+                  history['T:'+ tx.block_number + tx.hash] = tx;
+                });
+                var result = [];
+                _.keys(history).forEach(function(key) {
+                    result.push(history[key]);
+                })
+                data.history = result.sort(function(tx1, tx2) {
+                     return tx2.time - tx1.time;
+                   });
               })
           ])
           .then(function() {

@@ -12,6 +12,13 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
     }
   })
 
+  .filter('formatDecimal', function() {
+      return function(input) {
+        if (Math.abs(input) < 0.0001) return '~ 0';
+        return Math.floor(input * 10000) / 10000;
+      }
+    })
+
   .filter('formatDate', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).format('YYYY-MM-DD HH:mm') : '';

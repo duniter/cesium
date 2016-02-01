@@ -3,15 +3,15 @@ angular.module('cesium.controllers', ['cesium.services'])
 
   .config(function($httpProvider) {
     //Enable cross domain calls
-    //$httpProvider.defaults.useXDomain = true;
+    $httpProvider.defaults.useXDomain = true;
 
     //Remove the header used to identify ajax call  that would prevent CORS from working
-    //delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     //
-    //$httpProvider.defaults.withCredentials = false;
-    //$httpProvider.defaults.headers.common["Accept"] = "application/json";
-    //$httpProvider.defaults.headers.common["Content-Type"] = "application/json";
+    $httpProvider.defaults.withCredentials = false;
+    $httpProvider.defaults.headers.common["Accept"] = "application/json";
+    $httpProvider.defaults.headers.common["Content-Type"] = "application/json";
   })
 
   .controller('HomeCtrl', HomeController)
