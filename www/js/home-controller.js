@@ -32,8 +32,8 @@ angular.module('cesium.controllers', ['cesium.services'])
 function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate) {
   // Form data for the login modal
   $scope.loginData = {
-    username: "benoit.lavenier@e-is.pro",
-    password: "priezPourMoi!"
+    username: null,
+    password: null
   };
 
   // Login modal
