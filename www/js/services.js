@@ -124,8 +124,8 @@ angular.module('cesium.services', ['ngResource'])
           }
         }
       }
-    } 
-    var service = BMA('metab.ucoin.io');
+    }
+    var service = BMA('metab.ucoin.fr');
     service.instance = BMA;
   return service;
 })
@@ -358,7 +358,6 @@ angular.module('cesium.services', ['ngResource'])
         useRelative: USE_RELATIVE_DEFAULT,
         currency: null,
         currentUD: null,
-        /*currentTime: null,*/
         history: {},
         loaded: false
       };
@@ -443,8 +442,7 @@ angular.module('cesium.services', ['ngResource'])
               }),
 
             // Get transactions
-            BMA.tx.history.all({
-                  pubkey: data.pubkey})
+            BMA.tx.history.all({pubkey: data.pubkey})
               .then(function(res){
                 data.history = res.history; 
               })

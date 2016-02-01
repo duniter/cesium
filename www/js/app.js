@@ -124,7 +124,7 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
      .state('app.view_transfer', {
             url: "/transfer/:pubkey/:uid",
             /*params: [
-               'uid', 'pubkey'
+               'pubkey', 'uid'
             ],*/
             views: {
               'menuContent': {

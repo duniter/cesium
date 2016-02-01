@@ -7,6 +7,11 @@ angular.module('cesium.controllers', ['cesium.services'])
 
     //Remove the header used to identify ajax call  that would prevent CORS from working
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    //
+    //$httpProvider.defaults.withCredentials = false;
+    //$httpProvider.defaults.headers.common["Accept"] = "application/json";
+    //$httpProvider.defaults.headers.common["Content-Type"] = "application/json";
   })
 
   .controller('HomeCtrl', HomeController)
@@ -26,7 +31,10 @@ angular.module('cesium.controllers', ['cesium.services'])
 
 function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate) {
   // Form data for the login modal
-  $scope.loginData = {};
+  $scope.loginData = {
+    username: "benoit.lavenier@e-is.pro",
+    password: "priezPourMoi!"
+  };
 
   // Login modal
   $scope.loginModal = "undefined";
@@ -366,8 +374,8 @@ function IdentityController($scope, $state, BMA) {
   // Transfer click
   $scope.transfer = function() {
     $state.go('app.view_transfer', {
-      uid: $scope.identity.uid,
-      pubkey: $scope.identity.pubkey
+        pubkey: $scope.identity.pubkey,
+        uid: $scope.identity.uid,
       });
   };
 
