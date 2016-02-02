@@ -4,7 +4,10 @@ angular.module('cesium.services', ['ngResource'])
 
 .factory('BMA', function($http, $q) {
 
-    function BMA(server) {
+    function BMA(server, wsServer) {
+        if (wsServer == "undefined" || wsServer == null) {
+            wsServer = server;
+        }
 
       function processError(reject, data) {
         if (data != null && data.message != "undefined" && data.message != null) {
@@ -118,15 +121,16 @@ angular.module('cesium.services', ['ngResource'])
         },
         websocket: {
           block: function() {
-            return ws('ws://' + server + '/ws/block');
+            return ws('ws://' + wsServer + '/ws/block');
           },
           peer: function() {
-            return ws('ws://' + server + '/ws/peer');
+            return ws('ws://' + wsServer + '/ws/peer');
           }
         }
       }
     }
-    var service = BMA('metab.ucoin.fr');
+    //var service = BMA('metab.ucoin.fr', 'metab.ucoin.fr:9201');
+    var service = BMA('metab.ucoin.io');
     service.instance = BMA;
   return service;
 })
