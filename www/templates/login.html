@@ -1,24 +1,41 @@
 <ion-modal-view>
-  <ion-header-bar>
+  <ion-header-bar class="bar-positive">
+    <button class="button button-positive" ng-click="closeLogin()">Cancel
+    </button>
     <h1 class="title">Login</h1>
-    <div class="buttons">
-      <button class="button button-clear" ng-click="closeLogin()">Close</button>
-    </div>
+    <button class="button button-positive" ng-click="doLogin()">OK
+    </button>
   </ion-header-bar>
-  <ion-content>
+
+  <ion-content scroll="false">
     <form ng-submit="doLogin()">
       <div class="list">
-        <label class="item item-input">
+        <label class="item item-input item-floating-label">
           <span class="input-label">Username</span>
-          <input type="text" ng-model="loginData.username">
+          <input type="text" placeholder="Username" ng-model="loginData.username" ng-change="loginDataChanged()">
         </label>
-        <label class="item item-input">
+        <label class="item item-input item-floating-label">
           <span class="input-label">Password</span>
-          <input type="password" ng-model="loginData.password">
+          <input type="password" placeholder="Password" ng-model="loginData.password" ng-change="loginDataChanged()">
         </label>
-        <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
-        </label>
+        <div class="item item-icon-left item-button-right">
+          <i class="icon ion-key"/>
+          Public key
+          <a class="button button-light button-small" ng-click="showLoginPubkey()" ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
+          class="animate-if">
+              Show
+            </a>            
+          </label>
+
+          <span class="badge badge-energized" ng-if="loginData.pubkey">
+            {{loginData.pubkey | formatPubkey}}
+          </span>
+        </div>
+      </div>
+      <div class="padding">
+        <button class="button button-block button-positive" type="submit">
+          OK
+        </button>
       </div>
     </form>
   </ion-content>

@@ -12,6 +12,13 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
     }
   })
 
+  .filter('formatDecimal', function() {
+      return function(input) {
+        if (Math.abs(input) < 0.0001) return '~ 0';
+        return Math.floor(input * 10000) / 10000;
+      }
+    })
+
   .filter('formatDate', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).format('YYYY-MM-DD HH:mm') : '';
@@ -28,6 +35,12 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
         }
       }
       return unit.toUpperCase();
+    }
+  })
+
+  .filter('formatPubkey', function() {
+    return function(input) {
+      return input ? input.substr(0,8) : '';
     }
   })
 
@@ -93,7 +106,39 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
           controller: 'PeerCtrl'
         }
       }
+    })
+
+    .state('app.view_identity', {
+      url: "/wot/:pub",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/wot/view_identity.html",
+          controller: 'IdentityCtrl'
+        }
+      }
+    })
+
+    .state('app.view_wallet', {
+      url: "/wallet",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/account/view_wallet.html",
+          controller: 'WalletCtrl'
+        }
+      }
+    })
+
+    .state('app.view_transfer', {
+      url: "/transfer/:pubkey/:uid",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/account/view_transfer.html",
+          controller: 'TransferCtrl'
+        }
+      }
     });
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/home');
-});
+})
+;
