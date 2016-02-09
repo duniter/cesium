@@ -101,7 +101,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
 
   // Transfer click
   $scope.transfer = function() {
-    $state.go('app.view_transfer_uid', {
+    $state.go('app.view_transfer', {
         pubkey: $scope.identity.pubkey,
         uid: $scope.identity.uid,
       });

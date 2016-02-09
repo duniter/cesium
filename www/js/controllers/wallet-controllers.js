@@ -14,7 +14,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
         }
       })
 
-      .state('app.view_transfer_uid', {
+      .state('app.view_transfer', {
         url: "/transfer/:pubkey/:uid",
         views: {
           'menuContent': {
