@@ -5,13 +5,13 @@
                 
                 <span class="item item-icon-left" ng-if="isMember">
                     <i class="icon ion-person"></i>
-                    User
-                    <span class="badge">{{walletData.uid}}</span>
+                    <h2>{{walletData.uid}}</h2>
+                    <p>Public key: {{walletData.pubkey | formatPubkey}}</p>
                 </span>
 
                 <span class="item item-icon-left" ng-if="!isMember">
                     <i class="icon ion-key"></i>
-                    Pubkey
+                    Public key
                     <span class="badge">{{walletData.pubkey | formatPubkey}}</span>
                 </span>
 

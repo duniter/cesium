@@ -5,3 +5,5 @@ node_modules/
 platforms/
 plugins/
 .idea/
+cesium.iml
+pom.xml

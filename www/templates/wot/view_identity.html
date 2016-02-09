@@ -1,17 +1,12 @@
-<ion-view view-title="Identity {{identity.uid}}" left-buttons="leftButtons">
+<ion-view view-title="{{identity.uid}}" left-buttons="leftButtons">
 <ion-content>
     <div class="scroll">
         <div class="list">
             <span class="item item-icon-left">
                 <i class="icon ion-person"></i>
-                Uid
-                <span class="badge badge-royal">{{identity.uid}}</span>
-            </span>
-
-            <span class="item item-icon-left">
-                <i class="icon ion-key"></i>
-                Public key
-                <span class="badge">{{identity.pub | formatPubkey}}</span>
+                <h2>{{identity.uid}}</h2>
+                <p>public key: {{identity.pub | formatPubkey}}</p>
+                <span class="badge"></span>
             </span>
 
             <span class="item item-icon-left">
