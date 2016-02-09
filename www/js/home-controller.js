@@ -101,25 +101,27 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
     UIUtils.loading.show(); 
 
     // Call wallet login
-    Wallet.login($scope.loginData.username, $scope.loginData.password)
-    .catch(function(err) {
-      $scope.loginData = {}; // Reset login data
-      UIUtils.loading.hide();
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('Your browser is not compatible with cryptographic libraries.');
-    })
-    .then(function(){
-      UIUtils.loading.hide();
-      var callback = $scope.loginData.callback;
-      $scope.loginData = {}; // Reset login data
-      if (callback != "undefined" && callback != null) {
-        callback();
-      }
-      // Default: redirect to wallet view
-      else {
-        $state.go('app.view_wallet');
-      }
-    });
+    $q.all([
+      Wallet.login($scope.loginData.username, $scope.loginData.password)
+      .catch(function(err) {
+        $scope.loginData = {}; // Reset login data
+        UIUtils.loading.hide();
+        console.error('>>>>>>>' , err);
+        UIUtils.alert.error('Your browser is not compatible with cryptographic libraries.');
+      })
+      .then(function(){
+        UIUtils.loading.hide();
+        var callback = $scope.loginData.callback;
+        $scope.loginData = {}; // Reset login data
+        if (callback != "undefined" && callback != null) {
+          callback();
+        }
+        // Default: redirect to wallet view
+        else {
+          $state.go('app.view_wallet');
+        }
+      })
+    ]);
   };
 
   $scope.loginDataChanged = function() {
@@ -339,7 +341,7 @@ function LookupController($scope, BMA, $state) {
 
 }
 
-function IdentityController($scope, $state, BMA) {
+function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.showIdentity($state.stateParams.pub);
@@ -356,15 +358,42 @@ function IdentityController($scope, $state, BMA) {
               return uids.concat({
                 uid: idty.uid,
                 pub: res.pubkey,
-                sigDate: idty.meta.timestamp
+                sigDate: idty.meta.timestamp,                
+                sig: idty.self
               })
             }, []));
           }, [])[0];
         })
   };
 
-  $scope.signIdentity = function() {
-    alert('signIdentity');
+  $scope.hasSelf = function() {
+    return ($scope.identity.uid
+      && $scope.identity.sigDate
+      && $scope.identity.sig);
+  }
+
+  $scope.signIdentity = function(identity) {
+    $scope.loadWallet()
+    .then(function(walletData) {
+      UIUtils.loading.show();
+      Wallet.sign($scope.identity.uid,
+                  $scope.identity.pub,
+                  $scope.identity.sigDate,
+                  $scope.identity.sig)
+      .then(function() {
+        UIUtils.loading.hide();
+        alert('Identity signed');
+      })
+      .catch(function(err) {        
+        console.error('>>>>>>>' , err);
+        UIUtils.alert.error('Error while signing identity: ' + err);
+        UIUtils.loading.hide();
+      });
+    })
+    .catch(function(err) {      
+      console.error('>>>>>>>' , err);
+      UIUtils.alert.error('Error while signing identity: ' + err);
+    });
   };
 
   // Transfer click
@@ -586,11 +615,12 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
 }
 
 
-function WalletController($scope, $state) {
+function WalletController($scope, $state, $q, UIUtils, Wallet, $ionicPopup) {
 
   $scope.walletData = {};
   $scope.convertedBalance = 0;
   $scope.hasCredit = false;
+  $scope.isMember = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
@@ -617,6 +647,7 @@ function WalletController($scope, $state) {
   $scope.updateWalletView = function(wallet) {
     $scope.walletData = wallet;
     $scope.hasCredit = $scope.walletData.balance != "undefined" && ($scope.walletData.balance > 0);
+    $scope.isMember = (wallet.requirements != null);
   };
 
   // Has credit
@@ -628,8 +659,48 @@ function WalletController($scope, $state) {
   $scope.transfer= function() {
     $state.go('app.view_transfer');
   };
-}
 
+  // Self cert
+  $scope.self= function() {
+
+    // ASk uid
+    $ionicPopup.show({
+      template: '<input type="text" ng-model="walletData.uid">',
+      title: 'Enter Pseudo',
+      subTitle: 'Pseudo is used by other member member to find you',
+      scope: $scope,
+      buttons: [
+        { text: 'Cancel' },
+        {
+          text: '<b>Send</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            if (!$scope.walletData.uid) {
+              //don't allow the user to close unless he enters wifi password
+              e.preventDefault();
+            } else {
+              return $scope.walletData.uid;
+            }
+          }
+        }
+      ]
+    })
+    .then(function(uid) {
+      UIUtils.loading.show();
+      Wallet.self(uid)
+      .then(function() {
+        UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        console.error('>>>>>>>' , err);
+        UIUtils.alert.error('Error while sending self certification: ' + err);
+        UIUtils.loading.hide();
+      });
+    });
+    
+
+  };
+}
 
 
 function TransferController($scope, $ionicModal, Wallet, UIUtils, $state, $ionicHistory) {

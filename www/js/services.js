@@ -90,7 +90,9 @@ angular.module('cesium.services', ['ngResource'])
       return {
         wot: {
           lookup: getResource('http://' + server + '/wot/lookup/:search'),
-          members: getResource('http://' + server + '/wot/members')
+          members: getResource('http://' + server + '/wot/members'),
+          requirements: getResource('http://' + server + '/wot/requirements/:pubkey'),
+          add: postResource('http://' + server + '/wot/add')
         },
         network: {
           peering: {
@@ -107,7 +109,8 @@ angular.module('cesium.services', ['ngResource'])
           stats: {
             ud: getResource('http://' + server + '/blockchain/with/ud'),
             tx: getResource('http://' + server + '/blockchain/with/tx')
-          }
+          },
+          membership: postResource('http://' + server + '/blockchain/membership'),
         },
 
         tx: {
@@ -129,9 +132,9 @@ angular.module('cesium.services', ['ngResource'])
         }
       }
     }
-    //var service = BMA('metab.ucoin.fr', 'metab.ucoin.fr:9201');
+    var service = BMA('metab.ucoin.fr', 'metab.ucoin.fr:9201');
     //var service = BMA('192.168.0.28:9201');
-    var service = BMA('metab.ucoin.io');
+    //var service = BMA('metab.ucoin.io');
     service.instance = BMA;
   return service;
 })
@@ -369,6 +372,7 @@ angular.module('cesium.services', ['ngResource'])
 
     createData = function() {
       return {
+        uid: null,
         pubkey: null,
         keypair: {
             signSk: null,
@@ -380,7 +384,8 @@ angular.module('cesium.services', ['ngResource'])
         currency: null,
         currentUD: null,
         history: {},
-        loaded: false
+        loaded: false,
+        requirements: null
       };
     },
 
@@ -458,7 +463,7 @@ angular.module('cesium.services', ['ngResource'])
         return $q(function(resolve, reject){
           data.loaded = false;
 
-          console.log('calling loadData');
+          //console.log('calling loadData');
           $q.all([
 
             // Get currency parameters
@@ -494,6 +499,20 @@ angular.module('cesium.services', ['ngResource'])
                 data.balance = balance;
               }),
 
+            // Get requirements
+            BMA.wot.requirements({pubkey: data.pubkey})
+              .then(function(res){
+                if (res.identities != "undefined" 
+                    && res.identities != null
+                    && res.identities.length == 1) {
+                  data.requirements = res.identities[0];
+                  data.uid = res.identities[0].uid;
+                }
+              })
+              .catch(function(err) {
+                data.requirements = null; 
+              }),
+
             // Get transactions
             BMA.tx.history.all({pubkey: data.pubkey})
               .then(function(res){
@@ -518,7 +537,7 @@ angular.module('cesium.services', ['ngResource'])
           ])
           .then(function() {
             data.loaded = true;
-            resolve(data);            
+            resolve(data);           
           })
           .catch(function(err) {
             data.loaded = false;
@@ -543,6 +562,23 @@ angular.module('cesium.services', ['ngResource'])
                       data.currentUD = block.dividend;
                     });
                   }
+              }),
+
+            // Get requirements
+            BMA.wot.requirements({pubkey: data.pubkey})
+              .then(function(res){
+                if (res.identities != "undefined" 
+                    && res.identities != null
+                    && res.identities.length == 1) {
+                  data.requirements = res.identities[0];
+                  data.uid = res.identities[0].uid;
+                }
+                else {
+                  data.requirements = null;
+                }
+              })
+              .catch(function(err) {
+                data.requirements = null; 
               }),
 
             // Get sources
@@ -661,6 +697,96 @@ angular.module('cesium.services', ['ngResource'])
     }
 
     /**
+    * Send self certification
+    */
+    self = function(uid) {
+      return $q(function(resolve, reject) {
+        
+        BMA.blockchain.current()
+        .then(function(block) {
+          // Create the self part to sign
+          var self = 'UID:' + uid + '\n'
+                   + 'META:TS:' + (block.time+1) + '\n';
+
+          CryptoUtils.sign(self, data.keypair)
+          .then(function(signature) {
+            var signedSelf = self + signature + '\n';
+            // Send self
+            BMA.wot.add({pubkey: data.pubkey, self: signedSelf, other: ''})
+            .then(function(result) {
+              // Check requirements
+              BMA.wot.requirements({pubkey: data.pubkey})
+              .then(function(res){
+                if (res.identities != "undefined" 
+                    && res.identities != null
+                    && res.identities.length == 1) {
+                  data.requirements = res.identities[0];
+                  data.uid = uid;
+                  resolve();
+                }
+                else{
+                  reject(); 
+                }
+              })
+              .catch(function(err) {
+                reject();
+              })
+            })
+            .catch(function(err){
+              reject(err);
+            });
+          })
+          .catch(function(err){
+            reject(err);
+          });
+        })
+        .catch(function(err) {
+          reject(err);
+        });
+      });
+    },
+
+    /**
+    * Send identity certification
+    */
+    sign = function(uid, pubkey, timestamp, signature) {
+      return $q(function(resolve, reject) {
+        
+        BMA.blockchain.current()
+        .then(function(block) {
+          // Create the self part to sign
+          var self = 'UID:' + uid + '\n'
+                   + 'META:TS:' + timestamp + '\n'
+                   + signature /*+"\n"*/;
+
+          var cert = self + '\n'
+                + 'META:TS:' + block.number + '-' + block.hash + '\n';
+
+          CryptoUtils.sign(cert, data.keypair)
+          .then(function(signature) {
+            var inlineCert = data.pubkey 
+              + ':' + pubkey 
+              + ':' + block.number
+              + ':' + signature + '\n';
+            BMA.wot.add({pubkey: pubkey, self: self, other: inlineCert})
+              .then(function(result) {
+                resolve(result);
+              })
+              .catch(function(err){
+                reject(err);
+              });
+          })
+          .catch(function(err){
+            reject(err);
+          });
+        })
+        .catch(function(err) {
+          reject(err);
+        });
+      });
+    },
+
+    /**
     * Serialize to JSON string
     */
     toJson = function() {
@@ -711,7 +837,9 @@ angular.module('cesium.services', ['ngResource'])
         fromJson: fromJson,
         loadData: loadData,
         refreshData: refreshData,
-        transfer: transfer
+        transfer: transfer,
+        self: self,
+        sign: sign
     }
   }
   var service = Wallet('default');

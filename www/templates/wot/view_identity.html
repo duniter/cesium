@@ -30,16 +30,17 @@
                     <i class="icon-right ion-chevron-right"></i>
                 </a>
             </div>
-            <div class="item item-button-right positive" ng-click="signIdentity()">
+
+            <div class="item item-button-right positive" ng-click="signIdentity()" ng-if="hasSelf">
                 Certify
                 <a class="button button-clear button-positive" >
                     <i class="icon-right ion-chevron-right"></i>
                 </a>
             </div>
             
-            <div class="item item-divider" ng-if="isLogged()">
+            <!--div class="item item-divider" ng-if="isLogged()">
                 Last transactions
-            </div>
+            </div-->
 
         </div>
     <div class="scroll-bar scroll-bar-v"></div>

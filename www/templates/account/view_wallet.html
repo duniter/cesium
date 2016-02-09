@@ -2,7 +2,14 @@
     <ion-content>
         <div class="scroll">
             <div class="list">
-                <span class="item item-icon-left">
+                
+                <span class="item item-icon-left" ng-if="isMember">
+                    <i class="icon ion-person"></i>
+                    User
+                    <span class="badge">{{walletData.uid}}</span>
+                </span>
+
+                <span class="item item-icon-left" ng-if="!isMember">
                     <i class="icon ion-key"></i>
                     Pubkey
                     <span class="badge">{{walletData.pubkey | formatPubkey}}</span>
@@ -14,7 +21,6 @@
                     <span class="badge badge-balanced" ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
                     <span class="badge badge-balanced" ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
                 </span>
-
 
                 <div class="item item-toggle dark">
                     Use Relative Unit (UD)
@@ -32,6 +38,13 @@
 
                 <div class="item item-button-right positive" ng-if="hasCredit" ng-click="transfer()">
                     Send money
+                    <a class="button button-clear button-positive" >
+                        <i class="icon-right ion-chevron-right"></i>
+                    </a>
+                </div>
+
+                <div class="item item-button-right positive" ng-if="!isMember" ng-click="self()">
+                    Send self certification
                     <a class="button button-clear button-positive" >
                         <i class="icon-right ion-chevron-right"></i>
                     </a>
