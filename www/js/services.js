@@ -132,9 +132,9 @@ angular.module('cesium.services', ['ngResource'])
         }
       }
     }
-    var service = BMA('metab.ucoin.fr', 'metab.ucoin.fr:9201');
+    //var service = BMA('metab.ucoin.fr', 'metab.ucoin.fr:9201');
     //var service = BMA('192.168.0.28:9201');
-    //var service = BMA('metab.ucoin.io');
+    var service = BMA('metab.ucoin.io');
     service.instance = BMA;
   return service;
 })
