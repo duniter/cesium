@@ -1,0 +1,42 @@
+<ion-view view-title="{{formData.title}}" left-buttons="leftButtons">
+    <ion-nav-buttons side="secondary">
+        <button class="button button-positive" ng-click="edit()" ng-if="!isLogged() || formData.issuer == walletData.pubkey">
+            <i class="icon ion-android-create"></i>
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content class="item-text-wrap">
+
+        <div class="scroll">
+            <div class="list">
+
+                <ion-gallery ion-gallery-items="pictures" ng-if="pictures && pictures.length>0"></ion-gallery>
+
+                <div class="item">
+                    <h2 ng-bind-html="formData.title"></h2>
+                </div>
+
+                <div class="item">
+                    <p ng-bind-html="formData.description"></p>
+                </div>
+
+                <div class="item-divider"></div>
+
+                <span class="item item-icon-left">
+                    <i class="icon ion-person"></i>
+                    Issuer
+                    <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
+                </span>
+
+                <div class="item">
+                    Category
+                    <span class="badge badge-positive">{{category.name}}</span>
+                </div>
+
+
+
+            </div>
+            <div class="scroll-bar scroll-bar-v"></div>
+        </div>
+    </ion-content>
+</ion-view>

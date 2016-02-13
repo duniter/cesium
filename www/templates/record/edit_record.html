@@ -1,0 +1,81 @@
+<ion-view view-title="Product" left-buttons="leftButtons">
+    <ion-nav-buttons side="secondary">
+        <button class="button button-positive" ng-click="save()">
+            <i class="icon ion-android-send" ng-if="!id"></i>
+            <i class="icon ion-android-done" ng-if="id"></i>
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content>
+        <div class="scroll">
+            <div class="list">
+
+                <ion-gallery ion-gallery-items="pictures"
+                             ng-if="pictures && pictures.length>0"></ion-gallery>
+
+                <div class="item item-icon-right" ng-if="camera">
+                    Add pictures
+                    <a class="dark" href="#" ng-click="openPicturePopup()">
+                        <i class="icon ion-camera"></i>
+                    </a>
+                </div>
+
+                <div class="item item-input item-icon-right" ng-if="!camera" >
+                    <span class="input-label has-input">Add pictures</span>
+                    <input type="file" id="file" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"/>
+                    <!--a class="dark" href="#" ng-if="!camera" ng-click="addPictureFile()">
+                        <i class="icon ion-plus"></i>
+                    </a-->
+                </div>
+
+                <span class="item item-icon-left" ng-if="id && formData.issuer">
+                    <i class="icon ion-key"></i>
+                    Issuer
+                    <span class="badge">{{formData.issuer | formatPubkey}}</span>
+                </span>
+
+                <span class="item item-button-right" ng-click="openCategoryModal()">
+                    Category
+                    <span class="badge badge-royal">{{category.name}}</span>&nbsp;
+                    <i class="button button-clear ion-chevron-right"></i>
+                </span>
+
+                <div class="item item-input item-floating-label">
+                    <span class="input-label">Title</span>
+                    <input type="text" placeholder="Title" ng-model="formData.title" />
+                </div>
+
+                <div class="item item-input item-floating-label">
+                    <span class="input-label">Description</span>
+                    <textarea placeholder="Description" ng-model="formData.description"></textarea>
+                </div>
+
+                <div class="item item-floating-label">
+                    <span class="input-label">Location</span>
+                    <div class="item-input-inset">
+                        <label class="item-input-wrapper">
+                            <input type="text" placeholder="Location" ng-model="formData.location">
+                        </label>
+                        <button class="button button-small button-positive" ng-click="localize()" ng-if="location.enable">
+                            <i class="icon ion-pinpoint"></i>
+                        </button>
+                    </div>
+                </div>
+
+
+                <!--<div class="item item-toggle dark">
+                    Public visibility
+                    <label class="toggle toggle-royal">
+                        <input type="checkbox" ng-model="formData.public">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </div>-->
+            </div>
+            <div class="scroll-bar scroll-bar-v"></div>
+        </div>
+    </ion-content>
+
+
+</ion-view>

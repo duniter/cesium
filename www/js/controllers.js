@@ -3,7 +3,8 @@ angular.module('cesium.controllers', [
     'cesium.home.controllers',
     'cesium.wallet.controllers',
     'cesium.currency.controllers',
-    'cesium.wot.controllers'
+    'cesium.wot.controllers',
+    'cesium.record.controllers'
   ])
 
   .config(function($httpProvider) {
