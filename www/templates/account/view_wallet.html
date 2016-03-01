@@ -1,4 +1,4 @@
-<ion-view view-title="My Account" left-buttons="leftButtons">
+<ion-view view-title="{{'ACCOUNT.TITLE' | translate}}" left-buttons="leftButtons">
     <ion-content>
         <div class="scroll">
             <div class="list">
@@ -6,24 +6,24 @@
                 <span class="item item-icon-left" ng-if="isMember">
                     <i class="icon ion-person"></i>
                     <h2>{{walletData.uid}}</h2>
-                    <p>Public key: {{walletData.pubkey | formatPubkey}}</p>
+                    <p>{{'COMMON.PUBKEY' | translate}}: {{walletData.pubkey | formatPubkey}}</p>
                 </span>
 
                 <span class="item item-icon-left" ng-if="!isMember">
                     <i class="icon ion-key"></i>
-                    Public key
+                    {{'COMMON.PUBKEY' | translate}}
                     <span class="badge">{{walletData.pubkey | formatPubkey}}</span>
                 </span>
 
                 <span class="item item-icon-left">
                     <i class="icon ion-card"></i>
-                    Balance
+                    {{'ACCOUNT.BALANCE' | translate}}
                     <span class="badge badge-balanced" ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
                     <span class="badge badge-balanced" ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
                 </span>
 
                 <div class="item item-toggle dark">
-                    Use Relative Unit (UD)
+                    {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
                     <label class="toggle toggle-royal">
                         <input type="checkbox" ng-model="walletData.useRelative">
                         <div class="track">
@@ -37,14 +37,14 @@
                 </div>
 
                 <div class="item item-button-right positive" ng-if="hasCredit" ng-click="transfer()">
-                    Send money
+                    {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
                     <a class="button button-clear button-positive" >
                         <i class="icon-right ion-chevron-right"></i>
                     </a>
                 </div>
 
                 <div class="item item-button-right positive" ng-if="!isMember" ng-click="self()">
-                    Send self certification
+                    {{'ACCOUNT.BTN_REGISTER' | translate}}
                     <a class="button button-clear button-positive" >
                         <i class="icon-right ion-chevron-right"></i>
                     </a>
@@ -55,12 +55,12 @@
                 </div>
 
                 <div class="item item-divider">
-                    Last transactions
+                    {{'ACCOUNT.LAST_TX' | translate}}
                 </div>
 
                 <a href="#" class="item" ng-repeat="tx in walletData.history" ng-if="walletData.history">
                     <h3>{{tx.time | formatDate}}</h3>
-                    <p ng-if="tx.issuer">pubkey: {{tx.issuer | formatPubkey}}</p>
+                    <p ng-if="tx.issuer">{{'COMMON.PUBKEY' | translate}}: {{tx.issuer | formatPubkey}}</p>
                     <span class="badge item-note" ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
                     <span class="badge item-note" ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
                 </a>

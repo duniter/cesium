@@ -147,6 +147,37 @@ angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
         });
       }
 
+      var postRecord = postResource('http://' + server + '/store/record');
+
+      function addRecord(record, keypair) {
+        return $q(function(resolve, reject) {
+          var errorFct = function(err) {
+            reject(err);
+          }
+          var obj = {};
+          angular.copy(record, obj);
+          delete obj.signature;
+          delete obj.hash;
+          obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
+          var str = JSON.stringify(obj);
+
+          CryptoUtils.util.hash_sha256(str)
+          .then(function(hash_array) {
+            CryptoUtils.sign(str, keypair)
+            .then(function(signature) {
+              obj.hash = CryptoUtils.util.encode_utf8(hash_array);
+              obj.signature = signature;
+              postRecord(obj).then(function (id){
+                resolve(id);
+              })
+              .catch(errorFct);
+            })
+            .catch(errorFct);
+          })
+          .catch(errorFct);
+        });
+      }
+
       function emptyHit() {
         return {
            _id: null,
@@ -168,7 +199,7 @@ angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
         },
         record: {
           get: getResource('http://' + server + '/store/record/:id'),
-          add: postResource('http://' + server + '/store/record'),
+          add: addRecord,
           update: postResource('http://' + server + '/store/record/:id'),
           searchText: getResource('http://' + server + '/store/record/_search?q=:search'),
           search: postResource('http://' + server + '/store/record/_search?pretty'),

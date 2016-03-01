@@ -9,20 +9,26 @@
     <ion-content class="lookupForm padding">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="Search a record (e.g. car, store)" ng-model="search.text" ng-change="searchChanged()">
+            <input type="text" placeholder="Search (e.g. car, store)" ng-model="search.text" ng-change="searchChanged()">
         </label>
+        <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="isFilter('advanced')">
+            Category
+            <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
+            <i class="button button-clear ion-chevron-right"></i>
+        </span>
 
-        <div class="row">
+        <div class="row" ng-if="search.text">
             <div class="col">
-                <a href="#" class="button button-full button-small button-positive" ng-click="">All</a>
+                <a href="#" class="button button-full button-small" ng-class="{'button-positive': isFilter('last')}" ng-click="setFilter('last')">Last</a>
             </div>
             <div class="col">
-                <a href="#" class="button button-full button-small button-positive" ng-click="">Image</a>
+                <a href="#" class="button button-full button-small" ng-class="{'button-positive': isFilter('image')}" ng-click="setFilter('image')">Image</a>
             </div>
             <div class="col">
-                <a href="#" class="button button-full button-small button-positive" ng-click="">Search tool</a>
+                <a href="#" class="button button-full button-small" ng-class="{'button-positive': isFilter('advanced')}" ng-click="setFilter('advanced')">Search tool</a>
             </div>
         </div>
+
 
         <div class="list list-inset">
 

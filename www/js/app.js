@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'cesium.controllers'])
+angular.module('cesium', ['ionic', 'cesium.controllers', 'pascalprecht.translate'])
 
   .filter('formatInteger', function() {
     return function(input) {
@@ -42,6 +42,20 @@ angular.module('cesium', ['ionic', 'cesium.controllers'])
     return function(input) {
       return input ? input.substr(0,8) : '';
     }
+  })
+
+  // Translation i18n
+  .config(function ($translateProvider) {
+    $translateProvider.useStaticFilesLoader({
+        prefix: 'i18n/locale-',
+        suffix: '.json'
+    })
+    .uniformLanguageTag('bcp47')
+    .determinePreferredLanguage()
+    .useSanitizeValueStrategy('sanitize')
+    .fallbackLanguage(['en', 'fr'])
+    .useLoaderCache(true);
+
   })
 
 .run(function($ionicPlatform) {

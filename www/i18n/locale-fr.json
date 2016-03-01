@@ -1,0 +1,85 @@
+{
+  "COMMON": {
+    "APP_NAME": "Cesium",
+    "PUBKEY": "Clé publique",
+    "BTN_OK": "OK",
+    "BTN_SHOW": "Voir",
+    "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
+    "BTN_BACK": "Retour",
+    "BTN_CANCEL": "Annuler",
+    "BTN_LOGIN": "Se connecter",
+    "BTN_LOGOUT": "Déconnecter"
+  },
+  "MENU": {
+    "TITLE": "Cesium",
+    "HOME": "Accueil",
+    "CURRENCIES": "Monnaies",
+    "ACCOUNT": "Mon compte"
+  },
+  "HOME": {
+    "TITLE": "Accueil",
+    "WELCOME": "Bienvenu.",
+    "MESSAGE": "<b>Cesium</b> est toujours en développement. Il n'y a pas encore grand chose à voir ! :-)",
+    "EXPLORE_CURRENCIES": "Explorer les monnaies",
+    "EXPLORE_MARKET": "Explorer le marché"
+  },
+  "CURRENCY": {
+    "SELECT": {
+      "TITLE": "Explorer",
+      "CURRENCIES": "Monnaies connues"
+    },
+    "VIEW": {
+      "TITLE": "Explorer",
+      "TAB_CURRENCY": "Monnaie",
+      "TAB_WOT": "Membres",
+      "TAB_NETWORK": "Réseau",
+      "CURRENCY_NAME": "Nom de la monnaie",
+      "MEMBERS": "Membres",
+      "INCOMING_MEMBERS": "Nouveaux membres",
+      "MONEY_DIVIDER": "Monnaie",
+      "MASS": "Masse monétaire",
+      "SHARE": "Masse par membre",
+      "UD": "Dividend universel",
+      "C_ACTUAL": "c<sub>actuel</sub>",
+      "BLOCKCHAIN_DIVIDER": "Blockchain",
+      "TIME": "Heure de la blockchain",
+      "POW_MIN": "Niveau de difficulté",
+      "RULES_DIVIDER": "Règles",
+      "C_RULE": "c"
+    }
+  },
+  "PEER": {
+    "PEERS": "Peers",
+    "KNOWN_PEERS": "Known peers",
+    "SIGNED_ON_BLOCK": "Signed on block"
+  },
+  "WOT": {
+    "SEARCH_HELP": "Search (member or public key)",
+    "MODAL": {
+      "TITLE": "Search"
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Login",
+    "USERNAME": "Login",
+    "USERNAME_HELP": "Login (Pass phrase or email)",
+    "PASSWORD": "Password",
+    "PASSWORD_HELP": "Password"
+  },
+  "ACCOUNT": {
+    "TITLE": "My Account",
+    "BALANCE": "Balance",
+    "LAST_TX": "Last transactions",
+    "BTN_SEND_MONEY": "Send money",
+    "BTN_REGISTER": "Register as member"
+  },
+  "TRANSFER": {
+    "TITLE": "Transfer",
+    "FROM": "From",
+    "TO": "To",
+    "AMOUNT": "Amount",
+    "AMOUNT_HELP": "Amount",
+    "COMMENTS": "Comments",
+    "COMMENTS_HELP": "Comments"
+  }
+}

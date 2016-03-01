@@ -52,65 +52,128 @@ angular.module('cesium.record.controllers', ['cesium.services'])
 
 ;
 
-function RecordLookupController($scope, Record, $state) {
+function CategoryModalController($scope, Record, $state, $ionicModal) {
+
+  $scope.categoryModal = null;
+
+  // category lookup modal
+  $ionicModal.fromTemplateUrl('templates/record/modal_category.html', {
+      scope: $scope,
+      focusFirstInput: true
+  }).then(function(modal) {
+    $scope.categoryModal = modal;
+    $scope.categoryModal.hide();
+  });
+
+  $scope.openCategoryModal = function() {
+    // load categories
+    Record.record.category.all()
+    .then(function(categories){
+      $scope.categories = categories;
+      $scope.categoryModal.show();
+    });
+  };
+
+  $scope.closeCategoryModal = function() {
+    $scope.categoryModal.hide();
+  };
+
+  $scope.selectCategory = function(cat) {
+    if (!cat.parent) return;
+    console.log('Category ' + cat.name + 'selected. Method selectCategory(cat) not overwritten.');
+    $scope.closeCategoryModal();
+  };
+}
+
+function RecordLookupController($scope, Record, $state, $ionicModal) {
+
+  CategoryModalController.call(this, $scope, Record, $state, $ionicModal);
 
   $scope.queryData = {};
   $scope.search = { text: '', results: {} };
+  $scope.filter = null;
 
   function createQuery() {
-    return {
-       query: {
-         match: {
-           title: $scope.search.text/*,
-           description: $scope.search.text*/
-         }
-       },
-       highlight: {
-           fields : {
-               title : {},
-               description : {}
-           }
-       },
-       from: 0,
-       size: 20,
-       _source: ["title", "time", "description", "pictures"]
-     }
+    var res = {
+      query: {},
+      highlight: {
+        fields : {
+          title : {},
+          description : {}
+        }
+      },
+      from: 0,
+      size: 20,
+      _source: ["title", "time", "description", "pictures"]
+    };
+    var matches = [];
+    matches[0] = {match : { title: $scope.search.text}};
+    if ($scope.isFilter('advanced')
+        && $scope.search.category != null
+        && $scope.search.category != "undefined") {
+      matches[1] = {match : { category: $scope.search.category.id}};
+    }
+    if (matches.length > 1) {
+      res.query.bool = { should: matches };
+    }
+    else {
+      res.query.match = matches[0].match;
+    }
+    return res;
   }
+
+  $scope.setFilter = function(filter) {
+    $scope.filter = filter;
+  }
+
+  $scope.isFilter = function(filter) {
+    return ($scope.filter == filter);
+  }
+
+  $scope.selectCategory = function(cat) {
+    if (!cat.parent) return;
+    $scope.search.category = cat;
+    $scope.closeCategoryModal();
+  };
 
   $scope.searchChanged = function() {
     $scope.search.text = $scope.search.text.toLowerCase();
     if ($scope.search.text.length > 1) {
       $scope.search.looking = true;
       $scope.queryData = createQuery();
-      return Record.record.search($scope.queryData)
-        .then(function(res){
-          $scope.search.looking = false;
-          if (res.hits.total == 0) {
-            $scope.search.results = [];
-          }
-          else {
-            $scope.search.results = res.hits.hits.reduce(function(result, hit) {
-                var record = hit._source;
-                record.id = hit._id;
-                record.type = hit._type;
-                if (hit.highlight.title) {
-                    record.title = hit.highlight.title[0];
-                }
-                if (hit.highlight.description) {
-                    record.description = hit.highlight.description[0];
-                }
-                return result.concat(record);
-              }, []);
-          }
-        })
-        .catch(function(err) {
-          $scope.search.looking = false;
-          $scope.search.results = [];
-        });
+      $scope.doSearch()
     }
     else {
       $scope.search.results = [];
     }
+  };
+
+  $scope.doSearch = function() {
+    return Record.record.search($scope.queryData)
+      .then(function(res){
+        $scope.search.looking = false;
+        if (res.hits.total == 0) {
+          $scope.search.results = [];
+        }
+        else {
+          $scope.search.results = res.hits.hits.reduce(function(result, hit) {
+              var record = hit._source;
+              record.id = hit._id;
+              record.type = hit._type;
+              if (hit.highlight.title) {
+                  record.title = hit.highlight.title[0];
+              }
+              if (hit.highlight.description) {
+                  record.description = hit.highlight.description[0];
+              }
+              return result.concat(record);
+            }, []);
+        }
+      })
+      .catch(function(err) {
+        $scope.search.looking = false;
+        $scope.search.results = [];
+      });
   };
 
   $scope.select = function(id) {
@@ -168,6 +231,8 @@ function RecordController($scope, $ionicModal, Wallet, Record, UIUtils, $state, 
 
 function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $state, CryptoUtils, $q, $ionicPopup) {
 
+  CategoryModalController.call(this, $scope, Record, $state, $ionicModal);
+
   $scope.walletData = {};
   $scope.formData = {};
   $scope.id = null;
@@ -221,8 +286,7 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
         return res.concat({src: pic.src});
       }, []);
       if (!$scope.id) { // Create
-          $scope.formData.issuer = $scope.walletData.pubkey;
-          Record.record.add($scope.formData)
+          Record.record.add($scope.formData, $scope.walletData.keypair)
           .then(function(id) {
             UIUtils.loading.hide();
             $state.go('app.view_record', {id: id})
@@ -231,7 +295,7 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
           .catch(UIUtils.onError('Could not save record'));
       }
       else { // Update
-          Record.record.update($scope.formData, {id: $scope.id})
+          Record.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
           .then(function() {
             UIUtils.loading.hide();
             $state.go('app.view_record', {id: $scope.id})
@@ -240,28 +304,6 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
           .catch(UIUtils.onError('Could not update record'));
       }
     });
-  };
-
-  // category lookup modal
-  $ionicModal.fromTemplateUrl('templates/record/modal_category.html', {
-      scope: $scope,
-      focusFirstInput: true
-  }).then(function(modal) {
-    $scope.lookupModal = modal;
-    $scope.lookupModal.hide();
-  });
-
-  $scope.openCategoryModal = function() {
-    // load categories
-    Record.record.category.all()
-    .then(function(categories){
-      $scope.categories = categories;
-      $scope.lookupModal.show();
-    });
-  };
-
-  $scope.closeCategoryModal = function() {
-    $scope.lookupModal.hide();
   };
 
   $scope.selectCategory = function(cat) {
@@ -321,7 +363,7 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
       var reader = new FileReader();
 
       reader.addEventListener("load", function () {
-          console.log(reader.result);
+          //console.log(reader.result);
           $scope.pictures.push({src: reader.result});
           $scope.$apply();
       }, false);

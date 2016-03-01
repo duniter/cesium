@@ -1,4 +1,4 @@
-<ion-view view-title="Transfer" left-buttons="leftButtons">
+<ion-view view-title="{{'TRANSFER.TITLE' | translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
         <button class="button button-positive" ng-click="doTransfer()">
             <i class="icon ion-android-send"></i>
@@ -10,29 +10,29 @@
             <div class="list">
             <span class="item item-icon-left">
                 <i class="icon ion-key"></i>
-                From
+                {{'TRANSFER.FROM' | translate}}
                 <span class="badge badge-calm">{{walletData.pubkey.substr(0,8)}}</span>
             </span>
 
             <span class="item item-icon-left item-button-right" ng-click="openSearch()">
                 <i class="icon ion-person"></i>
-                To
+                {{'TRANSFER.TO' | translate}}
                 <span class="badge badge-royal">{{dest}}</span>&nbsp;
                 <i class="button button-clear ion-chevron-right"></i>
             </span>
 
                 <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
-                    <span class="input-label">Amount ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-                    <input type="number" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
+                    <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+                    <input type="number" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
                 </div>
 
                 <div class="item item-input item-floating-label" ng-if="walletData.useRelative">
-                    <span class="input-label">Amount ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-                    <input type="text" placeholder="Amount ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
+                    <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+                    <input type="text" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
                 </div>
 
                 <div class="item item-toggle dark">
-                    Use Relative Unit (UD)
+                    {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
                     <label class="toggle toggle-royal">
                         <input type="checkbox" ng-model="walletData.useRelative">
                         <div class="track">
@@ -42,7 +42,7 @@
                 </div>
 
                 <label class="item item-input">
-                    <textarea placeholder="Comments" ng-model="formData.comments"></textarea>
+                    <textarea placeholder="{{'TRANSFER.COMMENTS_HELP' | translate}}" ng-model="formData.comments"></textarea>
                 </label>
             </div>
 

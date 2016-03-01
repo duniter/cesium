@@ -1,0 +1,85 @@
+{
+  "COMMON": {
+    "APP_NAME": "Cesium",
+    "PUBKEY": "Public key",
+    "BTN_OK": "OK",
+    "BTN_SHOW": "Show",
+    "BTN_RELATIVE_UNIT": "Use relative unit",
+    "BTN_BACK": "Back",
+    "BTN_CANCEL": "Cancel",
+    "BTN_LOGIN": "Login",
+    "BTN_LOGOUT": "Logout"
+  },
+  "MENU": {
+    "TITLE": "Cesium",
+    "HOME": "Home",
+    "CURRENCIES": "Currencies",
+    "ACCOUNT": "My Account"
+  },
+  "HOME": {
+    "TITLE": "Home",
+    "WELCOME": "Welcome",
+    "MESSAGE": "<b>Cesium</b> is still in development phase. There is not much to see right now. :-)",
+    "EXPLORE_CURRENCIES": "Explore currencies",
+    "EXPLORE_MARKET": "Explore market place"
+  },
+  "CURRENCY": {
+    "SELECT": {
+      "TITLE": "Explore",
+      "CURRENCIES": "Known currencies"
+    },
+    "VIEW": {
+      "TITLE": "Explore",
+      "TAB_CURRENCY": "Currency",
+      "TAB_WOT": "Web of Trust",
+      "TAB_NETWORK": "Network",
+      "CURRENCY_NAME": "Currency name",
+      "MEMBERS": "Members",
+      "INCOMING_MEMBERS": "Incoming members",
+      "MONEY_DIVIDER": "Money",
+      "MASS": "Monetary mass",
+      "SHARE": "Money share",
+      "UD": "Universal Dividend",
+      "C_ACTUAL": "c<sub>actual</sub>",
+      "BLOCKCHAIN_DIVIDER": "Blockchain",
+      "TIME": "Current time",
+      "POW_MIN": "Common difficulty",
+      "RULES_DIVIDER": "Rules",
+      "C_RULE": "c"
+    }
+  },
+  "PEER": {
+    "PEERS": "Peers",
+    "KNOWN_PEERS": "Known peers",
+    "SIGNED_ON_BLOCK": "Signed on block"
+  },
+  "WOT": {
+    "SEARCH_HELP": "Search (member or public key)",
+    "MODAL": {
+      "TITLE": "Search"
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Login",
+    "USERNAME": "Login",
+    "USERNAME_HELP": "Login (Pass phrase or email)",
+    "PASSWORD": "Password",
+    "PASSWORD_HELP": "Password"
+  },
+  "ACCOUNT": {
+    "TITLE": "My Account",
+    "BALANCE": "Balance",
+    "LAST_TX": "Last transactions",
+    "BTN_SEND_MONEY": "Send money",
+    "BTN_REGISTER": "Register as member"
+  },
+  "TRANSFER": {
+    "TITLE": "Transfer",
+    "FROM": "From",
+    "TO": "To",
+    "AMOUNT": "Amount",
+    "AMOUNT_HELP": "Amount",
+    "COMMENTS": "Comments",
+    "COMMENTS_HELP": "Comments"
+  }
+}

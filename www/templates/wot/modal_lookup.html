@@ -1,14 +1,14 @@
 <ion-modal-view>
   <ion-header-bar class="bar-positive">
-      <h1 class="title">Search</h1>
-      <button class="button button-positive" ng-click="closeLookup()">Cancel</button>
+      <h1 class="title" translate>WOT.MODAL.TITLE</h1>
+      <button class="button button-positive" ng-click="closeLookup()" translate>COMMON.BTN_CANCEL</button>
   </ion-header-bar>
 
     <ion-content class="lookupForm">
     	<div class="list">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="Search" ng-model="search.text" ng-change="searchChanged()">
+            <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()">
         </label>
 
         <label class="item center" ng-if="search.looking">
@@ -18,7 +18,7 @@
         <a class="item item-icon-left" ng-repeat="found in search.results" ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
             <i class="icon ion-person"></i>
             <h2>{{found.uid}}</h2>
-            <p>pubkey: {{found.pub.substr(0,24)}}</p>
+            <p>{{'COMMON.PUBKEY'|translate}}: {{found.pub.substr(0,24)}}</p>
             <span class="badge item-note">{{found.sigDate | formatDate}}</span>
         </a>
     </div>
