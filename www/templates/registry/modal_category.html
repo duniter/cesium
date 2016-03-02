@@ -1,0 +1,23 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+      <h1 class="title" translate>RECORD.COMMON.CATEGORIES</h1>
+      <button class="button button-positive" ng-click="closeCategoryModal()" translate>COMMON.BTN_CANCEL</button>
+  </ion-header-bar>
+
+    <ion-content class="lookupForm">
+    	<div class="list">
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="Search" ng-model="search.text" ng-change="searchChanged()">
+        </label>
+
+        <label class="item center" ng-if="search.looking">
+            <ion-spinner icon="android"></ion-spinner>
+        </label>
+
+        <a class="item" ng-repeat="found in categories" ng-class="{'item-divider': (found.parent==null)}" href="#" ng-click="selectCategory(found)">
+            <h2 ng-bind-html="found.name"></h2>
+        </a>
+    </div>
+</ion-content>
+</ion-modal-view>

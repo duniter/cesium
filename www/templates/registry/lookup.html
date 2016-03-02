@@ -1,0 +1,51 @@
+<ion-view view-title="{{'REGISTRY.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
+    <ion-nav-buttons side="secondary">
+        <button ui-sref="app.registry_add_record" class="button button-positive">
+            <i class="icon ion-plus"></i>
+            <span translate>REGISTRY.SEARCH.BTN_ADD</span>
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content class="lookupForm padding">
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()">
+        </label>
+
+        <div class="item item-toggle dark" ng-if="search.text">
+            <span translate>REGISTRY.SEARCH.BTN_OPTIONS</span>
+            <label class="toggle toggle-royal">
+                <input type="checkbox" ng-model="search.options">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </div>
+
+        <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
+            <span translate>REGISTRY.COMMON.CATEGORY</span>
+            <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
+            <i class="button button-clear ion-chevron-right"></i>
+        </span>
+
+        <div class="list list-inset">
+
+            <label class="item center" ng-if="search.looking">
+                <ion-spinner icon="android"></ion-spinner>
+            </label>
+
+            <a class="item row item-product" ng-repeat="found in search.results" ng-click="select('{{found.id}}')">
+                <div class="col col-2">
+                    <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures > 0">
+                    <span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span>
+                </div>
+                <div class="col col-80 padding">
+                    <h2 ng-bind-html="found.title"></h2>
+                    <h3 class="light" ng-bind-html="found.description"></h3>
+                    <span class="badge item-note">{{found.time | formatDate}}</span>
+                </div>
+            </a>
+
+        </div>
+    </ion-content>
+</ion-view>

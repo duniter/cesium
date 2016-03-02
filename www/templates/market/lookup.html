@@ -1,20 +1,19 @@
-<ion-view view-title="{{'RECORD.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
+<ion-view view-title="{{'MARKET.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button ui-sref="app.add_record" class="button button-positive">
+        <button ui-sref="app.market_add_record" class="button button-positive">
             <i class="icon ion-plus"></i>
-            <span translate>RECORD.SEARCH.BTN_ADD</span>
+            <span translate>MARKET.SEARCH.BTN_ADD</span>
         </button>
     </ion-nav-buttons>
 
     <ion-content class="lookupForm padding">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'RECORD.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()">
+            <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()">
         </label>
 
-
         <div class="item item-toggle dark" ng-if="search.text">
-            <span translate>RECORD.SEARCH.BTN_OPTIONS</span>
+            <span translate>MARKET.SEARCH.BTN_OPTIONS</span>
             <label class="toggle toggle-royal">
                 <input type="checkbox" ng-model="search.options">
                 <div class="track">
@@ -24,7 +23,7 @@
         </div>
 
         <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
-            <span translate>RECORD.COMMON.CATEGORY</span>
+            <span translate>MARKET.COMMON.CATEGORY</span>
             <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
             <i class="button button-clear ion-chevron-right"></i>
         </span>

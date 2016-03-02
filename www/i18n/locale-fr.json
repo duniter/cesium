@@ -13,6 +13,8 @@
   "MENU": {
     "TITLE": "Cesium",
     "HOME": "Accueil",
+    "REGISTRY": "Annuaire",
+    "MARKET": "Offres/Demandes",
     "CURRENCIES": "Monnaies",
     "ACCOUNT": "Mon compte"
   },
@@ -83,14 +85,14 @@
     "COMMENTS": "Commentaires",
     "COMMENTS_HELP": "Commentaires"
   },
-  "RECORD": {
+  "MARKET": {
     "COMMON": {
       "CATEGORY": "Catégorie",
       "CATEGORIES": "Catégories",
       "ISSUER": "Soumis par"
     },
     "SEARCH": {
-      "TITLE": "Recherche",
+      "TITLE": "Offres/Demandes",
       "SEARCH_HELP": "Recherche (voiture, livre...)",
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Outil de recherche"

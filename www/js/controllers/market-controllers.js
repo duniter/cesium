@@ -1,63 +1,63 @@
-angular.module('cesium.record.controllers', ['cesium.services'])
+angular.module('cesium.market.controllers', ['cesium.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
-    .state('app.lookup_record', {
-      url: "/record",
+    .state('app.market_lookup', {
+      url: "/market",
       views: {
         'menuContent': {
-          templateUrl: "templates/record/lookup.html",
-          controller: 'RecordLookupCtrl'
+          templateUrl: "templates/market/lookup.html",
+          controller: 'MarketLookupCtrl'
         }
       }
     })
 
-   .state('app.view_record', {
-      url: "/record/:id",
+   .state('app.market_view_record', {
+      url: "/market/:id",
       views: {
         'menuContent': {
-          templateUrl: "templates/record/view_record.html",
-          controller: 'RecordCtrl'
+          templateUrl: "templates/market/view_record.html",
+          controller: 'MarketRecordViewCtrl'
         }
       }
     })
 
-    .state('app.add_record', {
-      url: "/record/add",
+    .state('app.market_add_record', {
+      url: "/market/add",
       views: {
         'menuContent': {
-          templateUrl: "templates/record/edit_record.html",
-          controller: 'RecordEditCtrl'
+          templateUrl: "templates/market/edit_record.html",
+          controller: 'MarketRecordEditCtrl'
         }
       }
     })
 
-    .state('app.edit_record', {
-      url: "/record/:id/edit",
+    .state('app.market_edit_record', {
+      url: "/market/:id/edit",
       views: {
         'menuContent': {
-          templateUrl: "templates/record/edit_record.html",
-          controller: 'RecordEditCtrl'
+          templateUrl: "templates/market/edit_record.html",
+          controller: 'MarketRecordEditCtrl'
         }
       }
     });
   })
 
- .controller('RecordLookupCtrl', RecordLookupController)
+ .controller('MarketLookupCtrl', MarketLookupController)
 
- .controller('RecordCtrl', RecordController)
+ .controller('MarketRecordViewCtrl', MarketRecordViewController)
 
- .controller('RecordEditCtrl', RecordEditController)
+ .controller('MarketRecordEditCtrl', MarketRecordEditController)
 
 ;
 
-function CategoryModalController($scope, Record, $state, $ionicModal) {
+function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
 
   $scope.categoryModal = null;
 
   // category lookup modal
-  $ionicModal.fromTemplateUrl('templates/record/modal_category.html', {
+  $ionicModal.fromTemplateUrl('templates/market/modal_category.html', {
       scope: $scope,
       focusFirstInput: true
   }).then(function(modal) {
@@ -67,7 +67,7 @@ function CategoryModalController($scope, Record, $state, $ionicModal) {
 
   $scope.openCategoryModal = function() {
     // load categories
-    Record.record.category.all()
+    Market.category.all()
     .then(function(categories){
       $scope.categories = categories;
       $scope.categoryModal.show();
@@ -85,9 +85,9 @@ function CategoryModalController($scope, Record, $state, $ionicModal) {
   };
 }
 
-function RecordLookupController($scope, Record, $state, $ionicModal) {
+function MarketLookupController($scope, Market, $state, $ionicModal) {
 
-  CategoryModalController.call(this, $scope, Record, $state, $ionicModal);
+  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal);
 
   $scope.search = {
     text: '',
@@ -148,7 +148,7 @@ function RecordLookupController($scope, Record, $state, $ionicModal) {
       request.query.match = matches[0].match;
     }
 
-    return Record.record.search(request)
+    return Market.record.search(request)
       .then(function(res){
         $scope.search.looking = false;
         if (res.hits.total == 0) {
@@ -156,18 +156,18 @@ function RecordLookupController($scope, Record, $state, $ionicModal) {
         }
         else {
           $scope.search.results = res.hits.hits.reduce(function(result, hit) {
-              var record = hit._source;
-              record.id = hit._id;
-              record.type = hit._type;
+              var market = hit._source;
+              market.id = hit._id;
+              market.type = hit._type;
               if (hit.highlight) {
                 if (hit.highlight.title) {
-                    record.title = hit.highlight.title[0];
+                    market.title = hit.highlight.title[0];
                 }
                 if (hit.highlight.description) {
-                    record.description = hit.highlight.description[0];
+                    market.description = hit.highlight.description[0];
                 }
               }
-              return result.concat(record);
+              return result.concat(market);
             }, []);
         }
       })
@@ -178,11 +178,11 @@ function RecordLookupController($scope, Record, $state, $ionicModal) {
   };
 
   $scope.select = function(id) {
-    $state.go('app.view_record', {id: id});
+    $state.go('app.market_view_record', {id: id});
   };
 }
 
-function RecordController($scope, $ionicModal, Wallet, Record, UIUtils, $state, CryptoUtils, $q) {
+function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q) {
 
   $scope.formData = {};
   $scope.id = null;
@@ -196,16 +196,16 @@ function RecordController($scope, $ionicModal, Wallet, Record, UIUtils, $state, 
        $scope.load($state.stateParams.id);
     }
     else {
-      $state.go('app.lookup_record');
+      $state.go('app.market_lookup');
     }
   });
 
   $scope.load = function(id) {
     UIUtils.loading.show();
     $q.all([
-      Record.record.category.all()
+      Market.category.all()
       .then(function(categories) {
-        Record.record.get({id: id})
+        Market.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
           $scope.category = categories[hit._source.category];
@@ -219,17 +219,17 @@ function RecordController($scope, $ionicModal, Wallet, Record, UIUtils, $state, 
           UIUtils.loading.hide();
         })
       })
-    ]).catch(UIUtils.onError('Could not load record'));
+    ]).catch(UIUtils.onError('Could not load market'));
   };
 
   $scope.edit = function() {
-    $state.go('app.edit_record', {id: $scope.id});
+    $state.go('app.market_edit_record', {id: $scope.id});
   };
 }
 
-function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $state, CryptoUtils, $q, $ionicPopup) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup) {
 
-  CategoryModalController.call(this, $scope, Record, $state, $ionicModal);
+  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal);
 
   $scope.walletData = {};
   $scope.formData = {};
@@ -258,9 +258,9 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
   $scope.load = function(id) {
     UIUtils.loading.show();
     $q.all([
-      Record.record.category.all()
+      Market.category.all()
       .then(function(categories) {
-        Record.record.get({id: id})
+        Market.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
           $scope.category = categories[hit._source.category];
@@ -274,7 +274,7 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
         });
       })
     ])
-    .catch(UIUtils.onError('Could not load record'))
+    .catch(UIUtils.onError('Could not load market'))
   };
 
   $scope.save = function() {
@@ -284,22 +284,22 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
         return res.concat({src: pic.src});
       }, []);
       if (!$scope.id) { // Create
-          Record.record.add($scope.formData, $scope.walletData.keypair)
+          Market.record.add($scope.formData, $scope.walletData.keypair)
           .then(function(id) {
             UIUtils.loading.hide();
-            $state.go('app.view_record', {id: id})
+            $state.go('app.market_view_record', {id: id})
             resolve();
           })
-          .catch(UIUtils.onError('Could not save record'));
+          .catch(UIUtils.onError('Could not save market'));
       }
       else { // Update
-          Record.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
+          Market.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
           .then(function() {
             UIUtils.loading.hide();
-            $state.go('app.view_record', {id: $scope.id})
+            $state.go('app.market_view_record', {id: $scope.id})
             resolve();
           })
-          .catch(UIUtils.onError('Could not update record'));
+          .catch(UIUtils.onError('Could not update market'));
       }
     });
   };
@@ -399,7 +399,7 @@ function RecordEditController($scope, $ionicModal, Wallet, Record, UIUtils, $sta
     .then(function(walletData) {
       UIUtils.loading.show();
       $scope.walletData = walletData;
-      Record.auth.token(walletData.keypair)
+      Market.auth.token(walletData.keypair)
       .then(function(token) {
         UIUtils.loading.hide();
         console.log('authentication token is:' + token);

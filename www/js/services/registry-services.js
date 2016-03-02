@@ -1,8 +1,8 @@
-angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
+angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
 
-.factory('Record', function($http, $q, CryptoUtils) {
+.factory('Registry', function($http, $q, CryptoUtils) {
 
-    function Record(server, wsServer) {
+    function Registry(server, wsServer) {
 
       var categories = [];
 
@@ -95,7 +95,7 @@ angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
             return;
           }
 
-          getResource('http://' + server + '/store/category/_search?pretty&from=0&size=1000')()
+          getResource('http://' + server + '/registry/category/_search?pretty&from=0&size=1000')()
           .then(function(res) {
             if (res.hits.total == 0) {
                 categories = [];
@@ -147,7 +147,7 @@ angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
         });
       }
 
-      var postRecord = postResource('http://' + server + '/store/record');
+      var postRecord = postResource('http://' + server + '/registry/record');
 
       function addRecord(record, keypair) {
         return $q(function(resolve, reject) {
@@ -197,23 +197,23 @@ angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
         hit: {
            empty: emptyHit
         },
+        category: {
+          all: getCategories
+        },
         record: {
-          get: getResource('http://' + server + '/store/record/:id'),
+          get: getResource('http://' + server + '/registry/record/:id'),
           add: addRecord,
-          update: postResource('http://' + server + '/store/record/:id'),
-          searchText: getResource('http://' + server + '/store/record/_search?q=:search'),
-          search: postResource('http://' + server + '/store/record/_search?pretty'),
-          category: {
-            all: getCategories
-          }
+          update: postResource('http://' + server + '/registry/record/:id'),
+          searchText: getResource('http://' + server + '/registry/record/_search?q=:search'),
+          search: postResource('http://' + server + '/registry/record/_search?pretty')
         }
       }
     }
 
-    var service = Record('localhost:9200');
+    var service = Registry('localhost:9200');
     //var service = ES('metab.ucoin.fr:9288');
 
-    service.instance = Record;
+    service.instance = Registry;
   return service;
 })
 ;

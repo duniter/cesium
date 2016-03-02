@@ -5,7 +5,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
   $stateProvider
 
     .state('app.explore_currency', {
-      url: "/home/explore",
+      url: "/currency",
       views: {
         'menuContent': {
           templateUrl: "templates/explore/explore_currency.html",
@@ -15,7 +15,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
     })
 
     .state('app.explore_tabs', {
-      url: "/currency",
+      url: "/currency/view",
       views: {
         'menuContent': {
           templateUrl: "templates/explore/explore_tabs.html",

@@ -13,7 +13,9 @@
   "MENU": {
     "TITLE": "Cesium",
     "HOME": "Home",
-    "CURRENCIES": "Currencies",
+    "REGISTRY": "Registry",
+    "MARKET": "Market place",
+    "CURRENCIES": "Expore currencies",
     "ACCOUNT": "My Account"
   },
   "HOME": {
@@ -83,15 +85,40 @@
     "COMMENTS": "Comments",
     "COMMENTS_HELP": "Comments"
   },
-  "RECORD": {
+  "MARKET": {
     "COMMON": {
       "CATEGORY": "Category",
       "CATEGORIES": "Categories",
       "ISSUER": "Issuer"
     },
     "SEARCH": {
-      "TITLE": "Explore",
-      "SEARCH_HELP": "Search (e.g. car, store)",
+      "TITLE": "Market",
+      "SEARCH_HELP": "Search (car, store)",
+      "BTN_ADD": "New",
+      "BTN_OPTIONS": "Search tool"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "EDIT": {
+      "TITLE": "New",
+      "BTN_ADD_PICTURES": "Add pictures",
+      "RECORD_TITLE": "Title",
+      "RECORD_TITLE_HELP": "Title",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Location"
+    }
+  },
+  "REGISTRY": {
+    "COMMON": {
+      "CATEGORY": "Category",
+      "CATEGORIES": "Categories",
+      "ISSUER": "Issuer"
+    },
+    "SEARCH": {
+      "TITLE": "Registry",
+      "SEARCH_HELP": "Search (name, pseudo, public key...)",
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Search tool"
     },

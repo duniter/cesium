@@ -8,22 +8,28 @@
       </h1>
        <button class="button button-assertive" ng-click="logout()" ng-if="isLogged()">
          <i class="icon ion-log-out"></i>
-         {{'COMMON.BTN_LOGOUT'|translate}}
+         <span translate>COMMON.BTN_LOGOUT</span>
        </button>
     </ion-header-bar>
     <ion-content scroll="false">
         <ion-item menu-close href="#/app/home">
-          {{'MENU.HOME'|translate}}
+          <span translate>MENU.HOME</span>
         </ion-item>
-        <ion-item menu-close href="#/app/home/explore">
-          {{'MENU.CURRENCIES'|translate}}
+        <ion-item menu-close href="#/app/registry">
+          <span translate>MENU.REGISTRY</span>
+        </ion-item>
+      <ion-item menu-close href="#/app/market">
+        <span translate>MENU.MARKET</span>
+      </ion-item>
+        <ion-item menu-close href="#/app/currency">
+          <span translate>MENU.CURRENCIES</span>
         </ion-item>
 
         <ion-item menu-close ng-click="login()" ng-if="!isLogged()">
-          {{'MENU.ACCOUNT'|translate}}
+          <span translate>MENU.ACCOUNT</span>
         </ion-item>
         <ion-item menu-close href="#" ui-sref="app.view_wallet" ng-if="isLogged()">
-          {{'MENU.ACCOUNT'|translate}}
+          <span translate>MENU.ACCOUNT</span>
         </ion-item>
         <!-- <ion-item menu-close ng-click="addAccount()">
           Add account

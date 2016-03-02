@@ -1,4 +1,4 @@
-<ion-view view-title="{{'RECORD.EDIT.TITLE'|translate}}" left-buttons="leftButtons">
+<ion-view view-title="{{'REGISTRY.EDIT.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
         <button class="button button-positive" ng-click="save()">
             <i class="icon ion-android-send" ng-if="!id"></i>
@@ -14,14 +14,14 @@
                              ng-if="pictures && pictures.length>0"></ion-gallery>
 
                 <div class="item item-icon-right" ng-if="camera">
-                    <span translate>RECORD.EDIT.BTN_ADD_PICTURES</span>
+                    <span translate>REGISTRY.EDIT.BTN_ADD_PICTURES</span>
                     <a class="dark" href="#" ng-click="openPicturePopup()">
                         <i class="icon ion-camera"></i>
                     </a>
                 </div>
 
                 <div class="item item-input item-icon-right" ng-if="!camera" >
-                    <span class="input-label has-input" translate>RECORD.EDIT.BTN_ADD_PICTURES</span>
+                    <span class="input-label has-input" translate>REGISTRY.EDIT.BTN_ADD_PICTURES</span>
                     <input type="file" id="file" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"/>
                     <!--a class="dark" href="#" ng-if="!camera" ng-click="addPictureFile()">
                         <i class="icon ion-plus"></i>
@@ -30,28 +30,28 @@
 
                 <span class="item item-icon-left" ng-if="id && formData.issuer">
                     <i class="icon ion-key"></i>
-                    <span translate>RECORD.COMMON.ISSUER</span>
+                    <span translate>REGISTRY.COMMON.ISSUER</span>
                     <span class="badge">{{formData.issuer | formatPubkey}}</span>
                 </span>
 
                 <span class="item item-button-right" ng-click="openCategoryModal()">
-                    <span translate>RECORD.COMMON.CATEGORY</span>
+                    <span translate>REGISTRY.COMMON.CATEGORY</span>
                     <span class="badge badge-royal">{{category.name}}</span>&nbsp;
                     <i class="button button-clear ion-chevron-right"></i>
                 </span>
 
                 <div class="item item-input item-floating-label">
-                    <span class="input-label" translate>RECORD.EDIT.RECORD_TITLE</span>
-                    <input type="text" placeholder="{{'RECORD.EDIT.RECORD_TITLE_HELP'|translate}}" ng-model="formData.title" />
+                    <span class="input-label" translate>REGISTRY.EDIT.RECORD_TITLE</span>
+                    <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_TITLE_HELP'|translate}}" ng-model="formData.title" />
                 </div>
 
                 <div class="item item-input item-floating-label">
-                    <span class="input-label" translate>RECORD.EDIT.RECORD_DESCRIPTION</span>
-                    <textarea placeholder="{{'RECORD.EDIT.RECORD_DESCRIPTION_HELP'|translate}}" ng-model="formData.description"></textarea>
+                    <span class="input-label" translate>REGISTRY.EDIT.RECORD_DESCRIPTION</span>
+                    <textarea placeholder="{{'REGISTRY.EDIT.RECORD_DESCRIPTION_HELP'|translate}}" ng-model="formData.description"></textarea>
                 </div>
 
                 <div class="item item-floating-label">
-                    <span class="input-label" translate>RECORD.EDIT.RECORD_LOCATION</span>
+                    <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
                     <div class="item-input-inset">
                         <label class="item-input-wrapper">
                             <input type="text" placeholder="Location" ng-model="formData.location">
