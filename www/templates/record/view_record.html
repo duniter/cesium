@@ -1,6 +1,6 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" view-title="{{'RECORD.VIEW.TITLE'|translate}}">
     <ion-nav-buttons side="secondary">
-        <button class="button button-positive" ng-click="edit()" ng-if="!isLogged() || formData.issuer == walletData.pubkey">
+        <button class="button button-positive" ng-click="edit()" ng-if="canEdit">
             <i class="icon ion-android-create"></i>
         </button>
     </ion-nav-buttons>
@@ -24,12 +24,12 @@
 
                 <span class="item item-icon-left">
                     <i class="icon ion-person"></i>
-                    Issuer
+                    <span translate>RECORD.COMMON.ISSUER</span>
                     <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
                 </span>
 
                 <div class="item">
-                    Category
+                    <span translate>RECORD.COMMON.CATEGORY</span>
                     <span class="badge badge-positive">{{category.name}}</span>
                 </div>
 

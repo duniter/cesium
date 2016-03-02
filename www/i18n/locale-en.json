@@ -20,8 +20,9 @@
     "TITLE": "Home",
     "WELCOME": "Welcome",
     "MESSAGE": "<b>Cesium</b> is still in development phase. There is not much to see right now. :-)",
-    "EXPLORE_CURRENCIES": "Explore currencies",
-    "EXPLORE_MARKET": "Explore market place"
+    "BTN_REGISTRY": "Registry",
+    "BTN_MARKET": "Market place",
+    "BTN_CURRENCIES": "Explore currencies"
   },
   "CURRENCY": {
     "SELECT": {
@@ -31,7 +32,7 @@
     "VIEW": {
       "TITLE": "Explore",
       "TAB_CURRENCY": "Currency",
-      "TAB_WOT": "Web of Trust",
+      "TAB_WOT": "Community",
       "TAB_NETWORK": "Network",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members",
@@ -81,5 +82,30 @@
     "AMOUNT_HELP": "Amount",
     "COMMENTS": "Comments",
     "COMMENTS_HELP": "Comments"
+  },
+  "RECORD": {
+    "COMMON": {
+      "CATEGORY": "Category",
+      "CATEGORIES": "Categories",
+      "ISSUER": "Issuer"
+    },
+    "SEARCH": {
+      "TITLE": "Explore",
+      "SEARCH_HELP": "Search (e.g. car, store)",
+      "BTN_ADD": "New",
+      "BTN_OPTIONS": "Search tool"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "EDIT": {
+      "TITLE": "New",
+      "BTN_ADD_PICTURES": "Add pictures",
+      "RECORD_TITLE": "Title",
+      "RECORD_TITLE_HELP": "Title",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Location"
+    }
   }
 }

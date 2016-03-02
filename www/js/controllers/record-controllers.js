@@ -89,12 +89,40 @@ function RecordLookupController($scope, Record, $state, $ionicModal) {
 
   CategoryModalController.call(this, $scope, Record, $state, $ionicModal);
 
-  $scope.queryData = {};
-  $scope.search = { text: '', results: {} };
-  $scope.filter = null;
+  $scope.search = {
+    text: '',
+    results: {},
+    category: null,
+    options: false
+  };
 
-  function createQuery() {
-    var res = {
+  $scope.$watch('search.options', $scope.doSearch, true);
+
+  $scope.isFilter = function(filter) {
+    return ($scope.filter == filter);
+  }
+
+  $scope.selectCategory = function(cat) {
+    if (!cat.parent) return;
+    $scope.search.category = cat;
+    $scope.closeCategoryModal();
+    $scope.doSearch();
+  };
+
+  $scope.searchChanged = function() {
+    $scope.search.text = $scope.search.text.toLowerCase();
+    if ($scope.search.text.length > 1) {
+      $scope.doSearch();
+    }
+    else {
+      $scope.search.results = [];
+    }
+  };
+
+  $scope.doSearch = function(query) {
+    $scope.search.looking = true;
+
+    var request = {
       query: {},
       highlight: {
         fields : {
@@ -107,49 +135,20 @@ function RecordLookupController($scope, Record, $state, $ionicModal) {
       _source: ["title", "time", "description", "pictures"]
     };
     var matches = [];
-    matches[0] = {match : { title: $scope.search.text}};
-    if ($scope.isFilter('advanced')
-        && $scope.search.category != null
-        && $scope.search.category != "undefined") {
-      matches[1] = {match : { category: $scope.search.category.id}};
+    if ($scope.search.text.length > 1) {
+      matches.push({match : { title: $scope.search.text}});
+    }
+    if ($scope.search.options && $scope.search.category) {
+      matches.push({match : { category: $scope.search.category.id}});
     }
     if (matches.length > 1) {
-      res.query.bool = { should: matches };
+      request.query.bool = { should: matches };
     }
     else {
-      res.query.match = matches[0].match;
+      request.query.match = matches[0].match;
     }
-    return res;
-  }
 
-  $scope.setFilter = function(filter) {
-    $scope.filter = filter;
-  }
-
-  $scope.isFilter = function(filter) {
-    return ($scope.filter == filter);
-  }
-
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    $scope.search.category = cat;
-    $scope.closeCategoryModal();
-  };
-
-  $scope.searchChanged = function() {
-    $scope.search.text = $scope.search.text.toLowerCase();
-    if ($scope.search.text.length > 1) {
-      $scope.search.looking = true;
-      $scope.queryData = createQuery();
-      $scope.doSearch()
-    }
-    else {
-      $scope.search.results = [];
-    }
-  };
-
-  $scope.doSearch = function() {
-    return Record.record.search($scope.queryData)
+    return Record.record.search(request)
       .then(function(res){
         $scope.search.looking = false;
         if (res.hits.total == 0) {
@@ -160,11 +159,13 @@ function RecordLookupController($scope, Record, $state, $ionicModal) {
               var record = hit._source;
               record.id = hit._id;
               record.type = hit._type;
-              if (hit.highlight.title) {
-                  record.title = hit.highlight.title[0];
-              }
-              if (hit.highlight.description) {
-                  record.description = hit.highlight.description[0];
+              if (hit.highlight) {
+                if (hit.highlight.title) {
+                    record.title = hit.highlight.title[0];
+                }
+                if (hit.highlight.description) {
+                    record.description = hit.highlight.description[0];
+                }
               }
               return result.concat(record);
             }, []);
@@ -188,6 +189,7 @@ function RecordController($scope, $ionicModal, Wallet, Record, UIUtils, $state, 
   $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
+  $scope.canEdit = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
@@ -212,12 +214,8 @@ function RecordController($scope, $ionicModal, Wallet, Record, UIUtils, $state, 
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
               return res.concat({src: pic.src});
             }, []);
-          }/*
-          if (hit._source.pictures) {
-            hit._source.pictures.forEach(function(pic) {
-              $scope.pictures.concat({src: pic.src});
-            });
-          }*/
+          }
+          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey)
           UIUtils.loading.hide();
         })
       })

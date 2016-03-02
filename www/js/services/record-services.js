@@ -165,7 +165,7 @@ angular.module('cesium.record.services', ['ngResource', 'cesium.services'])
           .then(function(hash_array) {
             CryptoUtils.sign(str, keypair)
             .then(function(signature) {
-              obj.hash = CryptoUtils.util.encode_utf8(hash_array);
+              obj.hash = CryptoUtils.util.encode_base58(hash_array);
               obj.signature = signature;
               postRecord(obj).then(function (id){
                 resolve(id);

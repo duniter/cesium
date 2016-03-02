@@ -20,8 +20,9 @@
     "TITLE": "Accueil",
     "WELCOME": "Bienvenu.",
     "MESSAGE": "<b>Cesium</b> est toujours en développement. Il n'y a pas encore grand chose à voir ! :-)",
-    "EXPLORE_CURRENCIES": "Explorer les monnaies",
-    "EXPLORE_MARKET": "Explorer le marché"
+    "BTN_REGISTRY": "Annuaire",
+    "BTN_MARKET": "Offres/demandes",
+    "BTN_CURRENCIES": "Explorer les monnaies"
   },
   "CURRENCY": {
     "SELECT": {
@@ -31,7 +32,7 @@
     "VIEW": {
       "TITLE": "Explorer",
       "TAB_CURRENCY": "Monnaie",
-      "TAB_WOT": "Membres",
+      "TAB_WOT": "Communauté",
       "TAB_NETWORK": "Réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Membres",
@@ -49,37 +50,62 @@
     }
   },
   "PEER": {
-    "PEERS": "Peers",
-    "KNOWN_PEERS": "Known peers",
-    "SIGNED_ON_BLOCK": "Signed on block"
+    "PEERS": "Noeuds",
+    "KNOWN_PEERS": "Noeuds connus",
+    "SIGNED_ON_BLOCK": "Signé sur le bloc"
   },
   "WOT": {
-    "SEARCH_HELP": "Search (member or public key)",
+    "SEARCH_HELP": "recherche (membre ou clé publique)",
     "MODAL": {
-      "TITLE": "Search"
+      "TITLE": "Recherche"
     }
   },
   "LOGIN": {
-    "TITLE": "Login",
-    "USERNAME": "Login",
-    "USERNAME_HELP": "Login (Pass phrase or email)",
-    "PASSWORD": "Password",
-    "PASSWORD_HELP": "Password"
+    "TITLE": "Connexion",
+    "USERNAME": "Phrase de protection",
+    "USERNAME_HELP": "Phrase de protection (phrase ou email)",
+    "PASSWORD": "Mot de passe",
+    "PASSWORD_HELP": "Mot de passe"
   },
   "ACCOUNT": {
-    "TITLE": "My Account",
-    "BALANCE": "Balance",
-    "LAST_TX": "Last transactions",
-    "BTN_SEND_MONEY": "Send money",
-    "BTN_REGISTER": "Register as member"
+    "TITLE": "Mon compte",
+    "BALANCE": "Solde",
+    "LAST_TX": "Dernières transactions",
+    "BTN_SEND_MONEY": "Payer",
+    "BTN_REGISTER": "S'inscrire comme membre"
   },
   "TRANSFER": {
-    "TITLE": "Transfer",
-    "FROM": "From",
-    "TO": "To",
-    "AMOUNT": "Amount",
-    "AMOUNT_HELP": "Amount",
-    "COMMENTS": "Comments",
-    "COMMENTS_HELP": "Comments"
+    "TITLE": "Payer",
+    "FROM": "De",
+    "TO": "A",
+    "AMOUNT": "Montant",
+    "AMOUNT_HELP": "Montant",
+    "COMMENTS": "Commentaires",
+    "COMMENTS_HELP": "Commentaires"
+  },
+  "RECORD": {
+    "COMMON": {
+      "CATEGORY": "Catégorie",
+      "CATEGORIES": "Catégories",
+      "ISSUER": "Soumis par"
+    },
+    "SEARCH": {
+      "TITLE": "Recherche",
+      "SEARCH_HELP": "Recherche (voiture, livre...)",
+      "BTN_ADD": "Nouveau",
+      "BTN_OPTIONS": "Outil de recherche"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "EDIT": {
+      "TITLE": "Nouveau",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "RECORD_TITLE": "Titre",
+      "RECORD_TITLE_HELP": "Titre",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Localiser"
+    }
   }
 }
