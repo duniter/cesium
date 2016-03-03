@@ -8,7 +8,8 @@
     "BTN_BACK": "Retour",
     "BTN_CANCEL": "Annuler",
     "BTN_LOGIN": "Se connecter",
-    "BTN_LOGOUT": "Déconnecter"
+    "BTN_LOGOUT": "Déconnecter",
+    "BTN_ADD_ACCOUNT": "S'inscrire"
   },
   "MENU": {
     "TITLE": "Cesium",
@@ -64,8 +65,8 @@
   },
   "LOGIN": {
     "TITLE": "Connexion",
-    "USERNAME": "Phrase de protection",
-    "USERNAME_HELP": "Phrase de protection (phrase ou email)",
+    "USERNAME": "Email (ou phrase)",
+    "USERNAME_HELP": "dupond@domaine.com",
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe"
   },
@@ -74,7 +75,17 @@
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "BTN_SEND_MONEY": "Payer",
-    "BTN_REGISTER": "S'inscrire comme membre"
+    "BTN_REGISTER": "S'inscrire comme membre",
+    "NEW": {
+      "TITLE": "Inscription",
+      "SLIDE_2_TITLE": "Type de compte :",
+      "MEMBER_ACCOUNT": "Compte membre",
+      "WALLET_ACCOUNT": "Simple protefeuille anonyme",
+      "PSEUDO": "Pseudonyme",
+      "PSEUDO_HELP": "Pseudonyme",
+      "PASSWORD_CONFIRM": "Confirmation du mot de passe",
+      "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe"
+    }
   },
   "TRANSFER": {
     "TITLE": "Payer",
@@ -101,13 +112,46 @@
       "TITLE": ""
     },
     "EDIT": {
-      "TITLE": "Nouveau",
+      "TITLE": "Edition",
       "BTN_ADD_PICTURES": "Ajouter des photos",
       "RECORD_TITLE": "Titre",
       "RECORD_TITLE_HELP": "Titre",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Localiser"
+      "RECORD_LOCATION": "Ville"
     }
+  },
+  "REGISTRY": {
+    "COMMON": {
+      "CATEGORY": "Catégorie",
+      "CATEGORIES": "Catégories",
+      "ISSUER": "Soumis par"
+    },
+    "SEARCH": {
+      "TITLE": "Annuaire",
+      "SEARCH_HELP": "Recherche (nom, pseudo, clé publique...)",
+      "BTN_ADD": "Nouveau",
+      "BTN_OPTIONS": "Outil de recherche"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "EDIT": {
+      "TITLE": "Edition",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "RECORD_TITLE": "Titre",
+      "RECORD_TITLE_HELP": "Titre",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Ville"
+    }
+  },
+  "ERROR": {
+    "POPUP_TITLE": "Erreur",
+    "UNKNOWN_ERROR": "Erreur inconnue",
+    "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie."
+  },
+  "INFO": {
+    "POPUP_TITLE": "Information"
   }
 }

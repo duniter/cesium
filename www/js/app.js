@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'cesium.controllers', 'pascalprecht.translate'])
+angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
 
   .filter('formatInteger', function() {
     return function(input) {
@@ -57,6 +57,27 @@ angular.module('cesium', ['ionic', 'cesium.controllers', 'pascalprecht.translate
     .useLoaderCache(true);
 
   })
+
+  // Add new compare-to directive (need for form validation)
+  .directive("compareTo", function() {
+      return {
+          require: "ngModel",
+          scope: {
+              otherModelValue: "=compareTo"
+          },
+          link: function(scope, element, attributes, ngModel) {
+
+              ngModel.$validators.compareTo = function(modelValue) {
+                  return modelValue == scope.otherModelValue;
+              };
+
+              scope.$watch("otherModelValue", function() {
+                  ngModel.$validate();
+              });
+          }
+      };
+  })
+
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

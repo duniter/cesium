@@ -2,36 +2,42 @@
 
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', function($ionicLoading, $ionicPopup) {
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate) {
   function alertError(err, subtitle) {
-    var message = err.message || err;
-    return $ionicPopup.show({
-      template: '<p>' + (message || 'Unknown error') + '</p>',
-      title: 'Application error',
-      subTitle: subtitle,
-      buttons: [
-        {
-          text: '<b>OK</b>',
-          type: 'button-assertive'
-        }
-      ]
+    $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
+    .then(function (translations) {
+      var message = err.message || translations[err];
+      return $ionicPopup.show({
+        template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
+        title: translations['ERROR.POPUP_TITLE'],
+        subTitle: subtitle,
+        buttons: [
+          {
+            text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
+            type: 'button-assertive'
+          }
+        ]
+      });
     });
   }
 
   function alertInfo(message, subtitle) {
-      var message = err.message || err;
+    $translate([message, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
+    .then(function (translations) {
+      var message = translations[message];
       return $ionicPopup.show({
         template: '<p>' + message + '</p>',
-        title: 'Information',
+        title: translations['INFO.POPUP_TITLE'],
         subTitle: subtitle,
         buttons: [
           {
-            text: '<b>OK</b>',
+            text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
             type: 'button-positive'
           }
         ]
       });
-    }
+    });
+  }
 
   function hideLoading(){
     $ionicLoading.hide();

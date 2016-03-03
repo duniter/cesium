@@ -3,30 +3,56 @@
     <button class="button button-positive" ng-click="closeLogin()" translate>COMMON.BTN_CANCEL
     </button>
     <h1 class="title" translate>LOGIN.TITLE</h1>
-    <button class="button button-positive" ng-click="doLogin()" translate>COMMON.BTN_OK
-    </button>
+    <button class="button button-positive button-icon ion-android-done" ng-click="doLogin()"></button>
   </ion-header-bar>
 
   <ion-content scroll="false">
-    <form ng-submit="doLogin()">
-      <div class="list">
-        <label class="item item-input item-floating-label">
+    <form name="loginForm" novalidate="" ng-submit="doLogin()">
+      <div class="list"
+        ng-init="setLoginForm(loginForm)">
+
+        <!-- username -->
+        <label class="item item-input"
+               ng-class="{ 'item-input-error': loginForm.$submitted && loginForm.username.$invalid}">
           <span class="input-label" translate>LOGIN.USERNAME</span>
-          <input type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}" ng-model="loginData.username" ng-change="loginDataChanged()">
+          <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
+                 ng-model="loginData.username"
+                 ng-change="loginDataChanged()"
+                 required>
         </label>
-        <label class="item item-input item-floating-label">
+        <div class="form-errors"
+             ng-show="loginForm.$submitted && loginForm.username.$error"
+             ng-messages="loginForm.username.$error">
+          <div class="form-error" ng-message="required">
+            <span translate="ERROR.FIELD_REQUIRED"></span>
+          </div>
+        </div>
+
+        <!-- password-->
+        <label class="item item-input"
+               ng-class="{ 'item-input-error': loginForm.$submitted && loginForm.password.$invalid}">
           <span class="input-label" translate>LOGIN.PASSWORD</span>
-          <input type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}" ng-model="loginData.password" ng-change="loginDataChanged()">
+          <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+                 ng-model="loginData.password"
+                 ng-change="loginDataChanged()"
+                 required>
         </label>
+        <div class="form-errors"
+             ng-show="loginForm.$submitted && loginForm.password.$error"
+             ng-messages="loginForm.password.$error">
+          <div class="form-error" ng-message="required">
+            <span translate="ERROR.FIELD_REQUIRED"></span>
+          </div>
+        </div>
+
+        <!-- show public key -->
         <div class="item item-icon-left item-button-right">
           <i class="icon ion-key"/>
           <span translate>COMMON.PUBKEY</span>
           <a class="button button-light button-small" ng-click="showLoginPubkey()" ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
           class="animate-if">
             {{'COMMON.BTN_SHOW' | translate}}
-            </a>            
-          </label>
-
+            </a>
           <span class="badge badge-energized" ng-if="loginData.pubkey">
             {{loginData.pubkey | formatPubkey}}
           </span>

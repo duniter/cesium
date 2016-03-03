@@ -5,10 +5,11 @@
     "BTN_OK": "OK",
     "BTN_SHOW": "Show",
     "BTN_RELATIVE_UNIT": "Use relative unit",
-    "BTN_BACK": "Back",
+    "BTN_BACK": " Back",
     "BTN_CANCEL": "Cancel",
     "BTN_LOGIN": "Login",
-    "BTN_LOGOUT": "Logout"
+    "BTN_LOGOUT": " Logout",
+    "BTN_ADD_ACCOUNT": "Register"
   },
   "MENU": {
     "TITLE": "Cesium",
@@ -64,8 +65,8 @@
   },
   "LOGIN": {
     "TITLE": "Login",
-    "USERNAME": "Login",
-    "USERNAME_HELP": "Login (Pass phrase or email)",
+    "USERNAME": "Email (or sentence)",
+    "USERNAME_HELP": "joe@domain.com",
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password"
   },
@@ -74,7 +75,17 @@
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "BTN_SEND_MONEY": "Send money",
-    "BTN_REGISTER": "Register as member"
+    "BTN_REGISTER": "Register as member",
+    "NEW": {
+      "TITLE": "Register",
+      "SLIDE_2_TITLE": "Kind of account:",
+      "MEMBER_ACCOUNT": "Member account",
+      "WALLET_ACCOUNT": "Simple wallet account",
+      "PSEUDO": "Pseudonym",
+      "PSEUDO_HELP": "joe123",
+      "PASSWORD_CONFIRM": "Confirm Password",
+      "PASSWORD_CONFIRM_HELP": "Confirm Password"
+    }
   },
   "TRANSFER": {
     "TITLE": "Transfer",
@@ -101,7 +112,7 @@
       "TITLE": ""
     },
     "EDIT": {
-      "TITLE": "New",
+      "TITLE": "Edit",
       "BTN_ADD_PICTURES": "Add pictures",
       "RECORD_TITLE": "Title",
       "RECORD_TITLE_HELP": "Title",
@@ -126,7 +137,7 @@
       "TITLE": ""
     },
     "EDIT": {
-      "TITLE": "New",
+      "TITLE": "Edit",
       "BTN_ADD_PICTURES": "Add pictures",
       "RECORD_TITLE": "Title",
       "RECORD_TITLE_HELP": "Title",
@@ -134,5 +145,16 @@
       "RECORD_DESCRIPTION_HELP": "Description",
       "RECORD_LOCATION": "Location"
     }
+  },
+  "ERROR": {
+    "POPUP_TITLE": "Error",
+    "UNKNOWN_ERROR": "Unknown error",
+    "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
+    "FIELD_REQUIRED": "This field is required.",
+    "FIELD_TOO_SHORT": "This field is too short.",
+    "PASSWORD_NOT_CONFIRMED": "Must match previous password"
+  },
+  "INFO": {
+    "POPUP_TITLE": "Information"
   }
 }
