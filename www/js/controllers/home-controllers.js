@@ -37,15 +37,9 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 ;
 
 function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate) {
-  // Form data for the login modal
-  $scope.loginData = {
-    username: null,
-    password: null
-  };
-  $scope.loginForm = null;
-
   // Login modal
   $scope.loginModal = "undefined";
+  $scope.loginData = {};
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -116,7 +110,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
     if(!$scope.loginForm.$valid) {
       return;
     }
-    $scope.loginForm = null;
+    delete $scope.loginForm;
     $scope.closeLogin();
     UIUtils.loading.show(); 
 
@@ -239,15 +233,15 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
         $scope.slide(0);
         $scope.newAccountModal.show();
         // TODO: remove default
-        $timeout(function() {
+        /*$timeout(function() {
           $scope.accountData.currency = $scope.knownCurrencies[0];
           $scope.accountData.isMember = true;
           $scope.next();
           $scope.next();
-        }, 300);
+        }, 300);*/
     }
 
-    if ($scope.newAccountModal == "undefined") {
+    if (!$scope.newAccountModal) {
       UIUtils.loading.show();
       // Create the account modal that we will use later
       $ionicModal.fromTemplateUrl('templates/account/new_account.html', {
@@ -298,7 +292,8 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
     if(!$scope.accountForm.$valid) {
       return;
     }
-    $scope.accountForm = null;
+    delete $scope.accountForm;
+    delete $scope.accountData;
   };
 
   // TODO: remove auto add account when done
