@@ -34,9 +34,19 @@
                     <span class="badge">{{formData.issuer | formatPubkey}}</span>
                 </span>
 
-                <span class="item item-button-right" ng-click="openCategoryModal()">
+                <div class="item item-toggle dark">
+                    {{'REGISTRY.EDIT.BTN_IS_COMPANY' | translate}}
+                    <label class="toggle toggle-royal">
+                        <input type="checkbox" ng-model="formData.isCompany">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <span class="item item-button-right" ng-click="openCategoryModal()" ng-show="formData.isCompany">
                     <span translate>REGISTRY.COMMON.CATEGORY</span>
-                    <span class="badge badge-royal">{{category.name}}</span>&nbsp;
+                    <span>{{category.name}}</span>&nbsp;
                     <i class="button button-clear ion-chevron-right"></i>
                 </span>
 

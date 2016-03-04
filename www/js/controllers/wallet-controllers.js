@@ -41,7 +41,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('TransferCtrl', TransferController)
 ;
 
-function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet) {
+function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, $translate) {
 
   $scope.walletData = {};
   $scope.convertedBalance = 0;
@@ -52,6 +52,7 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet) {
     $scope.loadWallet()
       .then(function(wallet) {
         $scope.updateWalletView(wallet);
+        UIUtils.loading.hide();
       });
   });
 
@@ -87,41 +88,54 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet) {
     $state.go('app.view_transfer');
   };
 
+  $scope.setRegisterForm = function(registerForm) {
+    $scope.registerForm = registerForm;
+  };
+
   // Self cert
   $scope.self= function() {
 
-    // Choose UID popup
-    $ionicPopup.show({
-      template: '<input type="text" ng-model="walletData.uid">',
-      title: 'Enter a pseudo',
-      subTitle: 'A pseudo is need to let other member find you.',
-      scope: $scope,
-      buttons: [
-        { text: 'Cancel' },
-        {
-          text: '<b>Send</b>',
-          type: 'button-positive',
-          onTap: function(e) {
-            if (!$scope.walletData.uid) {
-              //don't allow the user to close unless he enters a uid
-              e.preventDefault();
-            } else {
-              // TODO : check if not already used
-              return $scope.walletData.uid;
-            }
-          }
-        }
-      ]
-    })
-    .then(function(uid) {
-      UIUtils.loading.show();
-      Wallet.self(uid)
-      .then(function() {
-        UIUtils.loading.hide();
-      })
-      .catch(UIUtils.onError('Could not send self certification'));
-    });
+    $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
+      .then(function (translations) {
 
+        // Choose UID popup
+        $ionicPopup.show({
+          templateUrl: 'templates/account/popup_register.html',
+          title: translations['ACCOUNT.POPUP_REGISTER.TITLE'],
+          subTitle: translations['ACCOUNT.POPUP_REGISTER.HELP'],
+          scope: $scope,
+          buttons: [
+            { text: translations['COMMON.BTN_CANCEL'] },
+            {
+              text: translations['COMMON.BTN_ADD_ACCOUNT'] /*'<b>Send</b>'*/,
+              type: 'button-positive',
+              onTap: function(e) {
+                $scope.registerForm.$submitted=true;
+                if(!$scope.registerForm.$valid || !$scope.walletData.uid) {
+                  //don't allow the user to close unless he enters a uid
+                  e.preventDefault();
+                } else {
+                  // TODO : check if not already used
+                  return $scope.walletData.uid;
+                }
+              }
+            }
+          ]
+        })
+        .then(function(uid) {
+          if (!uid) {
+            $scope.walletData.uid = null;
+          }
+          else {
+            UIUtils.loading.show();
+            Wallet.self(uid)
+            .then(function() {
+              UIUtils.loading.hide();
+            })
+            .catch(UIUtils.onError('ERROR.SEND_SELF_REGISTRATION'));
+          }
+        });
+      });
   };
 }
 
@@ -157,6 +171,7 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
       .then(function(walletData) {
         $scope.walletData = walletData;
         $scope.onUseRelativeChanged();
+        UIUtils.loading.hide();
       });
   });
 

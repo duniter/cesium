@@ -232,7 +232,9 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
 
   $scope.walletData = {};
-  $scope.formData = {};
+  $scope.formData = {
+    isCompany: false
+  };
   $scope.id = null;
   $scope.isMember = false;
   $scope.category = {};

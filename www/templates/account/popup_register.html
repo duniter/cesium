@@ -1,0 +1,22 @@
+<form name="accountForm" ng-submit="">
+  <div class="list" ng-init="setRegisterForm(accountForm)">
+    <label class="item item-input"
+           ng-class="{'item-input-error': accountForm.$submitted && accountForm.pseudo.$invalid}">
+      <span class="input-label" translate>ACCOUNT.NEW.PSEUDO</span>
+      <input name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
+             ng-model="walletData.uid"
+             ng-minlength="3"
+             required>
+    </label>
+    <div class="form-errors"
+         ng-if="accountForm.$submitted && accountForm.pseudo.$error"
+         ng-messages="accountForm.pseudo.$error">
+      <div class="form-error" ng-message="required">
+        <span translate="ERROR.FIELD_REQUIRED"></span>
+      </div>
+      <div class="form-error" ng-message="minlength">
+        <span translate="ERROR.FIELD_TOO_SHORT"></span>
+      </div>
+    </div>
+  </div>
+</form>

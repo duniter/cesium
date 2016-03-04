@@ -85,6 +85,10 @@
       "PSEUDO_HELP": "joe123",
       "PASSWORD_CONFIRM": "Confirm Password",
       "PASSWORD_CONFIRM_HELP": "Confirm Password"
+    },
+    "POPUP_REGISTER": {
+      "TITLE": "Enter a pseudonym",
+      "HELP": "A pseudonym is need to let other members find you."
     }
   },
   "TRANSFER": {
@@ -143,7 +147,8 @@
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Location"
+      "RECORD_LOCATION": "Location",
+      "BTN_IS_COMPANY": "Is Company ?"
     }
   },
   "ERROR": {
@@ -152,7 +157,8 @@
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "This field is too short.",
-    "PASSWORD_NOT_CONFIRMED": "Must match previous password"
+    "PASSWORD_NOT_CONFIRMED": "Must match previous password",
+    "SEND_SELF_REGISTRATION": "Error while trying to register"
   },
   "INFO": {
     "POPUP_TITLE": "Information"

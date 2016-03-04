@@ -75,9 +75,9 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
               resolve(walletData);
             })
             .catch(function(err) {
-              console.error('>>>>>>>' , err);
-              UIUtils.alert.error('Your browser is not compatible with cryptographic features.');
               UIUtils.loading.hide();
+              console.error('>>>>>>>' , err);
+              UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
               reject(err);
             });
         });
@@ -88,9 +88,9 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
             resolve(walletData);
           })
           .catch(function(err) {
+            UIUtils.loading.hide();
             console.error('>>>>>>>' , err);
             UIUtils.alert.error('Could not fetch wallet data from remote uCoin node.');
-            UIUtils.loading.hide();
             reject(err);
           });
       }
@@ -101,8 +101,10 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
   };
 
   // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    return $scope.loginModal.hide();
+  $scope.cancelLogin = function() {
+    $scope.loginData = {}; // Reset login data
+    $scope.loginForm.$setPristine(); // Reset form
+    $scope.loginModal.hide();
   };
 
   // Login form submit
@@ -110,30 +112,32 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
     if(!$scope.loginForm.$valid) {
       return;
     }
-    delete $scope.loginForm;
-    $scope.closeLogin();
-    UIUtils.loading.show(); 
+    UIUtils.loading.show();
 
-    // Call wallet login
-    Wallet.login($scope.loginData.username, $scope.loginData.password)
-    .catch(function(err) {
-      $scope.loginData = {}; // Reset login data
-      UIUtils.loading.hide();
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('Your browser is not compatible with cryptographic libraries.');
-    })
+    $scope.loginModal.hide()
     .then(function(){
-      UIUtils.loading.hide();
-      var callback = $scope.loginData.callback;
-      $scope.loginData = {}; // Reset login data
-      if (callback != "undefined" && callback != null) {
-        callback();
-      }
-      // Default: redirect to wallet view
-      else {
-        $state.go('app.view_wallet');
-      }
-    });
+      // Call wallet login, then execute callback function
+      Wallet.login($scope.loginData.username, $scope.loginData.password)
+        .then(function(){
+          var callback = $scope.loginData.callback;
+          $scope.loginData = {}; // Reset login data
+          $scope.loginForm.$setPristine(); // Reset form
+          if (callback != "undefined" && callback != null) {
+            callback();
+          }
+          // Default: redirect to wallet view
+          else {
+            $state.go('app.view_wallet');
+          }
+        })
+        .catch(function(err) {
+          $scope.loginData = {}; // Reset login data
+          $scope.loginForm.$setPristine(); // Reset form
+          UIUtils.loading.hide();
+          console.error('>>>>>>>' , err);
+          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+        });
+    })
   };
 
   $scope.loginDataChanged = function() {
@@ -153,7 +157,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
       $scope.loginData.computing=false;
       UIUtils.loading.hide();
       console.error('>>>>>>>' , err);
-      UIUtils.alert.error('Your browser is not compatible with cryptographic libraries.');
+      UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
     });
   };
 
@@ -194,7 +198,6 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
   $scope.accounts = [];
   $scope.search = { text: '', results: {} };
   $scope.knownCurrencies = ['meta_brouzouf'];
-  $scope.newAccountModal = "undefined";
   $scope.slideIndex = 0;
   $scope.accountData = {};
   $scope.accountForm = {};
@@ -292,8 +295,24 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
     if(!$scope.accountForm.$valid) {
       return;
     }
-    delete $scope.accountForm;
-    delete $scope.accountData;
+
+    UIUtils.loading.show();
+    $scope.newAccountModal.hide()
+    .then(function(){
+      Wallet.login($scope.accountData.username, $scope.accountData.password)
+        .then(function() {
+          // Reset account data
+          delete $scope.accountForm;
+          $scope.accountData = {};
+          UIUtils.loading.hide();
+          $state.go('app.view_wallet');
+        })
+        .catch(function(err) {
+          UIUtils.loading.hide();
+          console.error('>>>>>>>' , err);
+          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+        });
+    })
   };
 
   // TODO: remove auto add account when done
