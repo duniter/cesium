@@ -84,7 +84,8 @@
       "PSEUDO": "Pseudonym",
       "PSEUDO_HELP": "joe123",
       "PASSWORD_CONFIRM": "Confirm Password",
-      "PASSWORD_CONFIRM_HELP": "Confirm Password"
+      "PASSWORD_CONFIRM_HELP": "Confirm Password",
+      "MSG_UID_ALREADY_USED": "This pseudonym is alreadey used by an existing member.<br/>Please choose another one."
     },
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",

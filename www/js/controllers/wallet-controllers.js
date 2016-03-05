@@ -41,7 +41,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('TransferCtrl', TransferController)
 ;
 
-function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, $translate) {
+function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA, $translate) {
 
   $scope.walletData = {};
   $scope.convertedBalance = 0;
@@ -115,7 +115,6 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, $tra
                   //don't allow the user to close unless he enters a uid
                   e.preventDefault();
                 } else {
-                  // TODO : check if not already used
                   return $scope.walletData.uid;
                 }
               }
@@ -123,17 +122,43 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, $tra
           ]
         })
         .then(function(uid) {
-          if (!uid) {
+          if (!uid) { // user cancel
             $scope.walletData.uid = null;
+            UIUtils.loading.hide();
+            return;
           }
-          else {
-            UIUtils.loading.show();
+          var doSendSelf = function() {
             Wallet.self(uid)
-            .then(function() {
+              .then(function() {
+                UIUtils.loading.hide();
+              })
+              .catch(UIUtils.onError('ERROR.SEND_SELF_REGISTRATION'));
+          };
+          // Check uid is not used by another member
+          UIUtils.loading.show();
+          BMA.wot.lookup({ search: uid })
+          .then(function(res) {
+            var found = typeof res.results != "undefined" && res.results != null && res.results.length > 0
+                && res.results.some(function(pub){
+                  return typeof pub.uids != "undefined" && pub.uids != null && pub.uids.length > 0
+                      && pub.uids.some(function(idty){
+                        return (idty.uid == uid);
+                      });
+                });
+            if (found) { // uid is already used : display a message and reopen the popup
               UIUtils.loading.hide();
-            })
-            .catch(UIUtils.onError('ERROR.SEND_SELF_REGISTRATION'));
-          }
+              UIUtils.alert.info('ACCOUNT.NEW.MSG_UID_ALREADY_USED')
+              .then(function(){
+                $scope.self();
+              });
+            }
+            else {
+              doSendSelf();
+            }
+          })
+          .catch(function() {
+             doSendSelf();
+          });
         });
       });
   };
