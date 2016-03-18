@@ -1,0 +1,10 @@
+
+/**********
+   Categories select
+**********/
+
+.item-category{
+  overflow: inherit ;
+  text-overflow: inherit ;
+  white-space: normal !important;
+}

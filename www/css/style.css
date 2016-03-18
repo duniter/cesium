@@ -18,7 +18,6 @@ body {
     margin-top: 30px;
 }
 
-
 .badge sub, .badge sup {
     line-height: inherit;
 }
@@ -51,17 +50,6 @@ body {
 .light {
     color: grey;
 }
-
-/**********
-   Categories select
-**********/
-
-.item-category{
-  overflow: inherit ;
-  text-overflow: inherit ;
-  white-space: normal !important;
-}
-
 /*.button {*/
     /*height: 50px !important;*/
     /*font-size: 18px !important;*/
@@ -118,8 +106,6 @@ body {
 .slider-slide {
     color: #000;
     background-color: #fff;
-    /*text-align: center;*/
-
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: 300;
 }
