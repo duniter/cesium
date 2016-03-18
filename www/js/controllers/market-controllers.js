@@ -55,6 +55,14 @@ angular.module('cesium.market.controllers', ['cesium.services'])
 function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
 
   $scope.categoryModal = null;
+  $scope.categories = {
+      all: null,
+      search: {
+        text: '',
+        results: {},
+        options: false
+      }
+  };
 
   // category lookup modal
   $ionicModal.fromTemplateUrl('templates/market/modal_category.html', {
@@ -66,10 +74,13 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
   });
 
   $scope.openCategoryModal = function() {
+
     // load categories
     Market.category.all()
     .then(function(categories){
-      $scope.categories = categories;
+      $scope.categories.search.text = '';
+      $scope.categories.search.results = categories;
+      $scope.categories.all = categories;
       $scope.categoryModal.show();
     });
   };
@@ -82,6 +93,31 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
     if (!cat.parent) return;
     console.log('Category ' + cat.name + 'selected. Method selectCategory(cat) not overwritten.');
     $scope.closeCategoryModal();
+  };
+
+  $scope.searchCategoryChanged = function() {
+    $scope.categories.search.text = $scope.categories.search.text.toLowerCase();
+    if ($scope.categories.search.text.length > 1) {
+      $scope.doSearchCategory($scope.categories.search.text);
+    }
+    else {
+      $scope.categories.search.results = $scope.categories.all;
+    }
+  };
+
+  $scope.doSearchCategory = function(text) {
+    $scope.search.looking = true;
+
+    $scope.categories.search.results = $scope.categories.all.reduce(function(result, cat) {
+      if (cat.parent != null
+          && cat.parent != "undefined"
+          && cat.name.toLowerCase().search(text) != -1) {
+          return result.concat(cat);
+      }
+      return result;
+    }, []);
+
+    $scope.categories.search.looking = false;
   };
 }
 

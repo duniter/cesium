@@ -198,7 +198,9 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
            empty: emptyHit
         },
         category: {
-          all: getCategories
+          all: getCategories,
+          searchText: getResource('http://' + server + '/market/category/_search?q=:search'),
+          search: postResource('http://' + server + '/market/category/_search?pretty')
         },
         record: {
           get: getResource('http://' + server + '/market/record/:id'),
