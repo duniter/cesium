@@ -4,5 +4,9 @@
   "watchPatterns": [
     "www/**/*",
     "!www/lib/**/*"
+  ],
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
   ]
 }

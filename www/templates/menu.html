@@ -15,10 +15,10 @@
         <ion-item menu-close href="#/app/home">
           <span translate>MENU.HOME</span>
         </ion-item>
-        <ion-item menu-close href="#/app/registry">
+        <ion-item menu-close href="#/app/registry" ng-if="options.registry.enable">
           <span translate>MENU.REGISTRY</span>
         </ion-item>
-      <ion-item menu-close href="#/app/market">
+      <ion-item menu-close href="#/app/market" ng-if="options.market.enable">
         <span translate>MENU.MARKET</span>
       </ion-item>
         <ion-item menu-close href="#/app/currency">

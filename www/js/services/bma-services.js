@@ -1,8 +1,9 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.bma.services', ['ngResource'])
+angular.module('cesium.bma.services', ['ngResource',
+    'cesium.config'])
 
-.factory('BMA', function($http, $q) {
+.factory('BMA', function($http, $q, APP_CONFIG) {
 
     function BMA(server, wsServer) {
         if (wsServer == "undefined" || wsServer == null) {
@@ -132,9 +133,8 @@ angular.module('cesium.bma.services', ['ngResource'])
         }
       }
     }
-    var service = BMA('metab.ucoin.fr', 'metab.ucoin.fr:9201');
-    //var service = BMA('192.168.0.28:9201');
-    //var service = BMA('metab.ucoin.io');
+
+    var service = BMA(APP_CONFIG.UCOIN_NODE, APP_CONFIG.UCOIN_NODE_WS);
     service.instance = BMA;
   return service;
 })

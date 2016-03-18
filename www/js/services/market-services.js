@@ -1,6 +1,6 @@
-angular.module('cesium.market.services', ['ngResource', 'cesium.services'])
+angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config'])
 
-.factory('Market', function($http, $q, CryptoUtils) {
+.factory('Market', function($http, $q, CryptoUtils, APP_CONFIG) {
 
     function Market(server, wsServer) {
 
@@ -210,8 +210,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services'])
       }
     }
 
-    var service = Market('localhost:9200');
-    //var service = ES('metab.ucoin.fr:9288');
+    var service = Market(APP_CONFIG.UCOIN_NODE_ES);
 
     service.instance = Market;
   return service;

@@ -184,7 +184,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
   };
 }
 
-function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA, UIUtils, $q, $timeout, Wallet, CryptoUtils, $ionicSideMenuDelegate) {
+function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -201,6 +201,16 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, BMA
   $scope.slideIndex = 0;
   $scope.accountData = {};
   $scope.accountForm = {};
+
+  var nodeWithES = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+  $scope.options = {
+    market: {
+      enable: nodeWithES
+    },
+    registry: {
+      enable: nodeWithES
+    }
+  };
 
   // Called to navigate to the main app
   $scope.cancel = function() {

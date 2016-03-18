@@ -254,6 +254,9 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
       if ($state.stateParams && $state.stateParams.id) { // Load by id
         $scope.load($state.stateParams.id);
       }
+      else {
+        UIUtils.loading.hide();
+      }
     });
   });
 

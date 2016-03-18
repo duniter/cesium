@@ -250,7 +250,11 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     .then(function(walletData) {
       $scope.walletData = walletData;
       if ($state.stateParams && $state.stateParams.id) { // Load by id
+        UIUtils.loading.show();
         $scope.load($state.stateParams.id);
+      }
+      else {
+        UIUtils.loading.hide();
       }
     });
   });

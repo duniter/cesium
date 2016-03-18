@@ -1,14 +1,10 @@
 angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
 
-.factory('Registry', function($http, $q, CryptoUtils) {
+.factory('Registry', function($http, $q, CryptoUtils, APP_CONFIG) {
 
-    function Registry(server, wsServer) {
+    function Registry(server) {
 
       var categories = [];
-
-      if (wsServer == "undefined" || wsServer == null) {
-            wsServer = server;
-      }
 
       function processError(reject, data) {
         if (data != null && data.message != "undefined" && data.message != null) {
@@ -210,10 +206,9 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
       }
     }
 
-    var service = Registry('localhost:9200');
-    //var service = ES('metab.ucoin.fr:9288');
-
+    var service = Registry(APP_CONFIG.UCOIN_NODE_ES);
     service.instance = Registry;
+
   return service;
 })
 ;
