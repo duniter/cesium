@@ -1,4 +1,4 @@
-<ion-view view-title="Explore" left-buttons="leftButtons">
+<ion-view view-title="{{'CURRENCY.VIEW.TITLE' | translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
         <button class="button button-icon" ng-click="doUpdate()">
             <i class="icon ion-loop"></i>
@@ -7,17 +7,17 @@
     <div class="scroll">
         <ion-tabs class="tabs-icon-top tabs-positive has-header">
 
-            <ion-tab title="Currency" icon="ion-stats-bars">
+            <ion-tab title="{{'CURRENCY.VIEW.TAB_CURRENCY'|translate}}" icon="ion-stats-bars">
                 <ion-nav-view name="currency-tab"/>
                 <ng-include src="'templates/explore/tabs/explore_tab_currency.html'"/>
             </ion-tab>
 
-            <ion-tab title="Web of Trust" icon="ion-ios-world-outline">
+            <ion-tab title="{{'CURRENCY.VIEW.TAB_WOT'|translate}}" icon="ion-person-stalker">
                 <ion-nav-view name="wot-tab"/>
                 <ng-include src="'templates/explore/tabs/explore_tab_wot.html'"/>
             </ion-tab>
 
-            <ion-tab title="Network" icon="ion-network">
+            <ion-tab title="{{'CURRENCY.VIEW.TAB_NETWORK'|translate}}" icon="ion-network">
                 <ion-nav-view name="network-tab"/>
                 <ng-include src="'templates/explore/tabs/explore_tab_network.html'"/>
             </ion-tab>

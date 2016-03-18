@@ -3,27 +3,27 @@
   <!-- MENU -->
   <ion-side-menu side="left">
     <ion-header-bar class="bar-royal">
-      <h1 class="title">
-        Cesium
+      <h1 class="title" translate>
+        MENU.TITLE
       </h1>
        <button class="button button-assertive" ng-click="logout()" ng-if="isLogged()">
          <i class="icon ion-log-out"></i>
-         Logout
-    </button>
+         <span translate>COMMON.BTN_LOGOUT</span>
+       </button>
     </ion-header-bar>
     <ion-content scroll="false">
         <ion-item menu-close href="#/app/home">
-          Home
+          <span translate>MENU.HOME</span>
         </ion-item>
-        <ion-item menu-close href="#/app/home/explore">
-          Explore
+        <ion-item menu-close href="#/app/currency">
+          <span translate>MENU.CURRENCIES</span>
         </ion-item>
 
         <ion-item menu-close ng-click="login()" ng-if="!isLogged()">
-          My account
+          <span translate>MENU.ACCOUNT</span>
         </ion-item>
         <ion-item menu-close href="#" ui-sref="app.view_wallet" ng-if="isLogged()">
-          My account
+          <span translate>MENU.ACCOUNT</span>
         </ion-item>
         <!-- <ion-item menu-close ng-click="addAccount()">
           Add account
@@ -36,7 +36,7 @@
   <ion-side-menu-content>
     <ion-nav-bar class="bar-stable">
       <ion-nav-back-button>
-        Back
+        {{'COMMON.BTN_BACK'|translate}}
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">

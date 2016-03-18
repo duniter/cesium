@@ -85,6 +85,13 @@ angular.module('cesium.crypto.services', ['ngResource'])
             return base58.encode(a);
         },
 
+        hash_sha256 = function(s) {
+          return $q(function(resolve, reject) {
+            var hash = nacl.crypto_hash_sha256(s);
+            resolve(hash);
+          });
+        },
+
        /**
         * Create a key pair, from salt+password, and  return a wallet object
         */
@@ -148,10 +155,9 @@ angular.module('cesium.crypto.services', ['ngResource'])
           util: {
             encode_utf8: nacl.encode_utf8,
             decode_utf8: decode_utf8,
-            encode_base58: encode_base58
+            encode_base58: encode_base58,
+            hash_sha256: hash_sha256
           },
-          
-
           connect: connect,
           sign: sign,
           verify: verify

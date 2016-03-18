@@ -2,36 +2,46 @@
 
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', function($ionicLoading, $ionicPopup) {
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q) {
   function alertError(err, subtitle) {
-    var message = err.message || err;
-    return $ionicPopup.show({
-      template: '<p>' + (message || 'Unknown error') + '</p>',
-      title: 'Application error',
-      subTitle: subtitle,
-      buttons: [
-        {
-          text: '<b>OK</b>',
-          type: 'button-assertive'
-        }
-      ]
+    $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
+    .then(function (translations) {
+      var message = err.message || translations[err];
+      return $ionicPopup.show({
+        template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
+        title: translations['ERROR.POPUP_TITLE'],
+        subTitle: subtitle,
+        buttons: [
+          {
+            text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
+            type: 'button-assertive'
+          }
+        ]
+      });
     });
   }
 
   function alertInfo(message, subtitle) {
-      var message = err.message || err;
-      return $ionicPopup.show({
-        template: '<p>' + message + '</p>',
-        title: 'Information',
-        subTitle: subtitle,
-        buttons: [
-          {
-            text: '<b>OK</b>',
-            type: 'button-positive'
-          }
-        ]
+    return $q(function(resolve, reject) {
+      $translate([message, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
+      .then(function (translations) {
+        return $ionicPopup.show({
+          template: '<p>' + translations[message] + '</p>',
+          title: translations['INFO.POPUP_TITLE'],
+          subTitle: subtitle,
+          buttons: [
+            {
+              text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
+              type: 'button-positive',
+              onTap: function(e) {
+                resolve(e);
+              }
+            }
+          ]
+        });
       });
-    }
+    });
+  }
 
   function hideLoading(){
     $ionicLoading.hide();
@@ -46,14 +56,15 @@ angular.module('cesium.utils.services', ['ngResource'])
   function onError(msg) {
     return function(err) {
       console.error('>>>>>>>' , err);
-      alertError(msg + ': ' + err);
       hideLoading();
+      alertError(msg + ': ' + err);
     }
   }
 
   return {
     alert: {
-      error: alertError
+      error: alertError,
+      info: alertInfo
     },
     loading: {
       show: showLoading,

@@ -87,6 +87,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             && data.pubkey != null;
     },
 
+    getData = function() {
+      return data;
+    },
+
     isSourceEquals = function(arg1, arg2) {
         return arg1.type == arg2.type
             && arg1.fingerprint == arg2.fingerprint
@@ -94,7 +98,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             && arg1.amount == arg2.amount;
     },
 
-    loadData = function() {
+    loadData = function(refresh) {
         if (data.loaded) {
           return refreshData();
         }
@@ -469,6 +473,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         login: login,
         logout: logout,
         isLogin: isLogin,
+        getData: getData,
         loadData: loadData,
         refreshData: refreshData,
         // operations

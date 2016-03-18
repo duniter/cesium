@@ -1,6 +1,6 @@
 <div class="card">
     <div class="item item-divider">
-        Known currencies
+        {{'CURRENCY.SELECT.CURRENCIES' | translate}}
     </div>
     <a class="item item-text-wrap" ng-repeat="currency in knownCurrencies" ng-click="selectCurrency(currency)" ng-class="{ selected: selectedCurrency == currency }">
         {{currency}}
