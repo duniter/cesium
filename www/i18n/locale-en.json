@@ -85,7 +85,7 @@
       "PSEUDO_HELP": "joe123",
       "PASSWORD_CONFIRM": "Confirm Password",
       "PASSWORD_CONFIRM_HELP": "Confirm Password",
-      "MSG_UID_ALREADY_USED": "This pseudonym is alreadey used by an existing member.<br/>Please choose another one."
+      "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one."
     },
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
@@ -111,7 +111,10 @@
       "TITLE": "Market",
       "SEARCH_HELP": "Search (car, store)",
       "BTN_ADD": "New",
-      "BTN_OPTIONS": "Search tool"
+      "BTN_OPTIONS": "Search tool",
+      "BTN_AROUND_ME": "Around me",
+      "LOCATION": "Location",
+      "LOCATION_HELP": "City"
     },
     "VIEW": {
       "TITLE": ""
@@ -123,7 +126,8 @@
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Location"
+      "RECORD_LOCATION": "Localization",
+      "RECORD_LOCATION_HELP": "Address, City"
     }
   },
   "REGISTRY": {
@@ -141,15 +145,22 @@
     "VIEW": {
       "TITLE": ""
     },
+    "NEW": {
+      "TITLE": "New",
+      "SELECT_TYPE": "Choose type:",
+      "TYPE_PARTICULAR": "Private individual",
+      "TYPE_COMPANY": "Company, organisation or institution"
+    },
     "EDIT": {
       "TITLE": "Edit",
       "BTN_ADD_PICTURES": "Add pictures",
-      "RECORD_TITLE": "Title",
-      "RECORD_TITLE_HELP": "Title",
-      "RECORD_DESCRIPTION": "Description",
-      "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Location",
-      "BTN_IS_COMPANY": "Is Company ?"
+      "RECORD_TITLE": "Name",
+      "RECORD_TITLE_HELP": "Name",
+      "RECORD_DESCRIPTION": "About me",
+      "RECORD_DESCRIPTION_HELP": "Something about me",
+      "RECORD_LOCATION": "Localization",
+      "RECORD_LOCATION_HELP": "Localization (address, city)",
+      "RECORD_SOCIAL_NETWORKS": "Social networks"
     }
   },
   "ERROR": {
@@ -159,9 +170,13 @@
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "This field is too short.",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password",
-    "SEND_SELF_REGISTRATION": "Error while trying to register"
+    "SEND_SELF_REGISTRATION": "Error while trying to register",
+    "SEND_CERTIFICATION_FAILED": "Could not certify identity",
+    "LOGIN_FAILED": "Error while login",
+    "LOAD_IDENTITY_FAILED": "Could not load identity"
   },
   "INFO": {
-    "POPUP_TITLE": "Information"
+    "POPUP_TITLE": "Information",
+    "CERTIFICATION_DONE": "Identity successfully signed"
   }
 }

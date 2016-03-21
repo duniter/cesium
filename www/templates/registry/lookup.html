@@ -1,6 +1,6 @@
 <ion-view view-title="{{'REGISTRY.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button ui-sref="app.registry_add_record" class="button button-positive">
+        <button class="button button-positive" ng-click="newRecord()">
             <i class="icon ion-plus"></i>
             <span translate>REGISTRY.SEARCH.BTN_ADD</span>
         </button>
@@ -9,7 +9,7 @@
     <ion-content class="lookupForm padding">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()">
+            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.text">
@@ -39,10 +39,22 @@
                     <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures > 0">
                     <span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span>
                 </div>
-                <div class="col col-80 padding">
-                    <h2 ng-bind-html="found.title"></h2>
-                    <h3 class="light" ng-bind-html="found.description"></h3>
-                    <span class="badge item-note">{{found.time | formatDate}}</span>
+                <div class="col col-80 padding" ng-if="found.isCompany">
+                    <h3>
+                        <span ng-bind-html="found.title"></span>
+                        <span class="light" ng-if="found.location">| {{found.location}}</span>
+                    </h3>
+                    <h4 class="light" ng-bind-html="found.location"></h4>
+                    <h4 class="light" ng-bind-html="found.description"></h4>
+                    <span class="badge badge-positive" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
+                </div>
+                <div class="col col-80 padding" ng-if="!found.isCompany">
+                    <h3>
+                        <span class="positive" ng-bind-html="found.title"></span>
+                        <span class="light responsive-lg" ng-if="found.location">| {{found.location}}</span>
+                    </h3>
+                    <h4 class="light responsive-lg" ng-bind-html="found.description"></h4>
+                    <span class="badge badge-positive" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
                 </div>
             </a>
 

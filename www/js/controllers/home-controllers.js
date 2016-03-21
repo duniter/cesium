@@ -184,33 +184,12 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
   };
 }
 
-function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
 
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry) {
 
-  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
-
-  $scope.accounts = [];
-  $scope.search = { text: '', results: {} };
-  $scope.knownCurrencies = ['meta_brouzouf'];
   $scope.slideIndex = 0;
   $scope.accountData = {};
   $scope.accountForm = {};
-
-  var nodeWithES = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
-  $scope.options = {
-    market: {
-      enable: nodeWithES
-    },
-    registry: {
-      enable: nodeWithES
-    }
-  };
 
   // Called to navigate to the main app
   $scope.cancel = function() {
@@ -257,7 +236,7 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $io
     if (!$scope.newAccountModal) {
       UIUtils.loading.show();
       // Create the account modal that we will use later
-      $ionicModal.fromTemplateUrl('templates/account/new_account.html', {
+      $ionicModal.fromTemplateUrl('templates/account/new_account_wizard.html', {
         scope: $scope
       }).then(function(modal) {
         $scope.newAccountModal = modal;
@@ -330,5 +309,35 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $io
     $scope.newAccount();
   }, 400);
   */
+}
+
+
+
+function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
+
+  // With the new view caching in Ionic, Controllers are only called
+  // when they are recreated or on app start, instead of every page change.
+  // To listen for when this page is active (for example, to refresh data),
+  // listen for the $ionicView.enter event:
+  //$scope.$on('$ionicView.enter', function(e) {
+  //});
+
+  $scope.accounts = [];
+  $scope.search = { text: '', results: {} };
+  $scope.knownCurrencies = ['meta_brouzouf'];
+
+  var nodeWithES = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+  $scope.options = {
+    market: {
+      enable: nodeWithES
+    },
+    registry: {
+      enable: nodeWithES
+    }
+  };
+
+  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
+
+  NewAccountWizardController.call(this, $scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
 }
 

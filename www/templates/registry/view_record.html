@@ -13,27 +13,45 @@
                 <ion-gallery ion-gallery-items="pictures" ng-if="pictures && pictures.length>0"></ion-gallery>
 
                 <div class="item">
-                    <h2 ng-bind-html="formData.title"></h2>
+                    <h2 class="positive" ng-bind-html="formData.title"></h2>
+                    <h4 class="light" ng-bind-html="formData.location"></h4>
+                    <span class="badge badge-positive" ng-if="!formData.isCompany">{{formData.issuer | formatPubkey}}</span>
                 </div>
 
                 <div class="item">
                     <p ng-bind-html="formData.description"></p>
                 </div>
 
-                <div class="item-divider"></div>
+                <div ng-if="formData.isCompany">
+                    <div class="item-divider"></div>
 
-                <span class="item item-icon-left">
-                    <i class="icon ion-person"></i>
-                    <span translate>REGISTRY.COMMON.ISSUER</span>
-                    <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
-                </span>
+                    <span class="item item-icon-left" >
+                        <i class="icon ion-person"></i>
+                        <h3><span translate>REGISTRY.COMMON.ISSUER</span></h3>
+                        <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
+                    </span>
 
-                <div class="item">
-                    <span translate>REGISTRY.COMMON.CATEGORY</span>
-                    <span class="badge badge-positive">{{category.name}}</span>
+                    <div class="item">
+                        <span translate>REGISTRY.COMMON.CATEGORY</span>
+                        <span class="badge badge-positive">{{category.name}}</span>
+                    </div>
                 </div>
 
+                <div class="item-divider"></div>
 
+                <div class="item item-button-right positive" ng-click="transfer()">
+                    Send money
+                    <a class="button button-clear button-positive" >
+                        <i class="icon-right ion-chevron-right"></i>
+                    </a>
+                </div>
+
+                <div class="item item-button-right positive" ng-click="signIdentity()" ng-if="hasSelf">
+                    Certify
+                    <a class="button button-clear button-positive" >
+                        <i class="icon-right ion-chevron-right"></i>
+                    </a>
+                </div>
 
             </div>
             <div class="scroll-bar scroll-bar-v"></div>

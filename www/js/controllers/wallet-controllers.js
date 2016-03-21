@@ -14,21 +14,21 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
         }
       })
 
-      .state('app.view_transfer', {
+      .state('app.new_transfer', {
         url: "/transfer/:pubkey/:uid",
         views: {
           'menuContent': {
-            templateUrl: "templates/account/view_transfer.html",
+            templateUrl: "templates/account/new_transfer.html",
             controller: 'TransferCtrl'
           }
         }
       })
 
-      .state('app.view_transfer_pubkey', {
+      .state('app.new_transfer_pubkey', {
         url: "/transfer/:pubkey",
         views: {
           'menuContent': {
-            templateUrl: "templates/account/view_transfer.html",
+            templateUrl: "templates/account/new_transfer.html",
             controller: 'TransferCtrl'
           }
         }
@@ -85,7 +85,7 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
 
   // Transfer click
   $scope.transfer= function() {
-    $state.go('app.view_transfer');
+    $state.go('app.new_transfer');
   };
 
   $scope.setRegisterForm = function(registerForm) {

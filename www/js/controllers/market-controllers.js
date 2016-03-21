@@ -121,7 +121,7 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
   };
 }
 
-function MarketLookupController($scope, Market, $state, $ionicModal) {
+function MarketLookupController($scope, Market, $state, $ionicModal, $focus) {
 
   MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal);
 
@@ -131,6 +131,10 @@ function MarketLookupController($scope, Market, $state, $ionicModal) {
     category: null,
     options: false
   };
+
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    $focus('searchText');
+  });
 
   $scope.$watch('search.options', $scope.doSearch, true);
 

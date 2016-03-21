@@ -84,7 +84,12 @@
       "PSEUDO": "Pseudonyme",
       "PSEUDO_HELP": "Pseudonyme",
       "PASSWORD_CONFIRM": "Confirmation du mot de passe",
-      "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe"
+      "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe",
+      "MSG_UID_ALREADY_USED": "Pseudonyme déjà pris par quelqu'un d'autre.<br/>Veuillez en choisir un autre."
+    },
+    "POPUP_REGISTER": {
+      "TITLE": "Choisissez un pseudonyme",
+      "HELP": "Un pseudonyme est obligatoire pour devenir membre."
     }
   },
   "TRANSFER": {
@@ -106,7 +111,10 @@
       "TITLE": "Offres/Demandes",
       "SEARCH_HELP": "Recherche (voiture, livre...)",
       "BTN_ADD": "Nouveau",
-      "BTN_OPTIONS": "Outil de recherche"
+      "BTN_OPTIONS": "Outil de recherche",
+      "BTN_AROUND_ME": "Autour de moi",
+      "LOCATION": "Localisation",
+      "LOCATION_HELP": "Ville"
     },
     "VIEW": {
       "TITLE": ""
@@ -118,7 +126,8 @@
       "RECORD_TITLE_HELP": "Titre",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Ville"
+      "RECORD_LOCATION": "Ville",
+      "RECORD_LOCATION_HELP": "Adresse, Ville"
     }
   },
   "REGISTRY": {
@@ -136,22 +145,38 @@
     "VIEW": {
       "TITLE": ""
     },
+    "NEW": {
+      "TITLE": "Nouveau",
+      "SELECT_TYPE": "Type d'ajout :",
+      "TYPE_PARTICULAR": "Particulier",
+      "TYPE_COMPANY": "Entreprise, organisme ou institution"
+    },
     "EDIT": {
       "TITLE": "Edition",
       "BTN_ADD_PICTURES": "Ajouter des photos",
-      "RECORD_TITLE": "Titre",
-      "RECORD_TITLE_HELP": "Titre",
-      "RECORD_DESCRIPTION": "Description",
-      "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Ville"
+      "RECORD_TITLE": "Nom",
+      "RECORD_TITLE_HELP": "Nom",
+      "RECORD_DESCRIPTION": "À propos de moi",
+      "RECORD_DESCRIPTION_HELP": "À propos de moi",
+      "RECORD_LOCATION": "Localisation",
+      "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
+      "RECORD_SOCIAL_NETWORKS": "Social networks"
     }
   },
   "ERROR": {
     "POPUP_TITLE": "Erreur",
     "UNKNOWN_ERROR": "Erreur inconnue",
-    "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie."
+    "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
+    "FIELD_REQUIRED": "Champ obligatoire.",
+    "FIELD_TOO_SHORT": "Valeur trop courte.",
+    "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe",
+    "SEND_SELF_REGISTRATION": "Erreur pendant l'inscription.",
+    "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité",
+    "LOGIN_FAILED": "Erreur lors de l'authentification",
+    "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité"
   },
   "INFO": {
-    "POPUP_TITLE": "Information"
+    "POPUP_TITLE": "Information",
+    "CERTIFICATION_DONE": "Certification envoyée"
   }
 }

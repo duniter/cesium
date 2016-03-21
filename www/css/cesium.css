@@ -48,7 +48,7 @@ body {
 }
 
 .light {
-    color: grey;
+    color: grey !important;
 }
 /*.button {*/
     /*height: 50px !important;*/

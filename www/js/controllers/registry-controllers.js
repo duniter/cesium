@@ -120,9 +120,10 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal) 
   };
 }
 
-function RegistryLookupController($scope, Registry, $state, $ionicModal) {
+function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
+  RegistryNewRecordWizardController.call(this, $scope, $ionicSlideBoxDelegate, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
 
   $scope.search = {
     text: '',
@@ -130,6 +131,10 @@ function RegistryLookupController($scope, Registry, $state, $ionicModal) {
     category: null,
     options: false
   };
+
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    $focus('searchText');
+  });
 
   $scope.$watch('search.options', $scope.doSearch, true);
 
@@ -167,7 +172,7 @@ function RegistryLookupController($scope, Registry, $state, $ionicModal) {
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "pictures"]
+      _source: ["title", "description", "time", "location", "pictures", "issuer", "isCompany"]
     };
     var matches = [];
     if ($scope.search.text.length > 1) {
@@ -217,7 +222,7 @@ function RegistryLookupController($scope, Registry, $state, $ionicModal) {
   };
 }
 
-function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q) {
+function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
 
   $scope.formData = {};
   $scope.id = null;
@@ -225,6 +230,8 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
   $scope.category = {};
   $scope.pictures = [];
   $scope.canEdit = false;
+  $scope.hasSelf = false;
+  $scope.identity = null;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
@@ -251,25 +258,76 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
             }, []);
           }
           $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey)
-          UIUtils.loading.hide();
+
+          if (!$scope.formData.isCompany) {
+            BMA.wot.lookup({ search: $scope.formData.issuer })
+              .then(function(res){
+                $scope.identity = res.results.reduce(function(idties, res) {
+                  return idties.concat(res.uids.reduce(function(uids, idty) {
+                    return uids.concat({
+                      uid: idty.uid,
+                      pub: res.pubkey,
+                      sigDate: idty.meta.timestamp,
+                      sig: idty.self
+                    })
+                  }, []));
+                }, [])[0];
+                $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
+                UIUtils.loading.hide();
+              })
+              .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
+          }
+          else {
+            $scope.hasSelf = false;
+            $scope.identity = null;
+            UIUtils.loading.hide();
+          }
         })
       })
     ]).catch(UIUtils.onError('Could not load registry'));
   };
 
+  // Edit click
   $scope.edit = function() {
     $state.go('app.registry_edit_record', {id: $scope.id});
   };
+
+  // Sign click
+  $scope.signIdentity = function(identity) {
+    $scope.loadWallet()
+    .then(function(walletData) {
+      UIUtils.loading.show();
+      Wallet.sign($scope.identity.uid,
+                  $scope.identity.pub,
+                  $scope.identity.sigDate,
+                  $scope.identity.sig)
+      .then(function() {
+        UIUtils.loading.hide();
+        UIUtils.alertInfo('INFO.CERTIFICATION_DONE');
+      })
+      .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+    })
+    .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
+  };
+
+  // Transfer click
+  $scope.transfer = function() {
+    $state.go('app.new_transfer', {
+        pubkey: $scope.formData.issuer,
+        uid: $scope.formData.title
+      });
+  };
 }
 
-function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup) {
+function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
 
   $scope.walletData = {};
-  $scope.formData = {
+  $scope.recordData = {
     isCompany: false
   };
+  $scope.recordForm = {};
   $scope.id = null;
   $scope.isMember = false;
   $scope.category = {};
@@ -281,6 +339,11 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
 	  }
     $scope.camera = navigator.camera;
   });
+
+
+  $scope.setRecordForm =  function(recordForm) {
+    $scope.recordForm = recordForm;
+  };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
@@ -302,7 +365,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
       .then(function(categories) {
         Registry.record.get({id: id})
         .then(function (hit) {
-          $scope.formData = hit._source;
+          $scope.recordData = hit._source;
           $scope.category = categories[hit._source.category];
           $scope.id= hit._id;
           if (hit._source.pictures) {
@@ -320,11 +383,11 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   $scope.save = function() {
     UIUtils.loading.show();
     return $q(function(resolve, reject) {
-      $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
+      $scope.recordData.pictures = $scope.pictures.reduce(function(res, pic) {
         return res.concat({src: pic.src});
       }, []);
       if (!$scope.id) { // Create
-          Registry.record.add($scope.formData, $scope.walletData.keypair)
+          Registry.record.add($scope.recordData, $scope.walletData.keypair)
           .then(function(id) {
             UIUtils.loading.hide();
             $state.go('app.registry_view_record', {id: id})
@@ -333,7 +396,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
           .catch(UIUtils.onError('Could not save registry'));
       }
       else { // Update
-          Registry.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
+          Registry.record.update($scope.recordData, {id: $scope.id}, $scope.walletData.keypair)
           .then(function() {
             UIUtils.loading.hide();
             $state.go('app.registry_view_record', {id: $scope.id})
@@ -347,7 +410,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   $scope.selectCategory = function(cat) {
     if (!cat.parent) return;
     $scope.category = cat;
-    $scope.formData.category = cat.id;
+    $scope.recordData.category = cat.id;
     $scope.closeCategoryModal();
   };
 
@@ -448,4 +511,124 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
     })
     .catch(onError('Could not computed authentication token'));
   };
+}
+
+function RegistryNewRecordWizardController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, UIUtils, $q, $timeout, Registry) {
+
+  $scope.slideIndex = 0;
+  $scope.recordData = {
+    isCompany: null
+  };
+  $scope.recordForm = {};
+  $scope.pictures = [];
+
+  // Called to navigate to the main app
+  $scope.cancel = function() {
+    $scope.newRecordModal.hide();
+    $timeout(function(){
+      $scope.recordData = {
+        isCompany: null
+      };
+      $scope.recordForm = {};
+    }, 200);
+  };
+
+  $scope.setRecordForm =  function(recordForm) {
+    $scope.recordForm = recordForm;
+  };
+
+  // Called each time the slide changes
+  $scope.slide = function(index) {
+    $ionicSlideBoxDelegate.slide(index);
+    $scope.slideIndex = index;
+    $scope.nextStep = $scope.slideIndex == 2 ? 'Start' : 'Next';
+  };
+
+  $scope.next = function() {
+    $scope.slide($scope.slideIndex + 1);
+  };
+
+  $scope.previous = function() {
+    $scope.slide($scope.slideIndex - 1);
+  };
+
+  $scope.newRecord = function() {
+    var showModal = function() {
+      $scope.loadWallet()
+        .then(function(walletData) {
+          $scope.walletData = walletData;
+          UIUtils.loading.hide();
+          $ionicSlideBoxDelegate.enableSlide(false);
+          $scope.slide(0);
+          $scope.newRecordModal.show();
+          // TODO: remove default
+          /*$timeout(function() {
+            $scope.recordData.isCompany = false;
+            $scope.recordData.title="Benoit Lavenier";
+            $scope.recordData.description="J'aime le Sou !";
+            $scope.next();
+          }, 300);*/
+        });
+    }
+
+    if (!$scope.newRecordModal) {
+      UIUtils.loading.show();
+      // Create the account modal that we will use later
+      $ionicModal.fromTemplateUrl('templates/registry/new_record_wizard.html', {
+        scope: $scope,
+        animation: 'slide-in-down'
+      }).then(function(modal) {
+        $scope.newRecordModal = modal;
+        $scope.newRecordModal.hide()
+        .then(function(){
+          UIUtils.loading.hide();
+          showModal();
+        });
+
+      });
+    }
+    else {
+      showModal();
+    }
+  };
+
+  $scope.setIsCompany = function(bool) {
+    $scope.recordData.isCompany = bool;
+    $scope.next();
+  };
+
+  $scope.doNewRecord = function() {
+    $scope.recordForm.$submitted=true;
+    if(!$scope.recordForm.$valid) {
+      return;
+    }
+
+    UIUtils.loading.show();
+    return $q(function(resolve, reject) {
+          $scope.recordData.pictures = $scope.pictures.reduce(function(res, pic) {
+            return res.concat({src: pic.src});
+          }, []);
+          Registry.record.add($scope.recordData, $scope.walletData.keypair)
+          .then(function(id) {
+            //UIUtils.loading.hide();
+            $scope.newRecordModal.hide();
+            $scope.newRecordModal.remove();
+            $state.go('app.registry_view_record', {id: id})
+            resolve();
+          })
+          .catch(UIUtils.onError('Could not save registry'));
+    });
+  };
+
+  //Cleanup the modal when hidden
+  $scope.$on('newRecordModal.hidden', function() {
+    $scope.newRecordModal.remove();
+    $scope.newRecordModal = null;
+  });
+
+  // TODO: remove auto add account when done
+  /*$timeout(function() {
+    $scope.newRecord();
+  }, 400);
+  */
 }

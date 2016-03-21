@@ -50,11 +50,11 @@
                     <textarea placeholder="{{'MARKET.EDIT.RECORD_DESCRIPTION_HELP'|translate}}" ng-model="formData.description"></textarea>
                 </div>
 
-                <div class="item item-floating-label">
+                <div class="item item-floating-label" ng-if="location.enable">
                     <span class="input-label" translate>MARKET.EDIT.RECORD_LOCATION</span>
                     <div class="item-input-inset">
                         <label class="item-input-wrapper">
-                            <input type="text" placeholder="Location" ng-model="formData.location">
+                            <input type="text" placeholder="{{'MARKET.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="formData.location">
                         </label>
                         <button class="button button-small button-positive" ng-click="localize()" ng-if="location.enable">
                             <i class="icon ion-pinpoint"></i>
@@ -62,16 +62,11 @@
                     </div>
                 </div>
 
+                <div class="item item-input item-floating-label" ng-if="!location.enable">
+                    <span class="input-label" translate>MARKET.EDIT.RECORD_LOCATION</span>
+                    <textarea placeholder="{{'MARKET.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="recordData.location"></textarea>
+                </div>
 
-                <!--<div class="item item-toggle dark">
-                    Public visibility
-                    <label class="toggle toggle-royal">
-                        <input type="checkbox" ng-model="formData.public">
-                        <div class="track">
-                            <div class="handle"></div>
-                        </div>
-                    </label>
-                </div>-->
             </div>
             <div class="scroll-bar scroll-bar-v"></div>
         </div>

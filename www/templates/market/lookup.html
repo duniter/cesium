@@ -9,7 +9,7 @@
     <ion-content class="lookupForm padding">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()">
+            <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.text">
@@ -28,6 +28,24 @@
             <i class="button button-clear ion-chevron-right"></i>
         </span>
 
+        <span class="item item-button-right" ng-if="search.options && location.enable">
+            <span translate>MARKET.SEARCH.BTN_AROUND_ME</span>
+            <label class="toggle toggle-royal">
+                <input type="checkbox" ng-model="search.localize">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </span>
+
+        <span class="item item-button-right" ng-if="search.options && !location.enable">
+            <span translate>MARKET.SEARCH.LOCATION</span>
+            <div class="item-input-inset">
+                <label class="item-input-wrapper">
+            <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}" ng-model="search.location" />
+                    </label>
+                </div>
+        </span>
 
         <div class="list list-inset">
 
@@ -35,14 +53,14 @@
                 <ion-spinner icon="android"></ion-spinner>
             </label>
 
-            <a class="item row item-product" ng-repeat="found in search.results" ng-click="select('{{found.id}}')">
+            <a class="item row item-record" ng-repeat="found in search.results" ng-click="select('{{found.id}}')">
                 <div class="col col-2">
                     <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures > 0">
                     <span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span>
                 </div>
                 <div class="col col-80 padding">
                     <h2 ng-bind-html="found.title"></h2>
-                    <h3 class="light" ng-bind-html="found.description"></h3>
+                    <h3 class="light" ng-bind-html="found.location"></h3>
                     <span class="badge item-note">{{found.time | formatDate}}</span>
                 </div>
             </a>

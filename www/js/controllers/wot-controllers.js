@@ -79,9 +79,10 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
         $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
         UIUtils.loading.hide();
       })
-      .catch(UIUtils.onError('Could not load identity'));
+      .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
   };
 
+  // Sign click
   $scope.signIdentity = function(identity) {
     $scope.loadWallet()
     .then(function(walletData) {
@@ -92,18 +93,18 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
                   $scope.identity.sig)
       .then(function() {
         UIUtils.loading.hide();
-        UIUtils.alertInfo('Identity successfully signed');
+        UIUtils.alertInfo('INFO.CERTIFICATION_DONE');
       })
-      .catch(UIUtils.onError('Could not certify identity'));
+      .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
     })
-    .catch(UIUtils.onError('Error while login'));
+    .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
   // Transfer click
   $scope.transfer = function() {
-    $state.go('app.view_transfer', {
+    $state.go('app.new_transfer', {
         pubkey: $scope.identity.pubkey,
-        uid: $scope.identity.uid,
+        uid: $scope.identity.uid
       });
   };
 }
