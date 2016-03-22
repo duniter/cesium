@@ -21,3 +21,51 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
+// --------------------------------------------------
+// Responsive: Utility classes
+// --------------------------------------------------
+$screen-xs-max:                            567px;
+$screen-sm:                                 568px;
+// IE10 on Windows Phone 8
+// IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
+// other words, say on a Lumia, you'll get 768px as the device width,
+// meaning users will see the tablet styles and not phone styles.
+//
+// Alternatively you can override this with JS (see source below), but
+// we won't be doing that here given our limited scope.
+//
+// Source: http://timkadlec.com/2013/01/windows-phone-8-and-device-width/
+@media screen and (max-width: 400px) {
+  @-ms-viewport{
+    width: 320px;
+  }
+}
+
+@media screen and (max-width: $screen-xs-max) {
+    .hidden-xs {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+
+@media screen and (min-width: $screen-sm) {
+    .hidden-xs {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+
+@media screen and (max-width: $screen-xs-max) {
+    .visible-xs {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+
+@media screen and (min-width: $screen-sm) {
+    .visible-xs {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+

@@ -1,4 +1,4 @@
-angular.module('cesium.market.controllers', ['cesium.services'])
+angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
@@ -172,11 +172,12 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus) {
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "pictures"]
+      _source: ["title", "time", "description", "location", "pictures"]
     };
     var matches = [];
     if ($scope.search.text.length > 1) {
       matches.push({match : { title: $scope.search.text}});
+      matches.push({match : { description: $scope.search.text}});
     }
     if ($scope.search.options && $scope.search.category) {
       matches.push({match : { category: $scope.search.category.id}});

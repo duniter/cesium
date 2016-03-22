@@ -10,12 +10,17 @@ angular.module('cesium.bma.services', ['ngResource',
             wsServer = server;
         }
 
-      function processError(reject, data) {
+      function processError(reject, data, uri) {
         if (data != null && data.message != "undefined" && data.message != null) {
           reject(data.ucode + ": " + data.message);
         }
         else {
-          reject('Unknown error from ucoin node');
+          if (uri != "undefined" && uri != null) {
+            reject('Error from ucoin node (' + uri + ')');
+          }
+          else {
+            reject('Unknown error from ucoin node');
+          }
         }
       }
 
@@ -49,7 +54,7 @@ angular.module('cesium.bma.services', ['ngResource',
                   resolve(data);
                 })
                 .error(function(data, status, headers, config) {
-                  processError(reject, data);
+                  processError(reject, data, uri);
                 });
             });
           });

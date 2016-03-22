@@ -9074,3 +9074,27 @@ a.button {
   opacity: 0;
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
+
+@media screen and (max-width: 400px) {
+  @-ms-viewport {
+    width: 320px; } }
+
+@media screen and (max-width: 567px) {
+  .hidden-xs {
+    display: none !important;
+    visibility: hidden !important; } }
+
+@media screen and (min-width: 568px) {
+  .hidden-xs {
+    display: inherited;
+    visibility: visible !important; } }
+
+@media screen and (max-width: 567px) {
+  .visible-xs {
+    display: inherited;
+    visibility: visible !important; } }
+
+@media screen and (min-width: 568px) {
+  .visible-xs {
+    display: none !important;
+    visibility: hidden !important; } }

@@ -39,7 +39,10 @@
 
         <div class="item item-input item-floating-label">
           <span class="input-label" translate>REGISTRY.EDIT.RECORD_DESCRIPTION</span>
-          <textarea placeholder="{{'REGISTRY.EDIT.RECORD_DESCRIPTION_HELP'|translate}}" ng-model="recordData.description"></textarea>
+          <textarea placeholder="{{'REGISTRY.EDIT.RECORD_DESCRIPTION_HELP'|translate}}"
+                    ng-model="recordData.description"
+                    rows="8" cols="10">
+          </textarea>
         </div>
 
         <div class="item item-floating-label" ng-if="location.enable">

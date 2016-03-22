@@ -34,26 +34,35 @@
                 <ion-spinner icon="android"></ion-spinner>
             </label>
 
-            <a class="item row item-product" ng-repeat="found in search.results" ng-click="select('{{found.id}}')">
-                <div class="col col-2">
+            <a class="item row item-product responsive-sm" ng-repeat="found in search.results" ng-click="select('{{found.id}}')">
+                <div class="col col-20" ng-class="{'hidden-xs': !found.pictures || found.pictures == 0}">
                     <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures > 0">
-                    <span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span>
+                    <!--span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span-->
                 </div>
-                <div class="col col-80 padding" ng-if="found.isCompany">
+                <div class="col" ng-if="found.isCompany">
                     <h3>
                         <span ng-bind-html="found.title"></span>
-                        <span class="light" ng-if="found.location">| {{found.location}}</span>
                     </h3>
-                    <h4 class="light" ng-bind-html="found.location"></h4>
-                    <h4 class="light" ng-bind-html="found.description"></h4>
-                    <span class="badge badge-positive" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
+                    <h4 class="light visible-xs" ng-bind-html="found.location" ng-if="found.location"></h4>
                 </div>
-                <div class="col col-80 padding" ng-if="!found.isCompany">
+
+                <div class="col" ng-if="!found.isCompany">
                     <h3>
-                        <span class="positive" ng-bind-html="found.title"></span>
-                        <span class="light responsive-lg" ng-if="found.location">| {{found.location}}</span>
+                        <span class="positive item-text-wrap" ng-bind-html="found.title"></span>
                     </h3>
-                    <h4 class="light responsive-lg" ng-bind-html="found.description"></h4>
+                    <h4 class="light visible-xs" ng-bind-html="found.location" ng-if="found.location"></h4>
+                    <span class="badge badge-positive visible-xs">{{found.issuer | formatPubkey}}</span>
+                </div>
+
+                <div class="col col-20 hidden-xs">
+                    <h3 class="light" ng-bind="found.location" ng-if="found.location"></h3>
+                </div>
+
+                <div class="col col-30 item-text-wrap">
+                    <h3 class="light" ng-bind-html="found.description" ng-if="found.description"></h3>
+                </div>
+
+                <div class="col col-10 col-pubkey hidden-xs" >
                     <span class="badge badge-positive" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
                 </div>
             </a>

@@ -177,6 +177,7 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
     var matches = [];
     if ($scope.search.text.length > 1) {
       matches.push({match : { title: $scope.search.text}});
+      matches.push({match : { description: $scope.search.text}});
     }
     if ($scope.search.options && $scope.search.category) {
       matches.push({match : { category: $scope.search.category.id}});

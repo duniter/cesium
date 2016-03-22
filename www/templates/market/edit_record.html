@@ -47,7 +47,9 @@
 
                 <div class="item item-input item-floating-label">
                     <span class="input-label" translate>MARKET.EDIT.RECORD_DESCRIPTION</span>
-                    <textarea placeholder="{{'MARKET.EDIT.RECORD_DESCRIPTION_HELP'|translate}}" ng-model="formData.description"></textarea>
+                    <textarea placeholder="{{'MARKET.EDIT.RECORD_DESCRIPTION_HELP'|translate}}"
+                              ng-model="formData.description"
+                              rows="8" cols="10"></textarea>
                 </div>
 
                 <div class="item item-floating-label" ng-if="location.enable">
@@ -64,7 +66,7 @@
 
                 <div class="item item-input item-floating-label" ng-if="!location.enable">
                     <span class="input-label" translate>MARKET.EDIT.RECORD_LOCATION</span>
-                    <textarea placeholder="{{'MARKET.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="recordData.location"></textarea>
+                    <textarea placeholder="{{'MARKET.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="formData.location"></textarea>
                 </div>
 
             </div>

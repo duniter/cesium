@@ -50,6 +50,13 @@ body {
 .light {
     color: grey !important;
 }
+.no-padding {
+    padding: 0px !important;
+}
+
+.col-pubkey {
+  min-width: 130px !important;
+}
 /*.button {*/
     /*height: 50px !important;*/
     /*font-size: 18px !important;*/
@@ -92,6 +99,11 @@ body {
 .item-input-error {
   border-bottom: 2px solid red;
 }
+
+.item em {
+  font-weight: bold !important;
+}
+
 
 /**********
    MODAL
