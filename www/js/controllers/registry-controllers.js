@@ -199,6 +199,7 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
     if ($scope.search.text.length > 1) {
       matches.push({match : { title: text}});
       matches.push({match : { description: text}});
+      matches.push({prefix : { issuer: text}});
       if (!$scope.search.options) {
         matches.push({match: { location: text}});
       }
@@ -207,7 +208,7 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
       filters.push({term: { category: $scope.search.category.id}});
     }
     if ($scope.search.options && $scope.search.location != null && $scope.search.location.length > 0) {
-      filters.push({match: { location: $scope.search.location}});
+      filters.push({match_phrase: { location: $scope.search.location}});
     }
 
     if (matches.length == 0 && filters.length == 0) {
