@@ -11,9 +11,9 @@ angular.module("cesium.config", [])
 .constant("APP_CONFIG", {
 	"UCOIN_NODE": "metab.ucoin.fr",
 	"UCOIN_NODE_WS": "metab.ucoin.fr:9201",
-	"UCOIN_NODE_ES": "localhost:9200",
+	"UCOIN_NODE_ES": "metab.ucoin.fr:9200",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-03-18T17:08:53.353Z"
+	"BUILD_DATE": "2016-03-23T08:57:41.603Z"
 })
 
 ;

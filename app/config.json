@@ -5,22 +5,24 @@
     }
   },
 
-  "prod-ucoin-io": {
+  "ucoin-io": {
     "APP_CONFIG": {
       "UCOIN_NODE": "metab.ucoin.io"
     }
   },
 
-  "prod-ucoin-fr": {
-    "APP_CONFIG": {
-      "UCOIN_NODE": "metab.ucoin.fr"
-    }
-  },
-
-  "dev-eis": {
+  "ucoin-fr": {
     "APP_CONFIG": {
       "UCOIN_NODE": "metab.ucoin.fr",
       "UCOIN_NODE_WS": "metab.ucoin.fr:9201",
+      "UCOIN_NODE_ES": "metab.ucoin.fr:9200"
+    }
+  },
+
+  "dev": {
+    "APP_CONFIG": {
+      "UCOIN_NODE": "localhost:9201",
+      "UCOIN_NODE_WS": "localhost:9201",
       "UCOIN_NODE_ES": "localhost:9200"
     }
 
