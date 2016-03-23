@@ -9,7 +9,8 @@
     "BTN_CANCEL": "Annuler",
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnecter",
-    "BTN_ADD_ACCOUNT": "S'inscrire"
+    "BTN_ADD_ACCOUNT": "S'inscrire",
+    "SEARCH_NO_RESULT": "Aucun résultat trouvé"
   },
   "MENU": {
     "TITLE": "Cesium",
@@ -111,7 +112,7 @@
       "TITLE": "Offres/Demandes",
       "SEARCH_HELP": "Recherche (voiture, livre...)",
       "BTN_ADD": "Nouveau",
-      "BTN_OPTIONS": "Outil de recherche",
+      "BTN_OPTIONS": "Recherche avancée",
       "BTN_AROUND_ME": "Autour de moi",
       "LOCATION": "Localisation",
       "LOCATION_HELP": "Ville"
@@ -140,7 +141,9 @@
       "TITLE": "Annuaire",
       "SEARCH_HELP": "Recherche (nom, pseudo, clé publique...)",
       "BTN_ADD": "Nouveau",
-      "BTN_OPTIONS": "Outil de recherche"
+      "BTN_OPTIONS": "Recherche avancée",
+      "LOCATION": "Localisation",
+      "LOCATION_HELP": "Ville"
     },
     "VIEW": {
       "TITLE": ""

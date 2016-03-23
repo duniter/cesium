@@ -9,7 +9,8 @@
     "BTN_CANCEL": "Cancel",
     "BTN_LOGIN": "Login",
     "BTN_LOGOUT": " Logout",
-    "BTN_ADD_ACCOUNT": "Register"
+    "BTN_ADD_ACCOUNT": "Register",
+    "SEARCH_NO_RESULT": "No result found"
   },
   "MENU": {
     "TITLE": "Cesium",
@@ -111,7 +112,7 @@
       "TITLE": "Market",
       "SEARCH_HELP": "Search (car, store)",
       "BTN_ADD": "New",
-      "BTN_OPTIONS": "Search tool",
+      "BTN_OPTIONS": "Advanced search",
       "BTN_AROUND_ME": "Around me",
       "LOCATION": "Location",
       "LOCATION_HELP": "City"
@@ -140,7 +141,9 @@
       "TITLE": "Registry",
       "SEARCH_HELP": "Search (name, pseudo, public key...)",
       "BTN_ADD": "New",
-      "BTN_OPTIONS": "Search tool"
+      "BTN_OPTIONS": "Search tool",
+      "LOCATION": "Location",
+      "LOCATION_HELP": "City"
     },
     "VIEW": {
       "TITLE": ""

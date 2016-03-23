@@ -44,6 +44,17 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
     }
   })
 
+  // Convert to user friendly URL (e.g. "Like - This" -> "like-this")
+  .filter('formatSlug', function() {
+    return function(input) {
+      return input ? encodeURIComponent(input
+        .toLowerCase()
+        .replace(/[^\w ]+/g,'')
+        .replace(/ +/g,'-'))
+        : '';
+    }
+  })
+
   // Translation i18n
   .config(function ($translateProvider) {
     $translateProvider.useStaticFilesLoader({

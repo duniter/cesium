@@ -12,7 +12,7 @@
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
         </label>
 
-        <div class="item item-toggle dark" ng-if="search.text">
+        <div class="item item-toggle dark" ng-if="search.options != null">
             <span translate>REGISTRY.SEARCH.BTN_OPTIONS</span>
             <label class="toggle toggle-royal">
                 <input type="checkbox" ng-model="search.options">
@@ -28,30 +28,34 @@
             <i class="button button-clear ion-chevron-right"></i>
         </span>
 
+        <span class="item item-button-right" ng-if="search.options && !location.enable">
+            <span translate>REGISTRY.SEARCH.LOCATION</span>
+            <div class="item-input-inset">
+                <label class="item-input-wrapper">
+                    <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}" ng-model="search.location" ng-change="searchChanged()"/>
+                </label>
+            </div>
+        </span>
+
         <div class="list list-inset">
 
             <label class="item center" ng-if="search.looking">
                 <ion-spinner icon="android"></ion-spinner>
             </label>
 
-            <a class="item row item-product responsive-sm" ng-repeat="found in search.results" ng-click="select('{{found.id}}')">
+            <label class="item center assertive" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
+                COMMON.SEARCH_NO_RESULT
+            </label>
+
+            <a class="item row item-product responsive-sm" ng-repeat="found in search.results" ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
                 <div class="col col-20" ng-class="{'hidden-xs': !found.pictures || found.pictures == 0}">
                     <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures > 0">
                     <!--span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span-->
                 </div>
-                <div class="col" ng-if="found.isCompany">
-                    <h3>
-                        <span ng-bind-html="found.title"></span>
-                    </h3>
+                <div class="col">
+                    <h2 class="positive item-text-wrap" ng-bind-html="found.title"></h2>
                     <h4 class="light visible-xs" ng-bind-html="found.location" ng-if="found.location"></h4>
-                </div>
-
-                <div class="col" ng-if="!found.isCompany">
-                    <h3>
-                        <span class="positive item-text-wrap" ng-bind-html="found.title"></span>
-                    </h3>
-                    <h4 class="light visible-xs" ng-bind-html="found.location" ng-if="found.location"></h4>
-                    <span class="badge badge-positive visible-xs">{{found.issuer | formatPubkey}}</span>
+                    <span class="badge badge-positive visible-xs" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
                 </div>
 
                 <div class="col col-20 hidden-xs">
@@ -64,6 +68,7 @@
 
                 <div class="col col-10 col-pubkey hidden-xs" >
                     <span class="badge badge-positive" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
+                    <h4 class="light item-text-wrap visible-lg" ng-if="found.isCompany">{{found.category.name}}</h4>
                 </div>
             </a>
 

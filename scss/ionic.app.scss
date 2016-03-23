@@ -24,8 +24,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
-$screen-xs-max:                            567px;
-$screen-sm:                                 568px;
+$screen-xs-max:                   767px;
+$screen-sm:                       768px;
+$screen-sm-max:                   991px;
+$screen-md:                       992px;
+$screen-md-max:                   1199px;
+$screen-lg:                       1200px;
 // IE10 on Windows Phone 8
 // IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
 // other words, say on a Lumia, you'll get 768px as the device width,
@@ -41,27 +45,25 @@ $screen-sm:                                 568px;
   }
 }
 
+// Extra small device: Phones (<768px)
 @media screen and (max-width: $screen-xs-max) {
     .hidden-xs {
         display: none !important;
         visibility: hidden !important;
     }
 }
-
 @media screen and (min-width: $screen-sm) {
     .hidden-xs {
         display: inherited;
         visibility: visible !important;
     }
 }
-
 @media screen and (max-width: $screen-xs-max) {
     .visible-xs {
         display: inherited;
         visibility: visible !important;
     }
 }
-
 @media screen and (min-width: $screen-sm) {
     .visible-xs {
         display: none !important;
@@ -69,3 +71,70 @@ $screen-sm:                                 568px;
     }
 }
 
+// Small devices: Tablets (≥768px)
+// TODO: vérifier à partir de la doc http://getbootstrap.com/css/#responsive-utilities-classes
+/*@media screen and (max-width: $screen-sm-max) {
+    .hidden-sm {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (min-width: $screen-md) {
+    .hidden-sm {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-sm-max) {
+    .visible-sm {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (min-width: $screen-md) {
+    .visible-sm {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+
+// Medium devices: Desktops (≥992px)
+@media screen and (max-width: $screen-md-max) {
+    .hidden-md {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (min-width: $screen-lg) {
+    .hidden-md {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-md-max) {
+    .visible-md {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (min-width: $screen-lg) {
+    .visible-md {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}*/
+
+
+// Large devices: Desktops (≥1200px)
+@media screen and (min-width: $screen-lg) {
+    .hidden-lg {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-md-max) {
+    .visible-lg {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}

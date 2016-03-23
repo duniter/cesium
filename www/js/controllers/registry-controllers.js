@@ -1,4 +1,4 @@
-angular.module('cesium.registry.controllers', ['cesium.services'])
+angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
@@ -14,7 +14,7 @@ angular.module('cesium.registry.controllers', ['cesium.services'])
     })
 
    .state('app.registry_view_record', {
-      url: "/registry/:id",
+      url: "/registry/:id/:title",
       views: {
         'menuContent': {
           templateUrl: "templates/registry/view_record.html",
@@ -120,7 +120,7 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal) 
   };
 }
 
-function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils) {
+function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
   RegistryNewRecordWizardController.call(this, $scope, $ionicSlideBoxDelegate, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
@@ -129,7 +129,7 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
     text: '',
     results: {},
     category: null,
-    options: false
+    options: null
   };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
@@ -150,13 +150,32 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
   };
 
   $scope.searchChanged = function() {
-    $scope.search.text = $scope.search.text.toLowerCase();
-    if ($scope.search.text.length > 1) {
-      $scope.doSearch();
-    }
-    else {
-      $scope.search.results = [];
-    }
+    $scope.search.typing = $scope.search.text;
+    $scope.search.looking = true;
+    $timeout(
+      function() {
+        if ($scope.search.typing == $scope.search.text) {
+          $scope.search.typing = null;
+          if ($scope.search.options == null) {
+            $scope.search.options = false;
+          }
+          $scope.doSearch();
+        }
+      },
+      1000);
+  };
+
+  $scope.searchLocationChanged = function() {
+    $scope.search.typing = $scope.search.location;
+    $scope.search.looking = true;
+    $timeout(
+      function() {
+        if ($scope.search.typing == $scope.search.location) {
+          $scope.search.typing = null;
+          $scope.doSearch();
+        }
+      },
+      1000);
   };
 
   $scope.doSearch = function(query) {
@@ -172,45 +191,74 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
       },
       from: 0,
       size: 20,
-      _source: ["title", "description", "time", "location", "pictures", "issuer", "isCompany"]
+      _source: ["title", "description", "time", "location", "pictures", "issuer", "isCompany", "category"]
     };
+    var text = $scope.search.text.toLowerCase();
     var matches = [];
+    var filters = [];
     if ($scope.search.text.length > 1) {
-      matches.push({match : { title: $scope.search.text}});
-      matches.push({match : { description: $scope.search.text}});
+      matches.push({match : { title: text}});
+      matches.push({match : { description: text}});
+      if (!$scope.search.options) {
+        matches.push({match: { location: text}});
+      }
     }
     if ($scope.search.options && $scope.search.category) {
-      matches.push({match : { category: $scope.search.category.id}});
+      filters.push({term: { category: $scope.search.category.id}});
     }
-    if (matches.length > 1) {
-      request.query.bool = { should: matches };
-    }
-    else {
-      request.query.match = matches[0].match;
+    if ($scope.search.options && $scope.search.location != null && $scope.search.location.length > 0) {
+      filters.push({match: { location: $scope.search.location}});
     }
 
-    return Registry.record.search(request)
-      .then(function(res){
-        $scope.search.looking = false;
-        if (res.hits.total == 0) {
-          $scope.search.results = [];
-        }
-        else {
-          $scope.search.results = res.hits.hits.reduce(function(result, hit) {
-              var registry = hit._source;
-              registry.id = hit._id;
-              registry.type = hit._type;
-              if (hit.highlight) {
-                if (hit.highlight.title) {
-                    registry.title = hit.highlight.title[0];
-                }
-                if (hit.highlight.description) {
-                    registry.description = hit.highlight.description[0];
-                }
-              }
-              return result.concat(registry);
-            }, []);
-        }
+    if (matches.length == 0 && filters.length == 0) {
+      $scope.search.results = [];
+      $scope.search.looking = false;
+      return;
+    }
+    request.query.bool = {};
+    if (matches.length > 0) {
+      request.query.bool.should =  matches;
+    }
+    if (filters.length > 0) {
+      request.query.bool.filter =  filters;
+    }
+
+    Registry.category.all()
+      .then(function(categories) {
+        Registry.record.search(request)
+          .then(function(res){
+            $scope.search.looking = false;
+            if (res.hits.total == 0) {
+              $scope.search.results = [];
+            }
+            else {
+              $scope.search.results = res.hits.hits.reduce(function(result, hit) {
+                  var registry = hit._source;
+                  registry.id = hit._id;
+                  registry.type = hit._type;
+                  registry.urlTitle = registry.title;
+                  if (registry.category) {
+                    registry.category = categories[registry.category];
+                  }
+                  if (hit.highlight) {
+                    if (hit.highlight.title) {
+                        registry.title = hit.highlight.title[0];
+                    }
+                    if (hit.highlight.description) {
+                        registry.description = hit.highlight.description[0];
+                    }
+                    if (hit.highlight.location) {
+                        registry.description = hit.highlight.location[0];
+                    }
+                  }
+                  return result.concat(registry);
+                }, []);
+            }
+          })
+          .catch(function(err) {
+              $scope.search.looking = false;
+              $scope.search.results = [];
+            });
       })
       .catch(function(err) {
         $scope.search.looking = false;
@@ -218,9 +266,10 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
       });
   };
 
-  $scope.select = function(id) {
-    $state.go('app.registry_view_record', {id: id});
+  $scope.select = function(id, title) {
+    $state.go('app.registry_view_record', {id: id, title: title});
   };
+
 }
 
 function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
