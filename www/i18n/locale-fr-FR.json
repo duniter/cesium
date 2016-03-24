@@ -1,0 +1,185 @@
+{
+  "COMMON": {
+    "APP_NAME": "Cesium",
+    "PUBKEY": "Clé publique",
+    "BTN_OK": "OK",
+    "BTN_SHOW": "Voir",
+    "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
+    "BTN_BACK": "Retour",
+    "BTN_CANCEL": "Annuler",
+    "BTN_LOGIN": "Se connecter",
+    "BTN_LOGOUT": "Déconnecter",
+    "BTN_ADD_ACCOUNT": "S'inscrire",
+    "SEARCH_NO_RESULT": "Aucun résultat trouvé"
+  },
+  "MENU": {
+    "TITLE": "Cesium",
+    "HOME": "Accueil",
+    "REGISTRY": "Annuaire",
+    "MARKET": "Offres/Demandes",
+    "CURRENCIES": "Monnaies",
+    "ACCOUNT": "Mon compte"
+  },
+  "HOME": {
+    "TITLE": "Accueil",
+    "WELCOME": "Bienvenue.",
+    "MESSAGE": "<b>Cesium</b> est toujours en développement. Il n'y a pas encore grand chose à voir ! :-)",
+    "BTN_REGISTRY": "Annuaire",
+    "BTN_MARKET": "Offres/demandes",
+    "BTN_CURRENCIES": "Explorer les monnaies"
+  },
+  "CURRENCY": {
+    "SELECT": {
+      "TITLE": "Explorer",
+      "CURRENCIES": "Monnaies connues"
+    },
+    "VIEW": {
+      "TITLE": "Explorer",
+      "TAB_CURRENCY": "Monnaie",
+      "TAB_WOT": "Communauté",
+      "TAB_NETWORK": "Réseau",
+      "CURRENCY_NAME": "Nom de la monnaie",
+      "MEMBERS": "Membres",
+      "INCOMING_MEMBERS": "Nouveaux membres",
+      "MONEY_DIVIDER": "Monnaie",
+      "MASS": "Masse monétaire",
+      "SHARE": "Masse par membre",
+      "UD": "Dividend universel",
+      "C_ACTUAL": "c<sub>actuel</sub>",
+      "BLOCKCHAIN_DIVIDER": "Blockchain",
+      "TIME": "Heure de la blockchain",
+      "POW_MIN": "Niveau de difficulté",
+      "RULES_DIVIDER": "Règles",
+      "C_RULE": "c"
+    }
+  },
+  "PEER": {
+    "PEERS": "Noeuds",
+    "KNOWN_PEERS": "Noeuds connus",
+    "SIGNED_ON_BLOCK": "Signé sur le bloc"
+  },
+  "WOT": {
+    "SEARCH_HELP": "recherche (membre ou clé publique)",
+    "MODAL": {
+      "TITLE": "Recherche"
+    }
+  },
+  "LOGIN": {
+    "TITLE": "Connexion",
+    "USERNAME": "Email (ou phrase)",
+    "USERNAME_HELP": "dupond@domaine.com",
+    "PASSWORD": "Mot de passe",
+    "PASSWORD_HELP": "Mot de passe"
+  },
+  "ACCOUNT": {
+    "TITLE": "Mon compte",
+    "BALANCE": "Solde",
+    "LAST_TX": "Dernières transactions",
+    "BTN_SEND_MONEY": "Payer",
+    "BTN_REGISTER": "S'inscrire comme membre",
+    "NEW": {
+      "TITLE": "Inscription",
+      "SLIDE_2_TITLE": "Type de compte :",
+      "MEMBER_ACCOUNT": "Compte membre",
+      "WALLET_ACCOUNT": "Simple protefeuille anonyme",
+      "PSEUDO": "Pseudonyme",
+      "PSEUDO_HELP": "Pseudonyme",
+      "PASSWORD_CONFIRM": "Confirmation du mot de passe",
+      "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe",
+      "MSG_UID_ALREADY_USED": "Pseudonyme déjà pris par quelqu'un d'autre.<br/>Veuillez en choisir un autre."
+    },
+    "POPUP_REGISTER": {
+      "TITLE": "Choisissez un pseudonyme",
+      "HELP": "Un pseudonyme est obligatoire pour devenir membre."
+    }
+  },
+  "TRANSFER": {
+    "TITLE": "Payer",
+    "FROM": "De",
+    "TO": "A",
+    "AMOUNT": "Montant",
+    "AMOUNT_HELP": "Montant",
+    "COMMENTS": "Commentaires",
+    "COMMENTS_HELP": "Commentaires"
+  },
+  "MARKET": {
+    "COMMON": {
+      "CATEGORY": "Catégorie",
+      "CATEGORIES": "Catégories",
+      "ISSUER": "Soumis par"
+    },
+    "SEARCH": {
+      "TITLE": "Offres/Demandes",
+      "SEARCH_HELP": "Recherche (voiture, livre...)",
+      "BTN_ADD": "Nouveau",
+      "BTN_OPTIONS": "Recherche avancée",
+      "BTN_AROUND_ME": "Autour de moi",
+      "LOCATION": "Localisation",
+      "LOCATION_HELP": "Ville"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "EDIT": {
+      "TITLE": "Edition",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "RECORD_TITLE": "Titre",
+      "RECORD_TITLE_HELP": "Titre",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Ville",
+      "RECORD_LOCATION_HELP": "Adresse, Ville"
+    }
+  },
+  "REGISTRY": {
+    "COMMON": {
+      "CATEGORY": "Catégorie",
+      "CATEGORIES": "Catégories",
+      "ISSUER": "Soumis par"
+    },
+    "SEARCH": {
+      "TITLE": "Annuaire",
+      "SEARCH_HELP": "Recherche (nom, pseudo, clé publique...)",
+      "BTN_ADD": "Nouveau",
+      "BTN_OPTIONS": "Recherche avancée",
+      "LOCATION": "Localisation",
+      "LOCATION_HELP": "Ville"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "NEW": {
+      "TITLE": "Nouveau",
+      "SELECT_TYPE": "Type d'ajout :",
+      "TYPE_PARTICULAR": "Particulier",
+      "TYPE_COMPANY": "Entreprise, organisme ou institution"
+    },
+    "EDIT": {
+      "TITLE": "Edition",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "RECORD_TITLE": "Nom",
+      "RECORD_TITLE_HELP": "Nom",
+      "RECORD_DESCRIPTION": "À propos de moi",
+      "RECORD_DESCRIPTION_HELP": "À propos de moi",
+      "RECORD_LOCATION": "Localisation",
+      "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
+      "RECORD_SOCIAL_NETWORKS": "Social networks"
+    }
+  },
+  "ERROR": {
+    "POPUP_TITLE": "Erreur",
+    "UNKNOWN_ERROR": "Erreur inconnue",
+    "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
+    "FIELD_REQUIRED": "Champ obligatoire.",
+    "FIELD_TOO_SHORT": "Valeur trop courte.",
+    "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe",
+    "SEND_SELF_REGISTRATION": "Erreur pendant l'inscription.",
+    "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité",
+    "LOGIN_FAILED": "Erreur lors de l'authentification",
+    "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité"
+  },
+  "INFO": {
+    "POPUP_TITLE": "Information",
+    "CERTIFICATION_DONE": "Certification envoyée"
+  }
+}

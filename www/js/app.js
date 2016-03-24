@@ -66,7 +66,8 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
     // Cela fait bugger les placeholder (pb d'affichage des accents en FR)
     //.useSanitizeValueStrategy('sanitize')
     .useSanitizeValueStrategy(null)
-    .fallbackLanguage(['en', 'fr'])
+    //.fallbackLanguage(['en', 'fr'])
+    .fallbackLanguage(['en', 'fr-FR'])
     .useLoaderCache(true);
 
   })
