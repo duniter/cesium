@@ -21,8 +21,8 @@
     "ACCOUNT": "Mon compte"
   },
   "HOME": {
-    "TITLE": "Accueil",
-    "WELCOME": "Le Sou",
+    "TITLE": "",
+    "WELCOME": "Cesium",
     "MESSAGE": "Application toujours en développement.<br/>Merci de votre compréhension...",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",

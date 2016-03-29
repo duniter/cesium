@@ -61,7 +61,7 @@
                 <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
                     <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
                     <h2 ng-bind-html="found.title"></h2>
-                    <h4 class="light" ng-bind-html="found.location"></h4>
+                    <h4 class="gray" ng-bind-html="found.location"></h4>
                     <span class="badge item-note">{{found.time | formatDate}}</span>
                 </div>
                 <div class="visible-xs item-content item-text-wrap">
@@ -74,17 +74,17 @@
                     </div>
                     <div class="col no-margin-xs">
                         <h2 ng-bind-html="found.title"></h2>
-                        <h4 class="light visible-xs" ng-bind-html="found.location"></h4>
+                        <h4 class="gray visible-xs" ng-bind-html="found.location"></h4>
                         <span class="badge item-note">{{found.time | formatDate}}</span>
                     </div>
                     <div class="col col-20">
-                        <h3 class="light" ng-bind="found.location" ng-if="found.location"></h3>
+                        <h3 class="gray" ng-bind="found.location" ng-if="found.location"></h3>
                     </div>
                     <div class="col col-30 item-text-wrap">
-                        <h3 class="light" ng-bind-html="found.description" ng-if="found.description"></h3>
+                        <h3 class="gray" ng-bind-html="found.description" ng-if="found.description"></h3>
                     </div>
                     <div class="col col-10 visible-lg" >
-                        <h3 class="light item-text-wrap" ng-if="found.category">{{found.category.name|formatCategory}}</h3>
+                        <h3 class="gray item-text-wrap" ng-if="found.category">{{found.category.name|formatCategory}}</h3>
                     </div>
                 </div>
             </a>

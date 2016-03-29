@@ -18,7 +18,7 @@
                 <span class="item item-text-wrap">
                     {{'TRANSFER.FROM' | translate}}
                     <span class="badge"
-                        ng-class="{'badge-assertive': (convertedBalance > 0 && formData.amount && convertedBalance < formData.amount), 'badge-balanced': (!formData.amount || convertedBalance >= formData.amount) }">
+                        ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
                         {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
                         <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
                         <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>

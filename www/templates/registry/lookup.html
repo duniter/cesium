@@ -52,8 +52,8 @@
                 ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
                 <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
                 <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>
-                <h4 class="light" ng-bind="found.location" ng-if="found.location"></h4>
-                <p class="light item-text-wrap" ng-bind-html="found.description" ng-if="found.description"></p>
+                <h4 class="gray" ng-bind="found.location" ng-if="found.location"></h4>
+                <p class="gray item-text-wrap" ng-bind-html="found.description" ng-if="found.description"></p>
                 <span class="badge" ng-if="!found.isCompany">{{found.issuer | formatPubkey}}</span>
             </a>
 

@@ -21,7 +21,7 @@
     "ACCOUNT": "My Account"
   },
   "HOME": {
-    "TITLE": "Home",
+    "TITLE": "",
     "WELCOME": "Welcome",
     "MESSAGE": "<b>Cesium</b> is still in development phase. There is not much to see right now. :-)",
     "BTN_REGISTRY": "Registry",

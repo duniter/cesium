@@ -15,12 +15,12 @@
                 <div class="item" ng-class="{'item-avatar': pictures && pictures.length > 0}">
                     <img ng-src="{{pictures[0].src}}" ng-if="pictures && pictures.length > 0">
                     <h2 class="positive" ng-bind-html="formData.title"></h2>
-                    <h4 class="light" ng-bind-html="formData.location"></h4>
+                    <h4 class="gray" ng-bind-html="formData.location"></h4>
                 </div>
 
                 <a class="item item-icon-left" ng-if="!formData.isCompany">
                     <i class="icon ion-key"></i>
-                    <h4 class="light">{{formData.issuer}}</h4>
+                    <h4 class="gray">{{formData.issuer}}</h4>
                 </a>
 
                 <div class="item">
