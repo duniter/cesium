@@ -79,6 +79,7 @@
     "BTN_REGISTER": "Register as member",
     "NEW": {
       "TITLE": "Register",
+      "SLIDE_1_TITLE": "Select a money:",
       "SLIDE_2_TITLE": "Kind of account:",
       "MEMBER_ACCOUNT": "Member account",
       "WALLET_ACCOUNT": "Simple wallet account",

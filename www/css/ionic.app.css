@@ -9079,22 +9079,22 @@ a.button {
   @-ms-viewport {
     width: 320px; } }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 747px) {
   .hidden-xs {
     display: none !important;
     visibility: hidden !important; } }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 748px) {
   .hidden-xs {
     display: inherited;
     visibility: visible !important; } }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 747px) {
   .visible-xs {
     display: inherited;
     visibility: visible !important; } }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 748px) {
   .visible-xs {
     display: none !important;
     visibility: hidden !important; } }

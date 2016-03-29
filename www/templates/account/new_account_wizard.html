@@ -2,12 +2,15 @@
 
     <ion-header-bar class="bar-positive">
 
-        <button class="button button-positive icon icon-left ion-chevron-left" ng-click="previous()" ng-show="slideIndex > 0" translate>COMMON.BTN_BACK</button>
+        <button class="button back-button button-clear buttons header-item" ng-click="previous()" ng-show="slideIndex > 0">
+            <i class="icon ion-ios-arrow-back"></i>
+            <span translate>COMMON.BTN_BACK</span>
+        </button>
         <button class="button button-positive" ng-click="cancel()" ng-show="slideIndex == 0" translate>COMMON.BTN_CANCEL</button>
 
         <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
 
-        <button class="button button-positive button-icon ion-android-send" ng-click="doNewAccount()" ng-show="slideIndex == 2"></button>
+        <button class="button button-positive button-icon ion-android-send visible-xs" ng-click="doNewAccount()" ng-show="slideIndex == 2"></button>
 
         </ion-nav-buttons>
     </ion-header-bar>
@@ -16,6 +19,7 @@
     <ion-slide-box on-slide-changed="slideChanged(index)" id="newAccount" class="has-header">
         <ion-slide>
             <div class="padding">
+                <h3 translate>ACCOUNT.NEW.SLIDE_1_TITLE</h3>
                 <ng-include src="'templates/currency/select_currency.html'"></ng-include>
             </div>
         </ion-slide>
@@ -33,6 +37,7 @@
 
                     <!-- pseudo -->
                     <label class="item item-input"
+                           ng-if="accountData.isMember"
                            ng-class="{'item-input-error': accountForm.$submitted && accountForm.pseudo.$invalid}">
                         <span class="input-label" translate>ACCOUNT.NEW.PSEUDO</span>
                         <input name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
@@ -41,7 +46,7 @@
                                required>
                     </label>
                     <div class="form-errors"
-                         ng-if="accountForm.$submitted && accountForm.pseudo.$error"
+                         ng-if="accountData.isMember && accountForm.$submitted && accountForm.pseudo.$error"
                          ng-messages="accountForm.pseudo.$error">
                         <div class="form-error" ng-message="required">
                             <span translate="ERROR.FIELD_REQUIRED"></span>
@@ -125,7 +130,7 @@
                     </div>
                 </div>
 
-                <div class="padding">
+                <div class="padding hidden-xs">
                     <button class="button button-block button-positive"  type="submit">
                         {{'COMMON.BTN_OK' | translate}}
                     </button>

@@ -20,15 +20,9 @@
           </a-->
         </div>
 
-        <span class="item item-icon-left" ng-if="id && recordData.issuer">
-            <i class="icon ion-key"></i>
-            <span translate>REGISTRY.COMMON.ISSUER</span>
-            <span class="badge">{{recordData.issuer | formatPubkey}}</span>
-        </span>
-
         <span class="item item-button-right" ng-click="openCategoryModal()" ng-show="recordData.isCompany">
             <span translate>REGISTRY.COMMON.CATEGORY</span>
-            <span>{{category.name}}</span>&nbsp;
+            <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
             <i class="button button-clear ion-chevron-right"></i>
         </span>
 
@@ -62,6 +56,17 @@
           <textarea placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="recordData.location"></textarea>
         </div>
 
+        <a class="item item-icon-left" ng-if="id && recordData.issuer && !recordData.isCompany">
+            <i class="icon ion-key"></i>
+            <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
+            <h4 class="light">{{recordData.issuer}}</h4>
+        </a>
+
+        <a class="item item-icon-left" ng-if="id && recordData.issuer && recordData.isCompany" >
+            <i class="icon ion-key"></i>
+            <span translate>REGISTRY.COMMON.ISSUER</span>
+            <h4>{{recordData.issuer | formatPubkey}}</h4>
+        </a>
 
   </div>
   </form>

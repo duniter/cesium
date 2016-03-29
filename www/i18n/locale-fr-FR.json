@@ -9,7 +9,7 @@
     "BTN_CANCEL": "Annuler",
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnecter",
-    "BTN_ADD_ACCOUNT": "S'inscrire",
+    "BTN_ADD_ACCOUNT": "Nous rejoindre",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé"
   },
   "MENU": {
@@ -21,9 +21,10 @@
     "ACCOUNT": "Mon compte"
   },
   "HOME": {
+    "LOGO": "img/lesou-120px.png",
     "TITLE": "Accueil",
-    "WELCOME": "Bienvenue.",
-    "MESSAGE": "<b>Cesium</b> est toujours en développement. Il n'y a pas encore grand chose à voir ! :-)",
+    "WELCOME": "Le Sou",
+    "MESSAGE": "Application toujours en développement.<br/>Merci de votre compréhension...",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies"
@@ -66,7 +67,7 @@
   },
   "LOGIN": {
     "TITLE": "Connexion",
-    "USERNAME": "Email (ou phrase)",
+    "USERNAME": "Adresse email",
     "USERNAME_HELP": "dupond@domaine.com",
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe"
@@ -79,12 +80,13 @@
     "BTN_REGISTER": "S'inscrire comme membre",
     "NEW": {
       "TITLE": "Inscription",
+      "SLIDE_1_TITLE": "Choix de la monnaie :",
       "SLIDE_2_TITLE": "Type de compte :",
       "MEMBER_ACCOUNT": "Compte membre",
-      "WALLET_ACCOUNT": "Simple protefeuille anonyme",
+      "WALLET_ACCOUNT": "Portefeuille anonyme",
       "PSEUDO": "Pseudonyme",
       "PSEUDO_HELP": "Pseudonyme",
-      "PASSWORD_CONFIRM": "Confirmation du mot de passe",
+      "PASSWORD_CONFIRM": "Confirmation",
       "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe",
       "MSG_UID_ALREADY_USED": "Pseudonyme déjà pris par quelqu'un d'autre.<br/>Veuillez en choisir un autre."
     },
@@ -163,7 +165,8 @@
       "RECORD_DESCRIPTION_HELP": "À propos de moi",
       "RECORD_LOCATION": "Localisation",
       "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
-      "RECORD_SOCIAL_NETWORKS": "Social networks"
+      "RECORD_SOCIAL_NETWORKS": "Social networks",
+      "RECORD_PUBKEY": "Clé publique"
     }
   },
   "ERROR": {

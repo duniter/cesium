@@ -13,7 +13,7 @@ angular.module("cesium.config", [])
 	"UCOIN_NODE_WS": "metab.ucoin.fr:9201",
 	"UCOIN_NODE_ES": "es.ucoin.fr",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-03-23T15:38:20.697Z"
+	"BUILD_DATE": "2016-03-29T18:32:27.012Z"
 })
 
 ;

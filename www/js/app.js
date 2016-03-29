@@ -44,6 +44,12 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
     }
   })
 
+  .filter('formatCategory', function() {
+    return function(input) {
+      return input && input.length > 28 ? input.substr(0,25)+'...' : input;
+    }
+  })
+
   // Convert to user friendly URL (e.g. "Like - This" -> "like-this")
   .filter('formatSlug', function() {
     return function(input) {
@@ -66,8 +72,7 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
     // Cela fait bugger les placeholder (pb d'affichage des accents en FR)
     //.useSanitizeValueStrategy('sanitize')
     .useSanitizeValueStrategy(null)
-    //.fallbackLanguage(['en', 'fr'])
-    .fallbackLanguage(['en', 'fr-FR'])
+    .fallbackLanguage(['en'])
     .useLoaderCache(true);
 
   })

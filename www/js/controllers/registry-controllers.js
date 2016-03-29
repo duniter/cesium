@@ -41,7 +41,8 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
           controller: 'RegistryRecordEditCtrl'
         }
       }
-    });
+    })
+    ;
   })
 
  .controller('RegistryLookupCtrl', RegistryLookupController)
@@ -178,7 +179,7 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
       1000);
   };
 
-  $scope.doSearch = function(query) {
+  $scope.doSearch = function() {
     $scope.search.looking = true;
 
     var request = {
@@ -271,6 +272,11 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
     $state.go('app.registry_view_record', {id: id, title: title});
   };
 
+ // TODO: remove auto add account when done
+  $timeout(function() {
+    $scope.search.text='lavenier';
+    $scope.doSearch();
+  }, 400);
 }
 
 function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {

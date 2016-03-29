@@ -15,6 +15,9 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
 
+//$positive:                        #921c81 !default;
+//$balanced:                        #94c11f !default;
+
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
@@ -24,8 +27,8 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
-$screen-xs-max:                   767px;
-$screen-sm:                       768px;
+$screen-xs-max:                   747px;
+$screen-sm:                       748px;
 $screen-sm-max:                   991px;
 $screen-md:                       992px;
 $screen-md-max:                   1199px;
