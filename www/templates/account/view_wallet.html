@@ -1,26 +1,28 @@
 <ion-view view-title="{{'ACCOUNT.TITLE' | translate}}" left-buttons="leftButtons">
     <ion-content>
         <div class="scroll">
+
+            <span class="item item-avatar" ng-if="isMember">
+                <i class="icon ion-person"></i>
+                <h2>{{walletData.uid}}</h2>
+                <p>{{'COMMON.PUBKEY' | translate}}: {{walletData.pubkey | formatPubkey}}</p>
+            </span>
+
+            <span class="item item-icon-left center bar bar-subheader bar-postitive" ng-if="!isMember">
+                <i class="icon ion-card"></i>
+                <h2>{{walletData.pubkey | formatPubkey}}</h2>
+                <h2 ng-class="{'balanced': (convertedBalance > 0), 'assertive': (!convertedBalance || convertedBalance == 0)}">
+                    <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+                    <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                </h2>
+            </span>
+
             <div class="list">
-                
-                <span class="item item-icon-left" ng-if="isMember">
-                    <i class="icon ion-person"></i>
-                    <h2>{{walletData.uid}}</h2>
-                    <p>{{'COMMON.PUBKEY' | translate}}: {{walletData.pubkey | formatPubkey}}</p>
-                </span>
 
-                <span class="item item-icon-left" ng-if="!isMember">
-                    <i class="icon ion-key"></i>
-                    {{'COMMON.PUBKEY' | translate}}
-                    <span class="badge">{{walletData.pubkey | formatPubkey}}</span>
-                </span>
 
-                <span class="item item-icon-left">
-                    <i class="icon ion-card"></i>
-                    {{'ACCOUNT.BALANCE' | translate}}
-                    <span class="badge badge-balanced" ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-                    <span class="badge badge-balanced" ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
-                </span>
+                <div class="item-divider">
+                    &nbsp;
+                </div>
 
                 <div class="item item-toggle dark">
                     {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
@@ -32,7 +34,7 @@
                     </label>
                 </div>
 
-                <div class="item">
+                <div class="item-divider">
                     &nbsp;
                 </div>
 

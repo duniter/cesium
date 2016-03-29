@@ -59,7 +59,7 @@
     "SIGNED_ON_BLOCK": "Signé sur le bloc"
   },
   "WOT": {
-    "SEARCH_HELP": "recherche (membre ou clé publique)",
+    "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
     "REGISTERED_SINCE": "Inscrit depuis ",
     "BTN_SEND_MONEY": "Payer",
     "BTN_CERTIFY": "Certifier",

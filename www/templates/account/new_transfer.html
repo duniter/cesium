@@ -15,11 +15,11 @@
                     <i class="button button-clear ion-chevron-right"></i>
                 </span>
 
-                <span class="item ">
-                    <h2>{{'TRANSFER.FROM' | translate}} <span class="light">{{walletData.pubkey| formatPubkey}}</span></h2>
-
+                <span class="item">
+                    {{'TRANSFER.FROM' | translate}}
                     <span class="badge"
                         ng-class="{'badge-assertive': (convertedBalance > 0 && formData.amount && convertedBalance < formData.amount), 'badge-balanced': (!formData.amount || convertedBalance >= formData.amount) }">
+                        {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
                         <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
                         <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
                     </span>

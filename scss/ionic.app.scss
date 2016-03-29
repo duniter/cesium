@@ -24,6 +24,13 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
+.background-positive {
+  background-color: $positive;
+  color: $light;
+  text-color: $light;
+}
+
+
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
@@ -83,7 +90,16 @@ $screen-lg:                       1200px;
         padding: inherited;
     }
 }
-
+@media screen and (max-width: $screen-xs-max) {
+    .no-margin-xs {
+        margin: 0px !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .no-margin-xs {
+        margin: inherited;
+    }
+}
 // Small devices: Tablets (≥768px)
 // TODO: vérifier à partir de la doc http://getbootstrap.com/css/#responsive-utilities-classes
 /*@media screen and (max-width: $screen-sm-max) {

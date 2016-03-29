@@ -37,7 +37,7 @@
             </div>
         </span>
 
-        <div class="list card" ng-if="search.options != null">
+        <div class="list list-inset" ng-if="search.options != null">
 
             <label class="item center" ng-if="search.looking">
                 <ion-spinner icon="android"></ion-spinner>
@@ -48,7 +48,7 @@
             </label>
 
             <a  ng-repeat="found in search.results"
-                class="item item-product item-avatar"
+                class="item item-avatar"
                 ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
                 <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
                 <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>

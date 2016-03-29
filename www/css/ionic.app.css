@@ -9075,6 +9075,11 @@ a.button {
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
 
+.background-positive {
+  background-color: #387ef5;
+  color: #fff;
+  text-color: #fff; }
+
 @media screen and (max-width: 400px) {
   @-ms-viewport {
     width: 320px; } }
@@ -9106,6 +9111,14 @@ a.button {
 @media screen and (min-width: 748px) {
   .no-padding-xs {
     padding: inherited; } }
+
+@media screen and (max-width: 747px) {
+  .no-margin-xs {
+    margin: 0px !important; } }
+
+@media screen and (min-width: 748px) {
+  .no-margin-xs {
+    margin: inherited; } }
 
 /*@media screen and (max-width: $screen-sm-max) {
     .hidden-sm {
