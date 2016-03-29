@@ -1,38 +1,30 @@
-<ion-view view-title="{{'ACCOUNT.TITLE' | translate}}" left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons">
     <ion-content>
         <div class="scroll">
 
-            <span class="item item-avatar" ng-if="isMember">
-                <i class="icon ion-person"></i>
-                <h2>{{walletData.uid}}</h2>
-                <p>{{'COMMON.PUBKEY' | translate}}: {{walletData.pubkey | formatPubkey}}</p>
-            </span>
-
-            <span class="item item-icon-left center bar bar-subheader bar-postitive" ng-if="!isMember">
-                <i class="icon ion-card"></i>
-                <h2>{{walletData.pubkey | formatPubkey}}</h2>
-                <h2 ng-class="{'balanced': (convertedBalance > 0), 'assertive': (!convertedBalance || convertedBalance == 0)}">
+            <span class="item item-royal item-icon-left item-content center item-text-wrap">
+                <i class="icon " ng-class="{'ion-card': !isMember, 'ion-person': isMember}"></i>
+                <h2 class="light" ng-if="isMember">{{walletData.uid}}</h2>
+                <h4 class="light" ng-if="isMember">{{walletData.pubkey | formatPubkey}}</h4>
+                <h2 class="light" ng-if="!isMember">{{walletData.pubkey | formatPubkey}}</h2>
+                <h1 class="light">
                     <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
                     <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
-                </h2>
+                </h1>
             </span>
+            <div class="item item-content item-toggle dark">
+                <h4 class="gray">
+                    {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
+                </h4>
+                <label class="toggle toggle-royal">
+                    <input type="checkbox" ng-model="walletData.useRelative">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </div>
 
             <div class="list">
-
-
-                <div class="item-divider">
-                    &nbsp;
-                </div>
-
-                <div class="item item-toggle dark">
-                    {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-                    <label class="toggle toggle-royal">
-                        <input type="checkbox" ng-model="walletData.useRelative">
-                        <div class="track">
-                            <div class="handle"></div>
-                        </div>
-                    </label>
-                </div>
 
                 <div class="item-divider">
                     &nbsp;

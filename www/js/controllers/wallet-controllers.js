@@ -58,11 +58,14 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
 
   $scope.refreshConvertedBalance = function() {
     if ($scope.walletData.useRelative) {
-      $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
+      $scope.convertedBalance = $scope.walletData.balance ? ($scope.walletData.balance / $scope.walletData.currentUD) : 0;
       $scope.unit = 'universal_dividend';
       $scope.udUnit = $scope.walletData.currency;
     } else {
       $scope.convertedBalance = $scope.walletData.balance;
+      if (!$scope.convertedBalance) {
+        $scope.convertedBalance = 0;
+      }
       $scope.unit = $scope.walletData.currency;
       $scope.udUnit = '';
     }

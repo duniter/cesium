@@ -103,8 +103,8 @@
     "TO": "To",
     "AMOUNT": "Amount",
     "AMOUNT_HELP": "Amount",
-    "COMMENTS": "Comments",
-    "COMMENTS_HELP": "Comments"
+    "COMMENTS": "Reference",
+    "COMMENTS_HELP": "Reference (optional)"
   },
   "MARKET": {
     "COMMON": {

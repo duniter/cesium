@@ -8,12 +8,13 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
 
   .filter('formatInteger', function() {
     return function(input) {
-      return input ? numeral(input).format('0,0') : '';
+      return input ? numeral(input).format('0,0') : '0';
     }
   })
 
   .filter('formatDecimal', function() {
       return function(input) {
+        if (!input) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
         return Math.floor(input * 10000) / 10000;
       }

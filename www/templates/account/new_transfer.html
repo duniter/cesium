@@ -15,7 +15,7 @@
                     <i class="button button-clear ion-chevron-right"></i>
                 </span>
 
-                <span class="item">
+                <span class="item item-text-wrap">
                     {{'TRANSFER.FROM' | translate}}
                     <span class="badge"
                         ng-class="{'badge-assertive': (convertedBalance > 0 && formData.amount && convertedBalance < formData.amount), 'badge-balanced': (!formData.amount || convertedBalance >= formData.amount) }">
@@ -24,6 +24,16 @@
                         <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
                     </span>
                 </span>
+
+                <div class="item item-content item-toggle dark">
+                    <h4 class="gray">{{'COMMON.BTN_RELATIVE_UNIT' | translate}}</h4>
+                    <label class="toggle toggle-royal">
+                        <input type="checkbox" ng-model="walletData.useRelative">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                    </label>
+                </div>
 
                 <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
                     <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
@@ -35,15 +45,6 @@
                     <input type="text" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
                 </div>
 
-                <div class="item item-toggle dark">
-                    {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-                    <label class="toggle toggle-royal">
-                        <input type="checkbox" ng-model="walletData.useRelative">
-                        <div class="track">
-                            <div class="handle"></div>
-                        </div>
-                    </label>
-                </div>
 
                 <label class="item item-input">
                     <textarea placeholder="{{'TRANSFER.COMMENTS_HELP' | translate}}" ng-model="formData.comments"></textarea>

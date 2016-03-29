@@ -103,8 +103,8 @@
     "TO": "A",
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
-    "COMMENTS": "Commentaires",
-    "COMMENTS_HELP": "Commentaires"
+    "COMMENTS": "Référence",
+    "COMMENTS_HELP": "Référence de l'opération (optionnelle)"
   },
   "MARKET": {
     "COMMON": {
