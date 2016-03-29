@@ -273,10 +273,11 @@ function RegistryLookupController($scope, $ionicSlideBoxDelegate, $state, $ionic
   };
 
  // TODO: remove auto add account when done
-  $timeout(function() {
+ /* $timeout(function() {
     $scope.search.text='lavenier';
     $scope.doSearch();
   }, 400);
+  */
 }
 
 function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
