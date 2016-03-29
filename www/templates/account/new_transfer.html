@@ -8,18 +8,22 @@
     <ion-content>
         <div class="scroll">
             <div class="list">
-            <span class="item item-icon-left">
-                <i class="icon ion-key"></i>
-                {{'TRANSFER.FROM' | translate}}
-                <span class="badge badge-calm">{{walletData.pubkey.substr(0,8)}}</span>
-            </span>
 
-            <span class="item item-icon-left item-button-right" ng-click="openSearch()">
-                <i class="icon ion-person"></i>
-                {{'TRANSFER.TO' | translate}}
-                <span class="badge badge-royal">{{dest}}</span>&nbsp;
-                <i class="button button-clear ion-chevron-right"></i>
-            </span>
+                <span class="item item-button-right" ng-click="openSearch()">
+                    {{'TRANSFER.TO' | translate}}
+                    <span class="badge badge-royal">{{dest}}</span>&nbsp;
+                    <i class="button button-clear ion-chevron-right"></i>
+                </span>
+
+                <span class="item ">
+                    <h2>{{'TRANSFER.FROM' | translate}} <span class="light">{{walletData.pubkey| formatPubkey}}</span></h2>
+
+                    <span class="badge"
+                        ng-class="{'badge-assertive': (convertedBalance > 0 && formData.amount && convertedBalance < formData.amount), 'badge-balanced': (!formData.amount || convertedBalance >= formData.amount) }">
+                        <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+                        <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                    </span>
+                </span>
 
                 <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
                     <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>

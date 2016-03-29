@@ -60,6 +60,9 @@
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
+    "REGISTERED_SINCE": "Registered since ",
+    "BTN_SEND_MONEY": "Send money",
+    "BTN_CERTIFY": "Certify",
     "MODAL": {
       "TITLE": "Search"
     }
@@ -164,7 +167,8 @@
       "RECORD_DESCRIPTION_HELP": "Something about me",
       "RECORD_LOCATION": "Localization",
       "RECORD_LOCATION_HELP": "Localization (address, city)",
-      "RECORD_SOCIAL_NETWORKS": "Social networks"
+      "RECORD_SOCIAL_NETWORKS": "Social networks",
+      "RECORD_PUBKEY": "Public key"
     }
   },
   "ERROR": {

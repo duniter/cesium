@@ -9099,6 +9099,14 @@ a.button {
     display: none !important;
     visibility: hidden !important; } }
 
+@media screen and (max-width: 747px) {
+  .no-padding-xs {
+    padding: 0px !important; } }
+
+@media screen and (min-width: 748px) {
+  .no-padding-xs {
+    padding: inherited; } }
+
 /*@media screen and (max-width: $screen-sm-max) {
     .hidden-sm {
         display: none !important;

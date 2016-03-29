@@ -167,6 +167,7 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
 function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wallet, UIUtils) {
 
   $scope.walletData = {};
+  $scope.convertedBalance = 0;
   $scope.formData = {
     destPub: null,
     amount: null,
@@ -203,10 +204,12 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
   // When chaing use relative UD
   $scope.onUseRelativeChanged = function() {
     if ($scope.walletData.useRelative) {
+      $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
       $scope.udAmount = $scope.amount * $scope.walletData.currentUD;
       $scope.unit = 'universal_dividend';
       $scope.udUnit = $scope.walletData.currency;
     } else {
+      $scope.convertedBalance = $scope.walletData.balance;
       $scope.formData.amount = ($scope.formData.amount != "undefined" && $scope.formData.amount != null)
         ? Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.')))
         : null;
@@ -216,6 +219,7 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
     }
   };
   $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
+  $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
 
   $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
       scope: $scope,

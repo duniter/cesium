@@ -21,7 +21,6 @@
     "ACCOUNT": "Mon compte"
   },
   "HOME": {
-    "LOGO": "img/lesou-120px.png",
     "TITLE": "Accueil",
     "WELCOME": "Le Sou",
     "MESSAGE": "Application toujours en développement.<br/>Merci de votre compréhension...",
@@ -61,6 +60,9 @@
   },
   "WOT": {
     "SEARCH_HELP": "recherche (membre ou clé publique)",
+    "REGISTERED_SINCE": "Inscrit depuis ",
+    "BTN_SEND_MONEY": "Payer",
+    "BTN_CERTIFY": "Certifier",
     "MODAL": {
       "TITLE": "Recherche"
     }
@@ -165,7 +167,7 @@
       "RECORD_DESCRIPTION_HELP": "À propos de moi",
       "RECORD_LOCATION": "Localisation",
       "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
-      "RECORD_SOCIAL_NETWORKS": "Social networks",
+      "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
       "RECORD_PUBKEY": "Clé publique"
     }
   },

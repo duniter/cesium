@@ -2,11 +2,11 @@
     <ion-nav-buttons side="secondary">
         <button ui-sref="app.market_add_record" class="button button-positive">
             <i class="icon ion-plus"></i>
-            <span translate>MARKET.SEARCH.BTN_ADD</span>
         </button>
     </ion-nav-buttons>
 
-    <ion-content class="lookupForm padding">
+    <ion-content class="lookupForm padding no-padding-xs">
+
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
@@ -47,7 +47,7 @@
                 </div>
         </span>
 
-        <div class="list list-inset">
+        <div class="list card no-padding" ng-if="search.options != null">
 
             <label class="item center" ng-if="search.looking">
                 <ion-spinner icon="android"></ion-spinner>
@@ -59,8 +59,9 @@
 
             <a class="item row item-record responsive-sm" ng-repeat="found in search.results" ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
                 <div class="col col-20" ng-class="{'hidden-xs': !found.pictures || found.pictures == 0}">
-                    <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures > 0">
-                    <!--<span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span>-->                </div>
+                    <img style="height:70px" ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures.length > 0">
+                    <!--<span nf-if="!found.pictures || found.pictures == 0">&nbsp;</span>-->
+                </div>
                 <div class="col">
                     <h2 ng-bind-html="found.title"></h2>
                     <h4 class="light visible-xs" ng-bind-html="found.location"></h4>
@@ -76,7 +77,7 @@
                 </div>
 
                 <div class="col col-10 visible-lg" >
-                    <h4 class="light item-text-wrap" ng-if="found.category">{{found.category.name}}</h4>
+                    <h3 class="light item-text-wrap" ng-if="found.category">{{found.category.name|formatCategory}}</h3>
                 </div>
             </a>
 

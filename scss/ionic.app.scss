@@ -48,7 +48,7 @@ $screen-lg:                       1200px;
   }
 }
 
-// Extra small device: Phones (<768px)
+// Extra small device: Phones (<747px)
 @media screen and (max-width: $screen-xs-max) {
     .hidden-xs {
         display: none !important;
@@ -71,6 +71,16 @@ $screen-lg:                       1200px;
     .visible-xs {
         display: none !important;
         visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .no-padding-xs {
+        padding: 0px !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .no-padding-xs {
+        padding: inherited;
     }
 }
 

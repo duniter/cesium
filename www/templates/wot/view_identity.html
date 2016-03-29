@@ -4,28 +4,26 @@
         <div class="list">
             <span class="item item-icon-left">
                 <i class="icon ion-person"></i>
-                <h2>{{identity.uid}}</h2>
-                <p>public key: {{identity.pub | formatPubkey}}</p>
-                <span class="badge"></span>
+                <h2 class="positive">{{identity.uid}}</h2>
+                <h4 class="light">{{'WOT.REGISTERED_SINCE' | translate}}{{identity.sigDate | formatDate}}</h4>
             </span>
 
-            <span class="item item-icon-left">
-                <i class="icon ion-calendar"></i>
-                Registration date
-                <span class="badge badge-calm">{{identity.sigDate | formatDate}}</span>
-            </span>
+            <a class="item item-icon-left">
+                <i class="icon ion-key"></i>
+                <h4 class="light">{{identity.pub}}</h4>
+            </a>
 
             <div class="item-divider"></div>
 
             <div class="item item-button-right positive" ng-click="transfer()">
-                Send money
+                {{'WOT.BTN_SEND_MONEY' | translate}}
                 <a class="button button-clear button-positive" >
                     <i class="icon-right ion-chevron-right"></i>
                 </a>
             </div>
 
             <div class="item item-button-right positive" ng-click="signIdentity()" ng-if="hasSelf">
-                Certify
+                {{'WOT.BTN_CERTIFY' | translate}}
                 <a class="button button-clear button-positive" >
                     <i class="icon-right ion-chevron-right"></i>
                 </a>

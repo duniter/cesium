@@ -6,7 +6,7 @@
         </button>
     </ion-nav-buttons>
 
-    <ion-content class="lookupForm padding">
+    <ion-content class="lookupForm padding no-padding-xs">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
@@ -37,7 +37,7 @@
             </div>
         </span>
 
-        <div class="list card">
+        <div class="list card" ng-if="search.options != null">
 
             <label class="item center" ng-if="search.looking">
                 <ion-spinner icon="android"></ion-spinner>
