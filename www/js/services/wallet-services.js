@@ -30,6 +30,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     data = createData(),
 
+    resetData = function() {
+      data.pubkey= null;
+      data.keypair ={
+                signSk: null,
+                signPk: null
+            };
+      data.balance = 0;
+      data.sources = null;
+      data.useRelative = USE_RELATIVE_DEFAULT;
+      data.currency= null;
+      data.currentUD= null;
+      data.history= {};
+      data.requirements= null;
+      data.loaded= false;
+    },
+
     reduceTx = function(txArray) {
         var list = [];
         txArray.forEach(function(tx) {
@@ -77,7 +93,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     logout = function(username, password) {
         return $q(function(resolve, reject) {
-            data = createData();
+            resetData();
             resolve();
         });
     },
@@ -129,7 +145,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             // Get sources
             BMA.tx.sources({pubkey: data.pubkey})
               .then(function(res){
-                data.sources = res.sources; 
+                data.sources = res.sources;
 
                 var balance = 0;
                 if (res.sources.length) {
@@ -179,7 +195,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           ])
           .then(function() {
             data.loaded = true;
-            resolve(data);            
+            resolve(data);
           })
           .catch(function(err) {
             data.loaded = false;
@@ -243,7 +259,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                     }
                   }
                   data.sources = res.sources;
-                }                
+                }
                 data.balance = balance;
               })
           ])
@@ -282,7 +298,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               + "Issuers:\n"
               + data.pubkey + "\n"
               + "Inputs:\n";
-            var sourceAmount = 0; 
+            var sourceAmount = 0;
             var inputs = [];
             for (var i = 0; i<data.sources.length; i++) {
               var input = data.sources[i];
@@ -302,13 +318,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             if (sourceAmount < amount) {
               reject('Not enought sources (max amount: '
                 +(data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount)
-                +'). Please wait next block computation.'); 
+                +'). Please wait next block computation.');
               return;
             }
 
             tx += "Outputs:\n"
                // ISSUERS:AMOUNT
-               + destPub +":" + amount + "\n"; 
+               + destPub +":" + amount + "\n";
             if (sourceAmount > amount) {
               tx += data.pubkey+":"+(sourceAmount-amount)+"\n";
             }

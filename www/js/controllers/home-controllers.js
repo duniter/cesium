@@ -60,10 +60,11 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
     if ($scope.loginModal != "undefined" && $scope.loginModal != null) {
       $scope.loginModal.show();
       $scope.loginData.callback = callback;
+      UIUtils.loading.hide();
     }
     else{
       $timeout($scope.login, 2000);
-    }    
+    }
   };
 
   // Login and load wallet
@@ -186,11 +187,18 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
 }
 
 
-function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry) {
+function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry) {
 
-  $scope.slideIndex = 0;
   $scope.accountData = {};
   $scope.accountForm = {};
+  $scope.slides = {
+    slider: null,
+    options: {
+      loop: false,
+      effect: 'slide',
+      speed: 500
+    }
+  };
 
   // Called to navigate to the main app
   $scope.cancel = function() {
@@ -198,6 +206,8 @@ function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal,
     $timeout(function(){
       $scope.accountData = {};
       $scope.accountForm = {};
+      $scope.slides.slider.destroy();
+      delete $scope.slides.slider;
     }, 200);
   };
 
@@ -205,33 +215,31 @@ function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal,
     $scope.accountForm = accountForm;
   };
 
-  // Called each time the slide changes
-  $scope.slide = function(index) {
-    $ionicSlideBoxDelegate.slide(index);
-    $scope.slideIndex = index;
-    $scope.nextStep = $scope.slideIndex == 2 ? 'Start' : 'Next';
+  $scope.slidePrev = function() {
+    $scope.slides.slider.unlockSwipes()
+    $scope.slides.slider.slidePrev();
+    $scope.slides.slider.lockSwipes()
   };
 
-  $scope.next = function() {
-    $scope.slide($scope.slideIndex + 1);
-  };
-
-  $scope.previous = function() {
-    $scope.slide($scope.slideIndex - 1);
-  };
+  $scope.slideNext = function() {
+      $scope.slides.slider.unlockSwipes()
+      $scope.slides.slider.slideNext();
+      $scope.slides.slider.lockSwipes()
+    };
 
   $scope.newAccount = function() {
     var showModal = function() {
-        $ionicSlideBoxDelegate.enableSlide(false);
-        $scope.slide(0);
-        $scope.newAccountModal.show();
-        // TODO: remove default
-        /*$timeout(function() {
-          $scope.accountData.currency = $scope.knownCurrencies[0];
-          $scope.accountData.isMember = true;
-          $scope.next();
-          $scope.next();
-        }, 300);*/
+      $scope.slides.slider.lockSwipes();
+      $scope.slides.slider.slideTo(0);
+      UIUtils.loading.hide();
+      $scope.newAccountModal.show();
+      // TODO: remove default
+      /*$timeout(function() {
+        $scope.accountData.currency = $scope.knownCurrencies[0];
+        $scope.accountData.isMember = true;
+        $scope.next();
+        $scope.next();
+      }, 300);*/
     }
 
     if (!$scope.newAccountModal) {
@@ -243,7 +251,6 @@ function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal,
         $scope.newAccountModal = modal;
         $scope.newAccountModal.hide()
         .then(function(){
-          UIUtils.loading.hide();
           showModal();
         });
 
@@ -256,13 +263,12 @@ function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal,
 
   $scope.selectCurrency = function(currency) {
     $scope.accountData.currency = currency;
-    $ionicSlideBoxDelegate.slide(1);
-    $scope.next();
+    $scope.slideNext()
   };
 
   $scope.selectAccountTypeMember = function(bool) {
     $scope.accountData.isMember = bool;
-    $scope.next();
+    $scope.slideNext()
   };
 
   $scope.showAccountPubkey = function() {
@@ -292,9 +298,7 @@ function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal,
       Wallet.login($scope.accountData.username, $scope.accountData.password)
         .then(function() {
           // Reset account data
-          delete $scope.accountForm;
-          $scope.accountData = {};
-          UIUtils.loading.hide();
+          $scope.cancel();
           $state.go('app.view_wallet');
         })
         .catch(function(err) {
@@ -314,7 +318,7 @@ function NewAccountWizardController($scope, $ionicSlideBoxDelegate, $ionicModal,
 
 
 
-function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
+function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -339,6 +343,6 @@ function HomeController($scope, $ionicSlideBoxDelegate, $ionicModal, $state, $io
 
   LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
 
-  NewAccountWizardController.call(this, $scope, $ionicSlideBoxDelegate, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
+  NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
 }
 

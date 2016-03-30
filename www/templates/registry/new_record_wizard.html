@@ -2,29 +2,32 @@
 
     <ion-header-bar class="bar-positive">
 
-        <button class="button button-positive icon icon-left ion-chevron-left" ng-click="previous()" ng-show="slideIndex > 0" translate>COMMON.BTN_BACK</button>
-        <button class="button button-positive" ng-click="cancel()" ng-show="slideIndex == 0" translate>COMMON.BTN_CANCEL</button>
+        <button class="button back-button button-clear buttons header-item" ng-click="slidePrev()" ng-show="slides.slider.activeIndex > 0">
+          <i class="icon ion-ios-arrow-back"></i>
+          <span translate>COMMON.BTN_BACK</span>
+        </button>
+        <button class="button button-positive" ng-click="cancel()" ng-show="slides.slider.activeIndex == 0" translate>COMMON.BTN_CANCEL</button>
 
         <h1 class="title" translate>REGISTRY.NEW.TITLE</h1>
 
-        <button class="button button-positive button-icon ion-android-send" ng-click="doNewRecord()" ng-show="slideIndex == 1"></button>
+        <button class="button button-positive button-icon ion-android-send" ng-click="doNewRecord()" ng-show="slides.slider.activeIndex == 1"></button>
 
         </ion-nav-buttons>
     </ion-header-bar>
-
-
-    <ion-slide-box on-slide-changed="slideChanged(index)" id="newRecord" class="has-header">
-        <ion-slide>
-            <div class="padding">
-                <h3 translate>REGISTRY.NEW.SELECT_TYPE</h3>
-                <button class="button button-block button-stable icon icon-left ion-person" ng-click="setIsCompany(false)" ng-class="{ selected: !recordData.isCompany && recordData.isCompany != null }" translate>REGISTRY.NEW.TYPE_PARTICULAR</button>
-                <button class="button button-block button-stable icon icon-left ion-android-cart" ng-click="setIsCompany(true)" ng-class="{ selected: recordData.isCompany && recordData.isCompany != null }" translate>REGISTRY.NEW.TYPE_COMPANY</button>
-            </div>
-        </ion-slide>
-        <ion-slide>
+    <ion-slides options="slides.options" slider="slides.slider">
+        <ion-slide-page>
+          <ion-content class="has-header padding">
+            <h3 translate>REGISTRY.NEW.SELECT_TYPE</h3>
+            <button class="button button-block button-stable icon icon-left ion-person" ng-click="setIsCompany(false)" ng-class="{ selected: !recordData.isCompany && recordData.isCompany != null }" translate>REGISTRY.NEW.TYPE_PARTICULAR</button>
+            <button class="button button-block button-stable icon icon-left ion-android-cart" ng-click="setIsCompany(true)" ng-class="{ selected: recordData.isCompany && recordData.isCompany != null }" translate>REGISTRY.NEW.TYPE_COMPANY</button>
+          </ion-content>
+        </ion-slide-page>
+        <ion-slide-page>
+          <ion-content class="has-header">
             <ng-include src="'templates/registry/record_form.html'"></ng-include>
-        </ion-slide>
-    </ion-slide-box>
+          </ion-content>
+        </ion-slide-page>
+    </ion-slides>
 </ion-view>
 
 <script type="text/ng-template" id="error-messages">

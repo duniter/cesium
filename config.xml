@@ -6,7 +6,7 @@
     </description>
   <author email="admin@ucoin.io" href="http://ucoin.io">
       cgeek
-    </author>
+  </author>
   <content src="index.html"/>
   <access origin="*"/>
   <preference name="webviewbounce" value="false"/>
