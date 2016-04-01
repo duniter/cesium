@@ -76,9 +76,20 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
   // Update view
   $scope.updateWalletView = function(wallet) {
     $scope.walletData = wallet;
-    $scope.hasCredit = ($scope.walletData.balance != "undefined" && $scope.walletData.balance > 0);
-    $scope.isMember = ($scope.walletData.requirements != "undefined" && $scope.walletData.requirements != null
-                      && $scope.walletData.requirements.uid != "undefined" && $scope.walletData.requirements.uid != null);
+    $scope.hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
+    if (!$scope.walletData.requirements || !$scope.walletData.requirements.uid) {
+      $scope.needSelf = true;
+      $scope.needMembership = true;
+      $scope.needRenew = false;
+    }
+    else {
+      $scope.needSelf = false;
+      $scope.needMembership = ($scope.walletData.requirements.membershipExpiresIn == 0
+        && $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
+      $scope.needRenew = !$scope.needMembership && ($scope.walletData.requirements.membershipExpiresIn < 129600
+        && $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
+    }
+    $scope.isMember = !$scope.needSelf && !$scope.needMembership;
   };
 
   // Has credit
@@ -95,7 +106,7 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
     $scope.registerForm = registerForm;
   };
 
-  // Self cert
+  // Send self identity
   $scope.self= function() {
 
     $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
@@ -130,12 +141,13 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
             UIUtils.loading.hide();
             return;
           }
-          var doSendSelf = function() {
+
+          var doSelf = function() {
             Wallet.self(uid)
               .then(function() {
                 UIUtils.loading.hide();
               })
-              .catch(UIUtils.onError('ERROR.SEND_SELF_REGISTRATION'));
+              .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
           };
           // Check uid is not used by another member
           UIUtils.loading.show();
@@ -152,18 +164,49 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
               UIUtils.loading.hide();
               UIUtils.alert.info('ACCOUNT.NEW.MSG_UID_ALREADY_USED')
               .then(function(){
-                $scope.self();
+                $scope.self(); // loop
               });
             }
             else {
-              doSendSelf();
+              doSelf();
             }
           })
           .catch(function() {
-             doSendSelf();
+             doSelf();
           });
         });
       });
+  };
+
+  // Send membership IN
+  $scope.membershipIn= function() {
+    UIUtils.loading.show();
+    Wallet.membership(true)
+    .then(function() {
+
+      UIUtils.loading.hide();
+    })
+    .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
+  };
+
+  // Send membership IN
+  $scope.membershipOut = function() {
+    UIUtils.loading.show();
+    Wallet.membership(false)
+    .then(function() {
+      UIUtils.loading.hide();
+    })
+    .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_OUT_FAILED'));
+  };
+
+  // Updating wallet data
+  $scope.doUpdate = function() {
+    UIUtils.loading.show();
+    Wallet.refreshData()
+    .then(function() {
+      UIUtils.loading.hide();
+    })
+    .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 }
 
@@ -182,7 +225,7 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
   WotLookupController.call(this, $scope, BMA, $state);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams != null 
+    if ($state.stateParams != null
         && $state.stateParams.pubkey != null
         && $state.stateParams.pubkey != "undefined") {
       $scope.destPub = $state.stateParams.pubkey;
@@ -191,7 +234,7 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
         $scope.dest = $state.stateParams.uid;
       }
       else {
-        $scope.dest = $scope.destPub; 
+        $scope.dest = $scope.destPub;
       }
     }
 
@@ -240,10 +283,10 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
     UIUtils.loading.show();
 
     var amount = $scope.formData.amount;
-    if ($scope.walletData.useRelative 
-      && amount != "undefined" 
+    if ($scope.walletData.useRelative
+      && amount != "undefined"
       && amount != null) {
-      amount = $scope.walletData.currentUD 
+      amount = $scope.walletData.currentUD
                * amount.replace(new RegExp('[.,]'), '.');
     }
 

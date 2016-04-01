@@ -61,6 +61,7 @@
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
     "REGISTERED_SINCE": "Registered since ",
+    "REGISTERED_SINCE_BLOCK": "Registered since block #",
     "BTN_SEND_MONEY": "Send money",
     "BTN_CERTIFY": "Certify",
     "MODAL": {
@@ -79,7 +80,10 @@
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "BTN_SEND_MONEY": "Send money",
-    "BTN_REGISTER": "Register as member",
+    "BTN_MEMBERSHIP_IN": "Register as member",
+    "BTN_MEMBERSHIP_RENEW": "Renew membership",
+    "BTN_MEMBERSHIP_OUT": "Revoke membership",
+    "BTN_SEND_IDENTITY": "Publish pseudonym (without register)",
     "NEW": {
       "TITLE": "Register",
       "SLIDE_1_TITLE": "Select a money:",
@@ -178,10 +182,13 @@
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "This field is too short.",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password",
-    "SEND_SELF_REGISTRATION": "Error while trying to register",
+    "SEND_IDENTITY_FAILED": "Error while trying to register",
     "SEND_CERTIFICATION_FAILED": "Could not certify identity",
     "LOGIN_FAILED": "Error while login",
-    "LOAD_IDENTITY_FAILED": "Could not load identity"
+    "LOAD_IDENTITY_FAILED": "Could not load identity",
+    "SEND_MEMBERSHIP_IN_FAILED": "Error while registering as member",
+    "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out",
+    "REFRESH_WALLET_DATA": "Could not refresh wallet"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

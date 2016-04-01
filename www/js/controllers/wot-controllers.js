@@ -30,10 +30,12 @@ function WotLookupController($scope, BMA, $state) {
           $scope.search.looking = false;
           $scope.search.results = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
+              var blocUid = idty.meta.timestamp.split('-', 2);
               return uids.concat({
                 uid: idty.uid,
                 pub: res.pubkey,
-                sigDate: idty.meta.timestamp
+                number: blocUid[0],
+                hash: blocUid[1]
               })
             }, []));
           }, []);
@@ -68,16 +70,25 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
       .then(function(res){
         $scope.identity = res.results.reduce(function(idties, res) {
           return idties.concat(res.uids.reduce(function(uids, idty) {
+            var blocUid = idty.meta.timestamp.split('-', 2);
             return uids.concat({
               uid: idty.uid,
               pub: res.pubkey,
-              sigDate: idty.meta.timestamp,
+              number: blocUid[0],
+              hash: blocUid[1],
+              revoked: idty.revoked,
+              revokedSig: idty.revocation_sig,
               sig: idty.self
             })
           }, []));
         }, [])[0];
         $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
-        UIUtils.loading.hide();
+        BMA.blockchain.block({block: $scope.identity.number})
+        .then(function(block) {
+          $scope.identity.sigDate = block.time;
+          UIUtils.loading.hide();
+        })
+        .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
       })
       .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
   };

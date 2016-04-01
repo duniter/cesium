@@ -12,7 +12,7 @@ angular.module('cesium.bma.services', ['ngResource',
 
       function processError(reject, data, uri) {
         if (data != null && data.message != "undefined" && data.message != null) {
-          reject(data.ucode + ": " + data.message);
+          reject(data);
         }
         else {
           if (uri != "undefined" && uri != null) {

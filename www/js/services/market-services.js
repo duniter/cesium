@@ -12,7 +12,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
 
       function processError(reject, data) {
         if (data != null && data.message != "undefined" && data.message != null) {
-          reject(data.ucode + ": " + data.message);
+          reject(data);
         }
         else {
           reject('Unknown error from ucoin node');

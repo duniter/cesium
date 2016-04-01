@@ -60,7 +60,8 @@
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
-    "REGISTERED_SINCE": "Inscrit depuis ",
+    "REGISTERED_SINCE": "Inscrit depuis le ",
+    "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
     "BTN_SEND_MONEY": "Payer",
     "BTN_CERTIFY": "Certifier",
     "MODAL": {
@@ -79,7 +80,10 @@
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "BTN_SEND_MONEY": "Payer",
-    "BTN_REGISTER": "S'inscrire comme membre",
+    "BTN_MEMBERSHIP_IN": "Devenir membre",
+    "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
+    "BTN_MEMBERSHIP_OUT": "Arrêter son adhésion",
+    "BTN_SEND_IDENTITY": "Publier le pseudonym (sans devenir membre)",
     "NEW": {
       "TITLE": "Inscription",
       "SLIDE_1_TITLE": "Choix de la monnaie :",
@@ -178,10 +182,12 @@
     "FIELD_REQUIRED": "Champ obligatoire.",
     "FIELD_TOO_SHORT": "Valeur trop courte.",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe",
-    "SEND_SELF_REGISTRATION": "Erreur pendant l'inscription.",
+    "SEND_IDENTITY_FAILED": "Erreur pendant l'inscription.",
     "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité",
     "LOGIN_FAILED": "Erreur lors de l'authentification",
-    "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité"
+    "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité",
+    "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté",
+    "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

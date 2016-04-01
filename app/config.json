@@ -11,6 +11,12 @@
     }
   },
 
+  "twiced": {
+    "APP_CONFIG": {
+      "UCOIN_NODE": "twiced.fr:9330"
+    }
+  },
+
   "ucoin-fr": {
     "APP_CONFIG": {
       "UCOIN_NODE": "metab.ucoin.fr",

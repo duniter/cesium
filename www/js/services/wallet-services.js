@@ -10,8 +10,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     USE_RELATIVE_DEFAULT = true,
 
-    createData = function() {
-      return {
+    data = {
         pubkey: null,
         keypair: {
             signSk: null,
@@ -23,12 +22,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         currency: null,
         currentUD: null,
         history: {},
-        requirements: null,
-        loaded: false
-      };
+        requirements: {},
+        loaded: false,
+        blockUid: null,
+        sigQty: null
     },
-
-    data = createData(),
 
     resetData = function() {
       data.pubkey= null;
@@ -42,8 +40,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.currency= null;
       data.currentUD= null;
       data.history= {};
-      data.requirements= null;
+      data.requirements= {};
       data.loaded= false;
+      data.blockUid= null;
+      data.sigQty = null;
     },
 
     reduceTx = function(txArray) {
@@ -114,6 +114,37 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             && arg1.amount == arg2.amount;
     },
 
+    loadRequirements = function() {
+      return $q(function(resolve, reject) {
+        // Get requirements
+        BMA.wot.requirements({pubkey: data.pubkey})
+        .then(function(res){
+          if (!res.identities && res.identities.length != 1) {
+            data.requirements = null;
+            resolve();
+            return;
+          }
+          var idty = res.identities[0];
+          data.requirements = idty;
+          data.uid = idty.uid;
+          data.blockUid = idty.meta.timestamp;
+          // TODO
+          //data.requirements.needCertifications = (idty.certifications.length < data.sigQty);
+          resolve();
+        })
+        .catch(function(err) {
+          data.requirements = {};
+          // If identity not publiched : continue
+          if (!!err && err.ucode == 2004) {
+            resolve();
+          }
+          else {
+            reject(err);
+          }
+        });
+      });
+    },
+
     loadData = function(refresh) {
         if (data.loaded) {
           return refreshData();
@@ -128,6 +159,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             BMA.currency.parameters()
               .then(function(json){
                 data.currency = json.currency;
+                data.sigQty = json.sigQty;
               }),
 
             // Get the UD informations
@@ -158,18 +190,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }),
 
             // Get requirements
-            BMA.wot.requirements({pubkey: data.pubkey})
-              .then(function(res){
-                if (res.identities != "undefined"
-                    && res.identities != null
-                    && res.identities.length == 1) {
-                  data.requirements = res.identities[0];
-                  data.uid = res.identities[0].uid;
-                }
-              })
-              .catch(function(err) {
-                data.requirements = null;
-              }),
+            loadRequirements(),
 
             // Get transactions
             BMA.tx.history.all({pubkey: data.pubkey})
@@ -221,21 +242,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }),
 
             // Get requirements
-            BMA.wot.requirements({pubkey: data.pubkey})
-              .then(function(res){
-                if (res.identities != "undefined"
-                    && res.identities != null
-                    && res.identities.length == 1) {
-                  data.requirements = res.identities[0];
-                  data.uid = res.identities[0].uid;
-                }
-                else {
-                  data.requirements = null;
-                }
-              })
-              .catch(function(err) {
-                data.requirements = null;
-              }),
+            loadRequirements(),
 
             // Get sources
             BMA.tx.sources({pubkey: data.pubkey})
@@ -265,10 +272,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           ])
           .then(function() {
             resolve(data);
-          })
-          .catch(function(err) {
-            reject(err);
-          });
+          }).catch(function(err){reject(err);});
         });
     },
 
@@ -331,74 +335,78 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
             tx += "Comment: "+ (comments!=null?comments:"") + "\n";
 
-
-
             CryptoUtils.sign(tx, data.keypair)
-              .then(function(signature) {
-                var signedTx = tx + signature + "\n";
-                BMA.tx.process({transaction: signedTx})
-                  .then(function(result) {
-                    data.balance -= amount;
-                    for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
-                    resolve(result);
-                  })
-                  .catch(function(err){
-                    reject(err);
-                  });
-              })
-              .catch(function(err){
-                reject(err);
-              });
+            .then(function(signature) {
+              var signedTx = tx + signature + "\n";
+              BMA.tx.process({transaction: signedTx})
+              .then(function(result) {
+                data.balance -= amount;
+                for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
+                resolve(result);
+              }).catch(function(err){reject(err);});
+            }).catch(function(err){reject(err);});
         });
     },
 
     /**
-    * Send self certification
+    * Send self identity
     */
     self = function(uid) {
       return $q(function(resolve, reject) {
 
         BMA.blockchain.current()
         .then(function(block) {
-          // Create the self part to sign
-          var self = 'UID:' + uid + '\n'
-                   + 'META:TS:' + (block.time+1) + '\n';
+          // Create identity to sign
+          var identity = 'Version: 2\n'
+                    + 'Type: Identity\n'
+                    + 'Currency: ' + data.currency + '\n'
+                    + 'Issuer: ' + data.pubkey + '\n'
+                    + 'UniqueID: ' + uid + '\n'
+                    + 'Timestamp: ' + block.number + '-' + block.hash + '\n';
 
-          CryptoUtils.sign(self, data.keypair)
+          CryptoUtils.sign(identity, data.keypair)
           .then(function(signature) {
-            var signedSelf = self + signature + '\n';
-            // Send self
-            BMA.wot.add({pubkey: data.pubkey, self: signedSelf, other: ''})
+            var signedIdentity = identity + signature + '\n';
+            // Send signed identity
+            BMA.wot.add({identity: signedIdentity})
             .then(function(result) {
-              // Check requirements
-              BMA.wot.requirements({pubkey: data.pubkey})
-              .then(function(res){
-                if (res.identities != "undefined"
-                    && res.identities != null
-                    && res.identities.length == 1) {
-                  data.requirements = res.identities[0];
-                  data.uid = uid;
-                  resolve();
-                }
-                else{
-                  reject();
-                }
-              })
-              .catch(function(err) {
-                reject();
-              })
-            })
-            .catch(function(err){
-              reject(err);
-            });
-          })
-          .catch(function(err){
-            reject(err);
-          });
-        })
-        .catch(function(err) {
-          reject(err);
-        });
+              // Refresh membership data
+              loadRequirements();
+            }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
+        }).catch(function(err){reject(err);});
+      });
+    },
+
+   /**
+    * Send membership (in)
+    */
+    membership = function(sideIn) {
+      return $q(function(resolve, reject) {
+
+        BMA.blockchain.current()
+        .then(function(block) {
+          // Create membership to sign
+           var membership = 'Version: 2\n'
+                   + 'Type: Membership\n'
+                   + 'Currency: ' + data.currency + '\n'
+                   + 'Issuer: ' + data.pubkey + '\n'
+                   + 'Block: ' + block.number + '-' + block.hash + '\n'
+                   + 'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n'
+                   + 'UserID: ' + data.uid + '\n'
+                   + 'CertTS: ' + data.blockUid + '\n';
+
+          CryptoUtils.sign(membership, data.keypair)
+          .then(function(signature) {
+            var signedMembership = membership + signature + '\n';
+            // Send signed membership
+            BMA.blockchain.membership({membership: signedMembership})
+            .then(function(result) {
+              // Refresh membership data
+              loadRequirements();
+            }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
+        }).catch(function(err){reject(err);});
       });
     },
 
@@ -427,18 +435,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             BMA.wot.add({pubkey: pubkey, self: self, other: inlineCert})
               .then(function(result) {
                 resolve(result);
-              })
-              .catch(function(err){
-                reject(err);
-              });
-          })
-          .catch(function(err){
-            reject(err);
-          });
-        })
-        .catch(function(err) {
-          reject(err);
-        });
+              }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
+        }).catch(function(err){reject(err);});
       });
     },
 
@@ -495,6 +494,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         // operations
         transfer: transfer,
         self: self,
+        membership: membership,
         sign: sign,
         // serialization
         toJson: toJson,

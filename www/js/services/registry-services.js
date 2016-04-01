@@ -8,7 +8,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
 
       function processError(reject, data) {
         if (data != null && data.message != "undefined" && data.message != null) {
-          reject(data.ucode + ": " + data.message);
+          reject(data);
         }
         else {
           reject('Unknown error from ucoin node');

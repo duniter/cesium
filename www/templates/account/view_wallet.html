@@ -1,4 +1,10 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" view-title="">
+    <ion-nav-buttons side="secondary">
+      <button class="button button-icon" ng-click="doUpdate()">
+        <i class="icon ion-loop"></i>
+      </button>
+    </ion-nav-buttons>
+
     <ion-content>
         <div class="scroll">
 
@@ -37,11 +43,32 @@
                     </a>
                 </div>
 
-                <div class="item item-button-right positive" ng-if="!isMember" ng-click="self()">
-                    {{'ACCOUNT.BTN_REGISTER' | translate}}
+                <div class="item item-button-right positive" ng-if="needMembership" ng-click="membershipIn()">
+                    {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
                     <a class="button button-clear button-positive" >
                         <i class="icon-right ion-chevron-right"></i>
                     </a>
+                </div>
+
+                <div class="item item-button-right positive" ng-if="needRenew" ng-click="membershipRenew()">
+                  {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+                  <a class="button button-clear button-positive" >
+                    <i class="icon-right ion-chevron-right"></i>
+                  </a>
+                </div>
+
+                <div class="item item-button-right positive" ng-if="!needSelf && !needMembership" ng-click="membershipOut()">
+                  {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
+                  <a class="button button-clear button-positive" >
+                    <i class="icon-right ion-chevron-right"></i>
+                  </a>
+                </div>
+
+                <div class="item item-button-right positive" ng-if="needSelf" ng-click="self()">
+                  {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+                  <a class="button button-clear button-positive" >
+                    <i class="icon-right ion-chevron-right"></i>
+                  </a>
                 </div>
 
                 <div class="item">

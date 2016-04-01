@@ -57,7 +57,12 @@ angular.module('cesium.utils.services', ['ngResource'])
     return function(err) {
       console.error('>>>>>>>' , err);
       hideLoading();
-      alertError(msg + ': ' + err);
+      if (!!err && !!err.message) {
+        alertError(msg + ': ' + err.message);
+      }
+      else {
+        alertError(msg);
+      }
     }
   }
 
