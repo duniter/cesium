@@ -71,20 +71,23 @@
                   </a>
                 </div>
 
-                <div class="item">
-                    &nbsp;
-                </div>
+                <!-- Last Transactions -->
+                <div ng-if="walletData.history && walletData.history.length > 0">
+                  <div class="item">
+                      &nbsp;
+                  </div>
 
-                <div class="item item-divider">
-                    {{'ACCOUNT.LAST_TX' | translate}}
-                </div>
+                  <div class="item item-divider">
+                      {{'ACCOUNT.LAST_TX' | translate}}
+                  </div>
 
-                <a href="#" class="item" ng-repeat="tx in walletData.history" ng-if="walletData.history">
-                    <h3>{{tx.time | formatDate}}</h3>
-                    <p ng-if="tx.issuer">{{'COMMON.PUBKEY' | translate}}: {{tx.issuer | formatPubkey}}</p>
-                    <span class="badge item-note" ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
-                    <span class="badge item-note" ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
-                </a>
+                  <a href="#" class="item" ng-repeat="tx in walletData.history">
+                      <h3>{{tx.time | formatDate}}</h3>
+                      <p ng-if="tx.issuer">{{'COMMON.PUBKEY' | translate}}: {{tx.issuer | formatPubkey}}</p>
+                      <span class="badge item-note" ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
+                      <span class="badge item-note" ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
+                  </a>
+                </div>
             </div>
             <div class="scroll-bar scroll-bar-v"></div>
         </div>
