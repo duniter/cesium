@@ -41,7 +41,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('TransferCtrl', TransferController)
 ;
 
-function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA, $translate) {
+function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout, UIUtils, Wallet, BMA, $translate) {
 
   $scope.walletData = {};
   $scope.convertedBalance = 0;
@@ -208,6 +208,34 @@ function WalletController($scope, $state, $q, $ionicPopup, UIUtils, Wallet, BMA,
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
+
+  // Triggered on a button click, or some other target
+ $scope.showActionsheet = function() {
+
+  $translate(['ACCOUNT.BTN_MEMBERSHIP_OUT', 'COMMON.BTN_CANCEL.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
+    .then(function (translations) {
+      // Show the action sheet
+      var hideMenu = $ionicActionSheet.show({
+        buttons: [
+          { text: translations['ACCOUNT.BTN_MEMBERSHIP_OUT'] },
+          { text: 'Move' }
+        ],
+        titleText: translations['ACCOUNT.MENU_TITLE'],
+        cancelText: translations['COMMON.BTN_CANCEL'],
+        cancel: function() {
+            // add cancel code..
+          },
+        buttonClicked: function(index) {
+          return true;
+        }
+      });
+
+      // For example's sake, hide the sheet after two seconds
+      $timeout(function() {
+        hideMenu();
+      }, 2000);
+    });
+ };
 }
 
 function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wallet, UIUtils) {

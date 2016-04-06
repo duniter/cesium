@@ -77,6 +77,7 @@
   },
   "ACCOUNT": {
     "TITLE": "My Account",
+    "MENU_TITLE": "Wallet's options",
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "BTN_SEND_MONEY": "Send money",

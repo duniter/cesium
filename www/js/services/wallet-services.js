@@ -50,7 +50,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       if (!txArray || txArray.length == 0) {
         return;
       }
-      var list = [];
       txArray.forEach(function(tx) {
         var issuerIndex = -1;
         var issuer = tx.issuers.reduce(function(issuer, res, index) {
@@ -60,6 +59,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         var receiver = (issuer != '') ? data.pubkey : '';
         var amount = tx.inputs.reduce(function(sum, output) {
             if (!!data.sources[output]) {
+              if (!data.sources[output].consumed) {
+                data.sources[output].consumed=true;
+              }
               return sum - data.sources[output].amount;
             }
             return sum;
@@ -79,7 +81,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             return sum;
           }, 0);
 
-        list.push({
+        result.push({
           time: ((tx.time != null && tx.time != "undefined") ? tx.time : 9999999),
           amount: amount,
           issuer: issuer,
@@ -91,7 +93,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           block_number: tx.block_number
         });
       });
-      result.push(list);
     },
 
     login = function(salt, password) {
@@ -166,23 +167,26 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         // Get transactions
         BMA.tx.sources({pubkey: data.pubkey})
         .then(function(res){
-          var existingSources = refresh ? data.sources : [];
-          data.sources = [];
-
+          if (!data.sources) {
+            data.sources=[];
+          }
+          var sources = [];
           var balance = 0;
           if (!!res.sources && res.sources.length > 0) {
             res.sources.forEach(function(src) {
-              balance += src.amount;
               var srcKey = src.type+':'+src.identifier+':'+src.noffset;
-              if (!!existingSources[srcKey]) {
-                src.consumed = existingSources[srcKey].consumed;
+              if (!!data.sources[srcKey]) {
+                src.consumed = data.sources[srcKey].consumed;
               }
               else {
                 src.consumed = false;
+                balance += src.amount;
               }
-              data.sources[srcKey] = src;
+              sources.push(src);
+              sources[srcKey] = src;
             });
           }
+          data.sources = sources;
           data.balance = balance;
           resolve();
         })

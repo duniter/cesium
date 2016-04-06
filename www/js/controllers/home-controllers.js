@@ -329,7 +329,7 @@ function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIU
 
   $scope.accounts = [];
   $scope.search = { text: '', results: {} };
-  $scope.knownCurrencies = ['meta_brouzouf'];
+  $scope.knownCurrencies = ['super_currency'];
 
   var nodeWithES = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
   $scope.options = {

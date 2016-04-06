@@ -11,7 +11,7 @@
     }
   },
 
-  "twiced": {
+  "twiced-fr": {
     "APP_CONFIG": {
       "UCOIN_NODE": "twiced.fr:9330"
     }
