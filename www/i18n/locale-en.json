@@ -77,7 +77,7 @@
   },
   "ACCOUNT": {
     "TITLE": "My Account",
-    "MENU_TITLE": "Wallet's options",
+    "MENU_TITLE": "Wallet actions",
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "BTN_SEND_MONEY": "Send money",
@@ -189,10 +189,15 @@
     "LOAD_IDENTITY_FAILED": "Could not load identity",
     "SEND_MEMBERSHIP_IN_FAILED": "Error while registering as member",
     "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out",
-    "REFRESH_WALLET_DATA": "Could not refresh wallet"
+    "REFRESH_WALLET_DATA": "Could not refresh wallet",
+    "SEND_TX_FAILED": "Could not send transaction",
+    "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
+    "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
+    "ACCOUNT_CREATION_FAILED": "Error while creating your member account"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
-    "CERTIFICATION_DONE": "Identity successfully signed"
+    "CERTIFICATION_DONE": "Identity successfully signed",
+    "NOT_ENOUGH_CREDIT": "Not enough credit."
   }
 }

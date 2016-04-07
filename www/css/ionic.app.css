@@ -9736,13 +9736,14 @@ a.button {
   color: #fff;
   text-color: #fff; }
 
-.button-float {
+#wallet .button-float {
   background: #ef473a !important;
   color: white !important;
   z-index: 12 !important;
   position: absolute !important;
   bottom: 10px !important;
   right: 10px !important;
+  min-width: 47px !important;
   border-radius: 50% !important;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
   -webkit-transform: translate3d(0, 0, 0) !important;
@@ -9752,11 +9753,14 @@ a.button {
   -webkit-transition-property: -webkit-transform, all !important;
   transition-property: transform, all !important; }
 
-.button-float:hover {
+#wallet .button-float:hover {
   -webkit-transform: translate3d(0, -1px, 0) !important;
   transform: translate3d(0, -1px, 0) !important;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
   background: #e42112 !important; }
+
+#wallet .button-float-second {
+  left: 70px !important; }
 
 @media screen and (max-width: 400px) {
   @-ms-viewport {

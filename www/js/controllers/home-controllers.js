@@ -184,6 +184,14 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
   $scope.isNotLogged = function() {
     return !Wallet.isLogin();
   };
+
+  // TODO: remove auto add account when done
+  /*$timeout(function() {
+    $scope.login();
+    $scope.loginData.username='abc';
+    $scope.loginData.password='def';
+  }, 400);
+  */
 }
 
 
@@ -297,9 +305,23 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
     .then(function(){
       Wallet.login($scope.accountData.username, $scope.accountData.password)
         .then(function() {
-          // Reset account data
-          $scope.cancel();
-          $state.go('app.view_wallet');
+          if (!$scope.accountData.isMember) {
+            return;
+          }
+
+          // Send self
+          Wallet.self($scope.accountData.pseudo, false/*do NOT load membership here*/)
+            .then(function() {
+              // Send membership IN
+              Wallet.membership(true)
+              .then(function() {
+                // Reset account data, and open wallet view
+                $scope.cancel();
+                $state.go('app.view_wallet');
+              })      
+              .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
+            })
+            .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));    
         })
         .catch(function(err) {
           UIUtils.loading.hide();

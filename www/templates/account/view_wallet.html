@@ -1,9 +1,9 @@
-<ion-view left-buttons="leftButtons" view-title="">
+<ion-view left-buttons="leftButtons" view-title="" id="wallet">
     <ion-nav-buttons side="secondary">
       <button class="button button-icon" ng-click="doUpdate()">
-        <i class="icon ion-loop"></i>
+        <i class="icon ion-android-refresh"></i>
       </button>
-      <button class="button button-icon" ng-click="showActionsheet()">
+      <button class="button button-icon visible-xs visible-sm" ng-click="showActionsheet()">
         <i class="icon ion-android-more-vertical"></i>
       </button>
       
@@ -35,46 +35,53 @@
                 </label>
             </div>
 
+            <div class="hidden-xs hidden-sm padding" style="text-align:center">
+                <button class="button button-assertive" 
+                        ng-click="transfer()">
+                  {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+                </button>
+
+                <button class="button icon-left ion-person" 
+                        ng-if="needMembership" 
+                        ng-click="membershipIn()">
+                    {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
+                </button>
+
+                <button class="button icon-left ion-loop" 
+                        ng-if="needRenew" 
+                        ng-click="membershipRenew()">
+                  {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+                </button>
+
+                <button class="button icon-left ion-log-out" 
+                        ng-if="needMembershipOut" 
+                        ng-click="membershipOut()">
+                  {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
+                </button>
+
+                <button class="button icon-left ion-flag" 
+                        ng-if="needSelf" 
+                        ng-click="self()">
+                  {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+                </button>
+            </div>
+
             <div class="list">
 
-                <div class="item-divider">
+                <!--div class="item-divider">
                     &nbsp;
                 </div>
 
-                <div class="item item-button-right positive" ng-if="needMembership" ng-click="membershipIn()">
-                    {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
-                    <a class="button button-clear button-positive" >
-                        <i class="icon-right ion-chevron-right"></i>
-                    </a>
-                </div>
+                
 
-                <div class="item item-button-right positive" ng-if="needRenew" ng-click="membershipRenew()">
-                  {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
-                  <a class="button button-clear button-positive" >
-                    <i class="icon-right ion-chevron-right"></i>
-                  </a>
-                </div>
-
-                <div class="item item-button-right positive" ng-if="!needSelf && !needMembership" ng-click="membershipOut()">
-                  {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
-                  <a class="button button-clear button-positive" >
-                    <i class="icon-right ion-chevron-right"></i>
-                  </a>
-                </div>
-
-                <div class="item item-button-right positive" ng-if="needSelf" ng-click="self()">
-                  {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
-                  <a class="button button-clear button-positive" >
-                    <i class="icon-right ion-chevron-right"></i>
-                  </a>
-                </div>
+                <!--TODO : charger les TX en arrière plan 
+                   label class="item center" ng-if="search.looking">
+                    <ion-spinner icon="android"></ion-spinner>
+                </label-->
 
                 <!-- Last Transactions -->
                 <div ng-if="walletData.history && walletData.history.length > 0">
-                  <div class="item">
-                      &nbsp;
-                  </div>
-
+                  
                   <div class="item item-divider">
                       {{'ACCOUNT.LAST_TX' | translate}}
                   </div>
@@ -88,16 +95,13 @@
                   </a>
                 </div>
 
-
             </div>
             <div class="scroll-bar scroll-bar-v"></div>
         </div>
-
-
     </ion-content>
 
-     <button class="button button-float" ng-if="hasCredit" ng-click="transfer()">
-        <i class="icon ion-android-send"></i>
-      </button>
+    <button class="button button-float visible-xs visible-sm" ng-click="transfer()">
+      <i class="icon ion-android-send"></i>
+    </button>
 </ion-view>
        

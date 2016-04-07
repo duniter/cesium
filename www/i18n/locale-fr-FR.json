@@ -77,7 +77,7 @@
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
-    "MENU_TITLE": "Options du portefeuille",,
+    "MENU_TITLE": "Actions",,
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "BTN_SEND_MONEY": "Payer",
