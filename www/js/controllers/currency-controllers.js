@@ -46,7 +46,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 function CurrenciesController($scope, $state) {
 
   $scope.selectedCurrency = '';
-  $scope.knownCurrencies = ['meta_brouzouf'];
+  $scope.knownCurrencies = ['super_currency'];
 
   // Called to navigate to the main app
   $scope.selectCurrency = function(currency) {
@@ -66,7 +66,7 @@ function ExploreController($scope, $rootScope, $state, BMA, $q, UIUtils, $interv
   $scope.accountTypeMember = null;
   $scope.accounts = [];
   $scope.search = { text: '', results: {} };
-  $scope.knownCurrencies = ['meta_brouzouf'];
+  $scope.knownCurrencies = ['super_currency'];
   $scope.formData = { useRelative: false };
   $scope.knownBlocks = [];
   $scope.entered = false;

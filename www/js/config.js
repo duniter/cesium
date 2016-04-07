@@ -10,8 +10,9 @@ angular.module("cesium.config", [])
 
 .constant("APP_CONFIG", {
 	"UCOIN_NODE": "twiced.fr:9330",
+	"UCOIN_NODE_ES": "es.ucoin.fr",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-04-06T17:25:44.944Z"
+	"BUILD_DATE": "2016-04-07T10:31:33.206Z"
 })
 
 ;

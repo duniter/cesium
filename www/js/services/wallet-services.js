@@ -346,7 +346,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             }
 
             if (sourceAmount < amount) {
-              reject('Not enought sources (max amount: '
+              reject('Not enough sources (max amount: '
                 +(data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount)
                 +'). Please wait next block computation.');
               return;

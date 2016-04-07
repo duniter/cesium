@@ -26,6 +26,7 @@
     "cordova-plugin-device"
   ],
   "cordovaPlatforms": [
-    "android"
+    "android",
+    "ios"
   ]
 }
