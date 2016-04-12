@@ -21,7 +21,7 @@
     "ACCOUNT": "Mon compte"
   },
   "HOME": {
-    "TITLE": "",
+    "TITLE": "Cesium",
     "WELCOME": "Cesium",
     "MESSAGE": "Application toujours en développement.<br/>Merci de votre compréhension...",
     "BTN_REGISTRY": "Annuaire",
@@ -77,7 +77,7 @@
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
-    "MENU_TITLE": "Options du portefeuille",,
+    "MENU_TITLE": "Options du portefeuille",
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "BTN_SEND_MONEY": "Payer",
@@ -188,6 +188,7 @@
     "LOGIN_FAILED": "Erreur lors de l'authentification",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité",
     "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté",
+    "SEND_MEMBERSHIP_OUT_FAILED": "Echec de l'arret de l'adhésion.",
     "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille"
   },
   "INFO": {
