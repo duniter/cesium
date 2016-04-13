@@ -471,7 +471,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     */
     membership = function(sideIn) {
       return $q(function(resolve, reject) {
-
         BMA.blockchain.current()
         .then(function(block) {
           // Create membership to sign

@@ -111,7 +111,6 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
 
         // Set Ink
         //ionicMaterialInk.displayEffect();
-
     }, 10);
   };
 
@@ -131,65 +130,65 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   // Ask uid
   $scope.showUidPopup = function() {
     return $q(function(resolve, reject) {
-    $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
-      .then(function (translations) {
+      $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
+        .then(function (translations) {
 
-        // Choose UID popup
-        $ionicPopup.show({
-          templateUrl: 'templates/account/popup_register.html',
-          title: translations['ACCOUNT.POPUP_REGISTER.TITLE'],
-          subTitle: translations['ACCOUNT.POPUP_REGISTER.HELP'],
-          scope: $scope,
-          buttons: [
-            { text: translations['COMMON.BTN_CANCEL'] },
-            {
-              text: translations['COMMON.BTN_ADD_ACCOUNT'] /*'<b>Send</b>'*/,
-              type: 'button-positive',
-              onTap: function(e) {
-                $scope.registerForm.$submitted=true;
-                if(!$scope.registerForm.$valid || !$scope.walletData.uid) {
-                  //don't allow the user to close unless he enters a uid
-                  e.preventDefault();
-                } else {
-                  return $scope.walletData.uid;
+          // Choose UID popup
+          $ionicPopup.show({
+            templateUrl: 'templates/wallet/popup_register.html',
+            title: translations['ACCOUNT.POPUP_REGISTER.TITLE'],
+            subTitle: translations['ACCOUNT.POPUP_REGISTER.HELP'],
+            scope: $scope,
+            buttons: [
+              { text: translations['COMMON.BTN_CANCEL'] },
+              {
+                text: translations['COMMON.BTN_ADD_ACCOUNT'] /*'<b>Send</b>'*/,
+                type: 'button-positive',
+                onTap: function(e) {
+                  $scope.registerForm.$submitted=true;
+                  if(!$scope.registerForm.$valid || !$scope.walletData.uid) {
+                    //don't allow the user to close unless he enters a uid
+                    e.preventDefault();
+                  } else {
+                    return $scope.walletData.uid;
+                  }
                 }
               }
+            ]
+          })
+          .then(function(uid) {
+            if (!uid) { // user cancel
+              $scope.walletData.uid = null;
+              UIUtils.loading.hide();
+              return;
             }
-          ]
-        })
-        .then(function(uid) {
-          if (!uid) { // user cancel
-            $scope.walletData.uid = null;
-            UIUtils.loading.hide();
-            return;
-          }
-          UIUtils.loading.show();
-          BMA.wot.lookup({ search: uid })
-          .then(function(res) {
-            var found = typeof res.results != "undefined" && res.results != null && res.results.length > 0
-                && res.results.some(function(pub){
+            UIUtils.loading.show();
+            BMA.wot.lookup({ search: uid })
+            .then(function(res) {
+              var found = typeof res.results != "undefined" && res.results != null && res.results.length > 0
+                  && res.results.some(function(pub){
                     return pub.pubkey != $scope.walletData.pubkey
                         && typeof pub.uids != "undefined" && pub.uids != null && pub.uids.length > 0
-                      && pub.uids.some(function(idty){
-                        return (idty.uid == uid);
-                      });
-                });
-            if (found) { // uid is already used : display a message and reopen the popup
-              UIUtils.loading.hide();
-              UIUtils.alert.info('ACCOUNT.NEW.MSG_UID_ALREADY_USED')
-              .then(function(){
+                        && pub.uids.some(function(idty){
+                          return (idty.uid == uid);
+                        });
+                  });
+              if (found) { // uid is already used : display a message and reopen the popup
+                UIUtils.loading.hide();
+                UIUtils.alert.info('ACCOUNT.NEW.MSG_UID_ALREADY_USED')
+                .then(function(){
                   $scope.showUidPopup(); // loop
-              });
-            }
-            else {
+                });
+              }
+              else {
                 resolve(uid);
-            }
-          })
-          .catch(function() {
+              }
+            })
+            .catch(function() {
                resolve(uid);
+            });
           });
         });
-      });
       });
   };
 
@@ -259,6 +258,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
 
   $translate(['ACCOUNT.MENU_TITLE', 'ACCOUNT.BTN_MEMBERSHIP_OUT', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
     .then(function (translations) {
+
       // Show the action sheet
       var hideMenu = $ionicActionSheet.show({
         buttons: [

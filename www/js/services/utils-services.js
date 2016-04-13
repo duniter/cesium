@@ -4,13 +4,13 @@ angular.module('cesium.utils.services', ['ngResource'])
 
 .factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q) {
   function alertError(err, subtitle) {
-    $translate([err, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
+    $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
     .then(function (translations) {
       var message = err.message || translations[err];
       return $ionicPopup.show({
         template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
         title: translations['ERROR.POPUP_TITLE'],
-        subTitle: subtitle,
+        subTitle: translations[subtitle],
         buttons: [
           {
             text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
@@ -23,12 +23,12 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function alertInfo(message, subtitle) {
     return $q(function(resolve, reject) {
-      $translate([message, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
+      $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
       .then(function (translations) {
         return $ionicPopup.show({
           template: '<p>' + translations[message] + '</p>',
           title: translations['INFO.POPUP_TITLE'],
-          subTitle: subtitle,
+          subTitle: translations[subtitle],
           buttons: [
             {
               text: '<b>'+translations['COMMON.BTN_OK']+'</b>',

@@ -78,7 +78,7 @@
   },
   "ACCOUNT": {
     "TITLE": "My Account",
-    "MENU_TITLE": "Wallet's options",
+    "MENU_TITLE": "Wallet actions",
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "NO_TX": "No transaction",
@@ -194,10 +194,15 @@
     "REFRESH_WALLET_DATA": "Could not refresh wallet",
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters",
     "GET_CURRENCIES_FAILED": "Could not load currencies",
-    "GET_CURRENCY_FAILED": "Could not load currency"
+    "GET_CURRENCY_FAILED": "Could not load currency",
+    "SEND_TX_FAILED": "Could not send transaction",
+    "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
+    "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
+    "ACCOUNT_CREATION_FAILED": "Error while creating your member account"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
-    "CERTIFICATION_DONE": "Identity successfully signed"
+    "CERTIFICATION_DONE": "Identity successfully signed",
+    "NOT_ENOUGH_CREDIT": "Not enough credit."
   }
 }
