@@ -1,6 +1,6 @@
 <ion-view class="modal slide-in-up ng-enter active ng-enter-active">
 
-    <ion-header-bar class="bar-dark">
+    <ion-header-bar class="bar-positive">
 
         <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item" ng-click="slidePrev()" ng-show="slides.slider.activeIndex > 0">
         </button>
@@ -8,7 +8,7 @@
 
         <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
 
-        <button class="button button-positive button-icon ion-android-send visible-xs" ng-click="doNewAccount()" ng-show="slides.slider.activeIndex == 2"></button>
+        <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doNewAccount()" ng-show="slides.slider.activeIndex == 2"></button>
 
         </ion-nav-buttons>
     </ion-header-bar>
@@ -121,10 +121,10 @@
                            ng-click="showAccountPubkey()"
                            ng-if="!accountData.pubkey && accountForm.$valid"
                            class="animate-if" translate>
-                            COMMON.BTN_SHOW
+                            COMMON.BTN_SHOW_PUBKEY
                         </a>
-                        <span class="badge badge-energized" ng-if="accountData.pubkey">
-                            {{accountData.pubkey | formatPubkey}}
+                        <span class="item-input" ng-if="accountData.pubkey">
+                            {{accountData.pubkey}}
                         </span>
                     </div>
                 </div>

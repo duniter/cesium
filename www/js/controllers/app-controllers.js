@@ -67,12 +67,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
             .then(function(walletData){
               resolve(walletData);
             })
-            .catch(function(err) {
-              UIUtils.loading.hide();
-              console.error('>>>>>>>' , err);
-              UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-              reject(err);
-            });
+            .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
         });
       }
       else if (!Wallet.data.loaded) {
@@ -80,12 +75,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
           .then(function(walletData){
             resolve(walletData);
           })
-          .catch(function(err) {
-            UIUtils.loading.hide();
-            console.error('>>>>>>>' , err);
-            UIUtils.alert.error('Could not fetch wallet data from remote uCoin node.');
-            reject(err);
-          });
+          .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
       }
       else {
         resolve(Wallet.data);
@@ -115,7 +105,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
           var callback = $scope.loginData.callback;
           $scope.loginData = {}; // Reset login data
           $scope.loginForm.$setPristine(); // Reset form
-          if (callback != "undefined" && callback != null) {
+          if (!!callback) {
             callback();
           }
           // Default: redirect to wallet view
@@ -178,7 +168,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
 }
 
 
-function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
+function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG, ionicMaterialInk) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -201,7 +191,10 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
         enable: nodeWithES
       }
     };
+
   LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
+
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils)
 
   ////////////////////////////////////////
   // Load currencies
@@ -320,6 +313,6 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
   };
 
   // Set Ink
-  //ionicMaterialInk.displayEffect();
+  ionicMaterialInk.displayEffect();
 }
 

@@ -37,8 +37,18 @@
 }
 
 .bar .button.button-clear {
-
+  font-size: 12px !important;
+  font-weight: 300 !important;
+  width: initial !important;
+  min-width: 38px !important;
+  max-width: 90px !important;
 }
+
+.bar .title + .button.button-clear.button-icon.icon {
+  min-height: 30px;
+}
+
+
 
 #transfer .list .item {
   border-bottom: solid 1px #ccc;
@@ -48,9 +58,10 @@
   border-bottom: solid 1px #ccc;
 }
 
-/*#menu .item {
-  border: 0px;
-}*/
+#menu .item.item-divider {
+  min-height: 5px;
+  height: 5px;
+}
 
 .menu .avatar {
     height: 88px;

@@ -379,13 +379,6 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
-  // Transfer click
-  $scope.transfer = function() {
-    $state.go('app.new_transfer', {
-        pubkey: $scope.formData.issuer,
-        uid: $scope.formData.title
-      });
-  };
 }
 
 function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate) {

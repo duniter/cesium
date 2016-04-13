@@ -85,23 +85,29 @@ angular.module('cesium.bma.services', ['ngResource',
     }
 
     function ws(uri) {
-      var sock = new WebSocket(uri);
-      sockets.concat(sock);
+      var sock = null;
       return {
         on: function(type, callback) {
+          if (!sock) {
+            sock = new WebSocket(uri)
+            sockets.push(this);
+          }
           sock.onmessage = function(e) {
             callback(JSON.parse(e.data));
           };
         },
         close: function(type, callback) {
-          sock.close();
+          if (!!sock) {
+            sock.close();
+            sock = null;
+          }
         }
       };
     }
 
-    function close() {
+    function closeWs() {
       if (sockets.length > 0) {
-        sockets.length.forEach(function(sock) {
+        sockets.forEach(function(sock) {
           sock.close();
         });
         sockets = []; // Reset socks list
@@ -149,7 +155,8 @@ angular.module('cesium.bma.services', ['ngResource',
         },
         peer: function() {
           return ws('ws://' + wsServer + '/ws/peer');
-        }
+        },
+        close : closeWs
       }
     }
   }

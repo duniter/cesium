@@ -55,7 +55,7 @@ function WotLookupController($scope, BMA, $state) {
   };
 }
 
-function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
+function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMaterialMotion, $timeout, ionicMaterialInk) {
 
   $scope.identity = {};
   $scope.hasSelf = false;
@@ -87,6 +87,13 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
         .then(function(block) {
           $scope.identity.sigDate = block.time;
           UIUtils.loading.hide();
+
+          // Set Motion
+          $timeout(function() {
+            ionicMaterialMotion.fadeSlideIn({
+                selector: '.item'
+            });
+          }, 10);
         })
         .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
       })
@@ -111,11 +118,8 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q) {
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
-  // Transfer click
-  $scope.transfer = function() {
-    $state.go('app.new_transfer', {
-        pubkey: $scope.identity.pubkey,
-        uid: $scope.identity.uid
-      });
-  };
+  $scope.$parent.clearFabs();
+
+  ionicMaterialInk.displayEffect();
+
 }

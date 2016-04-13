@@ -53,7 +53,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, Registry) {
+function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, Registry, ionicMaterialInk) {
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
@@ -68,7 +68,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
         $scope.selectedCurrency = res[0].id;
       }
       // Set Ink
-      //ionicMaterialInk.displayEffect();
+      ionicMaterialInk.displayEffect({selector: 'a.item'});
     });
   });
 
@@ -84,7 +84,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
   };
 }
 
-function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Registry) {
+function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Registry, ionicMaterialInk) {
 
   var USE_RELATIVE_DEFAULT = true;
 
@@ -99,7 +99,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$scope.node) {
-      $scope.node.close();
+      $scope.node.websocket.block().close();
       $scope.node = null;
     }
     if ($state.stateParams && $state.stateParams.id) { // Load by id
@@ -112,11 +112,13 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     }
   });
 
+  $scope.$on('$ionicView.beforeLeave', function(){
+    $scope.closeNode();
+  });
+
   $scope.load = function(id) {
-    if (!!$scope.node) {
-      $scope.node.close();
-      $scope.node = null;
-    }
+    $scope.closeNode();
+
     if (!!Registry) {
       Registry.currency.get({ id: id })
       .then(function(currency) {
@@ -149,7 +151,6 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
       return;
     }
 
-    // Currency OK
     $scope.node.websocket.block().on('block', function(block) {
       var theFPR = fpr(block);
       if ($scope.knownBlocks.indexOf(theFPR) === -1) {
@@ -161,10 +162,18 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         }, wait);
       }
     });
-    $scope.node.websocket.peer().on('peer', function(peer) {
+    /*$scope.node.websocket.peer().on('peer', function(peer) {
       console.log(peer);
-    });
+    });*/
   };
+
+  $scope.closeNode = function() {
+    if (!$scope.node) {
+      return;
+    }
+    $scope.node.websocket.close();
+    $scope.node = null;
+  }
 
   $scope.$watch('formData.useRelative', function() {
     if ($scope.formData.useRelative) {
@@ -187,6 +196,9 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
   };
 
   $scope.updateExploreView = function() {
+    if (!$scope.node) {
+      return;
+    }
 
     UIUtils.loading.show();
     $scope.formData.useRelative = false;
@@ -231,6 +243,10 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         $scope.MoverN = $scope.M / $scope.Nprev;
         $scope.cactual = 100 * $scope.UD / $scope.MoverN;
         $scope.formData.useRelative = USE_RELATIVE_DEFAULT;
+
+        // Set Ink
+        ionicMaterialInk.displayEffect({selector: '.peer-item'});
+
         UIUtils.loading.hide();
       })
       .catch(function(err) {

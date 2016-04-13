@@ -1,5 +1,5 @@
 
-angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
+angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
@@ -24,50 +24,17 @@ function SettingsController($scope, $state, $q, Wallet, $translate) {
   $scope.walletData = {};
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    if (!$scope.isLogged()) {
+      return;
+    }
+    UIUtils.loading.show();
     $scope.loadWallet()
       .then(function(wallet) {
-        if (!!Registry && !wallet.avatar) {
-          Registry.record.avatar({issuer:wallet.pubkey, category:'particulier'})
-          .then(function(res) {
-            if (res.hits.total > 0) {
-              wallet.avatar = res.hits.hits.reduce(function(res, hit) {
-                return res.concat(hit._source.pictures.reduce(function(res, pic) {
-                  return res.concat(pic.src);
-                }, [])[0]);
-              }, [])[0];
-            }
-            $scope.updateWalletView(wallet);
-            UIUtils.loading.hide();
-          })
-          .catch(function(err) {
-            // no avatar: continue
-            $scope.updateWalletView(wallet);
-            UIUtils.loading.hide();
-          })
-        }
-        else {
-          $scope.updateWalletView(wallet);
           UIUtils.loading.hide();
-        }
       });
   });
 
-  $scope.refreshConvertedBalance = function() {
-    if ($scope.walletData.useRelative) {
-      $scope.convertedBalance = $scope.walletData.balance ? ($scope.walletData.balance / $scope.walletData.currentUD) : 0;
-      $scope.unit = 'universal_dividend';
-      $scope.udUnit = $scope.walletData.currency;
-    } else {
-      $scope.convertedBalance = $scope.walletData.balance;
-      if (!$scope.convertedBalance) {
-        $scope.convertedBalance = 0;
-      }
-      $scope.unit = $scope.walletData.currency;
-      $scope.udUnit = '';
-    }
-  };
   $scope.$watch('walletData.useRelative', $scope.refreshConvertedBalance, true);
-  $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
   $scope.updateWalletView = function(wallet) {

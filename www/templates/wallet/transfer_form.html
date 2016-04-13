@@ -1,0 +1,55 @@
+  <form name="transferForm" novalidate="" ng-submit="doTransfer()">
+
+    <div class="list" ng-init="setTransferForm(transferForm)">
+
+      <span class="item item-button-right gray" ng-click="openWotLookup()">
+          <span class="gray" translate>TRANSFER.TO</span>
+          <span class="badge badge-royal">{{dest | formatPubkey}}</span>&nbsp;
+          <i class="button button-clear ion-chevron-right"></i>
+      </span>
+
+      <span class="item item-text-wrap">
+          <span class="gray" translate>TRANSFER.FROM</span>
+          <span class="badge"
+              ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
+              {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
+              <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+              <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+          </span>
+      </span>
+
+      <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
+          <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+          <input type="number" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})"
+                 ng-model="formData.amount" required>
+      </div>
+
+      <div class="item item-input item-floating-label" ng-if="walletData.useRelative">
+          <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+          <input type="text" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount"
+                 required>
+      </div>
+
+
+      <div class="item item-content item-toggle dark">
+        <h4 class="gray">{{'TRANSFER.BTN_RELATIVE_UNIT' | translate}}</h4>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="walletData.useRelative">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+      <label class="item item-input">
+          <textarea placeholder="{{'TRANSFER.COMMENTS_HELP' | translate}}" ng-model="formData.comments"></textarea>
+      </label>
+    </div>
+
+    <div class="padding hidden-xs">
+      <button class="button button-block button-positive button-raised icon icon-right ion-android-send ink" type="submit">
+        {{'TRANSFER.BTN_SEND' | translate}}
+      </button>
+    </div>
+  </form>
+

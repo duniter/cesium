@@ -1,40 +1,57 @@
 <ion-view view-title="{{identity.uid}}" left-buttons="leftButtons">
-<ion-content>
-    <div class="scroll">
-        <div class="list">
-            <span class="item item-icon-left">
-                <i class="icon ion-person"></i>
-                <h2 class="positive">{{identity.uid}}</h2>
-                <h4 class="gray">{{'WOT.REGISTERED_SINCE' | translate}}{{identity.sigDate | formatDate}}</h4>
-            </span>
 
-            <a class="item item-icon-left">
-                <i class="icon ion-key"></i>
-                <h4 class="gray">{{identity.pub}}</h4>
-            </a>
 
-            <div class="item-divider"></div>
 
-            <div class="item item-button-right positive" ng-click="transfer()">
-                {{'WOT.BTN_SEND_MONEY' | translate}}
-                <a class="button button-clear button-positive" >
-                    <i class="icon-right ion-chevron-right"></i>
-                </a>
-            </div>
-
-            <div class="item item-button-right positive" ng-click="signIdentity()" ng-if="hasSelf">
-                {{'WOT.BTN_CERTIFY' | translate}}
-                <a class="button button-clear button-positive" >
-                    <i class="icon-right ion-chevron-right"></i>
-                </a>
-            </div>
-            
-            <!--div class="item item-divider" ng-if="isLogged()">
-                Last transactions
-            </div-->
-
-        </div>
-    <div class="scroll-bar scroll-bar-v"></div>
+  <ion-content>
+    <div class="positive-900-bg hero">
+      <div class="content">
+        <div class="avatar"
+             ng-if="!!identity.avatar"
+             style="background-image: url({{identity.avatar}});"></div>
+        <i class="avatar avatar-member" ng-if="!identity.avatar"></i>
+        <h3 class="light">{{identity.uid}}</h3>
+        <h4 class="light">
+          {{identity.pub | formatPubkey}}
+        </h4>
+      </div>
     </div>
-</ion-content>
+    <div class="scroll">
+
+
+      <div class="hidden-xs hidden-sm padding" style="text-align:center">
+        <button class="button button-raised button-assertive ink-dark"
+                ng-click="transfer(identity.pub, identity.uid)">
+          {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+        </button>
+
+        <button class="button button-raised icon-left ion-person" ng-click="signIdentity()" ng-if="hasSelf">
+          {{'WOT.BTN_CERTIFY' | translate}}
+        </button>
+      </div>
+
+      <div class="list animate-fade-slide-in">
+          <span class="item item-icon-left">
+              <i class="icon ion-calendar"></i>
+              <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
+              <span class="badge badge-balanced">{{identity.sigDate | formatDate}}</span>
+          </span>
+
+          <a class="item item-icon-left">
+              <i class="icon ion-key"></i>
+              <h4 class="gray">{{identity.pub}}</h4>
+          </a>
+      </div>
+      <div class="scroll-bar scroll-bar-v"></div>
+    </div>
+  </ion-content>
+
+  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
+          ng-click="transfer(identity.pub, identity.uid)">
+  </button>
+
+  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-ribbon-b visible-xs visible-sm"
+          ng-click="signIdentity()"
+          ng-if="hasSelf"
+          style="bottom:78px;">
+  </button>
 </ion-view>

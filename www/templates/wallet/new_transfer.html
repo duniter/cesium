@@ -1,56 +1,14 @@
 <ion-view view-title="{{'TRANSFER.TITLE' | translate}}" left-buttons="leftButtons">
-    <ion-nav-buttons side="secondary">
-        <button class="button button-icon button-clear icon ion-android-send" ng-click="doTransfer()">
-        </button>
-    </ion-nav-buttons>
+  <ion-nav-buttons side="secondary">
+      <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doTransfer()">
+      </button>
+  </ion-nav-buttons>
 
-    <ion-content id="transfer">
-        <div class="scroll">
-            <div class="list">
+  <ion-content class="no-padding-xs">
+    <div class="scroll">
+      <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>
 
-                <span class="item item-button-right" ng-click="openSearch()">
-                    {{'TRANSFER.TO' | translate}}
-                    <span class="badge badge-royal">{{dest}}</span>&nbsp;
-                    <i class="button button-clear ion-chevron-right"></i>
-                </span>
-
-                <span class="item item-text-wrap">
-                    {{'TRANSFER.FROM' | translate}}
-                    <span class="badge"
-                        ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
-                        {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
-                        <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-                        <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
-                    </span>
-                </span>
-
-                <div class="item item-content item-toggle dark">
-                    <h4 class="gray">{{'COMMON.BTN_RELATIVE_UNIT' | translate}}</h4>
-                    <label class="toggle toggle-royal">
-                        <input type="checkbox" ng-model="walletData.useRelative">
-                        <div class="track">
-                            <div class="handle"></div>
-                        </div>
-                    </label>
-                </div>
-
-                <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
-                    <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-                    <input type="number" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
-                </div>
-
-                <div class="item item-input item-floating-label" ng-if="walletData.useRelative">
-                    <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-                    <input type="text" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount" >
-                </div>
-
-
-                <label class="item item-input">
-                    <textarea placeholder="{{'TRANSFER.COMMENTS_HELP' | translate}}" ng-model="formData.comments"></textarea>
-                </label>
-            </div>
-
-            <div class="scroll-bar scroll-bar-v"></div>
-        </div>
-    </ion-content>
+      <div class="scroll-bar scroll-bar-v"></div>
+    </div>
+  </ion-content>
 </ion-view>

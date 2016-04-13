@@ -10,21 +10,23 @@
     "BTN_CANCEL": "Cancel",
     "BTN_LOGIN": "Login",
     "BTN_LOGOUT": " Logout",
-    "BTN_ADD_ACCOUNT": "Register",
-    "SEARCH_NO_RESULT": "No result found"
+    "BTN_ADD_ACCOUNT": "Join us",
+    "SEARCH_NO_RESULT": "No result found",
+    "LOADING": "Loading..."
   },
   "MENU": {
-    "TITLE": "Cesium",
+    "TITLE": "Duniter",
     "HOME": "Home",
     "REGISTRY": "Registry",
     "MARKET": "Market place",
-    "EXPLORE_CURRENCIES": "Explore currencies",
-    "ACCOUNT": "My Account"
+    "CURRENCIES": "Currencies",
+    "ACCOUNT": "My Account",
+    "SETTINGS": "Settings"
   },
   "HOME": {
-    "TITLE": "Cesium",
-    "WELCOME": "Welcome",
-    "MESSAGE": "<b>Cesium</b> is still in development phase. There is not much to see right now. :-)",
+    "TITLE": " ",
+    "WELCOME": "Duniter",
+    "MESSAGE": "Welcome to Cesium App for Duniter !<br/>See your Duniter wallets in real time.",
     "BTN_REGISTRY": "Registry",
     "BTN_MARKET": "Market place",
     "BTN_CURRENCIES": "Explore currencies"
@@ -111,7 +113,12 @@
     "AMOUNT": "Amount",
     "AMOUNT_HELP": "Amount",
     "COMMENTS": "Reference",
-    "COMMENTS_HELP": "Reference (optional)"
+    "COMMENTS_HELP": "Reference (optional)",
+    "BTN_SEND": "Send",
+    "BTN_RELATIVE_UNIT": "Amount in relative unit ?",
+    "MODAL": {
+      "TITLE": "Transfer"
+    }
   },
   "MARKET": {
     "COMMON": {
@@ -198,11 +205,13 @@
     "SEND_TX_FAILED": "Could not send transaction",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
     "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
-    "ACCOUNT_CREATION_FAILED": "Error while creating your member account"
+    "ACCOUNT_CREATION_FAILED": "Error while creating your member account",
+    "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Identity successfully signed",
-    "NOT_ENOUGH_CREDIT": "Not enough credit."
+    "NOT_ENOUGH_CREDIT": "Not enough credit.",
+    "TRANSFER_SENT": "Transaction successfully sent."
   }
 }

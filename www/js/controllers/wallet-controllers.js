@@ -13,36 +13,14 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         }
       })
-
-      .state('app.new_transfer', {
-        url: "/transfer/:pubkey/:uid",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wallet/new_transfer.html",
-            controller: 'TransferCtrl'
-          }
-        }
-      })
-
-      .state('app.new_transfer_pubkey', {
-        url: "/transfer/:pubkey",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wallet/new_transfer.html",
-            controller: 'TransferCtrl'
-          }
-        }
-      })
     ;
   })
 
   .controller('WalletCtrl', WalletController)
-
-  .controller('TransferCtrl', TransferController)
 ;
 
 function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  ionicMaterialMotion, /*ionicMaterialInk,*/
+  ionicMaterialMotion, ionicMaterialInk,
   UIUtils, Wallet, BMA, $translate, Registry) {
 
   $scope.walletData = {};
@@ -105,22 +83,21 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
         ionicMaterialMotion.fadeSlideInRight({
           startVelocity: 3000
         });
-        ionicMaterialMotion.slideUp({
-            selector: '.slide-up'
-        });
-
         // Set Ink
-        //ionicMaterialInk.displayEffect();
+        ionicMaterialInk.displayEffect({selector: '.item'});
     }, 10);
   };
 
   // Transfer click
-  $scope.transfer= function() {
+  $scope.openTransfer = function() {
     if (!$scope.hasCredit) {
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
-    $state.go('app.new_transfer');
+    $scope.transfer(null,null, function() {
+      UIUtils.loading.hide();
+      UIUtils.alert.info('INFO.TRANSFER_SENT');
+    });
   };
 
   $scope.setRegisterForm = function(registerForm) {
@@ -285,106 +262,4 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
  };
 }
 
-function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wallet, UIUtils) {
 
-  $scope.walletData = {};
-  $scope.convertedBalance = 0;
-  $scope.formData = {
-    destPub: null,
-    amount: null,
-    comments: null
-  };
-  $scope.dest = null;
-  $scope.udAmount = null;
-
-  WotLookupController.call(this, $scope, BMA, $state);
-
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams != null
-        && $state.stateParams.pubkey != null
-        && $state.stateParams.pubkey != "undefined") {
-      $scope.destPub = $state.stateParams.pubkey;
-      if ($state.stateParams.uid != null
-        && $state.stateParams.uid != "undefined") {
-        $scope.dest = $state.stateParams.uid;
-      }
-      else {
-        $scope.dest = $scope.destPub;
-      }
-    }
-
-    // Login and load wallet
-    $scope.loadWallet()
-      .then(function(walletData) {
-        $scope.walletData = walletData;
-        $scope.onUseRelativeChanged();
-        UIUtils.loading.hide();
-      });
-  });
-
-  // When chaing use relative UD
-  $scope.onUseRelativeChanged = function() {
-    if ($scope.walletData.useRelative) {
-      $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
-      $scope.udAmount = $scope.amount * $scope.walletData.currentUD;
-      $scope.unit = 'universal_dividend';
-      $scope.udUnit = $scope.walletData.currency;
-    } else {
-      $scope.convertedBalance = $scope.walletData.balance;
-      $scope.formData.amount = ($scope.formData.amount != "undefined" && $scope.formData.amount != null)
-        ? Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.')))
-        : null;
-      $scope.udAmount = $scope.amount / $scope.walletData.currentUD;
-      $scope.unit = $scope.walletData.currency;
-      $scope.udUnit = '';
-    }
-  };
-  $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
-  $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
-
-  $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
-      scope: $scope,
-      focusFirstInput: true
-  }).then(function(modal) {
-    $scope.lookupModal = modal;
-    $scope.lookupModal.hide();
-  });
-
-  $scope.openSearch = function() {
-    $scope.lookupModal.show();
-  }
-
-  $scope.doTransfer = function() {
-    UIUtils.loading.show();
-
-    var amount = $scope.formData.amount;
-    if ($scope.walletData.useRelative
-      && amount != "undefined"
-      && amount != null) {
-      amount = $scope.walletData.currentUD
-               * amount.replace(new RegExp('[.,]'), '.');
-    }
-
-    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comments)
-    .then(function() {
-      UIUtils.loading.hide();
-      $ionicHistory.goBack()
-    })
-    .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
-  };
-
-  $scope.closeLookup = function() {
-    $scope.lookupModal.hide();
-  }
-
-  $scope.doSelectIdentity = function(pub, uid) {
-    if (uid != "undefined" && uid != null) {
-        $scope.dest = uid;
-    }
-    else {
-        $scope.dest = uid;
-    }
-    $scope.formData.destPub = pub;
-    $scope.lookupModal.hide();
-  }
-}

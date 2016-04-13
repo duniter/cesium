@@ -8,7 +8,7 @@ angular.module('cesium.home.controllers', ['cesium.services'])
         url: "/home",
         views: {
           'menuContent': {
-            templateUrl: "templates/home.html",
+            templateUrl: "templates/home/home.html",
             controller: 'HomeCtrl'
           }
         }
@@ -88,7 +88,15 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
         $scope.newAccountModal = modal;
         $scope.newAccountModal.hide()
         .then(function(){
-          showModal();
+          $scope.loadCurrencies()
+          .then(function (res) {
+            $scope.knownCurrencies = res;
+            $scope.search.looking = false;
+            if (!!res && res.length == 1) {
+              $scope.selectedCurrency = res[0].id;
+            }
+            showModal();
+          });
         });
 
       });

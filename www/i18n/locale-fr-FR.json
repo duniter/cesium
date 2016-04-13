@@ -9,22 +9,24 @@
     "BTN_BACK": "Retour",
     "BTN_CANCEL": "Annuler",
     "BTN_LOGIN": "Se connecter",
-    "BTN_LOGOUT": "Déconnecter",
+    "BTN_LOGOUT": "Déconnexion",
     "BTN_ADD_ACCOUNT": "Nous rejoindre",
-    "SEARCH_NO_RESULT": "Aucun résultat trouvé"
+    "SEARCH_NO_RESULT": "Aucun résultat trouvé",
+    "LOADING": "Veuillez patienter..."
   },
   "MENU": {
-    "TITLE": "Cesium",
+    "TITLE": "Duniter",
     "HOME": "Accueil",
     "REGISTRY": "Annuaire",
-    "MARKET": "Offres/Demandes",
-    "EXPLORE_CURRENCIES": "Voir les monnaies",
-    "ACCOUNT": "Mon compte"
+    "MARKET": "Annonces",
+    "CURRENCIES": "Monnaies",
+    "ACCOUNT": "Mon compte",
+    "SETTINGS": "Configuration"
   },
   "HOME": {
     "TITLE": " ",
     "WELCOME": "Duniter",
-    "MESSAGE": "Bienvenue dans Duniter !<br/>Regardez l'état de vos comptes en temps réel.",
+    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Regardez l'état de vos comptes Duniter en temps réel.",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies"
@@ -86,7 +88,7 @@
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
     "BTN_MEMBERSHIP_OUT": "Arrêter son adhésion",
-    "BTN_SEND_IDENTITY": "Publier le pseudonym (sans devenir membre)",
+    "BTN_SEND_IDENTITY": "Publier le pseudonyme",
     "NEW": {
       "TITLE": "Inscription",
       "SLIDE_1_TITLE": "Choix de la monnaie :",
@@ -111,7 +113,12 @@
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
     "COMMENTS": "Référence",
-    "COMMENTS_HELP": "Référence de l'opération (optionnelle)"
+    "COMMENTS_HELP": "Référence (optionnelle)",
+    "BTN_SEND": "Envoyer",
+    "BTN_RELATIVE_UNIT": "Montant en unité relative ?",
+    "MODAL": {
+      "TITLE": "Paiement"
+    }
   },
   "MARKET": {
     "COMMON": {
@@ -120,7 +127,7 @@
       "ISSUER": "Soumis par"
     },
     "SEARCH": {
-      "TITLE": "Offres/Demandes",
+      "TITLE": "Annonces",
       "SEARCH_HELP": "Recherche (voiture, livre...)",
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
@@ -195,14 +202,16 @@
     "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie",
     "GET_CURRENCIES_FAILED": "Impossible de chargement la liste des monnaies",
     "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible",
-    "SEND_TX_FAILED": "Echec de l'envoir du transfer",
+    "SEND_TX_FAILED": "Echec du paiement",
     "ALL_SOURCES_USED": "Veuillez attendre le cacul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
     "NOT_ENOUGH_SOURCES": "Veuillez attendre le cacul du prochain bloc (Pas assez de sources de monnaie).",
-    "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre"
+    "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre",
+    "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Certification envoyée",
-    "NOT_ENOUGH_CREDIT": "Credit insuffisant."
+    "NOT_ENOUGH_CREDIT": "Credit insuffisant.",
+    "TRANSFER_SENT": "La transaction a été envoyée avec succès."
   }
 }

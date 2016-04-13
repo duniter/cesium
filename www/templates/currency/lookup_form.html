@@ -1,5 +1,4 @@
 
-<h4 class="content double-padding-x" translate>CURRENCY.SELECT.CURRENCIES</h4>
 
 <ion-list>
 
@@ -9,7 +8,7 @@
 
     <div ng-repeat="currency in knownCurrencies"
               ng-class="{ selected: selectedCurrency == currency }">
-      <a class="item item-text-wrap hidden-xs hidden-sm ink" ng-click="selectCurrency(currency.id, true)"
+      <a class="item hidden-xs hidden-sm ink" ng-click="selectCurrency(currency.id, true)"
          ng-class="{ selected: selectedCurrency == currency }">
         <h3>{{currency.id}}</h3>
         <h4 class="gray">{{currency.peer}}</h4>

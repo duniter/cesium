@@ -3,6 +3,9 @@
 angular.module('cesium.utils.services', ['ngResource'])
 
 .factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q) {
+
+  var loadingTextCache=null;
+
   function alertError(err, subtitle) {
     $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
     .then(function (translations) {
@@ -48,8 +51,17 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function showLoading() {
+    if (!loadingTextCache) {
+      $translate(['COMMON.LOADING'])
+      .then(function(translations){
+        loadingTextCache = translations['COMMON.LOADING'];
+        showLoading();
+      });
+      return;
+    }
+
     $ionicLoading.show({
-      template: 'Loading...'
+      template: loadingTextCache
     });
   }
 

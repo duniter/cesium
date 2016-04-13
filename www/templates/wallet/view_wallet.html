@@ -13,6 +13,7 @@
     <ion-content
       ng-class="{expanded:isExpanded}">
         <div class="scroll">
+
             <div class="positive-900-bg hero">
               <div class="content">
                 <div class="avatar"
@@ -30,7 +31,7 @@
 
             <div class="hidden-xs hidden-sm padding" style="text-align:center">
               <button class="button button-raised button-assertive ink-dark"
-                      ng-click="transfer()">
+                      ng-click="openTransfer()">
                 {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
               </button>
 
@@ -84,6 +85,7 @@
 
     </ion-content>
 
-     <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm" ng-click="transfer()">
-     </button>
+    <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
+            ng-click="openTransfer()">
+    </button>
 </ion-view>

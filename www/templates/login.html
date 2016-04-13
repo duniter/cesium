@@ -51,10 +51,11 @@
           </div>
         </div>
 
-        <!-- show public key -->
-        <div class="item item-icon-left item-button-right left">
+        <!-- Show public key -->
+        <div class="item item-icon-left item-button-right left"
+             ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)">
           <span class="input-label" translate>COMMON.PUBKEY</span>
-          <a class="button button-light button-small ink" ng-click="showLoginPubkey()" ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
+          <a class="button button-light button-small ink" ng-click="showLoginPubkey()"
           class="animate-if">
             {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
             </a>
@@ -63,6 +64,7 @@
           </h3>
         </div>
       </div>
+
       <div class="padding hidden-xs">
         <button class="button button-block button-positive ink" type="submit">
           {{'COMMON.BTN_LOGIN' | translate}}

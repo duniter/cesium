@@ -1,0 +1,12 @@
+<ion-modal-view class="transfer">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear" ng-click="closeTransfer()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>TRANSFER.MODAL.TITLE</h1>
+    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doTransfer()">
+    </button>
+  </ion-header-bar>
+
+  <ion-content scroll="false">
+    <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>
+  </ion-content>
+</ion-modal-view>
