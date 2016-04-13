@@ -29,7 +29,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
-<<<<<<< HEAD
 // Add robotodraft fonts (need for ionic material)
 $RobotoDraftFontPath: "../lib/robotodraft/fonts";
 $RobotoDraftFontName: "RobotoDraft";
@@ -39,44 +38,7 @@ $RobotoDraftFontVersion: "1.1.0";
 
 // Include all of Ionic-Material
 @import "www/lib/ionic-material/src/scss/index";
-=======
-.background-positive {
-  background-color: $positive;
-  color: $light;
-  text-color: $light;
-}
 
-#wallet .button-float{
-  background: $assertive !important;
-  color:white !important;
-  z-index: 12 !important;
-  position: absolute !important; 
-  //top: 150px !important;
-  //left: 10px;
-  bottom: 10px !important;
-  right: 10px !important;
-  min-width: 47px !important;
-  border-radius: 50% !important;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
-  -webkit-transform: translate3d(0, 0, 0) !important;
-  transform: translate3d(0, 0, 0) !important;
-  -webkit-transition: 0.2s linear !important;
-  transition: 0.2s linear !important;
-  -webkit-transition-property: -webkit-transform, all !important;
-  transition-property: transform, all !important;
-}
-
-#wallet .button-float:hover{
-  -webkit-transform: translate3d(0, -1px, 0)  !important;
-  transform: translate3d(0, -1px, 0) !important;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
-    background: darken($assertive, 10%) !important;
-}
-
-#wallet .button-float-second{
-  left: 70px !important;
-}
->>>>>>> origin/with-ES-store
 
 // --------------------------------------------------
 // Responsive: Utility classes
