@@ -212,6 +212,11 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
       }
     }
 
+    var ESNodeConfigured = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+    if (!ESNodeConfigured) {
+      return null;
+    }
+
     var service = Market(APP_CONFIG.UCOIN_NODE_ES);
 
     service.instance = Market;

@@ -4,6 +4,7 @@
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
     "BTN_SHOW": "Voir",
+    "BTN_SHOW_PUBKEY": "Voir la clé",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
     "BTN_BACK": "Retour",
     "BTN_CANCEL": "Annuler",
@@ -17,13 +18,13 @@
     "HOME": "Accueil",
     "REGISTRY": "Annuaire",
     "MARKET": "Offres/Demandes",
-    "CURRENCIES": "Monnaies",
+    "EXPLORE_CURRENCIES": "Voir les monnaies",
     "ACCOUNT": "Mon compte"
   },
   "HOME": {
-    "TITLE": "Cesium",
-    "WELCOME": "Cesium",
-    "MESSAGE": "Application toujours en développement.<br/>Merci de votre compréhension...",
+    "TITLE": " ",
+    "WELCOME": "Duniter",
+    "MESSAGE": "Bienvenue dans Duniter !<br/>Regardez l'état de vos comptes en temps réel.",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies"
@@ -80,6 +81,7 @@
     "MENU_TITLE": "Options du portefeuille",
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
+    "NO_TX": "Aucune transaction",
     "BTN_SEND_MONEY": "Payer",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
@@ -189,7 +191,10 @@
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité",
     "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté",
     "SEND_MEMBERSHIP_OUT_FAILED": "Echec de l'arret de l'adhésion.",
-    "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille"
+    "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille",
+    "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie",
+    "GET_CURRENCIES_FAILED": "Impossible de chargement la liste des monnaies",
+    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

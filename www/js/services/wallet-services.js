@@ -1,8 +1,8 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services'])
+angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.registry.services'])
 
-.factory('Wallet', ['CryptoUtils', 'BMA', '$q', function(CryptoUtils, BMA, $q) {
+.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', 'Registry', function($q, CryptoUtils, BMA, Registry) {
 
   Wallet = function(id) {
 
@@ -25,7 +25,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         requirements: {},
         loaded: false,
         blockUid: null,
-        sigQty: null
+        sigQty: null,
+        avatar: null
     },
 
     resetData = function() {
@@ -44,6 +45,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.loaded= false;
       data.blockUid= null;
       data.sigQty = null;
+      data.avatar = null;
     },
 
     reduceTxAndPush = function(txArray, result) {
@@ -102,7 +104,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                     // Copy result to properties
                     data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
                     data.keypair = keypair;
-                    resolve();
+                    resolve(data);
                 }
             );
         });
@@ -138,6 +140,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         .then(function(res){
           if (!res.identities && res.identities.length != 1) {
             data.requirements = null;
+            data.blockUid = null;
             resolve();
             return;
           }
@@ -151,8 +154,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         })
         .catch(function(err) {
           data.requirements = {};
+          data.blockUid = null;
           // If identity not publiched : continue
           if (!!err && err.ucode == 2004) {
+            resolve();
+          }
+          // TODO workaround - waiting fix of issue https://github.com/ucoin-io/ucoin/issues/382
+          else if (!!err && err.ucode == 1002) {
             resolve();
           }
           else {
@@ -180,8 +188,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }
               else {
                 src.consumed = false;
-                balance += src.amount;
               }
+              //if (!src.consumed) {
+                balance += src.amount;
+              //}
               sources.push(src);
               sources[srcKey] = src;
             });
@@ -221,6 +231,34 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       });
     },
 
+    loadAvatar = function() {
+      return $q(function(resolve, reject) {
+        if (!Registry) {
+          data.avatar = null;
+          resolve();
+          return;
+        }
+        Registry.record.avatar({issuer:data.pubkey, category:'particulier'})
+          .then(function(res) {
+            if (res.hits.total > 0) {
+              data.avatar = res.hits.hits.reduce(function(res, hit) {
+                return res.concat(hit._source.pictures.reduce(function(res, pic) {
+                  return res.concat(pic.src);
+                }, [])[0]);
+              }, [])[0];
+            }
+            else {
+              data.avatar = null;
+            }
+            resolve();
+          })
+          .catch(function(err) {
+            data.avatar = null; // silent !
+            resolve();
+          });
+      });
+    },
+
     loadData = function(refresh) {
         if (data.loaded) {
           return refreshData();
@@ -257,7 +295,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             loadRequirements(),
 
             // Get transactions
-            loadTransactions()
+            loadTransactions(),
+
+            // Get avatar
+            loadAvatar()
           ])
           .then(function() {
             data.loaded = true;
@@ -346,9 +387,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             }
 
             if (sourceAmount < amount) {
-              reject('Not enough sources (max amount: '
+              if (sourceAmount == 0) {
+                reject('ERROR.ALL_SOURCES_USED');
+              }
+              else {
+                console.error('Maximum transaction sources has been reached: '
                 +(data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount)
-                +'). Please wait next block computation.');
+                  );
+                reject('ERROR.NOT_ENOUGH_SOURCES');
+              }
               return;
             }
 
@@ -383,7 +430,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     /**
     * Send self identity
     */
-    self = function(uid) {
+    self = function(uid, requirements) {
       return $q(function(resolve, reject) {
 
         BMA.blockchain.current()
@@ -402,8 +449,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             // Send signed identity
             BMA.wot.add({identity: signedIdentity})
             .then(function(result) {
+              if (!!requirements) {
               // Refresh membership data
-              loadRequirements();
+                loadRequirements()
+                .then(function() {
+                  resolve();
+                }).catch(function(err){reject(err);});
+              }
+              else {
+                data.blockUid = block.number + '-' + block.hash;
+                resolve();
+              }
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});
         }).catch(function(err){reject(err);});
@@ -435,7 +491,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             BMA.blockchain.membership({membership: signedMembership})
             .then(function(result) {
               // Refresh membership data
-              loadRequirements();
+              loadRequirements()
+              .then(function() {
+                resolve();
+              }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});
         }).catch(function(err){reject(err);});

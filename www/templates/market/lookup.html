@@ -1,7 +1,6 @@
 <ion-view view-title="{{'MARKET.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button ui-sref="app.market_add_record" class="button button-positive">
-            <i class="icon ion-plus"></i>
+        <button ui-sref="app.market_add_record" class="button button-icon button-clear icon ion-plus">
         </button>
     </ion-nav-buttons>
 
@@ -47,19 +46,21 @@
                 </div>
         </span>
 
-        <div class="list list-inset" ng-if="search.options != null">
+        <div class="list" ng-if="search.options != null">
 
             <label class="item center" ng-if="search.looking">
                 <ion-spinner icon="android"></ion-spinner>
             </label>
 
-            <label class="item card center assertive" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
+            <label class="item center assertive" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
                 COMMON.SEARCH_NO_RESULT
             </label>
 
-            <a class="item" ng-repeat="found in search.results" ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
-                <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
-                    <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
+            <a class="item ink" ng-repeat="found in search.results"
+               ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}"
+               ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
+              <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
+                <div class="visible-xs item-text-wrap" >
                     <h2 ng-bind-html="found.title"></h2>
                     <h4 class="gray" ng-bind-html="found.location"></h4>
                     <span class="badge item-note">{{found.time | formatDate}}</span>

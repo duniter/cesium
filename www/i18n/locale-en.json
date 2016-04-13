@@ -4,6 +4,7 @@
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SHOW": "Show",
+    "BTN_SHOW_PUBKEY": "Show key",
     "BTN_RELATIVE_UNIT": "Use relative unit",
     "BTN_BACK": " Back",
     "BTN_CANCEL": "Cancel",
@@ -17,7 +18,7 @@
     "HOME": "Home",
     "REGISTRY": "Registry",
     "MARKET": "Market place",
-    "CURRENCIES": "Expore currencies",
+    "EXPLORE_CURRENCIES": "Explore currencies",
     "ACCOUNT": "My Account"
   },
   "HOME": {
@@ -80,6 +81,7 @@
     "MENU_TITLE": "Wallet's options",
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
+    "NO_TX": "No transaction",
     "BTN_SEND_MONEY": "Send money",
     "BTN_MEMBERSHIP_IN": "Register as member",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
@@ -189,7 +191,10 @@
     "LOAD_IDENTITY_FAILED": "Could not load identity",
     "SEND_MEMBERSHIP_IN_FAILED": "Error while registering as member",
     "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out",
-    "REFRESH_WALLET_DATA": "Could not refresh wallet"
+    "REFRESH_WALLET_DATA": "Could not refresh wallet",
+    "GET_CURRENCY_PARAMETER": "Could not get currency parameters",
+    "GET_CURRENCIES_FAILED": "Could not load currencies",
+    "GET_CURRENCY_FAILED": "Could not load currency"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

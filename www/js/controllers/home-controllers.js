@@ -1,25 +1,8 @@
 
 angular.module('cesium.home.controllers', ['cesium.services'])
 
-  .config(function($httpProvider) {
-    //Enable cross domain calls
-   $httpProvider.defaults.useXDomain = true;
-
-    //Remove the header used to identify ajax call  that would prevent CORS from working
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-  })
-
-  .controller('HomeCtrl', HomeController)
-
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
-
-      .state('app', {
-        url: "/app",
-        abstract: true,
-        templateUrl: "templates/menu.html",
-        controller: 'HomeCtrl'
-      })
 
       .state('app.home', {
         url: "/home",
@@ -34,157 +17,11 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/app/home');
+
   })
+
+  .controller('HomeCtrl', HomeController)
 ;
-
-function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate) {
-  // Login modal
-  $scope.loginModal = "undefined";
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope,
-    focusFirstInput: true
-  }).then(function(modal) {
-    $scope.loginModal = modal;
-    $scope.loginModal.hide();
-  });
-
-  $scope.setLoginForm = function(loginForm) {
-    $scope.loginForm = loginForm;
-  }
-
-  // Open login modal
-  $scope.login = function(callback) {
-    if ($scope.loginModal != "undefined" && $scope.loginModal != null) {
-      $scope.loginModal.show();
-      $scope.loginData.callback = callback;
-      UIUtils.loading.hide();
-    }
-    else{
-      $timeout($scope.login, 2000);
-    }
-  };
-
-  // Login and load wallet
-  $scope.loadWallet = function() {
-    return $q(function(resolve, reject){
-      if (!Wallet.isLogin()) {
-        $scope.login(function() {
-          Wallet.loadData()
-            .then(function(walletData){
-              resolve(walletData);
-            })
-            .catch(function(err) {
-              UIUtils.loading.hide();
-              console.error('>>>>>>>' , err);
-              UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-              reject(err);
-            });
-        });
-      }
-      else if (!Wallet.data.loaded) {
-        Wallet.loadData()
-          .then(function(walletData){
-            resolve(walletData);
-          })
-          .catch(function(err) {
-            UIUtils.loading.hide();
-            console.error('>>>>>>>' , err);
-            UIUtils.alert.error('Could not fetch wallet data from remote uCoin node.');
-            reject(err);
-          });
-      }
-      else {
-        resolve(Wallet.data);
-      }
-    });
-  };
-
-  // Triggered in the login modal to close it
-  $scope.cancelLogin = function() {
-    $scope.loginData = {}; // Reset login data
-    $scope.loginForm.$setPristine(); // Reset form
-    $scope.loginModal.hide();
-  };
-
-  // Login form submit
-  $scope.doLogin = function() {
-    if(!$scope.loginForm.$valid) {
-      return;
-    }
-    UIUtils.loading.show();
-
-    $scope.loginModal.hide()
-    .then(function(){
-      // Call wallet login, then execute callback function
-      Wallet.login($scope.loginData.username, $scope.loginData.password)
-        .then(function(){
-          var callback = $scope.loginData.callback;
-          $scope.loginData = {}; // Reset login data
-          $scope.loginForm.$setPristine(); // Reset form
-          if (callback != "undefined" && callback != null) {
-            callback();
-          }
-          // Default: redirect to wallet view
-          else {
-            $state.go('app.view_wallet');
-          }
-        })
-        .catch(function(err) {
-          $scope.loginData = {}; // Reset login data
-          $scope.loginForm.$setPristine(); // Reset form
-          UIUtils.loading.hide();
-          console.error('>>>>>>>' , err);
-          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-        });
-    })
-  };
-
-  $scope.loginDataChanged = function() {
-    $scope.loginData.computing=false;
-    $scope.loginData.pubkey=null;
-  };
-
-  $scope.showLoginPubkey = function() {
-    $scope.loginData.computing=true;
-    CryptoUtils.connect($scope.loginData.username, $scope.loginData.password).then(
-        function(keypair) {
-            $scope.loginData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.loginData.computing=false;
-        }
-    )
-    .catch(function(err) {
-      $scope.loginData.computing=false;
-      UIUtils.loading.hide();
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-    });
-  };
-
-  // Logout
-  $scope.logout = function() {
-    UIUtils.loading.show();
-    Wallet.logout().then(
-        function() {
-          UIUtils.loading.hide();
-          $ionicSideMenuDelegate.toggleLeft();
-          $state.go('app.home');
-        }
-    );
-  };
-
-  // Is connected
-  $scope.isLogged = function() {
-      return Wallet.isLogin();
-  };
-
-  // Is not connected
-  $scope.isNotLogged = function() {
-    return !Wallet.isLogin();
-  };
-}
 
 
 function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry) {
@@ -245,7 +82,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
     if (!$scope.newAccountModal) {
       UIUtils.loading.show();
       // Create the account modal that we will use later
-      $ionicModal.fromTemplateUrl('templates/account/new_account_wizard.html', {
+      $ionicModal.fromTemplateUrl('templates/home/new_account_wizard.html', {
         scope: $scope
       }).then(function(modal) {
         $scope.newAccountModal = modal;
@@ -316,33 +153,8 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
   */
 }
 
-
-
 function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
 
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
-  $scope.accounts = [];
-  $scope.search = { text: '', results: {} };
-  $scope.knownCurrencies = ['super_currency'];
-
-  var nodeWithES = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
-  $scope.options = {
-    market: {
-      enable: nodeWithES
-    },
-    registry: {
-      enable: nodeWithES
-    }
-  };
-
-  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
-
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
-}
 
+}

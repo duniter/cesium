@@ -1,7 +1,6 @@
 <ion-view view-title="{{'REGISTRY.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button class="button button-positive" ng-click="newRecord()">
-            <i class="icon ion-plus"></i>
+        <button class="button button-positive button-icon button-clear icon ion-plus" ng-click="newRecord()">
         </button>
     </ion-nav-buttons>
 
@@ -36,7 +35,7 @@
             </div>
         </span>
 
-        <div class="list list-inset" ng-if="search.options != null">
+        <div class="list" ng-if="search.options != null">
 
             <label class="item center" ng-if="search.looking">
                 <ion-spinner icon="android"></ion-spinner>

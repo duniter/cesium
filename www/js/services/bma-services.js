@@ -6,9 +6,11 @@ angular.module('cesium.bma.services', ['ngResource',
 .factory('BMA', function($http, $q, APP_CONFIG) {
 
   function BMA(server, wsServer) {
-      if (wsServer == "undefined" || wsServer == null) {
-          wsServer = server;
-      }
+    if (wsServer == "undefined" || wsServer == null) {
+        wsServer = server;
+    }
+
+    var sockets = [];
 
     function processError(reject, data, uri) {
       if (data != null && data.message != "undefined" && data.message != null) {
@@ -84,13 +86,26 @@ angular.module('cesium.bma.services', ['ngResource',
 
     function ws(uri) {
       var sock = new WebSocket(uri);
+      sockets.concat(sock);
       return {
         on: function(type, callback) {
           sock.onmessage = function(e) {
             callback(JSON.parse(e.data));
           };
+        },
+        close: function(type, callback) {
+          sock.close();
         }
       };
+    }
+
+    function close() {
+      if (sockets.length > 0) {
+        sockets.length.forEach(function(sock) {
+          sock.close();
+        });
+        sockets = []; // Reset socks list
+      }
     }
 
     return {

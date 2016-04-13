@@ -1,12 +1,10 @@
 <ion-view class="modal slide-in-up ng-enter active ng-enter-active">
 
-    <ion-header-bar class="bar-positive">
+    <ion-header-bar class="bar-dark">
 
-        <button class="button back-button button-clear buttons header-item" ng-click="slidePrev()" ng-show="slides.slider.activeIndex > 0">
-            <i class="icon ion-ios-arrow-back"></i>
-            <span translate>COMMON.BTN_BACK</span>
+        <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item" ng-click="slidePrev()" ng-show="slides.slider.activeIndex > 0">
         </button>
-        <button class="button button-positive" ng-click="cancel()" ng-show="slides.slider.activeIndex == 0" translate>COMMON.BTN_CANCEL</button>
+        <button class="button button-clear text-no-wrap" ng-click="cancel()" ng-show="slides.slider.activeIndex == 0" translate>COMMON.BTN_CANCEL</button>
 
         <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
 
@@ -20,7 +18,7 @@
         <ion-slide-page>
             <ion-content class="has-header padding">
                 <h3 translate>ACCOUNT.NEW.SLIDE_1_TITLE</h3>
-                <ng-include src="'templates/currency/select_currency.html'"></ng-include>
+                <ng-include src="'templates/currency/lookup_form.html'"></ng-include>
             </ion-content>
         </ion-slide-page>
         <ion-slide-page>

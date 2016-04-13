@@ -1,5 +1,6 @@
 
 angular.module('cesium.controllers', [
+    'cesium.app.controllers',
     'cesium.home.controllers',
     'cesium.wallet.controllers',
     'cesium.currency.controllers',

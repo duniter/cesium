@@ -19,7 +19,8 @@ $dark:                            #444 !default;
 //$assertive:                       #ff7a00 !default;
 //$balanced:                        #33cd5f !default;
 
-//$positive:                        #921c81 !default;
+//$dark:                              #030055 !default; // bleu foncé uCoin App
+//$assertive:                       #94c11f !default;
 //$balanced:                        #94c11f !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
@@ -28,38 +29,15 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
-.background-positive {
-  background-color: $positive;
-  color: $light;
-  text-color: $light;
-}
+// Add robotodraft fonts (need for ionic material)
+$RobotoDraftFontPath: "../lib/robotodraft/fonts";
+$RobotoDraftFontName: "RobotoDraft";
+$RobotoDraftFontVersion: "1.1.0";
 
+@import "www/lib/robotodraft/sass/robotodraft";
 
-.button-float{
-  background: $assertive !important;
-  color:white !important;
-  z-index: 12 !important;
-  position: absolute !important; 
-  bottom: 10px !important;
-  right: 10px !important;
-  border-radius: 50% !important;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
-  -webkit-transform: translate3d(0, 0, 0) !important;
-  transform: translate3d(0, 0, 0) !important;
-  -webkit-transition: 0.2s linear !important;
-  transition: 0.2s linear !important;
-  -webkit-transition-property: -webkit-transform, all !important;
-  transition-property: transform, all !important;
-
-}
-
-.button-float:hover{
-  -webkit-transform: translate3d(0, -1px, 0)  !important;
-  transform: translate3d(0, -1px, 0) !important;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
-    background: darken($assertive, 10%) !important;
-}
-
+// Include all of Ionic-Material
+@import "www/lib/ionic-material/src/scss/index";
 
 // --------------------------------------------------
 // Responsive: Utility classes
@@ -155,6 +133,16 @@ $screen-lg:                       1200px;
         display: none !important;
         visibility: hidden !important;
     }
+}
+@media screen and (max-width: $screen-sm-max) {
+  body {
+      cursor: url('http://ionicframework.com/img/finger.png'), auto;
+  }
+}
+@media screen and (min-width: $screen-md) {
+  body {
+      cursor: inherit;
+  }
 }
 
 // Medium devices: Desktops (≥992px)

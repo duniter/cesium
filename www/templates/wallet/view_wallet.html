@@ -1,0 +1,89 @@
+<ion-view left-buttons="leftButtons"
+          view-title=""
+          id="wallet">
+
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+    </button>
+    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showActionsheet()">
+    </button>
+  </ion-nav-buttons>
+
+    <ion-content
+      ng-class="{expanded:isExpanded}">
+        <div class="scroll">
+            <div class="positive-900-bg hero">
+              <div class="content">
+                <div class="avatar"
+                     ng-if="!!walletData.avatar"
+                     style="background-image: url({{walletData.avatar}});"></div>
+                <i class="avatar" ng-class="{'avatar-wallet': !isMember, 'avatar-member': isMember}" ng-if="!walletData.avatar"></i>
+                <h3 class="light" ng-if="isMember">{{walletData.uid}}</h3>
+                <h3 class="light" ng-if="!isMember">{{walletData.pubkey | formatPubkey}}</h3>
+                <h4 class="light">
+                    <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+                    <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                </h4>
+              </div>
+            </div>
+
+            <div class="hidden-xs hidden-sm padding" style="text-align:center">
+              <button class="button button-raised button-assertive ink-dark"
+                      ng-click="transfer()">
+                {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+              </button>
+
+              <button class="button button-raised icon-left ion-person ink"
+                      ng-if="needMembership"
+                      ng-click="membershipIn()">
+                {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
+              </button>
+
+              <button class="button button-raised icon-left ion-loop ink"
+                      ng-if="needRenew"
+                      ng-click="membershipRenew()">
+                {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+              </button>
+
+              <button class="button button-raised icon-left ion-log-out ink"
+                      ng-if="needMembershipOut"
+                      ng-click="membershipOut()">
+                {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
+              </button>
+
+              <button class="button button-raised icon-left ion-flag ink"
+                      ng-if="needSelf"
+                      ng-click="self()">
+                {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+              </button>
+            </div>
+
+            <!-- Last Transactions -->
+
+            <div class="padding no-padding-xs">
+              <div class="list animate-fade-slide-in-right" >
+
+                <span class="item item-divider" translate>ACCOUNT.LAST_TX</span>
+
+                <span class="item" ng-if="!walletData.history || walletData.history.length == 0">
+                  <h3 translate>ACCOUNT.NO_TX</h3>
+                </span>
+
+                <a href="#" class="item" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
+                    <h3>{{tx.time | formatDate}}</h3>
+                    <p ng-if="tx.issuer">{{'COMMON.PUBKEY' | translate}}: {{tx.issuer | formatPubkey}}</p>
+                    <p ng-if="tx.receiver">{{'COMMON.PUBKEY' | translate}}: {{tx.receiver | formatPubkey}}</p>
+                    <span class="badge item-note" ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
+                    <span class="badge item-note" ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
+                </a>
+              </div>
+            </div>
+          <div class="scroll-bar scroll-bar-v"></div>
+        </div>
+
+    </ion-content>
+
+     <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm" ng-click="transfer()">
+     </button>
+</ion-view>

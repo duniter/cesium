@@ -1,13 +1,18 @@
-<ion-modal-view>
+<ion-modal-view class="login">
   <ion-header-bar class="bar-positive">
-    <button class="button button-positive" ng-click="cancelLogin()" translate>COMMON.BTN_CANCEL
+    <button class="button button-clear" ng-click="cancelLogin()" translate>COMMON.BTN_CANCEL
     </button>
     <h1 class="title" translate>LOGIN.TITLE</h1>
-    <button class="button button-positive button-icon ion-android-done visible-xs" ng-click="doLogin()"></button>
+    <div class="buttons buttons-right">
+      <span class="secondary-buttons">
+        <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
+        </button>
+    </span></div>
   </ion-header-bar>
 
   <ion-content scroll="false">
     <form name="loginForm" novalidate="" ng-submit="doLogin()">
+
       <div class="list"
         ng-init="setLoginForm(loginForm)">
 
@@ -18,6 +23,7 @@
           <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
                  ng-model="loginData.username"
                  ng-change="loginDataChanged()"
+                 class="highlight-light"
                  required>
         </label>
         <div class="form-errors"
@@ -46,21 +52,20 @@
         </div>
 
         <!-- show public key -->
-        <div class="item item-icon-left item-button-right">
-          <i class="icon ion-key"/>
-          <span translate>COMMON.PUBKEY</span>
-          <a class="button button-light button-small" ng-click="showLoginPubkey()" ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
+        <div class="item item-icon-left item-button-right left">
+          <span class="input-label" translate>COMMON.PUBKEY</span>
+          <a class="button button-light button-small ink" ng-click="showLoginPubkey()" ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
           class="animate-if">
-            {{'COMMON.BTN_SHOW' | translate}}
+            {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
             </a>
-          <span class="badge badge-energized" ng-if="loginData.pubkey">
-            {{loginData.pubkey | formatPubkey}}
-          </span>
+          <h3 class="gray text-no-wrap" ng-if="loginData.pubkey">
+            {{loginData.pubkey}}
+          </h3>
         </div>
       </div>
       <div class="padding hidden-xs">
-        <button class="button button-block button-positive" type="submit">
-          {{'COMMON.BTN_OK' | translate}}
+        <button class="button button-block button-positive ink" type="submit">
+          {{'COMMON.BTN_LOGIN' | translate}}
         </button>
       </div>
     </form>

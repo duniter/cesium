@@ -201,9 +201,19 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           add: addRecord,
           update: postResource('http://' + server + '/registry/record/:id'),
           searchText: getResource('http://' + server + '/registry/record/_search?q=:search'),
-          search: postResource('http://' + server + '/registry/record/_search?pretty')
+          search: postResource('http://' + server + '/registry/record/_search?pretty'),
+          avatar: getResource('http://' + server + '/registry/record/_search?q=issuer::issuer+category::category&size=1&_source=pictures.src'),
+        },
+        currency: {
+          all: getResource('http://' + server + '/currency/simple/_search?_source=currencyName,peers.host,peers.port'),
+          get: getResource('http://' + server + '/currency/simple/:id/_source')
         }
       }
+    }
+
+    var ESNodeConfigured = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+    if (!ESNodeConfigured) {
+      return null;
     }
 
     var service = Registry(APP_CONFIG.UCOIN_NODE_ES);

@@ -1,16 +1,4 @@
-body {
-    cursor: url('http://ionicframework.com/img/finger.png'), auto;
-}
 
-.homeMessage {
-    text-align: center;
-    font-size: 18px;
-}
-
-.selected {
-    background-color: steelblue !important;
-    color: white !important;
-}
 
 #newAccount h1 {
     font-size: 25px;
@@ -36,11 +24,45 @@ body {
     padding-top: 15px;
     padding-bottom: 15px;
     text-align: center;
+    color: #fff;
+}
+
+#home h4 {
+    color: #fff;
 }
 
 #home button, #home a {
     margin-top: 20px;
     height: 40px;
+}
+
+.bar .button.button-clear {
+
+}
+
+#transfer .list .item {
+  border-bottom: solid 1px #ccc;
+}
+
+.list .item-input {
+  border-bottom: solid 1px #ccc;
+}
+
+/*#menu .item {
+  border: 0px;
+}*/
+
+.menu .avatar {
+    height: 88px;
+    width: 88px;
+}
+
+.avatar-member {
+    background-image: url('../img/person.png');
+}
+
+.avatar-wallet {
+    background-image: url('../img/card.png');
 }
 
 .center {

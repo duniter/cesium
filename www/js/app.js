@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
+angular.module('cesium', ['ionic','ionic-material', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
 
   .filter('formatInteger', function() {
     return function(input) {

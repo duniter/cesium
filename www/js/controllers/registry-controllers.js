@@ -256,6 +256,15 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
                   return result.concat(registry);
                 }, []);
             }
+
+            // Set Motion
+            $timeout(function() {
+                ionicMaterialMotion.fadeSlideInRight({
+                  startVelocity: 3000
+                });
+                // Set Ink
+                //ionicMaterialInk.displayEffect();
+            }, 10);
           })
           .catch(function(err) {
               $scope.search.looking = false;

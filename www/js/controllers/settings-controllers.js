@@ -4,63 +4,51 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
-      .state('app.view_wallet', {
+      .state('app.settings', {
         url: "/wallet",
         views: {
           'menuContent': {
-            templateUrl: "templates/wallet/view_wallet.html",
-            controller: 'WalletCtrl'
-          }
-        }
-      })
-
-      .state('app.new_transfer', {
-        url: "/transfer/:pubkey/:uid",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wallet/new_transfer.html",
-            controller: 'TransferCtrl'
-          }
-        }
-      })
-
-      .state('app.new_transfer_pubkey', {
-        url: "/transfer/:pubkey",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wallet/new_transfer.html",
-            controller: 'TransferCtrl'
+            templateUrl: "templates/settings/settings.html",
+            controller: 'SettingsCtrl'
           }
         }
       })
     ;
   })
 
-  .controller('WalletCtrl', WalletController)
-
-  .controller('TransferCtrl', TransferController)
+  .controller('SettingsCtrl', SettingsController)
 ;
 
-function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  ionicMaterialMotion, /*ionicMaterialInk,*/
-  UIUtils, Wallet, BMA, $translate, Registry) {
+function SettingsController($scope, $state, $q, Wallet, $translate) {
 
   $scope.walletData = {};
-  $scope.convertedBalance = 0;
-  $scope.hasCredit = false;
-  $scope.isMember = false;
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.$parent.clearFabs();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
       .then(function(wallet) {
-        $scope.updateWalletView(wallet);
-        UIUtils.loading.hide();
+        if (!!Registry && !wallet.avatar) {
+          Registry.record.avatar({issuer:wallet.pubkey, category:'particulier'})
+          .then(function(res) {
+            if (res.hits.total > 0) {
+              wallet.avatar = res.hits.hits.reduce(function(res, hit) {
+                return res.concat(hit._source.pictures.reduce(function(res, pic) {
+                  return res.concat(pic.src);
+                }, [])[0]);
+              }, [])[0];
+            }
+            $scope.updateWalletView(wallet);
+            UIUtils.loading.hide();
+          })
+          .catch(function(err) {
+            // no avatar: continue
+            $scope.updateWalletView(wallet);
+            UIUtils.loading.hide();
+          })
+        }
+        else {
+          $scope.updateWalletView(wallet);
+          UIUtils.loading.hide();
+        }
       });
   });
 
@@ -88,7 +76,6 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     if (!$scope.walletData.requirements || !$scope.walletData.requirements.uid) {
       $scope.needSelf = true;
       $scope.needMembership = true;
-      $scope.needMembershipOut = false;
       $scope.needRenew = false;
     }
     else {
@@ -97,30 +84,17 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
         && $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
       $scope.needRenew = !$scope.needMembership && ($scope.walletData.requirements.membershipExpiresIn < 129600
         && $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
-      $scope.needMembershipOut = ($scope.walletData.requirements.membershipExpiresIn > 0);
     }
     $scope.isMember = !$scope.needSelf && !$scope.needMembership;
-    // Set Motion
-    $timeout(function() {
-        ionicMaterialMotion.fadeSlideInRight({
-          startVelocity: 3000
-        });
-        ionicMaterialMotion.slideUp({
-            selector: '.slide-up'
-        });
+  };
 
-        // Set Ink
-        //ionicMaterialInk.displayEffect();
-
-    }, 10);
+  // Has credit
+  $scope.hasCredit= function() {
+    return $scope.balance > 0;
   };
 
   // Transfer click
   $scope.transfer= function() {
-    if (!$scope.hasCredit) {
-      UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
-      return;
-    }
     $state.go('app.new_transfer');
   };
 
@@ -128,9 +102,9 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     $scope.registerForm = registerForm;
   };
 
-  // Ask uid
-  $scope.showUidPopup = function() {
-    return $q(function(resolve, reject) {
+  // Send self identity
+  $scope.self= function() {
+
     $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
       .then(function (translations) {
 
@@ -163,13 +137,21 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
             UIUtils.loading.hide();
             return;
           }
+
+          var doSelf = function() {
+            Wallet.self(uid)
+              .then(function() {
+                UIUtils.loading.hide();
+              })
+              .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
+          };
+          // Check uid is not used by another member
           UIUtils.loading.show();
           BMA.wot.lookup({ search: uid })
           .then(function(res) {
             var found = typeof res.results != "undefined" && res.results != null && res.results.length > 0
                 && res.results.some(function(pub){
-                    return pub.pubkey != $scope.walletData.pubkey
-                        && typeof pub.uids != "undefined" && pub.uids != null && pub.uids.length > 0
+                  return typeof pub.uids != "undefined" && pub.uids != null && pub.uids.length > 0
                       && pub.uids.some(function(idty){
                         return (idty.uid == uid);
                       });
@@ -178,57 +160,27 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
               UIUtils.loading.hide();
               UIUtils.alert.info('ACCOUNT.NEW.MSG_UID_ALREADY_USED')
               .then(function(){
-                  $scope.showUidPopup(); // loop
+                $scope.self(); // loop
               });
             }
             else {
-                resolve(uid);
+              doSelf();
             }
           })
           .catch(function() {
-               resolve(uid);
+             doSelf();
           });
         });
       });
-      });
-  };
-
-  // Send self identity
-  $scope.self= function() {
-    $scope.showUidPopup()
-    .then(function(uid) {
-      Wallet.self(uid)
-      .then(function() {
-        $scope.doUpdate();
-      })
-      .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
-    });
   };
 
   // Send membership IN
   $scope.membershipIn= function() {
-    var doMembershipIn = function() {
+    UIUtils.loading.show();
     Wallet.membership(true)
     .then(function() {
-        $scope.doUpdate();
-      })
-      .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
-    };
 
-    $scope.showUidPopup()
-    .then(function (uid) {
-      UIUtils.loading.show();
-      if ($scope.walletData.blockUid == null) {
-        Wallet.self(uid, false/*do NOT load membership here*/)
-        .then(function() {
-          doMembershipIn();
-        })
-        .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
-      }
-      else {
-        doMembershipIn();
-      }
-
+      UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
   };
@@ -238,7 +190,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     UIUtils.loading.show();
     Wallet.membership(false)
     .then(function() {
-      $scope.doUpdate();
+      UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_OUT_FAILED'));
   };
@@ -247,8 +199,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   $scope.doUpdate = function() {
     UIUtils.loading.show();
     Wallet.refreshData()
-    .then(function(wallet) {
-      $scope.updateWalletView(wallet);
+    .then(function() {
       UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
@@ -257,12 +208,13 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   // Triggered on a button click, or some other target
  $scope.showActionsheet = function() {
 
-  $translate(['ACCOUNT.MENU_TITLE', 'ACCOUNT.BTN_MEMBERSHIP_OUT', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
+  $translate(['ACCOUNT.BTN_MEMBERSHIP_OUT', 'COMMON.BTN_CANCEL.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
     .then(function (translations) {
       // Show the action sheet
       var hideMenu = $ionicActionSheet.show({
         buttons: [
-          { text: translations['ACCOUNT.BTN_MEMBERSHIP_OUT'] }
+          { text: translations['ACCOUNT.BTN_MEMBERSHIP_OUT'] },
+          { text: 'Move' }
         ],
         titleText: translations['ACCOUNT.MENU_TITLE'],
         cancelText: translations['COMMON.BTN_CANCEL'],
@@ -270,9 +222,6 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
             // add cancel code..
           },
         buttonClicked: function(index) {
-          if (index == 0) {
-            $scope.membershipIn();
-          }
           return true;
         }
       });
@@ -370,7 +319,7 @@ function TransferController($scope, $ionicModal, $state, $ionicHistory, BMA, Wal
       UIUtils.loading.hide();
       $ionicHistory.goBack()
     })
-    .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
+    .catch(UIUtils.onError('Could not send transaction'));
   };
 
   $scope.closeLookup = function() {

@@ -53,15 +53,21 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
-  function onError(msg) {
+  function onError(msg, reject/*optional*/) {
     return function(err) {
-      console.error('>>>>>>>' , err);
-      hideLoading();
+      var fullMsg = msg;
       if (!!err && !!err.message) {
-        alertError(msg + ': ' + err.message);
+        fullMsg = msg + ': ' + err.message;
       }
+      // If reject has been given, use it
+      if (!!reject) {
+        reject(fullMsg);
+      }
+      // Otherwise, log to console and display error
       else {
-        alertError(msg);
+        console.error('>>>>>>>' , err);
+        hideLoading();
+        alertError(fullMsg);
       }
     }
   }
