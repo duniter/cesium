@@ -11,3 +11,5 @@ cesium.iml
 pom.xml
 www/css/ionic.app.css
 www/css/ionic.app.min.css
+
+www/js/config.js
