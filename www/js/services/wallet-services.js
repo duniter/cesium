@@ -159,10 +159,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           if (!!err && err.ucode == 2004) {
             resolve();
           }
-          // TODO workaround - waiting fix of issue https://github.com/ucoin-io/ucoin/issues/382
-          else if (!!err && err.ucode == 1002) {
-            resolve();
-          }
           else {
             reject(err);
           }
