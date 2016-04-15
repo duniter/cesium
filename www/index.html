@@ -21,7 +21,6 @@
     <script src="lib/ionic/js/angular/angular-translate.min.js"></script>
     <script src="lib/ionic/js/angular/angular-translate-loader-static-files.min.js"></script>
     <script src="lib/ionic/js/angular/angular-messages.min.js"></script>
-
     <script src="js/vendor/moment.min.js"></script>
     <script src="js/vendor/numeral.js"></script>
     <script src="js/vendor/socket-io.js"></script>
@@ -29,12 +28,14 @@
 
 
     <!-- crypto libs -->
-    <script src="js/vendor/scrypt-em.js" ></script>
-    <script src="js/vendor/nacl_factory.js" ></script>
-    <script src="js/vendor/base58.js" ></script>
-    <script src="js/vendor/base64.js" ></script>
+    <script src="js/vendor/scrypt-em.js"></script>
+    <script src="js/vendor/nacl_factory.js"></script>
+    <script src="js/vendor/base58.js"></script>
+    <script src="js/vendor/base64.js"></script>
+    <script src="lib/crypto-js/crypto-js.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
+    <script src="js/vendor/ng-cordova.min.js"></script>
     <script src="cordova.js"></script>
 
     <!-- config -->
@@ -67,8 +68,6 @@
 
     <!-- App -->
     <script src="js/app.js"></script>
-
-    <script src="lib/ion-md-input/js/ion-md-input.js"></script>
 
   </head>
   <body ng-app="cesium" class="platform-android">

@@ -1,7 +1,7 @@
 <ion-modal-view>
   <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeCategoryModal()" translate>COMMON.BTN_CANCEL</button>
       <h1 class="title" translate>REGISTRY.COMMON.CATEGORIES</h1>
-      <button class="button button-positive" ng-click="closeCategoryModal()" translate>COMMON.BTN_CANCEL</button>
   </ion-header-bar>
 
     <ion-content class="lookupForm">
@@ -15,7 +15,9 @@
             <ion-spinner icon="android"></ion-spinner>
         </label>
 
-        <a class="item" ng-repeat="found in categories.search.results" ng-class="{'item-divider': (found.parent==null)}" href="#" ng-click="selectCategory(found)">
+        <a ng-repeat="found in categories.search.results"
+           ng-class="{'item-divider': !found.parent, 'item': !!found.parent}"
+           ng-click="selectCategory(found)">
             <h2 ng-bind-html="found.name" class="item-category"></h2>
         </a>
     </div>

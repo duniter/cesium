@@ -21,12 +21,12 @@ function PeerController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal,
           return peer;
         });
         $scope.peers = _.sortBy(peers, function(p) {
-          var score = 1
-            + 10000 * (p.online ? 1 : 0)
-            + 1000  * (p.hasMainConsensusBlock ? 1 : 0) +
-            + 100   * (p.uid ? 1 : 0);
+          var score = 1;
+          score += 10000 * (p.online ? 1 : 0);
+          score += 1000  * (p.hasMainConsensusBlock ? 1 : 0);
+          score += 100   * (p.uid ? 1 : 0);
           return -score;
         });
-      })
+      });
   };
 }

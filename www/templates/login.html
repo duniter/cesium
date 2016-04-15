@@ -1,6 +1,6 @@
 <ion-modal-view class="login">
   <ion-header-bar class="bar-positive">
-    <button class="button button-clear" ng-click="cancelLogin()" translate>COMMON.BTN_CANCEL
+    <button class="button button-clear visible-xs" ng-click="cancelLogin()" translate>COMMON.BTN_CANCEL
     </button>
     <h1 class="title" translate>LOGIN.TITLE</h1>
     <div class="buttons buttons-right">
@@ -10,7 +10,7 @@
     </span></div>
   </ion-header-bar>
 
-  <ion-content scroll="false">
+  <ion-content>
     <form name="loginForm" novalidate="" ng-submit="doLogin()">
 
       <div class="list"
@@ -52,24 +52,31 @@
         </div>
 
         <!-- Show public key -->
-        <div class="item item-icon-left item-button-right left"
-             ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)">
+        <div class="item item-icon-left item-button-right left">
           <span class="input-label" translate>COMMON.PUBKEY</span>
-          <a class="button button-light button-small ink" ng-click="showLoginPubkey()"
-          class="animate-if">
+          <a class="button button-light button-small ink"
+             ng-click="showLoginPubkey()"
+             ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
+             class="animate-if">
             {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
-            </a>
+          </a>
           <h3 class="gray text-no-wrap" ng-if="loginData.pubkey">
             {{loginData.pubkey}}
           </h3>
         </div>
       </div>
 
-      <div class="padding hidden-xs">
-        <button class="button button-block button-positive ink" type="submit">
+      <div class="padding hidden-xs text-right">
+        <button class="button button-small button-clear button-dark ink" ng-click="cancelLogin()" type="button" translate>COMMON.BTN_CANCEL
+        </button>
+        <button class="button button-small button-positive ink" type="submit">
           {{'COMMON.BTN_LOGIN' | translate}}
         </button>
       </div>
+      <!--div class="padding hidden-xs text-right">
+        <a class="assertive ink" ng-click="openNewAccount()" type="button" translate>COMMON.NO_ACOUNT_QUESTION
+        </a>
+      </div-->
     </form>
   </ion-content>
 </ion-modal-view>

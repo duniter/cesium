@@ -4,12 +4,12 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic','ionic-material', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
+angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
 
   .filter('formatInteger', function() {
     return function(input) {
       return input ? numeral(input).format('0,0') : '0';
-    }
+    };
   })
 
   .filter('formatDecimal', function() {
@@ -17,13 +17,19 @@ angular.module('cesium', ['ionic','ionic-material', 'ngMessages', 'pascalprecht.
         if (!input) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
         return Math.floor(input * 10000) / 10000;
-      }
+      };
     })
 
   .filter('formatDate', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).format('YYYY-MM-DD HH:mm') : '';
-    }
+    };
+  })
+
+  .filter('formatFromNow', function() {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).startOf('hour').fromNow() : '';
+    };
   })
 
   .filter('abbreviate', function() {
@@ -31,24 +37,24 @@ angular.module('cesium', ['ionic','ionic-material', 'ngMessages', 'pascalprecht.
       var unit = '', sepChars = ['-', '_', ' '], currency = input || '';
       for (var i = 0; i < currency.length; i++) {
         var c = currency[i];
-        if (i == 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
+        if (i === 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
           unit += c;
         }
       }
       return unit.toUpperCase();
-    }
+    };
   })
 
   .filter('formatPubkey', function() {
     return function(input) {
       return input ? input.substr(0,8) : '';
-    }
+    };
   })
 
   .filter('formatCategory', function() {
     return function(input) {
       return input && input.length > 28 ? input.substr(0,25)+'...' : input;
-    }
+    };
   })
 
   // Convert to user friendly URL (e.g. "Like - This" -> "like-this")
@@ -59,7 +65,7 @@ angular.module('cesium', ['ionic','ionic-material', 'ngMessages', 'pascalprecht.
         .replace(/[^\w ]+/g,'')
         .replace(/ +/g,'-'))
         : '';
-    }
+    };
   })
 
   // Translation i18n
@@ -75,7 +81,6 @@ angular.module('cesium', ['ionic','ionic-material', 'ngMessages', 'pascalprecht.
     .useSanitizeValueStrategy(null)
     .fallbackLanguage(['en'])
     .useLoaderCache(true);
-
   })
 
   // Add new compare-to directive (need for form validation)

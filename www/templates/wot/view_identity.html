@@ -33,13 +33,13 @@
           <span class="item item-icon-left">
               <i class="icon ion-calendar"></i>
               <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
-              <span class="badge badge-balanced">{{identity.sigDate | formatDate}}</span>
+              <span class="badge badge-balanced">{{identity.sigDate | formatFromNow}}</span>
           </span>
 
-          <a class="item item-icon-left">
+          <ion-item href="#" class="item-icon-left ink" on-hold="copyText(identity.pub)">
               <i class="icon ion-key"></i>
               <h4 class="gray">{{identity.pub}}</h4>
-          </a>
+          </span>
       </div>
       <div class="scroll-bar scroll-bar-v"></div>
     </div>

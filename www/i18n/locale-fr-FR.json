@@ -10,9 +10,13 @@
     "BTN_CANCEL": "Annuler",
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnexion",
-    "BTN_ADD_ACCOUNT": "Nous rejoindre",
+    "BTN_ADD_ACCOUNT": "Nouveau compte",
+    "NO_ACOUNT_QUESTION": "Pas de encore membre ? Créer un compte",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
-    "LOADING": "Veuillez patienter..."
+    "LOADING": "Veuillez patienter...",
+    "FROM": "De",
+    "TO": "A",
+    "COPY": "Copier"
   },
   "MENU": {
     "TITLE": "Duniter",
@@ -72,7 +76,7 @@
     }
   },
   "LOGIN": {
-    "TITLE": "Connexion",
+    "TITLE": "<i class=\"icon ion-locked\"></i> Connexion",
     "USERNAME": "Adresse email",
     "USERNAME_HELP": "dupond@domaine.com",
     "PASSWORD": "Mot de passe",
@@ -206,7 +210,8 @@
     "ALL_SOURCES_USED": "Veuillez attendre le cacul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
     "NOT_ENOUGH_SOURCES": "Veuillez attendre le cacul du prochain bloc (Pas assez de sources de monnaie).",
     "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre",
-    "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille"
+    "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille",
+    "COPY_CLIPBOARD_FAILED": "Echec de la copie"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

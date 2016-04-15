@@ -1,94 +1,94 @@
 <ion-view view-title="{{'MARKET.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button ui-sref="app.market_add_record" class="button button-icon button-clear icon ion-plus">
-        </button>
+      <button ui-sref="app.market_add_record" class="button button-icon button-clear icon ion-plus">
+      </button>
     </ion-nav-buttons>
 
     <ion-content class="lookupForm padding no-padding-xs">
 
         <label class="item item-input">
-            <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.options != null">
-            <span translate>MARKET.SEARCH.BTN_OPTIONS</span>
-            <label class="toggle toggle-royal">
-                <input type="checkbox" ng-model="search.options">
-                <div class="track">
-                    <div class="handle"></div>
-                </div>
-            </label>
+          <span translate>MARKET.SEARCH.BTN_OPTIONS</span>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="search.options">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
         </div>
 
         <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
-            <span translate>MARKET.COMMON.CATEGORY</span>
-            <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
-            <i class="button button-clear ion-chevron-right"></i>
+          <span translate>MARKET.COMMON.CATEGORY</span>
+          <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
+          <i class="button button-clear ion-chevron-right"></i>
         </span>
 
         <span class="item item-button-right" ng-if="search.options && location.enable">
-            <span translate>MARKET.SEARCH.BTN_AROUND_ME</span>
-            <label class="toggle toggle-royal">
-                <input type="checkbox" ng-model="search.localize">
-                <div class="track">
-                    <div class="handle"></div>
-                </div>
-            </label>
+          <span translate>MARKET.SEARCH.BTN_AROUND_ME</span>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="search.localize">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
         </span>
 
         <span class="item item-button-right" ng-if="search.options && !location.enable">
-            <span translate>MARKET.SEARCH.LOCATION</span>
-            <div class="item-input-inset">
-                <label class="item-input-wrapper">
-            <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}" ng-model="search.location" ng-change="searchLocationChanged()"/>
-                    </label>
-                </div>
+          <span translate>MARKET.SEARCH.LOCATION</span>
+          <div class="item-input-inset">
+            <label class="item-input-wrapper">
+              <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}" ng-model="search.location" ng-change="searchLocationChanged()"/>
+            </label>
+          </div>
         </span>
 
-        <div class="list" ng-if="search.options != null">
+        <div class="list"  ng-if="search.options != null">
 
-            <label class="item center" ng-if="search.looking">
-                <ion-spinner icon="android"></ion-spinner>
-            </label>
+          <label class="item" ng-if="search.looking">
+            <ion-spinner icon="android"></ion-spinner>
+          </label>
 
-            <label class="item center assertive" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
-                COMMON.SEARCH_NO_RESULT
-            </label>
+          <label class="item center assertive" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
+            COMMON.SEARCH_NO_RESULT
+          </label>
 
-            <a class="item ink" ng-repeat="found in search.results"
-               ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}"
-               ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
-              <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
-                <div class="visible-xs item-text-wrap" >
-                    <h2 ng-bind-html="found.title"></h2>
-                    <h4 class="gray" ng-bind-html="found.location"></h4>
-                    <span class="badge item-note">{{found.time | formatDate}}</span>
-                </div>
-                <div class="visible-xs item-content item-text-wrap">
-                    <p ng-bind-html="found.description"></p>
-                </div>
+          <a class="item ink" ng-repeat="found in search.results"
+             ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}"
+             ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
+            <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
+            <div class="visible-xs item-text-wrap" >
+              <h2 ng-bind-html="found.title"></h2>
+              <h4 class="gray" ng-bind-html="found.location"></h4>
+              <span class="badge item-note">{{found.time | formatDate}}</span>
+            </div>
+            <div class="visible-xs item-text-wrap">
+              <p ng-bind-html="found.description"></p>
+            </div>
 
-                <div class="row responsive-sm hidden-xs">
-                    <div class="col col-20" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
-                        <img ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures.length > 0">
-                    </div>
-                    <div class="col no-margin-xs">
-                        <h2 ng-bind-html="found.title"></h2>
-                        <h4 class="gray visible-xs" ng-bind-html="found.location"></h4>
-                        <span class="badge item-note">{{found.time | formatDate}}</span>
-                    </div>
-                    <div class="col col-20">
-                        <h3 class="gray" ng-bind="found.location" ng-if="found.location"></h3>
-                    </div>
-                    <div class="col col-30 item-text-wrap">
-                        <h3 class="gray" ng-bind-html="found.description" ng-if="found.description"></h3>
-                    </div>
-                    <div class="col col-10 visible-lg" >
-                        <h3 class="gray item-text-wrap" ng-if="found.category">{{found.category.name|formatCategory}}</h3>
-                    </div>
-                </div>
-            </a>
+            <div class="row responsive-sm hidden-xs">
+              <div class="col col-20" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
+                  <img ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures.length > 0">
+              </div>
+              <div class="col no-margin-xs">
+                  <h2 ng-bind-html="found.title"></h2>
+                  <h4 class="gray visible-xs" ng-bind-html="found.location"></h4>
+                  <span class="badge item-note">{{found.time | formatDate}}</span>
+              </div>
+              <div class="col col-20">
+                  <h3 class="gray" ng-bind="found.location" ng-if="found.location"></h3>
+              </div>
+              <div class="col col-30 item-text-wrap">
+                  <h3 class="gray" ng-bind-html="found.description" ng-if="found.description"></h3>
+              </div>
+              <div class="col col-10 visible-lg" >
+                  <h3 class="gray item-text-wrap" ng-if="found.category">{{found.category.name|formatCategory}}</h3>
+              </div>
+            </div>
+          </a>
 
         </div>
     </ion-content>

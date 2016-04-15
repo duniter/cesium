@@ -53,7 +53,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 
 ;
 
-function RegistryCategoryModalController($scope, Registry, $state, $ionicModal) {
+function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, ionicMaterialInk) {
 
   $scope.categoryModal = null;
   $scope.categories = {
@@ -81,6 +81,7 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal) 
       $scope.categories.search.text = '';
       $scope.categories.search.results = categories;
       $scope.categories.all = categories;
+      ionicMaterialInk.displayEffect();
       $scope.categoryModal.show();
     });
   };
@@ -109,9 +110,7 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal) 
     $scope.search.looking = true;
 
     $scope.categories.search.results = $scope.categories.all.reduce(function(result, cat) {
-      if (cat.parent != null
-          && cat.parent != "undefined"
-          && cat.name.toLowerCase().search(text) != -1) {
+      if (cat.parent && cat.name.toLowerCase().search(text) != -1) {
           return result.concat(cat);
       }
       return result;
@@ -121,9 +120,9 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal) 
   };
 }
 
-function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize) {
+function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize, ionicMaterialMotion, ionicMaterialInk) {
 
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
+  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, ionicMaterialInk);
   RegistryNewRecordWizardController.call(this, $scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
 
   $scope.search = {
@@ -141,7 +140,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 
   $scope.isFilter = function(filter) {
     return ($scope.filter == filter);
-  }
+  };
 
   $scope.selectCategory = function(cat) {
     if (!cat.parent) return;
@@ -157,7 +156,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
       function() {
         if ($scope.search.typing == $scope.search.text) {
           $scope.search.typing = null;
-          if ($scope.search.options == null) {
+          if (!$scope.search.options) {
             $scope.search.options = false;
           }
           $scope.doSearch();
@@ -208,11 +207,11 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
     if ($scope.search.options && $scope.search.category) {
       filters.push({term: { category: $scope.search.category.id}});
     }
-    if ($scope.search.options && $scope.search.location != null && $scope.search.location.length > 0) {
+    if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
       filters.push({match_phrase: { location: $scope.search.location}});
     }
 
-    if (matches.length == 0 && filters.length == 0) {
+    if (matches.length === 0 && filters.length === 0) {
       $scope.search.results = [];
       $scope.search.looking = false;
       return;
@@ -230,7 +229,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
         Registry.record.search(request)
           .then(function(res){
             $scope.search.looking = false;
-            if (res.hits.total == 0) {
+            if (res.hits.total === 0) {
               $scope.search.results = [];
             }
             else {
@@ -255,16 +254,17 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
                   }
                   return result.concat(registry);
                 }, []);
-            }
 
-            // Set Motion
-            $timeout(function() {
+              // Set Motion
+              $timeout(function() {
                 ionicMaterialMotion.fadeSlideInRight({
                   startVelocity: 3000
                 });
-                // Set Ink
-                //ionicMaterialInk.displayEffect();
-            }, 10);
+              }, 100);
+
+              // Set Ink
+              ionicMaterialInk.displayEffect();
+            }
           })
           .catch(function(err) {
               $scope.search.looking = false;
@@ -290,7 +290,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
   */
 }
 
-function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
+function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA, ionicMaterialInk) {
 
   $scope.formData = {};
   $scope.id = null;
@@ -325,7 +325,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
               return res.concat({src: pic.src});
             }, []);
           }
-          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey)
+          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey);
 
           if (!$scope.formData.isCompany) {
             BMA.wot.lookup({ search: $scope.formData.issuer })
@@ -337,7 +337,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
                       pub: res.pubkey,
                       sigDate: idty.meta.timestamp,
                       sig: idty.self
-                    })
+                    });
                   }, []));
                 }, [])[0];
                 $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
@@ -350,7 +350,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
             $scope.identity = null;
             UIUtils.loading.hide();
           }
-        })
+        });
       })
     ]).catch(UIUtils.onError('Could not load registry'));
   };
@@ -381,9 +381,9 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 }
 
-function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate) {
+function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, ionicMaterialInk) {
 
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
+  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, ionicMaterialInk);
 
   $scope.walletData = {};
   $scope.recordData = {
@@ -401,7 +401,6 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
 	  }
     $scope.camera = navigator.camera;
   });
-
 
   $scope.setRecordForm =  function(recordForm) {
     $scope.recordForm = recordForm;
@@ -439,7 +438,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
         });
       })
     ])
-    .catch(UIUtils.onError('Could not load registry'))
+    .catch(UIUtils.onError('Could not load registry'));
   };
 
   $scope.save = function() {
@@ -452,7 +451,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
           Registry.record.add($scope.recordData, $scope.walletData.keypair)
           .then(function(id) {
             UIUtils.loading.hide();
-            $state.go('app.registry_view_record', {id: id})
+            $state.go('app.registry_view_record', {id: id});
             resolve();
           })
           .catch(UIUtils.onError('Could not save registry'));
@@ -461,7 +460,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
           Registry.record.update($scope.recordData, {id: $scope.id}, $scope.walletData.keypair)
           .then(function() {
             UIUtils.loading.hide();
-            $state.go('app.registry_view_record', {id: $scope.id})
+            $state.go('app.registry_view_record', {id: $scope.id});
             resolve();
           })
           .catch(UIUtils.onError('Could not update registry'));
@@ -509,7 +508,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
         encodingType: navigator.camera.EncodingType.PNG,
         targetWidth : 400,
         targetHeight : 400
-      }
+      };
       $scope.camera.getPicture(
         function (imageData) {
           $scope.pictures.push({src: "data:image/png;base64," + imageData});
@@ -614,15 +613,15 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
   };
 
   $scope.slidePrev = function() {
-    $scope.slides.slider.unlockSwipes()
+    $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slidePrev();
-    $scope.slides.slider.lockSwipes()
+    $scope.slides.slider.lockSwipes();
   };
 
   $scope.slideNext = function() {
-    $scope.slides.slider.unlockSwipes()
+    $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slideNext();
-    $scope.slides.slider.lockSwipes()
+    $scope.slides.slider.lockSwipes();
   };
 
   $scope.newRecord = function() {
@@ -641,7 +640,7 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
             $scope.setIsCompany(false);
           }, 300);*/
         });
-    }
+    };
 
     if (!$scope.newRecordModal) {
       UIUtils.loading.show();
@@ -655,7 +654,6 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
         .then(function(){
           showModal();
         });
-
 
       });
     }
@@ -683,7 +681,7 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
           Registry.record.add($scope.recordData, $scope.walletData.keypair)
           .then(function(id) {
             $scope.cancel();
-            $state.go('app.registry_view_record', {id: id})
+            $state.go('app.registry_view_record', {id: id});
             resolve();
           })
           .catch(UIUtils.onError('Could not save registry'));

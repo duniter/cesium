@@ -19,7 +19,13 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotLookupCtrl', WotLookupController)
 ;
 
-function WotLookupController($scope, BMA, $state) {
+function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtils) {
+
+  $scope.options = {
+    scanQrCode : {
+      enable: true
+    }
+  }
 
   $scope.searchChanged = function() {
     $scope.search.text = $scope.search.text.toLowerCase();
@@ -53,6 +59,23 @@ function WotLookupController($scope, BMA, $state) {
   $scope.doSelectIdentity = function(pub, uid) {
     $state.go('app.view_identity', {pub: pub});
   };
+
+  ionic.Platform.ready(function() {
+     $scope.options.scanQrCode.enable = !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan);
+  });
+
+  $scope.scanQrCode = function(){
+   if ($scope.options.scanQrCode.enable) {
+     $cordovaBarcodeScanner.scan()
+     .then(function(result) {
+       if (!result.cancelled) {
+        $scope.search.text = result.text;
+       }
+     }, function(error) {
+         UIUtils.alert.error('Could no scan: ' + error);
+     });
+   }
+ }
 }
 
 function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMaterialMotion, $timeout, ionicMaterialInk) {

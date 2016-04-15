@@ -28,7 +28,7 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   .controller('AppCtrl', AppController)
 ;
 
-function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate) {
+function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   // Login modal
   $scope.loginModal = "undefined";
   $scope.loginData = {};
@@ -44,11 +44,11 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
 
   $scope.setLoginForm = function(loginForm) {
     $scope.loginForm = loginForm;
-  }
+  };
 
   // Open login modal
   $scope.login = function(callback) {
-    if ($scope.loginModal != "undefined" && $scope.loginModal != null) {
+    if ($scope.loginModal) {
       $scope.loginModal.show();
       $scope.loginData.callback = callback;
       UIUtils.loading.hide();
@@ -120,7 +120,7 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
           console.error('>>>>>>>' , err);
           UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
         });
-    })
+    });
   };
 
   $scope.loginDataChanged = function() {
@@ -156,6 +156,15 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
     );
   };
 
+  // Open new account
+  $scope.openNewAccount = function() {
+    $scope.cancelLogin();
+    $ionicHistory.nextViewOptions({
+        disableBack: true
+      });
+    $state.go('app.join');
+  };
+
   // Is connected
   $scope.isLogged = function() {
       return Wallet.isLogin();
@@ -168,7 +177,8 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
 }
 
 
-function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG, ionicMaterialInk) {
+function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG, ionicMaterialInk, $ionicHistory,
+  $cordovaClipboard) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -182,7 +192,7 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
   $scope.isExpanded = false;
   $scope.hasHeaderFabLeft = false;
   $scope.hasHeaderFabRight = false;
-  var nodeWithES = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+  var nodeWithES = !!APP_CONFIG.UCOIN_NODE_ES;
   $scope.options = {
       market: {
         enable: nodeWithES
@@ -192,9 +202,9 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
       }
     };
 
-  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate);
+  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils)
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk);
 
   ////////////////////////////////////////
   // Load currencies
@@ -220,7 +230,7 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
           $scope.search.looking = false;
           resolve($scope.knownCurrencies);
         })
-        .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));;
+        .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));
       }
       else  {
         $scope.knownCurrencies = [];
@@ -310,6 +320,21 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
       if (fabs.length && fabs.length > 1) {
           fabs[0].remove();
       }
+  };
+
+  $scope.copyText = function(text, callback) {
+    $cordovaClipboard
+        .copy(text)
+        .then(function () {
+          // success
+          console.log("Copied text");
+          if (callback) {
+            callback();
+          }
+        }, function () {
+          // error
+          UIUtils.alert.error('ERROR.COPY_CLIPBOARD');
+        });
   };
 
   // Set Ink

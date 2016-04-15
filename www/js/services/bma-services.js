@@ -6,18 +6,18 @@ angular.module('cesium.bma.services', ['ngResource',
 .factory('BMA', function($http, $q, APP_CONFIG) {
 
   function BMA(server, wsServer) {
-    if (wsServer == "undefined" || wsServer == null) {
+    if (!wsServer) {
         wsServer = server;
     }
 
     var sockets = [];
 
     function processError(reject, data, uri) {
-      if (data != null && data.message != "undefined" && data.message != null) {
+      if (data && data.message) {
         reject(data);
       }
       else {
-        if (uri != "undefined" && uri != null) {
+        if (uri) {
           reject('Error from ucoin node (' + uri + ')');
         }
         else {
@@ -60,7 +60,7 @@ angular.module('cesium.bma.services', ['ngResource',
               });
           });
         });
-      }
+      };
     }
 
     function postResource(uri) {
@@ -81,7 +81,7 @@ angular.module('cesium.bma.services', ['ngResource',
               });
           });
         });
-      }
+      };
     }
 
     function ws(uri) {
@@ -89,7 +89,7 @@ angular.module('cesium.bma.services', ['ngResource',
       return {
         on: function(type, callback) {
           if (!sock) {
-            sock = new WebSocket(uri)
+            sock = new WebSocket(uri);
             sockets.push(this);
           }
           sock.onmessage = function(e) {
@@ -158,7 +158,7 @@ angular.module('cesium.bma.services', ['ngResource',
         },
         close : closeWs
       }
-    }
+    };
   }
 
   var service = BMA(APP_CONFIG.UCOIN_NODE, APP_CONFIG.UCOIN_NODE_WS);

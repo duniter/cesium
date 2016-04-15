@@ -12,7 +12,7 @@ angular.module("cesium.config", [])
 	"UCOIN_NODE": "twiced.fr:9330",
 	"UCOIN_NODE_ES": "es.ucoin.fr",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-04-14T17:08:39.729Z"
+	"BUILD_DATE": "2016-04-15T16:07:41.437Z"
 })
 
 ;

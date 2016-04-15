@@ -13,6 +13,16 @@ angular.module('cesium.home.controllers', ['cesium.services'])
           }
         }
       })
+
+      .state('app.join', {
+        url: "/join",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/home/home.html",
+            controller: 'JoinCtrl'
+          }
+        }
+      })
     ;
 
     // if none of the above states are matched, use this as the fallback
@@ -21,6 +31,8 @@ angular.module('cesium.home.controllers', ['cesium.services'])
   })
 
   .controller('HomeCtrl', HomeController)
+
+  .controller('JoinCtrl', JoinController)
 ;
 
 
@@ -53,15 +65,15 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
   };
 
   $scope.slidePrev = function() {
-    $scope.slides.slider.unlockSwipes()
+    $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slidePrev();
-    $scope.slides.slider.lockSwipes()
+    $scope.slides.slider.lockSwipes();
   };
 
   $scope.slideNext = function() {
-      $scope.slides.slider.unlockSwipes()
+      $scope.slides.slider.unlockSwipes();
       $scope.slides.slider.slideNext();
-      $scope.slides.slider.lockSwipes()
+      $scope.slides.slider.lockSwipes();
     };
 
   $scope.newAccount = function() {
@@ -77,7 +89,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
         $scope.next();
         $scope.next();
       }, 300);*/
-    }
+    };
 
     if (!$scope.newAccountModal) {
       UIUtils.loading.show();
@@ -108,12 +120,12 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
 
   $scope.selectCurrency = function(currency) {
     $scope.accountData.currency = currency;
-    $scope.slideNext()
+    $scope.slideNext();
   };
 
   $scope.selectAccountTypeMember = function(bool) {
     $scope.accountData.isMember = bool;
-    $scope.slideNext()
+    $scope.slideNext();
   };
 
   $scope.showAccountPubkey = function() {
@@ -165,7 +177,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
           console.error('>>>>>>>' , err);
           UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
         });
-    })
+    });
   };
 
   // TODO: remove auto add account when done
@@ -178,5 +190,16 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
 function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
 
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
+
+}
+
+function JoinController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
+
+  NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
+
+  // open new account wizard
+  $timeout(function() {
+    $scope.newAccount();
+  }, 100);
 
 }

@@ -28,9 +28,9 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferCtrl', TransferController)
 ;
 
-function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils) {
+function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk) {
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils)
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk)
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$state.stateParams
@@ -55,7 +55,7 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils) {
 }
 
 
-function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils) {
+function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk) {
 
   $scope.walletData = {};
   $scope.transferForm = {};
@@ -77,6 +77,8 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   }).then(function(modal) {
     $scope.transferModal = modal;
     $scope.transferModal.hide();
+
+    ionicMaterialInk.displayEffect({selector: '.ink'});
   });
 
   $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {

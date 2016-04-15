@@ -81,7 +81,7 @@ angular.module('cesium.utils.services', ['ngResource'])
         hideLoading();
         alertError(fullMsg);
       }
-    }
+    };
   }
 
   return {
@@ -111,7 +111,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     getObject: function(key) {
       return JSON.parse($window.localStorage[key] || '{}');
     }
-  }
+  };
 }])
 
 // See http://plnkr.co/edit/vJQXtsZiX4EJ6Uvw9xtG?p=preview

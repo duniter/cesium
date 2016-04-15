@@ -54,6 +54,11 @@
   border-bottom: solid 1px #ccc;
 }
 
+#wallet .item h4 .comment{
+  font-style: italic !important;
+}
+
+
 .list .item-input {
   border-bottom: solid 1px #ccc;
 }

@@ -2,11 +2,11 @@
 
     <div class="list" ng-init="setTransferForm(transferForm)">
 
-      <span class="item item-button-right gray" ng-click="openWotLookup()">
+      <a class="item item-button-right gray ink" ng-click="openWotLookup()">
           <span class="gray" translate>TRANSFER.TO</span>
           <span class="badge badge-royal">{{dest | formatPubkey}}</span>&nbsp;
           <i class="button button-clear ion-chevron-right"></i>
-      </span>
+      </a>
 
       <span class="item item-text-wrap">
           <span class="gray" translate>TRANSFER.FROM</span>
@@ -46,8 +46,10 @@
       </label>
     </div>
 
-    <div class="padding hidden-xs">
-      <button class="button button-block button-positive button-raised icon icon-right ion-android-send ink" type="submit">
+    <div class="padding hidden-xs text-right">
+      <button class="button button-small button-clear button-dark ink" ng-click="closeTransfer()" type="button" translate>COMMON.BTN_CANCEL
+      </button>
+      <button class="button button-small button-positive ink" type="submit">
         {{'TRANSFER.BTN_SEND' | translate}}
       </button>
     </div>

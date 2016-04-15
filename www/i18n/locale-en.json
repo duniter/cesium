@@ -8,11 +8,14 @@
     "BTN_RELATIVE_UNIT": "Use relative unit",
     "BTN_BACK": " Back",
     "BTN_CANCEL": "Cancel",
-    "BTN_LOGIN": "Login",
+    "BTN_LOGIN": "Sign In",
     "BTN_LOGOUT": " Logout",
-    "BTN_ADD_ACCOUNT": "Join us",
+    "BTN_ADD_ACCOUNT": "New Account",
     "SEARCH_NO_RESULT": "No result found",
-    "LOADING": "Loading..."
+    "LOADING": "Loading...",
+    "FROM": "From",
+    "TO": "To",
+    "COPY": "Copy"
   },
   "MENU": {
     "TITLE": "Duniter",
@@ -90,7 +93,7 @@
     "BTN_MEMBERSHIP_OUT": "Revoke membership",
     "BTN_SEND_IDENTITY": "Publish pseudonym (without register)",
     "NEW": {
-      "TITLE": "Register",
+      "TITLE": "New Account",
       "SLIDE_1_TITLE": "Select a money:",
       "SLIDE_2_TITLE": "Kind of account:",
       "MEMBER_ACCOUNT": "Member account",
@@ -194,7 +197,7 @@
     "PASSWORD_NOT_CONFIRMED": "Must match previous password",
     "SEND_IDENTITY_FAILED": "Error while trying to register",
     "SEND_CERTIFICATION_FAILED": "Could not certify identity",
-    "LOGIN_FAILED": "Error while login",
+    "LOGIN_FAILED": "Error while sign in",
     "LOAD_IDENTITY_FAILED": "Could not load identity",
     "SEND_MEMBERSHIP_IN_FAILED": "Error while registering as member",
     "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out",
@@ -206,7 +209,8 @@
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
     "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
     "ACCOUNT_CREATION_FAILED": "Error while creating your member account",
-    "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data"
+    "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data",
+    "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

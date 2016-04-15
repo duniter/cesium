@@ -42,7 +42,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
           controller: 'PeerCtrl'
         }
       }
-    })
+    });
 })
 
 .controller('CurrencyLookupCtrl', CurrencyLookupController)
@@ -139,12 +139,12 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
       $scope.node = BMA;
       $scope.startListeningOnSocket();
       $timeout(function() {
-        if ((!$scope.search.peers || $scope.search.peers.length == 0) && $scope.search.lookingForPeers){
+        if ((!$scope.search.peers || $scope.search.peers.length === 0) && $scope.search.lookingForPeers){
           $scope.updateExploreView();
         }
       }, 2000);
     }
-  }
+  };
 
   $scope.startListeningOnSocket = function() {
     if (!$scope.node) {
@@ -173,7 +173,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     }
     $scope.node.websocket.close();
     $scope.node = null;
-  }
+  };
 
   $scope.$watch('formData.useRelative', function() {
     if ($scope.formData.useRelative) {
@@ -294,10 +294,10 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeo
       return peer.pubkey;
     });
     $scope.search.peers = _.sortBy($scope.search.peers, function(p) {
-      var score = 1
-        + 10000 * (p.online ? 1 : 0)
-        + 1000  * (p.hasMainConsensusBlock ? 1 : 0) +
-        + 100   * (p.uid ? 1 : 0);
+      var score = 1;
+      score += (10000 * (p.online ? 1 : 0));
+      score += (1000  * (p.hasMainConsensusBlock ? 1 : 0));
+      score += (100   * (p.uid ? 1 : 0));
       return -score;
     });
   };
@@ -359,19 +359,19 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeo
                       }
                     })
                     .catch(function(err) {
-                    })
+                    });
                 }
               }
-            })
+            });
         }))
-          .then(function(){
-            $scope.search.lookingForPeers = false;
-          })
+        .then(function(){
+          $scope.search.lookingForPeers = false;
+        });
       })
       .catch(function(err) {
         //console.log(err);
         //UIUtils.alert.error('Could get peers from remote uCoin node.');
-        //$scope.search.lookingForPeers = false;
+        $scope.search.lookingForPeers = false;
       });
   };
 

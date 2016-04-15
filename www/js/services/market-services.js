@@ -6,12 +6,12 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
 
       var categories = [];
 
-      if (wsServer == "undefined" || wsServer == null) {
-            wsServer = server;
+      if (wsServer) {
+        wsServer = server;
       }
 
       function processError(reject, data) {
-        if (data != null && data.message != "undefined" && data.message != null) {
+        if (data && data.message) {
           reject(data);
         }
         else {
@@ -53,7 +53,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
                 });
             });
           });
-        }
+        };
       }
 
       function postResource(uri) {
@@ -74,7 +74,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
                 });
             });
           });
-        }
+        };
       }
 
       function ws(uri) {
@@ -90,14 +90,14 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
 
       function getCategories() {
         return $q(function(resolve, reject) {
-          if (categories.length != 0) {
+          if (categories.length !== 0) {
             resolve(categories);
             return;
           }
 
           getResource('http://' + server + '/market/category/_search?pretty&from=0&size=1000')()
           .then(function(res) {
-            if (res.hits.total == 0) {
+            if (res.hits.total === 0) {
                 categories = [];
             }
             else {
@@ -123,7 +123,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         return $q(function(resolve, reject) {
           var errorFct = function(err) {
             reject(err);
-          }
+          };
           var getChallenge = getResource('http://' + server + '/auth');
           var postAuth = postResource('http://' + server + '/auth');
 
@@ -137,7 +137,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
                 signature: signature
               }) // get token
               .then(function(token) {
-                resolve(token)
+                resolve(token);
               })
               .catch(errorFct);
             })
@@ -153,7 +153,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         return $q(function(resolve, reject) {
           var errorFct = function(err) {
             reject(err);
-          }
+          };
           var obj = {};
           angular.copy(record, obj);
           delete obj.signature;
@@ -185,7 +185,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
            _type: null,
            _version: null,
            _source: {}
-        }
+        };
       }
 
       return {
@@ -209,10 +209,10 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
           searchText: getResource('http://' + server + '/market/record/_search?q=:search'),
           search: postResource('http://' + server + '/market/record/_search?pretty')
         }
-      }
+      };
     }
 
-    var ESNodeConfigured = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+    var ESNodeConfigured = !("undefined" === typeof APP_CONFIG.UCOIN_NODE_ES);
     if (!ESNodeConfigured) {
       return null;
     }

@@ -49,7 +49,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     reduceTxAndPush = function(txArray, result) {
-      if (!txArray || txArray.length == 0) {
+      if (!txArray || txArray.length === 0) {
         return;
       }
       txArray.forEach(function(tx) {
@@ -58,7 +58,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             issuerIndex = (res == data.pubkey) ? index : issuerIndex;
             return issuer + ((res != data.pubkey) ? ', ' + res : '');
         }, ', ').substring(2);
-        var receiver = (issuer != '') ? data.pubkey : '';
+        var receiver = (issuer !== '') ? data.pubkey : '';
         var amount = tx.inputs.reduce(function(sum, output) {
             if (!!data.sources[output]) {
               if (!data.sources[output].consumed) {
@@ -77,18 +77,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             if (outputReceiver == data.pubkey) { // user is the receiver
               return sum + outputAmount;
             }
-            if (outputReceiver != '') {
+            if (outputReceiver !== '') {
              receiver = outputReceiver;
             }
             return sum;
           }, 0);
 
         result.push({
-          time: ((tx.time != null && tx.time != "undefined") ? tx.time : 9999999),
+          time: tx.time,
           amount: amount,
           issuer: issuer,
           receiver: receiver,
-          comments: tx.comments,
+          comment: tx.comment,
           isUD: false,
           hash: tx.hash,
           locktime: tx.locktime,
@@ -118,8 +118,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     isLogin = function() {
-        return data.pubkey != "undefined"
-            && data.pubkey != null;
+        return !!data.pubkey;
     },
 
     getData = function() {
@@ -347,7 +346,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             if (!isLogin()){
               reject('Wallet required to be login first.'); return;
             }
-            if (amount == null) {
+            if (!amount) {
               reject('amount must not be null'); return;
             }
             amount = Math.round(amount);
@@ -358,19 +357,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               reject('Not enought credit'); return;
             }
 
-            var tx = "Version: 2\n"
-              + "Type: Transaction\n"
-              + "Currency: " + data.currency + "\n"
-              + "Locktime: 0" + "\n" // no lock
-              + "Issuers:\n"
-              + data.pubkey + "\n"
-              + "Inputs:\n";
+            var tx = "Version: 2\n";
+            tx += "Type: Transaction\n";
+            tx += "Currency: " + data.currency + "\n";
+            tx += "Locktime: 0" + "\n"; // no lock
+            tx += "Issuers:\n";
+            tx += data.pubkey + "\n";
+            tx += "Inputs:\n";
             var sourceAmount = 0;
             var outputBase = 0;
             var inputs = [];
             for (var i = 0; i<data.sources.length; i++) {
               var input = data.sources[i];
-              if (input.consumed == "undefined" || !input.consumed){
+              if (!input.consumed){
                 // if D : D:PUBLIC_KEY:BLOCK_ID
                 // if T : T:T_HASH:T_INDEX
                 tx += input.type +":"+input.identifier+":"+input.noffset+"\n";
@@ -383,13 +382,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             }
 
             if (sourceAmount < amount) {
-              if (sourceAmount == 0) {
+              if (sourceAmount === 0) {
                 reject('ERROR.ALL_SOURCES_USED');
               }
               else {
-                console.error('Maximum transaction sources has been reached: '
-                +(data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount)
-                  );
+                console.error('Maximum transaction sources has been reached: ' + (data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount));
                 reject('ERROR.NOT_ENOUGH_SOURCES');
               }
               return;

@@ -109,9 +109,7 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
     $scope.search.looking = true;
 
     $scope.categories.search.results = $scope.categories.all.reduce(function(result, cat) {
-      if (cat.parent != null
-          && cat.parent != "undefined"
-          && cat.name.toLowerCase().search(text) != -1) {
+      if (cat.parent && cat.name.toLowerCase().search(text) != -1) {
           return result.concat(cat);
       }
       return result;
@@ -121,9 +119,9 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
   };
 }
 
-function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout) {
+function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, ionicMaterialMotion, ionicMaterialInk) {
 
-  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal);
+  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, ionicMaterialInk);
 
   $scope.search = {
     text: '',
@@ -142,7 +140,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
   $scope.isFilter = function(filter) {
     return ($scope.filter == filter);
-  }
+  };
 
   $scope.selectCategory = function(cat) {
     if (!cat.parent) return;
@@ -158,7 +156,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       function() {
         if ($scope.search.typing == $scope.search.text) {
           $scope.search.typing = null;
-          if ($scope.search.options == null) {
+          if (!$scope.search.options) {
             $scope.search.options = false;
           }
           $scope.doSearch();
@@ -207,11 +205,11 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
     if ($scope.search.options && $scope.search.category) {
       filters.push({term: { category: $scope.search.category.id}});
     }
-    if ($scope.search.options && $scope.search.location != null && $scope.search.location.length > 0) {
+    if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
       filters.push({match: { location: $scope.search.location}});
     }
 
-    if (matches.length == 0 && filters.length == 0) {
+    if (matches.length === 0 && filters.length === 0) {
       $scope.search.results = [];
       $scope.search.looking = false;
       return;
@@ -229,7 +227,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
         return Market.record.search(request)
           .then(function(res){
             $scope.search.looking = false;
-            if (res.hits.total == 0) {
+            if (res.hits.total === 0) {
               $scope.search.results = [];
             }
             else {
@@ -254,12 +252,21 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
                   }
                   return result.concat(market);
                 }, []);
+
+              // Set Motion
+              $timeout(function() {
+                ionicMaterialMotion.fadeSlideInRight({
+                  startVelocity: 3000
+                });
+              }, 100);
+              // Set Ink
+              ionicMaterialInk.displayEffect();
             }
           })
           .catch(function(err) {
-              $scope.search.looking = false;
-              $scope.search.results = [];
-            });;
+            $scope.search.looking = false;
+            $scope.search.results = [];
+          });
       })
       .catch(function(err) {
         $scope.search.looking = false;
@@ -305,9 +312,9 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
               return res.concat({src: pic.src});
             }, []);
           }
-          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey)
+          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer === Wallet.getData().pubkey);
           UIUtils.loading.hide();
-        })
+        });
       })
     ]).catch(UIUtils.onError('Could not load market'));
   };
@@ -368,7 +375,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         });
       })
     ])
-    .catch(UIUtils.onError('Could not load market'))
+    .catch(UIUtils.onError('Could not load market'));
   };
 
   $scope.save = function() {
@@ -381,7 +388,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
           Market.record.add($scope.formData, $scope.walletData.keypair)
           .then(function(id) {
             UIUtils.loading.hide();
-            $state.go('app.market_view_record', {id: id})
+            $state.go('app.market_view_record', {id: id});
             resolve();
           })
           .catch(UIUtils.onError('Could not save market'));
@@ -390,7 +397,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
           Market.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
           .then(function() {
             UIUtils.loading.hide();
-            $state.go('app.market_view_record', {id: $scope.id})
+            $state.go('app.market_view_record', {id: $scope.id});
             resolve();
           })
           .catch(UIUtils.onError('Could not update market'));
@@ -438,7 +445,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         encodingType: navigator.camera.EncodingType.PNG,
         targetWidth : 400,
         targetHeight : 400
-      }
+      };
       $scope.camera.getPicture(
         function (imageData) {
           $scope.pictures.push({src: "data:image/png;base64," + imageData});

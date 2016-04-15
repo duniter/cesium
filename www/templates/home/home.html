@@ -13,11 +13,14 @@
         <div class="col-25 hidden-xs hidden-sm">&nbsp;
         </div>
         <div class="col">
-          <button class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
                   ui-sref="app.currency_lookup" translate>HOME.BTN_CURRENCIES</button>
-          <button class="button button-block button-stable button-raised icon icon-left ion-locked ink-dark"
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-locked ink-dark"
                   ng-click="login()" ng-show="!isLogged()" translate>COMMON.BTN_LOGIN</button>
-          <button class="button button-block button-light ink button-clear"
+          <button type="button"
+                  class="button button-block button-light ink button-clear"
                   ng-click="newAccount()" ng-show="!isLogged()" translate>COMMON.BTN_ADD_ACCOUNT</button>
         </div>
         <div class="col-25 hidden-xs hidden-sm">&nbsp;

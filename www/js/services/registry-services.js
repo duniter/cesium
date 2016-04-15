@@ -7,7 +7,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
       var categories = [];
 
       function processError(reject, data) {
-        if (data != null && data.message != "undefined" && data.message != null) {
+        if (data && data.message) {
           reject(data);
         }
         else {
@@ -49,7 +49,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
                 });
             });
           });
-        }
+        };
       }
 
       function postResource(uri) {
@@ -70,7 +70,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
                 });
             });
           });
-        }
+        };
       }
 
       function ws(uri) {
@@ -86,14 +86,14 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
 
       function getCategories() {
         return $q(function(resolve, reject) {
-          if (categories.length != 0) {
+          if (categories.length !== 0) {
             resolve(categories);
             return;
           }
 
           getResource('http://' + server + '/registry/category/_search?pretty&from=0&size=1000')()
           .then(function(res) {
-            if (res.hits.total == 0) {
+            if (res.hits.total === 0) {
                 categories = [];
             }
             else {
@@ -119,7 +119,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         return $q(function(resolve, reject) {
           var errorFct = function(err) {
             reject(err);
-          }
+          };
           var getChallenge = getResource('http://' + server + '/auth');
           var postAuth = postResource('http://' + server + '/auth');
 
@@ -133,7 +133,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
                 signature: signature
               }) // get token
               .then(function(token) {
-                resolve(token)
+                resolve(token);
               })
               .catch(errorFct);
             })
@@ -149,7 +149,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         return $q(function(resolve, reject) {
           var errorFct = function(err) {
             reject(err);
-          }
+          };
           var obj = {};
           angular.copy(record, obj);
           delete obj.signature;
@@ -181,7 +181,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
            _type: null,
            _version: null,
            _source: {}
-        }
+        };
       }
 
       return {
@@ -208,10 +208,10 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           all: getResource('http://' + server + '/currency/simple/_search?_source=currencyName,peers.host,peers.port'),
           get: getResource('http://' + server + '/currency/simple/:id/_source')
         }
-      }
+      };
     }
 
-    var ESNodeConfigured = APP_CONFIG.UCOIN_NODE_ES != "undefined" && APP_CONFIG.UCOIN_NODE_ES != null;
+    var ESNodeConfigured = !("undefined" === typeof APP_CONFIG.UCOIN_NODE_ES);
     if (!ESNodeConfigured) {
       return null;
     }

@@ -1,8 +1,8 @@
 <ion-view view-title="{{'MARKET.EDIT.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button class="button button-positive" ng-click="save()">
-            <i class="icon ion-android-send" ng-if="!id"></i>
-            <i class="icon ion-android-done" ng-if="id"></i>
+        <button class="button button-clear button-icon icon"
+                ng-class="{'ion-android-send':!id, 'ion-android-done': id}"
+                ng-click="save()">
         </button>
     </ion-nav-buttons>
 
