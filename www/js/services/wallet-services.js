@@ -61,15 +61,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             return issuer + ((res !== data.pubkey) ? ', ' + res : '');
         }, ', ').substring(2);
         var otherReceiver = (!walletIsIssuer) ? data.pubkey : '';
-        /*var amount = tx.inputs.reduce(function(sum, output) {
-            if (!!data.sources[output]) {
-              if (!data.sources[output].consumed) {
-                data.sources[output].consumed=true;
-              }
-              return sum - data.sources[output].amount;
-            }
-            return sum;
-          }, 0);*/
         var amount = tx.outputs.reduce(function(sum, output) {
             var outputArray = output.split(':',3);
             var outputAmount = parseInt(outputArray[0]);

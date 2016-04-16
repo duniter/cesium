@@ -4,6 +4,16 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
     $stateProvider
 
       .state('app.new_transfer', {
+        url: "/transfer",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wallet/new_transfer.html",
+            controller: 'TransferCtrl'
+          }
+        }
+      })
+
+      .state('app.new_transfer_pubkey_uid', {
         url: "/transfer/:pubkey/:uid",
         views: {
           'menuContent': {
