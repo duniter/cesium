@@ -8,7 +8,7 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
 
   .filter('formatInteger', function() {
     return function(input) {
-      return input ? numeral(input).format('0,0') : '0';
+      return input ? numeral(input).format('0,0').replace(',', ' ') : '0';
     };
   })
 
@@ -16,7 +16,7 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
       return function(input) {
         if (!input) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
-        return Math.floor(input * 10000) / 10000;
+        return numeral(input).format('0,0.0000').replace(',', ' ');
       };
     })
 
