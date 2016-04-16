@@ -72,8 +72,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             var outputArray = output.split(':',3);
             var outputAmount = parseInt(outputArray[0]);
             var outputCondArray = outputArray[2].split('(', 3);
-            var outputReceiver = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG')
-              ? outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
+            var outputReceiver = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
+                 outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
             if (outputReceiver == data.pubkey) { // user is the receiver
               return sum + outputAmount;
             }
@@ -126,10 +126,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     isSourceEquals = function(arg1, arg2) {
-        return arg1.type == arg2.type
-            && arg1.fingerprint == arg2.fingerprint
-            && arg1.number == arg2.number
-            && arg1.amount == arg2.amount;
+        return arg1.type == arg2.type &&
+            arg1.fingerprint == arg2.fingerprint &&
+            arg1.number == arg2.number &&
+            arg1.amount == arg2.amount;
     },
 
     loadRequirements = function() {
@@ -367,7 +367,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             var sourceAmount = 0;
             var outputBase = 0;
             var inputs = [];
-            for (var i = 0; i<data.sources.length; i++) {
+            var i;
+            for (i = 0; i<data.sources.length; i++) {
               var input = data.sources[i];
               if (!input.consumed){
                 // if D : D:PUBLIC_KEY:BLOCK_ID
@@ -392,17 +393,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               return;
             }
 
-            tx += 'Unlocks:\n'
-            for (var i=0; i<inputs.length; i++) {
+            tx += 'Unlocks:\n';
+            for (i=0; i<inputs.length; i++) {
                  // INPUT_INDEX:UNLOCK_CONDITION
                 tx += i + ':SIG(0)\n';
             }
 
-            tx += 'Outputs:\n'
-               // AMOUNT:BASE:CONDITIONS
-               + amount + ':'+outputBase+':SIG('+destPub+')\n';
+            tx += 'Outputs:\n';
+            // AMOUNT:BASE:CONDITIONS
+            tx += amount + ':'+outputBase+':SIG('+destPub+')\n';
             if (sourceAmount > amount) {
-              tx += (sourceAmount-amount)+':'+outputBase+':SIG('+data.pubkey+')\n'
+              tx += (sourceAmount-amount)+':'+outputBase+':SIG('+data.pubkey+')\n';
             }
 
             tx += "Comment: "+ (!!comments?comments:"") + "\n";
@@ -429,12 +430,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         BMA.blockchain.current()
         .then(function(block) {
           // Create identity to sign
-          var identity = 'Version: 2\n'
-                    + 'Type: Identity\n'
-                    + 'Currency: ' + data.currency + '\n'
-                    + 'Issuer: ' + data.pubkey + '\n'
-                    + 'UniqueID: ' + uid + '\n'
-                    + 'Timestamp: ' + block.number + '-' + block.hash + '\n';
+          var identity = 'Version: 2\n' +
+                    'Type: Identity\n' +
+                    'Currency: ' + data.currency + '\n' +
+                    'Issuer: ' + data.pubkey + '\n' +
+                    'UniqueID: ' + uid + '\n' +
+                    'Timestamp: ' + block.number + '-' + block.hash + '\n';
 
           CryptoUtils.sign(identity, data.keypair)
           .then(function(signature) {
@@ -467,14 +468,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         BMA.blockchain.current()
         .then(function(block) {
           // Create membership to sign
-           var membership = 'Version: 2\n'
-                   + 'Type: Membership\n'
-                   + 'Currency: ' + data.currency + '\n'
-                   + 'Issuer: ' + data.pubkey + '\n'
-                   + 'Block: ' + block.number + '-' + block.hash + '\n'
-                   + 'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n'
-                   + 'UserID: ' + data.uid + '\n'
-                   + 'CertTS: ' + data.blockUid + '\n';
+           var membership = 'Version: 2\n' +
+                   'Type: Membership\n' +
+                   'Currency: ' + data.currency + '\n' +
+                   'Issuer: ' + data.pubkey + '\n' +
+                   'Block: ' + block.number + '-' + block.hash + '\n' +
+                   'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n' +
+                   'UserID: ' + data.uid + '\n' +
+                   'CertTS: ' + data.blockUid + '\n';
 
           CryptoUtils.sign(membership, data.keypair)
           .then(function(signature) {
@@ -502,19 +503,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         BMA.blockchain.current()
         .then(function(block) {
           // Create the self part to sign
-          var self = 'UID:' + uid + '\n'
-                   + 'META:TS:' + timestamp + '\n'
-                   + signature /*+"\n"*/;
+          var self = 'UID:' + uid + '\n' +
+                   'META:TS:' + timestamp + '\n' +
+                   signature /*+"\n"*/;
 
-          var cert = self + '\n'
-                + 'META:TS:' + block.number + '-' + block.hash + '\n';
+          var cert = self + '\n' +
+                'META:TS:' + block.number + '-' + block.hash + '\n';
 
           CryptoUtils.sign(cert, data.keypair)
           .then(function(signature) {
-            var inlineCert = data.pubkey
-              + ':' + pubkey
-              + ':' + block.number
-              + ':' + signature + '\n';
+            var inlineCert = data.pubkey +
+                ':' + pubkey +
+                ':' + block.number +
+                ':' + signature + '\n';
             BMA.wot.add({pubkey: pubkey, self: self, other: inlineCert})
               .then(function(result) {
                 resolve(result);
@@ -529,9 +530,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     */
     toJson = function() {
       return $q(function(resolve, reject) {
-          var json = JSON.stringify(data);
-          resolve(json);
-        })
+        var json = JSON.stringify(data);
+        resolve(json);
+      });
     },
 
     /**
@@ -539,51 +540,52 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     */
     fromJson = function(json) {
       return $q(function(resolve, reject) {
-          var obj = JSON.parse(json || '{}');
-          if (obj.keypair != "undefined"
-              && obj.keypair != null) {
-              var keypair = obj.keypair;
+        var obj = JSON.parse(json || '{}');
+        if (obj.keypair) {
+          var keypair = obj.keypair;
+          var i;
 
-              // Convert to Uint8Array type
-              var signPk = new Uint8Array(32);
-              for (var i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
-              keypair.signPk = signPk;
+          // Convert to Uint8Array type
+          var signPk = new Uint8Array(32);
+          for (i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
+          keypair.signPk = signPk;
 
-              var signSk = new Uint8Array(64);
-              for (var i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
-              keypair.signSk = signSk;
+          var signSk = new Uint8Array(64);
+          for (i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
+          keypair.signSk = signSk;
 
-              data.pubkey = obj.pubkey;
-              data.keypair = keypair;
+          data.pubkey = obj.pubkey;
+          data.keypair = keypair;
 
-              resolve();
-          }
-          else {
-            reject('Not a valid Wallet.data object');
-          }
-        })
+          resolve();
+        }
+        else {
+          reject('Not a valid Wallet.data object');
+        }
+      });
     };
 
     return {
-        id: id,
-        data: data,
-        // auth
-        login: login,
-        logout: logout,
-        isLogin: isLogin,
-        getData: getData,
-        loadData: loadData,
-        refreshData: refreshData,
-        // operations
-        transfer: transfer,
-        self: self,
-        membership: membership,
-        sign: sign,
-        // serialization
-        toJson: toJson,
-        fromJson: fromJson
-    }
-  }
+      id: id,
+      data: data,
+      // auth
+      login: login,
+      logout: logout,
+      isLogin: isLogin,
+      getData: getData,
+      loadData: loadData,
+      refreshData: refreshData,
+      // operations
+      transfer: transfer,
+      self: self,
+      membership: membership,
+      sign: sign,
+      // serialization
+      toJson: toJson,
+      fromJson: fromJson
+    };
+  };
+
   var service = Wallet('default');
   service.instance = service;
   return service;

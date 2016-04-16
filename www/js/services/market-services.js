@@ -212,7 +212,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
       };
     }
 
-    var ESNodeConfigured = !("undefined" === typeof APP_CONFIG.UCOIN_NODE_ES);
+    var ESNodeConfigured = !!APP_CONFIG.UCOIN_NODE_ES;
     if (!ESNodeConfigured) {
       return null;
     }

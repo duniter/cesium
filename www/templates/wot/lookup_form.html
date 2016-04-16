@@ -8,13 +8,18 @@
         <button class="button button-icon button-clear icon ion-qr-scanner visible-xs" ng-click="scanQrCode()"></button>
       </div>
 
-      <div class="list" ng-if="search.text && search.text.length > 0">
+      <div class="list"
+           ng-class="{'list-inset': search.options.listInset}"
+           ng-if="search.text && search.text.length > 0">
 
-        <label class="item center" ng-if="search.looking">
+        <label class="item center text-left" ng-if="search.looking">
             <ion-spinner icon="android"></ion-spinner>
         </label>
 
-        <a class="item item-icon-left item-avatar ink" ng-repeat="found in search.results" ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
+        <a ng-if="!search.looking"
+           ng-repeat="found in search.results"
+           class="item item-icon-left item-avatar ink"
+           ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
             <i class="icon ion-person"></i>
             <h2>{{found.uid}}</h2>
             <span class="badge">{{found.pub | formatPubkey}}</span>

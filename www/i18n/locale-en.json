@@ -36,11 +36,11 @@
   },
   "CURRENCY": {
     "SELECT": {
-      "TITLE": "Explore",
+      "TITLE": "Currencies",
       "CURRENCIES": "Known currencies"
     },
     "VIEW": {
-      "TITLE": "Explore",
+      "TITLE": "Currency",
       "TAB_CURRENCY": "Currency",
       "TAB_WOT": "Community",
       "TAB_NETWORK": "Network",

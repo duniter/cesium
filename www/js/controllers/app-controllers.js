@@ -177,8 +177,10 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
 }
 
 
-function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG, ionicMaterialInk, $ionicHistory,
-  $cordovaClipboard) {
+function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
+  CryptoUtils, BMA, Wallet, Registry, APP_CONFIG, ionicMaterialInk, $ionicHistory,
+  $cordovaClipboard,
+  $cordovaBarcodeScanner) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -204,7 +206,7 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
 
   LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout);
 
   ////////////////////////////////////////
   // Load currencies

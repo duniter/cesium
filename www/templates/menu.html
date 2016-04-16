@@ -1,7 +1,7 @@
 <ion-side-menus enable-menu-with-back-views="true">
 
   <!-- MENU -->
-  <ion-side-menu side="left" id="menu">
+  <ion-side-menu side="left" id="menu" expose-aside-when="large" enable-menu-with-back-views="false">
     <ion-header-bar class="bar">
       <h1 class="title" translate>
         MENU.TITLE
@@ -18,13 +18,14 @@
           <span translate>MENU.CURRENCIES</span>
         </ion-item>
 
-        <div class="item item-divider"></div>
+        <div class="item item-divider"
+             ng-show="options.market.enable || options.market.enable"></div>
 
-        <ion-item menu-close class="item item-icon-left" href="#/app/registry" ng-if="options.registry.enable">
+        <ion-item menu-close class="item item-icon-left" href="#/app/registry" ng-show="options.registry.enable">
           <i class="icon ion-person-stalker"></i>
           <span translate>MENU.REGISTRY</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" href="#/app/market" ng-if="options.market.enable">
+        <ion-item menu-close class="item item-icon-left" href="#/app/market" ng-show="options.market.enable">
           <i class="icon ion-bag"></i>
           <span translate>MENU.MARKET</span>
         </ion-item>
@@ -62,7 +63,7 @@
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear icon ion-navicon" menu-toggle="left" ></button>
+        <button class="button button-icon button-clear icon ion-navicon visible-xs" menu-toggle="left" ></button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="menuContent"></ion-nav-view>

@@ -211,7 +211,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
       };
     }
 
-    var ESNodeConfigured = !("undefined" === typeof APP_CONFIG.UCOIN_NODE_ES);
+    var ESNodeConfigured = !!APP_CONFIG.UCOIN_NODE_ES;
     if (!ESNodeConfigured) {
       return null;
     }

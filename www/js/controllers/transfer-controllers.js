@@ -28,13 +28,12 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferCtrl', TransferController)
 ;
 
-function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk) {
+function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout) {
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk)
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!!$state.stateParams
-        && !!$state.stateParams.pubkey) {
+    if (!!$state.stateParams && !!$state.stateParams.pubkey) {
       $scope.formData.destPub = $state.stateParams.pubkey;
       if (!!$state.stateParams.uid) {
         $scope.dest = $state.stateParams.uid;
@@ -51,11 +50,9 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, i
       UIUtils.loading.hide();
     });
   });
-
 }
 
-
-function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk) {
+function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout) {
 
   $scope.walletData = {};
   $scope.transferForm = {};
@@ -68,7 +65,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   $scope.dest = null;
   $scope.udAmount = null;
 
-  WotLookupController.call(this, $scope, BMA, $state);
+  WotLookupController.call(this, $scope, BMA, $state, $cordovaBarcodeScanner, UIUtils, $timeout);
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
@@ -102,7 +99,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   $scope.setTransferForm = function(transferForm) {
     $scope.transferForm = transferForm;
-  }
+  };
 
   // Open transfer modal
   $scope.transfer = function(destPub, dest, callback) {
@@ -140,16 +137,15 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
     } else {
       $scope.convertedBalance = $scope.walletData.balance;
       // Convert to number
-      $scope.formData.amount = (!!$scope.formData.amount && typeof $scope.formData.amount == "string")
-        ? Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.')))
-        : $scope.formData.amount;
+      $scope.formData.amount = (!!$scope.formData.amount && typeof $scope.formData.amount == "string") ?
+          Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.'))) :
+          $scope.formData.amount;
       // Compute UD
-      $scope.udAmount = (!!$scope.formData.amount
-        && typeof $scope.formData.amount == "number"
-        && !!$scope.walletData.currentUD
-        && typeof $scope.walletData.currentUD == "number")
-        ? $scope.formData.amount / $scope.walletData.currentUD
-        : null;
+      $scope.udAmount = (!!$scope.formData.amount &&
+        typeof $scope.formData.amount == "number" &&
+        !!$scope.walletData.currentUD &&
+        typeof $scope.walletData.currentUD == "number") ?
+          $scope.formData.amount / $scope.walletData.currentUD :null;
       $scope.unit = $scope.walletData.currency;
       $scope.udUnit = '';
     }
@@ -159,17 +155,16 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   $scope.openWotLookup = function() {
     $scope.lookupModal.show();
-  }
+  };
 
   $scope.doTransfer = function() {
     UIUtils.loading.show();
 
     var amount = $scope.formData.amount;
-    if ($scope.walletData.useRelative
-      && !!amount
-      && typeof amount == "string") {
-      amount = $scope.walletData.currentUD
-               * amount.replace(new RegExp('[.,]'), '.');
+    if ($scope.walletData.useRelative && !!amount &&
+        typeof amount == "string") {
+      amount = $scope.walletData.currentUD *
+               amount.replace(new RegExp('[.,]'), '.');
     }
 
     Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comments)
@@ -193,16 +188,16 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   $scope.closeLookup = function() {
     $scope.lookupModal.hide();
-  }
+  };
 
   $scope.doSelectIdentity = function(pub, uid) {
-    if (uid != "undefined" && uid != null) {
+    if (uid) {
         $scope.dest = uid;
     }
     else {
-        $scope.dest = uid;
+        $scope.dest = pub;
     }
     $scope.formData.destPub = pub;
     $scope.lookupModal.hide();
-  }
+  };
 }

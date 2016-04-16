@@ -12,6 +12,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
           }
         }
       })
+      ;
   })
 
   .controller('IdentityCtrl', IdentityController)
@@ -19,22 +20,42 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotLookupCtrl', WotLookupController)
 ;
 
-function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtils) {
+function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtils, $timeout) {
 
   $scope.options = {
     scanQrCode : {
       enable: true
     }
-  }
+  };
+
+  ionic.Platform.ready(function() {
+     $scope.options.scanQrCode.enable = !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan);
+  });
 
   $scope.searchChanged = function() {
-    $scope.search.text = $scope.search.text.toLowerCase();
-    if ($scope.search.text.length > 1) {
-      $scope.search.looking = true;
-      return BMA.wot.lookup({ search: $scope.search.text })
+    $scope.search.typing = $scope.search.text;
+    $scope.search.looking = true;
+    $timeout(
+      function() {
+        if ($scope.search.typing === $scope.search.text) {
+          $scope.search.typing = null;
+          $scope.doSearch();
+        }
+      },
+      1000);
+  };
+
+  $scope.doSearch = function() {
+    $scope.search.looking = true;
+    var text = $scope.search.text.toLowerCase().trim();
+    if (text.length === 0) {
+      $scope.search.results = [];
+      $scope.search.looking = false;
+    }
+    else {
+      return BMA.wot.lookup({ search: text })
         .then(function(res){
-          $scope.search.looking = false;
-          $scope.search.results = res.results.reduce(function(idties, res) {
+          var idties = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
               var blocUid = idty.meta.timestamp.split('-', 2);
               return uids.concat({
@@ -42,27 +63,22 @@ function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtil
                 pub: res.pubkey,
                 number: blocUid[0],
                 hash: blocUid[1]
-              })
+              });
             }, []));
           }, []);
+          $scope.search.results = idties;
+          $scope.search.looking = false;
         })
         .catch(function() {
-          $scope.search.looking = false;
           $scope.search.results = [];
+          $scope.search.looking = false;
         });
-    }
-    else {
-      $scope.search.results = [];
     }
   };
 
   $scope.doSelectIdentity = function(pub, uid) {
     $state.go('app.view_identity', {pub: pub});
   };
-
-  ionic.Platform.ready(function() {
-     $scope.options.scanQrCode.enable = !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan);
-  });
 
   $scope.scanQrCode = function(){
    if ($scope.options.scanQrCode.enable) {
@@ -75,7 +91,7 @@ function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtil
          UIUtils.alert.error('Could no scan: ' + error);
      });
    }
- }
+ };
 }
 
 function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMaterialMotion, $timeout, ionicMaterialInk) {
@@ -102,7 +118,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMater
               revoked: idty.revoked,
               revokedSig: idty.revocation_sig,
               sig: idty.self
-            })
+            });
           }, []));
         }, [])[0];
         $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);

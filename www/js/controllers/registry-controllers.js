@@ -193,10 +193,10 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
       size: 20,
       _source: ["title", "description", "time", "location", "pictures", "issuer", "isCompany", "category"]
     };
-    var text = $scope.search.text.toLowerCase();
+    var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
     var filters = [];
-    if ($scope.search.text.length > 1) {
+    if (text.length > 1) {
       matches.push({match : { title: text}});
       matches.push({match : { description: text}});
       matches.push({prefix : { issuer: text}});

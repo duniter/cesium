@@ -37,11 +37,11 @@
   },
   "CURRENCY": {
     "SELECT": {
-      "TITLE": "Explorer",
+      "TITLE": "Monnaies",
       "CURRENCIES": "Monnaies connues"
     },
     "VIEW": {
-      "TITLE": "Explorer",
+      "TITLE": "Monnaie",
       "TAB_CURRENCY": "Monnaie",
       "TAB_WOT": "Communauté",
       "TAB_NETWORK": "Réseau",
