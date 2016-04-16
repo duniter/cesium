@@ -58,6 +58,9 @@
   font-style: italic !important;
 }
 
+#wallet .item h3 .gray{
+  font-size: 11px ! important;
+}
 
 .list .item-input {
   border-bottom: solid 1px #ccc;

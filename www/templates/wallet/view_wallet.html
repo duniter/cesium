@@ -61,13 +61,14 @@
             </div>
 
             <!-- Last Transactions -->
+            <div class="row no-padding">
+              <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+              </div>
 
-            <div class="padding no-padding-xs">
-              <div class="list animate-fade-slide-in-right" >
-
+              <div class="col list animate-fade-slide-in-right" >
                 <span class="item item-divider">
-                    <span ng-if="!walletData.useRelative">{{'ACCOUNT.LAST_TX' | translate}} ({{unit | abbreviate}})</span>
-                    <span ng-if="walletData.useRelative">{{'ACCOUNT.LAST_TX' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}})</sub></span>
+                  <span ng-if="!walletData.useRelative">{{'ACCOUNT.LAST_TX' | translate}} ({{unit | abbreviate}})</span>
+                  <span ng-if="walletData.useRelative">{{'ACCOUNT.LAST_TX' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}})</sub></span>
                 </span>
 
                 <span class="item" ng-if="!walletData.history || walletData.history.length == 0">
@@ -75,18 +76,23 @@
                 </span>
 
                 <span class="item ink" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
-                    <h3><i class="icon ion-clock" ng-if="!tx.block_number"> </i>{{tx.time | formatFromNow}}</h3>
-                    <h4 class="gray">
-                      <span class="positive" ng-if="tx.issuer" ui-sref="app.view_identity({pub:tx.issuer})">{{tx.issuer | formatPubkey}}</span>
-                      <span class="positive" ng-if="tx.receiver" ui-sref="app.view_identity({pub:tx.receiver})">{{tx.receiver | formatPubkey}}</span>
-                      <span ng-if="tx.comment" class="comment">| {{tx.comment}}</span>
-                    </h4>
-                    <span class="badge item-note"
-                          ng-class="{'badge-balanced': tx.amount > 0}">
-                      <span ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
-                      <span ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
-                    </span>
+                  <h3><i class="icon ion-clock" ng-if="!tx.block_number"> </i>{{tx.time | formatFromNow}}
+                    <span class="gray hidden-xs">| {{tx.time | formatDate}}</span>
+                  </h3>
+                  <h4 class="gray">
+                    <span class="positive" ng-if="tx.issuer" ui-sref="app.view_identity({pub:tx.issuer})">{{tx.issuer | formatPubkey}}</span>
+                    <span class="positive" ng-if="tx.receiver" ui-sref="app.view_identity({pub:tx.receiver})">{{tx.receiver | formatPubkey}}</span>
+                    <span ng-if="tx.comment" class="comment">| {{tx.comment}}</span>
+                  </h4>
+                  <span class="badge item-note"
+                        ng-class="{'badge-balanced': tx.amount > 0}">
+                    <span ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
+                    <span ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
+                  </span>
                 </span>
+              </div>
+
+              <div class="col col-20 hidden-xs hidden-sm">&nbsp;
               </div>
             </div>
           <div class="scroll-bar scroll-bar-v"></div>
