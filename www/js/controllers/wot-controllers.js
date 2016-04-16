@@ -20,17 +20,9 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotLookupCtrl', WotLookupController)
 ;
 
-function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtils, $timeout) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
 
-  $scope.options = {
-    scanQrCode : {
-      enable: true
-    }
-  };
-
-  ionic.Platform.ready(function() {
-     $scope.options.scanQrCode.enable = !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan);
-  });
+  $scope.system = System;
 
   $scope.searchChanged = function() {
     $scope.search.typing = $scope.search.text;
@@ -81,15 +73,14 @@ function WotLookupController($scope, BMA, $state, $cordovaBarcodeScanner, UIUtil
   };
 
   $scope.scanQrCode = function(){
-   if ($scope.options.scanQrCode.enable) {
-     $cordovaBarcodeScanner.scan()
+   if ($scope.system.camera.enable) {
+     $scope.system.camera.scan()
      .then(function(result) {
-       if (!result.cancelled) {
+       if (!result) {
         $scope.search.text = result.text;
        }
-     }, function(error) {
-         UIUtils.alert.error('Could no scan: ' + error);
-     });
+     })
+     .catch(UIUtils.alert.error('ERROR.SCAN_FAILED'));
    }
  };
 }

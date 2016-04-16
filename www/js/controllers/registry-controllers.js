@@ -120,9 +120,9 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, 
   };
 }
 
-function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize, ionicMaterialMotion, ionicMaterialInk) {
+function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize) {
 
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, ionicMaterialInk);
+  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
   RegistryNewRecordWizardController.call(this, $scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
 
   $scope.search = {
@@ -257,13 +257,13 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 
               // Set Motion
               $timeout(function() {
-                ionicMaterialMotion.fadeSlideInRight({
+                UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
                 });
               }, 100);
 
               // Set Ink
-              ionicMaterialInk.displayEffect();
+              UIUtils.ink();
             }
           })
           .catch(function(err) {

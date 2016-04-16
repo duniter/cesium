@@ -58,6 +58,9 @@ $screen-lg:                       1200px;
 // we won't be doing that here given our limited scope.
 //
 // Source: http://timkadlec.com/2013/01/windows-phone-8-and-device-width/
+//
+// >>Autre doc http://getbootstrap.com/css/#responsive-utilities-classes
+//
 @media screen and (max-width: 400px) {
   @-ms-viewport{
     width: 320px;
@@ -110,14 +113,19 @@ $screen-lg:                       1200px;
     }
 }
 // Small devices: Tablets (≥768px)
-// TODO: vérifier à partir de la doc http://getbootstrap.com/css/#responsive-utilities-classes
-/*@media screen and (max-width: $screen-sm-max) {
+@media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
     .hidden-sm {
         display: none !important;
         visibility: hidden !important;
     }
 }
 @media screen and (min-width: $screen-md) {
+    .hidden-sm {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
     .hidden-sm {
         display: inherited;
         visibility: visible !important;
@@ -130,6 +138,12 @@ $screen-lg:                       1200px;
     }
 }
 @media screen and (min-width: $screen-md) {
+    .visible-sm {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
     .visible-sm {
         display: none !important;
         visibility: hidden !important;
@@ -147,7 +161,7 @@ $screen-lg:                       1200px;
 }
 
 // Medium devices: Desktops (≥992px)
-@media screen and (max-width: $screen-md-max) {
+@media screen and (max-width: $screen-md-max) and (min-width: $screen-md) {
     .hidden-md {
         display: none !important;
         visibility: hidden !important;
@@ -155,13 +169,19 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-lg) {
     .hidden-md {
-        display: inherited;
+        display: inherit;
         visibility: visible !important;
     }
 }
-@media screen and (max-width: $screen-md-max) {
+@media screen and (max-width: $screen-sm-max) {
+    .hidden-md {
+        display: inherit;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-md-max) and (min-width: $screen-md) {
     .visible-md {
-        display: inherited;
+        display: inherit;
         visibility: visible !important;
     }
 }
@@ -170,7 +190,13 @@ $screen-lg:                       1200px;
         display: none !important;
         visibility: hidden !important;
     }
-}*/
+}
+@media screen and (max-width: $screen-sm-max) {
+    .visible-md {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
 
 
 // Large devices: Desktops (≥1200px)

@@ -1,6 +1,7 @@
 <ion-view view-title="{{'MARKET.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-      <button ui-sref="app.market_add_record" class="button button-icon button-clear icon ion-plus">
+      <button ui-sref="app.market_add_record" class="button button-icon button-clear">
+        <i class="icon ion-plus"></i>
       </button>
     </ion-nav-buttons>
 
@@ -62,24 +63,35 @@
             <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
             <div class="visible-xs item-text-wrap" >
               <h2 ng-bind-html="found.title"></h2>
-              <h4 class="gray" ng-bind-html="found.location"></h4>
-              <span class="badge item-note">{{found.time | formatDate}}</span>
+              <h4 class="gray">
+                <span ng-if="found.location">
+                  <i class="icon ion-location"></i>
+                  <span ng-bind-html="found.location"></span>
+                </span>
+                <span ng-show="found.time">
+                  <span ng-show="found.location">|</span>
+                  {{found.time | formatFromNow}}
+                </span>
+              </h4>
             </div>
             <div class="visible-xs item-text-wrap">
               <p ng-bind-html="found.description"></p>
             </div>
 
-            <div class="row responsive-sm hidden-xs">
-              <div class="col col-20" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
+            <div class="row hidden-xs">
+              <div class="col item-text-wrap" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
                   <img ng-src="{{found.pictures[0].src}}" nf-if="found.pictures && found.pictures.length > 0">
-              </div>
-              <div class="col no-margin-xs">
                   <h2 ng-bind-html="found.title"></h2>
-                  <h4 class="gray visible-xs" ng-bind-html="found.location"></h4>
-                  <span class="badge item-note">{{found.time | formatDate}}</span>
               </div>
-              <div class="col col-20">
-                  <h3 class="gray" ng-bind="found.location" ng-if="found.location"></h3>
+              <div class="col">
+                <h3 class="gray" >
+                  <i class="icon ion-location" ng-if="found.location"></i>
+                  <span ng-bind-html="found.location"></span>
+                </h3>
+                <h4 class="gray" ng-if="found.time">
+                  <i class="icon ion-clock" ></i>
+                  {{found.time | formatFromNow}}
+                </h4>
               </div>
               <div class="col col-30 item-text-wrap">
                   <h3 class="gray" ng-bind-html="found.description" ng-if="found.description"></h3>

@@ -67,8 +67,11 @@
 
               <div class="col list animate-fade-slide-in-right" >
                 <span class="item item-divider">
-                  <span ng-if="!walletData.useRelative">{{'ACCOUNT.LAST_TX' | translate}} ({{unit | abbreviate}})</span>
-                  <span ng-if="walletData.useRelative">{{'ACCOUNT.LAST_TX' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}})</sub></span>
+                  {{'ACCOUNT.LAST_TX' | translate}}
+                  <div class="badge item-note">
+                    <span ng-if="!walletData.useRelative">({{unit | abbreviate}})</span>
+                    <span ng-if="walletData.useRelative">({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+                  </div>
                 </span>
 
                 <span class="item" ng-if="!walletData.history || walletData.history.length == 0">
@@ -84,11 +87,11 @@
                     <span class="positive" ng-if="tx.receiver" ui-sref="app.view_identity({pub:tx.receiver})">{{tx.receiver | formatPubkey}}</span>
                     <span ng-if="tx.comment" class="comment">| {{tx.comment}}</span>
                   </h4>
-                  <span class="badge item-note"
+                  <div class="badge item-note"
                         ng-class="{'badge-balanced': tx.amount > 0}">
                     <span ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
                     <span ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
-                  </span>
+                  </div >
                 </span>
               </div>
 

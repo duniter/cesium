@@ -11,11 +11,17 @@
     "BTN_LOGIN": "Sign In",
     "BTN_LOGOUT": " Logout",
     "BTN_ADD_ACCOUNT": "New Account",
+    "NO_ACCOUNT_QUESTION": "No a member ? Register now !",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
     "FROM": "From",
     "TO": "To",
     "COPY": "Copy"
+  },
+  "SYSTEM": {
+    "PICTURE_CHOOSE_TYPE": "Choose picture source :",
+    "BTN_PICTURE_GALLERY": "Gallery",
+    "BTN_PICTURE_CAMERA": "<b>Camera</b>"
   },
   "MENU": {
     "TITLE": "Duniter",
@@ -127,7 +133,9 @@
     "COMMON": {
       "CATEGORY": "Category",
       "CATEGORIES": "Categories",
-      "ISSUER": "Issuer"
+      "ISSUER": "Issuer",
+      "PRICE": "Price",
+      "BTN_BUY": "Buy"
     },
     "SEARCH": {
       "TITLE": "Market",
@@ -167,7 +175,7 @@
       "LOCATION_HELP": "City"
     },
     "VIEW": {
-      "TITLE": ""
+      "TITLE": "Annonce"
     },
     "NEW": {
       "TITLE": "New",
@@ -182,6 +190,8 @@
       "RECORD_TITLE_HELP": "Name",
       "RECORD_DESCRIPTION": "About me",
       "RECORD_DESCRIPTION_HELP": "Something about me",
+      "RECORD_PRICE": "Price",
+      "RECORD_PRICE_HELP": "Price (optional)",
       "RECORD_LOCATION": "Localization",
       "RECORD_LOCATION_HELP": "Localization (address, city)",
       "RECORD_SOCIAL_NETWORKS": "Social networks",
@@ -210,7 +220,9 @@
     "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
     "ACCOUNT_CREATION_FAILED": "Error while creating your member account",
     "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data",
-    "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard"
+    "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
+    "TAKE_PICTURE_FAILED": "Could not get picture",
+    "SCAN_FAILED": "Could not scan QR code"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

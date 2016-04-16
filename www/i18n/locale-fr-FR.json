@@ -11,12 +11,17 @@
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnexion",
     "BTN_ADD_ACCOUNT": "Nouveau compte",
-    "NO_ACOUNT_QUESTION": "Pas de encore membre ? Créer un compte",
+    "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
     "FROM": "De",
     "TO": "A",
     "COPY": "Copier"
+  },
+  "SYSTEM": {
+    "PICTURE_CHOOSE_TYPE": "Choisir la source :",
+    "BTN_PICTURE_GALLERY": "Gallerie",
+    "BTN_PICTURE_CAMERA": "<b>Caméra</b>"
   },
   "MENU": {
     "TITLE": "Duniter",
@@ -128,7 +133,9 @@
     "COMMON": {
       "CATEGORY": "Catégorie",
       "CATEGORIES": "Catégories",
-      "ISSUER": "Soumis par"
+      "ISSUER": "Soumis par",
+      "PRICE": "Prix",
+      "BTN_BUY": "Acheter"
     },
     "SEARCH": {
       "TITLE": "Annonces",
@@ -140,7 +147,7 @@
       "LOCATION_HELP": "Ville"
     },
     "VIEW": {
-      "TITLE": ""
+      "TITLE": "Annonce"
     },
     "EDIT": {
       "TITLE": "Edition",
@@ -183,6 +190,8 @@
       "RECORD_TITLE_HELP": "Nom",
       "RECORD_DESCRIPTION": "À propos de moi",
       "RECORD_DESCRIPTION_HELP": "À propos de moi",
+      "RECORD_PRICE": "Prix",
+      "RECORD_PRICE_HELP": "Prix (optionnel)",
       "RECORD_LOCATION": "Localisation",
       "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
@@ -211,7 +220,9 @@
     "NOT_ENOUGH_SOURCES": "Veuillez attendre le cacul du prochain bloc (Pas assez de sources de monnaie).",
     "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre",
     "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille",
-    "COPY_CLIPBOARD_FAILED": "Echec de la copie"
+    "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible",
+    "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo",
+    "SCAN_FAILED": "Echec du scan de QR Code"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

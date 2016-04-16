@@ -38,9 +38,9 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferCtrl', TransferController)
 ;
 
-function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout) {
+function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout) {
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$state.stateParams && !!$state.stateParams.pubkey) {
@@ -62,7 +62,7 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, i
   });
 }
 
-function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout) {
+function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout) {
 
   $scope.walletData = {};
   $scope.transferForm = {};
@@ -75,8 +75,6 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   $scope.dest = null;
   $scope.udAmount = null;
 
-  WotLookupController.call(this, $scope, BMA, $state, $cordovaBarcodeScanner, UIUtils, $timeout);
-
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
     scope: $scope,
@@ -85,12 +83,12 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
     $scope.transferModal = modal;
     $scope.transferModal.hide();
 
-    ionicMaterialInk.displayEffect({selector: '.ink'});
+    UIUtils.ink({selector: '.ink'});
   });
 
   $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
       scope: $scope,
-      controller: 'WotLookupController',
+      controller: 'WotLookupCtrl',
       focusFirstInput: true
   }).then(function(modal) {
     $scope.lookupModal = modal;
@@ -112,12 +110,23 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   };
 
   // Open transfer modal
-  $scope.transfer = function(destPub, dest, callback) {
+  $scope.transfer = function(destPub, dest, amount, callback) {
     UIUtils.loading.show();
     if (!!$scope.transferModal) {
       $scope.formData.destPub = destPub;
+      if(dest) {
+        $scope.dest = dest;
+      }
+      else {
+        $scope.dest = destPub;
+      }
+      if (amount && typeof amount === "function") {
+        callback = amount;
+      }
+      else {
+        $scope.formData.amount = amount;
+      }
       $scope.formData.callback = callback;
-      $scope.dest = dest;
       $scope.loadWallet()
         .then(function(walletData) {
           UIUtils.loading.hide();

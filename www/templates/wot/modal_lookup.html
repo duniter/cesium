@@ -3,9 +3,10 @@
     <button class="button button-clear" ng-click="closeLookup()" translate>COMMON.BTN_CANCEL</button>
     <h1 class="title" translate>WOT.MODAL.TITLE</h1>
 
-    <!--<button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="scanQrCode()">-->
-    <!--<button class="button button-icon button-clear icon ion-qr-scanner visible-xs" ng-click="scanQrCode()>
-    </button>-->
+    <button class="button button-icon button-clear icon ion-qr-scanner visible-xs"
+            ng-show="system.camera.enable"
+            ng-click="scanQrCode()">
+    </button>
   </ion-header-bar>
 
   <ion-content>

@@ -28,7 +28,7 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   .controller('AppCtrl', AppController)
 ;
 
-function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   // Login modal
   $scope.loginModal = "undefined";
   $scope.loginData = {};
@@ -178,35 +178,27 @@ function LoginController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, 
 
 
 function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, Registry, APP_CONFIG, ionicMaterialInk, $ionicHistory,
-  $cordovaClipboard,
-  $cordovaBarcodeScanner) {
-
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, System
+  ) {
 
   $scope.knownCurrencies = null;
   $scope.search = { text: '', results: {} };
   $scope.isExpanded = false;
   $scope.hasHeaderFabLeft = false;
   $scope.hasHeaderFabRight = false;
-  var nodeWithES = !!APP_CONFIG.UCOIN_NODE_ES;
+  $scope.system = System;
   $scope.options = {
       market: {
-        enable: nodeWithES
+        enable: !!Market
       },
       registry: {
-        enable: nodeWithES
+        enable: !!Registry
       }
     };
 
-  LoginController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
+  LoginModalController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, ionicMaterialInk, $cordovaBarcodeScanner, $timeout);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout);
 
   ////////////////////////////////////////
   // Load currencies
@@ -323,23 +315,5 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
           fabs[0].remove();
       }
   };
-
-  $scope.copyText = function(text, callback) {
-    $cordovaClipboard
-        .copy(text)
-        .then(function () {
-          // success
-          console.log("Copied text");
-          if (callback) {
-            callback();
-          }
-        }, function () {
-          // error
-          UIUtils.alert.error('ERROR.COPY_CLIPBOARD');
-        });
-  };
-
-  // Set Ink
-  ionicMaterialInk.displayEffect();
 }
 

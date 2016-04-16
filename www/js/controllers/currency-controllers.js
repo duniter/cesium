@@ -84,11 +84,11 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
   };
 }
 
-function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Registry, ionicMaterialInk, $cordovaBarcodeScanner) {
+function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Registry) {
 
   var USE_RELATIVE_DEFAULT = true;
 
-  WotLookupController.call(this, $scope, BMA, $state, $cordovaBarcodeScanner, UIUtils, $timeout);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout);
   PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
 
   $scope.search = {
@@ -251,7 +251,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         $scope.formData.useRelative = USE_RELATIVE_DEFAULT;
 
         // Set Ink
-        ionicMaterialInk.displayEffect({selector: '.peer-item'});
+        UIUtils.ink({selector: '.peer-item'});
 
         UIUtils.loading.hide();
       })

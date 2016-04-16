@@ -2,7 +2,7 @@
 
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q) {
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion) {
 
   var loadingTextCache=null;
 
@@ -93,7 +93,9 @@ angular.module('cesium.utils.services', ['ngResource'])
       show: showLoading,
       hide: hideLoading
     },
-    onError: onError
+    onError: onError,
+    ink: ionicMaterialInk.displayEffect,
+    motion: ionicMaterialMotion
   };
 })
 
@@ -129,6 +131,126 @@ angular.module('cesium.utils.services', ['ngResource'])
   };
 })
 
+.factory('System', function($timeout, $window, UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner) {
+
+  var camera = {};
+  var scan = {};
+  var clipboard = {};
+
+  ionic.Platform.ready(function() {
+    // Check if camera is enable
+	  if (!navigator.camera) {
+	    camera.enable = false;
+	  }
+	  else {
+      camera.handle = navigator.camera;
+	  }
+
+    // Check if scan is enable
+	  scan.enable = !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan);
+
+    // Check if clipboard is enable
+	  clipboard.enable = !(!$cordovaClipboard || !$cordovaClipboard.copy);
+  });
+
+  camera.takePicture = function(sourceType) {
+    return $q(function (resolve, reject) {
+      if (!camera.enable) {
+        reject('Camera not enable. Please check [system.camera.enable] before use.');
+        return;
+      }
+      if (!sourceType) {
+        $translate(['SYSTEM.PICTURE_CHOOSE_TYPE'])
+        .then(function(translations){
+          $ionicPopup.show({
+            title: translations['SYSTEM.PICTURE_CHOOSE_TYPE'],
+            buttons: [
+              {
+                text: translations['SYSTEM.BTN_PICTURE_GALLERY'],
+                type: 'button',
+                onTap: function(e) {
+                  return navigator.camera.PictureSourceType.PHOTOLIBRARY;
+                }
+              },
+              {
+                text: translations['SYSTEM.BTN_PICTURE_CAMERA'],
+                type: 'button button-positive',
+                onTap: function(e) {
+                  return navigator.camera.PictureSourceType.CAMERA;
+                }
+              }
+            ]
+          })
+          .then(function(sourceType){
+            camera.takePicture(sourceType);
+          });
+        });
+      }
+      else {
+        var options = {
+            quality: 50,
+            destinationType: navigator.camera.DestinationType.DATA_URL,
+            sourceType: sourceType,
+            encodingType: navigator.camera.EncodingType.PNG,
+            targetWidth : 400,
+            targetHeight : 400
+        };
+        camera.handle.camera.getPicture(
+          function (imageData) {resolve(imageData);},
+          function(err){reject(err);},
+          options
+        );
+      }
+    });
+  };
+
+  camera.scan = function () {
+    return $q(function(resolve,reject){
+      if (!scan.enable) {
+        reject('Camera not enable. Please check [system.camera.enable] before use.');
+        return;
+      }
+      $cordovaBarcodeScanner.scan()
+      .then(function(result) {
+        if (!result.cancelled) {
+          resolve(result);
+        }
+        else {
+          resolve();
+        }
+      },
+      function(error) {reject(error);});
+    });
+  };
+
+  clipboard.copy = function (text, callback) {
+    $cordovaClipboard
+      .copy(text)
+      .then(function () {
+        // success
+        console.log("Copied text");
+        if (callback) {
+          callback();
+        }
+      }, function () {
+        // error
+        UIUtils.alert.error('ERROR.COPY_CLIPBOARD');
+      });
+  };
+
+  return {
+      clipboard: {
+        enable: clipboard.enable,
+        copy: clipboard.copy
+      },
+      camera: {
+        enable: camera.enable && scan.enable,
+        take: camera.takePicture,
+        scan: camera.scan
+      },
+    };
+})
+
 .directive('eventFocus', function(focus) {
   return function(scope, elem, attr) {
     elem.on(attr.eventFocus, function() {
@@ -142,4 +264,6 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   };
 })
+
+
 ;

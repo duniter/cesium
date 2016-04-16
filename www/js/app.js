@@ -22,6 +22,7 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
 
   .filter('formatDate', function() {
     return function(input) {
+      // TODO: use local format
       return input ? moment(parseInt(input)*1000).local().format('YYYY-MM-DD HH:mm') : '';
     };
   })

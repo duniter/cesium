@@ -12793,66 +12793,74 @@ a {
   .no-margin-xs {
     margin: inherited; } }
 
-/*@media screen and (max-width: $screen-sm-max) {
-    .hidden-sm {
-        display: none !important;
-        visibility: hidden !important;
-    }
-}
-@media screen and (min-width: $screen-md) {
-    .hidden-sm {
-        display: inherited;
-        visibility: visible !important;
-    }
-}
-@media screen and (max-width: $screen-sm-max) {
-    .visible-sm {
-        display: inherited;
-        visibility: visible !important;
-    }
-}
-@media screen and (min-width: $screen-md) {
-    .visible-sm {
-        display: none !important;
-        visibility: hidden !important;
-    }
-}
-@media screen and (max-width: $screen-sm-max) {
-  body {
-      cursor: url('http://ionicframework.com/img/finger.png'), auto;
-  }
-}
-@media screen and (min-width: $screen-md) {
-  body {
-      cursor: inherit;
-  }
-}
+@media screen and (max-width: 991px) and (min-width: 748px) {
+  .hidden-sm {
+    display: none !important;
+    visibility: hidden !important; } }
 
-// Medium devices: Desktops (≥992px)
-@media screen and (max-width: $screen-md-max) {
-    .hidden-md {
-        display: none !important;
-        visibility: hidden !important;
-    }
-}
-@media screen and (min-width: $screen-lg) {
-    .hidden-md {
-        display: inherited;
-        visibility: visible !important;
-    }
-}
-@media screen and (max-width: $screen-md-max) {
-    .visible-md {
-        display: inherited;
-        visibility: visible !important;
-    }
-}
-@media screen and (min-width: $screen-lg) {
-    .visible-md {
-        display: none !important;
-        visibility: hidden !important;
-    }
-}*/
+@media screen and (min-width: 992px) {
+  .hidden-sm {
+    display: inherited;
+    visibility: visible !important; } }
+
+@media screen and (max-width: 747px) {
+  .hidden-sm {
+    display: inherited;
+    visibility: visible !important; } }
+
+@media screen and (max-width: 991px) {
+  .visible-sm {
+    display: inherited;
+    visibility: visible !important; } }
+
+@media screen and (min-width: 992px) {
+  .visible-sm {
+    display: none !important;
+    visibility: hidden !important; } }
+
+@media screen and (max-width: 747px) {
+  .visible-sm {
+    display: none !important;
+    visibility: hidden !important; } }
+
+@media screen and (max-width: 991px) {
+  body {
+    cursor: url("http://ionicframework.com/img/finger.png"), auto; } }
+
+@media screen and (min-width: 992px) {
+  body {
+    cursor: inherit; } }
+
+@media screen and (max-width: 1199px) and (min-width: 992px) {
+  .hidden-md {
+    display: none !important;
+    visibility: hidden !important; } }
+
+@media screen and (min-width: 1200px) {
+  .hidden-md {
+    display: inherit;
+    visibility: visible !important; } }
+
+@media screen and (max-width: 991px) {
+  .hidden-md {
+    display: inherit;
+    visibility: visible !important; } }
+
+@media screen and (max-width: 1199px) and (min-width: 992px) {
+  .visible-md {
+    display: inherit;
+    visibility: visible !important; } }
+
+@media screen and (min-width: 1200px) {
+  .visible-md {
+    display: none !important;
+    visibility: hidden !important; } }
+
+@media screen and (max-width: 991px) {
+  .visible-md {
+    display: none !important;
+    visibility: hidden !important; } }
+
 @media screen and (min-width: 1200px) {
   .hidden-lg {
     display: none !important;

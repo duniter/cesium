@@ -4,10 +4,6 @@
             <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchWot">
         </label>
 
-      <div class="text-right" ng-show="options.scanQrCode.enable">
-        <button class="button button-icon button-clear icon ion-qr-scanner visible-xs" ng-click="scanQrCode()"></button>
-      </div>
-
       <div class="list"
            ng-class="{'list-inset': search.options.listInset}"
            ng-if="search.text && search.text.length > 0">

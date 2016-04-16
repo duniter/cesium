@@ -119,7 +119,7 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
   };
 }
 
-function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, ionicMaterialMotion, ionicMaterialInk) {
+function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, ionicMaterialMotion, ionicMaterialInk, UIUtils) {
 
   MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, ionicMaterialInk);
 
@@ -255,12 +255,12 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
               // Set Motion
               $timeout(function() {
-                ionicMaterialMotion.fadeSlideInRight({
+                UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
                 });
               }, 100);
               // Set Ink
-              ionicMaterialInk.displayEffect();
+              UIUtils.ink();
             }
           })
           .catch(function(err) {
@@ -324,7 +324,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
   };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, System, $timeout) {
 
   MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal);
 
@@ -334,13 +334,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
-
-  ionic.Platform.ready(function() {
-	  if (!navigator.camera) {
-	    delete $scope.camera; return;
-	  }
-    $scope.camera = navigator.camera;
-  });
+  $scope.camera = System.camera;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
@@ -372,6 +366,14 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
             }, []);
           }
           UIUtils.loading.hide();
+          UIUtils.motion.pushDown({
+                  selector: '.push-down'
+              });
+          UIUtils.motion.fadeSlideInRight({
+                  selector: '.animate-fade-slide-in .item'
+              });
+          // Set Ink
+          UIUtils.ink();
         });
       })
     ])
@@ -385,22 +387,30 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         return res.concat({src: pic.src});
       }, []);
       if (!$scope.id) { // Create
-          Market.record.add($scope.formData, $scope.walletData.keypair)
-          .then(function(id) {
-            UIUtils.loading.hide();
-            $state.go('app.market_view_record', {id: id});
-            resolve();
-          })
-          .catch(UIUtils.onError('Could not save market'));
+        // Set time (UTC)
+        // TODO : use the block chain time
+        $scope.formData.time = Math.floor(moment().utc().valueOf() / 1000);
+        Market.record.add($scope.formData, $scope.walletData.keypair)
+        .then(function(id) {
+          UIUtils.loading.hide();
+          $state.go('app.market_view_record', {id: id});
+          resolve();
+        })
+        .catch(UIUtils.onError('Could not save market'));
       }
       else { // Update
-          Market.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
-          .then(function() {
-            UIUtils.loading.hide();
-            $state.go('app.market_view_record', {id: $scope.id});
-            resolve();
-          })
-          .catch(UIUtils.onError('Could not update market'));
+        if (!$scope.formData.time) {
+          // Set time (UTC)
+          // TODO : use the block chain time
+          $scope.formData.time = Math.floor(moment().utc().valueOf() / 1000);
+        }
+        Market.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
+        .then(function() {
+          UIUtils.loading.hide();
+          $state.go('app.market_view_record', {id: $scope.id});
+          resolve();
+        })
+        .catch(UIUtils.onError('Could not update market'));
       }
     });
   };
@@ -412,48 +422,14 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     $scope.closeCategoryModal();
   };
 
-  $scope.openPicturePopup = function() {
-    $ionicPopup.show({
-        title: 'Choose picture source :',
-        buttons: [
-          {
-            text: 'Gallery',
-            type: 'button',
-            onTap: function(e) {
-              return navigator.camera.PictureSourceType.PHOTOLIBRARY;
-            }
-          },
-          {
-            text: '<b>Camera</b>',
-            type: 'button button-positive',
-            onTap: function(e) {
-              return navigator.camera.PictureSourceType.CAMERA;
-            }
-          }
-        ]
-      })
-      .then(function(sourceType){
-        $scope.getPicture(sourceType);
-      });
+  $scope.takePicture = function() {
+    camera.take()
+    .then(function(imageData) {
+      $scope.pictures.push({src: "data:image/png;base64," + imageData});
+                $scope.$apply();
+    })
+    .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
-
-  $scope.getPicture = function(sourceType) {
-      var options = {
-        quality: 50,
-        destinationType: navigator.camera.DestinationType.DATA_URL,
-        sourceType: sourceType,
-        encodingType: navigator.camera.EncodingType.PNG,
-        targetWidth : 400,
-        targetHeight : 400
-      };
-      $scope.camera.getPicture(
-        function (imageData) {
-          $scope.pictures.push({src: "data:image/png;base64," + imageData});
-          $scope.$apply();
-        },
-        UIUtils.onError('Could not get picture'),
-        options);
-    };
 
   $scope.fileChanged = function(event) {
     UIUtils.loading.show();
@@ -473,6 +449,18 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
       UIUtils.loading.hide();
       resolve();
     });
+  };
+
+  $scope.removePicture = function(index){
+    $scope.pictures.splice(index, 1);
+  };
+
+  $scope.favoritePicture = function(index){
+    if (index > 0) {
+      var item = $scope.pictures[index];
+      $scope.pictures.splice(index, 1);
+      $scope.pictures.splice(0, 0, item);
+    }
   };
 
   /*

@@ -32,11 +32,13 @@
       <div class="list animate-fade-slide-in">
           <span class="item item-icon-left">
               <i class="icon ion-calendar"></i>
-              <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
+              <span>{{'WOT.REGISTERED_SINCE' | translate}} {{identity.sigDate | formatDate}}</span>
               <span class="badge badge-balanced">{{identity.sigDate | formatFromNow}}</span>
           </span>
 
-          <ion-item href="#" class="item-icon-left ink" on-hold="copyText(identity.pub)">
+          <ion-item href="#" class="item-icon-left ink"
+                    ng-show="system.clipboard.enable"
+                    on-hold="system.clipboard.copy(identity.pub)">
               <i class="icon ion-key"></i>
               <h4 class="gray">{{identity.pub}}</h4>
           </span>
