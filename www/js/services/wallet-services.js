@@ -21,6 +21,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         useRelative: USE_RELATIVE_DEFAULT,
         currency: null,
         currentUD: null,
+        medianTime: null,
         history: {},
         requirements: {},
         loaded: false,
@@ -40,6 +41,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.useRelative = USE_RELATIVE_DEFAULT;
       data.currency= null;
       data.currentUD= null;
+      data.medianTime = null;
       data.history= {};
       data.requirements= {};
       data.loaded= false;
@@ -53,13 +55,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         return;
       }
       txArray.forEach(function(tx) {
-        var issuerIndex = -1;
-        var issuer = tx.issuers.reduce(function(issuer, res, index) {
-            issuerIndex = (res == data.pubkey) ? index : issuerIndex;
-            return issuer + ((res != data.pubkey) ? ', ' + res : '');
+        var walletIsIssuer = false;
+        var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
+            walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
+            return issuer + ((res !== data.pubkey) ? ', ' + res : '');
         }, ', ').substring(2);
-        var receiver = (issuer !== '') ? data.pubkey : '';
-        var amount = tx.inputs.reduce(function(sum, output) {
+        var otherReceiver = (!walletIsIssuer) ? data.pubkey : '';
+        /*var amount = tx.inputs.reduce(function(sum, output) {
             if (!!data.sources[output]) {
               if (!data.sources[output].consumed) {
                 data.sources[output].consumed=true;
@@ -67,27 +69,39 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               return sum - data.sources[output].amount;
             }
             return sum;
-          }, 0);
-        amount += tx.outputs.reduce(function(sum, output) {
+          }, 0);*/
+        var amount = tx.outputs.reduce(function(sum, output) {
             var outputArray = output.split(':',3);
             var outputAmount = parseInt(outputArray[0]);
             var outputCondArray = outputArray[2].split('(', 3);
-            var outputReceiver = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
+            var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
                  outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
-            if (outputReceiver == data.pubkey) { // user is the receiver
-              return sum + outputAmount;
+            if (outputPubkey == data.pubkey) { // output is for the wallet
+              if (!walletIsIssuer) {
+                return sum + outputAmount;
+              }
             }
-            if (outputReceiver !== '') {
-             receiver = outputReceiver;
+            else { // output is for someone else
+              if (outputPubkey !== '') {
+                otherReceiver = outputPubkey;
+              }
+              if (walletIsIssuer) {
+                return sum - outputAmount;
+              }
             }
             return sum;
           }, 0);
 
+        var time = tx.time;
+        if (!time) {
+          time= Math.floor(moment().utc().valueOf() / 1000);
+        }
+
         result.push({
-          time: tx.time,
+          time: time,
           amount: amount,
-          issuer: issuer,
-          receiver: receiver,
+          issuer: otherIssuer,
+          receiver: otherReceiver,
           comment: tx.comment,
           isUD: false,
           hash: tx.hash,

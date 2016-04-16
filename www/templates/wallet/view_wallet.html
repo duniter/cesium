@@ -72,7 +72,7 @@
                 </span>
 
                 <span class="item ink" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
-                    <h3><i class="icon ion-clock" ng-if="!tx.block_number"></i>{{tx.time | formatFromNow}}</h3>
+                    <h3><i class="icon ion-clock" ng-if="!tx.block_number"> </i>{{tx.time | formatFromNow}}</h3>
                     <h4 class="gray">
                       <span class="positive" ng-if="tx.issuer" ui-sref="app.view_identity({pub:tx.issuer})">{{tx.issuer | formatPubkey}}</span>
                       <span class="positive" ng-if="tx.receiver" ui-sref="app.view_identity({pub:tx.receiver})">{{tx.receiver | formatPubkey}}</span>
