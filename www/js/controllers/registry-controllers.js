@@ -53,7 +53,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 
 ;
 
-function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, ionicMaterialInk) {
+function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, UIUtils) {
 
   $scope.categoryModal = null;
   $scope.categories = {
@@ -81,7 +81,7 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, 
       $scope.categories.search.text = '';
       $scope.categories.search.results = categories;
       $scope.categories.all = categories;
-      ionicMaterialInk.displayEffect();
+      UIUtils.ink();
       $scope.categoryModal.show();
     });
   };
@@ -122,7 +122,7 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, 
 
 function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize) {
 
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal);
+  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
   RegistryNewRecordWizardController.call(this, $scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
 
   $scope.search = {
@@ -383,7 +383,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, ionicMaterialInk) {
 
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, ionicMaterialInk);
+  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 
   $scope.walletData = {};
   $scope.recordData = {
@@ -678,6 +678,9 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
           $scope.recordData.pictures = $scope.pictures.reduce(function(res, pic) {
             return res.concat({src: pic.src});
           }, []);
+          // Set time (UTC)
+          // TODO : use the block chain time
+          $scope.recordData.time = Math.floor(moment().utc().valueOf() / 1000);
           Registry.record.add($scope.recordData, $scope.walletData.keypair)
           .then(function(id) {
             $scope.cancel();
@@ -692,6 +695,13 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
   $scope.$on('newRecordModal.hidden', function() {
     $scope.cancel();
   });
+
+  $scope.selectCategory = function(cat) {
+    if (!cat.parent) return;
+    $scope.category = cat;
+    $scope.recordData.category = cat.id;
+    $scope.closeCategoryModal();
+  };
 
   // TODO: remove auto add account when done
   /*$timeout(function() {

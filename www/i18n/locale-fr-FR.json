@@ -156,6 +156,8 @@
       "RECORD_TITLE_HELP": "Titre",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_PRICE": "Prix",
+      "RECORD_PRICE_HELP": "Prix (optionnel)",
       "RECORD_LOCATION": "Ville",
       "RECORD_LOCATION_HELP": "Adresse, Ville"
     }
