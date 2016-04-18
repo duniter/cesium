@@ -381,7 +381,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 }
 
-function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, ionicMaterialInk) {
+function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, ionicMaterialInk, System) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 
@@ -395,12 +395,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   $scope.category = {};
   $scope.pictures = [];
 
-  ionic.Platform.ready(function() {
-	  if (!navigator.camera) {
-	    delete $scope.camera; return;
-	  }
-    $scope.camera = navigator.camera;
-  });
+  $scope.system = System;
 
   $scope.setRecordForm =  function(recordForm) {
     $scope.recordForm = recordForm;
@@ -476,87 +471,36 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   };
 
   $scope.openPicturePopup = function() {
-    $ionicPopup.show({
-        title: 'Choose picture source :',
-        buttons: [
-          {
-            text: 'Gallery',
-            type: 'button',
-            onTap: function(e) {
-              return navigator.camera.PictureSourceType.PHOTOLIBRARY;
-            }
-          },
-          {
-            text: '<b>Camera</b>',
-            type: 'button button-positive',
-            onTap: function(e) {
-              return navigator.camera.PictureSourceType.CAMERA;
-            }
-          }
-        ]
-      })
-      .then(function(sourceType){
-        $scope.getPicture(sourceType);
-      });
+    System.camera.take()
+    .then(function(imageData) {
+      $scope.pictures.push({src: "data:image/png;base64," + imageData});
+      $scope.$apply();
+    })
+    .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
-
-  $scope.getPicture = function(sourceType) {
-      var options = {
-        quality: 50,
-        destinationType: navigator.camera.DestinationType.DATA_URL,
-        sourceType: sourceType,
-        encodingType: navigator.camera.EncodingType.PNG,
-        targetWidth : 400,
-        targetHeight : 400
-      };
-      $scope.camera.getPicture(
-        function (imageData) {
-          $scope.pictures.push({src: "data:image/png;base64," + imageData});
-          $scope.$apply();
-        },
-        UIUtils.onError('Could not get picture'),
-        options);
-    };
 
   $scope.fileChanged = function(event) {
     UIUtils.loading.show();
     return $q(function(resolve, reject) {
       var file = event.target.files[0];
-      var reader = new FileReader();
-
-      reader.addEventListener("load", function () {
-          //console.log(reader.result);
-          $scope.pictures.push({src: reader.result});
-          $scope.$apply();
-      }, false);
-
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-      UIUtils.loading.hide();
-      resolve();
+      System.image.resize(file)
+      .then(function(imageData) {
+        if ($scope.pictures.length === 0) {
+          $scope.pictures.push({src: imageData});
+        }
+        else {
+          $scope.pictures[0] = {src: imageData};
+        }
+        UIUtils.loading.hide();
+        $scope.$apply();
+        resolve();
+      });
     });
   };
 
-  /*
-  // See doc :
-  // http://stackoverflow.com/questions/20958078/resize-base64-image-in-javascript-without-using-canvas
-  $scope.imageToDataUri function(img, width, height) {
-
-      // create an off-screen canvas
-      var canvas = document.createElement('canvas'),
-          ctx = canvas.getContext('2d');
-
-      // set its dimension to target size
-      canvas.width = width;
-      canvas.height = height;
-
-      // draw source image into the off-screen canvas:
-      ctx.drawImage(img, 0, 0, width, height);
-
-      // encode image to data-uri with base64 version of compressed image
-      return canvas.toDataURL();
-  }*/
+  $scope.removePicture = function(index){
+    $scope.pictures.splice(index, 1);
+  };
 
   $scope.auth = function() {
     $scope.loadWallet()

@@ -334,7 +334,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
-  $scope.camera = System.camera;
+  $scope.system = System;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
@@ -423,33 +423,27 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   };
 
   $scope.takePicture = function() {
-    camera.take()
+    System.camera.take()
     .then(function(imageData) {
       $scope.pictures.push({src: "data:image/png;base64," + imageData});
-                $scope.$apply();
+      $scope.$apply();
     })
     .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
 
   $scope.fileChanged = function(event) {
-    UIUtils.loading.show();
-    return $q(function(resolve, reject) {
-      var file = event.target.files[0];
-      var reader = new FileReader();
-
-      reader.addEventListener("load", function () {
-          //console.log(reader.result);
-          $scope.pictures.push({src: reader.result});
+      UIUtils.loading.show();
+      return $q(function(resolve, reject) {
+        var file = event.target.files[0];
+        System.image.resize(file)
+        .then(function(imageData) {
+          $scope.pictures.push({src: imageData});
+          UIUtils.loading.hide();
           $scope.$apply();
-      }, false);
-
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-      UIUtils.loading.hide();
-      resolve();
-    });
-  };
+          resolve();
+        });
+      });
+    };
 
   $scope.removePicture = function(index){
     $scope.pictures.splice(index, 1);
@@ -462,26 +456,6 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
       $scope.pictures.splice(0, 0, item);
     }
   };
-
-  /*
-  // See doc :
-  // http://stackoverflow.com/questions/20958078/resize-base64-image-in-javascript-without-using-canvas
-  $scope.imageToDataUri function(img, width, height) {
-
-      // create an off-screen canvas
-      var canvas = document.createElement('canvas'),
-          ctx = canvas.getContext('2d');
-
-      // set its dimension to target size
-      canvas.width = width;
-      canvas.height = height;
-
-      // draw source image into the off-screen canvas:
-      ctx.drawImage(img, 0, 0, width, height);
-
-      // encode image to data-uri with base64 version of compressed image
-      return canvas.toDataURL();
-  }*/
 
   $scope.auth = function() {
     $scope.loadWallet()

@@ -2,17 +2,32 @@
   <div class="list"
        ng-init="setRecordForm(recordForm)">
 
-        <ion-gallery ion-gallery-items="pictures"
-                     ng-if="pictures && pictures.length>0"></ion-gallery>
+        <div class="list gallery" ng-if="pictures && pictures.length>0" >
+          <div ng-repeat="picture in pictures"
+               class="item card card-gallery">
+            <div class="ink">
+              <img ng-src="{{picture.src}}" ng-if="!picture.loading"></img>
+              <ion-spinner icon="android" ng-if="picture.loading"></ion-spinner>
+            </div>
+            <div class="item tabs tabs-secondary tabs-icon-left">
+              <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
+                <i class="icon ion-close"></i>
+                Delete
+              </a>
+              <a class="tab-item stable-bg">
+              </a>
+            </div>
+          </div>
+        </div>
 
-        <div class="item item-icon-right" ng-if="camera">
+        <div class="item item-icon-right" ng-if="system.camera.enable">
           <span translate>REGISTRY.EDIT.BTN_ADD_PICTURES</span>
           <a class="dark" href="#" ng-click="openPicturePopup()">
             <i class="icon ion-camera"></i>
           </a>
         </div>
 
-        <div class="item item-input item-icon-right" ng-if="!camera" >
+        <div class="item item-input item-icon-right" ng-if="!system.camera.enable" >
           <span class="input-label has-input" translate>REGISTRY.EDIT.BTN_ADD_PICTURES</span>
           <input type="file" id="file" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"/>
           <!--a class="dark" href="#" ng-if="!camera" ng-click="addPictureFile()">

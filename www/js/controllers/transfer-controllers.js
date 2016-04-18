@@ -38,9 +38,9 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferCtrl', TransferController)
 ;
 
-function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout) {
+function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System) {
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$state.stateParams && !!$state.stateParams.pubkey) {
@@ -62,7 +62,7 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $
   });
 }
 
-function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout) {
+function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System) {
 
   $scope.walletData = {};
   $scope.transferForm = {};
@@ -74,6 +74,8 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   };
   $scope.dest = null;
   $scope.udAmount = null;
+
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, System);
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
@@ -88,7 +90,6 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
       scope: $scope,
-      controller: 'WotLookupCtrl',
       focusFirstInput: true
   }).then(function(modal) {
     $scope.lookupModal = modal;
@@ -220,3 +221,4 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
     $scope.lookupModal.hide();
   };
 }
+

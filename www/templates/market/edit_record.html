@@ -8,39 +8,38 @@
 
     <ion-content>
         <div class="scroll">
-          <div class="list gallery" ng-if="pictures && pictures.length>0" >
-            <div ng-repeat="picture in pictures"
-                 class="item card card-gallery">
-              <div class="ink">
-                <h2>{{picture.title}}</h2>
-                <img ng-src="{{picture.src}}" ></img>
+            <div class="list gallery" ng-if="pictures && pictures.length>0" >
+              <div ng-repeat="picture in pictures"
+                   class="item card card-gallery">
+                <div class="ink">
+                  <h2>{{picture.title}}</h2>
+                  <img ng-src="{{picture.src}}" ></img>
+                </div>
+                <div class="item tabs tabs-secondary tabs-icon-left">
+                  <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
+                    <i class="icon ion-close"></i>
+                    Delete
+                  </a>
+                  <a class="tab-item stable-bg"
+                      ng-click="favoritePicture($index)"
+                      ng-class="{'dark': $index !== 0, 'positive-900': $index === 0}">
+                    <i class="icon ion-star"></i>
+                    Default
+                  </a>
+                </div>
               </div>
-              <div class="item tabs tabs-secondary tabs-icon-left">
-                <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
-                  <i class="icon ion-close"></i>
-                  Delete
-                </a>
-                <a class="tab-item stable-bg"
-                    ng-click="favoritePicture($index)"
-                    ng-class="{'dark': $index !== 0, 'positive-900': $index === 0}">
-                  <i class="icon ion-star"></i>
-                  Default
-                </a>
-              </div>
-            </div>
-         </div>
+           </div>
+
             <div class="list">
 
-
-
-                <div class="item item-icon-right" ng-show="camera.enable">
+                <div class="item item-icon-right" ng-show="system.camera.enable">
                     <span translate>MARKET.EDIT.BTN_ADD_PICTURES</span>
                     <a class="dark" href="#" ng-click="openPicturePopup()">
                         <i class="icon ion-camera"></i>
                     </a>
                 </div>
 
-                <div class="item item-input item-icon-right" ng-show="!camera.enable" >
+                <div class="item item-input item-icon-right" ng-show="!system.camera.enable" >
                     <span class="input-label has-input" translate>MARKET.EDIT.BTN_ADD_PICTURES</span>
                     <input type="file" id="file" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"/>
                     <!--a class="dark" href="#" ng-if="!camera" ng-click="addPictureFile()">

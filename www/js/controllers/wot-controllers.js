@@ -22,22 +22,9 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
 
-  $scope.system = System;
+  $scope.system.camera = System;
 
   $scope.searchChanged = function() {
-    $scope.search.typing = $scope.search.text;
-    $scope.search.looking = true;
-    $timeout(
-      function() {
-        if ($scope.search.typing === $scope.search.text) {
-          $scope.search.typing = null;
-          $scope.doSearch();
-        }
-      },
-      1000);
-  };
-
-  $scope.doSearch = function() {
     $scope.search.looking = true;
     var text = $scope.search.text.toLowerCase().trim();
     if (text.length === 0) {
@@ -73,8 +60,8 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
   };
 
   $scope.scanQrCode = function(){
-   if ($scope.system.camera.enable) {
-     $scope.system.camera.scan()
+   if (System.camera.enable) {
+     System.camera.scan()
      .then(function(result) {
        if (!result) {
         $scope.search.text = result.text;

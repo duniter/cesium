@@ -131,27 +131,78 @@ angular.module('cesium.utils.services', ['ngResource'])
   };
 })
 
-.factory('System', function($timeout, $window, UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner) {
+.factory('System', function($timeout, $window, UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner, $q) {
 
-  var camera = {};
-  var scan = {};
-  var clipboard = {};
+  var CONST = {
+    MAX_HEIGHT: 400,
+    MAX_WIDTH: 400
+  },
+  camera = {
+    enable: false
+  },
+  scan = {
+    enable: false
+  },
+  clipboard = {
+    enable: false
+  };
 
   ionic.Platform.ready(function() {
-    // Check if camera is enable
-	  if (!navigator.camera) {
-	    camera.enable = false;
-	  }
-	  else {
-      camera.handle = navigator.camera;
-	  }
-
-    // Check if scan is enable
-	  scan.enable = !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan);
+    // Check if camera AND scan is enable
+	  camera.enable = !!navigator.camera /*&& !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan)*/;
+    camera.handle = navigator.camera;
 
     // Check if clipboard is enable
 	  clipboard.enable = !(!$cordovaClipboard || !$cordovaClipboard.copy);
   });
+
+  function resizeImageFromFile(file) {
+    return $q(function(resolve, reject) {
+
+      var reader = new FileReader();
+
+      reader.addEventListener("load", function () {
+        var img = document.createElement("img");
+        img.src = reader.result;
+
+        var width = img.width;
+        var height = img.height;
+
+        if (width > height) {
+          if (width > CONST.MAX_WIDTH) {
+            height *= CONST.MAX_WIDTH / width;
+            width = CONST.MAX_WIDTH;
+          }
+        } else {
+          if (height > CONST.MAX_HEIGHT) {
+            width *= CONST.MAX_HEIGHT / height;
+            height = CONST.MAX_HEIGHT;
+          }
+        }
+        var canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        var dataurl = canvas.toDataURL("image/png");
+
+        resolve(dataurl);
+      }, false);
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+      else {
+        reject("Not a file")
+      }
+    });
+
+    img.src = imageData;
+    reader.readAsDataURL(file);
+
+
+  }
 
   camera.takePicture = function(sourceType) {
     return $q(function (resolve, reject) {
@@ -160,7 +211,7 @@ angular.module('cesium.utils.services', ['ngResource'])
         return;
       }
       if (!sourceType) {
-        $translate(['SYSTEM.PICTURE_CHOOSE_TYPE'])
+        $translate(['SYSTEM.PICTURE_CHOOSE_TYPE', 'SYSTEM.BTN_PICTURE_GALLERY', 'SYSTEM.BTN_PICTURE_CAMERA'])
         .then(function(translations){
           $ionicPopup.show({
             title: translations['SYSTEM.PICTURE_CHOOSE_TYPE'],
@@ -192,8 +243,8 @@ angular.module('cesium.utils.services', ['ngResource'])
             destinationType: navigator.camera.DestinationType.DATA_URL,
             sourceType: sourceType,
             encodingType: navigator.camera.EncodingType.PNG,
-            targetWidth : 400,
-            targetHeight : 400
+            targetWidth : CONST.MAX_WIDTH,
+            targetHeight : CONST.MAX_HEIGHT
         };
         camera.handle.camera.getPicture(
           function (imageData) {resolve(imageData);},
@@ -223,14 +274,21 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   };
 
+
+
   clipboard.copy = function (text, callback) {
+    if (!clipboard.enable) {
+      return; // Always to call copy, but do nothing if not available
+    }
     $cordovaClipboard
       .copy(text)
       .then(function () {
         // success
-        console.log("Copied text");
         if (callback) {
           callback();
+        }
+        else {
+          console.log("Copy text to clipboard: " + text);
         }
       }, function () {
         // error
@@ -239,17 +297,59 @@ angular.module('cesium.utils.services', ['ngResource'])
   };
 
   return {
-      clipboard: {
-        enable: clipboard.enable,
-        copy: clipboard.copy
-      },
-      camera: {
-        enable: camera.enable && scan.enable,
-        take: camera.takePicture,
-        scan: camera.scan
-      },
-    };
+    image: {
+      resize: resizeImageFromFile
+    },
+    clipboard: {
+      enable: clipboard.enable,
+      copy: clipboard.copy
+    },
+    camera: {
+      enable: camera.enable,
+      take: camera.takePicture,
+      scan: camera.scan
+    },
+  };
 })
+
+.service('ModalService', function($ionicModal, $rootScope, $q, $controllers) {
+
+  var show = function(tpl, $scope) {
+
+    var promise;
+    $scope = $scope || $rootScope.$new();
+
+    promise = $q(function(resolve, reject){
+      $ionicModal.fromTemplateUrl(tpl, {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        $scope.modal = modal;
+        $scope.modal.show();
+      });
+    });
+
+     $scope.openModal = function() {
+       $scope.modal.show();
+     };
+     $scope.closeModal = function(result) {
+       $scope.modal.hide();
+       resolve(result);
+     };
+     $scope.$on('$destroy', function() {
+       $scope.modal.remove();
+     });
+
+    return promise;
+  };
+
+  return {
+    show: show
+  };
+
+})
+
+
 
 .directive('eventFocus', function(focus) {
   return function(scope, elem, attr) {

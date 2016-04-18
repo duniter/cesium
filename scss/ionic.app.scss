@@ -161,7 +161,7 @@ $screen-lg:                       1200px;
 }
 
 // Medium devices: Desktops (≥992px)
-@media screen and (max-width: $screen-md-max) and (min-width: $screen-md) {
+@media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
     .hidden-md {
         display: none !important;
         visibility: hidden !important;
@@ -170,16 +170,16 @@ $screen-lg:                       1200px;
 @media screen and (min-width: $screen-lg) {
     .hidden-md {
         display: inherit;
-        visibility: visible !important;
+        visibility: visible;
     }
 }
 @media screen and (max-width: $screen-sm-max) {
     .hidden-md {
         display: inherit;
-        visibility: visible !important;
+        visibility: visible;
     }
 }
-@media screen and (max-width: $screen-md-max) and (min-width: $screen-md) {
+@media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
     .visible-md {
         display: inherit;
         visibility: visible !important;
@@ -187,14 +187,14 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-lg) {
     .visible-md {
-        display: none !important;
-        visibility: hidden !important;
+        display: none;
+        visibility: hidden;
     }
 }
 @media screen and (max-width: $screen-sm-max) {
     .visible-md {
-        display: none !important;
-        visibility: hidden !important;
+        display: none;
+        visibility: hidden;
     }
 }
 
@@ -207,8 +207,20 @@ $screen-lg:                       1200px;
     }
 }
 @media screen and (max-width: $screen-md-max) {
+    .hidden-lg {
+        display: inherited;
+        visibility: visible;
+    }
+}
+@media screen and (min-width: $screen-lg) {
     .visible-lg {
-        display: none !important;
-        visibility: hidden !important;
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-md-max) {
+    .visible-lg {
+        display: none;
+        visibility: hidden;
     }
 }

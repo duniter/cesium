@@ -7,7 +7,10 @@
     <ion-content class="lookupForm padding no-padding-xs">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
+            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+                   ng-model="search.text"
+                   ng-model-options="{ debounce: 250 }"
+                   ng-change="searchChanged()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.options != null">

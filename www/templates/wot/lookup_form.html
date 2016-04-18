@@ -1,7 +1,10 @@
     <div class="lookupForm padding no-padding-xs">
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchWot">
+            <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+                   ng-model="search.text"
+                   ng-model-options="{ debounce: 250 }"
+                   ng-change="searchChanged()" id="searchWot">
         </label>
 
       <div class="list"

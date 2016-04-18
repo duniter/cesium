@@ -9,7 +9,10 @@
 
         <label class="item item-input">
           <i class="icon ion-search placeholder-icon"></i>
-          <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}" ng-model="search.text" ng-change="searchChanged()" id="searchText">
+          <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
+                 ng-model="search.text"
+                 ng-model-options="{ debounce: 250 }"
+                 ng-change="searchChanged()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.options != null">
@@ -42,7 +45,10 @@
           <span translate>MARKET.SEARCH.LOCATION</span>
           <div class="item-input-inset">
             <label class="item-input-wrapper">
-              <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}" ng-model="search.location" ng-change="searchLocationChanged()"/>
+              <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}"
+                     ng-model="search.location"
+                     ng-model-options="{ debounce: 250 }"
+                     ng-change="searchLocationChanged()"/>
             </label>
           </div>
         </span>

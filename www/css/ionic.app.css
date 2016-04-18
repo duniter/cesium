@@ -12831,7 +12831,7 @@ a {
   body {
     cursor: inherit; } }
 
-@media screen and (max-width: 1199px) and (min-width: 992px) {
+@media screen and (min-width: 992px) and (max-width: 1199px) {
   .hidden-md {
     display: none !important;
     visibility: hidden !important; } }
@@ -12839,27 +12839,27 @@ a {
 @media screen and (min-width: 1200px) {
   .hidden-md {
     display: inherit;
-    visibility: visible !important; } }
+    visibility: visible; } }
 
 @media screen and (max-width: 991px) {
   .hidden-md {
     display: inherit;
-    visibility: visible !important; } }
+    visibility: visible; } }
 
-@media screen and (max-width: 1199px) and (min-width: 992px) {
+@media screen and (min-width: 992px) and (max-width: 1199px) {
   .visible-md {
     display: inherit;
     visibility: visible !important; } }
 
 @media screen and (min-width: 1200px) {
   .visible-md {
-    display: none !important;
-    visibility: hidden !important; } }
+    display: none;
+    visibility: hidden; } }
 
 @media screen and (max-width: 991px) {
   .visible-md {
-    display: none !important;
-    visibility: hidden !important; } }
+    display: none;
+    visibility: hidden; } }
 
 @media screen and (min-width: 1200px) {
   .hidden-lg {
@@ -12867,6 +12867,16 @@ a {
     visibility: hidden !important; } }
 
 @media screen and (max-width: 1199px) {
+  .hidden-lg {
+    display: inherited;
+    visibility: visible; } }
+
+@media screen and (min-width: 1200px) {
   .visible-lg {
-    display: none !important;
-    visibility: hidden !important; } }
+    display: inherited;
+    visibility: visible !important; } }
+
+@media screen and (max-width: 1199px) {
+  .visible-lg {
+    display: none;
+    visibility: hidden; } }

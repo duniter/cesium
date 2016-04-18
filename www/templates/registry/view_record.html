@@ -7,6 +7,7 @@
     <ion-content class="item-text-wrap">
 
         <div class="scroll">
+
             <div class="list">
 
                 <ion-gallery ion-gallery-items="pictures" ng-if="pictures && pictures.length>0"></ion-gallery>
@@ -17,7 +18,9 @@
                     <h4 class="gray" ng-bind-html="formData.location"></h4>
                 </div>
 
-                <a class="item item-icon-left" ng-if="!formData.isCompany">
+                <a class="item item-icon-left" ng-if="!formData.isCompany"
+                   ng-class="{'ink': system.clipboard.enable}"
+                   on-hold="system.clipboard.copy(identity.pub)">
                     <i class="icon ion-key"></i>
                     <h4 class="gray">{{formData.issuer}}</h4>
                 </a>

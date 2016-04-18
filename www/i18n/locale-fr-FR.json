@@ -33,7 +33,7 @@
     "SETTINGS": "Configuration"
   },
   "HOME": {
-    "TITLE": " ",
+    "TITLE": "Duniter",
     "WELCOME": "Duniter",
     "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Regardez l'état de vos comptes Duniter en temps réel.",
     "BTN_REGISTRY": "Annuaire",

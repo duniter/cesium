@@ -37,7 +37,7 @@
           </span>
 
           <ion-item href="#" class="item-icon-left ink"
-                    ng-show="system.clipboard.enable"
+                    ng-class="{'ink': system.clipboard.enable}"
                     on-hold="system.clipboard.copy(identity.pub)">
               <i class="icon ion-key"></i>
               <h4 class="gray">{{identity.pub}}</h4>
