@@ -2,11 +2,11 @@
 (function() {
  var Base58 = (typeof module !== "undefined" && module !== null ? module.exports : void 0) || (window.Base58 = {});
 
- Base58.alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
- Base58.alphabetMap = {}
+ Base58.alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+ Base58.alphabetMap = {};
 
  for(var i = 0; i < Base58.alphabet.length; i++) {
-   Base58.alphabetMap[Base58.alphabet.charAt(i)] = i
+   Base58.alphabetMap[Base58.alphabet.charAt(i)] = i;
  }
 
   Base58.encode = function(buffer) {
@@ -52,7 +52,7 @@
   Base58.decode = function(string) {
     var bytes, c, carry, j;
     if (string.length === 0) {
-      return new (typeof Uint8Array !== "undefined" && Uint8Array !== null ? Uint8Array : Buffer)(0);
+      return (typeof Uint8Array !== "undefined" && Uint8Array !== null ? new Uint8Array(0) : new Buffer(0));
     }
     i = void 0;
     j = void 0;
@@ -88,7 +88,7 @@
       bytes.push(0);
       i++;
     }
-    return new (typeof Uint8Array !== "undefined" && Uint8Array !== null ? Uint8Array : Buffer)(bytes.reverse());
+    return (typeof Uint8Array !== "undefined" && Uint8Array !== null ? new Uint8Array(bytes.reverse()) : new Buffer(bytes.reverse()));
   };
 
 }).call(this);

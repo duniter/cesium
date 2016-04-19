@@ -1,16 +1,4 @@
-body {
-    cursor: url('http://ionicframework.com/img/finger.png'), auto;
-}
 
-.homeMessage {
-    text-align: center;
-    font-size: 18px;
-}
-
-.selected {
-    background-color: steelblue !important;
-    color: white !important;
-}
 
 #newAccount h1 {
     font-size: 25px;
@@ -36,6 +24,11 @@ body {
     padding-top: 15px;
     padding-bottom: 15px;
     text-align: center;
+    color: #fff;
+}
+
+#home h4 {
+    color: #fff;
 }
 
 #home button, #home a {
@@ -43,13 +36,83 @@ body {
     height: 40px;
 }
 
+.bar .button.button-clear {
+  font-size: 12px !important;
+  font-weight: 300 !important;
+  width: initial !important;
+  min-width: 38px !important;
+  max-width: 90px !important;
+}
+
+.bar .title + .button.button-clear.button-icon.icon {
+  min-height: 30px;
+}
+
+
+
+#transfer .list .item {
+  border-bottom: solid 1px #ccc;
+}
+
+#wallet .item h4 .comment{
+  font-style: italic !important;
+}
+
+#wallet .item h3 .gray{
+  font-size: 11px ! important;
+}
+
+.list .item-input {
+  border-bottom: solid 1px #ccc;
+}
+
+.item.item-thumbnail-left {
+  min-height: 100px !important;
+}
+
+.gallery .card-gallery img{
+  max-height: 150px;
+}
+
+.gallery .card.card-gallery{
+  margin-bottom: 15px !important;
+  float: left;
+  display: block;
+}
+
+#menu .item.item-divider {
+  min-height: 5px;
+  height: 5px;
+}
+
+.menu .avatar {
+    height: 88px;
+    width: 88px;
+}
+
+.avatar-member {
+    background-image: url('../img/person.png');
+}
+
+.avatar-wallet {
+    background-image: url('../img/card.png');
+}
+
 .center {
     text-align: center;
 }
 
-.light {
-    color: grey;
+.gray {
+    color: grey !important;
 }
+.no-padding {
+    padding: 0px !important;
+}
+
+.col-pubkey {
+  min-width: 130px !important;
+}
+
 /*.button {*/
     /*height: 50px !important;*/
     /*font-size: 18px !important;*/
@@ -92,6 +155,11 @@ body {
 .item-input-error {
   border-bottom: 2px solid red;
 }
+
+.item em {
+  font-weight: bold !important;
+}
+
 
 /**********
    MODAL

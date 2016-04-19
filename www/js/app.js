@@ -4,25 +4,33 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
+angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'cesium.controllers'])
 
   .filter('formatInteger', function() {
     return function(input) {
-      return input ? numeral(input).format('0,0') : '';
-    }
+      return input ? numeral(input).format('0,0').replace(',', ' ') : '0';
+    };
   })
 
   .filter('formatDecimal', function() {
       return function(input) {
+        if (!input) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
-        return Math.floor(input * 10000) / 10000;
-      }
+        return numeral(input).format('0,0.0000').replace(',', ' ');
+      };
     })
 
   .filter('formatDate', function() {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).format('YYYY-MM-DD HH:mm') : '';
-    }
+      // TODO: use local format
+      return input ? moment(parseInt(input)*1000).local().format('YYYY-MM-DD HH:mm') : '';
+    };
+  })
+
+  .filter('formatFromNow', function() {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).startOf('minute').fromNow() : '';
+    };
   })
 
   .filter('abbreviate', function() {
@@ -30,18 +38,35 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
       var unit = '', sepChars = ['-', '_', ' '], currency = input || '';
       for (var i = 0; i < currency.length; i++) {
         var c = currency[i];
-        if (i == 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
+        if (i === 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
           unit += c;
         }
       }
       return unit.toUpperCase();
-    }
+    };
   })
 
   .filter('formatPubkey', function() {
     return function(input) {
       return input ? input.substr(0,8) : '';
-    }
+    };
+  })
+
+  .filter('formatCategory', function() {
+    return function(input) {
+      return input && input.length > 28 ? input.substr(0,25)+'...' : input;
+    };
+  })
+
+  // Convert to user friendly URL (e.g. "Like - This" -> "like-this")
+  .filter('formatSlug', function() {
+    return function(input) {
+      return input ? encodeURIComponent(input
+        .toLowerCase()
+        .replace(/[^\w ]+/g,'')
+        .replace(/ +/g,'-'))
+        : '';
+    };
   })
 
   // Translation i18n
@@ -52,10 +77,11 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
     })
     .uniformLanguageTag('bcp47')
     .determinePreferredLanguage()
-    .useSanitizeValueStrategy('sanitize')
-    .fallbackLanguage(['en', 'fr'])
+    // Cela fait bugger les placeholder (pb d'affichage des accents en FR)
+    //.useSanitizeValueStrategy('sanitize')
+    .useSanitizeValueStrategy(null)
+    .fallbackLanguage(['en'])
     .useLoaderCache(true);
-
   })
 
   // Add new compare-to directive (need for form validation)
@@ -78,7 +104,6 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
       };
   })
 
-
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -92,6 +117,4 @@ angular.module('cesium', ['ionic', 'ngMessages', 'pascalprecht.translate', 'cesi
     }
   });
 })
-
-
 ;

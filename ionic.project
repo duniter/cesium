@@ -1,4 +1,12 @@
 {
   "name": "Cesium",
-  "app_id": ""
+  "app_id": "",
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ],
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ]
 }

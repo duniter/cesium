@@ -1,0 +1,27 @@
+    <div class="lookupForm padding no-padding-xs">
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+                   ng-model="search.text"
+                   ng-model-options="{ debounce: 250 }"
+                   ng-change="searchChanged()" id="searchWot">
+        </label>
+
+      <div class="list"
+           ng-class="{'list-inset': search.options.listInset}"
+           ng-if="search.text && search.text.length > 0">
+
+        <label class="item center text-left" ng-if="search.looking">
+            <ion-spinner icon="android"></ion-spinner>
+        </label>
+
+        <a ng-if="!search.looking"
+           ng-repeat="found in search.results"
+           class="item item-icon-left item-avatar ink"
+           ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
+            <i class="icon ion-person"></i>
+            <h2>{{found.uid}}</h2>
+            <span class="badge">{{found.pub | formatPubkey}}</span>
+        </a>
+    </div>
+  </div>

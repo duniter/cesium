@@ -1,0 +1,152 @@
+<ion-view class="modal slide-in-up ng-enter active ng-enter-active">
+
+    <ion-header-bar class="bar-positive">
+
+        <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item" ng-click="slidePrev()" ng-show="slides.slider.activeIndex > 0">
+        </button>
+        <button class="button button-clear text-no-wrap" ng-click="cancel()" ng-show="slides.slider.activeIndex == 0" translate>COMMON.BTN_CANCEL</button>
+
+        <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
+
+        <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doNewAccount()" ng-show="slides.slider.activeIndex == 2"></button>
+
+        </ion-nav-buttons>
+    </ion-header-bar>
+
+
+    <ion-slides options="slides.options" slider="slides.slider">
+        <ion-slide-page>
+            <ion-content class="has-header padding">
+                <h3 translate>ACCOUNT.NEW.SLIDE_1_TITLE</h3>
+                <ng-include src="'templates/currency/lookup_form.html'"></ng-include>
+            </ion-content>
+        </ion-slide-page>
+        <ion-slide-page>
+          <ion-content class="has-header padding">
+                <h3 translate>ACCOUNT.NEW.SLIDE_2_TITLE</h3>
+                <button class="button button-block button-stable icon icon-left ion-person" ng-click="selectAccountTypeMember(true)" ng-class="{ selected: accountTypeMember != null && accountTypeMember }" translate>ACCOUNT.NEW.MEMBER_ACCOUNT</button>
+                <button class="button button-block button-stable icon icon-left ion-card" ng-click="selectAccountTypeMember(false)" ng-class="{ selected: accountTypeMember != null && !accountTypeMember }" translate>ACCOUNT.NEW.WALLET_ACCOUNT</button>
+            </ion-content>
+        </ion-slide-page>
+        <ion-slide-page>
+          <ion-content class="has-header">
+            <form name="accountForm" novalidate="" ng-submit="doNewAccount()">
+                <div class="list"
+                     ng-init="setAccountForm(accountForm)">
+
+                    <!-- pseudo -->
+                    <label class="item item-input"
+                           ng-if="accountData.isMember"
+                           ng-class="{'item-input-error': accountForm.$submitted && accountForm.pseudo.$invalid}">
+                        <span class="input-label" translate>ACCOUNT.NEW.PSEUDO</span>
+                        <input name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
+                               ng-model="accountData.pseudo"
+                               ng-minlength="3"
+                               required>
+                    </label>
+                    <div class="form-errors"
+                         ng-if="accountData.isMember && accountForm.$submitted && accountForm.pseudo.$error"
+                         ng-messages="accountForm.pseudo.$error">
+                        <div class="form-error" ng-message="required">
+                            <span translate="ERROR.FIELD_REQUIRED"></span>
+                        </div>
+                        <div class="form-error" ng-message="minlength">
+                            <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                        </div>
+                    </div>
+
+                    <!-- salt -->
+                    <label class="item item-input"
+                           ng-class="{ 'item-input-error': accountForm.$submitted && accountForm.username.$invalid}">
+                        <span class="input-label" translate>LOGIN.USERNAME</span>
+                        <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
+                               ng-model="accountData.username"
+                               ng-minlength="8"
+                               required>
+                    </label>
+                    <div class="form-errors"
+                         ng-show="accountForm.$submitted && accountForm.username.$error"
+                         ng-messages="accountForm.username.$error">
+                        <div class="form-error" ng-message="required">
+                            <span translate="ERROR.FIELD_REQUIRED"></span>
+                        </div>
+                        <div class="form-error" ng-message="minlength">
+                            <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                        </div>
+                    </div>
+
+                    <!-- password -->
+                    <label class="item item-input"
+                           ng-class="{ 'item-input-error': accountForm.$submitted && accountForm.password.$invalid}">
+                        <span class="input-label" translate>LOGIN.PASSWORD</span>
+                        <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+                               ng-model="accountData.password"
+                               ng-minlength="8"
+                               required>
+                    </label>
+                    <div class="form-errors"
+                         ng-show="accountForm.$submitted && accountForm.password.$error"
+                         ng-messages="accountForm.password.$error">
+                        <div class="form-error" ng-message="required">
+                            <span translate="ERROR.FIELD_REQUIRED"></span>
+                        </div>
+                        <div class="form-error" ng-message="minlength">
+                            <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                        </div>
+                    </div>
+
+                    <!-- confirm password -->
+                    <label class="item item-input"
+                           ng-class="{ 'item-input-error': accountForm.$submitted && accountForm.confirmPassword.$invalid}">
+                        <span class="input-label" translate>ACCOUNT.NEW.PASSWORD_CONFIRM</span>
+                        <input name="confirmPassword" type="password" placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}" ng-model="accountData.confirmPassword" ng-change="loginDataChanged()"
+                               compare-to="accountData.password">
+                    </label>
+                    <div class="form-errors"
+                         ng-show="accountForm.$submitted && accountForm.confirmPassword.$error"
+                         ng-messages="accountForm.confirmPassword.$error">
+                        <div class="form-error" ng-message="required">
+                            <span translate="ERROR.FIELD_REQUIRED"></span>
+                        </div>
+                        <div class="form-error" ng-message="compareTo">
+                            <span translate="ERROR.PASSWORD_NOT_CONFIRMED"></span>
+                        </div>
+                    </div>
+
+                    <!-- Show public key-->
+                    <div class="item item-icon-left item-button-right">
+                        <i class="icon ion-key"/>
+                        <span translate>COMMON.PUBKEY</span>
+                        <a class="button button-light button-small"
+                           ng-click="showAccountPubkey()"
+                           ng-if="!accountData.pubkey && accountForm.$valid"
+                           class="animate-if" translate>
+                            COMMON.BTN_SHOW_PUBKEY
+                        </a>
+                        <span class="item-input" ng-if="accountData.pubkey">
+                            {{accountData.pubkey}}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="padding hidden-xs">
+                    <button class="button button-block button-positive"  type="submit">
+                        {{'COMMON.BTN_OK' | translate}}
+                    </button>
+                </div>
+            </form>
+            </ion-content>
+        </ion-slide-page>
+    </ion-slide-box>
+</ion-view>
+
+<script type="text/ng-template" id="error-messages">
+    <div class="error" ng-message="required">
+        <i class="ion-information-circled"></i>
+        <div translate="ERROR.FIELD_REQUIRED"></div>
+    </div>
+    <div class="error" ng-message="minlength">
+        <i class="ion-information-circled"></i>
+        <div translate="ERROR.FIELD_TOO_SHORT"></div>
+    </div>
+</script>

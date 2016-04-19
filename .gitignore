@@ -1,3 +1,5 @@
+/www/lib/ionic-material
+/www/lib/robotodraft
 # Specifies intentionally untracked files to ignore when using Git
 # http://git-scm.com/docs/gitignore
 
@@ -7,3 +9,7 @@ plugins/
 .idea/
 cesium.iml
 pom.xml
+www/css/ionic.app.css
+www/css/ionic.app.min.css
+
+www/js/config.js

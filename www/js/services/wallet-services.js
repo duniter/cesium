@@ -2,7 +2,7 @@
 
 angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services'])
 
-.factory('Wallet', ['CryptoUtils', 'BMA', '$q', function(CryptoUtils, BMA, $q) {
+.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', function($q, CryptoUtils, BMA) {
 
   Wallet = function(id) {
 
@@ -10,8 +10,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     USE_RELATIVE_DEFAULT = true,
 
-    createData = function() {
-      return {
+    data = {
         pubkey: null,
         keypair: {
             signSk: null,
@@ -22,44 +21,85 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         useRelative: USE_RELATIVE_DEFAULT,
         currency: null,
         currentUD: null,
+        medianTime: null,
         history: {},
-        requirements: null,
-        loaded: false
-      };
+        requirements: {},
+        loaded: false,
+        blockUid: null,
+        sigQty: null,
+        avatar: null
     },
 
-    data = createData(),
+    resetData = function() {
+      data.pubkey= null;
+      data.keypair ={
+                signSk: null,
+                signPk: null
+            };
+      data.balance = 0;
+      data.sources = null;
+      data.useRelative = USE_RELATIVE_DEFAULT;
+      data.currency= null;
+      data.currentUD= null;
+      data.medianTime = null;
+      data.history= {};
+      data.requirements= {};
+      data.loaded= false;
+      data.blockUid= null;
+      data.sigQty = null;
+      data.avatar = null;
+    },
 
-    reduceTx = function(txArray) {
-        var list = [];
-        txArray.forEach(function(tx) {
-            var issuerIndex = -1;
-            var issuer = tx.issuers.reduce(function(issuer, res, index) {
-                issuerIndex = (res == data.pubkey) ? index : issuerIndex;
-                return issuer + ((res != data.pubkey) ? ', ' + res : '');
-            }, ', ').substring(2);
-            var amount =
-                tx.inputs.reduce(function(sum, input) {
-                    var inputArray = input.split(':',5);
-                    return sum - ((inputArray[0] == issuerIndex) ? parseInt(inputArray[4]) : 0);
-                }, 0);
-            amount += tx.outputs.reduce(function(sum, output) {
-                    var outputArray = output.split(':',2);
-                    return sum + ((outputArray[0] == data.pubkey) ? parseInt(outputArray[1]) : 0);
-                }, 0);
+    reduceTxAndPush = function(txArray, result) {
+      if (!txArray || txArray.length === 0) {
+        return;
+      }
+      txArray.forEach(function(tx) {
+        var walletIsIssuer = false;
+        var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
+            walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
+            return issuer + ((res !== data.pubkey) ? ', ' + res : '');
+        }, ', ').substring(2);
+        var otherReceiver = (!walletIsIssuer) ? data.pubkey : '';
+        var amount = tx.outputs.reduce(function(sum, output) {
+            var outputArray = output.split(':',3);
+            var outputAmount = parseInt(outputArray[0]);
+            var outputCondArray = outputArray[2].split('(', 3);
+            var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
+                 outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
+            if (outputPubkey == data.pubkey) { // output is for the wallet
+              if (!walletIsIssuer) {
+                return sum + outputAmount;
+              }
+            }
+            else { // output is for someone else
+              if (outputPubkey !== '') {
+                otherReceiver = outputPubkey;
+              }
+              if (walletIsIssuer) {
+                return sum - outputAmount;
+              }
+            }
+            return sum;
+          }, 0);
 
-            list.push({
-              time: ((tx.time != null && tx.time != "undefined") ? tx.time : 9999999),
-              amount: amount,
-              issuer: issuer,
-              comments: 'comments',
-              isUD: false,
-              hash: tx.hash,
-              block_number: tx.block_number
-            });
+        var time = tx.time;
+        if (!time) {
+          time= Math.floor(moment().utc().valueOf() / 1000);
+        }
+
+        result.push({
+          time: time,
+          amount: amount,
+          issuer: otherIssuer,
+          receiver: otherReceiver,
+          comment: tx.comment,
+          isUD: false,
+          hash: tx.hash,
+          locktime: tx.locktime,
+          block_number: tx.block_number
         });
-
-        return list;
+      });
     },
 
     login = function(salt, password) {
@@ -69,7 +109,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                     // Copy result to properties
                     data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
                     data.keypair = keypair;
-                    resolve();
+                    resolve(data);
                 }
             );
         });
@@ -77,14 +117,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     logout = function(username, password) {
         return $q(function(resolve, reject) {
-            data = createData();
+            resetData();
             resolve();
         });
     },
 
     isLogin = function() {
-        return data.pubkey != "undefined"
-            && data.pubkey != null;
+        return !!data.pubkey;
     },
 
     getData = function() {
@@ -92,10 +131,104 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     isSourceEquals = function(arg1, arg2) {
-        return arg1.type == arg2.type
-            && arg1.fingerprint == arg2.fingerprint
-            && arg1.number == arg2.number
-            && arg1.amount == arg2.amount;
+        return arg1.type == arg2.type &&
+            arg1.fingerprint == arg2.fingerprint &&
+            arg1.number == arg2.number &&
+            arg1.amount == arg2.amount;
+    },
+
+    loadRequirements = function() {
+      return $q(function(resolve, reject) {
+        // Get requirements
+        BMA.wot.requirements({pubkey: data.pubkey})
+        .then(function(res){
+          if (!res.identities && res.identities.length != 1) {
+            data.requirements = null;
+            data.blockUid = null;
+            resolve();
+            return;
+          }
+          var idty = res.identities[0];
+          data.requirements = idty;
+          data.uid = idty.uid;
+          data.blockUid = idty.meta.timestamp;
+          // TODO
+          //data.requirements.needCertifications = (idty.certifications.length < data.sigQty);
+          resolve();
+        })
+        .catch(function(err) {
+          data.requirements = {};
+          data.blockUid = null;
+          // If identity not publiched : continue
+          if (!!err && err.ucode == 2004) {
+            resolve();
+          }
+          else {
+            reject(err);
+          }
+        });
+      });
+    },
+
+    loadSources = function(refresh) {
+      return $q(function(resolve, reject) {
+        // Get transactions
+        BMA.tx.sources({pubkey: data.pubkey})
+        .then(function(res){
+          if (!data.sources) {
+            data.sources=[];
+          }
+          var sources = [];
+          var balance = 0;
+          if (!!res.sources && res.sources.length > 0) {
+            res.sources.forEach(function(src) {
+              var srcKey = src.type+':'+src.identifier+':'+src.noffset;
+              if (!!data.sources[srcKey]) {
+                src.consumed = data.sources[srcKey].consumed;
+              }
+              else {
+                src.consumed = false;
+              }
+              //if (!src.consumed) {
+                balance += src.amount;
+              //}
+              sources.push(src);
+              sources[srcKey] = src;
+            });
+          }
+          data.sources = sources;
+          data.balance = balance;
+          resolve();
+        })
+        .catch(function(err) {
+          data.sources = [];
+          reject(err);
+        });
+      });
+    },
+
+    loadTransactions = function() {
+      return $q(function(resolve, reject) {
+        // Get transactions
+        BMA.tx.history.all({pubkey: data.pubkey})
+        .then(function(res){
+          var list = [];
+          reduceTxAndPush(res.history.sent, list);
+          reduceTxAndPush(res.history.received, list);
+          reduceTxAndPush(res.history.sending, list);
+          reduceTxAndPush(res.history.receiving, list);
+          reduceTxAndPush(res.history.pending, list);
+
+          data.history = list.sort(function(tx1, tx2) {
+             return tx2.time - tx1.time;
+          });
+          resolve();
+        })
+        .catch(function(err) {
+          data.history = [];
+          reject(err);
+        });
+      });
     },
 
     loadData = function(refresh) {
@@ -112,6 +245,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             BMA.currency.parameters()
               .then(function(json){
                 data.currency = json.currency;
+                data.sigQty = json.sigQty;
               }),
 
             // Get the UD informations
@@ -127,59 +261,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }),
 
             // Get sources
-            BMA.tx.sources({pubkey: data.pubkey})
-              .then(function(res){
-                data.sources = res.sources; 
-
-                var balance = 0;
-                if (res.sources.length) {
-                  for (var i=0; i<res.sources.length; i++) {
-                    balance += res.sources[i].amount;
-                    res.sources[i].consumed = false;
-                  }
-                }
-                data.balance = balance;
-              }),
+            loadSources(false),
 
             // Get requirements
-            BMA.wot.requirements({pubkey: data.pubkey})
-              .then(function(res){
-                if (res.identities != "undefined"
-                    && res.identities != null
-                    && res.identities.length == 1) {
-                  data.requirements = res.identities[0];
-                  data.uid = res.identities[0].uid;
-                }
-              })
-              .catch(function(err) {
-                data.requirements = null;
-              }),
+            loadRequirements(),
 
             // Get transactions
-            BMA.tx.history.all({pubkey: data.pubkey})
-              .then(function(res){
-                var list = reduceTx(res.history.sent);
-                list.push(reduceTx(res.history.received));
-                list.push(reduceTx(res.history.sending));
-                list.push(reduceTx(res.history.receiving));
-                list.push(reduceTx(res.history.pending));
-
-                var history = [];
-                list.forEach(function(tx){
-                  history['T:'+ tx.block_number + tx.hash] = tx;
-                });
-                var result = [];
-                _.keys(history).forEach(function(key) {
-                    result.push(history[key]);
-                })
-                data.history = result.sort(function(tx1, tx2) {
-                     return tx2.time - tx1.time;
-                   });
-              })
+            loadTransactions()
           ])
           .then(function() {
             data.loaded = true;
-            resolve(data);            
+            resolve(data);
           })
           .catch(function(err) {
             data.loaded = false;
@@ -205,54 +297,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }),
 
             // Get requirements
-            BMA.wot.requirements({pubkey: data.pubkey})
-              .then(function(res){
-                if (res.identities != "undefined"
-                    && res.identities != null
-                    && res.identities.length == 1) {
-                  data.requirements = res.identities[0];
-                  data.uid = res.identities[0].uid;
-                }
-                else {
-                  data.requirements = null;
-                }
-              })
-              .catch(function(err) {
-                data.requirements = null;
-              }),
+            loadRequirements(),
 
             // Get sources
-            BMA.tx.sources({pubkey: data.pubkey})
-              .then(function(res){
+            loadSources(true),
 
-                var balance = 0;
-                if (res.sources.length) {
-                  for (var i=0; i<res.sources.length; i++) {
-                    res.sources[i].consumed = false;
-                    if (data.sources.length) {
-                      for (var j=0; j<data.sources.length; j++) {
-                        if (isSourceEquals(res.sources[i], data.sources[j])
-                          && data.sources[j].consumed){
-                          res.sources[i].consumed = true;
-                          break;
-                        }
-                      }
-                    }
-                    if (!res.sources[i].consumed){
-                      balance += res.sources[i].amount;
-                    }
-                  }
-                  data.sources = res.sources;
-                }                
-                data.balance = balance;
-              })
+            // Get transactions
+            loadTransactions()
           ])
           .then(function() {
             resolve(data);
-          })
-          .catch(function(err) {
-            reject(err);
-          });
+          }).catch(function(err){reject(err);});
         });
     },
 
@@ -265,7 +320,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             if (!isLogin()){
               reject('Wallet required to be login first.'); return;
             }
-            if (amount == null) {
+            if (!amount) {
               reject('amount must not be null'); return;
             }
             amount = Math.round(amount);
@@ -276,21 +331,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               reject('Not enought credit'); return;
             }
 
-            var tx = "Version: 1\n"
-              + "Type: Transaction\n"
-              + "Currency: " + data.currency + "\n"
-              + "Issuers:\n"
-              + data.pubkey + "\n"
-              + "Inputs:\n";
-            var sourceAmount = 0; 
+            var tx = "Version: 2\n";
+            tx += "Type: Transaction\n";
+            tx += "Currency: " + data.currency + "\n";
+            tx += "Locktime: 0" + "\n"; // no lock
+            tx += "Issuers:\n";
+            tx += data.pubkey + "\n";
+            tx += "Inputs:\n";
+            var sourceAmount = 0;
+            var outputBase = 0;
             var inputs = [];
-            for (var i = 0; i<data.sources.length; i++) {
+            var i;
+            for (i = 0; i<data.sources.length; i++) {
               var input = data.sources[i];
-              if (input.consumed == "undefined" || !input.consumed){
-                // INDEX:SOURCE:NUMBER:FINGERPRINT:AMOUNT
-                tx += "0:"+input.type+":"+ input.number+":"
-                   + input.fingerprint+":"
-                   + input.amount+"\n";
+              if (!input.consumed){
+                // if D : D:PUBLIC_KEY:BLOCK_ID
+                // if T : T:T_HASH:T_INDEX
+                tx += input.type +":"+input.identifier+":"+input.noffset+"\n";
                 sourceAmount += input.amount;
                 inputs.push(input);
                 if (sourceAmount >= amount) {
@@ -300,89 +357,114 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             }
 
             if (sourceAmount < amount) {
-              reject('Not enought sources (max amount: '
-                +(data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount)
-                +'). Please wait next block computation.'); 
+              if (sourceAmount === 0) {
+                reject('ERROR.ALL_SOURCES_USED');
+              }
+              else {
+                console.error('Maximum transaction sources has been reached: ' + (data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount));
+                reject('ERROR.NOT_ENOUGH_SOURCES');
+              }
               return;
             }
 
-            tx += "Outputs:\n"
-               // ISSUERS:AMOUNT
-               + destPub +":" + amount + "\n"; 
-            if (sourceAmount > amount) {
-              tx += data.pubkey+":"+(sourceAmount-amount)+"\n";
+            tx += 'Unlocks:\n';
+            for (i=0; i<inputs.length; i++) {
+                 // INPUT_INDEX:UNLOCK_CONDITION
+                tx += i + ':SIG(0)\n';
             }
 
-            tx += "Comment: "+ (comments!=null?comments:"") + "\n";
+            tx += 'Outputs:\n';
+            // AMOUNT:BASE:CONDITIONS
+            tx += amount + ':'+outputBase+':SIG('+destPub+')\n';
+            if (sourceAmount > amount) {
+              tx += (sourceAmount-amount)+':'+outputBase+':SIG('+data.pubkey+')\n';
+            }
 
-
+            tx += "Comment: "+ (!!comments?comments:"") + "\n";
 
             CryptoUtils.sign(tx, data.keypair)
-              .then(function(signature) {
-                var signedTx = tx + signature + "\n";
-                BMA.tx.process({transaction: signedTx})
-                  .then(function(result) {
-                    data.balance -= amount;
-                    for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
-                    resolve(result);
-                  })
-                  .catch(function(err){
-                    reject(err);
-                  });
-              })
-              .catch(function(err){
-                reject(err);
-              });
+            .then(function(signature) {
+              var signedTx = tx + signature + "\n";
+              BMA.tx.process({transaction: signedTx})
+              .then(function(result) {
+                data.balance -= amount;
+                for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
+                resolve(result);
+              }).catch(function(err){reject(err);});
+            }).catch(function(err){reject(err);});
         });
     },
 
     /**
-    * Send self certification
+    * Send self identity
     */
-    self = function(uid) {
+    self = function(uid, requirements) {
       return $q(function(resolve, reject) {
 
         BMA.blockchain.current()
         .then(function(block) {
-          // Create the self part to sign
-          var self = 'UID:' + uid + '\n'
-                   + 'META:TS:' + (block.time+1) + '\n';
+          // Create identity to sign
+          var identity = 'Version: 2\n' +
+                    'Type: Identity\n' +
+                    'Currency: ' + data.currency + '\n' +
+                    'Issuer: ' + data.pubkey + '\n' +
+                    'UniqueID: ' + uid + '\n' +
+                    'Timestamp: ' + block.number + '-' + block.hash + '\n';
 
-          CryptoUtils.sign(self, data.keypair)
+          CryptoUtils.sign(identity, data.keypair)
           .then(function(signature) {
-            var signedSelf = self + signature + '\n';
-            // Send self
-            BMA.wot.add({pubkey: data.pubkey, self: signedSelf, other: ''})
+            var signedIdentity = identity + signature + '\n';
+            // Send signed identity
+            BMA.wot.add({identity: signedIdentity})
             .then(function(result) {
-              // Check requirements
-              BMA.wot.requirements({pubkey: data.pubkey})
-              .then(function(res){
-                if (res.identities != "undefined"
-                    && res.identities != null
-                    && res.identities.length == 1) {
-                  data.requirements = res.identities[0];
-                  data.uid = uid;
+              if (!!requirements) {
+              // Refresh membership data
+                loadRequirements()
+                .then(function() {
                   resolve();
-                }
-                else{
-                  reject();
-                }
-              })
-              .catch(function(err) {
-                reject();
-              })
-            })
-            .catch(function(err){
-              reject(err);
-            });
-          })
-          .catch(function(err){
-            reject(err);
-          });
-        })
-        .catch(function(err) {
-          reject(err);
-        });
+                }).catch(function(err){reject(err);});
+              }
+              else {
+                data.blockUid = block.number + '-' + block.hash;
+                resolve();
+              }
+            }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
+        }).catch(function(err){reject(err);});
+      });
+    },
+
+   /**
+    * Send membership (in)
+    */
+    membership = function(sideIn) {
+      return $q(function(resolve, reject) {
+        BMA.blockchain.current()
+        .then(function(block) {
+          // Create membership to sign
+           var membership = 'Version: 2\n' +
+                   'Type: Membership\n' +
+                   'Currency: ' + data.currency + '\n' +
+                   'Issuer: ' + data.pubkey + '\n' +
+                   'Block: ' + block.number + '-' + block.hash + '\n' +
+                   'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n' +
+                   'UserID: ' + data.uid + '\n' +
+                   'CertTS: ' + data.blockUid + '\n';
+
+          CryptoUtils.sign(membership, data.keypair)
+          .then(function(signature) {
+            var signedMembership = membership + signature + '\n';
+            // Send signed membership
+            BMA.blockchain.membership({membership: signedMembership})
+            .then(function(result) {
+              // Refresh membership data
+              loadRequirements()
+              .then(function() {
+                resolve();
+              }).catch(function(err){reject(err);});
+            }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
+        }).catch(function(err){reject(err);});
       });
     },
 
@@ -395,34 +477,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         BMA.blockchain.current()
         .then(function(block) {
           // Create the self part to sign
-          var self = 'UID:' + uid + '\n'
-                   + 'META:TS:' + timestamp + '\n'
-                   + signature /*+"\n"*/;
+          var self = 'UID:' + uid + '\n' +
+                   'META:TS:' + timestamp + '\n' +
+                   signature /*+"\n"*/;
 
-          var cert = self + '\n'
-                + 'META:TS:' + block.number + '-' + block.hash + '\n';
+          var cert = self + '\n' +
+                'META:TS:' + block.number + '-' + block.hash + '\n';
 
           CryptoUtils.sign(cert, data.keypair)
           .then(function(signature) {
-            var inlineCert = data.pubkey
-              + ':' + pubkey
-              + ':' + block.number
-              + ':' + signature + '\n';
+            var inlineCert = data.pubkey +
+                ':' + pubkey +
+                ':' + block.number +
+                ':' + signature + '\n';
             BMA.wot.add({pubkey: pubkey, self: self, other: inlineCert})
               .then(function(result) {
                 resolve(result);
-              })
-              .catch(function(err){
-                reject(err);
-              });
-          })
-          .catch(function(err){
-            reject(err);
-          });
-        })
-        .catch(function(err) {
-          reject(err);
-        });
+              }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
+        }).catch(function(err){reject(err);});
       });
     },
 
@@ -431,9 +504,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     */
     toJson = function() {
       return $q(function(resolve, reject) {
-          var json = JSON.stringify(data);
-          resolve(json);
-        })
+        var json = JSON.stringify(data);
+        resolve(json);
+      });
     },
 
     /**
@@ -441,50 +514,52 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     */
     fromJson = function(json) {
       return $q(function(resolve, reject) {
-          var obj = JSON.parse(json || '{}');
-          if (obj.keypair != "undefined"
-              && obj.keypair != null) {
-              var keypair = obj.keypair;
+        var obj = JSON.parse(json || '{}');
+        if (obj.keypair) {
+          var keypair = obj.keypair;
+          var i;
 
-              // Convert to Uint8Array type
-              var signPk = new Uint8Array(32);
-              for (var i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
-              keypair.signPk = signPk;
+          // Convert to Uint8Array type
+          var signPk = new Uint8Array(32);
+          for (i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
+          keypair.signPk = signPk;
 
-              var signSk = new Uint8Array(64);
-              for (var i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
-              keypair.signSk = signSk;
+          var signSk = new Uint8Array(64);
+          for (i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
+          keypair.signSk = signSk;
 
-              data.pubkey = obj.pubkey;
-              data.keypair = keypair;
+          data.pubkey = obj.pubkey;
+          data.keypair = keypair;
 
-              resolve();
-          }
-          else {
-            reject('Not a valid Wallet.data object');
-          }
-        })
+          resolve();
+        }
+        else {
+          reject('Not a valid Wallet.data object');
+        }
+      });
     };
 
     return {
-        id: id,
-        data: data,
-        // auth
-        login: login,
-        logout: logout,
-        isLogin: isLogin,
-        getData: getData,
-        loadData: loadData,
-        refreshData: refreshData,
-        // operations
-        transfer: transfer,
-        self: self,
-        sign: sign,
-        // serialization
-        toJson: toJson,
-        fromJson: fromJson
-    }
-  }
+      id: id,
+      data: data,
+      // auth
+      login: login,
+      logout: logout,
+      isLogin: isLogin,
+      getData: getData,
+      loadData: loadData,
+      refreshData: refreshData,
+      // operations
+      transfer: transfer,
+      self: self,
+      membership: membership,
+      sign: sign,
+      // serialization
+      toJson: toJson,
+      fromJson: fromJson
+    };
+  };
+
   var service = Wallet('default');
   service.instance = service;
   return service;

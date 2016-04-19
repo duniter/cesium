@@ -4,36 +4,49 @@
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SHOW": "Show",
+    "BTN_SHOW_PUBKEY": "Show key",
     "BTN_RELATIVE_UNIT": "Use relative unit",
     "BTN_BACK": " Back",
     "BTN_CANCEL": "Cancel",
-    "BTN_LOGIN": "Login",
+    "BTN_LOGIN": "Sign In",
     "BTN_LOGOUT": " Logout",
-    "BTN_ADD_ACCOUNT": "Register"
+    "BTN_ADD_ACCOUNT": "New Account",
+    "NO_ACCOUNT_QUESTION": "No a member ? Register now !",
+    "SEARCH_NO_RESULT": "No result found",
+    "LOADING": "Loading...",
+    "FROM": "From",
+    "TO": "To",
+    "COPY": "Copy"
+  },
+  "SYSTEM": {
+    "PICTURE_CHOOSE_TYPE": "Choose picture source :",
+    "BTN_PICTURE_GALLERY": "Gallery",
+    "BTN_PICTURE_CAMERA": "<b>Camera</b>"
   },
   "MENU": {
-    "TITLE": "Cesium",
+    "TITLE": "Duniter",
     "HOME": "Home",
     "REGISTRY": "Registry",
     "MARKET": "Market place",
-    "CURRENCIES": "Expore currencies",
-    "ACCOUNT": "My Account"
+    "CURRENCIES": "Currencies",
+    "ACCOUNT": "My Account",
+    "SETTINGS": "Settings"
   },
   "HOME": {
-    "TITLE": "Home",
-    "WELCOME": "Welcome",
-    "MESSAGE": "<b>Cesium</b> is still in development phase. There is not much to see right now. :-)",
+    "TITLE": "Duniter",
+    "WELCOME": "Duniter",
+    "MESSAGE": "Welcome to Cesium App for Duniter !<br/>See your Duniter wallets in real time.",
     "BTN_REGISTRY": "Registry",
     "BTN_MARKET": "Market place",
     "BTN_CURRENCIES": "Explore currencies"
   },
   "CURRENCY": {
     "SELECT": {
-      "TITLE": "Explore",
+      "TITLE": "Currencies",
       "CURRENCIES": "Known currencies"
     },
     "VIEW": {
-      "TITLE": "Explore",
+      "TITLE": "Currency",
       "TAB_CURRENCY": "Currency",
       "TAB_WOT": "Community",
       "TAB_NETWORK": "Network",
@@ -59,6 +72,10 @@
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
+    "REGISTERED_SINCE": "Registered since ",
+    "REGISTERED_SINCE_BLOCK": "Registered since block #",
+    "BTN_SEND_MONEY": "Send money",
+    "BTN_CERTIFY": "Certify",
     "MODAL": {
       "TITLE": "Search"
     }
@@ -72,12 +89,18 @@
   },
   "ACCOUNT": {
     "TITLE": "My Account",
+    "MENU_TITLE": "Wallet actions",
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
+    "NO_TX": "No transaction",
     "BTN_SEND_MONEY": "Send money",
-    "BTN_REGISTER": "Register as member",
+    "BTN_MEMBERSHIP_IN": "Register as member",
+    "BTN_MEMBERSHIP_RENEW": "Renew membership",
+    "BTN_MEMBERSHIP_OUT": "Revoke membership",
+    "BTN_SEND_IDENTITY": "Publish pseudonym (without register)",
     "NEW": {
-      "TITLE": "Register",
+      "TITLE": "New Account",
+      "SLIDE_1_TITLE": "Select a money:",
       "SLIDE_2_TITLE": "Kind of account:",
       "MEMBER_ACCOUNT": "Member account",
       "WALLET_ACCOUNT": "Simple wallet account",
@@ -85,7 +108,7 @@
       "PSEUDO_HELP": "joe123",
       "PASSWORD_CONFIRM": "Confirm Password",
       "PASSWORD_CONFIRM_HELP": "Confirm Password",
-      "MSG_UID_ALREADY_USED": "This pseudonym is alreadey used by an existing member.<br/>Please choose another one."
+      "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one."
     },
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
@@ -98,10 +121,44 @@
     "TO": "To",
     "AMOUNT": "Amount",
     "AMOUNT_HELP": "Amount",
-    "COMMENTS": "Comments",
-    "COMMENTS_HELP": "Comments"
+    "COMMENTS": "Reference",
+    "COMMENTS_HELP": "Reference (optional)",
+    "BTN_SEND": "Send",
+    "BTN_RELATIVE_UNIT": "Amount in relative unit ?",
+    "MODAL": {
+      "TITLE": "Transfer"
+    }
+  },
+  "ERROR": {
+    "POPUP_TITLE": "Error",
+    "UNKNOWN_ERROR": "Unknown error",
+    "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
+    "FIELD_REQUIRED": "This field is required.",
+    "FIELD_TOO_SHORT": "This field is too short.",
+    "PASSWORD_NOT_CONFIRMED": "Must match previous password",
+    "SEND_IDENTITY_FAILED": "Error while trying to register",
+    "SEND_CERTIFICATION_FAILED": "Could not certify identity",
+    "LOGIN_FAILED": "Error while sign in",
+    "LOAD_IDENTITY_FAILED": "Could not load identity",
+    "SEND_MEMBERSHIP_IN_FAILED": "Error while registering as member",
+    "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out",
+    "REFRESH_WALLET_DATA": "Could not refresh wallet",
+    "GET_CURRENCY_PARAMETER": "Could not get currency parameters",
+    "GET_CURRENCIES_FAILED": "Could not load currencies",
+    "GET_CURRENCY_FAILED": "Could not load currency",
+    "SEND_TX_FAILED": "Could not send transaction",
+    "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
+    "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
+    "ACCOUNT_CREATION_FAILED": "Error while creating your member account",
+    "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data",
+    "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
+    "TAKE_PICTURE_FAILED": "Could not get picture",
+    "SCAN_FAILED": "Could not scan QR code"
   },
   "INFO": {
-    "POPUP_TITLE": "Information"
+    "POPUP_TITLE": "Information",
+    "CERTIFICATION_DONE": "Identity successfully signed",
+    "NOT_ENOUGH_CREDIT": "Not enough credit.",
+    "TRANSFER_SENT": "Transaction successfully sent."
   }
 }

@@ -15,9 +15,212 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
 
+//$royal:                           #030055 !default;
+//$assertive:                       #ff7a00 !default;
+//$balanced:                        #33cd5f !default;
+
+//$dark:                              #030055 !default; // bleu foncé uCoin App
+//$assertive:                       #94c11f !default;
+//$balanced:                        #94c11f !default;
+
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
+// Add robotodraft fonts (need for ionic material)
+$RobotoDraftFontPath: "../lib/ionic/fonts/robotdraft";
+$RobotoDraftFontName: "RobotoDraft";
+$RobotoDraftFontVersion: "1.1.0";
+
+@import "www/lib/robotodraft/sass/robotodraft";
+
+// Include all of Ionic-Material
+@import "www/lib/ionic-material/src/scss/index";
+
+
+// --------------------------------------------------
+// Responsive: Utility classes
+// --------------------------------------------------
+$screen-xs-max:                   747px;
+$screen-sm:                       748px;
+$screen-sm-max:                   991px;
+$screen-md:                       992px;
+$screen-md-max:                   1199px;
+$screen-lg:                       1200px;
+// IE10 on Windows Phone 8
+// IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
+// other words, say on a Lumia, you'll get 768px as the device width,
+// meaning users will see the tablet styles and not phone styles.
+//
+// Alternatively you can override this with JS (see source below), but
+// we won't be doing that here given our limited scope.
+//
+// Source: http://timkadlec.com/2013/01/windows-phone-8-and-device-width/
+//
+// >>Autre doc http://getbootstrap.com/css/#responsive-utilities-classes
+//
+@media screen and (max-width: 400px) {
+  @-ms-viewport{
+    width: 320px;
+  }
+}
+
+// Extra small device: Phones (<747px)
+@media screen and (max-width: $screen-xs-max) {
+    .hidden-xs {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .hidden-xs {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .visible-xs {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .visible-xs {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .no-padding-xs {
+        padding: 0px !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .no-padding-xs {
+        padding: inherited;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .no-margin-xs {
+        margin: 0px !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .no-margin-xs {
+        margin: inherited;
+    }
+}
+// Small devices: Tablets (≥768px)
+@media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
+    .hidden-sm {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (min-width: $screen-md) {
+    .hidden-sm {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .hidden-sm {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-sm-max) {
+    .visible-sm {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (min-width: $screen-md) {
+    .visible-sm {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .visible-sm {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-sm-max) {
+  body {
+      cursor: url('http://ionicframework.com/img/finger.png'), auto;
+  }
+}
+@media screen and (min-width: $screen-md) {
+  body {
+      cursor: inherit;
+  }
+}
+
+// Medium devices: Desktops (≥992px)
+@media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
+    .hidden-md {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (min-width: $screen-lg) {
+    .hidden-md {
+        display: inherit;
+        visibility: visible;
+    }
+}
+@media screen and (max-width: $screen-sm-max) {
+    .hidden-md {
+        display: inherit;
+        visibility: visible;
+    }
+}
+@media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
+    .visible-md {
+        display: inherit;
+        visibility: visible !important;
+    }
+}
+@media screen and (min-width: $screen-lg) {
+    .visible-md {
+        display: none;
+        visibility: hidden;
+    }
+}
+@media screen and (max-width: $screen-sm-max) {
+    .visible-md {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+
+// Large devices: Desktops (≥1200px)
+@media screen and (min-width: $screen-lg) {
+    .hidden-lg {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-md-max) {
+    .hidden-lg {
+        display: inherited;
+        visibility: visible;
+    }
+}
+@media screen and (min-width: $screen-lg) {
+    .visible-lg {
+        display: inherited;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-md-max) {
+    .visible-lg {
+        display: none;
+        visibility: hidden;
+    }
+}

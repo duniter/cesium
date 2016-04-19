@@ -1,0 +1,32 @@
+<ion-view view-title="{{'HOME.TITLE'|translate}}">
+  <!--<ion-nav-title>
+    <img src="img/logo.png">
+  </ion-nav-title>-->
+
+  <ion-content class="has-header center padding positive-900-bg" id="home">
+
+        <!--img class="center" src="img/lesou-120px.png"/-->
+        <h2 translate>HOME.WELCOME</h2>
+        <h4 translate>HOME.MESSAGE</h4>
+
+      <div class="row no-padding">
+        <div class="col-25 hidden-xs hidden-sm">&nbsp;
+        </div>
+        <div class="col">
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
+                  ui-sref="app.currency_lookup" translate>HOME.BTN_CURRENCIES</button>
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-locked ink-dark"
+                  ng-click="login()" ng-show="!isLogged()" translate>COMMON.BTN_LOGIN</button>
+          <button type="button"
+                  class="button button-block button-light ink button-clear"
+                  ng-click="newAccount()" ng-show="!isLogged()" translate>COMMON.BTN_ADD_ACCOUNT</button>
+        </div>
+        <div class="col-25 hidden-xs hidden-sm">&nbsp;
+        </div>
+      </div>
+
+    </ion-content>
+
+</ion-view>

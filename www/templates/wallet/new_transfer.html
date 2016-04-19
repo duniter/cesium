@@ -1,0 +1,14 @@
+<ion-view view-title="{{'TRANSFER.TITLE' | translate}}" left-buttons="leftButtons">
+  <ion-nav-buttons side="secondary">
+      <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doTransfer()">
+      </button>
+  </ion-nav-buttons>
+
+  <ion-content class="no-padding-xs">
+    <div class="scroll">
+      <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>
+
+      <div class="scroll-bar scroll-bar-v"></div>
+    </div>
+  </ion-content>
+</ion-view>

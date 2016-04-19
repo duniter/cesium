@@ -69,7 +69,7 @@ angular.module('cesium.crypto.services', ['ngResource'])
                 "N":4096,
                 "r":16,
                 "p":1
-              }
+              },
 
         // load libraries
         scrypt = async_load_scrypt(),
@@ -87,7 +87,8 @@ angular.module('cesium.crypto.services', ['ngResource'])
 
         hash_sha256 = function(s) {
           return $q(function(resolve, reject) {
-            var hash = nacl.crypto_hash_sha256(s);
+            var hash = CryptoJS.SHA256(s);
+            //var hash = nacl.crypto_hash_sha256(s);
             resolve(hash);
           });
         },
@@ -104,7 +105,7 @@ angular.module('cesium.crypto.services', ['ngResource'])
                                            );
                    var keypair = nacl.crypto_sign_keypair_from_seed(seed);
                    resolve(keypair);
-                })
+                });
           },
 
         /**
@@ -139,10 +140,8 @@ angular.module('cesium.crypto.services', ['ngResource'])
               for (var i = 0; i < sig.length; i++) sig[i] = signedMsg[i];
               var signature = base64.encode(sig);
               resolve(signature);
-            })
-        }
-
-        ;
+            });
+        };
 
       // Service's exposed methods
       return {
@@ -162,8 +161,9 @@ angular.module('cesium.crypto.services', ['ngResource'])
           sign: sign,
           verify: verify
           //,isCompatible: isCompatible
-       }
+       };
     }
+
     var service = CryptoUtils();
     service.instance = CryptoUtils;
   return service;

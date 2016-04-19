@@ -1,0 +1,27 @@
+<ion-view view-title="{{'CURRENCY.VIEW.TITLE' | translate}} {{id}}" left-buttons="leftButtons" class="pane">
+    <ion-nav-buttons side="secondary">
+        <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content>
+      <div class="scroll">
+        <div class="row">
+          </div>
+        </div>
+          <div class="row responsive-sm">
+              <div class="col col-50 ">
+                <ng-include src="'templates/currency/tabs/view_parameters.html'"></ng-include>
+              </div>
+              <div class="col col-50">
+                  <div class="item item-divider" translate>
+                    CURRENCY.VIEW.TAB_WOT
+                  </div>
+                  <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
+                  <ng-include src="'templates/currency/tabs/view_network.html'"></ng-include>
+              </div>
+          </div>
+        <div class="scroll-bar scroll-bar-v"></div>
+      </div>
+    </ion-content>
+</ion-view>
