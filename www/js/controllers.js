@@ -6,9 +6,7 @@ angular.module('cesium.controllers', [
     'cesium.currency.controllers',
     'cesium.wot.controllers',
     'cesium.transfer.controllers',
-    'cesium.settings.controllers',
-    'cesium.market.controllers',
-    'cesium.registry.controllers'
+    'cesium.settings.controllers'
   ])
 
   .config(function($httpProvider) {
