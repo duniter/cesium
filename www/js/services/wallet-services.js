@@ -88,17 +88,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           time= Math.floor(moment().utc().valueOf() / 1000);
         }
 
-        result.push({
-          time: time,
-          amount: amount,
-          issuer: otherIssuer,
-          receiver: otherReceiver,
-          comment: tx.comment,
-          isUD: false,
-          hash: tx.hash,
-          locktime: tx.locktime,
-          block_number: tx.block_number
-        });
+        // Avoid duplicated tx, oar tx to him self
+        var txKey = amount + ':' + tx.hash + ':' + time;
+        if (!processedTxMap[txKey] && amount !== 0) {
+          processedTxMap[txKey] = true;
+          result.push({
+            time: time,
+            amount: amount,
+            issuer: otherIssuer,
+            receiver: otherReceiver,
+            comment: tx.comment,
+            isUD: false,
+            hash: tx.hash,
+            locktime: tx.locktime,
+            block_number: tx.block_number
+          });
+        }
       });
     },
 
@@ -213,11 +218,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         BMA.tx.history.all({pubkey: data.pubkey})
         .then(function(res){
           var list = [];
-          reduceTxAndPush(res.history.sent, list);
-          reduceTxAndPush(res.history.received, list);
-          reduceTxAndPush(res.history.sending, list);
-          reduceTxAndPush(res.history.receiving, list);
-          reduceTxAndPush(res.history.pending, list);
+          var processedTxMap = {};
+          reduceTxAndPush(res.history.sent, list, processedTxMap);
+          reduceTxAndPush(res.history.received, list, processedTxMap);
+          reduceTxAndPush(res.history.sending, list, processedTxMap);
+          reduceTxAndPush(res.history.pending, list, processedTxMap);
 
           data.history = list.sort(function(tx1, tx2) {
              return tx2.time - tx1.time;

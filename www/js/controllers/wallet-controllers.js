@@ -21,7 +21,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
   ionicMaterialMotion, ionicMaterialInk,
-  UIUtils, Wallet, BMA, $translate, Registry) {
+  UIUtils, Wallet, BMA, $translate) {
 
   $scope.walletData = {};
   $scope.convertedBalance = 0;

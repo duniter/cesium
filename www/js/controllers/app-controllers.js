@@ -179,7 +179,7 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
 
 
 function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, System
+  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, System
   ) {
 
   $scope.knownCurrencies = null;
@@ -203,35 +203,18 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
         resolve($scope.knownCurrencies);
         return;
       }
-      if (!!Registry) {
-        Registry.currency.all()
-        .then(function (res) {
-          if (!!res.hits && res.hits.total > 0) {
-            $scope.knownCurrencies = res.hits.hits.reduce(function(res, hit) {
-              var peer = hit._source.peers.reduce(function(peers, peer){
-                return peers.concat(new Peer(peer));
-              }, [])[0];
-              return res.concat({id: hit._id, peer: peer.host+':'+peer.port});
-            }, []);
-          }
-          $scope.search.looking = false;
-          resolve($scope.knownCurrencies);
-        })
-        .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));
-      }
-      else  {
-        $scope.knownCurrencies = [];
-        BMA.currency.parameters()
-        .then(function(params) {
-          $scope.knownCurrencies.push({
-            id: params.currency,
-            peer: APP_CONFIG.UCOIN_NODE}
-          );
-          $scope.search.looking = false;
-          resolve($scope.knownCurrencies);
-        })
-        .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
-      }
+
+      $scope.knownCurrencies = [];
+      BMA.currency.parameters()
+      .then(function(params) {
+        $scope.knownCurrencies.push({
+          id: params.currency,
+          peer: APP_CONFIG.UCOIN_NODE}
+        );
+        $scope.search.looking = false;
+        resolve($scope.knownCurrencies);
+      })
+      .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
     });
   };
 

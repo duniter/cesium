@@ -27,7 +27,8 @@ To contribute and compile cesium, you will have to:
 ```
   git clone https://www.github.com/ucoin-io/cesium.git
   cd cesium
-  npm install
+  npm install --save
+  bower install
 ```
 
   - Compiling and running application   

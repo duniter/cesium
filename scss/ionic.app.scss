@@ -76,13 +76,13 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-sm) {
     .hidden-xs {
-        display: inherited;
-        visibility: visible !important;
+        display: inherit;
+        visibility: visible;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
     .visible-xs {
-        display: inherited;
+        display: inherit !important;
         visibility: visible !important;
     }
 }
@@ -99,7 +99,7 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-sm) {
     .no-padding-xs {
-        padding: inherited;
+        padding: inherit;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
@@ -109,7 +109,7 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-sm) {
     .no-margin-xs {
-        margin: inherited;
+        margin: inherit;
     }
 }
 // Small devices: Tablets (≥768px)
@@ -121,32 +121,32 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-md) {
     .hidden-sm {
-        display: inherited;
-        visibility: visible !important;
+        display: inherit;
+        visibility: visible;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
     .hidden-sm {
-        display: inherited;
-        visibility: visible !important;
+        display: inherit;
+        visibility: visible;
     }
 }
 @media screen and (max-width: $screen-sm-max) {
     .visible-sm {
-        display: inherited;
+        display: inherit !important;
         visibility: visible !important;
     }
 }
 @media screen and (min-width: $screen-md) {
     .visible-sm {
-        display: none !important;
-        visibility: hidden !important;
+        display: none;
+        visibility: hidden;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
     .visible-sm {
-        display: none !important;
-        visibility: hidden !important;
+        display: none;
+        visibility: hidden;
     }
 }
 @media screen and (max-width: $screen-sm-max) {
@@ -181,7 +181,7 @@ $screen-lg:                       1200px;
 }
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
     .visible-md {
-        display: inherit;
+        display: inherit !important;
         visibility: visible !important;
     }
 }
@@ -208,13 +208,13 @@ $screen-lg:                       1200px;
 }
 @media screen and (max-width: $screen-md-max) {
     .hidden-lg {
-        display: inherited;
+        display: inherit;
         visibility: visible;
     }
 }
 @media screen and (min-width: $screen-lg) {
     .visible-lg {
-        display: inherited;
+        display: inherit !important;
         visibility: visible !important;
     }
 }

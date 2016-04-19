@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "A webapp client for uCoin network",
   "dependencies": {
+    "bower": "^1.7.9",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.2.0",
     "gulp-minify-css": "^0.3.0",

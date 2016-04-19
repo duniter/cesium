@@ -53,20 +53,21 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, Registry, ionicMaterialInk) {
+function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, ionicMaterialInk) {
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
-  $scope.search.looking = true;
+  $scope.search.looking = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    $scope.search.looking = true;
     $scope.loadCurrencies()
     .then(function (res) {
       $scope.knownCurrencies = res;
-      $scope.search.looking = false;
       if (!!res && res.length == 1) {
         $scope.selectedCurrency = res[0].id;
       }
+      $scope.search.looking = false;
       // Set Ink
       ionicMaterialInk.displayEffect({selector: 'a.item'});
     });
@@ -84,7 +85,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
   };
 }
 
-function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Registry) {
+function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout) {
 
   var USE_RELATIVE_DEFAULT = true;
 
@@ -125,31 +126,13 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
   $scope.load = function(id) {
     $scope.closeNode();
 
-    if (!!Registry) {
-      Registry.currency.get({ id: id })
-      .then(function(currency) {
-        if (!!currency.peers && currency.peers.length > 0) {
-          var peer = currency.peers.reduce(function (peers, peer){
-            return peers.concat(peer.host + ':' + peer.port);
-          }, [])[0];
-          $scope.node = BMA.instance(peer);
-        }
-        else {
-          $scope.node = BMA;
-        }
-        $scope.startListeningOnSocket();
-      })
-      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-    }
-    else {
-      $scope.node = BMA;
-      $scope.startListeningOnSocket();
-      $timeout(function() {
-        if ((!$scope.search.peers || $scope.search.peers.length === 0) && $scope.search.lookingForPeers){
-          $scope.updateExploreView();
-        }
-      }, 2000);
-    }
+    $scope.node = BMA;
+    $scope.startListeningOnSocket();
+    $timeout(function() {
+      if ((!$scope.search.peers || $scope.search.peers.length === 0) && $scope.search.lookingForPeers){
+        $scope.updateExploreView();
+      }
+    }, 2000);
   };
 
   $scope.startListeningOnSocket = function() {
