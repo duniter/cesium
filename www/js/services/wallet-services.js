@@ -50,7 +50,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.avatar = null;
     },
 
-    reduceTxAndPush = function(txArray, result) {
+    reduceTxAndPush = function(txArray, result, processedTxMap) {
       if (!txArray || txArray.length === 0) {
         return;
       }
