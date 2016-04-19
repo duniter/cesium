@@ -12764,12 +12764,12 @@ a {
 
 @media screen and (min-width: 748px) {
   .hidden-xs {
-    display: inherited;
-    visibility: visible !important; } }
+    display: inherit;
+    visibility: visible; } }
 
 @media screen and (max-width: 747px) {
   .visible-xs {
-    display: inherited;
+    display: inherit !important;
     visibility: visible !important; } }
 
 @media screen and (min-width: 748px) {
@@ -12783,7 +12783,7 @@ a {
 
 @media screen and (min-width: 748px) {
   .no-padding-xs {
-    padding: inherited; } }
+    padding: inherit; } }
 
 @media screen and (max-width: 747px) {
   .no-margin-xs {
@@ -12791,7 +12791,7 @@ a {
 
 @media screen and (min-width: 748px) {
   .no-margin-xs {
-    margin: inherited; } }
+    margin: inherit; } }
 
 @media screen and (max-width: 991px) and (min-width: 748px) {
   .hidden-sm {
@@ -12800,28 +12800,28 @@ a {
 
 @media screen and (min-width: 992px) {
   .hidden-sm {
-    display: inherited;
-    visibility: visible !important; } }
+    display: inherit;
+    visibility: visible; } }
 
 @media screen and (max-width: 747px) {
   .hidden-sm {
-    display: inherited;
-    visibility: visible !important; } }
+    display: inherit;
+    visibility: visible; } }
 
 @media screen and (max-width: 991px) {
   .visible-sm {
-    display: inherited;
+    display: inherit !important;
     visibility: visible !important; } }
 
 @media screen and (min-width: 992px) {
   .visible-sm {
-    display: none !important;
-    visibility: hidden !important; } }
+    display: none;
+    visibility: hidden; } }
 
 @media screen and (max-width: 747px) {
   .visible-sm {
-    display: none !important;
-    visibility: hidden !important; } }
+    display: none;
+    visibility: hidden; } }
 
 @media screen and (max-width: 991px) {
   body {
@@ -12848,7 +12848,7 @@ a {
 
 @media screen and (min-width: 992px) and (max-width: 1199px) {
   .visible-md {
-    display: inherit;
+    display: inherit !important;
     visibility: visible !important; } }
 
 @media screen and (min-width: 1200px) {
@@ -12868,12 +12868,12 @@ a {
 
 @media screen and (max-width: 1199px) {
   .hidden-lg {
-    display: inherited;
+    display: inherit;
     visibility: visible; } }
 
 @media screen and (min-width: 1200px) {
   .visible-lg {
-    display: inherited;
+    display: inherit !important;
     visibility: visible !important; } }
 
 @media screen and (max-width: 1199px) {

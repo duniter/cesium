@@ -104,33 +104,6 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
       };
   })
 
-  .directive('transferModal', ['$ionicModal', function($ionicModal, UIUtils) {
-
-      return {
-          restrict: 'E',
-          scope: {
-              externalScope : "="
-          },
-          replace: true,
-          link: function($scope, $element, $attrs) {
-
-              $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
-                  scope: $scope.externalScope,
-                  focusFirstInput: true,
-                  controller: 'TransferModalCtrl'
-                }).then(function(modal) {
-                  $scope.modal = modal;
-                  $scope.modal.hide();
-                });
-
-              /*$scope.externalScope.openModal = function() {
-                  $scope.modal.show()
-              };*/
-
-          }
-      };
-  }])
-
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

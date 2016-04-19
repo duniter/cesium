@@ -26,20 +26,6 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   })
 
   .controller('AppCtrl', AppController)
-
-  //.controller('LoginCtrl', LoginController)
-
-//  .factory('AppModals', ['ModalService', function(ModalService){
-//    function showLogin(walletData){
-//      return ModalService.show('templates/login.html', 'LoginCtrl', walletData);
-//    }
-//
-//    // all app modals here
-//    return {
-//      showLogin: showLogin
-//    };
-//
-//  }])
 ;
 
 function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
@@ -213,10 +199,6 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
   LoginModalController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
   TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System);
-
-  ionic.Platform.ready(function() {
-    //System.init(navigator);
-  });
 
   ////////////////////////////////////////
   // Load currencies
