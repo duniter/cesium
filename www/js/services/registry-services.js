@@ -143,9 +143,10 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         });
       }
 
-      var postRecord = postResource('http://' + server + '/registry/record');
+      var addRecordRequest = postResource('http://' + server + '/registry/record');
+      var updateRecordRequest = postResource('http://' + server + '/registry/record/:id');
 
-      function addRecord(record, keypair) {
+      function sendRecord(record, keypair, postRequest, params) {
         return $q(function(resolve, reject) {
           var errorFct = function(err) {
             reject(err);
@@ -157,13 +158,14 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
           var str = JSON.stringify(obj);
 
-          CryptoUtils.util.hash_sha256(str)
-          .then(function(hash_array) {
+          CryptoUtils.util.hash(str)
+          .then(function(hash) {
             CryptoUtils.sign(str, keypair)
             .then(function(signature) {
-              obj.hash = CryptoUtils.util.encode_base58(hash_array);
+              obj.hash = hash;
               obj.signature = signature;
-              postRecord(obj).then(function (id){
+              postRequest(obj, params)
+              .then(function (id){
                 resolve(id);
               })
               .catch(errorFct);
@@ -173,6 +175,54 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           .catch(errorFct);
         });
       }
+
+      function addRecord(record, keypair) {
+        return sendRecord(record, keypair, addRecordRequest)
+      };
+
+      function updateRecord(record, params, keypair) {
+        return sendRecord(record, keypair, updateRecordRequest, params);
+      };
+
+      var postAvatar = postResource('http://' + server + '/registry/record/_search');
+
+      function getAvatar(pubkey) {
+        return $q(function(resolve, reject) {
+          var errorFct = function(err) {
+            reject(err);
+          };
+          var request = {
+                query: {
+                  bool: {
+                    should: [
+                      {match_phrase: {issuer: pubkey}},
+                      {match_phrase: {category: 'particulier'}}
+                    ]
+                  }
+                },
+                from: 0,
+                size: 1,
+                _source: ["pictures.src"]
+              };
+
+          postAvatar(request)
+          .then(function(res) {
+            var imageData;
+            if (res.hits.total > 0) {
+                imageData = res.hits.hits.reduce(function(res, hit) {
+                  return res.concat(hit._source.pictures.reduce(function(res, pic) {
+                    return res.concat(pic.src);
+                  }, [])[0]);
+                }, [])[0];
+              }
+              else {
+                imageData = null;
+              }
+              resolve(imageData);
+            })
+            .catch(errorFct);
+          });
+        }
 
       function emptyHit() {
         return {
@@ -199,10 +249,10 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         record: {
           get: getResource('http://' + server + '/registry/record/:id'),
           add: addRecord,
-          update: postResource('http://' + server + '/registry/record/:id'),
+          update: updateRecord,
           searchText: getResource('http://' + server + '/registry/record/_search?q=:search'),
           search: postResource('http://' + server + '/registry/record/_search?pretty'),
-          avatar: getResource('http://' + server + '/registry/record/_search?q=issuer::issuer+category::category&size=1&_source=pictures.src'),
+          avatar: getAvatar
         },
         currency: {
           all: getResource('http://' + server + '/currency/simple/_search?_source=currencyName,peers.host,peers.port'),

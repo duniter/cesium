@@ -149,37 +149,11 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
     $scope.doSearch();
   };
 
-  $scope.searchChanged = function() {
-    $scope.search.typing = $scope.search.text;
-    $scope.search.looking = true;
-    $timeout(
-      function() {
-        if ($scope.search.typing == $scope.search.text) {
-          $scope.search.typing = null;
-          if (!$scope.search.options) {
-            $scope.search.options = false;
-          }
-          $scope.doSearch();
-        }
-      },
-      1000);
-  };
-
-  $scope.searchLocationChanged = function() {
-    $scope.search.typing = $scope.search.location;
-    $scope.search.looking = true;
-    $timeout(
-      function() {
-        if ($scope.search.typing == $scope.search.location) {
-          $scope.search.typing = null;
-          $scope.doSearch();
-        }
-      },
-      1000);
-  };
-
   $scope.doSearch = function() {
     $scope.search.looking = true;
+    if (!$scope.search.options) {
+      $scope.search.options = false;
+    }
 
     var request = {
       query: {},
@@ -191,24 +165,31 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
       },
       from: 0,
       size: 20,
-      _source: ["title", "description", "time", "location", "pictures", "issuer", "isCompany", "category"]
+      _source: ["title", "description", "time", "location", "pictures", "issuer", "category"]
     };
     var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
     var filters = [];
     if (text.length > 1) {
-      matches.push({match : { title: text}});
-      matches.push({match : { description: text}});
-      matches.push({prefix : { issuer: text}});
-      if (!$scope.search.options) {
-        matches.push({match: { location: text}});
-      }
+      var matchFields = ["title", "description", "issuer", "location"];
+      matches.push({multi_match : { query: text,
+        fields: matchFields,
+        type: "phrase_prefix"
+      }});
+//      matches.push({match : { title: text}});
+//      matches.push({match : { description: text}});
+//      matches.push({prefix : { issuer: text}});
+//      if (!$scope.search.options) { // search on location only if not set
+//        matchFields.push("location");
+//      }
     }
     if ($scope.search.options && $scope.search.category) {
-      filters.push({term: { category: $scope.search.category.id}});
+      matches.push({term: { category: $scope.search.category.id}});
+      //filters.push({term: { category: $scope.search.category.id}});
     }
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
-      filters.push({match_phrase: { location: $scope.search.location}});
+      //filters.push({match_phrase: { location: $scope.search.location}});
+      matches.push({match_phrase: { location: $scope.search.location}});
     }
 
     if (matches.length === 0 && filters.length === 0) {
@@ -260,7 +241,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
                 UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
                 });
-              }, 100);
+              }, 10);
 
               // Set Ink
               UIUtils.ink();

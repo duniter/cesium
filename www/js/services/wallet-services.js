@@ -244,14 +244,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           resolve();
           return;
         }
-        Registry.record.avatar({issuer:data.pubkey, category:'particulier'})
-          .then(function(res) {
-            if (res.hits.total > 0) {
-              data.avatar = res.hits.hits.reduce(function(res, hit) {
-                return res.concat(hit._source.pictures.reduce(function(res, pic) {
-                  return res.concat(pic.src);
-                }, [])[0]);
-              }, [])[0];
+        Registry.record.avatar(data.pubkey)
+          .then(function(imageData) {
+            if (imageData) {
+              data.avatar = imageData;
             }
             else {
               data.avatar = null;

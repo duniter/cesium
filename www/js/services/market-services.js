@@ -154,6 +154,9 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
           var errorFct = function(err) {
             reject(err);
           };
+          var query = {};
+
+
           var obj = {};
           angular.copy(record, obj);
           delete obj.signature;
@@ -161,13 +164,14 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
           obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
           var str = JSON.stringify(obj);
 
-          CryptoUtils.util.hash_sha256(str)
-          .then(function(hash_array) {
+          CryptoUtils.util.hash(str)
+          .then(function(hash) {
             CryptoUtils.sign(str, keypair)
             .then(function(signature) {
-              obj.hash = CryptoUtils.util.encode_base58(hash_array);
+              obj.hash = hash;
               obj.signature = signature;
-              postRecord(obj).then(function (id){
+              postRecord(obj)
+              .then(function (id){
                 resolve(id);
               })
               .catch(errorFct);

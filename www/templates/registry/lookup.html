@@ -5,12 +5,13 @@
     </ion-nav-buttons>
 
     <ion-content class="lookupForm padding no-padding-xs">
+        <form ng-submit="doSearch()"/>
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
                    ng-model-options="{ debounce: 250 }"
-                   ng-change="searchChanged()" id="searchText">
+                   ng-change="doSearch()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.options != null">
@@ -33,7 +34,10 @@
             <span translate>REGISTRY.SEARCH.LOCATION</span>
             <div class="item-input-inset">
                 <label class="item-input-wrapper">
-                    <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}" ng-model="search.location" ng-change="searchChanged()"/>
+                    <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}"
+                           ng-model="search.location"
+                           ng-model-options="{ debounce: 250 }"
+                           ng-change="doSearch()"/>
                 </label>
             </div>
         </span>
@@ -46,8 +50,8 @@
           COMMON.SEARCH_NO_RESULT
         </label>
 
-        <div class="list animate-fade-slide-in-right" ng-if="search.options != null">
-
+        <div class="list animate-fade-slide-in-right"
+             ng-if="search.options != null && !search.looking">
 
             <a  ng-repeat="found in search.results"
                 class="item item-avatar "
