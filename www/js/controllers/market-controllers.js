@@ -4,7 +4,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
     $stateProvider
 
     .state('app.market_lookup', {
-      url: "/market",
+      url: "/market?q",
       views: {
         'menuContent': {
           templateUrl: "templates/market/lookup.html",
@@ -81,6 +81,7 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
       $scope.categories.search.text = '';
       $scope.categories.search.results = categories;
       $scope.categories.all = categories;
+      UIUtils.ink();
       $scope.categoryModal.show();
     });
   };
@@ -128,11 +129,16 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
     results: {},
     category: null,
     location: null,
-    options: null,
-    typing: false
+    options: null
   };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    if ($state.stateParams && $state.stateParams.q) { // Query parameter
+      $scope.search.text=$state.stateParams.q;
+      $timeout(function() {
+        $scope.doSearch();
+      }, 100);
+    }
     $focus('searchText');
   });
 
@@ -149,37 +155,12 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
     $scope.doSearch();
   };
 
-  $scope.searchChanged = function() {
-    $scope.search.typing = $scope.search.text;
+  $scope.doSearch = function() {
     $scope.search.looking = true;
-    $timeout(
-      function() {
-        if ($scope.search.typing == $scope.search.text) {
-          $scope.search.typing = null;
-          if (!$scope.search.options) {
-            $scope.search.options = false;
-          }
-          $scope.doSearch();
-        }
-      },
-      1000);
-  };
+    if (!$scope.search.options) {
+      $scope.search.options = false;
+    }
 
-  $scope.searchLocationChanged = function() {
-      $scope.search.typing = $scope.search.location;
-      $scope.search.looking = true;
-      $timeout(
-        function() {
-          if ($scope.search.typing == $scope.search.location) {
-            $scope.search.typing = null;
-            $scope.doSearch();
-          }
-        },
-        1000);
-    };
-
-  $scope.doSearch = function(query) {
-    $scope.search.looking = true;
     var request = {
       query: {},
       highlight: {
@@ -192,7 +173,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       size: 20,
       _source: ["title", "time", "description", "location", "pictures", "category"]
     };
-    var text = $scope.search.text.toLowerCase();
+    var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
     var filters = [];
     if (text.length > 1) {
@@ -258,7 +239,8 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
                 UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
                 });
-              }, 100);
+              }, 10);
+
               // Set Ink
               UIUtils.ink();
             }
@@ -275,6 +257,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
   };
 
   $scope.select = function(id, title) {
+    UIUtils.loading.show();
     $state.go('app.market_view_record', {id: id, title: title});
   };
 }

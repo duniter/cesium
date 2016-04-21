@@ -15,8 +15,8 @@
         </h4>
       </div>
     </div>
-    <div class="scroll">
 
+    <div class="scroll">
 
       <div class="hidden-xs hidden-sm padding" style="text-align:center">
         <button class="button button-raised button-assertive ink-dark"
@@ -29,20 +29,31 @@
         </button>
       </div>
 
-      <div class="list animate-fade-slide-in">
-          <span class="item item-icon-left">
+      <div class="row no-padding">
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+        </div>
+
+        <div class="col list animate-fade-slide-in">
+
+          <span class="item item-icon-left" ng-if="identity.sigDate">
               <i class="icon ion-calendar"></i>
               <span>{{'WOT.REGISTERED_SINCE' | translate}} {{identity.sigDate | formatDate}}</span>
               <span class="badge badge-balanced">{{identity.sigDate | formatFromNow}}</span>
           </span>
 
           <ion-item href="#" class="item-icon-left ink"
-                    ng-class="{'ink': system.clipboard.enable}"
-                    on-hold="system.clipboard.copy(identity.pub)">
+                    on-hold="copy(identity.pub)"
+                    copy-on-click>
               <i class="icon ion-key"></i>
-              <h4 class="gray">{{identity.pub}}</h4>
-          </span>
+              <p class="gray" id="pubkey">{{identity.pub}}</p>
+          </ion-item>
+
+        </div>
+
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+        </div>
       </div>
+
       <div class="scroll-bar scroll-bar-v"></div>
     </div>
   </ion-content>

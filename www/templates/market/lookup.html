@@ -6,13 +6,13 @@
     </ion-nav-buttons>
 
     <ion-content class="lookupForm padding no-padding-xs">
-
+      <form ng-submit="doSearch()">
         <label class="item item-input">
           <i class="icon ion-search placeholder-icon"></i>
           <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
                  ng-model="search.text"
                  ng-model-options="{ debounce: 250 }"
-                 ng-change="searchChanged()" id="searchText">
+                 ng-change="doSearch()" id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.options != null">
@@ -48,10 +48,11 @@
               <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}"
                      ng-model="search.location"
                      ng-model-options="{ debounce: 250 }"
-                     ng-change="searchLocationChanged()"/>
+                     ng-change="doSearch()"/>
             </label>
           </div>
         </span>
+      </form>
 
         <div class="list"  ng-if="search.options != null">
 

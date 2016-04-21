@@ -104,6 +104,41 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
       };
   })
 
+  // Add a copy-on-click directive
+  .directive('copyOnClick', ['$window', 'System', function ($window, System) {
+      return {
+          restrict: 'A',
+          link: function (scope, element, attrs) {
+              element.bind('click', function () {
+                if (!System.clipboard.enable) {
+                  if ($window.getSelection && !$window.getSelection().toString() && this.value) {
+                    this.setSelectionRange(0, this.value.length);
+                  }
+                }
+              });
+              element.bind('hold', function () {
+                if (System.clipboard.enable && this.value) {
+                  System.clipboard.copy(this.value)
+                }
+              });
+          }
+      };
+  }])
+
+  // Add a select-on-click directive
+  .directive('selectOnClick', ['$window', 'System', function ($window, System) {
+      return {
+          restrict: 'A',
+          link: function (scope, element, attrs) {
+              element.bind('click', function () {
+                if ($window.getSelection && !$window.getSelection().toString() && this.value) {
+                  this.setSelectionRange(0, this.value.length);
+                }
+              });
+          }
+      };
+  }])
+
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

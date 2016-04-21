@@ -72,7 +72,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
  };
 }
 
-function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMaterialMotion, $timeout, ionicMaterialInk) {
+function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, System) {
 
   $scope.identity = {};
   $scope.hasSelf = false;
@@ -83,6 +83,17 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMater
 
   $scope.loadIdentity = function(pub) {
     UIUtils.loading.show();
+    var onLoadFinish = function() {
+      UIUtils.loading.hide();
+
+      // Set Motion
+      $timeout(function() {
+        UIUtils.motion.fadeSlideIn({
+            selector: '.item'
+        });
+      }, 10);
+      UIUtils.ink();
+    };
     BMA.wot.lookup({ search: pub })
       .then(function(res){
         $scope.identity = res.results.reduce(function(idties, res) {
@@ -103,18 +114,23 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMater
         BMA.blockchain.block({block: $scope.identity.number})
         .then(function(block) {
           $scope.identity.sigDate = block.time;
-          UIUtils.loading.hide();
-
-          // Set Motion
-          $timeout(function() {
-            ionicMaterialMotion.fadeSlideIn({
-                selector: '.item'
-            });
-          }, 10);
+          onLoadFinish();
         })
         .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
       })
-      .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
+      .catch(function(err) {
+        if (!!err && err.ucode == 2001) { // Identity not found (if no self)
+          $scope.hasSelf = false;
+          $scope.identity = {
+            uid: null,
+            pub: pub
+          };
+          onLoadFinish(); // Continue
+        }
+        else {
+          UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+        }
+      });
   };
 
   // Sign click
@@ -135,8 +151,22 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMater
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
+  // Copy
+  $scope.copy = function(value) {
+    if (value && System.clipboard.enable) {
+      System.clipboard.copy(value);
+    }
+  }
+
+  $scope.selectText = function(elementId) {
+    var el = document.getElementById(elementId);
+    if (el) {
+      UIUtils.selection.select(el);
+      var sel = UIUtils.selection.get();
+      alert(sel);
+    }
+  }
+
   $scope.$parent.clearFabs();
-
-  ionicMaterialInk.displayEffect();
-
+  UIUtils.ink();
 }

@@ -148,11 +148,20 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         // Get requirements
         BMA.wot.requirements({pubkey: data.pubkey})
         .then(function(res){
-          if (!res.identities && res.identities.length != 1) {
+          if (!res.identities || res.identities.length === 0) {
             data.requirements = null;
             data.blockUid = null;
             resolve();
             return;
+          }
+          if (res.identities.length > 0) {
+            res.identities = _.sortBy(res.identities, function(idty) {
+                  var score = 1;
+                  score += (100000000000 * ((!data.uid && idty.uid === data.uid) ? 1 : 0));
+                  score += (1000000      * idty.membershipExpiresIn);
+                  score += (10           * idty.membershipPendingExpiresIn);
+                  return -score;
+                });
           }
           var idty = res.identities[0];
           data.requirements = idty;
@@ -165,7 +174,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         .catch(function(err) {
           data.requirements = {};
           data.blockUid = null;
-          // If identity not publiched : continue
+          // If identity not published : continue
           if (!!err && err.ucode == 2004) {
             resolve();
           }
@@ -471,34 +480,36 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     * Send membership (in)
     */
     membership = function(sideIn) {
-      return $q(function(resolve, reject) {
-        BMA.blockchain.current()
-        .then(function(block) {
-          // Create membership to sign
-           var membership = 'Version: 2\n' +
-                   'Type: Membership\n' +
-                   'Currency: ' + data.currency + '\n' +
-                   'Issuer: ' + data.pubkey + '\n' +
-                   'Block: ' + block.number + '-' + block.hash + '\n' +
-                   'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n' +
-                   'UserID: ' + data.uid + '\n' +
-                   'CertTS: ' + data.blockUid + '\n';
+      return function() {
+        return $q(function(resolve, reject) {
+          BMA.blockchain.current()
+          .then(function(block) {
+            // Create membership to sign
+             var membership = 'Version: 2\n' +
+                     'Type: Membership\n' +
+                     'Currency: ' + data.currency + '\n' +
+                     'Issuer: ' + data.pubkey + '\n' +
+                     'Block: ' + block.number + '-' + block.hash + '\n' +
+                     'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n' +
+                     'UserID: ' + data.uid + '\n' +
+                     'CertTS: ' + data.blockUid + '\n';
 
-          CryptoUtils.sign(membership, data.keypair)
-          .then(function(signature) {
-            var signedMembership = membership + signature + '\n';
-            // Send signed membership
-            BMA.blockchain.membership({membership: signedMembership})
-            .then(function(result) {
-              // Refresh membership data
-              loadRequirements()
-              .then(function() {
-                resolve();
+            CryptoUtils.sign(membership, data.keypair)
+            .then(function(signature) {
+              var signedMembership = membership + signature + '\n';
+              // Send signed membership
+              BMA.blockchain.membership({membership: signedMembership})
+              .then(function(result) {
+                // Refresh membership data
+                loadRequirements()
+                .then(function() {
+                  resolve();
+                }).catch(function(err){reject(err);});
               }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});
-        }).catch(function(err){reject(err);});
-      });
+        });
+      };
     },
 
     /**
@@ -585,7 +596,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       // operations
       transfer: transfer,
       self: self,
-      membership: membership,
+      membership: {
+        inside: membership(true),
+        out: membership(false)
+      },
       sign: sign,
       // serialization
       toJson: toJson,

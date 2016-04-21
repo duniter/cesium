@@ -4,7 +4,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
     $stateProvider
 
     .state('app.registry_lookup', {
-      url: "/registry",
+      url: "/registry?q",
       views: {
         'menuContent': {
           templateUrl: "templates/registry/lookup.html",
@@ -129,10 +129,17 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
     text: '',
     results: {},
     category: null,
+    location: null,
     options: null
   };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    if ($state.stateParams && $state.stateParams.q) { // Query parameter
+      $scope.search.text=$state.stateParams.q;
+      $timeout(function() {
+        $scope.doSearch();
+      }, 100);
+    }
     $focus('searchText');
   });
 

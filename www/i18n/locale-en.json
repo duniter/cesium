@@ -93,6 +93,8 @@
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "NO_TX": "No transaction",
+    "EVENTS": "Events",
+    "WAITING_MEMBERSHIP": "Membership sent. Waiting validation.",
     "BTN_SEND_MONEY": "Send money",
     "BTN_MEMBERSHIP_IN": "Register as member",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
@@ -108,7 +110,8 @@
       "PSEUDO_HELP": "joe123",
       "PASSWORD_CONFIRM": "Confirm Password",
       "PASSWORD_CONFIRM_HELP": "Confirm Password",
-      "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one."
+      "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one.",
+      "MSG_PUBKEY_ALREADY_USED": "Public key already used by an existing member.<br/>Please choose another connection parameters."
     },
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",

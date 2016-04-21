@@ -5,13 +5,14 @@
     </ion-nav-buttons>
 
     <ion-content class="lookupForm padding no-padding-xs">
-        <form ng-submit="doSearch()"/>
+      <form ng-submit="doSearch()"/>
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
                    ng-model-options="{ debounce: 250 }"
-                   ng-change="doSearch()" id="searchText">
+                   ng-change="doSearch()"
+                   id="searchText">
         </label>
 
         <div class="item item-toggle dark" ng-if="search.options != null">
@@ -42,6 +43,8 @@
             </div>
         </span>
 
+      </form>
+
         <label class="center" ng-if="search.looking">
           <ion-spinner icon="android"></ion-spinner>
         </label>
@@ -54,7 +57,7 @@
              ng-if="search.options != null && !search.looking">
 
             <a  ng-repeat="found in search.results"
-                class="item item-avatar "
+                class="item item-avatar ink"
                 ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
                 <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
                 <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>

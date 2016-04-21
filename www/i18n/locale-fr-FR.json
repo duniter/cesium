@@ -93,6 +93,8 @@
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "NO_TX": "Aucune transaction",
+    "EVENTS": "Evénements",
+    "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "BTN_SEND_MONEY": "Payer",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
@@ -108,7 +110,8 @@
       "PSEUDO_HELP": "Pseudonyme",
       "PASSWORD_CONFIRM": "Confirmation",
       "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe",
-      "MSG_UID_ALREADY_USED": "Pseudonyme déjà pris par quelqu'un d'autre.<br/>Veuillez en choisir un autre."
+      "MSG_UID_ALREADY_USED": "Pseudonyme déjà utilisé par quelqu'un d'autre.<br/>Veuillez en choisir un autre.",
+      "MSG_PUBKEY_ALREADY_USED": "Clé publique déjà utilisée par quelqu'un d'autre.<br/>Veuillez choisir d'autres identifiants de connexion."
     },
     "POPUP_REGISTER": {
       "TITLE": "Choisissez un pseudonyme",
