@@ -13,3 +13,8 @@ www/css/ionic.app.css
 www/css/ionic.app.min.css
 
 www/js/config.js
+www/lib/angular-animate
+www/lib/angular-messages
+www/lib/angular-sanitize
+www/lib/angular-ui-router
+www/lib/waves

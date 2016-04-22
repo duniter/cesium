@@ -1,3 +1,0 @@
-[submodule "www/lib/cities"]
-	path = www/lib/cities
-	url = git://github.com/David-Haim/CountriesToCitiesJSON.git
