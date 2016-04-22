@@ -127,18 +127,27 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 
   $scope.search = {
     text: '',
-    results: {},
+    results: [],
+    lastRecords: true,
     category: null,
     location: null,
     options: null
   };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams && $state.stateParams.q) { // Query parameter
-      $scope.search.text=$state.stateParams.q;
-      $timeout(function() {
-        $scope.doSearch();
-      }, 100);
+    if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
+      if ($state.stateParams && $state.stateParams.q) { // Query parameter
+        $scope.search.text=$state.stateParams.q;
+        $timeout(function() {
+          $scope.doSearch();
+        }, 100);
+      }
+      else {
+        $timeout(function() {
+          $scope.doGetLastRecord();
+        }, 100);
+      }
+      $scope.entered = true;
     }
     $focus('searchText');
   });
@@ -158,6 +167,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 
   $scope.doSearch = function() {
     $scope.search.looking = true;
+    $scope.search.lastRecords = false;
     if (!$scope.search.options) {
       $scope.search.options = false;
     }
@@ -183,20 +193,16 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
         fields: matchFields,
         type: "phrase_prefix"
       }});
-//      matches.push({match : { title: text}});
-//      matches.push({match : { description: text}});
-//      matches.push({prefix : { issuer: text}});
-//      if (!$scope.search.options) { // search on location only if not set
-//        matchFields.push("location");
-//      }
+      matches.push({match : { title: text}});
+      matches.push({match : { description: text}});
+      matches.push({prefix : { location: text}});
+      matches.push({prefix : { issuer: text}});
     }
     if ($scope.search.options && $scope.search.category) {
-      matches.push({term: { category: $scope.search.category.id}});
-      //filters.push({term: { category: $scope.search.category.id}});
+      filters.push({term: { category: $scope.search.category.id}});
     }
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
-      //filters.push({match_phrase: { location: $scope.search.location}});
-      matches.push({match_phrase: { location: $scope.search.location}});
+      filters.push({match_phrase: { location: $scope.search.location}});
     }
 
     if (matches.length === 0 && filters.length === 0) {
@@ -211,6 +217,29 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
     if (filters.length > 0) {
       request.query.bool.filter =  filters;
     }
+
+    $scope.doRequest(request);
+  };
+
+
+  $scope.doGetLastRecord = function() {
+    $scope.search.looking = true;
+    $scope.search.lastRecords = true;
+
+    var request = {
+      sort: {
+        "time" : "desc"
+      },
+      from: 0,
+      size: 20,
+      _source: ["title", "description", "time", "location", "pictures", "issuer", "category"]
+    };
+
+    $scope.doRequest(request);
+  };
+
+  $scope.doRequest = function(request) {
+    $scope.search.looking = true;
 
     Registry.category.all()
       .then(function(categories) {
@@ -253,7 +282,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
               // Set Ink
               UIUtils.ink();
             }
-            
+
             $scope.search.looking = false;
           })
           .catch(function(err) {
@@ -265,11 +294,6 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
         $scope.search.looking = false;
         $scope.search.results = [];
       });
-  };
-
-  $scope.select = function(id, title) {
-    UIUtils.loading.show();
-    $state.go('app.registry_view_record', {id: id, title: title});
   };
 
  // TODO: remove auto add account when done
@@ -339,6 +363,18 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
             $scope.hasSelf = false;
             $scope.identity = null;
             UIUtils.loading.hide();
+          }
+        })
+        .catch(function(err) {
+          // Retry (ES could have error)
+          if (!$scope.secondTry) {
+            $scope.secondTry = true;
+            $q(new function() {
+              $scope.load(id);
+            }, 100);
+          }
+          else {
+            UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
           }
         });
       })

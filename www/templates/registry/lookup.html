@@ -1,6 +1,8 @@
 <ion-view view-title="{{'REGISTRY.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
     <ion-nav-buttons side="secondary">
-        <button class="button button-positive button-icon button-clear icon ion-plus" ng-click="newRecord()">
+        <button class="button button-positive button-icon button-clear visible-xs"
+                ng-click="newRecord()">
+          <i class="icon ion-plus"></i>
         </button>
     </ion-nav-buttons>
 
@@ -15,7 +17,7 @@
                    id="searchText">
         </label>
 
-        <div class="item item-toggle dark" ng-if="search.options != null">
+        <div class="item item-toggle dark" ng-if="!search.lastRecords">
             <span translate>REGISTRY.SEARCH.BTN_OPTIONS</span>
             <label class="toggle toggle-royal">
                 <input type="checkbox" ng-model="search.options">
@@ -49,16 +51,26 @@
           <ion-spinner icon="android"></ion-spinner>
         </label>
 
-        <label class="center assertive" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
+        <h4
+          ng-if="!search.looking && search.lastRecords && search.results.length > 0" translate>
+          REGISTRY.SEARCH.LAST_RECORDS
+        </h4>
+        <h4
+          ng-if="!search.looking && !search.lastRecords && search.results.length > 0" translate>
+          REGISTRY.SEARCH.RESULTS
+        </h4>
+
+        <label class="center assertive animate-fade-slide-in-right" ng-if="!search.looking && search.results.length==0 && search.options != null" translate>
           COMMON.SEARCH_NO_RESULT
         </label>
 
         <div class="list animate-fade-slide-in-right"
-             ng-if="search.options != null && !search.looking">
+             ng-if="!search.looking && search.results && search.results.length > 0">
 
             <a  ng-repeat="found in search.results"
                 class="item item-avatar ink"
-                ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">
+                ui-sref="app.registry_view_record({id: found.id, title: found.title})">
+
                 <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
                 <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>
                 <h4 class="gray" ng-bind="found.location" ng-if="found.location"></h4>

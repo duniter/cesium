@@ -12765,7 +12765,9 @@ a {
 @media screen and (min-width: 748px) {
   .hidden-xs {
     display: inherit;
-    visibility: visible; } }
+    visibility: visible; }
+  .row.hidden-xs {
+    display: flex !important; } }
 
 @media screen and (max-width: 747px) {
   .visible-xs {
@@ -12776,6 +12778,14 @@ a {
   .visible-xs {
     display: none !important;
     visibility: hidden !important; } }
+
+@media screen and (max-width: 747px) {
+  .padding-xs {
+    padding: 16px !important; } }
+
+@media screen and (min-width: 748px) {
+  .padding-xs {
+    padding: inherit; } }
 
 @media screen and (max-width: 747px) {
   .no-padding-xs {
@@ -12801,7 +12811,9 @@ a {
 @media screen and (min-width: 992px) {
   .hidden-sm {
     display: inherit;
-    visibility: visible; } }
+    visibility: visible; }
+  .row.hidden-sm {
+    display: flex !important; } }
 
 @media screen and (max-width: 747px) {
   .hidden-sm {
@@ -12880,3 +12892,11 @@ a {
   .visible-lg {
     display: none;
     visibility: hidden; } }
+
+@media screen and (ma-width: 748px) {
+  .no-padding-xs {
+    padding: inherit; } }
+
+@media screen and (max-width: 747px) {
+  .no-margin-xs {
+    margin: 0px !important; } }

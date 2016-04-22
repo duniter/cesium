@@ -148,7 +148,8 @@
       "BTN_AROUND_ME": "Around me",
       "LOCATION": "Location",
       "LOCATION_HELP": "City",
-      "LAST_RECORD": "Last records"
+      "LAST_RECORDS": "Last records:",
+      "RESULTS": "Results:"
     },
     "VIEW": {
       "TITLE": ""
@@ -162,6 +163,10 @@
       "RECORD_DESCRIPTION_HELP": "Description",
       "RECORD_LOCATION": "Localization",
       "RECORD_LOCATION_HELP": "Address, City"
+    },
+    "ERROR": {
+      "LOAD_CATEGORY_FAILED": "Error while loading market categories",
+      "LOAD_RECORD_FAILED": "Error while loading record."
     }
   },
   "REGISTRY": {
@@ -176,7 +181,9 @@
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Search tool",
       "LOCATION": "Location",
-      "LOCATION_HELP": "City"
+      "LOCATION_HELP": "City",
+      "LAST_RECORDS": "Last records:",
+      "RESULTS": "Results:"
     },
     "VIEW": {
       "TITLE": "Annonce"

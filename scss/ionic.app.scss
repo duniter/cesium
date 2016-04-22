@@ -79,6 +79,9 @@ $screen-lg:                       1200px;
         display: inherit;
         visibility: visible;
     }
+    .row.hidden-xs {
+      display: flex !important;
+    }
 }
 @media screen and (max-width: $screen-xs-max) {
     .visible-xs {
@@ -90,6 +93,16 @@ $screen-lg:                       1200px;
     .visible-xs {
         display: none !important;
         visibility: hidden !important;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .padding-xs {
+        padding: 16px !important;
+    }
+}
+@media screen and (min-width: $screen-sm) {
+    .padding-xs {
+        padding: inherit;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
@@ -123,6 +136,9 @@ $screen-lg:                       1200px;
     .hidden-sm {
         display: inherit;
         visibility: visible;
+    }
+    .row.hidden-sm {
+      display: flex !important;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
@@ -222,5 +238,16 @@ $screen-lg:                       1200px;
     .visible-lg {
         display: none;
         visibility: hidden;
+    }
+}
+
+@media screen and (ma-width: $screen-sm) {
+    .no-padding-xs {
+        padding: inherit;
+    }
+}
+@media screen and (max-width: $screen-xs-max) {
+    .no-margin-xs {
+        margin: 0px !important;
     }
 }

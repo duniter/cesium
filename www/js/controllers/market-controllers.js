@@ -52,7 +52,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
 ;
 
-function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
+function MarketCategoryModalController($scope, Market, $state, $ionicModal, UIUtils) {
 
   $scope.categoryModal = null;
   $scope.categories = {
@@ -120,29 +120,34 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal) {
   };
 }
 
-function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, ionicMaterialMotion, ionicMaterialInk, UIUtils) {
+function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils) {
 
-  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, ionicMaterialInk);
+  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
 
   $scope.search = {
     text: '',
-    results: {},
+    lastRecords: true,
+    results: [],
+    looking: true,
     category: null,
     location: null,
-    options: null
+    options: false
   };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams && $state.stateParams.q) { // Query parameter
-      $scope.search.text=$state.stateParams.q;
-      $timeout(function() {
-        $scope.doSearch();
-      }, 100);
-    }
-    else {
-      $timeout(function() {
-        $scope.doGetLastRecord();
-      }, 100);
+    if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
+      if ($state.stateParams && $state.stateParams.q) { // Query parameter
+        $scope.search.text=$state.stateParams.q;
+        $timeout(function() {
+          $scope.doSearch();
+        }, 100);
+      }
+      else {
+        $timeout(function() {
+          $scope.doGetLastRecord();
+        }, 100);
+      }
+      $scope.entered = true;
     }
     $focus('searchText');
   });
@@ -160,9 +165,9 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
     $scope.doSearch();
   };
 
-
   $scope.doSearch = function() {
     $scope.search.looking = true;
+    $scope.search.lastRecords = false;
     if (!$scope.search.options) {
       $scope.search.options = false;
     }
@@ -177,28 +182,30 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "location", "pictures", "category"]
+      _source: ["title", "time", "description", "location", "pictures", "category", "price"]
     };
     var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
     var filters = [];
     if (text.length > 1) {
+      var matchFields = ["title", "description", "issuer", "location"];
+      matches.push({multi_match : { query: text,
+        fields: matchFields,
+        type: "phrase_prefix"
+      }});
       matches.push({match: { title: text}});
       matches.push({match: { description: text}});
-      if (!$scope.search.options) {
-        matches.push({match: { location: text}});
-      }
+      matches.push({prefix: { location: text}});
     }
     if ($scope.search.options && $scope.search.category) {
       filters.push({term: { category: $scope.search.category.id}});
     }
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
-      filters.push({match: { location: $scope.search.location}});
+      filters.push({match_phrase: { location: $scope.search.location}});
     }
 
     if (matches.length === 0 && filters.length === 0) {
-      $scope.search.results = [];
-      $scope.search.looking = false;
+      $scope.doGetLastRecord();
       return;
     }
     request.query.bool = {};
@@ -214,6 +221,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
   $scope.doGetLastRecord = function() {
     $scope.search.looking = true;
+    $scope.search.lastRecords = true;
 
     var request = {
       sort: {
@@ -221,14 +229,14 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "location", "pictures", "category"]
+      _source: ["title", "time", "description", "location", "pictures", "category", "price"]
     };
 
     $scope.doRequest(request);
   };
 
 
-$scope.doRequest = function(request) {
+  $scope.doRequest = function(request) {
     $scope.search.looking = true;
 
     Market.category.all()
@@ -272,7 +280,7 @@ $scope.doRequest = function(request) {
               // Set Ink
               UIUtils.ink();
             }
- 
+
             $scope.search.looking = false;
           })
           .catch(function(err) {
@@ -284,11 +292,6 @@ $scope.doRequest = function(request) {
         $scope.search.looking = false;
         $scope.search.results = [];
       });
-  };
-
-  $scope.select = function(id, title) {
-    UIUtils.loading.show();
-    $state.go('app.market_view_record', {id: id, title: title});
   };
 }
 
@@ -327,9 +330,20 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
           }
           $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer === Wallet.getData().pubkey);
           UIUtils.loading.hide();
+        })
+        .catch(function(err) {
+          if (!$scope.secondTry) {
+            $scope.secondTry = true;
+            $q(new function() {
+              $scope.load(id); // loop once
+            }, 100);
+          }
+          else {
+            UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+          }
         });
       })
-    ]).catch(UIUtils.onError('Could not load market'));
+    ]).catch(UIUtils.onError('MARKET.ERROR.LOAD_CATEGORY_FAILED'));
   };
 
   $scope.edit = function() {
