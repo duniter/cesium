@@ -64,6 +64,10 @@
             COMMON.SEARCH_NO_RESULT
           </label>
 
+          <label class="item item-divider center assertive" ng-if="!search.looking && search.results.length==0 && search.options === null" translate>
+            MARKET.SEARCH.LAST_RECORDS
+          </label>
+
           <a class="item ink" ng-repeat="found in search.results"
              ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}"
              ng-click="select('{{found.id}}', '{{found.urlTitle|formatSlug}}')">

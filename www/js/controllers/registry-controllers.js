@@ -216,12 +216,11 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
       .then(function(categories) {
         Registry.record.search(request)
           .then(function(res){
-            $scope.search.looking = false;
             if (res.hits.total === 0) {
               $scope.search.results = [];
             }
             else {
-              $scope.search.results = res.hits.hits.reduce(function(result, hit) {
+              var items = res.hits.hits.reduce(function(result, hit) {
                   var registry = hit._source;
                   registry.id = hit._id;
                   registry.type = hit._type;
@@ -242,6 +241,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
                   }
                   return result.concat(registry);
                 }, []);
+              $scope.search.results = items;
 
               // Set Motion
               $timeout(function() {
@@ -253,6 +253,8 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
               // Set Ink
               UIUtils.ink();
             }
+            
+            $scope.search.looking = false;
           })
           .catch(function(err) {
               $scope.search.looking = false;

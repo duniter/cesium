@@ -147,7 +147,8 @@
       "BTN_OPTIONS": "Advanced search",
       "BTN_AROUND_ME": "Around me",
       "LOCATION": "Location",
-      "LOCATION_HELP": "City"
+      "LOCATION_HELP": "City",
+      "LAST_RECORD": "Last records"
     },
     "VIEW": {
       "TITLE": ""
