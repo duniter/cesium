@@ -108,11 +108,11 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function getSelectionText(){
-    var selectedText = ""
+    var selectedText = "";
     if (window.getSelection){ // all modern browsers and IE9+
-        selectedText = $window.getSelection().toString()
+        selectedText = $window.getSelection().toString();
     }
-    return selectedText
+    return selectedText;
   }
 
   return {
@@ -226,14 +226,9 @@ angular.module('cesium.utils.services', ['ngResource'])
         reader.readAsDataURL(file);
       }
       else {
-        reject("Not a file")
+        reject("Not a file");
       }
     });
-
-    img.src = imageData;
-    reader.readAsDataURL(file);
-
-
   }
 
   camera.takePicture = function(sourceType) {

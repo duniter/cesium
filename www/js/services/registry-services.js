@@ -177,12 +177,12 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
       }
 
       function addRecord(record, keypair) {
-        return sendRecord(record, keypair, addRecordRequest)
-      };
+        return sendRecord(record, keypair, addRecordRequest);
+      }
 
       function updateRecord(record, params, keypair) {
         return sendRecord(record, keypair, updateRecordRequest, params);
-      };
+      }
 
       var postAvatar = postResource('http://' + server + '/registry/record/_search');
 

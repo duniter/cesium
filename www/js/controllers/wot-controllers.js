@@ -156,7 +156,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
     if (value && System.clipboard.enable) {
       System.clipboard.copy(value);
     }
-  }
+  };
 
   $scope.selectText = function(elementId) {
     var el = document.getElementById(elementId);
@@ -165,7 +165,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
       var sel = UIUtils.selection.get();
       alert(sel);
     }
-  }
+  };
 
   $scope.$parent.clearFabs();
   UIUtils.ink();

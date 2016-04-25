@@ -369,7 +369,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
           // Retry (ES could have error)
           if (!$scope.secondTry) {
             $scope.secondTry = true;
-            $q(new function() {
+            $q(function() {
               $scope.load(id);
             }, 100);
           }

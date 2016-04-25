@@ -118,7 +118,7 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
               });
               element.bind('hold', function () {
                 if (System.clipboard.enable && this.value) {
-                  System.clipboard.copy(this.value)
+                  System.clipboard.copy(this.value);
                 }
               });
           }

@@ -334,7 +334,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
         .catch(function(err) {
           if (!$scope.secondTry) {
             $scope.secondTry = true;
-            $q(new function() {
+            $q(function() {
               $scope.load(id); // loop once
             }, 100);
           }
