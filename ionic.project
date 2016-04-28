@@ -8,5 +8,6 @@
   "gulpStartupTasks": [
     "sass",
     "watch"
-  ]
+  ],
+  "defaultBrowser": "chrome"
 }
