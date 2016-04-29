@@ -19,14 +19,14 @@
 
   "duniter-fr": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "test_net.duniter.fr"
+      "UCOIN_NODE": "test-net.duniter.fr"
     }
   },
 
   "duniter-fr-es": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "twiced.fr:9330",
-      "UCOIN_NODE_ES": "es.ucoin.fr"
+      "UCOIN_NODE": "test-net.duniter.fr",
+      "UCOIN_NODE_ES": "data.duniter.fr"
     }
   },
 

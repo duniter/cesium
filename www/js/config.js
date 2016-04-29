@@ -9,9 +9,9 @@
 angular.module("cesium.config", [])
 
 .constant("APP_CONFIG", {
-	"UCOIN_NODE": "twiced.fr:9330",
+	"UCOIN_NODE": "test-net.duniter.fr",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-04-29T08:33:49.379Z"
+	"BUILD_DATE": "2016-04-29T14:44:12.535Z"
 })
 
 ;
