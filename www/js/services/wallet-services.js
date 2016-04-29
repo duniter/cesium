@@ -64,6 +64,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         var amount = tx.outputs.reduce(function(sum, output) {
             var outputArray = output.split(':',3);
             var outputAmount = parseInt(outputArray[0]);
+            var outputBase = parseInt(outputArray[1]);
             var outputCondArray = outputArray[2].split('(', 3);
             var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
                  outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
@@ -515,26 +516,26 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     /**
     * Send identity certification
     */
-    sign = function(uid, pubkey, timestamp, signature) {
+    certify = function(uid, pubkey, timestamp, signature) {
       return $q(function(resolve, reject) {
 
         BMA.blockchain.current()
         .then(function(block) {
           // Create the self part to sign
-          var self = 'UID:' + uid + '\n' +
-                   'META:TS:' + timestamp + '\n' +
-                   signature /*+"\n"*/;
-
-          var cert = self + '\n' +
-                'META:TS:' + block.number + '-' + block.hash + '\n';
+          var cert = 'Version: 2\n' +
+                     'Type: Certification\n' +
+                     'Currency: ' + data.currency + '\n' +
+                     'Issuer: ' + data.pubkey + '\n' +
+                     'IdtyIssuer: '+ pubkey + '\n' +
+                     'IdtyUniqueID: '+ uid + '\n' +
+                     'IdtyTimestamp: '+ timestamp + '\n' +
+                     'IdtySignature: '+ signature + '\n' +
+                     'CertTimestamp: '+ block.number + '-' + block.hash + '\n';
 
           CryptoUtils.sign(cert, data.keypair)
           .then(function(signature) {
-            var inlineCert = data.pubkey +
-                ':' + pubkey +
-                ':' + block.number +
-                ':' + signature + '\n';
-            BMA.wot.add({pubkey: pubkey, self: self, other: inlineCert})
+            var signedCert = cert + signature + '\n';
+            BMA.wot.certify({cert: signedCert})
               .then(function(result) {
                 resolve(result);
               }).catch(function(err){reject(err);});
@@ -600,7 +601,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         inside: membership(true),
         out: membership(false)
       },
-      sign: sign,
+      certify: certify,
       // serialization
       toJson: toJson,
       fromJson: fromJson

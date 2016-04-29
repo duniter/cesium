@@ -78,6 +78,14 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
   $scope.hasSelf = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    if (!$state.stateParams || !$state.stateParams.pub
+        || $state.stateParams.pub.trim().length===0) {
+      // Redirect o home
+      $timeout(function() {
+       $state.go('app.home', null);
+      }, 10);
+      return;
+    }
     $scope.loadIdentity($state.stateParams.pub);
   });
 
@@ -102,6 +110,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
             return uids.concat({
               uid: idty.uid,
               pub: res.pubkey,
+              timestamp: idty.meta.timestamp,
               number: blocUid[0],
               hash: blocUid[1],
               revoked: idty.revoked,
@@ -110,7 +119,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
             });
           }, []));
         }, [])[0];
-        $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
+        $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
         BMA.blockchain.block({block: $scope.identity.number})
         .then(function(block) {
           $scope.identity.sigDate = block.time;
@@ -133,18 +142,18 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
       });
   };
 
-  // Sign click
-  $scope.signIdentity = function(identity) {
+  // Certify click
+  $scope.certifyIdentity = function(identity) {
     $scope.loadWallet()
     .then(function(walletData) {
       UIUtils.loading.show();
-      Wallet.sign($scope.identity.uid,
+      Wallet.certify($scope.identity.uid,
                   $scope.identity.pub,
-                  $scope.identity.sigDate,
+                  $scope.identity.timestamp,
                   $scope.identity.sig)
       .then(function() {
         UIUtils.loading.hide();
-        UIUtils.alertInfo('INFO.CERTIFICATION_DONE');
+        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
       })
       .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
     })

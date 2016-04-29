@@ -239,8 +239,8 @@
   },
   "INFO": {
     "POPUP_TITLE": "Information",
-    "CERTIFICATION_DONE": "Certification envoyée",
-    "NOT_ENOUGH_CREDIT": "Credit insuffisant.",
+    "CERTIFICATION_DONE": "Certification envoyée avec succès.",
+    "NOT_ENOUGH_CREDIT": "Crédit insuffisant.",
     "TRANSFER_SENT": "La transaction a été envoyée avec succès."
   }
 }
