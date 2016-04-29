@@ -2,7 +2,8 @@
 
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion) {
+.factory('UIUtils', ['$ionicLoading', '$ionicPopup', '$translate', '$q', 'ionicMaterialInk', 'ionicMaterialMotion', '$window',
+  function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window) {
 
   var loadingTextCache=null;
 
@@ -84,6 +85,36 @@ angular.module('cesium.utils.services', ['ngResource'])
     };
   }
 
+  function selectElementText(el) {
+    if (el.value || el.type == "text" || el.type == "textarea") {
+      // Source: http://stackoverflow.com/questions/14995884/select-text-on-input-focus
+      if ($window.getSelection && !$window.getSelection().toString()) {
+        el.setSelectionRange(0, el.value.length);
+      }
+    }
+    else {
+      if (el.childNodes && el.childNodes.length > 0) {
+        selectElementText(el.childNodes[0]);
+      }
+      else {
+        // See http://www.javascriptkit.com/javatutors/copytoclipboard.shtml
+        var range = $window.document.createRange(); // create new range object
+        range.selectNodeContents(el); // set range to encompass desired element text
+        var selection = $window.getSelection(); // get Selection object from currently user selected text
+        selection.removeAllRanges(); // unselect any user selected text (if any)
+        selection.addRange(range); // add range to Selection object to select it
+      }
+    }
+  }
+
+  function getSelectionText(){
+    var selectedText = "";
+    if (window.getSelection){ // all modern browsers and IE9+
+        selectedText = $window.getSelection().toString();
+    }
+    return selectedText;
+  }
+
   return {
     alert: {
       error: alertError,
@@ -95,9 +126,13 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     onError: onError,
     ink: ionicMaterialInk.displayEffect,
-    motion: ionicMaterialMotion
+    motion: ionicMaterialMotion,
+    selection: {
+      select: selectElementText,
+      get: getSelectionText
+    }
   };
-})
+}])
 
 .factory('$localstorage', ['$window', 'CryptoUtils', '$q', function($window, CryptoUtils, $q) {
   return {
@@ -140,20 +175,17 @@ angular.module('cesium.utils.services', ['ngResource'])
   camera = {
     enable: false
   },
-  scan = {
-    enable: false
-  },
   clipboard = {
     enable: false
   };
 
   ionic.Platform.ready(function() {
     // Check if camera AND scan is enable
-	  camera.enable = !!navigator.camera /*&& !(!$cordovaBarcodeScanner || !$cordovaBarcodeScanner.scan)*/;
+	  camera.enable = !!navigator.camera;
     camera.handle = navigator.camera;
 
     // Check if clipboard is enable
-	  clipboard.enable = !(!$cordovaClipboard || !$cordovaClipboard.copy);
+	  clipboard.enable = camera.enable;
   });
 
   function resizeImageFromFile(file) {
@@ -194,14 +226,9 @@ angular.module('cesium.utils.services', ['ngResource'])
         reader.readAsDataURL(file);
       }
       else {
-        reject("Not a file")
+        reject("Not a file");
       }
     });
-
-    img.src = imageData;
-    reader.readAsDataURL(file);
-
-
   }
 
   camera.takePicture = function(sourceType) {
@@ -274,8 +301,6 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   };
 
-
-
   clipboard.copy = function (text, callback) {
     if (!clipboard.enable) {
       return; // Always to call copy, but do nothing if not available
@@ -300,15 +325,8 @@ angular.module('cesium.utils.services', ['ngResource'])
     image: {
       resize: resizeImageFromFile
     },
-    clipboard: {
-      enable: clipboard.enable,
-      copy: clipboard.copy
-    },
-    camera: {
-      enable: camera.enable,
-      take: camera.takePicture,
-      scan: camera.scan
-    },
+    clipboard: clipboard,
+    camera: camera
   };
 })
 

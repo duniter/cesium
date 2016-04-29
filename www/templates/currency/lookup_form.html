@@ -6,9 +6,7 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div
-      ng-if="!search.looking"
-      ng-repeat="currency in knownCurrencies"
+    <div ng-repeat="currency in knownCurrencies"
               ng-class="{ selected: selectedCurrency == currency }">
       <a class="item hidden-xs hidden-sm ink" ng-click="selectCurrency(currency.id, true)"
          ng-class="{ selected: selectedCurrency == currency }">

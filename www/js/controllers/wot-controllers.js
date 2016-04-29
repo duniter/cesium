@@ -72,17 +72,36 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
  };
 }
 
-function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMaterialMotion, $timeout, ionicMaterialInk) {
+function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, System) {
 
   $scope.identity = {};
   $scope.hasSelf = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    if (!$state.stateParams || !$state.stateParams.pub
+        || $state.stateParams.pub.trim().length===0) {
+      // Redirect o home
+      $timeout(function() {
+       $state.go('app.home', null);
+      }, 10);
+      return;
+    }
     $scope.loadIdentity($state.stateParams.pub);
   });
 
   $scope.loadIdentity = function(pub) {
     UIUtils.loading.show();
+    var onLoadFinish = function() {
+      UIUtils.loading.hide();
+
+      // Set Motion
+      $timeout(function() {
+        UIUtils.motion.fadeSlideIn({
+            selector: '.item'
+        });
+      }, 10);
+      UIUtils.ink();
+    };
     BMA.wot.lookup({ search: pub })
       .then(function(res){
         $scope.identity = res.results.reduce(function(idties, res) {
@@ -91,6 +110,7 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMater
             return uids.concat({
               uid: idty.uid,
               pub: res.pubkey,
+              timestamp: idty.meta.timestamp,
               number: blocUid[0],
               hash: blocUid[1],
               revoked: idty.revoked,
@@ -99,44 +119,63 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, ionicMater
             });
           }, []));
         }, [])[0];
-        $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
+        $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
         BMA.blockchain.block({block: $scope.identity.number})
         .then(function(block) {
           $scope.identity.sigDate = block.time;
-          UIUtils.loading.hide();
-
-          // Set Motion
-          $timeout(function() {
-            ionicMaterialMotion.fadeSlideIn({
-                selector: '.item'
-            });
-          }, 10);
+          onLoadFinish();
         })
         .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
       })
-      .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
+      .catch(function(err) {
+        if (!!err && err.ucode == 2001) { // Identity not found (if no self)
+          $scope.hasSelf = false;
+          $scope.identity = {
+            uid: null,
+            pub: pub
+          };
+          onLoadFinish(); // Continue
+        }
+        else {
+          UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+        }
+      });
   };
 
-  // Sign click
-  $scope.signIdentity = function(identity) {
+  // Certify click
+  $scope.certifyIdentity = function(identity) {
     $scope.loadWallet()
     .then(function(walletData) {
       UIUtils.loading.show();
-      Wallet.sign($scope.identity.uid,
+      Wallet.certify($scope.identity.uid,
                   $scope.identity.pub,
-                  $scope.identity.sigDate,
+                  $scope.identity.timestamp,
                   $scope.identity.sig)
       .then(function() {
         UIUtils.loading.hide();
-        UIUtils.alertInfo('INFO.CERTIFICATION_DONE');
+        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
       })
       .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
     })
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
+  // Copy
+  $scope.copy = function(value) {
+    if (value && System.clipboard.enable) {
+      System.clipboard.copy(value);
+    }
+  };
+
+  $scope.selectText = function(elementId) {
+    var el = document.getElementById(elementId);
+    if (el) {
+      UIUtils.selection.select(el);
+      var sel = UIUtils.selection.get();
+      alert(sel);
+    }
+  };
+
   $scope.$parent.clearFabs();
-
-  ionicMaterialInk.displayEffect();
-
+  UIUtils.ink();
 }

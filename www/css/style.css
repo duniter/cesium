@@ -10,9 +10,11 @@
     line-height: inherit;
 }
 
+/*
 .lookupForm .list a {
     text-align: left;
 }
+*/
 
 #home h1 {
     padding-top: 15px;
@@ -66,7 +68,7 @@
   border-bottom: solid 1px #ccc;
 }
 
-.item.item-thumbnail-left {
+.item.item-thumbnail-left, .item-thumbnail-left {
   min-height: 100px !important;
 }
 
@@ -208,3 +210,8 @@
 .peer-item .badge {
     top: 14px;
 }
+
+.item-thumbnail-left-padding {
+    padding-left: 106px;
+}
+

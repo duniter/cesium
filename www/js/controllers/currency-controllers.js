@@ -57,17 +57,16 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
-  $scope.search.looking = false;
+  $scope.search.looking = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    $scope.search.looking = true;
     $scope.loadCurrencies()
     .then(function (res) {
       $scope.knownCurrencies = res;
+      $scope.search.looking = false;
       if (!!res && res.length == 1) {
         $scope.selectedCurrency = res[0].id;
       }
-      $scope.search.looking = false;
       // Set Ink
       ionicMaterialInk.displayEffect({selector: 'a.item'});
     });

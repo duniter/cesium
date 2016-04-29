@@ -119,7 +119,8 @@ angular.module('cesium.bma.services', ['ngResource',
         lookup: getResource('http://' + server + '/wot/lookup/:search'),
         members: getResource('http://' + server + '/wot/members'),
         requirements: getResource('http://' + server + '/wot/requirements/:pubkey'),
-        add: postResource('http://' + server + '/wot/add')
+        add: postResource('http://' + server + '/wot/add'),
+        certify: postResource('http://' + server + '/wot/certify')
       },
       network: {
         peering: {

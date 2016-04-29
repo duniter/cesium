@@ -31,7 +31,7 @@ angular.module('cesium.app.controllers', ['cesium.services'])
 
 function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   // Login modal
-  $scope.loginModal = "undefined";
+  $scope.loginModal = null;
   $scope.loginData = {};
 
   // Create the login modal that we will use later
@@ -50,12 +50,14 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
   // Open login modal
   $scope.login = function(callback) {
     if ($scope.loginModal) {
+      UIUtils.loading.hide();
       $scope.loginModal.show();
       $scope.loginData.callback = callback;
-      UIUtils.loading.hide();
     }
     else{
-      $timeout($scope.login, 2000);
+      $timeout(function(){
+        $scope.login(callback);
+      }, 2000);
     }
   };
 
@@ -63,6 +65,7 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
   $scope.loadWallet = function() {
     return $q(function(resolve, reject){
       if (!Wallet.isLogin()) {
+        $timeout(function() {
         $scope.login(function() {
           Wallet.loadData()
             .then(function(walletData){
@@ -70,6 +73,7 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
             })
             .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
         });
+        }, 2000);
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()

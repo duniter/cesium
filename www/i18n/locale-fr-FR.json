@@ -93,6 +93,8 @@
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "NO_TX": "Aucune transaction",
+    "EVENTS": "Evénements",
+    "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "BTN_SEND_MONEY": "Payer",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
@@ -108,7 +110,8 @@
       "PSEUDO_HELP": "Pseudonyme",
       "PASSWORD_CONFIRM": "Confirmation",
       "PASSWORD_CONFIRM_HELP": "Confirmation du mot de passe",
-      "MSG_UID_ALREADY_USED": "Pseudonyme déjà pris par quelqu'un d'autre.<br/>Veuillez en choisir un autre."
+      "MSG_UID_ALREADY_USED": "Pseudonyme déjà utilisé par quelqu'un d'autre.<br/>Veuillez en choisir un autre.",
+      "MSG_PUBKEY_ALREADY_USED": "Clé publique déjà utilisée par quelqu'un d'autre.<br/>Veuillez choisir d'autres identifiants de connexion."
     },
     "POPUP_REGISTER": {
       "TITLE": "Choisissez un pseudonyme",
@@ -127,6 +130,85 @@
     "BTN_RELATIVE_UNIT": "Montant en unité relative ?",
     "MODAL": {
       "TITLE": "Paiement"
+    }
+  },
+  "MARKET": {
+    "COMMON": {
+      "CATEGORY": "Catégorie",
+      "CATEGORIES": "Catégories",
+      "ISSUER": "Soumis par",
+      "PRICE": "Prix",
+      "BTN_BUY": "Acheter"
+    },
+    "SEARCH": {
+      "TITLE": "Annonces",
+      "SEARCH_HELP": "Recherche (voiture, livre...)",
+      "BTN_ADD": "Nouveau",
+      "BTN_OPTIONS": "Recherche avancée",
+      "BTN_AROUND_ME": "Autour de moi",
+      "LOCATION": "Localisation",
+      "LOCATION_HELP": "Ville",
+      "LAST_RECORDS": "Dernières annonces :",
+      "RESULTS": "Résultats :"
+    },
+    "VIEW": {
+      "TITLE": "Annonce"
+    },
+    "EDIT": {
+      "TITLE": "Edition",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "RECORD_TITLE": "Titre",
+      "RECORD_TITLE_HELP": "Titre",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_PRICE": "Prix",
+      "RECORD_PRICE_HELP": "Prix (optionnel)",
+      "RECORD_LOCATION": "Ville",
+      "RECORD_LOCATION_HELP": "Adresse, Ville"
+    },
+    "ERROR": {
+      "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
+      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'enregistrement."
+    }
+  },
+  "REGISTRY": {
+    "COMMON": {
+      "CATEGORY": "Catégorie",
+      "CATEGORIES": "Catégories",
+      "ISSUER": "Soumis par"
+    },
+    "SEARCH": {
+      "TITLE": "Annuaire",
+      "SEARCH_HELP": "Recherche (nom, pseudo, clé publique...)",
+      "BTN_ADD": "Nouveau",
+      "BTN_OPTIONS": "Recherche avancée",
+      "LOCATION": "Localisation",
+      "LOCATION_HELP": "Ville",
+      "LAST_RECORDS": "Derniers enregistrements :",
+      "RESULTS": "Résultats :"
+    },
+    "VIEW": {
+      "TITLE": ""
+    },
+    "NEW": {
+      "TITLE": "Nouveau",
+      "SELECT_TYPE": "Type d'ajout :",
+      "TYPE_PARTICULAR": "Particulier",
+      "TYPE_COMPANY": "Entreprise, organisme ou institution"
+    },
+    "EDIT": {
+      "TITLE": "Edition",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "RECORD_TITLE": "Nom",
+      "RECORD_TITLE_HELP": "Nom",
+      "RECORD_DESCRIPTION": "À propos de moi",
+      "RECORD_DESCRIPTION_HELP": "À propos de moi",
+      "RECORD_PRICE": "Prix",
+      "RECORD_PRICE_HELP": "Prix (optionnel)",
+      "RECORD_LOCATION": "Localisation",
+      "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
+      "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
+      "RECORD_PUBKEY": "Clé publique"
     }
   },
   "ERROR": {
@@ -157,8 +239,8 @@
   },
   "INFO": {
     "POPUP_TITLE": "Information",
-    "CERTIFICATION_DONE": "Certification envoyée",
-    "NOT_ENOUGH_CREDIT": "Credit insuffisant.",
+    "CERTIFICATION_DONE": "Certification envoyée avec succès.",
+    "NOT_ENOUGH_CREDIT": "Crédit insuffisant.",
     "TRANSFER_SENT": "La transaction a été envoyée avec succès."
   }
 }

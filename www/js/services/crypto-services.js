@@ -84,12 +84,11 @@ angular.module('cesium.crypto.services', ['ngResource'])
         encode_base58 = function(a) {
             return base58.encode(a);
         },
-
-        hash_sha256 = function(s) {
+        hash_sha256 = function(message) {
           return $q(function(resolve, reject) {
-            var hash = CryptoJS.SHA256(s);
-            //var hash = nacl.crypto_hash_sha256(s);
-            resolve(hash);
+            var msg = decode_utf8(message);
+            var hash = nacl.to_hex(nacl.crypto_hash_sha256(msg));
+            resolve(hash.toUpperCase());
           });
         },
 
@@ -155,7 +154,7 @@ angular.module('cesium.crypto.services', ['ngResource'])
             encode_utf8: nacl.encode_utf8,
             decode_utf8: decode_utf8,
             encode_base58: encode_base58,
-            hash_sha256: hash_sha256
+            hash: hash_sha256
           },
           connect: connect,
           sign: sign,

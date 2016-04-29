@@ -68,14 +68,16 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       $scope.needMembership = true;
       $scope.needMembershipOut = false;
       $scope.needRenew = false;
+      $scope.pendingMembership = false;
     }
     else {
       $scope.needSelf = false;
       $scope.needMembership = ($scope.walletData.requirements.membershipExpiresIn === 0 &&
         $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
-      $scope.needRenew = !$scope.needMembership && ($scope.walletData.requirements.membershipExpiresIn < 129600 &&
+      $scope.needRenew = !$scope.needMembership && ($scope.walletData.requirements.membershipExpiresIn < 129600 /*TODO: =1.5j suffit ?*/ &&
         $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
       $scope.needMembershipOut = ($scope.walletData.requirements.membershipExpiresIn > 0);
+      $scope.pendingMembership = ($scope.walletData.requirements.membershipPendingExpiresIn > 0);
     }
     $scope.isMember = !$scope.needSelf && !$scope.needMembership;
     // Set Motion
@@ -104,11 +106,64 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     $scope.registerForm = registerForm;
   };
 
+  $scope.checkUidNotExists = function(uid, pubkey) {
+    return $q(function(resolve, reject) {
+      BMA.wot.lookup({ search: uid }) // search on uid
+        .then(function(res) {
+          var found = res.results &&
+              res.results.length > 0 &&
+              res.results.some(function(pub){
+                return pub.uids && pub.uids.length > 0 &&
+                    pub.uids.some(function(idty) {
+                      return ((idty.uid === uid) && // check Uid
+                              (pub.pubkey !== pubkey || !idty.revoked)); // check pubkey
+                    });
+              });
+          if (found) { // uid is already used : display a message and call failed callback
+            reject('ACCOUNT.NEW.MSG_UID_ALREADY_USED');
+          }
+          else {
+            resolve(uid);
+          }
+        })
+        .catch(function() {
+           resolve(uid);
+        });
+    });
+  };
+
+  $scope.checkPubkeyNotExists = function(uid, pubkey) {
+      return $q(function(resolve, reject) {
+        BMA.wot.lookup({ search: pubkey }) // search on pubkey
+          .then(function(res) {
+            var found = res.results &&
+                res.results.length > 0 &&
+                res.results.some(function(pub){
+                  return pub.pubkey === pubkey &&
+                      pub.uids && pub.uids.length > 0 &&
+                      pub.uids.some(function(idty) {
+                        return (!idty.revoked); // excluded revoked uid
+                      });
+                });
+            if (found) { // uid is already used : display a message and reopen the popup
+              reject('ACCOUNT.NEW.MSG_PUBKEY_ALREADY_USED');
+            }
+            else {
+              resolve(uid);
+            }
+          })
+          .catch(function() {
+             resolve(uid);
+          });
+      });
+    };
+
   // Ask uid
   $scope.showUidPopup = function() {
     return $q(function(resolve, reject) {
       $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
+          $scope.walletData.newUid = (!!$scope.walletData.uid ? ''+$scope.walletData.uid : '');
 
           // Choose UID popup
           $ionicPopup.show({
@@ -123,11 +178,11 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
                 type: 'button-positive',
                 onTap: function(e) {
                   $scope.registerForm.$submitted=true;
-                  if(!$scope.registerForm.$valid || !$scope.walletData.uid) {
+                  if(!$scope.registerForm.$valid || !$scope.walletData.newUid) {
                     //don't allow the user to close unless he enters a uid
                     e.preventDefault();
                   } else {
-                    return $scope.walletData.uid;
+                    return $scope.walletData.newUid;
                   }
                 }
               }
@@ -139,32 +194,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
               UIUtils.loading.hide();
               return;
             }
-            UIUtils.loading.show();
-            BMA.wot.lookup({ search: uid })
-            .then(function(res) {
-              var found = res.results &&
-                  res.results.length > 0 &&
-                  res.results.some(function(pub){
-                    return pub.pubkey !== $scope.walletData.pubkey &&
-                        pub.uids && pub.uids.length > 0 &&
-                        pub.uids.some(function(idty){
-                          return (idty.uid === uid);
-                        });
-                  });
-              if (found) { // uid is already used : display a message and reopen the popup
-                UIUtils.loading.hide();
-                UIUtils.alert.info('ACCOUNT.NEW.MSG_UID_ALREADY_USED')
-                .then(function(){
-                  $scope.showUidPopup(); // loop
-                });
-              }
-              else {
                 resolve(uid);
-              }
-            })
-            .catch(function() {
-               resolve(uid);
-            });
           });
         });
       });
@@ -174,18 +204,24 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   $scope.self= function() {
     $scope.showUidPopup()
     .then(function(uid) {
+      UIUtils.loading.show();
+
       Wallet.self(uid)
       .then(function() {
         $scope.doUpdate();
       })
-      .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
+      .catch(function(err){
+         UIUtils.loading.hide();
+         UIUtils.alert.info(err);
+         $scope.self(); // loop
+      });
     });
   };
 
   // Send membership IN
   $scope.membershipIn= function() {
     var doMembershipIn = function() {
-    Wallet.membership(true)
+    Wallet.membership.inside()
     .then(function() {
         $scope.doUpdate();
       })
@@ -195,7 +231,10 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     $scope.showUidPopup()
     .then(function (uid) {
       UIUtils.loading.show();
-      if (!$scope.walletData.blockUid) {
+      // If uid changed, or selft blockUid not retrieve : do self() first
+      if (!$scope.walletData.blockUid || uid != $scope.walletData.uid) {
+        $scope.walletData.blockUid = null;
+        $scope.walletData.uid = uid;
         Wallet.self(uid, false/*do NOT load membership here*/)
         .then(function() {
           doMembershipIn();
@@ -213,7 +252,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   // Send membership IN
   $scope.membershipOut = function() {
     UIUtils.loading.show();
-    Wallet.membership(false)
+    Wallet.membership.out()
     .then(function() {
       $scope.doUpdate();
     })

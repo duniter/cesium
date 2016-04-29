@@ -1,15 +1,10 @@
 {
   "default": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "metab.ucoin.io"
+      "UCOIN_NODE": "twiced.fr:9330"
     }
   },
 
-  "ucoin-io": {
-    "APP_CONFIG": {
-      "UCOIN_NODE": "metab.ucoin.io"
-    }
-  },
 
   "twiced-fr": {
     "APP_CONFIG": {
@@ -17,18 +12,9 @@
     }
   },
 
-  "ucoin-fr": {
+  "duniter-fr": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "twiced.fr:9330",
-      "UCOIN_NODE_ES": "es.ucoin.fr"
-    }
-  },
-
-  "dev": {
-    "APP_CONFIG": {
-      "UCOIN_NODE": "192.168.0.28:9201",
-      "UCOIN_NODE_ES": "192.168.0.5:9200"
+      "UCOIN_NODE": "test-net.duniter.fr:9201"
     }
   }
-
 }

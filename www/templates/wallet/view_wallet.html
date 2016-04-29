@@ -60,12 +60,25 @@
               </button>
             </div>
 
-            <!-- Last Transactions -->
             <div class="row no-padding">
               <div class="col col-20 hidden-xs hidden-sm">&nbsp;
               </div>
 
               <div class="col list animate-fade-slide-in-right" >
+
+                <!-- Events -->
+                <span class="item item-divider" ng-if="pendingMembership">
+                  {{'ACCOUNT.EVENTS' | translate}}
+                </span>
+
+                <span class="item item-text-wrap" ng-if="pendingMembership">
+                  <h3>
+                    <i class="icon icon ion-clock"></i>
+                    {{'ACCOUNT.WAITING_MEMBERSHIP' | translate}}
+                  </h3>
+                </span>
+
+                <!-- Last Transactions -->
                 <span class="item item-divider">
                   {{'ACCOUNT.LAST_TX' | translate}}
                   <div class="badge item-note">
