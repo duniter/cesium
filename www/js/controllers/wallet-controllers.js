@@ -20,7 +20,6 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  ionicMaterialMotion, ionicMaterialInk,
   UIUtils, Wallet, BMA, $translate, Registry) {
 
   $scope.walletData = {};
@@ -82,11 +81,11 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     $scope.isMember = !$scope.needSelf && !$scope.needMembership;
     // Set Motion
     $timeout(function() {
-      ionicMaterialMotion.fadeSlideInRight({
+      UIUtils.motion.fadeSlideInRight({
         startVelocity: 3000
       });
       // Set Ink
-      ionicMaterialInk.displayEffect({selector: '.item'});
+      UIUtils.ink({selector: '.item'});
     }, 10);
   };
 

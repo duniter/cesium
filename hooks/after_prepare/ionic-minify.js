@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 var path = require("path");
 var ionic_minify_1 = require("ionic-minify");
 var config = require("../minify-conf.json");
@@ -7,12 +8,11 @@ var cmd = process.env.CORDOVA_CMDLINE;
 var rootDir = process.argv[2];
 var platforms = process.env.CORDOVA_PLATFORMS.split(',');
 var platformPath = path.join(rootDir, "platforms");
-if (cmd.indexOf("--release") > -1) {
-    console.log("WARN: The use of the --release flag is deprecated!! Use --minify instead!");
+if (cmd.indexOf("--release") > -1 || cmd.indexOf("--minify") > -1) {
+    if (cmd.indexOf("--release") > -1) {
+        console.log("WARN: The use of the --release flag is deprecated!! Use --minify instead!");
+    }
     minify = true;
-}
-else {
-    minify = (cmd.indexOf("--minify") > -1);
 }
 config.showErrStack = (config.showErrStack || false);
 config.jsOptions.fromString = true;

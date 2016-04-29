@@ -304,7 +304,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
   */
 }
 
-function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA, ionicMaterialInk) {
+function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
 
   $scope.formData = {};
   $scope.id = null;
@@ -407,7 +407,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 }
 
-function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, ionicMaterialInk, System) {
+function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, System) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 

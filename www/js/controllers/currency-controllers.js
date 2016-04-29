@@ -53,7 +53,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, Registry, ionicMaterialInk) {
+function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, Registry) {
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
@@ -68,7 +68,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
         $scope.selectedCurrency = res[0].id;
       }
       // Set Ink
-      ionicMaterialInk.displayEffect({selector: 'a.item'});
+      UIUtils.ink({selector: 'a.item'});
     });
   });
 
