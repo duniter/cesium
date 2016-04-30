@@ -1,14 +1,7 @@
 {
   "default": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "twiced.fr:9330"
-    }
-  },
-
-
-  "twiced-fr": {
-    "APP_CONFIG": {
-      "UCOIN_NODE": "twiced.fr:9330"
+      "UCOIN_NODE": "cgeek.fr:9330"
     }
   },
 
