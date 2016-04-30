@@ -28,10 +28,15 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   .controller('AppCtrl', AppController)
 ;
 
-function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   // Login modal
   $scope.loginModal = null;
   $scope.loginData = {};
+  $rootScope.viewFirstEnter = false;
+
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    $rootScope.viewFirstEnter = true;
+  });
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -66,13 +71,14 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
       if (!Wallet.isLogin()) {
         $timeout(function() {
           $scope.login(function() {
+            $rootScope.viewFirstEnter = false;
             Wallet.loadData()
               .then(function(walletData){
                 resolve(walletData);
               })
               .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
             });
-        }, 2000);
+        }, $rootScope.viewFirstEnter ? 10 : 2000);
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
@@ -181,7 +187,7 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
 }
 
 
-function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
+function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
   CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, System
   ) {
 
@@ -200,7 +206,7 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
       }
     };
 
-  LoginModalController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
+  LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
   TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System);
 

@@ -255,8 +255,8 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           avatar: getAvatar
         },
         currency: {
-          all: getResource('http://' + server + '/currency/simple/_search?_source=currencyName,peers.host,peers.port'),
-          get: getResource('http://' + server + '/currency/simple/:id/_source')
+          all: getResource('http://' + server + '/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
+          get: getResource('http://' + server + '/registry/currency/:id/_source')
         }
       };
     }

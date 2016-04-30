@@ -332,7 +332,9 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
         Registry.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
-          $scope.category = categories[hit._source.category];
+          if (hit._source.category && hit._source.category.id){
+            $scope.category = categories[hit._source.category.id];
+          }
           $scope.id= hit._id;
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
@@ -357,7 +359,18 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
                 $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
                 UIUtils.loading.hide();
               })
-              .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
+              .catch(function(err) {
+                if (err && err.ucode == 2001) {
+                  $scope.identity = {
+                    pub: $scope.formData.issuer
+                  };
+                  $scope.hasSelf = false;
+                  UIUtils.loading.hide();
+                }
+                else {
+                  UIUtils.onError('ERROR.WOT_LOOKUP_FAILED')(err);
+                }
+              });
           }
           else {
             $scope.hasSelf = false;
@@ -378,7 +391,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
           }
         });
       })
-    ]).catch(UIUtils.onError('Could not load registry'));
+    ]).catch(UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED'));
   };
 
   // Edit click
@@ -407,7 +420,8 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 }
 
-function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, System) {
+function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, System,
+  $ionicHistory, $ionicViewService) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 
@@ -448,7 +462,9 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
         Registry.record.get({id: id})
         .then(function (hit) {
           $scope.recordData = hit._source;
-          $scope.category = categories[hit._source.category];
+          if (hit._source.category && hit._source.category.id){
+            $scope.category = categories[hit._source.category.id];
+          }
           $scope.id= hit._id;
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
@@ -459,7 +475,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
         });
       })
     ])
-    .catch(UIUtils.onError('Could not load registry'));
+    .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED'));
   };
 
   $scope.save = function() {
@@ -475,7 +491,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
             $state.go('app.registry_view_record', {id: id});
             resolve();
           })
-          .catch(UIUtils.onError('Could not save registry'));
+          .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
       }
       else { // Update
           Registry.record.update($scope.recordData, {id: $scope.id}, $scope.walletData.keypair)
@@ -484,7 +500,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
             $state.go('app.registry_view_record', {id: $scope.id});
             resolve();
           })
-          .catch(UIUtils.onError('Could not update registry'));
+          .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
       }
     });
   };
@@ -511,14 +527,9 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
       var file = event.target.files[0];
       System.image.resize(file)
       .then(function(imageData) {
-        if ($scope.pictures.length === 0) {
-          $scope.pictures.push({src: imageData});
-        }
-        else {
-          $scope.pictures[0] = {src: imageData};
-        }
+        $scope.pictures.push({src: imageData});
         UIUtils.loading.hide();
-        $scope.$apply();
+        //$scope.$apply();
         resolve();
       });
     });
@@ -526,6 +537,14 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
 
   $scope.removePicture = function(index){
     $scope.pictures.splice(index, 1);
+  };
+
+  $scope.favoritePicture = function(index){
+    if (index > 0) {
+      var item = $scope.pictures[index];
+      $scope.pictures.splice(index, 1);
+      $scope.pictures.splice(0, 0, item);
+    }
   };
 
   $scope.auth = function() {
@@ -541,6 +560,11 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
       .catch(onError('Could not computed authentication token'));
     })
     .catch(onError('Could not computed authentication token'));
+  };
+
+  $scope.goBack = function() {
+    //var backView = $ionicHistory.backView();
+    $ionicViewService.getBackView().go();
   };
 }
 

@@ -5,16 +5,20 @@
         <div class="list gallery" ng-if="pictures && pictures.length>0" >
           <div ng-repeat="picture in pictures"
                class="item card card-gallery">
-            <div class="ink">
-              <img ng-src="{{picture.src}}" ng-if="!picture.loading"></img>
-              <ion-spinner icon="android" ng-if="picture.loading"></ion-spinner>
+            <div>
+              <h2 ng-if="picture.title">{{picture.title}}</h2>
+              <img ng-src="{{picture.src}}" ></img>
             </div>
             <div class="item tabs tabs-secondary tabs-icon-left">
               <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
                 <i class="icon ion-close"></i>
-                Delete
+                {{'COMMON.BTN_PICTURE_DELETE'|translate}}
               </a>
-              <a class="tab-item stable-bg">
+              <a class="tab-item stable-bg"
+                 ng-click="favoritePicture($index)"
+                 ng-class="{'dark': $index !== 0, 'positive-900': $index === 0}">
+                <i class="icon ion-star"></i>
+                {{'COMMON.BTN_PICTURE_FAVORISE'|translate}}
               </a>
             </div>
           </div>

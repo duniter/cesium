@@ -353,7 +353,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
 
 function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, System, $timeout) {
 
-  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal);
+  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
 
   $scope.walletData = {};
   $scope.formData = {};
@@ -385,7 +385,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         Market.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
-          $scope.category = categories[hit._source.category];
+          $scope.category = categories[hit._source.category.id];
           $scope.id= hit._id;
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
@@ -445,7 +445,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.selectCategory = function(cat) {
     if (!cat.parent) return;
     $scope.category = cat;
-    $scope.formData.category = cat.id;
+    $scope.formData.category = cat;
     $scope.closeCategoryModal();
   };
 

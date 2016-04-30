@@ -16,7 +16,9 @@
     "LOADING": "Loading...",
     "FROM": "From",
     "TO": "To",
-    "COPY": "Copy"
+    "COPY": "Copy",
+    "BTN_PICTURE_DELETE": "Delete",
+    "BTN_PICTURE_FAVORISE": "Default"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -138,7 +140,8 @@
       "CATEGORIES": "Categories",
       "ISSUER": "Issuer",
       "PRICE": "Price",
-      "BTN_BUY": "Buy"
+      "BTN_BUY": "Buy",
+      "BTN_NEW_AD": "New ad"
     },
     "SEARCH": {
       "TITLE": "Market",
@@ -156,13 +159,17 @@
     },
     "EDIT": {
       "TITLE": "Edit",
-      "BTN_ADD_PICTURES": "Add pictures",
       "RECORD_TITLE": "Title",
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
       "RECORD_LOCATION": "Localization",
-      "RECORD_LOCATION_HELP": "Address, City"
+      "RECORD_LOCATION_HELP": "Address, City",
+      "RECORD_PRICE": "Price",
+      "RECORD_PRICE_HELP": "Price (optional)",
+      "BTN_ADD_PICTURES": "Add pictures",
+      "BTN_PUBLISH": "Publish",
+      "BTN_SAVE": "Save"
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Error while loading market categories",
@@ -173,7 +180,8 @@
     "COMMON": {
       "CATEGORY": "Category",
       "CATEGORIES": "Categories",
-      "ISSUER": "Issuer"
+      "ISSUER": "Issuer",
+      "BTN_NEW": "Add"
     },
     "SEARCH": {
       "TITLE": "Registry",
@@ -196,17 +204,21 @@
     },
     "EDIT": {
       "TITLE": "Edit",
-      "BTN_ADD_PICTURES": "Add pictures",
       "RECORD_TITLE": "Name",
       "RECORD_TITLE_HELP": "Name",
       "RECORD_DESCRIPTION": "About me",
       "RECORD_DESCRIPTION_HELP": "Something about me",
-      "RECORD_PRICE": "Price",
-      "RECORD_PRICE_HELP": "Price (optional)",
       "RECORD_LOCATION": "Localization",
       "RECORD_LOCATION_HELP": "Localization (address, city)",
       "RECORD_SOCIAL_NETWORKS": "Social networks",
-      "RECORD_PUBKEY": "Public key"
+      "RECORD_PUBKEY": "Public key",
+      "BTN_ADD_PICTURES": "Add pictures",
+      "BTN_PUBLISH": "Publish",
+      "BTN_SAVE": "Save"
+    },
+    "ERROR": {
+      "LOAD_RECORD_FAILED": "Chargement impossible",
+      "SAVE_RECORD_FAILED": "Erreur de la sauvegarde"
     }
   },
   "ERROR": {
@@ -233,7 +245,8 @@
     "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data",
     "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
     "TAKE_PICTURE_FAILED": "Could not get picture",
-    "SCAN_FAILED": "Could not scan QR code"
+    "SCAN_FAILED": "Could not scan QR code",
+    "WOT_LOOKUP_FAILED": "Search failed"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

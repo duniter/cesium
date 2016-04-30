@@ -16,7 +16,9 @@
     "LOADING": "Veuillez patienter...",
     "FROM": "De",
     "TO": "A",
-    "COPY": "Copier"
+    "COPY": "Copier",
+    "BTN_PICTURE_DELETE": "Supprimer",
+    "BTN_PICTURE_FAVORISE": "Principale"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -138,7 +140,8 @@
       "CATEGORIES": "Catégories",
       "ISSUER": "Soumis par",
       "PRICE": "Prix",
-      "BTN_BUY": "Acheter"
+      "BTN_BUY": "Acheter",
+      "BTN_NEW_AD": "Nouvelle annonce"
     },
     "SEARCH": {
       "TITLE": "Annonces",
@@ -156,15 +159,17 @@
     },
     "EDIT": {
       "TITLE": "Edition",
-      "BTN_ADD_PICTURES": "Ajouter des photos",
       "RECORD_TITLE": "Titre",
       "RECORD_TITLE_HELP": "Titre",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Ville",
+      "RECORD_LOCATION_HELP": "Adresse, Ville",
       "RECORD_PRICE": "Prix",
       "RECORD_PRICE_HELP": "Prix (optionnel)",
-      "RECORD_LOCATION": "Ville",
-      "RECORD_LOCATION_HELP": "Adresse, Ville"
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "BTN_PUBLISH": "Publier",
+      "BTN_SAVE": "Sauvegarder"
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
@@ -175,7 +180,8 @@
     "COMMON": {
       "CATEGORY": "Catégorie",
       "CATEGORIES": "Catégories",
-      "ISSUER": "Soumis par"
+      "ISSUER": "Soumis par",
+      "BTN_NEW": "Ajouter"
     },
     "SEARCH": {
       "TITLE": "Annuaire",
@@ -192,23 +198,27 @@
     },
     "NEW": {
       "TITLE": "Nouveau",
-      "SELECT_TYPE": "Type d'ajout :",
+      "SELECT_TYPE": "Type de référencement :",
       "TYPE_PARTICULAR": "Particulier",
       "TYPE_COMPANY": "Entreprise, organisme ou institution"
     },
     "EDIT": {
       "TITLE": "Edition",
-      "BTN_ADD_PICTURES": "Ajouter des photos",
       "RECORD_TITLE": "Nom",
       "RECORD_TITLE_HELP": "Nom",
       "RECORD_DESCRIPTION": "À propos de moi",
       "RECORD_DESCRIPTION_HELP": "À propos de moi",
-      "RECORD_PRICE": "Prix",
-      "RECORD_PRICE_HELP": "Prix (optionnel)",
       "RECORD_LOCATION": "Localisation",
       "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
-      "RECORD_PUBKEY": "Clé publique"
+      "RECORD_PUBKEY": "Clé publique",
+      "BTN_ADD_PICTURES": "Ajouter des photos",
+      "BTN_PUBLISH": "Publier",
+      "BTN_SAVE": "Sauvegarder"
+    },
+    "ERROR": {
+      "LOAD_RECORD_FAILED": "Chargement impossible",
+      "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde"
     }
   },
   "ERROR": {
@@ -235,7 +245,8 @@
     "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille",
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible",
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo",
-    "SCAN_FAILED": "Echec du scan de QR Code"
+    "SCAN_FAILED": "Echec du scan de QR Code",
+    "WOT_LOOKUP_FAILED": "Echec de la recherche",
   },
   "INFO": {
     "POPUP_TITLE": "Information",

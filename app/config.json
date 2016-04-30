@@ -1,31 +1,25 @@
 {
   "default": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "metab.ucoin.io"
+      "UCOIN_NODE": "cgeek.fr:9330"
     }
   },
 
-  "ucoin-io": {
+  "cgeek-fr": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "metab.ucoin.io"
-    }
-  },
-
-  "twiced-fr": {
-    "APP_CONFIG": {
-      "UCOIN_NODE": "twiced.fr:9330"
+      "UCOIN_NODE": "cgeek.fr:9330"
     }
   },
 
   "duniter-fr": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "test-net.duniter.fr"
+      "UCOIN_NODE": "test-net.duniter.fr:9201"
     }
   },
 
   "duniter-fr-es": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "test-net.duniter.fr",
+      "UCOIN_NODE": "test-net.duniter.fr:9201",
       "UCOIN_NODE_ES": "data.duniter.fr"
     }
   },

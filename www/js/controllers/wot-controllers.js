@@ -48,9 +48,14 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
           $scope.search.results = idties;
           $scope.search.looking = false;
         })
-        .catch(function() {
-          $scope.search.results = [];
-          $scope.search.looking = false;
+        .catch(function(err) {
+          if (err && err.ucode == 2001) {
+            $scope.search.results = [];
+            $scope.search.looking = false;
+          }
+          else {
+            UIUtils.onError('ERROR.WOT_LOOKUP_FAILED')(err);
+          }
         });
     }
   };
@@ -67,7 +72,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
         $scope.search.text = result.text;
        }
      })
-     .catch(UIUtils.alert.error('ERROR.SCAN_FAILED'));
+     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
    }
  };
 }
