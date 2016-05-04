@@ -31,7 +31,7 @@
               {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
             </button>
 
-            <button class="button button-raised button-icon icon ion-ribbon-b" ng-click="signIdentity()" ng-if="hasSelf">
+            <button class="button button-raised button-icon icon ion-ribbon-b" ng-click="certifyIdentity()" ng-if="hasSelf">
               {{'WOT.BTN_CERTIFY' | translate}}
             </button>
           </div>
@@ -69,4 +69,15 @@
           <div class="scroll-bar scroll-bar-v"></div>
         </div>
     </ion-content>
+
+  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
+          ng-click="transfer(formData.issuer, formData.title)">
+  </button>
+
+  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-ribbon-b visible-xs visible-sm"
+          ng-click="certifyIdentity()"
+          ng-if="hasSelf"
+          style="bottom:78px;">
+  </button>
+
 </ion-view>

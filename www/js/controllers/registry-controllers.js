@@ -353,12 +353,12 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
                     return uids.concat({
                       uid: idty.uid,
                       pub: res.pubkey,
-                      sigDate: idty.meta.timestamp,
+                      timestamp: idty.meta.timestamp,
                       sig: idty.self
                     });
                   }, []));
                 }, [])[0];
-                $scope.hasSelf = ($scope.identity.uid && $scope.identity.sigDate && $scope.identity.sig);
+                $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
                 UIUtils.loading.hide();
               })
               .catch(function(err) {
@@ -402,14 +402,14 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
     $state.go('app.registry_edit_record', {id: $scope.id});
   };
 
-  // Sign click
-  $scope.signIdentity = function(identity) {
+  // Certify click
+  $scope.certifyIdentity = function(identity) {
     $scope.loadWallet()
     .then(function(walletData) {
       UIUtils.loading.show();
-      Wallet.sign($scope.identity.uid,
+      Wallet.certify($scope.identity.uid,
                   $scope.identity.pub,
-                  $scope.identity.sigDate,
+                  $scope.identity.timestamp,
                   $scope.identity.sig)
       .then(function() {
         UIUtils.loading.hide();
