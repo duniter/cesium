@@ -243,7 +243,7 @@
     "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out",
     "REFRESH_WALLET_DATA": "Could not refresh wallet",
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters",
-    "GET_CURRENCIES_FAILED": "Could not load currencies",
+    "GET_CURRENCIES_FAILED": "Unable to load currencies. Please retry later.",
     "GET_CURRENCY_FAILED": "Could not load currency",
     "SEND_TX_FAILED": "Could not send transaction",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
