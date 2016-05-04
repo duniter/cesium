@@ -39,7 +39,7 @@
           <div class="list">
 
               <span class="item item-icon-left ink"
-                    ng-if="!formData.isCompany"
+                    ng-if="!isCompany"
                     copy-on-click>
                   <i class="icon ion-key"></i>
                   <p class="gray">{{formData.issuer}}</p>
@@ -49,7 +49,7 @@
                   <p ng-bind-html="formData.description"></p>
               </div>
 
-              <div ng-if="formData.isCompany">
+              <div ng-if="isCompany">
                   <div class="item-divider"></div>
 
                   <div class="item">

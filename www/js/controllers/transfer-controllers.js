@@ -54,8 +54,9 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $
     }
 
     $scope.loadWallet()
-    .then(function(wallet) {
-      $scope.walletData = wallet;
+    .then(function(walletData) {
+      $scope.walletData = walletData;
+      $scope.formData.useRelative = walletData.settings.useRelative;
       $scope.onUseRelativeChanged();
       UIUtils.loading.hide();
     });
@@ -70,7 +71,8 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   $scope.formData = {
     destPub: null,
     amount: null,
-    comments: null
+    comments: null,
+    useRelative: Wallet.defaultSettings.useRelative
   };
   $scope.dest = null;
   $scope.udAmount = null;
@@ -132,6 +134,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
         .then(function(walletData) {
           UIUtils.loading.hide();
           $scope.walletData = walletData;
+          $scope.formData.useRelative = walletData.settings.useRelative;
           $scope.transferModal.show();
         });
     }
@@ -149,7 +152,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   // When changing use relative UD
   $scope.onUseRelativeChanged = function() {
-    if ($scope.walletData.useRelative) {
+    if ($scope.formData.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
       $scope.udAmount = $scope.amount * $scope.walletData.currentUD;
       $scope.unit = 'universal_dividend';
@@ -170,7 +173,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
       $scope.udUnit = '';
     }
   };
-  $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
+  $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
   $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
 
   $scope.openWotLookup = function() {
@@ -181,7 +184,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
     UIUtils.loading.show();
 
     var amount = $scope.formData.amount;
-    if ($scope.walletData.useRelative && !!amount &&
+    if ($scope.formData.useRelative && !!amount &&
         typeof amount == "string") {
       amount = $scope.walletData.currentUD *
                amount.replace(new RegExp('[.,]'), '.');

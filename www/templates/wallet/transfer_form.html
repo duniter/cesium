@@ -13,18 +13,18 @@
           <span class="badge"
               ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
               {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
-              <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-              <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+              <span ng-if="!formData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+              <span ng-if="formData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
           </span>
       </span>
 
-      <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
+      <div class="item item-input item-floating-label" ng-if="!formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
           <input type="number" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})"
                  ng-model="formData.amount" required>
       </div>
 
-      <div class="item item-input item-floating-label" ng-if="walletData.useRelative">
+      <div class="item item-input item-floating-label" ng-if="formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
           <input type="text" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount"
                  required>
@@ -34,7 +34,7 @@
       <div class="item item-content item-toggle dark">
         <h4 class="gray">{{'TRANSFER.BTN_RELATIVE_UNIT' | translate}}</h4>
         <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="walletData.useRelative">
+          <input type="checkbox" ng-model="formData.useRelative">
           <div class="track">
             <div class="handle"></div>
           </div>

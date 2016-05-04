@@ -12,7 +12,7 @@ angular.module("cesium.config", [])
 	"UCOIN_NODE": "cgeek.fr:9330",
 	"UCOIN_NODE_ES": "data.duniter.fr",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-05-04T08:08:51.555Z"
+	"BUILD_DATE": "2016-05-04T17:14:44.413Z"
 })
 
 ;

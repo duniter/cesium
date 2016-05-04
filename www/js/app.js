@@ -33,6 +33,12 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
     };
   })
 
+  .filter('formatDuration', function() {
+    return function(input) {
+      return input ? moment(moment().utc().valueOf() + parseInt(input)*1000).startOf('minute').fromNow() : '';
+    };
+  })
+
   .filter('abbreviate', function() {
     return function(input) {
       var unit = '', sepChars = ['-', '_', ' '], currency = input || '';

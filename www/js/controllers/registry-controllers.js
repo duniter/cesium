@@ -314,6 +314,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
   $scope.canEdit = false;
   $scope.hasSelf = false;
   $scope.identity = null;
+  $scope.isCompany = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
@@ -343,7 +344,8 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
           }
           $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey);
 
-          if (!$scope.formData.isCompany) {
+          $scope.isCompany = $scope.category.id == 'particulier';
+          if (!$scope.isCompany) {
             BMA.wot.lookup({ search: $scope.formData.issuer })
               .then(function(res){
                 $scope.identity = res.results.reduce(function(idties, res) {
@@ -421,15 +423,14 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 }
 
 function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, System,
-  $ionicHistory, $ionicViewService) {
+  $ionicHistory) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 
   $scope.walletData = {};
-  $scope.recordData = {
-    isCompany: false
-  };
+  $scope.recordData = {};
   $scope.recordForm = {};
+  $scope.isCompany = null;
   $scope.id = null;
   $scope.isMember = false;
   $scope.category = {};
@@ -563,16 +564,14 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   };
 
   $scope.goBack = function() {
-    //var backView = $ionicHistory.backView();
-    $ionicViewService.getBackView().go();
+    $ionicHistory.goBack();
   };
 }
 
 function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry) {
 
-  $scope.recordData = {
-    isCompany: null
-  };
+  $scope.recordData = {};
+  $scope.isCompany = null;
   $scope.recordForm = {};
   $scope.pictures = [];
   $scope.slides = {
@@ -591,10 +590,9 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
       $scope.newRecordModal.remove();
       $scope.newRecordModal = null;
       $timeout(function(){
-        $scope.recordData = {
-          isCompany: null
-        };
+        $scope.recordData = {};
         $scope.recordForm = {};
+        $scope.isCompany = null;
         $scope.pictures = [];
         $scope.slides.slider.destroy();
         delete $scope.slides.slider;
@@ -657,7 +655,7 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
   };
 
   $scope.setIsCompany = function(bool) {
-    $scope.recordData.isCompany = bool;
+    $scope.isCompany = bool;
     $scope.slideNext();
   };
 
@@ -672,6 +670,10 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
           $scope.recordData.pictures = $scope.pictures.reduce(function(res, pic) {
             return res.concat({src: pic.src});
           }, []);
+          // Use a default category if not a company
+          if (!$scope.isCompany) {
+            $scope.recordData.category={id:'particulier'};
+          }
           // Set time (UTC)
           // TODO : use the block chain time
           $scope.recordData.time = Math.floor(moment().utc().valueOf() / 1000);
@@ -692,8 +694,7 @@ function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils,
 
   $scope.selectCategory = function(cat) {
     if (!cat.parent) return;
-    $scope.category = cat;
-    $scope.recordData.category = cat.id;
+    $scope.recordData.category = cat;
     $scope.closeCategoryModal();
   };
 

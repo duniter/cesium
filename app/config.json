@@ -13,13 +13,13 @@
 
   "duniter-fr": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "test-net.duniter.fr:9201"
+      "UCOIN_NODE": "cgeek.fr:9330"
     }
   },
 
   "duniter-fr-es": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "test-net.duniter.fr:9201",
+      "UCOIN_NODE": "cgeek.fr:9330",
       "UCOIN_NODE_ES": "data.duniter.fr"
     }
   },

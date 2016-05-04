@@ -8,7 +8,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     var
 
-    USE_RELATIVE_DEFAULT = true,
+    defaultSettings = {
+      useRelative: true,
+      timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/
+    },
 
     data = {
         pubkey: null,
@@ -18,16 +21,21 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         },
         balance: 0,
         sources: null,
-        useRelative: USE_RELATIVE_DEFAULT,
+        useRelative: defaultSettings.useRelative, // TODO : a remplacer par settings.useRelative
         currency: null,
+        parameters: null,
         currentUD: null,
         medianTime: null,
         history: {},
         requirements: {},
+        isMember: false,
         loaded: false,
         blockUid: null,
-        sigQty: null,
-        avatar: null
+        avatar: null,
+        settings: {
+          useRelative: defaultSettings.useRelative,
+          timeWarningExpire: defaultSettings.timeWarningExpire
+        }
     },
 
     resetData = function() {
@@ -38,16 +46,21 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             };
       data.balance = 0;
       data.sources = null;
-      data.useRelative = USE_RELATIVE_DEFAULT;
+      data.useRelative = defaultSettings.useRelative; // TODO : a remplacer par settings.useRelative
       data.currency= null;
+      data.parameters = null;
       data.currentUD= null;
       data.medianTime = null;
       data.history= {};
       data.requirements= {};
+      data.isMember = false;
       data.loaded= false;
       data.blockUid= null;
-      data.sigQty = null;
       data.avatar = null;
+      data.settings = {
+        useRelative: defaultSettings.useRelative,
+        timeWarningExpire: defaultSettings.timeWarningExpire
+      };
     },
 
     reduceTxAndPush = function(txArray, result, processedTxMap) {
@@ -144,14 +157,29 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             arg1.amount == arg2.amount;
     },
 
+    resetRequirements = function() {
+      data.requirements = {
+        needSelf: true,
+        needMembership: true,
+        needMembershipOut: false,
+        needRenew: false,
+        pendingMembership: false,
+        certificationCount: 0,
+        needCertifications: false,
+        needCertificationCount: 0,
+        willNeedCertificationCount: 0
+      };
+      data.blockUid = null;
+      data.isMember = false;
+    },
+
     loadRequirements = function() {
       return $q(function(resolve, reject) {
         // Get requirements
         BMA.wot.requirements({pubkey: data.pubkey})
         .then(function(res){
           if (!res.identities || res.identities.length === 0) {
-            data.requirements = null;
-            data.blockUid = null;
+            resetRequirements();
             resolve();
             return;
           }
@@ -168,13 +196,31 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           data.requirements = idty;
           data.uid = idty.uid;
           data.blockUid = idty.meta.timestamp;
-          // TODO
-          //data.requirements.needCertifications = (idty.certifications.length < data.sigQty);
+          // Add useful custom fields
+          data.requirements.needSelf = false;
+          data.requirements.needMembership = (data.requirements.membershipExpiresIn === 0 &&
+                                              data.requirements.membershipPendingExpiresIn <= 0 );
+          data.requirements.needRenew = !data.requirements.needMembership && (data.requirements.membershipExpiresIn <= data.settings.timeWarningExpire &&
+                                        data.requirements.membershipPendingExpiresIn <= 0 );
+          data.requirements.needMembershipOut = (data.requirements.membershipExpiresIn > 0);
+          data.requirements.pendingMembership = (data.requirements.membershipPendingExpiresIn > 0);
+          data.requirements.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
+          var willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
+            if (cert.expiresIn <= data.settings.timeWarningExpire) {
+              return count + 1;
+            }
+            return count;
+          }, 0) : 0;
+          data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
+              (data.parameters.sigQty - data.requirements.certificationCount) : 0;
+          data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
+              data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - willExpireCertificationCount) < data.parameters.sigQty) ?
+              (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+          data.isMember = !data.requirements.needSelf && !data.requirements.needMembership;
           resolve();
         })
         .catch(function(err) {
-          data.requirements = {};
-          data.blockUid = null;
+          resetRequirements();
           // If identity not published : continue
           if (!!err && err.ucode == 2004) {
             resolve();
@@ -285,7 +331,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             BMA.currency.parameters()
               .then(function(json){
                 data.currency = json.currency;
-                data.sigQty = json.sigQty;
+                data.parameters = json;
               }),
 
             // Get the UD informations
@@ -432,6 +478,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               .then(function(result) {
                 data.balance -= amount;
                 for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
+                // Add to history
+                /*data.history.push({
+                    time: time,
+                    amount: amount,
+                    issuer: otherIssuer,
+                    receiver: otherReceiver,
+                    comment: tx.comment,
+                    isUD: false,
+                    hash: tx.hash,
+                    locktime: tx.locktime,
+                    block_number: tx.block_number
+                  });*/
+
                 resolve(result);
               }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
@@ -604,7 +663,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       certify: certify,
       // serialization
       toJson: toJson,
-      fromJson: fromJson
+      fromJson: fromJson,
+      defaultSettings: defaultSettings
     };
   };
 

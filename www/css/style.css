@@ -215,3 +215,11 @@
     padding-left: 106px;
 }
 
+#wallet .item-divider .badge {
+  top:16px !important;
+}
+
+#certifications .item-divider .badge {
+  top:16px !important;
+}
+

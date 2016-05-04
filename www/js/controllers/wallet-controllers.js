@@ -22,7 +22,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
   UIUtils, Wallet, BMA, $translate, Registry) {
 
-  $scope.walletData = {};
+  $scope.walletData = null;
   $scope.convertedBalance = 0;
   $scope.hasCredit = false;
   $scope.isMember = false;
@@ -42,7 +42,10 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   });
 
   $scope.refreshConvertedBalance = function() {
-    if ($scope.walletData.useRelative) {
+    if (!$scope.walletData) {
+      return;
+    }
+    if ($scope.walletData.settings.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance ? ($scope.walletData.balance / $scope.walletData.currentUD) : 0;
       $scope.unit = 'universal_dividend';
       $scope.udUnit = $scope.walletData.currency;
@@ -55,30 +58,13 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       $scope.udUnit = '';
     }
   };
-  $scope.$watch('walletData.useRelative', $scope.refreshConvertedBalance, true);
+  $scope.$watch('walletData.settings.useRelative', $scope.refreshConvertedBalance, true);
   $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
   $scope.updateWalletView = function(wallet) {
     $scope.walletData = wallet;
     $scope.hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
-    if (!$scope.walletData.requirements || !$scope.walletData.requirements.uid) {
-      $scope.needSelf = true;
-      $scope.needMembership = true;
-      $scope.needMembershipOut = false;
-      $scope.needRenew = false;
-      $scope.pendingMembership = false;
-    }
-    else {
-      $scope.needSelf = false;
-      $scope.needMembership = ($scope.walletData.requirements.membershipExpiresIn === 0 &&
-      $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
-      $scope.needRenew = !$scope.needMembership && ($scope.walletData.requirements.membershipExpiresIn < 129600 /*TODO: =1.5j suffit ?*/ &&
-      $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
-      $scope.needMembershipOut = ($scope.walletData.requirements.membershipExpiresIn > 0);
-      $scope.pendingMembership = ($scope.walletData.requirements.membershipPendingExpiresIn > 0);
-    }
-    $scope.isMember = !$scope.needSelf && !$scope.needMembership;
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight({
@@ -303,6 +289,17 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       }, 2000);
     });
  };
+
+ // Set Header
+ $scope.$parent.showHeader();
+ $scope.$parent.clearFabs();
+
+   // TODO: remove auto add account when done
+   /*$timeout(function() {
+
+     $scope.newAccount();
+   }, 400);
+   */
 }
 
 

@@ -19,12 +19,12 @@
                 <div class="avatar"
                      ng-if="!!walletData.avatar"
                      style="background-image: url({{walletData.avatar}});"></div>
-                <i class="avatar" ng-class="{'avatar-wallet': !isMember, 'avatar-member': isMember}" ng-if="!walletData.avatar"></i>
-                <h3 class="light" ng-if="isMember">{{walletData.uid}}</h3>
-                <h3 class="light" ng-if="!isMember">{{walletData.pubkey | formatPubkey}}</h3>
+                <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': isMember}" ng-if="!walletData.avatar"></i>
+                <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
+                <h3 class="light" ng-if="!walletData.isMember">{{walletData.pubkey | formatPubkey}}</h3>
                 <h4 class="light">
-                    <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-                    <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+                    <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+                    <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
                 </h4>
               </div>
             </div>
@@ -36,25 +36,25 @@
               </button>
 
               <button class="button button-raised icon-left ion-person ink"
-                      ng-if="needMembership"
+                      ng-if="walletData.requirements.needMembership"
                       ng-click="membershipIn()">
                 {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
               </button>
 
               <button class="button button-raised icon-left ion-loop ink"
-                      ng-if="needRenew"
+                      ng-if="walletData.requirements.needRenew"
                       ng-click="membershipRenew()">
                 {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
               </button>
 
               <button class="button button-raised icon-left ion-log-out ink"
-                      ng-if="needMembershipOut"
+                      ng-if="walletData.requirements.needMembershipOut"
                       ng-click="membershipOut()">
                 {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
               </button>
 
               <button class="button button-raised icon-left ion-flag ink"
-                      ng-if="needSelf"
+                      ng-if="walletData.requirements.needSelf"
                       ng-click="self()">
                 {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
               </button>
@@ -66,24 +66,44 @@
 
               <div class="col list animate-fade-slide-in-right" >
 
+                <!-- Certifications -->
+                <a class="item item-icon-left item-text-wrap ink" ng-if="walletData.isMember && walletData.requirements.certificationCount > 0"
+                   ui-sref="app.view_certifications({pub:walletData.pubkey})">
+                  <i class="icon ion-ribbon-b"></i>
+                  {{'ACCOUNT.CERTIFICATION_COUNT'|translate}}
+                  <span class="badge" ng-class="{'badge-balanced': walletData.requirements.needCertificationCount==0 && walletData.requirements.willNeedCertificationCount==0, 'badge-assertive': walletData.requirements.needCertificationCount>0 || walletData.requirements.willNeedCertificationCount>0}">{{walletData.requirements.certificationCount}}</span>
+                </a>
+
                 <!-- Events -->
-                <span class="item item-divider" ng-if="pendingMembership">
+                <span class="item item-divider" ng-if="walletData.requirements.pendingMembership||walletData.requirements.needCertificationCount > 0||walletData.requirements.willNeedCertificationCount > 0">
                   {{'ACCOUNT.EVENTS' | translate}}
                 </span>
 
-                <span class="item item-text-wrap" ng-if="pendingMembership">
+                <span class="item item-text-wrap" ng-if="walletData.requirements.pendingMembership">
                   <h3>
-                    <i class="icon icon ion-clock"></i>
+                    <i class="icon ion-clock"></i>
                     {{'ACCOUNT.WAITING_MEMBERSHIP' | translate}}
+                  </h3>
+                </span>
+                <span class="item item-text-wrap" ng-if="walletData.requirements.needCertificationCount > 0">
+                  <h3>
+                    <i class="icon ion-alert-circled"></i>
+                    {{'ACCOUNT.WAITING_CERTIFICATIONS' | translate:walletData.requirements}}
+                  </h3>
+                </span>
+                <span class="item item-text-wrap" ng-if="walletData.requirements.willNeedCertificationCount > 0">
+                  <h3>
+                    <i class="icon ion-alert-circled"></i>
+                    {{'ACCOUNT.WILL_MISSING_CERTIFICATIONS' | translate:walletData.requirements}}
                   </h3>
                 </span>
 
                 <!-- Last Transactions -->
                 <span class="item item-divider">
-                  {{'ACCOUNT.LAST_TX' | translate}}
+                  <span translate>ACCOUNT.LAST_TX</span>
                   <div class="badge item-note">
-                    <span ng-if="!walletData.useRelative">({{unit | abbreviate}})</span>
-                    <span ng-if="walletData.useRelative">({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+                    <span ng-if="!walletData.settings.useRelative">({{unit | abbreviate}})</span>
+                    <span ng-if="walletData.settings.useRelative">({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
                   </div>
                 </span>
 
@@ -102,8 +122,8 @@
                   </h4>
                   <div class="badge item-note"
                         ng-class="{'badge-balanced': tx.amount > 0}">
-                    <span ng-if="!walletData.useRelative">{{tx.amount | formatInteger}}</span>
-                    <span ng-if="walletData.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
+                    <span ng-if="!walletData.settings.useRelative">{{tx.amount | formatInteger}}</span>
+                    <span ng-if="walletData.settings.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
                   </div >
                 </span>
               </div>

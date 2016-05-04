@@ -18,8 +18,8 @@
         <ion-slide-page>
           <ion-content class="has-header padding">
             <h3 translate>REGISTRY.NEW.SELECT_TYPE</h3>
-            <button class="button button-block button-stable icon icon-left ion-person" ng-click="setIsCompany(false)" ng-class="{ selected: !recordData.isCompany && recordData.isCompany != null }" translate>REGISTRY.NEW.TYPE_PARTICULAR</button>
-            <button class="button button-block button-stable icon icon-left ion-android-cart" ng-click="setIsCompany(true)" ng-class="{ selected: recordData.isCompany && recordData.isCompany != null }" translate>REGISTRY.NEW.TYPE_COMPANY</button>
+            <button class="button button-block button-stable icon icon-left ion-person" ng-click="setIsCompany(false)" ng-class="{ selected: !isCompany && isCompany != null }" translate>REGISTRY.NEW.TYPE_PARTICULAR</button>
+            <button class="button button-block button-stable icon icon-left ion-android-cart" ng-click="setIsCompany(true)" ng-class="{ selected: isCompany && isCompany != null }" translate>REGISTRY.NEW.TYPE_COMPANY</button>
           </ion-content>
         </ion-slide-page>
         <ion-slide-page>
