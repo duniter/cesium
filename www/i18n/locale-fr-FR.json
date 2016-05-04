@@ -194,7 +194,7 @@
       "RESULTS": "Résultats :"
     },
     "VIEW": {
-      "TITLE": ""
+      "TITLE": "Annuaire"
     },
     "NEW": {
       "TITLE": "Nouveau",
@@ -246,7 +246,7 @@
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible",
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo",
     "SCAN_FAILED": "Echec du scan de QR Code",
-    "WOT_LOOKUP_FAILED": "Echec de la recherche",
+    "WOT_LOOKUP_FAILED": "Echec de la recherche"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

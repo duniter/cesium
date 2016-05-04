@@ -162,7 +162,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
           Wallet.self($scope.accountData.pseudo, false/*do NOT load membership here*/)
             .then(function() {
               // Send membership IN
-              Wallet.membership(true)
+              Wallet.membership.inside()
               .then(function() {
                 // Reset account data, and open wallet view
                 $scope.cancel();

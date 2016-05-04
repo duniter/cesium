@@ -152,6 +152,8 @@ function IdentityController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, 
     $scope.loadWallet()
     .then(function(walletData) {
       UIUtils.loading.show();
+
+      // TODO: ask user confirm - see issue https://github.com/duniter/cesium/issues/12
       Wallet.certify($scope.identity.uid,
                   $scope.identity.pub,
                   $scope.identity.timestamp,
