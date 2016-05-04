@@ -186,14 +186,14 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   };
 
   // TODO : for DEV only
-  $timeout(function() {
+  /*$timeout(function() {
     $scope.loginData = {
       username: 'benoit.lavenier@e-is.pro',
-      password: 'priezPourMoi!'
+      password: ''
     };
     //$scope.loginForm = {$valid:true};
     $scope.login();
-  }, 900);
+  }, 900);*/
 }
 
 
