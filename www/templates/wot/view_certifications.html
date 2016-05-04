@@ -38,11 +38,11 @@
                 ng-repeat="cert in certifications"
                 ng-if="loaded"
                 ui-sref="app.view_identity({pub:cert.from})">
-            <h3>
+            <h3 class="positive">
               <i class="icon " ng-class="{'ion-checkmark': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'ion-alert-circled': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire, 'ion-clock': !cert.expiresIn}"> </i>
               {{cert.uid}}
             </h3>
-            <h4 class="positive" >
+            <h4 class="gray">
               {{cert.from | formatPubkey}}
             </h4>
             <div class="badge item-note"
