@@ -413,7 +413,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
                   $scope.identity.sig)
       .then(function() {
         UIUtils.loading.hide();
-        UIUtils.alertInfo('INFO.CERTIFICATION_DONE');
+        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
       })
       .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
     })

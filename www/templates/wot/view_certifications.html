@@ -15,7 +15,7 @@
 
 
       <div class="row no-padding">
-        <div class="col col-30 hidden-xs hidden-sm">&nbsp;
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
         </div>
 
         <label class="col center" ng-if="!loaded">
@@ -38,7 +38,7 @@
                 ng-repeat="cert in certifications"
                 ng-if="loaded"
                 ui-sref="app.view_identity({pub:cert.from})">
-            <h3 class="positive">
+            <h3 ng-class="{'positive': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'assertive': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire}">
               <i class="icon " ng-class="{'ion-checkmark': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'ion-alert-circled': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire, 'ion-clock': !cert.expiresIn}"> </i>
               {{cert.uid}}
             </h3>
@@ -53,7 +53,7 @@
 
         </div>
 
-        <div class="col col-30 hidden-xs hidden-sm">&nbsp;
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
         </div>
       </div>
 

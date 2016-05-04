@@ -283,11 +283,11 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
           }, []));
         }, [])[0];
         $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
-        var expiresInByPub = certsFromRequirements.reduce(function(map, cert){
+        var expiresInByPub = !certsFromRequirements ? [] : certsFromRequirements.reduce(function(map, cert){
           map[cert.from]=cert.expiresIn;
           return map;
         }, []);
-        $scope.certifications = res.results.reduce(function(certs, res) {
+        $scope.certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
           return certs.concat(res.uids.reduce(function(certs, idty) {
 
             return certs.concat(idty.others.reduce(function(certs, cert) {

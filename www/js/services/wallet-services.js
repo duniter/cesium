@@ -72,8 +72,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
             walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
             return issuer + ((res !== data.pubkey) ? ', ' + res : '');
-        }, ', ').substring(2);
-        var otherReceiver = (!walletIsIssuer) ? data.pubkey : '';
+        }, '').substring(2);
+        var otherReceiver = null;
         var amount = tx.outputs.reduce(function(sum, output) {
             var outputArray = output.split(':',3);
             var outputAmount = parseInt(outputArray[0]);
@@ -87,7 +87,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }
             }
             else { // output is for someone else
-              if (outputPubkey !== '') {
+              if (outputPubkey != '' && outputPubkey != otherIssuer) {
                 otherReceiver = outputPubkey;
               }
               if (walletIsIssuer) {
