@@ -9,11 +9,10 @@
 angular.module("cesium.config", [])
 
 .constant("APP_CONFIG", {
-	"DUNITER_NODE": "test-net.duniter.fr:9201",
-	"DUNITER_NODE_ES": "data.duniter.fr",
+	"DUNITER_NODE": "cgeek.fr:9330",
+	"NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-05-13T15:45:50.799Z",
-	"NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug&title=[ES]"
+	"BUILD_DATE": "2016-05-13T15:43:14.136Z"
 })
 
 ;
