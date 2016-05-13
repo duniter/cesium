@@ -12,7 +12,7 @@ angular.module("cesium.config", [])
 	"DUNITER_NODE": "cgeek.fr:9330",
 	"NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
 	"VERSION": "0.0.1",
-	"BUILD_DATE": "2016-05-13T18:28:10.361Z"
+	"BUILD_DATE": "2016-05-13T18:48:18.603Z"
 })
 
 ;
