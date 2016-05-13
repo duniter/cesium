@@ -112,16 +112,33 @@
                 </span>
 
                 <span class="item ink" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
-                  <h3><i class="icon ion-clock" ng-if="!tx.block_number"> </i>{{tx.time | formatFromNow}}
-                    <span class="gray hidden-xs">| {{tx.time | formatDate}}</span>
+                  <h2><i class="icon ion-clock" ng-if="!tx.block_number"> </i>
+                    <span class="positive" ng-if="tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
+                      <i class="icon ion-person"></i>
+                      {{tx.uid}}
+                    </span>
+                    <span class="positive" ng-if="!tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
+                      <i class="icon ion-key"></i>
+                      {{tx.pubkey | formatPubkey}}
+                    </span>
+                    <span  ng-if="tx.comment">&nbsp;
+                      <i class="icon ion-ios-chatbubble-outline"></i>
+                      {{tx.comment}}
+                    </span>
+                  </h2>
+                  <h3 class="dark">
+                    {{tx.time | formatFromNow}}
+                    <span class="gray hidden-xs">|
+                      <i class="icon ion-calendar"></i>
+                      {{tx.time | formatDate}}
+                    </span>
+                    <span class="gray" ng-if="!tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">&nbsp;
+                      <i class="icon ion-key"></i>
+                      {{tx.pubkey | formatPubkey}}
+                    </span>
                   </h3>
-                  <h4 class="gray">
-                    <span class="positive" ng-if="tx.issuer" ui-sref="app.view_identity({pub:tx.issuer})">{{tx.issuer | formatPubkey}}</span>
-                    <span class="positive" ng-if="tx.receiver" ui-sref="app.view_identity({pub:tx.receiver})">{{tx.receiver | formatPubkey}}</span>
-                    <span ng-if="tx.comment" class="comment">| {{tx.comment}}</span>
-                  </h4>
                   <div class="badge item-note"
-                        ng-class="{'badge-balanced': tx.amount > 0}">
+                       ng-class="{'badge-balanced': tx.amount > 0}">
                     <span ng-if="!walletData.settings.useRelative">{{tx.amount | formatInteger}}</span>
                     <span ng-if="walletData.settings.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
                   </div >

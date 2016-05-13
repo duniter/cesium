@@ -18,9 +18,9 @@
         <div class="input-label">
           {{'COMMON.LANGUAGE' | translate}}
         </div>
-        <select ng-model="walletData.settings.language"
-                ng-change="changeLanguage(walletData.settings.language.id)"
-                ng-options="l as l.label for l in languages track by l.id">
+        <select ng-model="walletData.settings.locale"
+                ng-change="changeLanguage(walletData.settings.locale.id)"
+                ng-options="l as l.label for l in locales track by l.id">
         </select>
       </label>
 

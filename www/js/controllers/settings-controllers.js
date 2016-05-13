@@ -22,7 +22,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 function SettingsController($scope, $state, UIUtils, $translate) {
 
   $scope.walletData = {};
-  $scope.languages = [
+  $scope.locales = [
     {id:'fr-FR', label:'Français'},
     {id:'en', label:'English'}
   ];
@@ -31,8 +31,9 @@ function SettingsController($scope, $state, UIUtils, $translate) {
     $scope.loadWallet()
       .then(function(wallet) {
         $scope.walletData = wallet;
-        $scope.walletData.settings.language = $scope.languages.reduce(function(array, l, index) {
-            return l.id == $translate.use() ? array.concat(l) : array;
+        var currentLocale = $translate.use();
+        $scope.walletData.settings.locale = $scope.locales.reduce(function(array, l, index) {
+            return l.id == currentLocale ? array.concat(l) : array;
           }, [])[0];
         UIUtils.loading.hide();
       });

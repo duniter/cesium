@@ -31,6 +31,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         isMember: false,
         loaded: false,
         blockUid: null,
+        members: [],
         avatar: null,
         settings: {
           useRelative: defaultSettings.useRelative,
@@ -50,13 +51,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.useRelative = defaultSettings.useRelative; // TODO : a remplacer par settings.useRelative
       data.currency= null;
       data.parameters = null;
-      data.currentUD= null;
+      data.currentUD = null;
       data.medianTime = null;
-      data.history= {};
-      data.requirements= {};
+      data.history = {};
+      data.requirements = {};
       data.isMember = false;
-      data.loaded= false;
-      data.blockUid= null;
+      data.loaded = false;
+      data.blockUid = null;
+      data.members = [];
       data.avatar = null;
       data.settings = {
         useRelative: defaultSettings.useRelative,
@@ -106,6 +108,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           time= Math.floor(moment().utc().valueOf() / 1000);
         }
 
+        var pubkey = amount > 0 ? otherIssuer : otherReceiver;
+        var member = _.findWhere(data.members, { pubkey: pubkey });
+
         // Avoid duplicated tx, oar tx to him self
         var txKey = amount + ':' + tx.hash + ':' + time;
         if (!processedTxMap[txKey] && amount !== 0) {
@@ -114,8 +119,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           result.push({
             time: time,
             amount: amount,
-            issuer: otherIssuer,
-            receiver: otherReceiver,
+            pubkey: pubkey,
+            uid: (member ? member.uid : null),
             comment: tx.comment,
             isUD: false,
             hash: tx.hash,
@@ -348,6 +353,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                       data.currentUD = block.dividend;
                     });
                   }
+              }),
+
+            // Get members
+            BMA.wot.members()
+              .then(function(json){
+                data.members = json.results;
               }),
 
             // Get sources

@@ -186,19 +186,19 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   };
 
   // TODO : for DEV only
-  /*$timeout(function() {
+  $timeout(function() {
     $scope.loginData = {
       username: 'benoit.lavenier@e-is.pro',
-      password: ''
+      password: 'priezPourMoi!'
     };
     //$scope.loginForm = {$valid:true};
     $scope.login();
-  }, 900);*/
+  }, 900);
 }
 
 
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, System
+  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, System, $translate
   ) {
 
   $scope.knownCurrencies = null;
@@ -336,5 +336,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
           fabs[0].remove();
       }
   };
+
+
 }
 
