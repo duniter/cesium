@@ -11,7 +11,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           reject(data);
         }
         else {
-          reject('Unknown error from ucoin node');
+          reject('Unknown error from Duniter node');
         }
       }
 
@@ -261,12 +261,12 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
       };
     }
 
-    var ESNodeConfigured = !!APP_CONFIG.UCOIN_NODE_ES;
+    var ESNodeConfigured = !!APP_CONFIG.DUNITER_NODE_ES;
     if (!ESNodeConfigured) {
       return null;
     }
 
-    var service = Registry(APP_CONFIG.UCOIN_NODE_ES);
+    var service = Registry(APP_CONFIG.DUNITER_NODE_ES);
     service.instance = Registry;
 
   return service;

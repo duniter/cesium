@@ -134,9 +134,9 @@ angular.module('cesium.utils.services', ['ngResource'])
   };
 }])
 
-.factory('$localstorage', ['$window', 'CryptoUtils', '$q', function($window, CryptoUtils, $q) {
+.factory('localStorage', ['$window', function($window) {
   return {
-    set: function(key, value) {
+    put: function(key, value) {
       $window.localStorage[key] = value;
     },
     get: function(key, defaultValue) {

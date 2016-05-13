@@ -255,11 +255,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
 
         UIUtils.loading.hide();
       })
-      .catch(function(err) {
-        console.error('>>>>>>>' , err);
-        UIUtils.alert.error('Could not fetch informations from remote uCoin node.');
-        UIUtils.loading.hide();
-      })
+      .catch(UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED'))
       .then(function(){
         // Network
         $scope.searchPeers();
@@ -376,7 +372,6 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeo
       })
       .catch(function(err) {
         //console.log(err);
-        //UIUtils.alert.error('Could get peers from remote uCoin node.');
         $scope.search.lookingForPeers = false;
       });
   };

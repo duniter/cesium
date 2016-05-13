@@ -33,9 +33,23 @@
     color: #fff;
 }
 
+#home h4 a {
+  color: inherit;
+}
+
 #home button, #home a {
     margin-top: 20px;
     height: 40px;
+}
+
+#home .footer h1.title {
+  padding-top: 0;
+  font-size: 18px;
+}
+
+#home .build-date {
+  font-size: 14px !important;
+  color: grey !important;
 }
 
 .bar .button.button-clear {
@@ -64,6 +78,10 @@
   font-size: 11px ! important;
 }
 
+#wallet .list .item span {
+  display: inline !important;
+}
+
 .list .item-input {
   border-bottom: solid 1px #ccc;
 }
@@ -85,6 +103,15 @@
 #menu .item.item-divider {
   min-height: 5px;
   height: 5px;
+}
+
+#menu .footer h1.title {
+  font-size: 16px;
+}
+
+#menu .footer h1 .buildDate {
+  font-size: 12px ! important;
+  color: grey !important;
 }
 
 .menu .avatar {
@@ -222,4 +249,6 @@
 #certifications .item-divider .badge {
   top:16px !important;
 }
+
+
 

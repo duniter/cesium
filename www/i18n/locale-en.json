@@ -1,6 +1,8 @@
 {
   "COMMON": {
     "APP_NAME": "Cesium",
+    "APP_VERSION": "v{{version}}",
+    "APP_BUILD_DATE": "- build {{buildDate}}",
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SHOW": "Show",
@@ -17,6 +19,7 @@
     "FROM": "From",
     "TO": "To",
     "COPY": "Copy",
+    "LANGUAGE": "Language",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default"
   },
@@ -35,12 +38,15 @@
     "SETTINGS": "Settings"
   },
   "HOME": {
-    "TITLE": "Duniter",
-    "WELCOME": "Duniter",
-    "MESSAGE": "Welcome to Cesium App for Duniter !<br/>See your Duniter wallets in real time.",
+    "TITLE": "Cesium",
+    "WELCOME": "",
+    "MESSAGE": "Welcome to Cesium Application !<br/>See your <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> wallets in real time.",
     "BTN_REGISTRY": "Registry",
     "BTN_MARKET": "Market place",
-    "BTN_CURRENCIES": "Explore currencies"
+    "BTN_CURRENCIES": "Explore currencies",
+    "DEV_WARNING": "Warning",
+    "DEV_WARNING_MESSAGE": "Cesium is still in active development. Please report us any bug !",
+    "REPORT_ISSUE": "Signaler un problème"
   },
   "CURRENCY": {
     "SELECT": {
@@ -253,7 +259,8 @@
     "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
     "TAKE_PICTURE_FAILED": "Could not get picture",
     "SCAN_FAILED": "Could not scan QR code",
-    "WOT_LOOKUP_FAILED": "Search failed"
+    "WOT_LOOKUP_FAILED": "Search failed",
+    "LOAD_NODE_DATA_FAILED": "Duniter Node not accessible. Please retry later."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

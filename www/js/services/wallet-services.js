@@ -2,7 +2,7 @@
 
 angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.registry.services'])
 
-.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', 'Registry', function($q, CryptoUtils, BMA, Registry) {
+.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', 'Registry', '$translate', function($q, CryptoUtils, BMA, Registry, $translate) {
 
   Wallet = function(id) {
 
@@ -34,7 +34,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         avatar: null,
         settings: {
           useRelative: defaultSettings.useRelative,
-          timeWarningExpire: defaultSettings.timeWarningExpire
+          timeWarningExpire: defaultSettings.timeWarningExpire,
+          locale: {id: $translate.use()}
         }
     },
 
@@ -72,7 +73,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
             walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
             return issuer + ((res !== data.pubkey) ? ', ' + res : '');
-        }, '').substring(2);
+        }, '');
+        if (otherIssuer.length > 0) {
+          otherIssuer = otherIssuer.substring(2);
+        }
         var otherReceiver = null;
         var amount = tx.outputs.reduce(function(sum, output) {
             var outputArray = output.split(':',3);
@@ -280,7 +284,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           reduceTxAndPush(res.history.received, list, processedTxMap);
           reduceTxAndPush(res.history.sending, list, processedTxMap);
           reduceTxAndPush(res.history.pending, list, processedTxMap);
-
+          // sort by time desc
           data.history = list.sort(function(tx1, tx2) {
              return tx2.time - tx1.time;
           });

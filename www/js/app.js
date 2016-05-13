@@ -87,7 +87,8 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
     //.useSanitizeValueStrategy('sanitize')
     .useSanitizeValueStrategy(null)
     .fallbackLanguage(['en'])
-    .useLoaderCache(true);
+    .useLoaderCache(true)
+    .useStorage('localStorage');
   })
 
   // Add new compare-to directive (need for form validation)

@@ -207,6 +207,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   $scope.hasHeaderFabLeft = false;
   $scope.hasHeaderFabRight = false;
   $scope.system = System;
+  $scope.config = APP_CONFIG;
   $scope.options = {
       market: {
         enable: !!Market
@@ -252,7 +253,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
         .then(function(params) {
           $scope.knownCurrencies.push({
             id: params.currency,
-            peer: APP_CONFIG.UCOIN_NODE}
+            peer: APP_CONFIG.DUNITER_NODE}
           );
           $scope.search.looking = false;
           resolve($scope.knownCurrencies);

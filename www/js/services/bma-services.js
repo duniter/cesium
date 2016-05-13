@@ -5,10 +5,7 @@ angular.module('cesium.bma.services', ['ngResource',
 
 .factory('BMA', function($http, $q, APP_CONFIG) {
 
-  function BMA(server, wsServer) {
-    if (!wsServer) {
-        wsServer = server;
-    }
+  function BMA(server) {
 
     var sockets = [];
 
@@ -18,10 +15,10 @@ angular.module('cesium.bma.services', ['ngResource',
       }
       else {
         if (uri) {
-          reject('Error from ucoin node (' + uri + ')');
+          reject('Error from Duniter node (' + uri + ')');
         }
         else {
-          reject('Unknown error from ucoin node');
+          reject('Unknown error from Duniter node');
         }
       }
     }
@@ -152,17 +149,17 @@ angular.module('cesium.bma.services', ['ngResource',
       },
       websocket: {
         block: function() {
-          return ws('ws://' + wsServer + '/ws/block');
+          return ws('ws://' + server + '/ws/block');
         },
         peer: function() {
-          return ws('ws://' + wsServer + '/ws/peer');
+          return ws('ws://' + server + '/ws/peer');
         },
         close : closeWs
       }
     };
   }
 
-  var service = BMA(APP_CONFIG.UCOIN_NODE, APP_CONFIG.UCOIN_NODE_WS);
+  var service = BMA(APP_CONFIG.DUNITER_NODE);
   service.instance = BMA;
   return service;
 })

@@ -1,6 +1,8 @@
 {
   "COMMON": {
     "APP_NAME": "Cesium",
+    "APP_VERSION": "v{{version}}",
+    "APP_BUILD_DATE": "- build {{buildDate}}",
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
     "BTN_SHOW": "Voir",
@@ -17,6 +19,7 @@
     "FROM": "De",
     "TO": "A",
     "COPY": "Copier",
+    "LANGUAGE": "Langue",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale"
   },
@@ -26,7 +29,7 @@
     "BTN_PICTURE_CAMERA": "<b>Caméra</b>"
   },
   "MENU": {
-    "TITLE": "Duniter",
+    "TITLE": "Cesium",
     "HOME": "Accueil",
     "REGISTRY": "Annuaire",
     "MARKET": "Annonces",
@@ -35,12 +38,15 @@
     "SETTINGS": "Configuration"
   },
   "HOME": {
-    "TITLE": "Duniter",
-    "WELCOME": "Duniter",
-    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Regardez l'état de vos comptes Duniter en temps réel.",
+    "TITLE": "Cesium",
+    "WELCOME": "",
+    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Regardez l'état de vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en temps réel.",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
-    "BTN_CURRENCIES": "Explorer les monnaies"
+    "BTN_CURRENCIES": "Explorer les monnaies",
+    "DEV_WARNING": "Avertissement",
+    "DEV_WARNING_MESSAGE": "Cesium est encore en plein développement. N'hésitez pas à nous soumettre des éventuels problèmes !",
+    "REPORT_ISSUE": "Signaler un problème"
   },
   "CURRENCY": {
     "SELECT": {
@@ -253,7 +259,8 @@
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible",
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo",
     "SCAN_FAILED": "Echec du scan de QR Code",
-    "WOT_LOOKUP_FAILED": "Echec de la recherche"
+    "WOT_LOOKUP_FAILED": "Echec de la recherche",
+    "LOAD_NODE_DATA_FAILED": "Interrogation du noeud Duniter impossible. Veuillez réessayer ultérieurement."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

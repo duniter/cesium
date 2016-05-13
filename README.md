@@ -1,14 +1,14 @@
 # Cesium
 
-[Unhosted webapp](https://unhosted.org) client for [uCoin](http://ucoin.io) network.
+[Unhosted webapp](https://unhosted.org) client for [duniter](http://duniter.org) network.
 
-Try it at: http://cesium.ucoin.io
+Try it at: http://cesium.duniter.iofr
 
 ## Developer
 
 To contribute and compile cesium, you will have to: 
  
-  - Installing [mvn](https://github.com/creationix/nvm)   
+  - Installing [nvm](https://github.com/creationix/nvm)   
 ```
   wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 ```
@@ -25,7 +25,7 @@ To contribute and compile cesium, you will have to:
    
   - Getting source and installing project dependencies:    
 ```
-  git clone https://www.github.com/ucoin-io/cesium.git
+  git clone https://www.github.com/duniter/cesium.git
   cd cesium
   npm install --save
   bower install

@@ -2,10 +2,10 @@
           view-title="Settings">
 
     <ion-content >
-        <div class="positive-900-bg item item-content item-toggle dark">
-            <h4 class="gray">
+        <div class="item item-content item-toggle dark">
+            <div class="input-label">
                 {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-            </h4>
+            </div>
             <label class="toggle toggle-royal">
                 <input type="checkbox" ng-model="walletData.settings.useRelative">
                 <div class="track">
@@ -13,5 +13,16 @@
                 </div>
             </label>
         </div>
+
+      <label class="item item-input item-select">
+        <div class="input-label">
+          {{'COMMON.LANGUAGE' | translate}}
+        </div>
+        <select ng-model="walletData.settings.language"
+                ng-change="changeLanguage(walletData.settings.language.id)"
+                ng-options="l as l.label for l in languages track by l.id">
+        </select>
+      </label>
+
     </ion-content>
 </ion-view>
