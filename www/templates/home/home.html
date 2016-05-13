@@ -25,20 +25,27 @@
                   ng-click="newAccount()" ng-show="!isLogged()" translate>COMMON.BTN_ADD_ACCOUNT</button>
 
         <!-- warning still dev -->
-        <br/>
-        <br class="hidden-xs hidden-sm"/>
         <br class="hidden-xs"/>
+        <br class="hidden-xs"/>
+        <br class="hidden-xs hidden-sm"/>
         <div class="card stable-bg no-padding">
           <div class="item item-divider">
-            <i class="icon ion-alert-circled"></i>
+            <i class="icon ion-alert-circled assertive"></i>
             {{'HOME.DEV_WARNING'|translate}}
           </div>
           <div class="item item-text-wrap" >
             <span translate>HOME.DEV_WARNING_MESSAGE</span><br/>
-            <a class="button button-assertive icon icon-left ion-bug ink-dark"
-               href="{{config.NEW_ISSUE_LINK}}"
-               target="_blank"
-               translate>HOME.REPORT_ISSUE</a>
+            <span class="hidden-xs">
+              <a class="button button-block button-assertive button-raised icon icon-left ion-bug ink-dark "
+                 href="{{config.NEW_ISSUE_LINK}}"
+                 target="_blank"
+                 translate>HOME.REPORT_ISSUE</a>
+            </span>
+            <span class="visible-xs">
+              <a href="{{config.NEW_ISSUE_LINK}}"
+                 target="_blank"
+                 translate>HOME.REPORT_ISSUE</a>
+            </span>
           </div>
         </div>
         </div>

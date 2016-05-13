@@ -112,6 +112,9 @@ angular.module('cesium.bma.services', ['ngResource',
     }
 
     return {
+      node: {
+        summary: getResource('http://' + server + '/node/summary')
+      },
       wot: {
         lookup: getResource('http://' + server + '/wot/lookup/:search'),
         members: getResource('http://' + server + '/wot/members'),

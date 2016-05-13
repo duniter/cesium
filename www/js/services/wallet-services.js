@@ -93,7 +93,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               }
             }
             else { // output is for someone else
-              if (outputPubkey != '' && outputPubkey != otherIssuer) {
+              if (outputPubkey !== '' && outputPubkey != otherIssuer) {
                 otherReceiver = outputPubkey;
               }
               if (walletIsIssuer) {
@@ -422,17 +422,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         return $q(function(resolve, reject) {
 
             if (!isLogin()){
-              reject('Wallet required to be login first.'); return;
+              reject({message:'ERROR.NEED_LOGIN_FIRST'}); return;
             }
             if (!amount) {
-              reject('amount must not be null'); return;
+              reject({message:'ERROR.AMOUNT_REQUIRED'}); return;
             }
             amount = Math.round(amount);
             if (amount <= 0) {
-              reject('amount must be greater than zero'); return;
+              reject({message:'ERROR.AMOUNT_NEGATIVE'}); return;
             }
             if (amount > data.balance) {
-              reject('Not enought credit'); return;
+              reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
             }
 
             var tx = "Version: 2\n";
@@ -462,11 +462,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
             if (sourceAmount < amount) {
               if (sourceAmount === 0) {
-                reject('ERROR.ALL_SOURCES_USED');
+                reject({message:'ERROR.ALL_SOURCES_USED'});
               }
               else {
                 console.error('Maximum transaction sources has been reached: ' + (data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount));
-                reject('ERROR.NOT_ENOUGH_SOURCES');
+                reject({message:'ERROR.NOT_ENOUGH_SOURCES'});
               }
               return;
             }

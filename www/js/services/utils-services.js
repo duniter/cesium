@@ -69,8 +69,10 @@ angular.module('cesium.utils.services', ['ngResource'])
   function onError(msg, reject/*optional*/) {
     return function(err) {
       var fullMsg = msg;
+      var subtitle;
       if (!!err && !!err.message) {
-        fullMsg = msg + ': ' + err.message;
+        fullMsg = err.message;
+        subtitle = msg;
       }
       // If reject has been given, use it
       if (!!reject) {
@@ -80,7 +82,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       else {
         console.error('>>>>>>>' , err);
         hideLoading();
-        alertError(fullMsg);
+        alertError(fullMsg, subtitle);
       }
     };
   }

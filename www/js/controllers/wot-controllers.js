@@ -98,8 +98,9 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
   $scope.sigQty = null;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!$state.stateParams || !$state.stateParams.pub
-        || $state.stateParams.pub.trim().length===0) {
+    if (!$state.stateParams ||
+        !$state.stateParams.pub ||
+        $state.stateParams.pub.trim().length===0) {
       // Redirect o home
       $timeout(function() {
        $state.go('app.home', null);
@@ -239,8 +240,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.timeWarningExpire = Wallet.defaultSettings.timeWarningExpire;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!$state.stateParams || !$state.stateParams.pub
-        || $state.stateParams.pub.trim().length===0) {
+    if (!$state.stateParams || !$state.stateParams.pub || $state.stateParams.pub.trim().length===0) {
       // Redirect o home
       $timeout(function() {
        $state.go('app.home', null);
