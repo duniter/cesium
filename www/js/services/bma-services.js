@@ -5,9 +5,12 @@ angular.module('cesium.bma.services', ['ngResource',
 
 .factory('BMA', function($http, $q, APP_CONFIG) {
 
-  function BMA(server) {
+  function BMA(server, timeout) {
 
     var sockets = [];
+    if (!timeout) {
+      timeout=4000;
+    }
 
     function processError(reject, data, uri) {
       if (data && data.message) {
@@ -44,7 +47,7 @@ angular.module('cesium.bma.services', ['ngResource',
       return function(params) {
         return $q(function(resolve, reject) {
           var config = {
-            timeout: 4000
+            timeout: timeout
           };
 
           prepare(uri, params, config, function(uri, config) {
@@ -64,7 +67,7 @@ angular.module('cesium.bma.services', ['ngResource',
       return function(data, params) {
         return $q(function(resolve, reject) {
           var config = {
-            timeout: 4000,
+            timeout: timeout,
             headers : {'Content-Type' : 'application/json'}
           };
 
@@ -162,7 +165,7 @@ angular.module('cesium.bma.services', ['ngResource',
     };
   }
 
-  var service = BMA(APP_CONFIG.DUNITER_NODE);
+  var service = BMA(APP_CONFIG.DUNITER_NODE, APP_CONFIG.TIMEOUT);
   service.instance = BMA;
   return service;
 })

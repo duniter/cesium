@@ -1,9 +1,9 @@
-<ion-view view-title="{{identity.uid}}" left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+  </ion-nav-title>
 
-
-
-  <ion-content>
-    <div class="positive-900-bg hero">
+  <ion-content ng-class="{expanded:$scope.isExpanded}">
+    <div class="positive-900-bg hero animate-pan-in-left">
       <div class="content">
         <div class="avatar"
              ng-if="!!identity.avatar"
@@ -40,20 +40,21 @@
              ui-sref="app.view_certifications({pub:identity.pub})">
             <i class="icon ion-ribbon-b"></i>
             <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
-            <span class="badge" ng-class="{'badge-balanced': sigQty && certificationCount >= sigQty, 'badge-assertive': sigQty && certificationCount < sigQty}">{{certificationCount}}</span>
+            <span class="badge" ng-class="{'badge-balanced': sigQty && certificationCount >= sigQty, 'badge-assertive': sigQty && certificationCount < sigQty}">{{::certificationCount}}</span>
           </a>
 
-          <span class="item item-icon-left" ng-if="identity.sigDate">
-              <i class="icon ion-calendar"></i>
-              <span>{{'WOT.REGISTERED_SINCE' | translate}} {{identity.sigDate | formatDate}}</span>
-              <span class="badge badge-balanced">{{identity.sigDate | formatFromNow}}</span>
-          </span>
+          <ion-item class="item-icon-left" ng-if="identity.sigDate">
+            <i class="icon ion-calendar"></i>
+            <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
+            <h5 class="dark">{{::identity.sigDate | formatDate}}</h5>
+            <span class="badge badge-balanced">{{::identity.sigDate | formatFromNow}}</span>
+          </ion-item>
 
-          <ion-item class="item-icon-left ink"
+          <ion-item class="item-icon-left item-text-wrap ink"
                     on-hold="copy(identity.pub)"
                     copy-on-click>
             <i class="icon ion-key"></i>
-            <span id="pubkey">{{identity.pub}}</span>
+            <span id="pubkey">{{::identity.pub}}</span>
           </ion-item>
         </div>
 
@@ -65,13 +66,10 @@
     </div>
   </ion-content>
 
-  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
-          ng-click="transfer(identity.pub, identity.uid)">
-  </button>
-
-  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-ribbon-b visible-xs visible-sm"
-          ng-click="certifyIdentity()"
-          ng-if="hasSelf"
-          style="bottom:78px;">
-  </button>
+  <!-- fab button -->
+  <div class="visible-xs visible-sm">
+    <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send expanded button-energized-900 drop"
+            ng-click="transfer(identity.pub, identity.uid)">
+    </button>
+  </div>
 </ion-view>

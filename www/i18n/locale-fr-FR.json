@@ -82,10 +82,11 @@
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
-    "REGISTERED_SINCE": "Inscrit depuis le ",
+    "REGISTERED_SINCE": "Inscription",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
     "NO_CERTIFICATIONS": "Aucune certification",
-    "CERTIFICATIONS": "Certifications recues par {{uid}}",
+    "CERTIFICATIONS_RECEIVED": "Certifications recues",
+    "CERTIFICATIONS_RECEIVED_BY": "Certifications recues par {{uid}}",
     "EXPIRE_IN": "Expiration",
     "BTN_SEND_MONEY": "Payer",
     "BTN_CERTIFY": "Certifier",

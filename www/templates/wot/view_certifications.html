@@ -1,10 +1,14 @@
-<ion-view view-title="Certifications" left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span class="visible-xs visible-sm">{{::identity.uid}}</span>
+  </ion-nav-title>
+
   <ion-nav-buttons side="secondary">
     <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
     </button>
   </ion-nav-buttons>
 
-  <ion-content id="certifications">
+  <ion-content id="certifications" ng-class="{expanded:isExpanded}">
     <div class="content scroll">
 
       <div class="hidden-xs hidden-sm padding" style="text-align:center">
@@ -24,13 +28,13 @@
 
         <div class="col list animate-fade-slide-in-right">
 
-
           <span class="item item-divider">
-            <span translate="WOT.CERTIFICATIONS" translate-values="{uid: identity.uid}"></span>
+            <span class="hidden-xs" translate="WOT.CERTIFICATIONS_RECEIVED_BY" translate-values="{uid: identity.uid}"></span>
+            <span class="visible-xs" translate="WOT.CERTIFICATIONS_RECEIVED" ></span>
             <div class="badge item-note" translate>WOT.EXPIRE_IN</div>
           </span>
 
-          <span class="item" ng-if="!certifications || certifications.length == 0">
+          <span class="item" ng-if="loaded && certifications.length == 0">
             <h3 translate>WOT.NO_CERTIFICATIONS</h3>
           </span>
 
@@ -61,8 +65,10 @@
     </div>
   </ion-content>
 
-  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-ribbon-b visible-xs visible-sm"
-          ng-click="certifyIdentity()"
-          ng-if="hasSelf">
-  </button>
+  <!-- fab button -->
+  <div class="visible-xs visible-sm">
+    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-click="certifyIdentity()"
+    ><i class="icon ion-ribbon-b"></i></button>
+  </div>
 </ion-view>

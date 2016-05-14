@@ -2,14 +2,16 @@
   "default": {
     "APP_CONFIG": {
       "DUNITER_NODE": "cgeek.fr:9330",
-      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug"
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+      "TIMEOUT": 4000
     }
   },
 
   "duniter-fr": {
     "APP_CONFIG": {
       "DUNITER_NODE": "cgeek.fr:9330",
-      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug"
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+      "TIMEOUT": 4000
     }
   },
 
@@ -17,14 +19,16 @@
     "APP_CONFIG": {
       "DUNITER_NODE": "test-net.duniter.fr:9201",
       "DUNITER_NODE_ES": "data.duniter.fr",
-      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug&title=[ES]"
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug&title=[ES]",
+      "TIMEOUT": 4000
     }
   },
 
   "dev": {
     "APP_CONFIG": {
-      "DUNITER_NODE": "192.168.0.28:9201",
-      "DUNITER_NODE_ES": "192.168.0.5:9200"
+      "DUNITER_NODE": "192.168.0.5:9201",
+      "DUNITER_NODE_ES": "192.168.0.5:9200",
+      "TIMEOUT": 4000
     }
   }
 

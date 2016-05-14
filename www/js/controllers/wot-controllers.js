@@ -118,12 +118,12 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
       $scope.loaded = true;
       //UIUtils.loading.hide();
 
-      // Set Motion
       $timeout(function() {
-        UIUtils.motion.fadeSlideIn({
-            selector: '.item'
-        });
-      }, 10);
+          UIUtils.motion.fadeSlideInRight({
+            selector: '.animate-fade-slide-in .item',
+            startVelocity: 3000
+          });
+      }, 100);
       UIUtils.ink();
     };
     BMA.wot.lookup({ search: pub })
@@ -228,8 +228,17 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
     }
   };
 
+  // Set Header
+  $scope.$parent.showHeader();
   $scope.$parent.clearFabs();
-  UIUtils.ink();
+  $scope.isExpanded = false;
+  $scope.$parent.setExpanded(false);
+  $scope.$parent.setHeaderFab(false);
+
+  $timeout(function () {
+    document.getElementById('fab-transfer').classList.toggle('on');
+  }, 100);
+
 }
 
 function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, System) {
@@ -258,10 +267,14 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
       $scope.loaded = true;
       // Set Motion
       $timeout(function() {
-        UIUtils.motion.fadeSlideIn({
-          selector: '.item'
+        UIUtils.motion.fadeSlideInRight({
+            selector: '.animate-fade-slide-in-right .item',
+            startVelocity: 3000
         });
       }, 10);
+      $timeout(function () {
+        document.getElementById('fab-certify').classList.toggle('on');
+      }, 900);
       UIUtils.ink();
     };
     var onLoadRequirementsFinish = function(certsFromRequirements) {
@@ -372,4 +385,8 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   // Set Header
   $scope.$parent.showHeader();
   $scope.$parent.clearFabs();
+  $scope.isExpanded = false;
+  $scope.$parent.setExpanded(false);
+  $scope.$parent.setHeaderFab(false);
+
 }

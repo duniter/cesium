@@ -91,6 +91,15 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
     .useStorage('localStorage');
   })
 
+  .config(['$httpProvider', 'APP_CONFIG', function($httpProvider, APP_CONFIG) {
+    if (APP_CONFIG.TIMEOUT) {
+      $httpProvider.defaults.timeout = APP_CONFIG.TIMEOUT;
+    }
+    else {
+      $httpProvider.defaults.timeout = 4000; // default timeout
+    }
+  }])
+
   // Add new compare-to directive (need for form validation)
   .directive("compareTo", function() {
       return {

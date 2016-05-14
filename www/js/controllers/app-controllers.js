@@ -333,7 +333,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   $scope.clearFabs = function() {
       var fabs = document.getElementsByClassName('button-fab');
       if (fabs.length && fabs.length > 1) {
-          fabs[0].remove();
+        fabs[0].remove();
       }
   };
 

@@ -26,12 +26,6 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   $scope.convertedBalance = 0;
   $scope.hasCredit = false;
   $scope.isMember = false;
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.$parent.clearFabs();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
@@ -289,10 +283,6 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       }, 2000);
     });
  };
-
- // Set Header
- $scope.$parent.showHeader();
- $scope.$parent.clearFabs();
 
    // TODO: remove auto add account when done
    /*$timeout(function() {

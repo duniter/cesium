@@ -91,7 +91,7 @@
 }
 
 #wallet .list .item span {
-  display: inline !important;
+  display: inline;
 }
 
 .list .item-input {

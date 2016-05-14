@@ -115,26 +115,26 @@
                   <h2><i class="icon ion-clock" ng-if="!tx.block_number"> </i>
                     <span class="positive" ng-if="tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
                       <i class="icon ion-person"></i>
-                      {{tx.uid}}
+                      {{::tx.uid}}
                     </span>
                     <span class="positive" ng-if="!tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
                       <i class="icon ion-key"></i>
-                      {{tx.pubkey | formatPubkey}}
+                      {{::tx.pubkey | formatPubkey}}
                     </span>
-                    <span  ng-if="tx.comment">&nbsp;
+                    <span  ng-if="tx.comment" class="hidden-xs">&nbsp;
                       <i class="icon ion-ios-chatbubble-outline"></i>
-                      {{tx.comment}}
+                      {{::tx.comment}}
                     </span>
                   </h2>
+                  <h3 ng-if="tx.comment" class="visible-xs">
+                    <i class="icon ion-ios-chatbubble-outline"></i>
+                    {{::tx.comment}}<br/>
+                  </h3>
                   <h3 class="dark">
-                    {{tx.time | formatFromNow}}
+                    {{::tx.time | formatFromNow}}
                     <span class="gray hidden-xs">|
                       <i class="icon ion-calendar"></i>
-                      {{tx.time | formatDate}}
-                    </span>
-                    <span class="gray" ng-if="!tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">&nbsp;
-                      <i class="icon ion-key"></i>
-                      {{tx.pubkey | formatPubkey}}
+                      {{::tx.time | formatDate}}
                     </span>
                   </h3>
                   <div class="badge item-note"
