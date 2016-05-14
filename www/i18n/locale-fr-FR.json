@@ -40,12 +40,14 @@
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "",
-    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Regardez l'état de vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en temps réel.",
+    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en temps réel.",
+    "MESSAGE_SHORT": "Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a><br/>en temps réel !",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies",
     "DEV_WARNING": "Avertissement",
-    "DEV_WARNING_MESSAGE": "Cesium est encore en plein développement. N'hésitez pas à nous soumettre des éventuels problèmes !",
+    "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
+    "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
     "REPORT_ISSUE": "Signaler un problème"
   },
   "CURRENCY": {
