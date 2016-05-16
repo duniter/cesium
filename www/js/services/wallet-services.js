@@ -19,6 +19,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             signSk: null,
             signPk: null
         },
+        uid: null,
         balance: 0,
         sources: null,
         useRelative: defaultSettings.useRelative, // TODO : a remplacer par settings.useRelative
@@ -46,6 +47,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                 signSk: null,
                 signPk: null
             };
+      data.uid = null;
       data.balance = 0;
       data.sources = null;
       data.useRelative = defaultSettings.useRelative; // TODO : a remplacer par settings.useRelative
@@ -70,7 +72,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       if (!txArray || txArray.length === 0) {
         return;
       }
-      txArray.forEach(function(tx) {
+      _.forEach(txArray, function(tx) {
         var walletIsIssuer = false;
         var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
             walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
@@ -214,17 +216,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           data.requirements.needMembershipOut = (data.requirements.membershipExpiresIn > 0);
           data.requirements.pendingMembership = (data.requirements.membershipPendingExpiresIn > 0);
           data.requirements.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
-          var willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
+          data.requirements.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
             if (cert.expiresIn <= data.settings.timeWarningExpire) {
               return count + 1;
             }
             return count;
           }, 0) : 0;
-          data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
-              (data.parameters.sigQty - data.requirements.certificationCount) : 0;
-          data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
-              data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - willExpireCertificationCount) < data.parameters.sigQty) ?
-              (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
           data.isMember = !data.requirements.needSelf && !data.requirements.needMembership;
           resolve();
         })
@@ -252,7 +249,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           var sources = [];
           var balance = 0;
           if (!!res.sources && res.sources.length > 0) {
-            res.sources.forEach(function(src) {
+            _.forEach(res.sources, function(src) {
               var srcKey = src.type+':'+src.identifier+':'+src.noffset;
               if (!!data.sources[srcKey]) {
                 src.consumed = data.sources[srcKey].consumed;
@@ -374,6 +371,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             loadAvatar()
           ])
           .then(function() {
+            data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
+                (data.parameters.sigQty - data.requirements.certificationCount) : 0;
+            data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
+                data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
+                (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
             data.loaded = true;
             resolve(data);
           })

@@ -103,7 +103,7 @@
               </span>
               <span ng-show="found.time">
                 <span ng-show="found.location">|</span>
-                {{found.time | formatFromNow}}
+                {{::found.time | formatFromNow}}
               </span>
             </h4>
           </div>
@@ -123,13 +123,13 @@
               </h4>
               <h4 class="gray" ng-if="found.time">
                 <i class="icon ion-clock" ></i>
-                {{found.time | formatFromNow}}
+                {{::found.time | formatFromNow}}
               </h4>
               <span  ng-if="found.pictures && found.pictures.length > 1"
-                     class="badge badge-balanced badge-picture-count">{{found.pictures.length}}&nbsp;<i class="icon ion-camera"></i></span>
+                     class="badge badge-balanced badge-picture-count">{{::found.pictures.length}}&nbsp;<i class="icon ion-camera"></i></span>
             </div>
             <div class="col col-20">
-              <h3 class="gray" ng-if="found.category">{{found.category.name|formatCategory}}</h3>
+              <h3 class="gray" ng-if="found.category">{{::found.category.name|formatCategory}}</h3>
               <h2 class="badge badge-price badge-calm" ng-bind-html="found.price" ng-if="found.price"></h2>
             </div>
             <div class="col">

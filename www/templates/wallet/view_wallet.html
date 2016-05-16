@@ -18,10 +18,10 @@
               <div class="content">
                 <div class="avatar"
                      ng-if="!!walletData.avatar"
-                     style="background-image: url({{walletData.avatar}});"></div>
+                     style="background-image: url({{::walletData.avatar}});"></div>
                 <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': isMember}" ng-if="!walletData.avatar"></i>
                 <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
-                <h3 class="light" ng-if="!walletData.isMember">{{walletData.pubkey | formatPubkey}}</h3>
+                <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
                 <h4 class="light">
                     <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
                     <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
@@ -153,7 +153,10 @@
 
     </ion-content>
 
-    <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send hidden-md hidden-lg"
+    <button id="fab-transfer"
+            ng-if="walletData"
+            class="button button-fab button-fab-bottom-right button-energized-900 hidden-md hidden-lg drop"
             ng-click="openTransfer()">
+      <i class="icon ion-android-send"></i>
     </button>
 </ion-view>

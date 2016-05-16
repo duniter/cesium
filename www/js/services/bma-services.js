@@ -32,7 +32,7 @@ angular.module('cesium.bma.services', ['ngResource',
         pkeys = _.keys(params);
       }
 
-      pkeys.forEach(function(pkey){
+      _.forEach(pkeys, function(pkey){
         var prevURI = newUri;
         newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
         if (prevURI == newUri) {
@@ -107,7 +107,7 @@ angular.module('cesium.bma.services', ['ngResource',
 
     function closeWs() {
       if (sockets.length > 0) {
-        sockets.forEach(function(sock) {
+        _.forEach(sockets, function(sock) {
           sock.close();
         });
         sockets = []; // Reset socks list

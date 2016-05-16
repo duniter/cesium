@@ -92,12 +92,11 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
   })
 
   .config(['$httpProvider', 'APP_CONFIG', function($httpProvider, APP_CONFIG) {
-    if (APP_CONFIG.TIMEOUT) {
-      $httpProvider.defaults.timeout = APP_CONFIG.TIMEOUT;
-    }
-    else {
-      $httpProvider.defaults.timeout = 4000; // default timeout
-    }
+    $httpProvider.defaults.timeout = !!APP_CONFIG.TIMEOUT ? APP_CONFIG.TIMEOUT : 4000 /* default timeout */;
+  }])
+
+  .config(['$compileProvider', 'APP_CONFIG', function($compileProvider, APP_CONFIG) {
+      $compileProvider.debugInfoEnabled(!!APP_CONFIG.DEBUG);
   }])
 
   // Add new compare-to directive (need for form validation)

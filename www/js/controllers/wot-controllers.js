@@ -247,6 +247,9 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.identity = {};
   $scope.loaded = false;
   $scope.timeWarningExpire = Wallet.defaultSettings.timeWarningExpire;
+  $scope.hasSelf = false;
+  $scope.canCertify = false;
+  $scope.alreadyCertified = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!$state.stateParams || !$state.stateParams.pub || $state.stateParams.pub.trim().length===0) {
@@ -272,9 +275,11 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
             startVelocity: 3000
         });
       }, 10);
-      $timeout(function () {
-        document.getElementById('fab-certify').classList.toggle('on');
-      }, 900);
+      if ($scope.canCertify) {
+        $timeout(function () {
+          document.getElementById('fab-certify').classList.toggle('on');
+        }, 900);
+      }
       UIUtils.ink();
     };
     var onLoadRequirementsFinish = function(certsFromRequirements) {
@@ -316,6 +321,8 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
             }, certs));
           }, certs));
         }, []);
+        $scope.canCertify = !Wallet.isLogin() || Wallet.data.pubkey != pub;
+        $scope.alreadyCertified = (Wallet.isLogin() && Wallet.data.pubkey != pub && Wallet.data.isMember) ? _.findWhere($scope.certifications, { uid: Wallet.data.uid }) : false;
         onLoadFinish();
       })
       .catch(function(err) {
@@ -323,6 +330,8 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
           $scope.certifications = [];
           $scope.timeWarningExpire = Wallet.defaultSettings.timeWarningExpire;
           $scope.identity = {};
+          $scope.canCertify = false;
+          $scope.alreadyCertified = false;
           onLoadFinish(); // Continue
         }
         else {

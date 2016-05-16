@@ -21,7 +21,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
           pkeys = _.keys(params);
         }
 
-        pkeys.forEach(function(pkey){
+        _.forEach(pkeys, function(pkey){
           var prevURI = newUri;
           newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
           if (prevURI == newUri) {
@@ -103,7 +103,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
                 return result.concat(cat);
               }, []);
               // add as map also
-              categories.forEach(function(cat) {
+              _.forEach(categories, function(cat) {
                 categories[cat.id] = cat;
               });
             }

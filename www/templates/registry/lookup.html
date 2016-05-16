@@ -83,11 +83,11 @@
               class="item item-avatar ink"
               ui-sref="app.registry_view_record({id: found.id, title: found.title})">
 
-              <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
+              <img ng-src="{{::found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
               <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>
-              <h4 class="gray" ng-bind="found.location" ng-if="found.location"></h4>
+              <h4 class="gray" ng-if="found.location">{{::found.location}}</h4>
               <p class="gray item-text-wrap" ng-bind-html="found.description" ng-if="found.description"></p>
-              <span class="badge" ng-if="found.category && found.category.id=='particulier'">{{found.issuer | formatPubkey}}</span>
+              <span class="badge" ng-if="found.category && found.category.id=='particulier'">{{::found.issuer | formatPubkey}}</span>
           </a>
 
       </div>
