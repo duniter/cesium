@@ -34,15 +34,16 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    UIUtils.loading.show();
     $scope.loading = true; // to avoid the call of Wallet.store()
-    $scope.loadWallet()
+    $scope.loadWallet(true/*allowCancel*/)
       .then(function(walletData) {
-        $scope.formData.useRelative = walletData.settings.useRelative;
-        $scope.formData.node = walletData.settings.node;
-        $scope.formData.useLocalStorage = walletData.settings.useLocalStorage;
-        if (walletData.settings.locale && walletData.settings.locale.id) {
-          $scope.formData.locale = _.findWhere($scope.locales, {id: walletData.settings.locale.id});
+        if (walletData) {
+          $scope.formData.useRelative = walletData.settings.useRelative;
+          $scope.formData.node = walletData.settings.node;
+          $scope.formData.useLocalStorage = walletData.settings.useLocalStorage;
+          if (walletData.settings.locale && walletData.settings.locale.id) {
+            $scope.formData.locale = _.findWhere($scope.locales, {id: walletData.settings.locale.id});
+          }
         }
         UIUtils.loading.hide();
         $scope.loading = false;

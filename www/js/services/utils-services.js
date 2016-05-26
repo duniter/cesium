@@ -9,6 +9,10 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function alertError(err, subtitle) {
     return $q(function(resolve, reject) {
+      if (!err) {
+        resolve();
+        return;
+      }
       $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
       .then(function (translations) {
         var message = err.message || translations[err];

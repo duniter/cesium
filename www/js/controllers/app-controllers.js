@@ -52,21 +52,24 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   };
 
   // Open login modal
-  $scope.login = function(callback) {
+  $scope.login = function(success, cancel) {
     if ($scope.loginModal) {
       UIUtils.loading.hide();
       $scope.loginModal.show();
-      $scope.loginData.callback = callback;
+      $scope.loginData.callbacks = {};
+      $scope.loginData.callbacks.success = success;
+      $scope.loginData.callbacks.cancel = cancel;
     }
     else{
       $timeout(function(){
-        $scope.login(callback);
+        $scope.login(success, cancel);
       }, 2000);
     }
   };
 
   // Login and load wallet
-  $scope.loadWallet = function() {
+  $scope.loadWallet = function(allowCancel) {
+    if (!allowCancel) {allowCancel = false;}
     return $q(function(resolve, reject){
 
       if (!Wallet.isLogin()) {
@@ -82,13 +85,22 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
                 .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
             }
             else {
-              $scope.login(function() {
-                $rootScope.viewFirstEnter = false;
-                Wallet.loadData()
-                  .then(function(walletData){
-                    resolve(walletData);
-                  })
-                  .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+              $scope.login(
+                function() {
+                  $rootScope.viewFirstEnter = false;
+                  Wallet.loadData()
+                    .then(function(walletData){
+                      resolve(walletData);
+                    })
+                    .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+                },
+                function() { // user cancel callback
+                  if (allowCancel) {
+                    resolve();
+                  }
+                  else {
+                    reject();
+                  }
                 });
             }
           })
@@ -110,9 +122,13 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
   // Triggered in the login modal to close it
   $scope.cancelLogin = function() {
+    var callback = $scope.loginData.callbacks.cancel;
     $scope.loginData = {}; // Reset login data
     $scope.loginForm.$setPristine(); // Reset form
     $scope.loginModal.hide();
+    if (!!callback) {
+      callback();
+    }
   };
 
   // Login form submit
@@ -127,7 +143,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
       // Call wallet login, then execute callback function
       Wallet.login($scope.loginData.username, $scope.loginData.password)
         .then(function(){
-          var callback = $scope.loginData.callback;
+          var callback = $scope.loginData.callbacks.success;
           $scope.loginData = {}; // Reset login data
           $scope.loginForm.$setPristine(); // Reset form
           if (!!callback) {
