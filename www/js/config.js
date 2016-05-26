@@ -15,7 +15,7 @@ angular.module("cesium.config", [])
 	"DEBUG": false,
 	"NATIVE_TRANSITION": false,
 	"VERSION": "0.0.3",
-	"BUILD_DATE": "2016-05-26T13:50:17.773Z"
+	"BUILD_DATE": "2016-05-26T17:36:25.682Z"
 })
 
 ;

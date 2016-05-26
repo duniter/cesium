@@ -54,6 +54,7 @@
   },
   "SETTINGS": {
     "TITLE": "Setting",
+    "TECHNICAL_SETTINGS": "Technical settings",
     "NODE": "Duniter Node",
     "NODE_HELP": "server.domain.com:port",
     "POPUP_NODE": {

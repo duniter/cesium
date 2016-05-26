@@ -264,5 +264,8 @@
   top:16px !important;
 }
 
+#settings .item-divider {
+    background-color: #f5f5f5;
+}
 
 

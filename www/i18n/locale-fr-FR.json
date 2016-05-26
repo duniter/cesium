@@ -54,6 +54,7 @@
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
+    "TECHNICAL_SETTINGS": "Paramètres techniques",
     "NODE": "Noeud",
     "NODE_HELP": "server.domain.com:port",
     "POPUP_NODE": {

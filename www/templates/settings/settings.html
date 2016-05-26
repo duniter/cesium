@@ -1,5 +1,6 @@
 <ion-view left-buttons="leftButtons"
-          view-title="{{'SETTINGS.TITLE' | translate}}">
+          view-title="{{'SETTINGS.TITLE' | translate}}"
+          id="settings">
 
     <ion-content >
         <div class="item item-toggle dark">
@@ -21,6 +22,10 @@
                 ng-options="l as l.label for l in formData.locales track by l.id">
         </select>
       </label>
+
+      <span class="item item-divider">
+        {{'SETTINGS.TECHNICAL_SETTINGS' | translate}}
+      </span>
 
       <div class="item" ng-click="changeNode()">
         {{'SETTINGS.NODE' | translate}}
