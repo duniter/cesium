@@ -8,19 +8,24 @@ angular.module('cesium.utils.services', ['ngResource'])
   var loadingTextCache=null;
 
   function alertError(err, subtitle) {
-    $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
-    .then(function (translations) {
-      var message = err.message || translations[err];
-      return $ionicPopup.show({
-        template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
-        title: translations['ERROR.POPUP_TITLE'],
-        subTitle: translations[subtitle],
-        buttons: [
-          {
-            text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
-            type: 'button-assertive'
-          }
-        ]
+    return $q(function(resolve, reject) {
+      $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
+      .then(function (translations) {
+        var message = err.message || translations[err];
+        return $ionicPopup.show({
+          template: '<p>' + (message || translations['ERROR.UNKNOWN_ERROR']) + '</p>',
+          title: translations['ERROR.POPUP_TITLE'],
+          subTitle: translations[subtitle],
+          buttons: [
+            {
+              text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
+              type: 'button-assertive',
+              onTap: function(e) {
+                resolve(e);
+              }
+            }
+          ]
+        });
       });
     });
   }

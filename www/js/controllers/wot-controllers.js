@@ -240,15 +240,10 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
 
   // Set Header
   $scope.$parent.showHeader();
-  $scope.$parent.clearFabs();
   $scope.isExpanded = false;
   $scope.$parent.setExpanded(false);
   $scope.$parent.setHeaderFab(false);
-
-  $timeout(function () {
-    document.getElementById('fab-transfer').classList.toggle('on');
-  }, 100);
-
+  $scope.showFab('fab-transfer');
 }
 
 function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, System) {
@@ -274,7 +269,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
     }
   });
 
-  $scope.loadCertifications = function(pub) {
+  $scope.loadCertifications = function(pub, force) {
     $scope.loaded = false;
     var onLoadFinish = function() {
       $scope.loaded = true;
@@ -286,9 +281,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
         });
       }, 10);
       if ($scope.canCertify) {
-        $timeout(function () {
-          document.getElementById('fab-certify').classList.toggle('on');
-        }, 900);
+        $scope.showFab('fab-certify');
       }
       UIUtils.ink();
     };
@@ -332,7 +325,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
           }, certs));
         }, []);
         $scope.canCertify = !Wallet.isLogin() || Wallet.data.pubkey != pub;
-        $scope.alreadyCertified = (Wallet.isLogin() && Wallet.data.pubkey != pub && Wallet.data.isMember) ? _.findWhere($scope.certifications, { uid: Wallet.data.uid }) : false;
+        $scope.alreadyCertified = (Wallet.isLogin() && Wallet.data.pubkey != pub && Wallet.data.isMember) ? !!_.findWhere($scope.certifications, { uid: Wallet.data.uid }) : false;
         onLoadFinish();
       })
       .catch(function(err) {
@@ -350,7 +343,8 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
       });
     };
 
-    if (Wallet.isLogin()) { // Skip load requirements (already done)
+    // Skip load requirements if already done (if identity=wallet user)
+    if (!force && Wallet.isLogin() && Wallet.data.pubkey == pub) {
       $scope.timeWarningExpire = Wallet.data.settings.timeWarningExpire;
       onLoadRequirementsFinish(Wallet.data.requirements.certifications);
       return;
@@ -398,12 +392,11 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
 
   // Updating wallet data
   $scope.doUpdate = function() {
-    $scope.loadCertifications($scope.identity.pub);
+    $scope.loadCertifications($scope.identity.pub, true);
   };
 
   // Set Header
   $scope.$parent.showHeader();
-  $scope.$parent.clearFabs();
   $scope.isExpanded = false;
   $scope.$parent.setExpanded(false);
   $scope.$parent.setHeaderFab(false);

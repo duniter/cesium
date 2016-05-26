@@ -33,7 +33,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
         $scope.updateWalletView(wallet);
         UIUtils.loading.hide();
         $timeout(function () {
-          document.getElementById('fab-transfer').classList.toggle('on');
+          document.getElementById('fab-transfer').classList.toggle('on', true);
         }, 900);
       });
   });

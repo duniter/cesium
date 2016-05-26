@@ -52,6 +52,15 @@
     "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",
     "REPORT_ISSUE": "Report an issue"
   },
+  "SETTINGS": {
+    "TITLE": "Setting",
+    "NODE": "Duniter Node",
+    "NODE_HELP": "server.domain.com:port",
+    "POPUP_NODE": {
+      "TITLE" : "Node settings",
+      "HELP" : "Fill address of the Duniter node to use"
+    }
+  },
   "CURRENCY": {
     "SELECT": {
       "TITLE": "Currencies",
@@ -272,7 +281,8 @@
     "NEED_LOGIN_FIRST": "Please sign in first.",
     "AMOUNT_REQUIRED": "Amount is required.",
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",
-    "NOT_ENOUGH_CREDIT": "Not enough credit."
+    "NOT_ENOUGH_CREDIT": "Not enough credit.",
+    "INVALID_NODE_SUMMARY": "Unreachable node or invalid address"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

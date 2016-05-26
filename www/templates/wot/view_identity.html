@@ -35,13 +35,18 @@
 
         <div class="col list animate-fade-slide-in">
 
-          <!-- Certifications -->
-          <a class="item item-icon-left item-text-wrap ink" ng-if="hasSelf"
+          <!-- Certifications count -->
+          <a class="item item-icon-left item-text-wrap ink" ng-if="hasSelf && certificationCount > 0"
              ui-sref="app.view_certifications({pub:identity.pub})">
             <i class="icon ion-ribbon-b"></i>
             <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
             <span class="badge" ng-class="{'badge-balanced': sigQty && certificationCount >= sigQty, 'badge-assertive': sigQty && certificationCount < sigQty}">{{::certificationCount}}</span>
           </a>
+          <ion-item class="item-icon-left item-text-wrap" ng-if="hasSelf && certificationCount == 0">
+            <i class="icon ion-ribbon-b"></i>
+            <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
+            <span class="badge badge-assertive">{{::certificationCount}}</span>
+          </ion-item>
 
           <ion-item class="item-icon-left" ng-if="identity.sigDate">
             <i class="icon ion-calendar"></i>

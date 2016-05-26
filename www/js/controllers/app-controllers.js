@@ -330,13 +330,20 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
       $scope.hasHeader();
   };
 
-  $scope.clearFabs = function() {
+  $scope.showFab = function(id, timeout) {
+    if (!timeout) {
+      timeout = 900;
+    }
+    $timeout(function () {
+      // Could not use 'getElementById', because it return only once element,
+      // but many fabs can have the same id (many view could be loaded at the same time)
       var fabs = document.getElementsByClassName('button-fab');
-      if (fabs.length && fabs.length > 1) {
-        fabs[0].remove();
-      }
+      _.forEach(fabs, function(fab){
+        if (fab.id == id) {
+          fab.classList.toggle('on', true);
+        }
+      });
+    }, 900);
   };
-
-
 }
 

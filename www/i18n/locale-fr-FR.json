@@ -36,7 +36,7 @@
     "CURRENCY": "Monnaie",
     "CURRENCIES": "Monnaies",
     "ACCOUNT": "Mon compte",
-    "SETTINGS": "Configuration"
+    "SETTINGS": "Paramètres"
   },
   "HOME": {
     "TITLE": "Cesium",
@@ -51,6 +51,15 @@
     "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
     "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
     "REPORT_ISSUE": "Signaler un problème"
+  },
+  "SETTINGS": {
+    "TITLE": "Paramètres",
+    "NODE": "Noeud",
+    "NODE_HELP": "server.domain.com:port",
+    "POPUP_NODE": {
+      "TITLE" : "Paramétrage du noeud",
+      "HELP" : "Saisissez l'adresse du noeud Duniter que vous voulez utiliser"
+    }
   },
   "CURRENCY": {
     "SELECT": {
@@ -272,7 +281,8 @@
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
-    "NOT_ENOUGH_CREDIT": "Crédit insufissant."
+    "NOT_ENOUGH_CREDIT": "Crédit insufissant.",
+    "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

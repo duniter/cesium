@@ -123,7 +123,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
             $scope.load(res.id);
             UIUtils.loading.hide();
           })
-          .catch(IUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+          .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
       }
       return;
     }

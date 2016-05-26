@@ -1,11 +1,9 @@
 <ion-view left-buttons="leftButtons"
-          view-title="{{'MENU.SETTINGS' | translate}}">
+          view-title="{{'SETTINGS.TITLE' | translate}}">
 
     <ion-content >
-        <div class="item item-content item-toggle dark">
-            <div class="input-label">
-                {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-            </div>
+        <div class="item item-toggle dark">
+            {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
             <label class="toggle toggle-royal">
                 <input type="checkbox" ng-model="walletData.settings.useRelative">
                 <div class="track">
@@ -20,9 +18,14 @@
         </div>
         <select ng-model="walletData.settings.locale"
                 ng-change="changeLanguage(walletData.settings.locale.id)"
-                ng-options="l as l.label for l in locales track by l.id">
+                ng-options="l as l.label for l in formData.locales track by l.id">
         </select>
       </label>
+
+      <div class="item" ng-click="changeNode()">
+        {{'SETTINGS.NODE' | translate}}
+        <span class="item-note">{{formData.node}}</span>
+      </div>
 
     </ion-content>
 </ion-view>

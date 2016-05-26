@@ -114,9 +114,21 @@ angular.module('cesium.bma.services', ['ngResource',
       }
     }
 
+    function copy(otherNode) {
+      if (!!this.instance) {
+        var instance = this.instance;
+        angular.copy(otherNode, this);
+        this.instance = instance;
+      }
+      else {
+        angular.copy(otherNode, this);
+      }
+    }
+
     return {
       node: {
-        summary: getResource('http://' + server + '/node/summary')
+        summary: getResource('http://' + server + '/node/summary'),
+        server: server
       },
       wot: {
         lookup: getResource('http://' + server + '/wot/lookup/:search'),
@@ -161,7 +173,8 @@ angular.module('cesium.bma.services', ['ngResource',
           return ws('ws://' + server + '/ws/peer');
         },
         close : closeWs
-      }
+      },
+      copy: copy
     };
   }
 

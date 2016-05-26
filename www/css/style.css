@@ -64,7 +64,9 @@
   min-height: 30px;
 }
 
-
+.popup-buttons .button {
+  padding: 0 2px !important; /*Need for 'cancel' button */
+}
 
 #transfer .list .item {
   border-bottom: solid 1px #ccc;
