@@ -123,10 +123,8 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
   });
 
   $scope.loadIdentity = function(pub) {
-    //UIUtils.loading.show();
     var onLoadFinish = function() {
       $scope.loaded = true;
-      //UIUtils.loading.hide();
 
       $timeout(function() {
           UIUtils.motion.fadeSlideInRight({

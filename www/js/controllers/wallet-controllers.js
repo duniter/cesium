@@ -31,10 +31,8 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
     $scope.loadWallet()
       .then(function(wallet) {
         $scope.updateWalletView(wallet);
+        $scope.showFab('fab-transfer');
         UIUtils.loading.hide();
-        $timeout(function () {
-          document.getElementById('fab-transfer').classList.toggle('on', true);
-        }, 900);
       });
   });
 

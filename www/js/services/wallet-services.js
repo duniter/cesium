@@ -12,7 +12,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       useRelative: true,
       timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/,
       useLocalStorage: false,
-      node: BMA.node.url
+      node: BMA.node.url,
+      locale: {id: $translate.use()}
     },
 
     data = {
@@ -39,7 +40,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         settings: {
           useRelative: defaultSettings.useRelative,
           timeWarningExpire: defaultSettings.timeWarningExpire,
-          locale: {id: $translate.use()},
+          locale: defaultSettings.locale,
           useLocalStorage: defaultSettings.useLocalStorage,
           node: defaultSettings.node
         }
@@ -190,7 +191,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       }
     },
 
-    restore = function() {
+    restore = function(enableLoadData) {
       return $q(function(resolve, reject){
         var settings = localStorage.getObject('CESIUM_SETTINGS');
         var dataStr = localStorage.get('CESIUM_DATA');
@@ -212,6 +213,16 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             if (storedData && storedData.keypair && storedData.pubkey) {
               data.keypair = storedData.keypair;
               data.pubkey = storedData.pubkey;
+              data.loaded = false;
+              if (enableLoadData) {
+                loadData()
+                .then(function() {
+                  resolve();
+                })
+                .catch(function(err) {
+                  reject(err);
+                });
+              }
             }
             resolve();
           })
@@ -365,6 +376,60 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       });
     },
 
+    loadParameters = function() {
+      return $q(function(resolve, reject) {
+        BMA.currency.parameters()
+        .then(function(json){
+          data.currency = json.currency;
+          data.parameters = json;
+          resolve();
+        })
+        .catch(function(err) {
+          data.currency = null;
+          data.parameters = null;
+          reject(err);
+        });
+      });
+    },
+
+    loadUDs = function() {
+      return $q(function(resolve, reject) {
+        BMA.blockchain.stats.ud()
+        .then(function(res){
+          if (res.result.blocks.length) {
+            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+            return BMA.blockchain.block({ block: lastBlockWithUD })
+              .then(function(block){
+                data.currentUD = block.dividend;
+                resolve();
+              })
+              .catch(function(err) {
+                data.currentUD = null;
+                reject(err);
+              });
+            }
+        })
+        .catch(function(err) {
+          data.currentUD = null;
+          reject(err);
+        });
+      });
+    },
+
+    loadMembers = function() {
+      return $q(function(resolve, reject) {
+        BMA.wot.members()
+        .then(function(json){
+          data.members = json.results;
+          resolve();
+        })
+        .catch(function(err) {
+          data.members = [];
+          reject(err);
+        });
+      });
+    },
+
     loadAvatar = function() {
       return $q(function(resolve, reject) {
         if (!Registry) {
@@ -400,29 +465,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           $q.all([
 
             // Get currency parameters
-            BMA.currency.parameters()
-              .then(function(json){
-                data.currency = json.currency;
-                data.parameters = json;
-              }),
+            loadParameters(),
 
-            // Get the UD informations
-            BMA.blockchain.stats.ud()
-              .then(function(res){
-                if (res.result.blocks.length) {
-                  var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-                  return BMA.blockchain.block({ block: lastBlockWithUD })
-                    .then(function(block){
-                      data.currentUD = block.dividend;
-                    });
-                  }
-              }),
+            // Get UDs
+            loadUDs(),
 
             // Get members
-            BMA.wot.members()
-              .then(function(json){
-                data.members = json.results;
-              }),
+            loadMembers(),
 
             // Get sources
             loadSources(false),
