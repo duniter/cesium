@@ -79,6 +79,9 @@ angular.module('cesium.utils.services', ['ngResource'])
         fullMsg = err.message;
         subtitle = msg;
       }
+      else if (!msg){
+        fullMsg = err;
+      }
       // If reject has been given, use it
       if (!!reject) {
         reject(fullMsg);

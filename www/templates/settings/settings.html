@@ -6,7 +6,7 @@
         <div class="item item-toggle dark">
             {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
             <label class="toggle toggle-royal">
-                <input type="checkbox" ng-model="walletData.settings.useRelative">
+                <input type="checkbox" ng-model="formData.useRelative">
                 <div class="track">
                     <div class="handle"></div>
                 </div>
@@ -17,9 +17,9 @@
         <div class="input-label">
           {{'COMMON.LANGUAGE' | translate}}
         </div>
-        <select ng-model="walletData.settings.locale"
-                ng-change="changeLanguage(walletData.settings.locale.id)"
-                ng-options="l as l.label for l in formData.locales track by l.id">
+        <select ng-model="formData.locale"
+                ng-change="changeLanguage(formData.locale.id)"
+                ng-options="l as l.label for l in locales track by l.id">
         </select>
       </label>
 
@@ -27,9 +27,19 @@
         {{'SETTINGS.TECHNICAL_SETTINGS' | translate}}
       </span>
 
-      <div class="item" ng-click="changeNode()">
+      <div class="item ink" ng-click="changeNode()">
         {{'SETTINGS.NODE' | translate}}
         <span class="item-note">{{formData.node}}</span>
+      </div>
+
+      <div class="item item-toggle dark">
+        {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.useLocalStorage" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
       </div>
 
     </ion-content>

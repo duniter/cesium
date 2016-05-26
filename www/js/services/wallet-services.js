@@ -1,8 +1,8 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.registry.services'])
+angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.registry.services', 'cesium.utils.services'])
 
-.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', 'Registry', '$translate', function($q, CryptoUtils, BMA, Registry, $translate) {
+.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', 'Registry', '$translate', 'localStorage', function($q, CryptoUtils, BMA, Registry, $translate, localStorage) {
 
   Wallet = function(id) {
 
@@ -10,7 +10,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     defaultSettings = {
       useRelative: true,
-      timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/
+      timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/,
+      useLocalStorage: false,
+      node: BMA.node.url
     },
 
     data = {
@@ -37,11 +39,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         settings: {
           useRelative: defaultSettings.useRelative,
           timeWarningExpire: defaultSettings.timeWarningExpire,
-          locale: {id: $translate.use()}
+          locale: {id: $translate.use()},
+          useLocalStorage: defaultSettings.useLocalStorage,
+          node: defaultSettings.node
         }
     },
 
-    resetData = function() {
+    resetData = function(resetSettings) {
       data.pubkey= null;
       data.keypair ={
                 signSk: null,
@@ -50,7 +54,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.uid = null;
       data.balance = 0;
       data.sources = null;
-      data.useRelative = defaultSettings.useRelative; // TODO : a remplacer par settings.useRelative
       data.currency= null;
       data.parameters = null;
       data.currentUD = null;
@@ -62,10 +65,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.blockUid = null;
       data.members = [];
       data.avatar = null;
-      data.settings = {
-        useRelative: defaultSettings.useRelative,
-        timeWarningExpire: defaultSettings.timeWarningExpire
-      };
+      if (!!resetSettings) {
+        data.settings = {
+          useRelative: defaultSettings.useRelative,
+          timeWarningExpire: defaultSettings.timeWarningExpire,
+          useLocalStorage: defaultSettings.useLocalStorage,
+          node: BMA.node.url // If changed, use the updated url
+        };
+      }
     },
 
     reduceTxAndPush = function(txArray, result, processedTxMap) {
@@ -147,14 +154,73 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     logout = function(username, password) {
-        return $q(function(resolve, reject) {
-            resetData();
-            resolve();
-        });
+      return $q(function(resolve, reject) {
+
+        var resetSettings = !data.settings.useLocalStorage;
+        resetData(resetSettings);
+        if (data.settings.useLocalStorage) {
+          store();
+        }
+        resolve();
+      });
     },
 
     isLogin = function() {
         return !!data.pubkey;
+    },
+
+    store = function() {
+      if (data.settings.useLocalStorage) {
+        localStorage.setObject('CESIUM_SETTINGS', data.settings);
+
+        if (isLogin()) {
+          var dataToStore = {
+            keypair: data.keypair,
+            pubkey: data.pubkey
+          };
+          localStorage.setObject('CESIUM_DATA', dataToStore);
+        }
+        else {
+          localStorage.setObject('CESIUM_DATA', null);
+        }
+      }
+      else {
+        localStorage.setObject('CESIUM_SETTINGS', null);
+        localStorage.setObject('CESIUM_DATA', null);
+      }
+    },
+
+    restore = function() {
+      return $q(function(resolve, reject){
+        var settings = localStorage.getObject('CESIUM_SETTINGS');
+        var dataStr = localStorage.get('CESIUM_DATA');
+        if (!settings && !dataStr) {
+          resolve();
+          return;
+        }
+        var nodeChanged = (settings && settings.node) && (data.settings.node != settings.node);
+        if (nodeChanged) {
+          BMA.copy(BMA.instance(settings.node)); // reload BMA
+          data.loaded = false;
+        }
+        if (settings) {
+          data.settings = settings;
+        }
+        if (dataStr) {
+          fromJson(dataStr, false)
+          .then(function(storedData){
+            if (storedData && storedData.keypair && storedData.pubkey) {
+              data.keypair = storedData.keypair;
+              data.pubkey = storedData.pubkey;
+            }
+            resolve();
+          })
+          .catch(function(err){reject(err)});
+        }
+        else {
+          resolve();
+        }
+      });
     },
 
     getData = function() {
@@ -633,29 +699,35 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     /**
     * De-serialize from JSON string
     */
-    fromJson = function(json) {
+    fromJson = function(json, failIfInvalid) {
+      if (failIfInvalid === "undefined") {
+        failIfInvalid = true;
+      }
       return $q(function(resolve, reject) {
         var obj = JSON.parse(json || '{}');
-        if (obj.keypair) {
-          var keypair = obj.keypair;
+        if (obj && obj.keypair && obj.keypair.signPk && obj.keypair.signSk) {
+          var keypair = {};
           var i;
 
           // Convert to Uint8Array type
           var signPk = new Uint8Array(32);
-          for (i = 0; i < 32; i++) signPk[i] = keypair.signPk[i];
+          for (i = 0; i < 32; i++) signPk[i] = obj.keypair.signPk[i];
           keypair.signPk = signPk;
 
           var signSk = new Uint8Array(64);
-          for (i = 0; i < 64; i++) signSk[i] = keypair.signSk[i];
+          for (i = 0; i < 64; i++) signSk[i] = obj.keypair.signSk[i];
           keypair.signSk = signSk;
 
-          data.pubkey = obj.pubkey;
-          data.keypair = keypair;
-
-          resolve();
+          resolve({
+            pubkey: obj.pubkey,
+            keypair: keypair
+          });
+        }
+        else if (failIfInvalid) {
+          reject('Not a valid Wallet.data object');
         }
         else {
-          reject('Not a valid Wallet.data object');
+          resolve();
         }
       });
     };
@@ -678,6 +750,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         out: membership(false)
       },
       certify: certify,
+      store: store,
+      restore: restore,
       // serialization
       toJson: toJson,
       fromJson: fromJson,
@@ -686,7 +760,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
   };
 
   var service = Wallet('default');
-  service.instance = service;
+  service.instance = Wallet;
   return service;
 }])
 ;

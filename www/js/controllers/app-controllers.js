@@ -68,16 +68,31 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   // Login and load wallet
   $scope.loadWallet = function() {
     return $q(function(resolve, reject){
+
       if (!Wallet.isLogin()) {
         $timeout(function() {
-          $scope.login(function() {
-            $rootScope.viewFirstEnter = false;
-            Wallet.loadData()
-              .then(function(walletData){
-                resolve(walletData);
-              })
-              .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
-            });
+          Wallet.restore() // try to restore wallet
+          .then(function(){
+            if (Wallet.isLogin()) { // Maybe now login
+              $rootScope.viewFirstEnter = false;
+              Wallet.loadData()
+                .then(function(walletData){
+                  resolve(walletData);
+                })
+                .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+            }
+            else {
+              $scope.login(function() {
+                $rootScope.viewFirstEnter = false;
+                Wallet.loadData()
+                  .then(function(walletData){
+                    resolve(walletData);
+                  })
+                  .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+                });
+            }
+          })
+          .catch(UIUtils.onError('ERROR.RESTORE_WALLET_DATA_ERROR', reject));
         }, $rootScope.viewFirstEnter ? 10 : 2000);
       }
       else if (!Wallet.data.loaded) {
@@ -157,13 +172,13 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   // Logout
   $scope.logout = function() {
     UIUtils.loading.show();
-    Wallet.logout().then(
-        function() {
-          UIUtils.loading.hide();
-          $ionicSideMenuDelegate.toggleLeft();
-          $state.go('app.home');
-        }
-    );
+    Wallet.logout()
+    .then(function() {
+      $ionicSideMenuDelegate.toggleLeft();
+      UIUtils.loading.hide()
+      $state.go('app.home');
+    })
+    .catch(UIUtils.onError());
   };
 
   // Open new account

@@ -19,28 +19,32 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $state, UIUtils, $translate, BMA, $q, $ionicPopup) {
+function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q, $ionicPopup, $timeout, localStorage) {
 
-  $scope.walletData = {};
-  $scope.formData = {
-    locales: [
+  $scope.locales = [
       {id:'fr-FR', label:'Français'},
       {id:'en', label:'English'}
-    ],
-    node: BMA.node.server,
-    newNode: null
-  };
+    ];
+  $scope.formData = { // Init with default settings
+    useRelative: Wallet.defaultSettings.useRelative,
+    node: Wallet.defaultSettings.node,
+    useLocalStorage: Wallet.defaultSettings.useLocalStorage
+  }
+  $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
+  $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    $scope.loading = true; // to avoid the call of Wallet.store()
     $scope.loadWallet()
-      .then(function(wallet) {
-        $scope.walletData = wallet;
-        var currentLocale = $translate.use();
-        $scope.walletData.settings.locale = $scope.formData.locales.reduce(function(array, l, index) {
-            return l.id == currentLocale ? array.concat(l) : array;
-          }, [])[0];
+      .then(function(walletData) {
+        $scope.formData.useRelative = walletData.settings.useRelative;
+        $scope.formData.node = walletData.settings.node;
+        $scope.formData.useLocalStorage = walletData.settings.useLocalStorage;
+        $scope.formData.locale = _.findWhere($scope.locales, {id: walletData.settings.locale.id});
         UIUtils.loading.hide();
-      });
+        $scope.loading = false;
+      })
+      .catch(UIUtils.onError());
   });
 
   $scope.setSettingsForm = function(settingsForm) {
@@ -51,18 +55,6 @@ function SettingsController($scope, $state, UIUtils, $translate, BMA, $q, $ionic
     $translate.use(langKey);
   };
 
-  $scope.toogleUnit = function() {
-    $scope.walletData.settings.useRelative = !$scope.walletData.settings.useRelative;
-  };
-
-  $scope.onNodeChanged = function() {
-     BMA.instance($scope.formData.node);
-  };
-
-  $scope.onNodeChanged = function() {
-       BMA.instance($scope.formData.node);
-    };
-
   // Change node
   $scope.changeNode= function(node) {
     if (!node) {
@@ -70,11 +62,12 @@ function SettingsController($scope, $state, UIUtils, $translate, BMA, $q, $ionic
     }
     $scope.showNodePopup(node)
     .then(function(node) {
+      if (node == $scope.formData.node) {
+        return; // same node = nothing to do
+      }
       UIUtils.loading.show();
-
       var nodeBMA = BMA.instance(node);
-
-      nodeBMA.node.summary()
+      nodeBMA.node.summary() // ping the node
       .then(function() {
         UIUtils.loading.hide();
         $scope.formData.node = node;
@@ -132,4 +125,24 @@ function SettingsController($scope, $state, UIUtils, $translate, BMA, $q, $ionic
         });
       });
     };
+
+  $scope.onSettingsChanged = function() {
+    if (!$scope.loading) {
+      Wallet.data.settings.useRelative = $scope.formData.useRelative;
+      Wallet.data.settings.node = $scope.formData.node;
+      Wallet.data.settings.locale.id = $scope.formData.locale.id;
+      Wallet.data.settings.useLocalStorage = $scope.formData.useLocalStorage;
+      Wallet.store();
+    }
+  };
+  $scope.$watch('formData.useRelative', $scope.onSettingsChanged, true);
+  $scope.$watch('formData.node', $scope.onSettingsChanged, true);
+  $scope.$watch('formData.locale', $scope.onSettingsChanged, true);
+  $scope.$watch('formData.useLocalStorage', $scope.onSettingsChanged, true);
+
+  // Set Ink
+  $timeout(function() {
+    // Set Ink
+    UIUtils.ink({selector: '.item'});
+  }, 10);
 }

@@ -55,11 +55,12 @@
   "SETTINGS": {
     "TITLE": "Paramètres",
     "TECHNICAL_SETTINGS": "Paramètres techniques",
-    "NODE": "Noeud",
+    "NODE": "Noeud Duniter",
     "NODE_HELP": "server.domain.com:port",
+    "USE_LOCAL_STORAGE": "Activer le stockage local",
     "POPUP_NODE": {
-      "TITLE" : "Paramétrage du noeud",
-      "HELP" : "Saisissez l'adresse du noeud Duniter que vous voulez utiliser"
+      "TITLE" : "Noeud Duniter",
+      "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
     }
   },
   "CURRENCY": {
@@ -273,6 +274,7 @@
     "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
     "NOT_ENOUGH_SOURCES": "Veuillez attendre le calcul du prochain bloc (Pas assez de sources de monnaie).",
     "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre.",
+    "RESTORE_WALLET_DATA_ERROR": "Echec du rechargement des paramètres depuis le stockage local",
     "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille.",
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible.",
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo.",

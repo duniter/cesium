@@ -57,9 +57,10 @@
     "TECHNICAL_SETTINGS": "Technical settings",
     "NODE": "Duniter Node",
     "NODE_HELP": "server.domain.com:port",
+    "USE_LOCAL_STORAGE": "Enable local storage",
     "POPUP_NODE": {
-      "TITLE" : "Node settings",
-      "HELP" : "Fill address of the Duniter node to use"
+      "TITLE" : "Duniter Node",
+      "HELP" : "Set the address of the node to use:"
     }
   },
   "CURRENCY": {
@@ -273,6 +274,7 @@
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
     "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
     "ACCOUNT_CREATION_FAILED": "Error while creating your member account.",
+    "RESTORE_WALLET_DATA_ERROR": "Error while reloading settings from local storage",
     "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data.",
     "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
     "TAKE_PICTURE_FAILED": "Could not get picture.",
