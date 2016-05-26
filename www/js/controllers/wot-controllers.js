@@ -3,8 +3,18 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
+      .state('app.wot_lookup', {
+        url: "/wot",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/lookup.html",
+            controller: 'WotLookupCtrl'
+          }
+        }
+      })
+
       .state('app.view_identity', {
-        url: "/wot/:pub",
+        url: "/wot/view/:pub",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",

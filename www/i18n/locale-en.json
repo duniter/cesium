@@ -33,6 +33,7 @@
     "HOME": "Home",
     "REGISTRY": "Registry",
     "MARKET": "Market place",
+    "CURRENCY": "Currency",
     "CURRENCIES": "Currencies",
     "ACCOUNT": "My Account",
     "SETTINGS": "Settings"
@@ -45,6 +46,7 @@
     "BTN_REGISTRY": "Registry",
     "BTN_MARKET": "Market place",
     "BTN_CURRENCIES": "Explore currencies",
+    "BTN_CURRENCY": "Explore currency",
     "DEV_WARNING": "Warning",
     "DEV_WARNING_MESSAGE": "This application is still in active development.<br/>Please report us all issues !",
     "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",
@@ -90,6 +92,9 @@
     "EXPIRE_IN": "Expires",
     "BTN_SEND_MONEY": "Send money",
     "BTN_CERTIFY": "Certify",
+    "LOOKUP": {
+      "TITLE": "Registry"
+    },
     "MODAL": {
       "TITLE": "Search"
     }
@@ -232,8 +237,8 @@
       "BTN_SAVE": "Save"
     },
     "ERROR": {
-      "LOAD_RECORD_FAILED": "Chargement impossible",
-      "SAVE_RECORD_FAILED": "Erreur de la sauvegarde"
+      "LOAD_RECORD_FAILED": "Loading failed",
+      "SAVE_RECORD_FAILED": "Sending failed"
     }
   },
   "ERROR": {

@@ -36,9 +36,17 @@ To contribute and compile cesium, you will have to:
   gulp & ionic serve
 ```
 
+### Manage configuration
+
  - To build on another environment :
    - Add your environment config into `app/config.json`
    - Run compitaltion using option `--env`:
 ```
   gulp default --env <your_env_name> 
 ```
+
+### Best pratices
+
+ Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
+ before starting to contribute.
+ Read also [Angular performance for large applicatoins](https://www.airpair.com/angularjs/posts/angularjs-performance-large-applications). 

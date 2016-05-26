@@ -5,7 +5,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
   $stateProvider
 
     .state('app.currency_lookup', {
-      url: "/currency",
+      url: "/currencies",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/lookup.html",
@@ -113,7 +113,18 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
        $scope.load($scope.id);
     }
     else {
-      $state.go('app.currency_lookup');
+      if (Registry) {
+        $state.go('app.currency_lookup');
+      }
+      else {
+        UIUtils.loading.show();
+        $scope.loadCurrencies()
+          .then(function (res) {
+            $scope.load(res.id);
+            UIUtils.loading.hide();
+          })
+          .catch(IUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+      }
       return;
     }
   });

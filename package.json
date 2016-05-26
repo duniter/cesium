@@ -8,6 +8,7 @@
     "gulp-minify-css": "^0.3.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^2.2.0",
+    "ionic-native-transitions": "^1.0.0-rc10",
     "node-sass": "^3.3.3"
   },
   "devDependencies": {
@@ -28,7 +29,7 @@
     "cordova-plugin-device"
   ],
   "cordovaPlatforms": [
-    "android",
-    "ios"
+    "ios",
+    "android"
   ]
 }

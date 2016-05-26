@@ -26,19 +26,35 @@
           <i class="icon ion-home"></i>
           <span translate>MENU.HOME</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" href="#/app/currency">
+
+        <!-- CURRENCY -->
+        <ion-item menu-close class="item item-icon-left" href="#/app/currencies" ng-if="options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCIES</span>
         </ion-item>
+        <ion-item menu-close class="item item-icon-left hidden-xs hidden-sm" href="#/app/currency/view/lg/" ng-if="!options.registry || !options.registry.enable">
+          <i class="icon ion-ios-world-outline"></i>
+          <span translate>MENU.CURRENCY</span>
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" href="#/app/currency/view/" ng-if="!options.registry || !options.registry.enable">
+          <i class="icon ion-ios-world-outline"></i>
+          <span translate>MENU.CURRENCY</span>
+        </ion-item>
 
-        <div class="item item-divider"
-             ng-show="options.market.enable || options.market.enable"></div>
+        <div class="item item-divider"></div>
 
-        <ion-item menu-close class="item item-icon-left" href="#/app/registry" ng-show="options.registry.enable">
+        <!-- REGISTRY -->
+        <ion-item menu-close class="item item-icon-left" href="#/app/wot" ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-person-stalker"></i>
           <span translate>MENU.REGISTRY</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" href="#/app/market" ng-show="options.market.enable">
+        <ion-item menu-close class="item item-icon-left" href="#/app/registry" ng-if="options.registry.enable">
+          <i class="icon ion-person-stalker"></i>
+          <span translate>MENU.REGISTRY</span>
+        </ion-item>
+
+        <!-- MARKET -->
+        <ion-item menu-close class="item item-icon-left" href="#/app/market" ng-if="options.market.enable">
           <i class="icon ion-speakerphone"></i>
           <span translate>MENU.MARKET</span>
         </ion-item>

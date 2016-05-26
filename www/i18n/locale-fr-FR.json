@@ -33,6 +33,7 @@
     "HOME": "Accueil",
     "REGISTRY": "Annuaire",
     "MARKET": "Annonces",
+    "CURRENCY": "Monnaie",
     "CURRENCIES": "Monnaies",
     "ACCOUNT": "Mon compte",
     "SETTINGS": "Configuration"
@@ -45,6 +46,7 @@
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies",
+    "BTN_CURRENCY": "Explorer la monnaie",
     "DEV_WARNING": "Avertissement",
     "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
     "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
@@ -90,6 +92,9 @@
     "EXPIRE_IN": "Expiration",
     "BTN_SEND_MONEY": "Payer",
     "BTN_CERTIFY": "Certifier",
+    "LOOKUP": {
+      "TITLE": "Annuaire"
+    },
     "MODAL": {
       "TITLE": "Recherche"
     }
@@ -263,7 +268,7 @@
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo.",
     "SCAN_FAILED": "Echec du scan de QR Code",
     "WOT_LOOKUP_FAILED": "Echec de la recherche",
-    "LOAD_NODE_DATA_FAILED": "Interrogation du noeud Duniter impossible. Veuillez réessayer ultérieurement.",
+    "LOAD_NODE_DATA_FAILED": "Lecture du noeud Duniter impossible. Veuillez réessayer ultérieurement.",
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",

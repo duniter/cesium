@@ -64,8 +64,8 @@
                 <div ng-repeat="picture in pictures"
                      class="item card card-gallery">
                   <div class="ink">
-                    <h2>{{picture.title}}</h2>
-                    <img ng-src="{{picture.src}}" ></img>
+                    <h2 ng-if="picture.title">{{::picture.title}}</h2>
+                    <img ng-src="{{::picture.src}}" ></img>
                   </div>
                 </div>
               </div>

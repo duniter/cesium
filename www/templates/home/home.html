@@ -15,9 +15,20 @@
         <div class="col-25 hidden-xs hidden-sm">&nbsp;
         </div>
         <div class="col">
+          <!-- CURRENCY -->
           <button type="button"
                   class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
+                  ng-if="options.registry.enable"
                   ui-sref="app.currency_lookup" translate>HOME.BTN_CURRENCIES</button>
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark hidden-sm hidden-xs"
+                  ng-if="!options.registry || !options.registry.enable"
+                  ui-sref="app.currency_view_lg" translate>HOME.BTN_CURRENCY</button>
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark visible-sm visible-xs"
+                  ng-if="!options.registry || !options.registry.enable"
+                  ui-sref="app.currency_view" translate>HOME.BTN_CURRENCY</button>
+
           <button type="button"
                   class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
                   ng-click="login()" ng-show="!isLogged()" translate>COMMON.BTN_LOGIN</button>
