@@ -114,7 +114,6 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   // Open transfer modal
   $scope.transfer = function(destPub, dest, amount, callback) {
-    UIUtils.loading.show();
     if (!!$scope.transferModal) {
       $scope.formData.destPub = destPub;
       if(dest) {
@@ -130,15 +129,17 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
         $scope.formData.amount = amount;
       }
       $scope.formData.callback = callback;
+
       $scope.loadWallet()
         .then(function(walletData) {
           UIUtils.loading.hide();
           $scope.walletData = walletData;
           $scope.formData.useRelative = walletData.settings.useRelative;
           $scope.transferModal.show();
-        });
+        }).catch(UIUtils.onError());
     }
     else{
+      UIUtils.loading.show();
       $timeout($scope.transfer, 2000);
     }
   };

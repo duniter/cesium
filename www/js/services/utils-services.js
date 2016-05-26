@@ -2,8 +2,8 @@
 
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', ['$ionicLoading', '$ionicPopup', '$translate', '$q', 'ionicMaterialInk', 'ionicMaterialMotion', '$window',
-  function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window) {
+.factory('UIUtils', ['$ionicLoading', '$ionicPopup', '$translate', '$q', 'ionicMaterialInk', 'ionicMaterialMotion', '$window', '$timeout',
+  function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout) {
 
   var loadingTextCache=null;
 
@@ -52,8 +52,15 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
-  function hideLoading(){
-    $ionicLoading.hide();
+  function hideLoading(timeout){
+    if (timeout) {
+      $timeout(function(){
+        $ionicLoading.hide();
+      }, timeout);
+    }
+    else {
+      $ionicLoading.hide();
+    }
   }
 
   function showLoading() {

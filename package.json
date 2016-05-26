@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A webapp client for Duniter network",
   "dependencies": {
     "gulp": "^3.9.1",
@@ -12,7 +12,7 @@
     "node-sass": "^3.3.3"
   },
   "devDependencies": {
-    "bower": "^1.3.3",
+    "bower": "^1.7.3",
     "gulp-header": "^1.7.1",
     "gulp-ng-constant": "^1.1.0",
     "gulp-remove-code": "^1.0.2",
