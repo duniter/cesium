@@ -54,10 +54,11 @@
   },
   "SETTINGS": {
     "TITLE": "Setting",
-    "TECHNICAL_SETTINGS": "Technical settings",
-    "NODE": "Duniter Node",
+    "NETWORK_SETTINGS": "Network",
+    "NODE": "Node address",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
+    "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",

@@ -125,8 +125,10 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
 
   $scope.onSettingsChanged = function() {
     if (!$scope.loading) {
+      $scope.loading = true;
       angular.merge(Wallet.data.settings, $scope.formData);
       Wallet.store();
+      $scope.loading = false;
     }
   };
   $scope.$watch('formData', $scope.onSettingsChanged, true);
