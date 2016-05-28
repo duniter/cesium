@@ -58,6 +58,7 @@
     "NODE": "Noeud Duniter",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
+    "REMEMBER_ME": "Se rappeller de moi",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"

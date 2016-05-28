@@ -12,8 +12,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       useRelative: true,
       timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/,
       useLocalStorage: false,
-      node: BMA.node.url,
-      locale: {id: $translate.use()}
+      rememberMe: false,
+      node: BMA.node.url
     },
 
     data = {
@@ -32,7 +32,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         medianTime: null,
         history: {},
         requirements: {},
-        isMember: false,
+        isMember: false,  
         loaded: false,
         blockUid: null,
         members: [],
@@ -40,13 +40,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         settings: {
           useRelative: defaultSettings.useRelative,
           timeWarningExpire: defaultSettings.timeWarningExpire,
-          locale: defaultSettings.locale,
+          locale: {id: $translate.use()},
           useLocalStorage: defaultSettings.useLocalStorage,
+          rememberMe: defaultSettings.rememberMe,
           node: defaultSettings.node
         }
     },
 
-    resetData = function(resetSettings) {
+    resetData = function() {
       data.pubkey= null;
       data.keypair ={
                 signSk: null,
@@ -66,11 +67,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.blockUid = null;
       data.members = [];
       data.avatar = null;
-      if (!!resetSettings) {
+      if (!data.settings.useLocalStorage) {
         data.settings = {
           useRelative: defaultSettings.useRelative,
           timeWarningExpire: defaultSettings.timeWarningExpire,
+          locale: {id: $translate.use()},
           useLocalStorage: defaultSettings.useLocalStorage,
+          rememberMe: defaultSettings.rememberMe,
           node: BMA.node.url // If changed, use the updated url
         };
       }
@@ -148,6 +151,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                     // Copy result to properties
                     data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
                     data.keypair = keypair;
+                    if (data.settings.useLocalStorage) {
+                      store();
+                    }
                     resolve(data);
                 }
             );
@@ -157,11 +163,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     logout = function(username, password) {
       return $q(function(resolve, reject) {
 
-        var resetSettings = !data.settings.useLocalStorage;
-        resetData(resetSettings);
-        if (data.settings.useLocalStorage) {
-          store();
-        }
+        resetData(); // will reset keypair
+        store(); // store (if local storage enable)
         resolve();
       });
     },
@@ -174,7 +177,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       if (data.settings.useLocalStorage) {
         localStorage.setObject('CESIUM_SETTINGS', data.settings);
 
-        if (isLogin()) {
+        if (isLogin() && data.settings.rememberMe) {
           var dataToStore = {
             keypair: data.keypair,
             pubkey: data.pubkey
@@ -191,7 +194,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       }
     },
 
-    restore = function(enableLoadData) {
+    restore = function() {
       return $q(function(resolve, reject){
         var settings = localStorage.getObject('CESIUM_SETTINGS');
         var dataStr = localStorage.get('CESIUM_DATA');
@@ -214,15 +217,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               data.keypair = storedData.keypair;
               data.pubkey = storedData.pubkey;
               data.loaded = false;
-              if (enableLoadData) {
-                loadData()
-                .then(function() {
-                  resolve();
-                })
-                .catch(function(err) {
-                  reject(err);
-                });
-              }
             }
             resolve();
           })

@@ -58,6 +58,7 @@
     "NODE": "Duniter Node",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
+    "REMEMBER_ME": "Remember me",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
       "HELP" : "Set the address of the node to use:"

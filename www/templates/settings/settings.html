@@ -23,6 +23,16 @@
         </select>
       </label>
 
+      <div class="item item-toggle dark">
+        {{'SETTINGS.REMEMBER_ME' | translate}}
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.rememberMe" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
       <span class="item item-divider">
         {{'SETTINGS.TECHNICAL_SETTINGS' | translate}}
       </span>
@@ -41,6 +51,7 @@
           </div>
         </label>
       </div>
+
 
     </ion-content>
 </ion-view>

@@ -68,8 +68,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   };
 
   // Login and load wallet
-  $scope.loadWallet = function(allowCancel) {
-    if (!allowCancel) {allowCancel = false;}
+  $scope.loadWallet = function() {
     return $q(function(resolve, reject){
 
       if (!Wallet.isLogin()) {
@@ -95,12 +94,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
                     .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
                 },
                 function() { // user cancel callback
-                  if (allowCancel) {
-                    resolve();
-                  }
-                  else {
-                    reject();
-                  }
+                  reject('CANCELLED');
                 });
             }
           })

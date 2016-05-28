@@ -25,30 +25,23 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
       {id:'fr-FR', label:'Français'},
       {id:'en', label:'English'}
     ];
-  $scope.formData = { // Init with default settings
-    useRelative: Wallet.defaultSettings.useRelative,
-    node: Wallet.defaultSettings.node,
-    useLocalStorage: Wallet.defaultSettings.useLocalStorage
-  }
-  $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
+  $scope.formData = angular.copy(Wallet.defaultSettings);
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loading = true; // to avoid the call of Wallet.store()
-    $scope.loadWallet(true/*allowCancel*/)
-      .then(function(walletData) {
-        if (walletData) {
-          $scope.formData.useRelative = walletData.settings.useRelative;
-          $scope.formData.node = walletData.settings.node;
-          $scope.formData.useLocalStorage = walletData.settings.useLocalStorage;
-          if (walletData.settings.locale && walletData.settings.locale.id) {
-            $scope.formData.locale = _.findWhere($scope.locales, {id: walletData.settings.locale.id});
-          }
-        }
-        UIUtils.loading.hide();
-        $scope.loading = false;
-      })
-      .catch(UIUtils.onError());
+    $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()}); 
+    Wallet.restore()
+    .then(function() {
+      angular.merge($scope.formData, Wallet.data.settings);
+      $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+      UIUtils.loading.hide();
+      $scope.loading = false;
+    })
+    .catch(function(err) {
+      $scope.loading = false;
+      UIUtils.loading.hide();
+    });
   });
 
   $scope.setSettingsForm = function(settingsForm) {
@@ -132,17 +125,11 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
 
   $scope.onSettingsChanged = function() {
     if (!$scope.loading) {
-      Wallet.data.settings.useRelative = $scope.formData.useRelative;
-      Wallet.data.settings.node = $scope.formData.node;
-      Wallet.data.settings.locale.id = $scope.formData.locale.id;
-      Wallet.data.settings.useLocalStorage = $scope.formData.useLocalStorage;
+      angular.merge(Wallet.data.settings, $scope.formData);
       Wallet.store();
     }
   };
-  $scope.$watch('formData.useRelative', $scope.onSettingsChanged, true);
-  $scope.$watch('formData.node', $scope.onSettingsChanged, true);
-  $scope.$watch('formData.locale', $scope.onSettingsChanged, true);
-  $scope.$watch('formData.useLocalStorage', $scope.onSettingsChanged, true);
+  $scope.$watch('formData', $scope.onSettingsChanged, true);
 
   // Set Ink
   $timeout(function() {
