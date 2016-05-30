@@ -36,7 +36,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         medianTime: null,
         history: {},
         requirements: {},
-        isMember: false,  
+        isMember: false,
         loaded: false,
         blockUid: null,
         members: [],
@@ -228,7 +228,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             }
             resolve();
           })
-          .catch(function(err){reject(err)});
+          .catch(function(err){reject(err);});
         }
         else {
           resolve();
