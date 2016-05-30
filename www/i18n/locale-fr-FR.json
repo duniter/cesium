@@ -5,6 +5,7 @@
     "APP_BUILD_DATE": "- build {{buildDate}}",
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
+    "BTN_SEND": "Envoyer",
     "BTN_SHOW": "Voir",
     "BTN_SHOW_PUBKEY": "Voir la clé",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
@@ -36,6 +37,8 @@
     "CURRENCY": "Monnaie",
     "CURRENCIES": "Monnaies",
     "ACCOUNT": "Mon compte",
+    "TRANSFER": "Payer",
+    "SCAN": "Scanner",
     "SETTINGS": "Paramètres"
   },
   "HOME": {
@@ -59,7 +62,7 @@
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "AUTHENTICATION_SETTINGS": "Authentification",
-    "REMEMBER_ME": "Se rappeller de moi",
+    "REMEMBER_ME": "Se souvenir de moi",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
@@ -159,8 +162,8 @@
     "TO": "A",
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
-    "COMMENTS": "Référence",
-    "COMMENTS_HELP": "Référence (optionnelle)",
+    "COMMENT": "Référence",
+    "COMMENT_HELP": "Référence (optionnelle)",
     "BTN_SEND": "Envoyer",
     "BTN_RELATIVE_UNIT": "Montant en unité relative ?",
     "MODAL": {
@@ -260,6 +263,8 @@
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "FIELD_REQUIRED": "Champ obligatoire.",
     "FIELD_TOO_SHORT": "Valeur trop courte.",
+    "FIELD_TOO_LONG": "Valeur trop longue",
+    "FIELD_ACCENT": "Caractères accentués non autorisés",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SEND_IDENTITY_FAILED": "Erreur pendant l'inscription.",
     "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité.",
@@ -287,7 +292,8 @@
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
     "NOT_ENOUGH_CREDIT": "Crédit insufissant.",
-    "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide"
+    "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide.",
+    "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

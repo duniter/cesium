@@ -100,7 +100,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       // Otherwise, log to console and display error
       else {
         console.error('>>>>>>>' , err);
-        hideLoading();
+        hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
         alertError(fullMsg, subtitle);
       }
     };

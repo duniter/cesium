@@ -66,16 +66,17 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $
 function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System) {
 
   $scope.walletData = {};
-  $scope.transferForm = {};
   $scope.convertedBalance = 0;
+  //$scope.transferForm = {};
   $scope.formData = {
     destPub: null,
     amount: null,
-    comments: null,
+    comment: null,
     useRelative: Wallet.defaultSettings.useRelative
   };
   $scope.dest = null;
   $scope.udAmount = null;
+  $scope.commentPattern = Wallet.regex.COMMENT;
 
   WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, System);
 
@@ -182,6 +183,11 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   };
 
   $scope.doTransfer = function() {
+    $scope.transferForm.$submitted=true;
+    if(!$scope.transferForm.$valid) {
+      return;
+    }
+
     UIUtils.loading.show();
 
     var amount = $scope.formData.amount;
@@ -191,7 +197,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
                amount.replace(new RegExp('[.,]'), '.');
     }
 
-    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comments)
+    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment)
     .then(function() {
        var callback = $scope.formData.callback;
         $scope.formData = {}; // Reset form data
@@ -207,7 +213,11 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
           $state.go('app.view_wallet');
         }
     })
-    .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
+    .catch(// TODO BLA remoive function
+      function(err) {
+        UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
+      }
+    );
   };
 
   $scope.closeLookup = function() {

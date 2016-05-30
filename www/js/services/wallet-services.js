@@ -8,6 +8,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     var
 
+    USER_ID = "[A-Za-z0-9_-]*",
+    PUBKEY  = "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
+    COMMENT = "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]{0,255}",
+
     defaultSettings = {
       useRelative: true,
       timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/,
@@ -77,6 +81,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           node: BMA.node.url // If changed, use the updated url
         };
       }
+    },
+
+    exact = function(regexpContent) {
+      return new RegExp("^" + regexpContent + "$");
     },
 
     reduceTxAndPush = function(txArray, result, processedTxMap) {
@@ -309,7 +317,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       });
     },
 
-    loadSources = function(refresh) {
+    loadSources = function() {
       return $q(function(resolve, reject) {
         // Get transactions
         BMA.tx.sources({pubkey: data.pubkey})
@@ -328,9 +336,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               else {
                 src.consumed = false;
               }
-              //if (!src.consumed) {
+              if (!src.consumed) {
                 balance += src.amount;
-              //}
+              }
               sources.push(src);
               sources[srcKey] = src;
             });
@@ -448,7 +456,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       });
     },
 
-    loadData = function(refresh) {
+    loadData = function() {
         if (data.loaded) {
           return refreshData();
         }
@@ -468,7 +476,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             loadMembers(),
 
             // Get sources
-            loadSources(false),
+            loadSources(),
 
             // Get requirements
             loadRequirements(),
@@ -499,23 +507,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         return $q(function(resolve, reject){
           $q.all([
 
-            // Get the UD informations
-            BMA.blockchain.stats.ud()
-              .then(function(res){
-                if (res.result.blocks.length) {
-                  var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-                  return BMA.blockchain.block({ block: lastBlockWithUD })
-                    .then(function(block){
-                      data.currentUD = block.dividend;
-                    });
-                  }
-              }),
+            // Get UDs
+            loadUDs(),
 
             // Get requirements
             loadRequirements(),
 
             // Get sources
-            loadSources(true),
+            loadSources(),
 
             // Get transactions
             loadTransactions()
@@ -532,6 +531,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     transfer = function(destPub, amount, comments) {
         return $q(function(resolve, reject) {
 
+            if (!exact(COMMENT).test(comments)){
+              reject({message:'ERROR.INVALID_COMMENT'}); return;
+            }
             if (!isLogin()){
               reject({message:'ERROR.NEED_LOGIN_FIRST'}); return;
             }
@@ -798,7 +800,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       // serialization
       toJson: toJson,
       fromJson: fromJson,
-      defaultSettings: defaultSettings
+      defaultSettings: defaultSettings,
+      regex: {
+        COMMENT: exact(COMMENT)
+      }
     };
   };
 

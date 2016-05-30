@@ -19,7 +19,7 @@
                 <div class="avatar"
                      ng-if="!!walletData.avatar"
                      style="background-image: url({{::walletData.avatar}});"></div>
-                <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': isMember}" ng-if="!walletData.avatar"></i>
+                <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
                 <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
                 <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
                 <h4 class="light">
@@ -30,7 +30,7 @@
             </div>
 
             <div class="hidden-xs hidden-sm padding" style="text-align:center">
-              <button class="button button-raised button-assertive ink-dark"
+              <button class="button button-raised button-energized-900 ink-dark"
                       ng-click="openTransfer()">
                 {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
               </button>

@@ -55,8 +55,9 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
     $timeout(function(){
       $scope.accountData = {};
       $scope.accountForm = {};
-      $scope.slides.slider.destroy();
-      delete $scope.slides.slider;
+      $scope.newAccountModal.remove();
+      $scope.newAccountModal = null;
+      $scope.slides.slider = null;
     }, 200);
   };
 
@@ -117,6 +118,10 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
       showModal();
     }
   };
+
+  //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+  });
 
   $scope.selectCurrency = function(currency) {
     $scope.accountData.currency = currency;

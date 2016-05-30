@@ -31,7 +31,9 @@ angular.module('cesium.app.controllers', ['cesium.services'])
 function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   // Login modal
   $scope.loginModal = null;
-  $scope.loginData = {};
+  $scope.loginData = {
+    rememberMe: Wallet.defaultSettings.rememberMe
+  };
   $rootScope.viewFirstEnter = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
@@ -66,7 +68,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
       }, 2000);
     }
   };
-
+  
   // Login and load wallet
   $scope.loadWallet = function() {
     return $q(function(resolve, reject){
@@ -117,7 +119,9 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   // Triggered in the login modal to close it
   $scope.cancelLogin = function() {
     var callback = $scope.loginData.callbacks.cancel;
-    $scope.loginData = {}; // Reset login data
+    $scope.loginData = { // Reset login data
+      rememberMe: Wallet.defaultSettings.rememberMe
+    }; 
     $scope.loginForm.$setPristine(); // Reset form
     $scope.loginModal.hide();
     if (!!callback) {
@@ -136,7 +140,13 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     .then(function(){
       // Call wallet login, then execute callback function
       Wallet.login($scope.loginData.username, $scope.loginData.password)
-        .then(function(){
+        .then(function(walletData){
+          walletData.settings.rememberMe = $scope.formData.rememberMe;
+          if (walletData.settings.rememberMe) {
+            walletData.settings.useLocalStorage = true;
+            Wallet.store();
+          }
+
           var callback = $scope.loginData.callbacks.success;
           $scope.loginData = {}; // Reset login data
           $scope.loginForm.$setPristine(); // Reset form
@@ -181,11 +191,9 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
   // Logout
   $scope.logout = function() {
-    UIUtils.loading.show();
     Wallet.logout()
     .then(function() {
       $ionicSideMenuDelegate.toggleLeft();
-      UIUtils.loading.hide()
       $state.go('app.home');
     })
     .catch(UIUtils.onError());

@@ -5,6 +5,7 @@
     "APP_BUILD_DATE": "- build {{buildDate}}",
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
+    "BTN_SEND": "Send",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
     "BTN_RELATIVE_UNIT": "Use relative unit",
@@ -36,6 +37,8 @@
     "CURRENCY": "Currency",
     "CURRENCIES": "Currencies",
     "ACCOUNT": "My Account",
+    "TRANSFER": "Pay",
+    "SCAN": "Scan",
     "SETTINGS": "Settings"
   },
   "HOME": {
@@ -159,8 +162,8 @@
     "TO": "To",
     "AMOUNT": "Amount",
     "AMOUNT_HELP": "Amount",
-    "COMMENTS": "Reference",
-    "COMMENTS_HELP": "Reference (optional)",
+    "COMMENT": "Reference",
+    "COMMENT_HELP": "Reference (optional)",
     "BTN_SEND": "Send",
     "BTN_RELATIVE_UNIT": "Amount in relative unit ?",
     "MODAL": {
@@ -259,7 +262,9 @@
     "UNKNOWN_ERROR": "Unknown error",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "FIELD_REQUIRED": "This field is required.",
-    "FIELD_TOO_SHORT": "This field is too short.",
+    "FIELD_TOO_SHORT": "This field value is too short.",
+    "FIELD_TOO_LONG": "This field value is exeeding max length.",
+    "FIELD_ACCENT": "Accent character not allowed",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
@@ -287,7 +292,8 @@
     "AMOUNT_REQUIRED": "Amount is required.",
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "INVALID_NODE_SUMMARY": "Unreachable node or invalid address"
+    "INVALID_NODE_SUMMARY": "Unreachable node or invalid address",
+    "INVALID_COMMENT": "Field 'reference' has a bad format."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
