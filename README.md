@@ -1,8 +1,8 @@
 # Cesium
 
-[Unhosted webapp](https://unhosted.org) client for [duniter](http://duniter.org) network.
+[Unhosted webapp](https://unhosted.org) client for [Duniter](https://duniter.org) network.
 
-Try it at: http://cesium.duniter.iofr
+Try it at: http://cesium.duniter.fr
 
 ## Developer
 

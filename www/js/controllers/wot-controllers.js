@@ -169,7 +169,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
         .then(function(block) {
           $scope.identity.sigDate = block.time;
           // Retrieve sigDate
-          if (Wallet.isLogin()) {
+          if (Wallet.isLogin() && !!Wallet.data.parameters && !!Wallet.data.parameters.sigQty) {
             $scope.sigQty =  Wallet.data.parameters.sigQty;
             onLoadFinish();
           }

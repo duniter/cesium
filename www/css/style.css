@@ -76,18 +76,6 @@
   font-style: italic !important;
 }
 
-/*#wallet .item .comment-bubble{
-  font-style: italic !important;
-  border-radius: .75rem;
-  background: #e6e5eb;
-  color: #383641;
-  margin: 0;
-  font-size: 12px;
-  padding-right: 8px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}*/
-
 #wallet .item h3 .gray{
   font-size: 11px ! important;
 }

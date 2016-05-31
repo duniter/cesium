@@ -20,7 +20,7 @@ var paths = {
   templates: ['./www/templates/**/*.html']
 };
 
-gulp.task('default', ['sass','config']);
+gulp.task('default', ['sass', 'config']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -45,7 +45,7 @@ gulp.task('sass', function(done) {
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
   //gulp.watch(paths.config, ['config']);
-  gulp.watch(paths.templates, ['removeCode']);
+  //gulp.watch(paths.templates, ['removeCode']);
 });
 
 gulp.task('install', ['git-check'], function() {
