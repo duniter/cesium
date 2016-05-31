@@ -86,13 +86,13 @@
           <i class="icon ion-paper-airplane"></i>
           </button>
         </ion-item>
-        <!-- scan QR code 
-         ion-item menu-close class="item item-button-right" ng-if="isLogged()">
+        <!-- scan QR code -->
+        <ion-item menu-close class="item item-button-right" ng-if="isLogged() && device.enable">
           <span translate>Scan</span>
-          <button class="button button-energized-900" ng-click="scan()">
+          <button class="button button-energized-900" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
-        </ion-item-->
+        </ion-item>
         <ion-item menu-close class="item item-button-right" ng-if="isLogged()">
           <span translate>COMMON.BTN_LOGOUT</span>
           <button class="button button-energized-900" ng-click="logout()">

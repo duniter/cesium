@@ -68,7 +68,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
       }, 2000);
     }
   };
-  
+
   // Login and load wallet
   $scope.loadWallet = function() {
     return $q(function(resolve, reject){
@@ -121,7 +121,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     var callback = $scope.loginData.callbacks.cancel;
     $scope.loginData = { // Reset login data
       rememberMe: Wallet.defaultSettings.rememberMe
-    }; 
+    };
     $scope.loginForm.$setPristine(); // Reset form
     $scope.loginModal.hide();
     if (!!callback) {
@@ -218,6 +218,18 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     return !Wallet.isLogin();
   };
 
+  $scope.scanQrCode = function(){
+     if (Device.enable) {
+       Device.scan()
+       .then(function(result) {
+         if (result && result.text) {
+          $scope.search.text = result.text;
+         }
+       })
+       .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+     }
+   };
+
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.loginData = {
@@ -231,7 +243,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
 
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, System, $translate
+  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, Device, $translate
   ) {
 
   $scope.knownCurrencies = null;
@@ -239,7 +251,6 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   $scope.isExpanded = false;
   $scope.hasHeaderFabLeft = false;
   $scope.hasHeaderFabRight = false;
-  $scope.system = System;
   $scope.config = APP_CONFIG;
   $scope.options = {
       market: {
@@ -252,7 +263,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device);
 
   ////////////////////////////////////////
   // Load currencies
@@ -260,21 +271,24 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   $scope.loadCurrencies = function() {
     return $q(function (resolve, reject){
-      if (!!$scope.knownCurrencies) {
+      if (!!$scope.knownCurrencies) { // get list on once
         resolve($scope.knownCurrencies);
         return;
       }
       if (!!Registry) {
+        $scope.knownCurrencies = null; // reset
         Registry.currency.all()
         .then(function (res) {
+          var currencies = null;
           if (!!res.hits && res.hits.total > 0) {
-            $scope.knownCurrencies = res.hits.hits.reduce(function(res, hit) {
+            currencies = res.hits.hits.reduce(function(res, hit) {
               var peer = hit._source.peers.reduce(function(peers, peer){
                 return peers.concat(new Peer(peer));
               }, [])[0];
-              return res.concat({id: hit._id, peer: peer.host+':'+peer.port});
+              return res.concat({name: hit._id, peer: peer.host+':'+peer.port});
             }, []);
           }
+          $scope.knownCurrencies = currencies;
           $scope.search.looking = false;
           resolve($scope.knownCurrencies);
         })
@@ -283,10 +297,10 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
       else  {
         $scope.knownCurrencies = [];
         BMA.currency.parameters()
-        .then(function(params) {
+        .then(function(res) {
           $scope.knownCurrencies.push({
-            id: params.currency,
-            peer: APP_CONFIG.DUNITER_NODE}
+            name: res.currency,
+            peer: BMA.node.url}
           );
           $scope.search.looking = false;
           resolve($scope.knownCurrencies);
@@ -294,6 +308,28 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
         .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
       }
     });
+  };
+
+  ////////////////////////////////////////
+  // Device Methods
+  ////////////////////////////////////////
+
+  $scope.isDeviceEnable = function() {
+    return Device.enable;
+  };
+
+  $scope.scanQrCodeAndGo = function() {
+    if (!Device.enable) {
+      return;
+    }
+    Device.camera.scan()
+    .then(function(result) {
+      if (result && result.text) {
+        // Go To this pubkey
+        $state.go('app.view_identity', {pub: result.text});
+      }
+    })
+    .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
 
   ////////////////////////////////////////

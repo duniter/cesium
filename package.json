@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A webapp client for Duniter network",
   "dependencies": {
     "gulp": "^3.9.1",
@@ -26,7 +26,14 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-console",
     "ionic-plugin-keyboard",
-    "cordova-plugin-device"
+    "cordova-plugin-device",
+    "com.telerik.plugins.nativepagetransitions",
+    "org.apache.cordova.statusbar",
+    "org.apache.cordova.camera",
+    {
+      "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
+      "id": "phonegap-plugin-barcodescanner"
+    }
   ],
   "cordovaPlatforms": [
     "ios",

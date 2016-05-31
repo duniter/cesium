@@ -19,6 +19,16 @@
     }
   },
 
+  "android": {
+    "APP_CONFIG": {
+      "DUNITER_NODE": "cgeek.fr:9330",
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+      "TIMEOUT": 6000,
+      "DEBUG": false,
+      "NATIVE_TRANSITION": true
+    }
+  },
+
   "duniter-fr-es": {
     "APP_CONFIG": {
       "DUNITER_NODE": "test-net.duniter.fr:9201",

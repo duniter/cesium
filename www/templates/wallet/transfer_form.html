@@ -2,10 +2,10 @@
 
     <div class="list" ng-init="setTransferForm(transferForm)">
 
-      <a class="item item-button-right gray ink" ng-click="openWotLookup()">
+      <a class="item item-icon-right gray ink" ng-click="openWotLookup()">
           <span class="gray" translate>TRANSFER.TO</span>
           <span class="badge badge-royal">{{dest | formatPubkey}}</span>&nbsp;
-          <i class="button button-clear ion-chevron-right"></i>
+          <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"
            ng-show="transferForm.$submitted && !dest">
@@ -26,13 +26,13 @@
 
       <div class="item item-input item-floating-label" ng-if="!formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-          <input type="number" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})"
+          <input type="number" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}})"
                  ng-model="formData.amount" required>
       </div>
 
       <div class="item item-input item-floating-label" ng-if="formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-          <input type="text" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount"
+          <input type="text" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}} {{udUnit | abbreviate}})" ng-model="formData.amount"
                  required>
       </div>
       <div class="form-errors"
@@ -57,7 +57,7 @@
       <!-- Comment -->
       <label class="item item-input"
         ng-class="{'item-input-error': transferForm.$submitted && transferForm.comment.$invalid}">
-          <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}" 
+          <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
             name="comment"
             ng-model="formData.comment"
             ng-maxlength="255"

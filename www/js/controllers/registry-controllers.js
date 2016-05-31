@@ -422,7 +422,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 }
 
-function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, System,
+function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, Device,
   $ionicHistory) {
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
@@ -435,8 +435,6 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
-
-  $scope.system = System;
 
   $scope.setRecordForm =  function(recordForm) {
     $scope.recordForm = recordForm;
@@ -514,7 +512,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
   };
 
   $scope.openPicturePopup = function() {
-    System.camera.take()
+    Device.camera.getPicture()
     .then(function(imageData) {
       $scope.pictures.push({src: "data:image/png;base64," + imageData});
       $scope.$apply();
@@ -526,7 +524,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
     UIUtils.loading.show();
     return $q(function(resolve, reject) {
       var file = event.target.files[0];
-      System.image.resize(file)
+      UIUtils.image.resize(file)
       .then(function(imageData) {
         $scope.pictures.push({src: imageData});
         UIUtils.loading.hide();

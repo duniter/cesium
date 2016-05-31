@@ -42,9 +42,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
-
-  $scope.system.camera = System;
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
 
   $scope.searchChanged = function() {
     $scope.search.looking = true;
@@ -87,19 +85,20 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, System) {
   };
 
   $scope.scanQrCode = function(){
-   if (System.camera.enable) {
-     System.camera.scan()
-     .then(function(result) {
-       if (!result) {
-        $scope.search.text = result.text;
-       }
-     })
-     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+   if (!Device.enable) {
+    return;
    }
+   Device.camera.scan()
+   .then(function(result) {
+     if (!result) {
+      $scope.search.text = result.text;
+     }
+   })
+   .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
  };
 }
 
-function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, System) {
+function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
 
   $scope.identity = {};
   $scope.hasSelf = false;
@@ -222,8 +221,8 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
 
   // Copy
   $scope.copy = function(value) {
-    if (value && System.clipboard.enable) {
-      System.clipboard.copy(value);
+    if (value && Device.enable) {
+      Device.clipboard.copy(value);
     }
   };
 
@@ -244,7 +243,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
   $scope.showFab('fab-transfer');
 }
 
-function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, System) {
+function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
 
   $scope.certifications = [];
   $scope.identity = {};

@@ -29,7 +29,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         uid: null,
         balance: 0,
         sources: null,
-        useRelative: defaultSettings.useRelative, // TODO : a remplacer par settings.useRelative
         currency: null,
         parameters: null,
         currentUD: null,
@@ -578,7 +577,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                 reject({message:'ERROR.ALL_SOURCES_USED'});
               }
               else {
-                console.error('Maximum transaction sources has been reached: ' + (data.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount));
+                console.error('Maximum transaction sources has been reached: ' + (data.settings.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount));
                 reject({message:'ERROR.NOT_ENOUGH_SOURCES'});
               }
               return;

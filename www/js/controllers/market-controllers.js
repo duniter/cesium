@@ -351,7 +351,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
   };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, System, $timeout) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout) {
 
   MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
 
@@ -361,7 +361,6 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
-  $scope.system = System;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
@@ -449,8 +448,8 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     $scope.closeCategoryModal();
   };
 
-  $scope.takePicture = function() {
-    System.camera.take()
+  $scope.getPicture = function() {
+    Device.camera.getPicture()
     .then(function(imageData) {
       $scope.pictures.push({src: "data:image/png;base64," + imageData});
       $scope.$apply();
@@ -462,7 +461,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
       UIUtils.loading.show();
       return $q(function(resolve, reject) {
         var file = event.target.files[0];
-        System.image.resize(file)
+        UIUtils.image.resize(file)
         .then(function(imageData) {
           $scope.pictures.push({src: imageData});
           UIUtils.loading.hide();

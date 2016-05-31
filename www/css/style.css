@@ -156,6 +156,10 @@
   min-width: 130px !important;
 }
 
+.item.item-icon-right .badge{
+  right: 43px;
+}
+
 /*.button {*/
     /*height: 50px !important;*/
     /*font-size: 18px !important;*/
@@ -252,6 +256,10 @@
     top: 14px;
 }
 
+.peer-item:hover .badge{
+    color: #fff !important;
+}
+
 .item-thumbnail-left-padding {
     padding-left: 106px;
 }
@@ -267,5 +275,3 @@
 #settings .item-divider {
     background-color: #f5f5f5;
 }
-
-

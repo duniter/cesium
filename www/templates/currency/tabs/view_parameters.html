@@ -4,7 +4,7 @@
         <a href="#" class="item item-icon-left">
             <i class="icon ion-android-bookmark"></i>
             <span translate>CURRENCY.VIEW.CURRENCY_NAME</span>
-            <span class="item-note">{{selectedCurrency}} super_currency ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+            <span class="item-note">{{currency}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
         </a>
 
         <a class="item item-icon-left" href="#">
@@ -37,7 +37,7 @@
             <span class="badge badge-energized">{{MoverN | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</span>
         </a>
 
-        <a class="item item-icon-left" href="#">
+        <a class="item item-icon-left" href="#"> <!-- TODO : enable charts: ui-sref="app.currency_ud" -->
             <i class="icon ion-load-c"></i>
             <span translate>CURRENCY.VIEW.UD</span>
             <span class="badge badge-royal">{{UD | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</span>

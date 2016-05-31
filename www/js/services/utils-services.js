@@ -82,6 +82,16 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
+  function showToast(message, duration) {
+    if (!duration) {
+      duration = 2000; // 2s
+    }
+    $translate([message])
+    .then(function(translations){
+      $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
+    });
+  }
+
   function onError(msg, reject/*optional*/) {
     return function(err) {
       var fullMsg = msg;
@@ -136,14 +146,63 @@ angular.module('cesium.utils.services', ['ngResource'])
     return selectedText;
   }
 
+  function resizeImageFromFile(file) {
+      return $q(function(resolve, reject) {
+
+        var reader = new FileReader();
+
+        reader.onload = function(event){
+          var img = document.createElement("img");
+
+          img.onload = function(event) {
+            var width = event.target.width;
+            var height = event.target.height;
+
+            if (width > height) {
+              if (width > CONST.MAX_WIDTH) {
+                height *= CONST.MAX_WIDTH / width;
+                width = CONST.MAX_WIDTH;
+              }
+            } else {
+              if (height > CONST.MAX_HEIGHT) {
+                width *= CONST.MAX_HEIGHT / height;
+                height = CONST.MAX_HEIGHT;
+              }
+            }
+            var canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            var ctx = canvas.getContext("2d");
+            ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
+
+            var dataurl = canvas.toDataURL();
+
+            resolve(dataurl);
+          };
+
+          img.src = event.target.result;
+        };
+
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+        else {
+          //reject("Not a file");
+        }
+      });
+    }
+
   return {
     alert: {
       error: alertError,
-      info: alertInfo
+      info: alertInfo,
     },
     loading: {
       show: showLoading,
       hide: hideLoading
+    },
+    toast: {
+      show: showToast
     },
     onError: onError,
     ink: ionicMaterialInk.displayEffect,
@@ -151,6 +210,9 @@ angular.module('cesium.utils.services', ['ngResource'])
     selection: {
       select: selectElementText,
       get: getSelectionText
+    },
+    image: {
+      resize: resizeImageFromFile
     }
   };
 }])
@@ -173,7 +235,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 }])
 
 // See http://plnkr.co/edit/vJQXtsZiX4EJ6Uvw9xtG?p=preview
-.factory('$focus', function($timeout, $window) {
+.factory('$focus', ['$timeout', '$window', function($timeout, $window) {
   return function(id) {
     // timeout makes sure that it is invoked after any other event has been triggered.
     // e.g. click events that need to run before the focus or
@@ -185,29 +247,27 @@ angular.module('cesium.utils.services', ['ngResource'])
         element.focus();
     });
   };
-})
+}])
 
-.factory('System', function($timeout, $window, UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner, $q) {
+.factory('System', ['$timeout', '$window', 'UIUtils', '$translate', '$ionicPopup', '$cordovaClipboard', '$cordovaBarcodeScanner', '$q', '$cordovaCamera',
+  function($timeout, $window, UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner, $q, $cordovaCamera) {
 
   var CONST = {
     MAX_HEIGHT: 400,
     MAX_WIDTH: 400
   },
   camera = {
-    enable: false
+    enable: true
   },
   clipboard = {
-    enable: false
+    enable: true
   };
 
-  ionic.Platform.ready(function() {
+  function disable() {
     // Check if camera AND scan is enable
-	  camera.enable = !!navigator.camera;
-    camera.handle = navigator.camera;
-
-    // Check if clipboard is enable
-	  clipboard.enable = camera.enable;
-  });
+	  camera.enable = false;
+	  clipboard.enable = false;
+  }
 
   function resizeImageFromFile(file) {
     return $q(function(resolve, reject) {
@@ -297,7 +357,7 @@ angular.module('cesium.utils.services', ['ngResource'])
             targetWidth : CONST.MAX_WIDTH,
             targetHeight : CONST.MAX_HEIGHT
         };
-        camera.handle.camera.getPicture(
+        $cordovaCamera.getPicture(
           function (imageData) {resolve(imageData);},
           function(err){reject(err);},
           options
@@ -308,7 +368,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   camera.scan = function () {
     return $q(function(resolve,reject){
-      if (!scan.enable) {
+      if (!camera.enable) {
         reject('Camera not enable. Please check [system.camera.enable] before use.');
         return;
       }
@@ -346,15 +406,16 @@ angular.module('cesium.utils.services', ['ngResource'])
   };
 
   return {
+    disable: disable,
     image: {
       resize: resizeImageFromFile
     },
     clipboard: clipboard,
     camera: camera
   };
-})
+}])
 
-.service('ModalService', function($ionicModal, $rootScope, $q, $controllers) {
+.service('ModalService', ['$ionicModal', '$rootScope', '$q', '$controllers', function($ionicModal, $rootScope, $q, $controllers) {
 
   var show = function(tpl, $scope) {
 
@@ -389,7 +450,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     show: show
   };
 
-})
+}])
 
 
 

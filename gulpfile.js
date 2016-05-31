@@ -20,7 +20,7 @@ var paths = {
   templates: ['./www/templates/**/*.html']
 };
 
-gulp.task('default', ['sass', /*'removeCode',*/ 'config']);
+gulp.task('default', ['sass','config']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -34,12 +34,13 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
-gulp.task('removeCode', function(done) {
-  gulp.src('./www/templates/**/*.html')
-    .pipe(removeCode({ production: true }))
-    .pipe(gulp.dest('./dist/templates'))
-    .on('end', done);
-});
+// TODO : enable to have a special buidl for phone
+//gulp.task('removeCode', function(done) {
+//  gulp.src('./www/templates/**/*.html')
+//    .pipe(removeCode({ production: true }))
+//    .pipe(gulp.dest('./dist/templates'))
+//    .on('end', done);
+//});
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
