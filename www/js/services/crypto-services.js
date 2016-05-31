@@ -62,10 +62,10 @@ angular.module('cesium.crypto.services', ['ngResource'])
 
     function CryptoUtils() {
       var
-       // Const
-       crypto_sign_BYTES= 64,
-       SEED_LENGTH= 32, // Length of the key
-       SCRYPT_PARAMS= {
+        // Const
+        crypto_sign_BYTES= 64,
+        SEED_LENGTH= 32, // Length of the key
+        SCRYPT_PARAMS= {
                 "N":4096,
                 "r":16,
                 "p":1

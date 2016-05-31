@@ -20,30 +20,27 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  ionicMaterialMotion, ionicMaterialInk,
   UIUtils, Wallet, BMA, $translate) {
 
-  $scope.walletData = {};
+  $scope.walletData = null;
   $scope.convertedBalance = 0;
   $scope.hasCredit = false;
   $scope.isMember = false;
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.$parent.clearFabs();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
       .then(function(wallet) {
         $scope.updateWalletView(wallet);
+        $scope.showFab('fab-transfer');
         UIUtils.loading.hide();
       });
   });
 
   $scope.refreshConvertedBalance = function() {
-    if ($scope.walletData.useRelative) {
+    if (!$scope.walletData) {
+      return;
+    }
+    if ($scope.walletData.settings.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance ? ($scope.walletData.balance / $scope.walletData.currentUD) : 0;
       $scope.unit = 'universal_dividend';
       $scope.udUnit = $scope.walletData.currency;
@@ -56,37 +53,20 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       $scope.udUnit = '';
     }
   };
-  $scope.$watch('walletData.useRelative', $scope.refreshConvertedBalance, true);
+  $scope.$watch('walletData.settings.useRelative', $scope.refreshConvertedBalance, true);
   $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
   $scope.updateWalletView = function(wallet) {
     $scope.walletData = wallet;
     $scope.hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
-    if (!$scope.walletData.requirements || !$scope.walletData.requirements.uid) {
-      $scope.needSelf = true;
-      $scope.needMembership = true;
-      $scope.needMembershipOut = false;
-      $scope.needRenew = false;
-      $scope.pendingMembership = false;
-    }
-    else {
-      $scope.needSelf = false;
-      $scope.needMembership = ($scope.walletData.requirements.membershipExpiresIn === 0 &&
-        $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
-      $scope.needRenew = !$scope.needMembership && ($scope.walletData.requirements.membershipExpiresIn < 129600 /*TODO: =1.5j suffit ?*/ &&
-        $scope.walletData.requirements.membershipPendingExpiresIn <= 0 );
-      $scope.needMembershipOut = ($scope.walletData.requirements.membershipExpiresIn > 0);
-      $scope.pendingMembership = ($scope.walletData.requirements.membershipPendingExpiresIn > 0);
-    }
-    $scope.isMember = !$scope.needSelf && !$scope.needMembership;
     // Set Motion
     $timeout(function() {
-        ionicMaterialMotion.fadeSlideInRight({
-          startVelocity: 3000
-        });
-        // Set Ink
-        ionicMaterialInk.displayEffect({selector: '.item'});
+      UIUtils.motion.fadeSlideInRight({
+        startVelocity: 3000
+      });
+      // Set Ink
+      UIUtils.ink({selector: '.item'});
     }, 10);
   };
 
@@ -161,7 +141,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   // Ask uid
   $scope.showUidPopup = function() {
     return $q(function(resolve, reject) {
-      $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
+      $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
           $scope.walletData.newUid = (!!$scope.walletData.uid ? ''+$scope.walletData.uid : '');
 
@@ -174,7 +154,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
             buttons: [
               { text: translations['COMMON.BTN_CANCEL'] },
               {
-                text: translations['COMMON.BTN_ADD_ACCOUNT'] /*'<b>Send</b>'*/,
+                text: translations['COMMON.BTN_OK'],
                 type: 'button-positive',
                 onTap: function(e) {
                   $scope.registerForm.$submitted=true;
@@ -194,7 +174,7 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
               UIUtils.loading.hide();
               return;
             }
-                resolve(uid);
+            resolve(uid);
           });
         });
       });
@@ -244,9 +224,13 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       else {
         doMembershipIn();
       }
-
     })
-    .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
+    .catch(function(err){
+       UIUtils.loading.hide();
+       UIUtils.alert.info(err);
+       $scope.membershipIn(); // loop
+    });
+    //.catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
   };
 
   // Send membership IN
@@ -273,23 +257,39 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
   // Triggered on a button click, or some other target
  $scope.showActionsheet = function() {
 
-  $translate(['ACCOUNT.MENU_TITLE', 'ACCOUNT.BTN_MEMBERSHIP_OUT', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
+  $translate(['ACCOUNT.MENU_TITLE', 'ACCOUNT.BTN_MEMBERSHIP_IN', 'ACCOUNT.BTN_MEMBERSHIP_RENEW', 'ACCOUNT.BTN_MEMBERSHIP_OUT', 'ACCOUNT.BTN_SEND_IDENTITY',
+  'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
     .then(function (translations) {
+
+      var buttons = [];
+      var callbacks = [];
+      if ($scope.walletData.requirements.needMembership) {
+        buttons.push({text: translations['ACCOUNT.BTN_MEMBERSHIP_IN']});
+        callbacks.push(function(){$scope.membershipIn();});
+      }
+      if ($scope.walletData.requirements.needRenew) {
+        buttons.push({text: translations['ACCOUNT.BTN_MEMBERSHIP_RENEW']});
+        callbacks.push(function(){$scope.membershipRenew();});
+      }
+      if ($scope.walletData.requirements.needMembershipOut) {
+        buttons.push({text: translations['ACCOUNT.BTN_MEMBERSHIP_OUT']});
+        callbacks.push(function(){$scope.membershipOut();});
+      }
+      if ($scope.walletData.requirements.needSelf) {
+        buttons.push({text: translations['ACCOUNT.BTN_SEND_IDENTITY']});
+        callbacks.push(function(){$scope.self();});
+      }
 
       // Show the action sheet
       var hideMenu = $ionicActionSheet.show({
-        buttons: [
-          { text: translations['ACCOUNT.BTN_MEMBERSHIP_OUT'] }
-        ],
+        buttons: buttons,
         titleText: translations['ACCOUNT.MENU_TITLE'],
         cancelText: translations['COMMON.BTN_CANCEL'],
         cancel: function() {
             // add cancel code..
           },
         buttonClicked: function(index) {
-          if (index === 0) {
-            $scope.membershipOut();
-          }
+          callbacks[index]();
           return true;
         }
       });
@@ -297,9 +297,16 @@ function WalletController($scope, $state, $q, $ionicPopup, $ionicActionSheet, $t
       // For example's sake, hide the sheet after two seconds
       $timeout(function() {
         hideMenu();
-      }, 2000);
+      }, 2500);
     });
  };
+
+   // TODO: remove auto add account when done
+   /*$timeout(function() {
+
+     $scope.newAccount();
+   }, 400);
+   */
 }
 
 

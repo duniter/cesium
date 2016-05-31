@@ -26,13 +26,19 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   })
 
   .controller('AppCtrl', AppController)
-
 ;
 
-function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   // Login modal
   $scope.loginModal = null;
-  $scope.loginData = {};
+  $scope.loginData = {
+    rememberMe: Wallet.defaultSettings.rememberMe
+  };
+  $rootScope.viewFirstEnter = false;
+
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    $rootScope.viewFirstEnter = true;
+  });
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -48,15 +54,17 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
   };
 
   // Open login modal
-  $scope.login = function(callback) {
+  $scope.login = function(success, cancel) {
     if ($scope.loginModal) {
       UIUtils.loading.hide();
       $scope.loginModal.show();
-      $scope.loginData.callback = callback;
+      $scope.loginData.callbacks = {};
+      $scope.loginData.callbacks.success = success;
+      $scope.loginData.callbacks.cancel = cancel;
     }
     else{
       $timeout(function(){
-        $scope.login(callback);
+        $scope.login(success, cancel);
       }, 2000);
     }
   };
@@ -64,16 +72,36 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
   // Login and load wallet
   $scope.loadWallet = function() {
     return $q(function(resolve, reject){
+
       if (!Wallet.isLogin()) {
         $timeout(function() {
-        $scope.login(function() {
-          Wallet.loadData()
-            .then(function(walletData){
-              resolve(walletData);
-            })
-            .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
-        });
-        }, 2000);
+          Wallet.restore() // try to restore wallet
+          .then(function(){
+            if (Wallet.isLogin()) { // Maybe now login
+              $rootScope.viewFirstEnter = false;
+              Wallet.loadData()
+                .then(function(walletData){
+                  resolve(walletData);
+                })
+                .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+            }
+            else {
+              $scope.login(
+                function() {
+                  $rootScope.viewFirstEnter = false;
+                  Wallet.loadData()
+                    .then(function(walletData){
+                      resolve(walletData);
+                    })
+                    .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+                },
+                function() { // user cancel callback
+                  reject('CANCELLED');
+                });
+            }
+          })
+          .catch(UIUtils.onError('ERROR.RESTORE_WALLET_DATA_ERROR', reject));
+        }, $rootScope.viewFirstEnter ? 10 : 2000);
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
@@ -90,9 +118,15 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
 
   // Triggered in the login modal to close it
   $scope.cancelLogin = function() {
-    $scope.loginData = {}; // Reset login data
+    var callback = $scope.loginData.callbacks.cancel;
+    $scope.loginData = { // Reset login data
+      rememberMe: Wallet.defaultSettings.rememberMe
+    };
     $scope.loginForm.$setPristine(); // Reset form
     $scope.loginModal.hide();
+    if (!!callback) {
+      callback();
+    }
   };
 
   // Login form submit
@@ -106,8 +140,14 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
     .then(function(){
       // Call wallet login, then execute callback function
       Wallet.login($scope.loginData.username, $scope.loginData.password)
-        .then(function(){
-          var callback = $scope.loginData.callback;
+        .then(function(walletData){
+          walletData.settings.rememberMe = $scope.formData.rememberMe;
+          if (walletData.settings.rememberMe) {
+            walletData.settings.useLocalStorage = true;
+            Wallet.store();
+          }
+
+          var callback = $scope.loginData.callbacks.success;
           $scope.loginData = {}; // Reset login data
           $scope.loginForm.$setPristine(); // Reset form
           if (!!callback) {
@@ -151,14 +191,12 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
 
   // Logout
   $scope.logout = function() {
-    UIUtils.loading.show();
-    Wallet.logout().then(
-        function() {
-          UIUtils.loading.hide();
-          $ionicSideMenuDelegate.toggleLeft();
-          $state.go('app.home');
-        }
-    );
+    Wallet.logout()
+    .then(function() {
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('app.home');
+    })
+    .catch(UIUtils.onError());
   };
 
   // Open new account
@@ -179,11 +217,33 @@ function LoginModalController($scope, $ionicModal, Wallet, CryptoUtils, UIUtils,
   $scope.isNotLogged = function() {
     return !Wallet.isLogin();
   };
+
+  $scope.scanQrCode = function(){
+     if (Device.enable) {
+       Device.scan()
+       .then(function(result) {
+         if (result && result.text) {
+          $scope.search.text = result.text;
+         }
+       })
+       .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+     }
+   };
+
+  // TODO : for DEV only
+  /*$timeout(function() {
+    $scope.loginData = {
+      username: 'benoit.lavenier@e-is.pro',
+      password: ''
+    };
+    //$scope.loginForm = {$valid:true};
+    $scope.login();
+  }, 900);*/
 }
 
 
-function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, System
+function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
+  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $translate
   ) {
 
   $scope.knownCurrencies = null;
@@ -191,11 +251,11 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
   $scope.isExpanded = false;
   $scope.hasHeaderFabLeft = false;
   $scope.hasHeaderFabRight = false;
-  $scope.system = System;
+  $scope.config = APP_CONFIG;
 
-  LoginModalController.call(this, $scope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
+  LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device);
 
   ////////////////////////////////////////
   // Load currencies
@@ -203,23 +263,44 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
 
   $scope.loadCurrencies = function() {
     return $q(function (resolve, reject){
-      if (!!$scope.knownCurrencies) {
+      if (!!$scope.knownCurrencies) { // get list on once
         resolve($scope.knownCurrencies);
         return;
       }
-
       $scope.knownCurrencies = [];
       BMA.currency.parameters()
-      .then(function(params) {
+      .then(function(res) {
         $scope.knownCurrencies.push({
-          id: params.currency,
-          peer: APP_CONFIG.UCOIN_NODE}
+          name: res.currency,
+          peer: BMA.node.url}
         );
         $scope.search.looking = false;
         resolve($scope.knownCurrencies);
       })
       .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
     });
+  };
+
+  ////////////////////////////////////////
+  // Device Methods
+  ////////////////////////////////////////
+
+  $scope.isDeviceEnable = function() {
+    return Device.enable;
+  };
+
+  $scope.scanQrCodeAndGo = function() {
+    if (!Device.enable) {
+      return;
+    }
+    Device.camera.scan()
+    .then(function(result) {
+      if (result && result.text) {
+        // Go To this pubkey
+        $state.go('app.view_identity', {pub: result.text});
+      }
+    })
+    .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
 
   ////////////////////////////////////////
@@ -289,11 +370,20 @@ function AppController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUt
       $scope.hasHeader();
   };
 
-  $scope.clearFabs = function() {
+  $scope.showFab = function(id, timeout) {
+    if (!timeout) {
+      timeout = 900;
+    }
+    $timeout(function () {
+      // Could not use 'getElementById', because it return only once element,
+      // but many fabs can have the same id (many view could be loaded at the same time)
       var fabs = document.getElementsByClassName('button-fab');
-      if (fabs.length && fabs.length > 1) {
-          fabs[0].remove();
-      }
+      _.forEach(fabs, function(fab){
+        if (fab.id == id) {
+          fab.classList.toggle('on', true);
+        }
+      });
+    }, 900);
   };
 }
 

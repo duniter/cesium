@@ -1,20 +1,21 @@
 {
   "name": "cesium",
-  "version": "0.0.1",
-  "description": "A webapp client for uCoin network",
+  "version": "0.1.6",
+  "description": "A webapp client for Duniter network",
   "dependencies": {
-    "bower": "^1.7.9",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.2.0",
     "gulp-minify-css": "^0.3.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^2.2.0",
+    "ionic-native-transitions": "^1.0.0-rc10",
     "node-sass": "^3.3.3"
   },
   "devDependencies": {
-    "bower": "^1.3.3",
+    "bower": "^1.7.3",
     "gulp-header": "^1.7.1",
     "gulp-ng-constant": "^1.1.0",
+    "gulp-remove-code": "^1.0.2",
     "gulp-util": "^2.2.14",
     "ionic-minify": "^2.0.8",
     "shelljs": "^0.3.0",
@@ -25,10 +26,17 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-console",
     "ionic-plugin-keyboard",
-    "cordova-plugin-device"
+    "cordova-plugin-device",
+    "com.telerik.plugins.nativepagetransitions",
+    "org.apache.cordova.statusbar",
+    "org.apache.cordova.camera",
+    {
+      "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
+      "id": "phonegap-plugin-barcodescanner"
+    }
   ],
   "cordovaPlatforms": [
-    "android",
-    "ios"
+    "ios",
+    "android"
   ]
 }

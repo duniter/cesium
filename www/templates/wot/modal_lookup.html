@@ -1,10 +1,10 @@
-<ion-modal-view id="wotLookup">
+<ion-view id="wotLookup" class="modal slide-in-up ng-enter active ng-enter-active">>
   <ion-header-bar class="bar-positive">
     <button class="button button-clear" ng-click="closeLookup()" translate>COMMON.BTN_CANCEL</button>
     <h1 class="title" translate>WOT.MODAL.TITLE</h1>
 
     <button class="button button-icon button-clear icon ion-qr-scanner visible-xs"
-            ng-show="system.camera.enable"
+            ng-if="isDeviceEnable()"
             ng-click="scanQrCode()">
     </button>
   </ion-header-bar>
@@ -12,4 +12,4 @@
   <ion-content>
     <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
   </ion-content>
-</ion-modal-view>
+</ion-view>

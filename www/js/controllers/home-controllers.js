@@ -55,8 +55,9 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
     $timeout(function(){
       $scope.accountData = {};
       $scope.accountForm = {};
-      $scope.slides.slider.destroy();
-      delete $scope.slides.slider;
+      $scope.newAccountModal.remove();
+      $scope.newAccountModal = null;
+      $scope.slides.slider = null;
     }, 200);
   };
 
@@ -118,6 +119,10 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
     }
   };
 
+  //Cleanup the modal when we're done with it!
+  $scope.$on('$destroy', function() {
+  });
+
   $scope.selectCurrency = function(currency) {
     $scope.accountData.currency = currency;
     $scope.slideNext();
@@ -162,7 +167,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
           Wallet.self($scope.accountData.pseudo, false/*do NOT load membership here*/)
             .then(function() {
               // Send membership IN
-              Wallet.membership(true)
+              Wallet.membership.inside()
               .then(function() {
                 // Reset account data, and open wallet view
                 $scope.cancel();
@@ -187,7 +192,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
   */
 }
 
-function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, APP_CONFIG) {
+function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet,  APP_CONFIG) {
 
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet);
 

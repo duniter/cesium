@@ -1,13 +1,40 @@
 {
   "default": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "cgeek.fr:9330"
+      "DUNITER_NODE": "cgeek.fr:9330",
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+      "TIMEOUT": 4000,
+      "DEBUG": false,
+      "NATIVE_TRANSITION": false
     }
   },
 
   "duniter-fr": {
     "APP_CONFIG": {
-      "UCOIN_NODE": "test-net.duniter.fr:9201"
+      "DUNITER_NODE": "cgeek.fr:9330",
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+      "TIMEOUT": 4000,
+      "DEBUG": false,
+      "NATIVE_TRANSITION": false
+    }
+  },
+
+  "android": {
+    "APP_CONFIG": {
+      "DUNITER_NODE": "cgeek.fr:9330",
+      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+      "TIMEOUT": 6000,
+      "DEBUG": false,
+      "NATIVE_TRANSITION": true
+    }
+  },
+
+  "dev": {
+    "APP_CONFIG": {
+      "DUNITER_NODE": "localhost:9201",
+      "TIMEOUT": 4000,
+      "DEBUG": false,
+      "NATIVE_TRANSITION": true
     }
   }
 }

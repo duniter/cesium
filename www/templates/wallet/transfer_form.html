@@ -2,48 +2,80 @@
 
     <div class="list" ng-init="setTransferForm(transferForm)">
 
-      <a class="item item-button-right gray ink" ng-click="openWotLookup()">
+      <a class="item item-icon-right gray ink" ng-click="openWotLookup()">
           <span class="gray" translate>TRANSFER.TO</span>
           <span class="badge badge-royal">{{dest | formatPubkey}}</span>&nbsp;
-          <i class="button button-clear ion-chevron-right"></i>
+          <i class="gray icon ion-ios-arrow-right"></i>
       </a>
+      <div class="form-errors"
+           ng-show="transferForm.$submitted && !dest">
+        <div class="form-error">
+          <span translate="ERROR.FIELD_REQUIRED"></span>
+        </div>
+      </div>
 
       <span class="item item-text-wrap">
           <span class="gray" translate>TRANSFER.FROM</span>
           <span class="badge"
               ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
               {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
-              <span ng-if="!walletData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-              <span ng-if="walletData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+              <span ng-if="!formData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
+              <span ng-if="formData.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
           </span>
       </span>
 
-      <div class="item item-input item-floating-label" ng-if="!walletData.useRelative">
+      <div class="item item-input item-floating-label" ng-if="!formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-          <input type="number" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})"
+          <input type="number" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}})"
                  ng-model="formData.amount" required>
       </div>
 
-      <div class="item item-input item-floating-label" ng-if="walletData.useRelative">
+      <div class="item item-input item-floating-label" ng-if="formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
-          <input type="text" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}}{{udUnit | abbreviate}})" ng-model="formData.amount"
+          <input type="text" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}} {{udUnit | abbreviate}})" ng-model="formData.amount"
                  required>
+      </div>
+      <div class="form-errors"
+           ng-show="transferForm.$submitted && transferForm.amount.$error"
+           ng-messages="transferForm.amount.$error">
+        <div class="form-error" ng-message="required">
+          <span translate="ERROR.FIELD_REQUIRED"></span>
+        </div>
       </div>
 
 
       <div class="item item-content item-toggle dark">
         <h4 class="gray">{{'TRANSFER.BTN_RELATIVE_UNIT' | translate}}</h4>
         <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="walletData.useRelative">
+          <input type="checkbox" ng-model="formData.useRelative">
           <div class="track">
             <div class="handle"></div>
           </div>
         </label>
       </div>
 
-      <label class="item item-input">
-          <textarea placeholder="{{'TRANSFER.COMMENTS_HELP' | translate}}" ng-model="formData.comments"></textarea>
+      <!-- Comment -->
+      <label class="item item-input"
+        ng-class="{'item-input-error': transferForm.$submitted && transferForm.comment.$invalid}">
+          <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
+            name="comment"
+            ng-model="formData.comment"
+            ng-maxlength="255"
+            ng-pattern="commentPattern"
+            >
+          </textarea>
       </label>
+      <div class="form-errors"
+           ng-show="transferForm.$submitted && transferForm.comment.$error"
+           ng-messages="transferForm.comment.$error">
+        <div class="form-error" ng-message="maxlength">
+          <span translate="ERROR.FIELD_TOO_LONG"></span>
+        </div>
+        <div class="form-error" ng-message="pattern">
+          <span translate="ERROR.FIELD_ACCENT"></span>
+        </div>
+      </div>
+
     </div>
 
     <div class="padding hidden-xs text-right">

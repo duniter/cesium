@@ -1,70 +1,75 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-  <title></title>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
 
 
-  <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
 
-  <!-- compiled css output -->
-  <link href="css/ionic.app.css" rel="stylesheet">
+    <!-- compiled css output -->
+    <link href="css/ionic.app.css" rel="stylesheet">
 
-  <link href="css/style.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
-  <!-- ionic/angularjs js -->
-  <script src="lib/ionic/js/ionic.bundle.js"></script>
-  <script src="lib/ionic/js/ionic.material.min.js"></script>
-  <script src="lib/ionic/js/angular/angular-resource.min.js"></script>
-  <script src="lib/ionic/js/angular/angular-translate.min.js"></script>
-  <script src="lib/ionic/js/angular/angular-translate-loader-static-files.min.js"></script>
-  <script src="lib/ionic/js/angular/angular-messages.min.js"></script>
-  <script src="js/vendor/moment.min.js"></script>
-  <script src="js/vendor/numeral.js"></script>
-  <script src="js/vendor/socket-io.js"></script>
-  <script src="js/vendor/underscore.js"></script>
+    <!-- vendor js -->
+    <script src="js/vendor/moment.min.js"></script>
+    <script src="js/vendor/moment.fr.js"></script>
+    <script src="js/vendor/numeral.js"></script>
+    <script src="js/vendor/socket-io.js"></script>
+    <script src="js/vendor/underscore.js"></script>
 
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="lib/ionic/js/ionic.material.min.js"></script>
+    <script src="lib/ionic/js/ionic-native-transitions.min.js"></script>
+    <script src="lib/ionic/js/angular/angular-resource.min.js"></script>
+    <script src="lib/ionic/js/angular/angular-translate.min.js"></script>
+    <script src="lib/ionic/js/angular/angular-translate-loader-static-files.min.js"></script>
+    <script src="lib/ionic/js/angular/angular-messages.min.js"></script>
+    <script src="lib/ionic/js/angular/angular-moment.min.js"></script>
 
-  <!-- crypto libs -->
-  <script src="js/vendor/scrypt-em.js"></script>
-  <script src="js/vendor/nacl_factory.js"></script>
-  <script src="js/vendor/base58.js"></script>
-  <script src="js/vendor/base64.js"></script>
+    <!-- crypto libs -->
+    <script src="js/vendor/scrypt-em.js"></script>
+    <script src="js/vendor/nacl_factory.js"></script>
+    <script src="js/vendor/base58.js"></script>
+    <script src="js/vendor/base64.js"></script>
 
-  <!-- cordova script (this will be a 404 during development) -->
-  <script src="js/vendor/ng-cordova.min.js"></script>
-  <script src="cordova.js"></script>
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="js/vendor/ng-cordova.min.js"></script>
+    <script src="cordova.js"></script>
 
-  <!-- config -->
-  <script src="js/config.js"></script>
+    <!-- config -->
+    <script src="js/config.js"></script>
 
-  <!-- services -->
-  <script src="js/services/crypto-services.js"></script>
-  <script src="js/services/utils-services.js"></script>
-  <script src="js/services/wallet-services.js"></script>
-  <script src="js/services/bma-services.js"></script>
-  <script src="js/services.js"></script>
+    <!-- services -->
+    <script src="js/services/crypto-services.js"></script>
+    <script src="js/services/utils-services.js"></script>
+    <script src="js/services/device-services.js"></script>
+    <script src="js/services/wallet-services.js"></script>
+    <script src="js/services/bma-services.js"></script>
+    <script src="js/services.js"></script>
 
-  <!-- entities -->
-  <script src="js/entity/peer.js"></script>
+    <!-- entities -->
+    <script src="js/entity/peer.js"></script>
 
-  <!-- controllers -->
-  <script src="js/controllers/app-controllers.js"></script>
-  <script src="js/controllers/home-controllers.js"></script>
-  <script src="js/controllers/wot-controllers.js"></script>
-  <script src="js/controllers/peer-controllers.js"></script>
-  <script src="js/controllers/currency-controllers.js"></script>
-  <script src="js/controllers/wallet-controllers.js"></script>
-  <script src="js/controllers/transfer-controllers.js"></script>
-  <script src="js/controllers/settings-controllers.js"></script>
-  <script src="js/controllers.js"></script>
+    <!-- controllers -->
+    <script src="js/controllers/app-controllers.js"></script>
+    <script src="js/controllers/home-controllers.js"></script>
+    <script src="js/controllers/wot-controllers.js"></script>
+    <script src="js/controllers/peer-controllers.js"></script>
+    <script src="js/controllers/currency-controllers.js"></script>
+    <script src="js/controllers/wallet-controllers.js"></script>
+    <script src="js/controllers/transfer-controllers.js"></script>
+    <script src="js/controllers/settings-controllers.js"></script>
+    <script src="js/controllers.js"></script>
 
-  <!-- App -->
-  <script src="js/app.js"></script>
+    <!-- App -->
+    <script src="js/app.js"></script>
 
-</head>
-<body ng-app="cesium" class="platform-android">
-<ion-nav-view></ion-nav-view>
-</body>
+  </head>
+  <body ng-app="cesium" class="platform-android">
+  <ion-nav-view></ion-nav-view>
+  </body>
 </html>

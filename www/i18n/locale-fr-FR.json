@@ -1,8 +1,11 @@
 {
   "COMMON": {
     "APP_NAME": "Cesium",
+    "APP_VERSION": "v{{version}}",
+    "APP_BUILD_DATE": "- build {{buildDate}}",
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
+    "BTN_SEND": "Envoyer",
     "BTN_SHOW": "Voir",
     "BTN_SHOW_PUBKEY": "Voir la clé",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
@@ -16,7 +19,10 @@
     "LOADING": "Veuillez patienter...",
     "FROM": "De",
     "TO": "A",
-    "COPY": "Copier"
+    "COPY": "Copier",
+    "LANGUAGE": "Langue",
+    "BTN_PICTURE_DELETE": "Supprimer",
+    "BTN_PICTURE_FAVORISE": "Principale"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -24,21 +30,43 @@
     "BTN_PICTURE_CAMERA": "<b>Caméra</b>"
   },
   "MENU": {
-    "TITLE": "Duniter",
+    "TITLE": "Cesium",
     "HOME": "Accueil",
     "REGISTRY": "Annuaire",
     "MARKET": "Annonces",
+    "CURRENCY": "Monnaie",
     "CURRENCIES": "Monnaies",
     "ACCOUNT": "Mon compte",
-    "SETTINGS": "Configuration"
+    "TRANSFER": "Payer",
+    "SCAN": "Scanner",
+    "SETTINGS": "Paramètres"
   },
   "HOME": {
-    "TITLE": "Duniter",
-    "WELCOME": "Duniter",
-    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Regardez l'état de vos comptes Duniter en temps réel.",
+    "TITLE": "Cesium",
+    "WELCOME": "",
+    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en temps réel.",
+    "MESSAGE_SHORT": "Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a><br/>en temps réel !",
     "BTN_REGISTRY": "Annuaire",
     "BTN_MARKET": "Offres/demandes",
-    "BTN_CURRENCIES": "Explorer les monnaies"
+    "BTN_CURRENCIES": "Explorer les monnaies",
+    "BTN_CURRENCY": "Explorer la monnaie",
+    "DEV_WARNING": "Avertissement",
+    "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
+    "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
+    "REPORT_ISSUE": "Signaler un problème"
+  },
+  "SETTINGS": {
+    "TITLE": "Paramètres",
+    "NETWORK_SETTINGS": "Réseau",
+    "NODE": "Adresse du noeud",
+    "NODE_HELP": "server.domain.com:port",
+    "USE_LOCAL_STORAGE": "Activer le stockage local",
+    "AUTHENTICATION_SETTINGS": "Authentification",
+    "REMEMBER_ME": "Se souvenir de moi",
+    "POPUP_NODE": {
+      "TITLE" : "Noeud Duniter",
+      "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
+    }
   },
   "CURRENCY": {
     "SELECT": {
@@ -72,10 +100,17 @@
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
-    "REGISTERED_SINCE": "Inscrit depuis le ",
+    "REGISTERED_SINCE": "Inscription",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
+    "NO_CERTIFICATIONS": "Aucune certification",
+    "CERTIFICATIONS_RECEIVED": "Certifications recues",
+    "CERTIFICATIONS_RECEIVED_BY": "Certifications recues par {{uid}}",
+    "EXPIRE_IN": "Expiration",
     "BTN_SEND_MONEY": "Payer",
     "BTN_CERTIFY": "Certifier",
+    "LOOKUP": {
+      "TITLE": "Annuaire"
+    },
     "MODAL": {
       "TITLE": "Recherche"
     }
@@ -95,6 +130,9 @@
     "NO_TX": "Aucune transaction",
     "EVENTS": "Evénements",
     "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
+    "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
+    "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt manquer de certifications",
+    "CERTIFICATION_COUNT": "Nombre de certifications",
     "BTN_SEND_MONEY": "Payer",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
@@ -124,91 +162,12 @@
     "TO": "A",
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
-    "COMMENTS": "Référence",
-    "COMMENTS_HELP": "Référence (optionnelle)",
+    "COMMENT": "Référence",
+    "COMMENT_HELP": "Référence (optionnelle)",
     "BTN_SEND": "Envoyer",
     "BTN_RELATIVE_UNIT": "Montant en unité relative ?",
     "MODAL": {
       "TITLE": "Paiement"
-    }
-  },
-  "MARKET": {
-    "COMMON": {
-      "CATEGORY": "Catégorie",
-      "CATEGORIES": "Catégories",
-      "ISSUER": "Soumis par",
-      "PRICE": "Prix",
-      "BTN_BUY": "Acheter"
-    },
-    "SEARCH": {
-      "TITLE": "Annonces",
-      "SEARCH_HELP": "Recherche (voiture, livre...)",
-      "BTN_ADD": "Nouveau",
-      "BTN_OPTIONS": "Recherche avancée",
-      "BTN_AROUND_ME": "Autour de moi",
-      "LOCATION": "Localisation",
-      "LOCATION_HELP": "Ville",
-      "LAST_RECORDS": "Dernières annonces :",
-      "RESULTS": "Résultats :"
-    },
-    "VIEW": {
-      "TITLE": "Annonce"
-    },
-    "EDIT": {
-      "TITLE": "Edition",
-      "BTN_ADD_PICTURES": "Ajouter des photos",
-      "RECORD_TITLE": "Titre",
-      "RECORD_TITLE_HELP": "Titre",
-      "RECORD_DESCRIPTION": "Description",
-      "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_PRICE": "Prix",
-      "RECORD_PRICE_HELP": "Prix (optionnel)",
-      "RECORD_LOCATION": "Ville",
-      "RECORD_LOCATION_HELP": "Adresse, Ville"
-    },
-    "ERROR": {
-      "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
-      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'enregistrement."
-    }
-  },
-  "REGISTRY": {
-    "COMMON": {
-      "CATEGORY": "Catégorie",
-      "CATEGORIES": "Catégories",
-      "ISSUER": "Soumis par"
-    },
-    "SEARCH": {
-      "TITLE": "Annuaire",
-      "SEARCH_HELP": "Recherche (nom, pseudo, clé publique...)",
-      "BTN_ADD": "Nouveau",
-      "BTN_OPTIONS": "Recherche avancée",
-      "LOCATION": "Localisation",
-      "LOCATION_HELP": "Ville",
-      "LAST_RECORDS": "Derniers enregistrements :",
-      "RESULTS": "Résultats :"
-    },
-    "VIEW": {
-      "TITLE": ""
-    },
-    "NEW": {
-      "TITLE": "Nouveau",
-      "SELECT_TYPE": "Type d'ajout :",
-      "TYPE_PARTICULAR": "Particulier",
-      "TYPE_COMPANY": "Entreprise, organisme ou institution"
-    },
-    "EDIT": {
-      "TITLE": "Edition",
-      "BTN_ADD_PICTURES": "Ajouter des photos",
-      "RECORD_TITLE": "Nom",
-      "RECORD_TITLE_HELP": "Nom",
-      "RECORD_DESCRIPTION": "À propos de moi",
-      "RECORD_DESCRIPTION_HELP": "À propos de moi",
-      "RECORD_PRICE": "Prix",
-      "RECORD_PRICE_HELP": "Prix (optionnel)",
-      "RECORD_LOCATION": "Localisation",
-      "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
-      "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
-      "RECORD_PUBKEY": "Clé publique"
     }
   },
   "ERROR": {
@@ -217,25 +176,37 @@
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "FIELD_REQUIRED": "Champ obligatoire.",
     "FIELD_TOO_SHORT": "Valeur trop courte.",
-    "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe",
+    "FIELD_TOO_LONG": "Valeur trop longue",
+    "FIELD_ACCENT": "Caractères accentués non autorisés",
+    "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SEND_IDENTITY_FAILED": "Erreur pendant l'inscription.",
-    "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité",
-    "LOGIN_FAILED": "Erreur lors de l'authentification",
-    "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité",
-    "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté",
+    "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité.",
+    "LOGIN_FAILED": "Erreur lors de l'authentification.",
+    "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",
+    "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'ientité.",
+    "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté.",
     "SEND_MEMBERSHIP_OUT_FAILED": "Echec de l'arret de l'adhésion.",
-    "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille",
-    "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie",
-    "GET_CURRENCIES_FAILED": "Impossible de chargement la liste des monnaies",
-    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible",
-    "SEND_TX_FAILED": "Echec du paiement",
-    "ALL_SOURCES_USED": "Veuillez attendre le cacul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
-    "NOT_ENOUGH_SOURCES": "Veuillez attendre le cacul du prochain bloc (Pas assez de sources de monnaie).",
-    "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre",
-    "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille",
-    "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible",
-    "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo",
-    "SCAN_FAILED": "Echec du scan de QR Code"
+    "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille.",
+    "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie.",
+    "GET_CURRENCIES_FAILED": "Impossible de charger la liste des monnaies. Veuillez ressayer plus tard.",
+    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossibl.e",
+    "SEND_TX_FAILED": "Echec du paiement.",
+    "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
+    "NOT_ENOUGH_SOURCES": "Veuillez attendre le calcul du prochain bloc (Pas assez de sources de monnaie).",
+    "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre.",
+    "RESTORE_WALLET_DATA_ERROR": "Echec du rechargement des paramètres depuis le stockage local",
+    "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille.",
+    "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible.",
+    "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo.",
+    "SCAN_FAILED": "Echec du scan de QR Code",
+    "WOT_LOOKUP_FAILED": "Echec de la recherche",
+    "LOAD_NODE_DATA_FAILED": "Lecture du noeud Duniter impossible. Veuillez réessayer ultérieurement.",
+    "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
+    "AMOUNT_REQUIRED": "Le montant est obligatoire.",
+    "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
+    "NOT_ENOUGH_CREDIT": "Crédit insufissant.",
+    "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide.",
+    "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

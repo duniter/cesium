@@ -1,32 +1,95 @@
-<ion-view view-title="{{'HOME.TITLE'|translate}}">
-  <!--<ion-nav-title>
-    <img src="img/logo.png">
-  </ion-nav-title>-->
+<ion-view id="home">
+  <ion-nav-title>
+    <!--<img src="img/logo.png">-->
+    <span class="visible-xs visible-sm" translate>HOME.TITLE</span>
+  </ion-nav-title>
 
-  <ion-content class="has-header center padding positive-900-bg" id="home">
+  <ion-content class="has-header center padding-xs positive-900-bg">
 
-        <!--img class="center" src="img/lesou-120px.png"/-->
-        <h2 translate>HOME.WELCOME</h2>
-        <h4 translate>HOME.MESSAGE</h4>
+      <!--img class="center" src="img/lesou-120px.png"/-->
+      <h2 class="hidden-xs" translate>HOME.WELCOME</h2>
+      <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
+      <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
 
       <div class="row no-padding">
         <div class="col-25 hidden-xs hidden-sm">&nbsp;
         </div>
         <div class="col">
+          <!-- CURRENCY -->
           <button type="button"
                   class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
+                  ng-if="options.registry.enable"
                   ui-sref="app.currency_lookup" translate>HOME.BTN_CURRENCIES</button>
           <button type="button"
-                  class="button button-block button-stable button-raised icon icon-left ion-locked ink-dark"
+                  class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark hidden-sm hidden-xs"
+                  ng-if="!options.registry || !options.registry.enable"
+                  ui-sref="app.currency_view_lg" translate>HOME.BTN_CURRENCY</button>
+          <button type="button"
+                  class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark visible-sm visible-xs"
+                  ng-if="!options.registry || !options.registry.enable"
+                  ui-sref="app.currency_view" translate>HOME.BTN_CURRENCY</button>
+
+          <button type="button"
+                  class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
                   ng-click="login()" ng-show="!isLogged()" translate>COMMON.BTN_LOGIN</button>
           <button type="button"
                   class="button button-block button-light ink button-clear"
                   ng-click="newAccount()" ng-show="!isLogged()" translate>COMMON.BTN_ADD_ACCOUNT</button>
+
+        <!-- warning still dev -->
+        <br class="hidden-xs"/>
+        <br class="hidden-xs"/>
+        <br class="hidden-xs hidden-sm"/>
+        <div class="card stable-bg no-padding hidden-xs">
+          <div class="item item-divider">
+            <i class="icon ion-alert-circled assertive"></i>
+            {{'HOME.DEV_WARNING'|translate}}
+          </div>
+          <div class="item item-text-wrap">
+            <span translate>HOME.DEV_WARNING_MESSAGE</span><br/>
+            <a class="button button-block button-assertive button-raised icon icon-left ion-bug ink-dark "
+               href="{{config.NEW_ISSUE_LINK}}"
+               target="_blank"
+               translate>HOME.REPORT_ISSUE</a>
+          </div>
         </div>
-        <div class="col-25 hidden-xs hidden-sm">&nbsp;
+
+        <div class="card stable-bg no-padding visible-xs">
+          <p class="item item-text-wrap">
+            <span class="gray">
+              <i class="icon ion-alert-circled assertive"></i>
+              <b>{{'HOME.DEV_WARNING'|translate}}</b>
+            </span><br/>
+              <span translate>HOME.DEV_WARNING_MESSAGE_SHORT</span>
+            <span>
+              <a href="{{config.NEW_ISSUE_LINK}}"
+                 target="_blank"
+                 translate>HOME.REPORT_ISSUE</a>
+            </span>
+          </p>
         </div>
       </div>
+      <div class="col-25 hidden-xs hidden-sm">&nbsp;
+      </div>
+    </div>
 
-    </ion-content>
+    <!-- fork me on github -->
+    <a class="hidden-xs hidden-sm"
+       target="_blank"
+       href="https://github.com/duniter/cesium"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png">
+    </a>
+
+
+  </ion-content>
+
+  <ion-footer-bar align-title="center" class="bar-dark footer visible-xs visible-sm">
+    <h1 class="title">
+      <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
+      <span class="build-date gray" translate="COMMON.APP_BUILD_DATE" translate-values="{buildDate: config.BUILD_DATE}"></span>
+    </h1>
+  </ion-footer-bar>
+
+  <ion-footer-bar align-title="center" class="positive-900-bg hidden-xs hidden-sm">
+  </ion-footer-bar>
 
 </ion-view>

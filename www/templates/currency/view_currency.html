@@ -1,6 +1,6 @@
 <ion-view view-title="{{id}}" left-buttons="leftButtons" class="pane">
     <ion-nav-buttons side="secondary">
-        <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+        <button class="button button-icon button-clear icon ion-loop" ng-click="refresh()">
         </button>
     </ion-nav-buttons>
     <!--
@@ -14,13 +14,6 @@
                 <ion-content>
                         <ng-include src="'templates/currency/tabs/view_parameters.html'"/>
                  </ion-content>
-            </ion-tab>
-
-            <ion-tab title="{{'CURRENCY.VIEW.TAB_WOT'|translate}}" icon="ion-person-stalker">
-                <ion-nav-view name="wot-tab"/>
-                <ion-content class="padding no-padding-xs">
-                    <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
-                </ion-content>
             </ion-tab>
 
             <ion-tab title="{{'CURRENCY.VIEW.TAB_NETWORK'|translate}}" icon="ion-network" >

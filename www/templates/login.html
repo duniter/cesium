@@ -8,6 +8,7 @@
         <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
         </button>
     </span></div>
+
   </ion-header-bar>
 
   <ion-content >
@@ -51,6 +52,19 @@
           </div>
         </div>
 
+        <!-- remember me -->
+        <div class="item item-toggle dark hidden-xs">
+        <div class="input-label">
+          {{'SETTINGS.REMEMBER_ME' | translate}}
+        </div>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="loginData.rememberMe">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
         <!-- Show public key -->
         <div class="item item-icon-left item-button-right left">
           <span class="input-label" translate>COMMON.PUBKEY</span>
@@ -63,13 +77,16 @@
           <h3 class="gray text-no-wrap" ng-if="loginData.pubkey">
             {{loginData.pubkey}}
           </h3>
+          <h3 ng-if="loginData.computing">
+            <ion-spinner icon="android"></ion-spinner>
+          </h3>
         </div>
       </div>
 
       <div class="padding hidden-xs text-right">
-        <button class="button button-small button-clear button-dark ink" ng-click="cancelLogin()" type="button" translate>COMMON.BTN_CANCEL
+        <button class="button button-clear button-dark ink" ng-click="cancelLogin()" type="button" translate>COMMON.BTN_CANCEL
         </button>
-        <button class="button button-small button-positive ink" type="submit">
+        <button class="button button-positive ink" type="submit">
           {{'COMMON.BTN_LOGIN' | translate}}
         </button>
       </div>

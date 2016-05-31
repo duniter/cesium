@@ -5,12 +5,12 @@ angular.module('cesium.bma.services', ['ngResource',
 
 .factory('BMA', function($http, $q, APP_CONFIG) {
 
-  function BMA(server, wsServer) {
-    if (!wsServer) {
-        wsServer = server;
-    }
+  function BMA(server, timeout) {
 
     var sockets = [];
+    if (!timeout) {
+      timeout=4000;
+    }
 
     function processError(reject, data, uri) {
       if (data && data.message) {
@@ -18,10 +18,10 @@ angular.module('cesium.bma.services', ['ngResource',
       }
       else {
         if (uri) {
-          reject('Error from ucoin node (' + uri + ')');
+          reject('Error from Duniter node (' + uri + ')');
         }
         else {
-          reject('Unknown error from ucoin node');
+          reject('Unknown error from Duniter node');
         }
       }
     }
@@ -32,7 +32,7 @@ angular.module('cesium.bma.services', ['ngResource',
         pkeys = _.keys(params);
       }
 
-      pkeys.forEach(function(pkey){
+      _.forEach(pkeys, function(pkey){
         var prevURI = newUri;
         newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
         if (prevURI == newUri) {
@@ -47,7 +47,7 @@ angular.module('cesium.bma.services', ['ngResource',
       return function(params) {
         return $q(function(resolve, reject) {
           var config = {
-            timeout: 4000
+            timeout: timeout
           };
 
           prepare(uri, params, config, function(uri, config) {
@@ -67,7 +67,7 @@ angular.module('cesium.bma.services', ['ngResource',
       return function(data, params) {
         return $q(function(resolve, reject) {
           var config = {
-            timeout: 4000,
+            timeout: timeout,
             headers : {'Content-Type' : 'application/json'}
           };
 
@@ -107,14 +107,29 @@ angular.module('cesium.bma.services', ['ngResource',
 
     function closeWs() {
       if (sockets.length > 0) {
-        sockets.forEach(function(sock) {
+        _.forEach(sockets, function(sock) {
           sock.close();
         });
         sockets = []; // Reset socks list
       }
     }
 
+    function copy(otherNode) {
+      if (!!this.instance) {
+        var instance = this.instance;
+        angular.copy(otherNode, this);
+        this.instance = instance;
+      }
+      else {
+        angular.copy(otherNode, this);
+      }
+    }
+
     return {
+      node: {
+        summary: getResource('http://' + server + '/node/summary'),
+        url: server
+      },
       wot: {
         lookup: getResource('http://' + server + '/wot/lookup/:search'),
         members: getResource('http://' + server + '/wot/members'),
@@ -152,17 +167,18 @@ angular.module('cesium.bma.services', ['ngResource',
       },
       websocket: {
         block: function() {
-          return ws('ws://' + wsServer + '/ws/block');
+          return ws('ws://' + server + '/ws/block');
         },
         peer: function() {
-          return ws('ws://' + wsServer + '/ws/peer');
+          return ws('ws://' + server + '/ws/peer');
         },
         close : closeWs
-      }
+      },
+      copy: copy
     };
   }
 
-  var service = BMA(APP_CONFIG.UCOIN_NODE, APP_CONFIG.UCOIN_NODE_WS);
+  var service = BMA(APP_CONFIG.DUNITER_NODE, APP_CONFIG.TIMEOUT);
   service.instance = BMA;
   return service;
 })

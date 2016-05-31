@@ -1,0 +1,91 @@
+<form name="recordForm" novalidate="" ng-submit="doNewRecord()">
+  <div class="list"
+       ng-init="setRecordForm(recordForm)">
+
+        <div class="list gallery" ng-if="pictures && pictures.length>0" >
+          <div ng-repeat="picture in pictures"
+               class="item card card-gallery">
+            <div>
+              <h2 ng-if="picture.title">{{picture.title}}</h2>
+              <img ng-src="{{picture.src}}" ></img>
+            </div>
+            <div class="item tabs tabs-secondary tabs-icon-left">
+              <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
+                <i class="icon ion-close"></i>
+                {{'COMMON.BTN_PICTURE_DELETE'|translate}}
+              </a>
+              <a class="tab-item stable-bg"
+                 ng-click="favoritePicture($index)"
+                 ng-class="{'dark': $index !== 0, 'positive-900': $index === 0}">
+                <i class="icon ion-star"></i>
+                {{'COMMON.BTN_PICTURE_FAVORISE'|translate}}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="item item-icon-right" ng-if="isDeviceEnable()">
+          <span translate>REGISTRY.EDIT.BTN_ADD_PICTURES</span>
+          <a class="dark" href="#" ng-click="openPicturePopup()">
+            <i class="icon ion-camera"></i>
+          </a>
+        </div>
+
+        <div class="item item-input item-icon-right" ng-if="!isDeviceEnable()" >
+          <span class="input-label has-input" translate>REGISTRY.EDIT.BTN_ADD_PICTURES</span>
+          <input type="file" id="file" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"/>
+          <!--a class="dark" href="#" ng-if="!camera" ng-click="addPictureFile()">
+              <i class="icon ion-plus"></i>
+          </a-->
+        </div>
+
+        <span class="item item-button-right ink" ng-click="openCategoryModal()" ng-show="isCompany">
+            <span translate>REGISTRY.COMMON.CATEGORY</span>
+            <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
+            <i class="button button-clear ion-chevron-right"></i>
+        </span>
+
+        <div class="item item-input item-floating-label">
+          <span class="input-label" translate>REGISTRY.EDIT.RECORD_TITLE</span>
+          <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_TITLE_HELP'|translate}}" ng-model="recordData.title" />
+        </div>
+
+        <div class="item item-input item-floating-label">
+          <span class="input-label" translate>REGISTRY.EDIT.RECORD_DESCRIPTION</span>
+          <textarea placeholder="{{'REGISTRY.EDIT.RECORD_DESCRIPTION_HELP'|translate}}"
+                    ng-model="recordData.description"
+                    rows="8" cols="10">
+          </textarea>
+        </div>
+
+        <div class="item item-floating-label" ng-if="location.enable">
+          <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
+          <div class="item-input-inset">
+            <label class="item-input-wrapper">
+              <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="recordData.location">
+            </label>
+            <button class="button button-small button-positive" ng-click="localize()" ng-if="location.enable">
+              <i class="icon ion-pinpoint"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="item item-input item-floating-label" ng-if="!location.enable">
+          <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
+          <textarea placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="recordData.location"></textarea>
+        </div>
+
+        <a class="item item-icon-left" ng-if="id && recordData.issuer && !isCompany">
+            <i class="icon ion-key"></i>
+            <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
+            <h4 class="gray">{{recordData.issuer}}</h4>
+        </a>
+
+        <a class="item item-icon-left" ng-if="id && recordData.issuer && isCompany" >
+            <i class="icon ion-key"></i>
+            <span translate>REGISTRY.COMMON.ISSUER</span>
+            <h4>{{recordData.issuer | formatPubkey}}</h4>
+        </a>
+
+  </div>
+</form>

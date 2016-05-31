@@ -1,4 +1,17 @@
 <ion-side-menus enable-menu-with-back-views="true">
+  <!-- HEADER -->
+  <ion-side-menu-content>
+    <ion-nav-bar class="bar-dark" ng-class="{expanded: isExpanded, 'has-header-fab-left': hasHeaderFabLeft, 'has-header-fab-right': hasHeaderFabRight}" title-align="left">
+      <ion-nav-back-button class="no-text">
+      </ion-nav-back-button>
+
+      <ion-nav-buttons side="left">
+        <button class="button button-icon button-clear icon ion-navicon visible-xs" menu-toggle="left" ></button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-nav-view name="fabContent"></ion-nav-view>
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
 
   <!-- MENU -->
   <ion-side-menu side="left" id="menu" expose-aside-when="large" enable-menu-with-back-views="false">
@@ -13,9 +26,27 @@
           <i class="icon ion-home"></i>
           <span translate>MENU.HOME</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" href="#/app/currency">
+
+        <!-- CURRENCY -->
+        <ion-item menu-close class="item item-icon-left" href="#/app/currencies" ng-if="options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCIES</span>
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left hidden-xs hidden-sm" href="#/app/currency/view/lg/" ng-if="!options.registry || !options.registry.enable">
+          <i class="icon ion-ios-world-outline"></i>
+          <span translate>MENU.CURRENCY</span>
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" href="#/app/currency/view/" ng-if="!options.registry || !options.registry.enable">
+          <i class="icon ion-ios-world-outline"></i>
+          <span translate>MENU.CURRENCY</span>
+        </ion-item>
+
+        <div class="item item-divider"></div>
+
+        <!-- REGISTRY -->
+        <ion-item menu-close class="item item-icon-left" href="#/app/wot">
+          <i class="icon ion-person-stalker"></i>
+          <span translate>MENU.REGISTRY</span>
         </ion-item>
 
         <div class="item item-divider"></div>
@@ -28,32 +59,48 @@
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
+
         <!-- <ion-item menu-close ng-click="addAccount()">
           Add account
         </ion-item> -->
         <ion-item menu-close class="item item-icon-left" href="#/app/settings">
-          <i class="icon ion-wrench"></i>
+          <i class="icon ion-android-settings"></i>
           <span translate>MENU.SETTINGS</span>
         </ion-item>
-        <ion-item menu-close class="item item-assertive item-icon-left" ng-click="logout()" ng-if="isLogged()">
-          <i class="icon ion-log-out"></i>
-          <span translate>COMMON.BTN_LOGOUT</span>
+
+        <!-- actions -->
+        <div class="item item-divider" ng-if="isLogged()"></div>
+        <ion-item menu-close class="item item-button-right" ng-if="isLogged()">
+          <span translate>MENU.TRANSFER</span>
+          <button class="button button-energized-900" ng-click="transfer()">
+          <i class="icon ion-paper-airplane"></i>
+          </button>
         </ion-item>
+        <!-- scan QR code -->
+        <ion-item menu-close class="item item-button-right" ng-if="isLogged() && device.enable">
+          <span translate>Scan</span>
+          <button class="button button-energized-900" ng-click="scanQrCodeAndGo()">
+            <i class="icon ion-qr-scanner"></i>
+          </button>
+        </ion-item>
+        <ion-item menu-close class="item item-button-right" ng-if="isLogged()">
+          <span translate>COMMON.BTN_LOGOUT</span>
+          <button class="button button-energized-900" ng-click="logout()">
+          <i class="icon ion-log-out"></i>
+          </button>
+        </ion-item>
+
 
       </ion-list>
     </ion-content>
+
+    <ion-footer-bar class="bar-stable footer hidden-xs hidden-sm">
+      <h1 class="title">
+        <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
+        <span class="buildDate" translate="COMMON.APP_BUILD_DATE" translate-values="{buildDate: config.BUILD_DATE}"></span>
+      </h1>
+    </ion-footer-bar>
   </ion-side-menu>
 
-  <!-- HEADER -->
-  <ion-side-menu-content>
-    <ion-nav-bar class="bar-dark" title-align="left">
-      <ion-nav-back-button class="no-text">
-      </ion-nav-back-button>
 
-      <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear icon ion-navicon visible-xs" menu-toggle="left" ></button>
-      </ion-nav-buttons>
-    </ion-nav-bar>
-    <ion-nav-view name="menuContent"></ion-nav-view>
-  </ion-side-menu-content>
 </ion-side-menus>

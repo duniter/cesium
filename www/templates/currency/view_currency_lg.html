@@ -1,6 +1,6 @@
 <ion-view view-title="{{'CURRENCY.VIEW.TITLE' | translate}} {{id}}" left-buttons="leftButtons" class="pane">
     <ion-nav-buttons side="secondary">
-        <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+        <button class="button button-icon button-clear icon ion-loop" ng-click="refresh()">
         </button>
     </ion-nav-buttons>
 
@@ -14,10 +14,6 @@
                 <ng-include src="'templates/currency/tabs/view_parameters.html'"></ng-include>
               </div>
               <div class="col col-50">
-                  <div class="item item-divider" translate>
-                    CURRENCY.VIEW.TAB_WOT
-                  </div>
-                  <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
                   <ng-include src="'templates/currency/tabs/view_network.html'"></ng-include>
               </div>
           </div>

@@ -33,9 +33,23 @@
     color: #fff;
 }
 
+#home h4 a {
+  color: inherit;
+}
+
 #home button, #home a {
     margin-top: 20px;
     height: 40px;
+}
+
+#home .footer h1.title {
+  padding-top: 0;
+  font-size: 18px;
+}
+
+#home .build-date {
+  font-size: 14px !important;
+  color: grey !important;
 }
 
 .bar .button.button-clear {
@@ -50,18 +64,25 @@
   min-height: 30px;
 }
 
+.popup-buttons .button {
+  padding: 0 2px !important; /*Need for 'cancel' button */
+}
 
 
 #transfer .list .item {
   border-bottom: solid 1px #ccc;
 }
 
-#wallet .item h4 .comment{
+#wallet .item .comment{
   font-style: italic !important;
 }
 
 #wallet .item h3 .gray{
   font-size: 11px ! important;
+}
+
+#wallet .list .item span {
+  display: inline;
 }
 
 .list .item-input {
@@ -85,6 +106,15 @@
 #menu .item.item-divider {
   min-height: 5px;
   height: 5px;
+}
+
+#menu .footer h1.title {
+  font-size: 16px;
+}
+
+#menu .footer h1 .buildDate {
+  font-size: 12px ! important;
+  color: grey !important;
 }
 
 .menu .avatar {
@@ -113,6 +143,10 @@
 
 .col-pubkey {
   min-width: 130px !important;
+}
+
+.item.item-icon-right .badge{
+  right: 43px;
 }
 
 /*.button {*/
@@ -211,7 +245,22 @@
     top: 14px;
 }
 
+.peer-item:hover .badge{
+    color: #fff !important;
+}
+
 .item-thumbnail-left-padding {
     padding-left: 106px;
 }
 
+#wallet .item-divider .badge {
+  top:16px !important;
+}
+
+#certifications .item-divider .badge {
+  top:16px !important;
+}
+
+#settings .item-divider {
+    background-color: #f5f5f5;
+}

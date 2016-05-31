@@ -5,7 +5,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
   $stateProvider
 
     .state('app.currency_lookup', {
-      url: "/currency",
+      url: "/currencies",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/lookup.html",
@@ -15,7 +15,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
     })
 
     .state('app.currency_view', {
-      url: "/currency/view/:id",
+      url: "/currency/view/:name",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",
@@ -25,7 +25,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
     })
 
     .state('app.currency_view_lg', {
-      url: "/currency/view/lg/:id",
+      url: "/currency/view/lg/:name",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency_lg.html",
@@ -53,7 +53,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, ionicMaterialInk) {
+function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA) {
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
@@ -68,7 +68,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
         $scope.selectedCurrency = res[0].id;
       }
       // Set Ink
-      ionicMaterialInk.displayEffect({selector: 'a.item'});
+      UIUtils.ink({selector: 'a.item'});
     });
   });
 
@@ -76,19 +76,16 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
   $scope.selectCurrency = function(id, large) {
     $scope.selectedCurrency = id;
     if (large) {
-      $state.go('app.currency_view_lg', {id: id});
+      $state.go('app.currency_view_lg', {name: id});
     }
     else {
-      $state.go('app.currency_view', {id: id});
+      $state.go('app.currency_view', {name: id});
     }
   };
 }
 
-function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout) {
+function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Wallet) {
 
-  var USE_RELATIVE_DEFAULT = true;
-
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout);
   PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
 
   $scope.search = {
@@ -98,23 +95,29 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         listInset: true
       }
   };
-  $scope.formData = { useRelative: false };
+  $scope.formData = {
+    useRelative: Wallet.data.settings.useRelative
+  };
   $scope.knownBlocks = [];
-  $scope.id = null;
   $scope.node = null;
+  $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$scope.node) {
       $scope.node.websocket.block().close();
       $scope.node = null;
     }
-    if ($state.stateParams && $state.stateParams.id) { // Load by id
-       $scope.id = $state.stateParams.id;
-       $scope.load($scope.id);
+    if ($state.stateParams && $state.stateParams.name) { // Load by name
+       $scope.load($scope.name);
     }
     else {
-      $state.go('app.currency_lookup');
-      return;
+      $scope.loadCurrencies()
+      .then(function (currencies) {
+        if (currencies && currencies.length > 0) {
+          $scope.load(currencies[0]);
+        }
+      })
+      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
     }
   });
 
@@ -122,14 +125,14 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     $scope.closeNode();
   });
 
-  $scope.load = function(id) {
+  $scope.load = function(name) {
     $scope.closeNode();
 
     $scope.node = BMA;
     $scope.startListeningOnSocket();
     $timeout(function() {
       if ((!$scope.search.peers || $scope.search.peers.length === 0) && $scope.search.lookingForPeers){
-        $scope.updateExploreView();
+        $scope.refresh();
       }
     }, 2000);
   };
@@ -146,7 +149,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         // We wait 2s when a new block is received, just to wait for network propagation
         var wait = $scope.knownBlocks.length === 1 ? 0 : 2000;
         $timeout(function() {
-          $scope.updateExploreView();
+          $scope.refresh();
         }, wait);
       }
     });
@@ -163,39 +166,38 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     $scope.node = null;
   };
 
-  $scope.$watch('formData.useRelative', function() {
-    if ($scope.formData.useRelative) {
-      $scope.M = $scope.M / $scope.currentUD;
-      $scope.MoverN = $scope.MoverN / $scope.currentUD;
-      $scope.UD = $scope.UD / $scope.currentUD;
-      $scope.unit = 'universal_dividend';
-      $scope.udUnit = $scope.baseUnit;
-    } else {
-      $scope.M = $scope.M * $scope.currentUD;
-      $scope.MoverN = $scope.MoverN * $scope.currentUD;
-      $scope.UD = $scope.UD * $scope.currentUD;
-      $scope.unit = $scope.baseUnit;
-      $scope.udUnit = '';
+  $scope.onUseRelativeChanged = function() {
+    if (!$scope.loading) {
+      if ($scope.formData.useRelative) {
+        $scope.M = $scope.M / $scope.currentUD;
+        $scope.MoverN = $scope.MoverN / $scope.currentUD;
+        $scope.UD = $scope.UD / $scope.currentUD;
+        $scope.unit = 'universal_dividend';
+        $scope.udUnit = $scope.baseUnit;
+      } else {
+        $scope.M = $scope.M * $scope.currentUD;
+        $scope.MoverN = $scope.MoverN * $scope.currentUD;
+        $scope.UD = $scope.UD * $scope.currentUD;
+        $scope.unit = $scope.baseUnit;
+        $scope.udUnit = '';
+      }
     }
-  }, true);
-
-  $scope.doUpdate = function() {
-    $scope.updateExploreView();
   };
+  $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
 
-  $scope.updateExploreView = function() {
+  $scope.refresh = function() {
     if (!$scope.node) {
       return;
     }
 
     UIUtils.loading.show();
-    $scope.formData.useRelative = false;
 
     $q.all([
 
       // Get the currency parameters
       $scope.node.currency.parameters()
         .then(function(json){
+          $scope.currency = json.currency;
           $scope.c = json.c;
           $scope.baseUnit = json.currency;
           $scope.unit = json.currency;
@@ -230,17 +232,22 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         $scope.M = $scope.M - $scope.UD*$scope.Nprev;
         $scope.MoverN = $scope.M / $scope.Nprev;
         $scope.cactual = 100 * $scope.UD / $scope.MoverN;
-        $scope.formData.useRelative = USE_RELATIVE_DEFAULT;
+        //$scope.formData.useRelative = USE_RELATIVE_DEFAULT;
 
         // Set Ink
         UIUtils.ink({selector: '.peer-item'});
 
+        $scope.loading = false;
+
+        if ($scope.formData.useRelative) {
+          $scope.onUseRelativeChanged(); // convert to UD
+        }
+
         UIUtils.loading.hide();
       })
       .catch(function(err) {
-        console.error('>>>>>>>' , err);
-        UIUtils.alert.error('Could not fetch informations from remote uCoin node.');
-        UIUtils.loading.hide();
+        $scope.loading = false;
+        UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
       })
       .then(function(){
         // Network
@@ -358,7 +365,6 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeo
       })
       .catch(function(err) {
         //console.log(err);
-        //UIUtils.alert.error('Could get peers from remote uCoin node.');
         $scope.search.lookingForPeers = false;
       });
   };

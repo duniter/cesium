@@ -38,9 +38,9 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferCtrl', TransferController)
 ;
 
-function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System) {
+function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device) {
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System);
+  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$state.stateParams && !!$state.stateParams.pubkey) {
@@ -54,28 +54,31 @@ function TransferController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $
     }
 
     $scope.loadWallet()
-    .then(function(wallet) {
-      $scope.walletData = wallet;
+    .then(function(walletData) {
+      $scope.walletData = walletData;
+      $scope.formData.useRelative = walletData.settings.useRelative;
       $scope.onUseRelativeChanged();
       UIUtils.loading.hide();
     });
   });
 }
 
-function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, System) {
+function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device) {
 
   $scope.walletData = {};
-  $scope.transferForm = {};
   $scope.convertedBalance = 0;
+  //$scope.transferForm = {};
   $scope.formData = {
     destPub: null,
     amount: null,
-    comments: null
+    comment: null,
+    useRelative: Wallet.defaultSettings.useRelative
   };
   $scope.dest = null;
   $scope.udAmount = null;
+  $scope.commentPattern = Wallet.regex.COMMENT;
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, System);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, Device);
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
@@ -112,7 +115,6 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   // Open transfer modal
   $scope.transfer = function(destPub, dest, amount, callback) {
-    UIUtils.loading.show();
     if (!!$scope.transferModal) {
       $scope.formData.destPub = destPub;
       if(dest) {
@@ -128,14 +130,17 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
         $scope.formData.amount = amount;
       }
       $scope.formData.callback = callback;
+
       $scope.loadWallet()
         .then(function(walletData) {
           UIUtils.loading.hide();
           $scope.walletData = walletData;
+          $scope.formData.useRelative = walletData.settings.useRelative;
           $scope.transferModal.show();
-        });
+        }).catch(UIUtils.onError());
     }
     else{
+      UIUtils.loading.show();
       $timeout($scope.transfer, 2000);
     }
   };
@@ -149,7 +154,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
 
   // When changing use relative UD
   $scope.onUseRelativeChanged = function() {
-    if ($scope.walletData.useRelative) {
+    if ($scope.formData.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
       $scope.udAmount = $scope.amount * $scope.walletData.currentUD;
       $scope.unit = 'universal_dividend';
@@ -170,7 +175,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
       $scope.udUnit = '';
     }
   };
-  $scope.$watch('walletData.useRelative', $scope.onUseRelativeChanged, true);
+  $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
   $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
 
   $scope.openWotLookup = function() {
@@ -178,16 +183,21 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   };
 
   $scope.doTransfer = function() {
+    $scope.transferForm.$submitted=true;
+    if(!$scope.transferForm.$valid) {
+      return;
+    }
+
     UIUtils.loading.show();
 
     var amount = $scope.formData.amount;
-    if ($scope.walletData.useRelative && !!amount &&
+    if ($scope.formData.useRelative && !!amount &&
         typeof amount == "string") {
       amount = $scope.walletData.currentUD *
                amount.replace(new RegExp('[.,]'), '.');
     }
 
-    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comments)
+    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment)
     .then(function() {
        var callback = $scope.formData.callback;
         $scope.formData = {}; // Reset form data
@@ -203,7 +213,11 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
           $state.go('app.view_wallet');
         }
     })
-    .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
+    .catch(// TODO BLA remoive function
+      function(err) {
+        UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
+      }
+    );
   };
 
   $scope.closeLookup = function() {

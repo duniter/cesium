@@ -12,10 +12,12 @@ var ngConstant = require('gulp-ng-constant');
 var fs = require("fs");
 var argv = require('yargs').argv;
 var header = require('gulp-header');
+var removeCode = require('gulp-remove-code');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  config: ['./app/config.json']
+  config: ['./app/config.json'],
+  templates: ['./www/templates/**/*.html']
 };
 
 gulp.task('default', ['sass', 'config']);
@@ -32,9 +34,18 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
+// TODO : enable to have a special buidl for phone
+//gulp.task('removeCode', function(done) {
+//  gulp.src('./www/templates/**/*.html')
+//    .pipe(removeCode({ production: true }))
+//    .pipe(gulp.dest('./dist/templates'))
+//    .on('end', done);
+//});
+
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
   //gulp.watch(paths.config, ['config']);
+  //gulp.watch(paths.templates, ['removeCode']);
 });
 
 gulp.task('install', ['git-check'], function() {
