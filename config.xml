@@ -1,11 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.cesium" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget
+  xmlns="http://www.w3.org/ns/widgets"
+  xmlns:cdv="http://cordova.apache.org/ns/1.0"
+  id="fr.duniter.cesium"
+  version="0.1.9"
+  android-versionCode="1"
+  >
     <name>Cesium</name>
     <description>
     A webapp client for Duniter
     </description>
-    <author email="contact@le-sou.org" href="http://le-sou.org">
-      le Sou
+    <author email="contact@duniter.fr" href="http://www.duniter.fr">
+      Duniter team
     </author>
     <content src="index.html" />
     <access origin="*" />

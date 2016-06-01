@@ -13,6 +13,7 @@ var fs = require("fs");
 var argv = require('yargs').argv;
 var header = require('gulp-header');
 var removeCode = require('gulp-remove-code');
+//var bump = require('gulp-bump');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -82,7 +83,8 @@ gulp.task('config', function (done) {
 
   gutil.log(gutil.colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
 
-  config['APP_CONFIG']['VERSION'] = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
+  config['APP_CONFIG']['VERSION'] = version;
   config['APP_CONFIG']['BUILD_DATE'] = (new Date()).toJSON();
 
   return ngConstant({
