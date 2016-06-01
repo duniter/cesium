@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A webapp client for Duniter network",
   "dependencies": {
     "gulp": "^3.9.1",
