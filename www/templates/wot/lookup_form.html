@@ -4,7 +4,7 @@
             <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
                    ng-model-options="{ debounce: 250 }"
-                   ng-change="searchChanged()" id="searchWot">
+                   ng-change="onWotSearchChanged()" id="searchWot">
         </label>
 
       <div class="list"

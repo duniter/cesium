@@ -117,8 +117,8 @@
   },
   "LOGIN": {
     "TITLE": "Login",
-    "USERNAME": "Email (or sentence)",
-    "USERNAME_HELP": "joe@domain.com",
+    "USERNAME": "Protection phrase",
+    "USERNAME_HELP": "Protection phrase",
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password"
   },
@@ -199,6 +199,7 @@
     "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
     "TAKE_PICTURE_FAILED": "Could not get picture.",
     "SCAN_FAILED": "Could not scan QR code.",
+    "SCAN_UNKNOWN_FORMAT": "Code not recognized.",
     "WOT_LOOKUP_FAILED": "Search failed.",
     "LOAD_NODE_DATA_FAILED": "Duniter Node not accessible. Please retry later.",
     "NEED_LOGIN_FIRST": "Please sign in first.",

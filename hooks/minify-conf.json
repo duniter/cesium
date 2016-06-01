@@ -15,6 +15,6 @@
     "cssOptions": {
       "keepSpecialComments": 0
     },
-    "alwaysRun": true,
+    "alwaysRun": false,
     "showErrStack": false
 }

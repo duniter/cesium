@@ -193,8 +193,11 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
       };
   }])
 
-.run(function($ionicPlatform, $rootScope, amMoment, $translate, Device) {
-  $ionicPlatform.ready(function() {
+.run(function($rootScope, amMoment, $translate, Device) {
+
+  // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
+  Device.ready()
+  .then(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -204,11 +207,6 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-
-      // Disable device services
-      if (!navigator.camera) {
-        Device.enable = false;
-      }
   });
 
   $rootScope.onLanguageChange = function() {

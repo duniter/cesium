@@ -1,19 +1,32 @@
 
 angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services'])
 
-.factory('Device', ['UIUtils', '$translate', '$ionicPopup', '$cordovaClipboard', '$cordovaBarcodeScanner', '$q', '$cordovaCamera',
-  function(UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner, $q, $cordovaCamera) {
+.factory('Device', ['UIUtils', '$translate', '$ionicPopup', '$cordovaClipboard', '$cordovaBarcodeScanner', '$q', '$cordovaCamera', '$ionicPlatform',
+  function(UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner, $q, $cordovaCamera, $ionicPlatform) {
 
   var CONST = {
     MAX_HEIGHT: 400,
     MAX_WIDTH: 400
   },
+  readyPromise,
   enable = false;
+
+  // Replace the '$ionicPlatform.ready()', to enable multiple calls
+  ready = function () {
+    if (!readyPromise) {
+      readyPromise = $ionicPlatform.ready();
+    }
+    return readyPromise;
+  };
+
+  isEnable = function() {
+    return enable;
+  };
 
   getPicture = function(sourceType) {
     return $q(function (resolve, reject) {
       if (!enable) {
-        reject('Camera not enable. Please set [Device.enable] to true before use.');
+        reject("Camera scanner not enable. Please call 'Device.ready()' once before use (e.g in app.js).");
         return;
       }
       if (!sourceType) {
@@ -64,13 +77,13 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
   scan = function () {
     return $q(function(resolve,reject){
       if (!enable) {
-        reject('Camera not enable. Please set [Device.enable] to true before use.');
+        reject("Barcode scanner not enable. Please call 'Device.ready()' once before use (e.g in app.js).");
         return;
       }
       $cordovaBarcodeScanner.scan()
       .then(function(result) {
         if (!result.cancelled) {
-          resolve(result);
+          resolve(result.text); // make sure to convert into String
         }
         else {
           resolve();
@@ -100,8 +113,20 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
       });
   };
 
+  // On platform ready: check if device could be used
+  ready().then(function() {
+    enable = !!navigator.camera;
+    if (!enable) {
+      console.log('Device service enable');
+    }
+    else {
+      console.log('Device service disable');
+    }
+  });
+
   return {
-    enable: enable,
+    ready: ready,
+    isEnable: isEnable,
     clipboard: {
       copy: copy
     },

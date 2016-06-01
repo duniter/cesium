@@ -131,6 +131,8 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
       }
       $scope.formData.callback = callback;
 
+      $scope.resetWotSearch(); // Reset WOT search
+
       $scope.loadWallet()
         .then(function(walletData) {
           UIUtils.loading.hide();

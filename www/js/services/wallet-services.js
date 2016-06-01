@@ -10,7 +10,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     USER_ID = "[A-Za-z0-9_-]*",
     PUBKEY  = "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
-    COMMENT = "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]{0,255}",
+    COMMENT = "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
+    URI = "duniter://[a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+",
 
     defaultSettings = {
       useRelative: true,
@@ -774,7 +775,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       fromJson: fromJson,
       defaultSettings: defaultSettings,
       regex: {
-        COMMENT: exact(COMMENT)
+        USER_ID: exact(USER_ID),
+        COMMENT: exact(COMMENT),
+        PUBKEY: exact(PUBKEY),
+        URI: exact(URI)
       }
     };
   };

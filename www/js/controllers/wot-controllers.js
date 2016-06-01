@@ -44,7 +44,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
 
-  $scope.searchChanged = function() {
+  $scope.onWotSearchChanged = function() {
     $scope.search.looking = true;
     var text = $scope.search.text.toLowerCase().trim();
     if (text.length === 0) {
@@ -80,22 +80,38 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
     }
   };
 
+  $scope.resetWotSearch = function() {
+    $scope.search = {
+      text: null,
+      looking: false,
+      results: []
+    };
+  };
+
   $scope.doSelectIdentity = function(pub, uid) {
     $state.go('app.view_identity', {pub: pub});
   };
 
   $scope.scanQrCode = function(){
-   if (!Device.enable) {
-    return;
-   }
-   Device.camera.scan()
-   .then(function(result) {
-     if (!result) {
-      $scope.search.text = result.text;
-     }
-   })
-   .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
- };
+    if (!Device.isEnable()) {
+      return;
+    }
+    Device.camera.scan()
+    .then(function(result) {
+      if (!result) {
+        return;
+      }
+      // TODO : parse URI (duniter:// )
+      //if (Wallet.regex.URI.test(result)) {
+      //  UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
+      //}
+      //else {
+      $scope.search.text = result;
+      $scope.onWotSearchChanged();
+      //}
+    })
+    .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+  };
 }
 
 function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
@@ -221,7 +237,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
 
   // Copy
   $scope.copy = function(value) {
-    if (value && Device.enable) {
+    if (value && Device.isEnable()) {
       Device.clipboard.copy(value);
     }
   };

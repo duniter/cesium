@@ -19,7 +19,7 @@
         <!-- username -->
         <label class="item item-input"
                ng-class="{ 'item-input-error': loginForm.$submitted && loginForm.username.$invalid}">
-          <span class="input-label" translate>LOGIN.USERNAME</span>
+          <span class="input-label hidden-xs" translate>LOGIN.USERNAME</span>
           <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
                  ng-model="loginData.username"
                  ng-change="loginDataChanged()"
@@ -37,7 +37,7 @@
         <!-- password-->
         <label class="item item-input"
                ng-class="{ 'item-input-error': loginForm.$submitted && loginForm.password.$invalid}">
-          <span class="input-label" translate>LOGIN.PASSWORD</span>
+          <span class="input-label hidden-xs" translate>LOGIN.PASSWORD</span>
           <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                  ng-model="loginData.password"
                  ng-change="loginDataChanged()"

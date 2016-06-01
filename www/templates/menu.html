@@ -77,7 +77,7 @@
           </button>
         </ion-item>
         <!-- scan QR code -->
-        <ion-item menu-close class="item item-button-right" ng-if="isLogged() && device.enable">
+        <ion-item menu-close class="item item-button-right" ng-if="isDeviceEnable()">
           <span translate>Scan</span>
           <button class="button button-energized-900" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>

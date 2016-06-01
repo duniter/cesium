@@ -32,7 +32,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   // Login modal
   $scope.loginModal = null;
   $scope.loginData = {
-    rememberMe: Wallet.defaultSettings.rememberMe
+    rememberMe: Wallet.data.settings.rememberMe
   };
   $rootScope.viewFirstEnter = false;
 
@@ -120,7 +120,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   $scope.cancelLogin = function() {
     var callback = $scope.loginData.callbacks.cancel;
     $scope.loginData = { // Reset login data
-      rememberMe: Wallet.defaultSettings.rememberMe
+      rememberMe: Wallet.data.settings.rememberMe
     };
     $scope.loginForm.$setPristine(); // Reset form
     $scope.loginModal.hide();
@@ -141,7 +141,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
       // Call wallet login, then execute callback function
       Wallet.login($scope.loginData.username, $scope.loginData.password)
         .then(function(walletData){
-          walletData.settings.rememberMe = $scope.formData.rememberMe;
+          walletData.settings.rememberMe = $scope.loginData.rememberMe;
           if (walletData.settings.rememberMe) {
             walletData.settings.useLocalStorage = true;
             Wallet.store();
@@ -218,18 +218,6 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     return !Wallet.isLogin();
   };
 
-  $scope.scanQrCode = function(){
-     if (Device.enable) {
-       Device.scan()
-       .then(function(result) {
-         if (result && result.text) {
-          $scope.search.text = result.text;
-         }
-       })
-       .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
-     }
-   };
-
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.loginData = {
@@ -286,18 +274,29 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   ////////////////////////////////////////
 
   $scope.isDeviceEnable = function() {
-    return Device.enable;
+    console.log("calling isDeviceEnable()=" + Device.isEnable());
+    return Device.isEnable();
   };
 
   $scope.scanQrCodeAndGo = function() {
-    if (!Device.enable) {
+    if (!Device.isEnable()) {
       return;
     }
     Device.camera.scan()
     .then(function(result) {
-      if (result && result.text) {
-        // Go To this pubkey
-        $state.go('app.view_identity', {pub: result.text});
+      if (!result) {
+        return;
+      }
+      // If pubkey
+      if (Wallet.regex.PUBKEY.test(result)) {
+        $state.go('app.view_identity', {pub: result});
+      }
+      else {
+        // TODO: parse URI (duniter:// )
+        //if (Wallet.regex.URI.test(result)) {
+        //
+        //}
+        UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
       }
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));

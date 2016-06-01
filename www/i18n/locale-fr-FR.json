@@ -117,8 +117,8 @@
   },
   "LOGIN": {
     "TITLE": "<i class=\"icon ion-locked\"></i> Connexion",
-    "USERNAME": "Adresse email",
-    "USERNAME_HELP": "dupond@domaine.com",
+    "USERNAME": "Phrase de protection",
+    "USERNAME_HELP": "Phrase de protection",
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe"
   },
@@ -199,6 +199,7 @@
     "COPY_CLIPBOARD_FAILED": "Copie de la valeur impossible.",
     "TAKE_PICTURE_FAILED": "Echec de la récupération de la photo.",
     "SCAN_FAILED": "Echec du scan de QR Code",
+    "SCAN_UNKNOWN_FORMAT": "Code non reconnu.",
     "WOT_LOOKUP_FAILED": "Echec de la recherche",
     "LOAD_NODE_DATA_FAILED": "Lecture du noeud Duniter impossible. Veuillez réessayer ultérieurement.",
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
