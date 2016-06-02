@@ -159,20 +159,20 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', ['$window', 'System', function ($window, System) {
+  .directive('copyOnClick', ['$window', 'Device', function ($window, Device) {
       return {
           restrict: 'A',
           link: function (scope, element, attrs) {
               element.bind('click', function () {
-                if (!System.clipboard.enable) {
+                if (!Device.clipboard.enable) {
                   if ($window.getSelection && !$window.getSelection().toString() && this.value) {
                     this.setSelectionRange(0, this.value.length);
                   }
                 }
               });
               element.bind('hold', function () {
-                if (System.clipboard.enable && this.value) {
-                  System.clipboard.copy(this.value);
+                if (Device.clipboard.enable && this.value) {
+                  Device.clipboard.copy(this.value);
                 }
               });
           }
@@ -180,7 +180,7 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
   }])
 
   // Add a select-on-click directive
-  .directive('selectOnClick', ['$window', 'System', function ($window, System) {
+  .directive('selectOnClick', ['$window', function ($window) {
       return {
           restrict: 'A',
           link: function (scope, element, attrs) {
