@@ -603,37 +603,49 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     */
     self = function(uid, requirements) {
       return $q(function(resolve, reject) {
+        loadParameters()
+        .then(function() {
+          BMA.blockchain.current()
+            .then(function (block) {
+              // Create identity to sign
+              var identity = 'Version: 2\n' +
+                'Type: Identity\n' +
+                'Currency: ' + data.currency + '\n' +
+                'Issuer: ' + data.pubkey + '\n' +
+                'UniqueID: ' + uid + '\n' +
+                'Timestamp: ' + block.number + '-' + block.hash + '\n';
 
-        BMA.blockchain.current()
-        .then(function(block) {
-          // Create identity to sign
-          var identity = 'Version: 2\n' +
-                    'Type: Identity\n' +
-                    'Currency: ' + data.currency + '\n' +
-                    'Issuer: ' + data.pubkey + '\n' +
-                    'UniqueID: ' + uid + '\n' +
-                    'Timestamp: ' + block.number + '-' + block.hash + '\n';
-
-          CryptoUtils.sign(identity, data.keypair)
-          .then(function(signature) {
-            var signedIdentity = identity + signature + '\n';
-            // Send signed identity
-            BMA.wot.add({identity: signedIdentity})
-            .then(function(result) {
-              if (!!requirements) {
-              // Refresh membership data
-                loadRequirements()
-                .then(function() {
-                  resolve();
-                }).catch(function(err){reject(err);});
-              }
-              else {
-                data.blockUid = block.number + '-' + block.hash;
-                resolve();
-              }
-            }).catch(function(err){reject(err);});
-          }).catch(function(err){reject(err);});
-        }).catch(function(err){reject(err);});
+              CryptoUtils.sign(identity, data.keypair)
+                .then(function (signature) {
+                  var signedIdentity = identity + signature + '\n';
+                  // Send signed identity
+                  BMA.wot.add({identity: signedIdentity})
+                    .then(function (result) {
+                      if (!!requirements) {
+                        // Refresh membership data
+                        loadRequirements()
+                          .then(function () {
+                            resolve();
+                          }).catch(function (err) {
+                          reject(err);
+                        });
+                      }
+                      else {
+                        data.blockUid = block.number + '-' + block.hash;
+                        resolve();
+                      }
+                    }).catch(function (err) {
+                    reject(err);
+                  });
+                }).catch(function (err) {
+                reject(err);
+              });
+            }).catch(function (err) {
+            reject(err);
+          });
+        }).catch(function (err) {
+          reject(err);
+        });
       });
     },
 
