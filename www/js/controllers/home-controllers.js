@@ -160,6 +160,9 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
       Wallet.login($scope.accountData.username, $scope.accountData.password)
         .then(function() {
           if (!$scope.accountData.isMember) {
+            // Reset account data, and open wallet view
+            $scope.cancel();
+            $state.go('app.view_wallet');
             return;
           }
 
