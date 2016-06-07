@@ -42,7 +42,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet) {
 
   $scope.onWotSearchChanged = function() {
     $scope.search.looking = true;
@@ -89,7 +89,12 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
   };
 
   $scope.doSelectIdentity = function(pub, uid) {
-    $state.go('app.view_identity', {pub: pub});
+    if (!!pub && Wallet.isLogin() && !!Wallet.data && Wallet.data.pubkey == pub) {
+      $state.go('app.view_wallet'); // open the user wallet
+    }
+    else {
+      $state.go('app.view_identity', {pub: pub});
+    }
   };
 
   $scope.scanQrCode = function(){

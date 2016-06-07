@@ -78,7 +78,7 @@ function TransferModalController($scope, $ionicModal, $state, BMA, Wallet, UIUti
   $scope.udAmount = null;
   $scope.commentPattern = Wallet.regex.COMMENT;
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, Device);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, Device, Wallet);
 
   // Create the login modal that we will use later
   $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
