@@ -36,36 +36,6 @@ Rendez-vous à l'adresse https://github.com/duniter/cesium. Cliquez sur le bouto
 
 ### Installer Git
 
-#### Sous Linux / MacOS
-
-Installer Node.js est devenu extrêmement simple pour ces OS : un outil vous permet d'installer la version de Node.js que vous souhaitez, en changer quand vous voulez et sans conflit avec une version précédente : il s'agit de [nvm](https://github.com/creationix/nvm).
-
-Vous pouvez installer nvm avec la commande suivante :
-
-```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash
-```
-
-Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 5) : 
-
-```bash
-nvm install 5
-```
-
-Vous aurez alors la dernière version de la branche 5.x de Node.js prête à l'emploi.
-
-##### Outils de compilation
-
-Installer les outils nécessaires pour la compilation.
-```bash
-sudo apt-get install build-essential
-```
-
-#### Sous Windows
-
-Pour Windows, téléchargez la version 5 disponible sur le site officiel de Node.js : https://nodejs.org
-
-Puis lancez l'installeur ainsi téléchargé.
 
 ### Cloner votre fork
 
@@ -108,6 +78,39 @@ Ce second niveau vise à obtenir les outils de base pour exécuter le code sourc
 * la vérification du bon fonctionnement du code source *via* le lancement de l'application, en mode web.
 
 Si l'application se lance, vous aurez dores et déjà un environnement entièrement **fonctionnel** !
+
+### Installer Node.js
+
+#### Sous Linux / MacOS
+
+Installer Node.js est devenu extrêmement simple pour ces OS : un outil vous permet d'installer la version de Node.js que vous souhaitez, en changer quand vous voulez et sans conflit avec une version précédente : il s'agit de [nvm](https://github.com/creationix/nvm).
+
+Vous pouvez installer nvm avec la commande suivante :
+
+```bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash
+```
+
+Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 5) : 
+
+```bash
+nvm install 5
+```
+
+Vous aurez alors la dernière version de la branche 5.x de Node.js prête à l'emploi.
+
+##### Outils de compilation
+
+Installer les outils nécessaires pour la compilation.
+```bash
+sudo apt-get install build-essential
+```
+
+#### Sous Windows
+
+Pour Windows, téléchargez la version 5 disponible sur le site officiel de Node.js : https://nodejs.org
+
+Puis lancez l'installeur ainsi téléchargé.
 
 ### Installer les modules Node.js de Cesium
 
