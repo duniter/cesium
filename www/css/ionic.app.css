@@ -12984,3 +12984,6 @@ a {
 @media screen and (max-width: 747px) {
   .no-margin-xs {
     margin: 0px !important; } }
+
+#unitPopover .item.selected {
+  background-color: #f8f8f8; }
