@@ -22,7 +22,9 @@
     "COPY": "Copy",
     "LANGUAGE": "Language",
     "BTN_PICTURE_DELETE": "Delete",
-    "BTN_PICTURE_FAVORISE": "Default"
+    "BTN_PICTURE_FAVORISE": "Default",
+    "UNIVERSAL_DIVIDEND": "Universal dividend",
+    "UD": "UD"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -106,7 +108,7 @@
     "CERTIFICATIONS_RECEIVED": "Received certifications",
     "CERTIFICATIONS_RECEIVED_BY": "Received certifications for {{uid}}",
     "EXPIRE_IN": "Expires",
-    "BTN_SEND_MONEY": "Send money",
+    "BTN_SEND_MONEY": "Send",
     "BTN_CERTIFY": "Certify",
     "LOOKUP": {
       "TITLE": "Registry"
@@ -133,11 +135,14 @@
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
     "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
     "CERTIFICATION_COUNT": "Certifications count",
-    "BTN_SEND_MONEY": "Send money",
+    "BTN_SEND_MONEY": "Send",
+    "BTN_RECEIVE_MONEY": "Receive",
     "BTN_MEMBERSHIP_IN": "Register as member",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
     "BTN_MEMBERSHIP_OUT": "Revoke membership",
     "BTN_SEND_IDENTITY": "Publish pseudonym (without register)",
+    "BTN_DETAILS": "Display technical details",
+    "BTN_HIDE_DETAILS": "Hide technical details",
     "NEW": {
       "TITLE": "New Account",
       "SLIDE_1_TITLE": "Select a money:",
@@ -162,10 +167,11 @@
     "TO": "To",
     "AMOUNT": "Amount",
     "AMOUNT_HELP": "Amount",
-    "COMMENT": "Reference",
-    "COMMENT_HELP": "Reference (optional)",
+    "COMMENT": "Comment",
+    "COMMENT_HELP": "Comment (optional)",
+    "CHOOSE_UNIT": "Unit of amount",
     "BTN_SEND": "Send",
-    "BTN_RELATIVE_UNIT": "Amount in relative unit ?",
+    "BTN_ADD_COMMENT": "Add comment ?",
     "MODAL": {
       "TITLE": "Transfer"
     }
@@ -207,6 +213,7 @@
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
     "INVALID_NODE_SUMMARY": "Unreachable node or invalid address",
+    "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special caracters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format."
   },
   "INFO": {

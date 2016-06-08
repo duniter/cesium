@@ -7,7 +7,21 @@ angular.module('cesium.bma.services', ['ngResource',
 
   function BMA(server, timeout) {
 
-    var sockets = [];
+    var
+    errorCodes = {
+        NO_MATCHING_IDENTITY: 2001,
+        UID_ALREADY_USED: 2003,
+        NO_MATCHING_MEMBER: 2004,
+        MEMBERSHRIP_ALREADY_SEND: 2007
+      },
+    regex = {
+      USER_ID: "[A-Za-z0-9_-]*",
+      PUBKEY: "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
+      COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
+      URI: "duniter://[a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+"
+    },
+    sockets = [];
+
     if (!timeout) {
       timeout=4000;
     }
@@ -114,6 +128,10 @@ angular.module('cesium.bma.services', ['ngResource',
       }
     }
 
+    function exact(regexpContent) {
+      return new RegExp("^" + regexpContent + "$");
+    }
+
     function copy(otherNode) {
       if (!!this.instance) {
         var instance = this.instance;
@@ -174,7 +192,14 @@ angular.module('cesium.bma.services', ['ngResource',
         },
         close : closeWs
       },
-      copy: copy
+      copy: copy,
+      errorCodes: errorCodes,
+      regex: {
+        USER_ID: exact(regex.USER_ID),
+        COMMENT: exact(regex.COMMENT),
+        PUBKEY: exact(regex.PUBKEY),
+        URI: exact(regex.URI)
+      }
     };
   }
 

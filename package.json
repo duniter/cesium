@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "A webapp client for Duniter network",
   "dependencies": {
     "gulp": "^3.9.1",
@@ -38,6 +38,9 @@
   ],
   "cordovaPlatforms": [
     "ios",
-    "android"
+    {
+      "platform": "android",
+      "locator": "firefoxos"
+    }
   ]
 }

@@ -1,0 +1,20 @@
+<ion-popover-view>
+  <ion-header-bar>
+    <h1 class="title" translate>TRANSFER.CHOOSE_UNIT</h1>
+  </ion-header-bar>
+  <ion-content>
+    <div class="list">
+    <a class="item item-icon-left"
+       ng-class="{ 'positive': !formData.useRelative}"
+            ng-click="setUseRelative(false)">
+      <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': !formData.useRelative}"></i>
+      {{walletData.currency| abbreviate}}
+    </a>
+    <a class="item item-icon-left"
+         ng-class="{ 'positive': formData.useRelative}"
+          ng-click="setUseRelative(true)">
+      <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': formData.useRelative}"></i>
+      {{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub></a>
+    </div>
+  </ion-content>
+</ion-popover-view>

@@ -22,7 +22,9 @@
     "COPY": "Copier",
     "LANGUAGE": "Langue",
     "BTN_PICTURE_DELETE": "Supprimer",
-    "BTN_PICTURE_FAVORISE": "Principale"
+    "BTN_PICTURE_FAVORISE": "Principale",
+    "UNIVERSAL_DIVIDEND": "Dividende universel",
+    "UD": "DU"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -134,10 +136,13 @@
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt manquer de certifications",
     "CERTIFICATION_COUNT": "Nombre de certifications",
     "BTN_SEND_MONEY": "Payer",
+    "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller son adhésion comme membre",
     "BTN_MEMBERSHIP_OUT": "Arrêter son adhésion",
     "BTN_SEND_IDENTITY": "Publier le pseudonyme",
+    "BTN_SHOW_DETAILS": "Afficher les infos techniques",
+    "BTN_HIDE_DETAILS": "Masquer les infos techniques",
     "NEW": {
       "TITLE": "Inscription",
       "SLIDE_1_TITLE": "Choix de la monnaie :",
@@ -162,10 +167,11 @@
     "TO": "A",
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
-    "COMMENT": "Référence",
-    "COMMENT_HELP": "Référence (optionnelle)",
+    "COMMENT": "Commentaire",
+    "COMMENT_HELP": "Commentaire",
+    "CHOOSE_UNIT": "Unité du montant",
     "BTN_SEND": "Envoyer",
-    "BTN_RELATIVE_UNIT": "Montant en unité relative ?",
+    "BTN_ADD_COMMENT": "Saisir un commentaire ?",
     "MODAL": {
       "TITLE": "Paiement"
     }
@@ -205,8 +211,9 @@
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
-    "NOT_ENOUGH_CREDIT": "Crédit insufissant.",
+    "NOT_ENOUGH_CREDIT": "Crédit insufisant.",
     "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide.",
+    "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués."
   },
   "INFO": {

@@ -36,6 +36,7 @@ Rendez-vous à l'adresse https://github.com/duniter/cesium. Cliquez sur le bouto
 
 ### Installer Git
 
+L'installation de Git dépend de votre système d'exploitation. Suivez simplement les indications présentes sur : https://git-scm.com/
 
 ### Cloner votre fork
 

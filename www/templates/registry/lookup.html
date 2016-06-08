@@ -13,7 +13,7 @@
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
-                   ng-model-options="{ debounce: 250 }"
+                   ng-model-options="{ debounce: 350 }"
                    ng-change="doSearch()"
                    id="searchText">
         </label>
@@ -40,7 +40,7 @@
                 <label class="item-input-wrapper">
                     <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}"
                            ng-model="search.location"
-                           ng-model-options="{ debounce: 250 }"
+                           ng-model-options="{ debounce: 350 }"
                            ng-change="doSearch()"/>
                 </label>
             </div>

@@ -195,6 +195,8 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
 
 .run(function($rootScope, amMoment, $translate, Device) {
 
+  $rootScope.translations = [];
+
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
   Device.ready()
   .then(function() {
@@ -216,6 +218,7 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
 
   // Set up moment translation
   $rootScope.$on('$translateChangeSuccess', $rootScope.onLanguageChange);
+
 
 })
 ;

@@ -69,7 +69,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
           $scope.search.looking = false;
         })
         .catch(function(err) {
-          if (err && err.ucode == 2001) {
+          if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
             $scope.search.results = [];
             $scope.search.looking = false;
           }
@@ -206,7 +206,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
         .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
       })
       .catch(function(err) {
-        if (!!err && err.ucode == 2001) { // Identity not found (if no self)
+        if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) { // Identity not found (if no self)
           $scope.hasSelf = false;
           $scope.identity = {
             uid: null,
@@ -347,7 +347,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
         onLoadFinish();
       })
       .catch(function(err) {
-        if (!!err && err.ucode == 2001) { // Identity not found (if no self)
+        if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) { // Identity not found (if no self)
           $scope.certifications = [];
           $scope.timeWarningExpire = Wallet.defaultSettings.timeWarningExpire;
           $scope.identity = {};
@@ -378,7 +378,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
         onLoadRequirementsFinish(idty.certifications); // Continue
       })
       .catch(function(err) {
-        if (!!err && err.ucode == 2004) { // Identity not found (if no self)
+        if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) {
           onLoadRequirementsFinish([]); // Continue
         }
         else {

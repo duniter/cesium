@@ -10,8 +10,11 @@
              style="background-image: url({{identity.avatar}});"></div>
         <i class="avatar avatar-member" ng-if="!identity.avatar"></i>
         <h3 class="light">{{identity.uid}}</h3>
-        <h4 class="light">
+        <h4 class="light" ng-if="identity.pub">
           {{identity.pub | formatPubkey}}
+        </h4>
+        <h4 class="light" ng-if="!identity.pub">
+          <ion-spinner icon="android"></ion-spinner>
         </h4>
       </div>
     </div>
@@ -22,10 +25,6 @@
         <button class="button button-raised button-assertive ink-dark"
                 ng-click="transfer(identity.pub, identity.uid)">
           {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
-        </button>
-
-        <button class="button button-raised icon-left ion-ribbon-b" ng-click="certifyIdentity()" ng-if="hasSelf">
-          {{'WOT.BTN_CERTIFY' | translate}}
         </button>
       </div>
 
@@ -60,7 +59,7 @@
                     on-hold="copy(identity.pub)"
                     copy-on-click>
             <i class="icon ion-key"></i>
-            <span id="pubkey">{{::identity.pub}}</span>
+            <h4 id="pubkey" class="dark">{{::identity.pub}}</h4>
           </ion-item>
         </div>
 

@@ -231,7 +231,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
 
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $translate
+  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $translate, $ionicPopover
   ) {
 
   $scope.knownCurrencies = null;
@@ -243,7 +243,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device);
+  TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover);
 
   ////////////////////////////////////////
   // Load currencies
@@ -274,7 +274,6 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   ////////////////////////////////////////
 
   $scope.isDeviceEnable = function() {
-    console.log("calling isDeviceEnable()=" + Device.isEnable());
     return Device.isEnable();
   };
 
@@ -382,7 +381,9 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
           fab.classList.toggle('on', true);
         }
       });
-    }, 900);
+    }, timeout);
   };
+
+
 }
 
