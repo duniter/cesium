@@ -180,10 +180,12 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
         $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
 
         // Retrieve cert count
+        var certPubkeys = [];
         $scope.certificationCount = res.results.reduce(function(sum, res) {
           return res.uids.reduce(function(sum, idty) {
             return idty.others.reduce(function(sum, cert) {
-              if (cert.isMember) { // skip cert from not member
+              if (cert.isMember && !certPubkeys[cert.pubkey]) { // skip cert from not member
+                certPubkeys[cert.pubkey] = true;
                 return sum + 1;
               }
               return sum;
