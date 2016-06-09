@@ -58,7 +58,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
           var idties = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
               var blocUid = idty.meta.timestamp.split('-', 2);
-              var idtyKey = idty.uid + '-' + res.pubkey
+              var idtyKey = idty.uid + '-' + res.pubkey;
               if (!idtyKeys[idtyKey] && !idty.revoked) {
                 idtyKeys[idtyKey] = true;
                 return uids.concat({
