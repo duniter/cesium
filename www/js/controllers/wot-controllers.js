@@ -54,16 +54,25 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     else {
       return BMA.wot.lookup({ search: text })
         .then(function(res){
+          var idtyKeys = [];
           var idties = res.results.reduce(function(idties, res) {
-            return idties.concat(res.uids.reduce(function(uids, idty) {
+            var uids = res.uids.reduce(function(uids, idty) {
               var blocUid = idty.meta.timestamp.split('-', 2);
-              return uids.concat({
-                uid: idty.uid,
-                pub: res.pubkey,
-                number: blocUid[0],
-                hash: blocUid[1]
-              });
-            }, []));
+              var idtyKey = idty.uid + '-' + res.pubkey
+              if (!idtyKeys[idtyKey] && !idty.revoked) {
+                idtyKeys[idtyKey] = true;
+                return uids.concat({
+                  uid: idty.uid,
+                  pub: res.pubkey,
+                  number: blocUid[0],
+                  hash: blocUid[1]
+                });
+              }
+              else {
+                return uids;
+              }
+            }, []);
+            return uids.length > 0 ? idties.concat(uids) : idties;
           }, []);
           $scope.search.results = idties;
           $scope.search.looking = false;
