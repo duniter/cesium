@@ -110,6 +110,7 @@
     "CERTIFICATIONS_RECEIVED": "Received certifications",
     "CERTIFICATIONS_RECEIVED_BY": "Received certifications for {{uid}}",
     "EXPIRE_IN": "Expires",
+    "SIGNED_ON_BLOCK": "Certify on block",
     "BTN_SEND_MONEY": "Send",
     "BTN_CERTIFY": "Certify",
     "LOOKUP": {

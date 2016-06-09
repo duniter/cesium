@@ -56,7 +56,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
         .then(function(res){
           var idtyKeys = [];
           var idties = res.results.reduce(function(idties, res) {
-            var uids = res.uids.reduce(function(uids, idty) {
+            return idties.concat(res.uids.reduce(function(uids, idty) {
               var blocUid = idty.meta.timestamp.split('-', 2);
               var idtyKey = idty.uid + '-' + res.pubkey
               if (!idtyKeys[idtyKey] && !idty.revoked) {
@@ -68,11 +68,8 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
                   hash: blocUid[1]
                 });
               }
-              else {
-                return uids;
-              }
-            }, []);
-            return uids.length > 0 ? idties.concat(uids) : idties;
+              return uids;
+            }, []));
           }, []);
           $scope.search.results = idties;
           $scope.search.looking = false;
@@ -335,22 +332,32 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
           map[cert.from]=cert.expiresIn;
           return map;
         }, []);
-        $scope.certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
+        var certPubkeys = [];
+        var certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
           return certs.concat(res.uids.reduce(function(certs, idty) {
-
             return certs.concat(idty.others.reduce(function(certs, cert) {
-              if (cert.isMember) { // skip cert from not member
+              if (!certPubkeys[cert.pubkey]) { // skip duplicated certs
+                certPubkeys[cert.pubkey] = true;
                 return certs.concat({
                   from: cert.pubkey,
                   uid: cert.uids[0],
                   to: pub,
-                  expiresIn: expiresInByPub[cert.pubkey]
+                  block: (cert.meta && cert.meta.block_number) ? cert.meta.block_number : 0,
+                  expiresIn: cert.isMember ? expiresInByPub[cert.pubkey] : null,
+                  isMember: cert.isMember
                 });
               }
               return certs;
             }, certs));
           }, certs));
         }, []);
+        $scope.certifications = _.sortBy(certifications, function(cert){
+          var score = 1;
+          score += (1000000000000 * (cert.expiresIn ? cert.expiresIn : 0));
+          score += (10000000      * (cert.isMember ? 1 : 0));
+          score += (10            * (cert.block ? cert.block : 0));
+          return -score;
+        });
         $scope.canCertify = !Wallet.isLogin() || Wallet.data.pubkey != pub;
         $scope.alreadyCertified = (Wallet.isLogin() && Wallet.data.pubkey != pub && Wallet.data.isMember) ? !!_.findWhere($scope.certifications, { uid: Wallet.data.uid }) : false;
         onLoadFinish();
