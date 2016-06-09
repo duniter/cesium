@@ -185,7 +185,7 @@
     "FIELD_REQUIRED": "Champ obligatoire.",
     "FIELD_TOO_SHORT": "Valeur trop courte.",
     "FIELD_TOO_LONG": "Valeur trop longue",
-    "FIELD_ACCENT": "Caractères accentués non autorisés",
+    "FIELD_ACCENT": "Caractères accentués et virgules non autorisés",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SEND_IDENTITY_FAILED": "Erreur pendant l'inscription.",
     "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité.",

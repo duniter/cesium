@@ -185,7 +185,7 @@
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "This field value is too short.",
     "FIELD_TOO_LONG": "This field value is exeeding max length.",
-    "FIELD_ACCENT": "Accent character not allowed",
+    "FIELD_ACCENT": "Commas and accent characters not allowed",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
