@@ -87,6 +87,8 @@ gulp.task('config', function (done) {
   config['APP_CONFIG']['VERSION'] = version;
   config['APP_CONFIG']['BUILD_DATE'] = (new Date()).toJSON();
 
+  // TODO : change version config.xml file
+
   return ngConstant({
       name: 'cesium.config',
       constants: config,

@@ -791,6 +791,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
   };
 
   var service = Wallet('default');
+
+  // try to restore wallet
+  service.restore();
+
   service.instance = Wallet;
   return service;
 }])

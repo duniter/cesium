@@ -287,12 +287,12 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
         return;
       }
       // If pubkey
-      if (Wallet.regex.PUBKEY.test(result)) {
+      if (BMA.regex.PUBKEY.test(result)) {
         $state.go('app.view_identity', {pub: result});
       }
       else {
         // TODO: parse URI (duniter:// )
-        //if (Wallet.regex.URI.test(result)) {
+        //if (BMA.regex.URI.test(result)) {
         //
         //}
         UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
