@@ -39,6 +39,14 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
     };
   })
 
+  .filter('formatPeriod', function() {
+    return function(input) {
+      if (!input) {return null;}
+      var duration = moment(0).startOf('minute').from(moment(parseInt(input)*1000), true);
+      return duration.split(" ").slice(-1)[0]; // keep only the last word (e.g. remove "un" "a"...)
+    };
+  })
+
   .filter('abbreviate', function() {
     return function(input) {
       var unit = '', sepChars = ['-', '_', ' '], currency = input || '';

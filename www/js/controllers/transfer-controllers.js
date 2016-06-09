@@ -186,6 +186,14 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
   $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
 
+  // When changing use comment
+  $scope.onUseCommentChanged = function() {
+    if (!$scope.formData.useComment) {
+      $scope.formData.comment = null; // reset comment only when disable
+    }
+  }
+  $scope.$watch('formData.useComment', $scope.onUseCommentChanged, true);
+
   $scope.openWotLookup = function() {
     $scope.lookupModal.show();
   };
@@ -204,8 +212,7 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
       amount = $scope.walletData.currentUD *
                amount.replace(new RegExp('[.,]'), '.');
     }
-    var comment = $scope.formData.useComment ? $scope.formData.comment : null;
-    Wallet.transfer($scope.formData.destPub, amount, comment)
+    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment)
     .then(function() {
        var callback = $scope.formData.callback;
         $scope.formData = {}; // Reset form data

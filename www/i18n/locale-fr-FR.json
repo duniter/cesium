@@ -23,7 +23,7 @@
     "LANGUAGE": "Langue",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
-    "UNIVERSAL_DIVIDEND": "Dividende universel",
+    "UNIVERSAL_DIVIDEND": "Dividend universel",
     "UD": "DU"
   },
   "SYSTEM": {
@@ -92,7 +92,9 @@
       "TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau de difficulté",
       "RULES_DIVIDER": "Règles",
-      "C_RULE": "c"
+      "C_RULE": "c",
+      "UD_RULE": "Dividend universel (formule)",
+      "SIG_QTY_RULE": "Certifications requises"
     }
   },
   "PEER": {

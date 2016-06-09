@@ -20,13 +20,14 @@
               ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
               <ion-spinner icon="android" ng-if="!walletData.pubkey"></ion-spinner>
               <span ng-if="walletData.pubkey && !walletData.isMember">
-              {{walletData.pubkey| formatPubkey}}&nbsp;/&nbsp;
+              {{walletData.pubkey| formatPubkey}}&nbsp;(&nbsp;
               </span>
               <span ng-if="walletData.isMember">
-                {{walletData.uid}}&nbsp;/&nbsp;
+                {{walletData.uid}}&nbsp;(&nbsp;
               </span>
               <span ng-if="walletData.pubkey && !formData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
               <span ng-if="walletData.pubkey && formData.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub></span>
+              &nbsp;)
           </span>
       </span>
 
@@ -42,7 +43,7 @@
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub>)</span>
           <input type="text" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{'COMMON.UD' | translate}} {{unit | abbreviate}})" ng-model="formData.amount"
                  required>
-        <i class="icon ion-android-more-vertical"ng-click="unitPopover.show($event)" >
+        <i class="gray icon ion-android-more-vertical"ng-click="unitPopover.show($event)" >
         </i>
       </div>
       <div class="form-errors"
@@ -54,7 +55,7 @@
       </div>
 
       <!-- Enable comment ? -->
-      <div class="item item-content item-toggle dark">
+      <div class="item item-content item-toggle dark visible-xs visible-sm">
         <span class="input-label gray">{{'TRANSFER.BTN_ADD_COMMENT' | translate}}</span>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.useComment">
@@ -65,7 +66,17 @@
       </div>
 
       <!-- Comment -->
-      <label class="item item-input item-floating-label"
+      <label class="item item-input item-floating-label hidden-xs hidden-sm"
+             ng-class="{'item-input-error': transferForm.$submitted && transferForm.comment.$invalid}">
+        <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
+        <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
+                  name="comment"
+                  ng-model="formData.comment"
+                  ng-maxlength="255"
+                  ng-pattern="commentPattern">
+        </textarea>
+      </label>
+      <label class="item item-input item-floating-label visible-xs visible-sm"
              ng-if="formData.useComment"
              ng-class="{'item-input-error': transferForm.$submitted && transferForm.comment.$invalid}">
         <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
@@ -73,9 +84,8 @@
                   name="comment"
                   ng-model="formData.comment"
                   ng-maxlength="255"
-                  ng-pattern="commentPattern"
-        >
-          </textarea>
+                  ng-pattern="commentPattern">
+        </textarea>
       </label>
       <div class="form-errors"
            ng-show="transferForm.$submitted && transferForm.comment.$error"

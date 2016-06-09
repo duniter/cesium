@@ -92,7 +92,9 @@
       "TIME": "Current time",
       "POW_MIN": "Common difficulty",
       "RULES_DIVIDER": "Rules",
-      "C_RULE": "c"
+      "C_RULE": "c",
+      "UD_RULE": "Universal dividend (formula)",
+      "SIG_QTY_RULE": "Required certifications"
     }
   },
   "PEER": {

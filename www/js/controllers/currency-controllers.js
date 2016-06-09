@@ -201,6 +201,8 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
           $scope.c = json.c;
           $scope.baseUnit = json.currency;
           $scope.unit = json.currency;
+          $scope.dt = json.dt;
+          $scope.sigQty = json.sigQty;
         }),
 
       // Get the current block informations

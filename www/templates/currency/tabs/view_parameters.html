@@ -40,13 +40,13 @@
         <a class="item item-icon-left" ui-sref="app.currency_ud">
             <i class="icon ion-load-c"></i>
             <span translate>CURRENCY.VIEW.UD</span>
-            <span class="badge badge-royal">{{UD | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</span>
+            <span class="badge badge-royal">{{UD | formatInteger}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
         </a>
 
         <a class="item item-icon-left" href="#">
             <i class="icon ion-arrow-graph-up-right"></i>
             <span translate>CURRENCY.VIEW.C_ACTUAL</span>
-            <span class="badge badge-stable">{{cactual | formatInteger}} %</span>
+            <span class="badge badge-stable">{{cactual | formatInteger}}%&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
         </a>
 
         <div class="item item-toggle dark">
@@ -79,15 +79,21 @@
             <span translate>CURRENCY.VIEW.RULES_DIVIDER</span>
         </div>
 
-        <a class="item item-icon-left" href="#">
+        <ion-item class="item item-icon-left">
             <i class="icon ion-arrow-graph-up-right"></i>
             <span translate>CURRENCY.VIEW.C_RULE</span>
-            <span class="badge badge-stable">{{c*100 | formatInteger}}%</span>
-        </a>
+            <span class="badge badge-stable">{{c*100 | formatInteger}}%&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
+        </ion-item>
 
-        <a class="item item-icon-left" href="#">
+        <ion-item class="item item-icon-left">
             <i class="icon ion-load-c"></i>
-            <span translate>CURRENCY.VIEW.UD</span>
+            <span translate>CURRENCY.VIEW.UD_RULE</span>
             <span class="item-note">MAX(UD<sub>t-1</sub>, c*M/N)</span>
-        </a>
+        </ion-item>
+
+        <ion-item class="item-icon-left">
+          <i class="icon ion-ribbon-b"></i>
+          <span translate>CURRENCY.VIEW.SIG_QTY_RULE</span>
+          <span class="badge badge-stable">{{sigQty}}</span>
+        </ion-item>
     </div>
