@@ -191,7 +191,7 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
     if (!$scope.formData.useComment) {
       $scope.formData.comment = null; // reset comment only when disable
     }
-  }
+  };
   $scope.$watch('formData.useComment', $scope.onUseCommentChanged, true);
 
   $scope.openWotLookup = function() {
