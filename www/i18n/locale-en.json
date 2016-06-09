@@ -63,6 +63,8 @@
     "NODE": "Node address",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
+    "HISTORY_SETTINGS": "My Account",
+    "DISPLAY_UD_HISTORY": "Show received dividends ?",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
     "POPUP_NODE": {

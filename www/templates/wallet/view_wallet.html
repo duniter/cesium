@@ -122,9 +122,13 @@
                       <i class="icon ion-person"></i>
                       {{::tx.uid}}
                     </span>
-                    <span class="positive" ng-if="!tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
+                    <span class="positive" ng-if="!tx.uid && !tx.isUD" ui-sref="app.view_identity({pub:tx.pubkey})">
                       <i class="icon ion-key"></i>
                       {{::tx.pubkey | formatPubkey}}
+                    </span>
+                    <span class="energized" ng-if="tx.isUD">
+                      <i class="icon ion-arrow-up-c"></i>
+                      {{'COMMON.UNIVERSAL_DIVIDEND' | translate}}
                     </span>
                     <span  ng-if="tx.comment" class="hidden-xs">&nbsp;
                       <i class="icon ion-ios-chatbubble-outline"></i>
@@ -143,7 +147,7 @@
                     </span>
                   </h3>
                   <div class="badge item-note"
-                       ng-class="{'badge-balanced': tx.amount > 0}">
+                       ng-class="{'badge-balanced': tx.amount > 0 && !tx.isUD, 'badge-energized': tx.isUD}">
                     <span ng-if="!walletData.settings.useRelative">{{tx.amount | formatInteger}}</span>
                     <span ng-if="walletData.settings.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
                   </div >

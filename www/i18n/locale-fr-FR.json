@@ -63,6 +63,8 @@
     "NODE": "Adresse du noeud",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
+    "HISTORY_SETTINGS": "Mon compte",
+    "DISPLAY_UD_HISTORY": "Voir les dividends reçus ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "REMEMBER_ME": "Se souvenir de moi",
     "POPUP_NODE": {

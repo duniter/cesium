@@ -173,7 +173,6 @@ angular.module('cesium.bma.services', ['ngResource',
           tx: getResource('http://' + server + '/blockchain/with/tx')
         }
       },
-
       tx: {
         sources: getResource('http://' + server + '/tx/sources/:pubkey'),
         process: postResource('http://' + server + '/tx/process'),
@@ -182,6 +181,9 @@ angular.module('cesium.bma.services', ['ngResource',
           times: getResource('http://' + server + '/tx/history/:pubkey/times/:from/:to'),
           blocks: getResource('http://' + server + '/tx/history/:pubkey/blocks/:from/:to')
         }
+      },
+      ud: {
+        history: getResource('http://' + server + '/ud/history/:pubkey')
       },
       websocket: {
         block: function() {

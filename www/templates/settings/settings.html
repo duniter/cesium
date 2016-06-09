@@ -3,17 +3,17 @@
           id="settings">
 
     <ion-content >
-        <div class="item item-toggle dark">
-          <div class="input-label">
-            {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
-          </div>
-          <label class="toggle toggle-royal">
-              <input type="checkbox" ng-model="formData.useRelative">
-              <div class="track">
-                  <div class="handle"></div>
-              </div>
-          </label>
+      <div class="item item-toggle dark">
+        <div class="input-label">
+          {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
         </div>
+        <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.useRelative">
+            <div class="track">
+                <div class="handle"></div>
+            </div>
+        </label>
+      </div>
 
       <label class="item item-input item-select">
         <div class="input-label">
@@ -31,6 +31,22 @@
         </div>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.useLocalStorage" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+      <span class="item item-divider">
+        {{'SETTINGS.HISTORY_SETTINGS' | translate}}
+      </span>
+
+      <div class="item item-toggle dark">
+        <div class="input-label">
+          {{'SETTINGS.DISPLAY_UD_HISTORY' | translate}}
+        </div>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.showUDHistory" >
           <div class="track">
             <div class="handle"></div>
           </div>

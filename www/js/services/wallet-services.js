@@ -13,7 +13,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/,
       useLocalStorage: false,
       rememberMe: false,
-      node: BMA.node.url
+      node: BMA.node.url,
+      showUDHistory: true
     },
 
     data = {
@@ -42,7 +43,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           locale: {id: $translate.use()},
           useLocalStorage: defaultSettings.useLocalStorage,
           rememberMe: defaultSettings.rememberMe,
-          node: defaultSettings.node
+          node: defaultSettings.node,
+          showUDHistory: defaultSettings.showUDHistory
         }
     },
 
@@ -73,7 +75,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           locale: {id: $translate.use()},
           useLocalStorage: defaultSettings.useLocalStorage,
           rememberMe: defaultSettings.rememberMe,
-          node: BMA.node.url // If changed, use the updated url
+          node: BMA.node.url, // If changed, use the updated url
+          showUDHistory: defaultSettings.showUDHistory
         };
       }
     },
@@ -347,17 +350,40 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     loadTransactions = function() {
       return $q(function(resolve, reject) {
-        // Get transactions
-        BMA.tx.history.all({pubkey: data.pubkey})
-        .then(function(res){
-          var list = [];
-          var processedTxMap = {};
-          reduceTxAndPush(res.history.sent, list, processedTxMap);
-          reduceTxAndPush(res.history.received, list, processedTxMap);
-          reduceTxAndPush(res.history.sending, list, processedTxMap);
-          reduceTxAndPush(res.history.pending, list, processedTxMap);
+        var jobs = [];
+        // get TX history
+        var txList = [];
+        jobs.push(
+          BMA.tx.history.all({pubkey: data.pubkey})
+          .then(function(res){
+            var processedTxMap = {};
+            reduceTxAndPush(res.history.sent, txList, processedTxMap);
+            reduceTxAndPush(res.history.received, txList, processedTxMap);
+            reduceTxAndPush(res.history.sending, txList, processedTxMap);
+            reduceTxAndPush(res.history.pending, txList, processedTxMap);
+          }));
+        // get UD history
+        var udList = [];
+        if (data.settings.showUDHistory) {
+          jobs.push(
+            BMA.ud.history({pubkey: data.pubkey})
+            .then(function(res){
+              udList = !res.history || !res.history.history ? [] :
+               res.history.history.reduce(function(res, ud){
+                 return res.concat({
+                   time: ud.time,
+                   amount: ud.amount,
+                   isUD: true,
+                   block_number: ud.block_number
+                 });
+               }, []);
+            }));
+        }
+        // Execute jobs
+        $q.all(jobs)
+        .then(function(){
           // sort by time desc
-          data.history = list.sort(function(tx1, tx2) {
+          data.history = txList.concat(udList).sort(function(tx1, tx2) {
              return tx2.time - tx1.time;
           });
           resolve();
