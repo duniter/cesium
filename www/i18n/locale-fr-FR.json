@@ -23,7 +23,7 @@
     "LANGUAGE": "Langue",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
-    "UNIVERSAL_DIVIDEND": "Dividend universel",
+    "UNIVERSAL_DIVIDEND": "Dividende universel",
     "UD": "DU"
   },
   "SYSTEM": {
@@ -64,7 +64,7 @@
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "HISTORY_SETTINGS": "Mon compte",
-    "DISPLAY_UD_HISTORY": "Voir les dividends reçus ?",
+    "DISPLAY_UD_HISTORY": "Voir les dividendes reçus ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "REMEMBER_ME": "Se souvenir de moi",
     "POPUP_NODE": {
@@ -88,14 +88,14 @@
       "MONEY_DIVIDER": "Monnaie",
       "MASS": "Masse monétaire",
       "SHARE": "Masse par membre",
-      "UD": "Dividend universel",
+      "UD": "Dividende universel",
       "C_ACTUAL": "c<sub>actuel</sub>",
       "BLOCKCHAIN_DIVIDER": "Blockchain",
       "TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau de difficulté",
       "RULES_DIVIDER": "Règles",
       "C_RULE": "c",
-      "UD_RULE": "Dividend universel (formule)",
+      "UD_RULE": "Dividende universel (formule)",
       "SIG_QTY_RULE": "Certifications requises"
     }
   },
