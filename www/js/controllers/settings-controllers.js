@@ -36,7 +36,9 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
     Wallet.restore()
     .then(function() {
       angular.merge($scope.formData, Wallet.data.settings);
-      $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+      if (Wallet.data.settings.locale && Wallet.data.settings.locale.id) {
+        $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+      }
       UIUtils.loading.hide();
       $scope.loading = false;
     })
