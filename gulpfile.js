@@ -38,7 +38,7 @@ var paths = {
   templates: ['./www/templates/**/*.html'],
   templatecache: ['./www/templates/**/*.html'],
   ng_translate: ['./www/i18n/locale-*.json'],
-  ng_annotate: ['./www/js/*.js']
+  ng_annotate: ['./www/js/**/*.js']
 };
 
 gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate']);
