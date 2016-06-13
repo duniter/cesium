@@ -4,6 +4,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var bower = require('bower');
 var concat = require('gulp-concat');
+var path = require("path");
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
@@ -291,4 +292,37 @@ gulp.task('build:web', ['zip:web'], function(done) {
   return del([
       './tmp'
     ]);
+});
+
+gulp.task('deploy:android', function (done) {
+  var config = require('./hooks/playstore-config.json');
+
+  if(!config) {
+    gutil.log(gutil.colors.red("ERROR => Could not load `./hooks/playstore-config.json` file!"));
+    return done();
+  }
+  if(!config.client_email || !config.private_key) {
+    gutil.log(gutil.colors.red("ERROR => Could not found 'client_email' or 'private_key' in 'hooks/playstore-config.json' file."));
+    return done();
+  }
+
+  var publisher = require('playup')(config);
+
+  var apkFileLocation = path.join('.', 'platforms', 'android', 'build', 'outputs', 'apk', 'android-release.apk');
+  console.log('Publishing APK file [' + apkFileLocation + '] to playstore...');
+
+  publisher.upload(apkFileLocation, {
+    track: 'production',
+    recentChanges: {
+      'fr-FR': 'New stable release'
+    }
+  })
+  .then(function (data) {
+    console.log(' > APK has been deployed to playstore !');
+    done();
+  })
+  .catch(function(err){
+    console.log(err);
+    done();
+  });
 });

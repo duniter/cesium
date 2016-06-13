@@ -21,3 +21,4 @@ www/lib/angular-moment
 www/lib/moment
 www/lib/waves
 www/dist
+hooks/playstore-config.json
