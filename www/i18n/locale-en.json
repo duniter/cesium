@@ -229,6 +229,6 @@
   "CONFIRM": {
     "POPUP_TITLE": "Confirmation",
     "CERTIFY_WARNING": "Security warning",
-    "CERTIFY_RULES": "<small><b class=\"assertive\">Don't certify an account</b> if you believe: <ul><li>1.)  the issuers identity might be faked.<li>2.) Don't certify an account if you believe the issuer already has another certified account.<li>3.) Don't certify an account if you believe the issuer purposely or carelessly violates rule 1 or 2 (the issuer certifies faked or double accounts.</ul></small><br/>Are you sure you want to certify this identity ?"
+    "CERTIFY_RULES": "<small><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?"
   }
 }
