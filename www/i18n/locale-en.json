@@ -224,7 +224,8 @@
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Identity successfully signed",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "TRANSFER_SENT": "Transaction successfully sent."
+    "TRANSFER_SENT": "Transaction successfully sent.",
+    "COPY_TO_CLIPBOARD_DONE": "Copy succeed."
   },
   "CONFIRM": {
     "POPUP_TITLE": "Confirmation",

@@ -225,6 +225,7 @@
     "CERTIFICATION_DONE": "Certification envoyée avec succès.",
     "NOT_ENOUGH_CREDIT": "Crédit insuffisant.",
     "TRANSFER_SENT": "La transaction a été envoyée avec succès.",
+    "COPY_TO_CLIPBOARD_DONE": "Copie effectuée."
   },
   "CONFIRM": {
     "POPUP_TITLE": "Confirmation",

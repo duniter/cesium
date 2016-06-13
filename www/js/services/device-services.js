@@ -111,6 +111,7 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
           callback();
         }
         else {
+          UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
           console.log("Copy text to clipboard: " + text);
         }
       }, function () {
