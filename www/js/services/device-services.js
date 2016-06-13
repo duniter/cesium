@@ -1,8 +1,14 @@
 
 angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services'])
 
-.factory('Device', ['UIUtils', '$translate', '$ionicPopup', '$cordovaClipboard', '$cordovaBarcodeScanner', '$q', '$cordovaCamera', '$ionicPlatform',
-  function(UIUtils, $translate, $ionicPopup, $cordovaClipboard, $cordovaBarcodeScanner, $q, $cordovaCamera, $ionicPlatform) {
+.factory('Device',
+  function(UIUtils, $translate, $ionicPopup, $q,
+    // removeIf(no-device)
+    $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
+    // endRemoveIf(no-device)
+    $ionicPlatform
+  ) {
+  'ngInject';
 
   var CONST = {
     MAX_HEIGHT: 400,
@@ -132,6 +138,6 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
       scan: scan
     }
   };
-}])
+})
 
 ;

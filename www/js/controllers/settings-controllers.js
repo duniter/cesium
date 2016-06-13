@@ -1,7 +1,8 @@
 
 angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.currency.controllers'])
-
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
+
     $stateProvider
 
       .state('app.settings', {
@@ -20,6 +21,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q, $ionicPopup, $timeout, localStorage) {
+  'ngInject';
 
   $scope.locales = [
       {id:'fr-FR', label:'Français'},

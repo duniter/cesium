@@ -2,10 +2,16 @@
 angular.module('cesium.currency-charts.controllers', ['cesium.services'])
 
 .config(function($stateProvider, $urlRouterProvider) {
+  'ngInject';
+
   $stateProvider
 
     .state('app.currency_ud', {
       url: "/currency/ud",
+      nativeTransitions: {
+          "type": "flip",
+          "direction": "up"
+      },
       views: {
         'menuContent': {
           templateUrl: "templates/currency/charts/ud.html",
@@ -21,6 +27,7 @@ angular.module('cesium.currency-charts.controllers', ['cesium.services'])
 ;
 
 function CurrencyUdController($scope, BMA, $q) {
+  'ngInject';
 
   $scope.$on('$ionicView.enter', function(e, $state) {
       $scope.loadUds()

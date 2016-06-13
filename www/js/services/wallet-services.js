@@ -1,8 +1,8 @@
-//var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
 angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
 
-.factory('Wallet', ['$q', 'CryptoUtils', 'BMA', '$translate', 'localStorage', function($q, CryptoUtils, BMA, $translate, localStorage) {
+.factory('Wallet', function($q, CryptoUtils, BMA, $translate, localStorage) {
+  'ngInject';
 
   Wallet = function(id) {
 
@@ -823,5 +823,4 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
   service.instance = Wallet;
   return service;
-}])
-;
+});

@@ -32,14 +32,14 @@
 
             <div class="list">
 
-                <div class="item item-icon-right" ng-if="isDeviceEnable()">
+                <div class="item item-icon-right hidden-no-device">
                     <span translate>MARKET.EDIT.BTN_ADD_PICTURES</span>
                     <a class="dark" href="#" ng-click="openPicturePopup()">
                         <i class="icon ion-camera"></i>
                     </a>
                 </div>
 
-                <div class="item item-input item-icon-right" ng-if="!isDeviceEnable()" >
+                <div class="item item-input item-icon-right hidden-device">
                     <span class="input-label has-input" translate>MARKET.EDIT.BTN_ADD_PICTURES</span>
                     <input type="file" id="file" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"/>
                     <!--a class="dark" href="#" ng-if="!camera" ng-click="addPictureFile()">

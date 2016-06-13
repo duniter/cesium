@@ -3,7 +3,7 @@
     <button class="button button-clear" ng-click="closeLookup()" translate>COMMON.BTN_CANCEL</button>
     <h1 class="title" translate>WOT.MODAL.TITLE</h1>
 
-    <button class="button button-icon button-clear icon ion-qr-scanner visible-xs"
+    <button class="button button-icon button-clear icon ion-qr-scanner visible-xs hidden-no-device"
             ng-if="isDeviceEnable()"
             ng-click="scanQrCode()">
     </button>

@@ -1,9 +1,8 @@
-//var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
-
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', ['$ionicLoading', '$ionicPopup', '$translate', '$q', 'ionicMaterialInk', 'ionicMaterialMotion', '$window', '$timeout',
+.factory('UIUtils',
   function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout) {
+  'ngInject';
 
   var loadingTextCache=null;
 
@@ -215,9 +214,10 @@ angular.module('cesium.utils.services', ['ngResource'])
       resize: resizeImageFromFile
     }
   };
-}])
+})
 
-.factory('localStorage', ['$window', function($window) {
+.factory('localStorage', function($window) {
+  'ngInject';
   return {
     put: function(key, value) {
       $window.localStorage[key] = value;
@@ -231,72 +231,6 @@ angular.module('cesium.utils.services', ['ngResource'])
     getObject: function(key) {
       return JSON.parse($window.localStorage[key] || '{}');
     }
-  };
-}])
-
-// See http://plnkr.co/edit/vJQXtsZiX4EJ6Uvw9xtG?p=preview
-.factory('$focus', ['$timeout', '$window', function($timeout, $window) {
-  return function(id) {
-    // timeout makes sure that it is invoked after any other event has been triggered.
-    // e.g. click events that need to run before the focus or
-    // inputs elements that are in a disabled state but are enabled when those events
-    // are triggered.
-    $timeout(function() {
-      var element = $window.document.getElementById(id);
-      if(element)
-        element.focus();
-    });
-  };
-}])
-
-.service('ModalService', ['$ionicModal', '$rootScope', '$q', '$controllers', function($ionicModal, $rootScope, $q, $controllers) {
-
-  var show = function(tpl, $scope) {
-
-    var promise;
-    $scope = $scope || $rootScope.$new();
-
-    promise = $q(function(resolve, reject){
-      $ionicModal.fromTemplateUrl(tpl, {
-        scope: $scope,
-        animation: 'slide-in-up'
-      }).then(function(modal) {
-        $scope.modal = modal;
-        $scope.modal.show();
-      });
-    });
-
-     $scope.openModal = function() {
-       $scope.modal.show();
-     };
-     $scope.closeModal = function(result) {
-       $scope.modal.hide();
-       resolve(result);
-     };
-     $scope.$on('$destroy', function() {
-       $scope.modal.remove();
-     });
-
-    return promise;
-  };
-
-  return {
-    show: show
-  };
-
-}])
-
-.directive('eventFocus', function(focus) {
-  return function(scope, elem, attr) {
-    elem.on(attr.eventFocus, function() {
-      focus(attr.eventFocusId);
-    });
-
-    // Removes bound events in the element itself
-    // when the scope is destroyed
-    scope.$on('$destroy', function() {
-      elem.off(attr.eventFocus);
-    });
   };
 })
 ;

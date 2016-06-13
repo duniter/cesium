@@ -2,6 +2,8 @@
 angular.module('cesium.currency.controllers', ['cesium.services'])
 
 .config(function($stateProvider, $urlRouterProvider) {
+  'ngInject';
+
   $stateProvider
 
     .state('app.currency_lookup', {
@@ -36,6 +38,10 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
     .state('app.view_peer', {
       url: "/peer/:server",
+      nativeTransitions: {
+          "type": "flip",
+          "direction": "right"
+      },
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_peer.html",
@@ -54,6 +60,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 ;
 
 function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA) {
+  'ngInject';
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];

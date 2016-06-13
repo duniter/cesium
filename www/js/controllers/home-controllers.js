@@ -2,6 +2,7 @@
 angular.module('cesium.home.controllers', ['cesium.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
     $stateProvider
 
       .state('app.home', {
@@ -37,6 +38,7 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 
 
 function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet) {
+  'ngInject';
 
   $scope.accountData = {};
   $scope.accountForm = {};
@@ -196,12 +198,14 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
 }
 
 function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet,  APP_CONFIG) {
+  'ngInject';
 
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet);
 
 }
 
 function JoinController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, APP_CONFIG) {
+  'ngInject';
 
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet);
 

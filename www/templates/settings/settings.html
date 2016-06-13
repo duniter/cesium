@@ -38,6 +38,23 @@
       </div>
 
       <span class="item item-divider">
+        {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
+      </span>
+
+      <div class="item item-toggle" >
+        <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
+          {{'SETTINGS.REMEMBER_ME' | translate}}
+        </div>
+        <label class="toggle" ng-class="{'toggle-stable': !formData.useLocalStorage, 'toggle-royal': formData.useLocalStorage}">
+          <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage"
+          >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+      <span class="item item-divider">
         {{'SETTINGS.HISTORY_SETTINGS' | translate}}
       </span>
 
@@ -62,23 +79,6 @@
         {{'SETTINGS.NODE' | translate}}
         </div>
         <span class="item-note">{{formData.node}}</span>
-      </div>
-
-      <span class="item item-divider" ng-if="formData.useLocalStorage">
-        {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
-      </span>
-
-      <div class="item item-toggle dark" ng-if="formData.useLocalStorage">
-        <div class="input-label">
-          {{'SETTINGS.REMEMBER_ME' | translate}}
-        </div>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.rememberMe"
-            >
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
       </div>
 
     </ion-content>

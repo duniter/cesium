@@ -1,6 +1,7 @@
 angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
     $stateProvider
 
       .state('app.wot_lookup', {
@@ -25,6 +26,10 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.view_certifications', {
         url: "/wot/cert/:pub",
+        nativeTransitions: {
+            "type": "flip",
+            "direction": "right"
+        },
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -43,6 +48,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 ;
 
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet) {
+  'ngInject';
 
   $scope.onWotSearchChanged = function() {
     $scope.search.looking = true;
@@ -126,6 +132,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
 }
 
 function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
+  'ngInject';
 
   $scope.identity = {};
   $scope.hasSelf = false;
@@ -228,26 +235,6 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
       });
   };
 
-  // Certify click
-  $scope.certifyIdentity = function(identity) {
-    $scope.loadWallet()
-    .then(function(walletData) {
-      UIUtils.loading.show();
-
-      // TODO: ask user confirm - see issue https://github.com/duniter/cesium/issues/12
-      Wallet.certify($scope.identity.uid,
-                  $scope.identity.pub,
-                  $scope.identity.timestamp,
-                  $scope.identity.sig)
-      .then(function() {
-        UIUtils.loading.hide();
-        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-      })
-      .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-    })
-    .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
-  };
-
   // Copy
   $scope.copy = function(value) {
     if (value && Device.isEnable()) {
@@ -264,15 +251,11 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
     }
   };
 
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
   $scope.showFab('fab-transfer');
 }
 
 function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
+  'ngInject';
 
   $scope.certifications = [];
   $scope.identity = {};
@@ -430,11 +413,4 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.doUpdate = function() {
     $scope.loadCertifications($scope.identity.pub, true);
   };
-
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
-
 }

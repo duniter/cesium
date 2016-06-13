@@ -2,14 +2,18 @@
 angular.module('cesium.app.controllers', ['cesium.services'])
 
   .config(function($httpProvider) {
+    'ngInject';
+
     //Enable cross domain calls
-   $httpProvider.defaults.useXDomain = true;
+    $httpProvider.defaults.useXDomain = true;
 
     //Remove the header used to identify ajax call  that would prevent CORS from working
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
   })
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
+
     $stateProvider
 
       .state('app', {
@@ -29,6 +33,8 @@ angular.module('cesium.app.controllers', ['cesium.services'])
 ;
 
 function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+  'ngInject';
+
   // Login modal
   $scope.loginModal = null;
   $scope.loginData = {
@@ -134,6 +140,11 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     if(!$scope.loginForm.$valid) {
       return;
     }
+    // removeIf(no-device)
+    if (window.cordova && cordova.plugins.Keyboard) {
+      cordova.plugins.Keyboard.close();
+    }
+    // endRemoveIf(no-device)
     UIUtils.loading.show();
 
     $scope.loginModal.hide()
@@ -233,12 +244,10 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
   CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $translate, $ionicPopover
   ) {
+  'ngInject';
 
   $scope.knownCurrencies = null;
   $scope.search = { text: '', results: {} };
-  $scope.isExpanded = false;
-  $scope.hasHeaderFabLeft = false;
-  $scope.hasHeaderFabRight = false;
   $scope.config = APP_CONFIG;
 
   LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
@@ -304,70 +313,6 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   ////////////////////////////////////////
   // Layout Methods
   ////////////////////////////////////////
-  /*var navIcons = document.getElementsByClassName('ion-navicon');
-  for (var i = 0; i < navIcons.length; i++) {
-      navIcons.addEventListener('click', function() {
-          this.classList.toggle('active');
-      });
-  }*/
-
-  $scope.hideNavBar = function() {
-      document.getElementsByTagName('ion-nav-bar')[0].style.display = 'none';
-  };
-
-  $scope.showNavBar = function() {
-      document.getElementsByTagName('ion-nav-bar')[0].style.display = 'block';
-  };
-
-  $scope.noHeader = function() {
-      var content = document.getElementsByTagName('ion-content');
-      for (var i = 0; i < content.length; i++) {
-          if (content[i].classList.contains('has-header')) {
-              content[i].classList.toggle('has-header');
-          }
-      }
-  };
-
-  $scope.setExpanded = function(bool) {
-      $scope.isExpanded = bool;
-  };
-
-  $scope.setHeaderFab = function(location) {
-      var hasHeaderFabLeft = false;
-      var hasHeaderFabRight = false;
-
-      switch (location) {
-          case 'left':
-              hasHeaderFabLeft = true;
-              break;
-          case 'right':
-              hasHeaderFabRight = true;
-              break;
-      }
-
-      $scope.hasHeaderFabLeft = hasHeaderFabLeft;
-      $scope.hasHeaderFabRight = hasHeaderFabRight;
-  };
-
-  $scope.hasHeader = function() {
-      var content = document.getElementsByTagName('ion-content');
-      for (var i = 0; i < content.length; i++) {
-          if (!content[i].classList.contains('has-header')) {
-              content[i].classList.toggle('has-header');
-          }
-      }
-  };
-
-  $scope.hideHeader = function() {
-      $scope.hideNavBar();
-      $scope.noHeader();
-  };
-
-  $scope.showHeader = function() {
-      $scope.showNavBar();
-      $scope.hasHeader();
-  };
-
   $scope.showFab = function(id, timeout) {
     if (!timeout) {
       timeout = 900;

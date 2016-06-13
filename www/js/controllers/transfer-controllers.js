@@ -1,6 +1,7 @@
 angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
     $stateProvider
 
       .state('app.new_transfer', {
@@ -39,6 +40,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover) {
+  'ngInject';
 
   TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover);
 
@@ -64,6 +66,7 @@ function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet
 }
 
 function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover) {
+  'ngInject';
 
   $scope.walletData = {};
   $scope.convertedBalance = 0;

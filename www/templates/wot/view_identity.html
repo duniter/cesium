@@ -2,7 +2,7 @@
   <ion-nav-title>
   </ion-nav-title>
 
-  <ion-content ng-class="{expanded:$scope.isExpanded}">
+  <ion-content scroll="true">
     <div class="positive-900-bg hero animate-pan-in-left">
       <div class="content">
         <div class="avatar"
@@ -19,50 +19,45 @@
       </div>
     </div>
 
-    <div class="scroll">
+    <div class="hidden-xs hidden-sm padding" style="text-align:center">
+      <button class="button button-raised button-assertive ink-dark"
+              ng-click="transfer(identity.pub, identity.uid)">
+        {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+      </button>
+    </div>
 
-      <div class="hidden-xs hidden-sm padding" style="text-align:center">
-        <button class="button button-raised button-assertive ink-dark"
-                ng-click="transfer(identity.pub, identity.uid)">
-          {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
-        </button>
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
 
-      <div class="row no-padding">
-        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-        </div>
+      <div class="col list animate-fade-slide-in">
 
-        <div class="col list animate-fade-slide-in">
+        <!-- Certifications count -->
+        <a class="item item-icon-left item-text-wrap item-icon-right ink" ng-if="hasSelf"
+           ui-sref="app.view_certifications({pub:identity.pub})">
+          <i class="icon ion-ribbon-b"></i>
+          <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
+          <span class="badge" ng-class="{'badge-balanced': sigQty && certificationCount >= sigQty, 'badge-assertive': sigQty && certificationCount < sigQty}">{{certificationCount}}</span>
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </a>
 
-          <!-- Certifications count -->
-          <a class="item item-icon-left item-text-wrap item-icon-right ink" ng-if="hasSelf"
-             ui-sref="app.view_certifications({pub:identity.pub})">
-            <i class="icon ion-ribbon-b"></i>
-            <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
-            <span class="badge" ng-class="{'badge-balanced': sigQty && certificationCount >= sigQty, 'badge-assertive': sigQty && certificationCount < sigQty}">{{certificationCount}}</span>
-            <i class="gray icon ion-ios-arrow-right"></i>
-          </a>
+        <ion-item class="item-icon-left" ng-if="identity.sigDate">
+          <i class="icon ion-calendar"></i>
+          <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
+          <h5 class="dark">{{::identity.sigDate | formatDate}}</h5>
+          <span class="badge badge-balanced">{{::identity.sigDate | formatFromNow}}</span>
+        </ion-item>
 
-          <ion-item class="item-icon-left" ng-if="identity.sigDate">
-            <i class="icon ion-calendar"></i>
-            <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
-            <h5 class="dark">{{::identity.sigDate | formatDate}}</h5>
-            <span class="badge badge-balanced">{{::identity.sigDate | formatFromNow}}</span>
-          </ion-item>
-
-          <ion-item class="item-icon-left item-text-wrap ink"
-                    on-hold="copy(identity.pub)"
-                    copy-on-click>
-            <i class="icon ion-key"></i>
-            <h4 id="pubkey" class="dark">{{::identity.pub}}</h4>
-          </ion-item>
-        </div>
-
-        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-        </div>
+        <ion-item class="item-icon-left item-text-wrap ink"
+                  on-hold="copy(identity.pub)"
+                  copy-on-click>
+          <i class="icon ion-key"></i>
+          <h4 id="pubkey" class="dark">{{::identity.pub}}</h4>
+        </ion-item>
       </div>
 
-      <div class="scroll-bar scroll-bar-v"></div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
     </div>
   </ion-content>
 

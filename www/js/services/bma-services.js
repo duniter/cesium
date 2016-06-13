@@ -4,6 +4,7 @@ angular.module('cesium.bma.services', ['ngResource',
     'cesium.config'])
 
 .factory('BMA', function($http, $q, APP_CONFIG) {
+  'ngInject';
 
   function BMA(server, timeout) {
 

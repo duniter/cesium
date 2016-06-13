@@ -2,6 +2,7 @@
 angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
     $stateProvider
 
       .state('app.view_wallet', {
@@ -21,6 +22,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
   UIUtils, Wallet, BMA, $translate, Device, $ionicPopover) {
+  'ngInject';
 
   $scope.walletData = null;
   $scope.convertedBalance = null;
@@ -274,53 +276,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
-  };
-
-  // Triggered on a button click, or some other target
- $scope.showActionsheet = function() {
-
-  $translate(['ACCOUNT.MENU_TITLE', 'ACCOUNT.BTN_MEMBERSHIP_IN', 'ACCOUNT.BTN_MEMBERSHIP_RENEW', 'ACCOUNT.BTN_MEMBERSHIP_OUT', 'ACCOUNT.BTN_SEND_IDENTITY',
-  'ACCOUNT.POPUP_REGISTER.HELP', 'ACCOUNT.BTN_DETAILS', 'COMMON.BTN_ADD_ACCOUNT', 'COMMON.BTN_CANCEL'])
-    .then(function (translations) {
-
-      var buttons = [];
-      var callbacks = [];
-      if ($scope.walletData.requirements.needMembership) {
-        buttons.push({text: translations['ACCOUNT.BTN_MEMBERSHIP_IN']});
-        callbacks.push(function(){$scope.membershipIn();});
-      }
-      if ($scope.walletData.requirements.needRenew) {
-        buttons.push({text: translations['ACCOUNT.BTN_MEMBERSHIP_RENEW']});
-        callbacks.push(function(){$scope.membershipRenew();});
-      }
-      if ($scope.walletData.requirements.needSelf) {
-        buttons.push({text: translations['ACCOUNT.BTN_SEND_IDENTITY']});
-        callbacks.push(function(){$scope.self();});
-      }
-      if ($scope.walletData.requirements.needMembershipOut) {
-        buttons.push({text: translations['ACCOUNT.BTN_MEMBERSHIP_OUT']});
-        callbacks.push(function(){$scope.membershipOut();});
-      }
-
-      // Show the action sheet
-      var hideMenu = $ionicActionSheet.show({
-        buttons: buttons,
-        titleText: translations['ACCOUNT.MENU_TITLE'],
-        cancelText: translations['COMMON.BTN_CANCEL'],
-        cancel: function() {
-            // add cancel code..
-          },
-        buttonClicked: function(index) {
-          callbacks[index]();
-          return true;
-        }
-      });
-
-      // Hide the sheet after 3 seconds
-      $timeout(function() {
-        hideMenu();
-      }, 3000);
-    });
   };
 
   $scope.showQRCode = function(id, text, timeout) {

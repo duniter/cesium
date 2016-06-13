@@ -4,7 +4,12 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'angularMoment', 'cesium.controllers', 'ngAnimate', 'ionic-native-transitions'])
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment',
+  'cesium.controllers', 'cesium.templates','cesium.translations',
+   // removeIf(no-device)
+  'ngCordova', 'ionic-native-transitions',
+   // endRemoveIf(no-device)
+  ])
 
   .filter('formatInteger', function() {
     return function(input) {
@@ -85,10 +90,9 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
 
   // Translation i18n
   .config(function ($translateProvider) {
-    $translateProvider.useStaticFilesLoader({
-        prefix: 'i18n/locale-',
-        suffix: '.json'
-    })
+    'ngInject';
+
+    $translateProvider
     .uniformLanguageTag('bcp47')
     .determinePreferredLanguage()
     // Cela fait bugger les placeholder (pb d'affichage des accents en FR)
@@ -99,51 +103,42 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
     .useStorage('localStorage');
   })
 
-  .config(['$httpProvider', 'APP_CONFIG', function($httpProvider, APP_CONFIG) {
+  .config(function($httpProvider, APP_CONFIG) {
+    'ngInject';
+    // Set default timeout
     $httpProvider.defaults.timeout = !!APP_CONFIG.TIMEOUT ? APP_CONFIG.TIMEOUT : 4000 /* default timeout */;
-  }])
 
-  .config(['$compileProvider', 'APP_CONFIG', function($compileProvider, APP_CONFIG) {
-      $compileProvider.debugInfoEnabled(!!APP_CONFIG.DEBUG);
-  }])
+    //Enable cross domain calls
+    $httpProvider.defaults.useXDomain = true;
 
-  .config(function($animateProvider) {
-      $animateProvider.classNameFilter( /\banimate-/ );
+    //Remove the header used to identify ajax call  that would prevent CORS from working
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
   })
 
-  .config(['$ionicNativeTransitionsProvider', 'APP_CONFIG', function($ionicNativeTransitionsProvider, APP_CONFIG){
-    if (!!APP_CONFIG.NATIVE_TRANSITION) {
-      $ionicNativeTransitionsProvider.enable(true);
-      $ionicNativeTransitionsProvider.setDefaultOptions({
-          duration: 400, // in milliseconds (ms), default 400,
-          slowdownfactor: 4, // overlap views (higher number is more) or no overlap (1), default 4
-          iosdelay: -1, // ms to wait for the iOS webview to update before animation kicks in, default -1
-          androiddelay: -1, // same as above but for Android, default -1
-          winphonedelay: -1, // same as above but for Windows Phone, default -1,
-          fixedPixelsTop: 0, // the number of pixels of your fixed header, default 0 (iOS and Android)
-          fixedPixelsBottom: 0, // the number of pixels of your fixed footer (f.i. a tab bar), default 0 (iOS and Android)
-          triggerTransitionEvent: '$ionicView.afterEnter', // internal ionic-native-transitions option
-          backInOppositeDirection: false // Takes over default back transition and state back transition to use the opposite direction transition to go back
-      });
-      $ionicNativeTransitionsProvider.setDefaultTransition({
-        type: 'slide',
-        direction: 'left'
-      });
-      $ionicNativeTransitionsProvider.setDefaultBackTransition({
-          type: 'slide',
-          direction: 'right'
-      });
-    }
-    else {
-      $ionicNativeTransitionsProvider.enable(false);
-    }
-  }])
+  .config(function($compileProvider, APP_CONFIG) {
+    'ngInject';
+
+    $compileProvider.debugInfoEnabled(!!APP_CONFIG.DEBUG);
+  })
+
+  .config(function($animateProvider) {
+    'ngInject';
+    $animateProvider.classNameFilter( /\banimate-/ );
+  })
+
+  // removeIf(no-device)
+  .config(function($ionicNativeTransitionsProvider){
+    'ngInject';
+    // Use native transition
+    var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS();
+    $ionicNativeTransitionsProvider.enable(enableNativeTransitions);
+  })
+  // endRemoveIf(no-device)
 
   .config(function($ionicConfigProvider) {
-      if (ionic.Platform.isAndroid()) {
-        $ionicConfigProvider.scrolling.jsScrolling(false);
-      }
-      $ionicConfigProvider.views.maxCache(5);
+    'ngInject';
+    $ionicConfigProvider.scrolling.jsScrolling(false);
+    $ionicConfigProvider.views.maxCache(5);
   })
 
   // Add new compare-to directive (need for form validation)
@@ -167,28 +162,30 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', ['$window', 'Device', function ($window, Device) {
-      return {
-          restrict: 'A',
-          link: function (scope, element, attrs) {
-              element.bind('click', function () {
-                if (!Device.clipboard.enable) {
-                  if ($window.getSelection && !$window.getSelection().toString() && this.value) {
-                    this.setSelectionRange(0, this.value.length);
-                  }
-                }
-              });
-              element.bind('hold', function () {
-                if (Device.clipboard.enable && this.value) {
-                  Device.clipboard.copy(this.value);
-                }
-              });
+  .directive('copyOnClick', function ($window, Device) {
+    'ngInject';
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+        element.bind('click', function () {
+          if (!Device.clipboard.enable) {
+            if ($window.getSelection && !$window.getSelection().toString() && this.value) {
+              this.setSelectionRange(0, this.value.length);
+            }
           }
-      };
-  }])
+        });
+        element.bind('hold', function () {
+          if (Device.clipboard.enable && this.value) {
+            Device.clipboard.copy(this.value);
+          }
+        });
+      }
+    };
+  })
 
   // Add a select-on-click directive
-  .directive('selectOnClick', ['$window', function ($window) {
+  .directive('selectOnClick', function ($window) {
+    'ngInject';
       return {
           restrict: 'A',
           link: function (scope, element, attrs) {
@@ -199,20 +196,29 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
               });
           }
       };
-  }])
+  })
 
 .run(function($rootScope, amMoment, $translate, Device) {
-
-  $rootScope.translations = [];
+  'ngInject';
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
   Device.ready()
   .then(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
+
+    // Keyboard
     if (window.cordova && window.cordova.plugins.Keyboard) {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
+      // iOS: do not push header up when opening keyboard
+      // (see http://ionicframework.com/docs/api/page/keyboard/)
+      if (ionic.Platform.isIOS()) {
+        cordova.plugins.Keyboard.disableScroll(true);
+      }
     }
+
+    // Status bar
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
@@ -226,7 +232,6 @@ angular.module('cesium', ['ionic', 'ngCordova', 'ionic-material', 'ngMessages', 
 
   // Set up moment translation
   $rootScope.$on('$translateChangeSuccess', $rootScope.onLanguageChange);
-
 
 })
 ;

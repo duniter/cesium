@@ -39,7 +39,7 @@
     "CURRENCY": "Currency",
     "CURRENCIES": "Currencies",
     "ACCOUNT": "My Account",
-    "TRANSFER": "Pay",
+    "TRANSFER": "Send",
     "SCAN": "Scan",
     "SETTINGS": "Settings"
   },
@@ -146,8 +146,7 @@
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
     "BTN_MEMBERSHIP_OUT": "Revoke membership",
     "BTN_SEND_IDENTITY": "Publish pseudonym (without register)",
-    "BTN_DETAILS": "Display technical details",
-    "BTN_HIDE_DETAILS": "Hide technical details",
+    "BTN_SHOW_DETAILS": "Display technical details",
     "NEW": {
       "TITLE": "New Account",
       "SLIDE_1_TITLE": "Select a money:",
