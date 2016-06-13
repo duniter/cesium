@@ -224,6 +224,11 @@
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Certification envoyée avec succès.",
     "NOT_ENOUGH_CREDIT": "Crédit insuffisant.",
-    "TRANSFER_SENT": "La transaction a été envoyée avec succès."
+    "TRANSFER_SENT": "La transaction a été envoyée avec succès.",
+  },
+  "CONFIRM": {
+    "POPUP_TITLE": "Confirmation",
+    "CERTIFY_WARNING": "Avertissement de sécurité",
+    "CERTIFY_RULES": "<small><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul></small><br/>Etes-vous sûr de vouloir néanmoins certifier cette identité ?"
   }
 }

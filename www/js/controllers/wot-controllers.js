@@ -254,7 +254,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
   $scope.showFab('fab-transfer');
 }
 
-function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
+function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device, $ionicPopup) {
   'ngInject';
 
   $scope.certifications = [];
@@ -393,18 +393,24 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.certifyIdentity = function(identity) {
     $scope.loadWallet()
     .then(function(walletData) {
-      UIUtils.loading.show();
-
-      // TODO: ask user confirm - see issue https://github.com/duniter/cesium/issues/12
-      Wallet.certify($scope.identity.uid,
-                  $scope.identity.pub,
-                  $scope.identity.timestamp,
-                  $scope.identity.sig)
-      .then(function() {
-        UIUtils.loading.hide();
-        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-      })
-      .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+      UIUtils.loading.hide();
+      UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.CERTIFY_WARNING')
+      .then(function(confirm){
+        if (!confirm) {
+          return;
+        }
+        UIUtils.loading.show();
+        Wallet.certify($scope.identity.uid,
+                    $scope.identity.pub,
+                    $scope.identity.timestamp,
+                    $scope.identity.sig)
+        .then(function() {
+          UIUtils.loading.hide();
+          //UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+          UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+        })
+        .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+      });      
     })
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };

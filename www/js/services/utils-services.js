@@ -37,7 +37,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     return $q(function(resolve, reject) {
       $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
       .then(function (translations) {
-        return $ionicPopup.show({
+        $ionicPopup.show({
           template: '<p>' + translations[message] + '</p>',
           title: translations['INFO.POPUP_TITLE'],
           subTitle: translations[subtitle],
@@ -50,6 +50,26 @@ angular.module('cesium.utils.services', ['ngResource'])
               }
             }
           ]
+        });
+      });
+    });
+  }
+
+  function askConfirm(message, title) {
+    if (!title) {
+      title = 'CONFIRM.POPUP_TITLE';
+    }
+    return $q(function(resolve, reject) {
+      $translate([message, title, 'COMMON.BTN_CANCEL', 'COMMON.BTN_OK'])
+      .then(function (translations) {
+        $ionicPopup.confirm({
+          template: translations[message],
+          title: translations[title],
+          cancelText: translations['COMMON.BTN_CANCEL'], 
+          okText: translations['COMMON.BTN_OK']
+        })
+        .then(function(res) {
+          resolve(res);
         });
       });
     });
@@ -195,6 +215,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     alert: {
       error: alertError,
       info: alertInfo,
+      confirm: askConfirm
     },
     loading: {
       show: showLoading,
