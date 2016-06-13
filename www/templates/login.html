@@ -66,12 +66,12 @@
       </div>
 
         <!-- Show public key -->
-        <div class="item item-icon-left item-button-right left">
+        <div class="item item-button-right left">
           <span class="input-label" translate>COMMON.PUBKEY</span>
-          <a class="button button-light button-small ink"
+          <a class="button button-light button-small ink animate-if"
              ng-click="showLoginPubkey()"
              ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
-             class="animate-if">
+            >
             {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
           </a>
           <h3 class="gray text-no-wrap" ng-if="loginData.pubkey">

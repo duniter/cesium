@@ -60,6 +60,7 @@
                            ng-class="{ 'item-input-error': accountForm.$submitted && accountForm.username.$invalid}">
                         <span class="input-label" translate>LOGIN.USERNAME</span>
                         <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
+                               ng-change="accountDataChanged()"
                                ng-model="accountData.username"
                                ng-minlength="8"
                                required>
@@ -81,6 +82,7 @@
                         <span class="input-label" translate>LOGIN.PASSWORD</span>
                         <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                                ng-model="accountData.password"
+                               ng-change="accountDataChanged()"
                                ng-minlength="8"
                                required>
                     </label>
@@ -99,7 +101,9 @@
                     <label class="item item-input"
                            ng-class="{ 'item-input-error': accountForm.$submitted && accountForm.confirmPassword.$invalid}">
                         <span class="input-label" translate>ACCOUNT.NEW.PASSWORD_CONFIRM</span>
-                        <input name="confirmPassword" type="password" placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}" ng-model="accountData.confirmPassword" ng-change="loginDataChanged()"
+                        <input name="confirmPassword" type="password"
+                               placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}"
+                               ng-model="accountData.confirmPassword"
                                compare-to="accountData.password">
                     </label>
                     <div class="form-errors"
@@ -114,18 +118,20 @@
                     </div>
 
                     <!-- Show public key-->
-                    <div class="item item-icon-left item-button-right">
-                        <i class="icon ion-key"/>
-                        <span translate>COMMON.PUBKEY</span>
-                        <a class="button button-light button-small"
+                    <div class="item item-button-right">
+                        <span class="input-label" translate>COMMON.PUBKEY</span>
+                        <a class="button button-light button-small animate-if"
                            ng-click="showAccountPubkey()"
-                           ng-if="!accountData.pubkey && accountForm.$valid"
-                           class="animate-if" translate>
+                           ng-if="!(accountData.pubkey || accountData.computing || !accountData.username || !accountData.password)"
+                           translate>
                             COMMON.BTN_SHOW_PUBKEY
                         </a>
-                        <span class="item-input" ng-if="accountData.pubkey">
-                            {{accountData.pubkey}}
-                        </span>
+                        <h3 class="gray text-no-wrap" ng-if="accountData.pubkey">
+                          {{accountData.pubkey}}
+                        </h3>
+                        <h3 ng-if="accountData.computing">
+                          <ion-spinner icon="android"></ion-spinner>
+                        </h3>
                     </div>
                 </div>
 

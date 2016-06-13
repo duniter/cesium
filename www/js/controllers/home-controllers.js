@@ -138,16 +138,21 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
   $scope.showAccountPubkey = function() {
     $scope.accountData.computing=true;
     CryptoUtils.connect($scope.accountData.username, $scope.accountData.password).then(
-        function(keypair) {
-            $scope.accountData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.accountData.computing=false;
-        }
+      function(keypair) {
+        $scope.accountData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+        $scope.accountData.computing=false;
+      }
     )
     .catch(function(err) {
       $scope.accountData.computing=false;
       console.error('>>>>>>>' , err);
       UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
     });
+  };
+
+  $scope.accountDataChanged = function() {
+    $scope.accountData.computing=false;
+    $scope.accountData.pubkey=null;
   };
 
   $scope.doNewAccount = function() {
