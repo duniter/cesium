@@ -658,6 +658,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                         });
                       }
                       else {
+                        data.uid = uid;
                         data.blockUid = block.number + '-' + block.hash;
                         resolve();
                       }
