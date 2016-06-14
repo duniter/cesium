@@ -1,4 +1,11 @@
-<ion-view view-title="{{id}}" left-buttons="leftButtons" class="pane">
+<ion-view
+    left-buttons="leftButtons" class="pane"
+    cache-view="false"
+    >
+  <ion-nav-title>
+    {{id}}
+  </ion-nav-title>
+
     <ion-nav-buttons side="secondary">
         <button class="button button-icon button-clear icon ion-loop" ng-click="refresh()">
         </button>

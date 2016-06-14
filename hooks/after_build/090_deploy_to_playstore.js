@@ -9,7 +9,7 @@ var rootdir = process.argv[2];
 var argv = require('yargs').argv;
 
 var skip = true;
-if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {
+if (/*cmd.indexOf("--release") > -1 || */cmd.indexOf("--playstore") > -1) {
     skip = false;
 }
 
@@ -30,7 +30,7 @@ if (rootdir && !skip) {
 
       console.log('Publishing APK file [' + apkFileLocation + '] to playstore...');
 
-      var config = JSON.parse(fs.readFileSync('../playstore-config.json', 'utf8'));
+      var config = require('../playstore-config.json');
 
       if(!config) {
         gutil.log(gutil.colors.red("ERROR => Could not load `hooks/playstore-config.json` file!"));
