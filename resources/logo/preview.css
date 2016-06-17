@@ -1,0 +1,111 @@
+*, button {
+    font-family: "Open sans", roboto, sans-serif;
+}
+body { padding-top: 50px; }
+
+button {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    width: 100px;
+    height: 60px;
+    color: black;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    border: 3px solid #FFF;
+    background: whitesmoke;
+    text-transform: uppercase;
+    font-size: large;
+    z-index: 100;
+}
+    button:nth-child(2) {
+        color: white;
+        background: #0A0A0A;
+    }
+
+section {
+    width: 373px;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 1px 0px rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,0,0,0.1);
+    float: left;
+    position: relative;
+}
+    section icon {
+        border: 1px dashed;
+    }
+.bright section {
+    background: whitesmoke;
+}
+.dark section {
+    background: #0A0A0A;
+    
+}
+section h3 {
+    margin: -20px;
+    /* margin-bottom: 20px; */
+    line-height: 40px;
+    padding-left: 10px;
+    position: absolute;
+    top: -5px;
+    font-size: 10px;
+}
+.bright section h3 {
+    color: #000;
+}
+section icon {
+    display: inline-block;
+    position: relative;
+}
+section icon img {
+    width: 100%;
+    height: 100%;
+}
+section icon.large {
+    width: 192px;
+    height: 192px;
+}
+section icon.medium {
+    width: 96px;
+    height: 96px;
+}
+section icon.small {
+    width: 48px;
+    height: 48px;
+}
+section icon.tiny {
+    width: 16px;
+    height: 16px;
+}
+.bright section icon {border-color: rgba(10, 10, 10, 0.29);}
+.dark section icon {border-color: rgba(245, 245, 245, 0.3);}
+
+
+body.bright {
+    background: #FFF;
+}
+
+body.dark {
+    background: #000;
+}
+
+.dark section h3 {
+    color: #FFF;
+}
+
+section icon:after {
+    content: "192px";
+    position: absolute;
+    right: -36px;
+    top: -1px;
+    font-size: 12px;
+    background: #0A0A0A;
+    padding: 0 4px;
+    color: #FFF;
+    border-radius: 0 4px 4px 0;
+}
+section icon.large:after {/* content: "192px"; */right: -43px;}
+section icon.medium:after { content: "96px"; }
+section icon.small:after { content: "48px"; }
+section icon.tiny:after { content: "16px"; }
