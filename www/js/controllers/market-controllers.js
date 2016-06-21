@@ -186,7 +186,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "location", "thumbnail", "category", "price", "unit", "currency"]
+      _source: Market.record.fields.commons
     };
     var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
@@ -233,7 +233,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "location", "thumbnail", "category", "price", "unit", "currency"]
+      _source: Market.record.fields.commons
     };
 
     $scope.doRequest(request);
@@ -302,7 +302,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
   };
 }
 
-function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q) {
+function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout) {
   'ngInject';
 
   $scope.formData = {};
@@ -323,37 +323,56 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
 
   $scope.load = function(id) {
     UIUtils.loading.show();
-    $q.all([
-      Market.category.all()
-      .then(function(categories) {
-        Market.record.get({id: id})
-        .then(function (hit) {
-          $scope.formData = hit._source;
-          if (hit._source.category && hit._source.category.id) {
-            $scope.category = categories[hit._source.category.id];
-          }
-          $scope.id= hit._id;
+    Market.category.all()
+    .then(function(categories) {
+      Market.record.getCommons({id: id})
+      .then(function (hit) {
+        $scope.formData = hit._source;
+        if (hit._source.category && hit._source.category.id) {
+          $scope.category = categories[hit._source.category.id];
+        }
+        $scope.id= hit._id;
+        if (hit._source.thumbnail) {
+          $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
+        }
+        $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer === Wallet.getData().pubkey);
+        UIUtils.loading.hide();
+
+        // launch get pictures
+        Market.record.getPictures({id: id})
+        .then(function(hit) {
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
               return res.concat(UIUtils.image.fromAttachment(pic.file));
             }, []);
+            // Set Motion
+            $timeout(function() {
+              UIUtils.motion.fadeSlideIn({
+                startVelocity: 3000
+              });
+            }, 10);
           }
-          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer === Wallet.getData().pubkey);
-          UIUtils.loading.hide();
         })
         .catch(function(err) {
-          if (!$scope.secondTry) {
-            $scope.secondTry = true;
-            $q(function() {
-              $scope.load(id); // loop once
-            }, 100);
-          }
-          else {
-            UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
-          }
+          $scope.pictures = [];
         });
       })
-    ]).catch(UIUtils.onError('MARKET.ERROR.LOAD_CATEGORY_FAILED'));
+      .catch(function(err) {
+        if (!$scope.secondTry) {
+          $scope.secondTry = true;
+          $q(function() {
+            $scope.load(id); // loop once
+          }, 100);
+        }
+        else {
+          UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+        }
+      });
+    })
+    .catch(function(){
+      $scope.loading = false;
+      UIUtils.onError('MARKET.ERROR.LOAD_CATEGORY_FAILED')(err);
+    });
   };
 
   $scope.edit = function() {

@@ -21,12 +21,12 @@
                 <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
                 <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
                 <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
-        <h4 class="light" ng-if="isLogged() && convertedBalance != null">
+                <h4 class="light" ng-if="isLogged() && convertedBalance != null">
                     <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-            <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub></span>
-        </h4>
-        <h4 class="light" ng-if="!isLogged() || convertedBalance == null">
-          <ion-spinner icon="android"></ion-spinner>
+                    <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub></span>
+                </h4>
+                <h4 class="light" ng-if="!isLogged() || convertedBalance == null">
+                  <ion-spinner icon="android"></ion-spinner>
                 </h4>
               </div>
             </div>
@@ -87,14 +87,14 @@
                   </h3>
                 </span>
 
-        <!-- Public key -->
-        <span class="item item-icon-left item-text-wrap ink in done"
-                  on-hold="copy(walletData.pubkey)"
-                  ng-if="showDetails"
-                  copy-on-click>
-          <i class="icon ion-key"></i>
-          <h4 id="pubkey" class="dark">{{walletData.pubkey}}</h4>
-        </span>
+                <!-- Public key -->
+                <span class="item item-icon-left item-text-wrap ink in done"
+                          on-hold="copy(walletData.pubkey)"
+                          ng-if="showDetails"
+                          copy-on-click>
+                  <i class="icon ion-key"></i>
+                  <h4 id="pubkey" class="dark">{{walletData.pubkey}}</h4>
+                </span>
 
                 <!-- Last Transactions -->
                 <span class="item item-divider">

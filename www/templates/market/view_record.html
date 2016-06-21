@@ -20,8 +20,8 @@
             <div class="col no-padding">
               <div class="list">
 
-                <div class="item" ng-class="{'item-thumbnail-left': pictures && pictures.length>0}">
-                    <img ng-src="{{pictures[0].src}}" ng-if="pictures && pictures.length>0"></img>
+                <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
+                    <img ng-src="{{::thumbnail.src}}" ng-if="thumbnail"></img>
                     <h2 ng-bind-html="formData.title"></h2>
                     <h4 class="gray">
                         <i class="icon ion-location" ng-show="formData.location"></i>
@@ -64,12 +64,12 @@
                 </div>
               </div>
 
-              <div class="list gallery" ng-if="pictures && pictures.length>0" >
+              <div class="list gallery animate-fade-slide-in" ng-if="!loading && pictures && pictures.length>0" >
                 <div ng-repeat="picture in pictures"
                      class="item card card-gallery">
                   <div class="ink">
                     <h2 ng-if="picture.title">{{::picture.title}}</h2>
-                    <img ng-src="{{::picture.src}}" ></img>
+                    <img ng-src="{{::picture.src}}" >
                   </div>
                 </div>
               </div>

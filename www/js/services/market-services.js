@@ -5,7 +5,12 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
 
     function Market(server, wsServer) {
 
-      var categories = [];
+      var
+        categories = [],
+        fields = {
+          commons: ["title", "description", "issuer", "time", "location", "thumbnail", "category", "price", "unit", "currency"]
+        }
+      ;
 
       if (wsServer) {
         wsServer = server;
@@ -193,6 +198,13 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         };
       }
 
+      function getCommons() {
+        var _source = fields.commons.reduce(function(res, field){
+          return res + ',' + field
+        }, '').substring(1);
+        return getResource('http://' + server + '/market/record/:id?_source=' + _source);
+      }
+
       return {
         auth: {
             get: getResource('http://' + server + '/auth'),
@@ -209,10 +221,15 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         },
         record: {
           get: getResource('http://' + server + '/market/record/:id'),
+          getCommons: getCommons(),
+          getPictures: getResource('http://' + server + '/market/record/:id?_source=pictures'),
           add: addRecord,
           update: postResource('http://' + server + '/market/record/:id'),
           searchText: getResource('http://' + server + '/market/record/_search?q=:search'),
-          search: postResource('http://' + server + '/market/record/_search?pretty')
+          search: postResource('http://' + server + '/market/record/_search?pretty'),
+          fields: {
+            commons: fields.commons
+          }
         }
       };
     }
