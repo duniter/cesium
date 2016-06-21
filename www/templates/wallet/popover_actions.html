@@ -1,0 +1,44 @@
+<ion-popover-view>
+  <ion-header-bar>
+    <h1 class="title" translate>ACCOUNT.MENU_TITLE</h1>
+  </ion-header-bar>
+  <ion-content>
+    <div class="list">
+
+      <a class="item item-icon-left ink"
+         ng-click="setShowDetails(!showDetails)">
+        <i class="icon"
+           ng-class="{'ion-ios-checkmark-empty': showDetails}"></i>
+        {{'ACCOUNT.BTN_SHOW_DETAILS' | translate}}
+      </a>
+
+      <a class="item item-icon-left ink"
+         ng-if="walletData.requirements.needMembership"
+         ng-click="membershipIn()">
+        <i class="icon ion-person"></i>
+        {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
+      </a>
+
+      <button class="button button-raised item-icon-left ink visible-xs visible-sm"
+              ng-if="walletData.requirements.needRenew"
+              ng-click="membershipRenew()">
+        <i class="icon ion-loop"></i>
+        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+      </button>
+
+      <a class="item item-icon-left assertive ink"
+         ng-if="walletData.requirements.needMembershipOut"
+         ng-click="membershipOut()">
+        <i class="icon ion-log-out"></i>
+        {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
+      </a>
+
+      <a class="item item-icon-left ink"
+         ng-if="walletData.requirements.needSelf"
+         ng-click="self()">
+        <i class="icon ion-flag"></i>
+        {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+      </a>
+    </div>
+  </ion-content>
+</ion-popover-view>

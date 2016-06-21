@@ -1,0 +1,17 @@
+<ion-popover-view id="unitPopover">
+  <ion-content>
+    <div class="list">
+      <a class="item item-icon-left"
+         ng-class="{ 'selected': !formData.useRelative}"
+         ng-click="setUseRelative(false)">
+        <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': !formData.useRelative}"></i>
+        {{walletData.currency| abbreviate}}
+      </a>
+      <a class="item item-icon-left"
+         ng-class="{ 'selected': formData.useRelative}"
+         ng-click="setUseRelative(true)">
+        <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': formData.useRelative}"></i>
+        {{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub></a>
+    </div>
+  </ion-content>
+</ion-popover-view>
