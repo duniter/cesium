@@ -72,6 +72,11 @@
   border-bottom: solid 1px #ccc;
 }
 
+#transfer .item.item-icon-right input {
+  padding-right: 50px !important;
+}
+
+
 #wallet .item .comment{
   font-style: italic !important;
 }
@@ -85,6 +90,10 @@
 }
 
 .list .item-input {
+  border-bottom: solid 1px #ccc;
+}
+
+.popover .list .item {
   border-bottom: solid 1px #ccc;
 }
 
@@ -256,10 +265,42 @@
   top:16px !important;
 }
 
+#wallet .qrcode {
+  position: absolute;
+  top: 22px;
+  padding: 8px;
+  background: #fff;
+  width: 116px;
+  max-width: 30%;
+  right: -170px;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
+  -webkit-transition: all 0.5s ease-out !important;
+  transition: all 0.5s ease-out !important;
+}
+
+#wallet .qrcode img {
+  width: 100%;
+}
+
+#wallet .qrcode.on {
+  right: 8px;
+  -webkit-transition: all 0.5s ease-out !important;
+  transition: all 0.5s ease-out !important;
+}
+
 #certifications .item-divider .badge {
   top:16px !important;
 }
 
 #settings .item-divider {
     background-color: #f5f5f5;
+}
+
+#unitPopover {
+  height: 108px;
+}
+
+.no-margin {
+  margin: 0 !important;
 }

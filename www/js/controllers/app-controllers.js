@@ -2,6 +2,8 @@
 angular.module('cesium.app.controllers', ['cesium.services'])
 
   .config(function($httpProvider) {
+    'ngInject';
+
     //Enable cross domain calls
    $httpProvider.defaults.useXDomain = true;
 
@@ -10,6 +12,8 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   })
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
+
     $stateProvider
 
       .state('app', {
@@ -29,10 +33,12 @@ angular.module('cesium.app.controllers', ['cesium.services'])
 ;
 
 function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+  'ngInject';
+
   // Login modal
   $scope.loginModal = null;
   $scope.loginData = {
-    rememberMe: Wallet.defaultSettings.rememberMe
+    rememberMe: Wallet.data.settings.rememberMe
   };
   $rootScope.viewFirstEnter = false;
 
@@ -120,7 +126,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   $scope.cancelLogin = function() {
     var callback = $scope.loginData.callbacks.cancel;
     $scope.loginData = { // Reset login data
-      rememberMe: Wallet.defaultSettings.rememberMe
+      rememberMe: Wallet.data.settings.rememberMe
     };
     $scope.loginForm.$setPristine(); // Reset form
     $scope.loginModal.hide();
@@ -134,6 +140,11 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     if(!$scope.loginForm.$valid) {
       return;
     }
+    // removeIf(no-device)
+    if (window.cordova && cordova.plugins.Keyboard) {
+      cordova.plugins.Keyboard.close();
+    }
+    // endRemoveIf(no-device)
     UIUtils.loading.show();
 
     $scope.loginModal.hide()
@@ -141,7 +152,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
       // Call wallet login, then execute callback function
       Wallet.login($scope.loginData.username, $scope.loginData.password)
         .then(function(walletData){
-          walletData.settings.rememberMe = $scope.formData.rememberMe;
+          walletData.settings.rememberMe = $scope.loginData.rememberMe;
           if (walletData.settings.rememberMe) {
             walletData.settings.useLocalStorage = true;
             Wallet.store();
@@ -218,18 +229,6 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     return !Wallet.isLogin();
   };
 
-  $scope.scanQrCode = function(){
-     if (Device.enable) {
-       Device.scan()
-       .then(function(result) {
-         if (result && result.text) {
-          $scope.search.text = result.text;
-         }
-       })
-       .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
-     }
-   };
-
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.loginData = {
@@ -243,14 +242,11 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
 
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, Device, $translate
+  CryptoUtils, BMA, Wallet, Registry, Market, APP_CONFIG, $ionicHistory, Device, $translate, $ionicPopover
   ) {
 
   $scope.knownCurrencies = null;
   $scope.search = { text: '', results: {} };
-  $scope.isExpanded = false;
-  $scope.hasHeaderFabLeft = false;
-  $scope.hasHeaderFabRight = false;
   $scope.config = APP_CONFIG;
   $scope.options = {
       market: {
@@ -263,7 +259,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device);
+  TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover);
 
   ////////////////////////////////////////
   // Load currencies
@@ -315,18 +311,28 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   ////////////////////////////////////////
 
   $scope.isDeviceEnable = function() {
-    return Device.enable;
+    return Device.isEnable();
   };
 
   $scope.scanQrCodeAndGo = function() {
-    if (!Device.enable) {
+    if (!Device.isEnable()) {
       return;
     }
     Device.camera.scan()
     .then(function(result) {
-      if (result && result.text) {
-        // Go To this pubkey
-        $state.go('app.view_identity', {pub: result.text});
+      if (!result) {
+        return;
+      }
+      // If pubkey
+      if (BMA.regex.PUBKEY.test(result)) {
+        $state.go('app.view_identity', {pub: result});
+      }
+      else {
+        // TODO: parse URI (duniter:// )
+        //if (BMA.regex.URI.test(result)) {
+        //
+        //}
+        UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
       }
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
@@ -335,70 +341,6 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   ////////////////////////////////////////
   // Layout Methods
   ////////////////////////////////////////
-  /*var navIcons = document.getElementsByClassName('ion-navicon');
-  for (var i = 0; i < navIcons.length; i++) {
-      navIcons.addEventListener('click', function() {
-          this.classList.toggle('active');
-      });
-  }*/
-
-  $scope.hideNavBar = function() {
-      document.getElementsByTagName('ion-nav-bar')[0].style.display = 'none';
-  };
-
-  $scope.showNavBar = function() {
-      document.getElementsByTagName('ion-nav-bar')[0].style.display = 'block';
-  };
-
-  $scope.noHeader = function() {
-      var content = document.getElementsByTagName('ion-content');
-      for (var i = 0; i < content.length; i++) {
-          if (content[i].classList.contains('has-header')) {
-              content[i].classList.toggle('has-header');
-          }
-      }
-  };
-
-  $scope.setExpanded = function(bool) {
-      $scope.isExpanded = bool;
-  };
-
-  $scope.setHeaderFab = function(location) {
-      var hasHeaderFabLeft = false;
-      var hasHeaderFabRight = false;
-
-      switch (location) {
-          case 'left':
-              hasHeaderFabLeft = true;
-              break;
-          case 'right':
-              hasHeaderFabRight = true;
-              break;
-      }
-
-      $scope.hasHeaderFabLeft = hasHeaderFabLeft;
-      $scope.hasHeaderFabRight = hasHeaderFabRight;
-  };
-
-  $scope.hasHeader = function() {
-      var content = document.getElementsByTagName('ion-content');
-      for (var i = 0; i < content.length; i++) {
-          if (!content[i].classList.contains('has-header')) {
-              content[i].classList.toggle('has-header');
-          }
-      }
-  };
-
-  $scope.hideHeader = function() {
-      $scope.hideNavBar();
-      $scope.noHeader();
-  };
-
-  $scope.showHeader = function() {
-      $scope.showNavBar();
-      $scope.hasHeader();
-  };
-
   $scope.showFab = function(id, timeout) {
     if (!timeout) {
       timeout = 900;
@@ -412,7 +354,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
           fab.classList.toggle('on', true);
         }
       });
-    }, 900);
+    }, timeout);
   };
 }
 

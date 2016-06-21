@@ -3,6 +3,7 @@
 angular.module('cesium.crypto.services', ['ngResource'])
 
 .factory('CryptoUtils', function($q, $timeout) {
+  'ngInject';
 
     var async_load_scrypt = function() {
         if (typeof module !== 'undefined' && module.exports) {

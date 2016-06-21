@@ -2,6 +2,8 @@
 angular.module('cesium.currency.controllers', ['cesium.services'])
 
 .config(function($stateProvider, $urlRouterProvider) {
+  'ngInject';
+
   $stateProvider
 
     .state('app.currency_lookup', {
@@ -36,6 +38,10 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
     .state('app.view_peer', {
       url: "/peer/:server",
+      nativeTransitions: {
+          "type": "flip",
+          "direction": "right"
+      },
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_peer.html",
@@ -54,6 +60,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 ;
 
 function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA, Registry) {
+  'ngInject';
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
@@ -85,6 +92,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
 }
 
 function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Registry, Wallet) {
+  'ngInject';
 
   PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
 
@@ -225,6 +233,8 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
           $scope.c = json.c;
           $scope.baseUnit = json.currency;
           $scope.unit = json.currency;
+          $scope.dt = json.dt;
+          $scope.sigQty = json.sigQty;
         }),
 
       // Get the current block informations

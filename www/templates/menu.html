@@ -1,7 +1,7 @@
 <ion-side-menus enable-menu-with-back-views="true">
   <!-- HEADER -->
   <ion-side-menu-content>
-    <ion-nav-bar class="bar-dark" ng-class="{expanded: isExpanded, 'has-header-fab-left': hasHeaderFabLeft, 'has-header-fab-right': hasHeaderFabRight}" title-align="left">
+    <ion-nav-bar class="bar-dark" title-align="left">
       <ion-nav-back-button class="no-text">
       </ion-nav-back-button>
 
@@ -14,7 +14,11 @@
   </ion-side-menu-content>
 
   <!-- MENU -->
-  <ion-side-menu side="left" id="menu" expose-aside-when="large" enable-menu-with-back-views="false">
+  <ion-side-menu id="menu"
+                 side="left"
+                 expose-aside-when="large"
+                 enable-menu-with-back-views="false"
+                 width="225">
     <ion-header-bar class="bar">
       <h1 class="title" translate>
         MENU.TITLE
@@ -44,7 +48,7 @@
         <div class="item item-divider"></div>
 
         <!-- REGISTRY -->
-        <ion-item menu-close class="item item-icon-left" href="#/app/wot" ng-if="!options.registry || !options.registry.enable">
+        <ion-item menu-close class="item item-icon-left" href="#/app/wot">
           <i class="icon ion-person-stalker"></i>
           <span translate>MENU.REGISTRY</span>
         </ion-item>
@@ -70,9 +74,6 @@
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
 
-        <!-- <ion-item menu-close ng-click="addAccount()">
-          Add account
-        </ion-item> -->
         <ion-item menu-close class="item item-icon-left" href="#/app/settings">
           <i class="icon ion-android-settings"></i>
           <span translate>MENU.SETTINGS</span>
@@ -87,12 +88,13 @@
           </button>
         </ion-item>
         <!-- scan QR code -->
-        <ion-item menu-close class="item item-button-right" ng-if="isLogged() && device.enable">
+        <ion-item menu-close class="item item-button-right" ng-if="isDeviceEnable()">
           <span translate>Scan</span>
           <button class="button button-energized-900" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
         </ion-item>
+        <!-- log out -->
         <ion-item menu-close class="item item-button-right" ng-if="isLogged()">
           <span translate>COMMON.BTN_LOGOUT</span>
           <button class="button button-energized-900" ng-click="logout()">

@@ -1,6 +1,8 @@
 angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
+
     $stateProvider
 
     .state('app.market_lookup', {
@@ -53,6 +55,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 ;
 
 function MarketCategoryModalController($scope, Market, $state, $ionicModal, UIUtils) {
+  'ngInject';
 
   $scope.categoryModal = null;
   $scope.categories = {
@@ -121,6 +124,7 @@ function MarketCategoryModalController($scope, Market, $state, $ionicModal, UIUt
 }
 
 function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils) {
+  'ngInject';
 
   MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
 
@@ -296,6 +300,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 }
 
 function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q) {
+  'ngInject';
 
   $scope.formData = {};
   $scope.id = null;
@@ -352,6 +357,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
 }
 
 function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout) {
+  'ngInject';
 
   MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
 
@@ -465,7 +471,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         .then(function(imageData) {
           $scope.pictures.push({src: imageData});
           UIUtils.loading.hide();
-          $scope.$apply();
+          //$scope.$apply();
           resolve();
         });
       });

@@ -251,3 +251,9 @@ $screen-lg:                       1200px;
         margin: 0px !important;
     }
 }
+
+
+
+#unitPopover .item.selected {
+  background-color: $stable;
+}

@@ -1,6 +1,8 @@
 angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
+
     $stateProvider
 
     .state('app.registry_lookup', {
@@ -54,6 +56,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 ;
 
 function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, UIUtils) {
+  'ngInject';
 
   $scope.categoryModal = null;
   $scope.categories = {
@@ -121,6 +124,7 @@ function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, 
 }
 
 function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize) {
+  'ngInject';
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
   RegistryNewRecordWizardController.call(this, $scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
@@ -305,6 +309,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 }
 
 function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
+  'ngInject';
 
   $scope.formData = {};
   $scope.id = null;
@@ -424,6 +429,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 
 function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, Device,
   $ionicHistory) {
+  'ngInject';
 
   RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 
@@ -567,6 +573,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
 }
 
 function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry) {
+  'ngInject';
 
   $scope.recordData = {};
   $scope.isCompany = null;

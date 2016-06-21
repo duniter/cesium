@@ -2,6 +2,7 @@
 angular.module('cesium.home.controllers', ['cesium.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
     $stateProvider
 
       .state('app.home', {
@@ -37,6 +38,7 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 
 
 function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry) {
+ 'ngInject';
 
   $scope.accountData = {};
   $scope.accountForm = {};
@@ -148,6 +150,11 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
     });
   };
 
+  $scope.accountDataChanged = function() {
+    $scope.accountData.computing=false;
+    $scope.accountData.pubkey=null;
+  };
+
   $scope.doNewAccount = function() {
     $scope.accountForm.$submitted=true;
     if(!$scope.accountForm.$valid) {
@@ -160,6 +167,9 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
       Wallet.login($scope.accountData.username, $scope.accountData.password)
         .then(function() {
           if (!$scope.accountData.isMember) {
+            // Reset account data, and open wallet view
+            $scope.cancel();
+            $state.go('app.view_wallet');
             return;
           }
 
@@ -193,12 +203,14 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
 }
 
 function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
+  'ngInject';
 
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
 
 }
 
 function JoinController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry, APP_CONFIG) {
+  'ngInject';
 
   NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, Registry);
 

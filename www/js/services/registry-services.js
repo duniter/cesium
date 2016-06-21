@@ -1,6 +1,7 @@
 angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
 
 .factory('Registry', function($http, $q, CryptoUtils, APP_CONFIG) {
+  'ngInject';
 
     function Registry(server) {
 

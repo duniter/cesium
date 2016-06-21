@@ -1,18 +1,18 @@
 <ion-view left-buttons="leftButtons"
-          view-title=""
           id="wallet">
+  <ion-nav-title>
+    <!-- no title-->
+  </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
     <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
     </button>
-    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showActionsheet()">
+    <button class="button button-icon button-clear" ng-click="actionsPopover.show($event)">
+      <i class="icon ion-android-more-vertical"></i>
     </button>
   </ion-nav-buttons>
 
-    <ion-content
-      ng-class="{expanded:isExpanded}">
-        <div class="scroll">
-
+  <ion-content scroll="true">
             <div class="positive-900-bg hero">
               <div class="content">
                 <div class="avatar"
@@ -21,41 +21,30 @@
                 <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
                 <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
                 <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
-                <h4 class="light">
+        <h4 class="light" ng-if="isLogged() && convertedBalance != null">
                     <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-                    <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub></span>
+            <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub></span>
+        </h4>
+        <h4 class="light" ng-if="!isLogged() || convertedBalance == null">
+          <ion-spinner icon="android"></ion-spinner>
                 </h4>
               </div>
             </div>
 
-            <div class="hidden-xs hidden-sm padding" style="text-align:center">
+    <div id="qrcode" class="qrcode visible-xs visible-sm spin" ></div>
+
+    <!-- Buttons bar-->
+    <div class="hidden-xs hidden-sm padding" style="text-align:center"
+         ng-if="!!convertedBalance">
               <button class="button button-raised button-energized-900 ink-dark"
                       ng-click="openTransfer()">
                 {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
-              </button>
-
-              <button class="button button-raised icon-left ion-person ink"
-                      ng-if="walletData.requirements.needMembership"
-                      ng-click="membershipIn()">
-                {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
               </button>
 
               <button class="button button-raised icon-left ion-loop ink"
                       ng-if="walletData.requirements.needRenew"
                       ng-click="membershipRenew()">
                 {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
-              </button>
-
-              <button class="button button-raised icon-left ion-log-out ink"
-                      ng-if="walletData.requirements.needMembershipOut"
-                      ng-click="membershipOut()">
-                {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
-              </button>
-
-              <button class="button button-raised icon-left ion-flag ink"
-                      ng-if="walletData.requirements.needSelf"
-                      ng-click="self()">
-                {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
               </button>
             </div>
 
@@ -69,7 +58,7 @@
                 <a class="item item-icon-left item-icon-right item-text-wrap ink" ng-if="walletData.isMember && walletData.requirements.certificationCount > 0"
                    ui-sref="app.view_certifications({pub:walletData.pubkey})">
                   <i class="icon ion-ribbon-b"></i>
-                  {{'ACCOUNT.CERTIFICATION_COUNT'|translate}}
+          <span clas="input-label">{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
                   <span class="badge" ng-class="{'badge-balanced': walletData.requirements.needCertificationCount==0 && walletData.requirements.willNeedCertificationCount==0, 'badge-assertive': walletData.requirements.needCertificationCount>0 || walletData.requirements.willNeedCertificationCount>0}">{{walletData.requirements.certificationCount}}</span>
                   <i class="gray icon ion-ios-arrow-right"></i>
                 </a>
@@ -98,12 +87,21 @@
                   </h3>
                 </span>
 
+        <!-- Public key -->
+        <span class="item item-icon-left item-text-wrap ink in done"
+                  on-hold="copy(walletData.pubkey)"
+                  ng-if="showDetails"
+                  copy-on-click>
+          <i class="icon ion-key"></i>
+          <h4 id="pubkey" class="dark">{{walletData.pubkey}}</h4>
+        </span>
+
                 <!-- Last Transactions -->
                 <span class="item item-divider">
                   <span translate>ACCOUNT.LAST_TX</span>
                   <div class="badge item-note">
                     <span ng-if="!walletData.settings.useRelative">({{unit | abbreviate}})</span>
-                    <span ng-if="walletData.settings.useRelative">({{unit | abbreviate}}<sub>{{udUnit | abbreviate}}</sub>)</span>
+            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub>)</span>
                   </div>
                 </span>
 
@@ -117,16 +115,20 @@
                       <i class="icon ion-person"></i>
                       {{::tx.uid}}
                     </span>
-                    <span class="positive" ng-if="!tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
+            <span class="positive" ng-if="!tx.uid && !tx.isUD" ui-sref="app.view_identity({pub:tx.pubkey})">
                       <i class="icon ion-key"></i>
                       {{::tx.pubkey | formatPubkey}}
                     </span>
-                    <span  ng-if="tx.comment" class="hidden-xs">&nbsp;
+            <span class="energized" ng-if="tx.isUD">
+              <i class="icon ion-arrow-up-c"></i>
+              {{'COMMON.UNIVERSAL_DIVIDEND' | translate}}
+            </span>
+            <span  ng-if="tx.comment" class="dark hidden-xs">&nbsp;
                       <i class="icon ion-ios-chatbubble-outline"></i>
-                      {{::tx.comment}}
+              <smaller>{{::tx.comment}}</smaller>
                     </span>
                   </h2>
-                  <h3 ng-if="tx.comment" class="visible-xs">
+          <h3 ng-if="tx.comment" class="dark visible-xs">
                     <i class="icon ion-ios-chatbubble-outline"></i>
                     {{::tx.comment}}<br/>
                   </h3>
@@ -138,7 +140,7 @@
                     </span>
                   </h3>
                   <div class="badge item-note"
-                       ng-class="{'badge-balanced': tx.amount > 0}">
+               ng-class="{'badge-balanced': tx.amount > 0 && !tx.isUD, 'badge-energized': tx.isUD}">
                     <span ng-if="!walletData.settings.useRelative">{{tx.amount | formatInteger}}</span>
                     <span ng-if="walletData.settings.useRelative">{{tx.amount/walletData.currentUD | formatDecimal}}</span>
                   </div >
@@ -148,9 +150,6 @@
               <div class="col col-20 hidden-xs hidden-sm">&nbsp;
               </div>
             </div>
-          <div class="scroll-bar scroll-bar-v"></div>
-        </div>
-
     </ion-content>
 
     <button id="fab-transfer"

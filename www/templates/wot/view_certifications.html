@@ -43,14 +43,28 @@
                 ng-repeat="cert in certifications"
                 ng-if="loaded"
                 ui-sref="app.view_identity({pub:cert.from})">
-            <h3 ng-class="{'positive': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'assertive': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire}">
-              <i class="icon " ng-class="{'ion-checkmark': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'ion-alert-circled': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire, 'ion-clock': !cert.expiresIn}"> </i>
+            <span ng-if="cert.isMember">
+              <h3
+                ng-class="{'positive': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'assertive': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire}">
+                <i class="icon " ng-class="{'ion-alert-circled': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire, 'ion-clock': !cert.expiresIn && cert.isMember}"> </i>
+                <i class="icon ion-person"> </i>
               {{::cert.uid}}
             </h3>
             <h4 class="gray">
+                <i class="icon ion-key"></i>
               {{::cert.from | formatPubkey}}
+                <span class="gray"> | {{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</span>
             </h4>
+            </span>
+            <span ng-if="!cert.isMember">
+              <h3 class="gray">
+                <i class="icon ion-key"></i>
+                {{::cert.from | formatPubkey}}
+              </h3>
+              <h4 ng-if="!cert.isMember" class="gray">{{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</h4>
+            </span>
             <div class="badge item-note"
+                 ng-if="cert.expiresIn"
                  ng-class="{'badge-balanced': cert.expiresIn > timeWarningExpire, 'badge-assertive': cert.expiresIn <= timeWarningExpire}">
               {{::cert.expiresIn | formatDuration}}
             </div >

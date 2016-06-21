@@ -1,4 +1,8 @@
-<ion-view view-title="{{'MARKET.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span translate>MARKET.SEARCH.TITLE</span>
+  </ion-nav-title>
+
     <ion-nav-buttons side="secondary">
       <button class="button button-icon button-clear visible-xs"
               ui-sref="app.market_add_record">
@@ -14,7 +18,7 @@
           <i class="icon ion-search placeholder-icon"></i>
           <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
                  ng-model="search.text"
-                 ng-model-options="{ debounce: 250 }"
+               ng-model-options="{ debounce: 350 }"
                  ng-change="doSearch()" id="searchText">
         </label>
 
@@ -50,7 +54,7 @@
             <label class="item-input-wrapper">
               <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}"
                      ng-model="search.location"
-                     ng-model-options="{ debounce: 250 }"
+                   ng-model-options="{ debounce: 350 }"
                      ng-change="doSearch()"/>
             </label>
           </div>

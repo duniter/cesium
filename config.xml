@@ -1,21 +1,31 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.lesou" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget
+  xmlns="http://www.w3.org/ns/widgets"
+  xmlns:cdv="http://cordova.apache.org/ns/1.0"
+  id="fr.duniter.cesium"
+  version="0.1.18"
+  android-versionCode="6"
+  >
     <name>Cesium</name>
     <description>
-    A webapp client for Duniter
+  An simple App for Duniter
     </description>
-    <author email="contact@le-sou.org" href="http://le-sou.org">
-      le Sou
+  <author email="contact@duniter.fr" href="http://www.duniter.fr">
+    Duniter team
   </author>
     <content src="index.html" />
     <access origin="*" />
+  <!-- icon requirement for Ubuntu click packages -->
+  <icon src="www/img/logo.png" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="16" />
     <preference name="BackupWebStorage" value="none" />
     <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="4000" />
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="CrosswalkAnimatable" value="true" />
+    <allow-navigation href="*" />
     <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
     </feature>
@@ -67,9 +77,4 @@
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
     </platform>
-    <allow-navigation href="data:*" />
-    <preference name="xwalkVersion" value="xwalk_core_library_beta:18+" />
-    <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
-    <preference name="xwalkMode" value="embedded" />
-    <preference name="xwalkMultipleApk" value="true" />
 </widget>

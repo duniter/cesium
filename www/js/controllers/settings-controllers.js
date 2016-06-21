@@ -2,6 +2,8 @@
 angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
+
     $stateProvider
 
       .state('app.settings', {
@@ -20,6 +22,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q, $ionicPopup, $timeout, localStorage) {
+  'ngInject';
 
   $scope.locales = [
       {id:'fr-FR', label:'Français'},
@@ -30,11 +33,13 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loading = true; // to avoid the call of Wallet.store()
-    $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()}); 
+    $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
     Wallet.restore()
     .then(function() {
       angular.merge($scope.formData, Wallet.data.settings);
-      $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+      if (Wallet.data.settings.locale && Wallet.data.settings.locale.id) {
+        $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+      }
       UIUtils.loading.hide();
       $scope.loading = false;
     })

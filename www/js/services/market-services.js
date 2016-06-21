@@ -1,6 +1,7 @@
 angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config'])
 
 .factory('Market', function($http, $q, CryptoUtils, APP_CONFIG) {
+  'ngInject';
 
     function Market(server, wsServer) {
 

@@ -25,7 +25,7 @@ To contribute and compile cesium, you will have to:
    
   - Getting source and installing project dependencies:    
 ```
-  git clone https://www.github.com/duniter/cesium.git
+  git clone https://github.com/duniter/cesium.git
   cd cesium
   npm install --save
   bower install

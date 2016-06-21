@@ -22,7 +22,9 @@
     "COPY": "Copy",
     "LANGUAGE": "Language",
     "BTN_PICTURE_DELETE": "Delete",
-    "BTN_PICTURE_FAVORISE": "Default"
+    "BTN_PICTURE_FAVORISE": "Default",
+    "UNIVERSAL_DIVIDEND": "Universal dividend",
+    "UD": "UD"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -37,7 +39,7 @@
     "CURRENCY": "Currency",
     "CURRENCIES": "Currencies",
     "ACCOUNT": "My Account",
-    "TRANSFER": "Pay",
+    "TRANSFER": "Send",
     "SCAN": "Scan",
     "SETTINGS": "Settings"
   },
@@ -61,6 +63,8 @@
     "NODE": "Node address",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
+    "HISTORY_SETTINGS": "My Account",
+    "DISPLAY_UD_HISTORY": "Show received dividends ?",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
     "POPUP_NODE": {
@@ -90,10 +94,13 @@
       "TIME": "Current time",
       "POW_MIN": "Common difficulty",
       "RULES_DIVIDER": "Rules",
-      "C_RULE": "c"
+      "C_RULE": "c",
+      "UD_RULE": "Universal dividend (formula)",
+      "SIG_QTY_RULE": "Required certifications"
     }
   },
   "PEER": {
+    "TITLE": "Peer",
     "PEERS": "Peers",
     "KNOWN_PEERS": "Known peers",
     "SIGNED_ON_BLOCK": "Signed on block"
@@ -106,7 +113,8 @@
     "CERTIFICATIONS_RECEIVED": "Received certifications",
     "CERTIFICATIONS_RECEIVED_BY": "Received certifications for {{uid}}",
     "EXPIRE_IN": "Expires",
-    "BTN_SEND_MONEY": "Send money",
+    "SIGNED_ON_BLOCK": "Certify on block",
+    "BTN_SEND_MONEY": "Send",
     "BTN_CERTIFY": "Certify",
     "LOOKUP": {
       "TITLE": "Registry"
@@ -117,8 +125,8 @@
   },
   "LOGIN": {
     "TITLE": "Login",
-    "USERNAME": "Email (or sentence)",
-    "USERNAME_HELP": "joe@domain.com",
+    "USERNAME": "Protection phrase",
+    "USERNAME_HELP": "Protection phrase",
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password"
   },
@@ -133,11 +141,13 @@
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
     "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
     "CERTIFICATION_COUNT": "Certifications count",
-    "BTN_SEND_MONEY": "Send money",
+    "BTN_SEND_MONEY": "Send",
+    "BTN_RECEIVE_MONEY": "Receive",
     "BTN_MEMBERSHIP_IN": "Register as member",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
     "BTN_MEMBERSHIP_OUT": "Revoke membership",
     "BTN_SEND_IDENTITY": "Publish pseudonym (without register)",
+    "BTN_SHOW_DETAILS": "Display technical details",
     "NEW": {
       "TITLE": "New Account",
       "SLIDE_1_TITLE": "Select a money:",
@@ -162,10 +172,11 @@
     "TO": "To",
     "AMOUNT": "Amount",
     "AMOUNT_HELP": "Amount",
-    "COMMENT": "Reference",
-    "COMMENT_HELP": "Reference (optional)",
+    "COMMENT": "Comment",
+    "COMMENT_HELP": "Comment (optional)",
+    "CHOOSE_UNIT": "Unit of amount",
     "BTN_SEND": "Send",
-    "BTN_RELATIVE_UNIT": "Amount in relative unit ?",
+    "BTN_ADD_COMMENT": "Add comment ?",
     "MODAL": {
       "TITLE": "Transfer"
     }
@@ -264,7 +275,7 @@
     "FIELD_REQUIRED": "This field is required.",
     "FIELD_TOO_SHORT": "This field value is too short.",
     "FIELD_TOO_LONG": "This field value is exeeding max length.",
-    "FIELD_ACCENT": "Accent character not allowed",
+    "FIELD_ACCENT": "Commas and accent characters not allowed",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
@@ -286,6 +297,7 @@
     "COPY_CLIPBOARD_FAILED": "Could not copy to clipboard",
     "TAKE_PICTURE_FAILED": "Could not get picture.",
     "SCAN_FAILED": "Could not scan QR code.",
+    "SCAN_UNKNOWN_FORMAT": "Code not recognized.",
     "WOT_LOOKUP_FAILED": "Search failed.",
     "LOAD_NODE_DATA_FAILED": "Duniter Node not accessible. Please retry later.",
     "NEED_LOGIN_FIRST": "Please sign in first.",
@@ -293,12 +305,19 @@
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
     "INVALID_NODE_SUMMARY": "Unreachable node or invalid address",
+    "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special caracters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Identity successfully signed",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "TRANSFER_SENT": "Transaction successfully sent."
+    "TRANSFER_SENT": "Transaction successfully sent.",
+    "COPY_TO_CLIPBOARD_DONE": "Copy succeed."
+  },
+  "CONFIRM": {
+    "POPUP_TITLE": "Confirmation",
+    "CERTIFY_WARNING": "Security warning",
+    "CERTIFY_RULES": "<small><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?"
   }
 }

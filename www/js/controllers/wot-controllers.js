@@ -1,6 +1,7 @@
 angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
+    'ngInject';
     $stateProvider
 
       .state('app.wot_lookup', {
@@ -25,6 +26,10 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.view_certifications', {
         url: "/wot/cert/:pub",
+        nativeTransitions: {
+            "type": "flip",
+            "direction": "right"
+        },
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -42,9 +47,10 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet) {
+  'ngInject';
 
-  $scope.searchChanged = function() {
+  $scope.onWotSearchChanged = function() {
     $scope.search.looking = true;
     var text = $scope.search.text.toLowerCase().trim();
     if (text.length === 0) {
@@ -54,22 +60,28 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
     else {
       return BMA.wot.lookup({ search: text })
         .then(function(res){
+          var idtyKeys = [];
           var idties = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
               var blocUid = idty.meta.timestamp.split('-', 2);
+              var idtyKey = idty.uid + '-' + res.pubkey;
+              if (!idtyKeys[idtyKey] && !idty.revoked) {
+                idtyKeys[idtyKey] = true;
               return uids.concat({
                 uid: idty.uid,
                 pub: res.pubkey,
                 number: blocUid[0],
                 hash: blocUid[1]
               });
+              }
+              return uids;
             }, []));
           }, []);
           $scope.search.results = idties;
           $scope.search.looking = false;
         })
         .catch(function(err) {
-          if (err && err.ucode == 2001) {
+          if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
             $scope.search.results = [];
             $scope.search.looking = false;
           }
@@ -80,25 +92,47 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device) {
     }
   };
 
+  $scope.resetWotSearch = function() {
+    $scope.search = {
+      text: null,
+      looking: false,
+      results: []
+    };
+  };
+
   $scope.doSelectIdentity = function(pub, uid) {
-    $state.go('app.view_identity', {pub: pub});
+    if (!!pub && Wallet.isLogin() && !!Wallet.data && Wallet.data.pubkey == pub) {
+      $state.go('app.view_wallet'); // open the user wallet
+    }
+    else {
+      $state.go('app.view_identity', {pub: pub});
+    }
   };
 
   $scope.scanQrCode = function(){
-   if (!Device.enable) {
+    if (!Device.isEnable()) {
     return;
    }
    Device.camera.scan()
    .then(function(result) {
      if (!result) {
-      $scope.search.text = result.text;
+        return;
      }
+      // TODO : parse URI (duniter:// )
+      //if (Wallet.regex.URI.test(result)) {
+      //  UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
+      //}
+      //else {
+      $scope.search.text = result;
+      $scope.onWotSearchChanged();
+      //}
    })
    .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
  };
 }
 
 function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
+  'ngInject';
 
   $scope.identity = {};
   $scope.hasSelf = false;
@@ -153,10 +187,12 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
         $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
 
         // Retrieve cert count
+        var certPubkeys = [];
         $scope.certificationCount = res.results.reduce(function(sum, res) {
           return res.uids.reduce(function(sum, idty) {
             return idty.others.reduce(function(sum, cert) {
-              if (cert.isMember) { // skip cert from not member
+              if (cert.isMember && !certPubkeys[cert.pubkey]) { // skip cert from not member
+                certPubkeys[cert.pubkey] = true;
                 return sum + 1;
               }
               return sum;
@@ -185,7 +221,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
         .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
       })
       .catch(function(err) {
-        if (!!err && err.ucode == 2001) { // Identity not found (if no self)
+        if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) { // Identity not found (if no self)
           $scope.hasSelf = false;
           $scope.identity = {
             uid: null,
@@ -199,29 +235,9 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
       });
   };
 
-  // Certify click
-  $scope.certifyIdentity = function(identity) {
-    $scope.loadWallet()
-    .then(function(walletData) {
-      UIUtils.loading.show();
-
-      // TODO: ask user confirm - see issue https://github.com/duniter/cesium/issues/12
-      Wallet.certify($scope.identity.uid,
-                  $scope.identity.pub,
-                  $scope.identity.timestamp,
-                  $scope.identity.sig)
-      .then(function() {
-        UIUtils.loading.hide();
-        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-      })
-      .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-    })
-    .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
-  };
-
   // Copy
   $scope.copy = function(value) {
-    if (value && Device.enable) {
+    if (value && Device.isEnable()) {
       Device.clipboard.copy(value);
     }
   };
@@ -235,15 +251,11 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
     }
   };
 
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
   $scope.showFab('fab-transfer');
 }
 
-function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
+function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device, $ionicPopup) {
+  'ngInject';
 
   $scope.certifications = [];
   $scope.identity = {};
@@ -305,28 +317,39 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
           map[cert.from]=cert.expiresIn;
           return map;
         }, []);
-        $scope.certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
+        var certPubkeys = [];
+        var certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
           return certs.concat(res.uids.reduce(function(certs, idty) {
 
             return certs.concat(idty.others.reduce(function(certs, cert) {
-              if (cert.isMember) { // skip cert from not member
+              if (!certPubkeys[cert.pubkey]) { // skip duplicated certs
+                certPubkeys[cert.pubkey] = true;
                 return certs.concat({
                   from: cert.pubkey,
                   uid: cert.uids[0],
                   to: pub,
-                  expiresIn: expiresInByPub[cert.pubkey]
+                  block: (cert.meta && cert.meta.block_number) ? cert.meta.block_number : 0,
+                  expiresIn: cert.isMember ? expiresInByPub[cert.pubkey] : null,
+                  isMember: cert.isMember
                 });
               }
               return certs;
             }, certs));
           }, certs));
         }, []);
+        $scope.certifications = _.sortBy(certifications, function(cert){
+          var score = 1;
+          score += (1000000000000 * (cert.expiresIn ? cert.expiresIn : 0));
+          score += (10000000      * (cert.isMember ? 1 : 0));
+          score += (10            * (cert.block ? cert.block : 0));
+          return -score;
+        });
         $scope.canCertify = !Wallet.isLogin() || Wallet.data.pubkey != pub;
         $scope.alreadyCertified = (Wallet.isLogin() && Wallet.data.pubkey != pub && Wallet.data.isMember) ? !!_.findWhere($scope.certifications, { uid: Wallet.data.uid }) : false;
         onLoadFinish();
       })
       .catch(function(err) {
-        if (!!err && err.ucode == 2001) { // Identity not found (if no self)
+        if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) { // Identity not found (if no self)
           $scope.certifications = [];
           $scope.timeWarningExpire = Wallet.defaultSettings.timeWarningExpire;
           $scope.identity = {};
@@ -357,7 +380,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
         onLoadRequirementsFinish(idty.certifications); // Continue
       })
       .catch(function(err) {
-        if (!!err && err.ucode == 2004) { // Identity not found (if no self)
+        if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) {
           onLoadRequirementsFinish([]); // Continue
         }
         else {
@@ -371,18 +394,24 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.certifyIdentity = function(identity) {
     $scope.loadWallet()
     .then(function(walletData) {
+      UIUtils.loading.hide();
+      UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.CERTIFY_WARNING')
+      .then(function(confirm){
+        if (!confirm) {
+          return;
+        }
       UIUtils.loading.show();
-
-      // TODO: ask user confirm - see issue https://github.com/duniter/cesium/issues/12
       Wallet.certify($scope.identity.uid,
                   $scope.identity.pub,
                   $scope.identity.timestamp,
                   $scope.identity.sig)
       .then(function() {
         UIUtils.loading.hide();
-        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+          //UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+          UIUtils.toast.show('INFO.CERTIFICATION_DONE');
       })
       .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+      });
     })
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
@@ -391,11 +420,4 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.doUpdate = function() {
     $scope.loadCertifications($scope.identity.pub, true);
   };
-
-  // Set Header
-  $scope.$parent.showHeader();
-  $scope.isExpanded = false;
-  $scope.$parent.setExpanded(false);
-  $scope.$parent.setHeaderFab(false);
-
 }
