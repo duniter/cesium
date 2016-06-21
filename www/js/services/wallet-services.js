@@ -503,7 +503,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             loadTransactions(),
 
             // Load avatar
-            loadAvater();
+            loadAvatar()
           ])
           .then(function() {
             data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?

@@ -97,13 +97,13 @@
            ui-sref="app.market_view_record({id: found.id, title: found.title})"
            >
 
-          <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
-            <img ng-src="{{found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0"></img>
-            <h2 ng-bind-html="found.title"></h2>
+          <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': found.thumbnail}">
+            <img ng-src="{{::found.thumbnail.src}}" ng-if="found.thumbnail"></img>
+            <h2 ng-bind-html="::found.title"></h2>
             <h4 class="gray">
               <span ng-if="found.location">
                 <i class="icon ion-location"></i>
-                <span ng-bind-html="found.location"></span>
+                <span ng-bind-html="::found.location"></span>
               </span>
               <span ng-show="found.time">
                 <span ng-show="found.location">|</span>
@@ -117,9 +117,9 @@
 
           <div class="row row-record hidden-xs">
             <div class="col item-text-wrap item-thumbnail-left-padding"
-                 ng-class="{'item-thumbnail-left': (found.pictures && found.pictures.length > 0)}">
-              <img ng-src="{{found.pictures[0].src}}"
-                   ng-if="found.pictures && found.pictures.length > 0">
+                 ng-class="{'item-thumbnail-left': found.thumbnail}">
+              <img ng-src="{{::found.thumbnail.src}}"
+                   ng-if="found.thumbnail">
               <h2 ng-bind-html="found.title"></h2>
               <h4 class="gray">
                 <i class="icon ion-location" ng-if="found.location"></i>

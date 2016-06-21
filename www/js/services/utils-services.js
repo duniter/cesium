@@ -1,17 +1,25 @@
-//var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
-
 angular.module('cesium.utils.services', ['ngResource'])
 
 .factory('UIUtils',
   function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout) {
   'ngInject';
 
+  function exact(regexpContent) {
+    return new RegExp("^" + regexpContent + "$");
+  }
+
   var
     loadingTextCache=null,
     CONST = {
       MAX_HEIGHT: 400,
-      MAX_WIDTH: 400
-    };
+      MAX_WIDTH: 400,
+      THUMB_MAX_HEIGHT: 150,
+      THUMB_MAX_WIDTH: 150
+    },
+    regex = {
+      IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.*)")
+    }
+  ;
 
   function alertError(err, subtitle) {
     return $q(function(resolve, reject) {
@@ -172,51 +180,91 @@ angular.module('cesium.utils.services', ['ngResource'])
     return selectedText;
   }
 
-  function resizeImageFromFile(file) {
-      return $q(function(resolve, reject) {
+  function imageOnLoadResize(resolve, reject, thumbnail) {
+    return function(event) {
+       var width = event.target.width;
+       var height = event.target.height;
+       var maxWidth = (thumbnail ? CONST.THUMB_MAX_WIDTH : CONST.MAX_WIDTH);
+       var maxHeight = (thumbnail ? CONST.THUMB_MAX_HEIGHT : CONST.MAX_HEIGHT);
 
+       if (width > height) {
+         if (width > maxWidth) {
+           height *= maxWidth / width;
+           width = maxWidth;
+         }
+       } else {
+         if (height > maxHeight) {
+           width *= maxHeight / height;
+           height = maxHeight;
+         }
+       }
+       var canvas = document.createElement("canvas");
+       canvas.width = width;
+       canvas.height = height;
+       var ctx = canvas.getContext("2d");
+       ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
+
+       var dataurl = canvas.toDataURL();
+
+       resolve(dataurl);
+     };
+  }
+
+  function resizeImageFromFile(file, thumbnail) {
+    return $q(function(resolve, reject) {
+
+      if (file) {
         var reader = new FileReader();
-
         reader.onload = function(event){
           var img = document.createElement("img");
-
-          img.onload = function(event) {
-            var width = event.target.width;
-            var height = event.target.height;
-
-            if (width > height) {
-              if (width > CONST.MAX_WIDTH) {
-                height *= CONST.MAX_WIDTH / width;
-                width = CONST.MAX_WIDTH;
-              }
-            } else {
-              if (height > CONST.MAX_HEIGHT) {
-                width *= CONST.MAX_HEIGHT / height;
-                height = CONST.MAX_HEIGHT;
-              }
-            }
-            var canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
-
-            var dataurl = canvas.toDataURL();
-
-            resolve(dataurl);
-          };
-
+          img.onload = imageOnLoadResize(resolve, reject, thumbnail);
           img.src = event.target.result;
         };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
 
-        if (file) {
-          reader.readAsDataURL(file);
-        }
-        else {
-          //reject("Not a file");
-        }
-      });
+  function resizeImageFromSrc(imageSrc, thumbnail) {
+    return $q(function(resolve, reject) {
+      var img = document.createElement("img");
+      img.onload = imageOnLoadResize(resolve, reject, thumbnail);
+      img.src = imageSrc;
+    });
+  }
+
+  function imageFromAttachment(attachment) {
+    if (!attachment || !attachment._content_type || !attachment._content) {
+      return null;
     }
+    var image = {
+      src: "data:" + attachment._content_type + ";base64," + attachment._content
+    };
+    if (attachment._title) {
+      image.title = attachment._title;
+    }
+    if (attachment._name) {
+      image.name = attachment._name;
+    }
+    return image;
+  }
+
+  function imageToAttachment(image) {
+    if (!image || !image.src) return null;
+    var match = regex.IMAGE_SRC.exec(image.src);
+    if (!match) return null;
+    var attachment = {
+      _content_type: match[1],
+      _content: match[2]
+    };
+    if (image.title) {
+      attachment._title = image.title;
+    }
+    if (image.name) {
+      attachment._name = image.name;
+    }
+    return attachment;
+  }
 
   return {
     alert: {
@@ -239,7 +287,10 @@ angular.module('cesium.utils.services', ['ngResource'])
       get: getSelectionText
     },
     image: {
-      resize: resizeImageFromFile
+      resizeFile: resizeImageFromFile,
+      resizeSrc: resizeImageFromSrc,
+      fromAttachment: imageFromAttachment,
+      toAttachment: imageToAttachment
     }
   };
 })
@@ -261,5 +312,4 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   };
 })
-
 ;

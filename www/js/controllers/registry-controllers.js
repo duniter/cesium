@@ -530,7 +530,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
     UIUtils.loading.show();
     return $q(function(resolve, reject) {
       var file = event.target.files[0];
-      UIUtils.image.resize(file)
+      UIUtils.image.resizeFile(file)
       .then(function(imageData) {
         $scope.pictures.push({src: imageData});
         UIUtils.loading.hide();

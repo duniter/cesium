@@ -186,7 +186,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "location", "pictures", "category", "price"]
+      _source: ["title", "time", "description", "location", "thumbnail", "category", "price", "unit", "currency"]
     };
     var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
@@ -233,7 +233,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       },
       from: 0,
       size: 20,
-      _source: ["title", "time", "description", "location", "pictures", "category", "price"]
+      _source: ["title", "time", "description", "location", "thumbnail", "category", "price", "unit", "currency"]
     };
 
     $scope.doRequest(request);
@@ -251,28 +251,31 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
               $scope.search.results = [];
             }
             else {
-              var items = res.hits.hits.reduce(function(result, hit) {
-                  var market = hit._source;
-                  market.id = hit._id;
-                  market.type = hit._type;
-                  market.urlTitle = market.title;
-                  if (market.category) {
-                    market.category = categories[market.category];
+              var records = res.hits.hits.reduce(function(result, hit) {
+                  var record = hit._source;
+                  record.id = hit._id;
+                  record.type = hit._type;
+                  record.urlTitle = record.title;
+                  if (record.category && record.category.id) {
+                    record.category = categories[record.category.id];
+                  }
+                  if (record.thumbnail) {
+                    record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
                   }
                   if (hit.highlight) {
                     if (hit.highlight.title) {
-                        market.title = hit.highlight.title[0];
+                        record.title = hit.highlight.title[0];
                     }
                     if (hit.highlight.description) {
-                        market.description = hit.highlight.description[0];
+                        record.description = hit.highlight.description[0];
                     }
                     if (hit.highlight.location) {
-                        market.location = hit.highlight.location[0];
+                        record.location = hit.highlight.location[0];
                     }
                   }
-                  return result.concat(market);
+                  return result.concat(record);
                 }, []);
-              $scope.search.results = items;
+              $scope.search.results = records;
 
               // Set Motion
               $timeout(function() {
@@ -326,11 +329,13 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
         Market.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
-          $scope.category = categories[hit._source.category];
+          if (hit._source.category && hit._source.category.id) {
+            $scope.category = categories[hit._source.category.id];
+          }
           $scope.id= hit._id;
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-              return res.concat({src: pic.src});
+              return res.concat(UIUtils.image.fromAttachment(pic.file));
             }, []);
           }
           $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer === Wallet.getData().pubkey);
@@ -390,11 +395,13 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         Market.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
-          $scope.category = categories[hit._source.category.id];
+          if (hit._source.category && hit._source.category.id) {
+            $scope.category = categories[hit._source.category.id];
+          }
           $scope.id= hit._id;
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-              return res.concat({src: pic.src});
+              return res.concat(UIUtils.image.fromAttachment(pic.file));
             }, []);
           }
           UIUtils.loading.hide();
@@ -415,34 +422,49 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.save = function() {
     UIUtils.loading.show();
     return $q(function(resolve, reject) {
-      $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
-        return res.concat({src: pic.src});
-      }, []);
-      if (!$scope.id) { // Create
-        // Set time (UTC)
-        // TODO : use the block chain time
-        $scope.formData.time = Math.floor(moment().utc().valueOf() / 1000);
-        Market.record.add($scope.formData, $scope.walletData.keypair)
-        .then(function(id) {
-          UIUtils.loading.hide();
-          $state.go('app.market_view_record', {id: id});
-          resolve();
-        })
-        .catch(UIUtils.onError('Could not save market'));
-      }
-      else { // Update
-        if (!$scope.formData.time) {
+      var doFinishSave = function(formData) {
+        if (!$scope.id) { // Create
           // Set time (UTC)
           // TODO : use the block chain time
-          $scope.formData.time = Math.floor(moment().utc().valueOf() / 1000);
+          formData.time = Math.floor(moment().utc().valueOf() / 1000);
+          Market.record.add(formData, $scope.walletData.keypair)
+          .then(function(id) {
+            UIUtils.loading.hide();
+            $state.go('app.market_view_record', {id: id});
+            resolve();
+          })
+          .catch(UIUtils.onError('Could not save market'));
         }
-        Market.record.update($scope.formData, {id: $scope.id}, $scope.walletData.keypair)
-        .then(function() {
-          UIUtils.loading.hide();
-          $state.go('app.market_view_record', {id: $scope.id});
-          resolve();
-        })
-        .catch(UIUtils.onError('Could not update market'));
+        else { // Update
+          if (formData.time) {
+            // Set time (UTC)
+            // TODO : use the block chain time
+            formData.time = Math.floor(moment().utc().valueOf() / 1000);
+          }
+          Market.record.update(formData, {id: $scope.id}, $scope.walletData.keypair)
+          .then(function() {
+            UIUtils.loading.hide();
+            $state.go('app.market_view_record', {id: $scope.id});
+            resolve();
+          })
+          .catch(UIUtils.onError('Could not update market'));
+        }
+      };
+
+      if ($scope.pictures.length > 0) {
+        $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
+          return res.concat({file: UIUtils.image.toAttachment(pic)});
+        }, []);
+        UIUtils.image.resizeSrc($scope.pictures[0].src, true)
+        .then(function(imageSrc) {
+          $scope.formData.thumbnail = UIUtils.image.toAttachment({src: imageSrc});
+          doFinishSave($scope.formData);
+        });
+      }
+      else {
+        delete $scope.formData.thumbnail;
+        delete $scope.formData.pictures;
+        doFinishSave($scope.formData);
       }
     });
   };
@@ -464,18 +486,18 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   };
 
   $scope.fileChanged = function(event) {
-      UIUtils.loading.show();
-      return $q(function(resolve, reject) {
-        var file = event.target.files[0];
-        UIUtils.image.resize(file)
-        .then(function(imageData) {
-          $scope.pictures.push({src: imageData});
-          UIUtils.loading.hide();
-          //$scope.$apply();
-          resolve();
-        });
+    UIUtils.loading.show();
+    return $q(function(resolve, reject) {
+      var file = event.target.files[0];
+      UIUtils.image.resizeFile(file)
+      .then(function(imageData) {
+        $scope.pictures.push({src: imageData});
+        UIUtils.loading.hide();
+        //$scope.$apply();
+        resolve();
       });
-    };
+    });
+  };
 
   $scope.removePicture = function(index){
     $scope.pictures.splice(index, 1);
@@ -503,4 +525,5 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     })
     .catch(onError('Could not computed authentication token'));
   };
+
 }
