@@ -99,6 +99,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             var outputArray = output.split(':',3);
             var outputAmount = parseInt(outputArray[0]);
             var outputBase = parseInt(outputArray[1]);
+            if (outputBase > 0) {
+              alert("base > 0");
+            }
             var outputCondArray = outputArray[2].split('(', 3);
             var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
                  outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
@@ -330,8 +333,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               else {
                 src.consumed = false;
               }
+              var amount = src.amount;
+              if(src.base > 0) {
+                amount = amount * Math.pow(10, src.base);
+              }
               if (!src.consumed) {
-                balance += src.amount;
+                balance += amount;
               }
               sources.push(src);
               sources[srcKey] = src;
@@ -370,9 +377,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             .then(function(res){
               udList = !res.history || !res.history.history ? [] :
                res.history.history.reduce(function(res, ud){
+                 var amount = ud.amount;
+                 if(ud.base > 0) {
+                   amount = amount * Math.pow(10, ud.base);
+                 }
                  return res.concat({
                    time: ud.time,
-                   amount: ud.amount,
+                   amount: amount,
                    isUD: true,
                    block_number: ud.block_number
                  });
@@ -555,7 +566,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                 // if D : D:PUBLIC_KEY:BLOCK_ID
                 // if T : T:T_HASH:T_INDEX
                 tx += input.type+":"+input.identifier+":"+input.noffset+"\n";
-                sourceAmount += input.amount;
+                if (input.unit > 0) {
+                  sourceAmount += input.amount * Math.pow(10, input.unit);
+                }
+                else {
+                  sourceAmount += input.amount;
+                }
                 if (input.base > outputBase) {
                   outputBase = input.base;
                 }
@@ -586,11 +602,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             tx += 'Outputs:\n';
             // AMOUNT:BASE:CONDITIONS
             if (outputBase > 0) { // add offset
-
+              tx += Math.floor(amount / Math.pow(10, outputBase));
             }
-            tx += amount + ':'+outputBase+':SIG('+destPub+')\n';
+            else {
+              tx += amount;
+            }
+            tx += ':'+outputBase+':SIG('+destPub+')\n';
+
             if (sourceAmount > amount) {
-              tx += (sourceAmount-amount)+':'+outputBase+':SIG('+data.pubkey+')\n';
+              var rest = (sourceAmount-amount);
+              if (outputBase > 0) { // add offset
+                tx += Math.floor(rest / Math.pow(10, outputBase));
+              }
+              else {
+                tx += rest;
+              }
+              tx += ':'+outputBase+':SIG('+data.pubkey+')\n';
             }
 
             tx += "Comment: "+ (!!comments?comments:"") + "\n";
