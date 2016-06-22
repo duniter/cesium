@@ -21,7 +21,7 @@
               <div class="list">
 
                 <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
-                    <img ng-src="{{::thumbnail.src}}" ng-if="thumbnail"></img>
+                    <img ng-src="{{::thumbnail.src}}" ng-if="thumbnail">
                     <h2 ng-bind-html="formData.title"></h2>
                     <h4 class="gray">
                         <i class="icon ion-location" ng-show="formData.location"></i>
