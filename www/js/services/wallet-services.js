@@ -10,7 +10,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
     defaultSettings = {
       useRelative: true,
-      timeWarningExpire: 129600 /*TODO: =1.5j est-ce suffisant ?*/,
+      timeWarningExpire: 2592000 /*=30 days*/,
       useLocalStorage: false,
       rememberMe: false,
       node: BMA.node.url,
@@ -81,7 +81,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       }
     },
 
-    reduceTxAndPush = function(txArray, result, processedTxMap) {
+    reduceTxAndPush = function(txArray, result, processedTxMap, isPending) {
       if (!txArray || txArray.length === 0) {
         return;
       }
@@ -94,14 +94,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         if (otherIssuer.length > 0) {
           otherIssuer = otherIssuer.substring(2);
         }
-        var otherReceiver = null;
+        var otherReceiver;
+        var outputBase;
         var amount = tx.outputs.reduce(function(sum, output) {
             var outputArray = output.split(':',3);
-            var outputAmount = parseInt(outputArray[0]);
-            var outputBase = parseInt(outputArray[1]);
-            if (outputBase > 0) {
-              alert("base > 0");
-            }
+            outputBase = parseInt(outputArray[1]);
+            var outputAmount = (outputBase > 0) ? parseInt(outputArray[0]) * Math.pow(10, outputBase) : parseInt(outputArray[0]);
             var outputCondArray = outputArray[2].split('(', 3);
             var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
                  outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
@@ -133,17 +131,24 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         var txKey = amount + ':' + tx.hash + ':' + time;
         if (!processedTxMap[txKey] && amount !== 0) {
           processedTxMap[txKey] = true;
-
+          var isValid = true;
+          // FIXME : check is input are in available sources
+          //if (isPending && walletIsIssuer) {
+          //  isValid = (tx.inputs.length === tx.inputs.reduce(function(sum, input) {
+          //    return (data.sources[input] !== undefined) ? sum+1 : sum;
+          //  }, 0));
+          //}
           result.push({
-            time: time,
-            amount: amount,
-            pubkey: pubkey,
-            uid: (member ? member.uid : null),
-            comment: tx.comment,
-            isUD: false,
-            hash: tx.hash,
-            locktime: tx.locktime,
-            block_number: tx.block_number
+             time: time,
+             amount: amount,
+             pubkey: pubkey,
+             uid: (member ? member.uid : null),
+             comment: tx.comment,
+             isUD: false,
+             hash: tx.hash,
+             locktime: tx.locktime,
+             block_number: tx.block_number,
+             valid: isValid
           });
         }
       });
@@ -364,10 +369,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           BMA.tx.history.all({pubkey: data.pubkey})
           .then(function(res){
             var processedTxMap = {};
-            reduceTxAndPush(res.history.sent, txList, processedTxMap);
-            reduceTxAndPush(res.history.received, txList, processedTxMap);
-            reduceTxAndPush(res.history.sending, txList, processedTxMap);
-            reduceTxAndPush(res.history.pending, txList, processedTxMap);
+            reduceTxAndPush(res.history.sent, txList, processedTxMap, false);
+            reduceTxAndPush(res.history.received, txList, processedTxMap, false);
+            reduceTxAndPush(res.history.sending, txList, processedTxMap, false);
+            reduceTxAndPush(res.history.pending, txList, processedTxMap, true);
           }));
         // get UD history
         var udList = [];
@@ -377,10 +382,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             .then(function(res){
               udList = !res.history || !res.history.history ? [] :
                res.history.history.reduce(function(res, ud){
-                 var amount = ud.amount;
-                 if(ud.base > 0) {
-                   amount = amount * Math.pow(10, ud.base);
-                 }
+                 var amount = (ud.base > 0) ? ud.amount * Math.pow(10, ud.base) : ud.amount;
                  return res.concat({
                    time: ud.time,
                    amount: amount,
@@ -395,7 +397,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         .then(function(){
           // sort by time desc
           data.history = txList.concat(udList).sort(function(tx1, tx2) {
-             return tx2.time - tx1.time;
+             return (tx2.time - tx1.time);
           });
           resolve();
         })
@@ -430,11 +432,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
-                var currenUD = block.dividend;
+                var currentUD = block.dividend;
                 if (block.unitbase > 0) {
-                  currenUD = currenUD * Math.pow(10, block.unitbase);
+                  currentUD = currentUD * Math.pow(10, block.unitbase);
                 }
-                data.currentUD = currenUD;
+                data.currentUD = currentUD;
                 resolve();
               })
               .catch(function(err) {
@@ -483,23 +485,28 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             // Get members
             loadMembers(),
 
-            // Get sources
-            loadSources(),
-
             // Get requirements
             loadRequirements(),
 
-            // Get transactions
-            loadTransactions()
+            // Get sources
+            loadSources()
           ])
           .then(function() {
-            data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
-                (data.parameters.sigQty - data.requirements.certificationCount) : 0;
-            data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
-                data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
-                (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
-            data.loaded = true;
-            resolve(data);
+            // Get transactions
+            loadTransactions()
+            .then(function(){
+              data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
+                  (data.parameters.sigQty - data.requirements.certificationCount) : 0;
+              data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
+                  data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
+                  (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+              data.loaded = true;
+              resolve(data);
+            })
+            .catch(function(err) {
+              data.loaded = false;
+              reject(err);
+            });
           })
           .catch(function(err) {
             data.loaded = false;
@@ -509,25 +516,28 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     refreshData = function() {
-        return $q(function(resolve, reject){
-          $q.all([
+      return $q(function(resolve, reject){
+        $q.all([
 
-            // Get UDs
-            loadUDs(),
+          // Get UDs
+          loadUDs(),
 
-            // Get requirements
-            loadRequirements(),
+          // Get requirements
+          loadRequirements(),
 
-            // Get sources
-            loadSources(),
-
-            // Get transactions
-            loadTransactions()
-          ])
-          .then(function() {
+          // Get sources
+          loadSources()
+        ])
+        .then(function() {
+          // Get transactions (after sources)
+          loadTransactions()
+          .then(function(){
             resolve(data);
-          }).catch(function(err){reject(err);});
-        });
+          })
+          .catch(function(err){reject(err);});;
+        })
+        .catch(function(err){reject(err);});
+      });
     },
 
     /**
@@ -561,6 +571,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             tx += data.pubkey + "\n";
             tx += "Inputs:\n";
             var sourceAmount = 0;
+            var minInputBase = 0;
             var outputBase = 0;
             var inputs = [];
             var i;
@@ -570,21 +581,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
                 // if D : D:PUBLIC_KEY:BLOCK_ID
                 // if T : T:T_HASH:T_INDEX
                 tx += input.type+":"+input.identifier+":"+input.noffset+"\n";
-                if (input.unit > 0) {
-                  sourceAmount += input.amount * Math.pow(10, input.unit);
-                }
-                else {
-                  sourceAmount += input.amount;
-                }
-                if (input.base > outputBase) {
-                  outputBase = input.base;
-                }
+                sourceAmount += (input.unit > 0) ? (input.amount * Math.pow(10, input.unit)) : input.amount;
+                outputBase = (input.base > outputBase) ? input.base : outputBase;
+                minInputBase = (input.base > outputBase) ? input.base : minInputBase;
                 inputs.push(input);
                 if (sourceAmount >= amount) {
                   break;
                 }
               }
             }
+            // FIXME: Fix - make sure to get a round amount
+            // check is last digit is zero
+            //if (minInputBase < outputBase) {
+            //  var outputPow = Math.pow(10, outputBase);
+            // var inputPow = Math.pow(10, minInputBase);
+            //  var lastDigit = sourceAmount - Math.floor(sourceAmount / outputPow) * outputPow
+            //  outputBase - minInputBase
+            //}
 
             if (sourceAmount < amount) {
               if (sourceAmount === 0) {

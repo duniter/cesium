@@ -113,14 +113,16 @@
 
         <span class="item ink" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
           <h2>
-            <i class="icon ion-clock" ng-if="!tx.block_number"> </i>
-            <span class="positive" ng-if="tx.uid" ui-sref="app.view_identity({pub:tx.pubkey})">
-              <i class="icon ion-person"></i>
-              {{::tx.uid}}
-            </span>
-            <span class="positive" ng-if="!tx.uid && !tx.isUD" ui-sref="app.view_identity({pub:tx.pubkey})">
-              <i class="icon ion-key"></i>
-              {{::tx.pubkey | formatPubkey}}
+            <i class="icon" ng-if="!tx.block_number" ng-class="{'ion-clock': tx.valid, 'ion-minus-circled assertive': !tx.valid}"> </i>
+            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+              <span ng-if="tx.uid">
+                <i class="icon ion-person"></i>
+                {{::tx.uid}}
+              </span>
+              <span ng-if="!tx.uid && !tx.isUD">
+                <i class="icon ion-key"></i>
+                {{::tx.pubkey | formatPubkey}}
+              </span>
             </span>
             <span class="dark" ng-if="tx.isUD">
               <i class="icon ion-arrow-up-c"></i>
