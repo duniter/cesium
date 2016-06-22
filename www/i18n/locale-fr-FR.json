@@ -52,6 +52,7 @@
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies",
     "BTN_CURRENCY": "Explorer la monnaie",
+    "BTN_ACCOUNT": "Mon compte",
     "DEV_WARNING": "Avertissement",
     "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
     "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",

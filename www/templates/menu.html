@@ -20,8 +20,9 @@
                  expose-aside-when="large"
                  enable-menu-with-back-views="false"
                  width="225">
-    <ion-header-bar class="bar">
-      <h1 class="title" translate>
+    <ion-header-bar class="bar bar-header">
+      <img class="logo" src="img/logo-cs.small.svg"/>
+      <h1 class="title royal" translate>
         MENU.TITLE
       </h1>
     </ion-header-bar>
@@ -81,14 +82,18 @@
         <!-- scan QR code -->
         <ion-item menu-close class="item item-button-right" ng-if="isDeviceEnable()">
           <span translate>Scan</span>
-          <button class="button button-energized-900" ng-click="scanQrCodeAndGo()">
+          <button class="button button-stable" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
         </ion-item>
+        <span class="hidden-xs hidden-sm">
+          <br/>
+          <br/>
+        </span>
         <!-- log out -->
         <ion-item menu-close class="item item-button-right" ng-if="isLogged()">
           <span translate>COMMON.BTN_LOGOUT</span>
-          <button class="button button-energized-900" ng-click="logout()">
+          <button class="button button-stable" ng-click="logout()">
           <i class="icon ion-log-out"></i>
           </button>
         </ion-item>
@@ -101,6 +106,7 @@
         <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
         <span class="buildDate" translate="COMMON.APP_BUILD_DATE" translate-values="{buildDate: config.BUILD_DATE}"></span>
       </h1>
+
     </ion-footer-bar>
   </ion-side-menu>
 

@@ -137,7 +137,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .config(function($ionicConfigProvider) {
     'ngInject';
-    $ionicConfigProvider.scrolling.jsScrolling(false);
+    // JS scrolling need for iOs (see http://blog.ionic.io/native-scrolling-in-ionic-a-tale-in-rhyme/)
+    var enableJsScrolling = ionic.Platform.isIOS();
+    $ionicConfigProvider.scrolling.jsScrolling(enableJsScrolling);
     $ionicConfigProvider.views.maxCache(5);
   })
 

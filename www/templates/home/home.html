@@ -1,18 +1,19 @@
 <ion-view id="home">
   <ion-nav-title>
-    <!--span class="visible-xs visible-sm" translate>HOME.TITLE</span>-->
+
   </ion-nav-title>
 
   <ion-content class="has-header center padding-xs positive-900-bg">
 
     <h2 class="hidden-xs" translate>HOME.WELCOME</h2>
+    <img class="logo" src="img/logo.large.svg"/>
     <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
     <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
 
     <div class="row no-padding">
-      <div class="col-25 hidden-xs hidden-sm">&nbsp;</div>
-      <div class="col">
+      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
 
+      <div class="col">
         <!-- CURRENCY -->
         <button type="button"
                 class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
@@ -33,12 +34,32 @@
         <button type="button"
                 class="button button-block button-light ink button-clear"
                 ng-click="newAccount()" ng-show="!isLogged()" translate>COMMON.BTN_ADD_ACCOUNT</button>
+        <button type="button"
+                class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
+                ui-sref="app.view_wallet" ng-show="isLogged()" translate>HOME.BTN_ACCOUNT</button>
 
-        <!-- warning still dev -->
-        <br class="hidden-xs"/>
-        <br class="hidden-xs"/>
-        <br class="hidden-xs hidden-sm"/>
-        <div class="card stable-bg no-padding no-margin hidden-xs">
+      </div>
+
+      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
+    </div>
+
+    <!-- spacer -->
+    <span class="hidden-xs">
+      <br/>
+      <br/>
+    </span>
+    <span class="hidden-xs hidden-sm">
+      <br/>
+    </span>
+
+    <!-- warning still dev -->
+    <div class="row no-padding">
+
+      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="col col-10 hidden-xs">&nbsp;</div>
+
+      <div class="col">
+        <div class="card stable-bg no-padding no-margin hidden-xs hidden-sm">
           <div class="item item-divider">
             <i class="icon ion-alert-circled assertive"></i>
             {{'HOME.DEV_WARNING'|translate}}
@@ -52,13 +73,13 @@
           </div>
         </div>
 
-        <div class="card stable-bg no-padding no-margin visible-xs">
+        <div class="card stable-bg no-padding no-margin visible-xs visible-sm">
           <p class="item item-text-wrap">
             <span class="gray">
               <i class="icon ion-alert-circled assertive"></i>
               <b>{{'HOME.DEV_WARNING'|translate}}</b>
             </span><br/>
-              <span translate>HOME.DEV_WARNING_MESSAGE_SHORT</span>
+            <span translate>HOME.DEV_WARNING_MESSAGE_SHORT</span>
             <span>
               <a href="{{config.NEW_ISSUE_LINK}}"
                  target="_blank"
@@ -67,7 +88,9 @@
           </p>
         </div>
       </div>
-      <div class="col-25 hidden-xs hidden-sm">&nbsp;</div>
+
+      <div class="col col-10 hidden-xs">&nbsp;</div>
+      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
     </div>
 
     <!-- fork me on github -->

@@ -16,6 +16,18 @@
 }
 */
 
+#menu img.logo {
+    margin-top: 3px;
+    margin-left: 42px;
+    height: 37px;
+}
+
+#home img.logo {
+  margin-top: 15px;
+  height: 200px;
+  width: 200px;
+}
+
 #home h1 {
     padding-top: 15px;
     text-align: center;

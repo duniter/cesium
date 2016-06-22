@@ -52,6 +52,7 @@
     "BTN_MARKET": "Market place",
     "BTN_CURRENCIES": "Explore currencies",
     "BTN_CURRENCY": "Explore currency",
+    "BTN_ACCOUNT": "My Account",
     "DEV_WARNING": "Warning",
     "DEV_WARNING_MESSAGE": "This application is still in active development.<br/>Please report us all issues !",
     "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",

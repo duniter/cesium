@@ -3,8 +3,8 @@
   xmlns="http://www.w3.org/ns/widgets"
   xmlns:cdv="http://cordova.apache.org/ns/1.0"
   id="fr.duniter.cesium"
-  version="0.1.18"
-  android-versionCode="6"
+  version="0.1.19"
+  android-versionCode="7"
   >
   <name>Cesium</name>
   <description>
@@ -15,16 +15,13 @@
   </author>
   <content src="index.html" />
   <access origin="*" />
-  <!-- icon requirement for Ubuntu click packages -->
   <icon src="www/img/logo.png" />
   <preference name="webviewbounce" value="false" />
   <preference name="UIWebViewBounce" value="false" />
   <preference name="DisallowOverscroll" value="true" />
   <preference name="android-minSdkVersion" value="16" />
-  <preference name="BackupWebStorage" value="none" />
   <preference name="SplashScreen" value="screen" />
-  <preference name="SplashScreenDelay" value="3000" />
-  <preference name="CrosswalkAnimatable" value="true" />
+  <preference name="SplashScreenDelay" value="4000" />
   <allow-navigation href="*" />
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar" />
@@ -50,6 +47,7 @@
       <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
   </platform>
   <platform name="ios">
+      <preference name="BackupWebStorage" value="local" />
       <icon height="57" src="resources/ios/icon/icon.png" width="57" />
       <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
       <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
