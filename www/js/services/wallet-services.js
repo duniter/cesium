@@ -534,7 +534,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           .then(function(){
             resolve(data);
           })
-          .catch(function(err){reject(err);});;
+          .catch(function(err){reject(err);});
         })
         .catch(function(err){reject(err);});
       });
