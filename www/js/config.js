@@ -9,13 +9,13 @@
 angular.module("cesium.config", [])
 
 .constant("APP_CONFIG", {
-	"DUNITER_NODE": "cgeek.fr:9330",
-	"NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
-	"TIMEOUT": 4000,
-	"DEBUG": false,
-	"NATIVE_TRANSITION": false,
-	"VERSION": "0.1.6",
-	"BUILD_DATE": "2016-05-31T09:28:35.330Z"
+	"DUNITER_NODE": "192.168.0.5:9201",
+	"DUNITER_NODE_ES": "localhost:9200",
+	"TIMEOUT": 10000,
+	"DEBUG": true,
+	"NATIVE_TRANSITION": true,
+	"VERSION": "0.1.18",
+	"BUILD_DATE": "2016-06-21T18:17:41.441Z"
 })
 
 ;

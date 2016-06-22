@@ -43,9 +43,9 @@
   "dev": {
     "APP_CONFIG": {
       "DUNITER_NODE": "192.168.0.5:9201",
-      "DUNITER_NODE_ES": "192.168.0.5:9200",
-      "TIMEOUT": 4000,
-      "DEBUG": false,
+      "DUNITER_NODE_ES": "localhost:9200",
+      "TIMEOUT": 10000,
+      "DEBUG": true,
       "NATIVE_TRANSITION": true
     }
   }
