@@ -430,7 +430,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
-                data.currentUD = block.dividend;
+                var currenUD = block.dividend;
+                if (block.unitbase > 0) {
+                  currenUD = currenUD * Math.pow(10, block.unitbase);
+                }
+                data.currentUD = currenUD;
                 resolve();
               })
               .catch(function(err) {
