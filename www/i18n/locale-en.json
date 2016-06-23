@@ -24,7 +24,8 @@
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
     "UNIVERSAL_DIVIDEND": "Universal dividend",
-    "UD": "UD"
+    "UD": "UD",
+    "DATE_PATTERN": "YYYY-MM-DD HH:mm"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",

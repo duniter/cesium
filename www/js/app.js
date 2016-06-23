@@ -13,7 +13,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .filter('formatInteger', function() {
     return function(input) {
-      return input ? numeral(input).format('0,0').replace(',', ' ') : '0';
+      return !input ? '0' : numeral(input).format('0,0').replace(',', ' ');
     };
   })
 
@@ -22,6 +22,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
         if (!input) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
         return numeral(input).format('0,0.0000').replace(',', ' ');
+      };
+    })
+
+  .filter('formatNumeral', function() {
+      return function(input, pattern) {
+        if (!input) return '0';
+        if (Math.abs(input) < 0.0001) return '~ 0';
+        return numeral(input).format(pattern).replace(',', ' ');
       };
     })
 

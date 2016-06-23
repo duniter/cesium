@@ -91,7 +91,7 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
   };
 }
 
-function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Wallet) {
+function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Wallet, $translate) {
 
   PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
 
@@ -110,22 +110,24 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!!$scope.node) {
-      $scope.node.websocket.block().close();
-      $scope.node = null;
-    }
-    if ($state.stateParams && $state.stateParams.name) { // Load by name
-       $scope.load($scope.name);
-    }
-    else {
-      $scope.loadCurrencies()
-      .then(function (currencies) {
-        if (currencies && currencies.length > 0) {
-          $scope.load(currencies[0]);
-        }
-      })
-      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-    }
+    $scope.closeNode();
+
+    $translate(['COMMON.DATE_PATTERN'])
+    .then(function($translations) {
+      $scope.datePattern = $translations['COMMON.DATE_PATTERN'];
+      if ($state.stateParams && $state.stateParams.name) { // Load by name
+         $scope.load($scope.name);
+      }
+      else {
+        $scope.loadCurrencies()
+        .then(function (currencies) {
+          if (currencies && currencies.length > 0) {
+            $scope.load(currencies[0]);
+          }
+        })
+        .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+      }
+    });
   });
 
   $scope.$on('$ionicView.beforeLeave', function(){
@@ -174,20 +176,15 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
   };
 
   $scope.onUseRelativeChanged = function() {
-    if (!$scope.loading) {
-      if ($scope.formData.useRelative) {
-        $scope.M = $scope.M / $scope.currentUD;
-        $scope.MoverN = $scope.MoverN / $scope.currentUD;
-        $scope.UD = $scope.UD / $scope.currentUD;
-        $scope.unit = 'universal_dividend';
-        $scope.udUnit = $scope.baseUnit;
-      } else {
-        $scope.M = $scope.M * $scope.currentUD;
-        $scope.MoverN = $scope.MoverN * $scope.currentUD;
-        $scope.UD = $scope.UD * $scope.currentUD;
-        $scope.unit = $scope.baseUnit;
-        $scope.udUnit = '';
-      }
+    if ($scope.loading) return;
+    if ($scope.formData.useRelative) {
+      $scope.M = $scope.M / $scope.currentUD;
+      $scope.MoverN = $scope.MoverN / $scope.currentUD;
+      $scope.UD = $scope.UD / $scope.currentUD;
+    } else {
+      $scope.M = $scope.M * $scope.currentUD;
+      $scope.MoverN = $scope.MoverN * $scope.currentUD;
+      $scope.UD = $scope.UD * $scope.currentUD;
     }
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
@@ -199,6 +196,8 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
 
     UIUtils.loading.show();
 
+    var M;
+
     $q.all([
 
       // Get the currency parameters
@@ -206,8 +205,6 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
         .then(function(json){
           $scope.currency = json.currency;
           $scope.c = json.c;
-          $scope.baseUnit = json.currency;
-          $scope.unit = json.currency;
           $scope.dt = json.dt;
           $scope.sigQty = json.sigQty;
         }),
@@ -215,9 +212,9 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
       // Get the current block informations
       $scope.node.blockchain.current()
         .then(function(block){
-          $scope.M = block.monetaryMass;
+          M = block.monetaryMass;
           $scope.N = block.membersCount;
-          $scope.time  = moment(block.medianTime*1000).format('YYYY-MM-DD HH:mm');
+          $scope.time  = moment(block.medianTime*1000).format($scope.datePattern);
           $scope.difficulty  = block.powMin;
         }),
 
@@ -228,40 +225,43 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return $scope.node.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
-                $scope.currentUD = block.dividend;
-                $scope.UD = block.dividend;
+                $scope.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
                 $scope.Nprev = block.membersCount;
               });
           }
         })
     ])
 
-      // Done
-      .then(function(){
-        $scope.M = $scope.M - $scope.UD*$scope.Nprev;
-        $scope.MoverN = $scope.M / $scope.Nprev;
-        $scope.cactual = 100 * $scope.UD / $scope.MoverN;
-        //$scope.formData.useRelative = USE_RELATIVE_DEFAULT;
+    // Done
+    .then(function(){
+      var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
+      var MoverN = Mprev / $scope.Nprev;
+      $scope.cactual = 100 * $scope.currentUD / MoverN;
 
-        // Set Ink
-        UIUtils.ink({selector: '.peer-item'});
+      if ($scope.formData.useRelative) {
+        $scope.M = Mprev / $scope.currentUD;
+        $scope.MoverN = MoverN / $scope.currentUD;
+        $scope.UD = 1;
+      } else {
+        $scope.M = Mprev;
+        $scope.MoverN = MoverN;
+        $scope.UD = $scope.currentUD;
+      }
+      // Set Ink
+      UIUtils.ink({selector: '.peer-item'});
 
-        $scope.loading = false;
+      $scope.loading = false;
 
-        if ($scope.formData.useRelative) {
-          $scope.onUseRelativeChanged(); // convert to UD
-        }
-
-        UIUtils.loading.hide();
-      })
-      .catch(function(err) {
-        $scope.loading = false;
-        UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
-      })
-      .then(function(){
-        // Network
-        $scope.searchPeers();
-      });
+      UIUtils.loading.hide();
+    })
+    .catch(function(err) {
+      $scope.loading = false;
+      UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
+    })
+    .then(function(){
+      // Network
+      $scope.searchPeers();
+    });
   };
 }
 

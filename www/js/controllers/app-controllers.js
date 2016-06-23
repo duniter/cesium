@@ -242,7 +242,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
 
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $translate, $ionicPopover
+  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $ionicPopover
   ) {
   'ngInject';
 
