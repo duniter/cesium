@@ -13,8 +13,8 @@ angular.module("cesium.config", [])
 	"NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
 	"TIMEOUT": 4000,
 	"DEBUG": false,
-	"VERSION": "0.1.20",
-	"BUILD_DATE": "2016-06-22T19:28:18.901Z"
+	"VERSION": "0.1.21",
+	"BUILD_DATE": "2016-06-23T20:55:34.090Z"
 })
 
 ;
