@@ -1,3 +1,5 @@
+![Cesium logo](https://raw.github.com/duniter/cesium/master/resources/logo/v2/png/cs-logo.large.blue.sand-dune-250×250.png)
+
 # Cesium
 
 [Unhosted webapp](https://unhosted.org) client for [Duniter](https://duniter.org) network.
