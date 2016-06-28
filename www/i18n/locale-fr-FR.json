@@ -230,8 +230,7 @@
     "COPY_TO_CLIPBOARD_DONE": "Copie effectuée."
   },
   "CONFIRM": {
-    "POPUP_TITLE": "Confirmation",
-    "CERTIFY_WARNING": "Avertissement de sécurité",
-    "CERTIFY_RULES": "<small><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul></small><br/>Etes-vous sûr de vouloir néanmoins certifier cette identité ?"
+    "POPUP_TITLE": "<b>Confirmation</b>",
+    "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>"
   }
 }

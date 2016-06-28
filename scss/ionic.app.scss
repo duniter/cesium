@@ -324,3 +324,18 @@ $screen-lg:                       1200px;
   opacity: 1;
   color: black;
 }
+
+.popup-container.confirm .popup {
+ min-width: 250px !important;
+ width: 350px !important;
+}
+
+.popup-container.confirm .popup-head {
+ background-color: $positive;
+}
+
+.popup-container.confirm .popup-head {
+  h1, h2, h3, h5, h6, p {
+    color: white;
+  }
+}

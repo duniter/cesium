@@ -13042,3 +13042,13 @@ a {
   background-color: transparent;
   opacity: 1;
   color: black; }
+
+.popup-container.confirm .popup {
+  min-width: 250px !important;
+  width: 350px !important; }
+
+.popup-container.confirm .popup-head {
+  background-color: #387ef5; }
+
+.popup-container.confirm .popup-head h1, .popup-container.confirm .popup-head h2, .popup-container.confirm .popup-head h3, .popup-container.confirm .popup-head h5, .popup-container.confirm .popup-head h6, .popup-container.confirm .popup-head p {
+  color: white; }

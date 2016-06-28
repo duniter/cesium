@@ -61,9 +61,8 @@
   min-width: 38px !important;
   max-width: 90px !important;
 }
-
-.bar .title + .button.button-clear.button-icon.icon {
-  min-height: 30px;
+.bar .button.button-clear:first-child {
+  margin-left: 5px;
 }
 
 .popup-buttons .button {

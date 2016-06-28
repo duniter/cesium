@@ -395,7 +395,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
     $scope.loadWallet()
     .then(function(walletData) {
       UIUtils.loading.hide();
-      UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.CERTIFY_WARNING')
+      UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
       .then(function(confirm){
         if (!confirm) {
           return;
@@ -407,8 +407,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
                     $scope.identity.sig)
         .then(function() {
           UIUtils.loading.hide();
-          //UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-          UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+          UIUtils.alert.info('INFO.CERTIFICATION_DONE');
         })
         .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
       });

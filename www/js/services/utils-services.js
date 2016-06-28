@@ -43,7 +43,7 @@ angular.module('cesium.utils.services', ['ngResource'])
           subTitle: translations[subtitle],
           buttons: [
             {
-              text: '<b>'+translations['COMMON.BTN_OK']+'</b>',
+              text: translations['COMMON.BTN_OK'],
               type: 'button-positive',
               onTap: function(e) {
                 resolve(e);
@@ -64,6 +64,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       .then(function (translations) {
         $ionicPopup.confirm({
           template: translations[message],
+          cssClass: 'confirm',
           title: translations[title],
           cancelText: translations['COMMON.BTN_CANCEL'],
           okText: translations['COMMON.BTN_OK']
