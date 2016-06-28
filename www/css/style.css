@@ -16,17 +16,7 @@
 }
 */
 
-#menu img.logo {
-    margin-top: 3px;
-    margin-left: 42px;
-    height: 37px;
-}
 
-#home img.logo {
-  margin-top: 15px;
-  height: 200px;
-  width: 200px;
-}
 
 #home h1 {
     padding-top: 15px;
@@ -138,18 +128,14 @@
   color: grey !important;
 }
 
+
+
+
 .menu .avatar {
     height: 88px;
     width: 88px;
 }
 
-.avatar-member {
-    background-image: url('../img/person.png');
-}
-
-.avatar-wallet {
-    background-image: url('../img/card.png');
-}
 
 .center {
     text-align: center;
@@ -233,10 +219,6 @@
     background-color: #fff;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     font-weight: 300;
-}
-
-#logo {
-    margin: 30px 0px;
 }
 
 #list {

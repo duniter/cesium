@@ -252,8 +252,75 @@ $screen-lg:                       1200px;
     }
 }
 
-
-
 #unitPopover .item.selected {
   background-color: $stable;
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  #menu .logo {
+      margin-top: 3px;
+      margin-left: 42px;
+      height: 37px;
+      width: 37px;
+      background-image: url(../../resources/logo/svg/colors/logo.small.empty.dune.svg);
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 37px 37px;
+  }
+}
+
+#home .logo {
+  margin-top: 15px;
+  height: 200px;
+  width: 100%;
+  background-image: url(../../resources/logo/svg/colors/logo.large.cesium.dune.svg);
+  background-size: 200px 200px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+@media screen and (min-width: $screen-md) {
+  #home .scroll-content {
+    background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
+    background-repeat: no-repeat;
+    background-position: -725px -145px;
+    background-size: 1024px 1024px;
+  }
+
+  #menu .list {
+    background-image: url(../../resources/logo/svg/colors/logo.large.empty.transparent.noticks.svg);
+    background-repeat: no-repeat;
+    background-position: -500px -145px;
+    background-size: 1024px 1024px;
+    height: 100%;
+  }
+}
+
+.avatar-member {
+    background-image: url(../img/person.png);
+}
+
+.avatar-wallet {
+    background-image: url(../img/card.png);
+}
+
+
+#menu .item.active {
+  background-color: #b2e0ff !important;
+}
+
+#menu .item.active .item-content {
+  background-color: transparent;
+  opacity: 1;
+  color: black;
+}
+
+#menu .item {
+  opacity: 0.75;
+}
+
+#menu .item .item-content {
+  background-color: transparent;
+  opacity: 1;
+  color: black;
 }

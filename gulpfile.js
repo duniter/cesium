@@ -6,7 +6,8 @@ var bower = require('bower');
 var concat = require('gulp-concat');
 var path = require("path");
 var sass = require('gulp-sass');
-var minifyCss = require('gulp-minify-css');
+var cleanCss = require('gulp-clean-css');
+var base64 = require('gulp-base64');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 var ngConstant = require('gulp-ng-constant');
@@ -31,6 +32,7 @@ var clean = require('gulp-clean');
 var htmlmin = require('gulp-htmlmin');
 var deleteEmpty = require('delete-empty');
 var jshint = require('gulp-jshint');
+var sourcemaps = require('gulp-sourcemaps');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -46,15 +48,21 @@ gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_ann
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass()).on('error', sass.logError)
+    .pipe(base64({
+                    baseDir: "./www/css",
+                    extensions: ['svg', 'png', /\.jpg#datauri$/i],
+                    maxSize: 14 * 1024,
+                    debug: true
+                }))
     .pipe(gulp.dest('./www/css/'))
-    .pipe(minifyCss({
+    .pipe(cleanCss({
       keepSpecialComments: 0
-    }))
+     }))
+    .pipe(sourcemaps.write())
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest('./www/css/'))
     .on('end', done);
 });
-
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);

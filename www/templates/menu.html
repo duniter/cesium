@@ -21,28 +21,28 @@
                  enable-menu-with-back-views="false"
                  width="225">
     <ion-header-bar class="bar bar-header">
-      <img class="logo" src="img/logo-cs.small.svg"/>
+      <div class="logo"></div>
       <h1 class="title royal" translate>
         MENU.TITLE
       </h1>
     </ion-header-bar>
     <ion-content scroll="false">
       <ion-list class="list animate-rip">
-        <ion-item menu-close class="item-icon-left" href="#/app/home">
+        <ion-item menu-close class="item-icon-left" href="#/app/home" active-link="active">
           <i class="icon ion-home"></i>
           <span translate>MENU.HOME</span>
         </ion-item>
 
         <!-- CURRENCY -->
-        <ion-item menu-close class="item item-icon-left" href="#/app/currencies" ng-if="options.registry.enable">
+        <ion-item menu-close class="item item-icon-left" href="#/app/currencies" active-link="active" ng-if="options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCIES</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left hidden-xs hidden-sm" href="#/app/currency/view/lg/" ng-if="!options.registry || !options.registry.enable">
+        <ion-item menu-close class="item item-icon-left hidden-xs hidden-sm" active-link="active" href="#/app/currency/view/lg/" ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" href="#/app/currency/view/" ng-if="!options.registry || !options.registry.enable">
+        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" active-link="active" href="#/app/currency/view/" ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
         </ion-item>
@@ -50,7 +50,7 @@
         <div class="item item-divider"></div>
 
         <!-- REGISTRY -->
-        <ion-item menu-close class="item item-icon-left" href="#/app/wot">
+        <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/wot">
           <i class="icon ion-person-stalker"></i>
           <span translate>MENU.REGISTRY</span>
         </ion-item>
@@ -61,12 +61,12 @@
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" href="#" ui-sref="app.view_wallet" ng-if="isLogged()">
+        <ion-item menu-close class="item item-icon-left" active-link="active"  href="#/app/wallet" ng-if="isLogged()">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
 
-        <ion-item menu-close class="item item-icon-left" href="#/app/settings">
+        <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/settings">
           <i class="icon ion-android-settings"></i>
           <span translate>MENU.SETTINGS</span>
         </ion-item>

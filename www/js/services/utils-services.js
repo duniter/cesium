@@ -65,7 +65,7 @@ angular.module('cesium.utils.services', ['ngResource'])
         $ionicPopup.confirm({
           template: translations[message],
           title: translations[title],
-          cancelText: translations['COMMON.BTN_CANCEL'], 
+          cancelText: translations['COMMON.BTN_CANCEL'],
           okText: translations['COMMON.BTN_OK']
         })
         .then(function(res) {
@@ -237,21 +237,4 @@ angular.module('cesium.utils.services', ['ngResource'])
   };
 })
 
-.factory('localStorage', function($window) {
-  'ngInject';
-  return {
-    put: function(key, value) {
-      $window.localStorage[key] = value;
-    },
-    get: function(key, defaultValue) {
-      return $window.localStorage[key] || defaultValue;
-    },
-    setObject: function(key, value) {
-      $window.localStorage[key] = JSON.stringify(value);
-    },
-    getObject: function(key) {
-      return JSON.parse($window.localStorage[key] || '{}');
-    }
-  };
-})
 ;
