@@ -15,6 +15,10 @@
             <ion-spinner icon="android"></ion-spinner>
         </label>
 
+        <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.text.length > 0" translate>
+          COMMON.SEARCH_NO_RESULT
+        </label>
+
         <a ng-if="!search.looking"
            ng-repeat="found in search.results"
            class="item item-icon-left item-avatar ink"

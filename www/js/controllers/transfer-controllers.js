@@ -48,10 +48,12 @@ function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet
     if (!!$state.stateParams && !!$state.stateParams.pubkey) {
       $scope.formData.destPub = $state.stateParams.pubkey;
       if (!!$state.stateParams.uid) {
-        $scope.dest = $state.stateParams.uid;
+        $scope.destUid = $state.stateParams.uid;
+        $scope.destPub = '';
       }
       else {
-        $scope.dest = $scope.destPub;
+        $scope.destUid = '';
+        $scope.destPub = $scope.formData.destPub;
       }
     }
 
@@ -77,7 +79,6 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
     useRelative: Wallet.defaultSettings.useRelative,
     useComment: false
   };
-  $scope.dest = null;
   $scope.udAmount = null;
   $scope.commentPattern = BMA.regex.COMMENT;
 
@@ -126,14 +127,16 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
   };
 
   // Open transfer modal
-  $scope.transfer = function(destPub, dest, amount, callback) {
+  $scope.transfer = function(destPub, destUid, amount, callback) {
     if (!!$scope.transferModal) {
       $scope.formData.destPub = destPub;
-      if(dest) {
-        $scope.dest = dest;
+      if (destUid) {
+        $scope.destUid = destUid;
+        $scope.destPub = '';
       }
       else {
-        $scope.dest = destPub;
+        $scope.destUid = '';
+        $scope.destPub = destPub;
       }
       if (amount && typeof amount === "function") {
         callback = amount;
@@ -244,10 +247,12 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
 
   $scope.doSelectIdentity = function(pub, uid) {
     if (uid) {
-        $scope.dest = uid;
+        $scope.destUid = uid;
+        $scope.destPub = '';
     }
     else {
-        $scope.dest = pub;
+        $scope.destUid = '';
+        $scope.destPub = pub;
     }
     $scope.formData.destPub = pub;
     $scope.lookupModal.hide();

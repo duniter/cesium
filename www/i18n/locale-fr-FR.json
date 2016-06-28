@@ -112,8 +112,8 @@
     "REGISTERED_SINCE": "Inscription",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
     "NO_CERTIFICATIONS": "Aucune certification",
-    "CERTIFICATIONS_RECEIVED": "Certifications recues",
-    "CERTIFICATIONS_RECEIVED_BY": "Certifications recues par {{uid}}",
+    "CERTIFICATIONS_RECEIVED": "Certifications reçues",
+    "CERTIFICATIONS_RECEIVED_BY": "Certifications reçues par {{uid}}",
     "EXPIRE_IN": "Expiration",
     "SIGNED_ON_BLOCK": "Certifié au bloc",
     "BTN_SEND_MONEY": "Payer",
@@ -176,7 +176,6 @@
     "AMOUNT_HELP": "Montant",
     "COMMENT": "Commentaire",
     "COMMENT_HELP": "Commentaire",
-    "CHOOSE_UNIT": "Unité du montant",
     "BTN_SEND": "Envoyer",
     "BTN_ADD_COMMENT": "Saisir un commentaire ?",
     "MODAL": {

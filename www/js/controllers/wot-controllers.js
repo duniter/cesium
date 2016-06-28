@@ -60,6 +60,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     else {
       return BMA.wot.lookup({ search: text })
         .then(function(res){
+          if ($scope.search.text !== text) return; // search text has changed
           var idtyKeys = [];
           var idties = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
@@ -410,7 +411,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
           UIUtils.toast.show('INFO.CERTIFICATION_DONE');
         })
         .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-      });      
+      });
     })
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
