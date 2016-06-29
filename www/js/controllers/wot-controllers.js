@@ -60,7 +60,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     else {
       return BMA.wot.lookup({ search: text })
         .then(function(res){
-          if ($scope.search.text !== text) return; // search text has changed
+          if ($scope.search.text.toLowerCase().trim() !== text) return; // search text has changed
           var idtyKeys = [];
           var idties = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {

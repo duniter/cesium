@@ -256,19 +256,6 @@ $screen-lg:                       1200px;
   background-color: $stable;
 }
 
-@media screen and (max-width: $screen-sm-max) {
-  #menu .logo {
-      margin-top: 3px;
-      margin-left: 42px;
-      height: 37px;
-      width: 37px;
-      background-image: url(../../resources/logo/svg/colors/logo.small.empty.dune.svg);
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: 37px 37px;
-  }
-}
-
 #home .logo {
   margin-top: 15px;
   height: 200px;
@@ -280,19 +267,42 @@ $screen-lg:                       1200px;
 }
 
 @media screen and (min-width: $screen-md) {
-  #home .scroll-content {
-    background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
-    background-repeat: no-repeat;
-    background-position: -725px -145px;
-    background-size: 1024px 1024px;
+  .circle-bg-dark {
+    ion-content.scroll-content {
+      background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
+      background-repeat: no-repeat;
+      background-position: -725px -145px;
+      background-size: 1024px 1024px;
+    }
   }
 
-  #menu .list {
-    background-image: url(../../resources/logo/svg/colors/logo.large.empty.transparent.noticks.svg);
+  .menu.menu-left {
+    background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
     background-repeat: no-repeat;
-    background-position: -500px -145px;
+    background-position: -500px -100px;
     background-size: 1024px 1024px;
+    background-color: whitesmoke;
     height: 100%;
+
+    .item.active {
+        background-color: #b2e0ff !important;
+
+        .item-content {
+          background-color: transparent;
+          opacity: 1;
+          color: black;
+        }
+      }
+
+      .item {
+        opacity: 0.75;
+
+        .item-content {
+          background-color: transparent;
+          opacity: 1;
+          color: black;
+        }
+      }
   }
 }
 
@@ -304,38 +314,17 @@ $screen-lg:                       1200px;
     background-image: url(../img/card.png);
 }
 
+.popup-container.confirm
+  .popup {
+    min-width: 250px !important;
+    width: 350px !important;
+  }
 
-#menu .item.active {
-  background-color: #b2e0ff !important;
-}
+  .popup-head {
+    background-color: $positive;
 
-#menu .item.active .item-content {
-  background-color: transparent;
-  opacity: 1;
-  color: black;
-}
-
-#menu .item {
-  opacity: 0.75;
-}
-
-#menu .item .item-content {
-  background-color: transparent;
-  opacity: 1;
-  color: black;
-}
-
-.popup-container.confirm .popup {
- min-width: 250px !important;
- width: 350px !important;
-}
-
-.popup-container.confirm .popup-head {
- background-color: $positive;
-}
-
-.popup-container.confirm .popup-head {
-  h1, h2, h3, h5, h6, p {
-    color: white;
+    h1, h2, h3, h5, h6, p {
+      color: white;
+    }
   }
 }
