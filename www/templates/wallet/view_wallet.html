@@ -14,12 +14,14 @@
   </ion-nav-buttons>
 
   <ion-content scroll="true">
-    <div class="positive-900-bg hero">
-      <div class="content">
+    <div class="positive-900-bg hero"
+         id="wallet-header"
+         ng-class="{'hero-qrcode-active': toggleQRCode, 'on': convertedBalance != null}">
+      <div class="content" >
         <div class="avatar"
              ng-if="!!walletData.avatar"
              style="background-image: url({{::walletData.avatar}});"></div>
-        <i class="avatar" ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
+        <i class="avatar" ng-class="{'avatar-wallet': walletData && !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
         <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
         <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light" ng-if="isLogged() && convertedBalance != null">
@@ -32,7 +34,9 @@
       </div>
     </div>
 
-    <div id="qrcode" class="qrcode visible-xs visible-sm spin" ></div>
+    <div id="qrcode" class="qrcode visible-xs visible-sm spin"
+         ng-class="{'active': toggleQRCode}"
+         ng-click="toggleQRCode = !toggleQRCode"></div>
 
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding" style="text-align:center"
