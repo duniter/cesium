@@ -21,7 +21,15 @@ angular.module('cesium.bma.services', ['ngResource',
       COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
       URI: "duniter://[a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+"
     },
-    sockets = [];
+    constants = {
+      CACHE_TIME_MS: 60000
+    },
+    sockets = [],
+    data = {
+      blockchain: {
+        current: null
+      }
+    };
 
     if (!timeout) {
       timeout=4000;
@@ -144,6 +152,26 @@ angular.module('cesium.bma.services', ['ngResource',
       }
     }
 
+    this.getBlockchainCurrentNoCache = getResource('http://' + server + '/blockchain/current');
+
+    function getBlockchainCurrent(cache) {
+      return $q(function(resolve, reject) {
+        var now = new Date();
+        if (cache && data.blockchain.current !== null && (now.getTime() - data.blockchain.current.timestamp) <= constants.CACHE_TIME_MS) {
+          resolve(data.blockchain.current.result);
+          return;
+        }
+        getBlockchainCurrentNoCache()
+        .then(function(block) {
+          data.blockchain.current = {
+            result: block,
+            timestamp: now.getTime()
+          };
+          resolve(block);
+        });
+      });
+    }
+
     return {
       node: {
         summary: getResource('http://' + server + '/node/summary'),
@@ -166,7 +194,7 @@ angular.module('cesium.bma.services', ['ngResource',
         parameters: getResource('http://' + server + '/blockchain/parameters')
       },
       blockchain: {
-        current: getResource('http://' + server + '/blockchain/current'),
+        current: getBlockchainCurrent,
         block: getResource('http://' + server + '/blockchain/block/:block'),
         membership: postResource('http://' + server + '/blockchain/membership'),
         stats: {

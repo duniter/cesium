@@ -243,10 +243,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     },
 
     isSourceEquals = function(arg1, arg2) {
-        return arg1.type == arg2.type &&
-            arg1.fingerprint == arg2.fingerprint &&
-            arg1.number == arg2.number &&
-            arg1.amount == arg2.amount;
+        return arg1.identifier == arg2.identifier &&
+               arg1.noffset == arg2.noffset &&
+               arg1.type == arg2.type &&
+               arg1.base == arg2.base &&
+              arg1.amount == arg2.amount;
     },
 
     resetRequirements = function() {
@@ -432,11 +433,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
-                var currentUD = block.dividend;
-                if (block.unitbase > 0) {
-                  currentUD = currentUD * Math.pow(10, block.unitbase);
-                }
-                data.currentUD = currentUD;
+                data.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
                 resolve();
               })
               .catch(function(err) {
@@ -540,129 +537,181 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       });
     },
 
+    isBase = function(amount, base) {
+      if (!base) {
+        return true;
+      }
+      var rest = '00000000' + amount;
+      var lastDigits = parseInt(rest.substring(rest.length-base));
+      return lastDigits === 0; // no rest
+    },
+
+    getInputs = function(amount, filterBase, outputBase, offset) {
+      if (!outputBase) {
+        outputBase = filterBase;
+      }
+      var sourcesAmount = 0;
+      var sources = [];
+      var minBase = filterBase;
+      var maxBase = filterBase;
+      var i = 0;
+      _.forEach(data.sources, function(source) {
+        var skip = source.consumed || (source.base !== filterBase) || (offset && i++ >= offset);
+        if (!skip){
+          sourcesAmount += (source.base > 0) ? (source.amount * Math.pow(10, source.base)) : source.amount;
+          sources.push(source);
+          // Stop if excat amount OR compatible with base
+          if (sourcesAmount === amount ||
+              (sourcesAmount > amount && isBase(sourcesAmount, outputBase))) {
+            return false;
+          }
+        }
+      });
+
+      while (sourcesAmount < amount && filterBase > 0) {
+        filterBase -= 1;
+        var missingAmount = amount - sourcesAmount;
+        var lowerInputs = getInputs(missingAmount, filterBase, outputBase);
+        // Try to get a rounded amount, regarding expected base
+        var lowerOffset = 1;
+        while (lowerInputs.amount > 0 && !isBase(lowerInputs.amount, outputBase)) {
+          lowerOffset += 1;
+          lowerInputs = getInputs(missingAmount, filterBase, outputBase, lowerOffset);
+        }
+
+        if (lowerInputs.amount > 0) {
+          minBase = lowerInputs.minBase;
+          sourcesAmount += lowerInputs.amount;
+          [].push.apply(sources, lowerInputs.sources);
+        }
+      }
+
+      return {
+        minBase: minBase,
+        maxBase: maxBase,
+        amount: sourcesAmount,
+        sources: sources
+      };
+    },
+
     /**
     * Send a new transaction
     */
     transfer = function(destPub, amount, comments) {
-        return $q(function(resolve, reject) {
+      return $q(function(resolve, reject) {
+        BMA.blockchain.current(true/*cache*/)
+        .then(function(block) {
 
-            if (!BMA.regex.COMMENT.test(comments)){
-              reject({message:'ERROR.INVALID_COMMENT'}); return;
-            }
-            if (!isLogin()){
-              reject({message:'ERROR.NEED_LOGIN_FIRST'}); return;
-            }
-            if (!amount) {
-              reject({message:'ERROR.AMOUNT_REQUIRED'}); return;
-            }
-            amount = Math.round(amount);
-            if (amount <= 0) {
-              reject({message:'ERROR.AMOUNT_NEGATIVE'}); return;
-            }
-            if (amount > data.balance) {
-              reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
-            }
+          if (!BMA.regex.COMMENT.test(comments)){
+            reject({message:'ERROR.INVALID_COMMENT'}); return;
+          }
+          if (!isLogin()){
+            reject({message:'ERROR.NEED_LOGIN_FIRST'}); return;
+          }
+          if (!amount) {
+            reject({message:'ERROR.AMOUNT_REQUIRED'}); return;
+          }
+          // Round amount to current base
+          var basePow = block.unitbase ? Math.pow(10, block.unitbase) : 1;
+          amount = Math.floor(amount / basePow) * basePow;
+          if (amount <= 0) {
+            reject({message:'ERROR.AMOUNT_NEGATIVE'}); return;
+          }
+          if (amount > data.balance) {
+            reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
+          }
 
-            var tx = "Version: 2\n";
-            tx += "Type: Transaction\n";
-            tx += "Currency: " + data.currency + "\n";
-            tx += "Locktime: 0" + "\n"; // no lock
-            tx += "Issuers:\n";
-            tx += data.pubkey + "\n";
-            tx += "Inputs:\n";
-            var sourceAmount = 0;
-            var minInputBase = 0;
-            var outputBase = 0;
-            var inputs = [];
-            var i;
-            for (i = 0; i<data.sources.length; i++) {
-              var input = data.sources[i];
-              if (!input.consumed){
-                // if D : D:PUBLIC_KEY:BLOCK_ID
-                // if T : T:T_HASH:T_INDEX
-                tx += input.type+":"+input.identifier+":"+input.noffset+"\n";
-                sourceAmount += (input.unit > 0) ? (input.amount * Math.pow(10, input.unit)) : input.amount;
-                outputBase = (input.base > outputBase) ? input.base : outputBase;
-                minInputBase = (input.base > outputBase) ? input.base : minInputBase;
-                inputs.push(input);
-                if (sourceAmount >= amount) {
-                  break;
-                }
-              }
-            }
-            // FIXME: Fix - make sure to get a round amount
-            // check is last digit is zero
-            //if (minInputBase < outputBase) {
-            //  var outputPow = Math.pow(10, outputBase);
-            // var inputPow = Math.pow(10, minInputBase);
-            //  var lastDigit = sourceAmount - Math.floor(sourceAmount / outputPow) * outputPow
-            //  outputBase - minInputBase
-            //}
+          var tx = "Version: 2\n";
+          tx += "Type: Transaction\n";
+          tx += "Currency: " + data.currency + "\n";
+          tx += "Locktime: 0" + "\n"; // no lock
+          tx += "Issuers:\n";
+          tx += data.pubkey + "\n";
+          tx += "Inputs:\n";
 
-            if (sourceAmount < amount) {
-              if (sourceAmount === 0) {
-                reject({message:'ERROR.ALL_SOURCES_USED'});
-              }
-              else {
-                console.error('Maximum transaction sources has been reached: ' + (data.settings.useRelative ? (sourceAmount / data.currentUD)+' UD' : sourceAmount));
-                reject({message:'ERROR.NOT_ENOUGH_SOURCES'});
-              }
-              return;
-            }
+          var inputs= {
+            amount: 0,
+            minBase: block.unitbase,
+            maxBase: block.unitbase + 1,
+            intputs: []
+          };
 
-            tx += 'Unlocks:\n';
-            for (i=0; i<inputs.length; i++) {
-                 // INPUT_INDEX:UNLOCK_CONDITION
-                tx += i + ':SIG(0)\n';
-            }
+          while (inputs.amount < amount && inputs.maxBase > 0) {
+            inputs = getInputs(amount, inputs.maxBase - 1);
+          }
 
-            tx += 'Outputs:\n';
-            // AMOUNT:BASE:CONDITIONS
-            if (outputBase > 0) { // add offset
-              tx += Math.floor(amount / Math.pow(10, outputBase));
+          if (inputs.amount < amount) {
+            if (inputs.amount === 0) {
+              reject({message:'ERROR.ALL_SOURCES_USED'});
             }
             else {
-              tx += amount;
+              console.error('Maximum transaction sources has been reached: ' + (data.settings.useRelative ? (inputs.amount  / data.currentUD)+' UD' : inputs.amount));
+              reject({message:'ERROR.NOT_ENOUGH_SOURCES'});
             }
-            tx += ':'+outputBase+':SIG('+destPub+')\n';
+            return;
+          }
 
-            if (sourceAmount > amount) {
-              var rest = (sourceAmount-amount);
-              if (outputBase > 0) { // add offset
-                tx += Math.floor(rest / Math.pow(10, outputBase));
-              }
-              else {
-                tx += rest;
-              }
-              tx += ':'+outputBase+':SIG('+data.pubkey+')\n';
+          _.forEach(inputs.sources, function(source) {
+              // if D : D:PUBLIC_KEY:BLOCK_ID
+              // if T : T:T_HASH:T_INDEX
+              tx += source.type+":"+source.identifier+":"+source.noffset+"\n";
+          });
+
+          tx += 'Unlocks:\n';
+          for (i=0; i<inputs.sources.length; i++) {
+               // INPUT_INDEX:UNLOCK_CONDITION
+              tx += i + ':SIG(0)\n';
+          }
+
+          tx += 'Outputs:\n';
+          // AMOUNT:BASE:CONDITIONS
+          if (inputs.maxBase > 0) { // add offset
+            tx += Math.floor(amount / Math.pow(10, inputs.maxBase));
+          }
+          else {
+            tx += amount;
+          }
+          tx += ':'+inputs.maxBase+':SIG('+destPub+')\n';
+
+          if (inputs.amount > amount) {
+            var rest = (inputs.amount-amount);
+            if (inputs.maxBase > 0) { // add offset
+              tx += Math.floor(rest / Math.pow(10, inputs.maxBase));
             }
+            else {
+              tx += rest;
+            }
+            tx += ':'+inputs.maxBase+':SIG('+data.pubkey+')\n';
+          }
 
-            tx += "Comment: "+ (!!comments?comments:"") + "\n";
+          tx += "Comment: "+ (!!comments?comments:"") + "\n";
 
-            CryptoUtils.sign(tx, data.keypair)
-            .then(function(signature) {
-              var signedTx = tx + signature + "\n";
-              BMA.tx.process({transaction: signedTx})
-              .then(function(result) {
-                data.balance -= amount;
-                for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
-                // Add to history
-                /*data.history.push({
-                    time: time,
-                    amount: amount,
-                    issuer: otherIssuer,
-                    receiver: otherReceiver,
-                    comment: tx.comment,
-                    isUD: false,
-                    hash: tx.hash,
-                    locktime: tx.locktime,
-                    block_number: tx.block_number
-                  });*/
+          CryptoUtils.sign(tx, data.keypair)
+          .then(function(signature) {
+            var signedTx = tx + signature + "\n";
+            BMA.tx.process({transaction: signedTx})
+            .then(function(result) {
+              data.balance -= amount;
+              for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
+              // Add to history
+              data.history.unshift({
+                  time: block.time,
+                  amount: amount,
+                  issuer: data.pubkey,
+                  receiver: destPub,
+                  comment: comments,
+                  isUD: false,
+                  /*hash: tx.hash, TODO*/
+                  locktime: 0,
+                  block_number: null,
+                  valid: false
+                });
 
-                resolve(result);
-              }).catch(function(err){reject(err);});
+              resolve(result);
             }).catch(function(err){reject(err);});
+          }).catch(function(err){reject(err);});
         });
+      });
     },
 
     /**
