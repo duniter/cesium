@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "A webapp client for Duniter network",
   "dependencies": {
     "delete-empty": "^0.1.3",
