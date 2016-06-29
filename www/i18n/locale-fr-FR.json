@@ -204,7 +204,7 @@
     "GET_CURRENCY_FAILED": "Chargement de la monnaie impossibl.e",
     "SEND_TX_FAILED": "Echec du paiement.",
     "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
-    "NOT_ENOUGH_SOURCES": "Veuillez attendre le calcul du prochain bloc (Pas assez de sources de monnaie).",
+    "NOT_ENOUGH_SOURCES": "Pas assez de change pour envoyer ce montant en une seule transaction.<br/>Montant maximum : {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",
     "ACCOUNT_CREATION_FAILED": "Echec de la création du compte membre.",
     "RESTORE_WALLET_DATA_ERROR": "Echec du rechargement des paramètres depuis le stockage local",
     "LOAD_WALLET_DATA_ERROR": "Echec du chargement des données du portefeuille.",
@@ -220,7 +220,8 @@
     "NOT_ENOUGH_CREDIT": "Crédit insufisant.",
     "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide.",
     "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
-    "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués."
+    "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
+    "INVALID_PUBKEY": "La clé publique n'a pas le format attendu."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

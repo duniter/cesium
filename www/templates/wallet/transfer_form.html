@@ -8,7 +8,7 @@
           <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"
-           ng-show="transferForm.$submitted && !dest">
+           ng-if="transferForm.$submitted && !formData.destPub">
         <div class="form-error">
           <span translate="ERROR.FIELD_REQUIRED"></span>
         </div>

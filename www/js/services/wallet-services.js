@@ -1,7 +1,7 @@
 
 angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
 
-.factory('Wallet', function($q, CryptoUtils, BMA, $translate, localStorage) {
+.factory('Wallet', function($q, CryptoUtils, BMA, $translate, localStorage, $filter) {
   'ngInject';
 
   Wallet = function(id) {
@@ -556,7 +556,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       var maxBase = filterBase;
       var i = 0;
       _.forEach(data.sources, function(source) {
-        var skip = source.consumed || (source.base !== filterBase) || (offset && i++ >= offset);
+        var skip = source.consumed || (source.base !== filterBase) || (offset && i++ < offset);
         if (!skip){
           sourcesAmount += (source.base > 0) ? (source.amount * Math.pow(10, source.base)) : source.amount;
           sources.push(source);
@@ -597,11 +597,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     /**
     * Send a new transaction
     */
-    transfer = function(destPub, amount, comments) {
+    transfer = function(destPub, amount, comments, useRelative) {
       return $q(function(resolve, reject) {
         BMA.blockchain.current(true/*cache*/)
         .then(function(block) {
 
+          if (!BMA.regex.PUBKEY.test(destPub)){
+            reject({message:'ERROR.INVALID_PUBKEY'}); return;
+          }
           if (!BMA.regex.COMMENT.test(comments)){
             reject({message:'ERROR.INVALID_COMMENT'}); return;
           }
@@ -636,8 +639,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             intputs: []
           };
 
+          var maxAmount = 0;
           while (inputs.amount < amount && inputs.maxBase > 0) {
             inputs = getInputs(amount, inputs.maxBase - 1);
+            maxAmount =  (inputs.amount > maxAmount) ? inputs.amount : maxAmount;
           }
 
           if (inputs.amount < amount) {
@@ -645,8 +650,28 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               reject({message:'ERROR.ALL_SOURCES_USED'});
             }
             else {
-              console.error('Maximum transaction sources has been reached: ' + (data.settings.useRelative ? (inputs.amount  / data.currentUD)+' UD' : inputs.amount));
-              reject({message:'ERROR.NOT_ENOUGH_SOURCES'});
+              $translate('COMMON.UD')
+              .then(function(UD) {
+                var params;
+                if(useRelative) {
+                  params = {
+                    amount: ($filter('formatDecimal')(maxAmount / data.currentUD)),
+                    unit: UD,
+                    subUnit: $filter('abbreviate')(data.currency)
+                  };
+                }
+                else {
+                  params = {
+                    amount: ($filter('formatInteger')(maxAmount)),
+                    unit: $filter('abbreviate')(data.currency),
+                    subUnit: ''
+                  };
+                }
+                $translate('ERROR.NOT_ENOUGH_SOURCES', params)
+                .then(function(message) {
+                  reject({message: message});
+                });
+              });
             }
             return;
           }
@@ -692,20 +717,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             BMA.tx.process({transaction: signedTx})
             .then(function(result) {
               data.balance -= amount;
-              for(var i=0;i<inputs.length;i++)inputs[i].consumed=true;
+              _.forEach(inputs.sources, function(source) {
+                  source.consumed=true;
+              });
               // Add to history
-              data.history.unshift({
+              /*data.history.unshift({
                   time: block.time,
                   amount: amount,
                   issuer: data.pubkey,
                   receiver: destPub,
                   comment: comments,
                   isUD: false,
-                  /*hash: tx.hash, TODO*/
+                  hash: tx.hash, TODO
                   locktime: 0,
                   block_number: null,
                   valid: false
-                });
+                });*/
 
               resolve(result);
             }).catch(function(err){reject(err);});

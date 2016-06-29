@@ -206,7 +206,7 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
 
   $scope.doTransfer = function() {
     $scope.transferForm.$submitted=true;
-    if(!$scope.transferForm.$valid) {
+    if(!$scope.transferForm.$valid || !$scope.formData.destPub) {
       return;
     }
 
@@ -218,7 +218,7 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
       amount = $scope.walletData.currentUD *
                amount.replace(new RegExp('[.,]'), '.');
     }
-    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment)
+    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
     .then(function() {
        var callback = $scope.formData.callback;
         $scope.formData = {}; // Reset form data

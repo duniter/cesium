@@ -32,12 +32,12 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.showDetails = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    UIUtils.loading.hide();
     $scope.loadWallet()
       .then(function(wallet) {
         $scope.updateWalletView(wallet);
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', wallet.pubkey, 1100);
+        UIUtils.loading.hide();
       });
 
       $timeout(function () {

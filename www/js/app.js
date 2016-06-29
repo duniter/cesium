@@ -21,7 +21,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       return function(input) {
         if (!input) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
-        return numeral(input).format('0,0.0000').replace(',', ' ');
+        return numeral(input-0.00005).format('0,0.0000').replace(',', ' ');
       };
     })
 

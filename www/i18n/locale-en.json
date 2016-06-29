@@ -204,7 +204,7 @@
     "GET_CURRENCY_FAILED": "Could not load currency.",
     "SEND_TX_FAILED": "Could not send transaction.",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
-    "NOT_ENOUGH_SOURCES": "Please wait the next block computation (Not enough transaction sources).",
+    "NOT_ENOUGH_SOURCES": "Not enough changes to send this amount in one time.<br/>Maximum amount:  {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",
     "ACCOUNT_CREATION_FAILED": "Error while creating your member account.",
     "RESTORE_WALLET_DATA_ERROR": "Error while reloading settings from local storage",
     "LOAD_WALLET_DATA_ERROR": "Error while loading wallet data.",
@@ -220,7 +220,8 @@
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
     "INVALID_NODE_SUMMARY": "Unreachable node or invalid address",
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special caracters.",
-    "INVALID_COMMENT": "Field 'reference' has a bad format."
+    "INVALID_COMMENT": "Field 'reference' has a bad format.",
+    "INVALID_PUBKEY": "Public key has a bad format."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
