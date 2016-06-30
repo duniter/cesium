@@ -13057,8 +13057,8 @@ a {
   right: 30px; }
 
 #wallet .qrcode.active {
-  top: 0px;
-  right: 0px;
+  top: 0px !important;
+  right: 0px !important;
   padding: 10px;
   width: 200px;
   max-width: 50%; }
@@ -13070,6 +13070,12 @@ a {
   white-space: normal !important; }
 
 @media screen and (max-width: 991px) {
+  #wallet .qrcode {
+    top: 8px;
+    width: 60px;
+    max-width: 30%; }
+  #wallet .qrcode.on {
+    right: 8px; }
   #wallet .hero {
     -webkit-transition: all 1s ease-out !important;
     transition: all 1s ease-out !important;

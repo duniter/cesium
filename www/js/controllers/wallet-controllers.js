@@ -292,8 +292,8 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     }
     $scope.qrcode = new QRCode(id, {
       text: text,
-      width: 100,
-      height: 100,
+      width: 200,
+      height: 200,
       correctLevel: QRCode.CorrectLevel.L
     });
     $timeout(function () {

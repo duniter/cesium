@@ -353,8 +353,8 @@ $screen-lg:                       1200px;
   }
 
   .qrcode.active {
-    top: 0px;
-    right: 0px;
+    top: 0px !important;
+    right: 0px !important;
     padding: 10px;
     width: 200px;
     max-width: 50%;
@@ -371,6 +371,16 @@ $screen-lg:                       1200px;
 
 @media screen and (max-width: $screen-sm-max) {
   #wallet {
+     .qrcode {
+       top: 8px;
+       width: 60px;
+       max-width: 30%;
+     }
+
+     .qrcode.on {
+        right: 8px;
+     }
+
     .hero {
       -webkit-transition: all 1s ease-out !important;
       transition: all 1s ease-out !important;
