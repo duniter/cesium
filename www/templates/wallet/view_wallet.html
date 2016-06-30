@@ -115,7 +115,7 @@
           <h3 translate>ACCOUNT.NO_TX</h3>
         </span>
 
-        <span class="item ink" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
+        <span class="item ink item-badge-right" ng-repeat="tx in walletData.history" ng-if="walletData.history && walletData.history.length > 0">
           <h2>
             <i class="icon" ng-if="!tx.block_number" ng-class="{'ion-clock': tx.valid, 'ion-minus-circled assertive': !tx.valid}"> </i>
             <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
@@ -132,12 +132,12 @@
               <i class="icon ion-arrow-up-c"></i>
               {{'COMMON.UNIVERSAL_DIVIDEND' | translate}}
             </span>
-            <span  ng-if="tx.comment" class="dark hidden-xs">&nbsp;
+            <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap" >&nbsp;
               <i class="icon ion-ios-chatbubble-outline"></i>
               <smaller>{{::tx.comment}}</smaller>
             </span>
           </h2>
-          <h3 ng-if="tx.comment" class="dark visible-xs">
+          <h3 ng-if="tx.comment" class="dark visible-xs item-text-wrap">
             <i class="icon ion-ios-chatbubble-outline"></i>
             {{::tx.comment}}<br/>
           </h3>

@@ -13063,6 +13063,12 @@ a {
   width: 200px;
   max-width: 50%; }
 
+#wallet .item-badge-right {
+  padding-right: 100px; }
+
+#wallet .item-text-wrap {
+  white-space: normal !important; }
+
 @media screen and (max-width: 991px) {
   #wallet .hero {
     -webkit-transition: all 1s ease-out !important;

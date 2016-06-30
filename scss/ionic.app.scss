@@ -359,6 +359,14 @@ $screen-lg:                       1200px;
     width: 200px;
     max-width: 50%;
   }
+
+  .item-badge-right {
+    padding-right: 100px;
+  }
+
+  .item-text-wrap {
+    white-space: normal !important;
+  }
 }
 
 @media screen and (max-width: $screen-sm-max) {
