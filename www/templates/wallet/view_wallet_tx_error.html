@@ -1,0 +1,127 @@
+<ion-view left-buttons="leftButtons"
+          id="wallet">
+  <ion-nav-title>
+    <!-- no title-->
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+    </button>
+    <button class="button button-icon button-clear" ng-click="actionsPopover.show($event)">
+      <i class="icon ion-android-more-vertical"></i>
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true">
+
+    <!-- Buttons bar
+    <div class="hidden-xs hidden-sm padding" style="text-align:center"
+         ng-if="!!convertedBalance">
+      <button class="button button-raised button-energized-900 ink-dark"
+              ng-click="openTransfer()">
+        {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+      </button>
+    </div>-->
+
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+
+      <div class="col list animate-fade-slide-in-right">
+
+        <!-- Transactions in error -->
+        <span class="item item-divider">
+          <span translate>ACCOUNT.ERROR_TX_SENDED</span>
+          <div class="badge item-note">
+            <span ng-if="!walletData.settings.useRelative">({{walletData.currency | abbreviate}})</span>
+            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
+          </div>
+        </span>
+
+        <span class="item" ng-if="!walletData.tx.errors.length">
+          <h3 translate>ACCOUNT.NO_TX</h3>
+        </span>
+
+        <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.errors | filter: filterNegative('amount')">
+          <h2>
+            <i class="icon" ng-class="{'ion-clock': tx.valid, 'ion-close-circled assertive': !tx.valid}"> </i>
+            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+              <span ng-if="tx.uid">
+                <i class="icon ion-person"></i>
+                {{::tx.uid}}
+              </span>
+              <span ng-if="!tx.uid && !tx.isUD">
+                <i class="icon ion-key"></i>
+                {{::tx.pubkey | formatPubkey}}
+              </span>
+            </span>
+            <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap" >&nbsp;
+              <i class="icon ion-ios-chatbubble-outline"></i>
+              <smaller>{{::tx.comment}}</smaller>
+            </span>
+          </h2>
+          <h3 ng-if="tx.comment" class="dark visible-xs item-text-wrap">
+            <i class="icon ion-ios-chatbubble-outline"></i>
+            {{::tx.comment}}<br/>
+          </h3>
+          <div class="badge item-note assertive">
+            <span ng-if="!walletData.settings.useRelative">{{::tx.amount | formatInteger}}</span>
+            <span ng-if="walletData.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+          </div >
+        </span>
+
+        <!-- Transactions in error -->
+        <span class="item item-divider">
+          <span translate>ACCOUNT.ERROR_TX_RECEIVED</span>
+          <div class="badge item-note">
+            <span ng-if="!walletData.settings.useRelative">({{walletData.currency | abbreviate}})</span>
+            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
+          </div>
+        </span>
+
+        <span class="item" ng-if="!walletData.tx.errors.length">
+          <h3 translate>ACCOUNT.NO_TX</h3>
+        </span>
+
+        <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.errors | filter: filterPositive('amount')">
+          <h2>
+            <i class="icon" ng-class="{'ion-clock': tx.valid, 'ion-close-circled assertive': !tx.valid}"> </i>
+            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+              <span ng-if="tx.uid">
+                <i class="icon ion-person"></i>
+                {{::tx.uid}}
+              </span>
+              <span ng-if="!tx.uid && !tx.isUD">
+                <i class="icon ion-key"></i>
+                {{::tx.pubkey | formatPubkey}}
+              </span>
+            </span>
+            <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap" >&nbsp;
+              <i class="icon ion-ios-chatbubble-outline"></i>
+              <smaller>{{::tx.comment}}</smaller>
+            </span>
+          </h2>
+          <h3 ng-if="tx.comment" class="dark visible-xs item-text-wrap">
+            <i class="icon ion-ios-chatbubble-outline"></i>
+            {{::tx.comment}}<br/>
+          </h3>
+          <div class="badge badge-assertive item-note">
+            <span ng-if="!walletData.settings.useRelative">{{::tx.amount | formatInteger}}</span>
+            <span ng-if="walletData.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+          </div >
+        </span>
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+    </div>
+  </ion-content>
+
+  <!--button id="fab-redo-transfer"
+          ng-if="walletData"
+          class="button button-fab button-fab-bottom-right button-energized-900 hidden-md hidden-lg drop"
+          ng-click="redoTransfer()">
+    <i class="icon ion-refresh"></i>
+  </button-->
+</ion-view>

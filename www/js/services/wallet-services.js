@@ -26,11 +26,16 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         uid: null,
         balance: 0,
         sources: null,
+        sourcesIndexByKey: null,
         currency: null,
         parameters: null,
         currentUD: null,
         medianTime: null,
-        history: {},
+        tx: {
+          history: [],
+          pendings: [],
+          errors: []
+        },
         requirements: {},
         isMember: false,
         loaded: false,
@@ -57,11 +62,16 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       data.uid = null;
       data.balance = 0;
       data.sources = null;
+      data.sourcesIndexByKey = null;
       data.currency= null;
       data.parameters = null;
       data.currentUD = null;
       data.medianTime = null;
-      data.history = {};
+      data.tx = {
+         history: [],
+         pendings: [],
+         errors: []
+       };
       data.requirements = {};
       data.isMember = false;
       data.loaded = false;
@@ -81,75 +91,76 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
       }
     },
 
-    reduceTxAndPush = function(txArray, result, processedTxMap, isPending) {
+    reduceTxAndPush = function(txArray, result, processedTxMap, excludePending) {
       if (!txArray || txArray.length === 0) {
         return;
       }
+      var txPendingsTimeByKey = excludePending ? [] : data.tx.pendings.reduce(function(res, tx) {
+        if (tx.time) {
+          res[tx.amount+':'+tx.hash] = tx.time;
+        }
+        return res;
+      }, []);
+
       _.forEach(txArray, function(tx) {
-        var walletIsIssuer = false;
-        var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
-            walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
-            return issuer + ((res !== data.pubkey) ? ', ' + res : '');
-        }, '');
-        if (otherIssuer.length > 0) {
-          otherIssuer = otherIssuer.substring(2);
-        }
-        var otherReceiver;
-        var outputBase;
-        var amount = tx.outputs.reduce(function(sum, output) {
-            var outputArray = output.split(':',3);
-            outputBase = parseInt(outputArray[1]);
-            var outputAmount = (outputBase > 0) ? parseInt(outputArray[0]) * Math.pow(10, outputBase) : parseInt(outputArray[0]);
-            var outputCondArray = outputArray[2].split('(', 3);
-            var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
-                 outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
-            if (outputPubkey == data.pubkey) { // output is for the wallet
-              if (!walletIsIssuer) {
-                return sum + outputAmount;
+        if (!excludePending || tx.block_number !== null) {
+          var walletIsIssuer = false;
+          var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
+              walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
+              return issuer + ((res !== data.pubkey) ? ', ' + res : '');
+          }, '');
+          if (otherIssuer.length > 0) {
+            otherIssuer = otherIssuer.substring(2);
+          }
+          var otherReceiver;
+          var outputBase;
+          var amount = tx.outputs.reduce(function(sum, output) {
+              var outputArray = output.split(':',3);
+              outputBase = parseInt(outputArray[1]);
+              var outputAmount = (outputBase > 0) ? parseInt(outputArray[0]) * Math.pow(10, outputBase) : parseInt(outputArray[0]);
+              var outputCondArray = outputArray[2].split('(', 3);
+              var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
+                   outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
+              if (outputPubkey == data.pubkey) { // output is for the wallet
+                if (!walletIsIssuer) {
+                  return sum + outputAmount;
+                }
               }
-            }
-            else { // output is for someone else
-              if (outputPubkey !== '' && outputPubkey != otherIssuer) {
-                otherReceiver = outputPubkey;
+              else { // output is for someone else
+                if (outputPubkey !== '' && outputPubkey != otherIssuer) {
+                  otherReceiver = outputPubkey;
+                }
+                if (walletIsIssuer) {
+                  return sum - outputAmount;
+                }
               }
-              if (walletIsIssuer) {
-                return sum - outputAmount;
-              }
-            }
-            return sum;
-          }, 0);
+              return sum;
+            }, 0);
 
-        var time = tx.time;
-        if (!time) {
-          time= Math.floor(moment().utc().valueOf() / 1000);
-        }
+          var pubkey = amount > 0 ? otherIssuer : otherReceiver;
+          var member = _.findWhere(data.members, { pubkey: pubkey });
+          var time = tx.time;
+          if (tx.block_number === null) {
+            time = txPendingsTimeByKey[amount + ':' + tx.hash];
+          }
 
-        var pubkey = amount > 0 ? otherIssuer : otherReceiver;
-        var member = _.findWhere(data.members, { pubkey: pubkey });
-
-        // Avoid duplicated tx, oar tx to him self
-        var txKey = amount + ':' + tx.hash + ':' + time;
-        if (!processedTxMap[txKey] && amount !== 0) {
-          processedTxMap[txKey] = true;
-          var isValid = true;
-          // FIXME : check is input are in available sources
-          //if (isPending && walletIsIssuer) {
-          //  isValid = (tx.inputs.length === tx.inputs.reduce(function(sum, input) {
-          //    return (data.sources[input] !== undefined) ? sum+1 : sum;
-          //  }, 0));
-          //}
-          result.push({
-             time: time,
-             amount: amount,
-             pubkey: pubkey,
-             uid: (member ? member.uid : null),
-             comment: tx.comment,
-             isUD: false,
-             hash: tx.hash,
-             locktime: tx.locktime,
-             block_number: tx.block_number,
-             valid: isValid
-          });
+          // Avoid duplicated tx, oar tx to him self
+          var txKey = amount + ':' + tx.hash + ':' + time;
+          if (!processedTxMap[txKey] && amount !== 0) {
+            processedTxMap[txKey] = true;
+            result.push({
+               time: time,
+               amount: amount,
+               pubkey: pubkey,
+               uid: (member ? member.uid : null),
+               comment: tx.comment,
+               isUD: false,
+               hash: tx.hash,
+               locktime: tx.locktime,
+               block_number: tx.block_number,
+               inputs: (tx.block_number === null ? tx.inputs.slice(0) : null)
+            });
+          }
         }
       });
     },
@@ -192,6 +203,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             keypair: data.keypair,
             pubkey: data.pubkey
           };
+
+          if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
+            var pendings = data.tx.pendings.reduce(function(res, tx){
+              return tx.time ? res.concat({
+                amount: tx.amount,
+                time: tx.time,
+                hash: tx.hash
+              }) : res;
+            }, []);
+            if (pendings.length) {
+              dataToStore.tx = {
+                pendings: pendings
+              };
+            }
+          }
+
           localStorage.setObject('CESIUM_DATA', dataToStore);
         }
         else {
@@ -226,6 +253,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             if (storedData && storedData.keypair && storedData.pubkey) {
               data.keypair = storedData.keypair;
               data.pubkey = storedData.pubkey;
+              if (storedData.tx && storedData.tx.pendings) {
+                data.tx.pendings = storedData.tx.pendings;
+              }
               data.loaded = false;
             }
             resolve();
@@ -329,33 +359,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             data.sources=[];
           }
           var sources = [];
+          var sourcesIndexByKey = [];
           var balance = 0;
           if (!!res.sources && res.sources.length > 0) {
             _.forEach(res.sources, function(src) {
               var srcKey = src.type+':'+src.identifier+':'+src.noffset;
-              if (!!data.sources[srcKey]) {
-                src.consumed = data.sources[srcKey].consumed;
-              }
-              else {
-                src.consumed = false;
-              }
-              var amount = src.amount;
-              if(src.base > 0) {
-                amount = amount * Math.pow(10, src.base);
-              }
-              if (!src.consumed) {
-                balance += amount;
-              }
+              src.consumed = false;
+              balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
               sources.push(src);
-              sources[srcKey] = src;
+              sourcesIndexByKey[srcKey] = sources.length -1 ;
             });
           }
           data.sources = sources;
+          data.sourcesIndexByKey = sourcesIndexByKey;
           data.balance = balance;
           resolve();
         })
         .catch(function(err) {
           data.sources = [];
+          data.sourcesIndexByKey = [];
           reject(err);
         });
       });
@@ -364,24 +386,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
     loadTransactions = function() {
       return $q(function(resolve, reject) {
         var jobs = [];
+        var txHistory = [];
+        var udHistory = [];
+        var txPendings = [];
         // get TX history
-        var txList = [];
         jobs.push(
           BMA.tx.history.all({pubkey: data.pubkey})
           .then(function(res){
             var processedTxMap = {};
-            reduceTxAndPush(res.history.sent, txList, processedTxMap, false);
-            reduceTxAndPush(res.history.received, txList, processedTxMap, false);
-            reduceTxAndPush(res.history.sending, txList, processedTxMap, false);
-            reduceTxAndPush(res.history.pending, txList, processedTxMap, true);
+            reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
+            reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
+            reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
+            reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
           }));
         // get UD history
-        var udList = [];
         if (data.settings.showUDHistory) {
           jobs.push(
             BMA.ud.history({pubkey: data.pubkey})
             .then(function(res){
-              udList = !res.history || !res.history.history ? [] :
+              udHistory = !res.history || !res.history.history ? [] :
                res.history.history.reduce(function(res, ud){
                  var amount = (ud.base > 0) ? ud.amount * Math.pow(10, ud.base) : ud.amount;
                  return res.concat({
@@ -397,15 +420,55 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
         $q.all(jobs)
         .then(function(){
           // sort by time desc
-          data.history = txList.concat(udList).sort(function(tx1, tx2) {
+          data.tx.history  = txHistory.concat(udHistory).sort(function(tx1, tx2) {
              return (tx2.time - tx1.time);
           });
+          data.tx.pendings = txPendings;
           resolve();
         })
         .catch(function(err) {
-          data.history = [];
+          data.tx.history = [];
+          data.tx.pendings = [];
+          data.tx.errors = [];
           reject(err);
         });
+      });
+    },
+
+    processTransactionsAndSources = function() {
+      return $q(function(resolve, reject){
+        var txPendings = [];
+        var txErrors = [];
+        var balance = data.balance;
+        _.forEach(data.tx.pendings, function(tx) {
+          var sources = [];
+          var valid = true;
+          _.forEach(tx.inputs, function(input) {
+            var srcIndex = data.sourcesIndexByKey[input];
+            if (srcIndex !== undefined) {
+              sources.push(data.sources[srcIndex]);
+            }
+            else {
+              valid = false;
+              return false; // break
+            }
+          });
+          if (valid) {
+            balance += tx.amount; // update balance
+            txPendings.push(tx);
+            _.forEach(sources, function(src) {
+              src.consumed=true;
+            });
+          }
+          else {
+            txErrors.push(tx);
+          }
+        });
+
+        data.tx.pendings = txPendings;
+        data.tx.errors = txErrors;
+        data.balance = balance;
+        resolve();
       });
     },
 
@@ -486,12 +549,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             loadRequirements(),
 
             // Get sources
-            loadSources()
-          ])
-          .then(function() {
+            loadSources(),
+
             // Get transactions
             loadTransactions()
-            .then(function(){
+          ])
+          .then(function() {
+            // Process transactions and sources
+            processTransactionsAndSources()
+            .then(function() {
               data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
                   (data.parameters.sigQty - data.requirements.certificationCount) : 0;
               data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
@@ -523,11 +589,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           loadRequirements(),
 
           // Get sources
-          loadSources()
+          loadSources(),
+
+          // Get transactions
+          loadTransactions()
         ])
         .then(function() {
-          // Get transactions (after sources)
-          loadTransactions()
+          // Process transactions and sources
+          processTransactionsAndSources()
           .then(function(){
             resolve(data);
           })
@@ -614,23 +683,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
           if (!amount) {
             reject({message:'ERROR.AMOUNT_REQUIRED'}); return;
           }
-          // Round amount to current base
-          var basePow = block.unitbase ? Math.pow(10, block.unitbase) : 1;
-          amount = Math.floor(amount / basePow) * basePow;
           if (amount <= 0) {
             reject({message:'ERROR.AMOUNT_NEGATIVE'}); return;
           }
-          if (amount > data.balance) {
-            reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
-          }
-
-          var tx = "Version: 2\n";
-          tx += "Type: Transaction\n";
-          tx += "Currency: " + data.currency + "\n";
-          tx += "Locktime: 0" + "\n"; // no lock
-          tx += "Issuers:\n";
-          tx += data.pubkey + "\n";
-          tx += "Inputs:\n";
 
           var inputs= {
             amount: 0,
@@ -638,6 +693,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             maxBase: block.unitbase + 1,
             intputs: []
           };
+
+          // Round amount to current base
+          var basePow = block.unitbase ? Math.pow(10, block.unitbase) : 1;
+          if (amount > basePow) {
+            amount = Math.floor(amount / basePow) * basePow;
+          }
+          else {
+            inputs.maxBase = (''+amount).length;
+          }
+          if (amount > data.balance) {
+            reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
+          }
 
           var maxAmount = 0;
           while (inputs.amount < amount && inputs.maxBase > 0) {
@@ -675,6 +742,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
             }
             return;
           }
+
+          var tx = "Version: 2\n";
+          tx += "Type: Transaction\n";
+          tx += "Currency: " + data.currency + "\n";
+          tx += "Locktime: 0" + "\n"; // no lock
+          tx += "Issuers:\n";
+          tx += data.pubkey + "\n";
+          tx += "Inputs:\n";
 
           _.forEach(inputs.sources, function(source) {
               // if D : D:PUBLIC_KEY:BLOCK_ID
@@ -720,21 +795,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
               _.forEach(inputs.sources, function(source) {
                   source.consumed=true;
               });
-              // Add to history
-              /*data.history.unshift({
-                  time: block.time,
-                  amount: amount,
-                  issuer: data.pubkey,
-                  receiver: destPub,
-                  comment: comments,
-                  isUD: false,
-                  hash: tx.hash, TODO
-                  locktime: 0,
-                  block_number: null,
-                  valid: false
-                });*/
 
-              resolve(result);
+              // Add TX to pendings
+              CryptoUtils.util.hash(signedTx)
+              .then(function(hash) {
+                var member = _.findWhere(data.members, { pubkey: destPub });
+                data.tx.pendings.unshift({
+                    time: (Math.floor(moment().utc().valueOf() / 1000)),
+                    amount: -amount,
+                    pubkey: destPub,
+                    uid: member ? member.uid : null,
+                    comment: comments,
+                    isUD: false,
+                    hash: hash,
+                    locktime: 0,
+                    block_number: null
+                  });
+                store(); // save the wallet
+                resolve(result);
+              });
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});
         });
@@ -898,7 +977,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'cesium.bma.services', '
 
           resolve({
             pubkey: obj.pubkey,
-            keypair: keypair
+            keypair: keypair,
+            tx: obj.tx
           });
         }
         else if (failIfInvalid) {

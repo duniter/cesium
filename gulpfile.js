@@ -40,7 +40,7 @@ var paths = {
   templates: ['./www/templates/**/*.html'],
   templatecache: ['./www/templates/**/*.html'],
   ng_translate: ['./www/i18n/locale-*.json'],
-  ng_annotate: ['./www/js/**/*.js']
+  ng_annotate: ['./www/js/**/*.js', '!./www/js/vendor/*.js']
 };
 
 gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate']);
@@ -136,7 +136,7 @@ gulp.task('templatecache', function (done) {
 });
 
 gulp.task('ng_annotate', function (done) {
-  gulp.src('./www/js/**/*.js')
+  gulp.src(paths.ng_annotate)
     .pipe(ngAnnotate({single_quotes: true}))
     .pipe(gulp.dest('./www/dist/dist_js/app'))
     .on('end', done);

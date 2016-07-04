@@ -14,10 +14,22 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         }
       })
+
+      .state('app.view_wallet_tx_errors', {
+        url: "/wallet/tx/errors",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wallet/view_wallet_tx_error.html",
+            controller: 'WalletTxErrorCtrl'
+          }
+        }
+      })
     ;
   })
 
   .controller('WalletCtrl', WalletController)
+
+  .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
 function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
@@ -27,14 +39,12 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.walletData = null;
   $scope.convertedBalance = null;
   $scope.hasCredit = false;
-  $scope.isMember = false;
-  $scope.unit = '';
   $scope.showDetails = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
       .then(function(wallet) {
-        $scope.updateWalletView(wallet);
+        $scope.updateView(wallet);
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', wallet.pubkey, 1100);
         UIUtils.loading.hide();
@@ -74,10 +84,10 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
-  $scope.updateWalletView = function(wallet) {
+  $scope.updateView = function(wallet) {
     $scope.walletData = wallet;
-    $scope.unit = wallet.currency;
     $scope.hasCredit = (!!wallet.balance && wallet.balance > 0);
+    $scope.refreshConvertedBalance();
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight({
@@ -108,6 +118,15 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     $scope.transfer(null,null, function() {
       UIUtils.loading.hide();
       UIUtils.alert.info('INFO.TRANSFER_SENT');
+      // Set Motion
+      $timeout(function() {
+        UIUtils.motion.fadeSlideInRight({
+          startVelocity: 3000,
+          selector: '.item-pending'
+        });
+        // Set Ink
+        UIUtils.ink({selector: '.item-pending'});
+      }, 10);
     });
   };
 
@@ -277,7 +296,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     UIUtils.loading.show();
     Wallet.refreshData()
     .then(function(wallet) {
-      $scope.updateWalletView(wallet);
+      $scope.updateView(wallet);
       UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
@@ -305,6 +324,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       });
     }, timeout);
   };
+
    // TODO: remove auto add account when done
    /*$timeout(function() {
 
@@ -314,3 +334,53 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
 }
 
 
+function WalletTxErrorController($scope, $rootScope, $ionicPopup, $timeout, UIUtils, Wallet) {
+  'ngInject';
+
+  $scope.walletData = null;
+
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    $scope.loadWallet()
+      .then(function(wallet) {
+        $scope.updateView(wallet);
+        $scope.showFab('fab-redo-transfer');
+        UIUtils.loading.hide();
+      });
+  });
+
+  // Update view
+  $scope.updateView = function(wallet) {
+    $scope.walletData = wallet;
+    // Set Motion
+    $timeout(function() {
+      UIUtils.motion.fadeSlideInRight({
+        startVelocity: 3000
+      });
+      // Set Ink
+      UIUtils.ink({selector: '.item'});
+    }, 10);
+  };
+
+  // Updating wallet data
+  $scope.doUpdate = function() {
+    UIUtils.loading.show();
+    Wallet.refreshData()
+    .then(function(wallet) {
+      $scope.updateView(wallet);
+      UIUtils.loading.hide();
+    })
+    .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+  };
+
+  $scope.filterPositive = function(prop){
+    return function(item){
+      return item[prop] > 0;
+    }
+  };
+
+  $scope.filterNegative = function(prop){
+    return function(item){
+      return item[prop] < 0;
+    }
+  };
+}

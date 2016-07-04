@@ -33,19 +33,12 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loading = true; // to avoid the call of Wallet.store()
     $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
-    Wallet.restore()
-    .then(function() {
-      angular.merge($scope.formData, Wallet.data.settings);
-      if (Wallet.data.settings.locale && Wallet.data.settings.locale.id) {
-        $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
-      }
-      UIUtils.loading.hide();
-      $scope.loading = false;
-    })
-    .catch(function(err) {
-      $scope.loading = false;
-      UIUtils.loading.hide();
-    });
+    angular.merge($scope.formData, Wallet.data.settings);
+    if (Wallet.data.settings.locale && Wallet.data.settings.locale.id) {
+      $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+    }
+    UIUtils.loading.hide();
+    $scope.loading = false;
   });
 
   $scope.setSettingsForm = function(settingsForm) {

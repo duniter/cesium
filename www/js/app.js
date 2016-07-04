@@ -19,7 +19,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .filter('formatDecimal', function() {
       return function(input) {
-        if (!input) return '0';
+        if (input === undefined) return '0';
+        //if (input === Infinity || input === -Infinity) {
+        //  return '∞';
+        //}
         if (Math.abs(input) < 0.0001) return '~ 0';
         return numeral(input-0.00005).format('0,0.0000').replace(',', ' ');
       };
@@ -27,7 +30,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .filter('formatNumeral', function() {
       return function(input, pattern) {
-        if (!input) return '0';
+        if (input === undefined) return '0';
         if (Math.abs(input) < 0.0001) return '~ 0';
         return numeral(input).format(pattern).replace(',', ' ');
       };
