@@ -25,7 +25,8 @@
     "BTN_PICTURE_FAVORISE": "Principale",
     "UNIVERSAL_DIVIDEND": "Dividende universel",
     "UD": "DU",
-    "DATE_PATTERN": "DD/MM/YYYY HH:mm"
+    "DATE_PATTERN": "DD/MM/YYYY HH:mm",
+    "EMPTY_PARENTHESIS": "(vide)"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -236,6 +237,7 @@
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
-    "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>"
+    "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>",
+    "TRANSFER": "<b>Récapitulatif du paiement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir envoyer ce paiement ?</b>"
   }
 }

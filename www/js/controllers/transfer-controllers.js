@@ -39,10 +39,10 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferCtrl', TransferController)
 ;
 
-function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover) {
+function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q) {
   'ngInject';
 
-  TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover);
+  TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$state.stateParams && !!$state.stateParams.pubkey) {
@@ -67,7 +67,7 @@ function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet
   });
 }
 
-function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover) {
+function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q) {
   'ngInject';
 
   $scope.walletData = {};
@@ -210,17 +210,20 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
       return;
     }
 
-    UIUtils.loading.show();
+    $scope.askTransferConfirm()
+    .then(function(){
+      UIUtils.loading.show();
 
-    var amount = $scope.formData.amount;
-    if ($scope.formData.useRelative && !!amount &&
-        typeof amount == "string") {
-      amount = $scope.walletData.currentUD *
-               amount.replace(new RegExp('[.,]'), '.');
-    }
-    Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
-    .then(function() {
-       var callback = $scope.formData.callback;
+      var amount = $scope.formData.amount;
+      if ($scope.formData.useRelative && !!amount &&
+          typeof amount == "string") {
+        amount = $scope.walletData.currentUD *
+                 amount.replace(new RegExp('[.,]'), '.');
+      }
+
+      Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
+      .then(function() {
+        var callback = $scope.formData.callback;
         $scope.formData = {}; // Reset form data
         $scope.transferForm.$setPristine(); // Reset form
         $scope.closeTransfer();
@@ -233,12 +236,36 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
           UIUtils.alert.info('INFO.TRANSFER_SENT');
           $state.go('app.view_wallet');
         }
-    })
-    .catch(
-      function(err) {
-        UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
-      }
-    );
+      })
+      .catch(
+        function(err) {
+          UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
+        }
+      );
+    });
+  };
+
+  $scope.askTransferConfirm = function() {
+    return $q(function(resolve, reject) {
+      $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
+      .then(function(translations){
+        $translate('CONFIRM.TRANSFER', {
+          from: $scope.walletData.isMember ? $scope.walletData.uid : $filter('formatPubkey')($scope.walletData.pubkey),
+          to: $scope.destUid ? $scope.destUid : $scope.destPub,
+          amount: $scope.formData.amount,
+          unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.walletData.parameters.currency),
+          comment: (!$scope.formData.comment || $scope.formData.comment.trim().length == 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
+        })
+        .then(function(confirmMsg) {
+          UIUtils.alert.confirm(confirmMsg)
+          .then(function(confirm){
+            if (confirm) {
+              resolve();
+            }
+          });
+        });
+      });
+    });
   };
 
   $scope.closeLookup = function() {

@@ -25,7 +25,8 @@
     "BTN_PICTURE_FAVORISE": "Default",
     "UNIVERSAL_DIVIDEND": "Universal dividend",
     "UD": "UD",
-    "DATE_PATTERN": "YYYY-MM-DD HH:mm"
+    "DATE_PATTERN": "YYYY-MM-DD HH:mm",
+    "EMPTY_PARENTHESIS": "(empty)"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -236,6 +237,7 @@
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
-    "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?"
+    "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
+    "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to send this payment ?</b>"
   }
 }
