@@ -254,7 +254,7 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
           to: $scope.destUid ? $scope.destUid : $scope.destPub,
           amount: $scope.formData.amount,
           unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.walletData.parameters.currency),
-          comment: (!$scope.formData.comment || $scope.formData.comment.trim().length == 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
+          comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
         })
         .then(function(confirmMsg) {
           UIUtils.alert.confirm(confirmMsg)
