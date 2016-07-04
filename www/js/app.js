@@ -110,8 +110,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     //.useSanitizeValueStrategy('sanitize')
     .useSanitizeValueStrategy(null)
     .fallbackLanguage(['en'])
-    .useLoaderCache(true)
-    .useStorage('localStorage');
+    .useLoaderCache(true);
   })
 
   .config(function($httpProvider, APP_CONFIG) {
