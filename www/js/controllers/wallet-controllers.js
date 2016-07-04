@@ -375,12 +375,12 @@ function WalletTxErrorController($scope, $rootScope, $ionicPopup, $timeout, UIUt
   $scope.filterPositive = function(prop){
     return function(item){
       return item[prop] > 0;
-    }
+    };
   };
 
   $scope.filterNegative = function(prop){
     return function(item){
       return item[prop] < 0;
-    }
+    };
   };
 }
