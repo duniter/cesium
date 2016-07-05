@@ -95,19 +95,25 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
 
   PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
 
-  $scope.search = {
-    text: '',
-    results: {},
-    options: {
-        listInset: true
-      }
-  };
+  $scope.search = {};
   $scope.formData = {
     useRelative: Wallet.data.settings.useRelative
   };
   $scope.knownBlocks = [];
   $scope.node = null;
   $scope.loading = true;
+
+  $scope.currency = '';
+  $scope.M = 0;
+  $scope.MoverN = 0;
+  $scope.UD = 0;
+  $scope.cactual = 0;
+  $scope.c = 0;
+  $scope.dt = 0;
+  $scope.sigQty = 0;
+  $scope.time  = 0;
+  $scope.difficulty  = 0;
+  $scope.Nprev = 0;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.closeNode();

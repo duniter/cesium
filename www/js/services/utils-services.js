@@ -167,50 +167,80 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function resizeImageFromFile(file) {
-      return $q(function(resolve, reject) {
+    return $q(function(resolve, reject) {
 
-        var reader = new FileReader();
+      var reader = new FileReader();
 
-        reader.onload = function(event){
-          var img = document.createElement("img");
+      reader.onload = function(event){
+        var img = document.createElement("img");
 
-          img.onload = function(event) {
-            var width = event.target.width;
-            var height = event.target.height;
+        img.onload = function(event) {
+          var width = event.target.width;
+          var height = event.target.height;
 
-            if (width > height) {
-              if (width > CONST.MAX_WIDTH) {
-                height *= CONST.MAX_WIDTH / width;
-                width = CONST.MAX_WIDTH;
-              }
-            } else {
-              if (height > CONST.MAX_HEIGHT) {
-                width *= CONST.MAX_HEIGHT / height;
-                height = CONST.MAX_HEIGHT;
-              }
+          if (width > height) {
+            if (width > CONST.MAX_WIDTH) {
+              height *= CONST.MAX_WIDTH / width;
+              width = CONST.MAX_WIDTH;
             }
-            var canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
+          } else {
+            if (height > CONST.MAX_HEIGHT) {
+              width *= CONST.MAX_HEIGHT / height;
+              height = CONST.MAX_HEIGHT;
+            }
+          }
+          var canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(event.target, 0, 0,  canvas.width, canvas.height);
 
-            var dataurl = canvas.toDataURL();
+          var dataurl = canvas.toDataURL();
 
-            resolve(dataurl);
-          };
-
-          img.src = event.target.result;
+          resolve(dataurl);
         };
 
-        if (file) {
-          reader.readAsDataURL(file);
+        img.src = event.target.result;
+      };
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+      else {
+        //reject("Not a file");
+      }
+    });
+  }
+
+  function disableEffects() {
+    this.ink = function(){};
+
+    function disableMotion(baseSelector) {
+      return function(options) {
+        if (!options || !options.selector) {
+          options = {
+              selector: (baseSelector + ' .item')
+            };
         }
-        else {
-          //reject("Not a file");
+        var parentsInDom = document.querySelectorAll(baseSelector);
+        for (var i = 0; i < parentsInDom.length; i++) {
+            var parent = parentsInDom[i];
+            parent.className = parent.className.replace(/\banimate-[a-z- ]+\b/,'');
         }
-      });
+
+        var itemsInDom = document.querySelectorAll(options.selector);
+        for (var j = 0; j < itemsInDom.length; j++) {
+            var child = itemsInDom[j];
+            child.style.webkitTransitionDelay = "0s";
+            child.style.transitionDelay = "0s";
+            child.className += ' in done';
+        }
+      };
     }
+
+    this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
+    this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
+  }
 
   return {
     alert: {
@@ -228,6 +258,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     onError: onError,
     ink: ionicMaterialInk.displayEffect,
     motion: ionicMaterialMotion,
+    disableEffects: disableEffects,
     selection: {
       select: selectElementText,
       get: getSelectionText

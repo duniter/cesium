@@ -90,9 +90,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     $scope.refreshConvertedBalance();
     // Set Motion
     $timeout(function() {
-      UIUtils.motion.fadeSlideInRight({
-        startVelocity: 3000
-      });
+      UIUtils.motion.fadeSlideInRight();
       // Set Ink
       UIUtils.ink({selector: '.item'});
     }, 10);
@@ -121,7 +119,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       // Set Motion
       $timeout(function() {
         UIUtils.motion.fadeSlideInRight({
-          startVelocity: 3000,
           selector: '.item-pending'
         });
         // Set Ink
@@ -353,9 +350,7 @@ function WalletTxErrorController($scope, $rootScope, $ionicPopup, $timeout, UIUt
     $scope.walletData = wallet;
     // Set Motion
     $timeout(function() {
-      UIUtils.motion.fadeSlideInRight({
-        startVelocity: 3000
-      });
+      UIUtils.motion.fadeSlideInRight();
       // Set Ink
       UIUtils.ink({selector: '.item'});
     }, 10);

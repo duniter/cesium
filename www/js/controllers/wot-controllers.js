@@ -161,11 +161,8 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
       $scope.loaded = true;
 
       $timeout(function() {
-          UIUtils.motion.fadeSlideInRight({
-            selector: '.animate-fade-slide-in .item',
-            startVelocity: 3000
-          });
-      }, 100);
+          UIUtils.motion.fadeSlideInRight();
+      }, 10);
       UIUtils.ink();
     };
     BMA.wot.lookup({ search: pub })
@@ -285,10 +282,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
       $scope.loaded = true;
       // Set Motion
       $timeout(function() {
-        UIUtils.motion.fadeSlideInRight({
-            selector: '.animate-fade-slide-in-right .item',
-            startVelocity: 3000
-        });
+        UIUtils.motion.fadeSlideInRight();
       }, 10);
       if ($scope.canCertify) {
         $scope.showFab('fab-certify');

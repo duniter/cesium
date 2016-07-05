@@ -18,23 +18,26 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   })
 
   .filter('formatDecimal', function() {
-      return function(input) {
-        if (input === undefined) return '0';
-        //if (input === Infinity || input === -Infinity) {
-        //  return '∞';
-        //}
-        if (Math.abs(input) < 0.0001) return '~ 0';
-        return numeral(input-0.00005).format('0,0.0000').replace(',', ' ');
-      };
-    })
+    return function(input) {
+      if (input === undefined) return '0';
+      //if (input === Infinity || input === -Infinity) {
+      //  return '∞';
+      //}
+      if (Math.abs(input) < 0.0001) return '~ 0';
+      return numeral(input-0.00005).format('0,0.0000').replace(',', ' ');
+    };
+  })
 
   .filter('formatNumeral', function() {
-      return function(input, pattern) {
-        if (input === undefined) return '0';
-        if (Math.abs(input) < 0.0001) return '~ 0';
-        return numeral(input).format(pattern).replace(',', ' ');
-      };
-    })
+    return function(input, pattern) {
+      if (input === undefined) return '0';
+      //if (isNaN(input)) {
+      //    return 'NaN';
+      //}
+      if (Math.abs(input) < 0.0001) return '~ 0';
+      return numeral(input).format(pattern).replace(',', ' ');
+    };
+  })
 
   .filter('formatDate', function() {
     return function(input) {
@@ -140,7 +143,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   .config(function($ionicNativeTransitionsProvider){
     'ngInject';
     // Use native transition
-    var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS();
+    var enableNativeTransitions = (ionic.Platform.isAndroid() || ionic.Platform.isIOS()) &&
+      ionic.Platform.grade.toLowerCase()=='a';
     $ionicNativeTransitionsProvider.enable(enableNativeTransitions);
   })
   // endRemoveIf(no-device)
@@ -230,7 +234,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
-.run(function($rootScope, amMoment, $translate, Device) {
+.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig
+) {
   'ngInject';
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
@@ -254,6 +259,13 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
+    }
+
+    // Ionic Platform Grade is not A, disabling views transitions
+    if (ionic.Platform.grade.toLowerCase()!='a') {
+      console.log('Disable visual effects because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
+      $ionicConfig.views.transition('none');
+      UIUtils.disableEffects();
     }
   });
 
