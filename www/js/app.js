@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment', 'ngApi',
   'cesium.controllers', 'cesium.templates','cesium.translations',
    // removeIf(no-device)
   'ngCordova', 'ionic-native-transitions',
@@ -143,8 +143,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   .config(function($ionicNativeTransitionsProvider){
     'ngInject';
     // Use native transition
-    var enableNativeTransitions = (ionic.Platform.isAndroid() || ionic.Platform.isIOS()) &&
-      ionic.Platform.grade.toLowerCase()=='a';
+    var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS()/*) &&
+      ionic.Platform.grade.toLowerCase()=='a';*/
     $ionicNativeTransitionsProvider.enable(enableNativeTransitions);
   })
   // endRemoveIf(no-device)
