@@ -528,6 +528,30 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
+    /*loadAvatar = function() {
+      return $q(function(resolve, reject) {
+        if (!Registry) {
+          data.avatar = null;
+          resolve();
+          return;
+        }
+        Registry.record.avatar(data.pubkey)
+          .then(function(imageData) {
+            if (imageData) {
+              data.avatar = imageData;
+            }
+            else {
+              data.avatar = null;
+            }
+            resolve();
+          })
+          .catch(function(err) {
+            data.avatar = null; // silent !
+            resolve();
+          });
+      });
+    },*/
+
     loadData = function() {
         if (data.loaded) {
           return refreshData();

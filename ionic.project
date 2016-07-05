@@ -8,8 +8,11 @@
   "gulpStartupTasks": [
     "sass",
     "templatecache",
-    "ng_translate",
     "ng_annotate",
+    "ng_translate",
+    "templatecache_plugin",
+    "ng_annotate_plugin",
+    "ng_translate_plugin",
     "watch"
   ],
   "defaultBrowser": "chrome",

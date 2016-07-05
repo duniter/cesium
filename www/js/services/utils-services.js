@@ -4,7 +4,22 @@ angular.module('cesium.utils.services', ['ngResource'])
   function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout) {
   'ngInject';
 
-  var loadingTextCache=null;
+  function exact(regexpContent) {
+    return new RegExp("^" + regexpContent + "$");
+  }
+
+  var
+    loadingTextCache=null,
+    CONST = {
+      MAX_HEIGHT: 400,
+      MAX_WIDTH: 400,
+      THUMB_MAX_HEIGHT: 150,
+      THUMB_MAX_WIDTH: 150
+    },
+    regex = {
+      IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.*)")
+    }
+  ;
 
   function alertError(err, subtitle) {
     return $q(function(resolve, reject) {
@@ -166,27 +181,22 @@ angular.module('cesium.utils.services', ['ngResource'])
     return selectedText;
   }
 
-  function resizeImageFromFile(file) {
-    return $q(function(resolve, reject) {
-
-      var reader = new FileReader();
-
-      reader.onload = function(event){
-        var img = document.createElement("img");
-
-        img.onload = function(event) {
+  function imageOnLoadResize(resolve, reject, thumbnail) {
+    return function(event) {
           var width = event.target.width;
           var height = event.target.height;
+       var maxWidth = (thumbnail ? CONST.THUMB_MAX_WIDTH : CONST.MAX_WIDTH);
+       var maxHeight = (thumbnail ? CONST.THUMB_MAX_HEIGHT : CONST.MAX_HEIGHT);
 
           if (width > height) {
-            if (width > CONST.MAX_WIDTH) {
-              height *= CONST.MAX_WIDTH / width;
-              width = CONST.MAX_WIDTH;
+         if (width > maxWidth) {
+           height *= maxWidth / width;
+           width = maxWidth;
             }
           } else {
-            if (height > CONST.MAX_HEIGHT) {
-              width *= CONST.MAX_HEIGHT / height;
-              height = CONST.MAX_HEIGHT;
+         if (height > maxHeight) {
+           width *= maxHeight / height;
+           height = maxHeight;
             }
           }
           var canvas = document.createElement("canvas");
@@ -199,48 +209,93 @@ angular.module('cesium.utils.services', ['ngResource'])
 
           resolve(dataurl);
         };
+  }
 
-        img.src = event.target.result;
-      };
+  function resizeImageFromFile(file, thumbnail) {
+    return $q(function(resolve, reject) {
 
       if (file) {
+        var reader = new FileReader();
+        reader.onload = function(event){
+          var img = document.createElement("img");
+          img.onload = imageOnLoadResize(resolve, reject, thumbnail);
+          img.src = event.target.result;
+        };
         reader.readAsDataURL(file);
       }
-      else {
-        //reject("Not a file");
+    });
       }
+
+  function resizeImageFromSrc(imageSrc, thumbnail) {
+    return $q(function(resolve, reject) {
+      var img = document.createElement("img");
+      img.onload = imageOnLoadResize(resolve, reject, thumbnail);
+      img.src = imageSrc;
     });
   }
 
-  function disableEffects() {
-    this.ink = function(){};
-
-    function disableMotion(baseSelector) {
-      return function(options) {
-        if (!options || !options.selector) {
-          options = {
-              selector: (baseSelector + ' .item')
-            };
-        }
-        var parentsInDom = document.querySelectorAll(baseSelector);
-        for (var i = 0; i < parentsInDom.length; i++) {
-            var parent = parentsInDom[i];
-            parent.className = parent.className.replace(/\banimate-[a-z- ]+\b/,'');
-        }
-
-        var itemsInDom = document.querySelectorAll(options.selector);
-        for (var j = 0; j < itemsInDom.length; j++) {
-            var child = itemsInDom[j];
-            child.style.webkitTransitionDelay = "0s";
-            child.style.transitionDelay = "0s";
-            child.className += ' in done';
-        }
-      };
+  function imageFromAttachment(attachment) {
+    if (!attachment || !attachment._content_type || !attachment._content) {
+      return null;
     }
-
-    this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
-    this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
+    var image = {
+      src: "data:" + attachment._content_type + ";base64," + attachment._content
+    };
+    if (attachment._title) {
+      image.title = attachment._title;
+    }
+    if (attachment._name) {
+      image.name = attachment._name;
+    }
+    return image;
   }
+
+  function imageToAttachment(image) {
+    if (!image || !image.src) return null;
+    var match = regex.IMAGE_SRC.exec(image.src);
+    if (!match) return null;
+    var attachment = {
+      _content_type: match[1],
+      _content: match[2]
+      };
+    if (image.title) {
+      attachment._title = image.title;
+    }
+    if (image.name) {
+      attachment._name = image.name;
+    }
+    return attachment;
+  }
+
+  function disableEffects() {
+      this.ink = function(){};
+
+      function disableMotion(baseSelector) {
+        return function(options) {
+          if (!options || !options.selector) {
+            options = {
+                selector: (baseSelector + ' .item')
+              };
+          }
+          var parentsInDom = document.querySelectorAll(baseSelector);
+          for (var i = 0; i < parentsInDom.length; i++) {
+              var parent = parentsInDom[i];
+              parent.className = parent.className.replace(/\banimate-[a-z- ]+\b/,'');
+          }
+
+          var itemsInDom = document.querySelectorAll(options.selector);
+          for (var j = 0; j < itemsInDom.length; j++) {
+              var child = itemsInDom[j];
+              child.style.webkitTransitionDelay = "0s";
+              child.style.transitionDelay = "0s";
+              child.className += ' in done';
+          }
+        };
+      }
+
+      this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
+      this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
+    }
 
   return {
     alert: {
@@ -264,9 +319,29 @@ angular.module('cesium.utils.services', ['ngResource'])
       get: getSelectionText
     },
     image: {
-      resize: resizeImageFromFile
+      resizeFile: resizeImageFromFile,
+      resizeSrc: resizeImageFromSrc,
+      fromAttachment: imageFromAttachment,
+      toAttachment: imageToAttachment
     }
   };
 })
 
+
+// See http://plnkr.co/edit/vJQXtsZiX4EJ6Uvw9xtG?p=preview
+.factory('$focus', function($timeout, $window) {
+  'ngInject';
+
+  return function(id) {
+    // timeout makes sure that it is invoked after any other event has been triggered.
+    // e.g. click events that need to run before the focus or
+    // inputs elements that are in a disabled state but are enabled when those events
+    // are triggered.
+    $timeout(function() {
+      var element = $window.document.getElementById(id);
+      if(element)
+        element.focus();
+    });
+  };
+})
 ;

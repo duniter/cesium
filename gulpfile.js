@@ -40,10 +40,16 @@ var paths = {
   templates: ['./www/templates/**/*.html'],
   templatecache: ['./www/templates/**/*.html'],
   ng_translate: ['./www/i18n/locale-*.json'],
-  ng_annotate: ['./www/js/**/*.js', '!./www/js/vendor/*.js']
+  ng_annotate: ['./www/js/**/*.js', '!./www/js/vendor/*.js'],
+  // plugins:
+  templatecache_plugin: ['./www/plugins/*/templates/**/*.html'],
+  ng_translate_plugin: ['./www/plugins/*/i18n/locale-*.json'],
+  ng_annotate_plugin: ['./www/plugins/*/js/**/*.js', '!./www/plugins/*/js/vendor/*.js']
 };
 
-gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate']);
+gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate',
+  'templatecache_plugin', 'ng_translate_plugin', 'ng_annotate_plugin'
+]);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -66,8 +72,12 @@ gulp.task('sass', function(done) {
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.templatecache, ['templatecache']);
-  gulp.watch(paths.ng_translate, ['ng_translate']);
   gulp.watch(paths.ng_annotate, ['ng_annotate']);
+  gulp.watch(paths.ng_translate, ['ng_translate']);
+  // plugins:
+  gulp.watch(paths.templatecache_plugin, ['templatecache_plugin']);
+  gulp.watch(paths.ng_annotate_plugin, ['ng_annotate_plugin']);
+  gulp.watch(paths.ng_translate_plugin, ['ng_translate_plugin']);
 });
 
 gulp.task('install', ['git-check'], function() {
@@ -125,7 +135,7 @@ gulp.task('config', function (done) {
 });
 
 gulp.task('templatecache', function (done) {
-  gulp.src('./www/templates/**/*.html')
+  gulp.src(paths.templatecache)
     .pipe(templateCache({
       standalone:true,
       module:"cesium.templates",
@@ -148,6 +158,32 @@ gulp.task('ng_translate', function() {
     .pipe(gulp.dest('www/dist/dist_js/app'));
 });
 
+/* -- Plugins -- */
+gulp.task('templatecache_plugin', function (done) {
+  gulp.src(paths.templatecache_plugin)
+    .pipe(templateCache({
+      standalone:true,
+      module:"cesium.plugins.templates",
+      root: "plugins/"
+     }))
+    .pipe(gulp.dest('./www/dist/dist_js/plugins'))
+    .on('end', done);
+});
+
+gulp.task('ng_annotate_plugin', function (done) {
+  gulp.src(paths.ng_annotate_plugin)
+    .pipe(ngAnnotate({single_quotes: true}))
+    .pipe(gulp.dest('./www/dist/dist_js/plugins'))
+    .on('end', done);
+});
+
+gulp.task('ng_translate_plugin', function() {
+  return gulp.src(paths.ng_translate_plugin)
+    .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
+    .pipe(gulp.dest('www/dist/dist_js/plugins'));
+});
+
+/* -- Web dist build -- */
 gulp.task('clean:tmp', function(done) {
   return del([
       './tmp'
