@@ -1,4 +1,4 @@
-![Cesium logo](https://raw.github.com/duniter/cesium/master/resources/logo/v2/png/cs-logo.large.blue.sand-dune-250×250.png)
+![Cesium logo](https://raw.github.com/duniter/cesium/master/cs-logo.large.blue.sand-dune-250×250.png)
 
 # Cesium
 
