@@ -6,6 +6,8 @@
 
 Try it at: http://cesium.duniter.fr
 
+There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
+
 ## Developer
 
 To contribute and compile cesium, you will have to: 
