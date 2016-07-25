@@ -12927,6 +12927,10 @@ a {
   body {
     cursor: inherit; } }
 
+.item a {
+  color: inherit;
+  text-decoration: none; }
+
 @media screen and (min-width: 992px) and (max-width: 1199px) {
   .hidden-md {
     display: none !important;

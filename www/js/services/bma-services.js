@@ -28,6 +28,9 @@ angular.module('cesium.bma.services', ['ngResource',
     data = {
       blockchain: {
         current: null
+      },
+      wot: {
+        members: []
       }
     };
 
@@ -172,6 +175,31 @@ angular.module('cesium.bma.services', ['ngResource',
       });
     }
 
+    this.getMembers = getResource('http://' + server + '/wot/members');
+
+    function getMemberByPubkey(pubkey) {
+      return $q(function(resolve, reject) {
+        var doSearch = function() {
+          var member = _.findWhere(data.wot.members, { pubkey: pubkey });
+          resolve(member);
+        };
+        if (!data.wot || !data.wot.members || data.wot.members.length === 0){
+          getMembers()
+          .then(function(json){
+            data.wot.members = json.results;
+            doSearch();
+          })
+          .catch(function(err) {
+            data.wot.members = [];
+            reject(err);
+          });
+        }
+        else {
+          doSearch();
+        }
+      });
+    }
+
     return {
       node: {
         summary: getResource('http://' + server + '/node/summary'),
@@ -179,7 +207,10 @@ angular.module('cesium.bma.services', ['ngResource',
       },
       wot: {
         lookup: getResource('http://' + server + '/wot/lookup/:search'),
-        members: getResource('http://' + server + '/wot/members'),
+        members: getMembers,
+        member: {
+          get: getMemberByPubkey
+        },
         requirements: getResource('http://' + server + '/wot/requirements/:pubkey'),
         add: postResource('http://' + server + '/wot/add'),
         certify: postResource('http://' + server + '/wot/certify')

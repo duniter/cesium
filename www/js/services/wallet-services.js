@@ -831,20 +831,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               // Add TX to pendings
               CryptoUtils.util.hash(signedTx)
               .then(function(hash) {
-                var member = _.findWhere(data.members, { pubkey: destPub });
-                data.tx.pendings.unshift({
-                    time: (Math.floor(moment().utc().valueOf() / 1000)),
-                    amount: -amount,
-                    pubkey: destPub,
-                    uid: member ? member.uid : null,
-                    comment: comments,
-                    isUD: false,
-                    hash: hash,
-                    locktime: 0,
-                    block_number: null
-                  });
-                store(); // save the wallet
-                resolve(result);
+                BMA.wot.member.get(destPub)
+                .then(function(member) {
+                  data.tx.pendings.unshift({
+                      time: (Math.floor(moment().utc().valueOf() / 1000)),
+                      amount: -amount,
+                      pubkey: destPub,
+                      uid: member ? member.uid : null,
+                      comment: comments,
+                      isUD: false,
+                      hash: hash,
+                      locktime: 0,
+                      block_number: null
+                    });
+                  store(); // save the wallet
+                  resolve(result);
+                }).catch(function(err){reject(err);});;
               });
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});
