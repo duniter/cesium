@@ -44,11 +44,12 @@ var paths = {
   // plugins:
   templatecache_plugin: ['./www/plugins/*/templates/**/*.html'],
   ng_translate_plugin: ['./www/plugins/*/i18n/locale-*.json'],
-  ng_annotate_plugin: ['./www/plugins/*/js/**/*.js', '!./www/plugins/*/js/vendor/*.js']
+  ng_annotate_plugin: ['./www/plugins/*/js/**/*.js', '!./www/plugins/*/js/vendor/*.js'],
+  css_plugin: ['./www/plugins/*/css/**/*.css']
 };
 
 gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate',
-  'templatecache_plugin', 'ng_translate_plugin', 'ng_annotate_plugin'
+  'templatecache_plugin', 'ng_translate_plugin', 'ng_annotate_plugin', 'css_plugin'
 ]);
 
 gulp.task('sass', function(done) {
@@ -78,6 +79,7 @@ gulp.task('watch', function() {
   gulp.watch(paths.templatecache_plugin, ['templatecache_plugin']);
   gulp.watch(paths.ng_annotate_plugin, ['ng_annotate_plugin']);
   gulp.watch(paths.ng_translate_plugin, ['ng_translate_plugin']);
+  gulp.watch(paths.css_plugin, ['css_plugin']);
 });
 
 gulp.task('install', ['git-check'], function() {
@@ -181,6 +183,12 @@ gulp.task('ng_translate_plugin', function() {
   return gulp.src(paths.ng_translate_plugin)
     .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/plugins'));
+});
+
+gulp.task('css_plugin', function (done) {
+  gulp.src(paths.css_plugin)
+    .pipe(gulp.dest('./www/dist/dist_css/plugins'))
+    .on('end', done);
 });
 
 /* -- Web dist build -- */

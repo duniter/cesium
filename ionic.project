@@ -13,6 +13,7 @@
     "templatecache_plugin",
     "ng_annotate_plugin",
     "ng_translate_plugin",
+    "css_plugin",
     "watch"
   ],
   "defaultBrowser": "chrome",
