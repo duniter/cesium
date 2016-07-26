@@ -1,0 +1,99 @@
+<ion-view view-title="{{'REGISTRY.SEARCH.TITLE'|translate}}" left-buttons="leftButtons">
+    <ion-nav-buttons side="secondary">
+        <!--<button class="button button-positive button-icon button-clear visible-xs"
+                ng-click="newRecord()">
+          <i class="icon ion-plus"></i>
+        </button>-->
+    </ion-nav-buttons>
+
+    <ion-content class="lookupForm padding no-padding-xs">
+
+      <form ng-submit="doSearch()"/>
+        <label class="item item-input">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+                   ng-model="search.text"
+                   ng-model-options="{ debounce: 350 }"
+                   ng-change="doSearch()"
+                   id="searchText">
+        </label>
+
+        <div class="item item-toggle dark" ng-if="!search.lastRecords">
+            <span translate>REGISTRY.SEARCH.BTN_OPTIONS</span>
+            <label class="toggle toggle-royal">
+                <input type="checkbox" ng-model="search.options">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </div>
+
+        <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
+            <span translate>REGISTRY.COMMON.CATEGORY</span>
+            <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
+            <i class="button button-clear ion-chevron-right"></i>
+        </span>
+
+        <span class="item item-button-right" ng-if="search.options && !location.enable">
+            <span translate>REGISTRY.SEARCH.LOCATION</span>
+            <div class="item-input-inset">
+                <label class="item-input-wrapper">
+                    <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}"
+                           ng-model="search.location"
+                           ng-model-options="{ debounce: 350 }"
+                           ng-change="doSearch()"/>
+                </label>
+            </div>
+        </span>
+
+      </form>
+
+      <div class="row no-padding">
+        <div class="col">
+          <h4
+            ng-if="!search.looking && search.lastRecords && search.results.length > 0" translate>
+            REGISTRY.SEARCH.LAST_RECORDS
+          </h4>
+          <h4
+            ng-if="!search.looking && !search.lastRecords && search.results.length > 0" translate>
+            REGISTRY.SEARCH.RESULTS
+          </h4>
+        </div>
+
+        <div class="col col-25 hidden-xs hidden-sm" style="text-align:right">
+          <button class="button button-full button-raised button-calm ink"
+                  ng-click="newRecord()">
+            {{'REGISTRY.COMMON.BTN_NEW' | translate}}
+          </button>
+        </div>
+      </div>
+
+      <label class="center" ng-if="search.looking">
+        <ion-spinner icon="android"></ion-spinner>
+      </label>
+
+      <label class="center assertive animate-fade-slide-in-right" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+        COMMON.SEARCH_NO_RESULT
+      </label>
+
+      <div class="list animate-fade-slide-in-right"
+           ng-if="!search.looking && search.results && search.results.length > 0">
+
+          <a  ng-repeat="found in search.results"
+              class="item item-avatar ink"
+              ui-sref="app.registry_view_record({id: found.id, title: found.title})">
+
+              <img ng-src="{{::found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
+              <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>
+              <h4 class="gray" ng-if="found.location">{{::found.location}}</h4>
+              <p class="gray item-text-wrap" ng-bind-html="found.description" ng-if="found.description"></p>
+              <span class="badge" ng-if="found.category && found.category.id=='particulier'">{{::found.issuer | formatPubkey}}</span>
+          </a>
+
+      </div>
+    </ion-content>
+
+    <button class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg"
+            ng-click="newRecord()">
+    </button>
+</ion-view>

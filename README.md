@@ -1,10 +1,12 @@
-![Cesium logo](https://raw.github.com/duniter/cesium/master/resources/logo/v2/png/cs-logo.large.blue.sand-dune-250×250.png)
+![Cesium logo](https://raw.github.com/duniter/cesium/master/cesium-logo.large.blue.sand-dune-250×250.png)
 
 # Cesium
 
 [Unhosted webapp](https://unhosted.org) client for [Duniter](https://duniter.org) network.
 
 Try it at: http://cesium.duniter.fr
+
+There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
 
 ## Developer
 

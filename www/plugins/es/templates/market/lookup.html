@@ -1,0 +1,150 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span translate>MARKET.SEARCH.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear visible-xs"
+            ui-sref="app.market_add_record">
+      <i class="icon ion-plus"></i>
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="lookupForm padding no-padding-xs">
+
+
+    <form ng-submit="doSearch()">
+      <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
+               ng-model="search.text"
+               ng-model-options="{ debounce: 350 }"
+               ng-change="doSearch()" id="searchText">
+      </label>
+
+      <div class="item item-toggle dark" ng-if="!search.lastRecords">
+        <span translate>MARKET.SEARCH.BTN_OPTIONS</span>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="search.options">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+      <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
+        <span translate>MARKET.COMMON.CATEGORY</span>
+        <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
+        <i class="button button-clear ion-chevron-right"></i>
+      </span>
+
+      <span class="item item-button-right" ng-if="search.options && location.enable">
+        <span translate>MARKET.SEARCH.BTN_AROUND_ME</span>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="search.localize">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </span>
+
+      <span class="item item-button-right" ng-if="search.options && !location.enable">
+        <span translate>MARKET.SEARCH.LOCATION</span>
+        <div class="item-input-inset">
+          <label class="item-input-wrapper">
+            <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}"
+                   ng-model="search.location"
+                   ng-model-options="{ debounce: 350 }"
+                   ng-change="doSearch()"/>
+          </label>
+        </div>
+      </span>
+    </form>
+
+    <div class="row no-padding">
+      <div class="col">
+        <h4
+          ng-if="!search.looking && search.lastRecords && search.results.length > 0" translate>
+          MARKET.SEARCH.LAST_RECORDS
+        </h4>
+        <h4
+          ng-if="!search.looking && !search.lastRecords && search.results.length > 0" translate>
+          MARKET.SEARCH.RESULTS
+        </h4>
+      </div>
+
+      <div class="col col-25 hidden-xs hidden-sm padding" style="text-align:right">
+        <button class="button button-raised button-full button-calm ink"
+                ui-sref="app.market_add_record">
+          {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
+        </button>
+      </div>
+    </div>
+
+    <label class="center" ng-if="search.looking">
+      <ion-spinner icon="android"></ion-spinner>
+    </label>
+
+    <label class="center assertive animate-fade-slide-in-right" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+      COMMON.SEARCH_NO_RESULT
+    </label>
+
+    <div class="list animate-fade-slide-in-right"
+         ng-if="!search.looking && search.results && search.results.length > 0">
+
+      <a ng-repeat="rec in search.results"
+         class="item item-record ink padding-xs"
+         ui-sref="app.market_view_record({id: rec.id, title: rec.title})"
+         >
+
+        <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': rec.thumbnail}">
+          <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
+          <h2 ng-bind-html="rec.title"></h2>
+          <h4 class="gray">
+            <span ng-if="rec.location">
+              <i class="icon ion-location"></i>
+              <span ng-bind-html="rec.location"></span>
+            </span>
+            <span ng-show="rec.time">
+              <span ng-show="rec.location">|</span>
+              {{::rec.time | formatFromNow}}
+            </span>
+          </h4>
+        </div>
+        <!--<div class="visible-xs item-text-wrap">
+          <p ng-bind-html="rec.description"></p>
+        </div>-->
+
+        <div class="row row-record hidden-xs">
+          <div class="col item-text-wrap item-thumbnail-left-padding"
+               ng-class="{'item-thumbnail-left': rec.thumbnail}">
+            <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail">
+            <h2 ng-bind-html="rec.title"></h2>
+            <h4 class="gray">
+              <i class="icon ion-location" ng-if="rec.location"></i>
+              <span ng-bind-html="rec.location"></span>
+            </h4>
+            <h4 class="gray" ng-if="rec.time">
+              <i class="icon ion-clock" ></i>
+              {{::rec.time | formatFromNow}}
+            </h4>
+            <span  ng-if="rec.picturesCount > 0"
+                   class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
+          </div>
+          <div class="col col-20">
+            <h3 class="gray" ng-if="rec.category">{{::rec.category.name|formatCategory}}</h3>
+            <h2 class="badge badge-price badge-calm" ng-bind-html="rec.price" ng-if="rec.price"></h2>
+          </div>
+          <div class="col">
+              <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </ion-content>
+
+  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg"
+          ui-sref="app.market_add_record">
+  </button>
+</ion-view>

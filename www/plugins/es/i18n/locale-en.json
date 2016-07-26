@@ -1,0 +1,89 @@
+{
+  "MARKET": {
+    "COMMON": {
+      "CATEGORY": "Category",
+      "CATEGORIES": "Categories",
+      "ISSUER": "Issuer",
+      "PRICE": "Price",
+      "BTN_BUY": "Buy",
+      "BTN_NEW_AD": "New ad"
+    },
+    "SEARCH": {
+      "TITLE": "Market",
+      "SEARCH_HELP": "Search (car, store)",
+      "BTN_ADD": "New",
+      "BTN_OPTIONS": "Advanced search",
+      "BTN_AROUND_ME": "Around me",
+      "LOCATION": "Location",
+      "LOCATION_HELP": "City",
+      "LAST_RECORDS": "Last records:",
+      "RESULTS": "Results:"
+    },
+    "VIEW": {
+      "TITLE": "Ad"
+    },
+    "EDIT": {
+      "TITLE": "Edit",
+      "RECORD_TITLE": "Title",
+      "RECORD_TITLE_HELP": "Title",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description",
+      "RECORD_LOCATION": "Localization",
+      "RECORD_LOCATION_HELP": "Address, City",
+      "RECORD_PRICE": "Price",
+      "RECORD_PRICE_HELP": "Price (optional)",
+      "BTN_ADD_PICTURES": "Add pictures",
+      "BTN_PUBLISH": "Publish",
+      "BTN_SAVE": "Save"
+    },
+    "ERROR": {
+      "LOAD_CATEGORY_FAILED": "Error while loading market categories",
+      "LOAD_RECORD_FAILED": "Error while loading record."
+    }
+  },
+  "REGISTRY": {
+    "COMMON": {
+      "CATEGORY": "Category",
+      "CATEGORIES": "Categories",
+      "ISSUER": "Issuer",
+      "BTN_NEW": "Add"
+    },
+    "SEARCH": {
+      "TITLE": "Registry",
+      "SEARCH_HELP": "Search (name, pseudo, public key...)",
+      "BTN_ADD": "New",
+      "BTN_OPTIONS": "Search tool",
+      "LOCATION": "Location",
+      "LOCATION_HELP": "City",
+      "LAST_RECORDS": "Last records:",
+      "RESULTS": "Results:"
+    },
+    "VIEW": {
+      "TITLE": "Registry"
+    },
+    "NEW": {
+      "TITLE": "New",
+      "SELECT_TYPE": "Choose type:",
+      "TYPE_PARTICULAR": "Private individual",
+      "TYPE_COMPANY": "Company, organisation or institution"
+    },
+    "EDIT": {
+      "TITLE": "Edit",
+      "RECORD_TITLE": "Name",
+      "RECORD_TITLE_HELP": "Name",
+      "RECORD_DESCRIPTION": "About me",
+      "RECORD_DESCRIPTION_HELP": "Something about me",
+      "RECORD_LOCATION": "Localization",
+      "RECORD_LOCATION_HELP": "Localization (address, city)",
+      "RECORD_SOCIAL_NETWORKS": "Social networks",
+      "RECORD_PUBKEY": "Public key",
+      "BTN_ADD_PICTURES": "Add pictures",
+      "BTN_PUBLISH": "Publish",
+      "BTN_SAVE": "Save"
+    },
+    "ERROR": {
+      "LOAD_RECORD_FAILED": "Loading failed",
+      "SAVE_RECORD_FAILED": "Sending failed"
+    }
+  }
+}
