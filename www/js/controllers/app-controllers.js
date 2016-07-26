@@ -229,6 +229,11 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     return !Wallet.isLogin();
   };
 
+  // If connected and same pubkey
+  $scope.isUserPubkey = function(pubkey) {
+    return Wallet.isLogin() && Wallet.data.pubkey === pubkey;
+  };
+
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.loginData = {

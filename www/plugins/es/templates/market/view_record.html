@@ -8,98 +8,139 @@
       </button>
   </ion-nav-buttons>
 
-  <ion-content class="viewRecord item-text-wrap">
+  <ion-content scroll="true">
 
-      <div class="scroll">
-        <div class="row no-padding">
-          <div class="col-20 visible-lg">
-          </div>
-          <div class="col-10 visible-md">
-          </div>
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
 
-          <div class="col no-padding">
-            <div class="list animate-fade-slide-in">
+      <div class="col list animate-fade-slide-in item-text-wrap">
 
-              <div class="item" ng-class="{'item-thumbnail-left': pictures && pictures.length>0}">
-                  <img ng-src="{{pictures[0].src}}" nf-if="pictures && pictures.length>0">
-                  <h1 ng-bind-html="formData.title"></h1>
-                  <h2 class="gray">
-                    <a ng-if="formData.location" ui-sref="app.market_lookup({location:formData.location})">
-                      <i class="icon ion-location"></i>
-                      <span ng-bind-html="formData.location"></span>
-                    </a>
-                    <span ng-if="formData.location && category.name">&nbsp;|&nbsp;</span>
-                    <a class="ink" ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
-                      <i class="icon ion-flag"></i>
-                      {{category.name}}
-                    </a>
-                  </h2>
+        <div class="item" ng-class="{'item-thumbnail-left': pictures && pictures.length>0}">
+          <img ng-src="{{pictures[0].src}}" nf-if="pictures && pictures.length>0">
+          <h1 ng-bind-html="formData.title"></h1>
+          <h2 class="gray">
+            <a ng-if="formData.location" ui-sref="app.market_lookup({location:formData.location})">
+              <i class="icon ion-location"></i>
+              <span ng-bind-html="formData.location"></span>
+            </a>
+            <span ng-if="formData.location && category.name">&nbsp;|&nbsp;</span>
+            <a class="ink" ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
+              <i class="icon ion-flag"></i>
+              {{category.name}}
+            </a>
+          </h2>
 
-                  <h2 class="positive">
-                    <a ui-sref="app.view_identity({pub:formData.issuer})">
-                      <span ng-if="issuer.uid">
-                        <i class="icon ion-person"></i>
-                        {{issuer.uid}}
-                      </span>
-                      <span ng-if="!issuer.uid">
-                        <i class="icon ion-key"></i>
-                        {{issuer.pubkey|formatPubkey}}
-                      </span>
-                    </a>
-                  </h2>
-
-                <h4>
-                  <span>
-                    <i class="icon ion-clock" ng-if="formData.time"></i>
-                    {{formData.time|formatFromNow}}
-                    <span class="gray hidden-xs">|
-                      <i class="icon ion-calendar"></i>
-                      {{formData.time | formatDate}}
-                    </span>
-                  </span>
-                </h4>
-              </div>
-
-              <div class="item" style="margin-top:10px">
-                  <p ng-bind-html="formData.description"></p>
-              </div>
-
-              <span class="item item-icon-left item-button-right" >
-                  <i class="icon ion-pricetag" ng-show="formData.price"></i>
-                  <span class="dark">{{formData.price}}</span>
-                  <button class="button button-raised button-calm ink-dark"
-                          ng-click="transfer(formData.issuer, null, formData.price)">
-                    {{'MARKET.COMMON.BTN_BUY' | translate}}
-                  </button>
+          <h2 class="positive">
+            <a ui-sref="app.view_identity({pub:formData.issuer})">
+              <span ng-if="issuer.uid">
+                <i class="icon ion-person"></i>
+                {{issuer.uid}}
               </span>
+              <span ng-if="!issuer.uid">
+                <i class="icon ion-key"></i>
+                {{issuer.pubkey|formatPubkey}}
+              </span>
+            </a>
+          </h2>
 
-              <div class="hidden-xs hidden-sm padding">
+          <h4>
+            <span>
+              <i class="icon ion-clock" ng-if="formData.time"></i>
+              {{formData.time|formatFromNow}}
+              <span class="gray hidden-xs">|
+                <i class="icon ion-calendar"></i>
+                {{formData.time | formatDate}}
+              </span>
+            </span>
+          </h4>
+        </div>
 
-              </div>
+        <div class="item" style="margin-top:10px">
+            <p ng-bind-html="formData.description"></p>
+        </div>
 
-              <div class="item-divider visible-xs visible-sm">&nbsp;</div>
-            </div>
+        <span class="item item-icon-left item-button-right" >
+            <i class="icon ion-pricetag" ng-show="formData.price"></i>
+            <span class="dark">{{formData.price}}</span>
+            <button class="button button-raised button-calm ink-dark"
+                    ng-click="transfer(formData.issuer, null, formData.price)">
+              {{'MARKET.COMMON.BTN_BUY' | translate}}
+            </button>
+        </span>
 
-            <div class="list animate-fade-slide-in-right gallery" ng-if="pictures && pictures.length>0" >
-              <div ng-repeat="picture in pictures"
-                   class="item card card-gallery">
-                <div class="ink">
-                  <h2 ng-if="picture.title">{{::picture.title}}</h2>
-                  <img ng-src="{{::picture.src}}" ></img>
-                </div>
+        <div class="hidden-xs hidden-sm padding">
+
+        </div>
+
+        <div class="item-divider visible-xs visible-sm">&nbsp;</div>
+
+        <div class="lazy-load">
+          <div class="item gallery done in" ng-if="pictures && pictures.length>0" >
+            <div ng-repeat="picture in pictures"
+                class="item card card-gallery">
+              <div class="ink">
+                <h2 ng-if="picture.title">{{::picture.title}}</h2>
+                <img ng-src="{{::picture.src}}" ></img>
               </div>
             </div>
           </div>
 
-          <div class="col-20 visible-lg">
+          <div class="item item-divider">
+            <i class="icon ion-chatboxes"></i>
+            <span>{{'MARKET.COMMON.COMMENTS' | translate}}</span>
           </div>
-          <div class="col-10 visible-md">
+
+          <span class="item item-more-comments" ng-if="comments && comments.length === maxCommentSize">
+            <small><a ng-click="showMoreComments()" translate>MARKET.VIEW.SHOW_MORE_COMMENTS</a></small>
+          </span>
+
+          <div class="item card card-comment stable-bg item-text-wrap"
+               ng-if="comments && comments.length>0"
+               ng-repeat="comment in comments track by comment.id"
+              id="comment-{{comment.id}}">
+            <div class="padding card-header text-right">
+              <a class="pull-left positive" ui-sref="app.view_identity({pub:formData.issuer})">
+                <i class="icon ion-person"></i>
+                {{comment.uid}}
+              </a>
+              <span class="gray pull-right">&nbsp;
+                <i class="icon ion-clock"></i>
+                {{comment.time | formatFromNow}}
+              </span>
+            </div>
+            <div class="item done in">
+              {{comment.message}}
+              <div class="card-footer text-right ">
+                <a class="pull-right" >
+                  <i class="icon ion-android-share-alt"></i>
+                  {{'COMMON.BTN_SHARE'|translate}}
+                </a>
+                <span class="pull-right">&nbsp;&nbsp;</span>
+                <a class="pull-right" ng-if="isUserPubkey(comment.issuer)">
+                  <i class="icon ion-edit"></i>
+                  {{'COMMON.BTN_EDIT'|translate}}
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="item item-input-inset">
+            <label class="item-input-wrapper">
+              <input type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}" on-return="sendComment();" ng-model="formData.newComment"/>
+            </label>
+            <button class="button button-small button-icon" ng-click="sendComment()">
+              {{'MARKET.VIEW.SEND_COMMENT_BTN'|translate}}
+            </button>
           </div>
         </div>
       </div>
 
-
-      <div class="scroll-bar scroll-bar-v"></div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
     </div>
   </ion-content>
+
+
 </ion-view>

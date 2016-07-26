@@ -6,7 +6,8 @@
       "ISSUER": "Soumis par",
       "PRICE": "Prix",
       "BTN_BUY": "Acheter",
-      "BTN_NEW_AD": "Nouvelle annonce"
+      "BTN_NEW_AD": "Nouvelle annonce",
+      "COMMENTS": "Commentaires"
     },
     "SEARCH": {
       "TITLE": "Annonces",
@@ -20,7 +21,10 @@
       "RESULTS": "Résultats :"
     },
     "VIEW": {
-      "TITLE": "Annonce"
+      "TITLE": "Annonce",
+      "COMMENT_HELP": "Saisir un message, une question...",
+      "SEND_COMMENT_BTN": "Envoyer",
+      "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents"
     },
     "EDIT": {
       "TITLE": "Edition",

@@ -12927,8 +12927,16 @@ a {
   body {
     cursor: inherit; } }
 
+.gray a, .positive a {
+  color: inherit; }
+
+.gray a:hover, .positive a:hover {
+  color: inherit; }
+
+.gray a:visited, .positive a:visited {
+  color: inherit; }
+
 .item a {
-  color: inherit;
   text-decoration: none; }
 
 @media screen and (min-width: 992px) and (max-width: 1199px) {
@@ -13095,3 +13103,24 @@ a {
     height: 200px; }
     #wallet .hero.on h1, #wallet .hero.on h2, #wallet .hero.on h3, #wallet .hero.on h4, #wallet .hero.on h5, #wallet .hero.on i {
       opacity: 1; } }
+
+.card .card-header,
+.card .card-header {
+  font-size: 90%;
+  opacity: 0.8;
+  filter: alpha(opacity=80); }
+
+.item.stable-bg,
+.item .stable-bg,
+.item-complex .item-content .stable-bg,
+.item-radio .item-content .stable-bg {
+  background-color: #E0E0E0 !important; }
+
+.card .item {
+  background: inherit; }
+
+.card .card-header {
+  padding: 0; }
+
+.card .item .card-footer {
+  margin-bottom: 5px; }

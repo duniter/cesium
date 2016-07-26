@@ -30,7 +30,8 @@ angular.module('cesium.bma.services', ['ngResource',
         current: null
       },
       wot: {
-        members: []
+        members: [],
+        memberUidsByPubkey: []
       }
     };
 
@@ -177,27 +178,69 @@ angular.module('cesium.bma.services', ['ngResource',
 
     this.getMembers = getResource('http://' + server + '/wot/members');
 
-    function getMemberByPubkey(pubkey) {
+    function getCachedMembers() {
       return $q(function(resolve, reject) {
-        var doSearch = function() {
-          var member = _.findWhere(data.wot.members, { pubkey: pubkey });
-          resolve(member);
-        };
-        if (!data.wot || !data.wot.members || data.wot.members.length === 0){
+        if (data.wot && data.wot.members && data.wot.members.length > 0){
+          resolve(data.wot.members);
+        }
+        else {
           getMembers()
           .then(function(json){
             data.wot.members = json.results;
-            doSearch();
+            resolve(data.wot.members);
           })
           .catch(function(err) {
             data.wot.members = [];
             reject(err);
           });
         }
+      });
+    }
+
+    function getMemberByPubkey(pubkey) {
+      return $q(function(resolve, reject) {
+        getMemberUidsByPubkey()
+        .then(function(memberUidsByPubkey){
+          var uid = memberUidsByPubkey[pubkey];
+          resolve({
+            pubkey: pubkey,
+            uid: (uid ? uid : null)
+          });
+        })
+        .catch(function(err) {
+          reject(err);
+        });
+      });
+    }
+
+    function getMemberUidsByPubkey() {
+      return $q(function(resolve, reject) {
+        if (data.wot && data.wot.member && data.wot.memberUidsByPubkey && data.wot.memberUidsByPubkey.length > 0){
+          resolve(data.wot.memberUidsByPubkey);
+        }
         else {
-          doSearch();
+          getCachedMembers()
+          .then(function(members){
+            var result = {};
+            data.wot.members.forEach(function(member){
+              result[member.pubkey] = member.uid;
+            });
+            data.wot.memberUidsByPubkey = result;
+            resolve(result);
+          })
+          .catch(function(err) {
+            reject(err);
+          });
         }
       });
+    }
+
+    function resetWotData() {
+      data.wot = {};
+    }
+
+    function resetData() {
+      resetWotData();
     }
 
     return {
@@ -207,8 +250,9 @@ angular.module('cesium.bma.services', ['ngResource',
       },
       wot: {
         lookup: getResource('http://' + server + '/wot/lookup/:search'),
-        members: getMembers,
         member: {
+          all: getMembers,
+          uids: getMemberUidsByPubkey,
           get: getMemberByPubkey
         },
         requirements: getResource('http://' + server + '/wot/requirements/:pubkey'),
@@ -255,6 +299,14 @@ angular.module('cesium.bma.services', ['ngResource',
         close : closeWs
       },
       copy: copy,
+      cache: {
+        all: {
+          reset: resetData
+        },
+        wot: {
+          reset: resetWotData
+        }
+      },
       errorCodes: errorCodes,
       regex: {
         USER_ID: exact(regex.USER_ID),

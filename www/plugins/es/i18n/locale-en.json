@@ -6,7 +6,8 @@
       "ISSUER": "Issuer",
       "PRICE": "Price",
       "BTN_BUY": "Buy",
-      "BTN_NEW_AD": "New ad"
+      "BTN_NEW_AD": "New ad",
+      "COMMENTS": "Comments"
     },
     "SEARCH": {
       "TITLE": "Market",
@@ -20,7 +21,10 @@
       "RESULTS": "Results:"
     },
     "VIEW": {
-      "TITLE": "Ad"
+      "TITLE": "Ad",
+      "COMMENT_HELP": "Leave a message",
+      "SEND_COMMENT_BTN": "Send",
+      "SHOW_MORE_COMMENTS": "Show previous comments"
     },
     "EDIT": {
       "TITLE": "Edit",

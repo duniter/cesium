@@ -14,6 +14,8 @@
     "BTN_LOGIN": "Sign In",
     "BTN_LOGOUT": " Logout",
     "BTN_ADD_ACCOUNT": "New Account",
+    "BTN_SHARE": "Share",
+    "BTN_EDIT": "Edit",
     "NO_ACCOUNT_QUESTION": "No a member ? Register now !",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",

@@ -1,6 +1,6 @@
 angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config'])
 
-.factory('Market', function($http, $q, CryptoUtils, APP_CONFIG) {
+.factory('Market', function($http, $q, CryptoUtils, APP_CONFIG, BMA) {
   'ngInject';
 
     function Market(server, wsServer) {
@@ -8,7 +8,10 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
       var
         categories = [],
         fields = {
-          commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail", "picturesCount"]
+          commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail", "picturesCount"],
+          comment: {
+            commons: ["issuer", "time", "message"],
+          }
         }
       ;
 
@@ -188,6 +191,97 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         });
       }
 
+      var postComment = postResource('http://' + server + '/market/comment');
+
+      function addComment(comment, keypair) {
+        return $q(function(resolve, reject) {
+          var errorFct = function(err) {
+            reject(err);
+          };
+          var query = {};
+
+
+          var obj = {};
+          angular.copy(comment, obj);
+          delete obj.signature;
+          delete obj.hash;
+          obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
+          var str = JSON.stringify(obj);
+
+          CryptoUtils.util.hash(str)
+          .then(function(hash) {
+            CryptoUtils.sign(str, keypair)
+            .then(function(signature) {
+              obj.hash = hash;
+              obj.signature = signature;
+              postComment(obj)
+              .then(function (id){
+                resolve(id);
+              })
+              .catch(errorFct);
+            })
+            .catch(errorFct);
+          })
+          .catch(errorFct);
+        });
+      }
+
+      var postSearchComments = postResource('http://' + server + '/market/comment/_search?pretty');
+
+      var getSearchTextComment = getResource('http://' + server + '/market/comment/_search?q=:search');
+
+      function getCommentsByRecord(recordId, size) {
+        if (!size) {
+          size = 10;
+        }
+        else if (size < 0) {
+          size = 1000;
+        }
+        return $q(function(resolve, reject) {
+          var errorFct = function(err) {
+            reject(err);
+          };
+          var request = {
+            sort : [
+              { "time" : {"order" : "desc"}}
+            ],
+            query : {
+              constant_score:{
+                filter: {
+                  term: { record : recordId}
+                }
+              }
+            },
+            from: 0,
+            size: size,
+            _source: fields.comment.commons
+          };
+
+          postSearchComments(request)
+          //getSearchTextComment({search: 'record:' + recordId})
+          .then(function(res){
+            if (res.hits.total === 0) {
+              resolve([]);
+            }
+            else {
+              BMA.wot.member.uids()
+              .then(function(uids){
+                var result = res.hits.hits.reduce(function(result, hit) {
+                  var comment = hit._source;
+                  comment.id = hit._id;
+                  comment.uid = uids[comment.issuer];
+                  return result.concat(comment);
+                }, []);
+
+                resolve(result);
+              })
+              .catch(errorFct);
+            }
+          })
+          .catch(errorFct);
+        });
+      }
+
       function emptyHit() {
         return {
            _id: null,
@@ -222,13 +316,24 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         record: {
           get: getResource('http://' + server + '/market/record/:id'),
           getCommons: getCommons(),
-          getPictures: getResource('http://' + server + '/market/record/:id?_source=pictures'),
           add: addRecord,
           update: postResource('http://' + server + '/market/record/:id'),
           searchText: getResource('http://' + server + '/market/record/_search?q=:search'),
           search: postResource('http://' + server + '/market/record/_search?pretty'),
           fields: {
             commons: fields.commons
+          },
+          picture: {
+            all: getResource('http://' + server + '/market/record/:record?_source=pictures')
+          },
+          comment:{
+            searchText: getSearchTextComment,
+            search: postSearchComments,
+            all: getCommentsByRecord,
+            add: addComment,
+            fields: {
+              commons: fields.comment.commons
+            }
           }
         }
       };

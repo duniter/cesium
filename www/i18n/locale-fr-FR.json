@@ -14,6 +14,8 @@
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnexion",
     "BTN_ADD_ACCOUNT": "Nouveau compte",
+    "BTN_SHARE": "Partager",
+    "BTN_EDIT": "Modifier",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
