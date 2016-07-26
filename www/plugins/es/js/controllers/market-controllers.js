@@ -6,7 +6,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
     $stateProvider
 
     .state('app.market_lookup', {
-      url: "/market?q",
+      url: "/market?q&category&location",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/lookup.html",
@@ -146,6 +146,28 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
           $scope.doSearch();
         }, 100);
       }
+      // search on category
+      else if ($state.stateParams && $state.stateParams.category) {
+        Market.category.all()
+        .then(function(categories) {
+          var cat = categories[$state.stateParams.category];
+          if (cat !== "undefined") {
+            $scope.search.options = true;
+            $scope.search.category = cat;
+          }
+          $timeout(function() {
+            $scope.doSearch();
+          }, 100);
+        });
+      }
+      // search on location
+      else if ($state.stateParams && $state.stateParams.location) {
+        $scope.search.options = true;
+        $scope.search.location = $state.stateParams.location;
+        $timeout(function() {
+          $scope.doSearch();
+        }, 100);
+      }
       else {
         $timeout(function() {
           $scope.doGetLastRecord();
@@ -202,7 +224,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
       matches.push({prefix: { location: text}});
     }
     if ($scope.search.options && $scope.search.category) {
-      filters.push({term: { category: $scope.search.category.id}});
+      filters.push({term: { "category.id": $scope.search.category.id}});
     }
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
       filters.push({match_phrase: { location: $scope.search.location}});
@@ -302,7 +324,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
   };
 }
 
-function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout) {
+function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA) {
   'ngInject';
 
   $scope.formData = {};
@@ -314,7 +336,9 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
-       $scope.load($state.stateParams.id);
+      if (!$scope.loaded) {
+        $scope.load($state.stateParams.id);
+      }
     }
     else {
       $state.go('app.market_lookup');
@@ -345,17 +369,44 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
               return res.concat(UIUtils.image.fromAttachment(pic.file));
             }, []);
-            // Set Motion
-            $timeout(function() {
-              UIUtils.motion.fadeSlideIn({
-                startVelocity: 3000
-              });
-            }, 10);
           }
+        })
+        .then(function() {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.fadeSlideInRight({
+              selector: '.card-gallery'
+            });
+          }, 10);
         })
         .catch(function(err) {
           $scope.pictures = [];
-        });
+        }),
+
+        // Load issuer as member
+        BMA.wot.member.get($scope.formData.issuer)
+        .then(function(member){
+          if (member !== "undefined") {
+            $scope.issuer = member;
+          }
+          else {
+            $scope.issuer = {
+              pubkey: $scope.formData.issuer
+            }
+          }
+        })
+        .then(function() {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.fadeSlideIn({
+              startVelocity: 3000
+            });
+          }, 10);
+          $scope.loaded = true;
+        })
+        .catch(function(err) {
+          $scope.member = null;
+        })
       })
       .catch(function(err) {
         if (!$scope.secondTry) {
