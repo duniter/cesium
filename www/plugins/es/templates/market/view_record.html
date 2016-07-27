@@ -16,8 +16,8 @@
 
       <div class="col list animate-fade-slide-in item-text-wrap">
 
-        <div class="item" ng-class="{'item-thumbnail-left': pictures && pictures.length>0}">
-          <img ng-src="{{pictures[0].src}}" nf-if="pictures && pictures.length>0">
+        <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
+          <img ng-src="{{thumbnail.src}}" nf-if="thumbnail">
           <h1 ng-bind-html="formData.title"></h1>
           <h2 class="gray">
             <a ng-if="formData.location" ui-sref="app.market_lookup({location:formData.location})">

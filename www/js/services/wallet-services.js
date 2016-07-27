@@ -338,7 +338,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .catch(function(err) {
           resetRequirements();
           // If not a member: continue
-          if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) {
+          if (!!err &&
+              (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
+               err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
             resolve();
           }
           else {
@@ -394,8 +396,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             var processedTxMap = {};
             reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
             reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
-            // FIXME : should not be used (redondant)
-            //reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
+            reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
             reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
           }));
         // get UD history

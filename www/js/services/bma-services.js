@@ -13,6 +13,7 @@ angular.module('cesium.bma.services', ['ngResource',
         NO_MATCHING_IDENTITY: 2001,
         UID_ALREADY_USED: 2003,
         NO_MATCHING_MEMBER: 2004,
+        NO_IDTY_MATCHING_PUB_OR_UID: 2021,
         MEMBERSHRIP_ALREADY_SEND: 2007
       },
     regex = {

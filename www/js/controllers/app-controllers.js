@@ -162,7 +162,12 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
           $scope.loginData = {}; // Reset login data
           $scope.loginForm.$setPristine(); // Reset form
           if (!!callback) {
-            callback();
+            if (typeof callback === "string") {
+              $state.go(callback);
+            }
+            else {
+              callback();
+            }
           }
           // Default: redirect to wallet view
           else {

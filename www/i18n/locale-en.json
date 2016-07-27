@@ -16,6 +16,8 @@
     "BTN_ADD_ACCOUNT": "New Account",
     "BTN_SHARE": "Share",
     "BTN_EDIT": "Edit",
+    "BTN_DELETE": "Delete",
+    "BTN_ADD": "Add",
     "NO_ACCOUNT_QUESTION": "No a member ? Register now !",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
@@ -28,7 +30,8 @@
     "UNIVERSAL_DIVIDEND": "Universal dividend",
     "UD": "UD",
     "DATE_PATTERN": "YYYY-MM-DD HH:mm",
-    "EMPTY_PARENTHESIS": "(empty)"
+    "EMPTY_PARENTHESIS": "(empty)",
+    "UID": "Pseudonym"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -38,7 +41,7 @@
   "MENU": {
     "TITLE": "Duniter",
     "HOME": "Home",
-    "REGISTRY": "Registry",
+    "WOT": "Registry",
     "MARKET": "Market place",
     "CURRENCY": "Currency",
     "CURRENCIES": "Currencies",

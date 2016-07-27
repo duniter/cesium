@@ -1,0 +1,139 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span translate>REGISTRY.VIEW.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+      <button class="button button-icon button-clear ion-android-create" ng-click="edit()" ng-if="canEdit">
+      </button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true">
+
+      <div class="positive-900-bg hero"
+           id="profile-header">
+        <div class="content">
+          <div class="avatar"
+               ng-if="avatar"
+               style="background-image: url({{avatar.src}});"></div>
+          <i class="avatar" ng-class="{'avatar-wallet': walletData && !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
+          <h3 class="light" ng-if="!formData.title && walletData && walletData.isMember">{{walletData.uid}}</h3>
+          <h3 class="light" ng-if="!formData.title && walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
+          <h3 class="light">{{formData.title}}</h3>
+          <h4 class="light"></h4>
+          <h4 class="light" ng-if="!isLogged() || formData == null">
+            <ion-spinner icon="android"></ion-spinner>
+          </h4>
+        </div>
+      </div>
+
+      <form name="profileForm" novalidate="" ng-submit="doSave()">
+
+        <div class="row no-padding">
+          <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+          </div>
+
+          <div class="col list animate-fade-slide-in-right item-text-wrap" ng-init="setProfileForm(profileForm)">
+
+
+            <span class="item item-divider">
+              {{'PROFILE.GENERAL_DIVIDER' | translate}}
+            </span>
+
+            <!-- uid -->
+            <ion-item class="item" ng-if="walletData && walletData.uid">
+              <span class="input-label">{{'COMMON.UID' | translate}}</span>
+              <p class="gray">{{walletData.uid}}</p>
+            </ion-item>
+
+            <!-- title -->
+            <ion-item class="item-input item-floating-label item-button-right">
+              <span class="input-label">{{'PROFILE.TITLE' | translate}}</span>
+              <input type="text" name="title" placeholder="{{'PROFILE.TITLE_HELP' | translate}}" ng-model="formData.title"
+                     required>
+            </ion-item>
+            <div class="form-errors"
+                 ng-show="formData.$submitted && formData.title.$error"
+                 ng-messages="profileForm.title.$error">
+              <div class="form-error" ng-message="required">
+                <span translate="ERROR.FIELD_REQUIRED"></span>
+              </div>
+            </div>
+
+            <!-- description -->
+            <ion-item class="item-input item-floating-label item-button-right">
+              <span class="input-label">{{'PROFILE.DESCRIPTION' | translate}}</span>
+              <textarea placeholder="{{'PROFILE.DESCRIPTION_HELP' | translate}}" ng-model="formData.description"
+                     rows="8" cols="10">
+              </textarea>
+            </ion-item>
+
+            <span class="item item-divider">
+              {{'PROFILE.LOCATION_DIVIDER' | translate}}
+            </span>
+
+            <!-- address -->
+            <ion-item class="item-input item-floating-label item-button-right">
+              <span class="input-label">{{'PROFILE.ADDRESS' | translate}}</span>
+              <textarea placeholder="{{'PROFILE.ADDRESS_HELP' | translate}}" ng-model="formData.address"
+                        rows="4" cols="10">
+              </textarea>
+            </ion-item>
+
+            <!-- city -->
+            <div class="item item-input item-floating-label">
+              <span class="input-label" translate>PROFILE.CITY</span>
+              <input type="text" placeholder="{{'PROFILE.CITY_HELP'|translate}}"
+                        ng-model="formData.city"
+                        on-return="doSave();">
+            </div>
+
+            <span class="item item-divider">
+              {{'PROFILE.SOCIAL_NETWORKS_DIVIDER' | translate}}
+            </span>
+
+            <ion-item class="item-remove-animate item-icon-left "
+                 type="item-text-wrap"
+                 ng-if="formData.socials && formData.socials.length>0"
+                 ng-repeat="social in formData.socials track by social.url"
+                 id="social-{{social.url|formatSlug}}">
+                <i class="icon ion-social-{{social.type}}"></i>
+                <p>{{social.type}}</p>
+                <h2>{{social.url}}</h2>
+                <!--<a ng-click="removeSocialNetwork(social)">
+                  <i class="icon ion-delete"></i>
+                  {{'COMMON.BTN_DELETE'|translate}}
+                </a>-->
+              <ion-option-button class="button-assertive" ng-click="removeSocialNetwork(social)">
+                {{'COMMON.BTN_DELETE'|translate}}
+              </ion-option-button>
+            </ion-item>
+
+            <div class="item item-complex item-input-inset">
+              <label class="item-input-wrapper">
+                <input type="text" style="width:100%" placeholder="{{'PROFILE.SOCIAL_HELP'|translate}}" on-return="addSocialNetwork();" ng-model="formData.newSocial"/>
+              </label>
+              <button class="button button-small button-icon" ng-click="addSocialNetwork()">
+                {{'COMMON.BTN_ADD'|translate}}
+              </button>
+            </div>
+
+            <span class="item item-divider">
+              {{'PROFILE.TECHNICAL_DIVIDER' | translate}}
+            </span>
+
+            <!-- pubkey-->
+            <span class="item item-icon-left ink" copy-on-click>
+                <i class="icon ion-key"></i>
+                <p class="gray">{{walletData.pubkey}}</p>
+            </span>
+          </div>
+
+          <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+          </div>
+        </div>
+
+      </form>
+  </ion-content>
+
+</ion-view>

@@ -313,12 +313,16 @@ $screen-lg:                       1200px;
 
       .item {
         opacity: 0.75;
+        color: black;
 
         .item-content {
           background-color: transparent;
           opacity: 1;
-          color: black;
         }
+      }
+
+      .item-menu-disable {
+        color: #444 !important;
       }
   }
 }

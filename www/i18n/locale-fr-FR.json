@@ -16,6 +16,8 @@
     "BTN_ADD_ACCOUNT": "Nouveau compte",
     "BTN_SHARE": "Partager",
     "BTN_EDIT": "Modifier",
+    "BTN_DELETE": "Supprimer",
+    "BTN_ADD": "Ajouter",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
@@ -28,7 +30,8 @@
     "UNIVERSAL_DIVIDEND": "Dividende universel",
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YYYY HH:mm",
-    "EMPTY_PARENTHESIS": "(vide)"
+    "EMPTY_PARENTHESIS": "(vide)",
+    "UID": "Pseudonyme"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -38,7 +41,7 @@
   "MENU": {
     "TITLE": "Cesium",
     "HOME": "Accueil",
-    "REGISTRY": "Annuaire",
+    "WOT": "Annuaire",
     "MARKET": "Annonces",
     "CURRENCY": "Monnaie",
     "CURRENCIES": "Monnaies",

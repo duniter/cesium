@@ -1,15 +1,37 @@
-angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
+angular.module('cesium.user.services', ['ngResource', 'cesium.services'])
 
-.factory('Registry', function($http, $q, CryptoUtils, APP_CONFIG) {
+.factory('UserService', function($http, $q, CryptoUtils, APP_CONFIG) {
   'ngInject';
 
-    function Registry(server) {
+    function UserService(server) {
 
-      var categories = [];
+      var
+      regex = {
+        HTTP_URI: "https?://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+",
+        socials: {
+          facebook: "(fb.me)|((www.)?facebook.com)",
+          twitter: "(www.)?twitter.com",
+          googleplus: "plus.google.com(/u)?",
+          youtube: "(www.)?youtube.com",
+          github: "(www.)?github.com"
+        }
+      }
+      ;
+
+      function exact(regexpContent) {
+        return new RegExp("^" + regexpContent + "$");
+      }
+      regex.HTTP_URI = exact(regex.HTTP_URI);
+      _.keys(regex.socials).forEach(function(key){
+        regex.socials[key] = exact(regex.socials[key]);
+      })
 
       function processError(reject, data) {
         if (data && data.message) {
           reject(data);
+        }
+        else if (data && !data.found) {
+          reject({ucode: 404, message: 'Not found'});
         }
         else {
           reject('Unknown error from Duniter node');
@@ -85,47 +107,44 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         };
       }
 
-      function getCategories() {
+      function getToken(keypair) {
         return $q(function(resolve, reject) {
-          if (categories.length !== 0) {
-            resolve(categories);
-            return;
-          }
+          var errorFct = function(err) {
+            reject(err);
+          };
+          var getChallenge = getResource('http://' + server + '/auth');
+          var postAuth = postResource('http://' + server + '/auth');
 
-          getResource('http://' + server + '/registry/category/_search?pretty&from=0&size=1000')()
-          .then(function(res) {
-            if (res.hits.total === 0) {
-                categories = [];
-            }
-            else {
-              categories = res.hits.hits.reduce(function(result, hit) {
-                var cat = hit._source;
-                cat.id = hit._id;
-                return result.concat(cat);
-              }, []);
-              // add as map also
-              _.forEach(categories, function(cat) {
-                categories[cat.id] = cat;
-              });
-            }
-            resolve(categories);
+          getChallenge() // get the challenge phrase to sign
+          .then(function(challenge) {
+            CryptoUtils.sign(challenge, keypair) // sign the challenge
+            .then(function(signature) {
+              postAuth({
+                pubkey: CryptoUtils.util.encode_base58(keypair.signPk),
+                challenge: challenge,
+                signature: signature
+              }) // get token
+              .then(function(token) {
+                resolve(token);
+              })
+              .catch(errorFct);
+            })
+            .catch(errorFct);
           })
-          .catch(function(err) {
-             reject(err);
-           });
+          .catch(errorFct);
         });
       }
 
-      var addRecordRequest = postResource('http://' + server + '/registry/record');
-      var updateRecordRequest = postResource('http://' + server + '/registry/record/:id');
+      var addProfileRequest = postResource('http://' + server + '/user/profile');
+      var updateProfileRequest = postResource('http://' + server + '/user/profile/:pubkey');
 
-      function sendRecord(record, keypair, postRequest, params) {
+      function sendProfile(profile, keypair, postRequest, params) {
         return $q(function(resolve, reject) {
           var errorFct = function(err) {
             reject(err);
           };
           var obj = {};
-          angular.copy(record, obj);
+          angular.copy(profile, obj);
           delete obj.signature;
           delete obj.hash;
           obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
@@ -149,14 +168,6 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         });
       }
 
-      function addRecord(record, keypair) {
-        return sendRecord(record, keypair, addRecordRequest);
-      }
-
-      function updateRecord(record, params, keypair) {
-        return sendRecord(record, keypair, updateRecordRequest, params);
-      }
-
       function emptyHit() {
         return {
            _id: null,
@@ -167,23 +178,49 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
         };
       }
 
+      function addProfile(record, keypair) {
+        return sendProfile(record, keypair, addProfileRequest);
+      }
+
+      function updateProfile(record, params, keypair) {
+        return sendProfile(record, keypair, updateProfileRequest, params);
+      }
+
+      function getSocialTypeFromUrl(url){
+        var type = 'rss'; // default type
+        if (regex.HTTP_URI.test(url)) {
+          var server = regex.HTTP_URI.exec(url)[1];
+          console.log("match http URL, with server :" + server);
+          _.keys(regex.socials).forEach(function(key){
+            if (regex.socials[key].test(server)) {
+              type = key;
+              console.log("match type: " + key);
+              return false; // stop
+            }
+          });
+        }
+        return type;
+      }
+
       return {
+        auth: {
+            get: getResource('http://' + server + '/auth'),
+            post: postResource('http://' + server + '/auth'),
+            token: getToken
+        },
         hit: {
            empty: emptyHit
         },
-        category: {
-          all: getCategories
+        profile: {
+          get: getResource('http://' + server + '/user/profile/:pubkey'),
+          add: addProfile,
+          update: updateProfile,
+          avatar: getResource('http://' + server + '/user/profile/:pubkey?_source=avatar')
         },
-        record: {
-          get: getResource('http://' + server + '/registry/record/:id'),
-          add: addRecord,
-          update: updateRecord,
-          searchText: getResource('http://' + server + '/registry/record/_search?q=:search'),
-          search: postResource('http://' + server + '/registry/record/_search?pretty')
-        },
-        currency: {
-          all: getResource('http://' + server + '/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
-          get: getResource('http://' + server + '/registry/currency/:id/_source')
+        util: {
+          social: {
+            getType: getSocialTypeFromUrl
+          }
         }
       };
     }
@@ -193,8 +230,8 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services'])
       return null;
     }
 
-    var service = Registry(APP_CONFIG.DUNITER_NODE_ES);
-    service.instance = Registry;
+    var service = UserService(APP_CONFIG.DUNITER_NODE_ES);
+    service.instance = UserService;
 
   return service;
 })

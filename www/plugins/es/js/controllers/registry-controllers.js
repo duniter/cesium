@@ -1,5 +1,15 @@
 angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 
+  .config(function($menuProvider) {
+    'ngInject';
+    $menuProvider.addItem({
+      text: 'MENU.REGISTRY',
+      icon: "ion-ios-book",
+      url: '#/app/registry',
+      section: $menuProvider.sections.MAIN
+    });
+  })
+
   .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
 

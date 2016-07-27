@@ -128,34 +128,6 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         });
       }
 
-      function getToken(keypair) {
-        return $q(function(resolve, reject) {
-          var errorFct = function(err) {
-            reject(err);
-          };
-          var getChallenge = getResource('http://' + server + '/auth');
-          var postAuth = postResource('http://' + server + '/auth');
-
-          getChallenge() // get the challenge phrase to sign
-          .then(function(challenge) {
-            CryptoUtils.sign(challenge, keypair) // sign the challenge
-            .then(function(signature) {
-              postAuth({
-                pubkey: CryptoUtils.util.encode_base58(keypair.signPk),
-                challenge: challenge,
-                signature: signature
-              }) // get token
-              .then(function(token) {
-                resolve(token);
-              })
-              .catch(errorFct);
-            })
-            .catch(errorFct);
-          })
-          .catch(errorFct);
-        });
-      }
-
       var postRecord = postResource('http://' + server + '/market/record');
 
       function addRecord(record, keypair) {
@@ -300,11 +272,6 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
       }
 
       return {
-        auth: {
-            get: getResource('http://' + server + '/auth'),
-            post: postResource('http://' + server + '/auth'),
-            token: getToken
-        },
         hit: {
            empty: emptyHit
         },

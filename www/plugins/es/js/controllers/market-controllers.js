@@ -1,5 +1,15 @@
 angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
+  .config(function($menuProvider) {
+    'ngInject';
+    $menuProvider.addItem({
+      text: 'MENU.MARKET',
+      icon: "ion-speakerphone",
+      url: '#/app/market',
+      section: $menuProvider.sections.MAIN
+    });
+  })
+
   .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
 
@@ -456,35 +466,36 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
   }
 
   $scope.sendComment = function() {
-    if ($scope.formData.newComment && $scope.formData.newComment.trim().length > 0) {
-      $scope.loadWallet()
-      .then(function(walletData) {
-        UIUtils.loading.show();
-        var obj = {
-          issuer: walletData.pubkey,
-          record: $scope.id,
-          message: $scope.formData.newComment,
-          // Set time (UTC) - TODO : use the block chain time
-          time: Math.floor(moment().utc().valueOf() / 1000)
-        };
-        Market.record.comment.add(obj, walletData.keypair)
-        .then(function (id){
-          delete $scope.formData.newComment;
-          obj.id = id;
-          if (walletData.uid) {
-            obj.uid = walletData.uid;
-          }
-          $scope.comments.push(obj);
-          UIUtils.loading.hide();
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.fadeSlideIn({
-              selector: '#comment-' + id
-            });
-          }, 10);
-        });
-      });
+    if (!$scope.formData.newComment || $scope.formData.newComment.trim().length === 0) {
+      return;
     }
+    $scope.loadWallet()
+    .then(function(walletData) {
+      UIUtils.loading.show();
+      var obj = {
+        issuer: walletData.pubkey,
+        record: $scope.id,
+        message: $scope.formData.newComment,
+        // Set time (UTC) - TODO : use the block chain time
+        time: Math.floor(moment().utc().valueOf() / 1000)
+      };
+      Market.record.comment.add(obj, walletData.keypair)
+      .then(function (id){
+        delete $scope.formData.newComment;
+        obj.id = id;
+        if (walletData.uid) {
+          obj.uid = walletData.uid;
+        }
+        $scope.comments.push(obj);
+        UIUtils.loading.hide();
+        // Set Motion
+        $timeout(function() {
+          UIUtils.motion.fadeSlideIn({
+            selector: '#comment-' + id
+          });
+        }, 10);
+      });
+    });
   }
 }
 

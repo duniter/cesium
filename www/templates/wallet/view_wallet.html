@@ -22,8 +22,8 @@
              ng-if="!!walletData.avatar"
              style="background-image: url({{::walletData.avatar}});"></div>
         <i class="avatar" ng-class="{'avatar-wallet': walletData && !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
-        <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
-        <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
+        <h3 class="light" ng-if="walletData && walletData.isMember">{{walletData.uid}}</h3>
+        <h3 class="light" ng-if="walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light" ng-if="isLogged() && convertedBalance != null">
             <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>

@@ -26,13 +26,14 @@
       </h1>
     </ion-header-bar>
     <ion-content scroll="false">
-      <ion-list class="list animate-rip">
+      <ion-list class="list animate-rip" ng-controller="MenuCtrl">
+
+        <!-- DISCOVER Section -->
         <ion-item menu-close class="item-icon-left" href="#/app/home" active-link="active">
           <i class="icon ion-home"></i>
           <span translate>MENU.HOME</span>
         </ion-item>
 
-        <!-- CURRENCY -->
         <ion-item menu-close class="item item-icon-left" href="#/app/currencies" active-link="active" ng-if="options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCIES</span>
@@ -45,25 +46,48 @@
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
         </ion-item>
+        <ion-item menu-close class="item item-icon-left" active-link="active"
+                  ng-repeat="item in items[0]"
+                  href="{{item.url}}">
+          <i class="icon {{item.icon}}"></i>
+          <span translate>{{item.text}}</span>
+        </ion-item>
 
+        <!-- MAIN Section -->
         <div class="item item-divider"></div>
 
-        <!-- REGISTRY -->
         <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/wot">
           <i class="icon ion-person-stalker"></i>
-          <span translate>MENU.REGISTRY</span>
+          <span translate>MENU.WOT</span>
+        </ion-item>
+        <ion-item menu-close class="item item-icon-left" active-link="active"
+                  ng-repeat="item in items[1]"
+                  href="{{item.url}}">
+          <i class="icon {{item.icon}}"></i>
+          <span translate>{{item.text}}</span>
         </ion-item>
 
+        <!-- USER Section -->
         <div class="item item-divider"></div>
 
-        <ion-item menu-close class="item item-icon-left" ng-click="login()" ng-if="!isLogged()">
+        <ion-item menu-close class="item item-icon-left item-menu-disable" ng-click="login()" ng-if="!isLogged()">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" active-link="active"  href="#/app/wallet" ng-if="isLogged()">
+        <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/wallet" ng-if="isLogged()">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
+        <span ng-repeat="item in items[2]">
+        <ion-item menu-close class="item item-icon-left" active-link="active"
+                  ng-class="{'item-menu-disable': item.ngIf == '!isLogged()'}"
+                  href="{{item.url}}"
+                  ng-click="{{item.ngClick}}"
+                  ng-if="$eval(item.ngIf)">
+          <i class="icon {{item.icon}}"></i>
+          <span translate>{{item.text}}</span>
+        </ion-item>
+        </span>
 
         <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/settings">
           <i class="icon ion-android-settings"></i>

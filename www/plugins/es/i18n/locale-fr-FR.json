@@ -1,4 +1,9 @@
 {
+  "MENU": {
+    "MARKET": "Annonces",
+    "REGISTRY": "Professionels",
+    "USER_PROFILE": "Mon profil"
+  },
   "MARKET": {
     "COMMON": {
       "CATEGORY": "Catégorie",
@@ -88,6 +93,26 @@
     "ERROR": {
       "LOAD_RECORD_FAILED": "Chargement impossible",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde"
+    }
+  },
+  "PROFILE": {
+    "UID": "Pseudonyme",
+    "TITLE": "Nom",
+    "TITLE_HELP": "Nom",
+    "DESCRIPTION": "A propos de moi",
+    "DESCRIPTION_HELP": "A propos de moi...",
+    "ADDRESS": "Adresse",
+    "ADDRESS_HELP": "Addresse (optionnel)",
+    "CITY": "Ville",
+    "CITY_HELP": "Ville (optionnel)",
+    "SOCIAL_HELP": "http://...",
+    "GENERAL_DIVIDER": "Informations générales",
+    "LOCATION_DIVIDER": "Localisation",
+    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux",
+    "TECHNICAL_DIVIDER": "Informations techniques",
+    "ERROR": {
+      "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
+      "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde"
     }
   }
 }

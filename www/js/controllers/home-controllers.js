@@ -33,9 +33,20 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 
   .controller('HomeCtrl', HomeController)
 
+  .controller('MenuCtrl', MenuController)
+
   .controller('JoinCtrl', JoinController)
 ;
 
+function MenuController($scope, $menu) {
+  'ngInject';
+
+  // Fill sections arrays with items
+  $scope.items = [[],[],[]];
+  _.forEach($menu.items, function(item) {
+    $scope.items[item.section].push(item);
+  });
+}
 
 function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet) {
   'ngInject';
