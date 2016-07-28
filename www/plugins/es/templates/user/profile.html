@@ -13,27 +13,38 @@
       <div class="positive-900-bg hero"
            id="profile-header">
         <div class="content">
-          <div class="avatar"
-               ng-if="avatar"
-               style="background-image: url({{avatar.src}});"></div>
-          <i class="avatar" ng-class="{'avatar-wallet': walletData && !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
-          <h3 class="light" ng-if="!formData.title && walletData && walletData.isMember">{{walletData.uid}}</h3>
-          <h3 class="light" ng-if="!formData.title && walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
-          <h3 class="light">{{formData.title}}</h3>
-          <h4 class="light"></h4>
-          <h4 class="light" ng-if="!isLogged() || formData == null">
-            <ion-spinner icon="android"></ion-spinner>
-          </h4>
+          <i class="avatar"
+             ng-style="avatarStyle"
+             ng-class="{'avatar-wallet': !avatarStyle && walletData && !walletData.isMember, 'avatar-member': !avatarStyle && walletData.isMember}">
+            <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-no-device" ng-click="openPicturePopup()"></button>
+            <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-device"
+                    onclick="angular.element(document.querySelector('form #avatarFile'))[0].click();"></button>
+          </i>
+          <div ng-if="formData != null">
+            <h3 class="light" ng-if="!formData.title && walletData && walletData.isMember">{{walletData.uid}}</h3>
+            <h3 class="light" ng-if="!formData.title && walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
+            <h3 class="light">{{formData.title}}</h3>
+            <h4 class="light"></h4>
+          </div>
+          <div ng-if="formData == null">
+            <h4 class="light">
+              <ion-spinner icon="android"></ion-spinner>
+            </h4>
+          </div>
         </div>
       </div>
 
       <form name="profileForm" novalidate="" ng-submit="doSave()">
 
+        <input type="file" id="avatarFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
+               style="visibility:hidden; position:absolute;"/>
+
         <div class="row no-padding">
           <div class="col col-20 hidden-xs hidden-sm">&nbsp;
           </div>
 
-          <div class="col list animate-fade-slide-in-right item-text-wrap" ng-init="setProfileForm(profileForm)">
+          <ion-list class="col list animate-fade-slide-in-right item-text-wrap" ng-init="setProfileForm(profileForm)"
+                    can-swipe="isDeviceEnable()">
 
 
             <span class="item item-divider">
@@ -49,7 +60,9 @@
             <!-- title -->
             <ion-item class="item-input item-floating-label item-button-right">
               <span class="input-label">{{'PROFILE.TITLE' | translate}}</span>
-              <input type="text" name="title" placeholder="{{'PROFILE.TITLE_HELP' | translate}}" ng-model="formData.title"
+              <input type="text" name="title" placeholder="{{'PROFILE.TITLE_HELP' | translate}}"
+                     ng-model="formData.title"
+                     ng-model-options="{ debounce: 350 }"
                      required>
             </ion-item>
             <div class="form-errors"
@@ -62,9 +75,11 @@
 
             <!-- description -->
             <ion-item class="item-input item-floating-label item-button-right">
-              <span class="input-label">{{'PROFILE.DESCRIPTION' | translate}}</span>
-              <textarea placeholder="{{'PROFILE.DESCRIPTION_HELP' | translate}}" ng-model="formData.description"
-                     rows="8" cols="10">
+              <span class="input-label" style="width: 100%">{{'PROFILE.DESCRIPTION' | translate}}</span>
+              <textarea placeholder="{{'PROFILE.DESCRIPTION_HELP' | translate}}"
+                        ng-model="formData.description"
+                        ng-model-options="{ debounce: 350 }"
+                        rows="4" cols="10">
               </textarea>
             </ion-item>
 
@@ -75,7 +90,9 @@
             <!-- address -->
             <ion-item class="item-input item-floating-label item-button-right">
               <span class="input-label">{{'PROFILE.ADDRESS' | translate}}</span>
-              <textarea placeholder="{{'PROFILE.ADDRESS_HELP' | translate}}" ng-model="formData.address"
+              <textarea placeholder="{{'PROFILE.ADDRESS_HELP' | translate}}"
+                        ng-model="formData.address"
+                        ng-model-options="{ debounce: 350 }"
                         rows="4" cols="10">
               </textarea>
             </ion-item>
@@ -84,8 +101,8 @@
             <div class="item item-input item-floating-label">
               <span class="input-label" translate>PROFILE.CITY</span>
               <input type="text" placeholder="{{'PROFILE.CITY_HELP'|translate}}"
-                        ng-model="formData.city"
-                        on-return="doSave();">
+                     ng-model="formData.city"
+                     ng-model-options="{ debounce: 350 }">
             </div>
 
             <span class="item item-divider">
@@ -93,7 +110,7 @@
             </span>
 
             <ion-item class="item-remove-animate item-icon-left "
-                 type="item-text-wrap"
+                 type="no-padding item-text-wrap"
                  ng-if="formData.socials && formData.socials.length>0"
                  ng-repeat="social in formData.socials track by social.url"
                  id="social-{{social.url|formatSlug}}">
@@ -103,19 +120,27 @@
                 <h2>
                   <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
                   <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
+                  <a class="gray hidden-device" ng-click="formData.socials.splice($index, 1); doSave();">
+                    &nbsp;<b class="ion ion-close "></b>&nbsp;
+                  </a>
+                  <a class="gray hidden-device" ng-click="editSocialNetwork($index)">
+                    &nbsp;<b class="ion ion-edit "></b>&nbsp;
+                  </a>
                 </h2>
-                <!--<a ng-click="removeSocialNetwork(social)">
-                  <i class="icon ion-delete"></i>
+                <ion-option-button class="button-assertive" ng-click="formData.socials.splice($index, 1); doSave();">
                   {{'COMMON.BTN_DELETE'|translate}}
-                </a>-->
-              <ion-option-button class="button-assertive" ng-click="removeSocialNetwork(social)">
-                {{'COMMON.BTN_DELETE'|translate}}
-              </ion-option-button>
+                </ion-option-button>
+                <ion-option-button class="button-info" ng-click="editSocialNetwork($index)">
+                  {{'COMMON.BTN_EDIT'|translate}}
+                </ion-option-button>
             </ion-item>
 
             <div class="item item-complex item-input-inset">
               <label class="item-input-wrapper">
-                <input type="text" style="width:100%" placeholder="{{'PROFILE.SOCIAL_HELP'|translate}}" on-return="addSocialNetwork();" ng-model="formData.newSocial"/>
+                <input type="text" style="width:100%" placeholder="{{'PROFILE.SOCIAL_HELP'|translate}}"
+                       id="socialUrl"
+                       on-return="addSocialNetwork();"
+                       ng-model="socialData.url"/>
               </label>
               <button class="button button-small button-icon" ng-click="addSocialNetwork()">
                 {{'COMMON.BTN_ADD'|translate}}

@@ -1,5 +1,6 @@
 angular.module('cesium.services', [
     'cesium.config',
+    'cesium.http.services',
     'cesium.bma.services',
     'cesium.crypto.services',
     'cesium.utils.services',

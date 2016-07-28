@@ -223,8 +223,11 @@ angular.module('cesium.utils.services', ['ngResource'])
         };
         reader.readAsDataURL(file);
       }
-    });
+      else {
+        reject('no file to resize');
       }
+    });
+  }
 
   function resizeImageFromSrc(imageSrc, thumbnail) {
     return $q(function(resolve, reject) {

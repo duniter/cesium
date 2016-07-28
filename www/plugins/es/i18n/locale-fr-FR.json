@@ -42,12 +42,15 @@
       "RECORD_PRICE": "Prix",
       "RECORD_PRICE_HELP": "Prix (optionnel)",
       "BTN_ADD_PICTURES": "Ajouter des photos",
+      "BTN_ADD_PICTURE": "Ajouter une photo",
       "BTN_PUBLISH": "Publier",
       "BTN_SAVE": "Sauvegarder"
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
-      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'enregistrement."
+      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'enregistrement.",
+      "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
+      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
     }
   },
   "REGISTRY": {

@@ -500,7 +500,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
         return res.concat({src: pic.src});
       }, []);
       if (!$scope.id) { // Create
-          Registry.record.add($scope.recordData, $scope.walletData.keypair)
+          Registry.record.add($scope.recordData)
           .then(function(id) {
             UIUtils.loading.hide();
             $state.go('app.registry_view_record', {id: id});
@@ -509,7 +509,7 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
           .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
       }
       else { // Update
-          Registry.record.update($scope.recordData, {id: $scope.id}, $scope.walletData.keypair)
+          Registry.record.update($scope.recordData, {id: $scope.id})
           .then(function() {
             UIUtils.loading.hide();
             $state.go('app.registry_view_record', {id: $scope.id});

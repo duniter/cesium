@@ -155,7 +155,8 @@ angular.module('cesium.crypto.services', ['ngResource'])
           encode_utf8: nacl.encode_utf8,
           decode_utf8: decode_utf8,
           encode_base58: encode_base58,
-          hash: hash_sha256
+          hash: hash_sha256,
+          encode_base64: base64.encode
         },
         connect: connect,
         sign: sign,

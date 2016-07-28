@@ -14,7 +14,7 @@
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
 
-      <div class="col list animate-fade-slide-in item-text-wrap">
+      <ion-list class="col animate-fade-slide-in item-text-wrap">
 
         <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
           <img ng-src="{{thumbnail.src}}" nf-if="thumbnail">
@@ -95,12 +95,13 @@
             <small><a ng-click="showMoreComments()" translate>MARKET.VIEW.SHOW_MORE_COMMENTS</a></small>
           </span>
 
-          <div class="item card card-comment stable-bg item-text-wrap"
+          <ion-item class="card card-comment stable-bg item-text-wrap"
                ng-if="comments && comments.length>0"
                ng-repeat="comment in comments track by comment.id"
-              id="comment-{{comment.id}}">
+               ng-class="{'in done': comment.isnew}"
+               >
             <div class="padding card-header text-right">
-              <a class="pull-left positive" ui-sref="app.view_identity({pub:formData.issuer})">
+              <a class="pull-left positive" ui-sref="app.view_identity({pub:comment.issuer})">
                 <i class="icon ion-person"></i>
                 {{comment.uid}}
               </a>
@@ -111,31 +112,33 @@
             </div>
             <div class="item done in">
               {{comment.message}}
-              <div class="card-footer text-right ">
+              <div class="card-footer text-right gray">
                 <a class="pull-right" >
-                  <i class="icon ion-android-share-alt"></i>
-                  {{'COMMON.BTN_SHARE'|translate}}
+                  &nbsp;<b class="icon ion-android-share-alt"></b>&nbsp;
                 </a>
                 <span class="pull-right">&nbsp;&nbsp;</span>
-                <a class="pull-right" ng-if="isUserPubkey(comment.issuer)">
-                  <i class="icon ion-edit"></i>
-                  {{'COMMON.BTN_EDIT'|translate}}
+                <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="editComment($index)">
+                  &nbsp;<b class="icon ion-edit"></b>&nbsp;
+                </a>
+                <span class="pull-right">&nbsp;&nbsp;</span>
+                <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="removeComment($index)">
+                  &nbsp;<b class="icon ion-close"></b>&nbsp;
                 </a>
               </div>
             </div>
 
-          </div>
+          </ion-item>
 
           <div class="item item-input-inset">
             <label class="item-input-wrapper">
-              <input type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}" on-return="sendComment();" ng-model="formData.newComment"/>
+              <input id="commentMessage" type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}" on-return="sendComment();" ng-model="commentData.message"/>
             </label>
             <button class="button button-small button-icon" ng-click="sendComment()">
               {{'MARKET.VIEW.SEND_COMMENT_BTN'|translate}}
             </button>
           </div>
         </div>
-      </div>
+      </ion-list>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>

@@ -1,9 +1,9 @@
-angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config'])
+angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config', 'cesium.es.services'])
 
-.factory('Market', function($http, $q, CryptoUtils, APP_CONFIG, BMA) {
+.factory('Market', function($http, $q, CryptoUtils, APP_CONFIG, BMA, ESUtils) {
   'ngInject';
 
-    function Market(server, wsServer) {
+    function Market(server) {
 
       var
         categories = [],
@@ -15,88 +15,6 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         }
       ;
 
-      if (wsServer) {
-        wsServer = server;
-      }
-
-      function processError(reject, data) {
-        if (data && data.message) {
-          reject(data);
-        }
-        else {
-          reject('Unknown error from Duniter ES node');
-        }
-      }
-
-      function prepare(uri, params, config, callback) {
-        var pkeys = [], queryParams = {}, newUri = uri;
-        if (typeof params == 'object') {
-          pkeys = _.keys(params);
-        }
-
-        _.forEach(pkeys, function(pkey){
-          var prevURI = newUri;
-          newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
-          if (prevURI == newUri) {
-            queryParams[pkey] = params[pkey];
-          }
-        });
-        config.params = queryParams;
-        callback(newUri, config);
-      }
-
-      function getResource(uri) {
-        return function(params) {
-          return $q(function(resolve, reject) {
-            var config = {
-              timeout: 4000
-            };
-
-            prepare(uri, params, config, function(uri, config) {
-                $http.get(uri, config)
-                .success(function(data, status, headers, config) {
-                  resolve(data);
-                })
-                .error(function(data, status, headers, config) {
-                  processError(reject, data);
-                });
-            });
-          });
-        };
-      }
-
-      function postResource(uri) {
-        return function(data, params) {
-          return $q(function(resolve, reject) {
-            var config = {
-              timeout: 4000,
-              headers : {'Content-Type' : 'application/json'}
-            };
-
-            prepare(uri, params, config, function(uri, config) {
-                $http.post(uri, data, config)
-                .success(function(data, status, headers, config) {
-                  resolve(data);
-                })
-                .error(function(data, status, headers, config) {
-                  processError(reject, data);
-                });
-            });
-          });
-        };
-      }
-
-      function ws(uri) {
-        var sock = new WebSocket(uri);
-        return {
-          on: function(type, callback) {
-            sock.onmessage = function(e) {
-              callback(JSON.parse(e.data));
-            };
-          }
-        };
-      }
-
       function getCategories() {
         return $q(function(resolve, reject) {
           if (categories.length !== 0) {
@@ -104,7 +22,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
             return;
           }
 
-          getResource('http://' + server + '/market/category/_search?pretty&from=0&size=1000')()
+          ESUtils.get('http://' + server + '/market/category/_search?pretty&from=0&size=1000')()
           .then(function(res) {
             if (res.hits.total === 0) {
                 categories = [];
@@ -128,79 +46,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         });
       }
 
-      var postRecord = postResource('http://' + server + '/market/record');
-
-      function addRecord(record, keypair) {
-        return $q(function(resolve, reject) {
-          var errorFct = function(err) {
-            reject(err);
-          };
-          var query = {};
-
-
-          var obj = {};
-          angular.copy(record, obj);
-          delete obj.signature;
-          delete obj.hash;
-          obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
-          var str = JSON.stringify(obj);
-
-          CryptoUtils.util.hash(str)
-          .then(function(hash) {
-            CryptoUtils.sign(str, keypair)
-            .then(function(signature) {
-              obj.hash = hash;
-              obj.signature = signature;
-              postRecord(obj)
-              .then(function (id){
-                resolve(id);
-              })
-              .catch(errorFct);
-            })
-            .catch(errorFct);
-          })
-          .catch(errorFct);
-        });
-      }
-
-      var postComment = postResource('http://' + server + '/market/comment');
-
-      function addComment(comment, keypair) {
-        return $q(function(resolve, reject) {
-          var errorFct = function(err) {
-            reject(err);
-          };
-          var query = {};
-
-
-          var obj = {};
-          angular.copy(comment, obj);
-          delete obj.signature;
-          delete obj.hash;
-          obj.issuer = CryptoUtils.util.encode_base58(keypair.signPk);
-          var str = JSON.stringify(obj);
-
-          CryptoUtils.util.hash(str)
-          .then(function(hash) {
-            CryptoUtils.sign(str, keypair)
-            .then(function(signature) {
-              obj.hash = hash;
-              obj.signature = signature;
-              postComment(obj)
-              .then(function (id){
-                resolve(id);
-              })
-              .catch(errorFct);
-            })
-            .catch(errorFct);
-          })
-          .catch(errorFct);
-        });
-      }
-
-      var postSearchComments = postResource('http://' + server + '/market/comment/_search?pretty');
-
-      var getSearchTextComment = getResource('http://' + server + '/market/comment/_search?q=:search');
+      var postSearchComments = ESUtils.post('http://' + server + '/market/comment/_search?pretty');
 
       function getCommentsByRecord(recordId, size) {
         if (!size) {
@@ -230,13 +76,12 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
           };
 
           postSearchComments(request)
-          //getSearchTextComment({search: 'record:' + recordId})
           .then(function(res){
             if (res.hits.total === 0) {
               resolve([]);
             }
             else {
-              BMA.wot.member.uids()
+              BMA.wot.member.uids(true/*cache*/)
               .then(function(uids){
                 var result = res.hits.hits.reduce(function(result, hit) {
                   var comment = hit._source;
@@ -254,50 +99,38 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         });
       }
 
-      function emptyHit() {
-        return {
-           _id: null,
-           _index: null,
-           _type: null,
-           _version: null,
-           _source: {}
-        };
-      }
-
       function getCommons() {
         var _source = fields.commons.reduce(function(res, field){
           return res + ',' + field
         }, '').substring(1);
-        return getResource('http://' + server + '/market/record/:id?_source=' + _source);
+        return ESUtils.get('http://' + server + '/market/record/:id?_source=' + _source);
       }
 
       return {
-        hit: {
-           empty: emptyHit
-        },
         category: {
           all: getCategories,
-          searchText: getResource('http://' + server + '/market/category/_search?q=:search'),
-          search: postResource('http://' + server + '/market/category/_search?pretty')
+          searchText: ESUtils.get('http://' + server + '/market/category/_search?q=:search'),
+          search: ESUtils.post('http://' + server + '/market/category/_search?pretty')
         },
         record: {
-          get: getResource('http://' + server + '/market/record/:id'),
+          searchText: ESUtils.get('http://' + server + '/market/record/_search?q=:search'),
+          search: ESUtils.post('http://' + server + '/market/record/_search?pretty'),
+          get: ESUtils.get('http://' + server + '/market/record/:id'),
           getCommons: getCommons(),
-          add: addRecord,
-          update: postResource('http://' + server + '/market/record/:id'),
-          searchText: getResource('http://' + server + '/market/record/_search?q=:search'),
-          search: postResource('http://' + server + '/market/record/_search?pretty'),
+          add: ESUtils.record.post('http://' + server + '/market/record'),
+          update: ESUtils.record.post('http://' + server + '/market/record/:id/_update'),
           fields: {
             commons: fields.commons
           },
           picture: {
-            all: getResource('http://' + server + '/market/record/:record?_source=pictures')
+            all: ESUtils.get('http://' + server + '/market/record/:record?_source=pictures')
           },
           comment:{
-            searchText: getSearchTextComment,
             search: postSearchComments,
             all: getCommentsByRecord,
-            add: addComment,
+            add: ESUtils.record.post('http://' + server + '/market/comment'),
+            update: ESUtils.record.post('http://' + server + '/market/comment/:id/_update'),
+            remove: ESUtils.record.remove('market', 'comment'),
             fields: {
               commons: fields.comment.commons
             }
@@ -306,8 +139,8 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
       };
     }
 
-    var ESNodeConfigured = !!APP_CONFIG.DUNITER_NODE_ES;
-    if (!ESNodeConfigured) {
+    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    if (!enable) {
       return null;
     }
 

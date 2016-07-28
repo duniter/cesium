@@ -81,37 +81,25 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
       if (!Wallet.isLogin()) {
         $timeout(function() {
-          Wallet.restore() // try to restore wallet
-          .then(function(){
-            if (Wallet.isLogin()) { // Maybe now login
+          $scope.login(
+            function() {
               $rootScope.viewFirstEnter = false;
               Wallet.loadData()
-                .then(function(walletData){
-                  resolve(walletData);
-                })
-                .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
-            }
-            else {
-              $scope.login(
-                function() {
-                  $rootScope.viewFirstEnter = false;
-                  Wallet.loadData()
-                    .then(function(walletData){
-                      resolve(walletData);
-                    })
-                    .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
-                },
-                function() { // user cancel callback
-                  reject('CANCELLED');
-                });
-            }
-          })
-          .catch(UIUtils.onError('ERROR.RESTORE_WALLET_DATA_ERROR', reject));
+              .then(function(walletData){
+                $rootScope.walletData = walletData;
+                resolve(walletData);
+              })
+              .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+            },
+            function() { // user cancel callback
+              reject('CANCELLED');
+            });
         }, $rootScope.viewFirstEnter ? 10 : 2000);
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
           .then(function(walletData){
+            $rootScope.walletData = walletData;
             resolve(walletData);
           })
           .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
@@ -226,6 +214,11 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
   // Is connected
   $scope.isLogged = function() {
+      return Wallet.isLogin();
+  };
+
+  // Is connected
+  $rootScope.isLogged = function() {
       return Wallet.isLogin();
   };
 

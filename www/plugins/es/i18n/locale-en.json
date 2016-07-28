@@ -42,12 +42,15 @@
       "RECORD_PRICE": "Price",
       "RECORD_PRICE_HELP": "Price (optional)",
       "BTN_ADD_PICTURES": "Add pictures",
+      "BTN_ADD_PICTURE": "Add a picture",
       "BTN_PUBLISH": "Publish",
       "BTN_SAVE": "Save"
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Error while loading market categories",
-      "LOAD_RECORD_FAILED": "Error while loading record."
+      "LOAD_RECORD_FAILED": "Error while loading record.",
+      "FAILED_SAVE_COMMENT": "Error while de la saving comment",
+      "FAILED_REMOVE_COMMENT": "Error while deleting comment"
     }
   },
   "REGISTRY": {

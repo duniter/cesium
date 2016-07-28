@@ -17,8 +17,7 @@ function PeerController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal,
           peer.online = p.status == 'UP';
           peer.blockNumber = peer.block.replace(/-.+$/, '');
           peer.dns = peer.getDns();
-          var member = _.findWhere($rootScope.members, { pubkey: peer.pubkey });
-          peer.uid = member && member.uid;
+          peer.uid = $rootScope.memberUidsByPubkeys[peer.pubkey];
           return peer;
         });
         $scope.peers = _.sortBy(peers, function(p) {

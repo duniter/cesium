@@ -1,7 +1,7 @@
 
 angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
 
-.factory('Wallet', function($q, CryptoUtils, BMA, $translate, localStorage, $filter, Api) {
+.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api) {
   'ngInject';
 
   Wallet = function(id) {
@@ -1061,6 +1061,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
   // try to restore wallet
   service.restore();
+  $rootScope.walletData = service.data;
 
   service.instance = Wallet;
   return service;

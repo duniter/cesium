@@ -334,7 +334,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
   };
 }
 
-function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA) {
+function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService) {
   'ngInject';
 
   $scope.formData = {};
@@ -344,6 +344,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.pictures = [];
   $scope.canEdit = false;
   $scope.maxCommentSize = 10;
+  $scope.commentData = {};
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
@@ -466,36 +467,52 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
   }
 
   $scope.sendComment = function() {
-    if (!$scope.formData.newComment || $scope.formData.newComment.trim().length === 0) {
+    if (!$scope.commentData.message || $scope.commentData.message.trim().length === 0) {
       return;
     }
     $scope.loadWallet()
     .then(function(walletData) {
-      UIUtils.loading.show();
-      var obj = {
-        issuer: walletData.pubkey,
-        record: $scope.id,
-        message: $scope.formData.newComment,
+      var comment = $scope.commentData;
+      comment.record= $scope.id;
+      comment.issuer = walletData.pubkey;
+      var obj = {};
+      angular.copy(comment, obj);
+      if (walletData.uid) {
+        obj.uid = walletData.uid;
+      }
+      obj.isnew = true;
+      $scope.comments.push(obj);
+      $scope.commentData = {}; // reset comment
+      // Create
+      if (!comment.id) {
         // Set time (UTC) - TODO : use the block chain time
-        time: Math.floor(moment().utc().valueOf() / 1000)
-      };
-      Market.record.comment.add(obj, walletData.keypair)
-      .then(function (id){
-        delete $scope.formData.newComment;
-        obj.id = id;
-        if (walletData.uid) {
-          obj.uid = walletData.uid;
-        }
-        $scope.comments.push(obj);
-        UIUtils.loading.hide();
-        // Set Motion
-        $timeout(function() {
-          UIUtils.motion.fadeSlideIn({
-            selector: '#comment-' + id
-          });
-        }, 10);
-      });
+        comment.time = Math.floor(moment().utc().valueOf() / 1000);
+        Market.record.comment.add(comment)
+        .then(function (id){
+          obj.id = id;
+        })
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));;
+      }
+      // Update
+      else {
+        Market.record.comment.update(comment, {id: comment.id})
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));;
+      }
     });
+  }
+
+  $scope.editComment = function(index) {
+    var comment = $scope.comments[index];
+    $scope.comments.splice(index, 1);
+    $scope.commentData = comment;
+  }
+
+  $scope.removeComment = function(index) {
+    var comment = $scope.comments[index];
+    if (!comment || !comment.id) {return;}
+    $scope.comments.splice(index, 1);
+    Market.record.comment.remove(comment.id, Wallet.data.keypair)
+    .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
   }
 }
 
@@ -565,7 +582,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
           // Set time (UTC)
           // TODO : use the block chain time
           formData.time = Math.floor(moment().utc().valueOf() / 1000);
-          Market.record.add(formData, $scope.walletData.keypair)
+          Market.record.add(formData)
           .then(function(id) {
             UIUtils.loading.hide();
             $state.go('app.market_view_record', {id: id});
@@ -579,7 +596,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
             // TODO : use the block chain time
             formData.time = Math.floor(moment().utc().valueOf() / 1000);
           }
-          Market.record.update(formData, {id: $scope.id}, $scope.walletData.keypair)
+          Market.record.update(formData, {id: $scope.id})
           .then(function() {
             UIUtils.loading.hide();
             $state.go('app.market_view_record', {id: $scope.id});
@@ -616,7 +633,19 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     $scope.closeCategoryModal();
   };
 
-  $scope.getPicture = function() {
+  $scope.selectNewPicture = function() {
+    if ($scope.isDeviceEnable()){
+      openPicturePopup();
+    }
+    else {
+      var fileInput = angular.element(document.querySelector('#editMarket #pictureFile'));
+      if (fileInput && fileInput.length > 0) {
+        fileInput[0].click();
+      }
+    }
+  }
+
+  $scope.openPicturePopup = function() {
     Device.camera.getPicture()
     .then(function(imageData) {
       $scope.pictures.push({src: "data:image/png;base64," + imageData});
@@ -651,19 +680,5 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     }
   };
 
-  $scope.auth = function() {
-    $scope.loadWallet()
-    .then(function(walletData) {
-      UIUtils.loading.show();
-      $scope.walletData = walletData;
-      Market.auth.token(walletData.keypair)
-      .then(function(token) {
-        UIUtils.loading.hide();
-        console.log('authentication token is:' + token);
-      })
-      .catch(onError('Could not computed authentication token'));
-    })
-    .catch(onError('Could not computed authentication token'));
-  };
 
 }

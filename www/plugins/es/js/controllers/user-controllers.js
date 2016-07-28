@@ -40,45 +40,44 @@ angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
 
 ;
 
-function ProfileController($scope, UIUtils, $timeout, UserService, $filter) {
+function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $filter, $focus, $q, SocialUtils) {
   'ngInject';
 
+  $scope.loading = true;
   $scope.walletData = null;
   $scope.formData = {
     title: null,
     description: null,
     socials: []
   };
+  $scope.avatar = null;
+  $scope.existing = false;
+  $scope.socialData = {
+    url: null
+  };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
+    $scope.loading = true; // to avoid the call of doSave()
     $scope.loadWallet()
-      .then(function(wallet) {
-        UserService.profile.get({pubkey: wallet.pubkey})
+      .then(function(walletData) {
+        UserService.profile.get({id: walletData.pubkey})
         .then(function(res) {
-          if (res && res.found) {
-            // Make to remove duplicate social network entries
-            if (res._source && res._source.socials) {
-              var map = res._source.socials.reduce(function(res, social) {
-                if (social.url && social.url.startsWith('www.')) {
-                  social.url = 'http://' + social.url;
-                }
-                var id = $filter('formatSlug')(social.url);
-                res[id] = {
-                  type: UserService.util.social.getType(social.url),
-                  url: social.url
-                };
-                return res;
-              }, {});
-              res._source.socials = _.values(map);
-            }
-            $scope.updateView(wallet, res._source);
+          if (res && res.found && res._source) {
+            var profile = res._source;
+            $scope.avatar = profile.avatar ? UIUtils.image.fromAttachment(profile.avatar) : null;
+            profile.socials = profile.socials ? SocialUtils.reduce(profile.socials) : [];
+            $scope.existing = true;
+            $scope.updateView(walletData, profile);
           }
           UIUtils.loading.hide();
+          $scope.loading = false;
         })
         .catch(function(err){
           if (err && err.ucode == 404) {
-            $scope.updateView(wallet, {});
+            $scope.updateView(walletData, {});
             UIUtils.loading.hide();
+            $scope.loading = false;
+            $scope.existing = false;
           }
           else {
             UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
@@ -99,54 +98,47 @@ function ProfileController($scope, UIUtils, $timeout, UserService, $filter) {
   $scope.updateView = function(wallet, profile) {
     $scope.walletData = wallet;
     $scope.formData = profile;
+    if (profile.avatar) {
+      $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
+    }
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight();
       // Set Ink
-      UIUtils.ink({selector: '.item.ink'});
+      //UIUtils.ink({selector: '.item.ink'});
     }, 10);
   };
 
-  $scope.doSave = function() {
-    $scope.profileForm.$submitted=true;
-    if(!$scope.profileForm.$valid || !$scope.walletData) {
-      return;
+  $scope.onFormDataChanged = function() {
+    if (!$scope.loading) {
+      $scope.doSave();
     }
-    UIUtils.loading.show();
-
-    $scope.formData.pubkey = $scope.walletData.pubkey;
-    UserService.profile.update($scope.formData, {pubkey: $scope.formData.pubkey}, $scope.walletData.keypair)
-    .then(function() {
-      UIUtils.loading.hide();
-    })
-    .catch(UIUtils.onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
   };
+  $scope.$watch('formData', $scope.onFormDataChanged, true);
 
   $scope.addSocialNetwork = function() {
-    if (!$scope.formData.newSocial || $scope.formData.newSocial.trim().length === 0) {
+    if (!$scope.socialData.url || $scope.socialData.url.trim().length === 0) {
       return;
     }
     if (!$scope.formData.socials) {
       $scope.formData.socials = [];
     }
-    var url = $scope.formData.newSocial.trim();
+    var url = $scope.socialData.url.trim();
 
     var exists = _.findWhere($scope.formData.socials, {url: url});
     if (exists) { // duplicate entry
-      delete $scope.formData.newSocial;
+      $scope.socialData.url = '';
       return;
     }
 
-    var type = UserService.util.social.getType(url);
-    if (!type) {
+    var social = SocialUtils.get(url);
+    if (!social) {
       UIUtils.alert.error('PROFILE.ERROR.INVALID_SOCIAL_NETWORK_FORMAT');
+      $focus('socialUrl');
       return; // stop here
     }
-    $scope.formData.socials.push({
-      type: type,
-      url: url
-    });
-    delete $scope.formData.newSocial;
+    $scope.formData.socials.push(social);
+    $scope.socialData.url = '';
 
     // Set Motion
     $timeout(function() {
@@ -156,8 +148,64 @@ function ProfileController($scope, UIUtils, $timeout, UserService, $filter) {
     }, 0);
   }
 
-  $scope.removeSocialNetwork = function() {
-
+  $scope.editSocialNetwork = function(index) {
+    var social = $scope.formData.socials[index];
+    $scope.formData.socials.splice(index, 1);
+    $scope.socialData.url = social.url;
+    $focus('socialUrl');
   }
+
+  $scope.fileChanged = function(event) {
+      UIUtils.loading.show();
+      var file = event.target.files[0];
+      return $q(function(resolve, reject) {
+        UIUtils.image.resizeFile(file, true)
+        .then(function(imageData) {
+          $scope.avatar = {src: imageData};
+          $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
+          UIUtils.loading.hide(10);
+          //$scope.$apply();
+          resolve();
+        })
+        .catch(UIUtils.onError('Failed to resize image'));
+      });
+    };
+
+  $scope.doSave = function() {
+    $scope.profileForm.$submitted=true;
+    if(!$scope.profileForm.$valid || !$rootScope.walletData) {
+      return;
+    }
+
+    var doFinishSave = function(formData) {
+      if (!$scope.existing) {
+        UserService.profile.add(formData)
+        .then(function() {
+          console.log("User profile successfully created.");
+          $scope.existing = true;
+        })
+        .catch(UIUtils.onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
+      }
+      else {
+        UserService.profile.update(formData, {id: $rootScope.walletData.pubkey})
+        .then(function() {
+          console.log("User profile successfully updated.");
+        })
+        .catch(UIUtils.onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
+      }
+    }
+
+    if ($scope.avatar && $scope.avatar.src) {
+      UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to thumbnail
+      .then(function(imageSrc) {
+        $scope.formData.avatar = UIUtils.image.toAttachment({src: imageSrc});
+        doFinishSave($scope.formData);
+      });
+    }
+    else {
+      delete $scope.formData.avatar;
+      doFinishSave($scope.formData);
+    }
+  };
 }
 

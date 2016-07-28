@@ -332,15 +332,15 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeo
     }, 1000);
 
     var known = {};
-    $rootScope.members = [];
+    $rootScope.memberUidsByPubkeys = {};
     $scope.search.peers = [];
     $scope.search.lookingForPeers = true;
     lookingForPeers = true;
     return BMA.network.peering.peers({ leaves: true })
       .then(function(res){
-        return BMA.wot.members()
-          .then(function(json){
-            $rootScope.members = json.results;
+        return BMA.wot.member.uids(true/*cache*/)
+          .then(function(uids){
+            $rootScope.memberUidsByPubkeys = uids;
             return res;
           });
       })
@@ -355,8 +355,7 @@ function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeo
                 if (!known[peer.getURL()]) {
                   peer.dns = peer.getDns();
                   peer.blockNumber = peer.block.replace(/-.+$/, '');
-                  var member = _.findWhere($rootScope.members, { pubkey: peer.pubkey });
-                  peer.uid = member && member.uid;
+                  peer.uid = $rootScope.memberUidsByPubkeys[peer.pubkey];
                   newPeers.push(peer);
                   var node = BMA.instance(peer.getURL());
                   return node.blockchain.current()

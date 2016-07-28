@@ -82,3 +82,21 @@
   padding-bottom: 0;
   min-height: inherit !important;
 }
+
+.hero .content .button.button-camera {
+  display: block;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.hero .content i.avatar .button {
+  display: none;
+  position: absolute;
+  bottom: -25px;
+  left: -3px;
+}
+
+.hero .content i.avatar:hover .button {
+  display: block;
+}
