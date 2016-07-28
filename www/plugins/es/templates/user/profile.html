@@ -97,9 +97,13 @@
                  ng-if="formData.socials && formData.socials.length>0"
                  ng-repeat="social in formData.socials track by social.url"
                  id="social-{{social.url|formatSlug}}">
-                <i class="icon ion-social-{{social.type}}"></i>
-                <p>{{social.type}}</p>
-                <h2>{{social.url}}</h2>
+                <i class="icon ion-social-{{social.type}}"
+                   ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
+                <p ng-if="social.type && social.type != 'web'">{{social.type}}</p>
+                <h2>
+                  <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
+                  <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
+                </h2>
                 <!--<a ng-click="removeSocialNetwork(social)">
                   <i class="icon ion-delete"></i>
                   {{'COMMON.BTN_DELETE'|translate}}

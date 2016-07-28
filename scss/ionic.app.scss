@@ -39,6 +39,11 @@ $RobotoDraftFontVersion: "1.1.0";
 // Include all of Ionic-Material
 @import "www/lib/ionic-material/src/scss/index";
 
+// Cesium icons
+// The path for Cesiumicons font files, relative to the built CSS in www/css
+$cesiumicons-font-path: "../fonts" !default;
+@import "./icons/cesiumicons";
+
 
 // --------------------------------------------------
 // Responsive: Utility classes

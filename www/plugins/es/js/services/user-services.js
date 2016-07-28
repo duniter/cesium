@@ -7,13 +7,23 @@ angular.module('cesium.user.services', ['ngResource', 'cesium.services'])
 
       var
       regex = {
-        HTTP_URI: "https?://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+",
+        URI: "([a-z]+)://[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+",
+        EMAIL: "[a-zA-Z0-9-_.]+@[a-zA-Z0-9_.-]+?\\.[a-zA-Z]{2,3}",
         socials: {
-          facebook: "(fb.me)|((www.)?facebook.com)",
-          twitter: "(www.)?twitter.com",
-          googleplus: "plus.google.com(/u)?",
-          youtube: "(www.)?youtube.com",
-          github: "(www.)?github.com"
+          facebook: "https?://((fb.me)|((www.)?facebook.com))",
+          twitter: "https?://(www.)?twitter.com",
+          googleplus: "https?://plus.google.com(/u)?",
+          youtube: "https?://(www.)?youtube.com",
+          github: "https?://(www.)?github.com",
+          tumblr: "https?://(www.)?tumblr.com",
+          snapchat: "https?://(www.)?snapchat.com",
+          linkedin: "https?://(www.)?linkedin.com",
+          vimeo: "https?://(www.)?vimeo.com",
+          instagram: "https?://(www.)?instagram.com",
+          wordpress: "https?://([a-z]+)?wordpress.com",
+          diaspora: "https?://(www.)?((diaspora[-a-z]+)|(framasphere)).org",
+          duniter: "duniter://[a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+",
+          bitcoin: "bitcoin://[a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+"
         }
       }
       ;
@@ -21,7 +31,8 @@ angular.module('cesium.user.services', ['ngResource', 'cesium.services'])
       function exact(regexpContent) {
         return new RegExp("^" + regexpContent + "$");
       }
-      regex.HTTP_URI = exact(regex.HTTP_URI);
+      regex.URI = exact(regex.URI);
+      regex.EMAIL = exact(regex.EMAIL);
       _.keys(regex.socials).forEach(function(key){
         regex.socials[key] = exact(regex.socials[key]);
       })
@@ -187,17 +198,32 @@ angular.module('cesium.user.services', ['ngResource', 'cesium.services'])
       }
 
       function getSocialTypeFromUrl(url){
-        var type = 'rss'; // default type
-        if (regex.HTTP_URI.test(url)) {
-          var server = regex.HTTP_URI.exec(url)[1];
-          console.log("match http URL, with server :" + server);
+        var type;
+        if (regex.URI.test(url)) {
+          var protocol = regex.URI.exec(url)[1];
+          var urlToMatch = url;
+          if (protocol == 'http' || protocol == 'https') {
+            var slashPathIndex = url.indexOf('/', protocol.length + 3);
+            if (slashPathIndex > 0) {
+              urlToMatch = url.substring(0, slashPathIndex)
+            }
+          }
+          console.log("match URI, try to match: " + urlToMatch);
           _.keys(regex.socials).forEach(function(key){
-            if (regex.socials[key].test(server)) {
+            if (regex.socials[key].test(urlToMatch)) {
               type = key;
-              console.log("match type: " + key);
               return false; // stop
             }
           });
+          if (!type || type === null) {
+            type = 'web';
+          }
+        }
+        else if (regex.EMAIL.test(url)) {
+          type = 'email';
+        }
+        if (!type) {
+            console.log("match type: " + type);
         }
         return type;
       }

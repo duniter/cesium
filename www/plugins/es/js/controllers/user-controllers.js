@@ -59,6 +59,9 @@ function ProfileController($scope, UIUtils, $timeout, UserService, $filter) {
             // Make to remove duplicate social network entries
             if (res._source && res._source.socials) {
               var map = res._source.socials.reduce(function(res, social) {
+                if (social.url && social.url.startsWith('www.')) {
+                  social.url = 'http://' + social.url;
+                }
                 var id = $filter('formatSlug')(social.url);
                 res[id] = {
                   type: UserService.util.social.getType(social.url),
@@ -135,6 +138,10 @@ function ProfileController($scope, UIUtils, $timeout, UserService, $filter) {
     }
 
     var type = UserService.util.social.getType(url);
+    if (!type) {
+      UIUtils.alert.error('PROFILE.ERROR.INVALID_SOCIAL_NETWORK_FORMAT');
+      return; // stop here
+    }
     $scope.formData.socials.push({
       type: type,
       url: url

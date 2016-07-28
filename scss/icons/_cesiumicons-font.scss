@@ -1,0 +1,28 @@
+// Cesiumicons Font Path
+// --------------------------
+
+@font-face {
+ font-family: $cesiumicons-font-family;
+ src:url("#{$cesiumicons-font-path}/cesiumicons.eot?v=#{$cesiumicons-version}");
+ src:url("#{$cesiumicons-font-path}/cesiumicons.eot?v=#{$cesiumicons-version}#iefix") format("embedded-opentype"),
+  url("#{$cesiumicons-font-path}/cesiumicons.ttf?v=#{$cesiumicons-version}") format("truetype"),
+  url("#{$cesiumicons-font-path}/cesiumicons.woff?v=#{$cesiumicons-version}") format("woff"),
+  url("#{$cesiumicons-font-path}/cesiumicons.woff") format("woff"), /* for WP8 */
+  url("#{$cesiumicons-font-path}/cesiumicons.svg?v=#{$cesiumicons-version}#cesiumicons") format("svg");
+ font-weight: normal;
+ font-style: normal;
+}
+
+.cion {
+  display: inline-block;
+  font-family: $cesiumicons-font-family;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

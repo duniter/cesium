@@ -1,0 +1,11 @@
+// Cesiumicons Icons
+// --------------------------
+
+.cesiumicons,
+.#{$cesiumicons-prefix}social-duniter:before,
+.#{$cesiumicons-prefix}social-diaspora:before,
+{
+  @extend .cion;
+}
+.#{$cesiumicons-prefix}social-duniter:before { content: $cesiumicon-var-social-duniter; }
+.#{$cesiumicons-prefix}social-diaspora:before { content: $cesiumicon-var-social-diaspora; }

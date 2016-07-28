@@ -112,7 +112,8 @@
     "TECHNICAL_DIVIDER": "Informations techniques",
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
-      "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde"
+      "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
+      "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>"
     }
   }
 }
