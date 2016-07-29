@@ -243,7 +243,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.loaded = false;
         }
         if (settings) {
+          var refreshLocale = settings.locale && settings.locale.id && (data.settings.locale.id != settings.locale.id);
           data.settings = settings;
+          if (refreshLocale) {
+            $translate.use(data.settings.locale.id);
+          }
         }
         if (dataStr) {
           fromJson(dataStr, false)
