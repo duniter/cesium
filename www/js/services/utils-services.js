@@ -326,7 +326,11 @@ angular.module('cesium.utils.services', ['ngResource'])
       resizeSrc: resizeImageFromSrc,
       fromAttachment: imageFromAttachment,
       toAttachment: imageToAttachment
-    }
+    },
+    locales: [
+      {id:'fr-FR', label:'Français'},
+      {id:'en', label:'English'}
+    ]
   };
 })
 

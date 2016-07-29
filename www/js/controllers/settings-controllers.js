@@ -23,15 +23,12 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q, $ionicPopup, $timeout, localStorage) {
   'ngInject';
 
-  $scope.locales = [
-      {id:'fr-FR', label:'Français'},
-      {id:'en', label:'English'}
-    ];
   $scope.formData = angular.copy(Wallet.defaultSettings);
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loading = true; // to avoid the call of Wallet.store()
+    $scope.locales = UIUtils.locales;
     $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
     angular.merge($scope.formData, Wallet.data.settings);
     if (Wallet.data.settings.locale && Wallet.data.settings.locale.id) {
