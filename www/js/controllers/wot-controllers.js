@@ -44,11 +44,19 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotLookupCtrl', WotLookupController)
 
+  .controller('WotLookupModalCtrl', WotLookupModalController)
+
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 ;
 
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet) {
   'ngInject';
+
+  $scope.search = {
+    text: '',
+    looking: false,
+    results: []
+  };
 
   $scope.onWotSearchChanged = function() {
     $scope.search.looking = true;
@@ -130,6 +138,24 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
+}
+
+function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet){
+  'ngInject';
+
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, Device, Wallet);
+
+  $scope.cancel = function(){
+    $scope.closeModal();
+  }
+
+  $scope.doSelectIdentity = function(pub, uid){
+    $scope.closeModal({
+      pubkey: pub,
+      uid: uid
+    });
+  }
+
 }
 
 function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {

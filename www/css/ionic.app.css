@@ -12879,7 +12879,9 @@ a {
     display: inherit;
     visibility: visible; }
   .row.hidden-xs {
-    display: flex !important; } }
+    display: flex !important; }
+  .button.hidden-xs {
+    display: inline-block; } }
 
 @media screen and (max-width: 747px) {
   .visible-xs {
@@ -12925,7 +12927,9 @@ a {
     display: inherit;
     visibility: visible; }
   .row.hidden-sm {
-    display: flex !important; } }
+    display: flex !important; }
+  .button.hidden-sm {
+    display: inline-block; } }
 
 @media screen and (max-width: 747px) {
   .hidden-sm {
@@ -13156,3 +13160,12 @@ a {
 
 .card .item .card-footer {
   margin-bottom: 5px; }
+
+.list .item.text-left {
+  text-align: left !important; }
+
+.list .item.text-center {
+  text-align: center !important; }
+
+.list .item.text-right {
+  text-align: right !important; }

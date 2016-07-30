@@ -1,7 +1,7 @@
 
 angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
 
-.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api) {
+.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, UIUtils) {
   'ngInject';
 
   Wallet = function(id) {

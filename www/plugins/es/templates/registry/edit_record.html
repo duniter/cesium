@@ -4,27 +4,35 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear" ng-click="save()">
+      <button class="button button-icon button-clear visible-xs visible-sm" ng-click="save()">
           <i class="icon ion-android-send" ng-if="!id"></i>
           <i class="icon ion-android-done" ng-if="id"></i>
       </button>
   </ion-nav-buttons>
 
-  <ion-content>
-      <div class="scroll">
-          <ng-include src="'plugins/es/templates/registry/record_form.html'"></ng-include>
-          <div class="scroll-bar scroll-bar-v"></div>
-      </div>
+  <ion-content scroll="true">
 
-      <div class="padding hidden-xs hidden-sm text-right">
-        <button class="button button-clear button-dark ink" ng-click="goBack()" type="button" translate>COMMON.BTN_CANCEL
-        </button>
-        <button class="button button-positive button-raised ink" ng-click="save()" ng-show="!id">
-          {{'REGISTRY.EDIT.BTN_PUBLISH' | translate}}
-        </button>
-        <button class="button button-positive button-raised ink" ng-click="save()" ng-show="id">
-          {{'REGISTRY.EDIT.BTN_SAVE' | translate}}
-        </button>
+      <div class="row">
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+        </div>
+
+        <div class="col">
+          <ng-include src="'plugins/es/templates/registry/record_form.html'"></ng-include>
+
+          <div class="padding hidden-xs hidden-sm text-right">
+            <button class="button button-clear button-dark ink" ng-click="goBack()" type="button" translate>COMMON.BTN_CANCEL
+            </button>
+            <button class="button button-positive button-raised ink" ng-click="save()" ng-show="!id">
+              {{'REGISTRY.EDIT.BTN_PUBLISH' | translate}}
+            </button>
+            <button class="button button-positive button-raised ink" ng-click="save()" ng-show="id">
+              {{'REGISTRY.EDIT.BTN_SAVE' | translate}}
+            </button>
+          </div>
+        </div>
+
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+        </div>
       </div>
   </ion-content>
 </ion-view>

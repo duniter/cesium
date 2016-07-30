@@ -70,7 +70,7 @@
         <!-- USER Section -->
         <div class="item item-divider"></div>
 
-        <ion-item menu-close class="item item-icon-left item-menu-disable" ng-click="login()" ng-if="!isLogged()">
+        <ion-item menu-close class="item item-icon-left item-menu-disable" ng-click="login('app.view_wallet')" ng-if="!isLogged()">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
@@ -98,7 +98,7 @@
         <div class="item item-divider" ng-if="isLogged()"></div>
         <ion-item menu-close class="item item-button-right" ng-if="isLogged()">
           <span translate>MENU.TRANSFER</span>
-          <button class="button button-energized-900" ng-click="transfer()">
+          <button class="button button-energized-900" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
           </button>
         </ion-item>

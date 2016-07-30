@@ -334,7 +334,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
   };
 }
 
-function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService) {
+function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService) {
   'ngInject';
 
   $scope.formData = {};
@@ -382,42 +382,19 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
         if (hit._source.thumbnail) {
           $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
         }
-        $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer === Wallet.getData().pubkey);
-        UIUtils.loading.hide();
+        $scope.canEdit = $scope.formData && $scope.isUserPubkey($scope.formData.issuer);
 
-        $q.all([
-          // Load pictures
-          Market.record.picture.all({record: id})
-          .then(function(hit) {
-            if (hit._source.pictures) {
-              $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-                return res.concat(UIUtils.image.fromAttachment(pic.file));
-              }, []);
-            }
-          }),
-
-          // Load comments
-          $scope.loadComments(id)
-        ])
-        .then(function() {
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.fadeSlideIn({
-              selector: '.card-gallery, .card-comment, .lazy-load > .item'
-            });
-          }, 10);
+        // Get last UD
+        BMA.blockchain.lastUd(true/*cache*/)
+        .then(function(currentUD){
+          $rootScope.walletData.currentUD = currentUD;
+          $scope.refreshConvertedPrice();
+          // Load issuer as member
+          return BMA.wot.member.get($scope.formData.issuer);
         })
-        .catch(function(err) {
-          $scope.pictures = [];
-          $scope.comments = [];
-        });
-
-        // Load issuer as member
-        BMA.wot.member.get($scope.formData.issuer)
         .then(function(member){
           $scope.issuer = member;
-        })
-        .then(function() {
+
           // Set Motion (only direct children, to exclude .lazy-load children)
           $timeout(function() {
             UIUtils.motion.fadeSlideIn({
@@ -425,9 +402,11 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
               startVelocity: 3000
             });
           }, 10);
+          UIUtils.loading.hide();
           $scope.loaded = true;
         })
         .catch(function(err) {
+          UIUtils.loading.hide();
           $scope.member = null;
         })
       })
@@ -442,12 +421,53 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
           UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
         }
       });
+
+      // Continue loading other data
+      $q.all([
+        // Load pictures
+        Market.record.picture.all({id: id})
+        .then(function(hit) {
+          if (hit._source.pictures) {
+            $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
+              return res.concat(UIUtils.image.fromAttachment(pic.file));
+            }, []);
+          }
+        }),
+
+        // Load comments
+        $scope.loadComments(id)
+      ])
+      .then(function() {
+        // Set Motion
+        $timeout(function() {
+          UIUtils.motion.fadeSlideIn({
+            selector: '.card-gallery, .card-comment, .lazy-load > .item'
+          });
+        }, 10);
+      })
+      .catch(function(err) {
+        $scope.pictures = [];
+        $scope.comments = [];
+      });
+
     })
     .catch(function(){
       $scope.loading = false;
       UIUtils.onError('MARKET.ERROR.LOAD_CATEGORY_FAILED')(err);
     });
   };
+
+  $scope.refreshConvertedPrice = function() {
+    if (!$scope.walletData || !$rootScope.walletData.settings) {
+      return;
+    }
+    if ($rootScope.walletData.settings.useRelative) {
+      $scope.convertedPrice = $scope.formData.price ? ($scope.formData.price / $rootScope.walletData.currentUD) : null;
+    } else {
+      $scope.convertedPrice = $scope.formData.price;
+    }
+  };
+  $scope.$watch('$root.walletData.settings.useRelative', $scope.refreshConvertedPrice, true);
 
   $scope.edit = function() {
     $state.go('app.market_edit_record', {id: $scope.id});
@@ -487,6 +507,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
       if (!comment.id) {
         // Set time (UTC) - TODO : use the block chain time
         comment.time = Math.floor(moment().utc().valueOf() / 1000);
+        obj.time = comment.time;
         Market.record.comment.add(comment)
         .then(function (id){
           obj.id = id;
@@ -519,7 +540,7 @@ function MarketRecordViewController($scope, $ionicModal, Wallet, Market, UIUtils
 function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout) {
   'ngInject';
 
-  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
+  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils, Wallet);
 
   $scope.walletData = {};
   $scope.formData = {};
@@ -529,15 +550,26 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
   $scope.pictures = [];
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    $scope.loadWallet()
+    $scope.loadCurrencies()
+    .then(function(currencies){
+      if (currencies.length == 1) {
+         $scope.currency = currencies[0].name;
+      }
+      return $scope.loadWallet();
+    })
     .then(function(walletData) {
+      $scope.useRelative = walletData.settings.useRelative;
       $scope.walletData = walletData;
       if ($state.stateParams && $state.stateParams.id) { // Load by id
         UIUtils.loading.show();
         $scope.load($state.stateParams.id);
       }
       else {
-        UIUtils.loading.hide();
+        $scope.loadCurrencies()
+        .then(function(currencies){
+          $scope.formData.currency = $scope.currency;
+          UIUtils.loading.hide();
+        })
       }
     });
   });
@@ -584,6 +616,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
           formData.time = Math.floor(moment().utc().valueOf() / 1000);
           Market.record.add(formData)
           .then(function(id) {
+            $scope.id = id;
             UIUtils.loading.hide();
             $state.go('app.market_view_record', {id: id});
             resolve();
@@ -632,6 +665,15 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     $scope.formData.category = cat;
     $scope.closeCategoryModal();
   };
+
+  $scope.setUseRelative = function(useRelative) {
+    $scope.formData.unit = useRelative ? 'DU' : 'unit';
+    //$scope.unitPopover.hide();
+  };
+
+  $scope.openCurrencyLookup = function() {
+    alert('Not implemented yet. Please submit an issue if occur again.');
+  }
 
   $scope.selectNewPicture = function() {
     if ($scope.isDeviceEnable()){

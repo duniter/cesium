@@ -33,27 +33,31 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover) {
+  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.walletData = null;
   $scope.convertedBalance = null;
   $scope.hasCredit = false;
   $scope.showDetails = false;
+  $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
-      .then(function(wallet) {
-        $scope.updateView(wallet);
+      .then(function(walletData) {
+        if (!walletData) {
+          $state.go('app.home');
+        }
+        $scope.walletData = walletData;
+        $scope.updateView();
         $scope.showFab('fab-transfer');
-        $scope.showQRCode('qrcode', wallet.pubkey, 1100);
-        UIUtils.loading.hide();
+        $scope.showQRCode('qrcode', walletData.pubkey, 1100);
+        $timeout(function () {
+          var header = document.getElementById('wallet-header');
+          header.classList.toggle('on', true);
+        }, 100);
       });
 
-      $timeout(function () {
-        var header = document.getElementById('wallet-header');
-        header.classList.toggle('on', true);
-      }, 100);
   });
 
   $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
@@ -74,25 +78,26 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     if ($scope.walletData.settings.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance ? ($scope.walletData.balance / $scope.walletData.currentUD) : 0;
     } else {
-      $scope.convertedBalance = $scope.walletData.balance;
-      if (!$scope.convertedBalance) {
-        $scope.convertedBalance = 0;
+      var balance = $scope.walletData.balance;
+      if (!balance) {
+        balance = 0;
       }
+      $scope.convertedBalance = balance;
     }
   };
   $scope.$watch('walletData.settings.useRelative', $scope.refreshConvertedBalance, true);
   $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
-  $scope.updateView = function(wallet) {
-    $scope.walletData = wallet;
-    $scope.hasCredit = (!!wallet.balance && wallet.balance > 0);
+  $scope.updateView = function() {
+    $scope.hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
     $scope.refreshConvertedBalance();
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight();
       // Set Ink
       UIUtils.ink({selector: '.item'});
+
     }, 10);
   };
 
@@ -107,14 +112,14 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     qrcode.classList.toggle('visible-sm', !show);
   };
 
-  // Transfer click
-  $scope.openTransfer = function() {
+  // Transfer
+  $scope.showTransferModal = function() {
     if (!$scope.hasCredit) {
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
-    $scope.transfer(null,null, function() {
-      UIUtils.loading.hide();
+    Modals.showTransfer()
+    .then(function(){
       UIUtils.alert.info('INFO.TRANSFER_SENT');
       // Set Motion
       $timeout(function() {
@@ -292,8 +297,8 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.doUpdate = function() {
     UIUtils.loading.show();
     Wallet.refreshData()
-    .then(function(wallet) {
-      $scope.updateView(wallet);
+    .then(function() {
+      $scope.updateView();
       UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
@@ -338,16 +343,16 @@ function WalletTxErrorController($scope, $rootScope, $ionicPopup, $timeout, UIUt
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loadWallet()
-      .then(function(wallet) {
-        $scope.updateView(wallet);
+      .then(function(walletData) {
+        $scope.walletData = walletData;
+        $scope.updateView();
         $scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
       });
   });
 
   // Update view
-  $scope.updateView = function(wallet) {
-    $scope.walletData = wallet;
+  $scope.updateView = function() {
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight();
@@ -360,8 +365,8 @@ function WalletTxErrorController($scope, $rootScope, $ionicPopup, $timeout, UIUt
   $scope.doUpdate = function() {
     UIUtils.loading.show();
     Wallet.refreshData()
-    .then(function(wallet) {
-      $scope.updateView(wallet);
+    .then(function() {
+      $scope.updateView();
       UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));

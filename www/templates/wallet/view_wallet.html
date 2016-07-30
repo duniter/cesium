@@ -16,22 +16,22 @@
   <ion-content scroll="true">
     <div class="positive-900-bg hero"
          id="wallet-header"
-         ng-class="{'hero-qrcode-active': toggleQRCode, 'on': convertedBalance != null}">
-      <div class="content" >
+         ng-class="{'hero-qrcode-active': toggleQRCode, 'on': !loading}">
+      <div class="content" ng-show="convertedBalance">
         <div class="avatar"
-             ng-if="!!walletData.avatar"
+             ng-if="walletData.avatar"
              style="background-image: url({{::walletData.avatar}});"></div>
-        <i class="avatar" ng-class="{'avatar-wallet': walletData && !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
-        <h3 class="light" ng-if="walletData && walletData.isMember">{{walletData.uid}}</h3>
-        <h3 class="light" ng-if="walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
-        <h4 class="light" ng-if="isLogged() && convertedBalance != null">
+        <i class="avatar"  ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
+        <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
+        <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
+        <h4 class="light">
             <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
         </h4>
-        <h4 class="light" ng-if="!isLogged() || convertedBalance == null">
-          <ion-spinner icon="android"></ion-spinner>
-        </h4>
       </div>
+      <h4 class="content light" ng-show="!convertedBalance">
+        <ion-spinner icon="android"></ion-spinner>
+      </h4>
     </div>
 
     <div id="qrcode" class="qrcode visible-xs visible-sm spin"
@@ -39,10 +39,10 @@
          ng-click="toggleQRCode = !toggleQRCode"></div>
 
     <!-- Buttons bar-->
-    <div class="hidden-xs hidden-sm padding" style="text-align:center"
-         ng-if="!!convertedBalance">
+    <div class="hidden-xs hidden-sm padding text-center"
+         ng-if="convertedBalance">
       <button class="button button-raised button-energized-900 ink-dark"
-              ng-click="openTransfer()">
+              ng-click="showTransferModal()">
         {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
       </button>
 
@@ -54,8 +54,7 @@
     </div>
 
     <div class="row no-padding">
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
       <div class="col list animate-fade-slide-in-right">
 
@@ -220,7 +219,7 @@
   <button id="fab-transfer"
           ng-if="walletData"
           class="button button-fab button-fab-bottom-right button-energized-900 hidden-md hidden-lg drop"
-          ng-click="openTransfer()">
+          ng-click="showTransferModal()">
     <i class="icon ion-android-send"></i>
   </button>
 </ion-view>

@@ -87,6 +87,9 @@ $screen-lg:                       1200px;
     .row.hidden-xs {
       display: flex !important;
     }
+    .button.hidden-xs {
+      display: inline-block;
+    }
 }
 @media screen and (max-width: $screen-xs-max) {
     .visible-xs {
@@ -144,6 +147,9 @@ $screen-lg:                       1200px;
     }
     .row.hidden-sm {
       display: flex !important;
+    }
+    .button.hidden-sm {
+      display: inline-block;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
@@ -462,4 +468,16 @@ $screen-lg:                       1200px;
 
 .card .item .card-footer {
   margin-bottom: 5px;
+}
+
+.list .item.text-left {
+  text-align: left !important;
+}
+
+.list .item.text-center {
+  text-align: center !important;
+}
+
+.list .item.text-right {
+  text-align: right !important;
 }

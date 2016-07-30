@@ -123,7 +123,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
             commons: fields.commons
           },
           picture: {
-            all: ESUtils.get('http://' + server + '/market/record/:record?_source=pictures')
+            all: ESUtils.get('http://' + server + '/market/record/:id?_source=pictures')
           },
           comment:{
             search: postSearchComments,

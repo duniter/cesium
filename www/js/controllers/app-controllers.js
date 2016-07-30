@@ -32,7 +32,7 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   .controller('AppCtrl', AppController)
 ;
 
-function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+function LoginModalController2($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
   'ngInject';
 
   // Login modal
@@ -123,86 +123,6 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     }
   };
 
-  // Login form submit
-  $scope.doLogin = function() {
-    if(!$scope.loginForm.$valid) {
-      return;
-    }
-    // removeIf(no-device)
-    if (window.cordova && cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.close();
-    }
-    // endRemoveIf(no-device)
-    UIUtils.loading.show();
-
-    $scope.loginModal.hide()
-    .then(function(){
-      // Call wallet login, then execute callback function
-      Wallet.login($scope.loginData.username, $scope.loginData.password)
-        .then(function(walletData){
-          walletData.settings.rememberMe = $scope.loginData.rememberMe;
-          if (walletData.settings.rememberMe) {
-            walletData.settings.useLocalStorage = true;
-            Wallet.store();
-          }
-
-          var callback = $scope.loginData.callbacks.success;
-          $scope.loginData = {}; // Reset login data
-          $scope.loginForm.$setPristine(); // Reset form
-          if (!!callback) {
-            if (typeof callback === "string") {
-              $state.go(callback);
-            }
-            else {
-              callback();
-            }
-          }
-          // Default: redirect to wallet view
-          else {
-            $state.go('app.view_wallet');
-          }
-        })
-        .catch(function(err) {
-          $scope.loginData = {}; // Reset login data
-          $scope.loginForm.$setPristine(); // Reset form
-          UIUtils.loading.hide();
-          console.error('>>>>>>>' , err);
-          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-        });
-    });
-  };
-
-  $scope.loginDataChanged = function() {
-    $scope.loginData.computing=false;
-    $scope.loginData.pubkey=null;
-  };
-
-  $scope.showLoginPubkey = function() {
-    $scope.loginData.computing=true;
-    CryptoUtils.connect($scope.loginData.username, $scope.loginData.password).then(
-        function(keypair) {
-            $scope.loginData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.loginData.computing=false;
-        }
-    )
-    .catch(function(err) {
-      $scope.loginData.computing=false;
-      UIUtils.loading.hide();
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-    });
-  };
-
-  // Logout
-  $scope.logout = function() {
-    Wallet.logout()
-    .then(function() {
-      $ionicSideMenuDelegate.toggleLeft();
-      $state.go('app.home');
-    })
-    .catch(UIUtils.onError());
-  };
-
   // Open new account
   $scope.openNewAccount = function() {
     $scope.cancelLogin();
@@ -212,25 +132,6 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     $state.go('app.join');
   };
 
-  // Is connected
-  $scope.isLogged = function() {
-      return Wallet.isLogin();
-  };
-
-  // Is connected
-  $rootScope.isLogged = function() {
-      return Wallet.isLogin();
-  };
-
-  // Is not connected
-  $scope.isNotLogged = function() {
-    return !Wallet.isLogin();
-  };
-
-  // If connected and same pubkey
-  $scope.isUserPubkey = function(pubkey) {
-    return Wallet.isLogin() && Wallet.data.pubkey === pubkey;
-  };
 
   // TODO : for DEV only
   /*$timeout(function() {
@@ -245,17 +146,18 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
 
 
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $ionicPopover, $translate, $filter
+  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $ionicPopover, $translate, $filter,
+  Modals
   ) {
   'ngInject';
 
-  $scope.knownCurrencies = null;
   $scope.search = { text: '', results: {} };
   $scope.config = APP_CONFIG;
+  $rootScope.walletData = Wallet.data;
 
-  LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
+  //LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
 
-  TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q);
+  //TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q);
 
   ////////////////////////////////////////
   // Load currencies
@@ -263,19 +165,19 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   $scope.loadCurrencies = function() {
     return $q(function (resolve, reject){
-      if (!!$scope.knownCurrencies) { // get list on once
-        resolve($scope.knownCurrencies);
+      if (!!$rootScope.knownCurrencies) { // get list only once
+        resolve($rootScope.knownCurrencies);
         return;
       }
-      $scope.knownCurrencies = [];
+      $rootScope.knownCurrencies = [];
       BMA.currency.parameters()
       .then(function(res) {
-        $scope.knownCurrencies.push({
+        $rootScope.knownCurrencies.push({
           name: res.currency,
           peer: BMA.node.url}
         );
         $scope.search.looking = false;
-        resolve($scope.knownCurrencies);
+        resolve($rootScope.knownCurrencies);
       })
       .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
     });
@@ -311,6 +213,131 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
       }
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+  };
+
+  ////////////////////////////////////////
+  // Login & wallet
+  ////////////////////////////////////////
+
+  // Login and load wallet
+  $scope.loadWallet = function() {
+    return $q(function(resolve, reject){
+
+      if (!Wallet.isLogin()) {
+        $scope.showLoginModal()
+        .then(function(walletData) {
+          if (walletData) {
+            $rootScope.viewFirstEnter = false;
+            Wallet.loadData()
+            .then(function(walletData){
+              $rootScope.walletData = walletData;
+              resolve(walletData);
+            })
+            .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+          }
+          else { // failed to login
+            reject('CANCELLED');
+          }
+        });
+      }
+      else if (!Wallet.data.loaded) {
+        Wallet.loadData()
+          .then(function(walletData){
+            $rootScope.walletData = walletData;
+            resolve(walletData);
+          })
+          .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+      }
+      else {
+        resolve(Wallet.data);
+      }
+    });
+  };
+
+  // Login
+  $scope.login = function(state) {
+    if (!Wallet.isLogin()) {
+      $scope.showLoginModal()
+      .then(function(walletData){
+        UIUtils.loading.hide();
+        if (walletData) {
+          $state.go(state ? state : 'app.view_wallet');
+        }
+      })
+    }
+  };
+
+  // Show login modal
+  $scope.showLoginModal = function() {
+    return Modals.showLogin()
+    .then(function(formData){
+      if (!formData) return;
+      Wallet.data.settings.rememberMe = formData.rememberMe;
+      if (Wallet.data.settings.rememberMe) {
+        Wallet.data.settings.useLocalStorage = true;
+        Wallet.store();
+      }
+      return Wallet.login(formData.username, formData.password);
+    })
+    .then(function(walletData){
+      if (walletData) {
+        $rootScope.walletData = walletData;
+      }
+      return walletData;
+    })
+    .catch(UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR'));
+  };
+
+
+  // Logout
+  $scope.logout = function() {
+    Wallet.logout()
+    .then(function() {
+      $ionicSideMenuDelegate.toggleLeft();
+      $state.go('app.home');
+    })
+    .catch(UIUtils.onError());
+  };
+
+  // Is connected
+  $scope.isLogged = function() {
+      return Wallet.isLogin();
+  };
+
+  // Is connected
+  $rootScope.isLogged = function() {
+      return Wallet.isLogin();
+  };
+
+  // Is not connected
+  $scope.isNotLogged = function() {
+    return !Wallet.isLogin();
+  };
+
+  // If connected and same pubkey
+  $scope.isUserPubkey = function(pubkey) {
+    return Wallet.isLogin() && Wallet.data.pubkey === pubkey;
+  };
+
+  ////////////////////////////////////////
+  // Useful modals
+  ////////////////////////////////////////
+
+  // Open transfer modal
+  $scope.showTransferModal = function(parameters) {
+    $scope.loadWallet()
+    .then(function(walletData){
+      UIUtils.loading.hide();
+      if (walletData) {
+        return Modals.showTransfer(parameters);
+      }
+    })
+    .then(function(result){
+      if (result){
+        UIUtils.alert.info('INFO.TRANSFER_SENT');
+        $state.go('app.view_wallet');
+      }
+    });
   };
 
   ////////////////////////////////////////

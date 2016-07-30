@@ -14,21 +14,20 @@
   <ion-content >
     <form name="loginForm" novalidate="" ng-submit="doLogin()">
 
-      <div class="list" ng-init="setLoginForm(loginForm)">
+      <div class="list" ng-init="setForm(loginForm)">
 
         <!-- username -->
         <label class="item item-input"
-               ng-class="{ 'item-input-error': loginForm.$submitted && loginForm.username.$invalid}">
+               ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
           <span class="input-label hidden-xs" translate>LOGIN.USERNAME</span>
           <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
-                 ng-model="loginData.username"
-                 ng-change="loginDataChanged()"
+                 ng-model="formData.username"
                  class="highlight-light"
                  required>
         </label>
         <div class="form-errors"
-             ng-show="loginForm.$submitted && loginForm.username.$error"
-             ng-messages="loginForm.username.$error">
+             ng-show="form.$submitted && form.username.$error"
+             ng-messages="form.username.$error">
           <div class="form-error" ng-message="required">
             <span translate="ERROR.FIELD_REQUIRED"></span>
           </div>
@@ -36,17 +35,16 @@
 
         <!-- password-->
         <label class="item item-input"
-               ng-class="{ 'item-input-error': loginForm.$submitted && loginForm.password.$invalid}">
+               ng-class="{ 'item-input-error': form.$submitted && form.password.$invalid}">
           <span class="input-label hidden-xs" translate>LOGIN.PASSWORD</span>
           <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
-                 ng-model="loginData.password"
-                 ng-change="loginDataChanged()"
+                 ng-model="formData.password"
                  select-on-click
                  required>
         </label>
         <div class="form-errors"
-             ng-show="loginForm.$submitted && loginForm.password.$error"
-             ng-messages="loginForm.password.$error">
+             ng-show="form.$submitted && form.password.$error"
+             ng-messages="form.password.$error">
           <div class="form-error" ng-message="required">
             <span translate="ERROR.FIELD_REQUIRED"></span>
           </div>
@@ -58,7 +56,7 @@
           {{'SETTINGS.REMEMBER_ME' | translate}}
         </div>
         <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="loginData.rememberMe">
+          <input type="checkbox" ng-model="formData.rememberMe">
           <div class="track">
             <div class="handle"></div>
           </div>
@@ -69,22 +67,23 @@
         <div class="item item-button-right left">
           <span class="input-label" translate>COMMON.PUBKEY</span>
           <a class="button button-light button-small ink animate-if"
-             ng-click="showLoginPubkey()"
-             ng-if="!(loginData.pubkey || loginData.computing || !loginData.username || !loginData.password)"
+             ng-click="showPubkey()"
+             ng-if="!(pubkey || computing || !formData.username || !formData.password)"
             >
             {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
           </a>
-          <h3 class="gray text-no-wrap" ng-if="loginData.pubkey">
-            {{loginData.pubkey}}
+          <h3 class="gray text-no-wrap" ng-if="pubkey">
+            {{pubkey}}
           </h3>
-          <h3 ng-if="loginData.computing">
+          <h3 ng-if="computing">
             <ion-spinner icon="android"></ion-spinner>
           </h3>
         </div>
       </div>
 
       <div class="padding hidden-xs text-right">
-        <button class="button button-clear button-dark ink" ng-click="cancelLogin()" type="button" translate>COMMON.BTN_CANCEL
+        <button class="button button-clear button-dark ink"
+                ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
         </button>
         <button class="button button-positive ink" type="submit">
           {{'COMMON.BTN_LOGIN' | translate}}

@@ -121,10 +121,10 @@
                   <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
                   <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
                   <a class="gray hidden-device" ng-click="formData.socials.splice($index, 1); doSave();">
-                    &nbsp;<b class="ion ion-close "></b>&nbsp;
+                    &nbsp;<b class="ion ion-trash-a"></b>&nbsp;
                   </a>
                   <a class="gray hidden-device" ng-click="editSocialNetwork($index)">
-                    &nbsp;<b class="ion ion-edit "></b>&nbsp;
+                    &nbsp;<b class="ion ion-edit"></b>&nbsp;
                   </a>
                 </h2>
                 <ion-option-button class="button-assertive" ng-click="formData.socials.splice($index, 1); doSave();">

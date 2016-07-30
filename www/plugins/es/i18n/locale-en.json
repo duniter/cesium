@@ -2,7 +2,7 @@
   "MENU": {
     "MARKET": "Ads",
     "REGISTRY": "Companies",
-    "USER_PROFILE": "Profile"
+    "USER_PROFILE": "My Profile"
   },
   "MARKET": {
     "COMMON": {
@@ -33,6 +33,7 @@
     },
     "EDIT": {
       "TITLE": "Edit",
+      "LAST_MODIFICATION_DATE": "Updated on ",
       "RECORD_TITLE": "Title",
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
@@ -41,6 +42,7 @@
       "RECORD_LOCATION_HELP": "Address, City",
       "RECORD_PRICE": "Price",
       "RECORD_PRICE_HELP": "Price (optional)",
+      "RECORD_CURRENCY": "Currency",
       "BTN_ADD_PICTURES": "Add pictures",
       "BTN_ADD_PICTURE": "Add a picture",
       "BTN_PUBLISH": "Publish",

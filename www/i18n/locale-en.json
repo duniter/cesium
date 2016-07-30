@@ -180,6 +180,7 @@
   },
   "TRANSFER": {
     "TITLE": "Transfer",
+    "SUB_TITLE": "Send a payment",
     "FROM": "From",
     "TO": "To",
     "AMOUNT": "Amount",

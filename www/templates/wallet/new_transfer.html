@@ -1,7 +1,7 @@
 <ion-view left-buttons="leftButtons"
           id="transfer">
   <ion-nav-title>
-    <span translate>TRANSFER.TITLE</span>
+    <span class="visible-xs visible-sm" translate>TRANSFER.TITLE</span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
@@ -9,11 +9,17 @@
       </button>
   </ion-nav-buttons>
 
-  <ion-content class="no-padding-xs">
-    <div class="scroll">
-      <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>
-
-      <div class="scroll-bar scroll-bar-v"></div>
+  <ion-content scroll="true">
+    <div class="row">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="col">
+        <h2 class="hidden-xs hidden-sm">
+          {{'TRANSFER.SUB_TITLE'|translate}}
+        </h2>
+        <h4 class="hidden-xs hidden-sm">&nbsp;</h4>
+        <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>
+      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
     </div>
   </ion-content>
 </ion-view>

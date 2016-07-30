@@ -37,12 +37,14 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   })
 
   .controller('TransferCtrl', TransferController)
+
+  .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q) {
+function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals) {
   'ngInject';
 
-  TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q);
+  TransferModalController.call(this, $scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!!$state.stateParams && !!$state.stateParams.pubkey) {
@@ -65,12 +67,22 @@ function TransferController($scope, $rootScope, $ionicModal, $state, BMA, Wallet
       UIUtils.loading.hide();
     });
   });
+
+  $scope.cancel = function() {
+    //TODO : go back ?
+    alert('TODO : go back ?')
+  };
+
+  $scope.setForm = function(form) {
+    $scope.form = form;
+  };
+
 }
 
-function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q) {
+function TransferModalController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, parameters) {
   'ngInject';
 
-  $scope.walletData = {};
+  $scope.walletData = $rootScope.walletData;
   $scope.convertedBalance = 0;
   $scope.formData = {
     destPub: null,
@@ -82,26 +94,26 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
   $scope.udAmount = null;
   $scope.commentPattern = BMA.regex.COMMENT;
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, Device, Wallet);
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/wallet/modal_transfer.html', {
-    scope: $scope,
-    focusFirstInput: true
-  }).then(function(modal) {
-    $scope.transferModal = modal;
-    $scope.transferModal.hide();
-
-    UIUtils.ink({selector: '.ink'});
-  });
-
-  $ionicModal.fromTemplateUrl('templates/wot/modal_lookup.html', {
-      scope: $scope,
-      focusFirstInput: true
-  }).then(function(modal) {
-    $scope.lookupModal = modal;
-    $scope.lookupModal.hide();
-  });
+  if (parameters) {
+    if (parameters.pubkey) {
+      $scope.formData.destPub = parameters.pubkey;
+    }
+    if (parameters.uid) {
+        $scope.destUid = parameters.uid;
+        $scope.destPub = '';
+    }
+    else {
+      $scope.destUid = '';
+      $scope.destPub = parameters.pubkey;
+    }
+    if (parameters.amount) {
+      $scope.formData.amount = parameters.amount;
+    }
+    if (parameters.comment) {
+      $scope.formData.useComment=true;
+      $scope.formData.comment = parameters.comment;
+    }
+  }
 
   $ionicPopover.fromTemplateUrl('templates/wallet/popover_unit.html', {
     scope: $scope
@@ -111,62 +123,14 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
 
   //Cleanup the modal when we're done with it!
   $scope.$on('$destroy', function() {
-    if (!!$scope.transferModal) {
-      $scope.transferModal.remove();
-    }
-    if (!!$scope.lookupModal) {
-      $scope.lookupModal.remove();
-    }
     if (!!$scope.unitPopover) {
       $scope.unitPopover.remove();
     }
   });
 
-  $scope.setTransferForm = function(transferForm) {
-    $scope.transferForm = transferForm;
-  };
 
-  // Open transfer modal
-  $scope.transfer = function(destPub, destUid, amount, callback) {
-    if (!!$scope.transferModal) {
-      $scope.formData.destPub = destPub;
-      if (destUid) {
-        $scope.destUid = destUid;
-        $scope.destPub = '';
-      }
-      else {
-        $scope.destUid = '';
-        $scope.destPub = destPub;
-      }
-      if (amount && typeof amount === "function") {
-        callback = amount;
-      }
-      else {
-        $scope.formData.amount = amount;
-      }
-      $scope.formData.callback = callback;
-
-      $scope.resetWotSearch(); // Reset WOT search
-
-      $scope.loadWallet()
-        .then(function(wallet) {
-          UIUtils.loading.hide();
-          $scope.walletData = wallet;
-          $scope.formData.useRelative = wallet.settings.useRelative;
-          $scope.transferModal.show();
-        }).catch(UIUtils.onError());
-    }
-    else{
-      UIUtils.loading.show();
-      $timeout($scope.transfer, 2000);
-    }
-  };
-
-  // Triggered in the login modal to close it
-  $scope.closeTransfer = function() {
-    $scope.formData = {}; // Reset login data
-    $scope.transferForm.$setPristine(); // Reset form
-    $scope.transferModal.hide();
+  $scope.cancel = function() {
+    $scope.closeModal();
   };
 
   // When changing use relative UD
@@ -200,13 +164,26 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
   };
   $scope.$watch('formData.useComment', $scope.onUseCommentChanged, true);
 
-  $scope.openWotLookup = function() {
-    $scope.lookupModal.show();
+  $scope.showWotLookupModal = function() {
+    Modals.showWotLookup()
+    .then(function(result){
+      if (result) {
+        if (result.uid) {
+            $scope.destUid = result.uid;
+            $scope.destPub = '';
+        }
+        else {
+            $scope.destUid = '';
+            $scope.destPub = result.pubkey;
+        }
+        $scope.formData.destPub = result.pubkey;
+      }
+    });
   };
 
   $scope.doTransfer = function() {
-    $scope.transferForm.$submitted=true;
-    if(!$scope.transferForm.$valid || !$scope.formData.destPub) {
+    $scope.form.$submitted=true;
+    if(!$scope.form.$valid || !$scope.formData.destPub) {
       return;
     }
 
@@ -223,25 +200,10 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
 
       Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
       .then(function() {
-        var callback = $scope.formData.callback;
-        $scope.formData = {}; // Reset form data
-        $scope.transferForm.$setPristine(); // Reset form
-        $scope.closeTransfer();
-        if (!!callback) {
-          callback();
-        }
-        // Default: redirect to wallet view
-        else {
-          UIUtils.loading.hide();
-          UIUtils.alert.info('INFO.TRANSFER_SENT');
-          $state.go('app.view_wallet');
-        }
+        UIUtils.loading.hide();
+        $scope.closeModal(true);
       })
-      .catch(
-        function(err) {
-          UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
-        }
-      );
+      .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
     });
   };
 
@@ -266,23 +228,6 @@ function TransferModalController($scope, $rootScope, $ionicModal, $state, BMA, W
         });
       });
     });
-  };
-
-  $scope.closeLookup = function() {
-    $scope.lookupModal.hide();
-  };
-
-  $scope.doSelectIdentity = function(pub, uid) {
-    if (uid) {
-        $scope.destUid = uid;
-        $scope.destPub = '';
-    }
-    else {
-        $scope.destUid = '';
-        $scope.destPub = pub;
-    }
-    $scope.formData.destPub = pub;
-    $scope.lookupModal.hide();
   };
 
   $scope.setUseRelative = function(useRelative) {

@@ -35,6 +35,11 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       }
     };
 
+    this.getBlockchainBlock = HttpUtils.get('http://' + server + '/blockchain/block/:block');
+    this.getBlockchainWithUd = HttpUtils.get('http://' + server + '/blockchain/with/ud');
+    this.getBlockchainCurrentNoCache = HttpUtils.get('http://' + server + '/blockchain/current');
+    this.getMembersNoCache = HttpUtils.get('http://' + server + '/wot/members');
+
     function exact(regexpContent) {
       return new RegExp("^" + regexpContent + "$");
     }
@@ -50,7 +55,6 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       }
     }
 
-    this.getBlockchainCurrentNoCache = HttpUtils.get('http://' + server + '/blockchain/current');
 
     function getBlockchainCurrent(cache) {
       return $q(function(resolve, reject) {
@@ -71,7 +75,6 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       });
     }
 
-    this.getMembersNoCache = HttpUtils.get('http://' + server + '/wot/members');
 
     function getMembers(cache) {
       return $q(function(resolve, reject) {
@@ -140,6 +143,31 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       });
     }
 
+    function getBlockchainLastUd(cache) {
+      return $q(function(resolve, reject) {
+        var now = new Date();
+        if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= constants.CACHE_TIME_MS){
+          resolve(data.blockchain.lastUd);
+        }
+        else {
+          getBlockchainWithUd()
+          .then(function(res){
+            if (res.result.blocks.length) {
+              var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+              return getBlockchainBlock({ block: lastBlockWithUD })
+                .then(function(block){
+                  var currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
+                  resolve(currentUD);
+                });
+            }
+          })
+          .catch(function(err) {
+            reject(err);
+          });
+        }
+      });
+    }
+
     function resetWotData() {
       data.wot = {};
     }
@@ -175,12 +203,13 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       },
       blockchain: {
         current: getBlockchainCurrent,
-        block: HttpUtils.get('http://' + server + '/blockchain/block/:block'),
+        block: getBlockchainBlock,
         membership: HttpUtils.post('http://' + server + '/blockchain/membership'),
         stats: {
-          ud: HttpUtils.get('http://' + server + '/blockchain/with/ud'),
+          ud: getBlockchainWithUd,
           tx: HttpUtils.get('http://' + server + '/blockchain/with/tx')
-        }
+        },
+        lastUd: getBlockchainLastUd
       },
       tx: {
         sources: HttpUtils.get('http://' + server + '/tx/sources/:pubkey'),

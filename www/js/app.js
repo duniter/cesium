@@ -40,7 +40,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
-  .filter('formatDate', function() {
+  .filter('formatDate', function($translate) {
     return function(input) {
       // TODO: use local format
       return input ? moment(parseInt(input)*1000).local().format('YYYY-MM-DD HH:mm') : '';

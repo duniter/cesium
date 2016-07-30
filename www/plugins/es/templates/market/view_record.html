@@ -4,7 +4,7 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-positive button-clear button-icon ion-android-create" ng-click="edit()" ng-if="canEdit">
+      <button class="button button-positive button-clear button-icon ion-android-create visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
       </button>
   </ion-nav-buttons>
 
@@ -61,19 +61,24 @@
         </div>
 
         <span class="item item-icon-left item-button-right" >
-            <i class="icon ion-pricetag" ng-show="formData.price"></i>
-            <span class="dark">{{formData.price}}</span>
-            <button class="button button-raised button-calm ink-dark"
-                    ng-click="transfer(formData.issuer, null, formData.price)">
-              {{'MARKET.COMMON.BTN_BUY' | translate}}
-            </button>
+            <i class="icon ion-pricetag" ng-if="formData.price"></i>
+            <span class="dark" ng-if="formData.currency && !$root.walletData.settings.useRelative">{{convertedPrice|formatInteger}} {{formData.currency|abbreviate}}</span>
+            <span class="dark" ng-if="formData.currency && $root.walletData.settings.useRelative">{{convertedPrice|formatDecimal}} {{'COMMON.UD'|translate}} <sub>{{formData.currency|abbreviate}}</sub></span>
         </span>
 
-        <div class="hidden-xs hidden-sm padding">
-
+        <!-- Buttons bar-->
+        <div class="item padding text-right">
+          <button class="button button-raised button-calm ink-dark"
+                  ng-click="showTransferModal({pubkey: issuer.pubkey, uid: issuer.uid, amount: formData.price})"
+                  ng-if="!canEdit && formData.price">
+            {{'MARKET.COMMON.BTN_BUY' | translate}}
+          </button>
+          <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
+                  ng-if="canEdit"
+                  ng-click="edit()">
+            {{'COMMON.BTN_EDIT' | translate}}
+          </button>
         </div>
-
-        <div class="item-divider visible-xs visible-sm">&nbsp;</div>
 
         <div class="lazy-load">
           <div class="item gallery done in" ng-if="pictures && pictures.length>0" >
@@ -122,14 +127,14 @@
                 </a>
                 <span class="pull-right">&nbsp;&nbsp;</span>
                 <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="removeComment($index)">
-                  &nbsp;<b class="icon ion-close"></b>&nbsp;
+                  &nbsp;<b class="icon ion-trash-a"></b>&nbsp;
                 </a>
               </div>
             </div>
 
           </ion-item>
 
-          <div class="item item-input-inset">
+          <div class="item item-input-inset ">
             <label class="item-input-wrapper">
               <input id="commentMessage" type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}" on-return="sendComment();" ng-model="commentData.message"/>
             </label>

@@ -180,6 +180,7 @@
   },
   "TRANSFER": {
     "TITLE": "Payer",
+    "SUB_TITLE": "Envoyer un paiement",
     "FROM": "De",
     "TO": "A",
     "AMOUNT": "Montant",

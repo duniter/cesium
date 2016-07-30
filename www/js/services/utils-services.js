@@ -351,4 +351,5 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   };
 })
+
 ;

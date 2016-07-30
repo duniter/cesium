@@ -1,14 +1,15 @@
-  <form name="transferForm" novalidate="" ng-submit="doTransfer()">
+  <form name="transferForm" novalidate="" ng-submit="doTransfer()"
+        >
 
-    <div class="list" ng-init="setTransferForm(transferForm)">
+    <div class="list" ng-init="setForm(transferForm)">
 
-      <a class="item item-icon-right gray ink" ng-click="openWotLookup()">
+      <a class="item item-icon-right gray ink" ng-click="showWotLookupModal()">
           <span class="gray" translate>TRANSFER.TO</span>
           <span class="badge badge-royal">{{destUid}}{{destPub | formatPubkey}}</span>&nbsp;
           <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"
-           ng-if="transferForm.$submitted && !formData.destPub">
+           ng-if="form.$submitted && !formData.destPub">
         <div class="form-error">
           <span translate="ERROR.FIELD_REQUIRED"></span>
         </div>
@@ -52,8 +53,8 @@
         </span>
       </ion-item>
       <div class="form-errors"
-           ng-show="transferForm.$submitted && transferForm.amount.$error"
-           ng-messages="transferForm.amount.$error">
+           ng-show="form.$submitted && form.amount.$error"
+           ng-messages="form.amount.$error">
         <div class="form-error" ng-message="required">
           <span translate="ERROR.FIELD_REQUIRED"></span>
         </div>
@@ -72,7 +73,7 @@
 
       <!-- Comment -->
       <label class="item item-input item-floating-label hidden-xs hidden-sm"
-             ng-class="{'item-input-error': transferForm.$submitted && transferForm.comment.$invalid}">
+             ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
         <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
         <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
                   name="comment"
@@ -83,7 +84,7 @@
       </label>
       <label class="item item-input item-floating-label visible-xs visible-sm"
              ng-if="formData.useComment"
-             ng-class="{'item-input-error': transferForm.$submitted && transferForm.comment.$invalid}">
+             ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
         <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
         <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
                   name="comment"
@@ -93,8 +94,8 @@
         </textarea>
       </label>
       <div class="form-errors"
-           ng-show="transferForm.$submitted && transferForm.comment.$error"
-           ng-messages="transferForm.comment.$error">
+           ng-show="form.$submitted && form.comment.$error"
+           ng-messages="form.comment.$error">
         <div class="form-error" ng-message="maxlength">
           <span translate="ERROR.FIELD_TOO_LONG"></span>
         </div>
@@ -106,7 +107,8 @@
     </div>
 
     <div class="padding hidden-xs text-right">
-      <button class="button button-small button-clear button-dark ink" ng-click="closeTransfer()" type="button" translate>COMMON.BTN_CANCEL
+      <button class="button button-small button-clear button-dark ink"
+              ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
       </button>
       <button class="button button-small button-positive ink" type="submit">
         {{'TRANSFER.BTN_SEND' | translate}}

@@ -17,6 +17,14 @@
 
         <div class="list col">
 
+          <div class="item" ng-if="id">
+            <h1 ng-bind-html="formData.title"></h1>
+            <h4 class="gray">
+              <i class="icon ion-calendar"></i>
+              {{'MARKET.EDIT.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
+            </h4>
+          </div>
+
           <div class="gallery" >
             <div ng-repeat="picture in pictures"
                  class="item card card-gallery">
@@ -48,17 +56,12 @@
           <input type="file" id="pictureFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
                  style="visibility:hidden; position:absolute;"/>
 
-          <span class="item item-icon-left" ng-if="id && formData.issuer">
-              <i class="icon ion-key"></i>
-              <span translate>MARKET.COMMON.ISSUER</span>
-              <span class="badge">{{formData.issuer | formatPubkey}}</span>
-          </span>
 
-          <span class="item item-button-right" ng-click="openCategoryModal()">
-              <span translate>MARKET.COMMON.CATEGORY</span>
-              <span class="badge badge-royal">{{category.name}}</span>&nbsp;
-              <i class="button button-clear ion-chevron-right"></i>
-          </span>
+          <a class="item item-icon-right ink" ng-click="openCategoryModal()">
+            <span class="item-label" translate>MARKET.COMMON.CATEGORY</span>
+            <span class="badge badge-royal">{{category.name}}</span>&nbsp;
+            <i class="gray icon ion-ios-arrow-right"></i>
+          </a>
 
           <div class="item item-input item-floating-label">
               <span class="input-label" translate>MARKET.EDIT.RECORD_TITLE</span>
@@ -72,11 +75,37 @@
                         rows="8" cols="10"></textarea>
           </div>
 
-          <div class="item item-input item-floating-label">
-            <span class="input-label" translate>MARKET.EDIT.RECORD_PRICE</span>
-                <input type="text" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP'|translate}}"
-                          ng-model="formData.price">
-          </div>
+          <!-- price -->
+          <ion-item class="item-input item-floating-label item-button-right"
+                    ng-if="!$root.walletData.settings.useRelative">
+            <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{currency | abbreviate}})</span>
+            <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{currency | abbreviate}})"
+                   ng-model="formData.price"
+                   required>
+            <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
+            </span>
+            <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
+              <i class="icon ion-android-more-vertical"></i>
+            </span>
+          </ion-item>
+          <ion-item class="item-input item-floating-label item-button-right"
+                    ng-if="$root.walletData.settings.useRelative">
+            <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</span>
+            <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
+                   ng-model="formData.price"
+                   required>
+            <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
+            </span>
+            <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
+              <i class="icon ion-android-more-vertical"></i>
+            </span>
+          </ion-item>
+
+          <a class="item item-icon-right ink" ng-click="openCurrencyLookup()" >
+            <span class="item-label gray" translate>MARKET.EDIT.RECORD_CURRENCY</span>
+            <span class="badge badge-royal">{{currency}}</span>&nbsp;
+            <i class="gray icon ion-ios-arrow-right"></i>
+          </a>
 
           <div class="item item-floating-label" ng-if="location.enable">
               <span class="input-label" translate>MARKET.EDIT.RECORD_LOCATION</span>
