@@ -126,7 +126,7 @@ cd cesium
 Puis, lancez le téléchargement et l'installation des modules Cesium à l'aide de la commande : 
 
 ```bash
-npm install -g bower gulp ionic
+npm install -g bower gulp ionic cordova
 ```
 Puis pour les dépendances non globales :
 ```bash

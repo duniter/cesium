@@ -22,16 +22,22 @@ To contribute and compile cesium, you will have to:
   nvm install 5 
 ```
       
+  - Installing nodejs build tools:
+```
+   npm install -g bower gulp ionic cordova
+```
+
   - Installing other build dependencies:
 ```
  sudo apt-get install build-essential
 ```
    
+   
   - Getting source and installing project dependencies:    
 ```
   git clone https://github.com/duniter/cesium.git
   cd cesium
-  npm install --save
+  npm install
   bower install
 ```
 
