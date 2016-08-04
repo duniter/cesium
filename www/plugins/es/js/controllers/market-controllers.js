@@ -408,7 +408,7 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         .catch(function(err) {
           UIUtils.loading.hide();
           $scope.member = null;
-        })
+        });
       })
       .catch(function(err) {
         if (!$scope.secondTry) {
@@ -484,7 +484,7 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         });
       }, 10);
     });
-  }
+  };
 
   $scope.sendComment = function() {
     if (!$scope.commentData.message || $scope.commentData.message.trim().length === 0) {
@@ -512,21 +512,21 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         .then(function (id){
           obj.id = id;
         })
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));;
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
       }
       // Update
       else {
         Market.record.comment.update(comment, {id: comment.id})
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));;
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
       }
     });
-  }
+  };
 
   $scope.editComment = function(index) {
     var comment = $scope.comments[index];
     $scope.comments.splice(index, 1);
     $scope.commentData = comment;
-  }
+  };
 
   $scope.removeComment = function(index) {
     var comment = $scope.comments[index];
@@ -534,7 +534,7 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
     $scope.comments.splice(index, 1);
     Market.record.comment.remove(comment.id, Wallet.data.keypair)
     .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
-  }
+  };
 }
 
 function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout) {
@@ -569,7 +569,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         .then(function(currencies){
           $scope.formData.currency = $scope.currency;
           UIUtils.loading.hide();
-        })
+        });
       }
     });
   });
@@ -639,7 +639,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         }
       };
 
-      $scope.formData.picturesCount = $scope.pictures.length
+      $scope.formData.picturesCount = $scope.pictures.length;
       if ($scope.formData.picturesCount > 0) {
         $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
           return res.concat({file: UIUtils.image.toAttachment(pic)});
@@ -673,7 +673,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
 
   $scope.openCurrencyLookup = function() {
     alert('Not implemented yet. Please submit an issue if occur again.');
-  }
+  };
 
   $scope.selectNewPicture = function() {
     if ($scope.isDeviceEnable()){
@@ -685,7 +685,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         fileInput[0].click();
       }
     }
-  }
+  };
 
   $scope.openPicturePopup = function() {
     Device.camera.getPicture()

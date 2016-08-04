@@ -9,7 +9,11 @@ var foldersToProcess = [
     'js',
     'js/controllers',
     'js/entity',
-    'js/services'
+    'js/services',
+    'plugins/es/js',
+    'plugins/es/js/controllers',
+    'plugins/es/js/entity',
+    'plugins/es/js/services'
 ];
 
 foldersToProcess.forEach(function(folder) {

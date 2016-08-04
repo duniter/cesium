@@ -115,6 +115,6 @@ angular.module('cesium.directives', [])
           }
         });
       }
-    }
+    };
   })
 ;

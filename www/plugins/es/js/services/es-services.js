@@ -124,7 +124,7 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
         /*$rootScope.globals = {};
         $cookie.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic ';*/
-    };
+    }
 
     function emptyHit() {
       return {

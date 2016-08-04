@@ -147,14 +147,14 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device
 
   $scope.cancel = function(){
     $scope.closeModal();
-  }
+  };
 
   $scope.doSelectIdentity = function(pub, uid){
     $scope.closeModal({
       pubkey: pub,
       uid: uid
     });
-  }
+  };
 
 }
 

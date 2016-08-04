@@ -59,8 +59,8 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
     function getBlockchainCurrent(cache) {
       return $q(function(resolve, reject) {
         var now = new Date();
-        if (cache && data.blockchain.current !== null
-            && (now.getTime() - data.blockchain.current.timestamp) <= constants.CACHE_TIME_MS) {
+        if (cache && data.blockchain.current !== null &&
+            (now.getTime() - data.blockchain.current.timestamp) <= constants.CACHE_TIME_MS) {
           resolve(data.blockchain.current.result);
           return;
         }

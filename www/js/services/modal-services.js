@@ -94,7 +94,7 @@ angular.module('cesium.modal.services', [])
 
   return {
     show: show
-  }
+  };
 })
 
 .factory('Modals', function(ModalUtils) {
@@ -120,6 +120,6 @@ angular.module('cesium.modal.services', [])
     showTransfer: showTransfer,
     showLogin: showLogin,
     showWotLookup: showWotLookup
-  }
+  };
 
 });

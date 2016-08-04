@@ -35,7 +35,7 @@ angular.module('cesium.social.services', ['ngResource'])
       regex.EMAIL = exact(regex.EMAIL);
       _.keys(regex.socials).forEach(function(key){
         regex.socials[key] = exact(regex.socials[key]);
-      })
+      });
 
       function getTypeFromUrl(url){
         var type;
@@ -45,7 +45,7 @@ angular.module('cesium.social.services', ['ngResource'])
           if (protocol == 'http' || protocol == 'https') {
             var slashPathIndex = url.indexOf('/', protocol.length + 3);
             if (slashPathIndex > 0) {
-              urlToMatch = url.substring(0, slashPathIndex)
+              urlToMatch = url.substring(0, slashPathIndex);
             }
           }
           console.log("match URI, try to match: " + urlToMatch);
@@ -69,7 +69,7 @@ angular.module('cesium.social.services', ['ngResource'])
       }
 
       function getFromUrl(url) {
-        var url = url ? url.trim() : url;
+        url = url ? url.trim() : url;
         if (url && url.length > 0) {
           if (url.startsWith('www.')) {
             url = 'http://' + url;
@@ -85,7 +85,7 @@ angular.module('cesium.social.services', ['ngResource'])
       function reduceArray(socials) {
         var map = {};
         socials.forEach(function(social) {
-          var social = getFromUrl(social.url);
+          social = getFromUrl(social.url);
           if (social) {
             var id = $filter('formatSlug')(social.url);
             map[id] = social;

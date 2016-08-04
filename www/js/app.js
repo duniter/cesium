@@ -144,9 +144,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   .config(function($ionicNativeTransitionsProvider){
     'ngInject';
     // Use native transition
-    var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS()/*) &&
-      ionic.Platform.grade.toLowerCase()=='a';*/
-    $ionicNativeTransitionsProvider.enable(enableNativeTransitions);
+    // FIXME : native transition on a PAD move also the left menu !
+    //var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS();
+    //$ionicNativeTransitionsProvider.enable(enableNativeTransitions);
   })
   // endRemoveIf(no-device)
 

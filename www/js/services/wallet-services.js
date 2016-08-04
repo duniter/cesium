@@ -852,7 +852,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                     });
                   store(); // save the wallet
                   resolve(result);
-                }).catch(function(err){reject(err);});;
+                }).catch(function(err){reject(err);});
               });
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});

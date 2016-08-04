@@ -101,7 +101,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
 
       function getCommons() {
         var _source = fields.commons.reduce(function(res, field){
-          return res + ',' + field
+          return res + ',' + field;
         }, '').substring(1);
         return ESUtils.get('http://' + server + '/market/record/:id?_source=' + _source);
       }

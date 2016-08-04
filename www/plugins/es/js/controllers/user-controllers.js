@@ -82,7 +82,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
           else {
             UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
           }*/
-        })
+        });
       });
 
       $timeout(function () {
@@ -146,14 +146,14 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
         selector: '#social-' + $filter('formatSlug')(url)
       });
     }, 0);
-  }
+  };
 
   $scope.editSocialNetwork = function(index) {
     var social = $scope.formData.socials[index];
     $scope.formData.socials.splice(index, 1);
     $scope.socialData.url = social.url;
     $focus('socialUrl');
-  }
+  };
 
   $scope.fileChanged = function(event) {
       UIUtils.loading.show();
@@ -193,7 +193,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
         })
         .catch(UIUtils.onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
-    }
+    };
 
     if ($scope.avatar && $scope.avatar.src) {
       UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to thumbnail

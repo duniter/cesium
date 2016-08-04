@@ -70,7 +70,7 @@ function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $t
 
   $scope.cancel = function() {
     //TODO : go back ?
-    alert('TODO : go back ?')
+    alert('TODO : go back ?');
   };
 
   $scope.setForm = function(form) {

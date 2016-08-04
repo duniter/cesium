@@ -273,7 +273,42 @@ gulp.task('ng_annotate:web', ['templatecache:web'], function (done) {
     .on('end', done);
 });
 
-gulp.task('optimize-files:web', ['ng_annotate:web'], function(done) {
+gulp.task('copy-plugin-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
+  var tmpPath = './platforms/web/www';
+  es.concat(
+    // Transform i18n into JS
+    gulp.src(paths.ng_translate_plugin)
+        .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
+        .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins')),
+
+    // Copy CSS
+    gulp.src(paths.css_plugin)
+        .pipe(gulp.dest(tmpPath + '/dist/dist_css/plugins'))
+  )
+  .on('end', done);
+});
+
+gulp.task('templatecache-plugin:web', ['copy-plugin-files:web'], function (done) {
+  var tmpPath = './platforms/web/www';
+  gulp.src(paths.templatecache_plugin)
+    .pipe(templateCache({
+      standalone:true,
+      module:"cesium.plugins.templates",
+      root: "plugins/"
+     }))
+    .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'))
+    .on('end', done);
+});
+
+gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done) {
+  var tmpPath = './platforms/web/www';
+  gulp.src(paths.ng_annotate_plugin)
+    .pipe(ngAnnotate({single_quotes: true}))
+    .pipe(gulp.dest(tmpPath + '/dist/dist_js/plugins'))
+    .on('end', done);
+});
+
+gulp.task('optimize-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
   var tmpPath = './platforms/web/www';
   var jsFilter = filter(["**/*.js", "!**/vendor/*"], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });

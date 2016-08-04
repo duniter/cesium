@@ -263,7 +263,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
         if (walletData) {
           $state.go(state ? state : 'app.view_wallet');
         }
-      })
+      });
     }
   };
 
