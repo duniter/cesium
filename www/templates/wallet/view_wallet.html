@@ -18,12 +18,13 @@
          id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode, 'on': !loading}">
       <div class="content" ng-show="convertedBalance">
-        <div class="avatar"
-             ng-if="walletData.avatar"
-             style="background-image: url({{::walletData.avatar}});"></div>
-        <i class="avatar"  ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
-        <h3 class="light" ng-if="walletData.isMember">{{walletData.uid}}</h3>
-        <h3 class="light" ng-if="!walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
+        <i class="avatar"
+           ng-style="avatarStyle"
+           ng-class="{'avatar-wallet': !avatarStyle && !walletData.isMember, 'avatar-member': !avatarStyle && walletData.isMember}">
+        </i>
+        <h3 class="light" ng-if="walletData.name">{{walletData.name}}</h3>
+        <h3 class="light" ng-if="!walletData.name && walletData.isMember">{{walletData.uid}}</h3>
+        <h3 class="light" ng-if="!walletData.name && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
             <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
@@ -124,7 +125,7 @@
         <span class="item item-pending ink item-badge-right" ng-repeat="tx in walletData.tx.pendings">
           <h2>
             <i class="icon ion-clock"> </i>
-            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+            <span ui-sref="app.view_identity({pubkey:tx.pubkey})" class="positive">
               <span ng-if="tx.uid">
                 <i class="icon ion-person"></i>
                 {{::tx.uid}}
@@ -173,7 +174,7 @@
         <!-- TX history -->
         <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.history">
           <h2>
-            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+            <span ui-sref="app.view_identity({pubkey:tx.pubkey})" class="positive">
               <span ng-if="tx.uid">
                 <i class="icon ion-person"></i>
                 {{::tx.uid}}

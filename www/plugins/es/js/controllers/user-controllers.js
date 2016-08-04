@@ -110,7 +110,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
   };
 
   $scope.onFormDataChanged = function() {
-    if (!$scope.loading) {
+    if (!$scope.loading && !$scope.saving) {
       $scope.doSave();
     }
   };
@@ -177,21 +177,32 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
       return;
     }
 
+    $scope.saving = true;
+
+    var onError = function(message) {
+      return function(err) {
+        $scope.saving = false;
+        UIUtils.onError(message)(err);
+      };
+    };
+
     var doFinishSave = function(formData) {
       if (!$scope.existing) {
         UserService.profile.add(formData)
         .then(function() {
           console.log("User profile successfully created.");
           $scope.existing = true;
+          $scope.saving = false;
         })
-        .catch(UIUtils.onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
+        .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
       else {
         UserService.profile.update(formData, {id: $rootScope.walletData.pubkey})
         .then(function() {
           console.log("User profile successfully updated.");
+          $scope.saving = false;
         })
-        .catch(UIUtils.onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
+        .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
     };
 

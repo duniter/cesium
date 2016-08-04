@@ -1,6 +1,7 @@
 
 angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
 
+
 .factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, UIUtils) {
   'ngInject';
 
@@ -588,8 +589,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
             // API extension
             $q(function(resolve, reject){
-              api.events.raise.loadData();
-              resolve();
+              api.data.raise.load(data, resolve, reject);
             })
           ])
           .then(function() {
@@ -1031,7 +1031,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     };
 
     // Register extension points
-    api.registerEvent('events', 'loadData');
+    api.registerEvent('data', 'load');
 
     return {
       id: id,

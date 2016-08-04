@@ -21,8 +21,8 @@ angular.module('cesium.modal.services', [])
     };
 
     $ionicModal.fromTemplateUrl(templateUrl, {
-      scope: modalScope,
-      animation: 'slide-in-up'
+      scope: modalScope/*,
+      animation: 'slide-in-up'*/
     })
     .then(function (modal) {
       modalScope.modal = modal;

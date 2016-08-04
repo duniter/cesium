@@ -8,6 +8,7 @@ angular.module('cesium.services', [
     'cesium.storage.services',
     'cesium.device.services',
     'cesium.wallet.services',
+    'cesium.identity.services',
     'cesium.plugin.services'
     ])
 ;

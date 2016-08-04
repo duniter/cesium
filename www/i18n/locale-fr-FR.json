@@ -6,6 +6,7 @@
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
     "BTN_SEND": "Envoyer",
+    "BTN_SAVE": "Enregistrer",
     "BTN_SHOW": "Voir",
     "BTN_SHOW_PUBKEY": "Voir la clé",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",

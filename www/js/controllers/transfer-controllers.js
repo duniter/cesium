@@ -41,7 +41,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals) {
+function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, $ionicHistory) {
   'ngInject';
 
   TransferModalController.call(this, $scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals);
@@ -69,8 +69,7 @@ function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $t
   });
 
   $scope.cancel = function() {
-    //TODO : go back ?
-    alert('TODO : go back ?');
+    $ionicHistory.goBack();
   };
 
   $scope.setForm = function(form) {

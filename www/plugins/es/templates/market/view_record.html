@@ -32,7 +32,7 @@
           </h2>
 
           <h2 class="positive">
-            <a ui-sref="app.view_identity({pub:formData.issuer})">
+            <a ui-sref="app.view_identity({pubkey:formData.issuer})">
               <span ng-if="issuer.uid">
                 <i class="icon ion-person"></i>
                 {{issuer.uid}}
@@ -106,7 +106,7 @@
                ng-class="{'in done': comment.isnew}"
                >
             <div class="padding card-header text-right">
-              <a class="pull-left positive" ui-sref="app.view_identity({pub:comment.issuer})">
+              <a class="pull-left positive" ui-sref="app.view_identity({pubkey:comment.issuer})">
                 <i class="icon ion-person"></i>
                 {{comment.uid}}
               </a>

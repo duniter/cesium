@@ -18,11 +18,14 @@ angular.module('cesium.http.services', ['ngResource'])
       timeout=4000;
     }
 
-    function processError(reject, data, uri) {
+    function processError(reject, data, uri, status) {
       if (data && data.message) {
         reject(data);
       }
       else {
+        if (status == 404) {
+          reject({ucode: 404, message: 'Resource not found ' + (uri ? ' ('+uri+')' : '')});
+        }
         if (uri) {
           reject('Error from node (' + uri + ')');
         }
@@ -62,7 +65,7 @@ angular.module('cesium.http.services', ['ngResource'])
                 resolve(data);
               })
               .error(function(data, status, headers, config) {
-                processError(reject, data, uri);
+                processError(reject, data, uri, status);
               });
           });
         });
@@ -83,7 +86,7 @@ angular.module('cesium.http.services', ['ngResource'])
                 resolve(data);
               })
               .error(function(data, status, headers, config) {
-                processError(reject, data);
+                processError(reject, data, status);
               });
           });
         });
@@ -120,11 +123,45 @@ angular.module('cesium.http.services', ['ngResource'])
       }
     }
 
+    // See doc : https://gist.github.com/jlong/2428561
+    function parseUri(uri) {
+      var protocol;
+      if (uri.startsWith('duniter://')) {
+        protocol = 'duniter';
+        uri = uri.replace('duniter://', 'http://');
+      }
+
+      var parser = document.createElement('a');
+      parser.href = uri;
+
+      var pathname = parser.pathname;
+      if (pathname && pathname.startsWith('/')) {
+        pathname = pathname.substring(1);
+      }
+
+      result = {
+        protocol: protocol ? protocol : parser.protocol,
+        hostname: parser.hostname,
+        host: parser.host,
+        port: parser.port,
+        username: parser.username,
+        password: parser.password,
+        pathname: pathname,
+        search: parser.search,
+        hash: parser.hash
+      };
+      parser.remove();
+      return result;
+    }
+
     return {
       get: getResource,
       post: postResource,
       ws: ws,
-      closeAllWs: closeAllWs
+      closeAllWs: closeAllWs,
+      uri: {
+        parse: parseUri
+      }
     };
   }
 

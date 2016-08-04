@@ -9,6 +9,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
   function BMA(server) {
 
     var
+    instance = this,
     errorCodes = {
         NO_MATCHING_IDENTITY: 2001,
         UID_ALREADY_USED: 2003,
@@ -17,10 +18,13 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
         MEMBERSHRIP_ALREADY_SEND: 2007
       },
     regex = {
-      USER_ID: "[A-Za-z0-9_-]*",
+      USER_ID: "[A-Za-z0-9_-]+",
+      CURRENCY: "[A-Za-z0-9_-]+",
       PUBKEY: "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
       COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
-      URI: "duniter://[a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+"
+      // duniter://[uid]:[pubkey]@[host]:[port]
+      URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
+      URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
     },
     constants = {
       CACHE_TIME_MS: 60000
@@ -35,11 +39,6 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       }
     };
 
-    this.getBlockchainBlock = HttpUtils.get('http://' + server + '/blockchain/block/:block');
-    this.getBlockchainWithUd = HttpUtils.get('http://' + server + '/blockchain/with/ud');
-    this.getBlockchainCurrentNoCache = HttpUtils.get('http://' + server + '/blockchain/current');
-    this.getMembersNoCache = HttpUtils.get('http://' + server + '/wot/members');
-
     function exact(regexpContent) {
       return new RegExp("^" + regexpContent + "$");
     }
@@ -49,6 +48,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
         var instance = this.instance;
         angular.copy(otherNode, this);
         this.instance = instance;
+        resetData(); // clean all cache
       }
       else {
         angular.copy(otherNode, this);
@@ -57,6 +57,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
 
 
     function getBlockchainCurrent(cache) {
+      var getBlockchainCurrentNoCache = HttpUtils.get('http://' + server + '/blockchain/current');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain.current !== null &&
@@ -77,6 +78,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
 
 
     function getMembers(cache) {
+      var getMembersNoCache = HttpUtils.get('http://' + server + '/wot/members');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.wot && data.wot.members && data.wot.members.length > 0 &&
@@ -144,6 +146,8 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
     }
 
     function getBlockchainLastUd(cache) {
+      var getBlockchainWithUd = HttpUtils.get('http://' + server + '/blockchain/with/ud');
+      var getBlockchainBlock = HttpUtils.get('http://' + server + '/blockchain/block/:block');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= constants.CACHE_TIME_MS){
@@ -166,6 +170,111 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
           });
         }
       });
+    }
+
+    function parseUri(uri) {
+      return $q(function(resolve, reject) {
+        var result = {};
+        // If pubkey
+        if (exact(regex.PUBKEY).test(uri)) {
+          return {
+            pubkey: uri
+          };
+        }
+        else if(uri.startsWith('duniter://')) {
+          var parser = HttpUtils.uri.parse(uri),
+            pubkey,
+            uid,
+            currency = parser.host.indexOf('.') === -1 ? parser.host : null,
+            host = parser.host.indexOf('.') !== -1 ? parser.host : null;
+          if (parser.username) {
+            if (parser.password) {
+              uid = parser.username;
+              pubkey = parser.password;
+            }
+            else {
+              pubkey = parser.username;
+            }
+          }
+          if (parser.pathname) {
+            var paths = parser.pathname.split('/');
+            var pathCount = !paths ? 0 : paths.length;
+            var index = 0;
+            if (!currency && pathCount > index) {
+              currency = paths[index++];
+            }
+            if (!pubkey && pathCount > index) {
+              pubkey = paths[index++];
+            }
+            if (!uid && pathCount > index) {
+              uid = paths[index++];
+            }
+            if (pathCount > index) {
+              throw {message: 'Bad Duniter URI format. Invalid path (incomplete or redundant): '+parser.pathname};
+            }
+          }
+
+          if (!currency){
+            if (host) {
+              HttpUtils.get('http://' + host + '/blockchain/parameters')()
+              .then(function(parameters){
+                resolve({
+                  uid: uid,
+                  pubkey: pubkey,
+                  host: host,
+                  currency: parameters.currency
+                });
+              }).catch(function(err) {
+                throw {message: 'Could not get node parameter. Currency could not be retrieve.'};
+              });
+            }
+            else {
+              throw {message: 'Bad Duniter URI format. Missing currency name (or node address).'};
+            }
+          }
+          else {
+            if (!host) {
+              resolve({
+                uid: uid,
+                pubkey: pubkey,
+                currency: currency
+              });
+            }
+
+            // Check if currency are the same (between node and uri)
+            return HttpUtils.get('http://' + host + '/blockchain/parameters')()
+            .then(function(parameters){
+              if (parameters.currency !== currency) {
+                throw {message: "Node's currency ["+parameters.currency+"] does not matched URI's currency ["+currency+"]."};
+              }
+              resolve({
+                uid: uid,
+                pubkey: pubkey,
+                host: host,
+                currency: currency
+              });
+            });
+          }
+        }
+        else {
+          throw {message: 'Bad URI format: ' + uri};
+        }
+      })
+
+      // Check values against regex
+      .then(function(result) {
+        if (result.pubkey && !(exact(regex.PUBKEY).test(result.pubkey))) {
+          throw {message: "Invalid pubkey format [" + result.pubkey + "]"};
+        }
+        if (result.uid && !(exact(regex.USER_ID).test(result.uid))) {
+          throw {message: "Invalid uid format [" + result.uid + "]"};
+        }
+        if (result.currency && !(exact(regex.CURRENCY).test(result.currency))) {
+          throw {message: "Invalid currency format ["+result.currency+"]"};
+        }
+        return result;
+      });
+      ;
     }
 
     function resetWotData() {
@@ -203,10 +312,10 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
       },
       blockchain: {
         current: getBlockchainCurrent,
-        block: getBlockchainBlock,
+        block: HttpUtils.get('http://' + server + '/blockchain/block/:block'),
         membership: HttpUtils.post('http://' + server + '/blockchain/membership'),
         stats: {
-          ud: getBlockchainWithUd,
+          ud: HttpUtils.get('http://' + server + '/blockchain/with/ud'),
           tx: HttpUtils.get('http://' + server + '/blockchain/with/tx')
         },
         lastUd: getBlockchainLastUd
@@ -246,7 +355,11 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
         USER_ID: exact(regex.USER_ID),
         COMMENT: exact(regex.COMMENT),
         PUBKEY: exact(regex.PUBKEY),
+        CURRENCY: exact(regex.CURRENCY),
         URI: exact(regex.URI)
+      },
+      uri: {
+        parse: parseUri
       }
     };
   }

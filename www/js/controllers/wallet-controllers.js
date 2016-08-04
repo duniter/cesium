@@ -1,5 +1,5 @@
 
-angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
+angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers', 'cesium.user.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
@@ -33,7 +33,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover, Modals) {
+  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover, Modals, UserService) {
   'ngInject';
 
   $scope.walletData = null;
@@ -48,6 +48,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
         if (!walletData) {
           $state.go('app.home');
         }
+        $scope.avatar = walletData.avatar ? UIUtils.image.fromAttachment(walletData.avatar) : null;
         $scope.walletData = walletData;
         $scope.updateView();
         $scope.showFab('fab-transfer');
@@ -92,6 +93,9 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.updateView = function() {
     $scope.hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
     $scope.refreshConvertedBalance();
+    if ($scope.avatar) {
+      $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
+    }
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight();

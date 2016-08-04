@@ -4,7 +4,7 @@
             <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
                    ng-model-options="{ debounce: 350 }"
-                   ng-change="onWotSearchChanged()" id="searchWot">
+                   ng-change="doSearch()" id="searchWot">
         </label>
 
       <div class="list"
@@ -19,13 +19,27 @@
           COMMON.SEARCH_NO_RESULT
         </label>
 
-        <a ng-if="!search.looking"
+        <ion-item ng-if="!search.looking"
            ng-repeat="found in search.results"
-           class="item item-icon-left item-avatar ink"
+           class="item item-avatar item-icon-right ink"
            ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
-            <i class="icon ion-person"></i>
-            <h2>{{found.uid}}</h2>
-            <span class="badge">{{found.pub | formatPubkey}}</span>
-        </a>
+
+          <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
+          <i ng-if="!found.avatar" class="item-image avatar icon ion-person"></i>
+
+          <h2 ng-if="found.name">{{found.name}}</h2>
+          <h2 ng-if="!found.name">{{found.uid}}</h2>
+            <h4 class="gray">
+              <span class="positive" ng-if="found.name">
+                <i class="ion ion-person"></i>
+                {{found.uid}}
+              </span>
+              <i class="ion ion-key"></i>
+              {{found.pub | formatPubkey}}
+            </h4>
+            <i class="icon ion-ios-arrow-right"></i>
+        </ion-item>
+
+        <!--<img src="http://ionicmaterial.com/preview/img/jon-snow.jpg">-->
     </div>
   </div>

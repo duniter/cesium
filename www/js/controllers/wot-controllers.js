@@ -5,7 +5,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
     $stateProvider
 
       .state('app.wot_lookup', {
-        url: "/wot",
+        url: "/wot?q",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup.html",
@@ -15,7 +15,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.view_identity', {
-        url: "/wot/view/:pub",
+        url: "/wot/view/:pubkey",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -49,7 +49,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, IdentityService, UserService) {
   'ngInject';
 
   $scope.search = {
@@ -58,7 +58,16 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     results: []
   };
 
-  $scope.onWotSearchChanged = function() {
+  $scope.$on('$ionicView.enter', function(e, $state) {
+    if ($state.stateParams && $state.stateParams.q) { // Query parameter
+      $scope.search.text=$state.stateParams.q;
+      $timeout(function() {
+        $scope.doSearch();
+      }, 100);
+    }
+  });
+
+  $scope.doSearch = function() {
     $scope.search.looking = true;
     var text = $scope.search.text.toLowerCase().trim();
     if (text.length === 0) {
@@ -66,38 +75,13 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
       $scope.search.looking = false;
     }
     else {
-      return BMA.wot.lookup({ search: text })
-        .then(function(res){
-          if ($scope.search.text.toLowerCase().trim() !== text) return; // search text has changed
-          var idtyKeys = [];
-          var idties = res.results.reduce(function(idties, res) {
-            return idties.concat(res.uids.reduce(function(uids, idty) {
-              var blocUid = idty.meta.timestamp.split('-', 2);
-              var idtyKey = idty.uid + '-' + res.pubkey;
-              if (!idtyKeys[idtyKey] && !idty.revoked) {
-                idtyKeys[idtyKey] = true;
-                return uids.concat({
-                  uid: idty.uid,
-                  pub: res.pubkey,
-                  number: blocUid[0],
-                  hash: blocUid[1]
-                });
-              }
-              return uids;
-            }, []));
-          }, []);
-          $scope.search.results = idties;
-          $scope.search.looking = false;
-        })
-        .catch(function(err) {
-          if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
-            $scope.search.results = [];
-            $scope.search.looking = false;
-          }
-          else {
-            UIUtils.onError('ERROR.WOT_LOOKUP_FAILED')(err);
-          }
-        });
+      IdentityService.search(text)
+      .then(function(idties){
+        if ($scope.search.text.toLowerCase().trim() !== text) return; // search text has changed
+        $scope.search.results = idties;
+        $scope.search.looking = false;
+      })
+      .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
     }
   };
 
@@ -109,12 +93,12 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     };
   };
 
-  $scope.doSelectIdentity = function(pub, uid) {
-    if (!!pub && Wallet.isLogin() && !!Wallet.data && Wallet.data.pubkey == pub) {
+  $scope.doSelectIdentity = function(pubkey, uid) {
+    if (!!pubkey && Wallet.isLogin() && !!Wallet.data && Wallet.data.pubkey == pubkey) {
       $state.go('app.view_wallet'); // open the user wallet
     }
     else {
-      $state.go('app.view_identity', {pub: pub});
+      $state.go('app.view_identity', {pubkey: pubkey});
     }
   };
 
@@ -127,14 +111,19 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
       if (!result) {
         return;
       }
-      // TODO : parse URI (duniter:// )
-      //if (Wallet.regex.URI.test(result)) {
-      //  UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
-      //}
-      //else {
-      $scope.search.text = result;
-      $scope.onWotSearchChanged();
-      //}
+      BMA.uri.parse(result)
+      .then(function(obj){
+        if (obj.pubkey) {
+          $scope.search.text = obj.pubkey;
+        }
+        else if (result.uid) {
+          $scope.search.text = obj.uid;
+        }
+        else {
+          $scope.search.text = result;
+        }
+        $scope.doSearch();
+      });
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
@@ -158,7 +147,7 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device
 
 }
 
-function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device) {
+function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device, UserService) {
   'ngInject';
 
   $scope.identity = {};
@@ -169,16 +158,16 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!$state.stateParams ||
-        !$state.stateParams.pub ||
-        $state.stateParams.pub.trim().length===0) {
+        !$state.stateParams.pubkey ||
+        $state.stateParams.pubkey.trim().length===0) {
       // Redirect o home
       $timeout(function() {
-       $state.go('app.home', null);
+       //$state.go('app.home');
       }, 10);
       return;
     }
     if (!$scope.loaded) {
-      $scope.loadIdentity($state.stateParams.pub);
+      $scope.loadIdentity($state.stateParams.pubkey);
     }
   });
 

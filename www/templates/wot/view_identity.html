@@ -10,9 +10,8 @@
              style="background-image: url({{identity.avatar}});"></div>
         <i class="avatar" ng-if="!identity.avatar" ng-class="{'avatar-member': identity.uid, 'avatar-wallet': !identity.uid}"></i>
         <h3 class="light" >{{identity.uid}}</h3>
-        <h4 class="gray" ng-if="identity.pub">
-          <i class="icon ion-key"></i>
-          <small>{{identity.pub | formatPubkey}}</small>
+        <h4 ng-if="identity.pub">
+          &nbsp;
         </h4>
         <h4 class="light" ng-if="!identity.pub">
           <ion-spinner icon="android"></ion-spinner>

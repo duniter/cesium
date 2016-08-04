@@ -46,7 +46,7 @@
         <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.errors | filter: filterNegative('amount')">
           <h2>
             <i class="icon" ng-class="{'ion-clock': tx.valid, 'ion-close-circled assertive': !tx.valid}"> </i>
-            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+            <span ui-sref="app.view_identity({pubkey:tx.pubkey})" class="positive">
               <span ng-if="tx.uid">
                 <i class="icon ion-person"></i>
                 {{::tx.uid}}
@@ -87,7 +87,7 @@
         <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.errors | filter: filterPositive('amount')">
           <h2>
             <i class="icon" ng-class="{'ion-clock': tx.valid, 'ion-close-circled assertive': !tx.valid}"> </i>
-            <span ui-sref="app.view_identity({pub:tx.pubkey})" class="positive">
+            <span ui-sref="app.view_identity({pubkey:tx.pubkey})" class="positive">
               <span ng-if="tx.uid">
                 <i class="icon ion-person"></i>
                 {{::tx.uid}}

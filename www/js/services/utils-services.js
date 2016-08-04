@@ -207,17 +207,19 @@ angular.module('cesium.utils.services', ['ngResource'])
 
           var dataurl = canvas.toDataURL();
 
+          canvas.remove();
+
           resolve(dataurl);
         };
   }
 
   function resizeImageFromFile(file, thumbnail) {
+    var img = document.createElement("img");
     return $q(function(resolve, reject) {
 
       if (file) {
         var reader = new FileReader();
         reader.onload = function(event){
-          var img = document.createElement("img");
           img.onload = imageOnLoadResize(resolve, reject, thumbnail);
           img.src = event.target.result;
         };
@@ -226,14 +228,23 @@ angular.module('cesium.utils.services', ['ngResource'])
       else {
         reject('no file to resize');
       }
-    });
+    })
+    .then(function(dataurl) {
+      img.remove();
+      return dataurl;
+    })
+    ;
   }
 
   function resizeImageFromSrc(imageSrc, thumbnail) {
+    var img = document.createElement("img");
     return $q(function(resolve, reject) {
-      var img = document.createElement("img");
       img.onload = imageOnLoadResize(resolve, reject, thumbnail);
       img.src = imageSrc;
+    })
+    .then(function(data){
+      img.remove();
+      return data;
     });
   }
 

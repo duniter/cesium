@@ -196,21 +196,24 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
       return;
     }
     Device.camera.scan()
-    .then(function(result) {
-      if (!result) {
+    .then(function(uri) {
+      if (!uri) {
         return;
       }
-      // If pubkey
-      if (BMA.regex.PUBKEY.test(result)) {
-        $state.go('app.view_identity', {pub: result});
-      }
-      else {
-        // TODO: parse URI (duniter:// )
-        //if (BMA.regex.URI.test(result)) {
-        //
-        //}
-        UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
-      }
+      BMA.uri.parse(uri)
+      .then(function(result){
+        // If pubkey
+        if (result && result.pubkey) {
+          $state.go('app.view_identity', {
+            pub: result.pubkey,
+            node: result.host ? result.host: null}
+          );
+        }
+        else {
+          UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
+        }
+      })
+      .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };

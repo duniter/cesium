@@ -6,6 +6,7 @@
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SEND": "Send",
+    "BTN_SAVE": "Save",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
     "BTN_RELATIVE_UNIT": "Use relative unit",

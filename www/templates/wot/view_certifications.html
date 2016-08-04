@@ -41,7 +41,7 @@
         <a class="item ink"
               ng-repeat="cert in certifications"
               ng-if="loaded"
-              ui-sref="app.view_identity({pub:cert.from})">
+              ui-sref="app.view_identity({pubkey:cert.from})">
           <span ng-if="cert.isMember">
             <h3
               ng-class="{'positive': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'assertive': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire}">

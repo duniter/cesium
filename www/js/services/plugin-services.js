@@ -3,6 +3,8 @@
 angular.module('cesium.plugin.services', [])
 
 .provider('$menu', function MenuProvider() {
+  'ngInject';
+
   var items = [],
 
   sections = {
@@ -32,7 +34,7 @@ angular.module('cesium.plugin.services', [])
     this.sections = sections;
   }
 
-  this.$get = [function menuFactory(apiToken) {
+  this.$get = [function menuFactory() {
 
     return new Menu(items);
   }];
