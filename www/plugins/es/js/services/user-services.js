@@ -5,7 +5,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
 
   function UserService(server) {
 
-    loadNameAndAvatar = function(data, resolve, reject) {
+    doLoad = function(data, resolve, reject) {
       if (!data || !data.pubkey) {
         if (resolve) {
           resolve();
@@ -30,7 +30,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       });
     }
 
-    loadNamesAndAvatars = function(datas, resolve, reject) {
+    doSearch = function(text, datas, resolve, reject) {
       if (!datas) {
         if (resolve) {
           resolve();
@@ -38,25 +38,50 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
         return;
       }
 
-      var size = datas.length;
+      var text = text.toLowerCase().trim();
       var map = {};
-      var pubkeys = datas.reduce(function(res, data) {
-        map[data.pub] = data;
-        return res.concat(data.pub);
-      }, []);
 
       var request = {
-        query : {
-          constant_score:{
-            filter: {
-              terms: { _id : pubkeys}
-            }
+        query: {},
+        highlight: {
+          fields : {
+            title : {}
           }
         },
         from: 0,
-        size: size,
+        size: 100,
         _source: ["title", "avatar"]
       };
+
+      if (datas.length > 0) {
+        var pubkeys = datas.reduce(function(res, data) {
+          map[data.pub] = data;
+          return res.concat(data.pub);
+        }, []);
+        request.query.constant_score = {
+           filter: {
+             bool: {
+                should: [
+                  {terms : {_id : pubkeys}},
+                  {bool: {
+                    must: [
+                      {match: { title: text}},
+                      {prefix: { title: text}}
+                    ]}
+                  }
+                ]
+             }
+           }
+         };
+      }
+      else {
+        request.query.bool = {
+          should: [
+            {match: { title: text}},
+            {prefix: { title: text}}
+          ]
+        };
+      }
 
       ESUtils.post('http://' + server + '/user/profile/_search?pretty')(request)
       .then(function(res) {
@@ -66,12 +91,26 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
         else {
           _.forEach(res.hits.hits, function(hit) {
             var data = map[hit._id];
+            if (!data) {
+              data = {
+                pub: hit._id
+              };
+              datas.push(data);
+            }
             var avatar = hit._source.avatar? UIUtils.image.fromAttachment(hit._source.avatar) : null;
             if (avatar) {
               data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
               data.avatar=avatar;
             }
             data.name=hit._source.title;
+            if (hit._source.uid) {
+              data.uid = hit._source.uid;
+            }
+            if (hit.highlight) {
+              if (hit.highlight.title) {
+                  data.name = hit.highlight.title[0];
+              }
+            }
           });
         }
         resolve(datas);
@@ -87,9 +126,9 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
     }
 
     // Extend Wallet.loadData() and IdentityService.loadData()
-    Wallet.api.data.on.load($rootScope, loadNameAndAvatar);
-    IdentityService.api.data.on.load($rootScope, loadNameAndAvatar);
-    IdentityService.api.data.on.loadMany($rootScope, loadNamesAndAvatars);
+    Wallet.api.data.on.load($rootScope, doLoad);
+    IdentityService.api.data.on.load($rootScope, doLoad);
+    IdentityService.api.data.on.search($rootScope, doSearch);
 
     return {
       profile: {

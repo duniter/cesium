@@ -94,30 +94,6 @@ angular.module('cesium.identity.services', ['ngResource', 'ngApi', 'cesium.bma.s
       });
     },
 
-    /*loadAvatar = function() {
-      return $q(function(resolve, reject) {
-        if (!Registry) {
-          data.avatar = null;
-          resolve();
-          return;
-        }
-        Registry.record.avatar(data.pubkey)
-          .then(function(imageData) {
-            if (imageData) {
-              data.avatar = imageData;
-            }
-            else {
-              data.avatar = null;
-            }
-            resolve();
-          })
-          .catch(function(err) {
-            data.avatar = null; // silent !
-            resolve();
-          });
-      });
-    },*/
-
     loadData = function(pubkey) {
         if (data.loaded) {
           return refreshData();
@@ -180,12 +156,13 @@ angular.module('cesium.identity.services', ['ngResource', 'ngApi', 'cesium.bma.s
               }, []));
             }, []);
 
-            api.data.raise.loadMany(idties, resolve, reject);
+            api.data.raise.search(text, idties, resolve, reject);
             //resolve(idties);
           })
           .catch(function(err) {
             if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
-              resolve();
+              api.data.raise.search(text, [], resolve, reject);
+              //resolve();
             }
             else {
               reject(err);
@@ -197,7 +174,7 @@ angular.module('cesium.identity.services', ['ngResource', 'ngApi', 'cesium.bma.s
 
     // Register extension points
     api.registerEvent('data', 'load');
-    api.registerEvent('data', 'loadMany');
+    api.registerEvent('data', 'search');
 
     return {
       id: id,

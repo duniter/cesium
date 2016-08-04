@@ -57,20 +57,22 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     looking: false,
     results: []
   };
+  $scope.entered = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams && $state.stateParams.q) { // Query parameter
+    if (!$scope.entered && $state.stateParams && $state.stateParams.q) { // Query parameter
       $scope.search.text=$state.stateParams.q;
       $timeout(function() {
         $scope.doSearch();
       }, 100);
     }
+    $scope.entered = true;
   });
 
   $scope.doSearch = function() {
     $scope.search.looking = true;
     var text = $scope.search.text.toLowerCase().trim();
-    if (text.length === 0) {
+    if (text.length < 3) {
       $scope.search.results = [];
       $scope.search.looking = false;
     }

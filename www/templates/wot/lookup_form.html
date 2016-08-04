@@ -25,12 +25,12 @@
            ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
 
           <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
-          <i ng-if="!found.avatar" class="item-image avatar icon ion-person"></i>
+          <i ng-if="!found.avatar" class="item-image avatar stable icon ion-person"></i>
 
-          <h2 ng-if="found.name">{{found.name}}</h2>
+          <h2 ng-if="found.name" ng-bind-html="found.name"></h2>
           <h2 ng-if="!found.name">{{found.uid}}</h2>
             <h4 class="gray">
-              <span class="positive" ng-if="found.name">
+              <span class="positive" ng-if="found.name && found.uid">
                 <i class="ion ion-person"></i>
                 {{found.uid}}
               </span>

@@ -488,13 +488,23 @@ $screen-lg:                       1200px;
 
     .img {
         left: 16px !important;
-        max-height: 56px !important;
-        max-width: 56px !important;
     }
 }
 
-.item-avatar > img:first-child, .item-avatar .item-image, .item-avatar .item-content > img:first-child, .item-avatar .item-content .item-image, .item-avatar-left > img:first-child, .item-avatar-left .item-image, .item-avatar-left .item-content > img:first-child, .item-avatar-left .item-content .item-image {
-  max-height: 56px !important;
-  max-width: 56px !important;
+.lookupForm {
+
+  item-avatar {
+    min-height: 80px !important;
+  }
+  .item-avatar > i:first-child{
+      font-size: 45px !important;
+      padding-left: 10px;
+      top: 14px !important;
+  }
+  .item-avatar > img:first-child, .item-avatar .item-image, .item-avatar .item-content > img:first-child, .item-avatar .item-content .item-image, .item-avatar-left > img:first-child, .item-avatar-left .item-image, .item-avatar-left .item-content > img:first-child, .item-avatar-left .item-content .item-image {
+    max-height: 56px !important;
+    max-width: 56px !important;
+    top: 14px !important;
+  }
 }
 
