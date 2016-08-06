@@ -22,7 +22,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
             return;
           }
 
-          ESUtils.get('http://' + server + '/market/category/_search?pretty&from=0&size=1000')()
+          ESUtils.get('http://' + server + '/market/category/_search?pretty&sort=order&from=0&size=1000&_source=name,parent')()
           .then(function(res) {
             if (res.hits.total === 0) {
                 categories = [];

@@ -1,0 +1,24 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+      <h1 class="title" translate>REGISTRY.NEW.SELECT_TYPE</h1>
+  </ion-header-bar>
+
+    <ion-content class="lookupForm">
+    	<div class="list padding">
+        <h3 translate>REGISTRY.NEW.SELECT_TYPE</h3>
+        <button class="button button-block button-stable icon icon-left ion-android-cart"
+                ng-click="closeModal('shop')"
+                translate>REGISTRY.NEW.TYPE_SHOP</button>
+        <button class="button button-block button-stable icon icon-left ion-person-stalker"
+                ng-click="closeModal('association')"
+                translate>REGISTRY.NEW.TYPE_ASSOCIATION</button>
+        <button class="button button-block button-stable icon icon-left ion-office"
+                ng-click="closeModal('company')"
+                translate>REGISTRY.NEW.TYPE_COMPANY</button>
+        <button class="button button-block button-stable icon icon-left ion-library"
+                ng-click="closeModal('institution')"
+                translate>REGISTRY.NEW.TYPE_INSTITUTION</button>
+      </div>
+</ion-content>
+</ion-modal-view>

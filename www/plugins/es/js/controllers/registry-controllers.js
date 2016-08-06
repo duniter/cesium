@@ -36,6 +36,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
     })
 
     .state('app.registry_add_record', {
+      cache: false,
       url: "/registry/add",
       views: {
         'menuContent': {
@@ -46,6 +47,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
     })
 
     .state('app.registry_edit_record', {
+      cache: false,
       url: "/registry/:id/edit",
       views: {
         'menuContent': {
@@ -63,81 +65,14 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize'])
 
  .controller('RegistryRecordEditCtrl', RegistryRecordEditController)
 
+ .controller('RegistryCategoryModalCtrl', RegistryCategoryModalController)
+
+ .controller('RegistryRecordTypeModalCtrl', RegistryRecordTypeModalController)
+
 ;
 
-function RegistryCategoryModalController($scope, Registry, $state, $ionicModal, UIUtils) {
+function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize, ModalUtils, UserService) {
   'ngInject';
-
-  $scope.categoryModal = null;
-  $scope.categories = {
-      all: null,
-      search: {
-        text: '',
-        results: {},
-        options: false
-      }
-  };
-
-  // category lookup modal
-  $ionicModal.fromTemplateUrl('plugins/es/templates/registry/modal_category.html', {
-      scope: $scope,
-      focusFirstInput: true
-  }).then(function(modal) {
-    $scope.categoryModal = modal;
-    $scope.categoryModal.hide();
-  });
-
-  $scope.openCategoryModal = function() {
-    // load categories
-    Registry.category.all()
-    .then(function(categories){
-      $scope.categories.search.text = '';
-      $scope.categories.search.results = categories;
-      $scope.categories.all = categories;
-      UIUtils.ink();
-      $scope.categoryModal.show();
-    });
-  };
-
-  $scope.closeCategoryModal = function() {
-    $scope.categoryModal.hide();
-  };
-
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    console.log('Category ' + cat.name + 'selected. Method selectCategory(cat) not overwritten.');
-    $scope.closeCategoryModal();
-  };
-
-  $scope.searchCategoryChanged = function() {
-    $scope.categories.search.text = $scope.categories.search.text.toLowerCase();
-    if ($scope.categories.search.text.length > 1) {
-      $scope.doSearchCategory($scope.categories.search.text);
-    }
-    else {
-      $scope.categories.search.results = $scope.categories.all;
-    }
-  };
-
-  $scope.doSearchCategory = function(text) {
-    $scope.search.looking = true;
-
-    $scope.categories.search.results = $scope.categories.all.reduce(function(result, cat) {
-      if (cat.parent && cat.name.toLowerCase().search(text) != -1) {
-          return result.concat(cat);
-      }
-      return result;
-    }, []);
-
-    $scope.categories.search.looking = false;
-  };
-}
-
-function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize) {
-  'ngInject';
-
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
-  RegistryNewRecordWizardController.call(this, $scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry);
 
   $scope.search = {
     text: '',
@@ -170,13 +105,6 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 
   $scope.isFilter = function(filter) {
     return ($scope.filter == filter);
-  };
-
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    $scope.search.category = cat;
-    $scope.closeCategoryModal();
-    $scope.doSearch();
   };
 
   $scope.doSearch = function() {
@@ -234,7 +162,6 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
 
     $scope.doRequest(request);
   };
-
 
   $scope.doGetLastRecord = function() {
     $scope.search.looking = true;
@@ -310,6 +237,34 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
       });
   };
 
+  /* -- modals -- */
+
+  $scope.showCategoryModal = function(parameters) {
+    ModalUtils.show('plugins/es/templates/modal_category.html', 'RegistryCategoryModalCtrl as ctrl',
+          parameters, {focusFirstInput: true})
+    .then(function(cat){
+      if (cat && cat.parent) {
+        $scope.search.category = cat;
+        $scope.doSearch();
+      }
+    });
+  };
+
+  $scope.showNewRecordModal = function() {
+    $scope.loadWallet()
+      .then(function(walletData) {
+        UIUtils.loading.hide();
+        $scope.walletData = walletData;
+        ModalUtils.show('plugins/es/templates/registry/modal_record_type.html', 'RegistryRecordTypeModalCtrl',
+                  null, {focusFirstInput: true, animation: 'slide-in-down'})
+        .then(function(type){
+          if (type) {
+            $state.go('app.registry_edit_record');
+          }
+        });
+    });
+  };
+
  // TODO: remove auto add account when done
  /* $timeout(function() {
     $scope.search.text='lavenier';
@@ -336,7 +291,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
        $scope.load($state.stateParams.id);
     }
     else {
-      $state.go('app.lookup_registry');
+      $state.go('app.registry_lookup');
     }
   });
 
@@ -438,15 +393,13 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 }
 
 function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, Device,
-  $ionicHistory) {
+  $ionicHistory, ModalUtils, UserService) {
   'ngInject';
-
-  RegistryCategoryModalController.call(this, $scope, Registry, $state, $ionicModal, UIUtils);
 
   $scope.walletData = {};
   $scope.recordData = {};
   $scope.recordForm = {};
-  $scope.isCompany = null;
+  $scope.type = null;
   $scope.id = null;
   $scope.isMember = false;
   $scope.category = {};
@@ -520,13 +473,6 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
     });
   };
 
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    $scope.category = cat;
-    $scope.recordData.category = cat.id;
-    $scope.closeCategoryModal();
-  };
-
   $scope.openPicturePopup = function() {
     Device.camera.getPicture()
     .then(function(imageData) {
@@ -562,160 +508,60 @@ function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIU
     }
   };
 
-  $scope.auth = function() {
-    $scope.loadWallet()
-    .then(function(walletData) {
-      UIUtils.loading.show();
-      $scope.walletData = walletData;
-      Registry.auth.token(walletData.keypair)
-      .then(function(token) {
-        UIUtils.loading.hide();
-        console.log('authentication token is:' + token);
-      })
-      .catch(onError('Could not computed authentication token'));
-    })
-    .catch(onError('Could not computed authentication token'));
+  $scope.cancel = function() {
+    $ionicHistory.goBack();
   };
 
-  $scope.goBack = function() {
-    $ionicHistory.goBack();
+  /* -- modals -- */
+  $scope.showCategoryModal = function(parameters) {
+    ModalUtils.show('plugins/es/templates/modal_category.html', 'RegistryCategoryModalCtrl as ctrl',
+          parameters, {focusFirstInput: true})
+    .then(function(cat){
+      if (cat && cat.parent) {
+        $scope.category = cat;
+        $scope.recordData.category= cat.id;
+      }
+    });
   };
 }
 
-function RegistryNewRecordWizardController($scope, $ionicModal, $state, UIUtils, $q, $timeout, Registry) {
+function RegistryCategoryModalController($scope, Registry, UIUtils, parameters) {
   'ngInject';
 
-  $scope.recordData = {};
-  $scope.isCompany = null;
-  $scope.recordForm = {};
-  $scope.pictures = [];
-  $scope.slides = {
-    slider: null,
-    options: {
-      loop: false,
-      effect: 'slide',
-      speed: 500
-    }
-  };
+  $scope.loading = true;
+  $scope.allCategories = [];
+  $scope.categories = [];
+  this.searchText = '';
 
-  // Called to navigate to the main app
-  $scope.cancel = function() {
-    if ($scope.newRecordModal) {
-      $scope.newRecordModal.hide();
-      $scope.newRecordModal.remove();
-      $scope.newRecordModal = null;
-      $timeout(function(){
-        $scope.recordData = {};
-        $scope.recordForm = {};
-        $scope.isCompany = null;
-        $scope.pictures = [];
-        $scope.slides.slider.destroy();
-        delete $scope.slides.slider;
-      }, 200);
-    }
-  };
-
-  $scope.setRecordForm =  function(recordForm) {
-    $scope.recordForm = recordForm;
-  };
-
-  $scope.slidePrev = function() {
-    $scope.slides.slider.unlockSwipes();
-    $scope.slides.slider.slidePrev();
-    $scope.slides.slider.lockSwipes();
-  };
-
-  $scope.slideNext = function() {
-    $scope.slides.slider.unlockSwipes();
-    $scope.slides.slider.slideNext();
-    $scope.slides.slider.lockSwipes();
-  };
-
-  $scope.newRecord = function() {
-    var showModal = function() {
-      $scope.loadWallet()
-        .then(function(walletData) {
-          $scope.walletData = walletData;
-          $scope.slides.slider.slideTo(0);
-          $scope.slides.slider.lockSwipes();
-          UIUtils.loading.hide();
-          $scope.newRecordModal.show();
-          // TODO: remove default
-          /*$timeout(function() {
-            $scope.recordData.title="Benoit Lavenier";
-            $scope.recordData.description="J'aime le Sou !";
-            $scope.setIsCompany(false);
-          }, 300);*/
-        });
-    };
-
-    if (!$scope.newRecordModal) {
-      UIUtils.loading.show();
-      // Create the account modal that we will use later
-      $ionicModal.fromTemplateUrl('plugins/es/templates/registry/new_record_wizard.html', {
-        scope: $scope,
-        animation: 'slide-in-down'
-      }).then(function(modal) {
-        $scope.newRecordModal = modal;
-        $scope.newRecordModal.hide()
-        .then(function(){
-          showModal();
-        });
-
-      });
-    }
-    else {
-      showModal();
-    }
-  };
-
-  $scope.setIsCompany = function(bool) {
-    $scope.isCompany = bool;
-    $scope.slideNext();
-  };
-
-  $scope.doNewRecord = function() {
-    $scope.recordForm.$submitted=true;
-    if(!$scope.recordForm.$valid) {
-      return;
-    }
-
-    UIUtils.loading.show();
-    return $q(function(resolve, reject) {
-          $scope.recordData.pictures = $scope.pictures.reduce(function(res, pic) {
-            return res.concat({src: pic.src});
-          }, []);
-          // Use a default category if not a company
-          if (!$scope.isCompany) {
-            $scope.recordData.category={id:'particulier'};
-          }
-          // Set time (UTC)
-          // TODO : use the block chain time
-          $scope.recordData.time = Math.floor(moment().utc().valueOf() / 1000);
-          Registry.record.add($scope.recordData, $scope.walletData.keypair)
-          .then(function(id) {
-            $scope.cancel();
-            $state.go('app.registry_view_record', {id: id});
-            resolve();
-          })
-          .catch(UIUtils.onError('Could not save registry'));
-    });
-  };
-
-  //Cleanup the modal when hidden
-  $scope.$on('newRecordModal.hidden', function() {
-    $scope.cancel();
+  // load categories
+  Registry.category.all()
+  .then(function(result){
+    $scope.categories = result;
+    $scope.allCategories = result;
+    $scope.loading = false;
+    UIUtils.ink();
   });
 
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    $scope.recordData.category = cat;
-    $scope.closeCategoryModal();
-  };
+  this.doSearch = function() {
+    var searchText = this.searchText.toLowerCase().trim();
+    if (searchText.length > 1) {
+      $scope.loading = true;
+      $scope.categories = $scope.allCategories.reduce(function(result, cat) {
+        if (cat.parent && cat.name.toLowerCase().search(searchText) != -1) {
+            return result.concat(cat);
+        }
+        return result;
+      }, []);
 
-  // TODO: remove auto add account when done
-  /*$timeout(function() {
-    $scope.newRecord();
-  }, 400);
-  */
+      $scope.loading = false;
+    }
+    else {
+      $scope.categories = $scope.allCategories;
+    }
+  };
+}
+
+function RegistryRecordTypeModalController($scope, parameters) {
+
+
 }

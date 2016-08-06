@@ -32,10 +32,10 @@
         </label>
       </div>
 
-      <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
+      <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
         <span translate>MARKET.COMMON.CATEGORY</span>
-        <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
-        <i class="button button-clear ion-chevron-right"></i>
+        <span class="badge badge-royal badge-text-wrap">{{search.category.name}}</span>&nbsp;
+        <i class="gray icon ion-ios-arrow-right"></i>
       </span>
 
       <span class="item item-button-right" ng-if="search.options && location.enable">
@@ -73,7 +73,7 @@
         </h4>
       </div>
 
-      <div class="col col-25 hidden-xs hidden-sm padding" style="text-align:right">
+      <div class="col col-25 hidden-xs hidden-sm" style="text-align:right">
         <button class="button button-raised button-full button-calm ink"
                 ui-sref="app.market_add_record">
           {{'MARKET.COMMON.BTN_NEW_AD' | translate}}

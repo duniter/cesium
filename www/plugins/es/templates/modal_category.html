@@ -1,0 +1,29 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+      <h1 class="title" translate>COMMON.CATEGORIES</h1>
+  </ion-header-bar>
+
+  <ion-content class="categoryModal">
+    <div class="list">
+      <label class="item item-input">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="text" placeholder="{{'COMMON.CATEGORY_SEARCH_HELP'|translate}}"
+                 ng-model="ctrl.searchText"
+                 ng-model-options="{ debounce: 350 }"
+                 ng-change="ctrl.doSearch()">
+      </label>
+
+      <label class="item center" ng-if="loading">
+          <ion-spinner icon="android"></ion-spinner>
+      </label>
+
+      <div ng-repeat="cat in categories"
+         class="item item-category item-text-wrap"
+         ng-class="{'item-divider': !cat.parent}"
+         ng-click="cat.parent ? closeModal(cat) : false">
+          <h2 ng-bind-html="cat.name"></h2>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

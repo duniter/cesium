@@ -4,8 +4,12 @@
 .cesiumicons,
 .#{$cesiumicons-prefix}social-duniter:before,
 .#{$cesiumicons-prefix}social-diaspora:before,
+.#{$cesiumicons-prefix}office:before,
+.#{$cesiumicons-prefix}library:before,
 {
   @extend .cion;
 }
 .#{$cesiumicons-prefix}social-duniter:before { content: $cesiumicon-var-social-duniter; }
 .#{$cesiumicons-prefix}social-diaspora:before { content: $cesiumicon-var-social-diaspora; }
+.#{$cesiumicons-prefix}office:before { content: $cesiumicon-var-office; }
+.#{$cesiumicons-prefix}library:before { content: $cesiumicon-var-library; }

@@ -1,4 +1,8 @@
 {
+  "COMMON": {
+    "CATEGORIES": "Catégories",
+    "CATEGORY_SEARCH_HELP": "Recherche"
+  },
   "MENU": {
     "MARKET": "Annonces",
     "REGISTRY": "Professionels",
@@ -7,11 +11,10 @@
   "MARKET": {
     "COMMON": {
       "CATEGORY": "Catégorie",
-      "CATEGORIES": "Catégories",
       "ISSUER": "Soumis par",
       "PRICE": "Prix",
       "BTN_BUY": "Acheter",
-      "BTN_NEW_AD": "Nouvelle annonce",
+      "BTN_NEW_AD": "Ajouter",
       "COMMENTS": "Commentaires"
     },
     "SEARCH": {
@@ -58,13 +61,12 @@
   "REGISTRY": {
     "COMMON": {
       "CATEGORY": "Catégorie",
-      "CATEGORIES": "Catégories",
       "ISSUER": "Soumis par",
       "BTN_NEW": "Ajouter"
     },
     "SEARCH": {
       "TITLE": "Annuaire",
-      "SEARCH_HELP": "Recherche (nom, pseudo, clé publique...)",
+      "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
       "LOCATION": "Localisation",
@@ -78,8 +80,10 @@
     "NEW": {
       "TITLE": "Nouveau",
       "SELECT_TYPE": "Type de référencement :",
-      "TYPE_PARTICULAR": "Particulier",
-      "TYPE_COMPANY": "Entreprise, organisme ou institution"
+      "TYPE_SHOP": "Commerce local",
+      "TYPE_COMPANY": "Entreprise",
+      "TYPE_ASSOCIATION": "Association",
+      "TYPE_INSTITUTION": "Institution"
     },
     "EDIT": {
       "TITLE": "Edition",

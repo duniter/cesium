@@ -36,6 +36,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
     })
 
     .state('app.market_add_record', {
+      cache: false,
       url: "/market/add",
       views: {
         'menuContent': {
@@ -46,6 +47,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
     })
 
     .state('app.market_edit_record', {
+      cache: false,
       url: "/market/:id/edit",
       views: {
         'menuContent': {
@@ -62,81 +64,12 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
  .controller('MarketRecordEditCtrl', MarketRecordEditController)
 
+ .controller('MarketCategoryModalCtrl', MarketCategoryModalController)
+
 ;
 
-function MarketCategoryModalController($scope, Market, $state, $ionicModal, UIUtils) {
+function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils, ModalUtils) {
   'ngInject';
-
-  $scope.categoryModal = null;
-  $scope.categories = {
-      all: null,
-      search: {
-        text: '',
-        results: {},
-        options: false
-      }
-  };
-
-  // category lookup modal
-  $ionicModal.fromTemplateUrl('plugins/es/templates/market/modal_category.html', {
-      scope: $scope,
-      focusFirstInput: true
-  }).then(function(modal) {
-    $scope.categoryModal = modal;
-    $scope.categoryModal.hide();
-  });
-
-  $scope.openCategoryModal = function() {
-
-    // load categories
-    Market.category.all()
-    .then(function(categories){
-      $scope.categories.search.text = '';
-      $scope.categories.search.results = categories;
-      $scope.categories.all = categories;
-      UIUtils.ink();
-      $scope.categoryModal.show();
-    });
-  };
-
-  $scope.closeCategoryModal = function() {
-    $scope.categoryModal.hide();
-  };
-
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    console.log('Category ' + cat.name + 'selected. Method selectCategory(cat) not overwritten.');
-    $scope.closeCategoryModal();
-  };
-
-  $scope.searchCategoryChanged = function() {
-    $scope.categories.search.text = $scope.categories.search.text.toLowerCase();
-    if ($scope.categories.search.text.length > 1) {
-      $scope.doSearchCategory($scope.categories.search.text);
-    }
-    else {
-      $scope.categories.search.results = $scope.categories.all;
-    }
-  };
-
-  $scope.doSearchCategory = function(text) {
-    $scope.search.looking = true;
-
-    $scope.categories.search.results = $scope.categories.all.reduce(function(result, cat) {
-      if (cat.parent && cat.name.toLowerCase().search(text) != -1) {
-          return result.concat(cat);
-      }
-      return result;
-    }, []);
-
-    $scope.categories.search.looking = false;
-  };
-}
-
-function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils) {
-  'ngInject';
-
-  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils);
 
   $scope.search = {
     text: '',
@@ -192,13 +125,6 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
   $scope.isFilter = function(filter) {
     return ($scope.filter == filter);
-  };
-
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    $scope.search.category = cat;
-    $scope.closeCategoryModal();
-    $scope.doSearch();
   };
 
   $scope.doSearch = function() {
@@ -271,7 +197,6 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
     $scope.doRequest(request);
   };
 
-
   $scope.doRequest = function(request) {
     $scope.search.looking = true;
 
@@ -332,6 +257,20 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
         $scope.search.results = [];
       });
   };
+
+  /* -- modals -- */
+
+  $scope.showCategoryModal = function(parameters) {
+    ModalUtils.show('plugins/es/templates/modal_category.html', 'MarketCategoryModalCtrl as ctrl',
+          parameters, {focusFirstInput: true})
+    .then(function(cat){
+      if (cat && cat.parent) {
+        $scope.search.category = cat;
+        $scope.doSearch();
+      }
+    });
+  };
+
 }
 
 function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService) {
@@ -537,10 +476,10 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
   };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
   'ngInject';
 
-  MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils, Wallet);
+  //MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils, Wallet);
 
   $scope.walletData = {};
   $scope.formData = {};
@@ -659,13 +598,6 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     });
   };
 
-  $scope.selectCategory = function(cat) {
-    if (!cat.parent) return;
-    $scope.category = cat;
-    $scope.formData.category = cat;
-    $scope.closeCategoryModal();
-  };
-
   $scope.setUseRelative = function(useRelative) {
     $scope.formData.unit = useRelative ? 'DU' : 'unit';
     //$scope.unitPopover.hide();
@@ -722,5 +654,53 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     }
   };
 
+  /* -- modals -- */
 
+  $scope.showCategoryModal = function(parameters) {
+    ModalUtils.show('plugins/es/templates/modal_category.html', 'MarketCategoryModalCtrl as ctrl',
+          parameters, {focusFirstInput: true})
+    .then(function(cat){
+      if (cat && cat.parent) {
+        $scope.category = cat;
+        $scope.formData.category = cat;
+      }
+    });
+  };
+}
+
+
+function MarketCategoryModalController($scope, Market, UIUtils, parameters) {
+  'ngInject';
+
+  $scope.loading = true;
+  $scope.allCategories = [];
+  $scope.categories = [];
+  this.searchText = '';
+
+  // load categories
+  Market.category.all()
+  .then(function(result){
+    $scope.categories = result;
+    $scope.allCategories = result;
+    $scope.loading = false;
+    UIUtils.ink();
+  });
+
+  this.doSearch = function() {
+    var searchText = this.searchText.toLowerCase().trim();
+    if (searchText.length > 1) {
+      $scope.loading = true;
+      $scope.categories = $scope.allCategories.reduce(function(result, cat) {
+        if (cat.parent && cat.name.toLowerCase().search(searchText) != -1) {
+            return result.concat(cat);
+        }
+        return result;
+      }, []);
+
+      $scope.loading = false;
+    }
+    else {
+      $scope.categories = $scope.allCategories;
+    }
+  };
 }

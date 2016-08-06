@@ -3,10 +3,19 @@
    Categories select
 **********/
 
-.item-category{
+.item-category {
+  border: 1px solid #ddd !important;
+}
+
+.item-category .h2 {
   overflow: inherit ;
   text-overflow: inherit ;
   white-space: normal !important;
+}
+
+.item-category.item-divider,
+.item-category .item-divider{
+  background-color: #f5f5f5 !important;
 }
 
 .row-record {

@@ -1,4 +1,4 @@
-<form name="recordForm" novalidate="" ng-submit="doNewRecord()">
+<form name="recordForm" novalidate="" ng-submit="save()">
   <div class="list"
        ng-init="setRecordForm(recordForm)">
 
@@ -39,7 +39,7 @@
           </a-->
         </div>
 
-        <span class="item item-button-right ink" ng-click="openCategoryModal()" ng-show="isCompany">
+        <span class="item item-button-right ink" ng-click="showCategoryModal()">
             <span translate>REGISTRY.COMMON.CATEGORY</span>
             <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
             <i class="button button-clear ion-chevron-right"></i>
@@ -75,13 +75,7 @@
           <textarea placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="recordData.location"></textarea>
         </div>
 
-        <a class="item item-icon-left" ng-if="id && recordData.issuer && !isCompany">
-            <i class="icon ion-key"></i>
-            <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
-            <h4 class="gray">{{recordData.issuer}}</h4>
-        </a>
-
-        <a class="item item-icon-left" ng-if="id && recordData.issuer && isCompany" >
+        <a class="item item-icon-left" ng-if="id && recordData.issuer" >
             <i class="icon ion-key"></i>
             <span translate>REGISTRY.COMMON.ISSUER</span>
             <h4>{{recordData.issuer | formatPubkey}}</h4>

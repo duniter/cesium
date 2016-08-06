@@ -1,45 +1,45 @@
-    <div class="lookupForm padding no-padding-xs">
-        <label class="item item-input">
-            <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
-                   ng-model="search.text"
-                   ng-model-options="{ debounce: 350 }"
-                   ng-change="doSearch()" id="searchWot">
-        </label>
+<div class="lookupForm">
+  <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             ng-model-options="{ debounce: 350 }"
+             ng-change="doSearch()" id="searchWot">
+  </label>
 
-      <div class="list"
-           ng-class="{'list-inset': search.options.listInset}"
-           ng-if="search.text && search.text.length > 0">
+  <div class="list"
+       ng-class="{'list-inset': search.options.listInset}"
+       ng-if="search.text && search.text.length > 0">
 
-        <label class="item center text-left" ng-if="search.looking">
-            <ion-spinner icon="android"></ion-spinner>
-        </label>
+    <label class="item center text-left" ng-if="search.looking">
+        <ion-spinner icon="android"></ion-spinner>
+    </label>
 
-        <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.text.length > 0" translate>
-          COMMON.SEARCH_NO_RESULT
-        </label>
+    <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.text.length > 0" translate>
+      COMMON.SEARCH_NO_RESULT
+    </label>
 
-        <ion-item ng-if="!search.looking"
-           ng-repeat="found in search.results"
-           class="item item-avatar item-icon-right ink"
-           ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
+    <ion-item ng-if="!search.looking"
+       ng-repeat="found in search.results"
+       class="item item-avatar item-icon-right ink"
+       ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
 
-          <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
-          <i ng-if="!found.avatar" class="item-image avatar stable icon ion-person"></i>
+      <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
+      <i ng-if="!found.avatar" class="item-image avatar stable icon ion-person"></i>
 
-          <h2 ng-if="found.name" ng-bind-html="found.name"></h2>
-          <h2 ng-if="!found.name">{{found.uid}}</h2>
-            <h4 class="gray">
-              <span class="positive" ng-if="found.name && found.uid">
-                <i class="ion ion-person"></i>
-                {{found.uid}}
-              </span>
-              <i class="ion ion-key"></i>
-              {{found.pub | formatPubkey}}
-            </h4>
-            <i class="icon ion-ios-arrow-right"></i>
-        </ion-item>
+      <h2 ng-if="found.name" ng-bind-html="found.name"></h2>
+      <h2 ng-if="!found.name">{{found.uid}}</h2>
+        <h4 class="gray">
+          <span class="positive" ng-if="found.name && found.uid">
+            <i class="ion ion-person"></i>
+            {{found.uid}}
+          </span>
+          <i class="ion ion-key"></i>
+          {{found.pub | formatPubkey}}
+        </h4>
+        <i class="icon ion-ios-arrow-right"></i>
+    </ion-item>
 
-        <!--<img src="http://ionicmaterial.com/preview/img/jon-snow.jpg">-->
-    </div>
+    <!--<img src="http://ionicmaterial.com/preview/img/jon-snow.jpg">-->
   </div>
+</div>

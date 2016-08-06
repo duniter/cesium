@@ -12,7 +12,7 @@
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
-                   ng-model="search.text"
+                   ng-model="searchText"
                    ng-model-options="{ debounce: 350 }"
                    ng-change="doSearch()"
                    id="searchText">
@@ -28,10 +28,10 @@
             </label>
         </div>
 
-        <span class="item item-button-right" ng-click="openCategoryModal()" ng-if="search.options">
+        <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
             <span translate>REGISTRY.COMMON.CATEGORY</span>
-            <span class="badge badge-royal">{{search.category.name}}</span>&nbsp;
-            <i class="button button-clear ion-chevron-right"></i>
+            <span class="badge badge-royal badge-text-wrap">{{search.category.name}}</span>&nbsp;
+            <i class="gray icon ion-ios-arrow-right"></i>
         </span>
 
         <span class="item item-button-right" ng-if="search.options && !location.enable">
@@ -45,7 +45,6 @@
                 </label>
             </div>
         </span>
-
       </form>
 
       <div class="row no-padding">
@@ -62,7 +61,7 @@
 
         <div class="col col-25 hidden-xs hidden-sm" style="text-align:right">
           <button class="button button-full button-raised button-calm ink"
-                  ng-click="newRecord()">
+                  ng-click="showNewRecordModal()">
             {{'REGISTRY.COMMON.BTN_NEW' | translate}}
           </button>
         </div>
@@ -94,6 +93,6 @@
     </ion-content>
 
     <button class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg"
-            ng-click="newRecord()">
+            ng-click="showNewRecordModal()">
     </button>
 </ion-view>

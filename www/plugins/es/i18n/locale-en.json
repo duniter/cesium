@@ -7,16 +7,18 @@
   "MARKET": {
     "COMMON": {
       "CATEGORY": "Category",
+      "CATEGORY_SEARCH_HELP": "What: car, computer, ...",
       "CATEGORIES": "Categories",
       "ISSUER": "Issuer",
       "PRICE": "Price",
       "BTN_BUY": "Buy",
       "BTN_NEW_AD": "New ad",
-      "COMMENTS": "Comments"
+      "COMMENTS": "Comments",
+      "SEARCH_CATEGORY_HELP": "Search"
     },
     "SEARCH": {
       "TITLE": "Market",
-      "SEARCH_HELP": "Search (car, store)",
+      "SEARCH_HELP": "What, Where: car, Columbia city, ...",
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Advanced search",
       "BTN_AROUND_ME": "Around me",
@@ -58,13 +60,14 @@
   "REGISTRY": {
     "COMMON": {
       "CATEGORY": "Category",
+      "CATEGORY_SEARCH_HELP": "What: restaurant, ...",
       "CATEGORIES": "Categories",
       "ISSUER": "Issuer",
       "BTN_NEW": "Add"
     },
     "SEARCH": {
       "TITLE": "Registry",
-      "SEARCH_HELP": "Search (name, pseudo, public key...)",
+      "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Search tool",
       "LOCATION": "Location",
@@ -77,9 +80,11 @@
     },
     "NEW": {
       "TITLE": "New",
-      "SELECT_TYPE": "Choose type:",
-      "TYPE_PARTICULAR": "Private individual",
-      "TYPE_COMPANY": "Company, organisation or institution"
+      "SELECT_TYPE": "Kind of referencing:",
+      "TYPE_SHOP": "local shops",
+      "TYPE_COMPANY": "Company",
+      "TYPE_ASSOCIATION": "Association",
+      "TYPE_INSTITUTION": "Institution"
     },
     "EDIT": {
       "TITLE": "Edit",
@@ -101,6 +106,7 @@
     }
   },
   "PROFILE": {
+    "UID": "Pseudonym",
     "TITLE": "Name",
     "TITLE_HELP": "Name",
     "DESCRIPTION": "About me",
@@ -109,6 +115,7 @@
     "ADDRESS_HELP": "Address (optional)",
     "CITY": "City",
     "CITY_HELP": "City (optional)",
+    "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "General data",
     "LOCATION_DIVIDER": "Localisation",
     "SOCIAL_NETWORKS_DIVIDER": "Social networks",
