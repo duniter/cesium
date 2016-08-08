@@ -17,16 +17,74 @@
         </div>
 
         <div class="col">
-          <ng-include src="'plugins/es/templates/registry/record_form.html'"></ng-include>
+          <form name="recordForm" novalidate="" ng-submit="save()">
+            <div class="list" ng-init="setForm(recordForm)">
+
+              <div class="item" ng-if="id">
+                <h1 ng-bind-html="formData.title"></h1>
+                <h4 class="gray">
+                  <i class="icon ion-calendar"></i>
+                  {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
+                </h4>
+              </div>
+
+              <!-- pictures -->
+              <ng-include src="'plugins/es/templates/common/edit_pictures.html'"></ng-include>
+
+              <span class="item item-button-right ink" ng-click="showCategoryModal()">
+                <span translate>COMMON.CATEGORY</span>
+                <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
+                <i class="button button-clear ion-chevron-right"></i>
+              </span>
+
+              <div class="item item-input item-floating-label">
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_TITLE</span>
+                <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_TITLE_HELP'|translate}}" ng-model="formData.title" />
+              </div>
+
+              <div class="item item-input item-floating-label">
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_DESCRIPTION</span>
+                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_DESCRIPTION_HELP'|translate}}"
+                          ng-model="formData.description"
+                          rows="8" cols="10">
+                </textarea>
+              </div>
+
+              <div class="item item-floating-label" ng-if="location.enable">
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
+                <div class="item-input-inset">
+                  <label class="item-input-wrapper">
+                    <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="formData.location">
+                  </label>
+                  <button class="button button-small button-positive" ng-click="localize()" ng-if="location.enable">
+                    <i class="icon ion-pinpoint"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="item item-input item-floating-label" ng-if="!location.enable">
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
+                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="formData.location"></textarea>
+              </div>
+
+              <a class="item item-icon-left" ng-if="id && formData.issuer" >
+                <i class="icon ion-key"></i>
+                <span translate>REGISTRY.COMMON.ISSUER</span>
+                <h4>{{formData.issuer | formatPubkey}}</h4>
+              </a>
+
+            </div>
+          </form>
 
           <div class="padding hidden-xs hidden-sm text-right">
-            <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
+            <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
+              COMMON.BTN_CANCEL
             </button>
-            <button class="button button-positive button-raised ink" ng-click="save()" ng-show="!id">
-              {{'REGISTRY.EDIT.BTN_PUBLISH' | translate}}
+            <button class="button button-positive button-raised ink" ng-click="save()" ng-if="!id" translate>
+              COMMON.BTN_PUBLISH
             </button>
-            <button class="button button-positive button-raised ink" ng-click="save()" ng-show="id">
-              {{'REGISTRY.EDIT.BTN_SAVE' | translate}}
+            <button class="button button-assertive button-raised ink" ng-click="save()" ng-if="id" translate>
+              COMMON.BTN_SAVE
             </button>
           </div>
         </div>

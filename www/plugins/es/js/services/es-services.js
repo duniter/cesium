@@ -5,6 +5,12 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
 
   function ESUtils(server) {
 
+    // Get time (UTC)
+    function getTimeNow() {
+       // TODO : use the block chain time
+       return Math.floor(moment().utc().valueOf() / 1000);
+    }
+
     function postRecord(uri) {
       var postRequest = HttpUtils.post(uri);
 
@@ -16,6 +22,9 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
           var errorFct = function(err) {
             reject(err);
           };
+          if (!record.time) {
+            record.time = getTimeNow();
+          }
           var keypair = $rootScope.walletData.keypair;
           var obj = {};
           angular.copy(record, obj);
@@ -59,8 +68,7 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
             type: type,
             id: id,
             issuer: $rootScope.walletData.pubkey,
-            // TODO: get blockchain time ?
-            time: Math.floor(moment().utc().valueOf() / 1000)
+            time: getTimeNow()
           };
           var str = JSON.stringify(obj);
           CryptoUtils.util.hash(str)
@@ -81,6 +89,7 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
         });
       };
     }
+
 
     function login(keypair) {
       return $q(function(resolve, reject) {
@@ -149,6 +158,9 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
       },
       hit: {
          empty: emptyHit
+      },
+      date: {
+        now: getTimeNow
       }
     };
   }

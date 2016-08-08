@@ -1,4 +1,4 @@
-angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
+angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'cesium.es.controllers'])
 
   .config(function($menuProvider) {
     'ngInject';
@@ -26,7 +26,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
     })
 
    .state('app.market_view_record', {
-      url: "/market/:id/:title",
+      url: "/market/view/:id/:title",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/view_record.html",
@@ -48,7 +48,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
     .state('app.market_edit_record', {
       cache: false,
-      url: "/market/:id/edit",
+      url: "/market/edit/:id/:title",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/edit_record.html",
@@ -64,11 +64,9 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize'])
 
  .controller('MarketRecordEditCtrl', MarketRecordEditController)
 
- .controller('MarketCategoryModalCtrl', MarketCategoryModalController)
-
 ;
 
-function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils, ModalUtils) {
+function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils, ModalUtils, $filter) {
   'ngInject';
 
   $scope.search = {
@@ -212,7 +210,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
                   var record = hit._source;
                   record.id = hit._id;
                   record.type = hit._type;
-                  record.urlTitle = record.title;
+                  record.urlTitle = $filter('formatSlug')(record.title);
                   if (record.category && record.category.id) {
                     record.category = categories[record.category.id];
                   }
@@ -260,9 +258,15 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
   /* -- modals -- */
 
-  $scope.showCategoryModal = function(parameters) {
-    ModalUtils.show('plugins/es/templates/modal_category.html', 'MarketCategoryModalCtrl as ctrl',
-          parameters, {focusFirstInput: true})
+  $scope.showCategoryModal = function() {
+    // load categories
+    Market.category.all()
+    .then(function(result){
+      return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
+        {categories : result},
+        {focusFirstInput: true}
+      )
+    })
     .then(function(cat){
       if (cat && cat.parent) {
         $scope.search.category = cat;
@@ -273,7 +277,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
 }
 
-function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService) {
+function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService, ESUtils, $filter) {
   'ngInject';
 
   $scope.formData = {};
@@ -409,7 +413,7 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
   $scope.$watch('$root.walletData.settings.useRelative', $scope.refreshConvertedPrice, true);
 
   $scope.edit = function() {
-    $state.go('app.market_edit_record', {id: $scope.id});
+    $state.go('app.market_edit_record', {id: $scope.id, title: $filter('formatSlug')($scope.formData.title)});
   };
 
   $scope.showMoreComments = function(){
@@ -440,12 +444,9 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         obj.uid = walletData.uid;
       }
       obj.isnew = true;
-      $scope.comments.push(obj);
-      $scope.commentData = {}; // reset comment
       // Create
       if (!comment.id) {
-        // Set time (UTC) - TODO : use the block chain time
-        comment.time = Math.floor(moment().utc().valueOf() / 1000);
+        comment.time = ESUtils.date.now();
         obj.time = comment.time;
         Market.record.comment.add(comment)
         .then(function (id){
@@ -458,6 +459,9 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         Market.record.comment.update(comment, {id: comment.id})
         .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
       }
+
+      $scope.comments.push(obj);
+      $scope.commentData = {}; // reset comment
     });
   };
 
@@ -476,10 +480,8 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
   };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils, ESUtils) {
   'ngInject';
-
-  //MarketCategoryModalController.call(this, $scope, Market, $state, $ionicModal, UIUtils, Wallet);
 
   $scope.walletData = {};
   $scope.formData = {};
@@ -550,9 +552,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     return $q(function(resolve, reject) {
       var doFinishSave = function(formData) {
         if (!$scope.id) { // Create
-          // Set time (UTC)
-          // TODO : use the block chain time
-          formData.time = Math.floor(moment().utc().valueOf() / 1000);
+          formData.time = ESUtils.date.now();
           Market.record.add(formData)
           .then(function(id) {
             $scope.id = id;
@@ -564,9 +564,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         }
         else { // Update
           if (formData.time) {
-            // Set time (UTC)
-            // TODO : use the block chain time
-            formData.time = Math.floor(moment().utc().valueOf() / 1000);
+            formData.time = ESUtils.date.now();
           }
           Market.record.update(formData, {id: $scope.id})
           .then(function() {
@@ -656,51 +654,20 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
 
   /* -- modals -- */
 
-  $scope.showCategoryModal = function(parameters) {
-    ModalUtils.show('plugins/es/templates/modal_category.html', 'MarketCategoryModalCtrl as ctrl',
-          parameters, {focusFirstInput: true})
+  $scope.showCategoryModal = function() {
+    // load categories
+    Market.category.all()
+    .then(function(result){
+      return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
+        {categories : result},
+        {focusFirstInput: true}
+      )
+    })
     .then(function(cat){
       if (cat && cat.parent) {
         $scope.category = cat;
         $scope.formData.category = cat;
       }
     });
-  };
-}
-
-
-function MarketCategoryModalController($scope, Market, UIUtils, parameters) {
-  'ngInject';
-
-  $scope.loading = true;
-  $scope.allCategories = [];
-  $scope.categories = [];
-  this.searchText = '';
-
-  // load categories
-  Market.category.all()
-  .then(function(result){
-    $scope.categories = result;
-    $scope.allCategories = result;
-    $scope.loading = false;
-    UIUtils.ink();
-  });
-
-  this.doSearch = function() {
-    var searchText = this.searchText.toLowerCase().trim();
-    if (searchText.length > 1) {
-      $scope.loading = true;
-      $scope.categories = $scope.allCategories.reduce(function(result, cat) {
-        if (cat.parent && cat.name.toLowerCase().search(searchText) != -1) {
-            return result.concat(cat);
-        }
-        return result;
-      }, []);
-
-      $scope.loading = false;
-    }
-    else {
-      $scope.categories = $scope.allCategories;
-    }
   };
 }

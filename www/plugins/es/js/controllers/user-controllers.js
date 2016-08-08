@@ -1,12 +1,12 @@
 angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
 
-  .config(function($menuProvider) {
+  .config(function($menuProvider, $stateProvider, $urlRouterProvider) {
     'ngInject';
     $menuProvider.addItem({
       text: 'MENU.USER_PROFILE',
       icon: "ion-person",
       section: $menuProvider.sections.USER,
-      url: '#/app/user/profile',
+      url: '#/app/user/profile/edit',
       ngIf: "isLogged()"
     });
 
@@ -14,26 +14,20 @@ angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
       text: 'MENU.USER_PROFILE',
       icon: "ion-person",
       section: $menuProvider.sections.USER,
-      ngClick: "login('app.user_profile')",
+      ngClick: "login('app.user_edit_profile')",
       ngIf: "!isLogged()"
     });
-  })
 
-  .config(function($stateProvider, $urlRouterProvider) {
-    'ngInject';
-
-    $stateProvider
-
-    .state('app.user_profile', {
-      url: "/user/profile",
+    $stateProvider.state('app.user_edit_profile', {
+      url: "/user/profile/edit",
       views: {
         'menuContent': {
-          templateUrl: "plugins/es/templates/user/profile.html",
+          templateUrl: "plugins/es/templates/user/edit_profile.html",
           controller: 'ProfileCtrl'
         }
       }
-    })
-    ;
+    });
+
   })
 
  .controller('ProfileCtrl', ProfileController)

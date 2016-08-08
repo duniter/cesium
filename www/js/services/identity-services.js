@@ -7,7 +7,7 @@ angular.module('cesium.identity.services', ['ngResource', 'ngApi', 'cesium.bma.s
   IdentityService = function(id) {
 
     var
-    api = new Api(this, id),
+    api = new Api(this, "IdentityService-" + id),
 
     loadRequirements = function(pubkey) {
       return $q(function(resolve, reject) {

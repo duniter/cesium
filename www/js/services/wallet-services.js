@@ -53,7 +53,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         }
     },
 
-    api = new Api(this, id),
+    api = new Api(this, 'WalletService-' + id),
 
     resetData = function() {
       data.pubkey= null;

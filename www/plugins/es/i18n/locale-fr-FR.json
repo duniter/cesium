@@ -1,7 +1,13 @@
 {
   "COMMON": {
+    "CATEGORY": "Catégorie",
     "CATEGORIES": "Catégories",
-    "CATEGORY_SEARCH_HELP": "Recherche"
+    "CATEGORY_SEARCH_HELP": "Recherche",
+    "LAST_MODIFICATION_DATE": "Mise à jour le",
+    "BTN_PUBLISH": "Publier",
+    "BTN_PICTURE_DELETE": "Supprimer",
+    "BTN_PICTURE_FAVORISE": "Principale",
+    "BTN_ADD_PICTURE": "Ajouter une photo"
   },
   "MENU": {
     "MARKET": "Annonces",
@@ -10,7 +16,6 @@
   },
   "MARKET": {
     "COMMON": {
-      "CATEGORY": "Catégorie",
       "ISSUER": "Soumis par",
       "PRICE": "Prix",
       "BTN_BUY": "Acheter",
@@ -36,7 +41,6 @@
     },
     "EDIT": {
       "TITLE": "Edition",
-      "LAST_MODIFICATION_DATE": "Mise à jour le",
       "RECORD_TITLE": "Titre",
       "RECORD_TITLE_HELP": "Titre",
       "RECORD_DESCRIPTION": "Description",
@@ -45,11 +49,7 @@
       "RECORD_LOCATION_HELP": "Adresse, Ville",
       "RECORD_PRICE": "Prix",
       "RECORD_PRICE_HELP": "Prix (optionnel)",
-      "RECORD_CURRENCY": "Monnaie",
-      "BTN_ADD_PICTURES": "Ajouter des photos",
-      "BTN_ADD_PICTURE": "Ajouter une photo",
-      "BTN_PUBLISH": "Publier",
-      "BTN_SAVE": "Sauvegarder"
+      "RECORD_CURRENCY": "Monnaie"
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
@@ -94,10 +94,7 @@
       "RECORD_LOCATION": "Localisation",
       "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
-      "RECORD_PUBKEY": "Clé publique",
-      "BTN_ADD_PICTURES": "Ajouter des photos",
-      "BTN_PUBLISH": "Publier",
-      "BTN_SAVE": "Sauvegarder"
+      "RECORD_PUBKEY": "Clé publique"
     },
     "ERROR": {
       "LOAD_RECORD_FAILED": "Chargement impossible",

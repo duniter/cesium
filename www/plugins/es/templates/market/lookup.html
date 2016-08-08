@@ -94,7 +94,7 @@
 
       <a ng-repeat="rec in search.results"
          class="item item-record ink padding-xs"
-         ui-sref="app.market_view_record({id: rec.id, title: rec.title})"
+         ui-sref="app.market_view_record({id: rec.id, title: rec.urlTitle})"
          >
 
         <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': rec.thumbnail}">

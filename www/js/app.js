@@ -235,7 +235,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
-.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig
+.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig, PluginService
 ) {
   'ngInject';
 
@@ -278,5 +278,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   // Set up moment translation
   $rootScope.$on('$translateChangeSuccess', $rootScope.onLanguageChange);
 
+  // start plugin
+  PluginService.start();
 })
 ;

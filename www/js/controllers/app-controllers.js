@@ -155,10 +155,6 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   $scope.config = APP_CONFIG;
   $rootScope.walletData = Wallet.data;
 
-  //LoginModalController.call(this, $scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory);
-
-  //TransferModalController.call(this, $scope, $rootScope, $ionicModal, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q);
-
   ////////////////////////////////////////
   // Load currencies
   ////////////////////////////////////////

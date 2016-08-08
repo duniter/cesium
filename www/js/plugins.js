@@ -9,8 +9,9 @@ angular.module('cesium.plugins', [
     'cesium.market.services',
     'cesium.user.services',
     // Controllers
-    'cesium.registry.controllers',
+    'cesium.es.controllers',
     'cesium.market.controllers',
+    'cesium.registry.controllers',
     'cesium.user.controllers'
   ])
 ;

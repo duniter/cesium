@@ -1,4 +1,14 @@
 {
+  "COMMON": {
+    "CATEGORY": "Category",
+    "CATEGORIES": "Categories",
+    "CATEGORY_SEARCH_HELP": "Search",
+    "LAST_MODIFICATION_DATE": "Updated on ",
+    "BTN_PUBLISH": "Publish",
+    "BTN_PICTURE_DELETE": "Delete",
+    "BTN_PICTURE_FAVORISE": "Default",
+    "BTN_ADD_PICTURES": "Add pictures"
+  },
   "MENU": {
     "MARKET": "Ads",
     "REGISTRY": "Companies",
@@ -6,15 +16,11 @@
   },
   "MARKET": {
     "COMMON": {
-      "CATEGORY": "Category",
-      "CATEGORY_SEARCH_HELP": "What: car, computer, ...",
-      "CATEGORIES": "Categories",
       "ISSUER": "Issuer",
       "PRICE": "Price",
       "BTN_BUY": "Buy",
       "BTN_NEW_AD": "New ad",
-      "COMMENTS": "Comments",
-      "SEARCH_CATEGORY_HELP": "Search"
+      "COMMENTS": "Comments"
     },
     "SEARCH": {
       "TITLE": "Market",
@@ -35,7 +41,6 @@
     },
     "EDIT": {
       "TITLE": "Edit",
-      "LAST_MODIFICATION_DATE": "Updated on ",
       "RECORD_TITLE": "Title",
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
@@ -44,11 +49,7 @@
       "RECORD_LOCATION_HELP": "Address, City",
       "RECORD_PRICE": "Price",
       "RECORD_PRICE_HELP": "Price (optional)",
-      "RECORD_CURRENCY": "Currency",
-      "BTN_ADD_PICTURES": "Add pictures",
-      "BTN_ADD_PICTURE": "Add a picture",
-      "BTN_PUBLISH": "Publish",
-      "BTN_SAVE": "Save"
+      "RECORD_CURRENCY": "Currency"
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Error while loading market categories",
@@ -60,8 +61,6 @@
   "REGISTRY": {
     "COMMON": {
       "CATEGORY": "Category",
-      "CATEGORY_SEARCH_HELP": "What: restaurant, ...",
-      "CATEGORIES": "Categories",
       "ISSUER": "Issuer",
       "BTN_NEW": "Add"
     },
@@ -95,10 +94,7 @@
       "RECORD_LOCATION": "Localization",
       "RECORD_LOCATION_HELP": "Localization (address, city)",
       "RECORD_SOCIAL_NETWORKS": "Social networks",
-      "RECORD_PUBKEY": "Public key",
-      "BTN_ADD_PICTURES": "Add pictures",
-      "BTN_PUBLISH": "Publish",
-      "BTN_SAVE": "Save"
+      "RECORD_PUBKEY": "Public key"
     },
     "ERROR": {
       "LOAD_RECORD_FAILED": "Loading failed",

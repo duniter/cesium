@@ -4,7 +4,7 @@ angular.module('cesium.modal.services', [])
   'ngInject';
 
 
-  function show(templateUrl, controller, parameters) {
+  function show(templateUrl, controller, parameters, options) {
     // Grab the injector and create a new scope
     var deferred = $q.defer(),
         ctrlInstance,
@@ -20,10 +20,11 @@ angular.module('cesium.modal.services', [])
       }
     };
 
-    $ionicModal.fromTemplateUrl(templateUrl, {
-      scope: modalScope,
-      animation: 'slide-in-up'
-    })
+    options = options ? options : {} ;
+    options.scope = options.scope ? options.scope : modalScope;
+    options.animation = options.animation ? options.animation : 'slide-in-up';
+
+    $ionicModal.fromTemplateUrl(templateUrl, options)
     .then(function (modal) {
       modalScope.modal = modal;
 

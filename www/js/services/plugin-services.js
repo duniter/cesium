@@ -2,6 +2,31 @@
 
 angular.module('cesium.plugin.services', [])
 
+.provider('PluginService', function PluginServiceProvider() {
+  'ngInject';
+
+  var eagerLoadingServices = [];
+
+  this.registerEagerLoadingService = function(serviceName) {
+    eagerLoadingServices.push(serviceName);
+  };
+
+  this.$get = ['$injector', function pluginFactory($injector) {
+
+    function start() {
+      if (eagerLoadingServices.length>0) {
+        _.forEach(eagerLoadingServices, function(name) {
+          $injector.get(name);
+        });
+      }
+    }
+
+    return {
+      start: start
+    };
+  }];
+})
+
 .provider('$menu', function MenuProvider() {
   'ngInject';
 

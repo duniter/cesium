@@ -1,5 +1,5 @@
 
-angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers', 'cesium.user.services'])
+angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
@@ -33,7 +33,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover, Modals, UserService) {
+  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.walletData = null;

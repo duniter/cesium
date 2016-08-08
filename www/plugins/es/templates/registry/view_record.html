@@ -4,74 +4,87 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear ion-android-create" ng-click="edit()" ng-if="canEdit">
+      <button class="button button-icon button-clear ion-android-create visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
       </button>
   </ion-nav-buttons>
 
-  <ion-content class="item-text-wrap">
+  <ion-content class="item-text-wrap" scroll="true">
 
-      <div class="scroll">
-
-        <div class="positive-900-bg hero">
-          <div class="content">
-            <div class="avatar"
-                 ng-if="pictures && pictures.length > 0"
-                 style="background-image: url({{pictures[0].src}});"></div>
-            <i class="avatar avatar-member" ng-if="!pictures || pictures.length === 0"></i>
-            <h3 class="light">{{formData.title}}</h3>
-            <h4 class="gray">
-              <i class="icon ion-location" ng-show="formData.location"></i>
-              <span ng-bind-html="formData.location"></span>
-              <span ng-shwo="formData.location && formData.time">&nbsp;&nbsp;</span>
-              <i class="icon ion-calendar" ng-show="formData.time"></i>
-              {{formData.time|formatDate}}
-            </h4>
-          </div>
+      <div class="positive-900-bg hero">
+        <div class="content">
+          <div class="avatar"
+               ng-if="pictures && pictures.length > 0"
+               style="background-image: url({{pictures[0].src}});"></div>
+          <i class="avatar avatar-member" ng-if="!pictures || pictures.length === 0"></i>
+          <h3 class="light">{{formData.title}}</h3>
+          <h4 class="gray">
+            <i class="icon ion-location" ng-show="formData.location"></i>
+            <span ng-bind-html="formData.location"></span>
+            <span ng-shwo="formData.location && formData.time">&nbsp;&nbsp;</span>
+            <i class="icon ion-calendar" ng-show="formData.time"></i>
+            {{formData.time|formatDate}}
+          </h4>
         </div>
+      </div>
 
-        <div class="hidden-xs hidden-sm padding text-center">
+    <div class="row">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+
+      <div class="col list">
+
+        <!-- Buttons bar-->
+        <div class="item padding hidden-xs hidden-sm text-center"
+             ng-if="!canEdit">
           <button class="button button-raised button-assertive ink-dark"
                   ng-click="transfer(formData.issuer, formData.title)">
             {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
           </button>
-
           <button class="button button-raised button-icon icon ion-ribbon-b" ng-click="certifyIdentity()" ng-if="hasSelf">
             {{'WOT.BTN_CERTIFY' | translate}}
           </button>
         </div>
 
-        <div class="list">
+        <div class="item padding text-right"
+             ng-if="canEdit">
+          <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
+                  ng-click="edit()">
+            {{'COMMON.BTN_EDIT' | translate}}
+          </button>
+        </div>
 
-            <span class="item item-icon-left ink"
-                  ng-if="!isCompany"
-                  copy-on-click>
-                <i class="icon ion-key"></i>
-                <p class="gray">{{formData.issuer}}</p>
-            </span>
+        <span class="item item-icon-left ink"
+              ng-if="!isCompany"
+              copy-on-click>
+            <i class="icon ion-key"></i>
+            <p class="gray">{{formData.issuer}}</p>
+        </span>
+
+        <div class="item">
+            <p ng-bind-html="formData.description"></p>
+        </div>
+
+        <div ng-if="isCompany">
+            <div class="item-divider"></div>
 
             <div class="item">
-                <p ng-bind-html="formData.description"></p>
+                <span translate>COMMON.CATEGORY</span>
+                <span class="badge badge-positive">{{category.name || formatCategory}}</span>
             </div>
 
-            <div ng-if="isCompany">
-                <div class="item-divider"></div>
-
-                <div class="item">
-                    <span translate>REGISTRY.COMMON.CATEGORY</span>
-                    <span class="badge badge-positive">{{category.name || formatCategory}}</span>
-                </div>
-
-                <span class="item item-icon-left" >
-                    <i class="icon ion-person"></i>
-                    <h3><span translate>REGISTRY.COMMON.ISSUER</span></h3>
-                    <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
-                </span>
-
-            </div>
+            <span class="item item-icon-left" >
+                <i class="icon ion-person"></i>
+                <h3><span translate>REGISTRY.COMMON.ISSUER</span></h3>
+                <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
+            </span>
 
         </div>
-        <div class="scroll-bar scroll-bar-v"></div>
+
       </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+    </div>
   </ion-content>
 
   <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"

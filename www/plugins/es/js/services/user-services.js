@@ -1,4 +1,10 @@
 angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services'])
+.config(function(PluginServiceProvider) {
+    'ngInject';
+
+    PluginServiceProvider.registerEagerLoadingService('UserService');
+
+  })
 
 .factory('UserService', function(APP_CONFIG, $rootScope, ESUtils, Wallet, IdentityService, UIUtils) {
   'ngInject';
@@ -126,9 +132,9 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
     }
 
     // Extend Wallet.loadData() and IdentityService.loadData()
-    Wallet.api.data.on.load($rootScope, doLoad);
-    IdentityService.api.data.on.load($rootScope, doLoad);
-    IdentityService.api.data.on.search($rootScope, doSearch);
+    Wallet.api.data.on.load($rootScope, doLoad, this);
+    IdentityService.api.data.on.load($rootScope, doLoad, this);
+    IdentityService.api.data.on.search($rootScope, doSearch, this);
 
     return {
       profile: {
