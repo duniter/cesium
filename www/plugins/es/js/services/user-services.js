@@ -6,7 +6,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
 
   })
 
-.factory('UserService', function(APP_CONFIG, $rootScope, ESUtils, Wallet, IdentityService, UIUtils) {
+.factory('UserService', function(APP_CONFIG, $rootScope, ESUtils, Wallet, WotService, UIUtils) {
   'ngInject';
 
   function UserService(server) {
@@ -22,7 +22,11 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       .then(function(res) {
         if (res && res._source) {
           data.name = res._source.title;
-          data.avatar = res._source.avatar;
+          var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
+          if (avatar) {
+            data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
+            data.avatar=avatar;
+          }
         }
         resolve(data);
       })
@@ -61,8 +65,8 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
 
       if (datas.length > 0) {
         var pubkeys = datas.reduce(function(res, data) {
-          map[data.pub] = data;
-          return res.concat(data.pub);
+          map[data.pubkey] = data;
+          return res.concat(data.pubkey);
         }, []);
         request.query.constant_score = {
            filter: {
@@ -99,7 +103,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
             var data = map[hit._id];
             if (!data) {
               data = {
-                pub: hit._id
+                pubkey: hit._id
               };
               datas.push(data);
             }
@@ -131,10 +135,10 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       });
     }
 
-    // Extend Wallet.loadData() and IdentityService.loadData()
+    // Extend Wallet.loadData() and WotService.loadData()
     Wallet.api.data.on.load($rootScope, doLoad, this);
-    IdentityService.api.data.on.load($rootScope, doLoad, this);
-    IdentityService.api.data.on.search($rootScope, doSearch, this);
+    WotService.api.data.on.load($rootScope, doLoad, this);
+    WotService.api.data.on.search($rootScope, doSearch, this);
 
     return {
       profile: {

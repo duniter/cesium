@@ -307,10 +307,8 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
         },
         peers: HttpUtils.get('http://' + server + '/network/peers')
       },
-      currency: {
-        parameters: HttpUtils.get('http://' + server + '/blockchain/parameters')
-      },
       blockchain: {
+        parameters: HttpUtils.get('http://' + server + '/blockchain/parameters'),
         current: getBlockchainCurrent,
         block: HttpUtils.get('http://' + server + '/blockchain/block/:block'),
         membership: HttpUtils.post('http://' + server + '/blockchain/membership'),

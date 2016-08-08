@@ -7,7 +7,7 @@ angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
       icon: "ion-person",
       section: $menuProvider.sections.USER,
       url: '#/app/user/profile/edit',
-      ngIf: "isLogged()"
+      ngIf: "isLogin()"
     });
 
     $menuProvider.addItem({
@@ -15,7 +15,7 @@ angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
       icon: "ion-person",
       section: $menuProvider.sections.USER,
       ngClick: "login('app.user_edit_profile')",
-      ngIf: "!isLogged()"
+      ngIf: "!isLogin()"
     });
 
     $stateProvider.state('app.user_edit_profile', {

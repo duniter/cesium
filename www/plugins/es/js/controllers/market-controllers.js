@@ -1,4 +1,4 @@
-angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'cesium.es.controllers'])
+angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'cesium.es-common.controllers'])
 
   .config(function($menuProvider) {
     'ngInject';
@@ -48,7 +48,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
 
     .state('app.market_edit_record', {
       cache: false,
-      url: "/market/edit/:id/:title",
+      url: "/market/:id/:title/edit",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/edit_record.html",
@@ -206,11 +206,12 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
               $scope.search.results = [];
             }
             else {
+              var formatSlug = $filter('formatSlug');
               var records = res.hits.hits.reduce(function(result, hit) {
                   var record = hit._source;
                   record.id = hit._id;
                   record.type = hit._type;
-                  record.urlTitle = $filter('formatSlug')(record.title);
+                  record.urlTitle = formatSlug(hit._source.title);
                   if (record.category && record.category.id) {
                     record.category = categories[record.category.id];
                   }
@@ -237,10 +238,9 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
                 UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
                 });
+                // Set Ink
+                UIUtils.ink();
               }, 10);
-
-              // Set Ink
-              UIUtils.ink();
             }
 
             $scope.search.looking = false;
@@ -277,7 +277,7 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
 }
 
-function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, UserService, ESUtils, $filter) {
+function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, ESUtils, $filter) {
   'ngInject';
 
   $scope.formData = {};
@@ -325,7 +325,7 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         if (hit._source.thumbnail) {
           $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
         }
-        $scope.canEdit = $scope.formData && $scope.isUserPubkey($scope.formData.issuer);
+        $scope.canEdit = $scope.formData && Wallet.isUserPubkey($scope.formData.issuer);
 
         // Get last UD
         BMA.blockchain.lastUd(true/*cache*/)

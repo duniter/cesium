@@ -48,7 +48,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
         if (!walletData) {
           $state.go('app.home');
         }
-        $scope.avatar = walletData.avatar ? UIUtils.image.fromAttachment(walletData.avatar) : null;
         $scope.walletData = walletData;
         $scope.updateView();
         $scope.showFab('fab-transfer');
@@ -93,9 +92,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.updateView = function() {
     $scope.hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
     $scope.refreshConvertedBalance();
-    if ($scope.avatar) {
-      $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
-    }
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight();
@@ -123,16 +119,18 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       return;
     }
     Modals.showTransfer()
-    .then(function(){
-      UIUtils.alert.info('INFO.TRANSFER_SENT');
-      // Set Motion
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight({
-          selector: '.item-pending'
-        });
-        // Set Ink
-        UIUtils.ink({selector: '.item-pending'});
-      }, 10);
+    .then(function(done){
+      if (done) {
+        UIUtils.alert.info('INFO.TRANSFER_SENT');
+        // Set Motion
+        $timeout(function() {
+          UIUtils.motion.fadeSlideInRight({
+            selector: '.item-pending'
+          });
+          // Set Ink
+          UIUtils.ink({selector: '.item-pending'});
+        }, 10);
+      }
     });
   };
 
@@ -167,30 +165,30 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   };
 
   $scope.checkPubkeyNotExists = function(uid, pubkey) {
-      return $q(function(resolve, reject) {
-        BMA.wot.lookup({ search: pubkey }) // search on pubkey
-          .then(function(res) {
-            var found = res.results &&
-                res.results.length > 0 &&
-                res.results.some(function(pub){
-                  return pub.pubkey === pubkey &&
-                      pub.uids && pub.uids.length > 0 &&
-                      pub.uids.some(function(idty) {
-                        return (!idty.revoked); // excluded revoked uid
-                      });
-                });
-            if (found) { // uid is already used : display a message and reopen the popup
-              reject('ACCOUNT.NEW.MSG_PUBKEY_ALREADY_USED');
-            }
-            else {
-              resolve(uid);
-            }
-          })
-          .catch(function() {
-             resolve(uid);
-          });
-      });
-    };
+    return $q(function(resolve, reject) {
+      BMA.wot.lookup({ search: pubkey }) // search on pubkey
+        .then(function(res) {
+          var found = res.results &&
+              res.results.length > 0 &&
+              res.results.some(function(pub){
+                return pub.pubkey === pubkey &&
+                    pub.uids && pub.uids.length > 0 &&
+                    pub.uids.some(function(idty) {
+                      return (!idty.revoked); // excluded revoked uid
+                    });
+              });
+          if (found) { // uid is already used : display a message and reopen the popup
+            reject('ACCOUNT.NEW.MSG_PUBKEY_ALREADY_USED');
+          }
+          else {
+            resolve(uid);
+          }
+        })
+        .catch(function() {
+           resolve(uid);
+        });
+    });
+  };
 
   // Ask uid
   $scope.showUidPopup = function() {

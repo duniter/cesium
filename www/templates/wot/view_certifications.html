@@ -11,8 +11,8 @@
   <ion-content id="certifications" scroll="true">
 
     <div class="hidden-xs hidden-sm padding" style="text-align:center">
-      <button class="button button-raised icon-left ion-ribbon-b" ng-click="certifyIdentity()"
-              ng-if="hasSelf && canCertify"
+      <button class="button button-raised icon-left ion-ribbon-b" ng-click="certify()"
+              ng-if="formData.hasSelf && canCertify"
               ng-disabled="alreadyCertified">
         {{'WOT.BTN_CERTIFY' | translate}}
       </button>
@@ -22,30 +22,29 @@
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
 
-      <label class="col center" ng-if="!loaded">
+      <label class="col center" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </label>
 
       <div class="col list animate-fade-slide-in-right">
 
         <span class="item item-divider">
-          <span class="hidden-xs" translate="WOT.CERTIFICATIONS_RECEIVED_BY" translate-values="{uid: identity.uid}"></span>
+          <span class="hidden-xs" translate="WOT.CERTIFICATIONS_RECEIVED_BY" translate-values="{uid: formData.uid}"></span>
           <span class="visible-xs" translate="WOT.CERTIFICATIONS_RECEIVED" ></span>
           <div class="badge item-note" translate>WOT.EXPIRE_IN</div>
         </span>
 
-        <span class="item" ng-if="loaded && certifications.length == 0">
+        <span class="item" ng-if="!loading && certifications.length == 0">
           <h3 translate>WOT.NO_CERTIFICATIONS</h3>
         </span>
 
         <a class="item ink"
-              ng-repeat="cert in certifications"
-              ng-if="loaded"
-              ui-sref="app.view_identity({pubkey:cert.from})">
+              ng-repeat="cert in formData.certifications"
+              ui-sref="app.wot_view_identity({pubkey:cert.from, uid:cert.uid})">
           <span ng-if="cert.isMember">
             <h3
-              ng-class="{'positive': !!cert.expiresIn && cert.expiresIn > timeWarningExpire, 'assertive': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire}">
-              <i class="icon " ng-class="{'ion-alert-circled': !!cert.expiresIn && cert.expiresIn <= timeWarningExpire, 'ion-clock': !cert.expiresIn && cert.isMember}"> </i>
+              ng-class="{'positive': cert.valid}">
+              <i ng-if="!cert.valid" class="icon ion-clock"> </i>
               <i class="icon ion-person"> </i>
               {{::cert.uid}}
             </h3>
@@ -63,8 +62,8 @@
             <h4 ng-if="!cert.isMember" class="gray">{{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</h4>
           </span>
           <div class="badge item-note"
-               ng-if="cert.expiresIn"
-               ng-class="{'badge-balanced': cert.expiresIn > timeWarningExpire, 'badge-assertive': cert.expiresIn <= timeWarningExpire}">
+               ng-if="cert.valid"
+               ng-class="{'badge-balanced': !cert.willExpire, 'badge-energized': cert.willExpire}">
             {{::cert.expiresIn | formatDuration}}
           </div >
         </a>

@@ -4,6 +4,7 @@
     "CATEGORIES": "Categories",
     "CATEGORY_SEARCH_HELP": "Search",
     "LAST_MODIFICATION_DATE": "Updated on ",
+    "RECORD_ISSUER": "Record issuer",
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
@@ -16,7 +17,6 @@
   },
   "MARKET": {
     "COMMON": {
-      "ISSUER": "Issuer",
       "PRICE": "Price",
       "BTN_BUY": "Buy",
       "BTN_NEW_AD": "New ad",
@@ -61,7 +61,6 @@
   "REGISTRY": {
     "COMMON": {
       "CATEGORY": "Category",
-      "ISSUER": "Issuer",
       "BTN_NEW": "Add"
     },
     "SEARCH": {

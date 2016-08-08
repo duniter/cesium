@@ -22,7 +22,7 @@
     <ion-item ng-if="!search.looking"
        ng-repeat="found in search.results"
        class="item item-avatar item-icon-right ink"
-       ng-click="doSelectIdentity('{{found.pub}}', '{{found.uid}}')">
+       ng-click="select(found)">
 
       <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
       <i ng-if="!found.avatar" class="item-image avatar stable icon ion-person"></i>
@@ -35,7 +35,7 @@
             {{found.uid}}
           </span>
           <i class="ion ion-key"></i>
-          {{found.pub | formatPubkey}}
+          {{found.pubkey | formatPubkey}}
         </h4>
         <i class="icon ion-ios-arrow-right"></i>
     </ion-item>

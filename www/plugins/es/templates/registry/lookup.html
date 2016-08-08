@@ -80,7 +80,7 @@
 
           <a  ng-repeat="found in search.results"
               class="item item-avatar ink"
-              ui-sref="app.registry_view_record({id: found.id, title: found.title})">
+              ui-sref="app.registry_view_record({id: found.id, title: found.urlTitle})">
 
               <img ng-src="{{::found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
               <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>

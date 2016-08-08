@@ -80,7 +80,7 @@ function LoginModalController2($scope, $rootScope, $ionicModal, Wallet, CryptoUt
     return $q(function(resolve, reject){
 
       if (!Wallet.isLogin()) {
-        $timeout(function() {
+        //$timeout(function() {
           $scope.login(
             function() {
               $rootScope.viewFirstEnter = false;
@@ -94,7 +94,7 @@ function LoginModalController2($scope, $rootScope, $ionicModal, Wallet, CryptoUt
             function() { // user cancel callback
               reject('CANCELLED');
             });
-        }, $rootScope.viewFirstEnter ? 10 : 2000);
+        //}, 10);
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
@@ -166,7 +166,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
         return;
       }
       $rootScope.knownCurrencies = [];
-      BMA.currency.parameters()
+      BMA.blockchain.parameters()
       .then(function(res) {
         $rootScope.knownCurrencies.push({
           name: res.currency,
@@ -200,8 +200,8 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
       .then(function(result){
         // If pubkey
         if (result && result.pubkey) {
-          $state.go('app.view_identity', {
-            pub: result.pubkey,
+          $state.go('app.wot_view_identity', {
+            pubkey: result.pubkey,
             node: result.host ? result.host: null}
           );
         }
@@ -287,7 +287,6 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
     .catch(UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR'));
   };
 
-
   // Logout
   $scope.logout = function() {
     Wallet.logout()
@@ -299,23 +298,13 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   };
 
   // Is connected
-  $scope.isLogged = function() {
+  $scope.isLogin = function() {
       return Wallet.isLogin();
-  };
-
-  // Is connected
-  $rootScope.isLogged = function() {
-      return Wallet.isLogin();
-  };
-
-  // Is not connected
-  $scope.isNotLogged = function() {
-    return !Wallet.isLogin();
   };
 
   // If connected and same pubkey
   $scope.isUserPubkey = function(pubkey) {
-    return Wallet.isLogin() && Wallet.data.pubkey === pubkey;
+    return Wallet.isUserPubkey(pubkey);
   };
 
   ////////////////////////////////////////

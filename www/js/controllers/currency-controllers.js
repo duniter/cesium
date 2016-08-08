@@ -207,7 +207,7 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     $q.all([
 
       // Get the currency parameters
-      $scope.node.currency.parameters()
+      $scope.node.blockchain.parameters()
         .then(function(json){
           $scope.currency = json.currency;
           $scope.c = json.c;

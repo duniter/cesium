@@ -1,6 +1,6 @@
 angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.config'])
 
-.factory('ESUtils', function($q, CryptoUtils, HttpUtils, $rootScope, APP_CONFIG) {
+.factory('ESUtils', function($q, CryptoUtils, HttpUtils, $rootScope, APP_CONFIG, Wallet) {
   'ngInject';
 
   function ESUtils(server) {
@@ -16,7 +16,7 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
 
       return function(record, params) {
         return $q(function(resolve, reject) {
-          if (!$rootScope.isLogged()) {
+          if (!Wallet.isLogin()) {
             reject('Wallet must be login before sending record to ES node'); return;
           }
           var errorFct = function(err) {
@@ -56,7 +56,7 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
       var postHistoryDelete = HttpUtils.post('http://' + server + '/history/delete');
       return function(id) {
         return $q(function(resolve, reject) {
-          if (!$rootScope.isLogged()) {
+          if (!Wallet.isLogin()) {
             reject('Wallet must be login before sending record to ES node'); return;
           }
           var errorFct = function(err) {

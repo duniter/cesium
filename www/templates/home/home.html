@@ -30,13 +30,13 @@
 
         <button type="button"
                 class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
-                ng-click="login()" ng-show="!isLogged()" translate>COMMON.BTN_LOGIN</button>
+                ng-click="login()" ng-show="!isLogin()" translate>COMMON.BTN_LOGIN</button>
         <button type="button"
                 class="button button-block button-light ink button-clear"
-                ng-click="newAccount()" ng-show="!isLogged()" translate>COMMON.BTN_ADD_ACCOUNT</button>
+                ng-click="newAccount()" ng-show="!isLogin()" translate>COMMON.BTN_ADD_ACCOUNT</button>
         <button type="button"
                 class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
-                ui-sref="app.view_wallet" ng-show="isLogged()" translate>HOME.BTN_ACCOUNT</button>
+                ui-sref="app.view_wallet" ng-show="isLogin()" translate>HOME.BTN_ACCOUNT</button>
 
       </div>
 

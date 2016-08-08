@@ -1,4 +1,4 @@
-angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize', 'cesium.es.controllers'])
+angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize', 'cesium.es-common.controllers'])
 
   .config(function($menuProvider) {
     'ngInject';
@@ -48,7 +48,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize', 
 
     .state('app.registry_edit_record', {
       cache: false,
-      url: "/registry/:id/edit",
+      url: "/registry/:id/:title/edit",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/edit_record.html",
@@ -67,7 +67,7 @@ angular.module('cesium.registry.controllers', ['cesium.services', 'ngSanitize', 
 
 ;
 
-function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize, ModalUtils, UserService) {
+function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $timeout, Registry, UIUtils, $sanitize, ModalUtils, $filter) {
   'ngInject';
 
   $scope.search = {
@@ -186,38 +186,41 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
               $scope.search.results = [];
             }
             else {
+              var formatSlug = $filter('formatSlug')
               var items = res.hits.hits.reduce(function(result, hit) {
-                  var registry = hit._source;
-                  registry.id = hit._id;
-                  registry.type = hit._type;
-                  registry.urlTitle = registry.title;
-                  if (registry.category) {
-                    registry.category = categories[registry.category];
+                  var record = hit._source;
+                  record.id = hit._id;
+                  record.type = hit._type;
+                  record.urlTitle = formatSlug(hit._source.title);
+                  if (record.category) {
+                    record.category = categories[record.category];
+                  }
+                  if (record.thumbnail) {
+                    record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
                   }
                   if (hit.highlight) {
                     if (hit.highlight.title) {
-                        registry.title = hit.highlight.title[0];
+                        record.title = hit.highlight.title[0];
                     }
                     if (hit.highlight.description) {
-                        registry.description = hit.highlight.description[0];
+                        record.description = hit.highlight.description[0];
                     }
                     if (hit.highlight.location) {
-                        registry.description = hit.highlight.location[0];
+                        record.description = hit.highlight.location[0];
                     }
                   }
-                  return result.concat(registry);
+                  return result.concat(record);
                 }, []);
               $scope.search.results = items;
 
-              // Set Motion
+              // Set Motion & Ink
               $timeout(function() {
                 UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
                 });
+                UIUtils.ink();
               }, 10);
 
-              // Set Ink
-              UIUtils.ink();
             }
 
             $scope.search.looking = false;
@@ -274,7 +277,7 @@ function RegistryLookupController($scope, $state, $ionicModal, $focus, $q, $time
   */
 }
 
-function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA) {
+function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, BMA, $timeout) {
   'ngInject';
 
   $scope.formData = {};
@@ -313,43 +316,22 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
               return res.concat({src: pic.src});
             }, []);
           }
-          $scope.canEdit = !$scope.isLogged() || ($scope.formData && $scope.formData.issuer == Wallet.getData().pubkey);
+          $scope.canEdit = Wallet.isUserPubkey($scope.formData.issuer);
 
-          $scope.isCompany = $scope.category.id == 'particulier';
-          if (!$scope.isCompany) {
-            BMA.wot.lookup({ search: $scope.formData.issuer })
-              .then(function(res){
-                $scope.identity = res.results.reduce(function(idties, res) {
-                  return idties.concat(res.uids.reduce(function(uids, idty) {
-                    return uids.concat({
-                      uid: idty.uid,
-                      pub: res.pubkey,
-                      timestamp: idty.meta.timestamp,
-                      sig: idty.self
-                    });
-                  }, []));
-                }, [])[0];
-                $scope.hasSelf = ($scope.identity.uid && $scope.identity.timestamp && $scope.identity.sig);
-                UIUtils.loading.hide();
-              })
-              .catch(function(err) {
-                if (err && err.ucode == 2001) {
-                  $scope.identity = {
-                    pub: $scope.formData.issuer
-                  };
-                  $scope.hasSelf = false;
-                  UIUtils.loading.hide();
-                }
-                else {
-                  UIUtils.onError('ERROR.WOT_LOOKUP_FAILED')(err);
-                }
-              });
-          }
-          else {
-            $scope.hasSelf = false;
-            $scope.identity = null;
-            UIUtils.loading.hide();
-          }
+          // Load issuer as member
+          return BMA.wot.member.get($scope.formData.issuer);
+        })
+        .then(function(member){
+          $scope.issuer = member;
+          // Set Motion (only direct children, to exclude .lazy-load children)
+          $timeout(function() {
+            UIUtils.motion.fadeSlideIn({
+              selector: '.list > .item',
+              startVelocity: 3000
+            });
+          }, 10);
+          UIUtils.loading.hide();
+          $scope.loaded = true;
         })
         .catch(function(err) {
           // Retry (ES could have error)
@@ -394,7 +376,7 @@ function RegistryRecordViewController($scope, $ionicModal, Wallet, Registry, UIU
 }
 
 function RegistryRecordEditController($scope, $ionicModal, Wallet, Registry, UIUtils, $state, CryptoUtils, $q, $ionicPopup, $translate, Device,
-  $ionicHistory, ModalUtils, UserService) {
+  $ionicHistory, ModalUtils) {
   'ngInject';
 
   $scope.walletData = {};

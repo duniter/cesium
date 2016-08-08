@@ -17,13 +17,7 @@
                style="background-image: url({{pictures[0].src}});"></div>
           <i class="avatar avatar-member" ng-if="!pictures || pictures.length === 0"></i>
           <h3 class="light">{{formData.title}}</h3>
-          <h4 class="gray">
-            <i class="icon ion-location" ng-show="formData.location"></i>
-            <span ng-bind-html="formData.location"></span>
-            <span ng-shwo="formData.location && formData.time">&nbsp;&nbsp;</span>
-            <i class="icon ion-calendar" ng-show="formData.time"></i>
-            {{formData.time|formatDate}}
-          </h4>
+          <h4></h4>
         </div>
       </div>
 
@@ -32,6 +26,8 @@
       </div>
 
       <div class="col list">
+
+
 
         <!-- Buttons bar-->
         <div class="item padding hidden-xs hidden-sm text-center"
@@ -44,7 +40,6 @@
             {{'WOT.BTN_CERTIFY' | translate}}
           </button>
         </div>
-
         <div class="item padding text-right"
              ng-if="canEdit">
           <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
@@ -52,13 +47,6 @@
             {{'COMMON.BTN_EDIT' | translate}}
           </button>
         </div>
-
-        <span class="item item-icon-left ink"
-              ng-if="!isCompany"
-              copy-on-click>
-            <i class="icon ion-key"></i>
-            <p class="gray">{{formData.issuer}}</p>
-        </span>
 
         <div class="item">
             <p ng-bind-html="formData.description"></p>
@@ -78,6 +66,40 @@
                 <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
             </span>
 
+        </div>
+
+        <div class="item">
+          <h2 class="gray">
+            <i class="icon ion-location" ng-show="formData.location"></i>
+            <span ng-bind-html="formData.location"></span>
+          </h2>
+        </div>
+
+        <div class="item">
+          <h2 translate>
+            COMMON.SUBMIT_BY
+          </h2>
+          <h4>
+            <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
+              <span ng-if="issuer.uid">
+                <i class="icon ion-person"></i>
+                {{issuer.uid}}
+              </span>
+              <span ng-if="!issuer.uid">
+                <i class="icon ion-key"></i>
+                {{formData.issuer|formatPubkey}}
+              </span>
+            </a>
+            <span>
+              <span class="gray hidden-xs">|</span>
+              <i class="icon ion-clock" ng-if="formData.time"></i>
+              {{formData.time|formatFromNow}}
+              <span class="gray hidden-xs">|
+                <i class="icon ion-calendar"></i>
+                {{formData.time | formatDate}}
+              </span>
+            </span>
+          </h4>
         </div>
 
       </div>

@@ -11,7 +11,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     defaultSettings = {
       useRelative: true,
-      timeWarningExpire: 2592000 /*=30 days*/,
+      timeWarningExpire: 2592000 * 6 /*=6 mois*/,
       useLocalStorage: false,
       rememberMe: false,
       node: BMA.node.url,
@@ -193,6 +193,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         return !!data.pubkey;
     },
 
+    // If connected and same pubkey
+    isUserPubkey = function(pubkey) {
+      return isLogin() && data.pubkey === pubkey;
+    };
+
     store = function() {
       if (data.settings.useLocalStorage) {
         localStorage.setObject('CESIUM_SETTINGS', data.settings);
@@ -244,8 +249,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.loaded = false;
         }
         if (settings) {
-          var refreshLocale = settings.locale && settings.locale.id && (data.settings.locale.id != settings.locale.id);
+          var refreshLocale = settings.locale && settings.locale.id && (data.settings.locale.id !== settings.locale.id);
           data.settings = settings;
+          data.settings.timeWarningExpire = defaultSettings.timeWarningExpire;
+
           if (refreshLocale) {
             $translate.use(data.settings.locale.id);
           }
@@ -500,7 +507,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     loadParameters = function() {
       return $q(function(resolve, reject) {
-        BMA.currency.parameters()
+        BMA.blockchain.parameters()
         .then(function(json){
           data.currency = json.currency;
           data.parameters = json;
@@ -1040,6 +1047,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       login: login,
       logout: logout,
       isLogin: isLogin,
+      isUserPubkey: isUserPubkey,
       getData: getData,
       loadData: loadData,
       refreshData: refreshData,

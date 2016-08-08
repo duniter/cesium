@@ -5,23 +5,22 @@
   <ion-content scroll="true">
     <div class="positive-900-bg hero animate-pan-in-left">
       <div class="content">
-        <div class="avatar"
-             ng-if="!!identity.avatar"
-             style="background-image: url({{identity.avatar}});"></div>
-        <i class="avatar" ng-if="!identity.avatar" ng-class="{'avatar-member': identity.uid, 'avatar-wallet': !identity.uid}"></i>
-        <h3 class="light" >{{identity.uid}}</h3>
-        <h4 ng-if="identity.pub">
-          &nbsp;
-        </h4>
-        <h4 class="light" ng-if="!identity.pub">
-          <ion-spinner icon="android"></ion-spinner>
+        <i class="avatar"
+           ng-style="formData.avatarStyle"
+           ng-class="{'avatar-wallet': !formData.avatarStyle && walletData && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
+        </i>
+        <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
+        <h3 class="light" ng-if="!formData.name && formData.isMember">{{formData.uid}}</h3>
+        <h3 class="light" ng-if="!formData.name && !formData.isMember">{{formData.pubkey | formatPubkey}}</h3>
+        <h4 class="light">
+          <ion-spinner ng-if="loading" icon="android"></ion-spinner> &nbsp;
         </h4>
       </div>
     </div>
 
     <div class="hidden-xs hidden-sm padding" style="text-align:center">
       <button class="button button-raised button-assertive ink-dark"
-              ng-click="showTransferModal({pubkey:identity.pub, uid: identity.uid})">
+              ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.uid})">
         {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
       </button>
     </div>
@@ -33,26 +32,26 @@
       <div class="col list animate-fade-slide-in-right">
 
         <!-- Certifications count -->
-        <a class="item item-icon-left item-text-wrap item-icon-right ink" ng-if="hasSelf"
-           ui-sref="app.view_certifications({pub:identity.pub})">
+        <a class="item item-icon-left item-text-wrap item-icon-right ink" ng-if="formData.hasSelf"
+           ui-sref="app.wot_view_cert({pubkey:formData.pubkey})">
           <i class="icon ion-ribbon-b"></i>
           <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
-          <span class="badge" ng-class="{'badge-balanced': sigQty && certificationCount >= sigQty, 'badge-assertive': sigQty && certificationCount < sigQty}">{{certificationCount}}</span>
+          <span class="badge" ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 
-        <ion-item class="item-icon-left" ng-if="identity.sigDate">
+        <ion-item class="item-icon-left" ng-if="formData.sigDate">
           <i class="icon ion-calendar"></i>
           <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
-          <h5 class="dark">{{::identity.sigDate | formatDate}}</h5>
-          <span class="badge badge-balanced">{{::identity.sigDate | formatFromNow}}</span>
+          <h5 class="dark">{{::formData.sigDate | formatDate}}</h5>
+          <span class="badge badge-balanced">{{::formData.sigDate | formatFromNow}}</span>
         </ion-item>
 
         <ion-item class="item-icon-left item-text-wrap ink"
-                  on-hold="copy(identity.pub)"
+                  on-hold="copy(formData.pubkey)"
                   copy-on-click>
           <i class="icon ion-key"></i>
-          <h4 id="pubkey" class="dark">{{::identity.pub}}</h4>
+          <h4 id="pubkey" class="dark">{{::formData.pubkey}}</h4>
         </ion-item>
       </div>
 
@@ -64,7 +63,7 @@
   <!-- fab button -->
   <div class="visible-xs visible-sm">
     <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive expanded button-energized-900 drop"
-            ng-click="showTransferModal({pubkey:identity.pub, uid: identity.uid})">
+            ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.uid})">
       <i class="icon ion-android-send"></i>
     </button>
   </div>

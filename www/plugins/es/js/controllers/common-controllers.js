@@ -1,4 +1,4 @@
-angular.module('cesium.es.controllers', ['cesium.services', 'ngSanitize'])
+angular.module('cesium.es-common.controllers', ['cesium.services', 'ngSanitize'])
 
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
