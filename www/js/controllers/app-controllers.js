@@ -32,119 +32,6 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   .controller('AppCtrl', AppController)
 ;
 
-function LoginModalController2($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
-  'ngInject';
-
-  // Login modal
-  $scope.loginModal = null;
-  $scope.loginData = {
-    rememberMe: Wallet.data.settings.rememberMe
-  };
-  $rootScope.viewFirstEnter = false;
-
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    $rootScope.viewFirstEnter = true;
-  });
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope,
-    focusFirstInput: true
-  }).then(function(modal) {
-    $scope.loginModal = modal;
-    $scope.loginModal.hide();
-  });
-
-  $scope.setLoginForm = function(loginForm) {
-    $scope.loginForm = loginForm;
-  };
-
-  // Open login modal
-  $scope.login = function(success, cancel) {
-    if ($scope.loginModal) {
-      UIUtils.loading.hide();
-      $scope.loginModal.show();
-      $scope.loginData.callbacks = {};
-      $scope.loginData.callbacks.success = success;
-      $scope.loginData.callbacks.cancel = cancel;
-    }
-    else{
-      $timeout(function(){
-        $scope.login(success, cancel);
-      }, 2000);
-    }
-  };
-
-  // Login and load wallet
-  $scope.loadWallet = function() {
-    return $q(function(resolve, reject){
-
-      if (!Wallet.isLogin()) {
-        //$timeout(function() {
-          $scope.login(
-            function() {
-              $rootScope.viewFirstEnter = false;
-              Wallet.loadData()
-              .then(function(walletData){
-                $rootScope.walletData = walletData;
-                resolve(walletData);
-              })
-              .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
-            },
-            function() { // user cancel callback
-              reject('CANCELLED');
-            });
-        //}, 10);
-      }
-      else if (!Wallet.data.loaded) {
-        Wallet.loadData()
-          .then(function(walletData){
-            $rootScope.walletData = walletData;
-            resolve(walletData);
-          })
-          .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
-      }
-      else {
-        resolve(Wallet.data);
-      }
-    });
-  };
-
-  // Triggered in the login modal to close it
-  $scope.cancelLogin = function() {
-    var callback = $scope.loginData.callbacks.cancel;
-    $scope.loginData = { // Reset login data
-      rememberMe: Wallet.data.settings.rememberMe
-    };
-    $scope.loginForm.$setPristine(); // Reset form
-    $scope.loginModal.hide();
-    if (!!callback) {
-      callback();
-    }
-  };
-
-  // Open new account
-  $scope.openNewAccount = function() {
-    $scope.cancelLogin();
-    $ionicHistory.nextViewOptions({
-        disableBack: true
-      });
-    $state.go('app.join');
-  };
-
-
-  // TODO : for DEV only
-  /*$timeout(function() {
-    $scope.loginData = {
-      username: 'benoit.lavenier@e-is.pro',
-      password: ''
-    };
-    //$scope.loginForm = {$valid:true};
-    $scope.login();
-  }, 900);*/
-}
-
-
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
   CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $ionicPopover, $translate, $filter,
   Modals
@@ -153,7 +40,9 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   $scope.search = { text: '', results: {} };
   $scope.config = APP_CONFIG;
-  $rootScope.walletData = Wallet.data;
+  if (!$rootScope.walletData) {
+    $rootScope.walletData = Wallet.data;
+  }
 
   ////////////////////////////////////////
   // Load currencies
@@ -289,10 +178,16 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
 
   // Logout
   $scope.logout = function() {
+    UIUtils.loading.show();
     Wallet.logout()
     .then(function() {
       $ionicSideMenuDelegate.toggleLeft();
-      $state.go('app.home');
+      $ionicHistory.clearHistory();
+      $ionicHistory.clearCache()
+      .then(function() {
+        UIUtils.loading.hide();
+        $state.go('app.home');
+      });
     })
     .catch(UIUtils.onError());
   };

@@ -1,11 +1,18 @@
 angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'cesium.es.services'])
 
-.factory('Registry', function($q, CryptoUtils, APP_CONFIG, ESUtils) {
+.factory('Registry', function($q, APP_CONFIG, ESUtils, CommentService) {
   'ngInject';
 
     function Registry(server) {
 
-      var categories = [];
+      var
+      categories = [],
+      fields = {
+        commons: ["category", "title", "description", "issuer", "time", "city", "thumbnail", "picturesCount", "type"],
+        comment: {
+          commons: ["issuer", "time", "message"],
+        }
+      };
 
       function getCategories() {
         return $q(function(resolve, reject) {
@@ -38,6 +45,15 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'ce
         });
       }
 
+      var commentService = CommentService.instance(server, 'registry');
+
+      function getCommons() {
+        var _source = fields.commons.reduce(function(res, field){
+          return res + ',' + field;
+        }, '').substring(1);
+        return ESUtils.get('http://' + server + '/registry/record/:id?_source=' + _source);
+      }
+
       return {
         category: {
           all: getCategories
@@ -46,9 +62,17 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'ce
           searchText: ESUtils.get('http://' + server + '/registry/record/_search?q=:search'),
           search: ESUtils.post('http://' + server + '/registry/record/_search?pretty'),
           get: ESUtils.get('http://' + server + '/registry/record/:id'),
+          getCommons: getCommons(),
           add: ESUtils.record.post('http://' + server + '/registry/record'),
           update: ESUtils.record.post('http://' + server + '/registry/record/:id/_update'),
-          remove: ESUtils.record.remove('registry', 'record')
+          remove: ESUtils.record.remove('registry', 'record'),
+          fields: {
+            commons: fields.commons
+          },
+          picture: {
+            all: ESUtils.get('http://' + server + '/registry/record/:id?_source=pictures')
+          },
+          comment: commentService
         },
         currency: {
           all: ESUtils.get('http://' + server + '/registry/currency/_search?_source=currencyName,peers.host,peers.port'),

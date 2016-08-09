@@ -1,9 +1,9 @@
-<ion-popover-view>
+<ion-popover-view class="fit has-header">
   <ion-header-bar>
-    <h1 class="title" translate>ACCOUNT.MENU_TITLE</h1>
+    <h1 class="title"  translate>ACCOUNT.MENU_TITLE</h1>
   </ion-header-bar>
-  <ion-content>
-    <div class="list">
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
 
       <a class="item item-icon-left ink"
          ng-click="setShowDetails(!showDetails)">
@@ -19,15 +19,15 @@
         {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
       </a>
 
-      <button class="button button-raised item-icon-left ink visible-xs visible-sm"
+      <a class="item item-icon-left ink visible-xs visible-sm"
               ng-if="walletData.requirements.needRenew"
               ng-click="membershipRenew()">
         <i class="icon ion-loop"></i>
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
-      </button>
+      </a>
 
       <a class="item item-icon-left assertive ink"
-              ng-if="walletData.requirements.needMembershipOut"
+              ng-if="walletData.requirements.canMembershipOut"
               ng-click="membershipOut()">
         <i class="icon ion-log-out"></i>
         {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}

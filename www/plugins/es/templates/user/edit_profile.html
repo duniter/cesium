@@ -10,23 +10,23 @@
 
   <ion-content scroll="true">
 
-    <div class="positive-900-bg hero"
+    <div class="positive-900-bg hero" ng-class="{'on': !loading}"
          id="profile-header">
       <div class="content">
         <i class="avatar"
            ng-style="avatarStyle"
-           ng-class="{'avatar-wallet': !avatarStyle && walletData && !walletData.isMember, 'avatar-member': !avatarStyle && walletData.isMember}">
+           ng-class="{'avatar-wallet': !loading && !avatarStyle && walletData && !walletData.isMember, 'avatar-member': !loading && !avatarStyle && walletData.isMember}">
           <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-no-device" ng-click="openPicturePopup()"></button>
           <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-device"
                   onclick="angular.element(document.querySelector('form #avatarFile'))[0].click();"></button>
         </i>
-        <div ng-if="formData != null">
+        <div ng-if="!loading">
           <h3 class="light" ng-if="!formData.title && walletData && walletData.isMember">{{walletData.uid}}</h3>
           <h3 class="light" ng-if="!formData.title && walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
           <h3 class="light">{{formData.title}}</h3>
           <h4 class="light">&nbsp;</h4>
         </div>
-        <div ng-if="formData == null">
+        <div ng-if="loading">
           <h4 class="light">
             <ion-spinner icon="android"></ion-spinner>
           </h4>
@@ -45,7 +45,7 @@
           <input type="file" id="avatarFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
                  style="visibility:hidden; position:absolute;"/>
 
-          <ion-list class="col list animate-fade-slide-in-right item-text-wrap" ng-init="setProfileForm(profileForm)"
+          <ion-list class="animate-ripple item-text-wrap" ng-init="setProfileForm(profileForm)"
                   can-swipe="isDeviceEnable()">
 
 
@@ -85,9 +85,7 @@
               </textarea>
             </ion-item>
 
-            <span class="item item-divider">
-              {{'PROFILE.LOCATION_DIVIDER' | translate}}
-            </span>
+            <span class="item item-divider" translate>PROFILE.LOCATION_DIVIDER</span>
 
             <!-- address -->
             <ion-item class="item-input item-floating-label item-button-right">
@@ -107,9 +105,7 @@
                      ng-model-options="{ debounce: 350 }">
             </div>
 
-            <span class="item item-divider">
-              {{'PROFILE.SOCIAL_NETWORKS_DIVIDER' | translate}}
-            </span>
+            <span class="item item-divider" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</span>
 
             <ion-item class="item-remove-animate item-icon-left "
                  type="no-padding item-text-wrap"

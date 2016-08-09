@@ -60,9 +60,9 @@
         </div>
 
         <div class="col col-25 hidden-xs hidden-sm" style="text-align:right">
-          <button class="button button-full button-raised button-calm ink"
+          <button class="button button-raised button-full button-calm ink"
                   ng-click="showNewRecordModal()">
-            {{'REGISTRY.COMMON.BTN_NEW' | translate}}
+            {{'REGISTRY.BTN_NEW' | translate}}
           </button>
         </div>
       </div>
@@ -71,24 +71,55 @@
         <ion-spinner icon="android"></ion-spinner>
       </label>
 
-      <label class="center assertive animate-fade-slide-in-right" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+      <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
         COMMON.SEARCH_NO_RESULT
       </label>
 
-      <div class="list animate-fade-slide-in-right"
+      <div class="list"
            ng-if="!search.looking && search.results && search.results.length > 0">
 
-          <a  ng-repeat="found in search.results"
-              class="item item-avatar ink"
-              ui-sref="app.registry_view_record({id: found.id, title: found.urlTitle})">
+        <a ng-repeat="rec in search.results"
+           class="item item-record ink padding-xs"
+           ui-sref="app.registry_view_record({id: rec.id, title: rec.urlTitle})">
 
-              <img ng-src="{{::found.pictures[0].src}}" ng-if="found.pictures && found.pictures.length > 0">
-              <h2 class="item-text-wrap" ng-bind-html="found.title"></h2>
-              <h4 class="gray" ng-if="found.location">{{::found.location}}</h4>
-              <p class="gray item-text-wrap" ng-bind-html="found.description" ng-if="found.description"></p>
-              <span class="badge" ng-if="found.category && found.category.id=='particulier'">{{::found.issuer | formatPubkey}}</span>
-          </a>
+          <div class="visible-xs item-text-wrap"
+               ng-class="{'item-thumbnail-left': rec.thumbnail}">
+            <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
+            <h2 ng-bind-html="rec.title"></h2>
+            <h4 class="gray">
+              <span ng-if="rec.city">
+                <i class="icon ion-location"></i>
+                <span ng-bind-html="rec.city"></span>
+              </span>
+              <span class="item-text-wrap" ng-show="rec.description" ng-bind-html="rec.description">
+              </span>
+            </h4>
+          </div>
 
+          <div class="row row-record hidden-xs">
+            <div class="col item-text-wrap item-thumbnail-left-padding"
+                 ng-class="{'item-thumbnail-left': rec.thumbnail}">
+              <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail">
+              <h2 ng-bind-html="rec.title"></h2>
+              <h4 class="gray">
+                <i class="icon ion-location" ng-if="rec.city"></i>
+                <span ng-bind-html="rec.city"></span>
+              </h4>
+              <h4 class="gray" ng-if="rec.time">
+                <i class="icon ion-clock" ></i>
+                {{::rec.time | formatFromNow}}
+              </h4>
+              <span  ng-if="rec.picturesCount > 1"
+                     class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
+            </div>
+            <div class="col col-20 ">
+              <h3 class="gray" ng-if="rec.category">{{::rec.category.name}}</h3>
+            </div>
+            <div class="col">
+              <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>
+            </div>
+          </div>
+        </a>
       </div>
     </ion-content>
 

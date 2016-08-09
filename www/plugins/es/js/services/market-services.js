@@ -1,19 +1,15 @@
-angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config', 'cesium.es.services'])
+angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesium.config', 'cesium.es.services', 'cesium.comment.services'])
 
-.factory('Market', function($http, $q, CryptoUtils, APP_CONFIG, BMA, ESUtils) {
+.factory('Market', function($http, $q, APP_CONFIG, ESUtils, CommentService) {
   'ngInject';
 
     function Market(server) {
 
       var
-        categories = [],
-        fields = {
-          commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail", "picturesCount"],
-          comment: {
-            commons: ["issuer", "time", "message"],
-          }
-        }
-      ;
+      categories = [],
+      fields = {
+        commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail", "picturesCount"]
+      };
 
       function getCategories() {
         return $q(function(resolve, reject) {
@@ -46,58 +42,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
         });
       }
 
-      var postSearchComments = ESUtils.post('http://' + server + '/market/comment/_search?pretty');
-
-      function getCommentsByRecord(recordId, size) {
-        if (!size) {
-          size = 10;
-        }
-        else if (size < 0) {
-          size = 1000;
-        }
-        return $q(function(resolve, reject) {
-          var errorFct = function(err) {
-            reject(err);
-          };
-          var request = {
-            sort : [
-              { "time" : {"order" : "desc"}}
-            ],
-            query : {
-              constant_score:{
-                filter: {
-                  term: { record : recordId}
-                }
-              }
-            },
-            from: 0,
-            size: size,
-            _source: fields.comment.commons
-          };
-
-          postSearchComments(request)
-          .then(function(res){
-            if (res.hits.total === 0) {
-              resolve([]);
-            }
-            else {
-              BMA.wot.member.uids(true/*cache*/)
-              .then(function(uids){
-                var result = res.hits.hits.reduce(function(result, hit) {
-                  var comment = hit._source;
-                  comment.id = hit._id;
-                  comment.uid = uids[comment.issuer];
-                  return result.concat(comment);
-                }, []);
-
-                resolve(result);
-              })
-              .catch(errorFct);
-            }
-          })
-          .catch(errorFct);
-        });
-      }
+      var commentService = CommentService.instance(server, 'market');
 
       function getCommons() {
         var _source = fields.commons.reduce(function(res, field){
@@ -125,16 +70,7 @@ angular.module('cesium.market.services', ['ngResource', 'cesium.services', 'cesi
           picture: {
             all: ESUtils.get('http://' + server + '/market/record/:id?_source=pictures')
           },
-          comment:{
-            search: postSearchComments,
-            all: getCommentsByRecord,
-            add: ESUtils.record.post('http://' + server + '/market/comment'),
-            update: ESUtils.record.post('http://' + server + '/market/comment/:id/_update'),
-            remove: ESUtils.record.remove('market', 'comment'),
-            fields: {
-              commons: fields.comment.commons
-            }
-          }
+          comment: commentService
         }
       };
     }

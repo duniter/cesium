@@ -11,7 +11,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     defaultSettings = {
       useRelative: true,
-      timeWarningExpire: 2592000 * 6 /*=6 mois*/,
+      timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
+      timeWarningExpire: 2592000 * 3 /*=3 mois*/,
       useLocalStorage: false,
       rememberMe: false,
       node: BMA.node.url,
@@ -44,6 +45,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         avatar: null,
         settings: {
           useRelative: defaultSettings.useRelative,
+          timeWarningExpireMembership: defaultSettings.timeWarningExpireMembership,
           timeWarningExpire: defaultSettings.timeWarningExpire,
           locale: {id: $translate.use()},
           useLocalStorage: defaultSettings.useLocalStorage,
@@ -82,6 +84,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (!data.settings.useLocalStorage) {
         data.settings = {
           useRelative: defaultSettings.useRelative,
+          timeWarningExpireMembership: defaultSettings.timeWarningExpireMembership,
           timeWarningExpire: defaultSettings.timeWarningExpire,
           locale: {id: $translate.use()},
           useLocalStorage: defaultSettings.useLocalStorage,
@@ -251,7 +254,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         if (settings) {
           var refreshLocale = settings.locale && settings.locale.id && (data.settings.locale.id !== settings.locale.id);
           data.settings = settings;
+
+          // TODO : This is a workaround for DEV (Need to implement edition in settings)
           data.settings.timeWarningExpire = defaultSettings.timeWarningExpire;
+          data.settings.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
 
           if (refreshLocale) {
             $translate.use(data.settings.locale.id);
@@ -294,7 +300,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.requirements = {
         needSelf: true,
         needMembership: true,
-        needMembershipOut: false,
+        canMembershipOut: false,
         needRenew: false,
         pendingMembership: false,
         certificationCount: 0,
@@ -333,9 +339,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.requirements.needSelf = false;
           data.requirements.needMembership = (data.requirements.membershipExpiresIn === 0 &&
                                               data.requirements.membershipPendingExpiresIn <= 0 );
-          data.requirements.needRenew = !data.requirements.needMembership && (data.requirements.membershipExpiresIn <= data.settings.timeWarningExpire &&
-                                        data.requirements.membershipPendingExpiresIn <= 0 );
-          data.requirements.needMembershipOut = (data.requirements.membershipExpiresIn > 0);
+          data.requirements.needRenew = (!data.requirements.needMembership &&
+                                         data.requirements.membershipExpiresIn <= data.settings.timeWarningExpireMembership &&
+                                         data.requirements.membershipPendingExpiresIn <= 0);
+          data.requirements.canMembershipOut = (data.requirements.membershipExpiresIn > 0);
           data.requirements.pendingMembership = (data.requirements.membershipPendingExpiresIn > 0);
           data.requirements.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
           data.requirements.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
@@ -545,29 +552,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    /*loadAvatar = function() {
-      return $q(function(resolve, reject) {
-        if (!Registry) {
-          data.avatar = null;
-          resolve();
-          return;
-        }
-        Registry.record.avatar(data.pubkey)
-          .then(function(imageData) {
-            if (imageData) {
-              data.avatar = imageData;
-            }
-            else {
-              data.avatar = null;
-            }
-            resolve();
-          })
-          .catch(function(err) {
-            data.avatar = null; // silent !
-            resolve();
-          });
-      });
-    },*/
+    // Must be call after loadParameters() and loadRequirements()
+    finishLoadRequirements = function() {
+      data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
+          (data.parameters.sigQty - data.requirements.certificationCount) : 0;
+      data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
+          data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
+          (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+    },
 
     loadData = function() {
         if (data.loaded) {
@@ -603,11 +595,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             // Process transactions and sources
             processTransactionsAndSources()
             .then(function() {
-              data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
-                  (data.parameters.sigQty - data.requirements.certificationCount) : 0;
-              data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
-                  data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
-                  (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+              finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
               data.loaded = true;
               resolve(data);
             })
@@ -631,7 +619,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           loadUDs(),
 
           // Get requirements
-          loadRequirements(),
+          loadRequirements()
+          .then(function() {
+            finishLoadRequirements();
+          }),
 
           // Get sources
           loadSources(),

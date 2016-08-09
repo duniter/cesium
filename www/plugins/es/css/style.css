@@ -109,3 +109,40 @@
 .hero .content i.avatar:hover .button {
   display: block;
 }
+
+.avatar-association:before {
+    content: "\f212";
+}
+.avatar-association {
+    font-family: "Ionicons";
+    font-size: 55px !important;
+    line-height: 88px;
+}
+
+
+.avatar-company:before {
+    content: "\e903";
+}
+.avatar-company {
+    font-family: "Cesiumicons";
+    font-size: 55px !important;
+    line-height: 88px;
+}
+
+.avatar-institution:before {
+    content: "\e921";
+}
+.avatar-institution {
+    font-family: "Cesiumicons";
+    font-size: 55px !important;
+    line-height: 88px;
+}
+
+.avatar-shop:before {
+    content: "\f370";
+}
+.avatar-shop {
+    font-family: "Ionicons";
+    font-size: 55px !important;
+    line-height: 88px;
+}

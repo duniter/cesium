@@ -8,41 +8,54 @@
       </button>
   </ion-nav-buttons>
 
-  <ion-content class="item-text-wrap" scroll="true">
-
+  <ion-content class="" scroll="true">
       <div class="positive-900-bg hero">
-        <div class="content">
-          <div class="avatar"
-               ng-if="pictures && pictures.length > 0"
-               style="background-image: url({{pictures[0].src}});"></div>
-          <i class="avatar avatar-member" ng-if="!pictures || pictures.length === 0"></i>
-          <h3 class="light">{{formData.title}}</h3>
-          <h4></h4>
+        <div class="content" ng-if="!loading">
+          <img class="avatar" ng-src="{{thumbnail.src}}" ng-if="thumbnail">
+          <i class="avatar avatar-{{formData.type}}" ng-if="!thumbnail"></i>
+          <h3 ng-bind-html="formData.title"></h3>
+          <h4>&nbsp;</h4>
         </div>
+        <h4 class="content light" ng-if="loading">
+          <ion-spinner icon="android"></ion-spinner>
+        </h4>
       </div>
 
     <div class="row">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
 
-      <div class="col list">
+      <div class="col list animate-fade-slide-in item-text-wrap">
 
-
+        <h2 class="item gray">
+          <a ng-if="formData.city" ui-sref="app.registry_lookup({location:formData.city})">
+            <i class="icon ion-location"></i>
+            <span ng-bind-html="formData.city"></span>
+          </a>
+          <span ng-if="formData.city && formData.type">&nbsp;|&nbsp;</span>
+          <a class="ink" ng-if="formData.type" ui-sref="app.registry_lookup({type:formData.type})">
+            <i class="icon ion-flag"></i>
+            <span ng-if="formData.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
+            <span ng-if="formData.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
+            <span ng-if="formData.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
+            <span ng-if="formData.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
+          </a>
+        </h2>
 
         <!-- Buttons bar-->
-        <div class="item padding hidden-xs hidden-sm text-center"
-             ng-if="!canEdit">
+        <div class="item padding hidden-xs hidden-sm text-center">
           <button class="button button-raised button-assertive ink-dark"
-                  ng-click="transfer(formData.issuer, formData.title)">
+                  ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
+                  ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
             {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
           </button>
-          <button class="button button-raised button-icon icon ion-ribbon-b" ng-click="certifyIdentity()" ng-if="hasSelf">
+          <button class="button button-raised button-icon icon ion-ribbon-b"
+                  ng-if="hasSelf && !canEdit"
+                  ng-click="certifyIdentity()">
             {{'WOT.BTN_CERTIFY' | translate}}
           </button>
-        </div>
-        <div class="item padding text-right"
-             ng-if="canEdit">
           <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
+                  ng-if="canEdit"
                   ng-click="edit()">
             {{'COMMON.BTN_EDIT' | translate}}
           </button>
@@ -52,56 +65,71 @@
             <p ng-bind-html="formData.description"></p>
         </div>
 
-        <div ng-if="isCompany">
-            <div class="item-divider"></div>
-
-            <div class="item">
-                <span translate>COMMON.CATEGORY</span>
-                <span class="badge badge-positive">{{category.name || formatCategory}}</span>
-            </div>
-
-            <span class="item item-icon-left" >
-                <i class="icon ion-person"></i>
-                <h3><span translate>REGISTRY.COMMON.ISSUER</span></h3>
-                <span class="badge" ng-class="{'badge-positive': isMember, 'badge-assertive': !isMember}">{{formData.issuer | formatPubkey}}</span>
-            </span>
-
-        </div>
-
-        <div class="item">
-          <h2 class="gray">
-            <i class="icon ion-location" ng-show="formData.location"></i>
-            <span ng-bind-html="formData.location"></span>
-          </h2>
-        </div>
-
-        <div class="item">
-          <h2 translate>
-            COMMON.SUBMIT_BY
-          </h2>
-          <h4>
-            <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
-              <span ng-if="issuer.uid">
-                <i class="icon ion-person"></i>
-                {{issuer.uid}}
-              </span>
-              <span ng-if="!issuer.uid">
-                <i class="icon ion-key"></i>
-                {{formData.issuer|formatPubkey}}
-              </span>
+        <div class="item ">
+          <span>Activité principale :</span>
+          <h4 class="gray">
+            <a ng-if="formData.category" ui-sref="app.registry_lookup({category:formData.category.id})">
+              <span ng-bind="formData.category.name"></span>
             </a>
-            <span>
-              <span class="gray hidden-xs">|</span>
-              <i class="icon ion-clock" ng-if="formData.time"></i>
-              {{formData.time|formatFromNow}}
-              <span class="gray hidden-xs">|
-                <i class="icon ion-calendar"></i>
-                {{formData.time | formatDate}}
-              </span>
-            </span>
           </h4>
         </div>
 
+        <span class="item item-divider" ng-if="formData.address || formData.city" translate>REGISTRY.LOCATION_DIVIDER</span>
+
+        <div class="item" ng-if="formData.address || formData.city">
+          <h2 class="gray">
+            <i class="icon ion-location"></i>
+            <span ng-bind-html="formData.address"></span>
+            <span ng-bind-html="formData.city"></span>
+          </h2>
+        </div>
+
+        <div class="lazy-load">
+
+          <!-- pictures -->
+          <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
+
+          <span class="item item-divider" translate>REGISTRY.TECHNICAL_DIVIDER</span>
+
+          <!-- issuer -->
+          <div class="item">
+            <span class="item-icon-left no-padding">
+              <i class="icon ion-clock" ng-if="formData.time"></i>
+            </span>
+            <span class="item-icon-left-padding">
+              <span translate>COMMON.SUBMIT_BY</span>
+              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
+                <span ng-if="issuer.uid">
+                    <i class="icon ion-person"></i>
+                    {{issuer.uid}}
+                  </span>
+                <span ng-if="!issuer.uid">
+                    <i class="icon ion-key"></i>
+                    {{formData.issuer|formatPubkey}}
+                </span>
+              </a>
+              <span>
+                {{formData.time|formatFromNow}}
+                <h4 class="gray hidden-xs">|
+                  {{formData.time | formatDate}}
+                </h4>
+              </span>
+            </span>
+          </div>
+
+          <!-- pubkey -->
+          <div class="item item-icon-left item-text-wrap ink"
+                    ng-if="formData.pubkey"
+                    on-hold="copy(formData.pubkey)"
+                    copy-on-click>
+            <i class="icon ion-key"></i>
+            <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
+            <h4 class="dark">{{::formData.pubkey}}</h4>
+          </div>
+
+          <!-- comments -->
+          <ng-include src="'plugins/es/templates/common/view_comments.html'"></ng-include>
+        </div>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;

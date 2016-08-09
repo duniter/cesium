@@ -16,8 +16,8 @@
   <ion-content scroll="true">
     <div class="positive-900-bg hero"
          id="wallet-header"
-         ng-class="{'hero-qrcode-active': toggleQRCode, 'on': !loading}">
-      <div class="content" ng-show="convertedBalance">
+         ng-class="{'hero-qrcode-active': toggleQRCode}">
+      <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-style="walletData.avatarStyle"
            ng-class="{'avatar-wallet': !walletData.avatarStyle && !walletData.isMember, 'avatar-member': !walletData.avatarStyle && walletData.isMember}">
@@ -30,7 +30,7 @@
             <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
         </h4>
       </div>
-      <h4 class="content light" ng-show="!convertedBalance">
+      <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
     </div>
@@ -112,6 +112,12 @@
             {{'ACCOUNT.WILL_MISSING_CERTIFICATIONS' | translate:walletData.requirements}}
           </h3>
         </span>
+        <span class="item item-text-wrap" ng-if="walletData.requirements.needRenew">
+          <h3>
+            <i class="icon ion-alert-circled"></i>
+            {{'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP' | translate:walletData.requirements}}
+          </h3>
+        </span>
 
         <!-- Pending transactions -->
         <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
@@ -125,7 +131,7 @@
         <span class="item item-pending ink item-badge-right" ng-repeat="tx in walletData.tx.pendings">
           <h2>
             <i class="icon ion-clock"> </i>
-            <span ui-sref="app.view_identity({pubkey:tx.pubkey})" class="positive">
+            <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
               <span ng-if="tx.uid">
                 <i class="icon ion-person"></i>
                 {{::tx.uid}}
@@ -134,7 +140,7 @@
                 <i class="icon ion-key"></i>
                 {{::tx.pubkey | formatPubkey}}
               </span>
-            </span>
+            </a>
             <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap" >&nbsp;
               <i class="icon ion-ios-chatbubble-outline"></i>
               <smaller>{{::tx.comment}}</smaller>
@@ -147,7 +153,6 @@
           <h3 class="dark" ng-if="tx.time">
             {{::tx.time | formatFromNow}}
             <span class="gray hidden-xs">|
-              <i class="icon ion-calendar"></i>
               {{::tx.time | formatDate}}
             </span>
           </h3>
@@ -159,7 +164,7 @@
         </span>
 
         <!-- Last Transactions -->
-        <span class="item item-divider">
+        <span class="item item-divider" ng-if="!loading">
           <span translate>ACCOUNT.LAST_TX</span>
           <div class="badge item-note">
             <span ng-if="!walletData.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
@@ -167,14 +172,21 @@
           </div>
         </span>
 
-        <span class="item" ng-if="!walletData.tx.history.length">
+
+        <span class="item" ng-if="!loading && !walletData.tx.history.length">
           <h3 translate>ACCOUNT.NO_TX</h3>
         </span>
 
         <!-- TX history -->
-        <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.history">
+        <span class="item item-badge-right"
+              ng-repeat="tx in walletData.tx.history">
+        <!-- TODO Use collection-repeat : but scrollbars are not visible on browsers
+        <span class="item item-badge-right"
+              collection-repeat="tx in walletData.tx.history"
+              collection-item-height="74">
+        -->
           <h2>
-            <span ui-sref="app.view_identity({pubkey:tx.pubkey})" class="positive">
+            <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
               <span ng-if="tx.uid">
                 <i class="icon ion-person"></i>
                 {{::tx.uid}}
@@ -183,7 +195,7 @@
                 <i class="icon ion-key"></i>
                 {{::tx.pubkey | formatPubkey}}
               </span>
-            </span>
+            </a>
             <span class="dark" ng-if="tx.isUD">
               <i class="icon ion-arrow-up-c"></i>
               {{'COMMON.UNIVERSAL_DIVIDEND' | translate}}
@@ -200,7 +212,6 @@
           <h3 class="dark">
             {{::tx.time | formatFromNow}}
             <span class="gray hidden-xs">|
-              <i class="icon ion-calendar"></i>
               {{::tx.time | formatDate}}
             </span>
           </h3>

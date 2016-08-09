@@ -1,0 +1,9 @@
+<div class="item gallery done in" ng-if="pictures && pictures.length>0" >
+  <div ng-repeat="picture in pictures"
+       class="item card card-gallery">
+    <div class="ink">
+      <h2 ng-if="picture.title">{{::picture.title}}</h2>
+      <img ng-src="{{::picture.src}}" ></img>
+    </div>
+  </div>
+</div>

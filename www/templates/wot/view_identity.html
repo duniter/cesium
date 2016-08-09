@@ -3,8 +3,8 @@
   </ion-nav-title>
 
   <ion-content scroll="true">
-    <div class="positive-900-bg hero animate-pan-in-left">
-      <div class="content">
+    <div class="positive-900-bg hero">
+      <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-style="formData.avatarStyle"
            ng-class="{'avatar-wallet': !formData.avatarStyle && walletData && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
@@ -12,13 +12,15 @@
         <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
         <h3 class="light" ng-if="!formData.name && formData.isMember">{{formData.uid}}</h3>
         <h3 class="light" ng-if="!formData.name && !formData.isMember">{{formData.pubkey | formatPubkey}}</h3>
-        <h4 class="light">
-          <ion-spinner ng-if="loading" icon="android"></ion-spinner> &nbsp;
-        </h4>
+        <h4>&nbsp;</h4>
       </div>
+      <h4 class="content light" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </h4>
     </div>
 
-    <div class="hidden-xs hidden-sm padding" style="text-align:center">
+    <!-- button bar-->
+    <div class="hidden-xs hidden-sm padding text-center">
       <button class="button button-raised button-assertive ink-dark"
               ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.uid})">
         {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
@@ -31,6 +33,8 @@
 
       <div class="col list animate-fade-slide-in-right">
 
+        <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
+
         <!-- Certifications count -->
         <a class="item item-icon-left item-text-wrap item-icon-right ink" ng-if="formData.hasSelf"
            ui-sref="app.wot_view_cert({pubkey:formData.pubkey})">
@@ -40,6 +44,7 @@
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 
+        <!-- Registration date -->
         <ion-item class="item-icon-left" ng-if="formData.sigDate">
           <i class="icon ion-calendar"></i>
           <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
@@ -47,10 +52,20 @@
           <span class="badge badge-balanced">{{::formData.sigDate | formatFromNow}}</span>
         </ion-item>
 
-        <ion-item class="item-icon-left item-text-wrap ink"
+        <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
+
+        <!-- Uid -->
+        <ion-item class="item-icon-left" ng-if="formData.uid">
+          <span>{{'WOT.PSEUDO' | translate}}</span>
+          <span class="badge">{{::formData.uid}}</span>
+        </ion-item>
+
+        <!-- Pubkey -->
+        <ion-item class="item-icon-left item-icon-right item-text-wrap ink"
                   on-hold="copy(formData.pubkey)"
                   copy-on-click>
           <i class="icon ion-key"></i>
+          <span>Clé publique</span>
           <h4 id="pubkey" class="dark">{{::formData.pubkey}}</h4>
         </ion-item>
       </div>

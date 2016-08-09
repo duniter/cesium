@@ -48,7 +48,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
 
     .state('app.market_edit_record', {
       cache: false,
-      url: "/market/:id/:title/edit",
+      url: "/market/edit/:id/:title",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/edit_record.html",
@@ -66,7 +66,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
 
 ;
 
-function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $timeout, UIUtils, ModalUtils, $filter) {
+function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtils, ModalUtils, $filter) {
   'ngInject';
 
   $scope.search = {
@@ -115,6 +115,8 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
         }, 100);
       }
       $scope.entered = true;
+
+      $scope.showFab('fab-add-market-record');
     }
     $focus('searchText');
   });
@@ -235,9 +237,9 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
               // Set Motion
               $timeout(function() {
-                UIUtils.motion.fadeSlideInRight({
+                /*UIUtils.motion.fadeSlideInRight({
                   startVelocity: 3000
-                });
+                });*/
                 // Set Ink
                 UIUtils.ink();
               }, 10);
@@ -277,17 +279,18 @@ function MarketLookupController($scope, Market, $state, $ionicModal, $focus, $ti
 
 }
 
-function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $timeout, BMA, ESUtils, $filter) {
+function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils, $state, $q, $timeout, BMA, ESUtils, $filter) {
   'ngInject';
 
   $scope.formData = {};
   $scope.id = null;
-  $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
   $scope.canEdit = false;
   $scope.maxCommentSize = 10;
-  $scope.commentData = {};
+
+  ESCommentsController.call(this, $scope, Wallet, UIUtils, $q, $timeout, ESUtils, Market);
+
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
@@ -300,17 +303,6 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
     }
   });
 
-  $scope.loadComments = function(id) {
-    return Market.record.comment.all(id, $scope.maxCommentSize)
-      .then(function(comments) {
-        // sort by time asc
-        comments  = comments.sort(function(cm1, cm2) {
-           return (cm1.time - cm2.time);
-        });
-        $scope.comments = comments;
-      });
-  };
-
   $scope.load = function(id) {
     UIUtils.loading.show();
     Market.category.all()
@@ -318,10 +310,10 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
       Market.record.getCommons({id: id})
       .then(function (hit) {
         $scope.formData = hit._source;
+        $scope.id= hit._id;
         if (hit._source.category && hit._source.category.id) {
           $scope.category = categories[hit._source.category.id];
         }
-        $scope.id= hit._id;
         if (hit._source.thumbnail) {
           $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
         }
@@ -384,7 +376,7 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
         // Set Motion
         $timeout(function() {
           UIUtils.motion.fadeSlideIn({
-            selector: '.card-gallery, .card-comment, .lazy-load > .item'
+            selector: '.card-gallery, .card-comment, .lazy-load .item'
           });
         }, 10);
       })
@@ -415,72 +407,9 @@ function MarketRecordViewController($scope, $rootScope, $ionicModal, Wallet, Mar
   $scope.edit = function() {
     $state.go('app.market_edit_record', {id: $scope.id, title: $filter('formatSlug')($scope.formData.title)});
   };
-
-  $scope.showMoreComments = function(){
-    $scope.maxCommentSize = $scope.maxCommentSize * $scope.maxCommentSize;
-    $scope.loadComments($scope.id)
-    .then(function() {
-      // Set Motion
-      $timeout(function() {
-        UIUtils.motion.fadeSlideIn({
-          selector: '.card-comment'
-        });
-      }, 10);
-    });
-  };
-
-  $scope.sendComment = function() {
-    if (!$scope.commentData.message || $scope.commentData.message.trim().length === 0) {
-      return;
-    }
-    $scope.loadWallet()
-    .then(function(walletData) {
-      var comment = $scope.commentData;
-      comment.record= $scope.id;
-      comment.issuer = walletData.pubkey;
-      var obj = {};
-      angular.copy(comment, obj);
-      if (walletData.uid) {
-        obj.uid = walletData.uid;
-      }
-      obj.isnew = true;
-      // Create
-      if (!comment.id) {
-        comment.time = ESUtils.date.now();
-        obj.time = comment.time;
-        Market.record.comment.add(comment)
-        .then(function (id){
-          obj.id = id;
-        })
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
-      }
-      // Update
-      else {
-        Market.record.comment.update(comment, {id: comment.id})
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
-      }
-
-      $scope.comments.push(obj);
-      $scope.commentData = {}; // reset comment
-    });
-  };
-
-  $scope.editComment = function(index) {
-    var comment = $scope.comments[index];
-    $scope.comments.splice(index, 1);
-    $scope.commentData = comment;
-  };
-
-  $scope.removeComment = function(index) {
-    var comment = $scope.comments[index];
-    if (!comment || !comment.id) {return;}
-    $scope.comments.splice(index, 1);
-    Market.record.comment.remove(comment.id, Wallet.data.keypair)
-    .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
-  };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils, ESUtils) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, $q, $ionicPopup, Device, $timeout, ModalUtils, ESUtils) {
   'ngInject';
 
   $scope.walletData = {};
@@ -581,7 +510,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
           return res.concat({file: UIUtils.image.toAttachment(pic)});
         }, []);
-        UIUtils.image.resizeSrc($scope.pictures[0].src, true)
+        UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
         .then(function(imageSrc) {
           $scope.formData.thumbnail = UIUtils.image.toAttachment({src: imageSrc});
 

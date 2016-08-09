@@ -50,12 +50,10 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
         }
         $scope.walletData = walletData;
         $scope.updateView();
+        $scope.loading=false;
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', walletData.pubkey, 1100);
-        $timeout(function () {
-          var header = document.getElementById('wallet-header');
-          header.classList.toggle('on', true);
-        }, 100);
+        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       });
 
   });
@@ -97,7 +95,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       UIUtils.motion.fadeSlideInRight();
       // Set Ink
       UIUtils.ink({selector: '.item'});
-
     }, 10);
   };
 
@@ -124,7 +121,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
         UIUtils.alert.info('INFO.TRANSFER_SENT');
         // Set Motion
         $timeout(function() {
-          UIUtils.motion.fadeSlideInRight({
+          UIUtils.motion.ripple({
             selector: '.item-pending'
           });
           // Set Ink
@@ -252,12 +249,21 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
 
   // Send membership IN
   $scope.membershipIn= function() {
-    var doMembershipIn = function() {
-    Wallet.membership.inside()
-    .then(function() {
+    var doMembershipIn = function(retryCount) {
+      Wallet.membership.inside()
+      .then(function() {
         $scope.doUpdate();
       })
-      .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
+      .catch(function(err) {
+        if (!retryCount || retryCount <= 2) {
+          $timeout(function() {
+            doMembershipIn(retryCount ? retryCount+1 : 1);
+          }, 1000);
+        }
+        else {
+          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
+        }
+      });
     };
 
     $scope.showUidPopup()

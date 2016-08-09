@@ -2,6 +2,7 @@
 angular.module('cesium.es.plugin', [
     // Services
     'cesium.es.services',
+    'cesium.comment.services',
     'cesium.social.services',
     'cesium.registry.services',
     'cesium.market.services',

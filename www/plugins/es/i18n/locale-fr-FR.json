@@ -59,10 +59,12 @@
     }
   },
   "REGISTRY": {
-    "COMMON": {
-      "CATEGORY": "Catégorie",
-      "BTN_NEW": "Ajouter"
-    },
+    "CATEGORY": "Catégorie",
+    "GENERAL_DIVIDER": "Informations générales",
+    "LOCATION_DIVIDER": "Localisation",
+    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux",
+    "TECHNICAL_DIVIDER": "Informations techniques",
+    "BTN_NEW": "Ajouter",
     "SEARCH": {
       "TITLE": "Annuaire",
       "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
@@ -76,24 +78,28 @@
     "VIEW": {
       "TITLE": "Annuaire"
     },
-    "NEW": {
+    "TYPE": {
       "TITLE": "Nouveau",
       "SELECT_TYPE": "Type de référencement :",
-      "TYPE_SHOP": "Commerce local",
-      "TYPE_COMPANY": "Entreprise",
-      "TYPE_ASSOCIATION": "Association",
-      "TYPE_INSTITUTION": "Institution"
+      "SHOP": "Commerce local",
+      "COMPANY": "Entreprise",
+      "ASSOCIATION": "Association",
+      "INSTITUTION": "Institution"
     },
     "EDIT": {
       "TITLE": "Edition",
+      "RECORD_TYPE":"Type de fiche",
       "RECORD_TITLE": "Nom",
       "RECORD_TITLE_HELP": "Nom",
-      "RECORD_DESCRIPTION": "À propos de moi",
-      "RECORD_DESCRIPTION_HELP": "À propos de moi",
-      "RECORD_LOCATION": "Localisation",
-      "RECORD_LOCATION_HELP": "Localisation (adresse, ville)",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Description de l'activité",
+      "RECORD_ADDRESS": "Adresse",
+      "RECORD_ADDRESS_HELP": "Adresse (rue, batiment)",
+      "RECORD_CITY": "Ville",
+      "RECORD_CITY_HELP": "Ville",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
-      "RECORD_PUBKEY": "Clé publique"
+      "RECORD_PUBKEY": "Clé publique",
+      "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
     "ERROR": {
       "LOAD_RECORD_FAILED": "Chargement impossible",

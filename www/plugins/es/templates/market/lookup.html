@@ -33,7 +33,7 @@
       </div>
 
       <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
-        <span translate>MARKET.COMMON.CATEGORY</span>
+        <span translate>COMMON.CATEGORY</span>
         <span class="badge badge-royal badge-text-wrap">{{search.category.name}}</span>&nbsp;
         <i class="gray icon ion-ios-arrow-right"></i>
       </span>
@@ -85,19 +85,19 @@
       <ion-spinner icon="android"></ion-spinner>
     </label>
 
-    <label class="center assertive animate-fade-slide-in-right" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+    <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
       COMMON.SEARCH_NO_RESULT
     </label>
 
-    <div class="list animate-fade-slide-in-right"
+    <div class="list"
          ng-if="!search.looking && search.results && search.results.length > 0">
 
       <a ng-repeat="rec in search.results"
          class="item item-record ink padding-xs"
-         ui-sref="app.market_view_record({id: rec.id, title: rec.urlTitle})"
-         >
+         ui-sref="app.market_view_record({id: rec.id, title: rec.urlTitle})">
 
-        <div class="visible-xs item-text-wrap" ng-class="{'item-thumbnail-left': rec.thumbnail}">
+        <div class="visible-xs item-text-wrap"
+             ng-class="{'item-thumbnail-left': rec.thumbnail}">
           <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
           <h2 ng-bind-html="rec.title"></h2>
           <h4 class="gray">
@@ -111,9 +111,6 @@
             </span>
           </h4>
         </div>
-        <!--<div class="visible-xs item-text-wrap">
-          <p ng-bind-html="rec.description"></p>
-        </div>-->
 
         <div class="row row-record hidden-xs">
           <div class="col item-text-wrap item-thumbnail-left-padding"
@@ -128,7 +125,7 @@
               <i class="icon ion-clock" ></i>
               {{::rec.time | formatFromNow}}
             </h4>
-            <span  ng-if="rec.picturesCount > 0"
+            <span  ng-if="rec.picturesCount > 1"
                    class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
           </div>
           <div class="col col-20">
@@ -144,7 +141,8 @@
     </div>
   </ion-content>
 
-  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg"
+  <button id="fab-add-market-record"
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg drop"
           ui-sref="app.market_add_record">
   </button>
 </ion-view>

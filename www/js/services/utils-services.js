@@ -17,7 +17,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       THUMB_MAX_WIDTH: 150
     },
     regex = {
-      IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.*)")
+      IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
     }
   ;
 
@@ -249,7 +249,7 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function imageFromAttachment(attachment) {
-    if (!attachment || !attachment._content_type || !attachment._content) {
+    if (!attachment || !attachment._content_type || !attachment._content || attachment._content.length === 0) {
       return null;
     }
     var image = {

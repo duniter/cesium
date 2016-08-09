@@ -31,8 +31,10 @@
             </a>
           </h2>
 
-          <h2 class="positive">
-            <a ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
+          <h3>
+            <i class="icon ion-clock"></i>
+            <span translate>COMMON.SUBMIT_BY</span>
+            <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
               <span ng-if="issuer.uid">
                 <i class="icon ion-person"></i>
                 {{issuer.uid}}
@@ -42,32 +44,18 @@
                 {{issuer.pubkey|formatPubkey}}
               </span>
             </a>
-          </h2>
-
-          <h4>
             <span>
-              <i class="icon ion-clock" ng-if="formData.time"></i>
               {{formData.time|formatFromNow}}
               <span class="gray hidden-xs">|
-                <i class="icon ion-calendar"></i>
                 {{formData.time | formatDate}}
               </span>
             </span>
-          </h4>
+          </h3>
         </div>
 
-        <div class="item" style="margin-top:10px">
-            <p ng-bind-html="formData.description"></p>
-        </div>
-
-        <span class="item item-icon-left item-button-right" ng-if="formData.price">
-            <i class="icon ion-pricetag"></i>
-            <span class="dark" ng-if="formData.currency && !$root.walletData.settings.useRelative">{{convertedPrice|formatInteger}} {{formData.currency|abbreviate}}</span>
-            <span class="dark" ng-if="formData.currency && $root.walletData.settings.useRelative">{{convertedPrice|formatDecimal}} {{'COMMON.UD'|translate}} <sub>{{formData.currency|abbreviate}}</sub></span>
-        </span>
 
         <!-- Buttons bar-->
-        <div class="item padding text-right">
+        <div class="item padding text-center">
           <button class="button button-raised button-calm ink-dark"
                   ng-click="showTransferModal({pubkey: issuer.pubkey, uid: issuer.uid, amount: formData.price})"
                   ng-if="!canEdit && formData.price">
@@ -80,68 +68,22 @@
           </button>
         </div>
 
+        <div class="item" style="margin-top:10px">
+            <p ng-bind-html="formData.description"></p>
+        </div>
+
+        <span class="item item-icon-left item-button-right" ng-if="formData.price">
+            <i class="icon ion-pricetag"></i>
+            <span class="dark" ng-if="formData.currency && !$root.walletData.settings.useRelative">{{convertedPrice|formatInteger}} {{formData.currency|abbreviate}}</span>
+            <span class="dark" ng-if="formData.currency && $root.walletData.settings.useRelative">{{convertedPrice|formatDecimal}} {{'COMMON.UD'|translate}} <sub>{{formData.currency|abbreviate}}</sub></span>
+        </span>
+
         <div class="lazy-load">
-          <div class="item gallery done in" ng-if="pictures && pictures.length>0" >
-            <div ng-repeat="picture in pictures"
-                class="item card card-gallery">
-              <div class="ink">
-                <h2 ng-if="picture.title">{{::picture.title}}</h2>
-                <img ng-src="{{::picture.src}}" ></img>
-              </div>
-            </div>
-          </div>
+          <!-- pictures -->
+          <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
 
-          <div class="item item-divider">
-            <i class="icon ion-chatboxes"></i>
-            <span>{{'MARKET.COMMON.COMMENTS' | translate}}</span>
-          </div>
-
-          <span class="item item-more-comments" ng-if="comments && comments.length === maxCommentSize">
-            <small><a ng-click="showMoreComments()" translate>MARKET.VIEW.SHOW_MORE_COMMENTS</a></small>
-          </span>
-
-          <ion-item class="card card-comment stable-bg item-text-wrap"
-               ng-if="comments && comments.length>0"
-               ng-repeat="comment in comments track by comment.id"
-               ng-class="{'in done': comment.isnew}"
-               >
-            <div class="padding card-header text-right">
-              <a class="pull-left positive" ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.uid})">
-                <i class="icon ion-person"></i>
-                {{comment.uid}}
-              </a>
-              <span class="gray pull-right">&nbsp;
-                <i class="icon ion-clock"></i>
-                {{comment.time | formatFromNow}}
-              </span>
-            </div>
-            <div class="item done in">
-              {{comment.message}}
-              <div class="card-footer text-right gray">
-                <a class="pull-right" >
-                  &nbsp;<b class="icon ion-android-share-alt"></b>&nbsp;
-                </a>
-                <span class="pull-right">&nbsp;&nbsp;</span>
-                <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="editComment($index)">
-                  &nbsp;<b class="icon ion-edit"></b>&nbsp;
-                </a>
-                <span class="pull-right">&nbsp;&nbsp;</span>
-                <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="removeComment($index)">
-                  &nbsp;<b class="icon ion-trash-a"></b>&nbsp;
-                </a>
-              </div>
-            </div>
-
-          </ion-item>
-
-          <div class="item item-input-inset ">
-            <label class="item-input-wrapper">
-              <input id="commentMessage" type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}" on-return="sendComment();" ng-model="commentData.message"/>
-            </label>
-            <button class="button button-small button-icon" ng-click="sendComment()">
-              {{'MARKET.VIEW.SEND_COMMENT_BTN'|translate}}
-            </button>
-          </div>
+          <!-- comments -->
+          <ng-include src="'plugins/es/templates/common/view_comments.html'"></ng-include>
         </div>
       </ion-list>
 

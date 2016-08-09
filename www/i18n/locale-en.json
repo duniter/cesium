@@ -6,6 +6,7 @@
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SEND": "Send",
+    "BTN_SEND_MONEY": "Send money",
     "BTN_SAVE": "Save",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
@@ -120,8 +121,11 @@
     "CERTIFICATIONS_RECEIVED": "Received certifications",
     "CERTIFICATIONS_RECEIVED_BY": "Received certifications for {{uid}}",
     "EXPIRE_IN": "Expires",
+    "PSEUDO": "Pseudonym",
     "SIGNED_ON_BLOCK": "Certify on block",
-    "BTN_SEND_MONEY": "Send",
+    "GENERAL_DIVIDER": "General data",
+    "TECHNICAL_DIVIDER": "Technical data",
+    "BTN_SEND_MONEY": "Send money",
     "BTN_CERTIFY": "Certify",
     "LOOKUP": {
       "TITLE": "Registry"
@@ -151,6 +155,7 @@
     "WAITING_MEMBERSHIP": "Membership sent. Waiting validation.",
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
     "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
+    "WILL_NEED_RENEW_MEMBERSHIP": "Your membership will expire {{membershipExpiresIn|formatDuration}}",
     "CERTIFICATION_COUNT": "Certifications count",
     "BTN_SEND_MONEY": "Send",
     "BTN_RECEIVE_MONEY": "Receive",

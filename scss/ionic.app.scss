@@ -230,6 +230,16 @@ $screen-lg:                       1200px;
         display: none !important;
         visibility: hidden !important;
     }
+    .badge {
+      text-overflow: ellipsis !important;
+      white-space: nowrap;
+      overflow: hidden !important;
+      max-width: 400px !important;
+      display: block !important;
+    }
+    .badge:empty {
+      display: none !important;
+    }
 }
 @media screen and (min-width: $screen-lg) {
     .hidden-md {
@@ -268,6 +278,16 @@ $screen-lg:                       1200px;
     .hidden-lg {
         display: none !important;
         visibility: hidden !important;
+    }
+    .badge {
+      text-overflow: ellipsis !important;
+      white-space: nowrap;
+      overflow: hidden !important;
+      max-width: 450px !important;
+      display: block !important;
+    }
+    .badge:empty {
+      display: none !important;
     }
 }
 @media screen and (max-width: $screen-md-max) {
@@ -366,6 +386,7 @@ $screen-lg:                       1200px;
     background-image: url(../img/card.png);
 }
 
+
 .popup-container.confirm {
   .popup {
     min-width: 250px !important;
@@ -415,6 +436,23 @@ $screen-lg:                       1200px;
   .item-text-wrap {
     white-space: normal !important;
   }
+
+  .item .comment{
+    font-style: italic !important;
+  }
+
+  .item h3 .gray{
+    font-size: 11px ! important;
+  }
+
+  .list .item span {
+    display: inline;
+  }
+
+  .item-divider .badge {
+    top:16px !important;
+  }
+
 }
 
 @media screen and (max-width: $screen-sm-max) {
@@ -429,30 +467,9 @@ $screen-lg:                       1200px;
         right: 8px;
      }
 
-    .hero {
-      -webkit-transition: all 1s ease-out !important;
-      transition: all 1s ease-out !important;
-      height:100%;
-
-      h1,h2,h3,h4,h5,i {
-        -webkit-transition: all 1s ease-out !important;
-        transition: all 1s ease-out !important;
-        opacity: 0;
-        transition-delay: 0.5s;
-      }
-    }
-
     .hero.hero-qrcode-active {
       h1,h2,h3,h4,h5,i {
         margin-right:200px;
-      }
-    }
-
-    .hero.on{
-      height:200px;
-
-      h1,h2,h3,h4,h5,i {
-        opacity: 1;
       }
     }
   }
@@ -525,13 +542,50 @@ $screen-lg:                       1200px;
 }
 
 
+/*
+* Badge
+*/
+
 .item.item-icon-right .badge,
 .item.item-button-right .badge,
 {
   right: 43px;
 }
 
+$ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
+
+.badge-editable:hover {
+  cursor: pointer;
+  @extend .badge-assertive;
+}
+.badge-editable:hover:before {
+  @extend .ion;
+  content: $ionicon-var-badge-editable;
+}
+
+/*
+* Modals
+*/
 
 .modal.modal-full-height {
     height: 100% !important;
+}
+
+
+
+.item-button-right > .button,
+.item-button-right .item-content > .button,
+.item-button-right > .buttons,
+.item-button-right .item-content > .buttons {
+  top: 16px;
+}
+
+
+
+.item-thumbnail-left-padding {
+    padding-left: 106px;
+}
+
+.item-icon-left-padding {
+    padding-left: 40px;
 }

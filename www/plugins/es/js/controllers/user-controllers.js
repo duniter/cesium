@@ -97,7 +97,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
     }
     // Set Motion
     $timeout(function() {
-      UIUtils.motion.fadeSlideInRight();
+      UIUtils.motion.ripple();
       // Set Ink
       //UIUtils.ink({selector: '.item.ink'});
     }, 10);

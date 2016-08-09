@@ -71,17 +71,7 @@
 }
 
 
-#wallet .item .comment{
-  font-style: italic !important;
-}
 
-#wallet .item h3 .gray{
-  font-size: 11px ! important;
-}
-
-#wallet .list .item span {
-  display: inline;
-}
 
 .list .item-input {
   border-bottom: solid 1px #ccc;
@@ -240,13 +230,7 @@
     color: #fff !important;
 }
 
-.item-thumbnail-left-padding {
-    padding-left: 106px;
-}
 
-#wallet .item-divider .badge {
-  top:16px !important;
-}
 
 
 #certifications .item-divider .badge {

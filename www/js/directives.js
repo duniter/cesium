@@ -4,18 +4,19 @@ angular.module('cesium.directives', [])
   .directive("compareTo", function() {
       return {
           require: "ngModel",
-          scope: {
+          /*scope: {
               otherModelValue: "=compareTo"
-          },
+          },*/
           link: function(scope, element, attributes, ngModel) {
-
+            if (attributes.compareTo) {
               ngModel.$validators.compareTo = function(modelValue) {
-                  return modelValue == scope.otherModelValue;
+                  return modelValue == scope.$eval(attributes.compareTo);
               };
 
-              scope.$watch("otherModelValue", function() {
+              scope.$watch(attributes.compareTo, function() {
                   ngModel.$validate();
               });
+            }
           }
       };
   })

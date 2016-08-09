@@ -22,25 +22,42 @@
 
               <div class="item" ng-if="id">
                 <h1 ng-bind-html="formData.title"></h1>
+              </div>
+              <div class="item" ng-if="id">
                 <h4 class="gray">
                   <i class="icon ion-calendar"></i>
                   {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
                 </h4>
+                <div class="badge badge-balanced badge-editable" ng-click="showRecordTypeModal()">
+                  <span ng-if="formData.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
+                  <span ng-if="formData.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
+                  <span ng-if="formData.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
+                  <span ng-if="formData.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
+                </div>
               </div>
 
               <!-- pictures -->
               <ng-include src="'plugins/es/templates/common/edit_pictures.html'"></ng-include>
 
-              <span class="item item-button-right ink" ng-click="showCategoryModal()">
+
+
+              <div class="item item-divider" translate>REGISTRY.GENERAL_DIVIDER</div>
+
+              <span class="item item-icon-right ink"
+                    ng-if="formData.type=='company' || formData.type=='shop'"
+                    ng-click="showCategoryModal()">
                 <span translate>COMMON.CATEGORY</span>
                 <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
-                <i class="button button-clear ion-chevron-right"></i>
+                <i class="gray icon ion-ios-arrow-right"></i>
               </span>
 
               <div class="item item-input item-floating-label">
                 <span class="input-label" translate>REGISTRY.EDIT.RECORD_TITLE</span>
-                <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_TITLE_HELP'|translate}}" ng-model="formData.title" />
+                <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_TITLE_HELP'|translate}}"
+                       ng-model="formData.title"
+                       required/>
               </div>
+
 
               <div class="item item-input item-floating-label">
                 <span class="input-label" translate>REGISTRY.EDIT.RECORD_DESCRIPTION</span>
@@ -50,28 +67,42 @@
                 </textarea>
               </div>
 
+              <div class="item item-divider" translate>REGISTRY.LOCATION_DIVIDER</div>
+
+              <!-- address -->
               <div class="item item-floating-label" ng-if="location.enable">
-                <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_ADDRESS</span>
                 <div class="item-input-inset">
                   <label class="item-input-wrapper">
-                    <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="formData.location">
+                    <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_ADDRESS_HELP'|translate}}" ng-model="formData.address">
                   </label>
                   <button class="button button-small button-positive" ng-click="localize()" ng-if="location.enable">
                     <i class="icon ion-pinpoint"></i>
                   </button>
                 </div>
               </div>
-
               <div class="item item-input item-floating-label" ng-if="!location.enable">
-                <span class="input-label" translate>REGISTRY.EDIT.RECORD_LOCATION</span>
-                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_LOCATION_HELP'|translate}}" ng-model="formData.location"></textarea>
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_ADDRESS</span>
+                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_ADDRESS_HELP' | translate}}"
+                          ng-model="formData.address"
+                          ng-model-options="{ debounce: 350 }"
+                          rows="4" cols="10">
+                </textarea>
               </div>
 
-              <a class="item item-icon-left" ng-if="id && formData.issuer" >
-                <i class="icon ion-key"></i>
-                <span translate>COMMON.SUBMIT_BY</span>
-                <h4>{{formData.issuer | formatPubkey}}</h4>
-              </a>
+              <div class="item item-input item-floating-label">
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_CITY</span>
+                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_CITY_HELP'|translate}}" ng-model="formData.city"></textarea>
+              </div>
+
+              <div class="item item-divider" translate>REGISTRY.SOCIAL_NETWORKS_DIVIDER</div>
+
+              <div class="item item-divider" translate>REGISTRY.TECHNICAL_DIVIDER</div>
+
+              <div class="item item-input item-floating-label">
+                <span class="input-label" translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
+                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_PUBKEY_HELP'|translate}}" ng-model="formData.pubkey"></textarea>
+              </div>
 
             </div>
           </form>

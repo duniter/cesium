@@ -7,8 +7,7 @@
              ng-change="doSearch()" id="searchWot">
   </label>
 
-  <div class="list"
-       ng-class="{'list-inset': search.options.listInset}"
+  <ion-list
        ng-if="search.text && search.text.length > 0">
 
     <label class="item center text-left" ng-if="search.looking">
@@ -21,25 +20,27 @@
 
     <ion-item ng-if="!search.looking"
        ng-repeat="found in search.results"
-       class="item item-avatar item-icon-right ink"
+       class="item-avatar item-icon-right ink"
        ng-click="select(found)">
 
       <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
       <i ng-if="!found.avatar" class="item-image avatar stable icon ion-person"></i>
-
       <h2 ng-if="found.name" ng-bind-html="found.name"></h2>
       <h2 ng-if="!found.name">{{found.uid}}</h2>
-        <h4 class="gray">
-          <span class="positive" ng-if="found.name && found.uid">
-            <i class="ion ion-person"></i>
-            {{found.uid}}
-          </span>
-          <i class="ion ion-key"></i>
-          {{found.pubkey | formatPubkey}}
-        </h4>
-        <i class="icon ion-ios-arrow-right"></i>
+      <h4 class="gray">
+        <span class="positive" ng-if="found.name && found.uid">
+          <i class="ion ion-person"></i>
+          {{found.uid}}
+        </span>
+        <i class="ion ion-key"></i>
+        {{found.pubkey | formatPubkey}}
+      </h4>
+      <i class="icon ion-ios-arrow-right"></i>
+      <ion-option-button class="button-positive"
+                         ng-click="showTransferModal({pubkey: found.pubkey, uid: found.uid})"
+                         translate>COMMON.BTN_SEND_MONEY</ion-option-button>
     </ion-item>
 
     <!--<img src="http://ionicmaterial.com/preview/img/jon-snow.jpg">-->
-  </div>
+  </ion-list>
 </div>

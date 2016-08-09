@@ -17,7 +17,7 @@ function ESPicturesEditController($scope, $ionicModal, Wallet, Market, UIUtils, 
       openPicturePopup();
     }
     else {
-      var fileInput = angular.element(document.querySelector('#editMarket #pictureFile'));
+      var fileInput = angular.element(document.querySelector('#pictureFile'));
       if (fileInput && fileInput.length > 0) {
         fileInput[0].click();
       }
@@ -112,4 +112,87 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 function ESEmptyModalController($scope, parameters) {
 
+}
+
+
+function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, ESUtils, DataService) {
+  'ngInject';
+
+  $scope.maxCommentSize = 10;
+  $scope.commentData = {};
+
+  $scope.loadComments = function(id) {
+    return DataService.record.comment.all(id, $scope.maxCommentSize)
+      .then(function(comments) {
+        // sort by time asc
+        comments  = comments.sort(function(cm1, cm2) {
+           return (cm1.time - cm2.time);
+        });
+        $scope.comments = comments;
+      });
+  };
+
+  $scope.showMoreComments = function(){
+    $scope.maxCommentSize = $scope.maxCommentSize * $scope.maxCommentSize;
+    $scope.loadComments($scope.id)
+    .then(function() {
+      // Set Motion
+      $timeout(function() {
+        UIUtils.motion.fadeSlideIn({
+          selector: '.card-comment'
+        });
+      }, 10);
+    });
+  };
+
+  $scope.sendComment = function() {
+    if (!$scope.commentData.message || $scope.commentData.message.trim().length === 0) {
+      return;
+    }
+    $scope.loadWallet()
+    .then(function(walletData) {
+      var comment = $scope.commentData;
+      comment.record= $scope.id;
+      comment.issuer = walletData.pubkey;
+      var obj = {};
+      angular.copy(comment, obj);
+      if (walletData.uid) {
+        obj.uid = walletData.uid;
+      }
+      obj.isnew = true;
+      // Create
+      if (!comment.id) {
+        comment.time = ESUtils.date.now();
+        obj.time = comment.time;
+        DataService.record.comment.add(comment)
+        .then(function (id){
+          obj.id = id;
+        })
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
+      }
+      // Update
+      else {
+        DataService.record.comment.update(comment, {id: comment.id})
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
+      }
+
+      $scope.comments.push(obj);
+      $scope.commentData = {}; // reset comment
+    });
+  };
+
+  $scope.editComment = function(index) {
+    var comment = $scope.comments[index];
+    $scope.comments.splice(index, 1);
+    $scope.commentData = comment;
+  };
+
+  $scope.removeComment = function(index) {
+    var comment = $scope.comments[index];
+    if (!comment || !comment.id) {return;}
+    $scope.comments.splice(index, 1);
+
+    DataService.record.comment.remove(comment.id, Wallet.data.keypair)
+    .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
+  };
 }
