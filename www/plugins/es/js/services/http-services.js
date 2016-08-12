@@ -1,9 +1,23 @@
-angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.config'])
+angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'cesium.config'])
 
-.factory('ESUtils', function($q, CryptoUtils, HttpUtils, $rootScope, APP_CONFIG, Wallet) {
+/**
+ * Elastic Search Http
+ */
+.factory('esHttp', function($q, CryptoUtils, HttpUtils, $rootScope, APP_CONFIG, Wallet) {
   'ngInject';
 
-  function ESUtils(server) {
+  function esHttp(server) {
+
+    function copy(otherNode) {
+      if (!!this.instance) {
+        var instance = this.instance;
+        angular.copy(otherNode, this);
+        this.instance = instance;
+      }
+      else {
+        angular.copy(otherNode, this);
+      }
+    }
 
     // Get time (UTC)
     function getTimeNow() {
@@ -11,8 +25,16 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
        return Math.floor(moment().utc().valueOf() / 1000);
     }
 
+    function get(path) {
+      return HttpUtils.get('http://' + server + path);
+    }
+
+    function post(path) {
+      return HttpUtils.post('http://' + server + path);
+    }
+
     function postRecord(uri) {
-      var postRequest = HttpUtils.post(uri);
+      var postRequest = HttpUtils.post('http://' + server + uri);
 
       return function(record, params) {
         return $q(function(resolve, reject) {
@@ -135,6 +157,10 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
         $http.defaults.headers.common.Authorization = 'Basic ';*/
     }
 
+    isEnable = function() {
+      return !!server;
+    };
+
     function emptyHit() {
       return {
          _id: null,
@@ -146,8 +172,10 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
     }
 
     return {
-      get: HttpUtils.get,
-      post: HttpUtils.post,
+      isEnable: isEnable,
+      copy: copy,
+      get: get,
+      post: post,
       record: {
         post: postRecord,
         remove: removeRecord
@@ -165,12 +193,10 @@ angular.module('cesium.es.services', ['ngResource', 'cesium.services', 'cesium.c
     };
   }
 
-  var enable = !!APP_CONFIG.DUNITER_NODE_ES;
-  if (!enable) {
-    return null;
-  }
-  var service = ESUtils(APP_CONFIG.DUNITER_NODE_ES);
-  service.instance = ESUtils;
+  var service = esHttp((Wallet.data && Wallet.data.settings && Wallet.data.settings.esNode) ?
+                         Wallet.data.settings.esNode :
+                         APP_CONFIG.DUNITER_NODE_ES);
+  service.instance = esHttp;
   return service;
 })
 ;

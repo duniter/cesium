@@ -1,16 +1,16 @@
-angular.module('cesium.comment.services', ['ngResource', 'cesium.services', 'cesium.config', 'cesium.es.services'])
+angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services', 'cesium.es.http.services'])
 
-.factory('CommentService', function($http, $q, APP_CONFIG, BMA, ESUtils) {
+.factory('esComment', function($q, BMA, esHttp) {
   'ngInject';
 
-    function CommentService(server, index) {
+    function ESComment(index) {
 
       var
       fields = {
         commons: ["issuer", "time", "message"],
       };
 
-      var postSearchComments = ESUtils.post('http://' + server + '/'+index+'/comment/_search?pretty');
+      var postSearchComments = esHttp.post('/'+index+'/comment/_search?pretty');
 
       function getCommentsByRecord(recordId, size) {
         if (!size) {
@@ -67,23 +67,18 @@ angular.module('cesium.comment.services', ['ngResource', 'cesium.services', 'ces
 
         search: postSearchComments,
         all: getCommentsByRecord,
-        add: ESUtils.record.post('http://' + server + '/'+index+'/comment'),
-        update: ESUtils.record.post('http://' + server + '/'+index+'/comment/:id/_update'),
-        remove: ESUtils.record.remove(index, 'comment'),
+        add: esHttp.record.post('/'+index+'/comment'),
+        update: esHttp.record.post('/'+index+'/comment/:id/_update'),
+        remove: esHttp.record.remove(index, 'comment'),
         fields: {
           commons: fields.commons
         }
       };
     }
 
-    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
-    if (!enable) {
-      return null;
-    }
-
     var service = {};
 
-    service.instance = CommentService;
+    service.instance = ESComment;
   return service;
 })
 ;

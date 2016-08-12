@@ -1,15 +1,29 @@
-angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services'])
+angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.services'])
 .config(function(PluginServiceProvider) {
     'ngInject';
 
-    PluginServiceProvider.registerEagerLoadingService('UserService');
+    PluginServiceProvider.registerEagerLoadingService('esUser');
 
   })
 
-.factory('UserService', function(APP_CONFIG, $rootScope, ESUtils, Wallet, WotService, UIUtils, BMA) {
+.factory('esUser', function($rootScope, esHttp, Wallet, WotService, UIUtils, BMA) {
   'ngInject';
 
-  function UserService(server) {
+  function ESUser(server) {
+
+    var listeners;
+
+    function copy(otherNode) {
+      removeListeners();
+      if (!!this.instance) {
+        var instance = this.instance;
+        angular.copy(otherNode, this);
+        this.instance = instance;
+      }
+      else {
+        angular.copy(otherNode, this);
+      }
+    }
 
     onWalletLoad = function(data, resolve, reject) {
       if (!data || !data.pubkey) {
@@ -18,7 +32,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
         }
         return;
       }
-      ESUtils.get('http://' + server + '/user/profile/:id?_source=avatar,title')({id: data.pubkey})
+      esHttp.get('/user/profile/:id?_source=avatar,title')({id: data.pubkey})
       .then(function(res) {
         if (res && res._source) {
           data.name = res._source.title;
@@ -47,7 +61,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
         }
         return;
       }
-      ESUtils.get('http://' + server + '/user/profile/:id')({id: data.pubkey})
+      esHttp.get('/user/profile/:id')({id: data.pubkey})
       .then(function(res) {
         if (res && res._source) {
           data.name = res._source.title;
@@ -129,7 +143,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       BMA.wot.member.uids()
       .then(function(res){
         uidsByPubkey = res;
-        return ESUtils.post('http://' + server + '/user/profile/_search?pretty')(request);
+        return esHttp.post('/user/profile/_search?pretty')(request);
       })
       .then(function(res) {
         if (res.hits.total === 0) {
@@ -173,27 +187,32 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
     }
 
     // Extend Wallet.loadData() and WotService.loadData()
-    Wallet.api.data.on.load($rootScope, onWalletLoad, this);
-    WotService.api.data.on.load($rootScope, onWotLoad, this);
-    WotService.api.data.on.search($rootScope, onWotSearch, this);
+    listeners = [
+      Wallet.api.data.on.load($rootScope, onWalletLoad, this),
+      WotService.api.data.on.load($rootScope, onWotLoad, this),
+      WotService.api.data.on.search($rootScope, onWotSearch, this)
+    ];
+
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
 
     return {
+      copy: copy,
       profile: {
-        get: ESUtils.get('http://' + server + '/user/profile/:id'),
-        add: ESUtils.record.post('http://' + server + '/user/profile'),
-        update: ESUtils.record.post('http://' + server + '/user/profile/:id/_update'),
-        avatar: ESUtils.get('http://' + server + '/user/profile/:id?_source=avatar')
+        get: esHttp.get('/user/profile/:id'),
+        add: esHttp.record.post('/user/profile'),
+        update: esHttp.record.post('/user/profile/:id/_update'),
+        avatar: esHttp.get('/user/profile/:id?_source=avatar')
       }
     };
   }
 
-  var enable = !!APP_CONFIG.DUNITER_NODE_ES;
-  if (!enable) {
-    return null;
-  }
-
-  var service = UserService(APP_CONFIG.DUNITER_NODE_ES);
-  service.instance = UserService;
+  var service = ESUser();
+  service.instance = ESUser;
   return service;
 })
 ;

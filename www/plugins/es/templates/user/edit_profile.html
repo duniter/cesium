@@ -10,8 +10,7 @@
 
   <ion-content scroll="true">
 
-    <div class="positive-900-bg hero" ng-class="{'on': !loading}"
-         id="profile-header">
+    <div class="positive-900-bg hero">
       <div class="content">
         <i class="avatar"
            ng-style="avatarStyle"
@@ -57,6 +56,7 @@
             <ion-item class="item-input item-floating-label item-button-right">
               <span class="input-label">{{'PROFILE.TITLE' | translate}}</span>
               <input type="text" name="title" placeholder="{{'PROFILE.TITLE_HELP' | translate}}"
+                     id="profile-name"
                      ng-model="formData.title"
                      ng-model-options="{ debounce: 350 }"
                      required>
@@ -99,45 +99,8 @@
                      ng-model-options="{ debounce: 350 }">
             </div>
 
-            <div class="item item-divider" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</div>
-
-            <ion-item class="item-remove-animate item-icon-left "
-                 type="no-padding item-text-wrap"
-                 ng-if="formData.socials && formData.socials.length>0"
-                 ng-repeat="social in formData.socials track by social.url"
-                 id="social-{{social.url|formatSlug}}">
-                <i class="icon ion-social-{{social.type}}"
-                   ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
-                <p ng-if="social.type && social.type != 'web'">{{social.type}}</p>
-                <h2>
-                  <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
-                  <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
-                  <a class="gray hidden-device" ng-click="formData.socials.splice($index, 1); doSave();">
-                    &nbsp;<b class="ion ion-trash-a"></b>&nbsp;
-                  </a>
-                  <a class="gray hidden-device" ng-click="editSocialNetwork($index)">
-                    &nbsp;<b class="ion ion-edit"></b>&nbsp;
-                  </a>
-                </h2>
-                <ion-option-button class="button-assertive" ng-click="formData.socials.splice($index, 1); doSave();">
-                  {{'COMMON.BTN_DELETE'|translate}}
-                </ion-option-button>
-                <ion-option-button class="button-info" ng-click="editSocialNetwork($index)">
-                  {{'COMMON.BTN_EDIT'|translate}}
-                </ion-option-button>
-            </ion-item>
-
-            <div class="item item-complex item-input-inset">
-              <label class="item-input-wrapper">
-                <input type="text" style="width:100%" placeholder="{{'PROFILE.SOCIAL_HELP'|translate}}"
-                       id="socialUrl"
-                       on-return="addSocialNetwork();"
-                       ng-model="socialData.url"/>
-              </label>
-              <button class="button button-small button-icon" ng-click="addSocialNetwork()">
-                {{'COMMON.BTN_ADD'|translate}}
-              </button>
-            </div>
+            <!-- social networks -->
+            <ng-include src="'plugins/es/templates/common/edit_socials.html'"></ng-include>
 
             <div class="item item-divider">
               {{'PROFILE.TECHNICAL_DIVIDER' | translate}}

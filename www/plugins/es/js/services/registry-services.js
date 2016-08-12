@@ -1,9 +1,9 @@
-angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'cesium.es.services'])
+angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 'cesium.es.http.services'])
 
-.factory('Registry', function($q, APP_CONFIG, ESUtils, CommentService) {
+.factory('esRegistry', function($q, esHttp, esComment) {
   'ngInject';
 
-    function Registry(server) {
+    function ESRegistry() {
 
       var
       categories = [],
@@ -14,6 +14,17 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'ce
         }
       };
 
+      function copy(otherNode) {
+        if (!!this.instance) {
+          var instance = this.instance;
+          angular.copy(otherNode, this);
+          this.instance = instance;
+        }
+        else {
+          angular.copy(otherNode, this);
+        }
+      }
+
       function getCategories() {
         return $q(function(resolve, reject) {
           if (categories.length !== 0) {
@@ -21,7 +32,7 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'ce
             return;
           }
 
-          ESUtils.get('http://' + server + '/registry/category/_search?pretty&sort=order&from=0&size=1000&_source=name,parent')()
+          esHttp.get('/registry/category/_search?pretty&sort=order&from=0&size=1000&_source=name,parent')()
           .then(function(res) {
             if (res.hits.total === 0) {
                 categories = [];
@@ -45,49 +56,45 @@ angular.module('cesium.registry.services', ['ngResource', 'cesium.services', 'ce
         });
       }
 
-      var commentService = CommentService.instance(server, 'registry');
+      var esCommentNode = esComment.instance('registry');
 
       function getCommons() {
         var _source = fields.commons.reduce(function(res, field){
           return res + ',' + field;
         }, '').substring(1);
-        return ESUtils.get('http://' + server + '/registry/record/:id?_source=' + _source);
+        return esHttp.get('/registry/record/:id?_source=' + _source);
       }
 
       return {
+        copy: copy,
         category: {
           all: getCategories
         },
         record: {
-          searchText: ESUtils.get('http://' + server + '/registry/record/_search?q=:search'),
-          search: ESUtils.post('http://' + server + '/registry/record/_search?pretty'),
-          get: ESUtils.get('http://' + server + '/registry/record/:id'),
+          searchText: esHttp.get('/registry/record/_search?q=:search'),
+          search: esHttp.post('/registry/record/_search?pretty'),
+          get: esHttp.get('/registry/record/:id'),
           getCommons: getCommons(),
-          add: ESUtils.record.post('http://' + server + '/registry/record'),
-          update: ESUtils.record.post('http://' + server + '/registry/record/:id/_update'),
-          remove: ESUtils.record.remove('registry', 'record'),
+          add: esHttp.record.post('/registry/record'),
+          update: esHttp.record.post('/registry/record/:id/_update'),
+          remove: esHttp.record.remove('esRegistry', 'record'),
           fields: {
             commons: fields.commons
           },
           picture: {
-            all: ESUtils.get('http://' + server + '/registry/record/:id?_source=pictures')
+            all: esHttp.get('/registry/record/:id?_source=pictures')
           },
-          comment: commentService
+          comment: esCommentNode
         },
         currency: {
-          all: ESUtils.get('http://' + server + '/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
-          get: ESUtils.get('http://' + server + '/registry/currency/:id/_source')
+          all: esHttp.get('/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
+          get: esHttp.get('/registry/currency/:id/_source')
         }
       };
     }
 
-    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
-    if (!enable) {
-      return null;
-    }
-
-    var service = Registry(APP_CONFIG.DUNITER_NODE_ES);
-    service.instance = Registry;
+    var service = ESRegistry();
+    service.instance = ESRegistry;
 
   return service;
 })

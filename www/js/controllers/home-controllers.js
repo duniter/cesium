@@ -32,18 +32,11 @@ angular.module('cesium.home.controllers', ['cesium.services'])
   })
 
 
-  .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
-
   .controller('HomeCtrl', HomeController)
 
   .controller('JoinCtrl', JoinController)
 ;
 
-
-function PluginExtensionPointController($scope, PluginService) {
-  'ngInject';
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-}
 
 function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet) {
   'ngInject';

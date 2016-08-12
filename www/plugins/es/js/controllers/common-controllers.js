@@ -1,10 +1,11 @@
-angular.module('cesium.es-common.controllers', ['cesium.services', 'ngSanitize'])
+angular.module('cesium.es.common.controllers', ['cesium.es.services'])
 
   // Configure menu items
   .config(function(PluginServiceProvider) {
     'ngInject';
     PluginServiceProvider
 
+    // Menu extension points
     .extendState('app', {
        points: {
          'menu-main': {
@@ -16,12 +17,12 @@ angular.module('cesium.es-common.controllers', ['cesium.services', 'ngSanitize']
            controller: "PluginExtensionPointCtrl"
          }
        }
-      })
-    ;
-
+      });
   })
 
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
+
+ .controller('ESSocialsEditCtrl', ESSocialsEditController)
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
 
@@ -30,7 +31,7 @@ angular.module('cesium.es-common.controllers', ['cesium.services', 'ngSanitize']
 ;
 
 
-function ESPicturesEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
+function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
   'ngInject';
 
   $scope.selectNewPicture = function() {
@@ -136,7 +137,7 @@ function ESEmptyModalController($scope, parameters) {
 }
 
 
-function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, ESUtils, DataService) {
+function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, esHttp, DataService) {
   'ngInject';
 
   $scope.maxCommentSize = 10;
@@ -183,18 +184,18 @@ function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, ESUtils, Da
       obj.isnew = true;
       // Create
       if (!comment.id) {
-        comment.time = ESUtils.date.now();
+        comment.time = esHttp.date.now();
         obj.time = comment.time;
         DataService.record.comment.add(comment)
         .then(function (id){
           obj.id = id;
         })
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
+        .catch(UIUtils.onError('esMarket.ERROR.FAILED_SAVE_COMMENT'));
       }
       // Update
       else {
         DataService.record.comment.update(comment, {id: comment.id})
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
+        .catch(UIUtils.onError('esMarket.ERROR.FAILED_SAVE_COMMENT'));
       }
 
       $scope.comments.push(obj);
@@ -214,8 +215,53 @@ function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, ESUtils, Da
     $scope.comments.splice(index, 1);
 
     DataService.record.comment.remove(comment.id, Wallet.data.keypair)
-    .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
+    .catch(UIUtils.onError('esMarket.ERROR.FAILED_REMOVE_COMMENT'));
   };
 }
 
+function ESSocialsEditController($scope, $focus, $timeout, $filter, UIUtils, SocialUtils)  {
+  'ngInject';
 
+  $scope.socialData = {
+    url: null
+  };
+
+  $scope.addSocialNetwork = function() {
+    if (!$scope.socialData.url || $scope.socialData.url.trim().length === 0) {
+      return;
+    }
+    if (!$scope.formData.socials) {
+      $scope.formData.socials = [];
+    }
+    var url = $scope.socialData.url.trim();
+
+    var exists = _.findWhere($scope.formData.socials, {url: url});
+    if (exists) { // duplicate entry
+      $scope.socialData.url = '';
+      return;
+    }
+
+    var social = SocialUtils.get(url);
+    if (!social) {
+      UIUtils.alert.error('PROFILE.ERROR.INVALID_SOCIAL_NETWORK_FORMAT');
+      $focus('socialUrl');
+      return; // stop here
+    }
+    $scope.formData.socials.push(social);
+    $scope.socialData.url = '';
+
+    // Set Motion
+    $timeout(function() {
+      UIUtils.motion.fadeSlideIn({
+        selector: '#social-' + $filter('formatSlug')(url)
+      });
+    }, 0);
+  };
+
+  $scope.editSocialNetwork = function(index) {
+    var social = $scope.formData.socials[index];
+    $scope.formData.socials.splice(index, 1);
+    $scope.socialData.url = social.url;
+    $focus('socialUrl');
+  };
+}

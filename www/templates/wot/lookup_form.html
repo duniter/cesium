@@ -1,7 +1,9 @@
 <div class="lookupForm">
   <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="text" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+      <input type="text"
+             id="wotSearchText"
+             placeholder="{{'WOT.SEARCH_HELP'|translate}}"
              ng-model="search.text"
              ng-model-options="{ debounce: 350 }"
              ng-change="doSearch()" id="searchWot">
@@ -24,7 +26,7 @@
        ng-click="select(found)">
 
       <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
-      <i ng-if="!found.avatar" class="item-image avatar stable icon ion-person"></i>
+      <i ng-if="!found.avatar" class="item-image icon ion-person"></i>
       <h2 ng-if="found.name" ng-bind-html="found.name"></h2>
       <h2 ng-if="!found.name">{{found.uid}}</h2>
       <h4 class="gray">

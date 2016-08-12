@@ -4,17 +4,16 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear visible-xs visible-sm" ng-click="save()">
-          <i class="icon ion-android-send" ng-if="!id"></i>
-          <i class="icon ion-android-done" ng-if="id"></i>
+      <button class="button button-icon button-clear visible-xs visible-sm"
+              ng-class="{'ion-android-send':!id, 'ion-android-done': id}"
+              ng-click="save()">
       </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true">
+      <div class="row no-padding">
 
-      <div class="row">
-        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-        </div>
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
         <div class="col">
           <form name="recordForm" novalidate="" ng-submit="save()">
@@ -47,6 +46,7 @@
               <div class="item item-input item-floating-label">
                 <span class="input-label" translate>REGISTRY.EDIT.RECORD_TITLE</span>
                 <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_TITLE_HELP'|translate}}"
+                       id="registry-record-title"
                        ng-model="formData.title"
                        required/>
               </div>
@@ -95,7 +95,8 @@
                 <textarea placeholder="{{'REGISTRY.EDIT.RECORD_CITY_HELP'|translate}}" ng-model="formData.city"></textarea>
               </div>
 
-              <div class="item item-divider" translate>REGISTRY.SOCIAL_NETWORKS_DIVIDER</div>
+              <!-- social networks -->
+              <ng-include src="'plugins/es/templates/common/edit_socials.html'"></ng-include>
 
               <div class="item item-divider" translate>REGISTRY.TECHNICAL_DIVIDER</div>
 
@@ -105,23 +106,24 @@
               </div>
 
             </div>
+
+            <div class="padding hidden-xs hidden-sm text-right">
+              <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
+                COMMON.BTN_CANCEL
+              </button>
+              <button class="button button-positive button-raised ink" type="submit" ng-if="!id" translate>
+                COMMON.BTN_PUBLISH
+              </button>
+              <button class="button button-assertive button-raised ink" type="submit" ng-if="id" translate>
+                COMMON.BTN_SAVE
+              </button>
+            </div>
           </form>
-
-          <div class="padding hidden-xs hidden-sm text-right">
-            <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
-              COMMON.BTN_CANCEL
-            </button>
-            <button class="button button-positive button-raised ink" type="submit" ng-if="!id" translate>
-              COMMON.BTN_PUBLISH
-            </button>
-            <button class="button button-assertive button-raised ink" type="submit" ng-if="id" translate>
-              COMMON.BTN_SAVE
-            </button>
-          </div>
         </div>
 
-        <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-        </div>
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
       </div>
+    </div>
   </ion-content>
 </ion-view>

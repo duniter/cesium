@@ -5,11 +5,13 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment', 'ngApi',
-  'cesium.directives', 'cesium.controllers', 'cesium.templates', 'cesium.translations',
    // removeIf(no-device)
   'ngCordova', 'ionic-native-transitions',
    // endRemoveIf(no-device)
-   'cesium.plugins'
+   // removeIf(no-plugin)
+   'cesium.plugins',
+   // endRemoveIf(no-plugin)
+  'cesium.directives', 'cesium.controllers', 'cesium.templates', 'cesium.translations'
   ])
 
   .filter('formatInteger', function() {

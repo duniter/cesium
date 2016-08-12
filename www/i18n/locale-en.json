@@ -68,7 +68,7 @@
   "SETTINGS": {
     "TITLE": "Setting",
     "NETWORK_SETTINGS": "Network",
-    "NODE": "Node address",
+    "NODE": "Duniter node address",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "HISTORY_SETTINGS": "My Account",

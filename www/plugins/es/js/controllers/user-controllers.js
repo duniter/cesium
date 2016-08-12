@@ -1,6 +1,6 @@
-angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
+angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
 
     $stateProvider.state('app.user_edit_profile', {
       url: "/user/profile/edit",
@@ -18,7 +18,7 @@ angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
 
 ;
 
-function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $filter, $focus, $q, SocialUtils) {
+function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filter, $focus, $q, SocialUtils) {
   'ngInject';
 
   $scope.loading = true;
@@ -38,7 +38,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
     $scope.loading = true; // to avoid the call of doSave()
     $scope.loadWallet()
       .then(function(walletData) {
-        UserService.profile.get({id: walletData.pubkey})
+        esUser.profile.get({id: walletData.pubkey})
         .then(function(res) {
           if (res && res.found && res._source) {
             var profile = res._source;
@@ -61,12 +61,9 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
             UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
           }*/
         });
-      });
 
-      $timeout(function () {
-        var header = document.getElementById('profile-header');
-        header.classList.toggle('on', true);
-      }, 100);
+        $focus('profile-name');
+      });
   });
 
   $scope.setProfileForm = function(profileForm) {
@@ -93,45 +90,6 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
     }
   };
   $scope.$watch('formData', $scope.onFormDataChanged, true);
-
-  $scope.addSocialNetwork = function() {
-    if (!$scope.socialData.url || $scope.socialData.url.trim().length === 0) {
-      return;
-    }
-    if (!$scope.formData.socials) {
-      $scope.formData.socials = [];
-    }
-    var url = $scope.socialData.url.trim();
-
-    var exists = _.findWhere($scope.formData.socials, {url: url});
-    if (exists) { // duplicate entry
-      $scope.socialData.url = '';
-      return;
-    }
-
-    var social = SocialUtils.get(url);
-    if (!social) {
-      UIUtils.alert.error('PROFILE.ERROR.INVALID_SOCIAL_NETWORK_FORMAT');
-      $focus('socialUrl');
-      return; // stop here
-    }
-    $scope.formData.socials.push(social);
-    $scope.socialData.url = '';
-
-    // Set Motion
-    $timeout(function() {
-      UIUtils.motion.fadeSlideIn({
-        selector: '#social-' + $filter('formatSlug')(url)
-      });
-    }, 0);
-  };
-
-  $scope.editSocialNetwork = function(index) {
-    var social = $scope.formData.socials[index];
-    $scope.formData.socials.splice(index, 1);
-    $scope.socialData.url = social.url;
-    $focus('socialUrl');
-  };
 
   $scope.fileChanged = function(event) {
       UIUtils.loading.show();
@@ -166,7 +124,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
 
     var doFinishSave = function(formData) {
       if (!$scope.existing) {
-        UserService.profile.add(formData)
+        esUser.profile.add(formData)
         .then(function() {
           console.log("User profile successfully created.");
           $scope.existing = true;
@@ -175,7 +133,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
         .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
       else {
-        UserService.profile.update(formData, {id: $rootScope.walletData.pubkey})
+        esUser.profile.update(formData, {id: $rootScope.walletData.pubkey})
         .then(function() {
           console.log("User profile successfully updated.");
           $scope.saving = false;

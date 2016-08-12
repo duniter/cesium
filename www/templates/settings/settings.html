@@ -39,6 +39,8 @@
         </div>
       </label>
     </div>
+    <!-- Allow extension here -->
+    <cs-extension-point name="common"></cs-extension-point>
 
     <span class="item item-divider">
       {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
@@ -57,6 +59,7 @@
       </label>
     </div>
 
+
     <span class="item item-divider">
       {{'SETTINGS.HISTORY_SETTINGS' | translate}}
     </span>
@@ -72,6 +75,8 @@
         </div>
       </label>
     </div>
+    <!-- Allow extension here -->
+    <cs-extension-point name="history"></cs-extension-point>
 
     <span class="item item-divider">
       {{'SETTINGS.NETWORK_SETTINGS' | translate}}
@@ -83,6 +88,9 @@
       </div>
       <span class="item-note">{{formData.node}}</span>
     </div>
+    <!-- Allow extension here -->
+    <cs-extension-point name="network"></cs-extension-point>
+
 
   </ion-content>
 </ion-view>

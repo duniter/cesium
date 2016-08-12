@@ -1,6 +1,6 @@
-angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'cesium.es-common.controllers'])
+angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es.common.controllers'])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
     'ngInject';
 
     $stateProvider
@@ -10,7 +10,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/lookup.html",
-          controller: 'MarketLookupCtrl'
+          controller: 'ESMarketLookupCtrl'
         }
       }
     })
@@ -20,7 +20,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/view_record.html",
-          controller: 'MarketRecordViewCtrl'
+          controller: 'ESMarketRecordViewCtrl'
         }
       }
     })
@@ -31,7 +31,7 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/edit_record.html",
-          controller: 'MarketRecordEditCtrl'
+          controller: 'ESMarketRecordEditCtrl'
         }
       }
     })
@@ -42,21 +42,21 @@ angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'c
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/edit_record.html",
-          controller: 'MarketRecordEditCtrl'
+          controller: 'ESMarketRecordEditCtrl'
         }
       }
     });
   })
 
- .controller('MarketLookupCtrl', MarketLookupController)
+ .controller('ESMarketLookupCtrl', ESMarketLookupController)
 
- .controller('MarketRecordViewCtrl', MarketRecordViewController)
+ .controller('ESMarketRecordViewCtrl', ESMarketRecordViewController)
 
- .controller('MarketRecordEditCtrl', MarketRecordEditController)
+ .controller('ESMarketRecordEditCtrl', ESMarketRecordEditController)
 
 ;
 
-function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtils, ModalUtils, $filter) {
+function ESMarketLookupController($scope, esMarket, $state, $focus, $timeout, UIUtils, ModalUtils, $filter) {
   'ngInject';
 
   $scope.search = {
@@ -79,7 +79,7 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
       }
       // search on category
       else if ($state.stateParams && $state.stateParams.category) {
-        Market.category.all()
+        esMarket.category.all()
         .then(function(categories) {
           var cat = categories[$state.stateParams.category];
           if (cat !== "undefined") {
@@ -134,7 +134,7 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
       },
       from: 0,
       size: 20,
-      _source: Market.record.fields.commons
+      _source: esMarket.record.fields.commons
     };
     var text = $scope.search.text.toLowerCase().trim();
     var matches = [];
@@ -181,7 +181,7 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
       },
       from: 0,
       size: 20,
-      _source: Market.record.fields.commons
+      _source: esMarket.record.fields.commons
     };
 
     $scope.doRequest(request);
@@ -190,9 +190,9 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
   $scope.doRequest = function(request) {
     $scope.search.looking = true;
 
-    Market.category.all()
+    esMarket.category.all()
       .then(function(categories) {
-        return Market.record.search(request)
+        return esMarket.record.search(request)
           .then(function(res){
             if (res.hits.total === 0) {
               $scope.search.results = [];
@@ -252,7 +252,7 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
 
   $scope.showCategoryModal = function() {
     // load categories
-    Market.category.all()
+    esMarket.category.all()
     .then(function(result){
       return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
         {categories : result},
@@ -269,7 +269,7 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
 
 }
 
-function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils, $state, $q, $timeout, BMA, ESUtils, $filter) {
+function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUtils, $state, $q, $timeout, BMA, esHttp, $filter) {
   'ngInject';
 
   $scope.formData = {};
@@ -279,7 +279,7 @@ function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils,
   $scope.canEdit = false;
   $scope.maxCommentSize = 10;
 
-  ESCommentsController.call(this, $scope, Wallet, UIUtils, $q, $timeout, ESUtils, Market);
+  ESCommentsController.call(this, $scope, Wallet, UIUtils, $q, $timeout, esHttp, esMarket);
 
 
   $scope.$on('$ionicView.enter', function(e, $state) {
@@ -295,9 +295,9 @@ function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils,
 
   $scope.load = function(id) {
     UIUtils.loading.show();
-    Market.category.all()
+    esMarket.category.all()
     .then(function(categories) {
-      Market.record.getCommons({id: id})
+      esMarket.record.getCommons({id: id})
       .then(function (hit) {
         $scope.formData = hit._source;
         $scope.id= hit._id;
@@ -343,14 +343,14 @@ function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils,
           }, 100);
         }
         else {
-          UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+          UIUtils.onError('esMarket.ERROR.LOAD_RECORD_FAILED')(err);
         }
       });
 
       // Continue loading other data
       $q.all([
         // Load pictures
-        Market.record.picture.all({id: id})
+        esMarket.record.picture.all({id: id})
         .then(function(hit) {
           if (hit._source.pictures) {
             $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
@@ -378,7 +378,7 @@ function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils,
     })
     .catch(function(){
       $scope.loading = false;
-      UIUtils.onError('MARKET.ERROR.LOAD_CATEGORY_FAILED')(err);
+      UIUtils.onError('esMarket.ERROR.LOAD_CATEGORY_FAILED')(err);
     });
   };
 
@@ -399,7 +399,8 @@ function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils,
   };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, $q, $ionicPopup, Device, $timeout, ModalUtils, ESUtils, $ionicHistory) {
+function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, $q, $ionicPopup, Device,
+  $timeout, ModalUtils, esHttp, $ionicHistory, $focus) {
   'ngInject';
 
   $scope.walletData = {};
@@ -431,15 +432,16 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
           UIUtils.loading.hide();
         });
       }
+      $focus('market-record-title');
     });
   });
 
   $scope.load = function(id) {
     UIUtils.loading.show();
     $q.all([
-      Market.category.all()
+      esMarket.category.all()
       .then(function(categories) {
-        Market.record.get({id: id})
+        esMarket.record.get({id: id})
         .then(function (hit) {
           $scope.formData = hit._source;
           if (hit._source.category && hit._source.category.id) {
@@ -463,7 +465,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
         });
       })
     ])
-    .catch(UIUtils.onError('Could not load market'));
+    .catch(UIUtils.onError('Could not load esMarket'));
   };
 
   $scope.save = function() {
@@ -471,27 +473,27 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
     return $q(function(resolve, reject) {
       var doFinishSave = function(formData) {
         if (!$scope.id) { // Create
-          formData.time = ESUtils.date.now();
-          Market.record.add(formData)
+          formData.time = esHttp.date.now();
+          esMarket.record.add(formData)
           .then(function(id) {
             $scope.id = id;
             UIUtils.loading.hide();
             $state.go('app.market_view_record', {id: id});
             resolve();
           })
-          .catch(UIUtils.onError('Could not save market'));
+          .catch(UIUtils.onError('Could not save esMarket'));
         }
         else { // Update
           if (formData.time) {
-            formData.time = ESUtils.date.now();
+            formData.time = esHttp.date.now();
           }
-          Market.record.update(formData, {id: $scope.id})
+          esMarket.record.update(formData, {id: $scope.id})
           .then(function() {
             UIUtils.loading.hide();
             $state.go('app.market_view_record', {id: $scope.id});
             resolve();
           })
-          .catch(UIUtils.onError('Could not update market'));
+          .catch(UIUtils.onError('Could not update esMarket'));
         }
       };
 
@@ -529,7 +531,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
       openPicturePopup();
     }
     else {
-      var fileInput = angular.element(document.querySelector('#editMarket #pictureFile'));
+      var fileInput = angular.element(document.querySelector('#editesMarket #pictureFile'));
       if (fileInput && fileInput.length > 0) {
         fileInput[0].click();
       }
@@ -579,7 +581,7 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
 
   $scope.showCategoryModal = function() {
     // load categories
-    Market.category.all()
+    esMarket.category.all()
     .then(function(result){
       return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
         {categories : result},

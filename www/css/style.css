@@ -122,12 +122,6 @@
     text-align: center;
 }
 
-.gray {
-    color: grey !important;
-}
-.no-padding {
-    padding: 0px !important;
-}
 
 .col-pubkey {
   min-width: 130px !important;

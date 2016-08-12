@@ -68,7 +68,7 @@
   "SETTINGS": {
     "TITLE": "Paramètres",
     "NETWORK_SETTINGS": "Réseau",
-    "NODE": "Adresse du noeud",
+    "NODE": "Adresse du noeud Duniter",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "HISTORY_SETTINGS": "Mon compte",

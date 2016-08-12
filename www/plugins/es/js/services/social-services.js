@@ -1,9 +1,9 @@
-angular.module('cesium.social.services', ['ngResource'])
+angular.module('cesium.es.social.services', ['ngResource'])
 
 .factory('SocialUtils', function($filter) {
   'ngInject';
 
-    function SocialUtils(server) {
+    function SocialUtils() {
 
       var
       regex = {

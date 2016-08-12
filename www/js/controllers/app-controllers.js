@@ -27,8 +27,23 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   })
 
   .controller('AppCtrl', AppController)
+
+  .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
+
 ;
 
+
+/**
+ * Useful controller that could be reuse in plugin, using $scope.extensionPoint for condition rendered in templates
+ */
+function PluginExtensionPointController($scope, PluginService) {
+  'ngInject';
+  $scope.extensionPoint = PluginService.extensions.points.current.get();
+}
+
+/**
+ * Abstract controller (inherited by other controllers)
+ */
 function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
   CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $ionicPopover, $translate, $filter,
   Modals

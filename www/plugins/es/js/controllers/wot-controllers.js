@@ -1,4 +1,4 @@
-angular.module('cesium.es-wot.controllers', ['cesium.services'])
+angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
   .config(function(PluginServiceProvider) {
     'ngInject';
