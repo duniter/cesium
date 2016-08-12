@@ -1,0 +1,36 @@
+
+<!-- Main section -->
+<ng-if ng-if="extensionPoint === 'menu-main'">
+
+  <!-- professionals registry-->
+  <ion-item menu-close class="item item-icon-left" active-link="active"
+            href="#/app/registry">
+    <i class="icon ion-ios-book"></i>
+    <span translate>MENU.REGISTRY</span>
+  </ion-item>
+
+  <!-- market place -->
+  <ion-item menu-close class="item item-icon-left" active-link="active"
+            href="#/app/market">
+    <i class="icon ion-speakerphone"></i>
+    <span translate>MENU.MARKET</span>
+  </ion-item>
+</ng-if>
+
+<!-- User section -->
+<ng-if ng-if="extensionPoint === 'menu-user'">
+  <!-- user profile -->
+  <ion-item menu-close class="item item-icon-left" active-link="active"
+            ng-if="isLogin()"
+            href="#/app/user/profile/edit">
+    <i class="icon ion-person"></i>
+    <span translate>MENU.USER_PROFILE</span>
+  </ion-item>
+  <ion-item menu-close class="item item-icon-left" active-link="active"
+            ng-if="!isLogin()"
+            ng-click="login('app.user_edit_profile')">
+    <i class="icon ion-person"></i>
+    <span translate>MENU.USER_PROFILE</span>
+  </ion-item>
+
+</ng-if>

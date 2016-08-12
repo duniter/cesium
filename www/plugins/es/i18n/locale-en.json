@@ -4,7 +4,7 @@
     "CATEGORIES": "Categories",
     "CATEGORY_SEARCH_HELP": "Search",
     "LAST_MODIFICATION_DATE": "Updated on ",
-    "RECORD_ISSUER": "Record issuer",
+    "SUBMIT_BY": "Submit by",
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
@@ -59,12 +59,15 @@
     }
   },
   "REGISTRY": {
-    "COMMON": {
-      "CATEGORY": "Category",
-      "BTN_NEW": "Add"
-    },
+    "CATEGORY": "Main activity",
+    "GENERAL_DIVIDER": "Basic information",
+    "LOCATION_DIVIDER": "Localisation",
+    "SOCIAL_NETWORKS_DIVIDER": "Social networks and web site",
+    "TECHNICAL_DIVIDER": "Technical data",
+    "BTN_NEW": "Add",
     "SEARCH": {
-      "TITLE": "Registry",
+      "TITLE": "Professional Directory",
+      "TITLE_SMALL_DEVICE": "Pro Directory",
       "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Search tool",
@@ -74,7 +77,8 @@
       "RESULTS": "Results:"
     },
     "VIEW": {
-      "TITLE": "Registry"
+      "TITLE": "Registry",
+      "CATEGORY": "Main activity:"
     },
     "TYPE": {
       "TITLE": "New",
@@ -89,19 +93,15 @@
       "RECORD_TYPE":"Record type",
       "RECORD_TITLE": "Name",
       "RECORD_TITLE_HELP": "Name",
-      "RECORD_DESCRIPTION": "About me",
-      "RECORD_DESCRIPTION_HELP": "Something about me",
+      "RECORD_DESCRIPTION": "Description",
+      "RECORD_DESCRIPTION_HELP": "Describe activity...",
       "RECORD_ADDRESS": "Address",
-      "RECORD_ADDRESS_HELP": "Address",
+      "RECORD_ADDRESS_HELP": "Street, address...",
       "RECORD_CITY": "City",
       "RECORD_CITY_HELP": "City",
-      "RECORD_SOCIAL_NETWORKS": "Social networks",
+      "RECORD_SOCIAL_NETWORKS": "Social networks and web site",
       "RECORD_PUBKEY": "Public key",
-      "RECORD_PUBKEY_HELP": "Public key to receive payments",
-      "GENERAL_DIVIDER": "General data",
-      "LOCATION_DIVIDER": "Localisation",
-      "SOCIAL_NETWORKS_DIVIDER": "Social networks",
-      "TECHNICAL_DIVIDER": "Technical data",
+      "RECORD_PUBKEY_HELP": "Public key to receive payments"
     },
     "ERROR": {
       "LOAD_RECORD_FAILED": "Loading failed",
@@ -121,7 +121,7 @@
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "General data",
     "LOCATION_DIVIDER": "Localisation",
-    "SOCIAL_NETWORKS_DIVIDER": "Social networks",
+    "SOCIAL_NETWORKS_DIVIDER": "Social networks and web site",
     "TECHNICAL_DIVIDER": "Technical data",
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Could not load user profile.",

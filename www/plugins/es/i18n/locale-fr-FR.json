@@ -59,14 +59,15 @@
     }
   },
   "REGISTRY": {
-    "CATEGORY": "Catégorie",
+    "CATEGORY": "Activité principale",
     "GENERAL_DIVIDER": "Informations générales",
     "LOCATION_DIVIDER": "Localisation",
-    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux",
+    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_NEW": "Ajouter",
     "SEARCH": {
-      "TITLE": "Annuaire",
+      "TITLE": "Annuaire des professionels",
+      "TITLE_SMALL_DEVICE": "Annuaire pro",
       "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
@@ -76,7 +77,8 @@
       "RESULTS": "Résultats :"
     },
     "VIEW": {
-      "TITLE": "Annuaire"
+      "TITLE": "Annuaire",
+      "CATEGORY": "Activité principale :"
     },
     "TYPE": {
       "TITLE": "Nouveau",
@@ -97,7 +99,7 @@
       "RECORD_ADDRESS_HELP": "Adresse (rue, batiment)",
       "RECORD_CITY": "Ville",
       "RECORD_CITY_HELP": "Ville",
-      "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux",
+      "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux et site web",
       "RECORD_PUBKEY": "Clé publique",
       "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
@@ -119,7 +121,7 @@
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "Informations générales",
     "LOCATION_DIVIDER": "Localisation",
-    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux",
+    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",

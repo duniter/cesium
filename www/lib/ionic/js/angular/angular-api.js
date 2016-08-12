@@ -87,13 +87,28 @@
             if (!feature.on) {
                 feature.on = {};
                 feature.raise = {};
+                feature.raisePromise = {};
             }
 
             var eventId = 'event:api:' + this.apiId + ':' + featureName + ':' + eventName;
 
             // Creating raise event method: featureName.raise.eventName
             feature.raise[eventName] = function() {
-                $rootScope.$emit.apply($rootScope, [eventId].concat(Array.prototype.slice.call(arguments)));
+              $rootScope.$emit.apply($rootScope, [eventId].concat(Array.prototype.slice.call(arguments)));
+            };
+
+            // Creating raise that return a promise event method: featureName.raisePromise.eventName
+            feature.raisePromise[eventName] = function() {
+              var deferred = $q.defer();
+              if (!$rootScope.$$listeners[eventId]) {
+                deferred.resolve();
+              }
+              else {
+                // Add promise reject/resolve has last arguments
+                var eventArgs = [eventId].concat(Array.prototype.slice.call(arguments)).concat([deferred.resolve, deferred.reject]);
+                $rootScope.$emit.apply($rootScope, eventArgs);
+              }
+              return deferred.promise;
             };
 
             // Creating on event method: featureName.oneventName
@@ -108,6 +123,10 @@
                     _this: _this
                 };
                 self.eventListeners.push(listener);
+                /*if (!self.eventListenersByEventId[eventId]) {
+                  self.eventListenersByEventId[eventId] = {};
+                }
+                self.eventListenersByEventId[eventId].push(self.eventListenersByEventId[eventId]);*/
 
                 var removeListener = function() {
                     listener.dereg();
@@ -130,6 +149,47 @@
                 handler.apply(_this ? _this : app, args);
             });
         }
+
+        /**
+         * Used to execute a function while disabling the specified event listeners.
+         * Disables the listenerFunctions, executes the callbackFn, and then enables the listenerFunctions again
+         *
+         * @listenerFuncs: Listener function or array of listener functions to suppress. These must be the same
+         * @functions that were used in the .on.eventName method
+         * @callBackFn: Function to execute with surpressed events
+         *
+         * Example:
+         *    var clicked = function (){
+         *       // Button clicked event handler
+         *    }
+         *
+         *    api.suppressEvents(clicked, function() {
+         *       // No clicked events will be fired
+         *       api.ui.form.main.submit.click(scope);
+         *    });
+         */
+        Api.prototype.hasListeners = function(listenerFuncs, callBackFn) {
+            var self = this;
+            var listeners = angular.isArray(listenerFuncs) ? listenerFuncs : [listenerFuncs];
+
+            var foundListeners = [];
+            listeners.forEach(function(l) {
+                foundListeners = self.eventListeners.filter(function(lstnr) {
+                    return l === lstnr.handler;
+                });
+            });
+
+            foundListeners.forEach(function(l) {
+                l.dereg();
+            });
+
+            callBackFn();
+
+            foundListeners.forEach(function(l) {
+                l.dereg = registerEventWithAngular(l.eventId, l.handler, self.gantt, l._this);
+            });
+
+        };
 
         /**
          * Registers a new event for the given feature

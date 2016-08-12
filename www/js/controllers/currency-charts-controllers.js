@@ -1,7 +1,7 @@
 
 angular.module('cesium.currency-charts.controllers', ['cesium.services'])
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider) {
   'ngInject';
 
   $stateProvider

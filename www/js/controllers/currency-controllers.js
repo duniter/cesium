@@ -1,7 +1,7 @@
 
 angular.module('cesium.currency.controllers', ['cesium.services'])
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider) {
   'ngInject';
 
   $stateProvider
@@ -37,7 +37,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
     })
 
     .state('app.view_peer', {
-      url: "/peer/:server",
+      url: "/currency/peer/:server",
       nativeTransitions: {
           "type": "flip",
           "direction": "right"

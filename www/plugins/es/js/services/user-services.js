@@ -6,12 +6,12 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
 
   })
 
-.factory('UserService', function(APP_CONFIG, $rootScope, ESUtils, Wallet, WotService, UIUtils) {
+.factory('UserService', function(APP_CONFIG, $rootScope, ESUtils, Wallet, WotService, UIUtils, BMA) {
   'ngInject';
 
   function UserService(server) {
 
-    doLoad = function(data, resolve, reject) {
+    onWalletLoad = function(data, resolve, reject) {
       if (!data || !data.pubkey) {
         if (resolve) {
           resolve();
@@ -40,7 +40,39 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       });
     }
 
-    doSearch = function(text, datas, resolve, reject) {
+    onWotLoad = function(data, resolve, reject) {
+      if (!data || !data.pubkey) {
+        if (resolve) {
+          resolve();
+        }
+        return;
+      }
+      ESUtils.get('http://' + server + '/user/profile/:id')({id: data.pubkey})
+      .then(function(res) {
+        if (res && res._source) {
+          data.name = res._source.title;
+          var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
+          data.profile = res._source;
+          if (avatar) {
+            data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
+            data.avatar=avatar;
+            delete res._source.avatar;
+          }
+          data.profile = res._source;
+        }
+        resolve(data);
+      })
+      .catch(function(err){
+        if (err && err.ucode && err.ucode == 404) {
+          resolve(data); // not found
+        }
+        else {
+          reject(err);
+        }
+      });
+    }
+
+    onWotSearch = function(text, datas, resolve, reject) {
       if (!datas) {
         if (resolve) {
           resolve();
@@ -64,7 +96,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       };
 
       if (datas.length > 0) {
-        var pubkeys = datas.reduce(function(res, data) {
+        var pubkeys = datas.reduce(function(res, data, resolve, reject) {
           map[data.pubkey] = data;
           return res.concat(data.pubkey);
         }, []);
@@ -93,7 +125,12 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
         };
       }
 
-      ESUtils.post('http://' + server + '/user/profile/_search?pretty')(request)
+      var uidsByPubkey;
+      BMA.wot.member.uids()
+      .then(function(res){
+        uidsByPubkey = res;
+        return ESUtils.post('http://' + server + '/user/profile/_search?pretty')(request);
+      })
       .then(function(res) {
         if (res.hits.total === 0) {
           resolve(datas);
@@ -113,8 +150,8 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
               data.avatar=avatar;
             }
             data.name=hit._source.title;
-            if (hit._source.uid) {
-              data.uid = hit._source.uid;
+            if (!data.uid) {
+              data.uid = hit._source.uid ? hit._source.uid : uidsByPubkey[data.pubkey];
             }
             if (hit.highlight) {
               if (hit.highlight.title) {
@@ -127,7 +164,7 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
       })
       .catch(function(err){
         if (err && err.ucode && err.ucode == 404) {
-          resolve(datas); // not found
+          resolve(datas);
         }
         else {
           reject(err);
@@ -136,9 +173,9 @@ angular.module('cesium.user.services', ['cesium.services', 'cesium.es.services']
     }
 
     // Extend Wallet.loadData() and WotService.loadData()
-    Wallet.api.data.on.load($rootScope, doLoad, this);
-    WotService.api.data.on.load($rootScope, doLoad, this);
-    WotService.api.data.on.search($rootScope, doSearch, this);
+    Wallet.api.data.on.load($rootScope, onWalletLoad, this);
+    WotService.api.data.on.load($rootScope, onWotLoad, this);
+    WotService.api.data.on.search($rootScope, onWotSearch, this);
 
     return {
       profile: {

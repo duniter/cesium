@@ -53,9 +53,8 @@
           </h3>
         </div>
 
-
         <!-- Buttons bar-->
-        <div class="item padding text-center">
+        <div class="item large-button-bar hidden-xs hidden-sm">
           <button class="button button-raised button-calm ink-dark"
                   ng-click="showTransferModal({pubkey: issuer.pubkey, uid: issuer.uid, amount: formData.price})"
                   ng-if="!canEdit && formData.price">
@@ -68,9 +67,11 @@
           </button>
         </div>
 
-        <div class="item" style="margin-top:10px">
-            <p ng-bind-html="formData.description"></p>
-        </div>
+        <ion-item>
+          <h2>
+            <span class="text-keep-lines" ng-bind-html="formData.description"></span>
+          </h2>
+        </ion-item>
 
         <span class="item item-icon-left item-button-right" ng-if="formData.price">
             <i class="icon ion-pricetag"></i>

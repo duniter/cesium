@@ -1,5 +1,26 @@
 angular.module('cesium.es-common.controllers', ['cesium.services', 'ngSanitize'])
 
+  // Configure menu items
+  .config(function(PluginServiceProvider) {
+    'ngInject';
+    PluginServiceProvider
+
+    .extendState('app', {
+       points: {
+         'menu-main': {
+           templateUrl: "plugins/es/templates/menu_extend.html",
+           controller: "PluginExtensionPointCtrl"
+         },
+         'menu-user': {
+           templateUrl: "plugins/es/templates/menu_extend.html",
+           controller: "PluginExtensionPointCtrl"
+         }
+       }
+      })
+    ;
+
+  })
+
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
@@ -196,3 +217,5 @@ function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, ESUtils, Da
     .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
   };
 }
+
+

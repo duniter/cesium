@@ -1,15 +1,5 @@
 angular.module('cesium.market.controllers', ['cesium.services', 'ngSanitize', 'cesium.es-common.controllers'])
 
-  .config(function($menuProvider) {
-    'ngInject';
-    $menuProvider.addItem({
-      text: 'MENU.MARKET',
-      icon: "ion-speakerphone",
-      url: '#/app/market',
-      section: $menuProvider.sections.MAIN
-    });
-  })
-
   .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
 
@@ -76,7 +66,7 @@ function MarketLookupController($scope, Market, $state, $focus, $timeout, UIUtil
     looking: true,
     category: null,
     location: null,
-    options: false
+    options: null
   };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
@@ -409,7 +399,7 @@ function MarketRecordViewController($scope, $rootScope, Wallet, Market, UIUtils,
   };
 }
 
-function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, $q, $ionicPopup, Device, $timeout, ModalUtils, ESUtils) {
+function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils, $state, $q, $ionicPopup, Device, $timeout, ModalUtils, ESUtils, $ionicHistory) {
   'ngInject';
 
   $scope.walletData = {};
@@ -580,6 +570,10 @@ function MarketRecordEditController($scope, $ionicModal, Wallet, Market, UIUtils
       $scope.pictures.splice(0, 0, item);
     }
   };
+
+  $scope.cancel = function() {
+    $ionicHistory.goBack();
+  }
 
   /* -- modals -- */
 

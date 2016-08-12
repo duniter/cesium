@@ -1,6 +1,6 @@
 angular.module('cesium.wot.controllers', ['cesium.services'])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
     'ngInject';
     $stateProvider
 
@@ -171,7 +171,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
       if ($scope.loading) {
         $scope.load(
           $state.stateParams.pubkey.trim(),
-          $state.stateParams.uid.trim()
+          $state.stateParams.uid ? $state.stateParams.uid.trim() : null
         );
       }
     }
@@ -205,6 +205,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
   };
 
   $scope.showFab('fab-transfer');
+
 }
 
 function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device, $ionicPopup, WotService) {

@@ -1,22 +1,6 @@
 angular.module('cesium.user.controllers', ['cesium.services', 'ngSanitize'])
 
-  .config(function($menuProvider, $stateProvider, $urlRouterProvider) {
-    'ngInject';
-    $menuProvider.addItem({
-      text: 'MENU.USER_PROFILE',
-      icon: "ion-person",
-      section: $menuProvider.sections.USER,
-      url: '#/app/user/profile/edit',
-      ngIf: "isLogin()"
-    });
-
-    $menuProvider.addItem({
-      text: 'MENU.USER_PROFILE',
-      icon: "ion-person",
-      section: $menuProvider.sections.USER,
-      ngClick: "login('app.user_edit_profile')",
-      ngIf: "!isLogin()"
-    });
+  .config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider.state('app.user_edit_profile', {
       url: "/user/profile/edit",
@@ -99,7 +83,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, UserService, $
     $timeout(function() {
       UIUtils.motion.ripple();
       // Set Ink
-      //UIUtils.ink({selector: '.item.ink'});
+      UIUtils.ink({selector: 'ion-list > .item.ink'});
     }, 10);
   };
 

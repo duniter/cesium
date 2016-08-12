@@ -580,12 +580,20 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top: 16px;
 }
 
-
-
 .item-thumbnail-left-padding {
     padding-left: 106px;
 }
 
 .item-icon-left-padding {
     padding-left: 40px;
+}
+
+.text-keep-lines {
+  white-space: pre;
+}
+
+.item.large-button-bar {
+  @extend .padding;
+  @extend .text-center;
+  margin-bottom: 10px;
 }

@@ -49,15 +49,9 @@
                   can-swipe="isDeviceEnable()">
 
 
-            <span class="item item-divider">
+            <div class="item item-divider">
               {{'PROFILE.GENERAL_DIVIDER' | translate}}
-            </span>
-
-            <!-- uid -->
-            <ion-item class="item" ng-if="walletData && walletData.uid">
-              <span class="input-label">{{'COMMON.UID' | translate}}</span>
-              <p class="gray">{{walletData.uid}}</p>
-            </ion-item>
+            </div>
 
             <!-- title -->
             <ion-item class="item-input item-floating-label item-button-right">
@@ -85,7 +79,7 @@
               </textarea>
             </ion-item>
 
-            <span class="item item-divider" translate>PROFILE.LOCATION_DIVIDER</span>
+            <div class="item item-divider" translate>PROFILE.LOCATION_DIVIDER</div>
 
             <!-- address -->
             <ion-item class="item-input item-floating-label item-button-right">
@@ -105,7 +99,7 @@
                      ng-model-options="{ debounce: 350 }">
             </div>
 
-            <span class="item item-divider" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</span>
+            <div class="item item-divider" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</div>
 
             <ion-item class="item-remove-animate item-icon-left "
                  type="no-padding item-text-wrap"
@@ -145,15 +139,24 @@
               </button>
             </div>
 
-            <span class="item item-divider">
+            <div class="item item-divider">
               {{'PROFILE.TECHNICAL_DIVIDER' | translate}}
-            </span>
+            </div>
+
+            <!-- uid -->
+            <ion-item class="item-icon-left" ng-if="walletData && walletData.uid">
+              <span translate>COMMON.UID</span>
+              <span class="badge badge-stable">{{::walletData.uid}}</span>
+            </ion-item>
 
             <!-- pubkey-->
-            <span class="item item-icon-left ink" copy-on-click>
+            <ion-item class="item-icon-left item-icon-right item-text-wrap ink"
+                  on-hold="copy(formData.pubkey)"
+                  copy-on-click>
                 <i class="icon ion-key"></i>
+                <span translate>COMMON.PUBKEY</span>
                 <p class="gray">{{walletData.pubkey}}</p>
-            </span>
+            </ion-item>
 
             <div class="item padding hidden-xs text-right">
               <button class="button button-small button-clear button-dark ink"

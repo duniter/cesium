@@ -7,11 +7,26 @@ angular.module('cesium.plugin.services', [])
 
   var eagerLoadingServices = [];
 
+  var extensionByStates = {};
+
   this.registerEagerLoadingService = function(serviceName) {
     eagerLoadingServices.push(serviceName);
+    return this;
   };
 
-  this.$get = ['$injector', function pluginFactory($injector) {
+  this.extendState = function(stateName, extension) {
+    if (angular.isDefined(stateName) && angular.isDefined(extension)) {
+      if (!extensionByStates[stateName]) {
+        extensionByStates[stateName] = [];
+      }
+      extensionByStates[stateName].push(extension);
+    }
+    return this;
+  }
+
+  this.$get = ['$injector', '$state', function pluginFactory($injector, $state) {
+
+    var currentExtensionPointName;
 
     function start() {
       if (eagerLoadingServices.length>0) {
@@ -21,48 +36,35 @@ angular.module('cesium.plugin.services', [])
       }
     }
 
+    function getActiveExtensionPointsByName(extensionPointName) {
+      var extensions = _.keys(extensionByStates).reduce(function(res, stateName){
+        return $state.includes(stateName) ? res.concat(extensionByStates[stateName]) : res;
+      }, []);
+      return extensions.reduce(function(res, extension){
+        return extension.points && extension.points[extensionPointName] ? res.concat(extension.points[extensionPointName]) : res;
+      }, []);
+    };
+
+    function setCurrentExtensionPointName(extensionPointName) {
+      currentExtensionPointName  = extensionPointName;
+    }
+
+    function getCurrentExtensionPointName() {
+      return currentExtensionPointName;
+    }
+
     return {
-      start: start
+      start: start,
+      extensions: {
+        points: {
+          getActivesByName: getActiveExtensionPointsByName,
+          current: {
+            get: getCurrentExtensionPointName,
+            set: setCurrentExtensionPointName
+          }
+        }
+      }
     };
   }];
 })
-
-.provider('$menu', function MenuProvider() {
-  'ngInject';
-
-  var items = [],
-
-  sections = {
-    DISCOVER: 0,
-    MAIN: 1,
-    USER: 2
-  };
-
-  this.addItem = function(menuItem) {
-    if (!menuItem.section) {
-      menuItem.section = 2; // default section
-    }
-    if (!menuItem.ngIf) {
-      menuItem.ngIf = 'true';
-    }
-    if (!menuItem.ngClick) {
-      menuItem.ngClick = '';
-    }
-    if (menuItem.disable === "undefined") {
-      menuItem.disable = false;
-    }
-    items.push(menuItem);
-  };
-
-  function Menu(items) {
-    this.items = items;
-    this.sections = sections;
-  }
-
-  this.$get = [function menuFactory() {
-
-    return new Menu(items);
-  }];
-
-  this.sections = sections;
-});
+;

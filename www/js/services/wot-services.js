@@ -92,7 +92,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               });
             }, []));
           }, [])[0];
-          identity.hasSelf = (identity.uid && identity.timestamp && identity.sig);
+          identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
 
           // Retrieve certifications
           var timeWarningExpire = Wallet.isLogin() ? Wallet.data.settings.timeWarningExpire : Wallet.defaultSettings.timeWarningExpire;
@@ -222,9 +222,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }),
 
             // API extension
-            $q(function(resolve, reject){
-              api.data.raise.load(data, resolve, reject);
-            })
+            api.data.raisePromise.load(data)
           ])
           .then(function() {
             resolve(data);
@@ -260,13 +258,18 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }, []));
             }, []);
 
-            api.data.raise.search(text, idties, resolve, reject);
-            //resolve(idties);
+            api.data.raisePromise.search(text, idties)
+            .then(function() {
+              resolve(idties);
+            });
           })
           .catch(function(err) {
             if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
-              api.data.raise.search(text, [], resolve, reject);
-              //resolve();
+              var idties = [];
+              api.data.raisePromise.search(text, idties)
+              .then(function() {
+                resolve(idties);
+              });
             }
             else {
               reject(err);

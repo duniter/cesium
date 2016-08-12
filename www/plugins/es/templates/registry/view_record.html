@@ -27,23 +27,45 @@
 
       <div class="col list animate-fade-slide-in item-text-wrap">
 
-        <h2 class="item gray">
-          <a ng-if="formData.city" ui-sref="app.registry_lookup({location:formData.city})">
-            <i class="icon ion-location"></i>
-            <span ng-bind-html="formData.city"></span>
-          </a>
-          <span ng-if="formData.city && formData.type">&nbsp;|&nbsp;</span>
-          <a class="ink" ng-if="formData.type" ui-sref="app.registry_lookup({type:formData.type})">
-            <i class="icon ion-flag"></i>
-            <span ng-if="formData.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
-            <span ng-if="formData.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
-            <span ng-if="formData.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
-            <span ng-if="formData.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
-          </a>
-        </h2>
+        <div class="item gray">
+          <h2>
+            <a ng-if="formData.city" ui-sref="app.registry_lookup({location:formData.city})">
+              <i class="icon ion-location"></i>
+              <span ng-bind-html="formData.city"></span>
+            </a>
+            <span ng-if="formData.city && formData.type">&nbsp;|&nbsp;</span>
+            <a class="ink" ng-if="formData.type" ui-sref="app.registry_lookup({type:formData.type})">
+              <i class="icon ion-flag"></i>
+              <span ng-if="formData.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
+              <span ng-if="formData.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
+              <span ng-if="formData.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
+              <span ng-if="formData.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
+            </a>
+          </h2>
+          <h4>
+            <i class="icon ion-clock" ng-if="formData.time"></i>
+            <span translate>COMMON.SUBMIT_BY</span>
+            <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
+                <span ng-if="issuer.uid">
+                    <i class="icon ion-person"></i>
+                    {{issuer.uid}}
+                  </span>
+              <span ng-if="!issuer.uid">
+                    <i class="icon ion-key"></i>
+                    {{formData.issuer|formatPubkey}}
+                </span>
+            </a>
+            <span>
+                {{formData.time|formatFromNow}}
+                <h4 class="gray hidden-xs">|
+                  {{formData.time | formatDate}}
+                </h4>
+              </span>
+          </h4>
+        </div>
 
         <!-- Buttons bar-->
-        <div class="item padding hidden-xs hidden-sm text-center">
+        <div class="item large-button-bar hidden-xs hidden-sm">
           <button class="button button-raised button-assertive ink-dark"
                   ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
@@ -61,24 +83,27 @@
           </button>
         </div>
 
-        <div class="item">
-            <p ng-bind-html="formData.description"></p>
-        </div>
+        <ion-item>
+            <h2>
+              <span class="text-keep-lines" ng-bind-html="formData.description"></span>
+            </h2>
+        </ion-item>
 
-        <div class="item ">
-          <span>Activité principale :</span>
-          <h4 class="gray">
-            <a ng-if="formData.category" ui-sref="app.registry_lookup({category:formData.category.id})">
+        <ion-item>
+          <h4>
+            <span class="gray" translate>REGISTRY.VIEW.CATEGORY</span>
+            <a class="positive" ng-if="formData.category" ui-sref="app.registry_lookup({category:formData.category.id})">
               <span ng-bind="formData.category.name"></span>
             </a>
           </h4>
-        </div>
+        </ion-item>
 
-        <span class="item item-divider" ng-if="formData.address || formData.city" translate>REGISTRY.LOCATION_DIVIDER</span>
+        <span class="item item-divider" ng-if="formData.address || formData.city">
+          <span translate>REGISTRY.LOCATION_DIVIDER</span>
+        </span>
 
-        <div class="item" ng-if="formData.address || formData.city">
-          <h2 class="gray">
-            <i class="icon ion-location"></i>
+        <div class="item item-icon-left" ng-if="formData.address || formData.city">
+          <h2>
             <span ng-bind-html="formData.address"></span>
             <span ng-bind-html="formData.city"></span>
           </h2>
@@ -89,33 +114,10 @@
           <!-- pictures -->
           <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
 
-          <span class="item item-divider" translate>REGISTRY.TECHNICAL_DIVIDER</span>
 
-          <!-- issuer -->
-          <div class="item">
-            <span class="item-icon-left no-padding">
-              <i class="icon ion-clock" ng-if="formData.time"></i>
-            </span>
-            <span class="item-icon-left-padding">
-              <span translate>COMMON.SUBMIT_BY</span>
-              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid:issuer.uid})">
-                <span ng-if="issuer.uid">
-                    <i class="icon ion-person"></i>
-                    {{issuer.uid}}
-                  </span>
-                <span ng-if="!issuer.uid">
-                    <i class="icon ion-key"></i>
-                    {{formData.issuer|formatPubkey}}
-                </span>
-              </a>
-              <span>
-                {{formData.time|formatFromNow}}
-                <h4 class="gray hidden-xs">|
-                  {{formData.time | formatDate}}
-                </h4>
-              </span>
-            </span>
-          </div>
+        <span class="item item-divider" ng-if="formData.pubkey">
+          <span translate>REGISTRY.TECHNICAL_DIVIDER</span>
+        </span>
 
           <!-- pubkey -->
           <div class="item item-icon-left item-text-wrap ink"

@@ -26,7 +26,7 @@
       </h1>
     </ion-header-bar>
     <ion-content scroll="false">
-      <ion-list class="list animate-rip" ng-controller="MenuCtrl">
+      <ion-list class="list">
 
         <!-- DISCOVER Section -->
         <ion-item menu-close class="item-icon-left" href="#/app/home" active-link="active">
@@ -34,24 +34,29 @@
           <span translate>MENU.HOME</span>
         </ion-item>
 
-        <ion-item menu-close class="item item-icon-left" href="#/app/currencies" active-link="active" ng-if="options.registry.enable">
+        <ion-item menu-close class="item item-icon-left"
+                  href="#/app/currencies"
+                  active-link="active"
+                  active-link-path-prefix="#/app/currenc"
+                  ng-if="options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCIES</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left hidden-xs hidden-sm" active-link="active" href="#/app/currency/view/lg/" ng-if="!options.registry || !options.registry.enable">
+        <ion-item menu-close class="item item-icon-left hidden-xs hidden-sm"
+                  active-link="active"
+                  active-link-path-prefix="#/app/currency"
+                  href="#/app/currency/view/lg/" ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" active-link="active" href="#/app/currency/view/" ng-if="!options.registry || !options.registry.enable">
+        <ion-item menu-close class="item item-icon-left visible-xs visible-sm"
+                  active-link="active"
+                  active-link-path-prefix="#/app/currency"
+                  href="#/app/currency/view/" ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" active-link="active"
-                  ng-repeat="item in items[0]"
-                  href="{{item.url}}">
-          <i class="icon {{item.icon}}"></i>
-          <span translate>{{item.text}}</span>
-        </ion-item>
+        <cs-extension-point name="menu-discover"></cs-extension-point>
 
         <!-- MAIN Section -->
         <div class="item item-divider"></div>
@@ -60,12 +65,9 @@
           <i class="icon ion-person-stalker"></i>
           <span translate>MENU.WOT</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" active-link="active"
-                  ng-repeat="item in items[1]"
-                  href="{{item.url}}">
-          <i class="icon {{item.icon}}"></i>
-          <span translate>{{item.text}}</span>
-        </ion-item>
+        <!-- extension point-->
+        {{extensionPoint}}
+        <cs-extension-point name="menu-main"></cs-extension-point>
 
         <!-- USER Section -->
         <div class="item item-divider"></div>
@@ -78,16 +80,8 @@
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
-        <span ng-repeat="item in items[2]">
-        <ion-item menu-close class="item item-icon-left" active-link="active"
-                  ng-class="{'item-menu-disable': item.ngIf == '!isLogin()'}"
-                  href="{{item.url}}"
-                  ng-click="{{item.ngClick}}"
-                  ng-if="$eval(item.ngIf)">
-          <i class="icon {{item.icon}}"></i>
-          <span translate>{{item.text}}</span>
-        </ion-item>
-        </span>
+        <!-- extension point-->
+        <cs-extension-point name="menu-user"></cs-extension-point>
 
         <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/settings">
           <i class="icon ion-android-settings"></i>
@@ -109,10 +103,6 @@
             <i class="icon ion-qr-scanner"></i>
           </button>
         </ion-item>
-        <span class="hidden-xs hidden-sm">
-          <br/>
-          <br/>
-        </span>
         <!-- log out -->
         <ion-item menu-close class="item item-button-right" ng-if="isLogin()">
           <span translate>COMMON.BTN_LOGOUT</span>
@@ -120,6 +110,8 @@
           <i class="icon ion-log-out"></i>
           </button>
         </ion-item>
+
+        <cs-extension-point name="menu-actions"></cs-extension-point>
 
       </ion-list>
     </ion-content>

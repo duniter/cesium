@@ -1,4 +1,4 @@
-angular.module('cesium.directives', [])
+angular.module('cesium.directives', ['cesium.services'])
 
   // Add new compare-to directive (need for form validation)
   .directive("compareTo", function() {
@@ -64,12 +64,12 @@ angular.module('cesium.directives', [])
       restrict: 'A',
       link: function(scope, element, attrs, controller) {
         var clazz = attrs.activeLink;
-        var path = attrs.href;
+        var path = attrs.activeLinkPathPrefix ? attrs.activeLinkPathPrefix : attrs.href;
         if (path) {
           path = path.substring(1); //hack because path does not return including hashbang
           scope.location = $location;
           scope.$watch('location.path()', function (newPath) {
-            if (path === newPath) {
+            if (newPath.startsWith(path)) {
               element.addClass(clazz);
             } else {
               element.removeClass(clazz);
@@ -120,4 +120,52 @@ angular.module('cesium.directives', [])
       }
     };
   })
+
+/**
+* Plugin extension point (see services/plugin-services.js)
+*/
+.directive('csExtensionPoint', function ($state, $compile, $controller, $templateCache, PluginService) {
+
+
+  var getTemplate = function(extensionPoint) {
+    var template = extensionPoint.templateUrl ? $templateCache.get(extensionPoint.templateUrl) : extensionPoint.template;
+    if (extensionPoint.controller) {
+      template = '<ng-controller ng-controller="'+extensionPoint.controller+'">' + template + '</div>';
+    }
+    return template;
+  };
+
+  var compiler = function(tElement, tAttributes) {
+
+    if (angular.isDefined(tAttributes.name)) {
+      var extensionPoints = PluginService.extensions.points.getActivesByName(tAttributes.name);
+      if (extensionPoints.length > 0) {
+        tElement.html("");
+        _.forEach(extensionPoints, function(extensionPoint){
+          tElement.append(getTemplate(extensionPoint));
+        });
+      };
+    }
+
+    return {
+      pre: function(scope, iElement, iAttrs, controller){
+        PluginService.extensions.points.current.set(iAttrs.name);
+      },
+      post: function(scope, iElement, iAttrs, controller){
+        PluginService.extensions.points.current.set();
+      },
+    }
+  };
+
+
+  return {
+    restrict: "E",
+    //link: linker,
+    //controller: controller,
+    compile: compiler,
+    scope: {
+        content:'='
+    }
+  }
+})
 ;

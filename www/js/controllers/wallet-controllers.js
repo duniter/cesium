@@ -1,7 +1,7 @@
 
 angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
     'ngInject';
     $stateProvider
 

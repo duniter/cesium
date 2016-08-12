@@ -43,13 +43,6 @@
 
               <div class="item item-divider" translate>REGISTRY.GENERAL_DIVIDER</div>
 
-              <span class="item item-icon-right ink"
-                    ng-if="formData.type=='company' || formData.type=='shop'"
-                    ng-click="showCategoryModal()">
-                <span translate>COMMON.CATEGORY</span>
-                <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
-                <i class="gray icon ion-ios-arrow-right"></i>
-              </span>
 
               <div class="item item-input item-floating-label">
                 <span class="input-label" translate>REGISTRY.EDIT.RECORD_TITLE</span>
@@ -58,7 +51,6 @@
                        required/>
               </div>
 
-
               <div class="item item-input item-floating-label">
                 <span class="input-label" translate>REGISTRY.EDIT.RECORD_DESCRIPTION</span>
                 <textarea placeholder="{{'REGISTRY.EDIT.RECORD_DESCRIPTION_HELP'|translate}}"
@@ -66,6 +58,14 @@
                           rows="8" cols="10">
                 </textarea>
               </div>
+
+              <span class="item item-icon-right ink"
+                    ng-if="formData.type=='company' || formData.type=='shop'"
+                    ng-click="showCategoryModal()">
+                <span translate>REGISTRY.CATEGORY</span>
+                <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
+                <i class="gray icon ion-ios-arrow-right"></i>
+              </span>
 
               <div class="item item-divider" translate>REGISTRY.LOCATION_DIVIDER</div>
 
@@ -111,10 +111,10 @@
             <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
               COMMON.BTN_CANCEL
             </button>
-            <button class="button button-positive button-raised ink" ng-click="save()" ng-if="!id" translate>
+            <button class="button button-positive button-raised ink" type="submit" ng-if="!id" translate>
               COMMON.BTN_PUBLISH
             </button>
-            <button class="button button-assertive button-raised ink" ng-click="save()" ng-if="id" translate>
+            <button class="button button-assertive button-raised ink" type="submit" ng-if="id" translate>
               COMMON.BTN_SAVE
             </button>
           </div>

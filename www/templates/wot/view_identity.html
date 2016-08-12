@@ -52,12 +52,14 @@
           <span class="badge badge-balanced">{{::formData.sigDate | formatFromNow}}</span>
         </ion-item>
 
+        <cs-extension-point name="general"></cs-extension-point>
+
         <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
 
         <!-- Uid -->
         <ion-item class="item-icon-left" ng-if="formData.uid">
-          <span>{{'WOT.PSEUDO' | translate}}</span>
-          <span class="badge">{{::formData.uid}}</span>
+          <span translate>COMMON.UID</span>
+          <span class="badge badge-stable">{{::formData.uid}}</span>
         </ion-item>
 
         <!-- Pubkey -->
@@ -65,9 +67,11 @@
                   on-hold="copy(formData.pubkey)"
                   copy-on-click>
           <i class="icon ion-key"></i>
-          <span>Clé publique</span>
-          <h4 id="pubkey" class="dark">{{::formData.pubkey}}</h4>
+          <span translate>COMMON.PUBKEY</span>
+          <h4 id="pubkey" class="dark text-left">{{::formData.pubkey}}</h4>
         </ion-item>
+
+        <cs-extension-point name="technical"></cs-extension-point>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;

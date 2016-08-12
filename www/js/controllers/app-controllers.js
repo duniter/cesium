@@ -11,7 +11,7 @@ angular.module('cesium.app.controllers', ['cesium.services'])
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
   })
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
     'ngInject';
 
     $stateProvider
@@ -23,9 +23,6 @@ angular.module('cesium.app.controllers', ['cesium.services'])
         controller: 'AppCtrl'
       })
     ;
-
-    // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/app/home');
 
   })
 

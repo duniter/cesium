@@ -9,6 +9,7 @@ angular.module('cesium.es.plugin', [
     'cesium.user.services',
     // Controllers
     'cesium.es-common.controllers',
+    'cesium.es-wot.controllers',
     'cesium.market.controllers',
     'cesium.registry.controllers',
     'cesium.user.controllers'

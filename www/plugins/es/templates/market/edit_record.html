@@ -100,13 +100,13 @@
 
               <!-- buttons -->
               <div class="padding hidden-xs hidden-sm text-right">
-                <button class="button button-clear button-dark ink" ng-click="goBack()" type="button" translate>
+                <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
                   COMMON.BTN_CANCEL
                 </button>
-                <button class="button button-positive button-raised ink" ng-click="save()" ng-if="!id" translate>
+                <button class="button button-positive button-raised ink" type="submit" ng-if="!id" translate>
                   COMMON.BTN_PUBLISH
                 </button>
-                <button class="button button-assertive button-raised ink" ng-click="save()" ng-if="id" translate>
+                <button class="button button-assertive button-raised ink" type="submit" ng-if="id" translate>
                   COMMON.BTN_SAVE
                 </button>
               </div>

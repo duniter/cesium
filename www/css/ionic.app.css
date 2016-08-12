@@ -3588,7 +3588,7 @@ cite {
 .text-right {
   text-align: right; }
 
-.text-center {
+.text-center, .item.large-button-bar {
   text-align: center; }
 
 h1, h2, h3, h4, h5, h6,
@@ -6660,29 +6660,29 @@ button.item.item-button-right {
   .card .item:last-child {
     border-bottom: 0; }
 
-.padding .card, .padding .list-inset {
+.padding .card, .item.large-button-bar .card, .padding .list-inset, .item.large-button-bar .list-inset {
   margin-left: 0;
   margin-right: 0; }
 
 .card .item:first-child,
 .list-inset .item:first-child,
-.padding > .list .item:first-child {
+.padding > .list .item:first-child, .item.large-button-bar > .list .item:first-child {
   border-top-left-radius: 2px;
   border-top-right-radius: 2px; }
   .card .item:first-child .item-content,
   .list-inset .item:first-child .item-content,
-  .padding > .list .item:first-child .item-content {
+  .padding > .list .item:first-child .item-content, .item.large-button-bar > .list .item:first-child .item-content {
     border-top-left-radius: 2px;
     border-top-right-radius: 2px; }
 
 .card .item:last-child,
 .list-inset .item:last-child,
-.padding > .list .item:last-child {
+.padding > .list .item:last-child, .item.large-button-bar > .list .item:last-child {
   border-bottom-right-radius: 2px;
   border-bottom-left-radius: 2px; }
   .card .item:last-child .item-content,
   .list-inset .item:last-child .item-content,
-  .padding > .list .item:last-child .item-content {
+  .padding > .list .item:last-child .item-content, .item.large-button-bar > .list .item:last-child .item-content {
     border-bottom-right-radius: 2px;
     border-bottom-left-radius: 2px; }
 
@@ -6692,13 +6692,13 @@ button.item.item-button-right {
 
 .card .item,
 .list-inset .item,
-.padding > .list .item,
+.padding > .list .item, .item.large-button-bar > .list .item,
 .padding-horizontal > .list .item {
   margin-right: 0;
   margin-left: 0; }
   .card .item.item-input input,
   .list-inset .item.item-input input,
-  .padding > .list .item.item-input input,
+  .padding > .list .item.item-input input, .item.large-button-bar > .list .item.item-input input,
   .padding-horizontal > .list .item.item-input input {
     padding-right: 44px; }
 
@@ -7412,7 +7412,7 @@ ion-slides {
     right: 0;
     left: 0; }
 
-.overflow-scroll.padding > .scroll.overscroll {
+.overflow-scroll.padding > .scroll.overscroll, .overflow-scroll.item.large-button-bar > .scroll.overscroll {
   padding: 10px; }
 
 @-webkit-keyframes refresh-spin {
@@ -8932,7 +8932,7 @@ progress {
       box-shadow: none;
       color: #fff; }
 
-.padding > .button.button-block:first-child {
+.padding > .button.button-block:first-child, .item.large-button-bar > .button.button-block:first-child {
   margin-top: 0; }
 
 .button-block {
@@ -9446,7 +9446,7 @@ a.button {
  * Content Padding
  * --------------------------------------------------
  */
-.padding {
+.padding, .item.large-button-bar {
   padding: 10px; }
 
 .padding-top,
@@ -11226,7 +11226,7 @@ a.button {
 
 /* Utilities : Padding
 ==================================*/
-.im-wrapper, .padding {
+.im-wrapper, .padding, .item.large-button-bar {
   padding: 16px !important; }
 
 .padding-bottom {
@@ -13201,7 +13201,7 @@ a {
 .list .item.text-left {
   text-align: left !important; }
 
-.list .item.text-center {
+.list .item.text-center, .list .item.large-button-bar {
   text-align: center !important; }
 
 .list .item.text-right {
@@ -13255,3 +13255,9 @@ a {
 
 .item-icon-left-padding {
   padding-left: 40px; }
+
+.text-keep-lines {
+  white-space: pre; }
+
+.item.large-button-bar {
+  margin-bottom: 10px; }

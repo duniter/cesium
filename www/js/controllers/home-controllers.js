@@ -31,21 +31,18 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 
   })
 
-  .controller('HomeCtrl', HomeController)
 
-  .controller('MenuCtrl', MenuController)
+  .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
+
+  .controller('HomeCtrl', HomeController)
 
   .controller('JoinCtrl', JoinController)
 ;
 
-function MenuController($scope, $menu) {
-  'ngInject';
 
-  // Fill sections arrays with items
-  $scope.items = [[],[],[]];
-  _.forEach($menu.items, function(item) {
-    $scope.items[item.section].push(item);
-  });
+function PluginExtensionPointController($scope, PluginService) {
+  'ngInject';
+  $scope.extensionPoint = PluginService.extensions.points.current.get();
 }
 
 function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet) {

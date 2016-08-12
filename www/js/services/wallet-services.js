@@ -587,9 +587,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             loadTransactions(),
 
             // API extension
-            $q(function(resolve, reject){
-              api.data.raise.load(data, resolve, reject);
-            })
+            api.data.raisePromise.load(data)
           ])
           .then(function() {
             // Process transactions and sources
