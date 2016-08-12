@@ -18,7 +18,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
 ;
 
-function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filter, $focus, $q, SocialUtils, $translate) {
+function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filter, $focus, $q, SocialUtils, $translate, $ionicHistory) {
   'ngInject';
 
   $scope.loading = true;
@@ -168,5 +168,9 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
       doFinishSave($scope.formData);
     }
   };
+
+  $scope.cancel = function() {
+    $ionicHistory.goBack();
+  }
 }
 
