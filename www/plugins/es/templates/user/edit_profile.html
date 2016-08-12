@@ -4,7 +4,7 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear ion-android-create" ng-click="edit()" ng-if="canEdit">
+      <button class="button button-icon button-clear ion-android-send visible-xs visible-sm" ng-click="submitAndSave()">
       </button>
   </ion-nav-buttons>
 
@@ -39,12 +39,12 @@
       </div>
 
       <div class="col">
-        <form name="profileForm" novalidate="" ng-submit="doSave()">
+        <form name="profileForm" novalidate="" ng-submit="save()">
 
           <input type="file" id="avatarFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
                  style="visibility:hidden; position:absolute;"/>
 
-          <ion-list class="animate-ripple item-text-wrap" ng-init="setProfileForm(profileForm)"
+          <ion-list class="animate-ripple item-text-wrap" ng-init="setForm(profileForm)"
                   can-swipe="isDeviceEnable()">
 
 
@@ -62,8 +62,8 @@
                      required>
             </ion-item>
             <div class="form-errors"
-                 ng-show="formData.$submitted && formData.title.$error"
-                 ng-messages="profileForm.title.$error">
+                 ng-show="form.$submitted && form.title.$error"
+                 ng-messages="form.title.$error">
               <div class="form-error" ng-message="required">
                 <span translate="ERROR.FIELD_REQUIRED"></span>
               </div>
@@ -121,7 +121,7 @@
                 <p class="gray">{{walletData.pubkey}}</p>
             </ion-item>
 
-            <div class="item padding hidden-xs text-right">
+            <div class="item padding visible-sm text-right">
               <button class="button button-small button-clear button-dark ink"
                       ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
               </button>

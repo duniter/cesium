@@ -1,23 +1,25 @@
 angular.module('cesium.es.common.controllers', ['cesium.es.services'])
 
   // Configure menu items
-  .config(function(PluginServiceProvider) {
+  .config(function(PluginServiceProvider, APP_CONFIG) {
     'ngInject';
-    PluginServiceProvider
 
-    // Menu extension points
-    .extendState('app', {
-       points: {
-         'menu-main': {
-           templateUrl: "plugins/es/templates/menu_extend.html",
-           controller: "PluginExtensionPointCtrl"
-         },
-         'menu-user': {
-           templateUrl: "plugins/es/templates/menu_extend.html",
-           controller: "PluginExtensionPointCtrl"
+    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    if (enable) {
+      // Menu extension points
+      PluginServiceProvider.extendState('app', {
+         points: {
+           'menu-main': {
+             templateUrl: "plugins/es/templates/menu_extend.html",
+             controller: "PluginExtensionPointCtrl"
+           },
+           'menu-user': {
+             templateUrl: "plugins/es/templates/menu_extend.html",
+             controller: "PluginExtensionPointCtrl"
+           }
          }
-       }
-      });
+        });
+    }
   })
 
  .controller('ESPicturesEditCtrl', ESPicturesEditController)

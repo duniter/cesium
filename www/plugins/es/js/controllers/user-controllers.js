@@ -18,7 +18,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
 ;
 
-function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filter, $focus, $q, SocialUtils) {
+function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filter, $focus, $q, SocialUtils, $translate) {
   'ngInject';
 
   $scope.loading = true;
@@ -66,8 +66,8 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
       });
   });
 
-  $scope.setProfileForm = function(profileForm) {
-    $scope.profileForm = profileForm;
+  $scope.setForm = function(form) {
+    $scope.form = form;
   };
 
   $scope.updateView = function(wallet, profile) {
@@ -86,7 +86,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
 
   $scope.onFormDataChanged = function() {
     if (!$scope.loading && !$scope.saving) {
-      $scope.doSave();
+      $scope.save(true);
     }
   };
   $scope.$watch('formData', $scope.onFormDataChanged, true);
@@ -107,9 +107,13 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
       });
     };
 
-  $scope.doSave = function() {
-    $scope.profileForm.$submitted=true;
-    if(!$scope.profileForm.$valid || !$rootScope.walletData) {
+  $scope.submitAndSave = function() {
+    $scope.form.$submitted=true;
+    $scope.save();
+  }
+
+  $scope.save = function(silent) {
+    if(!$scope.form.$valid || !$rootScope.walletData) {
       return;
     }
 
@@ -122,6 +126,14 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
       };
     };
 
+    var showSuccessToast = function() {
+      if (!silent) {
+        $translate('PROFILE.INFO.PROFILE_SAVED')
+        .then(function(message){
+          UIUtils.toast.show(message);
+        });
+      }
+    }
     var doFinishSave = function(formData) {
       if (!$scope.existing) {
         esUser.profile.add(formData)
@@ -129,6 +141,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
           console.log("User profile successfully created.");
           $scope.existing = true;
           $scope.saving = false;
+          showSuccessToast();
         })
         .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
@@ -137,6 +150,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
         .then(function() {
           console.log("User profile successfully updated.");
           $scope.saving = false;
+          showSuccessToast();
         })
         .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }

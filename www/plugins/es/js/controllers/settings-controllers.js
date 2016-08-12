@@ -1,20 +1,21 @@
 angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 
   // Configure menu items
-  .config(function(PluginServiceProvider) {
+  .config(function(PluginServiceProvider, APP_CONFIG) {
     'ngInject';
-    PluginServiceProvider
 
-    // Settings extension points
-    .extendState('app.settings', {
-       points: {
-         'network': {
-           templateUrl: "plugins/es/templates/settings/settings_extend.html",
-           controller: "ESExtendSettingsCtrl"
-         }
-       }
-      })
-    ;
+    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    if (enable) {
+      // Extend settings via extension points
+      PluginServiceProvider.extendState('app.settings', {
+        points: {
+          'network': {
+            templateUrl: "plugins/es/templates/settings/settings_extend.html",
+            controller: "ESExtendSettingsCtrl"
+          }
+        }
+      });
+    }
   })
 
  .controller('ESExtendSettingsCtrl', ESExtendSettingsController)

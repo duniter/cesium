@@ -1,8 +1,12 @@
 angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.services'])
-.config(function(PluginServiceProvider) {
+.config(function(PluginServiceProvider, APP_CONFIG) {
     'ngInject';
 
-    PluginServiceProvider.registerEagerLoadingService('esUser');
+    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    if (enable) {
+      // Will force to load this service
+      PluginServiceProvider.registerEagerLoadingService('esUser');
+    }
 
   })
 
@@ -187,11 +191,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     // Extend Wallet.loadData() and WotService.loadData()
-    listeners = [
-      Wallet.api.data.on.load($rootScope, onWalletLoad, this),
-      WotService.api.data.on.load($rootScope, onWotLoad, this),
-      WotService.api.data.on.search($rootScope, onWotSearch, this)
-    ];
+    if (esHttp.isEnable()) {
+      listeners = [
+        Wallet.api.data.on.load($rootScope, onWalletLoad, this),
+        WotService.api.data.on.load($rootScope, onWotLoad, this),
+        WotService.api.data.on.search($rootScope, onWotSearch, this)
+      ];
+    }
 
     function removeListeners() {
       _.forEach(listeners, function(remove){
