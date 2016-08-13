@@ -4,7 +4,7 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear ion-android-send visible-xs visible-sm" ng-click="submitAndSave()">
+      <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="submitAndSave()">
       </button>
   </ion-nav-buttons>
 
@@ -121,7 +121,7 @@
                 <p class="gray">{{walletData.pubkey}}</p>
             </ion-item>
 
-            <div class="item padding visible-sm text-right">
+            <div class="item padding hidden-xs hidden-sm text-right">
               <button class="button button-small button-clear button-dark ink"
                       ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
               </button>

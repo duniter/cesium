@@ -127,7 +127,6 @@ function TransferModalController($scope, $rootScope, $state, BMA, Wallet, UIUtil
     }
   });
 
-
   $scope.cancel = function() {
     $scope.closeModal();
   };

@@ -45,18 +45,38 @@
               <!-- pictures -->
               <ng-include src="'plugins/es/templates/common/edit_pictures.html'"></ng-include>
 
+              <!-- category -->
               <a class="item item-icon-right ink" ng-click="showCategoryModal()">
                 <span class="item-label" translate>COMMON.CATEGORY</span>
                 <span class="badge badge-royal">{{category.name}}</span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
               </a>
+              <div class="form-errors"
+                   ng-show="form.$submitted && !category.id">
+                <div class="form-error">
+                  <span translate="ERROR.FIELD_REQUIRED"></span>
+                </div>
+              </div>
 
+              <!-- title -->
               <div class="item item-input item-floating-label">
                   <span class="input-label" translate>MARKET.EDIT.RECORD_TITLE</span>
                   <input type="text" placeholder="{{'MARKET.EDIT.RECORD_TITLE_HELP'|translate}}"
+                         name="title"
                          id="market-record-title"
                          ng-model="formData.title"
+                         ng-minlength="5"
                          required>
+              </div>
+              <div class="form-errors"
+                   ng-show="form.$submitted && form.title.$error"
+                   ng-messages="form.title.$error">
+                <div class="form-error" ng-message="required">
+                  <span translate="ERROR.FIELD_REQUIRED"></span>
+                </div>
+                <div class="form-error" ng-message="minlength">
+                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                </div>
               </div>
 
               <div class="item item-input item-floating-label">
@@ -83,8 +103,7 @@
                         ng-if="$root.walletData.settings.useRelative">
                 <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</sub>)</span>
                 <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
-                       ng-model="formData.price"
-                       required>
+                       ng-model="formData.price">
                 <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
                 </span>
                 <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">

@@ -47,12 +47,7 @@
                     <div class="form-errors"
                          ng-if="accountData.isMember && accountForm.$submitted && accountForm.pseudo.$error"
                          ng-messages="accountForm.pseudo.$error">
-                        <div class="form-error" ng-message="required">
-                            <span translate="ERROR.FIELD_REQUIRED"></span>
-                        </div>
-                        <div class="form-error" ng-message="minlength">
-                            <span translate="ERROR.FIELD_TOO_SHORT"></span>
-                        </div>
+                      <ng-include src="'templates/common/form_error_messages.html'"></ng-include>
                     </div>
 
                     <!-- salt -->
@@ -68,12 +63,7 @@
                     <div class="form-errors"
                          ng-show="accountForm.$submitted && accountForm.username.$error"
                          ng-messages="accountForm.username.$error">
-                        <div class="form-error" ng-message="required">
-                            <span translate="ERROR.FIELD_REQUIRED"></span>
-                        </div>
-                        <div class="form-error" ng-message="minlength">
-                            <span translate="ERROR.FIELD_TOO_SHORT"></span>
-                        </div>
+                      <ng-include src="'templates/common/form_error_messages.html'"></ng-include>
                     </div>
 
                     <!-- password -->
@@ -89,12 +79,7 @@
                     <div class="form-errors"
                          ng-show="accountForm.$submitted && accountForm.password.$error"
                          ng-messages="accountForm.password.$error">
-                        <div class="form-error" ng-message="required">
-                            <span translate="ERROR.FIELD_REQUIRED"></span>
-                        </div>
-                        <div class="form-error" ng-message="minlength">
-                            <span translate="ERROR.FIELD_TOO_SHORT"></span>
-                        </div>
+                      <ng-include src="'templates/common/form_error_messages.html'"></ng-include>
                     </div>
 
                     <!-- confirm password -->
@@ -109,12 +94,10 @@
                     <div class="form-errors"
                          ng-show="accountForm.$submitted && accountForm.confirmPassword.$error"
                          ng-messages="accountForm.confirmPassword.$error">
-                        <div class="form-error" ng-message="required">
-                            <span translate="ERROR.FIELD_REQUIRED"></span>
-                        </div>
-                        <div class="form-error" ng-message="compareTo">
-                            <span translate="ERROR.PASSWORD_NOT_CONFIRMED"></span>
-                        </div>
+                      <ng-include src="'templates/common/form_error_messages.html'"></ng-include>
+                      <div class="form-error" ng-message="compareTo">
+                          <span translate="ERROR.PASSWORD_NOT_CONFIRMED"></span>
+                      </div>
                     </div>
 
                     <!-- Show public key-->

@@ -466,10 +466,13 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
   $scope.walletData = {};
   $scope.formData = {};
   $scope.id = null;
-  $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
   $scope.loading = true;
+
+  $scope.setForm =  function(form) {
+    $scope.form = form;
+  };
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     // Load currencies list
@@ -535,6 +538,11 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
   };
 
   $scope.save = function() {
+    $scope.form.$submitted=true;
+    if(!$scope.form.$valid || !$scope.category.id) {
+      return;
+    }
+
     UIUtils.loading.show();
     var doFinishSave = function(formData) {
       if (!$scope.id) { // Create

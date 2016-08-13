@@ -481,9 +481,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
 
   $scope.walletData = {};
   $scope.formData = {};
-  $scope.type = null;
   $scope.id = null;
-  $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
   $scope.loading = true;
@@ -552,7 +550,9 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
 
   $scope.save = function() {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid || !$scope.formData.title) {
+    if(!$scope.form.$valid ||
+       (!$scope.category.id &&
+        ($scope.formData.type === 'shop' || $scope.formData.type === 'company'))) {
       return;
     }
 
