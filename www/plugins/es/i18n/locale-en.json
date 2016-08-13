@@ -39,6 +39,12 @@
       "SEND_COMMENT_BTN": "Send",
       "SHOW_MORE_COMMENTS": "Show previous comments"
     },
+    "TYPE": {
+      "TITLE": "New",
+      "SELECT_TYPE": "Kind of ad:",
+      "OFFER": "Offer",
+      "NEED": "Need"
+    },
     "EDIT": {
       "TITLE": "Edit",
       "RECORD_TITLE": "Title",

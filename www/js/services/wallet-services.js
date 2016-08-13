@@ -274,7 +274,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               }
               data.loaded = false;
             }
-            resolve();
+
+            // Load parameters
+            // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+            return loadParameters();
           })
           .catch(function(err){reject(err);});
         }
@@ -513,19 +516,21 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     loadParameters = function() {
-      return $q(function(resolve, reject) {
-        BMA.blockchain.parameters()
-        .then(function(json){
-          data.currency = json.currency;
-          data.parameters = json;
-          resolve();
-        })
-        .catch(function(err) {
-          data.currency = null;
-          data.parameters = null;
-          reject(err);
+      if (!data.parameters || !data.currency) {
+        return $q(function(resolve, reject) {
+          BMA.blockchain.parameters()
+          .then(function(json){
+            data.currency = json.currency;
+            data.parameters = json;
+            resolve();
+          })
+          .catch(function(err) {
+            data.currency = null;
+            data.parameters = null;
+            reject(err);
+          });
         });
-      });
+      }
     },
 
     loadUDs = function() {
@@ -704,7 +709,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return $q(function(resolve, reject) {
         BMA.blockchain.current(true/*cache*/)
         .then(function(block) {
-
           if (!BMA.regex.PUBKEY.test(destPub)){
             reject({message:'ERROR.INVALID_PUBKEY'}); return;
           }

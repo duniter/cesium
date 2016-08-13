@@ -1,6 +1,7 @@
 <ion-view left-buttons="leftButtons" id="editMarket">
   <ion-nav-title>
-    <span translate>MARKET.EDIT.TITLE</span>
+    <span class="visible-xs" ng-if="id" ng-bind-html="formData.title"></span>
+    <span class="visible-xs" ng-if="!loading && !id" translate>MARKET.EDIT.TITLE_NEW</span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
@@ -11,21 +12,34 @@
     </ion-nav-buttons>
 
     <ion-content scroll="true">
+
       <div class="row no-padding">
 
         <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
         <div class="col">
 
-          <form name="recordForm" novalidate="" ng-submit="save()">
-            <div class="list" ng-init="setForm(recordForm)">
+          <!-- loading -->
+          <div class="center padding" ng-if="loading">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
 
-              <div class="item" ng-if="id">
-                <h1 ng-bind-html="formData.title"></h1>
-                <h4 class="gray">
+          <form name="recordForm" novalidate="" ng-submit="save()">
+            <div class="list animate-ripple" ng-init="setForm(recordForm)">
+
+              <div class="item hidden-xs">
+                <h1 ng-if="id" ng-bind-html="formData.title"></h1>
+                <h1 ng-if="!id" translate>MARKET.EDIT.TITLE_NEW</h1>
+              </div>
+              <div class="item">
+                <h4 class="gray" ng-if="id">
                   <i class="icon ion-calendar"></i>
                   {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
                 </h4>
+                <div class="badge badge-balanced badge-editable" ng-click="showRecordTypeModal()">
+                  <span ng-if="formData.type=='offer'" translate>MARKET.TYPE.OFFER</span>
+                  <span ng-if="formData.type=='need'" translate>MARKET.TYPE.NEED</span>
+                </div>
               </div>
 
               <!-- pictures -->
@@ -67,7 +81,7 @@
               </ion-item>
               <ion-item class="item-input item-floating-label item-button-right"
                         ng-if="$root.walletData.settings.useRelative">
-                <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</span>
+                <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</sub>)</span>
                 <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
                        ng-model="formData.price"
                        required>
@@ -78,11 +92,13 @@
                 </span>
               </ion-item>
 
-              <a class="item item-icon-right ink" ng-click="openCurrencyLookup()" >
+              <!--dev class="item item-icon-right ink"
+                   ng-show="formData.price"
+                   ng-click="openCurrencyLookup()" >
                 <span class="item-label gray" translate>MARKET.EDIT.RECORD_CURRENCY</span>
                 <span class="badge badge-royal">{{currency}}</span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
-              </a>
+              </dev-->
 
               <div class="item item-floating-label" ng-if="location.enable">
                   <span class="input-label" translate>MARKET.EDIT.RECORD_LOCATION</span>
@@ -102,7 +118,7 @@
               </div>
 
               <!-- buttons -->
-              <div class="padding hidden-xs hidden-sm text-right">
+              <div class="item padding hidden-xs hidden-sm text-right">
                 <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
                   COMMON.BTN_CANCEL
                 </button>

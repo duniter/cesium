@@ -81,19 +81,6 @@
   border-bottom: solid 1px #ccc;
 }
 
-.item.item-thumbnail-left, .item-thumbnail-left {
-  min-height: 100px !important;
-}
-
-.gallery .card-gallery img{
-  max-height: 150px;
-}
-
-.gallery .card.card-gallery{
-  margin-bottom: 15px !important;
-  float: left;
-  display: block;
-}
 
 #menu .item.item-divider {
   min-height: 5px;

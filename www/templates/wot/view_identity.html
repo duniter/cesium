@@ -39,7 +39,7 @@
         <a class="item item-icon-left item-text-wrap item-icon-right ink" ng-if="formData.hasSelf"
            ui-sref="app.wot_view_cert({pubkey:formData.pubkey})">
           <i class="icon ion-ribbon-b"></i>
-          <span>{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
+          <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
           <span class="badge" ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>

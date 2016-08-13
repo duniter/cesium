@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons" cache-view="false">
+<ion-view left-buttons="leftButtons">
     <ion-nav-title>
       <span class="hidden-xs" translate>REGISTRY.SEARCH.TITLE</span>
       <span class="visible-xs" translate>REGISTRY.SEARCH.TITLE_SMALL_DEVICE</span>
@@ -10,10 +10,10 @@
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
-                   ng-model="searchText"
+                   id="registrySearchText"
+                   ng-model="search.text"
                    ng-model-options="{ debounce: 350 }"
-                   ng-change="doSearch()"
-                   id="searchText">
+                   ng-change="doSearch()">
         </label>
 
         <div class="item item-toggle dark" ng-if="!search.lastRecords">
@@ -26,13 +26,22 @@
             </label>
         </div>
 
+        <div class="item item-icon-right" ng-if="search.options" ng-click="showRecordTypeModal()">
+          <span translate>REGISTRY.SEARCH.TYPE</span>
+          <span class="badge badge-balanced" ng-if="search.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
+          <span class="badge badge-balanced" ng-if="search.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
+          <span class="badge badge-balanced" ng-if="search.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
+          <span class="badge badge-balanced" ng-if="search.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </div>
+
         <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
-            <span translate>REGISTRY.COMMON.CATEGORY</span>
-            <span class="badge badge-royal badge-text-wrap">{{search.category.name}}</span>&nbsp;
+            <span translate>REGISTRY.CATEGORY</span>
+            <span class="badge badge-royal badge-text-wrap" ng-bind-html="search.category.name"></span>&nbsp;
             <i class="gray icon ion-ios-arrow-right"></i>
         </span>
 
-        <span class="item item-button-right" ng-if="search.options && !location.enable">
+        <span class="item item-button-right" ng-if="(search.options) && !location.enable ">
             <span translate>REGISTRY.SEARCH.LOCATION</span>
             <div class="item-input-inset">
                 <label class="item-input-wrapper">
@@ -65,15 +74,15 @@
         </div>
       </div>
 
-      <label class="center" ng-if="search.looking">
+      <div class="center" ng-if="search.looking">
         <ion-spinner icon="android"></ion-spinner>
-      </label>
+      </div>
 
-      <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+      <div class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
         COMMON.SEARCH_NO_RESULT
-      </label>
+      </div>
 
-      <div class="list"
+      <div class="list animate-ripple"
            ng-if="!search.looking && search.results && search.results.length > 0">
 
         <a ng-repeat="rec in search.results"
@@ -96,8 +105,9 @@
 
           <div class="row row-record hidden-xs">
             <div class="col item-text-wrap item-thumbnail-left-padding"
-                 ng-class="{'item-thumbnail-left': rec.thumbnail}">
+                 ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">
               <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail">
+              <i class="item-image icon cion-registry-{{rec.type}}" ng-if="!rec.thumbnail"></i>
               <h2 ng-bind-html="rec.title"></h2>
               <h4 class="gray">
                 <i class="icon ion-location" ng-if="rec.city"></i>
@@ -122,7 +132,7 @@
     </ion-content>
 
     <button id="fab-add-registry-record"
-            class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg"
+            class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg spin"
             ng-click="showNewRecordModal()">
     </button>
 </ion-view>

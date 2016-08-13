@@ -8,7 +8,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
       var
       categories = [],
       fields = {
-        commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail", "picturesCount"]
+        commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail", "picturesCount", "type"]
       };
 
       function copy(otherNode) {
@@ -53,6 +53,17 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
         });
       }
 
+      var getCategoryRequest = esHttp.get('/market/category/:id');
+
+      function getCategory(id) {
+        return getCategoryRequest({id: id})
+        .then(function(hit) {
+          var res = hit._source;
+          res.id = hit._id;
+          return res;
+        });
+      }
+
       var esCommentNode = esComment.instance('market');
 
       function getCommons() {
@@ -67,7 +78,8 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
         category: {
           all: getCategories,
           searchText: esHttp.get('/market/category/_search?q=:search'),
-          search: esHttp.post('/market/category/_search?pretty')
+          search: esHttp.post('/market/category/_search?pretty'),
+          get: getCategory
         },
         record: {
           searchText: esHttp.get('/market/record/_search?q=:search'),

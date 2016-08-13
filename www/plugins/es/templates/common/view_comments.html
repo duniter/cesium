@@ -44,7 +44,9 @@
 
 <div class="item item-input-inset ">
   <label class="item-input-wrapper">
-    <input id="commentMessage" type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}" on-return="sendComment();" ng-model="commentData.message"/>
+    <input id="commentMessage" type="text" style="width:100%" placeholder="{{'MARKET.VIEW.COMMENT_HELP'|translate}}"
+           on-return="sendComment();"
+           ng-model="commentData.message"/>
   </label>
   <button class="button button-small button-icon" ng-click="sendComment()">
     {{'MARKET.VIEW.SEND_COMMENT_BTN'|translate}}

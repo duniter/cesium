@@ -1,6 +1,7 @@
 <ion-view left-buttons="leftButtons">
   <ion-nav-title>
-    <span translate>REGISTRY.EDIT.TITLE</span>
+    <span class="visible-xs" ng-if="id" ng-bind-html="formData.title"></span>
+    <span class="visible-xs" ng-if="!loading && !id" translate>REGISTRY.EDIT.TITLE_NEW</span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
@@ -16,11 +17,17 @@
         <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
         <div class="col">
-          <form name="recordForm" novalidate="" ng-submit="save()">
-            <div class="list" ng-init="setForm(recordForm)">
+          <!-- loading -->
+          <div class="center padding" ng-if="loading">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
 
-              <div class="item" ng-if="id">
-                <h1 ng-bind-html="formData.title"></h1>
+          <form name="recordForm" novalidate="" ng-submit="save()">
+            <div class="list animate-ripple" ng-init="setForm(recordForm)">
+
+              <div class="item hidden-xs">
+                <h1 ng-if="id" ng-bind-html="formData.title"></h1>
+                <h1 ng-if="!id" translate>REGISTRY.EDIT.TITLE_NEW</h1>
               </div>
               <div class="item" ng-if="id">
                 <h4 class="gray">

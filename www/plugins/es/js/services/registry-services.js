@@ -56,6 +56,17 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         });
       }
 
+      var getCategoryRequest = esHttp.get('/registry/category/:id');
+
+      function getCategory(id) {
+        return getCategoryRequest({id: id})
+          .then(function(hit) {
+            var res = hit._source;
+            res.id = hit._id;
+            return res;
+          });
+      }
+
       var esCommentNode = esComment.instance('registry');
 
       function getCommons() {
@@ -68,7 +79,8 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       return {
         copy: copy,
         category: {
-          all: getCategories
+          all: getCategories,
+          get: getCategory
         },
         record: {
           searchText: esHttp.get('/registry/record/_search?q=:search'),

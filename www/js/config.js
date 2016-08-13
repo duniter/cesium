@@ -11,10 +11,10 @@ angular.module("cesium.config", [])
 .constant("APP_CONFIG", {
 	"DUNITER_NODE": "test-net.duniter.fr:9201",
 	"DUNITER_NODE_ES": "localhost:9200",
-	"TIMEOUT": 6000,
+	"TIMEOUT": 10000,
 	"DEBUG": true,
 	"VERSION": "0.1.26",
-	"BUILD_DATE": "2016-08-12T16:10:58.065Z"
+	"BUILD_DATE": "2016-08-12T20:53:46.159Z"
 })
 
 ;

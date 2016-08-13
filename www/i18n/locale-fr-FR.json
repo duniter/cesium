@@ -132,6 +132,9 @@
     },
     "MODAL": {
       "TITLE": "Recherche"
+    },
+    "CERTIFICATIONS": {
+      "TITLE": "{{uid}} - Certifications"
     }
   },
   "LOGIN": {

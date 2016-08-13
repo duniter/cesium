@@ -110,39 +110,47 @@
   display: block;
 }
 
-.avatar-association:before {
+.hero .content i.avatar {
+  font-size: 55px !important;
+  line-height: 88px;
+}
+
+/**
+* Add specific Icons
+*/
+
+/* Association */
+.cion-registry-association:before {
+    font-family: "Ionicons";
     content: "\f212";
 }
-.avatar-association {
-    font-family: "Ionicons";
-    font-size: 55px !important;
-    line-height: 88px;
-}
 
-
-.avatar-company:before {
+/* institution */
+.cion-registry-company:before {
+    font-family: "Cesiumicons";
     content: "\e903";
 }
-.avatar-company {
-    font-family: "Cesiumicons";
-    font-size: 55px !important;
-    line-height: 88px;
-}
 
-.avatar-institution:before {
+/* institution */
+.cion-registry-institution:before {
+    font-family: "Cesiumicons";
     content: "\e921";
 }
-.avatar-institution {
-    font-family: "Cesiumicons";
-    font-size: 55px !important;
-    line-height: 88px;
+
+/* shop */
+.cion-registry-shop:before {
+    font-family: "Ionicons";
+    content: "\f110";
 }
 
-.avatar-shop:before {
-    content: "\f370";
-}
-.avatar-shop {
+/* offer*/
+.cion-market-offer:before {
     font-family: "Ionicons";
-    font-size: 55px !important;
-    line-height: 88px;
+    content: "\f48d";
+}
+
+/* need */
+.cion-market-need:before {
+    font-family: "Ionicons";
+    content: "\f27c";
 }

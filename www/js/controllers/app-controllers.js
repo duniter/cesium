@@ -120,7 +120,7 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
   ////////////////////////////////////////
 
   // Login and load wallet
-  $scope.loadWallet = function() {
+  $scope.loadWallet = function(rejectIfError) {
     return $q(function(resolve, reject){
 
       if (!Wallet.isLogin()) {
@@ -133,7 +133,14 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
               $rootScope.walletData = walletData;
               resolve(walletData);
             })
-            .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+            .catch(function(err) {
+              if (rejectIfError) {
+                UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject)(err);
+              }
+              else {
+                UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
+              }
+            });
           }
           else { // failed to login
             reject('CANCELLED');
@@ -142,11 +149,18 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
       }
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
-          .then(function(walletData){
-            $rootScope.walletData = walletData;
-            resolve(walletData);
-          })
-          .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject));
+        .then(function(walletData){
+          $rootScope.walletData = walletData;
+          resolve(walletData);
+        })
+        .catch(function(err) {
+          if (rejectIfError) {
+            UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject)(err);
+          }
+          else {
+            UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
+          }
+        });
       }
       else {
         resolve(Wallet.data);

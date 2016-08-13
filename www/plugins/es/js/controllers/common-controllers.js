@@ -63,8 +63,11 @@ function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils
       var file = event.target.files[0];
       UIUtils.image.resizeFile(file)
       .then(function(imageData) {
-        $scope.pictures.push({src: imageData});
-        UIUtils.loading.hide();
+        $scope.pictures.push({
+          src: imageData,
+          isnew: true // use to prevent visibility hidden (if animation)
+        });
+        UIUtils.loading.hide(100);
         //$scope.$apply();
         resolve();
       });
@@ -183,7 +186,7 @@ function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, esHttp, Dat
       if (walletData.uid) {
         obj.uid = walletData.uid;
       }
-      obj.isnew = true;
+      obj.isnew = true; // use to  prevent visibility hidden (if animation)
       // Create
       if (!comment.id) {
         comment.time = esHttp.date.now();

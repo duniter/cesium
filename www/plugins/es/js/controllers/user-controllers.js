@@ -51,15 +51,15 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
           $scope.loading = false;
         })
         .catch(function(err){
-          //if (err && err.ucode == 404) {
+          if (err && err.ucode == 404) {
             $scope.updateView(walletData, {});
             UIUtils.loading.hide();
             $scope.loading = false;
             $scope.existing = false;
-          /*}
+          }
           else {
             UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
-          }*/
+          }
         });
 
         $focus('profile-name');

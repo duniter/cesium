@@ -39,8 +39,15 @@
       "SEND_COMMENT_BTN": "Envoyer",
       "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents"
     },
+    "TYPE": {
+      "TITLE": "Nouveau",
+      "SELECT_TYPE": "Type d'annonce :",
+      "OFFER": "Offre, Vente",
+      "NEED": "Demande, Recherche"
+    },
     "EDIT": {
       "TITLE": "Edition",
+      "TITLE_NEW": "Nouvelle annonce",
       "RECORD_TITLE": "Titre",
       "RECORD_TITLE_HELP": "Titre",
       "RECORD_DESCRIPTION": "Description",
@@ -53,7 +60,7 @@
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
-      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'enregistrement.",
+      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'annonce.",
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
       "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
     }
@@ -71,6 +78,7 @@
       "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
+      "TYPE": "Type d'organisation",
       "LOCATION": "Localisation",
       "LOCATION_HELP": "Ville",
       "LAST_RECORDS": "Derniers enregistrements :",
@@ -81,8 +89,8 @@
       "CATEGORY": "Activité principale :"
     },
     "TYPE": {
-      "TITLE": "Nouveau",
-      "SELECT_TYPE": "Type de référencement :",
+      "TITLE": "Nouveau référencement",
+      "SELECT_TYPE": "Type d'organisation :",
       "SHOP": "Commerce local",
       "COMPANY": "Entreprise",
       "ASSOCIATION": "Association",
@@ -90,7 +98,8 @@
     },
     "EDIT": {
       "TITLE": "Edition",
-      "RECORD_TYPE":"Type de fiche",
+      "TITLE_NEW": "Nouveau référencement",
+      "RECORD_TYPE":"Type d'organisation",
       "RECORD_TITLE": "Nom",
       "RECORD_TITLE_HELP": "Nom",
       "RECORD_DESCRIPTION": "Description",
@@ -104,7 +113,8 @@
       "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
     "ERROR": {
-      "LOAD_RECORD_FAILED": "Chargement impossible",
+      "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
+      "LOAD_RECORD_FAILED": "Erreur lors du chargement de la fiche",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde"
     }
   },

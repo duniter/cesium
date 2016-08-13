@@ -57,13 +57,14 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
 ;
 
-function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegistry, UIUtils, $sanitize, ModalUtils, $filter) {
+function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegistry, UIUtils, $sanitize, ModalUtils, $filter, BMA) {
   'ngInject';
 
   $scope.search = {
     text: '',
     results: [],
     lastRecords: true,
+    type: null,
     category: null,
     location: null,
     options: null
@@ -71,28 +72,58 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
-      if ($state.stateParams && $state.stateParams.q) { // Query parameter
+      var hasOptions = false;
+      var runSearch = false;
+      var finishEntered = function() {
+        $scope.search.options = hasOptions ? true : $scope.search.options; // keep null if first call
+        if (runSearch) {
+          $timeout(function() {
+            $scope.doSearch();
+          }, 100);
+        }
+        else { // By default : get last record
+          $timeout(function() {
+            $scope.doGetLastRecord();
+          }, 100);
+        }
+        $scope.entered = true;
+      };
+
+      // Search by text
+      if ($state.stateParams && $state.stateParams.q) {
         $scope.search.text=$state.stateParams.q;
-        $timeout(function() {
-          $scope.doSearch();
-        }, 100);
+        runSearch = true;
+      }
+
+      // Search on type
+      if ($state.stateParams && $state.stateParams.type) {
+        $scope.search.type = $state.stateParams.type;
+        hasOptions = runSearch = true;
+      }
+
+      // Search on location
+      if ($state.stateParams && $state.stateParams.location) {
+        $scope.search.location = $state.stateParams.location;
+        hasOptions = runSearch = true;
+      }
+
+      // Search on category
+      if ($state.stateParams && $state.stateParams.category) {
+        esRegistry.category.get($state.stateParams.category)
+        .then(function(cat) {
+          $scope.search.category = cat;
+          hasOptions = runSearch = true;
+          finishEntered();
+        })
+        .catch(UIUtils.onError("REGISTRY.ERROR.LOAD_CATEGORY_FAILED"));
       }
       else {
-        $timeout(function() {
-          $scope.doGetLastRecord();
-        }, 100);
+        finishEntered();
       }
-      $scope.showFab('fab-add-registry-record');
-      $scope.entered = true;
     }
-    $focus('searchText');
+    $scope.showFab('fab-add-registry-record');
+    $focus('registrySearchText');
   });
-
-  $scope.$watch('search.options', $scope.doSearch, true);
-
-  $scope.isFilter = function(filter) {
-    return ($scope.filter == filter);
-  };
 
   $scope.doSearch = function() {
     $scope.search.looking = true;
@@ -113,32 +144,66 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
       size: 20,
       _source: esRegistry.record.fields.commons
     };
-    var text = $scope.search.text.toLowerCase().trim();
+    var text = $scope.search.text.trim();
     var matches = [];
     var filters = [];
     if (text.length > 1) {
-      var matchFields = ["title", "description", "issuer", "city", "address"];
-      matches.push({multi_match : { query: text,
-        fields: matchFields,
-        type: "phrase_prefix"
-      }});
-      matches.push({match : { title: text}});
-      matches.push({match : { description: text}});
-      matches.push({prefix : { city: text}});
-      matches.push({prefix : { issuer: text}});
+      // pubkey : use a special 'term', because of 'non indexed' field
+      if (BMA.regex.PUBKEY.test(text /*case sensitive*/)) {
+        matches = [];
+        filters.push({term : { issuer: text}});
+        filters.push({term : { pubkey: text}});
+      }
+      else {
+        text = text.toLowerCase();
+        var matchFields = ["title", "description", "city", "address"];
+        matches.push({multi_match : { query: text,
+          fields: matchFields,
+          type: "phrase_prefix"
+        }});
+        matches.push({match : { title: text}});
+        matches.push({match : { description: text}});
+        matches.push({prefix : { city: text}});
+        matches.push({
+          nested: {
+            path: "category",
+            query: {
+              bool: {
+                filter: {
+                  match: { "category.name": text}
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+    if ($scope.search.options && $scope.search.type) {
+      filters.push({term: { type: $scope.search.type}});
     }
     if ($scope.search.options && $scope.search.category) {
-      filters.push({term: { category: $scope.search.category.id}});
+      filters.push({
+        nested: {
+          path: "category",
+          query: {
+            bool: {
+              filter: {
+                term: { "category.id": $scope.search.category.id}
+              }
+            }
+          }
+        }
+      });
     }
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
       filters.push({match_phrase: { city: $scope.search.location}});
     }
 
     if (matches.length === 0 && filters.length === 0) {
-      $scope.search.results = [];
-      $scope.search.looking = false;
+      $scope.doGetLastRecord();
       return;
     }
+
     request.query.bool = {};
     if (matches.length > 0) {
       request.query.bool.should =  matches;
@@ -149,6 +214,13 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
 
     $scope.doRequest(request);
   };
+
+  $scope.onToggleOptions = function() {
+    if ($scope.search.entered) {
+      $scope.doSearch();
+    }
+  };
+  $scope.$watch('search.options', $scope.onToggleOptions, true);
 
   $scope.doGetLastRecord = function() {
     $scope.search.looking = true;
@@ -178,10 +250,9 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
             }
             else {
               var formatSlug = $filter('formatSlug')
-              var items = res.hits.hits.reduce(function(result, hit) {
+              var records = res.hits.hits.reduce(function(result, hit) {
                   var record = hit._source;
                   record.id = hit._id;
-                  record.type = hit._type;
                   record.urlTitle = formatSlug(hit._source.title);
                   if (record.category && record.category.id) {
                     record.category = categories[record.category.id];
@@ -197,29 +268,31 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
                         record.description = hit.highlight.description[0];
                     }
                     if (hit.highlight.location) {
-                        record.description = hit.highlight.location[0];
+                        record.location = hit.highlight.location[0];
                     }
                   }
                   return result.concat(record);
                 }, []);
-              $scope.search.results = items;
+              $scope.search.results = records;
 
-              // Set Motion & Ink
-              $timeout(function() {
-                UIUtils.motion.fadeSlideInRight({
-                  startVelocity: 3000
-                });
-                UIUtils.ink();
-              }, 10);
-
+              if (records.length > 0) {
+                // Set Motion
+                $timeout(function() {
+                  UIUtils.motion.ripple({
+                    startVelocity: 3000
+                  });
+                  // Set Ink
+                  UIUtils.ink();
+                }, 10);
+              }
             }
 
             $scope.search.looking = false;
           })
           .catch(function(err) {
-              $scope.search.looking = false;
-              $scope.search.results = [];
-            });
+            $scope.search.looking = false;
+            $scope.search.results = [];
+          });
       })
       .catch(function(err) {
         $scope.search.looking = false;
@@ -228,6 +301,15 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
   };
 
   /* -- modals -- */
+  $scope.showRecordTypeModal = function() {
+    ModalUtils.show('plugins/es/templates/registry/modal_record_type.html', 'ESEmptyModalCtrl')
+    .then(function(type){
+      if (type) {
+        $scope.search.type = type;
+        $scope.doSearch();
+      }
+    });
+  };
 
   $scope.showCategoryModal = function(parameters) {
     // load categories
@@ -281,7 +363,9 @@ function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $st
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
-       $scope.load($state.stateParams.id);
+      if ($scope.loading) { // prevent reload if same id
+        $scope.load($state.stateParams.id);
+      }
     }
     else {
       $state.go('app.registry_lookup');
@@ -392,7 +476,7 @@ function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $st
 }
 
 function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $state, $q, $translate, Device,
-  $ionicHistory, ModalUtils, $focus) {
+  $ionicHistory, ModalUtils, $focus, $timeout) {
   'ngInject';
 
   $scope.walletData = {};
@@ -402,6 +486,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
   $scope.isMember = false;
   $scope.category = {};
   $scope.pictures = [];
+  $scope.loading = true;
 
   $scope.setForm =  function(form) {
     $scope.form = form;
@@ -418,34 +503,47 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
         if ($state.stateParams && $state.stateParams.type) {
           $scope.formData.type=$state.stateParams.type;
         }
+        $scope.loading = false;
         UIUtils.loading.hide();
+        UIUtils.motion.ripple();
       }
       $focus('registry-record-title');
     });
   });
 
   $scope.load = function(id) {
-    UIUtils.loading.show();
-    $q.all([
-      esRegistry.category.all()
-      .then(function(categories) {
-        esRegistry.record.get({id: id})
-        .then(function (hit) {
-          $scope.formData = hit._source;
-          $scope.id= hit._id;
-          if (hit._source.category && hit._source.category.id){
-            $scope.category = categories[hit._source.category.id];
-          }
-          if (hit._source.pictures && hit._source.pictures.reduce) {
-            $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-              return res.concat(UIUtils.image.fromAttachment(pic.file));
-            }, []);
-          }
-          UIUtils.loading.hide();
-        });
+    esRegistry.category.all()
+    .then(function(categories) {
+      esRegistry.record.get({id: id})
+      .then(function (hit) {
+        $scope.formData = hit._source;
+        $scope.id= hit._id;
+        if (hit._source.category && hit._source.category.id){
+          $scope.category = categories[hit._source.category.id];
+        }
+        if (hit._source.pictures && hit._source.pictures.reduce) {
+          $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
+            return res.concat(UIUtils.image.fromAttachment(pic.file));
+          }, []);
+          delete $scope.formData.pictures; // duplicated with $scope.pictures
+        }
+        else {
+          $scope.pictures = [];
+        }
+        $scope.loading = false;
+        UIUtils.loading.hide();
+        $timeout(function(){
+          UIUtils.motion.ripple({
+            selector: '.animate-ripple .item, .card-gallery',
+            startVelocity: 3000
+          });
+          // Set Ink
+          UIUtils.ink();
+        },100);
       })
-    ])
-    .catch(UIUtils.onError('esRegistry.ERROR.LOAD_RECORD_FAILED'));
+      .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED'));
+    })
+    .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_CATEGORY_FAILED'));
   };
 
   $scope.needCategory = function() {
@@ -471,7 +569,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
               $state.go('app.registry_view_record', {id: id});
               resolve();
             })
-            .catch(UIUtils.onError('esRegistry.ERROR.SAVE_RECORD_FAILED'));
+            .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
         }
         else { // Update
             esRegistry.record.update(formData, {id: $scope.id})
@@ -480,7 +578,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
               $state.go('app.registry_view_record', {id: $scope.id});
               resolve();
             })
-            .catch(UIUtils.onError('esRegistry.ERROR.SAVE_RECORD_FAILED'));
+            .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
         }
       }
 

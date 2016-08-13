@@ -5,14 +5,14 @@
 
   <ion-content class="lookupForm padding no-padding-xs">
 
-
     <form ng-submit="doSearch()">
       <label class="item item-input">
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
+               id="marketSearchText"
                ng-model="search.text"
                ng-model-options="{ debounce: 350 }"
-               ng-change="doSearch()" id="searchText">
+               ng-change="doSearch()">
       </label>
 
       <div class="item item-toggle dark" ng-if="!search.lastRecords">
@@ -27,7 +27,7 @@
 
       <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
         <span translate>COMMON.CATEGORY</span>
-        <span class="badge badge-royal badge-text-wrap">{{search.category.name}}</span>&nbsp;
+        <span class="badge badge-royal badge-text-wrap" ng-bind-html="search.category.name"></span>&nbsp;
         <i class="gray icon ion-ios-arrow-right"></i>
       </span>
 
@@ -68,21 +68,21 @@
 
       <div class="col col-25 hidden-xs hidden-sm" style="text-align:right">
         <button class="button button-raised button-full button-calm ink"
-                ui-sref="app.market_add_record">
+                ng-click="showNewRecordModal()">
           {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
         </button>
       </div>
     </div>
 
-    <label class="center" ng-if="search.looking">
+    <div class="center" ng-if="search.looking">
       <ion-spinner icon="android"></ion-spinner>
-    </label>
+    </div>
 
-    <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+    <div class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
       COMMON.SEARCH_NO_RESULT
-    </label>
+    </div>
 
-    <div class="list"
+    <div class="list animate-ripple"
          ng-if="!search.looking && search.results && search.results.length > 0">
 
       <a ng-repeat="rec in search.results"
@@ -122,7 +122,7 @@
                    class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
           </div>
           <div class="col col-20">
-            <h3 class="gray" ng-if="rec.category">{{::rec.category.name|formatCategory}}</h3>
+            <h3 class="gray" ng-if="rec.category" ng-bind-html="rec.category.name"></h3>
             <h2 class="badge badge-price badge-calm" ng-bind-html="rec.price" ng-if="rec.price"></h2>
           </div>
           <div class="col">
@@ -135,7 +135,7 @@
   </ion-content>
 
   <button id="fab-add-market-record"
-          class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg drop"
-          ui-sref="app.market_add_record">
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg spin"
+          ng-click="showNewRecordModal()">
   </button>
 </ion-view>

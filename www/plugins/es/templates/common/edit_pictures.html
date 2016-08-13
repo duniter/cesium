@@ -1,11 +1,14 @@
 <div class="gallery" ng-controller="ESPicturesEditCtrl as ctrl">
+
+  <!-- Picture list -->
   <div ng-repeat="picture in pictures"
-       class="item card card-gallery">
+       class="item card card-gallery stable-bg"
+       ng-class="{'in done': picture.isnew}">
     <div>
       <h2 ng-if="picture.title">{{picture.title}}</h2>
       <img ng-src="{{picture.src}}" ></img>
     </div>
-    <div class="item tabs tabs-secondary tabs-icon-left">
+    <div class="item in done tabs tabs-secondary tabs-icon-left">
       <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
         <i class="icon ion-close"></i>
         {{'COMMON.BTN_PICTURE_DELETE'|translate}}
@@ -18,7 +21,9 @@
       </a>
     </div>
   </div>
-  <div class="item card card-gallery text-center padding ink"
+
+  <!-- Add picture button -->
+  <div class="item card card-gallery card-gallery-new text-center padding ink"
        ng-click="selectNewPicture()">
     <i class="icon ion-image stable" style="font-size:150px"></i>
     <b class="icon ion-plus gray" style="font-size:80px; position:absolute; top:25px; right: 5px;"></b>
