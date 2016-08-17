@@ -9,7 +9,6 @@
     "gulp-concat": "^2.2.0",
     "gulp-rename": "^1.2.0",
     "gulp-sass": "^2.2.0",
-    "ionic-native-transitions": "^1.0.0-rc10",
     "node-sass": "^3.3.3"
   },
   "devDependencies": {
@@ -53,20 +52,19 @@
     "cordova-plugin-console",
     "ionic-plugin-keyboard",
     "cordova-plugin-device",
-    "com.telerik.plugins.nativepagetransitions",
-    "org.apache.cordova.statusbar",
-    "org.apache.cordova.camera",
+    "cordova-plugin-statusbar",
+    "cordova-plugin-camera",
+    "cordova-plugin-websocket",
+    "cordova-plugin-vibration",
+    "cordova-plugin-dialogs",
     {
       "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
       "id": "phonegap-plugin-barcodescanner"
-    },
-    "cordova-plugin-camera"
+    }
   ],
   "cordovaPlatforms": [
     "ios",
-    {
-      "platform": "android",
-      "locator": "firefoxos"
-    }
+    "android",
+    "firefoxos"
   ]
 }

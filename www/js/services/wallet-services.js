@@ -199,7 +199,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     // If connected and same pubkey
     isUserPubkey = function(pubkey) {
       return isLogin() && data.pubkey === pubkey;
-    };
+    },
 
     store = function() {
       if (data.settings.useLocalStorage) {
@@ -567,51 +567,51 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     loadData = function() {
-        if (data.loaded) {
-          return refreshData();
-        }
+      if (data.loaded) {
+        return refreshData();
+      }
 
-        return $q(function(resolve, reject){
-          data.loaded = false;
+      return $q(function(resolve, reject){
+        data.loaded = false;
 
-          $q.all([
+        $q.all([
 
-            // Get currency parameters
-            loadParameters(),
+          // Get currency parameters
+          loadParameters(),
 
-            // Get UDs
-            loadUDs(),
+          // Get UDs
+          loadUDs(),
 
-            // Get requirements
-            loadRequirements(),
+          // Get requirements
+          loadRequirements(),
 
-            // Get sources
-            loadSources(),
+          // Get sources
+          loadSources(),
 
-            // Get transactions
-            loadTransactions(),
+          // Get transactions
+          loadTransactions(),
 
-            // API extension
-            api.data.raisePromise.load(data)
-          ])
+          // API extension
+          api.data.raisePromise.load(data)
+        ])
+        .then(function() {
+          // Process transactions and sources
+          processTransactionsAndSources()
           .then(function() {
-            // Process transactions and sources
-            processTransactionsAndSources()
-            .then(function() {
-              finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
-              data.loaded = true;
-              resolve(data);
-            })
-            .catch(function(err) {
-              data.loaded = false;
-              reject(err);
-            });
+            finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
+            data.loaded = true;
+            resolve(data);
           })
           .catch(function(err) {
             data.loaded = false;
             reject(err);
           });
+        })
+        .catch(function(err) {
+          data.loaded = false;
+          reject(err);
         });
+      });
     },
 
     refreshData = function() {
@@ -1028,7 +1028,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           resolve();
         }
       });
-    };
+    }
+    ;
 
     // Register extension points
     api.registerEvent('data', 'load');

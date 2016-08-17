@@ -29,7 +29,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
     }
 
-    onWalletLoad = function(data, resolve, reject) {
+    function onWalletLoad(data, resolve, reject) {
       if (!data || !data.pubkey) {
         if (resolve) {
           resolve();
@@ -58,7 +58,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
-    onWotLoad = function(data, resolve, reject) {
+    function onWotLoad(data, resolve, reject) {
       if (!data || !data.pubkey) {
         if (resolve) {
           resolve();
@@ -90,7 +90,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
-    onWotSearch = function(text, datas, resolve, reject) {
+    function onWotSearch(text, datas, resolve, reject) {
       if (!datas) {
         if (resolve) {
           resolve();
@@ -98,7 +98,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return;
       }
 
-      var text = text.toLowerCase().trim();
+      text = text.toLowerCase().trim();
       var map = {};
 
       var request = {
@@ -190,6 +190,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
+
     // Extend Wallet.loadData() and WotService.loadData()
     if (esHttp.isEnable()) {
       listeners = [
@@ -199,12 +206,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       ];
     }
 
-    function removeListeners() {
-      _.forEach(listeners, function(remove){
-        remove();
-      });
-      listeners = [];
-    }
 
     return {
       copy: copy,

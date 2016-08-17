@@ -123,7 +123,7 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
   ready().then(function() {
     enable = !!navigator.camera;
     if (!enable) {
-      console.log('Device service disable');
+      console.log('Device service disable (no camera)');
     }
   });
 

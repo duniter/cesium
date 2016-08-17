@@ -39,6 +39,11 @@ To contribute and compile cesium, you will have to:
   cd cesium
   npm install
   bower install
+  ionic state restore
+```
+  - Installing Cordova plugins    
+```
+  ionic state restore
 ```
 
   - Compiling and running application   

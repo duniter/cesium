@@ -22,7 +22,7 @@ angular.module('cesium.plugin.services', [])
       extensionByStates[stateName].push(extension);
     }
     return this;
-  }
+  };
 
   this.$get = ['$injector', '$state', function pluginFactory($injector, $state) {
 
@@ -43,7 +43,7 @@ angular.module('cesium.plugin.services', [])
       return extensions.reduce(function(res, extension){
         return extension.points && extension.points[extensionPointName] ? res.concat(extension.points[extensionPointName]) : res;
       }, []);
-    };
+    }
 
     function setCurrentExtensionPointName(extensionPointName) {
       currentExtensionPointName  = extensionPointName;

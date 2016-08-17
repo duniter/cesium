@@ -110,7 +110,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
   $scope.submitAndSave = function() {
     $scope.form.$submitted=true;
     $scope.save();
-  }
+  };
 
   $scope.save = function(silent) {
     if(!$scope.form.$valid || !$rootScope.walletData) {
@@ -133,7 +133,8 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
           UIUtils.toast.show(message);
         });
       }
-    }
+    };
+
     var doFinishSave = function(formData) {
       if (!$scope.existing) {
         esUser.profile.add(formData)
@@ -171,6 +172,6 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
 
   $scope.cancel = function() {
     $ionicHistory.goBack();
-  }
+  };
 }
 

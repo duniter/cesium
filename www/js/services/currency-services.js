@@ -30,7 +30,7 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
           );
 
           // API extension point
-          return api.data.raisePromise.load(data)
+          return api.data.raisePromise.load(data);
         })
         .then(function() {
           data.loaded = true;

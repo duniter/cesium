@@ -69,7 +69,7 @@ angular.module('cesium.directives', ['cesium.services'])
           path = path.substring(1); //hack because path does not return including hashbang
           scope.location = $location;
           scope.$watch('location.path()', function (newPath) {
-            if (newPath.startsWith(path)) {
+            if (newPath && newPath.indexOf(path) === 0) {
               element.addClass(clazz);
             } else {
               element.removeClass(clazz);
@@ -174,7 +174,7 @@ angular.module('cesium.directives', ['cesium.services'])
         _.forEach(extensionPoints, function(extensionPoint){
           tElement.append(getTemplate(extensionPoint));
         });
-      };
+      }
     }
 
     return {
@@ -183,8 +183,8 @@ angular.module('cesium.directives', ['cesium.services'])
       },
       post: function(scope, iElement, iAttrs, controller){
         PluginService.extensions.points.current.set();
-      },
-    }
+      }
+    };
   };
 
 
@@ -196,6 +196,6 @@ angular.module('cesium.directives', ['cesium.services'])
     scope: {
         content:'='
     }
-  }
+  };
 })
 ;

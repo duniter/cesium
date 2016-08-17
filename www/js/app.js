@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment', 'ngApi',
    // removeIf(no-device)
-  'ngCordova', 'ionic-native-transitions',
+  'ngCordova',
    // endRemoveIf(no-device)
    // removeIf(no-plugin)
    'cesium.plugins',
@@ -143,13 +143,15 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   })
 
   // removeIf(no-device)
+  // FIXME: native transition on a PAD move also move the left menu !
+  /*
   .config(function($ionicNativeTransitionsProvider){
     'ngInject';
     // Use native transition
-    // FIXME : native transition on a PAD move also the left menu !
-    //var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS();
-    //$ionicNativeTransitionsProvider.enable(enableNativeTransitions);
+    var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS();
+    $ionicNativeTransitionsProvider.enable(enableNativeTransitions);
   })
+  */
   // endRemoveIf(no-device)
 
   .config(function($ionicConfigProvider) {
@@ -207,3 +209,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   PluginService.start();
 })
 ;
+
+// Workaround to add startsWith() if not present
+if (typeof String.prototype.startsWith !== 'function') {
+  console.log("Adding String.prototype.startsWith() -> was missing on this platform");
+  String.prototype.startsWith = function(prefix) {
+      return this.indexOf(prefix) === 0;
+  };
+}

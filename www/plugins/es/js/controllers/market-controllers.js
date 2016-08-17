@@ -299,11 +299,11 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
   $scope.showCategoryModal = function() {
     // load categories
     esMarket.category.all()
-    .then(function(result){
+    .then(function(categories){
       return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-        {categories : result},
+        {categories : categories},
         {focusFirstInput: true}
-      )
+      );
     })
     .then(function(cat){
       if (cat && cat.parent) {
@@ -499,7 +499,7 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
         UIUtils.motion.ripple();
       }
       $focus('market-record-title');
-    })
+    });
   });
 
   $scope.load = function(id) {
@@ -603,7 +603,7 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
 
   $scope.cancel = function() {
     $ionicHistory.goBack();
-  }
+  };
 
   /* -- modals -- */
   $scope.showRecordTypeModal = function() {
@@ -618,11 +618,11 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
   $scope.showCategoryModal = function() {
     // load categories
     esMarket.category.all()
-    .then(function(result){
+    .then(function(categories){
       return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-        {categories : result},
+        {categories : categories},
         {focusFirstInput: true}
-      )
+      );
     })
     .then(function(cat){
       if (cat && cat.parent) {

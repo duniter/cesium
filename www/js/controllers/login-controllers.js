@@ -60,8 +60,7 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
     $timeout(function() {
       Modals.showNewAccount();
     }, 300);
-
-  }
+  };
 
   // TODO : for DEV only
   /*$timeout(function() {

@@ -248,7 +248,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
         }
       }, 10);
     });
-  }
+  };
 
   // Certify click
   $scope.certify = function() {

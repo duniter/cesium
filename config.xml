@@ -15,7 +15,7 @@
   </author>
   <content src="index.html" />
   <access origin="*" />
-  <icon src="www/img/logo.png" />
+  <icon src="www/img/logo_96px.png" />
   <preference name="webviewbounce" value="false" />
   <preference name="UIWebViewBounce" value="false" />
   <preference name="DisallowOverscroll" value="true" />
@@ -74,5 +74,9 @@
       <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
       <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
       <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
+  </platform>
+  <platform name="firefoxos">
+    <icon height="128" src="resources/firefoxos/img/logo_128.png" width="128" />
+    <icon height="60" src="resources/firefoxos/img/logo_60.png" width="60" />
   </platform>
 </widget>

@@ -212,7 +212,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               return loadIdentity(pubkey, requirements)
               .then(function(identity){
                 angular.merge(data, identity);
-              })
+              });
             }),
 
             // Get sources

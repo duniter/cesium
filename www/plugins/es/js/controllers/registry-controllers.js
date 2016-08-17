@@ -249,7 +249,7 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
               $scope.search.results = [];
             }
             else {
-              var formatSlug = $filter('formatSlug')
+              var formatSlug = $filter('formatSlug');
               var records = res.hits.hits.reduce(function(result, hit) {
                   var record = hit._source;
                   record.id = hit._id;
@@ -314,10 +314,10 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
   $scope.showCategoryModal = function(parameters) {
     // load categories
     esRegistry.category.all()
-    .then(function(result){
+    .then(function(categories){
       // open modal
       return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-             {categories: result}, {focusFirstInput: true})
+             {categories: categories}, {focusFirstInput: true});
     })
     .then(function(cat){
       if (cat && cat.parent) {
@@ -581,7 +581,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
             })
             .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
         }
-      }
+      };
 
       // Resize pictures
       $scope.formData.picturesCount = $scope.pictures.length;
@@ -664,10 +664,10 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
   $scope.showCategoryModal = function(parameters) {
     // load categories
     esRegistry.category.all()
-    .then(function(result){
+    .then(function(categories){
       // open modal
       return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-             {categories: result}, {focusFirstInput: true})
+             {categories: categories}, {focusFirstInput: true});
     })
     .then(function(cat){
       if (cat && cat.parent) {

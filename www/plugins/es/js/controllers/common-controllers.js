@@ -100,7 +100,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
     $timeout(function() {
       UIUtils.ink();
     }, 10);
-  }
+  };
 
   this.doSearch = function() {
     var searchText = this.searchText.toLowerCase().trim();
@@ -128,7 +128,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
     parameters.load()
     .then(function(res){
       $scope.afterLoad(res);
-    })
+    });
   }
 
 }

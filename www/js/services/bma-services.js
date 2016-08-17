@@ -274,7 +274,6 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
         }
         return result;
       });
-      ;
     }
 
     function resetWotData() {
