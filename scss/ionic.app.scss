@@ -547,6 +547,11 @@ $screen-lg:                       1200px;
     }
 }
 
+/**********
+   Item > Avatar
+**********/
+
+
 .item-avatar {
   min-height: 80px !important;
 }
@@ -584,7 +589,39 @@ $screen-lg:                       1200px;
   left: 12px !important;
 }
 
+/**********
+   Item > Other
+**********/
 
+.item em {
+  font-weight: bold !important;
+}
+
+/**********
+   Form validation
+**********/
+
+.form-errors:first-child {
+  margin: 5px 0;
+}
+
+.form-errors:last-child {
+    margin: 5px 0 0;
+}
+
+.form-error {
+  padding: 0px 16px;
+  font-size: 12px;
+  color: red;
+  vertical-align: middle;
+  text-align: end;
+  top: 0px;
+  position: relative;
+}
+
+.item-input-error {
+  border-bottom: 2px solid red !important;
+}
 
 /*
 * Badge
@@ -615,6 +652,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 100% !important;
 }
 
+.modal.about .bar.bar-header .button + .title {
+    left: 0px !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
+}
 
 /*
 * Item buttons

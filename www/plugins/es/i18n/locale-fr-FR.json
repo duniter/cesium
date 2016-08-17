@@ -86,7 +86,8 @@
     },
     "VIEW": {
       "TITLE": "Annuaire",
-      "CATEGORY": "Activité principale :"
+      "CATEGORY": "Activité principale :",
+      "LOCATION": "Adresse :"
     },
     "TYPE": {
       "TITLE": "Nouveau référencement",
@@ -105,7 +106,7 @@
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description de l'activité",
       "RECORD_ADDRESS": "Adresse",
-      "RECORD_ADDRESS_HELP": "Adresse (rue, batiment)",
+      "RECORD_ADDRESS_HELP": "Adresse : rue, batiment...",
       "RECORD_CITY": "Ville",
       "RECORD_CITY_HELP": "Ville",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux et site web",

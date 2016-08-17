@@ -1,7 +1,7 @@
 
 angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
 
-.factory('WotService', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, UIUtils, Wallet) {
+.factory('WotService', function($q, BMA, Api, Wallet) {
   'ngInject';
 
   WotService = function(id) {

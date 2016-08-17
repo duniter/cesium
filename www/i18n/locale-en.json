@@ -13,6 +13,7 @@
     "BTN_RELATIVE_UNIT": "Use relative unit",
     "BTN_BACK": " Back",
     "BTN_CANCEL": "Cancel",
+    "BTN_CLOSE": "Close",
     "BTN_LOGIN": "Sign In",
     "BTN_LOGOUT": " Logout",
     "BTN_ADD_ACCOUNT": "New Account",
@@ -50,6 +51,13 @@
     "SCAN": "Scan",
     "SETTINGS": "Settings"
   },
+  "ABOUT": {
+    "TITLE": "About",
+    "DEV_WARNING": "Warning",
+    "DEV_WARNING_MESSAGE": "This application is still in active development.<br/>Please report us all issues !",
+    "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",
+    "REPORT_ISSUE": "Report an issue"
+  },
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "",
@@ -59,14 +67,12 @@
     "BTN_MARKET": "Market place",
     "BTN_CURRENCIES": "Explore currencies",
     "BTN_CURRENCY": "Explore currency",
+    "BTN_ABOUT": "About",
     "BTN_ACCOUNT": "My Account",
-    "DEV_WARNING": "Warning",
-    "DEV_WARNING_MESSAGE": "This application is still in active development.<br/>Please report us all issues !",
-    "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",
     "REPORT_ISSUE": "Report an issue"
   },
   "SETTINGS": {
-    "TITLE": "Setting",
+    "TITLE": "Settings",
     "NETWORK_SETTINGS": "Network",
     "NODE": "Duniter node address",
     "NODE_HELP": "server.domain.com:port",
@@ -132,6 +138,9 @@
     },
     "MODAL": {
       "TITLE": "Search"
+    },
+    "CERTIFICATIONS": {
+      "TITLE": "{{uid}} - Certifications"
     }
   },
   "LOGIN": {
@@ -139,7 +148,9 @@
     "USERNAME": "Protection phrase",
     "USERNAME_HELP": "Protection phrase",
     "PASSWORD": "Password",
-    "PASSWORD_HELP": "Password"
+    "PASSWORD_HELP": "Password",
+    "NO_ACCOUNT_QUESTION": "Do not have an account yet ?",
+    "CREATE_ACCOUNT": "Create an account"
   },
   "ACCOUNT": {
     "TITLE": "My Account",
@@ -169,7 +180,9 @@
       "SLIDE_1_TITLE": "Select a money:",
       "SLIDE_2_TITLE": "Kind of account:",
       "MEMBER_ACCOUNT": "Member account",
-      "WALLET_ACCOUNT": "Simple wallet account",
+      "MEMBER_ACCOUNT_HELP": "If you are not yet registered as an individual (One account possible by individual).",
+      "WALLET_ACCOUNT": "Simple wallet",
+      "WALLET_ACCOUNT_HELP": "If you represent a company, association, etc. or simply need an additional wallet. No universal dividend will be created by this account.",
       "PSEUDO": "Pseudonym",
       "PSEUDO_HELP": "joe123",
       "PASSWORD_CONFIRM": "Confirm Password",

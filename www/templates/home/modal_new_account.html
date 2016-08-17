@@ -1,0 +1,215 @@
+<ion-view class="modal slide-in-up ng-enter active ng-enter-active">
+
+    <ion-header-bar class="bar-positive">
+
+        <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
+                ng-click="slidePrev()"
+                ng-if="slides.slider.activeIndex">
+        </button>
+
+      <button class="button button-clear visible-xs"
+              ng-if="!slides.slider.activeIndex"
+              ng-click="closeModal()" translate>COMMON.BTN_CANCEL
+      </button>
+
+        <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
+
+        <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doNewAccount()" ng-show="slides.slider.activeIndex == 2"></button>
+
+        </ion-nav-buttons>
+    </ion-header-bar>
+
+
+    <ion-slides options="slides.options" slider="slides.slider">
+        <ion-slide-page>
+            <ion-content class="has-header padding">
+                <h3 translate>ACCOUNT.NEW.SLIDE_1_TITLE</h3>
+                <div class="list">
+                  <div ng-repeat="currency in knownCurrencies"
+                     class="item card item-icon-right stable-bg padding ink"
+                     ng-class="{ selected: selectedCurrency == currency }"
+                     ng-click="selectCurrency(currency.name, true)">
+                    <h2>{{::currency.name}}</h2>
+                    <h4 class="gray">{{::currency.peer}}</h4>
+                    <i class="icon dark ion-ios-arrow-right"></i>
+                  </div>
+                </div>
+
+                <div class="padding hidden-xs text-right">
+                  <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+                  </button>
+                </div>
+            </ion-content>
+        </ion-slide-page>
+        <ion-slide-page>
+          <ion-content class="has-header padding">
+              <h3 translate>ACCOUNT.NEW.SLIDE_2_TITLE</h3>
+              <div class="list">
+                <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
+                   ng-class="{ activated: accountTypeMember != null && accountTypeMember }"
+                   ng-click="selectAccountTypeMember(true)">
+                  <div class="item-content item-text-wrap">
+                    <i class="item-image icon dark ion-person"></i>
+                    <h2 translate>ACCOUNT.NEW.MEMBER_ACCOUNT</h2>
+                    <h4 class="gray" translate>ACCOUNT.NEW.MEMBER_ACCOUNT_HELP</h4>
+                    <i class="icon dark ion-ios-arrow-right"></i>
+                  </div>
+                </div>
+
+                <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
+                     ng-class="{ activated: accountTypeMember != null && !accountTypeMember }"
+                     ng-click="selectAccountTypeMember(false)">
+                  <div class="item-content item-text-wrap">
+                    <i class="item-image icon dark ion-card"></i>
+                    <h2 translate>ACCOUNT.NEW.WALLET_ACCOUNT</h2>
+                    <h4 class="gray" translate>ACCOUNT.NEW.WALLET_ACCOUNT_HELP</h4>
+                    <i class="icon dark ion-ios-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="padding hidden-xs text-right">
+                <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+                </button>
+              </div>
+            </ion-content>
+        </ion-slide-page>
+        <ion-slide-page>
+          <ion-content class="has-header" scroll="false">
+            <form name="accountForm" novalidate="" ng-submit="doNewAccount()">
+                <div class="list"
+                     ng-init="setForm(accountForm)">
+
+                    <!-- pseudo -->
+                    <div class="item item-input"
+                         ng-if="formData.isMember"
+                         ng-class="{'item-input-error': form.$submitted && form.pseudo.$invalid}">
+                      <span class="input-label" translate>ACCOUNT.NEW.PSEUDO</span>
+                      <input name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
+                             ng-model="formData.pseudo"
+                             ng-minlength="3"
+                             ng-maxlength="100"
+                             required>
+                    </div>
+                    <div class="form-errors"
+                         ng-if="formData.isMember"
+                         ng-show="form.$submitted && form.pseudo.$error"
+                         ng-messages="form.pseudo.$error">
+                      <div class="form-error" ng-message="minlength">
+                        <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                      </div>
+                      <div class="form-error" ng-message="maxlength">
+                        <span translate="ERROR.FIELD_TOO_LONG"></span>
+                      </div>
+                      <div class="form-error" ng-message="required">
+                        <span translate="ERROR.FIELD_REQUIRED"></span>
+                      </div>
+                    </div>
+
+                    <!-- salt -->
+                    <div class="item item-input"
+                         ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
+                      <span class="input-label" translate>LOGIN.USERNAME</span>
+                      <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
+                             ng-change="formDataChanged()"
+                             ng-model="formData.username"
+                             ng-minlength="8"
+                             required>
+                    </div>
+                    <div class="form-errors"
+                         ng-show="form.$submitted && form.username.$error"
+                         ng-messages="form.username.$error">
+                      <div class="form-error" ng-message="minlength">
+                        <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                      </div>
+                      <div class="form-error" ng-message="maxlength">
+                        <span translate="ERROR.FIELD_TOO_LONG"></span>
+                      </div>
+                      <div class="form-error" ng-message="required">
+                        <span translate="ERROR.FIELD_REQUIRED"></span>
+                      </div>
+                    </div>
+
+                    <!-- password -->
+                    <div class="item item-input"
+                         ng-class="{ 'item-input-error': form.$submitted && form.password.$invalid}">
+                      <span class="input-label" translate>LOGIN.PASSWORD</span>
+                      <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+                             ng-model="formData.password"
+                             ng-change="formDataChanged()"
+                             ng-minlength="8"
+                             required>
+
+                    </div>
+                    <div class="form-errors"
+                         ng-show="form.$submitted && form.password.$error"
+                         ng-messages="form.password.$error">
+                      <div class="form-error" ng-message="minlength">
+                        <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                      </div>
+                      <div class="form-error" ng-message="maxlength">
+                        <span translate="ERROR.FIELD_TOO_LONG"></span>
+                      </div>
+                      <div class="form-error" ng-message="required">
+                        <span translate="ERROR.FIELD_REQUIRED"></span>
+                      </div>
+                    </div>
+
+                    <!-- confirm password -->
+                    <div class="item item-input"
+                         ng-class="{ 'item-input-error': form.$submitted && form.confirmPassword.$invalid}">
+                      <span class="input-label" translate>ACCOUNT.NEW.PASSWORD_CONFIRM</span>
+                      <input name="confirmPassword" type="password"
+                             placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}"
+                             ng-model="formData.confirmPassword"
+                             compare-to="formData.password">
+                    </div>
+                    <div class="form-errors"
+                         ng-show="form.$submitted && form.confirmPassword.$error"
+                         ng-messages="form.confirmPassword.$error">
+                      <div class="form-error" ng-message="minlength">
+                        <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                      </div>
+                      <div class="form-error" ng-message="maxlength">
+                        <span translate="ERROR.FIELD_TOO_LONG"></span>
+                      </div>
+                      <div class="form-error" ng-message="required">
+                        <span translate="ERROR.FIELD_REQUIRED"></span>
+                      </div>
+                      <div class="form-error" ng-message="compareTo">
+                        <span translate="ERROR.PASSWORD_NOT_CONFIRMED"></span>
+                      </div>
+                    </div>
+
+                    <!-- Show public key-->
+                    <div class="item item-button-right">
+                        <span class="input-label" translate>COMMON.PUBKEY</span>
+                        <a class="button button-light button-small animate-if"
+                           ng-click="showAccountPubkey()"
+                           ng-if="!(formData.pubkey || formData.computing || !formData.username || !formData.password)"
+                           translate>
+                            COMMON.BTN_SHOW_PUBKEY
+                        </a>
+                        <h3 class="gray text-no-wrap" ng-if="formData.pubkey">
+                          {{formData.pubkey}}
+                        </h3>
+                        <h3 ng-if="formData.computing">
+                          <ion-spinner icon="android"></ion-spinner>
+                        </h3>
+                    </div>
+                </div>
+
+              <div class="padding hidden-xs text-right">
+                <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+                </button>
+                <button class="button button-positive ink" type="submit" translate>
+                    COMMON.BTN_SEND
+                </button>
+              </div>
+
+                <div class="padding hidden-xs">
+                </div>
+            </form>
+            </ion-content>
+        </ion-slide-page>
+    </ion-slide-box>
+</ion-view>

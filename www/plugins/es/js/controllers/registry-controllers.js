@@ -302,7 +302,7 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
 
   /* -- modals -- */
   $scope.showRecordTypeModal = function() {
-    ModalUtils.show('plugins/es/templates/registry/modal_record_type.html', 'ESEmptyModalCtrl')
+    ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
     .then(function(type){
       if (type) {
         $scope.search.type = type;
@@ -332,7 +332,7 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
       .then(function(walletData) {
         UIUtils.loading.hide();
         $scope.walletData = walletData;
-        ModalUtils.show('plugins/es/templates/registry/modal_record_type.html', 'ESEmptyModalCtrl')
+        ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
         .then(function(type){
           if (type) {
             $state.go('app.registry_add_record', {type: type});
@@ -399,7 +399,7 @@ function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $st
           // Set Motion (only direct children, to exclude .lazy-load children)
           $timeout(function() {
             UIUtils.motion.fadeSlideIn({
-              selector: '.list > .item',
+              selector: '.list > .item, .list > ng-if > .item',
               startVelocity: 3000
             });
             UIUtils.ink();
@@ -438,7 +438,8 @@ function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $st
       // Set Motion
       $timeout(function() {
         UIUtils.motion.fadeSlideIn({
-          selector: '.card-gallery, .card-comment, .lazy-load .item'
+          selector: '.card-gallery, .card-comment, .lazy-load .item',
+          startVelocity: 3000
         });
       }, 10);
     })
@@ -651,7 +652,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
 
   /* -- modals -- */
   $scope.showRecordTypeModal = function() {
-    ModalUtils.show('plugins/es/templates/registry/modal_record_type.html', 'ESEmptyModalCtrl')
+    ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
     .then(function(type){
       if (type) {
         $scope.formData.type = type;

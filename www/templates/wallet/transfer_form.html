@@ -2,7 +2,9 @@
 
     <div class="list" ng-init="setForm(transferForm)">
 
-      <a class="item item-icon-right gray ink" ng-click="showWotLookupModal()">
+      <a class="item item-icon-right gray ink"
+         ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
+         ng-click="showWotLookupModal()">
           <span class="gray" translate>TRANSFER.TO</span>
           <span class="badge badge-royal">{{destUid}}{{destPub | formatPubkey}}</span>&nbsp;
           <i class="gray icon ion-ios-arrow-right"></i>
@@ -31,7 +33,9 @@
       </span>
 
       <!-- Amount -->
-      <div class="item item-input item-floating-label item-button-right" ng-if="!formData.useRelative">
+      <div class="item item-input item-floating-label item-button-right"
+           ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}"
+           ng-if="!formData.useRelative">
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}})</span>
           <input type="number" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}})"
                  ng-model="formData.amount" required>
@@ -41,7 +45,9 @@
           <i class="icon ion-android-more-vertical"></i>
         </span>
       </div>
-      <ion-item class="item-input item-floating-label item-button-right" ng-if="formData.useRelative">
+      <ion-item class="item-input item-floating-label item-button-right"
+                ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}"
+                ng-if="formData.useRelative">
         <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub>)</span>
         <input type="text" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{'COMMON.UD' | translate}} {{unit | abbreviate}})" ng-model="formData.amount"
                required>

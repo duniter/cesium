@@ -20,6 +20,8 @@ angular.module('cesium.modal.services', [])
       }
     };
 
+    controller = controller ? controller : 'EmptyModalCtrl';
+
     options = options ? options : {} ;
     options.scope = options.scope ? options.scope : modalScope;
     options.animation = options.animation ? options.animation : 'slide-in-up';
@@ -108,7 +110,7 @@ angular.module('cesium.modal.services', [])
   }
 
   function showLogin(parameters) {
-    return ModalUtils.show('templates/login_modal.html','LoginModalCtrl',
+    return ModalUtils.show('templates/modal_login.html','LoginModalCtrl',
       parameters, {focusFirstInput: true});
   }
 
@@ -117,10 +119,23 @@ angular.module('cesium.modal.services', [])
       parameters, {focusFirstInput: true});
   }
 
+  function showAbout(parameters) {
+    return ModalUtils.show('templates/home/modal_about.html','EmptyModalCtrl',
+      parameters);
+  }
+
+  function showNewAccount(parameters) {
+      return ModalUtils.show('templates/home/modal_new_account.html','NewAccountModalCtrl',
+        parameters, {animation: 'slide-in-up'});
+    }
+
+
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
-    showWotLookup: showWotLookup
+    showWotLookup: showWotLookup,
+    showAbout: showAbout,
+    showNewAccount: showNewAccount
   };
 
 });

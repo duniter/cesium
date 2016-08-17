@@ -318,7 +318,7 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
       .then(function(walletData) {
         UIUtils.loading.hide();
         $scope.walletData = walletData;
-        ModalUtils.show('plugins/es/templates/market/modal_record_type.html', 'ESEmptyModalCtrl')
+        ModalUtils.show('plugins/es/templates/market/modal_record_type.html')
         .then(function(type){
           if (type) {
             $state.go('app.market_add_record', {type: type});
@@ -607,7 +607,7 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
 
   /* -- modals -- */
   $scope.showRecordTypeModal = function() {
-    ModalUtils.show('plugins/es/templates/market/modal_record_type.html', 'ESEmptyModalCtrl')
+    ModalUtils.show('plugins/es/templates/market/modal_record_type.html')
     .then(function(type){
       if (type) {
         $scope.formData.type = type;

@@ -1,7 +1,7 @@
 {
   "name": "cesium",
-  "version": "0.1.26",
-  "description": "A webapp client for Duniter network",
+  "version": "0.1.27",
+  "description": "Unhosted webapp client for Duniter network",
   "dependencies": {
     "delete-empty": "^0.1.3",
     "gulp": "^3.9.1",

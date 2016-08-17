@@ -28,10 +28,7 @@ angular.module('cesium.es.common.controllers', ['cesium.es.services'])
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
 
- .controller('ESEmptyModalCtrl', ESEmptyModalController)
-
 ;
-
 
 function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
   'ngInject';
@@ -136,10 +133,6 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 }
 
-
-function ESEmptyModalController($scope, parameters) {
-
-}
 
 
 function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, esHttp, DataService) {
@@ -258,9 +251,10 @@ function ESSocialsEditController($scope, $focus, $timeout, $filter, UIUtils, Soc
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideIn({
-        selector: '#social-' + $filter('formatSlug')(url)
+        selector: '#social-' + $filter('formatSlug')(url),
+        startVelocity: 10000
       });
-    }, 0);
+    }, 10);
   };
 
   $scope.editSocialNetwork = function(index) {

@@ -35,14 +35,17 @@ angular.module('cesium.home.controllers', ['cesium.services'])
   .controller('HomeCtrl', HomeController)
 
   .controller('JoinCtrl', JoinController)
+
+  .controller('NewAccountModalCtrl', NewAccountModalController)
 ;
 
 
-function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet) {
+function NewAccountModalController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, csCurrency) {
   'ngInject';
 
-  $scope.accountData = {};
-  $scope.accountForm = {};
+  $scope.formData = {
+    pseudo: ''
+  };
   $scope.slides = {
     slider: null,
     options: {
@@ -51,22 +54,19 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
       speed: 500
     }
   };
-
-  // Called to navigate to the main app
-  $scope.cancel = function() {
-    $scope.newAccountModal.hide();
-    $timeout(function(){
-      $scope.accountData = {};
-      $scope.accountForm = {};
-      $scope.newAccountModal.remove();
-      $scope.newAccountModal = null;
-      $scope.slides.slider = null;
-    }, 200);
+  $scope.search = {
+    looking: true
   };
 
-  $scope.setAccountForm =  function(accountForm) {
-    $scope.accountForm = accountForm;
-  };
+  csCurrency.load()
+  .then(function (data) {
+    if (data) {
+      $scope.knownCurrencies = data.currencies;
+    }
+    $scope.search.looking = false;
+  })
+  .catch(UIUtils.onError('GET_CURRENCIES_FAILED'));
+
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
@@ -80,94 +80,48 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
       $scope.slides.slider.lockSwipes();
     };
 
-  $scope.newAccount = function() {
-    var showModal = function() {
-      $scope.slides.slider.lockSwipes();
-      $scope.slides.slider.slideTo(0);
-      UIUtils.loading.hide();
-      $scope.newAccountModal.show();
-      // TODO: remove default
-      /*$timeout(function() {
-        $scope.accountData.currency = $scope.knownCurrencies[0];
-        $scope.accountData.isMember = true;
-        $scope.next();
-        $scope.next();
-      }, 300);*/
-    };
-
-    if (!$scope.newAccountModal) {
-      UIUtils.loading.show();
-      // Create the account modal that we will use later
-      $ionicModal.fromTemplateUrl('templates/home/new_account_wizard.html', {
-        scope: $scope
-      }).then(function(modal) {
-        $scope.newAccountModal = modal;
-        $scope.newAccountModal.hide()
-        .then(function(){
-          $scope.loadCurrencies()
-          .then(function (res) {
-            $scope.knownCurrencies = res;
-            $scope.search.looking = false;
-            if (!!res && res.length == 1) {
-              $scope.selectedCurrency = res[0].id;
-            }
-            showModal();
-          });
-        });
-
-      });
-    }
-    else {
-      showModal();
-    }
-  };
-
-  //Cleanup the modal when we're done with it!
-  $scope.$on('$destroy', function() {
-  });
-
   $scope.selectCurrency = function(currency) {
-    $scope.accountData.currency = currency;
+    $scope.formData.currency = currency;
     $scope.slideNext();
   };
 
   $scope.selectAccountTypeMember = function(bool) {
-    $scope.accountData.isMember = bool;
+    $scope.formData.isMember = bool;
     $scope.slideNext();
   };
 
   $scope.showAccountPubkey = function() {
-    $scope.accountData.computing=true;
-    CryptoUtils.connect($scope.accountData.username, $scope.accountData.password).then(
+    $scope.formData.computing=true;
+    CryptoUtils.connect($scope.formData.username, $scope.formData.password).then(
       function(keypair) {
-        $scope.accountData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-        $scope.accountData.computing=false;
+        $scope.formData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+        $scope.formData.computing=false;
       }
     )
     .catch(function(err) {
-      $scope.accountData.computing=false;
+      $scope.formData.computing=false;
       console.error('>>>>>>>' , err);
       UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
     });
   };
 
-  $scope.accountDataChanged = function() {
-    $scope.accountData.computing=false;
-    $scope.accountData.pubkey=null;
+  $scope.formDataChanged = function() {
+    $scope.formData.computing=false;
+    $scope.formData.pubkey=null;
   };
 
   $scope.doNewAccount = function() {
-    $scope.accountForm.$submitted=true;
-    if(!$scope.accountForm.$valid) {
+    $scope.form.$submitted=true;
+    if(!$scope.form.$valid) {
       return;
     }
 
     UIUtils.loading.show();
-    $scope.newAccountModal.hide()
+    $scope.closeModal()
     .then(function(){
-      Wallet.login($scope.accountData.username, $scope.accountData.password)
+      Wallet.login($scope.formData.username, $scope.formData.password)
         .then(function() {
-          if (!$scope.accountData.isMember) {
+          if (!$scope.formData.isMember) {
             // Reset account data, and open wallet view
             $scope.cancel();
             $state.go('app.view_wallet');
@@ -175,7 +129,7 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
           }
 
           // Send self
-          Wallet.self($scope.accountData.pseudo, false/*do NOT load membership here*/)
+          Wallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
             .then(function() {
               // Send membership IN
               Wallet.membership.inside()
@@ -203,21 +157,27 @@ function NewAccountWizardController($scope, $ionicModal, $state, $ionicSideMenuD
   */
 }
 
-function HomeController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet,  APP_CONFIG) {
+function HomeController($scope, Modals) {
   'ngInject';
 
-  NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet);
+  /* -- modals -- */
+  $scope.showAboutModal = function() {
+    Modals.showAbout();
+  };
 
+  $scope.showNewAccountModal = function() {
+    Modals.showNewAccount();
+  };
 }
 
-function JoinController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, APP_CONFIG) {
+function JoinController($scope, $timeout, Modals) {
   'ngInject';
 
-  NewAccountWizardController.call(this, $scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet);
+  HomeController.call(this, $scope, Modals);
 
-  // open new account wizard
+  // Open new account wizard
   $timeout(function() {
-    $scope.newAccount();
+    $scope.showNewAccountModal();
   }, 100);
 
 }

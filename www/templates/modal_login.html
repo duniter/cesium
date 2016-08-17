@@ -1,6 +1,6 @@
-<ion-modal-view class="login">
+<ion-modal-view id="login">
   <ion-header-bar class="bar-positive">
-    <button class="button button-clear visible-xs" ng-click="cancelLogin()" translate>COMMON.BTN_CANCEL
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL
     </button>
     <h1 class="title" translate>LOGIN.TITLE</h1>
     <div class="buttons buttons-right">
@@ -11,7 +11,7 @@
 
   </ion-header-bar>
 
-  <ion-content >
+  <ion-content>
     <form name="loginForm" novalidate="" ng-submit="doLogin()">
 
       <div class="list" ng-init="setForm(loginForm)">
@@ -52,16 +52,16 @@
 
         <!-- remember me -->
         <div class="item item-toggle dark hidden-xs">
-        <div class="input-label">
-          {{'SETTINGS.REMEMBER_ME' | translate}}
-        </div>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.rememberMe">
-          <div class="track">
-            <div class="handle"></div>
+          <div class="input-label">
+            {{'SETTINGS.REMEMBER_ME' | translate}}
           </div>
-        </label>
-      </div>
+          <label class="toggle toggle-royal">
+            <input type="checkbox" ng-model="formData.rememberMe">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
 
         <!-- Show public key -->
         <div class="item item-button-right left">
@@ -79,6 +79,7 @@
             <ion-spinner icon="android"></ion-spinner>
           </h3>
         </div>
+
       </div>
 
       <div class="padding hidden-xs text-right">
@@ -88,6 +89,15 @@
         <button class="button button-positive ink" type="submit">
           {{'COMMON.BTN_LOGIN' | translate}}
         </button>
+      </div>
+
+      <!-- Register ? -->
+      <div class="text-center no-padding">
+        {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
+        <br class="visible-xs">
+        <a ng-click="showNewAccountModal()" translate>
+          LOGIN.CREATE_ACCOUNT
+        </a>
       </div>
       <!--div class="padding hidden-xs text-right">
         <a class="assertive ink" ng-click="openNewAccount()" type="button" translate>COMMON.NO_ACOUNT_QUESTION

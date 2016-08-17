@@ -13,6 +13,7 @@
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
     "BTN_BACK": "Retour",
     "BTN_CANCEL": "Annuler",
+    "BTN_CLOSE": "Fermer",
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnexion",
     "BTN_ADD_ACCOUNT": "Nouveau compte",
@@ -50,6 +51,13 @@
     "SCAN": "Scanner",
     "SETTINGS": "Paramètres"
   },
+  "ABOUT": {
+    "TITLE": "A propos",
+    "DEV_WARNING": "Avertissement",
+    "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
+    "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
+    "REPORT_ISSUE": "Remonter un problème"
+  },
   "HOME": {
     "TITLE": "Cesium",
     "WELCOME": "",
@@ -59,11 +67,9 @@
     "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCIES": "Explorer les monnaies",
     "BTN_CURRENCY": "Explorer la monnaie",
+    "BTN_ABOUT": "A propos",
     "BTN_ACCOUNT": "Mon compte",
-    "DEV_WARNING": "Avertissement",
-    "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
-    "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
-    "REPORT_ISSUE": "Signaler un problème"
+    "REPORT_ISSUE": "anomalie"
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
@@ -142,7 +148,9 @@
     "USERNAME": "Phrase de protection",
     "USERNAME_HELP": "Phrase de protection",
     "PASSWORD": "Mot de passe",
-    "PASSWORD_HELP": "Mot de passe"
+    "PASSWORD_HELP": "Mot de passe",
+    "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
+    "CREATE_ACCOUNT": "Créer un compte"
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
@@ -172,7 +180,9 @@
       "SLIDE_1_TITLE": "Choix de la monnaie :",
       "SLIDE_2_TITLE": "Type de compte :",
       "MEMBER_ACCOUNT": "Compte membre",
-      "WALLET_ACCOUNT": "Portefeuille anonyme",
+      "MEMBER_ACCOUNT_HELP": "Si vous n'etes pas encore inscrit en tant qu'individu (Un seul compte possible par individu).",
+      "WALLET_ACCOUNT": "Simple portefeuille",
+      "WALLET_ACCOUNT_HELP": "Si vous représentez une entreprise, une association, etc. ou si vous avez simplement besoin d'un compte supplémentaire. Aucun dividende universel ne sera créé par ce compte.",
       "PSEUDO": "Pseudonyme",
       "PSEUDO_HELP": "Pseudonyme",
       "PASSWORD_CONFIRM": "Confirmation",
@@ -219,7 +229,7 @@
     "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille.",
     "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie.",
     "GET_CURRENCIES_FAILED": "Impossible de charger la liste des monnaies. Veuillez ressayer plus tard.",
-    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossibl.e",
+    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible.",
     "SEND_TX_FAILED": "Echec du paiement.",
     "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
     "NOT_ENOUGH_SOURCES": "Pas assez de change pour envoyer ce montant en une seule transaction.<br/>Montant maximum : {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",

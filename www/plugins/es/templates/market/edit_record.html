@@ -46,7 +46,9 @@
               <ng-include src="'plugins/es/templates/common/edit_pictures.html'"></ng-include>
 
               <!-- category -->
-              <a class="item item-icon-right ink" ng-click="showCategoryModal()">
+              <a class="item item-icon-right ink"
+                 ng-class="{'item-input-error': form.$submitted && !category.id}"
+                 ng-click="showCategoryModal()">
                 <span class="item-label" translate>COMMON.CATEGORY</span>
                 <span class="badge badge-royal">{{category.name}}</span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
@@ -59,7 +61,8 @@
               </div>
 
               <!-- title -->
-              <div class="item item-input item-floating-label">
+              <div class="item item-input item-floating-label"
+                   ng-class="{'item-input-error': form.$submitted && form.title.$invalid}">
                   <span class="input-label" translate>MARKET.EDIT.RECORD_TITLE</span>
                   <input type="text" placeholder="{{'MARKET.EDIT.RECORD_TITLE_HELP'|translate}}"
                          name="title"

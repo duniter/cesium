@@ -53,7 +53,8 @@
             </div>
 
             <!-- title -->
-            <ion-item class="item-input item-floating-label item-button-right">
+            <ion-item class="item-input item-floating-label item-button-right"
+                      ng-class="{'item-input-error': form.$submitted && form.title.$invalid}">
               <span class="input-label">{{'PROFILE.TITLE' | translate}}</span>
               <input type="text" name="title" placeholder="{{'PROFILE.TITLE_HELP' | translate}}"
                      id="profile-name"

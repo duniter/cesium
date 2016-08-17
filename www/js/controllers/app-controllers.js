@@ -30,8 +30,17 @@ angular.module('cesium.app.controllers', ['cesium.services'])
 
   .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
 
+  .controller('EmptyModalCtrl', EmptyModalController)
+
 ;
 
+
+/**
+ * Useful for modal with no controller (see Modal service)
+ */
+function EmptyModalController($scope, parameters) {
+
+}
 
 /**
  * Useful controller that could be reuse in plugin, using $scope.extensionPoint for condition rendered in templates

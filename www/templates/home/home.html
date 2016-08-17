@@ -32,85 +32,35 @@
                 class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
                 ng-click="login()" ng-show="!isLogin()" translate>COMMON.BTN_LOGIN</button>
         <button type="button"
-                class="button button-block button-light ink button-clear"
-                ng-click="newAccount()" ng-show="!isLogin()" translate>COMMON.BTN_ADD_ACCOUNT</button>
-        <button type="button"
                 class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
                 ui-sref="app.view_wallet" ng-show="isLogin()" translate>HOME.BTN_ACCOUNT</button>
 
+        <div class="text-center no-padding" ng-show="!isLogin()">
+          {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
+          <br class="visible-xs">
+          <b>
+            <a class="assertive" ng-click="showNewAccountModal()" translate>
+            LOGIN.CREATE_ACCOUNT
+          </a>
+          </b>
+        </div>
       </div>
 
       <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
     </div>
 
-    <!-- spacer -->
-    <span class="hidden-xs">
-      <br/>
-      <br/>
-    </span>
-    <span class="hidden-xs hidden-sm">
-      <br/>
-    </span>
-
-    <!-- warning still dev -->
-    <div class="row no-padding">
-
-      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
-      <div class="col col-10 hidden-xs">&nbsp;</div>
-
-      <div class="col">
-        <div class="card stable-bg no-padding no-margin hidden-xs hidden-sm">
-          <div class="item item-divider">
-            <i class="icon ion-alert-circled assertive"></i>
-            {{'HOME.DEV_WARNING'|translate}}
-          </div>
-          <div class="item item-text-wrap">
-            <span translate>HOME.DEV_WARNING_MESSAGE</span><br/>
-            <a class="button button-block button-assertive button-raised icon icon-left ion-bug ink-dark "
-               href="{{config.NEW_ISSUE_LINK}}"
-               target="_blank"
-               translate>HOME.REPORT_ISSUE</a>
-          </div>
-        </div>
-
-        <div class="card stable-bg no-padding no-margin visible-xs visible-sm">
-          <p class="item item-text-wrap">
-            <span class="gray">
-              <i class="icon ion-alert-circled assertive"></i>
-              <b>{{'HOME.DEV_WARNING'|translate}}</b>
-            </span><br/>
-            <span translate>HOME.DEV_WARNING_MESSAGE_SHORT</span>
-            <span>
-              <a href="{{config.NEW_ISSUE_LINK}}"
-                 target="_blank"
-                 translate>HOME.REPORT_ISSUE</a>
-            </span>
-          </p>
-        </div>
-      </div>
-
-      <div class="col col-10 hidden-xs">&nbsp;</div>
-      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
-    </div>
-
-    <!-- fork me on github -->
-    <a class="hidden-xs hidden-sm"
-       style="position: absolute; top: 0px; right: 0; margin: 0; padding: 0; border: 0;"
-       target="_blank"
-       href="https://github.com/duniter/cesium">
-        <img style="border: 0;"
-          src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png">
-    </a>
   </ion-content>
 
-  <ion-footer-bar align-title="center" class="bar-dark footer visible-xs visible-sm">
-    <h1 class="title">
+  <ion-footer-bar align-title="center" class="positive-900-bg light footer">
+
+    <h1 class="title stable">
+      <!-- version -->
       <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
-      <span class="build-date gray" translate="COMMON.APP_BUILD_DATE" translate-values="{buildDate: config.BUILD_DATE}"></span>
+      |
+      <!-- about -->
+      <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
     </h1>
   </ion-footer-bar>
 
-  <ion-footer-bar align-title="center" class="positive-900-bg hidden-xs hidden-sm">
-  </ion-footer-bar>
 
 </ion-view>

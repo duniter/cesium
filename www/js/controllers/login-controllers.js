@@ -4,7 +4,7 @@ angular.module('cesium.login.controllers', ['cesium.services'])
   .controller('LoginModalCtrl', LoginModalController)
 ;
 
-function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory) {
+function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory, Modals) {
   'ngInject';
 
   $scope.computing = false;
@@ -12,11 +12,6 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   $scope.formData = {
     rememberMe: Wallet.data.settings.rememberMe
   };
-  $rootScope.viewFirstEnter = false;
-
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    $rootScope.viewFirstEnter = true;
-  });
 
   // Login form submit
   $scope.doLogin = function() {
@@ -43,7 +38,6 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
   $scope.$watch('formData.username', $scope.formDataChanged, true);
   $scope.$watch('formData.password', $scope.formDataChanged, true);
 
-
   $scope.showPubkey = function() {
     $scope.computing=true;
     CryptoUtils.connect($scope.formData.username, $scope.formData.password).then(
@@ -60,6 +54,14 @@ function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUti
       UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
     });
   };
+
+  $scope.showNewAccountModal = function() {
+    $scope.closeModal();
+    $timeout(function() {
+      Modals.showNewAccount();
+    }, 300);
+
+  }
 
   // TODO : for DEV only
   /*$timeout(function() {

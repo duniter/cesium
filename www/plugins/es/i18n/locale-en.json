@@ -47,6 +47,7 @@
     },
     "EDIT": {
       "TITLE": "Edit",
+      "TITLE_NEW": "New ad",
       "RECORD_TITLE": "Title",
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
@@ -77,6 +78,7 @@
       "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Search tool",
+      "TYPE": "Kind of referencing",
       "LOCATION": "Location",
       "LOCATION_HELP": "City",
       "LAST_RECORDS": "Last records:",
@@ -84,7 +86,8 @@
     },
     "VIEW": {
       "TITLE": "Registry",
-      "CATEGORY": "Main activity:"
+      "CATEGORY": "Main activity:",
+      "LOCATION": "Address:"
     },
     "TYPE": {
       "TITLE": "New",
@@ -96,13 +99,14 @@
     },
     "EDIT": {
       "TITLE": "Edit",
+      "TITLE_NEW": "New referencing",
       "RECORD_TYPE":"Record type",
       "RECORD_TITLE": "Name",
       "RECORD_TITLE_HELP": "Name",
       "RECORD_DESCRIPTION": "Description",
-      "RECORD_DESCRIPTION_HELP": "Describe activity...",
+      "RECORD_DESCRIPTION_HELP": "Describe activity",
       "RECORD_ADDRESS": "Address",
-      "RECORD_ADDRESS_HELP": "Street, address...",
+      "RECORD_ADDRESS_HELP": "Address: Street, building...",
       "RECORD_CITY": "City",
       "RECORD_CITY_HELP": "City",
       "RECORD_SOCIAL_NETWORKS": "Social networks and web site",
@@ -110,6 +114,7 @@
       "RECORD_PUBKEY_HELP": "Public key to receive payments"
     },
     "ERROR": {
+      "LOAD_CATEGORY_FAILED": "Loading activity list failed",
       "LOAD_RECORD_FAILED": "Loading failed",
       "SAVE_RECORD_FAILED": "Saving failed"
     }

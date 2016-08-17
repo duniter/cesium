@@ -1,6 +1,6 @@
 <ion-view left-buttons="leftButtons">
   <ion-nav-title>
-    <span translate>REGISTRY.VIEW.TITLE</span>
+
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
@@ -65,16 +65,12 @@
         </div>
 
         <!-- Buttons bar-->
-        <div class="item large-button-bar hidden-xs hidden-sm">
+        <div class="item large-button-bar hidden-xs hidden-sm"
+             ng-if="formData.pubkey || canEdit">
           <button class="button button-raised button-assertive ink-dark"
                   ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
             {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
-          </button>
-          <button class="button button-raised button-icon icon ion-ribbon-b"
-                  ng-if="hasSelf && !canEdit"
-                  ng-click="certifyIdentity()">
-            {{'WOT.BTN_CERTIFY' | translate}}
           </button>
           <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
                   ng-if="canEdit"
@@ -96,18 +92,31 @@
               <span ng-bind-html="formData.category.name"></span>
             </a>
           </h4>
+          <h4 ng-if="formData.address">
+            <span class="gray" translate>REGISTRY.VIEW.LOCATION</span>
+            <a class="positive" target='_blank' href="https://www.google.fr/maps/?q={{formData.address}},%20{{formData.city}}">
+              <span ng-bind-html="formData.address"></span>
+              <span ng-if="formData.city"> - </span>
+              <span ng-bind-html="formData.city"></span>
+            </a>
+          </h4>
         </ion-item>
 
-        <span class="item item-divider" ng-if="formData.address || formData.city">
-          <span translate>REGISTRY.LOCATION_DIVIDER</span>
-        </span>
-
-        <div class="item item-icon-left" ng-if="formData.address || formData.city">
-          <h2>
-            <span ng-bind-html="formData.address"></span>
-            <span ng-bind-html="formData.city"></span>
-          </h2>
-        </div>
+        <!-- Socials networks -->
+        <ng-if ng-if="formData.socials && formData.socials.length>0">
+          <ion-item class="item-icon-left"
+                    type="no-padding item-text-wrap"
+                    ng-repeat="social in formData.socials track by social.url"
+                    id="social-{{social.url|formatSlug}}">
+            <i class="icon ion-social-{{social.type}}"
+               ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
+            <p ng-if="social.type && social.type != 'web'">{{social.type}}</p>
+            <h2>
+              <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
+              <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
+            </h2>
+          </ion-item>
+        </ng-if>
 
         <div class="lazy-load">
 
@@ -115,9 +124,9 @@
           <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
 
 
-        <span class="item item-divider" ng-if="formData.pubkey">
-          <span translate>REGISTRY.TECHNICAL_DIVIDER</span>
-        </span>
+          <span class="item item-divider" ng-if="formData.pubkey">
+            <span translate>REGISTRY.TECHNICAL_DIVIDER</span>
+          </span>
 
           <!-- pubkey -->
           <div class="item item-icon-left item-text-wrap ink"
