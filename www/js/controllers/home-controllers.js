@@ -160,14 +160,6 @@ function NewAccountModalController($scope, $ionicModal, $state, $ionicSideMenuDe
 function HomeController($scope, Modals) {
   'ngInject';
 
-  /* -- modals -- */
-  $scope.showAboutModal = function() {
-    Modals.showAbout();
-  };
-
-  $scope.showNewAccountModal = function() {
-    Modals.showNewAccount();
-  };
 }
 
 function JoinController($scope, $timeout, Modals) {

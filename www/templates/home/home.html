@@ -3,64 +3,57 @@
 
   </ion-nav-title>
 
-  <ion-content class="has-header center padding-xs positive-900-bg">
+  <ion-content class="has-header text-center padding-xs positive-900-bg">
 
     <h2 class="hidden-xs" translate>HOME.WELCOME</h2>
     <div class="logo"></div>
     <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
     <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
 
-    <div class="row no-padding">
-      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
+    <div class="center">
 
-      <div class="col">
-        <!-- CURRENCY -->
-        <button type="button"
-                class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
-                ng-if="options.registry.enable"
-                ui-sref="app.currency_lookup" translate>HOME.BTN_CURRENCIES</button>
-        <button type="button"
-                class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark hidden-sm hidden-xs"
-                ng-if="!options.registry || !options.registry.enable"
-                ui-sref="app.currency_view_lg" translate>HOME.BTN_CURRENCY</button>
-        <button type="button"
-                class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark visible-sm visible-xs"
-                ng-if="!options.registry || !options.registry.enable"
-                ui-sref="app.currency_view" translate>HOME.BTN_CURRENCY</button>
+      <!-- CURRENCY -->
+      <button type="button"
+              class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark"
+              ng-if="options.registry.enable"
+              ui-sref="app.currency_lookup" translate>HOME.BTN_CURRENCIES</button>
+      <button type="button"
+              class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark hidden-sm hidden-xs"
+              ng-if="!options.registry || !options.registry.enable"
+              ui-sref="app.currency_view_lg" translate>HOME.BTN_CURRENCY</button>
+      <button type="button"
+              class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark visible-sm visible-xs"
+              ng-if="!options.registry || !options.registry.enable"
+              ui-sref="app.currency_view" translate>HOME.BTN_CURRENCY</button>
 
-        <button type="button"
-                class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
-                ng-click="login()" ng-show="!isLogin()" translate>COMMON.BTN_LOGIN</button>
-        <button type="button"
-                class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
-                ui-sref="app.view_wallet" ng-show="isLogin()" translate>HOME.BTN_ACCOUNT</button>
+      <button type="button"
+              class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
+              ng-click="login()" ng-show="!isLogin()" translate>COMMON.BTN_LOGIN</button>
+      <button type="button"
+              class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
+              ui-sref="app.view_wallet" ng-show="isLogin()" translate>HOME.BTN_ACCOUNT</button>
 
-        <div class="text-center no-padding" ng-show="!isLogin()">
-          {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
-          <br class="visible-xs">
-          <b>
-            <a class="assertive" ng-click="showNewAccountModal()" translate>
+      <div class="text-center no-padding" ng-show="!isLogin()">
+        {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
+        <br class="visible-xs">
+        <b>
+          <a class="assertive" ng-click="showNewAccountModal()" translate>
             LOGIN.CREATE_ACCOUNT
           </a>
-          </b>
-        </div>
+        </b>
       </div>
 
-      <div class="col col-25 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="text-center no-padding visible-xs stable">
+        <br/>
+        <!-- version -->
+        <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
+        |
+        <!-- about -->
+        <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
+      </div>
     </div>
 
+
   </ion-content>
-
-  <ion-footer-bar align-title="center" class="positive-900-bg light footer">
-
-    <h1 class="title stable">
-      <!-- version -->
-      <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
-      |
-      <!-- about -->
-      <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
-    </h1>
-  </ion-footer-bar>
-
 
 </ion-view>

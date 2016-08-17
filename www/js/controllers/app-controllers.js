@@ -258,6 +258,14 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
     });
   };
 
+  $scope.showAboutModal = function() {
+    Modals.showAbout();
+  };
+
+  $scope.showNewAccountModal = function() {
+    Modals.showNewAccount();
+  };
+
   ////////////////////////////////////////
   // Layout Methods
   ////////////////////////////////////////

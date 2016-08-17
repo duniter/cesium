@@ -54,6 +54,8 @@ $screen-sm-max:                   991px;
 $screen-md:                       992px;
 $screen-md-max:                   1199px;
 $screen-lg:                       1200px;
+
+
 // IE10 on Windows Phone 8
 // IE10 on WP8 doesn't report CSS pixels, but actual device pixels. In
 // other words, say on a Lumia, you'll get 768px as the device width,
@@ -279,6 +281,10 @@ $screen-lg:                       1200px;
         display: none !important;
         visibility: hidden !important;
     }
+    .visible-lg {
+        display: inherit !important;
+        visibility: visible !important;
+    }
     .badge {
       text-overflow: ellipsis !important;
       white-space: nowrap;
@@ -294,12 +300,6 @@ $screen-lg:                       1200px;
     .hidden-lg {
         display: inherit;
         visibility: visible;
-    }
-}
-@media screen and (min-width: $screen-lg) {
-    .visible-lg {
-        display: inherit !important;
-        visibility: visible !important;
     }
 }
 @media screen and (max-width: $screen-md-max) {
@@ -320,19 +320,115 @@ $screen-lg:                       1200px;
     }
 }
 
+/* ============
+ Left menu
+=============== */
+
+// Resolution for left menu show/hide
+$screen-nomenu-max:               844px;
+$screen-menu:                     845px;
+
+// Screen without left menu
+@media screen and (max-width: $screen-nomenu-max) {
+    .hidden-nomenu {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    .visible-nomenu {
+        display: inherit !important;
+        visibility: visible !important;
+    }
+}
+@media screen and (min-width: $screen-menu) {
+    .hidden-nomenu {
+        display: inherit;
+        visibility: visible;
+    }
+    .visible-nomenu {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+
+// Screen WITH left menu
+@media screen and (min-width: $screen-menu) {
+    .hidden-menu {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    .visible-menu {
+        display: inherit !important;
+        visibility: visible !important;
+    }
+}
+@media screen and (max-width: $screen-nomenu-max) {
+    .hidden-menu {
+        display: inherit;
+        visibility: visible;
+    }
+    .visible-menu {
+        display: none;
+        visibility: hidden;
+    }
+}
+
 #unitPopover .item.selected {
   background-color: $stable;
 }
 
+/* ============
+ Home page
+=============== */
+
 #home .logo {
   margin-top: 15px;
-  height: 200px;
   width: 100%;
-  background-image: url(../../resources/logo/svg/colors/logo.large.cesium.dune.svg);
-  background-size: 200px 200px;
   background-position: center center;
   background-repeat: no-repeat;
 }
+
+#home .center {
+  float: none;
+  text-align: center;
+  display: inline-block;
+}
+#home .center .button {
+  display: inline-block;
+}
+
+@media screen and (max-width: $screen-xs-max) {
+  #home .logo {
+    height: 96px;
+    background-image: url(../img/logo_96px.png);
+    background-size: 96px 96px;
+  }
+  #home .footer {
+    display:none;
+  }
+}
+@media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
+  #home .logo {
+    height: 144px;
+    background-image: url(../img/logo_144px.png);
+    background-size: 144px 144px;
+  }
+  #home .button {
+     max-width: 350px;
+  }
+}
+@media screen and (min-width: $screen-md) {
+  #home .logo {
+    height: 200px;
+    background-image: url(../../resources/logo/svg/colors/logo.large.cesium.dune.svg);
+    background-size: 200px 200px;
+  }
+
+  #home .button {
+     max-width: 350px;
+  }
+}
+
+
 
 @media screen and (min-width: $screen-md) {
   .circle-bg-dark {

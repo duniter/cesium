@@ -181,7 +181,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       if (ionic.Platform.isIOS()) {
         cordova.plugins.Keyboard.disableScroll(true);
       }
+
+      // See - http://ionicframework.com/docs/api/page/keyboard/
+      else if (ionic.Platform.isAndroid()) {
+        ionic.Platform.isFullScreen = true;
+      }
     }
+
+
 
     // Status bar
     if (window.StatusBar) {

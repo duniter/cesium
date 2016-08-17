@@ -7,7 +7,7 @@
       </ion-nav-back-button>
 
       <ion-nav-buttons side="left">
-        <button class="button button-icon button-clear icon ion-navicon visible-xs" menu-toggle="left" ></button>
+        <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="fabContent"></ion-nav-view>
@@ -121,10 +121,12 @@
 
     <ion-footer-bar class="bar-stable footer hidden-xs hidden-sm">
       <h1 class="title">
+        <!-- version -->
         <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
-        <span class="buildDate" translate="COMMON.APP_BUILD_DATE" translate-values="{buildDate: config.BUILD_DATE}"></span>
+        |
+        <!-- about -->
+        <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
       </h1>
-
     </ion-footer-bar>
   </ion-side-menu>
 
