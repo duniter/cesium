@@ -11,8 +11,13 @@
     <!-- build:css dist_css/cesium.css -->
       <link href="css/ionic.app.css" rel="stylesheet">
       <link href="css/style.css" rel="stylesheet">
+
       <!--removeIf(device)-->
       <link href="css/style-no-device.css" rel="stylesheet">
+      <!--endRemoveIf(device)-->
+
+      <!--removeIf(no-plugin)-->
+      <link href="dist/dist_css/plugins/es/css/style.css" rel="stylesheet">
       <!--endRemoveIf(device)-->
     <!-- endbuild -->
 
@@ -86,7 +91,6 @@
 
       <!--removeIf(no-plugin)-->
       <!-- Plugins -->
-      <link href="dist/dist_css/plugins/es/css/style.css" rel="stylesheet">
       <script src="dist/dist_js/app/plugins.js"></script>
       <script src="dist/dist_js/plugins/translations.js"></script>
       <script src="dist/dist_js/plugins/templates.js"></script>
