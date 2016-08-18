@@ -21,11 +21,11 @@
 
     <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
-    <div class="item ink" ng-click="changeEsNode()" >
+    <div class="item ink" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
       <div class="input-label" ng-class="{'gray': !formData.enable}">
       {{'ES_SETTINGS.NODE' | translate}}
       </div>
-      <span class="item-note" ng-class="{'gray': !formData.enable}">{{formData.node}}</span>
+      <span class="item-note" ng-class="{'dark': formData.enable}">{{formData.node}}</span>
     </div>
   </ion-content>
 </ion-view>

@@ -104,6 +104,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, $ioni
       esUser.copy(newInstance);
 
       $scope.formData.node = node;
+      delete $scope.formData.newNode;
 
       UIUtils.loading.hide(10);
     });
@@ -142,7 +143,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, $ioni
             ]
           })
           .then(function(node) {
-            delete $scope.formData.newNode;
             if (!node) { // user cancel
               UIUtils.loading.hide();
               return;
