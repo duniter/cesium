@@ -4,12 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title>Cesium</title>
-
-      <link rel="icon" href="./img/favicon.ico">
-      <link rel="manifest" href="/manifest.json">
-
+    <link rel="icon" href="./img/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
     <!-- build:css dist_css/cesium.css -->
-      <link href="css/ionic.app.css" rel="stylesheet">
+      <link href="css/ionic.app.min.css" rel="stylesheet">
       <link href="css/style.css" rel="stylesheet">
 
       <!--removeIf(device)-->
@@ -20,8 +18,7 @@
       <link href="dist/dist_css/plugins/es/css/style.css" rel="stylesheet">
       <!--endRemoveIf(device)-->
     <!-- endbuild -->
-
-    <!-- build:js dist_js/cesium.js -->
+    <!-- build:js dist_js/vendor.js -->
       <!-- vendor js -->
       <script src="js/vendor/moment.min.js"></script>
       <script src="js/vendor/moment.fr.js"></script>
@@ -51,10 +48,8 @@
       <script src="js/vendor/ng-cordova.min.js"></script>
       <script src="cordova.js"></script>
       <!--endRemoveIf(no-device)-->
-
-      <!-- config -->
-      <script src="js/config.js"></script>
-
+    <!-- endbuild -->
+    <!-- build:js dist_js/cesium.js -->
       <!-- services -->
       <script src="dist/dist_js/app/services/crypto-services.js"></script>
       <script src="dist/dist_js/app/services/utils-services.js"></script>
@@ -116,9 +111,12 @@
       <script src="dist/dist_js/app/directives.js"></script>
       <script src="dist/dist_js/app/app.js"></script>
     <!-- endbuild -->
-
+    <!-- build:js config.js -->
+      <!-- config  -->
+      <script src="js/config.js"></script>
+    <!-- endbuild -->
   </head>
   <body ng-app="cesium" ng-strict-di>
-  <ion-nav-view></ion-nav-view>
+    <ion-nav-view></ion-nav-view>
   </body>
 </html>

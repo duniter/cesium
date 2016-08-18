@@ -11,7 +11,7 @@
   "market": {
     "APP_CONFIG": {
       "DUNITER_NODE": "cgeek.fr:9330",
-      "DUNITER_NODE_ES": "test-net.duniter.fr:9202",
+      "DUNITER_NODE_ES": "test-net.duniter.fr:9203",
       "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
       "TIMEOUT": 4000,
       "DEBUG": false

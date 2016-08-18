@@ -310,38 +310,41 @@ gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done
 
 gulp.task('optimize-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
   var tmpPath = './platforms/web/www';
-  var jsFilter = filter(["**/*.js", "!**/vendor/*"], { restore: true });
+  var jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
-  var indexHtmlFilter = filter(['**/*', '!**/index.html'], { restore: true });
+  var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
 
   gulp.src(tmpPath + '/index.html')
-    .pipe(useref())      // Concatenate with gulp-useref
+    .pipe(useref())             // Concatenate with gulp-useref
+    // Process JS
     .pipe(jsFilter)
     .pipe(uglify())             // Minify any javascript sources
     .pipe(jsFilter.restore)
+
+    // Process CSS
     .pipe(cssFilter)
     .pipe(csso())               // Minify any CSS sources
     .pipe(cssFilter.restore)
-    .pipe(indexHtmlFilter)
-    .pipe(rev())                // Rename the concatenated files (but not index.html)
-    .pipe(indexHtmlFilter.restore)
-    .pipe(revReplace())         // Substitute in new filenames
+
+    // Add revision to filename  (but not index.html and config.js)
+    .pipe(revFilesFilter)
+    .pipe(rev())                // Rename the concatenated files
+    .pipe(revFilesFilter.restore)
+
+    // Substitute in new filenames
+    .pipe(revReplace())
     .pipe(gulp.dest(tmpPath))
     .on('end', done);
 });
 
 gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
   var tmpPath = './platforms/web/www';
-  var jsFilter = filter(["**/*.js", "!**/cesium-*.js"]);
-  var cssFilter = filter(["**/*.css", "!**/cesium-*.css"]);
 
   es.concat(
     gulp.src(tmpPath + '/js/**/*.js', {read: false})
-      .pipe(jsFilter)
       .pipe(clean()),
 
     gulp.src(tmpPath + '/css/**/*.css', {read: false})
-      .pipe(cssFilter)
       .pipe(clean())
   )
   .on ('end', done);
@@ -356,7 +359,8 @@ gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function(d
     tmpPath + '/dist',
     tmpPath + '/lib/ionic/scss',
     tmpPath + '/lib/ionic/css',
-    tmpPath + '/lib/ionic/js'
+    tmpPath + '/lib/ionic/js',
+    tmpPath + '/lib/ionic/version.json'
   ]);
 });
 
