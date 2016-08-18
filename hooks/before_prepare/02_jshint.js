@@ -8,11 +8,11 @@ var async = require('async');
 var foldersToProcess = [
     'js',
     'js/controllers',
-    'js/entity',
+    'js/entities',
     'js/services',
     'plugins/es/js',
     'plugins/es/js/controllers',
-    'plugins/es/js/entity',
+    //'plugins/es/js/entities',
     'plugins/es/js/services'
 ];
 
