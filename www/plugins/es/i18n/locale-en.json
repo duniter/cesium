@@ -144,7 +144,13 @@
     }
   },
   "SETTINGS": {
+    "PLUGIN_NAME": "Registry and market place",
+    "ENABLE_TOGGLE": "Enable extension ?",
     "ES_NODE": "Data node address",
-    "ES_NODE_HELP": "server.domain.com:port"
+    "ES_NODE_HELP": "server.domain.com:port",
+    "POPUP_NODE": {
+      "TITLE" : "Data Node",
+      "HELP" : "Set the address of the node to use:"
+    }
   }
 }

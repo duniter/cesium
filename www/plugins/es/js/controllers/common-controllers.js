@@ -11,16 +11,19 @@ angular.module('cesium.es.common.controllers', ['cesium.es.services'])
          points: {
            'menu-main': {
              templateUrl: "plugins/es/templates/menu_extend.html",
-             controller: "PluginExtensionPointCtrl"
+             controller: "ESMenuExtendCtrl"
            },
            'menu-user': {
              templateUrl: "plugins/es/templates/menu_extend.html",
-             controller: "PluginExtensionPointCtrl"
+             controller: "ESMenuExtendCtrl"
            }
          }
         });
     }
   })
+
+
+ .controller('ESMenuExtendCtrl', ESMenuExtendController)
 
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
@@ -29,6 +32,18 @@ angular.module('cesium.es.common.controllers', ['cesium.es.services'])
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
 
 ;
+
+/**
+ * Control menu extension
+ */
+function ESMenuExtendController($scope, PluginService, Wallet) {
+  'ngInject';
+  $scope.extensionPoint = PluginService.extensions.points.current.get();
+
+  $scope.es = Wallet.data.settings.plugins && Wallet.data.settings.plugins.es ? Wallet.data.settings.plugins.es : {
+    enable: false
+  };
+}
 
 function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
   'ngInject';

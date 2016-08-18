@@ -32,7 +32,9 @@
     "UD": "UD",
     "DATE_PATTERN": "YYYY-MM-DD HH:mm",
     "EMPTY_PARENTHESIS": "(empty)",
-    "UID": "Pseudonym"
+    "UID": "Pseudonym",
+    "ENABLE": "Enable",
+    "DISABLE": "Disable"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -81,6 +83,7 @@
     "DISPLAY_UD_HISTORY": "Show received dividends ?",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
+    "PLUGINS_SETTINGS": "Extensions",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
       "HELP" : "Set the address of the node to use:"

@@ -80,14 +80,16 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
     });
   };
 
-  scan = function () {
+  scan = function (n) {
     return $q(function(resolve,reject){
       if (!enable) {
         reject("Barcode scanner not enable. Please call 'Device.ready()' once before use (e.g in app.js).");
         return;
       }
-      $cordovaBarcodeScanner.scan()
-      .then(function(result) {
+      cordova.plugins.barcodeScanner.scan(
+      function(result) {
+        //console.log('bar code result');
+        //console.log(result);
         if (!result.cancelled) {
           resolve(result.text); // make sure to convert into String
         }
@@ -95,7 +97,8 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
           resolve();
         }
       },
-      function(error) {reject(error);});
+      function(err) {reject(err);},
+      n);
     });
   };
 

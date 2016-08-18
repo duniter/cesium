@@ -144,7 +144,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       }
       // Otherwise, log to console and display error
       else {
-        console.error('>>>>>>>' , err);
+        console.error(err);
         hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
         alertError(fullMsg, subtitle);
       }
@@ -309,6 +309,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
       this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
       this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
+      this.motion.ripple = disableMotion('.animate-ripple');
     }
 
   return {

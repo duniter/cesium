@@ -36,6 +36,12 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
     }
     UIUtils.loading.hide();
     $scope.loading = false;
+
+    // Set Ink
+    $timeout(function() {
+      // Set Ink
+      UIUtils.ink({selector: '.item'});
+    }, 100);
   });
 
   $scope.setSettingsForm = function(settingsForm) {
@@ -107,6 +113,7 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
             ]
           })
           .then(function(node) {
+            delete $scope.formData.newNode;
             if (!node) { // user cancel
               UIUtils.loading.hide();
               return;
@@ -127,9 +134,5 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
   };
   $scope.$watch('formData', $scope.onSettingsChanged, true);
 
-  // Set Ink
-  $timeout(function() {
-    // Set Ink
-    UIUtils.ink({selector: '.item'});
-  }, 10);
+
 }

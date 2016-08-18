@@ -1,7 +1,9 @@
 
-  <div class="item ink" ng-click="changeEsNode()">
-    <div class="input-label">
-    {{'SETTINGS.ES_NODE' | translate}}
-    </div>
-    <span class="item-note">{{formData.esNode}}</span>
-  </div>
+<div class="item ink" ui-sref="app.es_settings">
+  <div class="input-label ng-binding" translate>ES_SETTINGS.PLUGIN_NAME</div>
+
+  <h3 class="item-note">
+    <span ng-if="enable" translate>COMMON.ENABLE</span>
+    <span ng-if="!enable" translate>COMMON.DISABLE</span>
+  </h3>
+</div>

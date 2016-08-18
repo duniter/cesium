@@ -32,7 +32,9 @@
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YYYY HH:mm",
     "EMPTY_PARENTHESIS": "(vide)",
-    "UID": "Pseudonyme"
+    "UID": "Pseudonyme",
+    "ENABLE": "Activé",
+    "DISABLE": "Désactivé"
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -81,6 +83,7 @@
     "DISPLAY_UD_HISTORY": "Voir les dividendes reçus ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "REMEMBER_ME": "Se souvenir de moi",
+    "PLUGINS_SETTINGS": "Extensions",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"

@@ -1,9 +1,7 @@
 <ion-view left-buttons="leftButtons"
           cache-view="false"
-          id="settings">
-  <ion-nav-title>
-    <span translate>SETTINGS.TITLE</span>
-  </ion-nav-title>
+          class="settings">
+  <ion-nav-title translate>SETTINGS.TITLE</ion-nav-title>
 
   <ion-content >
     <div class="item item-toggle dark">
@@ -60,14 +58,10 @@
     </div>
 
 
-    <span class="item item-divider">
-      {{'SETTINGS.HISTORY_SETTINGS' | translate}}
-    </span>
+    <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
 
     <div class="item item-toggle dark">
-      <div class="input-label">
-        {{'SETTINGS.DISPLAY_UD_HISTORY' | translate}}
-      </div>
+      <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
       <label class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.showUDHistory" >
         <div class="track">
@@ -75,12 +69,11 @@
         </div>
       </label>
     </div>
+
     <!-- Allow extension here -->
     <cs-extension-point name="history"></cs-extension-point>
 
-    <span class="item item-divider">
-      {{'SETTINGS.NETWORK_SETTINGS' | translate}}
-    </span>
+    <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
     <div class="item ink" ng-click="changeNode()">
       <div class="input-label">
@@ -91,6 +84,10 @@
     <!-- Allow extension here -->
     <cs-extension-point name="network"></cs-extension-point>
 
+    <span class="item item-divider" translate>SETTINGS.PLUGINS_SETTINGS</span>
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="plugins"></cs-extension-point>
 
   </ion-content>
 </ion-view>

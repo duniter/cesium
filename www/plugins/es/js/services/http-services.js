@@ -8,6 +8,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 
   function esHttp(server) {
 
+    var enable = !!server;
+    if (enable && Wallet.data && Wallet.data.settings && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es) {
+      enable = Wallet.data.settings.plugins.es.enable;
+    }
+
     function copy(otherNode) {
       if (!!this.instance) {
         var instance = this.instance;
@@ -157,9 +162,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         $http.defaults.headers.common.Authorization = 'Basic ';*/
     }
 
-    isEnable = function() {
-      return !!server;
-    };
+    function isEnable() {
+      return enable;
+    }
+
+    function setEnable(value) {
+      enable = value;
+    }
 
     function emptyHit() {
       return {
@@ -173,6 +182,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 
     return {
       isEnable: isEnable,
+      setEnable: setEnable,
       copy: copy,
       get: get,
       post: post,
@@ -193,9 +203,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
     };
   }
 
-  var service = esHttp((Wallet.data && Wallet.data.settings && Wallet.data.settings.esNode) ?
-                         Wallet.data.settings.esNode :
-                         APP_CONFIG.DUNITER_NODE_ES);
+  var service = esHttp(APP_CONFIG.DUNITER_NODE_ES);
   service.instance = esHttp;
   return service;
 })

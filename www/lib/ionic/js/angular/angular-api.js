@@ -100,7 +100,8 @@
             // Creating raise that return a promise event method: featureName.raisePromise.eventName
             feature.raisePromise[eventName] = function() {
               var deferred = $q.defer();
-              if (!$rootScope.$$listeners[eventId]) {
+              // If no listener: continue
+              if (!$rootScope.$$listenerCount[eventId]) {
                 deferred.resolve();
               }
               else {
@@ -132,6 +133,10 @@
                     listener.dereg();
                     var index = self.eventListeners.indexOf(listener);
                     self.eventListeners.splice(index, 1);
+                    // If empty, completely remove the event array
+                    //if (!$rootScope.$$listenerCount[eventId]) {
+                    //  delete $rootScope.$$listeners[eventId];
+                    //}
                 };
 
                 scope.$on('$destroy', function() {

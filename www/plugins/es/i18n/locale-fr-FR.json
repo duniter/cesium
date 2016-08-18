@@ -143,8 +143,14 @@
       "PROFILE_SAVED": "Profil sauvegardé"
     }
   },
-  "SETTINGS": {
-    "ES_NODE": "Addresse du noeud de données",
-    "ES_NODE_HELP": "server.domain.com:port"
+  "ES_SETTINGS": {
+    "PLUGIN_NAME": "Annuaire et place de marché",
+    "ENABLE_TOGGLE": "Activé l'extension ?",
+    "NODE": "Addresse du noeud de données",
+    "NODE_HELP": "server.domain.com:port",
+    "POPUP_NODE": {
+      "TITLE" : "Noeud de données",
+      "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
+    }
   }
 }

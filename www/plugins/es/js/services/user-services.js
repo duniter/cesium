@@ -191,14 +191,18 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function removeListeners() {
+      console.log("[ES] Removing contribution to Wallet and Wot services");
+
       _.forEach(listeners, function(remove){
         remove();
       });
       listeners = [];
     }
 
-    // Extend Wallet.loadData() and WotService.loadData()
-    if (esHttp.isEnable()) {
+    function addListeners() {
+      console.log("[ES] Enable contribution to Wallet and Wot services");
+
+      // Extend Wallet.loadData() and WotService.loadData()
       listeners = [
         Wallet.api.data.on.load($rootScope, onWalletLoad, this),
         WotService.api.data.on.load($rootScope, onWotLoad, this),
@@ -206,9 +210,21 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       ];
     }
 
+    function refreshListeners() {
+      if (!esHttp.isEnable() && listeners && listeners.length > 0) {
+        removeListeners();
+      }
+      else if (esHttp.isEnable() && (!listeners || listeners.length === 0)) {
+        addListeners();
+      }
+    }
+
+    // Default action
+    refreshListeners();
 
     return {
       copy: copy,
+      refreshListeners: refreshListeners,
       profile: {
         get: esHttp.get('/user/profile/:id'),
         add: esHttp.record.post('/user/profile'),
