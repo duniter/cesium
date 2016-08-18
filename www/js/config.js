@@ -14,7 +14,7 @@ angular.module("cesium.config", [])
 	"TIMEOUT": 4000,
 	"DEBUG": false,
 	"VERSION": "0.1.27",
-	"BUILD_DATE": "2016-08-18T14:27:04.933Z"
+	"BUILD_DATE": "2016-08-18T14:32:54.704Z"
 })
 
 ;

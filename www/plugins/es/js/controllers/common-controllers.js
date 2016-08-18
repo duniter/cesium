@@ -213,6 +213,7 @@ function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, esHttp, Dat
 
       $scope.comments.push(obj);
       $scope.commentData = {}; // reset comment
+      UIUtils.loading.hide();
     });
   };
 

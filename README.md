@@ -57,8 +57,10 @@ To contribute and compile cesium, you will have to:
    - Add your environment config into `app/config.json`
    - Run compitaltion using option `--env`:
 ```
-  gulp default --env <your_env_name> 
+  gulp config --env <your_env_name> 
 ```
+
+ This will update the configuration file used by cesium, at `www/js/config.json`.
 
 ### Best pratices
 
