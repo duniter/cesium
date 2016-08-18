@@ -38,7 +38,8 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 /*
  * Settings extend controller
  */
-function ESExtendSettingsController ($scope, Wallet, PluginService, APP_CONFIG) {
+function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, APP_CONFIG) {
+  'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
   $scope.enable = false;
@@ -59,20 +60,27 @@ function ESExtendSettingsController ($scope, Wallet, PluginService, APP_CONFIG) 
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, $ionicHistory, UIUtils, APP_CONFIG, esHttp, esMarket,
+function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionicPopup, $ionicHistory, UIUtils, APP_CONFIG, esHttp, esMarket,
   esRegistry, esUser, Wallet) {
+  'ngInject';
 
   $scope.formData = {};
+  $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!$scope.formData.node && APP_CONFIG.DUNITER_NODE_ES) {
+    if (!$scope.formData.node) {
       if (Wallet.data.settings && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es) {
         angular.merge($scope.formData, Wallet.data.settings.plugins.es);
       }
       else {
         $scope.formData.enable = !!APP_CONFIG.DUNITER_NODE_ES;
+
+      }
+      if (!$scope.formData.node) {
+        $scope.formData.node = APP_CONFIG.DUNITER_NODE_ES;
       }
     }
+    $scope.loading = false;
   });
 
   $scope.setSettingsForm = function(settingsForm) {
@@ -155,11 +163,9 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, $ioni
 
   $scope.onSettingsChanged = function() {
     if ($scope.loading) {
-      $timeout(function() {
-        $scope.onSettingsChanged();
-      }, 200);
       return;
     }
+
     $scope.loading = true;
 
     if (!Wallet.data.settings.plugins) {
@@ -176,7 +182,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, $ioni
     esHttp.setEnable($scope.formData.enable);
     esUser.refreshListeners();
 
-    Wallet.store();
+    Wallet.store({settings: true, data: false});
 
     // Clean cache
     $ionicHistory.clearCache();

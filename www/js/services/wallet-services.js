@@ -8,6 +8,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   Wallet = function(id) {
 
     var
+    events = {
+      SETTINGS: 'wallet-settings-changed'
+    },
 
     defaultSettings = {
       useRelative: true,
@@ -201,41 +204,51 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return isLogin() && data.pubkey === pubkey;
     },
 
-    store = function() {
+    store = function(options) {
       if (data.settings.useLocalStorage) {
-        localStorage.setObject('CESIUM_SETTINGS', data.settings);
 
-        if (isLogin() && data.settings.rememberMe) {
-          var dataToStore = {
-            keypair: data.keypair,
-            pubkey: data.pubkey
-          };
-
-          if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
-            var pendings = data.tx.pendings.reduce(function(res, tx){
-              return tx.time ? res.concat({
-                amount: tx.amount,
-                time: tx.time,
-                hash: tx.hash
-              }) : res;
-            }, []);
-            if (pendings.length) {
-              dataToStore.tx = {
-                pendings: pendings
-              };
-            }
-          }
-
-          localStorage.setObject('CESIUM_DATA', dataToStore);
+        if (!options || options.settings) {
+          localStorage.setObject('CESIUM_SETTINGS', data.settings);
+          // Send event when settings changed
+          $rootScope.$broadcast(events.SETTINGS);
         }
-        else {
-          localStorage.setObject('CESIUM_DATA', null);
+
+        if (!options || options.data) {
+          if (isLogin() && data.settings.rememberMe) {
+            var dataToStore = {
+              keypair: data.keypair,
+              pubkey: data.pubkey
+            };
+
+            if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
+              var pendings = data.tx.pendings.reduce(function(res, tx){
+                return tx.time ? res.concat({
+                  amount: tx.amount,
+                  time: tx.time,
+                  hash: tx.hash
+                }) : res;
+              }, []);
+              if (pendings.length) {
+                dataToStore.tx = {
+                  pendings: pendings
+                };
+              }
+            }
+
+            localStorage.setObject('CESIUM_DATA', dataToStore);
+          }
+          else {
+            localStorage.setObject('CESIUM_DATA', null);
+          }
         }
       }
       else {
         localStorage.setObject('CESIUM_SETTINGS', null);
         localStorage.setObject('CESIUM_DATA', null);
+        // Send event when settings changed
+        $rootScope.$broadcast(events.SETTINGS);
       }
+
     },
 
     restore = function() {
@@ -1059,7 +1072,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       toJson: toJson,
       fromJson: fromJson,
       defaultSettings: defaultSettings,
-      api: api
+      api: api,
+      events: events
     };
   };
 

@@ -1,4 +1,4 @@
-angular.module('cesium.es.common.controllers', ['cesium.es.services'])
+angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.services'])
 
   // Configure menu items
   .config(function(PluginServiceProvider, APP_CONFIG) {
@@ -36,13 +36,19 @@ angular.module('cesium.es.common.controllers', ['cesium.es.services'])
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, PluginService, Wallet) {
+function ESMenuExtendController($scope, $rootScope, PluginService, Wallet, APP_CONFIG) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
 
-  $scope.es = Wallet.data.settings.plugins && Wallet.data.settings.plugins.es ? Wallet.data.settings.plugins.es : {
-    enable: false
+  $scope.refreshEnable = function() {
+    $scope.enable = Wallet.data && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es ?
+        Wallet.data.settings.plugins.es.enable :
+        !!APP_CONFIG.DUNITER_NODE_ES
   };
+
+  $rootScope.$on(Wallet.events.SETTINGS, $scope.refreshEnable);
+
+  $scope.refreshEnable();
 }
 
 function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {

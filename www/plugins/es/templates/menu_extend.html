@@ -1,6 +1,6 @@
 
 <!-- Main section -->
-<ng-if ng-if="es.enable && extensionPoint === 'menu-main'">
+<ng-if ng-if="enable && extensionPoint === 'menu-main'">
 
   <!-- professionals registry-->
   <ion-item menu-close class="item item-icon-left" active-link="active"
@@ -18,7 +18,7 @@
 </ng-if>
 
 <!-- User section -->
-<ng-if ng-if="es.enable && extensionPoint === 'menu-user'">
+<ng-if ng-if="enable && extensionPoint === 'menu-user'">
   <!-- user profile -->
   <ion-item menu-close class="item item-icon-left" active-link="active"
             ng-if="isLogin()"
