@@ -10,10 +10,12 @@ angular.module("cesium.config", [])
 
 .constant("APP_CONFIG", {
 	"DUNITER_NODE": "cgeek.fr:9330",
-	"TIMEOUT": 6000,
-	"DEBUG": true,
+	"DUNITER_NODE_ES": "test-net.duniter.fr:9202",
+	"NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
+	"TIMEOUT": 4000,
+	"DEBUG": false,
 	"VERSION": "0.1.27",
-	"BUILD_DATE": "2016-08-17T12:43:55.176Z"
+	"BUILD_DATE": "2016-08-18T12:55:59.884Z"
 })
 
 ;

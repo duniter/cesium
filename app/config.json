@@ -8,10 +8,10 @@
     }
   },
 
-  "gchange": {
+  "market": {
     "APP_CONFIG": {
       "DUNITER_NODE": "cgeek.fr:9330",
-      "DUNITER_NODE_ES": "data.duniter.fr",
+      "DUNITER_NODE_ES": "test-net.duniter.fr:9202",
       "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
       "TIMEOUT": 4000,
       "DEBUG": false
@@ -29,7 +29,7 @@
   "dev-es": {
     "APP_CONFIG": {
       "DUNITER_NODE": "test-net.duniter.fr:9201",
-      "DUNITER_NODE_ES": "localhost:9200",
+      "DUNITER_NODE_ES": "192.168.0.28:9200",
       "TIMEOUT": 6000,
       "DEBUG": true
     }
