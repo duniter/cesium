@@ -234,7 +234,7 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
     WotService.load(pubkey)
     .then(function(identity){
       $scope.formData = identity;
-      $scope.canCertify = Wallet.isLogin() && !Wallet.isUserPubkey(pubkey) && Wallet.data.isMember;
+      $scope.canCertify = $scope.formData.hasSelf && (!Wallet.isLogin() || (!Wallet.isUserPubkey(pubkey)));
       $scope.alreadyCertified = $scope.canCertify ? !!_.findWhere(identity.certifications, { uid: Wallet.data.uid, valid: true }) : false;
 
       $scope.loading = false;
@@ -254,6 +254,11 @@ function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $
   $scope.certify = function() {
     $scope.loadWallet()
     .then(function(walletData) {
+      if (!walletData.isMember) {
+        UIUtils.alert.error(walletData.requirements.needSelf ?
+          'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
+        return;
+      }
       UIUtils.loading.hide();
       UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
       .then(function(confirm){

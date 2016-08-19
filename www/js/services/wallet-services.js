@@ -1,27 +1,17 @@
 
-angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
+angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
+  'cesium.settings.services'])
 
 
-.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, UIUtils) {
+.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, csSettings) {
   'ngInject';
 
   Wallet = function(id) {
 
     var
-    events = {
-      SETTINGS: 'wallet-settings-changed'
-    },
-
-    defaultSettings = {
-      useRelative: true,
-      timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
-      timeWarningExpire: 2592000 * 3 /*=3 mois*/,
-      useLocalStorage: false,
-      rememberMe: false,
-      node: BMA.node.url,
-      showUDHistory: true
-    },
-
+    constants = {
+      STORAGE_KEY: "CESIUM_DATA"
+    }
     data = {
         pubkey: null,
         keypair: {
@@ -46,16 +36,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         loaded: false,
         blockUid: null,
         avatar: null,
-        settings: {
-          useRelative: defaultSettings.useRelative,
-          timeWarningExpireMembership: defaultSettings.timeWarningExpireMembership,
-          timeWarningExpire: defaultSettings.timeWarningExpire,
-          locale: {id: $translate.use()},
-          useLocalStorage: defaultSettings.useLocalStorage,
-          rememberMe: defaultSettings.rememberMe,
-          node: defaultSettings.node,
-          showUDHistory: defaultSettings.showUDHistory
-        }
     },
 
     api = new Api(this, 'WalletService-' + id),
@@ -84,17 +64,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.loaded = false;
       data.blockUid = null;
       data.avatar = null;
-      if (!data.settings.useLocalStorage) {
-        data.settings = {
-          useRelative: defaultSettings.useRelative,
-          timeWarningExpireMembership: defaultSettings.timeWarningExpireMembership,
-          timeWarningExpire: defaultSettings.timeWarningExpire,
-          locale: {id: $translate.use()},
-          useLocalStorage: defaultSettings.useLocalStorage,
-          rememberMe: defaultSettings.rememberMe,
-          node: BMA.node.url, // If changed, use the updated url
-          showUDHistory: defaultSettings.showUDHistory
-        };
+      if (!csSettings.data.useLocalStorage) {
+        csSettings.reset();
       }
     },
 
@@ -177,7 +148,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                     // Copy result to properties
                     data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
                     data.keypair = keypair;
-                    if (data.settings.useLocalStorage) {
+                    if (csSettings.data.useLocalStorage) {
                       store();
                     }
                     resolve(data);
@@ -204,99 +175,64 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return isLogin() && data.pubkey === pubkey;
     },
 
-    store = function(options) {
-      if (data.settings.useLocalStorage) {
+    store = function() {
+      if (csSettings.data.useLocalStorage) {
 
-        if (!options || options.settings) {
-          localStorage.setObject('CESIUM_SETTINGS', data.settings);
-          // Send event when settings changed
-          $rootScope.$broadcast(events.SETTINGS);
-        }
+        if (isLogin() && csSettings.data.rememberMe) {
+          var dataToStore = {
+            keypair: data.keypair,
+            pubkey: data.pubkey
+          };
 
-        if (!options || options.data) {
-          if (isLogin() && data.settings.rememberMe) {
-            var dataToStore = {
-              keypair: data.keypair,
-              pubkey: data.pubkey
-            };
-
-            if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
-              var pendings = data.tx.pendings.reduce(function(res, tx){
-                return tx.time ? res.concat({
-                  amount: tx.amount,
-                  time: tx.time,
-                  hash: tx.hash
-                }) : res;
-              }, []);
-              if (pendings.length) {
-                dataToStore.tx = {
-                  pendings: pendings
-                };
-              }
+          if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
+            var pendings = data.tx.pendings.reduce(function(res, tx){
+              return tx.time ? res.concat({
+                amount: tx.amount,
+                time: tx.time,
+                hash: tx.hash
+              }) : res;
+            }, []);
+            if (pendings.length) {
+              dataToStore.tx = {
+                pendings: pendings
+              };
             }
+          }
 
-            localStorage.setObject('CESIUM_DATA', dataToStore);
-          }
-          else {
-            localStorage.setObject('CESIUM_DATA', null);
-          }
+          localStorage.setObject(constants.STORAGE_KEY, dataToStore);
+        }
+        else {
+          localStorage.setObject(constants.STORAGE_KEY, null);
         }
       }
       else {
-        localStorage.setObject('CESIUM_SETTINGS', null);
-        localStorage.setObject('CESIUM_DATA', null);
-        // Send event when settings changed
-        $rootScope.$broadcast(events.SETTINGS);
+        localStorage.setObject(constants.STORAGE_KEY, null);
       }
-
     },
 
     restore = function() {
       return $q(function(resolve, reject){
-        var settings = localStorage.getObject('CESIUM_SETTINGS');
-        var dataStr = localStorage.get('CESIUM_DATA');
-        if (!settings && !dataStr) {
+        var dataStr = localStorage.get(constants.STORAGE_KEY);
+        if (!dataStr) {
           resolve();
           return;
         }
-        var nodeChanged = (settings && settings.node) && (data.settings.node != settings.node);
-        if (nodeChanged) {
-          BMA.copy(BMA.instance(settings.node)); // reload BMA
-          data.loaded = false;
-        }
-        if (settings) {
-          var refreshLocale = settings.locale && settings.locale.id && (data.settings.locale.id !== settings.locale.id);
-          data.settings = settings;
-
-          // TODO : This is a workaround for DEV (Need to implement edition in settings)
-          data.settings.timeWarningExpire = defaultSettings.timeWarningExpire;
-          data.settings.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
-
-          if (refreshLocale) {
-            $translate.use(data.settings.locale.id);
-          }
-        }
-        if (dataStr) {
-          fromJson(dataStr, false)
-          .then(function(storedData){
-            if (storedData && storedData.keypair && storedData.pubkey) {
-              data.keypair = storedData.keypair;
-              data.pubkey = storedData.pubkey;
-              if (storedData.tx && storedData.tx.pendings) {
-                data.tx.pendings = storedData.tx.pendings;
-              }
-              data.loaded = false;
+        fromJson(dataStr, false)
+        .then(function(storedData){
+          if (storedData && storedData.keypair && storedData.pubkey) {
+            data.keypair = storedData.keypair;
+            data.pubkey = storedData.pubkey;
+            if (storedData.tx && storedData.tx.pendings) {
+              data.tx.pendings = storedData.tx.pendings;
             }
+            data.loaded = false;
+          }
 
-            // Load parameters
-            // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-            return loadParameters();
-          })
-          .catch(function(err){reject(err);});
-        }
-        else {
-          resolve();
-        }
+          // Load parameters
+          // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+          return loadParameters();
+        })
+        .catch(function(err){reject(err);});
       });
     },
 
@@ -356,13 +292,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.requirements.needMembership = (data.requirements.membershipExpiresIn === 0 &&
                                               data.requirements.membershipPendingExpiresIn <= 0 );
           data.requirements.needRenew = (!data.requirements.needMembership &&
-                                         data.requirements.membershipExpiresIn <= data.settings.timeWarningExpireMembership &&
+                                         data.requirements.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
                                          data.requirements.membershipPendingExpiresIn <= 0);
           data.requirements.canMembershipOut = (data.requirements.membershipExpiresIn > 0);
           data.requirements.pendingMembership = (data.requirements.membershipPendingExpiresIn > 0);
           data.requirements.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
           data.requirements.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
-            if (cert.expiresIn <= data.settings.timeWarningExpire) {
+            if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
               return count + 1;
             }
             return count;
@@ -435,7 +371,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
           }));
         // get UD history
-        if (data.settings.showUDHistory) {
+        if (csSettings.data.showUDHistory) {
           jobs.push(
             BMA.ud.history({pubkey: data.pubkey})
             .then(function(res){
@@ -529,21 +465,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     loadParameters = function() {
-      if (!data.parameters || !data.currency) {
-        return $q(function(resolve, reject) {
-          BMA.blockchain.parameters()
-          .then(function(json){
-            data.currency = json.currency;
-            data.parameters = json;
-            resolve();
-          })
-          .catch(function(err) {
-            data.currency = null;
-            data.parameters = null;
-            reject(err);
-          });
+      return $q(function(resolve, reject) {
+        if (data.parameters && data.currency) {
+          resolve();
+          return;
+        }
+        BMA.blockchain.parameters()
+        .then(function(json){
+          data.currency = json.currency;
+          data.parameters = json;
+          resolve();
+        })
+        .catch(function(err) {
+          data.currency = null;
+          data.parameters = null;
+          reject(err);
         });
-      }
+      });
     },
 
     loadUDs = function() {
@@ -627,25 +565,40 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    refreshData = function() {
+    refreshData = function(options) {
+      if (!options) {
+        options = {
+          uds: true,
+          requirements: true,
+          sources: true,
+          tx: true
+        }
+      }
       return $q(function(resolve, reject){
-        $q.all([
+        var jobs = [];
+        // Get UDs
+        if (options.uds) {
+          jobs.push(loadUDs());
+        }
+        // Get requirements
+        if (options.uds) {
+          jobs.push(loadRequirements()
+            .then(function() {
+              finishLoadRequirements();
+            }));
+        }
+        // Get sources
+        if (options.source) {
+          jobs.push(loadSources());
+        }
+        // Get transactions
+        if (options.tx) {
+          jobs.push(loadTransactions());
+        }
+        // API extension
+        jobs.push(api.data.raisePromise.load(data));
 
-          // Get UDs
-          loadUDs(),
-
-          // Get requirements
-          loadRequirements()
-          .then(function() {
-            finishLoadRequirements();
-          }),
-
-          // Get sources
-          loadSources(),
-
-          // Get transactions
-          loadTransactions()
-        ])
+        $q.all(jobs)
         .then(function() {
           // Process transactions and sources
           processTransactionsAndSources()
@@ -794,18 +747,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             return;
           }
 
-          var tx = "Version: 2\n";
-          tx += "Type: Transaction\n";
-          tx += "Currency: " + data.currency + "\n";
-          tx += "Locktime: 0" + "\n"; // no lock
-          tx += "Issuers:\n";
-          tx += data.pubkey + "\n";
-          tx += "Inputs:\n";
+          var tx = 'Version: 3\n' +
+            'Type: Transaction\n' +
+            'Currency: ' + data.currency + '\n' +
+            'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
+            'Locktime: 0\n' + // no lock
+            'Issuers:\n' +
+             data.pubkey + '\n' +
+             'Inputs:\n';
 
           _.forEach(inputs.sources, function(source) {
-              // if D : D:PUBLIC_KEY:BLOCK_ID
-              // if T : T:T_HASH:T_INDEX
-              tx += source.type+":"+source.identifier+":"+source.noffset+"\n";
+              // if D : AMOUNT:BASE:D:PUBLIC_KEY:BLOCK_ID
+              // if T : AMOUNT:BASE:T:T_HASH:T_INDEX
+              tx += [source.amount, source.base, source.type, source.identifier,source.noffset].join(':')+"\n";
           });
 
           tx += 'Unlocks:\n';
@@ -899,22 +853,27 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   var signedIdentity = identity + signature + '\n';
                   // Send signed identity
                   BMA.wot.add({identity: signedIdentity})
-                    .then(function (result) {
-                      if (!!requirements) {
-                        // Refresh membership data
-                        loadRequirements()
-                          .then(function () {
-                            resolve();
-                          }).catch(function (err) {
-                          reject(err);
-                        });
-                      }
-                      else {
-                        data.uid = uid;
-                        data.blockUid = block.number + '-' + block.hash;
-                        resolve();
-                      }
-                    }).catch(function (err) {
+                  .then(function (result) {
+                    if (!!requirements) {
+                      // Refresh membership data
+                      loadRequirements()
+                        .then(function () {
+                          resolve();
+                        }).catch(function (err) {
+                        reject(err);
+                      });
+                    }
+                    else {
+                      data.uid = uid;
+                      data.blockUid = block.number + '-' + block.hash;
+                      resolve();
+                    }
+                  })
+                  .catch(function (err) {
+                    if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
+                      reject({ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'});
+                      return;
+                    }
                     reject(err);
                   });
                 }).catch(function (err) {
@@ -953,11 +912,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               // Send signed membership
               BMA.blockchain.membership({membership: signedMembership})
               .then(function(result) {
-                // Refresh membership data
-                loadRequirements()
-                .then(function() {
-                  resolve();
-                }).catch(function(err){reject(err);});
+                $timeout(function() {
+                  loadRequirements()
+                    .then(function() {
+                      finishLoadRequirements();
+                      resolve();
+                    })
+                    .catch(function(err){reject(err);});
+                }, 200);
               }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});
@@ -1047,6 +1009,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     // Register extension points
     api.registerEvent('data', 'load');
 
+    csSettings.api.data.on.changed($rootScope, store);
+
     return {
       id: id,
       data: data,
@@ -1071,9 +1035,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // serialization
       toJson: toJson,
       fromJson: fromJson,
-      defaultSettings: defaultSettings,
-      api: api,
-      events: events
+      api: api
     };
   };
 

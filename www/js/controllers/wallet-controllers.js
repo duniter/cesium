@@ -32,8 +32,8 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicActionSheet, $timeout,
-  UIUtils, Wallet, BMA, $translate, Device, $ionicPopover, Modals) {
+function WalletController($scope, $q, $ionicPopup, $timeout,
+  UIUtils, Wallet, BMA, $translate, $ionicPopover, Modals, csSettings) {
   'ngInject';
 
   $scope.walletData = null;
@@ -73,7 +73,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
     if (!$scope.walletData) {
       return;
     }
-    if ($scope.walletData.settings.useRelative) {
+    if (csSettings.data.useRelative) {
       $scope.convertedBalance = $scope.walletData.balance ? ($scope.walletData.balance / $scope.walletData.currentUD) : 0;
     } else {
       var balance = $scope.walletData.balance;
@@ -83,7 +83,7 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       $scope.convertedBalance = balance;
     }
   };
-  $scope.$watch('walletData.settings.useRelative', $scope.refreshConvertedBalance, true);
+  csSettings.api.data.on.changed($scope, $scope.refreshConvertedBalance);
   $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
 
   // Update view
@@ -241,8 +241,10 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
       })
       .catch(function(err){
          UIUtils.loading.hide();
-         UIUtils.alert.info(err);
-         $scope.self(); // loop
+         UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err)
+         .then(function() {
+           $scope.self(); // loop
+         });
       });
     });
   };
@@ -251,9 +253,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.membershipIn= function() {
     var doMembershipIn = function(retryCount) {
       Wallet.membership.inside()
-      .then(function() {
-        $scope.doUpdate();
-      })
       .catch(function(err) {
         if (!retryCount || retryCount <= 2) {
           $timeout(function() {
@@ -295,9 +294,6 @@ function WalletController($scope, $rootScope, $state, $q, $ionicPopup, $ionicAct
   $scope.membershipOut = function() {
     UIUtils.loading.show();
     Wallet.membership.out()
-    .then(function() {
-      $scope.doUpdate();
-    })
     .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_OUT_FAILED'));
   };
 

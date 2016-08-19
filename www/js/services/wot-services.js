@@ -1,7 +1,8 @@
 
-angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services'])
+angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
+  'cesium.settings.services'])
 
-.factory('WotService', function($q, BMA, Api, Wallet) {
+.factory('WotService', function($q, BMA, Api, csSettings) {
   'ngInject';
 
   WotService = function(id) {
@@ -28,19 +29,18 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   return -score;
                 });
           }
-          var timeWarningExpire = Wallet.isLogin() ? Wallet.data.settings.timeWarningExpire : Wallet.defaultSettings.timeWarningExpire;
           var requirements = res.identities[0];
           // Add useful custom fields
           requirements.hasSelf = true;
           requirements.needMembership = (requirements.membershipExpiresIn === 0 &&
                                               requirements.membershipPendingExpiresIn <= 0 );
-          requirements.needRenew = !requirements.needMembership && (requirements.membershipExpiresIn <= timeWarningExpire &&
+          requirements.needRenew = !requirements.needMembership && (requirements.membershipExpiresIn <= csSettings.data.timeWarningExpire &&
                                         requirements.membershipPendingExpiresIn <= 0 );
           requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
           requirements.pendingMembership = (requirements.membershipPendingExpiresIn > 0);
           requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
           requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
-            if (cert.expiresIn <= timeWarningExpire) {
+            if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
               return count + 1;
             }
             return count;
@@ -95,7 +95,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
 
           // Retrieve certifications
-          var timeWarningExpire = Wallet.isLogin() ? Wallet.data.settings.timeWarningExpire : Wallet.defaultSettings.timeWarningExpire;
           var expiresInByPub = requirements.certifications.reduce(function(map, cert){
             map[cert.from]=cert.expiresIn;
             return map;
@@ -112,7 +111,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     uid: cert.uids[0],
                     block: (cert.meta && cert.meta.block_number) ? cert.meta.block_number : 0,
                     expiresIn: expiresIn,
-                    willExpire: (expiresIn && expiresIn <= timeWarningExpire),
+                    willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
                     valid: (expiresIn && expiresIn > 0),
                     isMember: cert.isMember
                   });

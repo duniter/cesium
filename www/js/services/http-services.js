@@ -1,6 +1,6 @@
 angular.module('cesium.http.services', ['ngResource'])
 
-.factory('HttpUtils', function($http, $q, APP_CONFIG) {
+.factory('HttpUtils', function($http, $q, csSettings) {
   'ngInject';
 
   function HttpUtils(timeout) {
@@ -165,7 +165,7 @@ angular.module('cesium.http.services', ['ngResource'])
     };
   }
 
-  var service = HttpUtils(APP_CONFIG.TIMEOUT);
+  var service = HttpUtils(csSettings.data.timeout);
   service.instance = HttpUtils;
   return service;
 })

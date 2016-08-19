@@ -1,12 +1,11 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
-    'cesium.config'])
+angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, APP_CONFIG, HttpUtils) {
+.factory('BMA', function($q, csSettings, HttpUtils, $rootScope) {
   'ngInject';
 
-  function BMA(server) {
+  function BMA(host, port) {
 
     var
     instance = this,
@@ -15,7 +14,8 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
         UID_ALREADY_USED: 2003,
         NO_MATCHING_MEMBER: 2004,
         NO_IDTY_MATCHING_PUB_OR_UID: 2021,
-        MEMBERSHRIP_ALREADY_SEND: 2007
+        MEMBERSHIP_ALREADY_SEND: 2007,
+        IDENTITY_SANDBOX_FULL: 1007
       },
     regex = {
       USER_ID: "[A-Za-z0-9_-]+",
@@ -29,7 +29,13 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
     constants = {
       CACHE_TIME_MS: 60000
     },
+    protocol = (port === 443 ? 'https' : 'http'),
+    server = protocol + '://' + host + (port ? ':' + port : ''),
     data = {
+      node: {
+        host: host,
+        port: port
+      },
       blockchain: {
         current: null
       },
@@ -57,7 +63,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
 
 
     function getBlockchainCurrent(cache) {
-      var getBlockchainCurrentNoCache = HttpUtils.get('http://' + server + '/blockchain/current');
+      var getBlockchainCurrentNoCache = HttpUtils.get(server + '/blockchain/current');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain.current !== null &&
@@ -72,13 +78,14 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
             timestamp: now.getTime()
           };
           resolve(block);
-        });
+        })
+        .catch(function(err){reject(err);});
       });
     }
 
 
     function getMembers(cache) {
-      var getMembersNoCache = HttpUtils.get('http://' + server + '/wot/members');
+      var getMembersNoCache = HttpUtils.get(server + '/wot/members');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.wot && data.wot.members && data.wot.members.length > 0 &&
@@ -146,8 +153,8 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
     }
 
     function getBlockchainLastUd(cache) {
-      var getBlockchainWithUd = HttpUtils.get('http://' + server + '/blockchain/with/ud');
-      var getBlockchainBlock = HttpUtils.get('http://' + server + '/blockchain/block/:block');
+      var getBlockchainWithUd = HttpUtils.get(server + '/blockchain/with/ud');
+      var getBlockchainBlock = HttpUtils.get(server + '/blockchain/block/:block');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= constants.CACHE_TIME_MS){
@@ -216,7 +223,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
 
           if (!currency){
             if (host) {
-              HttpUtils.get('http://' + host + '/blockchain/parameters')()
+              HttpUtils.get(host + '/blockchain/parameters')()
               .then(function(parameters){
                 resolve({
                   uid: uid,
@@ -242,7 +249,7 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
             }
 
             // Check if currency are the same (between node and uri)
-            return HttpUtils.get('http://' + host + '/blockchain/parameters')()
+            return HttpUtils.get(host + '/blockchain/parameters')()
             .then(function(parameters){
               if (parameters.currency !== currency) {
                 throw {message: "Node's currency ["+parameters.currency+"] does not matched URI's currency ["+currency+"]."};
@@ -286,55 +293,57 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
 
     return {
       node: {
-        summary: HttpUtils.get('http://' + server + '/node/summary'),
-        url: server
+        summary: HttpUtils.get(server + '/node/summary'),
+        url: server,
+        host: host,
+        port: port
       },
       wot: {
-        lookup: HttpUtils.get('http://' + server + '/wot/lookup/:search'),
+        lookup: HttpUtils.get(server + '/wot/lookup/:search'),
         member: {
           all: getMembers,
           uids: getMemberUidsByPubkey,
           get: getMemberByPubkey
         },
-        requirements: HttpUtils.get('http://' + server + '/wot/requirements/:pubkey'),
-        add: HttpUtils.post('http://' + server + '/wot/add'),
-        certify: HttpUtils.post('http://' + server + '/wot/certify')
+        requirements: HttpUtils.get(server + '/wot/requirements/:pubkey'),
+        add: HttpUtils.post(server + '/wot/add'),
+        certify: HttpUtils.post(server + '/wot/certify')
       },
       network: {
         peering: {
-          peers: HttpUtils.get('http://' + server + '/network/peering/peers')
+          peers: HttpUtils.get(server + '/network/peering/peers')
         },
-        peers: HttpUtils.get('http://' + server + '/network/peers')
+        peers: HttpUtils.get(server + '/network/peers')
       },
       blockchain: {
-        parameters: HttpUtils.get('http://' + server + '/blockchain/parameters'),
+        parameters: HttpUtils.get(server + '/blockchain/parameters'),
         current: getBlockchainCurrent,
-        block: HttpUtils.get('http://' + server + '/blockchain/block/:block'),
-        membership: HttpUtils.post('http://' + server + '/blockchain/membership'),
+        block: HttpUtils.get(server + '/blockchain/block/:block'),
+        membership: HttpUtils.post(server + '/blockchain/membership'),
         stats: {
-          ud: HttpUtils.get('http://' + server + '/blockchain/with/ud'),
-          tx: HttpUtils.get('http://' + server + '/blockchain/with/tx')
+          ud: HttpUtils.get(server + '/blockchain/with/ud'),
+          tx: HttpUtils.get(server + '/blockchain/with/tx')
         },
         lastUd: getBlockchainLastUd
       },
       tx: {
-        sources: HttpUtils.get('http://' + server + '/tx/sources/:pubkey'),
-        process: HttpUtils.post('http://' + server + '/tx/process'),
+        sources: HttpUtils.get(server + '/tx/sources/:pubkey'),
+        process: HttpUtils.post(server + '/tx/process'),
         history: {
-          all: HttpUtils.get('http://' + server + '/tx/history/:pubkey'),
-          times: HttpUtils.get('http://' + server + '/tx/history/:pubkey/times/:from/:to'),
-          blocks: HttpUtils.get('http://' + server + '/tx/history/:pubkey/blocks/:from/:to')
+          all: HttpUtils.get(server + '/tx/history/:pubkey'),
+          times: HttpUtils.get(server + '/tx/history/:pubkey/times/:from/:to'),
+          blocks: HttpUtils.get(server + '/tx/history/:pubkey/blocks/:from/:to')
         }
       },
       ud: {
-        history: HttpUtils.get('http://' + server + '/ud/history/:pubkey')
+        history: HttpUtils.get(server + '/ud/history/:pubkey')
       },
       websocket: {
         block: function() {
-          return HttpUtils.ws('ws://' + server + '/ws/block');
+          return HttpUtils.ws('ws://' + host + ':' + port + '/ws/block');
         },
         peer: function() {
-          return HttpUtils.ws('ws://' + server + '/ws/peer');
+          return HttpUtils.ws('ws://' + host + ':' + port + '/ws/peer');
         },
         close : HttpUtils.closeAllWs
       },
@@ -361,8 +370,22 @@ angular.module('cesium.bma.services', ['cesium.http.services', 'ngResource',
     };
   }
 
-  var service = BMA(APP_CONFIG.DUNITER_NODE, APP_CONFIG.TIMEOUT);
+  var service = BMA(csSettings.data.node.host, csSettings.data.node.port);
   service.instance = BMA;
+
+  // Listen settings changes
+  csSettings.api.data.on.changed($rootScope, function(settings) {
+
+    var nodeChanged =
+      (settings.node.host && settings.node.host != service.node.host) ||
+      (settings.node.port && settings.node.port != service.node.port);
+
+    if (nodeChanged) {
+      service.copy(BMA(settings.node.host, settings.node.port)); // reload BMA
+    }
+
+  });
+
   return service;
 })
 ;

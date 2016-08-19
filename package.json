@@ -2,6 +2,25 @@
   "name": "cesium",
   "version": "0.1.28",
   "description": "Unhosted webapp client for Duniter network",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:duniter/cesium.git"
+  },
+  "keywords": [
+    "duniter",
+    "cesium",
+    "ionic",
+    "angular",
+    "cordova",
+    "crypto-currency"
+  ],
+  "author": "Duniter team",
+  "license": "GPLv3",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/duniter/cesium/issues",
+    "new": "https://github.com/duniter/cesium/issues/new?labels=bug"
+  },
   "dependencies": {
     "delete-empty": "^0.1.3",
     "gulp": "^3.9.1",

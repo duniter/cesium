@@ -53,16 +53,18 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  CryptoUtils, BMA, Wallet, APP_CONFIG, $ionicHistory, Device, $ionicPopover, $translate, $filter,
-  Modals
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
+  BMA, Wallet, csConfig, $ionicHistory, Device, Modals, csSettings
   ) {
   'ngInject';
 
   $scope.search = { text: '', results: {} };
-  $scope.config = APP_CONFIG;
+  $scope.config = csConfig;
   if (!$rootScope.walletData) {
     $rootScope.walletData = Wallet.data;
+  }
+  if (!$rootScope.settings) {
+    $rootScope.settings = csSettings.data;
   }
 
   ////////////////////////////////////////
@@ -195,9 +197,9 @@ function AppController($scope, $rootScope, $ionicModal, $state, $ionicSideMenuDe
     return Modals.showLogin()
     .then(function(formData){
       if (!formData) return;
-      Wallet.data.settings.rememberMe = formData.rememberMe;
-      if (Wallet.data.settings.rememberMe) {
-        Wallet.data.settings.useLocalStorage = true;
+      var rememberMeChanged = (csSettings.data.rememberMe !== formData.rememberMe);
+      if (rememberMeChanged) {
+        csSettings.data.useLocalStorage = csSettings.data.rememberMe ? true : csSettings.data.useLocalStorage;
         Wallet.store();
       }
       return Wallet.login(formData.username, formData.password);

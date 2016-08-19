@@ -3,7 +3,16 @@ function PeerController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal,
   'ngInject';
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    $scope.showPeer($state.stateParams.server);
+    if (!$rootScope.memberUidsByPubkeys) {
+      BMA.wot.member.uids(true/*cache*/)
+      .then(function(uids){
+        $rootScope.memberUidsByPubkeys = uids;
+        $scope.showPeer($state.stateParams.server);
+      });
+    }
+    else {
+      $scope.showPeer($state.stateParams.server);
+    }
   });
 
   $scope.showPeer = function(server) {

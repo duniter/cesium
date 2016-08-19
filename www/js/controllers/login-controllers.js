@@ -4,13 +4,13 @@ angular.module('cesium.login.controllers', ['cesium.services'])
   .controller('LoginModalCtrl', LoginModalController)
 ;
 
-function LoginModalController($scope, $rootScope, $ionicModal, Wallet, CryptoUtils, UIUtils, $q, $state, $timeout, $ionicSideMenuDelegate, $ionicHistory, Modals) {
+function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, csSettings) {
   'ngInject';
 
   $scope.computing = false;
   $scope.pubkey = null;
   $scope.formData = {
-    rememberMe: Wallet.data.settings.rememberMe
+    rememberMe: csSettings.data.rememberMe
   };
 
   // Login form submit

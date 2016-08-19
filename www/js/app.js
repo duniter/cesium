@@ -119,10 +119,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     .useLoaderCache(true);
   })
 
-  .config(function($httpProvider, APP_CONFIG) {
+  .config(function($httpProvider, csConfig) {
     'ngInject';
     // Set default timeout
-    $httpProvider.defaults.timeout = !!APP_CONFIG.TIMEOUT ? APP_CONFIG.TIMEOUT : 4000 /* default timeout */;
+    $httpProvider.defaults.timeout = !!csConfig.TIMEOUT ? csConfig.TIMEOUT : 4000 /* default timeout */;
 
     //Enable cross domain calls
     $httpProvider.defaults.useXDomain = true;
@@ -131,10 +131,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
   })
 
-  .config(function($compileProvider, APP_CONFIG) {
+  .config(function($compileProvider, csConfig) {
     'ngInject';
 
-    $compileProvider.debugInfoEnabled(!!APP_CONFIG.DEBUG);
+    $compileProvider.debugInfoEnabled(!!csConfig.DEBUG);
   })
 
   .config(function($animateProvider) {

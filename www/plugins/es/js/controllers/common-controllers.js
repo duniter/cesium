@@ -1,10 +1,10 @@
 angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.services'])
 
   // Configure menu items
-  .config(function(PluginServiceProvider, APP_CONFIG) {
+  .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    var enable = !!csConfig.DUNITER_NODE_ES;
     if (enable) {
       // Menu extension points
       PluginServiceProvider.extendState('app', {
@@ -36,14 +36,14 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $rootScope, PluginService, Wallet, APP_CONFIG) {
+function ESMenuExtendController($scope, $rootScope, PluginService, Wallet, csConfig) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
 
   $scope.refreshEnable = function() {
     $scope.enable = Wallet.data && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es ?
         Wallet.data.settings.plugins.es.enable :
-        !!APP_CONFIG.DUNITER_NODE_ES;
+        !!csConfig.DUNITER_NODE_ES;
   };
 
   $rootScope.$on(Wallet.events.SETTINGS, $scope.refreshEnable);

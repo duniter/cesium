@@ -26,8 +26,8 @@
         <h3 class="light" ng-if="!walletData.name && walletData.isMember">{{walletData.uid}}</h3>
         <h3 class="light" ng-if="!walletData.name && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
-            <span ng-if="!walletData.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
-            <span ng-if="walletData.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
+            <span ng-if="!$root.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
+            <span ng-if="$root.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
         </h4>
       </div>
       <h4 class="content light" ng-if="loading">
@@ -123,8 +123,8 @@
         <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
           <span translate>ACCOUNT.PENDING_TX</span>
           <div class="badge item-note">
-            <span ng-if="!walletData.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
-            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
           </div>
         </span>
 
@@ -158,8 +158,8 @@
           </h3>
           <div class="badge badge-pending item-note"
                ng-class="{'badge-balanced': tx.amount > 0}">
-            <span ng-if="!walletData.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-            <span ng-if="walletData.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
+            <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
 
@@ -167,8 +167,8 @@
         <span class="item item-divider" ng-if="!loading">
           <span translate>ACCOUNT.LAST_TX</span>
           <div class="badge item-note">
-            <span ng-if="!walletData.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
-            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
           </div>
         </span>
 
@@ -217,8 +217,8 @@
           </h3>
           <div class="badge item-note"
                ng-class="{'badge-balanced': tx.amount > 0}">
-            <span ng-if="!walletData.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-            <span ng-if="walletData.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
+            <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
       </div>

@@ -117,14 +117,14 @@ gulp.task('config', function (done) {
   gutil.log(gutil.colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
 
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  config['APP_CONFIG']['VERSION'] = version;
-  config['APP_CONFIG']['BUILD_DATE'] = (new Date()).toJSON();
+  config['version'] = version;
+  config['build'] = (new Date()).toJSON();
 
-  // TODO : change version config.xml file
+  // TODO : change version in config.xml file
 
   return ngConstant({
       name: 'cesium.config',
-      constants: config,
+      constants: {"csConfig": config},
       stream: true,
       dest: 'config.js'
     })

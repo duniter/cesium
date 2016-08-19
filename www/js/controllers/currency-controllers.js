@@ -59,14 +59,14 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CONFIG, BMA) {
+function CurrencyLookupController($scope, $state, UIUtils) {
   'ngInject';
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
   $scope.search.looking = true;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function() {
     $scope.loadCurrencies()
     .then(function (res) {
       $scope.knownCurrencies = res;
@@ -91,15 +91,13 @@ function CurrencyLookupController($scope, $state, $q, $timeout, UIUtils, APP_CON
   };
 }
 
-function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $interval, $timeout, Wallet, $translate) {
+function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csNetwork) {
 
-  PeersController.call(this, $scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout);
-
-  $scope.search = {};
+  $scope.loadingPeers = true;
+  $scope.peers = csNetwork.data.peers;
   $scope.formData = {
-    useRelative: Wallet.data.settings.useRelative
+    useRelative: csSettings.data.useRelative
   };
-  $scope.knownBlocks = [];
   $scope.node = null;
   $scope.loading = true;
 
@@ -158,11 +156,11 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     }
 
     $scope.node.websocket.block().on('block', function(block) {
-      var theFPR = fpr(block);
-      if ($scope.knownBlocks.indexOf(theFPR) === -1) {
-        $scope.knownBlocks.push(theFPR);
+      var buid = csNetwork.buid(block);
+      if (csNetwork.data.knownBlocks.indexOf(buid) === -1) {
+        csNetwork.data.knownBlocks.push(buid);
         // We wait 2s when a new block is received, just to wait for network propagation
-        var wait = $scope.knownBlocks.length === 1 ? 0 : 2000;
+        var wait = csNetwork.data.knownBlocks.length === 1 ? 0 : 2000;
         $timeout(function() {
           $scope.refresh();
         }, wait);
@@ -266,128 +264,16 @@ function CurrencyViewController($scope, $rootScope, $state, BMA, $q, UIUtils, $i
     })
     .then(function(){
       // Network
-      $scope.searchPeers();
+      $scope.loadingPeers = true;
+      csNetwork.getPeers()
+        .then(function(peers) {
+          $scope.peers = peers;
+          $scope.loadingPeers = false;
+        })
+        .catch(function(err) {
+          $scope.peers = [];
+          $scope.loadingPeers = false;
+        })
     });
   };
-}
-
-
-function PeersController($scope, $rootScope, BMA, UIUtils, $q, $interval, $timeout) {
-
-  var newPeers = [], interval, lookingForPeers;
-  $scope.search.lookingForPeers = false;
-  $scope.search.peers = [];
-
-  $scope.overviewPeers = function() {
-    var currents = {}, block;
-    for (var i = 0, len = $scope.search.peers.length; i < len; i++) {
-      block = $scope.search.peers[i].current;
-      if (block) {
-        var bid = fpr(block);
-        currents[bid] = currents[bid] || 0;
-        currents[bid]++;
-      }
-    }
-    var fprs = _.keys(currents).map(function(key) {
-      return { fpr: key, qty: currents[key] };
-    });
-    var best = _.max(fprs, function(obj) {
-      return obj.qty;
-    });
-    var p;
-    for (var j = 0, len2 = $scope.search.peers.length; j < len2; j++) {
-      p = $scope.search.peers[j];
-      p.hasMainConsensusBlock = fpr(p.current) == best.fpr;
-      p.hasConsensusBlock = !p.hasMainConsensusBlock && currents[fpr(p.current)] > 1;
-    }
-    $scope.search.peers = _.uniq($scope.search.peers, false, function(peer) {
-      return peer.pubkey;
-    });
-    $scope.search.peers = _.sortBy($scope.search.peers, function(p) {
-      var score = 1;
-      score += (10000 * (p.online ? 1 : 0));
-      score += (1000  * (p.hasMainConsensusBlock ? 1 : 0));
-      score += (100   * (p.uid ? 1 : 0));
-      return -score;
-    });
-  };
-
-  $scope.searchPeers = function() {
-
-    if (interval) {
-      $interval.cancel(interval);
-    }
-
-    interval = $interval(function() {
-      if (newPeers.length) {
-        $scope.search.peers = $scope.search.peers.concat(newPeers.splice(0));
-        $scope.overviewPeers();
-      } else if (lookingForPeers && !$scope.search.lookingForPeers) {
-        // The peer lookup endend, we can make a clean final report
-        $timeout(function(){
-          lookingForPeers = false;
-          $scope.overviewPeers();
-        }, 1000);
-      }
-    }, 1000);
-
-    var known = {};
-    $rootScope.memberUidsByPubkeys = {};
-    $scope.search.peers = [];
-    $scope.search.lookingForPeers = true;
-    lookingForPeers = true;
-    return BMA.network.peering.peers({ leaves: true })
-      .then(function(res){
-        return BMA.wot.member.uids(true/*cache*/)
-          .then(function(uids){
-            $rootScope.memberUidsByPubkeys = uids;
-            return res;
-          });
-      })
-      .then(function(res){
-        return $q.all(res.leaves.map(function(leaf) {
-          return BMA.network.peering.peers({ leaf: leaf })
-            .then(function(subres){
-              var peer = subres.leaf.value;
-              if (peer) {
-                peer = new Peer(peer);
-                // Test each peer only once
-                if (!known[peer.getURL()]) {
-                  peer.dns = peer.getDns();
-                  peer.blockNumber = peer.block.replace(/-.+$/, '');
-                  peer.uid = $rootScope.memberUidsByPubkeys[peer.pubkey];
-                  newPeers.push(peer);
-                  var node = BMA.instance(peer.getURL());
-                  return node.blockchain.current()
-                    .then(function(block){
-                      peer.current = block;
-                      peer.online = true;
-                      peer.server = peer.getURL();
-                      if ($scope.knownBlocks.indexOf(fpr(block)) === -1) {
-                        $scope.knownBlocks.push(fpr(block));
-                      }
-                    })
-                    .catch(function(err) {
-                    });
-                }
-              }
-            });
-        }))
-        .then(function(){
-          $scope.search.lookingForPeers = false;
-        });
-      })
-      .catch(function(err) {
-        //console.log(err);
-        $scope.search.lookingForPeers = false;
-      });
-  };
-
-  $scope.viewPeer = function() {
-
-  };
-}
-
-function fpr(block) {
-  return block && [block.number, block.hash].join('-');
 }

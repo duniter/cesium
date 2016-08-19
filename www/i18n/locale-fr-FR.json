@@ -222,8 +222,11 @@
     "FIELD_TOO_LONG": "Valeur trop longue",
     "FIELD_ACCENT": "Caractères accentués et virgules non autorisés",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
-    "SEND_IDENTITY_FAILED": "Erreur pendant l'inscription.",
-    "SEND_CERTIFICATION_FAILED": "Erreur lors de la certification de l'identité.",
+    "SEND_IDENTITY_FAILED": "Echec de l'inscription.",
+    "SEND_CERTIFICATION_FAILED": "Echec de la certification.",
+    "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vous ne pouvez pas effectuer de certification, car votre compte n'est <b>pas membre</b>.",
+    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas certifier quelqu'un, car vous n'etes pas encore devenu membre.<br/>Patience ! ;-)",
+    "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
     "LOGIN_FAILED": "Erreur lors de l'authentification.",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",
     "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'ientité.",
@@ -252,7 +255,8 @@
     "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide.",
     "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
-    "INVALID_PUBKEY": "La clé publique n'a pas le format attendu."
+    "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
+    "IDENTITY_SANDBOX_FULL": "Le noeud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de noeud (via le menu <b>Paramètres</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

@@ -1,37 +1,43 @@
 {
   "default": {
-    "APP_CONFIG": {
-      "DUNITER_NODE": "test-net.duniter.fr:9201",
-      "DUNITER_NODE_ES": "test-net.duniter.fr:9203",
-      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
-      "TIMEOUT": 4000,
-      "DEBUG": false
-    }
-  },
-
-  "simple": {
-    "APP_CONFIG": {
-      "DUNITER_NODE": "test-net.duniter.fr:9201",
-      "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
-      "TIMEOUT": 6000,
-      "DEBUG": false
+    "timeout": 4000,
+    "useRelative": true,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": false,
+    "rememberMe": false,
+    "showUDHistory": false,
+    "node": {
+      "host": "test-net.duniter.fr",
+      "port": "9201"
+    },
+    "plugins":{
+      "es": {
+        "enable": "false",
+        "host": "test-net.duniter.fr",
+        "port": "9203"
+      }
     }
   },
 
   "dev": {
-    "APP_CONFIG": {
-      "DUNITER_NODE": "localhost:9201",
-      "TIMEOUT": 6000,
-      "DEBUG": true
-    }
-  },
-
-  "dev-es": {
-    "APP_CONFIG": {
-      "DUNITER_NODE": "test-net.duniter.fr:9201",
-      "DUNITER_NODE_ES": "192.168.0.28:9200",
-      "TIMEOUT": 6000,
-      "DEBUG": true
+    "timeout": 6000,
+    "useRelative": true,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": true,
+    "rememberMe": true,
+    "showUDHistory": false,
+    "node": {
+      "host": "test-net.duniter.fr",
+      "port": "9201"
+    },
+    "plugins":{
+      "es": {
+        "enable": "true",
+        "host": "test-net.duniter.fr",
+        "port": "9203"
+      }
     }
   }
 }

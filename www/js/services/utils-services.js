@@ -146,7 +146,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       else {
         console.error(err);
         hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
-        alertError(fullMsg, subtitle);
+        return alertError(fullMsg, subtitle);
       }
     };
   }

@@ -3,17 +3,15 @@
     cache-view="false"
     >
   <ion-nav-title>
-    {{id}}
+    {{currency}}
   </ion-nav-title>
 
     <ion-nav-buttons side="secondary">
         <button class="button button-icon button-clear icon ion-loop" ng-click="refresh()">
         </button>
     </ion-nav-buttons>
-    <!--
-      TODO : use a ng-if to show/hide when small/large
-    <div class="scroll visible-xs">-->
-    <div class="scroll">
+
+    <ion-content scroll="false">
         <ion-tabs class="tabs-icon-top tabs-positive has-header">
 
             <ion-tab title="{{'CURRENCY.VIEW.TAB_CURRENCY'|translate}}" icon="ion-stats-bars">
@@ -32,17 +30,6 @@
 
             </ion-tab>
         </ion-tabs>
-    </div>
+    </ion-content>
 
-    <!--<ion-content class="has-header hidden-xs">
-        <div class="row scroll">
-            <div class="col-50 ">
-                <ng-include src="'templates/explore/tabs/explore_tab_currency.html'"/>
-            </div>
-            <div class="col-50 ">
-                <ng-include src="'templates/explore/tabs/explore_tab_network.html'"/>
-            </div>
-        </div>
-        <div class="scroll-bar scroll-bar-v"></div>
-    </ion-content>-->
 </ion-view>

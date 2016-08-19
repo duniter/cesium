@@ -1,8 +1,8 @@
 angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.services'])
-.config(function(PluginServiceProvider, APP_CONFIG) {
+.config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    var enable = !!csConfig.DUNITER_NODE_ES;
     if (enable) {
       // Will force to load this service
       PluginServiceProvider.registerEagerLoadingService('esUser');

@@ -3,7 +3,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, CryptoUtils, HttpUtils, $rootScope, APP_CONFIG, Wallet) {
+.factory('esHttp', function($q, CryptoUtils, HttpUtils, $rootScope, csConfig, Wallet) {
   'ngInject';
 
   function esHttp(server) {
@@ -203,7 +203,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
     };
   }
 
-  var service = esHttp(APP_CONFIG.DUNITER_NODE_ES);
+  var service = esHttp(csConfig.DUNITER_NODE_ES);
   service.instance = esHttp;
   return service;
 })

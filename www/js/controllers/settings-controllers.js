@@ -20,19 +20,19 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q, $ionicPopup, $timeout, localStorage) {
+function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUtils, BMA, csSettings) {
   'ngInject';
 
-  $scope.formData = angular.copy(Wallet.defaultSettings);
+  $scope.formData = angular.copy(csSettings.data);
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $scope.loading = true; // to avoid the call of Wallet.store()
     $scope.locales = UIUtils.locales;
     $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
-    angular.merge($scope.formData, Wallet.data.settings);
-    if (Wallet.data.settings.locale && Wallet.data.settings.locale.id) {
-      $scope.formData.locale = _.findWhere($scope.locales, {id: Wallet.data.settings.locale.id});
+    angular.merge($scope.formData, csSettings.data);
+    if (csSettings.data.locale && csSettings.data.locale.id) {
+      $scope.formData.locale = _.findWhere($scope.locales, {id: csSettings.data.locale.id});
     }
     UIUtils.loading.hide();
     $scope.loading = false;
@@ -54,27 +54,26 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
 
   // Change node
   $scope.changeNode= function(node) {
-    if (!node) {
-      node = $scope.formData.node;
-    }
-    $scope.showNodePopup(node)
-    .then(function(node) {
-      if (node == $scope.formData.node) {
+    $scope.showNodePopup(node || $scope.formData.node)
+    .then(function(newNode) {
+
+      if (newNode.host === $scope.formData.node.host &&
+        newNode.port === $scope.formData.node.port) {
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
-      var nodeBMA = BMA.instance(node);
+      var nodeBMA = BMA.instance(newNode.host, newNode.port);
       nodeBMA.node.summary() // ping the node
       .then(function() {
         UIUtils.loading.hide();
-        $scope.formData.node = node;
+        $scope.formData.node = newNode;
         BMA.copy(nodeBMA);
       })
       .catch(function(err){
          UIUtils.loading.hide();
          UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
          .then(function(){
-           $scope.changeNode(node); // loop
+           $scope.changeNode(newNode); // loop
          });
       });
     });
@@ -83,7 +82,7 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
-      $scope.formData.newNode = node;
+      $scope.formData.newNode = [node.host, node.port].join(':');
       if (!!$scope.settingsForm) {
         $scope.settingsForm.$setPristine();
       }
@@ -113,12 +112,15 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
             ]
           })
           .then(function(node) {
-            delete $scope.formData.newNode;
             if (!node) { // user cancel
               UIUtils.loading.hide();
               return;
             }
-            resolve(node);
+            var parts = node.split(':');
+            resolve({
+              host: parts[0],
+              port: parts[1] || 80
+            });
           });
         });
       });
@@ -127,8 +129,8 @@ function SettingsController($scope, $state, UIUtils, Wallet, $translate, BMA, $q
   $scope.onSettingsChanged = function() {
     if (!$scope.loading) {
       $scope.loading = true;
-      angular.merge(Wallet.data.settings, $scope.formData);
-      Wallet.store();
+      angular.merge(csSettings.data, $scope.formData);
+      csSettings.store();
       $scope.loading = false;
     }
   };

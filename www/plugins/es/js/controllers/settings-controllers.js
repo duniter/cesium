@@ -1,10 +1,10 @@
 angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 
   // Configure menu items
-  .config(function(PluginServiceProvider, $stateProvider, APP_CONFIG) {
+  .config(function(PluginServiceProvider, $stateProvider, csConfig) {
     'ngInject';
 
-    var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+    var enable = !!csConfig.DUNITER_NODE_ES;
     if (enable) {
       // Extend settings via extension points
       PluginServiceProvider.extendState('app.settings', {
@@ -38,7 +38,7 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 /*
  * Settings extend controller
  */
-function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, APP_CONFIG) {
+function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, csConfig) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
@@ -47,7 +47,7 @@ function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, 
   // Update settings if need
   $scope.onSettingsLoaded = function() {
     if ($scope.loading) {
-      var enable = !!APP_CONFIG.DUNITER_NODE_ES;
+      var enable = !!csConfig.DUNITER_NODE_ES;
       if (enable && Wallet.data.settings && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es) {
         enable = Wallet.data.settings.plugins.es.enable;
       }
@@ -60,7 +60,7 @@ function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, 
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionicPopup, $ionicHistory, UIUtils, APP_CONFIG, esHttp, esMarket,
+function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionicPopup, $ionicHistory, UIUtils, csConfig, esHttp, esMarket,
   esRegistry, esUser, Wallet) {
   'ngInject';
 
@@ -73,11 +73,11 @@ function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionic
         angular.merge($scope.formData, Wallet.data.settings.plugins.es);
       }
       else {
-        $scope.formData.enable = !!APP_CONFIG.DUNITER_NODE_ES;
+        $scope.formData.enable = !!csConfig.DUNITER_NODE_ES;
 
       }
       if (!$scope.formData.node) {
-        $scope.formData.node = APP_CONFIG.DUNITER_NODE_ES;
+        $scope.formData.node = csConfig.DUNITER_NODE_ES;
       }
     }
     $scope.loading = false;

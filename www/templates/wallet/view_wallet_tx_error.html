@@ -34,8 +34,8 @@
         <span class="item item-divider">
           <span translate>ACCOUNT.ERROR_TX_SENDED</span>
           <div class="badge item-note">
-            <span ng-if="!walletData.settings.useRelative">({{walletData.currency | abbreviate}})</span>
-            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{walletData.currency | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
           </div>
         </span>
 
@@ -66,8 +66,8 @@
             {{::tx.comment}}<br/>
           </h3>
           <div class="badge item-note assertive">
-            <span ng-if="!walletData.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-            <span ng-if="walletData.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
+            <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
 
@@ -75,8 +75,8 @@
         <span class="item item-divider">
           <span translate>ACCOUNT.ERROR_TX_RECEIVED</span>
           <div class="badge item-note">
-            <span ng-if="!walletData.settings.useRelative">({{walletData.currency | abbreviate}})</span>
-            <span ng-if="walletData.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{walletData.currency | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
           </div>
         </span>
 
@@ -107,8 +107,8 @@
             {{::tx.comment}}<br/>
           </h3>
           <div class="badge badge-assertive item-note">
-            <span ng-if="!walletData.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-            <span ng-if="walletData.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
+            <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
       </div>

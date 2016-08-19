@@ -3,11 +3,11 @@
 
         <div class="item item-divider item-icon-right">
             {{'PEER.PEERS'|translate}}
-            <ion-spinner class="icon" icon="android" ng-if="search.lookingForPeers"></ion-spinner>
+            <ion-spinner class="icon" icon="android" ng-if="loadingPeers"></ion-spinner>
         </div>
 
         <a class="peer-item item item-icon-left"
-           collection-repeat="peer in search.peers"
+           collection-repeat="peer in peers"
            ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock) }"
            ui-sref="app.view_peer(peer)">
             <i class="icon ion-android-globe"></i>
