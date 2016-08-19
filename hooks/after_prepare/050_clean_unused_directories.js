@@ -41,6 +41,7 @@ if (rootdir && !skip) {
       path.join(wwwPath, 'dist'),
       path.join(wwwPath, 'js'),
       path.join(wwwPath, 'cordova-js-src'),
+      path.join(wwwPath, 'plugins', 'es'),
       path.join(wwwPath, 'lib', '**'),
       // Keep Ionic lib/ionic/fonts directory
       '!'+path.join(wwwPath, 'lib'),

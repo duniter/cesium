@@ -230,6 +230,10 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
       .pipe(htmlmin())
       .pipe(gulp.dest(tmpPath)),
 
+    // Copy fonts
+    gulp.src('./www/fonts/**/*.*')
+      .pipe(gulp.dest(tmpPath + '/fonts')),
+
     // Copy CSS
     gulp.src('./www/css/**/*.*')
       .pipe(gulp.dest(tmpPath + '/css')),

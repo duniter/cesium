@@ -29,20 +29,18 @@ if (rootdir) {
       wwwPath = path.join(rootdir, 'platforms', platform, 'www');
     }
 
-    var templatesPath = path.join(wwwPath, 'templates');
-    var jsPath = path.join(wwwPath, 'js');
-    var distJsPath = path.join(wwwPath, 'dist', 'dist_js', 'app');
+    var pluginPath = path.join(wwwPath, 'plugins') + '/es';
 
     // Removing unused code for device...
     es.concat(
       // Remove unused HTML tags
-      gulp.src(templatesPath + '/**/*.html')
+      gulp.src([wwwPath + '/templates/**/*.html', pluginPath + '/templates/**/*.html'])
         .pipe(removeCode({device: true}))
         .pipe(removeHtml('.hidden-xs.hidden-sm'))
         .pipe(removeHtml('.hidden-device'))
         .pipe(removeHtml('[remove-if][remove-if="device"]'))
         .pipe(htmlmin())
-        .pipe(gulp.dest(templatesPath)),
+        .pipe(gulp.dest(".")),
 
       gulp.src(path.join(wwwPath, 'index.html'))
         .pipe(removeCode({device: true}))
@@ -53,10 +51,10 @@ if (rootdir) {
         .pipe(gulp.dest(wwwPath)),
 
       // Remove unused JS code
-      gulp.src(jsPath +  + '/**/*.js')
+      gulp.src([wwwPath +  + '/js/**/*.js', pluginPath +  + '/js/**/*.js'])
         .pipe(removeCode({device: true}))
         .pipe(ngAnnotate({single_quotes: true}))
-        .pipe(gulp.dest(distJsPath))
+        .pipe(gulp.dest("."))
      );
 
   }

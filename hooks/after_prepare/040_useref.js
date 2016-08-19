@@ -38,9 +38,9 @@ if (rootdir && !skip) {
 
     var indexPath = path.join(wwwPath, 'index.html');
 
-    var jsFilter = filter(["**/*.js", "!**/vendor/*"], { restore: true });
+    var jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
     var cssFilter = filter("**/*.css", { restore: true });
-    var indexHtmlFilter = filter(['**/*', '!**/index.html'], { restore: true });
+    var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
 
     // Removing unused code for device...
     es.concat(
@@ -52,9 +52,9 @@ if (rootdir && !skip) {
         .pipe(cssFilter)
         .pipe(csso())               // Minify any CSS sources
         .pipe(cssFilter.restore)
-        .pipe(indexHtmlFilter)
+        .pipe(revFilesFilter)
         .pipe(rev())                // Rename the concatenated files (but not index.html)
-        .pipe(indexHtmlFilter.restore)
+        .pipe(revFilesFilter.restore)
         .pipe(revReplace())         // Substitute in new filenames
         .pipe(gulp.dest(wwwPath))
      );

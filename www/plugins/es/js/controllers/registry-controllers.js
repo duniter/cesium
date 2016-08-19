@@ -122,7 +122,12 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
       }
     }
     $scope.showFab('fab-add-registry-record');
+
+    // removeIf(device)
+    // Focus on search text (only if NOT device, to avoid keyboard opening)
     $focus('registrySearchText');
+    // removeIf(device)
+
   });
 
   $scope.doSearch = function() {

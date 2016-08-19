@@ -3,11 +3,11 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var path = require("path");
-var templateCache = require('gulp-angular-templatecache');
 var es = require('event-stream');
 var cmd = process.env.CORDOVA_CMDLINE;
 var rootdir = process.argv[2];
 var argv = require('yargs').argv;
+var ngTranslate = require('gulp-angular-translate');
 
 if (rootdir) {
 
@@ -30,21 +30,13 @@ if (rootdir) {
 
     // Concat templates into a JS
     es.concat(
-      gulp.src(wwwPath + 'templates/**/*.html')
-        .pipe(templateCache({
-          standalone:true,
-          module:"cesium.templates",
-          root: "templates/"
-         }))
+      gulp.src(wwwPath + '/i18n/locale-*.json')
+        .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
         .pipe(gulp.dest(distJsPath)),
 
-       gulp.src(wwwPath + 'plugins/*/templates/**/*.html')
-         .pipe(templateCache({
-           standalone:true,
-           module:"cesium.plugins.templates",
-           root: "templates/"
-          }))
-         .pipe(gulp.dest(pluginDistJsPath))
+      gulp.src(wwwPath + '/plugins/*/i18n/locale-*.json')
+        .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
+        .pipe(gulp.dest(pluginDistJsPath))
      );
   }
 }

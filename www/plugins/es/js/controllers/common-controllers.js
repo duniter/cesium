@@ -43,7 +43,7 @@ function ESMenuExtendController($scope, $rootScope, PluginService, Wallet, APP_C
   $scope.refreshEnable = function() {
     $scope.enable = Wallet.data && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es ?
         Wallet.data.settings.plugins.es.enable :
-        !!APP_CONFIG.DUNITER_NODE_ES
+        !!APP_CONFIG.DUNITER_NODE_ES;
   };
 
   $rootScope.$on(Wallet.events.SETTINGS, $scope.refreshEnable);

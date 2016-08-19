@@ -115,7 +115,11 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
       }
     }
     $scope.showFab('fab-add-market-record');
+
+    // removeIf(device)
+    // Focus on search text (only if NOT device, to avoid keyboard opening)
     $focus('marketSearchText');
+    // removeIf(device)
   });
 
 
