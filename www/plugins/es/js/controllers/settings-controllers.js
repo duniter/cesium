@@ -181,5 +181,5 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
   $scope.getServer = function() {
     return csHttp.getServer($scope.formData.host, $scope.formData.port);
-  }
+  };
 }

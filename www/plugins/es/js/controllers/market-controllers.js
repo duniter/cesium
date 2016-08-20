@@ -103,7 +103,7 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
 
       // Search on category
       if ($state.stateParams && $state.stateParams.category) {
-        esMarket.category.get($state.stateParams.category)
+        esMarket.category.get({id: $state.stateParams.category})
         .then(function(cat) {
           $scope.search.category = cat;
           hasOptions = runSearch = true;

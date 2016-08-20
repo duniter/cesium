@@ -54,7 +54,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
              reject(err);
            });
         });
-      }
+      };
     }
 
 
@@ -67,7 +67,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
           res.id = hit._id;
           return res;
         });
-      }
+      };
     }
 
     function getRecordCommonsRequest() {

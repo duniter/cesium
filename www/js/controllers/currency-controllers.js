@@ -266,14 +266,14 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
       // Network
       $scope.loadingPeers = true;
       csNetwork.getPeers()
-        .then(function(peers) {
-          $scope.peers = peers;
-          $scope.loadingPeers = false;
-        })
-        .catch(function(err) {
-          $scope.peers = [];
-          $scope.loadingPeers = false;
-        })
+      .then(function(peers) {
+        $scope.peers = peers;
+        $scope.loadingPeers = false;
+      })
+      .catch(function(err) {
+        $scope.peers = [];
+        $scope.loadingPeers = false;
+      });
     });
   };
 }

@@ -57,7 +57,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
 ;
 
-function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegistry, UIUtils, $sanitize, ModalUtils, $filter, BMA) {
+function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry, UIUtils, ModalUtils, $filter, BMA) {
   'ngInject';
 
   $scope.search = {
@@ -109,7 +109,7 @@ function ESRegistryLookupController($scope, $state, $focus, $q, $timeout, esRegi
 
       // Search on category
       if ($state.stateParams && $state.stateParams.category) {
-        esRegistry.category.get($state.stateParams.category)
+        esRegistry.category.get({id: $state.stateParams.category})
         .then(function(cat) {
           $scope.search.category = cat;
           hasOptions = runSearch = true;

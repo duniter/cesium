@@ -56,7 +56,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
              reject(err);
            });
         });
-      }
+      };
     }
 
     function getCategoryRequest() {
@@ -68,7 +68,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
             res.id = hit._id;
             return res;
           });
-      }
+      };
     }
 
     function getCommonsRequest() {
