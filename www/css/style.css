@@ -171,7 +171,9 @@
     top: 14px;
 }
 
-.peer-item:hover .badge{
+.peer-item:hover .badge.badge-energized,
+.peer-item:hover .badge.badge-balanced
+{
     color: #fff !important;
 }
 
