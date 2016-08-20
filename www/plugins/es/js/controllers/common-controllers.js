@@ -4,7 +4,7 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = !!csConfig.DUNITER_NODE_ES;
+    var enable = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.enable;
     if (enable) {
       // Menu extension points
       PluginServiceProvider.extendState('app', {
@@ -36,19 +36,21 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $rootScope, PluginService, Wallet, csConfig) {
+function ESMenuExtendController($scope, PluginService, csSettings) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
 
-  $scope.refreshEnable = function() {
-    $scope.enable = Wallet.data && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es ?
-        Wallet.data.settings.plugins.es.enable :
-        !!csConfig.DUNITER_NODE_ES;
+  $scope.updateView = function() {
+    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
+                    csSettings.data.plugins.es.enable :
+                    !!csSettings.data.plugins.host;
   };
 
-  $rootScope.$on(Wallet.events.SETTINGS, $scope.refreshEnable);
+  csSettings.api.data.on.changed($scope, function() {
+    $scope.updateView();
+  });
 
-  $scope.refreshEnable();
+  $scope.updateView();
 }
 
 function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {

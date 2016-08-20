@@ -119,14 +119,14 @@
       </ion-list>
     </ion-content>
 
-    <ion-footer-bar class="bar-stable footer hidden-xs hidden-sm">
-      <h1 class="title">
+    <ion-footer-bar class="bar-stable footer hidden-xs hidden-sm" >
+      <a class="title gray" ng-click="showAboutModal()">
         <!-- version -->
-        <span translate="COMMON.APP_VERSION" translate-values="{version: config.VERSION}"></span>
+        <span translate="COMMON.APP_VERSION" translate-values="{version: settings.version}"></span>
         |
         <!-- about -->
-        <a ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>
-      </h1>
+        <span translate>HOME.BTN_ABOUT</span>
+      </a>
     </ion-footer-bar>
   </ion-side-menu>
 

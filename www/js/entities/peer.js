@@ -88,31 +88,28 @@ function Peer(json) {
 
   that.getURL = function() {
     var bma = that.getBMA();
-    var base =
+    var host =
       (that.hasValid4(bma) ? bma.ipv4 :
         (bma.dns ? bma.dns :
           (bma.ipv6 ? '[' + bma.ipv6 + ']' : '')));
-    if(bma.port)
-      base += ':' + bma.port;
-    return base;
+    var protocol = (bma.port === 443) ? 'https' : 'http';
+    return protocol + '://' + host + (bma.port ? (':' + bma.port) : '');
+  };
+
+  that.getServer = function() {
+    var bma = that.getBMA();
+    var host =
+      (that.hasValid4(bma) ? bma.ipv4 :
+        (bma.dns ? bma.dns :
+          (bma.ipv6 ? '[' + bma.ipv6 + ']' : null)));
+    return host + (host && bma.port ? (':' + bma.port) : '');
   };
 
   that.hasValid4 = function(bma) {
     return bma.ipv4 && !bma.ipv4.match(/^127.0/) && !bma.ipv4.match(/^192.168/) ? true : false;
   };
 
-  that.getNamedURL = function() {
-    var bma = that.getBMA();
-    var base =
-      (that.hasValid4(bma) ? bma.ipv4 :
-        (bma.dns ? bma.dns :
-          (bma.ipv6 ? '[' + bma.ipv6 + ']' : '')));
-    if(bma.port)
-      base += ':' + bma.port;
-    return base;
-  };
-
   that.isReachable = function () {
-    return that.getURL() ? true : false;
+    return !!that.getServer();
   };
 }

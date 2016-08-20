@@ -2,7 +2,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = !!csConfig.DUNITER_NODE_ES;
+    var enable = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.enable;
     if (enable) {
       // Will force to load this service
       PluginServiceProvider.registerEagerLoadingService('esUser');
@@ -10,10 +10,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, esHttp, Wallet, WotService, UIUtils, BMA) {
+.factory('esUser', function($rootScope, esHttp, csSettings, Wallet, WotService, UIUtils, BMA) {
   'ngInject';
 
-  function ESUser(server) {
+  function factory(host, port) {
 
     var listeners;
 
@@ -36,7 +36,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }
         return;
       }
-      esHttp.get('/user/profile/:id?_source=avatar,title')({id: data.pubkey})
+      esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: data.pubkey})
       .then(function(res) {
         if (res && res._source) {
           data.name = res._source.title;
@@ -65,7 +65,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }
         return;
       }
-      esHttp.get('/user/profile/:id')({id: data.pubkey})
+      esHttp.get(host, port, '/user/profile/:id')({id: data.pubkey})
       .then(function(res) {
         if (res && res._source) {
           data.name = res._source.title;
@@ -114,7 +114,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       };
 
       if (datas.length > 0) {
-        var pubkeys = datas.reduce(function(res, data, resolve, reject) {
+        var pubkeys = datas.reduce(function(res, data) {
           map[data.pubkey] = data;
           return res.concat(data.pubkey);
         }, []);
@@ -147,7 +147,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       BMA.wot.member.uids()
       .then(function(res){
         uidsByPubkey = res;
-        return esHttp.post('/user/profile/_search?pretty')(request);
+        return esHttp.post(host, port, '/user/profile/_search?pretty')(request);
       })
       .then(function(res) {
         if (res.hits.total === 0) {
@@ -210,32 +210,50 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       ];
     }
 
+    function isEnable() {
+      return csSettings.data.plugins &&
+        csSettings.data.plugins.es &&
+        csSettings.data.plugins.es.enable &&
+        !!esHttp.getServer(host, port);
+    }
+
     function refreshListeners() {
-      if (!esHttp.isEnable() && listeners && listeners.length > 0) {
+      var enable = isEnable();
+      if (!enable && listeners && listeners.length > 0) {
         removeListeners();
       }
-      else if (esHttp.isEnable() && (!listeners || listeners.length === 0)) {
+      else if (enable && (!listeners || listeners.length === 0)) {
         addListeners();
       }
     }
+
+    // Listen for settings changed
+    csSettings.api.data.on.changed($rootScope, function(){
+      refreshListeners();
+    });
 
     // Default action
     refreshListeners();
 
     return {
       copy: copy,
-      refreshListeners: refreshListeners,
+      node: {
+        server: esHttp.getServer(host, port)
+      },
       profile: {
-        get: esHttp.get('/user/profile/:id'),
-        add: esHttp.record.post('/user/profile'),
-        update: esHttp.record.post('/user/profile/:id/_update'),
-        avatar: esHttp.get('/user/profile/:id?_source=avatar')
+        get: esHttp.get(host, port, '/user/profile/:id'),
+        add: esHttp.record.post(host, port, '/user/profile'),
+        update: esHttp.record.post(host, port, '/user/profile/:id/_update'),
+        avatar: esHttp.get(host, port, '/user/profile/:id?_source=avatar')
       }
     };
   }
 
-  var service = ESUser();
-  service.instance = ESUser;
+  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
+  var port = host ? csSettings.data.plugins.es.port : null;
+
+  var service = factory(host, port);
+  service.instance = factory;
   return service;
 })
 ;

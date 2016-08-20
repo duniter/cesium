@@ -54,18 +54,13 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  BMA, Wallet, csConfig, $ionicHistory, Device, Modals, csSettings
+  BMA, Wallet, $ionicHistory, Device, Modals, csSettings
   ) {
   'ngInject';
 
-  $scope.search = { text: '', results: {} };
-  $scope.config = csConfig;
-  if (!$rootScope.walletData) {
-    $rootScope.walletData = Wallet.data;
-  }
-  if (!$rootScope.settings) {
-    $rootScope.settings = csSettings.data;
-  }
+  $scope.search = {};
+  $rootScope.walletData = Wallet.data;
+  $rootScope.settings = csSettings.data;
 
   ////////////////////////////////////////
   // Load currencies
@@ -82,7 +77,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUti
       .then(function(res) {
         $rootScope.knownCurrencies.push({
           name: res.currency,
-          peer: BMA.node.url}
+          peer: BMA.node.server}
         );
         $scope.search.looking = false;
         resolve($rootScope.knownCurrencies);

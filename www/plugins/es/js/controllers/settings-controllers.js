@@ -4,7 +4,7 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
   .config(function(PluginServiceProvider, $stateProvider, csConfig) {
     'ngInject';
 
-    var enable = !!csConfig.DUNITER_NODE_ES;
+    var enable = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.enable;
     if (enable) {
       // Extend settings via extension points
       PluginServiceProvider.extendState('app.settings', {
@@ -38,7 +38,7 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 /*
  * Settings extend controller
  */
-function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, csConfig) {
+function ESExtendSettingsController ($scope, PluginService, csSettings) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
@@ -47,11 +47,7 @@ function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, 
   // Update settings if need
   $scope.onSettingsLoaded = function() {
     if ($scope.loading) {
-      var enable = !!csConfig.DUNITER_NODE_ES;
-      if (enable && Wallet.data.settings && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es) {
-        enable = Wallet.data.settings.plugins.es.enable;
-      }
-      $scope.enable = enable;
+      $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es && csSettings.data.plugins.es.enable;
     }
   };
   $scope.$watch('formData', $scope.onSettingsLoaded, true);
@@ -60,59 +56,50 @@ function ESExtendSettingsController ($scope, $rootScope, Wallet, PluginService, 
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionicPopup, $ionicHistory, UIUtils, csConfig, esHttp, esMarket,
-  esRegistry, esUser, Wallet) {
+function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, csSettings, csHttp, esMarket,
+  esRegistry, esUser) {
   'ngInject';
 
   $scope.formData = {};
+  $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!$scope.formData.node) {
-      if (Wallet.data.settings && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es) {
-        angular.merge($scope.formData, Wallet.data.settings.plugins.es);
-      }
-      else {
-        $scope.formData.enable = !!csConfig.DUNITER_NODE_ES;
-
-      }
-      if (!$scope.formData.node) {
-        $scope.formData.node = csConfig.DUNITER_NODE_ES;
-      }
-    }
+  $scope.$on('$ionicView.enter', function() {
+    $scope.loading = true;
+    $scope.formData = csSettings.data.plugins && csSettings.data.plugins.es ?
+      angular.copy(csSettings.data.plugins.es) : {
+      enable: false,
+      host: null,
+      port: null
+    };
     $scope.loading = false;
   });
 
-  $scope.setSettingsForm = function(settingsForm) {
-    $scope.settingsForm = settingsForm;
+  $scope.setPopupForm = function(popupForm) {
+    $scope.popupForm = popupForm;
   };
 
   // Change ESnode
   $scope.changeEsNode= function(node) {
-    if (!node) {
-      node = $scope.formData.node;
-    }
-    $scope.showNodePopup(node)
+    $scope.showNodePopup(node || $scope.formData)
     .then(function(node) {
-      if (node == $scope.formData.node) {
+      if (node.host === $scope.formData.host &&
+        node.port === $scope.formData.port) {
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
 
-      var newInstance = esHttp.instance(node);
-      esHttp.copy(newInstance);
-
-      newInstance = esMarket.instance(node);
+      var newInstance = esMarket.instance(node.host, node.port);
       esMarket.copy(newInstance);
 
-      newInstance = esRegistry.instance(node);
+      newInstance = esRegistry.instance(node.host, node.port);
       esRegistry.copy(newInstance);
 
-      newInstance = esUser.instance(node);
+      newInstance = esUser.instance(node.host, node.port);
       esUser.copy(newInstance);
 
-      $scope.formData.node = node;
-      delete $scope.formData.newNode;
+      $scope.formData.host = node.host;
+      $scope.formData.port = node.port;
 
       UIUtils.loading.hide(10);
     });
@@ -121,9 +108,9 @@ function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionic
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
-      $scope.formData.newNode = node;
-      if (!!$scope.settingsForm) {
-        $scope.settingsForm.$setPristine();
+      $scope.popupData.newNode = node.port ? [node.host, node.port].join(':') : node.host;
+      if (!!$scope.popupForm) {
+        $scope.popupForm.$setPristine();
       }
       $translate(['ES_SETTINGS.POPUP_NODE.TITLE', 'ES_SETTINGS.POPUP_NODE.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
@@ -139,12 +126,12 @@ function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionic
                 text: translations['COMMON.BTN_OK'],
                 type: 'button-positive',
                 onTap: function(e) {
-                  $scope.settingsForm.$submitted=true;
-                  if(!$scope.settingsForm.$valid || !$scope.settingsForm.newNode) {
+                  $scope.popupForm.$submitted=true;
+                  if(!$scope.popupForm.$valid || !$scope.popupForm.newNode) {
                     //don't allow the user to close unless he enters a node
                     e.preventDefault();
                   } else {
-                    return $scope.formData.newNode;
+                    return $scope.popupData.newNode;
                   }
                 }
               }
@@ -155,40 +142,44 @@ function ESPluginSettingsController ($scope, $rootScope, $q,  $translate, $ionic
               UIUtils.loading.hide();
               return;
             }
-            resolve(node);
+            var parts = node.split(':');
+            resolve({
+              host: parts[0],
+              port: parts[1]
+            });
           });
         });
       });
     };
 
-  $scope.onSettingsChanged = function() {
+  $scope.onFormChanged = function() {
     if ($scope.loading) {
       return;
     }
 
     $scope.loading = true;
 
-    if (!Wallet.data.settings.plugins) {
-      Wallet.data.settings.plugins={};
+    if (!csSettings.data.plugins) {
+      csSettings.data.plugins={};
     }
-    if (!Wallet.data.settings.plugins.es) {
-      Wallet.data.settings.plugins.es=$scope.formData;
+    if (!csSettings.data.plugins.es) {
+      csSettings.data.plugins.es=$scope.formData;
     }
     else {
-      angular.merge(Wallet.data.settings.plugins.es, $scope.formData);
+      angular.merge(csSettings.data.plugins.es, $scope.formData);
     }
 
-    // Update services
-    esHttp.setEnable($scope.formData.enable);
-    esUser.refreshListeners();
+    // Fix old settings
+    delete csSettings.data.plugins.es.newNode;
 
-    Wallet.store({settings: true, data: false});
-
-    // Clean cache
-    $ionicHistory.clearCache();
+    csSettings.store();
 
     $scope.loading = false;
 
   };
-  $scope.$watch('formData', $scope.onSettingsChanged, true);
+  $scope.$watch('formData', $scope.onFormChanged, true);
+
+  $scope.getServer = function() {
+    return csHttp.getServer($scope.formData.host, $scope.formData.port);
+  }
 }

@@ -1,33 +1,37 @@
 angular.module('cesium.http.services', ['ngResource'])
 
-.factory('HttpUtils', function($http, $q, csSettings) {
+.factory('csHttp', function($http, $q, csSettings) {
   'ngInject';
 
-  function HttpUtils(timeout) {
+  function factory(timeout) {
 
     var
-    errorCodes = {
-      },
-    constants = {
-      CACHE_TIME_MS: 60000
-    },
-    sockets = []
+      sockets = []
     ;
 
     if (!timeout) {
-      timeout=4000;
+      timeout=4000; // default
     }
 
-    function processError(reject, data, uri, status) {
+    function getServer(host, port) {
+      return  !host ? null : (host + (port ? ':' + port : ''));
+    }
+
+    function getUrl(host, port, path) {
+      var protocol = (port === 443 ? 'https' : 'http');
+      return  protocol + '://' + getServer(host, port) + (path ? path : '');
+    }
+
+    function processError(reject, data, url, status) {
       if (data && data.message) {
         reject(data);
       }
       else {
         if (status == 404) {
-          reject({ucode: 404, message: 'Resource not found ' + (uri ? ' ('+uri+')' : '')});
+          reject({ucode: 404, message: 'Resource not found ' + (url ? ' ('+url+')' : '')});
         }
-        if (uri) {
-          reject('Error from node (' + uri + ')');
+        if (url) {
+          reject('Error from node (' + url + ')');
         }
         else {
           reject('Unknown error from node');
@@ -35,8 +39,8 @@ angular.module('cesium.http.services', ['ngResource'])
       }
     }
 
-    function prepare(uri, params, config, callback) {
-      var pkeys = [], queryParams = {}, newUri = uri;
+    function prepare(url, params, config, callback) {
+      var pkeys = [], queryParams = {}, newUri = url;
       if (typeof params == 'object') {
         pkeys = _.keys(params);
       }
@@ -52,27 +56,29 @@ angular.module('cesium.http.services', ['ngResource'])
       callback(newUri, config);
     }
 
-    function getResource(uri) {
+    function getResource(host, port, path) {
+      var url = getUrl(host, port, path);
       return function(params) {
         return $q(function(resolve, reject) {
           var config = {
             timeout: timeout
           };
 
-          prepare(uri, params, config, function(uri, config) {
-              $http.get(uri, config)
+          prepare(url, params, config, function(url, config) {
+              $http.get(url, config)
               .success(function(data, status, headers, config) {
                 resolve(data);
               })
               .error(function(data, status, headers, config) {
-                processError(reject, data, uri, status);
+                processError(reject, data, url, status);
               });
           });
         });
       };
     }
 
-    function postResource(uri) {
+    function postResource(host, port, path) {
+      var url = getUrl(host, port, path);
       return function(data, params) {
         return $q(function(resolve, reject) {
           var config = {
@@ -80,8 +86,8 @@ angular.module('cesium.http.services', ['ngResource'])
             headers : {'Content-Type' : 'application/json'}
           };
 
-          prepare(uri, params, config, function(uri, config) {
-              $http.post(uri, data, config)
+          prepare(url, params, config, function(url, config) {
+              $http.post(url, data, config)
               .success(function(data, status, headers, config) {
                 resolve(data);
               })
@@ -159,14 +165,14 @@ angular.module('cesium.http.services', ['ngResource'])
       post: postResource,
       ws: ws,
       closeAllWs: closeAllWs,
+      getUrl : getUrl,
+      getServer: getServer,
       uri: {
         parse: parseUri
-      }
+      },
     };
   }
 
-  var service = HttpUtils(csSettings.data.timeout);
-  service.instance = HttpUtils;
-  return service;
+  return factory(csSettings.data.timeout);
 })
 ;

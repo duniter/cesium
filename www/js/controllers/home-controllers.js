@@ -10,7 +10,7 @@ angular.module('cesium.home.controllers', ['cesium.services'])
         views: {
           'menuContent': {
             templateUrl: "templates/home/home.html",
-            controller: 'HomeCtrl'
+            controller: 'AppCtrl'
           }
         }
       })
@@ -31,12 +31,11 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 
   })
 
-
-  .controller('HomeCtrl', HomeController)
-
   .controller('JoinCtrl', JoinController)
 
   .controller('NewAccountModalCtrl', NewAccountModalController)
+
+  .controller('AboutCtrl', AboutController)
 ;
 
 
@@ -157,19 +156,18 @@ function NewAccountModalController($scope, $ionicModal, $state, $ionicSideMenuDe
   */
 }
 
-function HomeController($scope, Modals) {
-  'ngInject';
-
-}
-
 function JoinController($scope, $timeout, Modals) {
   'ngInject';
 
-  HomeController.call(this, $scope, Modals);
 
   // Open new account wizard
   $timeout(function() {
     $scope.showNewAccountModal();
   }, 100);
 
+}
+
+function AboutController($scope, csConfig) {
+  'ngInject';
+  $scope.config = csConfig;
 }

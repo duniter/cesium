@@ -1,36 +1,42 @@
-<ion-modal-view class="about login">
+<ion-modal-view class="about">
   <ion-header-bar class="bar-positive">
     <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL
     </button>
     <h1 class="title" translate>ABOUT.TITLE</h1>
   </ion-header-bar>
 
-  <ion-content class="text-center" scroll="false">
+  <ion-content class="text-center" scroll="true">
 
-    <div class="list">
-      <div class="item padding">
-        Cesium est <b>libre de droit</b> (license GNU GPLv3).
+    <div class="list item-wrap-text">
+      <div class="item item-complex item-icon-left item-text-wrap">
+        <div class="item-content">
+          <span>{{'COMMON.APP_NAME'|translate}}&nbsp;{{'COMMON.APP_VERSION'|translate:config}}</span>
+          <h3 class="gray">{{'COMMON.APP_BUILD'|translate:config}}</h3>
+          <span translate>ABOUT.LICENSE</span>
+        </div>
       </div>
       <div class="item item-complex item-icon-left">
         <div class="item-content">
           <i class="item-image icon ion-social-github"></i>
-          Code source :
-          <a href="https://github.com/duniter/cesium">https://github.com/duniter/cesium</a>
+          {{'ABOUT.CODE' | translate}}
+          <h3><a href="https://github.com/duniter/cesium">https://github.com/duniter/cesium</a></h3>
         </div>
       </div>
       <div class="item item-complex item-icon-left">
         <div class="item-content">
           <i class="item-image icon ion-chatbubbles"></i>
-          Forum :
-          <a href="https://forum.duniter.org">https://forum.duniter.org</a>
+          {{'ABOUT.FORUM' | translate}}
+          <h3><a href="https://forum.duniter.org">https://forum.duniter.org</a>
         </div>
       </div>
       <div class="item item-complex item-icon-left">
         <div class="item-content">
           <i class="item-image icon ion-chatbubbles"></i>
-          Développeurs :
-          <a ui-sref="app.wot_lookup({q:'cgeek'})" modal-close>cgeek</a> &amp;
-          <a ui-sref="app.wot_lookup({q:'kimamila'})" modal-close>kimamila</a>
+          {{'ABOUT.DEVELOPERS' | translate}}
+          <h3>
+            <a ui-sref="app.wot_lookup({q:'cgeek'})" modal-close>cgeek</a>,
+            <a ui-sref="app.wot_lookup({q:'kimamila'})" modal-close>kimamila</a>
+          </h3>
         </div>
       </div>
       <div class="item item-complex item-icon-left item-text-wrap">
@@ -38,18 +44,20 @@
           <i class="item-image icon ion-bug"></i>
           <h2>{{'ABOUT.DEV_WARNING'|translate}}</h2>
           <span translate>ABOUT.DEV_WARNING_MESSAGE</span>
-          <a href="{{config.NEW_ISSUE_LINK}}"
+          <br/>
+          <a href="{{config.newIssueUrl}}"
              target="_blank"
              translate>ABOUT.REPORT_ISSUE</a>
         </div>
       </div>
 
-    </div>
-    <div class="padding hidden-xs text-right">
-      <button class="button button-positive ink" type="submit"
-              ng-click="closeModal()">
-        {{'COMMON.BTN_CLOSE' | translate}}
-      </button>
+      <div class="padding hidden-xs text-center">
+        <button class="button button-positive ink" type="submit"
+                ng-click="closeModal()">
+          {{'COMMON.BTN_CLOSE' | translate}}
+        </button>
+      </div>
+
     </div>
   </ion-content>
 </ion-modal-view>

@@ -78,28 +78,11 @@
 }
 
 
-#menu .item.item-divider {
-  min-height: 5px;
-  height: 5px;
-}
-
-#menu .footer h1.title {
-  font-size: 16px;
-}
-
-#menu .footer h1 .buildDate {
-  font-size: 12px ! important;
-  color: grey !important;
-}
-
-
-
 
 .menu .avatar {
     height: 88px;
     width: 88px;
 }
-
 
 .center {
     text-align: center;

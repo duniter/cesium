@@ -116,9 +116,10 @@ gulp.task('config', function (done) {
 
   gutil.log(gutil.colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
 
-  var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  config['version'] = version;
+  var project = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+  config['version'] = project.version;
   config['build'] = (new Date()).toJSON();
+  config['newIssueUrl'] = project.bugs.new;
 
   // TODO : change version in config.xml file
 

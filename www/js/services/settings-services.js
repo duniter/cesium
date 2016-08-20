@@ -12,6 +12,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
       },
 
       defaultSettings = angular.merge({
+        timeout : 4000,
+        cacheTimeMs: 60000, /*1 min*/
         useRelative: true,
         timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
         timeWarningExpire: 2592000 * 3 /*=3 mois*/,
@@ -31,7 +33,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         angular.merge(data, defaultSettings);
       },
 
-      store = function(options) {
+      store = function() {
         if (data.useLocalStorage) {
           localStorage.setObject(constants.STORAGE_KEY, data);
         }
@@ -66,10 +68,9 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
             $translate.use(data.locale.id);
           }
 
-
           // Emit event on changed
-          api.data.raisePromise.changed(data);
-          //resolve();
+          api.data.raise.changed(data);
+          resolve();
         });
       };
 

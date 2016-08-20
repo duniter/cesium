@@ -2,11 +2,6 @@
           class="settings">
   <ion-nav-title translate>ES_SETTINGS.PLUGIN_NAME</ion-nav-title>
 
-  <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="submitAndSave()">
-    </button>
-  </ion-nav-buttons>
-
   <ion-content scroll="true">
 
     <div class="item item-toggle dark">
@@ -25,7 +20,7 @@
       <div class="input-label" ng-class="{'gray': !formData.enable}">
       {{'ES_SETTINGS.NODE' | translate}}
       </div>
-      <span class="item-note" ng-class="{'dark': formData.enable}">{{formData.node}}</span>
+      <span class="item-note" ng-class="{'dark': formData.enable}">{{getServer()}}</span>
     </div>
   </ion-content>
 </ion-view>

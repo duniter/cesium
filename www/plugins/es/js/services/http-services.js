@@ -3,26 +3,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, CryptoUtils, HttpUtils, $rootScope, csConfig, Wallet) {
+.factory('esHttp', function($q, CryptoUtils, csHttp, $rootScope, csConfig, csSettings, Wallet) {
   'ngInject';
 
-  function esHttp(server) {
-
-    var enable = !!server;
-    if (enable && Wallet.data && Wallet.data.settings && Wallet.data.settings.plugins && Wallet.data.settings.plugins.es) {
-      enable = Wallet.data.settings.plugins.es.enable;
-    }
-
-    function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-    }
+  function factory() {
 
     // Get time (UTC)
     function getTimeNow() {
@@ -30,16 +14,16 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
        return Math.floor(moment().utc().valueOf() / 1000);
     }
 
-    function get(path) {
-      return HttpUtils.get('http://' + server + path);
+    function get(host, node, path) {
+      return csHttp.get(host, node, path);
     }
 
-    function post(path) {
-      return HttpUtils.post('http://' + server + path);
+    function post(host, node, path) {
+      return csHttp.post(host, node, path);
     }
 
-    function postRecord(uri) {
-      var postRequest = HttpUtils.post('http://' + server + uri);
+    function postRecord(host, node, path) {
+      var postRequest = csHttp.post(host, node, path);
 
       return function(record, params) {
         return $q(function(resolve, reject) {
@@ -79,8 +63,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       };
     }
 
-    function removeRecord(index, type) {
-      var postHistoryDelete = HttpUtils.post('http://' + server + '/history/delete');
+    function removeRecord(host, node, index, type) {
+      var postHistoryDelete = csHttp.post(host, node, '/history/delete');
       return function(id) {
         return $q(function(resolve, reject) {
           if (!Wallet.isLogin()) {
@@ -117,14 +101,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       };
     }
 
-
-    function login(keypair) {
+    function login(host, node, keypair) {
       return $q(function(resolve, reject) {
         var errorFct = function(err) {
           reject(err);
         };
-        var getChallenge = getResource('http://' + server + '/auth');
-        var postAuth = postResource('http://' + server + '/auth');
+        var getChallenge = getResource(host, node, '/auth');
+        var postAuth = postResource(host, node, '/auth');
 
         getChallenge() // get the challenge phrase to sign
         .then(function(challenge) {
@@ -145,8 +128,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
                   }
               };
               $http.defaults.headers.common['Authorization'] = 'Basic ' + token; // jshint ignore:line
-              $cookies.put('globals', $rootScope.globals);*/
-              resolve(token);
+              $cookies.put('globals', $rootScope.globals);
+              resolve(token);*/
             })
             .catch(errorFct);
           })
@@ -156,18 +139,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       });
     }
 
-    function logout() {
+    function logout(host, node) {
         /*$rootScope.globals = {};
         $cookie.remove('globals');
         $http.defaults.headers.common.Authorization = 'Basic ';*/
-    }
-
-    function isEnable() {
-      return enable;
-    }
-
-    function setEnable(value) {
-      enable = value;
     }
 
     function emptyHit() {
@@ -181,11 +156,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
     }
 
     return {
-      isEnable: isEnable,
-      setEnable: setEnable,
       copy: copy,
       get: get,
       post: post,
+      getUrl : csHttp.getUrl,
+      getServer: csHttp.getServer,
       record: {
         post: postRecord,
         remove: removeRecord
@@ -203,8 +178,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
     };
   }
 
-  var service = esHttp(csConfig.DUNITER_NODE_ES);
-  service.instance = esHttp;
+  var service = factory();
   return service;
 })
 ;

@@ -1,6 +1,7 @@
 {
   "default": {
     "timeout": 4000,
+    "cacheTimeMs": 60000,
     "useRelative": true,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
@@ -22,6 +23,7 @@
 
   "dev": {
     "timeout": 6000,
+    "cacheTimeMs": 6000,
     "useRelative": true,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,

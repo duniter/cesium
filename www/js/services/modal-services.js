@@ -120,7 +120,7 @@ angular.module('cesium.modal.services', [])
   }
 
   function showAbout(parameters) {
-    return ModalUtils.show('templates/home/modal_about.html','EmptyModalCtrl',
+    return ModalUtils.show('templates/home/modal_about.html','AboutCtrl',
       parameters);
   }
 

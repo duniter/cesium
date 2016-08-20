@@ -79,7 +79,7 @@
       <div class="input-label">
       {{'SETTINGS.NODE' | translate}}
       </div>
-      <span class="item-note dark">{{formData.node.host}}<ng-if ng-if="formData.node.port && formData.node.port !== 80">:{{formData.node.port}}</ng-if></span>
+      <span class="item-note dark">{{getServer()}}</ng-if></span>
     </div>
     <!-- Allow extension here -->
     <cs-extension-point name="network"></cs-extension-point>

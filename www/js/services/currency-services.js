@@ -4,7 +4,7 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
 .factory('csCurrency', function($q, BMA, Api) {
   'ngInject';
 
-  CSCurrency = function(id) {
+  factory = function(id) {
 
     var
     data = {
@@ -26,7 +26,7 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
         .then(function(res){
           data.currencies.push({
             name: res.currency,
-            peer: BMA.node.url}
+            peer: BMA.node.server}
           );
 
           // API extension point
@@ -56,8 +56,8 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
     };
   };
 
-  var service = CSCurrency('default');
+  var service = factory('default');
 
-  service.instance = CSCurrency;
+  service.instance = factory;
   return service;
 });

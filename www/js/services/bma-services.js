@@ -2,10 +2,10 @@
 
 angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, csSettings, HttpUtils, $rootScope) {
+.factory('BMA', function($q, csSettings, csHttp, $rootScope) {
   'ngInject';
 
-  function BMA(host, port) {
+  function factory(host, port) {
 
     var
     instance = this,
@@ -26,16 +26,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
       URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
     },
-    constants = {
-      CACHE_TIME_MS: 60000
-    },
-    protocol = (port === 443 ? 'https' : 'http'),
-    server = protocol + '://' + host + (port ? ':' + port : ''),
     data = {
-      node: {
-        host: host,
-        port: port
-      },
       blockchain: {
         current: null
       },
@@ -63,7 +54,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
 
     function getBlockchainCurrent(cache) {
-      var getBlockchainCurrentNoCache = HttpUtils.get(server + '/blockchain/current');
+      var getBlockchainCurrentNoCache = csHttp.get(host, port, '/blockchain/current');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain.current !== null &&
@@ -85,7 +76,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
 
     function getMembers(cache) {
-      var getMembersNoCache = HttpUtils.get(server + '/wot/members');
+      var getMembersNoCache = csHttp.get(host, port, '/wot/members');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.wot && data.wot.members && data.wot.members.length > 0 &&
@@ -130,7 +121,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     function getMemberUidsByPubkey(cache) {
       return $q(function(resolve, reject) {
         var now = new Date();
-        if (cache && data.wot && data.wot.member && data.wot.memberUidsByPubkey && data.wot.memberUidsByPubkey.length > 0 &&
+        if (cache && data.wot && data.wot.members && data.wot.memberUidsByPubkey && data.wot.memberUidsByPubkey.length > 0 &&
             (now.getTime() - data.wot.memberUidsByPubkeyTimestamp) <= constants.CACHE_TIME_MS){
           resolve(data.wot.memberUidsByPubkey);
         }
@@ -138,9 +129,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
           getMembers(false/* no cache*/)
           .then(function(members){
             var result = {};
-            data.wot.members.forEach(function(member){
+            _.forEach(members, function(member){
               result[member.pubkey] = member.uid;
             });
+            data.wot.members = members;
             data.wot.memberUidsByPubkey = result;
             data.wot.memberUidsByPubkeyTimestamp = now.getTime();
             resolve(result);
@@ -153,8 +145,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     }
 
     function getBlockchainLastUd(cache) {
-      var getBlockchainWithUd = HttpUtils.get(server + '/blockchain/with/ud');
-      var getBlockchainBlock = HttpUtils.get(server + '/blockchain/block/:block');
+      var getBlockchainWithUd = csHttp.get(host, port, '/blockchain/with/ud');
+      var getBlockchainBlock = csHttp.get(host, port, '/blockchain/block/:block');
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= constants.CACHE_TIME_MS){
@@ -181,15 +173,14 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
     function parseUri(uri) {
       return $q(function(resolve, reject) {
-        var result = {};
-        // If pubkey
+        // If pubkey: not need to parse
         if (exact(regex.PUBKEY).test(uri)) {
-          return {
+          resolve({
             pubkey: uri
-          };
+          });
         }
         else if(uri.startsWith('duniter://')) {
-          var parser = HttpUtils.uri.parse(uri),
+          var parser = csHttp.uri.parse(uri),
             pubkey,
             uid,
             currency = parser.host.indexOf('.') === -1 ? parser.host : null,
@@ -217,13 +208,13 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
               uid = paths[index++];
             }
             if (pathCount > index) {
-              throw {message: 'Bad Duniter URI format. Invalid path (incomplete or redundant): '+parser.pathname};
+              reject( {message: 'Bad Duniter URI format. Invalid path (incomplete or redundant): '+ parser.pathname}); return;
             }
           }
 
           if (!currency){
             if (host) {
-              HttpUtils.get(host + '/blockchain/parameters')()
+              csHttp.get(host + '/blockchain/parameters')()
               .then(function(parameters){
                 resolve({
                   uid: uid,
@@ -232,11 +223,12 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
                   currency: parameters.currency
                 });
               }).catch(function(err) {
-                throw {message: 'Could not get node parameter. Currency could not be retrieve.'};
+                console.log(err);
+                reject({message: 'Could not get node parameter. Currency could not be retrieve'}); return;
               });
             }
             else {
-              throw {message: 'Bad Duniter URI format. Missing currency name (or node address).'};
+              reject({message: 'Bad Duniter URI format. Missing currency name (or node address).'}); return;
             }
           }
           else {
@@ -249,10 +241,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
             }
 
             // Check if currency are the same (between node and uri)
-            return HttpUtils.get(host + '/blockchain/parameters')()
+            return csHttp.get(host + '/blockchain/parameters')()
             .then(function(parameters){
               if (parameters.currency !== currency) {
-                throw {message: "Node's currency ["+parameters.currency+"] does not matched URI's currency ["+currency+"]."};
+                reject( {message: "Node's currency ["+parameters.currency+"] does not matched URI's currency ["+currency+"]."}); return;
               }
               resolve({
                 uid: uid,
@@ -271,13 +263,13 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       // Check values against regex
       .then(function(result) {
         if (result.pubkey && !(exact(regex.PUBKEY).test(result.pubkey))) {
-          throw {message: "Invalid pubkey format [" + result.pubkey + "]"};
+          reject({message: "Invalid pubkey format [" + result.pubkey + "]"}); return;
         }
         if (result.uid && !(exact(regex.USER_ID).test(result.uid))) {
-          throw {message: "Invalid uid format [" + result.uid + "]"};
+          reject({message: "Invalid uid format [" + result.uid + "]"}); return;
         }
         if (result.currency && !(exact(regex.CURRENCY).test(result.currency))) {
-          throw {message: "Invalid currency format ["+result.currency+"]"};
+          reject({message: "Invalid currency format ["+result.currency+"]"}); return;
         }
         return result;
       });
@@ -293,59 +285,57 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
     return {
       node: {
-        summary: HttpUtils.get(server + '/node/summary'),
-        url: server,
-        host: host,
-        port: port
+        summary: csHttp.get(host, port, '/node/summary'),
+        server: csHttp.getServer(host, port)
       },
       wot: {
-        lookup: HttpUtils.get(server + '/wot/lookup/:search'),
+        lookup: csHttp.get(host, port, '/wot/lookup/:search'),
         member: {
           all: getMembers,
           uids: getMemberUidsByPubkey,
           get: getMemberByPubkey
         },
-        requirements: HttpUtils.get(server + '/wot/requirements/:pubkey'),
-        add: HttpUtils.post(server + '/wot/add'),
-        certify: HttpUtils.post(server + '/wot/certify')
+        requirements: csHttp.get(host, port, '/wot/requirements/:pubkey'),
+        add: csHttp.post(host, port, '/wot/add'),
+        certify: csHttp.post(host, port, '/wot/certify')
       },
       network: {
         peering: {
-          peers: HttpUtils.get(server + '/network/peering/peers')
+          peers: csHttp.get(host, port, '/network/peering/peers')
         },
-        peers: HttpUtils.get(server + '/network/peers')
+        peers: csHttp.get(host, port, '/network/peers')
       },
       blockchain: {
-        parameters: HttpUtils.get(server + '/blockchain/parameters'),
+        parameters: csHttp.get(host, port, '/blockchain/parameters'),
         current: getBlockchainCurrent,
-        block: HttpUtils.get(server + '/blockchain/block/:block'),
-        membership: HttpUtils.post(server + '/blockchain/membership'),
+        block: csHttp.get(host, port, '/blockchain/block/:block'),
+        membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
-          ud: HttpUtils.get(server + '/blockchain/with/ud'),
-          tx: HttpUtils.get(server + '/blockchain/with/tx')
+          ud: csHttp.get(host, port, '/blockchain/with/ud'),
+          tx: csHttp.get(host, port, '/blockchain/with/tx')
         },
         lastUd: getBlockchainLastUd
       },
       tx: {
-        sources: HttpUtils.get(server + '/tx/sources/:pubkey'),
-        process: HttpUtils.post(server + '/tx/process'),
+        sources: csHttp.get(host, port, '/tx/sources/:pubkey'),
+        process: csHttp.post(host, port, '/tx/process'),
         history: {
-          all: HttpUtils.get(server + '/tx/history/:pubkey'),
-          times: HttpUtils.get(server + '/tx/history/:pubkey/times/:from/:to'),
-          blocks: HttpUtils.get(server + '/tx/history/:pubkey/blocks/:from/:to')
+          all: csHttp.get(host, port, '/tx/history/:pubkey'),
+          times: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
+          blocks: csHttp.get(host, port, '/tx/history/:pubkey/blocks/:from/:to')
         }
       },
       ud: {
-        history: HttpUtils.get(server + '/ud/history/:pubkey')
+        history: csHttp.get(host, port, '/ud/history/:pubkey')
       },
       websocket: {
         block: function() {
-          return HttpUtils.ws('ws://' + host + ':' + port + '/ws/block');
+          return csHttp.ws('ws://' + csHttp.getServer(host, port) + '/ws/block');
         },
         peer: function() {
-          return HttpUtils.ws('ws://' + host + ':' + port + '/ws/peer');
+          return csHttp.ws('ws://' + csHttp.getServer(host, port) + '/ws/peer');
         },
-        close : HttpUtils.closeAllWs
+        close : csHttp.closeAllWs
       },
       copy: copy,
       cache: {
@@ -370,18 +360,16 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     };
   }
 
-  var service = BMA(csSettings.data.node.host, csSettings.data.node.port);
-  service.instance = BMA;
+  var service = factory(csSettings.data.node.host, csSettings.data.node.port);
+  service.instance = factory;
 
   // Listen settings changes
   csSettings.api.data.on.changed($rootScope, function(settings) {
 
-    var nodeChanged =
-      (settings.node.host && settings.node.host != service.node.host) ||
-      (settings.node.port && settings.node.port != service.node.port);
-
-    if (nodeChanged) {
-      service.copy(BMA(settings.node.host, settings.node.port)); // reload BMA
+    var nodeServer = csHttp.getServer(settings.node.host, settings.node.port);
+    if (nodeServer != service.node.server) {
+      var newService = factory(settings.node.host, settings.node.port);
+      service.copy(newService); // reload service
     }
 
   });

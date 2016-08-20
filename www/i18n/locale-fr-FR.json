@@ -2,7 +2,7 @@
   "COMMON": {
     "APP_NAME": "Cesium",
     "APP_VERSION": "v{{version}}",
-    "APP_BUILD_DATE": "- build {{buildDate}}",
+    "APP_BUILD": "date : {{build}}",
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
     "BTN_SEND": "Envoyer",
@@ -55,6 +55,10 @@
   },
   "ABOUT": {
     "TITLE": "A propos",
+    "LICENSE": "Application <b>libre de droit</b> (licence GNU GPLv3).",
+    "CODE": "Code source :",
+    "DEVELOPERS": "Développé par :",
+    "FORUM": "Forum :",
     "DEV_WARNING": "Avertissement",
     "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
     "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",

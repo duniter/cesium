@@ -13392,12 +13392,6 @@ a {
 .item-button-right .item-content > .buttons {
   top: 16px; }
 
-#menu .item-button-right > .button,
-.item-button-right .item-content > .button,
-.item-button-right > .buttons,
-.item-button-right .item-content > .buttons {
-  top: 8px !important; }
-
 .item.large-button-bar {
   margin-bottom: 10px; }
 
@@ -13432,3 +13426,20 @@ a {
 
 .text-keep-lines {
   white-space: pre-line; }
+
+/*
+* Menu
+*/
+#menu .item.item-divider {
+  min-height: 5px;
+  height: 5px; }
+
+#menu .item-button-right > .button,
+.item-button-right .item-content > .button,
+.item-button-right > .buttons,
+.item-button-right .item-content > .buttons {
+  top: 8px !important; }
+
+#menu .footer a {
+  font-size: 14px !important;
+  color: grey !important; }

@@ -2,7 +2,7 @@
   "COMMON": {
     "APP_NAME": "Cesium",
     "APP_VERSION": "v{{version}}",
-    "APP_BUILD_DATE": "- build {{buildDate}}",
+    "APP_BUILD": "build {{build}}",
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SEND": "Send",
@@ -55,6 +55,10 @@
   },
   "ABOUT": {
     "TITLE": "About",
+    "LICENSE": "<b>Open source</b> software (License GNU GPLv3).",
+    "CODE": "Source code:",
+    "DEVELOPERS": "Developers:",
+    "FORUM": "Forum:",
     "DEV_WARNING": "Warning",
     "DEV_WARNING_MESSAGE": "This application is still in active development.<br/>Please report us all issues !",
     "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",

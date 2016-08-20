@@ -20,10 +20,11 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUtils, BMA, csSettings) {
+function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp, UIUtils, BMA, csSettings) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
+  $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
@@ -44,8 +45,8 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUti
     }, 100);
   });
 
-  $scope.setSettingsForm = function(settingsForm) {
-    $scope.settingsForm = settingsForm;
+  $scope.setPopupForm = function(popupForm) {
+    $scope.popupForm = popupForm;
   };
 
   $scope.changeLanguage = function(langKey) {
@@ -56,7 +57,6 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUti
   $scope.changeNode= function(node) {
     $scope.showNodePopup(node || $scope.formData.node)
     .then(function(newNode) {
-
       if (newNode.host === $scope.formData.node.host &&
         newNode.port === $scope.formData.node.port) {
         return; // same node = nothing to do
@@ -82,9 +82,9 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUti
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
-      $scope.formData.newNode = [node.host, node.port].join(':');
-      if (!!$scope.settingsForm) {
-        $scope.settingsForm.$setPristine();
+      $scope.popupData.newNode = node.port ? [node.host, node.port].join(':') : node.host;
+      if (!!$scope.popupForm) {
+        $scope.popupForm.$setPristine();
       }
       $translate(['SETTINGS.POPUP_NODE.TITLE', 'SETTINGS.POPUP_NODE.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
@@ -100,12 +100,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUti
                 text: translations['COMMON.BTN_OK'],
                 type: 'button-positive',
                 onTap: function(e) {
-                  $scope.settingsForm.$submitted=true;
-                  if(!$scope.settingsForm.$valid || !$scope.settingsForm.newNode) {
+                  $scope.popupForm.$submitted=true;
+                  if(!$scope.popupForm.$valid || !$scope.popupForm.newNode) {
                     //don't allow the user to close unless he enters a node
                     e.preventDefault();
                   } else {
-                    return $scope.formData.newNode;
+                    return $scope.popupData.newNode;
                   }
                 }
               }
@@ -119,7 +119,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUti
             var parts = node.split(':');
             resolve({
               host: parts[0],
-              port: parts[1] || 80
+              port: parts[1]
             });
           });
         });
@@ -137,4 +137,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, UIUti
   $scope.$watch('formData', $scope.onSettingsChanged, true);
 
 
+  $scope.getServer = function() {
+    return csHttp.getServer($scope.formData.node.host, $scope.formData.node.port);
+  }
 }

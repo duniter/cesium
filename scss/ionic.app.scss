@@ -763,19 +763,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top: 16px;
 }
 
-#menu .item-button-right > .button,
-      .item-button-right .item-content > .button,
-      .item-button-right > .buttons,
-      .item-button-right .item-content > .buttons {
-  top: 8px !important;
-}
-
 .item.large-button-bar {
   @extend .padding;
   @extend .text-center;
   margin-bottom: 10px;
 }
-
 
 /*
 * Item thumbnail
@@ -817,3 +809,23 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 
+/*
+* Menu
+*/
+
+#menu .item.item-divider {
+  min-height: 5px;
+  height: 5px;
+}
+
+#menu .item-button-right > .button,
+.item-button-right .item-content > .button,
+.item-button-right > .buttons,
+.item-button-right .item-content > .buttons {
+  top: 8px !important;
+}
+
+#menu .footer a {
+  font-size: 14px ! important;
+  color: grey !important;
+}
