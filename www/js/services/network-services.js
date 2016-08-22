@@ -84,7 +84,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         return BMA.wot.member.uids(true/*cache*/)
           .then(function(uids){
             uidsByPubkeys = uids;
-            return BMA.network.peering.peers({ leaves: true })
+            return BMA.network.peering.peers({ leaves: true });
           })
           .then(function(res){
             return $q.all(res.leaves.map(function(leaf) {

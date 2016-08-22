@@ -139,5 +139,5 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
   $scope.getServer = function() {
     return csHttp.getServer($scope.formData.node.host, $scope.formData.node.port);
-  }
+  };
 }

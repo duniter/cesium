@@ -11,7 +11,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     var
     constants = {
       STORAGE_KEY: "CESIUM_DATA"
-    }
+    },
     data = {
         pubkey: null,
         keypair: {
@@ -572,7 +572,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           requirements: true,
           sources: true,
           tx: true
-        }
+        };
       }
       return $q(function(resolve, reject){
         var jobs = [];

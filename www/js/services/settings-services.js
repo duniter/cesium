@@ -63,20 +63,20 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
                 port: nodePart[1] // could be undefined, but that's fine
               };
             }
-            delete delete data.DUNITER_NODE;
+            delete storedData.DUNITER_NODE;
           }
           if (storedData.DUNITER_NODE_ES) {
-            var nodePart = storedData.DUNITER_NODE_ES.split(':');
-            if (nodePart.length == 1 || nodePart.length == 2) {
+            var esNodePart = storedData.DUNITER_NODE_ES.split(':');
+            if (esNodePart.length == 1 || esNodePart.length == 2) {
               storedData.plugins = {
                 es: {
                   enable: true,
-                  host: nodePart[0],
-                  port: nodePart[1] // could be undefined, but that's fine
+                  host: esNodePart[0],
+                  port: esNodePart[1] // could be undefined, but that's fine
                 }
               };
             }
-            delete delete data.DUNITER_NODE_ES;
+            delete storedData.DUNITER_NODE_ES;
           }
 
           var localeChanged = storedData.locale && storedData.locale.id && (data.locale.id !== storedData.locale.id);
