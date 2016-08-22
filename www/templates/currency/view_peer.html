@@ -17,6 +17,7 @@
             <a class="peer-item item item-icon-left"
                collection-repeat="peer in peers"
                ng-class="{ assertive: !peer.online, balanced: peer.online }"
+               target="_blank"
                ng-href="{{peer.getURL()}}/blockchain/current">
                 <i class="icon ion-android-globe"></i>
                 <h3><span ng-class="{ positive: peer.uid }">{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
