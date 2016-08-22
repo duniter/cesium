@@ -332,7 +332,7 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
   };
 }
 
-function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUtils, $state, $q, $timeout, BMA, esHttp, $filter) {
+function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUtils, $state, $q, $timeout, BMA, esHttp, $filter, csSettings) {
   'ngInject';
 
   $scope.formData = {};
@@ -447,24 +447,39 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
   };
 
   $scope.refreshConvertedPrice = function() {
-    if (!$scope.walletData || !$rootScope.walletData.settings) {
+    if (!$scope.formData.price) {
+      $scope.convertedPrice = null;
       return;
     }
-    if ($rootScope.walletData.settings.useRelative) {
-      $scope.convertedPrice = $scope.formData.price ? ($scope.formData.price / $rootScope.walletData.currentUD) : null;
-    } else {
-      $scope.convertedPrice = $scope.formData.price;
+
+    // Price in UD
+    if (!$scope.formData.unit || $scope.formData.unit == 'UD') {
+      if (!csSettings.data.useRelative) {
+        $scope.convertedPrice = $scope.formData.price * $rootScope.walletData.currentUD;
+      }
+      else {
+        $scope.convertedPrice = $scope.formData.price;
+      }
+    }
+    // price in qte
+    else {
+      if (!csSettings.data.useRelative) {
+        $scope.convertedPrice = $scope.formData.price;
+      }
+      else {
+        $scope.convertedPrice =  $scope.formData.price / $rootScope.walletData.currentUD;
+      }
     }
   };
-  $scope.$watch('$root.walletData.settings.useRelative', $scope.refreshConvertedPrice, true);
+  $scope.$watch('$root.settings.useRelative', $scope.refreshConvertedPrice, true);
 
   $scope.edit = function() {
     $state.go('app.market_edit_record', {id: $scope.id, title: $filter('formatSlug')($scope.formData.title)});
   };
 }
 
-function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, $q, $ionicPopup, Device,
-  $timeout, ModalUtils, esHttp, $ionicHistory, $focus) {
+function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
+  $timeout, ModalUtils, esHttp, $ionicHistory, $focus, csSettings) {
   'ngInject';
 
   $scope.walletData = {};
@@ -489,7 +504,7 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
       return $scope.loadWallet();
     })
     .then(function(walletData) {
-      $scope.useRelative = walletData.settings.useRelative;
+      $scope.useRelative = csSettings.data.useRelative;
       $scope.walletData = walletData;
       if ($state.stateParams && $state.stateParams.id) { // Load by id
         $scope.load($state.stateParams.id);
@@ -597,7 +612,8 @@ function ESMarketRecordEditController($scope, $ionicModal, Wallet, esMarket, UIU
   };
 
   $scope.setUseRelative = function(useRelative) {
-    $scope.formData.unit = useRelative ? 'DU' : 'unit';
+    $scope.formData.unit = useRelative ? 'UD' : 'unit';
+    $scope.useRelative = useRelative;
     //$scope.unitPopover.hide();
   };
 

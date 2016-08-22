@@ -54,6 +54,31 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
             return;
           }
 
+          // Workaround to get node info from Cesium < 0.2.0
+          if (storedData.DUNITER_NODE) {
+            var nodePart = storedData.DUNITER_NODE.split(':');
+            if (nodePart.length == 1 || nodePart.length == 2) {
+              storedData.node = {
+                host: nodePart[0],
+                port: nodePart[1] // could be undefined, but that's fine
+              };
+            }
+            delete delete data.DUNITER_NODE;
+          }
+          if (storedData.DUNITER_NODE_ES) {
+            var nodePart = storedData.DUNITER_NODE_ES.split(':');
+            if (nodePart.length == 1 || nodePart.length == 2) {
+              storedData.plugins = {
+                es: {
+                  enable: true,
+                  host: nodePart[0],
+                  port: nodePart[1] // could be undefined, but that's fine
+                }
+              };
+            }
+            delete delete data.DUNITER_NODE_ES;
+          }
+
           var localeChanged = storedData.locale && storedData.locale.id && (data.locale.id !== storedData.locale.id);
           angular.merge(data, storedData);
 
@@ -61,8 +86,6 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           // This is a workaround for DEV (TODO: implement edition in settings)
           data.timeWarningExpire = defaultSettings.timeWarningExpire;
           data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
-          delete data.DUNITER_NODE;
-          delete data.DUNITER_NODE_ES;
 
           if (localeChanged) {
             $translate.use(data.locale.id);

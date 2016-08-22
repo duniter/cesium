@@ -79,8 +79,8 @@
 
           <span class="item item-icon-left item-button-right" ng-if="formData.price">
               <i class="icon ion-pricetag"></i>
-              <span class="dark" ng-if="formData.currency && !$root.walletData.settings.useRelative">{{convertedPrice|formatInteger}} {{formData.currency|abbreviate}}</span>
-              <span class="dark" ng-if="formData.currency && $root.walletData.settings.useRelative">{{convertedPrice|formatDecimal}} {{'COMMON.UD'|translate}} <sub>{{formData.currency|abbreviate}}</sub></span>
+              <span class="dark" ng-if="!$root.settings.useRelative">{{convertedPrice|formatInteger}} {{formData.currency|abbreviate}}</span>
+              <span class="dark" ng-if="$root.settings.useRelative">{{convertedPrice|formatDecimal}} {{'COMMON.UD'|translate}} <sub>{{formData.currency|abbreviate}}</sub></span>
           </span>
 
           <div class="lazy-load">

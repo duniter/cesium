@@ -39,7 +39,7 @@ angular.module('cesium.home.controllers', ['cesium.services'])
 ;
 
 
-function NewAccountModalController($scope, $ionicModal, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout, CryptoUtils, BMA, Wallet, csCurrency) {
+function NewAccountModalController($scope, $state, UIUtils, CryptoUtils, Wallet, csCurrency) {
   'ngInject';
 
   $scope.formData = {
@@ -91,12 +91,11 @@ function NewAccountModalController($scope, $ionicModal, $state, $ionicSideMenuDe
 
   $scope.showAccountPubkey = function() {
     $scope.formData.computing=true;
-    CryptoUtils.connect($scope.formData.username, $scope.formData.password).then(
-      function(keypair) {
-        $scope.formData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-        $scope.formData.computing=false;
-      }
-    )
+    CryptoUtils.connect($scope.formData.username, $scope.formData.password)
+    .then(function(keypair) {
+      $scope.formData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+      $scope.formData.computing=false;
+    })
     .catch(function(err) {
       $scope.formData.computing=false;
       console.error('>>>>>>>' , err);
@@ -116,36 +115,35 @@ function NewAccountModalController($scope, $ionicModal, $state, $ionicSideMenuDe
     }
 
     UIUtils.loading.show();
-    $scope.closeModal()
-    .then(function(){
-      Wallet.login($scope.formData.username, $scope.formData.password)
+    $scope.closeModal();
+
+    Wallet.login($scope.formData.username, $scope.formData.password)
+    .then(function() {
+      if (!$scope.formData.isMember) {
+        // Reset account data, and open wallet view
+        $scope.cancel();
+        $state.go('app.view_wallet');
+        return;
+      }
+
+      // Send self
+      Wallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
         .then(function() {
-          if (!$scope.formData.isMember) {
+          // Send membership IN
+          Wallet.membership.inside()
+          .then(function() {
             // Reset account data, and open wallet view
             $scope.cancel();
             $state.go('app.view_wallet');
-            return;
-          }
-
-          // Send self
-          Wallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
-            .then(function() {
-              // Send membership IN
-              Wallet.membership.inside()
-              .then(function() {
-                // Reset account data, and open wallet view
-                $scope.cancel();
-                $state.go('app.view_wallet');
-              })
-              .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
-            })
-            .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
+          })
+          .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
         })
-        .catch(function(err) {
-          UIUtils.loading.hide();
-          console.error('>>>>>>>' , err);
-          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-        });
+        .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
+    })
+    .catch(function(err) {
+      UIUtils.loading.hide();
+      console.error('>>>>>>>' , err);
+      UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
     });
   };
 
