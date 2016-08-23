@@ -16,7 +16,8 @@ currentAndroid=`grep -P "android-versionCode=\"\d+\"" config.xml | grep -oP "\d+
 echo "Current Android version: $currentAndroid"
 
 if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
-  echo "build $2"
+  echo "new build version: $2"
+  echo "new build android version: $3"
   case "$1" in
     rel|pre)
       # Change the version in package.json and test file
@@ -41,10 +42,11 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   esac
   git commit -m "v$2"
   git tag "v$2"
+  git push
 else
   echo "Wrong version format"
   echo "Usage:"
-  echo " > release.sh [pre|rel] <version> <android-version>"
+  echo " > ./release.sh [pre|rel] <version> <android-version>"
   echo "with:"
   echo "  - version: x.y.z"
   echo "  - android-version: nnn"
@@ -57,6 +59,7 @@ ionic build android --release
 ionic build firefoxos --release
 
 gulp build:web --release
+
 
 
 
