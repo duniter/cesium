@@ -30,7 +30,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   esac
 
   # Commit
-  #git reset HEAD
+  git reset HEAD
   case "$1" in
     rel)
       git add package.json config.xml
@@ -49,13 +49,14 @@ else
   echo "  - version: x.y.z"
   echo "  - android-version: nnn"
 fi
-#gulp default --env default
 
-#ionic build android --release
+gulp default --env default
 
-#ionic build firefoxos --release
+ionic build android --release
 
-#gulp build:web --release
+ionic build firefoxos --release
+
+gulp build:web --release
 
 
 

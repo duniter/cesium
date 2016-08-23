@@ -54,13 +54,14 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  BMA, Wallet, $ionicHistory, Device, Modals, csSettings
+  BMA, Wallet, $ionicHistory, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
 
   $scope.search = {};
   $rootScope.walletData = Wallet.data;
   $rootScope.settings = csSettings.data;
+  $rootScope.config = csConfig;
 
   ////////////////////////////////////////
   // Load currencies
