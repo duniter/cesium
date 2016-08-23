@@ -24,16 +24,8 @@ wget -qO- https://raw.githubusercontent.com/duniter/duniter/master/install.sh | 
 This will download and unzip latest release in a `./cesium` directory.
 Existing files will be override.
 
-**Notes**
- 
- - To change the default installation directory, define the path into `CESIUM_DIR`, **before** launching installation script :
+**Note**: You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
 
-    ```
-     export CESIUM_DIR=/path/to/install/dir     
-    ```
-
- - You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
- 
 
 ## Developer
 
