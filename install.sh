@@ -88,7 +88,6 @@ reset() {
     download install_from_github do_install
 }
 
-
 [ "_$CESIUM_ENV" = "_testing" ] || do_install $1
 
 } # this ensures the entire script is downloaded #
