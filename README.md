@@ -18,7 +18,7 @@ curl -kL https://raw.githubusercontent.com/duniter/cesium/master/install.sh | ba
 or:
 
 ```
-wget -qO- https://raw.githubusercontent.com/duniter/duniter/master/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/duniter/cesium/master/install.sh | bash
 ```
 
 This will download and unzip latest release in a `./cesium` directory.
