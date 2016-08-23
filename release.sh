@@ -48,15 +48,20 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   ionic build firefoxos --release
   gulp build:web --release
 
+  if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ ]]; then
+    ./github.sh $1 $2
+  fi
+
   echo "**********************************"
-  echo "* Build release $2 sucees !"
+  echo "* Build release succeed !"
   echo "**********************************"
 else
   echo "Wrong version format"
   echo "Usage:"
-  echo " > ./release.sh [pre|rel] <version> <android-version>"
+  echo " > ./release.sh [pre|rel] <version> <android-version> <github_credentials>"
   echo "with:"
-  echo "  - version: x.y.z"
-  echo "  - android-version: nnn"
+  echo "  version: x.y.z"
+  echo "  android-version: nnn"
+  echo "  github_credentials: user:password  (a valid GitHub user account)"
 fi
 

@@ -55,11 +55,11 @@ case "$1" in
       dirname=`pwd`
       curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/web/build/cesium-web-$current.zip $upload_url?name=cesium-v$current-web.zip
       curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/firefoxos/build/package.zip $upload_url?name=cesium-v$current-firefoxos.zip
-      curl -i -u $2 -H 'Content-Type: application/vnd.android.package-archive' -T $dirname/platforms/android/build/outputs/apk/android-release.apk $upload_url?name=cesium-v$current-android.zip
+      curl -i -u $2 -H 'Content-Type: application/vnd.android.package-archive' -T $dirname/platforms/android/build/outputs/apk/android-release.apk $upload_url?name=cesium-v$current-android.apk
 
       echo "Successfully uploading files"
       release_url=`echo "$result" | grep -P "\"url\": \"[^\"]+"  | grep -oP "https://api.github.com/repos/[a-z0-9/.]+"`
-      echo " Release address: $release_url"
+      echo " -> Release url: $release_url"
     else
       echo "Wrong arguments"
       echo "Usage:"
