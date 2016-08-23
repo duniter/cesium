@@ -51,13 +51,12 @@ install_from_github() {
     mkdir -p "$CESIUM_DIR"
   fi
 
-  echo "=> Downloading Cesium from $CESIUM_URL"
-  echo "                        to $CESIUM_ARCHIVE"
+  echo "Downloading [$CESIUM_URL]"
   download "$CESIUM_URL" -o "$CESIUM_ARCHIVE" || {
       echo >&2 "Failed to download '$CESIUM_URL'"
       return 4
     }
-  echo "=> Unarchive to $CESIUM_DIR"
+  echo "Unarchive to $CESIUM_DIR"
   unzip -o $CESIUM_ARCHIVE -d $CESIUM_DIR
   rm $CESIUM_ARCHIVE
 
