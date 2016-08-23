@@ -44,7 +44,7 @@ install_from_github() {
   local CESIUM_ARCHIVE=$CESIUM_DIR/cesium.zip
   if [ -d "$CESIUM_DIR" ]; then
     if [ -f "$CESIUM_ARCHIVE" ]; then
-      echo "WARNING: Deleting existing file: $CESIUM_ARCHIVE"
+      echo "WARNING: Deleting existing archive [$CESIUM_ARCHIVE]"
       rm $CESIUM_ARCHIVE
     fi
   else
