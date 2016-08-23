@@ -48,14 +48,18 @@ case "$1" in
 
       echo "Creating new release..."
       result=`curl -i https://api.github.com/repos/duniter/cesium/releases -u $2 -d '{"tag_name": "v'"$current"'","target_commitish": "master","name": "'"$current"'","body": "'"$3"'","draft": false,"prerelease": '"$prerelease"'}'`
-      upload_url=`echo "$result" | grep -P "upload_url\": \"[^\"]+"  | grep -oP "https://[a-z0-9/.]+"`
-      echo $upload_url
+      upload_url=`echo "$result" | grep -P "\"upload_url\": \"[^\"]+"  | grep -oP "https://[a-z0-9/.]+"`
 
       ###  Sending files
-      echo "Sending binaries..."
-      curl -i ''"$upload_url"'?name=cesium-v'"$current"'-web.zip' -u $2 -H 'Content-Type: application/zip' --data '@platforms/web/build/cesium-web-'"$current"'.zip'
-      curl -i ''"$upload_url"'?name=cesium-v'"$current"'-firefoxos.zip' -u $2 -H 'Content-Type: application/zip' --data '@platforms/firefoxos/build/package.zip'
-      curl -i ''"$upload_url"'?name=cesium-v'"$current"'-android.apk' -u $2 -H 'Content-Type: application/vnd.android.package-archive' --data '@platforms/android/build/outputs/apk/android-release.apk'
+      echo "Uploading files to GitHub..."
+      dirname=`pwd`
+      curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/web/build/cesium-web-$current.zip $upload_url?name=cesium-v$current-web.zip
+      curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/firefoxos/build/package.zip $upload_url?name=cesium-v$current-firefoxos.zip
+      curl -i -u $2 -H 'Content-Type: application/vnd.android.package-archive' -T $dirname/platforms/android/build/outputs/apk/android-release.apk $upload_url?name=cesium-v$current-android.zip
+
+      echo "Successfully uploading files"
+      release_url=`echo "$result" | grep -P "\"url\": \"[^\"]+"  | grep -oP "https://api.github.com/repos/[a-z0-9/.]+"`
+      echo " Release address: $release_url"
     else
       echo "Wrong arguments"
       echo "Usage:"

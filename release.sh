@@ -43,6 +43,12 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git commit -m "v$2"
   git tag "v$2"
   git push
+
+  # Build assets
+  gulp default --env default
+  ionic build android --release
+  ionic build firefoxos --release
+  gulp build:web --release
 else
   echo "Wrong version format"
   echo "Usage:"
@@ -52,13 +58,7 @@ else
   echo "  - android-version: nnn"
 fi
 
-gulp default --env default
 
-ionic build android --release
-
-ionic build firefoxos --release
-
-gulp build:web --release
 
 
 
