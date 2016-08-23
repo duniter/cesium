@@ -9,7 +9,7 @@ is_installed() {
 if [ "_$1" != "_" ]; then
   CESIUM_DIR="$1"
 fi
-if [ -z "$CESIUM_DIR" ]; then
+if [ "_$CESIUM_DIR" = "_" ]; then
   DIRNAME=`pwd`
   CESIUM_DIR="$DIRNAME/cesium"
 fi

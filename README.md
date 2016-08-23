@@ -8,6 +8,33 @@ Try it at: http://cesium.duniter.fr
 
 There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
 
+## Install
+
+Cesium can be easily installed on most web server using the following command:
+
+```
+curl -kL https://raw.githubusercontent.com/duniter/cesium/master/install.sh | bash
+```
+or:
+
+```
+wget -qO- https://raw.githubusercontent.com/duniter/duniter/master/install.sh | bash
+```
+
+This will download and unzip latest release in a `./cesium` directory.
+Existing files will be override.
+
+**Notes**
+ 
+ - To change the default installation directory, define the path into `CESIUM_DIR`, **before** launching installation script :
+
+    ```
+     export CESIUM_DIR=/path/to/install/dir     
+    ```
+
+ - You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
+ 
+
 ## Developer
 
 To contribute and compile cesium, you will have to: 
