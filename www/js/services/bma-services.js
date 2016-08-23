@@ -58,7 +58,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.blockchain.current !== null &&
-            (now.getTime() - data.blockchain.current.timestamp) <= constants.CACHE_TIME_MS) {
+            (now.getTime() - data.blockchain.current.timestamp) <= csSettings.cacheTimeMs) {
           resolve(data.blockchain.current.result);
           return;
         }
@@ -80,7 +80,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.wot && data.wot.members && data.wot.members.length > 0 &&
-            (now.getTime() - data.wot.membersTimestamp) <= constants.CACHE_TIME_MS){
+            (now.getTime() - data.wot.membersTimestamp) <= csSettings.cacheTimeMs){
           resolve(data.wot.members);
         }
         else {
@@ -122,7 +122,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       return $q(function(resolve, reject) {
         var now = new Date();
         if (cache && data.wot && data.wot.members && data.wot.memberUidsByPubkey && data.wot.memberUidsByPubkey.length > 0 &&
-            (now.getTime() - data.wot.memberUidsByPubkeyTimestamp) <= constants.CACHE_TIME_MS){
+            (now.getTime() - data.wot.memberUidsByPubkeyTimestamp) <= csSettings.cacheTimeMs){
           resolve(data.wot.memberUidsByPubkey);
         }
         else {
@@ -149,7 +149,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       var getBlockchainBlock = csHttp.get(host, port, '/blockchain/block/:block');
       return $q(function(resolve, reject) {
         var now = new Date();
-        if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= constants.CACHE_TIME_MS){
+        if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= csSettings.cacheTimeMs){
           resolve(data.blockchain.lastUd);
         }
         else {

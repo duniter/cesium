@@ -7,7 +7,7 @@
         </div>
 
         <a class="peer-item item item-icon-left"
-           collection-repeat="peer in peers"
+           collection-repeat="peer in data.peers"
            ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock) }"
            ui-sref="app.view_peer({server: peer.getServer()})">
             <i class="icon ion-android-globe"></i>

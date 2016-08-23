@@ -94,7 +94,7 @@ function CurrencyLookupController($scope, $state, UIUtils) {
 function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csNetwork) {
 
   $scope.loadingPeers = true;
-  $scope.peers = csNetwork.data.peers;
+  $scope.data = csNetwork.data;
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
@@ -144,7 +144,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     $scope.node = BMA;
     $scope.startListeningOnSocket();
     $timeout(function() {
-      if ((!$scope.search.peers || $scope.search.peers.length === 0) && $scope.search.lookingForPeers){
+      if (!csNetwork.hasPeers() && $scope.loadingPeers){
         $scope.refresh();
       }
     }, 2000);
@@ -166,9 +166,10 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
         }, wait);
       }
     });
-    /*$scope.node.websocket.peer().on('peer', function(peer) {
-      console.log(peer);
-    });*/
+    $scope.node.websocket.peer().on('peer', function(peer) {
+      csNetwork.onNewPeer(peer);
+      csNetwork.processPeers();
+    });
   };
 
   $scope.closeNode = function() {
@@ -266,12 +267,10 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
       // Network
       $scope.loadingPeers = true;
       csNetwork.getPeers()
-      .then(function(peers) {
-        $scope.peers = peers;
+      .then(function() {
         $scope.loadingPeers = false;
       })
       .catch(function(err) {
-        $scope.peers = [];
         $scope.loadingPeers = false;
       });
     });
