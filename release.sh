@@ -30,25 +30,30 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
   esac
 
+  # Update config file
+  gulp config --env default
+
   # Commit
   git reset HEAD
-  case "$1" in
-    rel)
-      git add package.json config.xml
-      ;;
-    pre)
-      git add package.json config.xml
-      ;;
-  esac
+  git add package.json config.xml
   git commit -m "v$2"
   git tag "v$2"
   git push
 
   # Build assets
-  gulp default --env default
   ionic build android --release
   ionic build firefoxos --release
   gulp build:web --release
+
+  echo "**********************************"
+  echo "* Build release $2 succeed !"
+  echo "* "
+  echo "* "
+  echo "* Now please deploy files to github using:"
+  echo "* "
+  echo "* > ./github.sh pre|rel user:pwd"
+  echo "* "
+  echo "**********************************"
 else
   echo "Wrong version format"
   echo "Usage:"
@@ -57,11 +62,4 @@ else
   echo "  - version: x.y.z"
   echo "  - android-version: nnn"
 fi
-
-
-
-
-
-
-
 
