@@ -24,6 +24,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       sed -i "s/version\": \"$current/version\": \"$2/g" package.json
       sed -i "s/ version=\".*\"/ version=\"$2\"/g" config.xml
       sed -i "s/ android-versionCode=\".*\"/ android-versionCode=\"$3\"/g" config.xml
+
+      # Bump the install.sh
+      sed -i "s/echo \"v$current\"/echo \"v$2\"/g" install.sh
       ;;
     *)
       echo "No task given"
@@ -35,7 +38,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
 
   # Commit
   git reset HEAD
-  git add package.json config.xml
+  git add package.json config.xml install.sh
   git commit -m "v$2"
   git tag "v$2"
   git push
@@ -46,13 +49,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   gulp build:web --release
 
   echo "**********************************"
-  echo "* Build release $2 succeed !"
-  echo "* "
-  echo "* "
-  echo "* Now please deploy files to github using:"
-  echo "* "
-  echo "* > ./github.sh pre|rel user:pwd"
-  echo "* "
+  echo "* Build release $2 sucees !"
   echo "**********************************"
 else
   echo "Wrong version format"
