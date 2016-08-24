@@ -18,6 +18,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
         timeWarningExpire: 2592000 * 3 /*=3 mois*/,
         useLocalStorage: false,
+        walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
+        walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
         rememberMe: false,
         showUDHistory: true,
         locale: {
@@ -86,6 +88,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           // This is a workaround for DEV (TODO: implement edition in settings)
           data.timeWarningExpire = defaultSettings.timeWarningExpire;
           data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
+          data.cacheTimeMs = defaultSettings.cacheTimeMs;
 
           if (localeChanged) {
             $translate.use(data.locale.id);

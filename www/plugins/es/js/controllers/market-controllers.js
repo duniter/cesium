@@ -345,7 +345,7 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
 
   ESCommentsController.call(this, $scope, Wallet, UIUtils, $q, $timeout, esHttp, esMarket);
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function (e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
         $scope.load($state.stateParams.id);
@@ -356,95 +356,92 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
     }
   });
 
-  $scope.load = function(id) {
-    esMarket.category.all()
-    .then(function(categories) {
-      esMarket.record.getCommons({id: id})
-      .then(function (hit) {
-        $scope.formData = hit._source;
-        $scope.id= hit._id;
-        if (hit._source.category && hit._source.category.id) {
-          $scope.category = categories[hit._source.category.id];
-        }
-        if (hit._source.thumbnail) {
-          $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
-        }
-        $scope.canEdit = $scope.formData && Wallet.isUserPubkey($scope.formData.issuer);
+  $scope.load = function (id) {
 
-        // Get last UD
-        BMA.blockchain.lastUd(true/*cache*/)
-        .then(function(currentUD){
-          $rootScope.walletData.currentUD = currentUD;
-          $scope.refreshConvertedPrice();
-          // Load issuer as member
-          return BMA.wot.member.get($scope.formData.issuer);
-        })
-        .then(function(member){
-          $scope.issuer = member;
-
-          // Set Motion (only direct children, to exclude .lazy-load children)
-          $timeout(function() {
-            UIUtils.motion.fadeSlideIn({
-              selector: '.list > .item',
-              startVelocity: 3000
-            });
-          }, 10);
-          UIUtils.loading.hide();
-          $scope.loading = false;
-        })
-        .catch(function(err) {
-          $scope.loading = false;
-          UIUtils.loading.hide();
-          $scope.member = null;
-        });
-      })
-      .catch(function(err) {
-        if (!$scope.secondTry) {
-          $scope.secondTry = true;
-          $q(function() {
-            $scope.load(id); // loop once
-          }, 100);
-        }
-        else {
-          $scope.loading = false;
-          UIUtils.onError('esMarket.ERROR.LOAD_RECORD_FAILED')(err);
-        }
-      });
-
-      // Continue loading other data
-      $q.all([
-        // Load pictures
-        esMarket.record.picture.all({id: id})
-        .then(function(hit) {
-          if (hit._source.pictures) {
-            $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-              return res.concat(UIUtils.image.fromAttachment(pic.file));
-            }, []);
-          }
+    var categories;
+    $q.all([
+      esMarket.category.all()
+        .then(function (result) {
+          categories = result;
         }),
-
-        // Load comments
-        $scope.loadComments(id)
-      ])
-      .then(function() {
-        // Set Motion
-        $timeout(function() {
-          UIUtils.motion.fadeSlideIn({
-            selector: '.card-gallery, .card-comment, .lazy-load .item'
-          });
-        }, 10);
-      })
-      .catch(function(err) {
-        $scope.pictures = [];
-        $scope.comments = [];
-      });
-
+      // Get last UD
+      BMA.blockchain.lastUd()
+        .then(function (currentUD) {
+          $rootScope.walletData.currentUD = currentUD;
+        })
+    ])
+    .then(function () {
+      return esMarket.record.getCommons({id: id});
     })
-    .catch(function(){
+    .then(function (hit) {
+      $scope.formData = hit._source;
+      $scope.id = hit._id;
+      if (hit._source.category && hit._source.category.id) {
+        $scope.category = categories[hit._source.category.id];
+      }
+      if (hit._source.thumbnail) {
+        $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
+      }
+      $scope.canEdit = $scope.formData && Wallet.isUserPubkey($scope.formData.issuer);
+
+      return BMA.wot.member.get($scope.formData.issuer);
+    })
+    .then(function (member) {
+      $scope.issuer = member;
+      $scope.refreshConvertedPrice();
+      // Set Motion (only direct children, to exclude .lazy-load children)
+      $timeout(function () {
+        UIUtils.motion.fadeSlideIn({
+          selector: '.list > .item',
+          startVelocity: 3000
+        });
+      }, 10);
+      UIUtils.loading.hide();
       $scope.loading = false;
-      UIUtils.onError('esMarket.ERROR.LOAD_CATEGORY_FAILED')(err);
+    })
+    .catch(function (err) {
+      if (!$scope.secondTry) {
+        $scope.secondTry = true;
+        $q(function () {
+          $scope.load(id); // loop once
+        }, 100);
+      }
+      else {
+        $scope.loading = false;
+        UIUtils.loading.hide();
+        $scope.member = null;
+        UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+      }
     });
-  };
+
+  // Continue loading other data
+  $q.all([
+    // Load pictures
+    esMarket.record.picture.all({id: id})
+      .then(function (hit) {
+        if (hit._source.pictures) {
+          $scope.pictures = hit._source.pictures.reduce(function (res, pic) {
+            return res.concat(UIUtils.image.fromAttachment(pic.file));
+          }, []);
+        }
+      }),
+
+    // Load comments
+    $scope.loadComments(id)
+  ])
+    .then(function () {
+      // Set Motion
+      $timeout(function () {
+        UIUtils.motion.fadeSlideIn({
+          selector: '.card-gallery, .card-comment, .lazy-load .item'
+        });
+      }, 10);
+    })
+    .catch(function (err) {
+      $scope.pictures = [];
+      $scope.comments = [];
+    });
+  }
 
   $scope.refreshConvertedPrice = function() {
     if (!$scope.formData.price) {
@@ -479,7 +476,7 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
 }
 
 function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
-  $timeout, ModalUtils, esHttp, $ionicHistory, $focus, csSettings) {
+  $timeout, ModalUtils, esHttp, $ionicHistory, $focus, csSettings, csCurrency) {
   'ngInject';
 
   $scope.walletData = {};
@@ -495,7 +492,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     // Load currencies list
-    $scope.loadCurrencies()
+    csCurrency.all()
     .then(function(currencies){
       if (currencies.length == 1) {
          $scope.currency = currencies[0].name;

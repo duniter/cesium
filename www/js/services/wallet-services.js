@@ -3,7 +3,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, csSettings) {
+.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, csSettings, csNetwork) {
   'ngInject';
 
   Wallet = function(id) {
@@ -356,20 +356,41 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     loadTransactions = function() {
       return $q(function(resolve, reject) {
-        var jobs = [];
         var txHistory = [];
         var udHistory = [];
         var txPendings = [];
-        // get TX history
-        jobs.push(
-          BMA.tx.history.all({pubkey: data.pubkey})
+
+        var now = new Date().getTime();
+        var nowInSec = Math.trunc(now / 1000);
+        var fromTime = nowInSec - csSettings.data.walletHistoryTimeSecond;
+        var processedTxMap = {};
+
+        var jobs = [
+          // get pendings history
+          BMA.tx.history.pending({pubkey: data.pubkey})
+            .then(function(res){
+              reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
+              reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
+            })
+        ];
+
+        // get TX history since
+        var sliceTime = csSettings.data.walletHistorySliceSecond;
+        for(var i = fromTime - (fromTime % sliceTime); i - sliceTime < nowInSec; i += sliceTime)  {
+          jobs.push(BMA.tx.history.times({pubkey: data.pubkey, from: i, to: i+sliceTime-1})
+            .then(function(res){
+              reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
+              reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
+            })
+          );
+        }
+
+        jobs.push(BMA.tx.history.timesNoCache({pubkey: data.pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
           .then(function(res){
-            var processedTxMap = {};
             reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
             reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
-            reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
-            reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
           }));
+
         // get UD history
         if (csSettings.data.showUDHistory) {
           jobs.push(
@@ -395,12 +416,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
              return (tx2.time - tx1.time);
           });
           data.tx.pendings = txPendings;
+          data.tx.fromTime = fromTime;
+          data.tx.toTime = data.tx.history.length ? data.tx.history[0].time /*=max(tx.time)*/: fromTime;
+          console.log('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
           resolve();
         })
         .catch(function(err) {
           data.tx.history = [];
           data.tx.pendings = [];
           data.tx.errors = [];
+          delete data.tx.fromTime;
+          delete data.tx.toTime;
           reject(err);
         });
       });

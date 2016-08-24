@@ -4,7 +4,8 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment', 'ngApi',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment',
+  'ngApi', 'angular-cache',
    // removeIf(no-device)
   'ngCordova',
    // endRemoveIf(no-device)
@@ -42,10 +43,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
-  .filter('formatDate', function($translate) {
+  .filter('formatDate', function($rootScope) {
     return function(input) {
-      // TODO: use local format
-      return input ? moment(parseInt(input)*1000).local().format('YYYY-MM-DD HH:mm') : '';
+      return input ? moment(parseInt(input)*1000).local().format($rootScope.datePattern || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
@@ -142,6 +142,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     $animateProvider.classNameFilter( /\banimate-/ );
   })
 
+  .config(function (CacheFactoryProvider) {
+    angular.extend(CacheFactoryProvider.defaults, { maxAge: 60 * 1000 /*1min*/});
+  })
+
   // removeIf(no-device)
   // FIXME: native transition on a PAD move also move the left menu !
   /*
@@ -201,7 +205,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   $rootScope.onLanguageChange = function() {
     var lang = $translate.use();
+    console.debug('[app] Locale ['+lang+']');
     moment.locale(lang.substring(0,2));
+    $translate('COMMON.DATE_PATTERN')
+      .then(function(datePattern) {
+        $rootScope.datePattern = datePattern;
+      })
   };
 
   // Set up moment translation

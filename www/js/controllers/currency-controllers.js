@@ -59,7 +59,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, UIUtils) {
+function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   'ngInject';
 
   $scope.selectedCurrency = '';
@@ -67,12 +67,12 @@ function CurrencyLookupController($scope, $state, UIUtils) {
   $scope.search.looking = true;
 
   $scope.$on('$ionicView.enter', function() {
-    $scope.loadCurrencies()
-    .then(function (res) {
-      $scope.knownCurrencies = res;
+    csCurrency.all()
+    .then(function (currencies) {
+      $scope.knownCurrencies = currencies;
       $scope.search.looking = false;
       if (!!res && res.length == 1) {
-        $scope.selectedCurrency = res[0].id;
+        $scope.selectedCurrency = currencies[0].id;
       }
       // Set Ink
       UIUtils.ink({selector: 'a.item'});
@@ -91,10 +91,9 @@ function CurrencyLookupController($scope, $state, UIUtils) {
   };
 }
 
-function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csNetwork) {
+function CurrencyViewController($scope, $q, $translate, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
 
   $scope.loadingPeers = true;
-  $scope.data = csNetwork.data;
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
@@ -114,16 +113,17 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.Nprev = 0;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    $scope.closeNode();
-
     $translate(['COMMON.DATE_PATTERN'])
     .then(function($translations) {
       $scope.datePattern = $translations['COMMON.DATE_PATTERN'];
       if ($state.stateParams && $state.stateParams.name) { // Load by name
-         $scope.load($scope.name);
+        csCurrency.searchByName($state.stateParams.name)
+        .then(function(currency){
+          $scope.load(currency);
+        });
       }
       else {
-        $scope.loadCurrencies()
+        csCurrency.all()
         .then(function (currencies) {
           if (currencies && currencies.length > 0) {
             $scope.load(currencies[0]);
@@ -135,49 +135,21 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   });
 
   $scope.$on('$ionicView.beforeLeave', function(){
-    $scope.closeNode();
+    csNetwork.close();
   });
 
-  $scope.load = function(name) {
-    $scope.closeNode();
+  $scope.load = function(currency) {
+    $scope.name = currency.name;
+    $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
+      BMA.instance(currency.peer.host, currency.peer.port) : BMA;
 
-    $scope.node = BMA;
-    $scope.startListeningOnSocket();
-    $timeout(function() {
-      if (!csNetwork.hasPeers() && $scope.loadingPeers){
-        $scope.refresh();
-      }
-    }, 2000);
-  };
-
-  $scope.startListeningOnSocket = function() {
-    if (!$scope.node) {
-      return;
+    if ($scope.loadingPeers){
+      csNetwork.start($scope.node, $scope)
+        .then(function(peers) {
+          $scope.peers = peers;
+          $scope.loadingPeers = false;
+        })
     }
-
-    $scope.node.websocket.block().on('block', function(block) {
-      var buid = csNetwork.buid(block);
-      if (csNetwork.data.knownBlocks.indexOf(buid) === -1) {
-        csNetwork.data.knownBlocks.push(buid);
-        // We wait 2s when a new block is received, just to wait for network propagation
-        var wait = csNetwork.data.knownBlocks.length === 1 ? 0 : 2000;
-        $timeout(function() {
-          $scope.refresh();
-        }, wait);
-      }
-    });
-    $scope.node.websocket.peer().on('peer', function(peer) {
-      csNetwork.onNewPeer(peer);
-      csNetwork.processPeers();
-    });
-  };
-
-  $scope.closeNode = function() {
-    if (!$scope.node) {
-      return;
-    }
-    $scope.node.websocket.close();
-    $scope.node = null;
   };
 
   $scope.onUseRelativeChanged = function() {
@@ -266,7 +238,8 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .then(function(){
       // Network
       $scope.loadingPeers = true;
-      csNetwork.getPeers()
+      $scope.peers = csNetwork.getPeers();
+      csNetwork.refreshPeers()
       .then(function() {
         $scope.loadingPeers = false;
       })

@@ -30,7 +30,7 @@
                      ng-class="{ selected: selectedCurrency == currency }"
                      ng-click="selectCurrency(currency.name, true)">
                     <h2>{{::currency.name}}</h2>
-                    <h4 class="gray">{{::currency.peer}}</h4>
+                    <h4 class="gray">{{::currency.peer.server}}</h4>
                     <i class="icon dark ion-ios-arrow-right"></i>
                   </div>
                 </div>

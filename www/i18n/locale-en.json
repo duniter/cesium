@@ -260,7 +260,7 @@
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special caracters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
-    "IDENTITY_SANDBOX_FULL": "Duniter node could not received new identity, beacause it's sandbox is full.<br/><br/>Please retry later or change your node (in <b>Settings</b>)."
+    "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>)."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

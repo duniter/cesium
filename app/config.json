@@ -23,7 +23,7 @@
 
   "dev": {
     "timeout": 6000,
-    "cacheTimeMs": 6000,
+    "cacheTimeMs": 60000,
     "useRelative": true,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
@@ -36,8 +36,8 @@
     },
     "plugins":{
       "es": {
-        "enable": "true",
-        "host": "test-net.duniter.fr",
+        "enable": "false",
+        "host": "192.168.0.28",
         "port": "9203"
       }
     }

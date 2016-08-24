@@ -1,12 +1,18 @@
-angular.module('cesium.http.services', ['ngResource'])
+angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
 
-.factory('csHttp', function($http, $q, csSettings) {
+.factory('csHttp', function($http, $q, csSettings, CacheFactory) {
   'ngInject';
 
   function factory(timeout) {
 
     var
-      sockets = []
+      sockets = [],
+      constants = {
+        cache: {
+          LONG: 1 * 60  * 60 * 1000 /*5 min*/,
+          SHORT: csSettings.data.cacheTimeMs
+        }
+      }
     ;
 
     if (!timeout) {
@@ -53,8 +59,9 @@ angular.module('cesium.http.services', ['ngResource'])
         }
       });
       config.params = queryParams;
-      callback(newUri, config);
+      return callback(newUri, config);
     }
+
 
     function getResource(host, port, path) {
       var url = getUrl(host, port, path);
@@ -66,6 +73,73 @@ angular.module('cesium.http.services', ['ngResource'])
 
           prepare(url, params, config, function(url, config) {
               $http.get(url, config)
+              .success(function(data, status, headers, config) {
+                resolve(data);
+              })
+              .error(function(data, status, headers, config) {
+                processError(reject, data, url, status);
+              });
+          });
+        });
+      };
+    }
+
+    function getOrCreateCache(maxAge, onExpire){
+      var cacheName = 'csHttp-' + maxAge;
+      if (!onExpire) {
+        return CacheFactory.get(cacheName) ||
+          CacheFactory.createCache(cacheName, {
+            maxAge: maxAge,
+            deleteOnExpire: 'aggressive',
+            recycleFreq: Math.max(maxAge - 1000, 5 * 60 * 1000 /*5min*/),
+            storageMode:
+              // FIXME : enable this when cache is cleaning on rollback
+              csSettings.data.useLocalStorage ? 'localStorage' : 'memory'
+          });
+      }
+      else {
+        var counter = 1;
+        while(CacheFactory.get(cacheName + counter)) {
+          counter++;
+        }
+        return CacheFactory.createCache(cacheName + counter, {
+            maxAge: maxAge,
+            deleteOnExpire: 'aggressive',
+            recycleFreq: maxAge,
+            onExpire: onExpire,
+            storageMode:
+              // FIXME : enable this when cache is cleaning on rollback
+              csSettings.data.useLocalStorage ? 'localStorage' : 'memory'
+          });
+      }
+    }
+
+    function getResourceWithCache(host, port, path, maxAge, autoRefresh) {
+      var url = getUrl(host, port, path);
+      maxAge = maxAge || constants.cache.LONG;
+      console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
+
+      return function(params) {
+        return $q(function(resolve, reject) {
+          var config = {
+            timeout: timeout
+          }
+          if (autoRefresh) { // redo the request if need
+            config.cache = getOrCreateCache(maxAge, function (key, value) {
+                console.debug('[http] Refreshing cache for ['+key+'] ');
+                $http.get(key, config)
+                  .success(function (data) {
+                    config.cache.put(key, data);
+                });
+              });
+          }
+          else {
+            config.cache = getOrCreateCache(maxAge);
+          };
+
+
+          prepare(url, params, config, function(url, config) {
+            $http.get(url, config)
               .success(function(data, status, headers, config) {
                 resolve(data);
               })
@@ -162,6 +236,7 @@ angular.module('cesium.http.services', ['ngResource'])
 
     return {
       get: getResource,
+      getWithCache: getResourceWithCache,
       post: postResource,
       ws: ws,
       closeAllWs: closeAllWs,
@@ -170,6 +245,7 @@ angular.module('cesium.http.services', ['ngResource'])
       uri: {
         parse: parseUri
       },
+      cache: constants.cache
     };
   }
 

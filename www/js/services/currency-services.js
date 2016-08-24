@@ -7,42 +7,56 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
   factory = function(id) {
 
     var
-    data = {
-      loaded: false,
-      currencies: null
-    },
-    api = new Api(this, "csCurrency-" + id),
+      data = {
+        loaded: false,
+        currencies: null
+      },
+      api = new Api(this, "csCurrency-" + id),
 
-    loadData = function() {
-      return $q(function (resolve, reject){
-        if (data.loaded) { // load only once
-          resolve(data);
-          return;
-        }
+      loadData = function() {
+        return $q(function (resolve, reject){
+          if (data.loaded) { // load only once
+            resolve(data);
+            return;
+          }
 
-        data.currencies = [];
-        // Load currency from default node
-        BMA.blockchain.parameters()
-        .then(function(res){
-          data.currencies.push({
-            name: res.currency,
-            peer: BMA.node.server}
-          );
-
-          // API extension point
-          return api.data.raisePromise.load(data);
-        })
-        .then(function() {
-          data.loaded = true;
-          resolve(data);
-        })
-        .catch(function(err) {
-          data.loaded = false;
           data.currencies = [];
-          reject(err);
+          // Load currency from default node
+          BMA.blockchain.parameters()
+          .then(function(res){
+            data.currencies.push({
+                name: res.currency,
+                peer: BMA.node
+              });
+
+            // API extension point
+            return api.data.raisePromise.load(data);
+          })
+          .then(function() {
+            data.loaded = true;
+            resolve(data);
+          })
+          .catch(function(err) {
+            data.loaded = false;
+            data.currencies = [];
+            reject(err);
+          });
         });
-      });
-    }
+      },
+
+      getAll = function() {
+        return loadData()
+        .then(function(data){
+          return data.currencies;
+        });
+      },
+
+      searchByName = function(name) {
+        return loadData()
+          .then(function(data){
+            return _.findWhere(data.currencies, {name: name});
+          });
+      }
     ;
 
     // Register extension points
@@ -51,6 +65,8 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
     return {
       id: id,
       load: loadData,
+      all: getAll,
+      searchByName: searchByName,
       // api extension
       api: api
     };

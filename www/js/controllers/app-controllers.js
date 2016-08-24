@@ -54,7 +54,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  BMA, Wallet, $ionicHistory, Device, Modals, csSettings, csConfig
+  BMA, Wallet, $ionicHistory, Device, Modals, csSettings, csConfig, csCurrency
   ) {
   'ngInject';
 
@@ -68,23 +68,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUti
   ////////////////////////////////////////
 
   $scope.loadCurrencies = function() {
-    return $q(function (resolve, reject){
-      if (!!$rootScope.knownCurrencies) { // get list only once
-        resolve($rootScope.knownCurrencies);
-        return;
-      }
-      $rootScope.knownCurrencies = [];
-      BMA.blockchain.parameters()
-      .then(function(res) {
-        $rootScope.knownCurrencies.push({
-          name: res.currency,
-          peer: BMA.node.server}
-        );
-        $scope.search.looking = false;
-        resolve($rootScope.knownCurrencies);
-      })
+    console.debug("[WARN] $scope.loadCurrencies() si deprecated. use csNetwork.all() instead");
+    return csCurrency.all()
       .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
-    });
   };
 
   ////////////////////////////////////////

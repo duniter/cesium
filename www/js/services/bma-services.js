@@ -8,7 +8,6 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
   function factory(host, port) {
 
     var
-    instance = this,
     errorCodes = {
         NO_MATCHING_IDENTITY: 2001,
         UID_ALREADY_USED: 2003,
@@ -26,15 +25,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
       URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
     },
-    data = {
-      blockchain: {
-        current: null
-      },
-      wot: {
-        members: [],
-        memberUidsByPubkey: []
-      }
-    };
+    server = csHttp.getServer(host, port);
 
     function exact(regexpContent) {
       return new RegExp("^" + regexpContent + "$");
@@ -52,123 +43,48 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       }
     }
 
-
-    function getBlockchainCurrent(cache) {
-      var getBlockchainCurrentNoCache = csHttp.get(host, port, '/blockchain/current');
-      return $q(function(resolve, reject) {
-        var now = new Date();
-        if (cache && data.blockchain.current !== null &&
-            (now.getTime() - data.blockchain.current.timestamp) <= csSettings.cacheTimeMs) {
-          resolve(data.blockchain.current.result);
-          return;
-        }
-        getBlockchainCurrentNoCache()
-        .then(function(block) {
-          data.blockchain.current = {
-            result: block,
-            timestamp: now.getTime()
-          };
-          resolve(block);
-        })
-        .catch(function(err){reject(err);});
-      });
+    function isSameNode(host2, port2) {
+      return host2 == host && ((!port && !port2) ||(port == port2));
     }
 
+    var getMembers = csHttp.getWithCache(host, port, '/wot/members');
 
-    function getMembers(cache) {
-      var getMembersNoCache = csHttp.get(host, port, '/wot/members');
-      return $q(function(resolve, reject) {
-        var now = new Date();
-        if (cache && data.wot && data.wot.members && data.wot.members.length > 0 &&
-            (now.getTime() - data.wot.membersTimestamp) <= csSettings.cacheTimeMs){
-          resolve(data.wot.members);
-        }
-        else {
-          getMembersNoCache()
-          .then(function(json){
-            data.wot.members = json.results;
-            data.wot.membersTimestamp = now.getTime();
-            resolve(data.wot.members);
-          })
-          .catch(function(err) {
-            data.wot.members = [];
-            data.wot.membersTimestamp = now.getTime();
-            reject(err);
-          });
-        }
-      });
+    function getMemberUidsByPubkey() {
+      return getMembers()
+        .then(function(res){
+          return res.results.reduce(function(res, member){
+            res[member.pubkey] = member.uid;
+            return res;
+          }, {});
+        });
     }
 
-    function getMemberByPubkey(pubkey, cache) {
-      if (cache == "undefined") {
-        cache = true;
-      }
-      return $q(function(resolve, reject) {
-        getMemberUidsByPubkey(cache)
+    function getMemberByPubkey(pubkey) {
+      return getMemberUidsByPubkey()
         .then(function(memberUidsByPubkey){
           var uid = memberUidsByPubkey[pubkey];
-          resolve({
-            pubkey: pubkey,
-            uid: (uid ? uid : null)
-          });
+          return {
+              pubkey: pubkey,
+              uid: (uid ? uid : null)
+            };
         })
-        .catch(function(err) {
-          reject(err);
-        });
-      });
     }
 
-    function getMemberUidsByPubkey(cache) {
-      return $q(function(resolve, reject) {
-        var now = new Date();
-        if (cache && data.wot && data.wot.members && data.wot.memberUidsByPubkey && data.wot.memberUidsByPubkey.length > 0 &&
-            (now.getTime() - data.wot.memberUidsByPubkeyTimestamp) <= csSettings.cacheTimeMs){
-          resolve(data.wot.memberUidsByPubkey);
-        }
-        else {
-          getMembers(false/* no cache*/)
-          .then(function(members){
-            var result = {};
-            _.forEach(members, function(member){
-              result[member.pubkey] = member.uid;
+    var getBlockchainWithUd = csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT)
+    var getBlockchainBlock = csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT);
+
+    function getBlockchainLastUd() {
+      return getBlockchainWithUd()
+        .then(function(res) {
+          if (!res.result.blocks || !res.result.blocks.length) {
+            return null;
+          }
+          var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+          return getBlockchainBlock({block: lastBlockWithUD})
+            .then(function(block){
+              return (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
             });
-            data.wot.members = members;
-            data.wot.memberUidsByPubkey = result;
-            data.wot.memberUidsByPubkeyTimestamp = now.getTime();
-            resolve(result);
-          })
-          .catch(function(err) {
-            reject(err);
-          });
-        }
-      });
-    }
-
-    function getBlockchainLastUd(cache) {
-      var getBlockchainWithUd = csHttp.get(host, port, '/blockchain/with/ud');
-      var getBlockchainBlock = csHttp.get(host, port, '/blockchain/block/:block');
-      return $q(function(resolve, reject) {
-        var now = new Date();
-        if (cache && data.blockchain && data.blockchain.lastUd && (now.getTime() - data.blockchain.lastUdTimestamp) <= csSettings.cacheTimeMs){
-          resolve(data.blockchain.lastUd);
-        }
-        else {
-          getBlockchainWithUd()
-          .then(function(res){
-            if (res.result.blocks.length) {
-              var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-              return getBlockchainBlock({ block: lastBlockWithUD })
-                .then(function(block){
-                  var currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
-                  resolve(currentUD);
-                });
-            }
-          })
-          .catch(function(err) {
-            reject(err);
-          });
-        }
-      });
+        });
     }
 
     function parseUri(uri) {
@@ -286,7 +202,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     return {
       node: {
         summary: csHttp.get(host, port, '/node/summary'),
-        server: csHttp.getServer(host, port)
+        server: server,
+        host: host,
+        port: port,
+        same: isSameNode
       },
       wot: {
         lookup: csHttp.get(host, port, '/wot/lookup/:search'),
@@ -306,12 +225,12 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         peers: csHttp.get(host, port, '/network/peers')
       },
       blockchain: {
-        parameters: csHttp.get(host, port, '/blockchain/parameters'),
-        current: getBlockchainCurrent,
-        block: csHttp.get(host, port, '/blockchain/block/:block'),
+        parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
+        current: csHttp.get(host, port, '/blockchain/current'),
+        block: getBlockchainBlock,
         membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
-          ud: csHttp.get(host, port, '/blockchain/with/ud'),
+          ud: getBlockchainWithUd,
           tx: csHttp.get(host, port, '/blockchain/with/tx')
         },
         lastUd: getBlockchainLastUd
@@ -321,8 +240,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         process: csHttp.post(host, port, '/tx/process'),
         history: {
           all: csHttp.get(host, port, '/tx/history/:pubkey'),
-          times: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
-          blocks: csHttp.get(host, port, '/tx/history/:pubkey/blocks/:from/:to')
+          times: csHttp.getWithCache(host, port, '/tx/history/:pubkey/times/:from/:to'),
+          timesNoCache: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
+          blocks: csHttp.getWithCache(host, port, '/tx/history/:pubkey/blocks/:from/:to'),
+          pending: csHttp.get(host, port, '/tx/history/:pubkey/pending')
         }
       },
       ud: {
@@ -330,10 +251,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       },
       websocket: {
         block: function() {
-          return csHttp.ws('ws://' + csHttp.getServer(host, port) + '/ws/block');
+          return csHttp.ws('ws://' + server + '/ws/block');
         },
         peer: function() {
-          return csHttp.ws('ws://' + csHttp.getServer(host, port) + '/ws/peer');
+          return csHttp.ws('ws://' + server + '/ws/peer');
         },
         close : csHttp.closeAllWs
       },
