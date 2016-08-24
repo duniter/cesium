@@ -121,21 +121,29 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
       },
 
-      refreshPeers = function() {
+      refreshPeers = function(doNotWaitAllPeers) {
         return $q(function(resolve, reject){
           if (interval) {
             $interval.cancel(interval);
           }
 
+          var resolved = false;
+
           interval = $interval(function() {
             if (data.newPeers.length) {
               data.peers = data.peers.concat(data.newPeers.splice(0));
               sortPeers();
+              if (doNotWaitAllPeers) {
+                resolved = true;
+                resolve(data.peers);
+              }
             } else if (data.updatingPeers && !data.searchingPeersOnNetwork) {
               // The peer lookup endend, we can make a clean final report
               sortPeers();
               data.updatingPeers = false;
-              resolve(data.peers);
+              if (!resolved) {
+                resolve(data.peers);
+              }
               $interval.cancel(interval);
             }
           }, 1000);
@@ -192,14 +200,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
       },
 
-      start = function(bma, $scope) {
+      start = function(bma, doNotWaitAllPeers) {
         return $q(function(resolve, reject) {
           close();
           data.bma = bma ? bma : BMA;
           console.info('[network] Starting network [' + bma.node.server + ']');
           var now = new Date();
           startListeningOnSocket(resolve, reject);
-          refreshPeers()
+          refreshPeers(doNotWaitAllPeers)
             .then(function(peers){
               resolve(peers);
               console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');
@@ -264,6 +272,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       close: close,
       hasPeers: hasPeers,
       getPeers: getPeers,
+      getTrustedPeers: getTrustedPeers,
       getKnownBlocks: getKnownBlocks,
       getMainBlockUid: getMainBlockUid,
       refreshPeers: refreshPeers,

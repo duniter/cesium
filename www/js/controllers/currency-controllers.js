@@ -91,7 +91,7 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   };
 }
 
-function CurrencyViewController($scope, $q, $translate, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
 
   $scope.loadingPeers = true;
   $scope.formData = {
@@ -138,19 +138,123 @@ function CurrencyViewController($scope, $q, $translate, BMA, UIUtils, csSettings
     csNetwork.close();
   });
 
+  $scope.checkLoadingPeers = function() {
+    if (!csNetwork.data.updatingPeers) {
+      $scope.loadingPeers = false;
+    }
+    else {
+      $timeout(function(){
+        $scope.checkLoadingPeers();
+      }, 1000);
+    }
+  };
+
   $scope.load = function(currency) {
     $scope.name = currency.name;
     $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
       BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+    UIUtils.loading.show();
 
     if ($scope.loadingPeers){
-      csNetwork.start($scope.node, $scope)
+      csNetwork.start($scope.node, true/*no wait*/)
         .then(function(peers) {
           $scope.peers = peers;
-          $scope.loadingPeers = false;
-        })
+          $scope.checkLoadingPeers();
+        });
+      $scope.$on('$destroy', function(){
+        csNetwork.close();
+      });
     }
+
+    $scope.loadParameter();
   };
+
+  $scope.loadParameter = function() {
+    if (!$scope.node) {
+      return;
+    }
+
+    var M;
+
+    return $q.all([
+
+      // Get the currency parameters
+      $scope.node.blockchain.parameters()
+        .then(function(json){
+          $scope.currency = json.currency;
+          $scope.c = json.c;
+          $scope.dt = json.dt;
+          $scope.sigQty = json.sigQty;
+        }),
+
+      // Get the current block informations
+      $scope.node.blockchain.current()
+        .then(function(block){
+          M = block.monetaryMass;
+          $scope.N = block.membersCount;
+          $scope.time  = moment(block.medianTime*1000).format($scope.datePattern);
+          $scope.difficulty  = block.powMin;
+        }),
+
+      // Get the UD informations
+      $scope.node.blockchain.stats.ud()
+        .then(function(res){
+          if (res.result.blocks.length) {
+            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
+            return $scope.node.blockchain.block({ block: lastBlockWithUD })
+              .then(function(block){
+                $scope.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
+                $scope.Nprev = block.membersCount;
+              });
+          }
+        })
+    ])
+
+    // Done
+      .then(function(){
+        var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
+        var MoverN = Mprev / $scope.Nprev;
+        $scope.cactual = 100 * $scope.currentUD / MoverN;
+
+        if ($scope.formData.useRelative) {
+          $scope.M = Mprev / $scope.currentUD;
+          $scope.MoverN = MoverN / $scope.currentUD;
+          $scope.UD = 1;
+        } else {
+          $scope.M = Mprev;
+          $scope.MoverN = MoverN;
+          $scope.UD = $scope.currentUD;
+        }
+        // Set Ink
+        UIUtils.ink({selector: '.peer-item'});
+
+        $scope.loading = false;
+
+        UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        $scope.loading = false;
+        UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
+      })
+  };
+
+  $scope.refresh = function() {
+    UIUtils.loading.show();
+
+    $scope.loadParameter()
+    .then(function(){
+      // Network
+      $scope.loadingPeers = true;
+      $scope.peers = csNetwork.getPeers();
+      csNetwork.refreshPeers(true)
+        .then(function() {
+          $scope.checkLoadingPeers();
+        })
+        .catch(function(err) {
+          $scope.loadingPeers = false;
+        });
+    });
+  }
 
   $scope.onUseRelativeChanged = function() {
     if ($scope.loading) return;
@@ -239,9 +343,9 @@ function CurrencyViewController($scope, $q, $translate, BMA, UIUtils, csSettings
       // Network
       $scope.loadingPeers = true;
       $scope.peers = csNetwork.getPeers();
-      csNetwork.refreshPeers()
+      csNetwork.refreshPeers(true)
       .then(function() {
-        $scope.loadingPeers = false;
+        $scope.checkLoadingPeers();
       })
       .catch(function(err) {
         $scope.loadingPeers = false;
