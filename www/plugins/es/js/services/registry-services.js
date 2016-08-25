@@ -8,7 +8,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     var
     categories = [],
     fields = {
-      commons: ["category", "title", "description", "issuer", "time", "address", "city", "thumbnail", "picturesCount", "type", "socials"],
+      commons: ["category", "title", "description", "issuer", "time", "address", "city", "thumbnail", "picturesCount", "type", "socials", "pubkey"],
       comment: {
         commons: ["issuer", "time", "message"],
       }

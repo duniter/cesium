@@ -149,13 +149,9 @@
   </ion-content>
 
   <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
-          ng-click="transfer(formData.issuer, formData.title)">
+          ng-if="formData.pubkey"
+          ng-click="showTransferModal({pubkey: formData.pubkey, uid: formData.title})">
   </button>
 
-  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-ribbon-b visible-xs visible-sm"
-          ng-click="certifyIdentity()"
-          ng-if="hasSelf"
-          style="bottom:78px;">
-  </button>
 
 </ion-view>

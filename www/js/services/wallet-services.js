@@ -326,13 +326,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         // Get transactions
         BMA.tx.sources({pubkey: data.pubkey})
         .then(function(res){
-          if (!data.sources) {
-            data.sources=[];
-          }
           var sources = [];
           var sourcesIndexByKey = [];
           var balance = 0;
-          if (!!res.sources && res.sources.length > 0) {
+          if (res.sources) {
             _.forEach(res.sources, function(src) {
               var srcKey = src.type+':'+src.identifier+':'+src.noffset;
               src.consumed = false;
@@ -442,23 +439,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var balance = data.balance;
 
           _.forEach(data.tx.history, function(tx) { // process TX history
-             var uid = uids[tx.pubkey];
-             tx.uid = (uid ? uid : null);
+             tx.uid = uids[tx.pubkey] || null;
           });
 
           _.forEach(data.tx.pendings, function(tx) { // process TX pendings
-            var uid = uids[tx.pubkey];
-            tx.uid = (uid ? uid : null);
+            tx.uid = uids[tx.pubkey] || null;
 
             var sources = [];
             var valid = true;
-            if (tx.issuer !== data.pubkey) { // do not check sources from received TX
+            if (tx.amount > 0) { // do not check sources from received TX
               valid = false;
+              // TODO get sources from the issuer ?
             }
             else {
               _.forEach(tx.inputs, function(input) {
-                var srcIndex = data.sourcesIndexByKey[input];
-                if (srcIndex !== undefined) {
+                var inputKey = input.split(':').slice(2).join(':');
+                var srcIndex = data.sourcesIndexByKey[inputKey];
+                if (!angular.isUndefined(srcIndex)) {
                   sources.push(data.sources[srcIndex]);
                 }
                 else {
@@ -843,7 +840,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                       locktime: 0,
                       block_number: null
                     });
-                  store(); // save the wallet
+                  store(); // save pendings in local storage
                   resolve(result);
                 }).catch(function(err){reject(err);});
               });
