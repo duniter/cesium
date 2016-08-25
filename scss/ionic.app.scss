@@ -652,7 +652,7 @@ $screen-menu:                     845px;
   min-height: 80px !important;
 }
 
-.item-avatar > i:first-child,
+.item-avatar > i:first-child ,
 .item-avatar i.item-image,
 .item-avatar .item-content > i:first-child,
 .item-avatar .item-content i.item-image,
@@ -662,10 +662,10 @@ $screen-menu:                     845px;
 .item-avatar-left .item-content i.item-image {
     color: #D9D9D9;
     background-color: #f8f8f8;
+    overflow: hidden !important;
     font-size: 65px !important;
     padding-left: 4px;
     padding-top: 6px;
-    overflow: hidden !important;
 }
 
 .item-avatar > i:first-child,

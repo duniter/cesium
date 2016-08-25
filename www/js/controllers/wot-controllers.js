@@ -72,7 +72,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
 
   $scope.doSearch = function() {
     $scope.search.looking = true;
-    var text = $scope.search.text.toLowerCase().trim();
+    var text = $scope.search.text.trim();
     if (text.length < 3) {
       $scope.search.results = [];
       $scope.search.looking = false;
@@ -80,8 +80,15 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     else {
       WotService.search(text)
       .then(function(idties){
-        if ($scope.search.text.toLowerCase().trim() !== text) return; // search text has changed
-        $scope.search.results = idties;
+        if ($scope.search.text.trim() !== text) return; // search text has changed before received response
+
+        if (!idties || !idties.length) {
+          $scope.search.results = BMA.regex.PUBKEY.test(text) ? [{pubkey: text}] : [];
+        }
+        else {
+          $scope.search.results = idties;
+        }
+
         $scope.search.looking = false;
 
         $timeout(function() {

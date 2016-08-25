@@ -5,7 +5,7 @@
              id="wotSearchText"
              placeholder="{{'WOT.SEARCH_HELP'|translate}}"
              ng-model="search.text"
-             ng-model-options="{ debounce: 350 }"
+             ng-model-options="{ debounce: 650 }"
              ng-change="doSearch()" id="searchWot">
   </label>
 
@@ -16,26 +16,28 @@
         <ion-spinner icon="android"></ion-spinner>
     </label>
 
-    <label class="center assertive" ng-if="!search.looking && search.results.length===0 && search.text.length > 0" translate>
+    <div class="assertive padding" ng-if="!search.looking && !search.results.length && search.text.length" translate>
       COMMON.SEARCH_NO_RESULT
-    </label>
+    </div>
 
     <ion-item ng-if="!search.looking"
        ng-repeat="found in search.results"
        class="item-avatar item-icon-right ink"
        ng-click="select(found)">
 
-      <img ng-if="found.avatar" class="item-image"  ng-src="{{found.avatar.src}}">
-      <i ng-if="!found.avatar" class="item-image icon ion-person"></i>
+      <img ng-if="found.avatar" class="item-image"  ng-src="{{::found.avatar.src}}">
+      <i ng-if="!found.avatar && found.uid" class="item-image icon ion-person"></i>
+
       <h2 ng-if="found.name" ng-bind-html="found.name"></h2>
-      <h2 ng-if="!found.name">{{found.uid}}</h2>
+      <h2 ng-if="!found.name && found.uid">{{::found.uid}}</h2>
+      <h2 ng-if="!found.name && !found.uid">{{::found.pubkey|formatPubkey}}</h2>
       <h4 class="gray">
         <span class="positive" ng-if="found.name && found.uid">
           <i class="ion ion-person"></i>
-          {{found.uid}}
+          {{::found.uid}}
         </span>
         <i class="ion ion-key"></i>
-        {{found.pubkey | formatPubkey}}
+        {{::found.pubkey | formatPubkey}}
       </h4>
       <i class="icon ion-ios-arrow-right"></i>
       <ion-option-button class="button-positive"

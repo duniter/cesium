@@ -13312,10 +13312,10 @@ a {
 .item-avatar-left .item-content i.item-image {
   color: #D9D9D9;
   background-color: #f8f8f8;
+  overflow: hidden !important;
   font-size: 65px !important;
   padding-left: 4px;
-  padding-top: 6px;
-  overflow: hidden !important; }
+  padding-top: 6px; }
 
 .item-avatar > i:first-child,
 .item-avatar > img:first-child,
