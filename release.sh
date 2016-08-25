@@ -33,8 +33,6 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
   esac
 
-  exit
-
   # Update config file
   gulp config --env default
 
