@@ -23,13 +23,13 @@ angular.module("cesium.config", [])
 	},
 	"plugins": {
 		"es": {
-			"enable": "false",
+			"enable": false,
 			"host": "test-net.duniter.fr",
 			"port": "9203"
 		}
 	},
-	"version": "0.2.6",
-	"build": "2016-08-25T07:16:49.361Z",
+	"version": "0.2.7",
+	"build": "2016-08-25T22:36:54.103Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
