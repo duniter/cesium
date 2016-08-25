@@ -156,7 +156,6 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
       console.debug("[http] cleaning all caches");
       var cache = CacheFactory.get('csHttp-' + constants.cache.SHORT);
       if (cache) {
-        console.debug("[http] cleaning cache " + constants.cache.SHORT)
         cache.removeAll();
       }
       cache = CacheFactory.get('csHttp-' + constants.cache.LONG);
