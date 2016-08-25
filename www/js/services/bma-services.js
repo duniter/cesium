@@ -67,10 +67,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
               pubkey: pubkey,
               uid: (uid ? uid : null)
             };
-        })
+        });
     }
 
-    var getBlockchainWithUd = csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT)
+    var getBlockchainWithUd = csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT);
     var getBlockchainBlock = csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT);
 
     function getBlockchainLastUd() {

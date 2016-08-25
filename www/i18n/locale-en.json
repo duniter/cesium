@@ -30,7 +30,7 @@
     "LANGUAGE": "Language",
     "UNIVERSAL_DIVIDEND": "Universal dividend",
     "UD": "UD",
-    "DATE_PATTERN": "YYYY-MM-DD HH:mm",
+    "DATE_PATTERN": "MM/DD/YYYY HH:mm",
     "EMPTY_PARENTHESIS": "(empty)",
     "UID": "Pseudonym",
     "ENABLE": "Enable",

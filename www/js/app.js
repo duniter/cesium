@@ -210,7 +210,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     $translate('COMMON.DATE_PATTERN')
       .then(function(datePattern) {
         $rootScope.datePattern = datePattern;
-      })
+      });
   };
 
   // Set up moment translation

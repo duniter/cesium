@@ -92,9 +92,9 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
             maxAge: maxAge,
             deleteOnExpire: 'aggressive',
             recycleFreq: Math.max(maxAge - 1000, 5 * 60 * 1000 /*5min*/),
-            storageMode:
+            storageMode: 'memory'
               // FIXME : enable this when cache is cleaning on rollback
-              csSettings.data.useLocalStorage ? 'localStorage' : 'memory'
+              //csSettings.data.useLocalStorage ? 'localStorage' : 'memory'
           });
       }
       else {
@@ -107,9 +107,9 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
             deleteOnExpire: 'aggressive',
             recycleFreq: maxAge,
             onExpire: onExpire,
-            storageMode:
+            storageMode: 'memory'
               // FIXME : enable this when cache is cleaning on rollback
-              csSettings.data.useLocalStorage ? 'localStorage' : 'memory'
+              //csSettings.data.useLocalStorage ? 'localStorage' : 'memory'
           });
       }
     }
@@ -123,7 +123,7 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
         return $q(function(resolve, reject) {
           var config = {
             timeout: timeout
-          }
+          };
           if (autoRefresh) { // redo the request if need
             config.cache = getOrCreateCache(maxAge, function (key, value) {
                 console.debug('[http] Refreshing cache for ['+key+'] ');
@@ -135,8 +135,7 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
           }
           else {
             config.cache = getOrCreateCache(maxAge);
-          };
-
+          }
 
           prepare(url, params, config, function(url, config) {
             $http.get(url, config)

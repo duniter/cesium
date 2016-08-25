@@ -414,21 +414,21 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
       }
     });
 
-  // Continue loading other data
-  $q.all([
-    // Load pictures
-    esMarket.record.picture.all({id: id})
-      .then(function (hit) {
-        if (hit._source.pictures) {
-          $scope.pictures = hit._source.pictures.reduce(function (res, pic) {
-            return res.concat(UIUtils.image.fromAttachment(pic.file));
-          }, []);
-        }
-      }),
+    // Continue loading other data
+    $q.all([
+      // Load pictures
+      esMarket.record.picture.all({id: id})
+        .then(function (hit) {
+          if (hit._source.pictures) {
+            $scope.pictures = hit._source.pictures.reduce(function (res, pic) {
+              return res.concat(UIUtils.image.fromAttachment(pic.file));
+            }, []);
+          }
+        }),
 
-    // Load comments
-    $scope.loadComments(id)
-  ])
+      // Load comments
+      $scope.loadComments(id)
+    ])
     .then(function () {
       // Set Motion
       $timeout(function () {
@@ -441,7 +441,7 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
       $scope.pictures = [];
       $scope.comments = [];
     });
-  }
+  };
 
   $scope.refreshConvertedPrice = function() {
     if (!$scope.formData.price) {

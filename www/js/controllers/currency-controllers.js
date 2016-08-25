@@ -211,31 +211,31 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     ])
 
     // Done
-      .then(function(){
-        var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
-        var MoverN = Mprev / $scope.Nprev;
-        $scope.cactual = 100 * $scope.currentUD / MoverN;
+    .then(function(){
+      var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
+      var MoverN = Mprev / $scope.Nprev;
+      $scope.cactual = 100 * $scope.currentUD / MoverN;
 
-        if ($scope.formData.useRelative) {
-          $scope.M = Mprev / $scope.currentUD;
-          $scope.MoverN = MoverN / $scope.currentUD;
-          $scope.UD = 1;
-        } else {
-          $scope.M = Mprev;
-          $scope.MoverN = MoverN;
-          $scope.UD = $scope.currentUD;
-        }
-        // Set Ink
-        UIUtils.ink({selector: '.peer-item'});
+      if ($scope.formData.useRelative) {
+        $scope.M = Mprev / $scope.currentUD;
+        $scope.MoverN = MoverN / $scope.currentUD;
+        $scope.UD = 1;
+      } else {
+        $scope.M = Mprev;
+        $scope.MoverN = MoverN;
+        $scope.UD = $scope.currentUD;
+      }
+      // Set Ink
+      UIUtils.ink({selector: '.peer-item'});
 
-        $scope.loading = false;
+      $scope.loading = false;
 
-        UIUtils.loading.hide();
-      })
-      .catch(function(err) {
-        $scope.loading = false;
-        UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
-      })
+      UIUtils.loading.hide();
+    })
+    .catch(function(err) {
+      $scope.loading = false;
+      UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
+    });
   };
 
   $scope.refresh = function() {
@@ -254,7 +254,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
           $scope.loadingPeers = false;
         });
     });
-  }
+  };
 
   $scope.onUseRelativeChanged = function() {
     if ($scope.loading) return;

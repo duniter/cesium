@@ -362,31 +362,29 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         var fromTime = nowInSec - csSettings.data.walletHistoryTimeSecond;
         var processedTxMap = {};
 
+        var reduceTx = function(res){
+          reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
+          reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
+          reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
+          reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
+        };
+
         var jobs = [
           // get pendings history
           BMA.tx.history.pending({pubkey: data.pubkey})
-            .then(function(res){
-              reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
-              reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
-            })
+            .then(reduceTx)
         ];
 
         // get TX history since
         var sliceTime = csSettings.data.walletHistorySliceSecond;
         for(var i = fromTime - (fromTime % sliceTime); i - sliceTime < nowInSec; i += sliceTime)  {
           jobs.push(BMA.tx.history.times({pubkey: data.pubkey, from: i, to: i+sliceTime-1})
-            .then(function(res){
-              reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
-              reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
-            })
+            .then(reduceTx)
           );
         }
 
         jobs.push(BMA.tx.history.timesNoCache({pubkey: data.pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
-          .then(function(res){
-            reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
-            reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
-          }));
+          .then(reduceTx));
 
         // get UD history
         if (csSettings.data.showUDHistory) {

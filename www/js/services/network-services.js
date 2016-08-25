@@ -196,7 +196,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           processPeer(peer);
           if (!data.updatingPeers) {
             sortPeers();
-          };
+          }
         });
       },
 
@@ -211,20 +211,13 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             .then(function(peers){
               resolve(peers);
               console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');
-            })
+            });
         });
-
-        // Add a destroy hook
-        if ($scope) {
-          $scope.$on('$destroy', function(){
-            close();
-          });
-        }
       },
 
       close = function() {
         if (data.bma) {
-          console.info('[network] Close');
+          console.info('[network] Stopping');
           data.bma.websocket.close();
           resetData();
         }
