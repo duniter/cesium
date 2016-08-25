@@ -91,6 +91,7 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
           CacheFactory.createCache(cacheName, {
             maxAge: maxAge,
             deleteOnExpire: 'aggressive',
+            //cacheFlushInterval: 60 * 60 * 1000, //  clear itself every hour
             recycleFreq: Math.max(maxAge - 1000, 5 * 60 * 1000 /*5min*/),
             storageMode: 'memory'
               // FIXME : enable this when cache is cleaning on rollback
@@ -105,6 +106,7 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
         return CacheFactory.createCache(cacheName + counter, {
             maxAge: maxAge,
             deleteOnExpire: 'aggressive',
+            //cacheFlushInterval: 60 * 60 * 1000, // This cache will clear itself every hour
             recycleFreq: maxAge,
             onExpire: onExpire,
             storageMode: 'memory'
@@ -148,6 +150,19 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
           });
         });
       };
+    }
+
+    function clearAllCache() {
+      console.debug("[http] cleaning all caches");
+      var cache = CacheFactory.get('csHttp-' + constants.cache.SHORT);
+      if (cache) {
+        console.debug("[http] cleaning cache " + constants.cache.SHORT)
+        cache.removeAll();
+      }
+      cache = CacheFactory.get('csHttp-' + constants.cache.LONG);
+      if (cache) {
+        cache.removeAll();
+      }
     }
 
     function postResource(host, port, path) {
@@ -244,7 +259,11 @@ angular.module('cesium.http.services', ['ngResource', 'angular-cache'])
       uri: {
         parse: parseUri
       },
-      cache: constants.cache
+      cache: {
+        LONG : constants.LONG,
+        SHORT: constants.SHORT,
+        clearAll: clearAllCache
+      }
     };
   }
 

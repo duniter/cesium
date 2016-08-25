@@ -49,7 +49,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $filter, $focus) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus) {
   'ngInject';
 
   $scope.search = {
@@ -159,7 +159,7 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device
 
 }
 
-function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device, WotService) {
+function WotIdentityViewController($scope, UIUtils, $timeout, Device, WotService) {
   'ngInject';
 
   $scope.formData = {};
@@ -209,7 +209,7 @@ function WotIdentityViewController($scope, $state, BMA, Wallet, UIUtils, $q, $ti
 
 }
 
-function WotCertificationsViewController($scope, $state, BMA, Wallet, UIUtils, $q, $timeout, Device, $ionicPopup, WotService) {
+function WotCertificationsViewController($scope, Wallet, UIUtils, $timeout, WotService) {
   'ngInject';
 
   $scope.loading = true;

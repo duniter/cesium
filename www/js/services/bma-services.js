@@ -32,11 +32,11 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     }
 
     function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
+      if (!!this.instance) { // if main service impl
+        var instance = this.instance; // keep factory
+        csHttp.cache.clearAll(); // clean cache for old node
         angular.copy(otherNode, this);
         this.instance = instance;
-        resetData(); // clean all cache
       }
       else {
         angular.copy(otherNode, this);
@@ -191,14 +191,6 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       });
     }
 
-    function resetWotData() {
-      data.wot = {};
-    }
-
-    function resetData() {
-      resetWotData();
-    }
-
     return {
       node: {
         summary: csHttp.get(host, port, '/node/summary'),
@@ -259,14 +251,6 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         close : csHttp.closeAllWs
       },
       copy: copy,
-      cache: {
-        all: {
-          reset: resetData
-        },
-        wot: {
-          reset: resetWotData
-        }
-      },
       errorCodes: errorCodes,
       regex: {
         USER_ID: exact(regex.USER_ID),
