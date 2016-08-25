@@ -43,7 +43,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
 
   # Commit
   git reset HEAD
-  git add package.json config.xml install.sh
+  git add package.json config.xml install.sh www/js/config.js
   git commit -m "v$2"
   git tag "v$2"
   git push
