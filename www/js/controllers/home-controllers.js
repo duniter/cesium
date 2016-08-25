@@ -120,8 +120,7 @@ function NewAccountModalController($scope, $state, UIUtils, CryptoUtils, Wallet,
     Wallet.login($scope.formData.username, $scope.formData.password)
     .then(function() {
       if (!$scope.formData.isMember) {
-        // Reset account data, and open wallet view
-        $scope.cancel();
+        // Redirect to wallet
         $state.go('app.view_wallet');
         return;
       }
@@ -132,8 +131,7 @@ function NewAccountModalController($scope, $state, UIUtils, CryptoUtils, Wallet,
           // Send membership IN
           Wallet.membership.inside()
           .then(function() {
-            // Reset account data, and open wallet view
-            $scope.cancel();
+            // Redirect to wallet
             $state.go('app.view_wallet');
           })
           .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));

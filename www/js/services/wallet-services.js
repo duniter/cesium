@@ -3,7 +3,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('Wallet', function($q, $rootScope, CryptoUtils, BMA, $translate, localStorage, $filter, Api, csSettings, csNetwork) {
+.factory('Wallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings, csNetwork) {
   'ngInject';
 
   Wallet = function(id) {
