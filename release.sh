@@ -33,6 +33,8 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
   esac
 
+  exit
+
   # Update config file
   gulp config --env default
 
@@ -53,14 +55,14 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "**********************************"
 
   if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ && "_$5" != "_" ]]; then
-    ./github.sh $1 $2
+    ./github.sh $1 $4 $5
   else
     echo " WARN - missing arguments: "
     echo "       user:password 'release_description'"
     echo
     echo "   Binaries files NOT sending to github repository"
     echo "   Please run:"
-    echo "  > ./github.sh user:password 'release_description'"
+    echo "  > ./github.sh pre|rel user:password 'release_description'"
     echo
   fi
 

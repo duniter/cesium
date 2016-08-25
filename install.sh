@@ -15,11 +15,11 @@ if [ "_$CESIUM_DIR" = "_" ]; then
 fi
 
 latest_version() {
-  echo "0.2.5" #lastest
+  echo "v0.2.7" #lastest
 }
 
 api_release_url() {
-  echo "https://api.github.com/repos/duniter/cesium/releases/tags/v$(latest_version)"
+  echo "https://api.github.com/repos/duniter/cesium/releases/tags/$(latest_version)"
 }
 
 download() {
