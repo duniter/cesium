@@ -36,17 +36,17 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   # Update config file
   gulp config --env default
 
+  # Build assets
+  ionic build android --release
+  ionic build firefoxos --release
+  gulp build:web --release
+
   # Commit
   git reset HEAD
   git add package.json config.xml install.sh
   git commit -m "v$2"
   git tag "v$2"
   git push
-
-  # Build assets
-  ionic build android --release
-  ionic build firefoxos --release
-  gulp build:web --release
 
   if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ ]]; then
     ./github.sh $1 $2
