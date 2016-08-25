@@ -20,14 +20,14 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp, UIUtils, BMA, csSettings) {
+function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp, UIUtils, BMA, csSettings, $ionicPopover) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e) {
     $scope.loading = true; // to avoid the call of Wallet.store()
     $scope.locales = UIUtils.locales;
     $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
@@ -43,10 +43,31 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       // Set Ink
       UIUtils.ink({selector: '.item'});
     }, 100);
+
+
+  });
+
+  $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
+    scope: $scope
+  }).then(function(popover) {
+    $scope.actionsPopover = popover;
+  });
+
+  //Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.actionsPopover.remove();
   });
 
   $scope.setPopupForm = function(popupForm) {
     $scope.popupForm = popupForm;
+  };
+
+  $scope.reset = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+    csSettings.reset();
+    angular.merge($scope.formData, csSettings.data);
   };
 
   $scope.changeLanguage = function(langKey) {

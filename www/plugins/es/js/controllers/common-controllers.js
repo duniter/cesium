@@ -4,7 +4,7 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.enable;
+    var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
       // Menu extension points
       PluginServiceProvider.extendState('app', {

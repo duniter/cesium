@@ -2,7 +2,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.enable;
+    var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
       // Will force to load this service
       PluginServiceProvider.registerEagerLoadingService('esUser');
@@ -212,9 +212,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     function isEnable() {
       return csSettings.data.plugins &&
-        csSettings.data.plugins.es &&
-        csSettings.data.plugins.es.enable &&
-        !!esHttp.getServer(host, port);
+         csSettings.data.plugins.es &&
+         host && csSettings.data.plugins.es.enable;
     }
 
     function refreshListeners() {

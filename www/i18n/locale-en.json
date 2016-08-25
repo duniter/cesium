@@ -88,6 +88,8 @@
     "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
     "PLUGINS_SETTINGS": "Extensions",
+    "MENU_TITLE": "Options",
+    "BTN_RESET": "Restore default values",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
       "HELP" : "Set the address of the node to use:"

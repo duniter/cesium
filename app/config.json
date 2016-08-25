@@ -14,7 +14,7 @@
     },
     "plugins":{
       "es": {
-        "enable": "false",
+        "enable": false,
         "host": "test-net.duniter.fr",
         "port": "9203"
       }
@@ -36,8 +36,8 @@
     },
     "plugins":{
       "es": {
-        "enable": "false",
-        "host": "192.168.0.28",
+        "enable": false,
+        "host": "192.168.0.5",
         "port": "9203"
       }
     }

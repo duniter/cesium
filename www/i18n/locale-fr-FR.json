@@ -88,6 +88,8 @@
     "AUTHENTICATION_SETTINGS": "Authentification",
     "REMEMBER_ME": "Se souvenir de moi",
     "PLUGINS_SETTINGS": "Extensions",
+    "MENU_TITLE": "Options",
+    "BTN_RESET": "Restaurer les valeurs par défaut",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
@@ -161,7 +163,7 @@
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
-    "MENU_TITLE": "Options du portefeuille",
+    "MENU_TITLE": "Options",
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "NO_TX": "Aucune transaction",

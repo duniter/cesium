@@ -4,7 +4,7 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
   .config(function(PluginServiceProvider, $stateProvider, csConfig) {
     'ngInject';
 
-    var enable = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.enable;
+    var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
       // Extend settings via extension points
       PluginServiceProvider.extendState('app.settings', {
@@ -42,15 +42,7 @@ function ESExtendSettingsController ($scope, PluginService, csSettings) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
-  $scope.enable = false;
 
-  // Update settings if need
-  $scope.onSettingsLoaded = function() {
-    if ($scope.loading) {
-      $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es && csSettings.data.plugins.es.enable;
-    }
-  };
-  $scope.$watch('formData', $scope.onSettingsLoaded, true);
 }
 
 /*
