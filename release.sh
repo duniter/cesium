@@ -48,13 +48,22 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git tag "v$2"
   git push
 
-  if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ ]]; then
-    ./github.sh $1 $2
-  fi
-
   echo "**********************************"
   echo "* Build release succeed !"
   echo "**********************************"
+
+  if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ && "_$5" != "_" ]]; then
+    ./github.sh $1 $2
+  else
+    echo " WARN - missing arguments: "
+    echo "       user:password 'release_description'"
+    echo
+    echo "   Binaries files NOT sending to github repository"
+    echo "   Please run:"
+    echo "  > ./github.sh user:password 'release_description'"
+    echo
+  fi
+
 else
   echo "Wrong version format"
   echo "Usage:"
