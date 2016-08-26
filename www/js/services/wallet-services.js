@@ -608,12 +608,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               finishLoadRequirements();
             }));
         }
-        // Get sources
-        if (options.source) {
+        if (options.sources || options.tx) {
+          // Get sources
           jobs.push(loadSources());
-        }
-        // Get transactions
-        if (options.tx) {
+          // Get transactions
           jobs.push(loadTransactions());
         }
         // API extension
@@ -641,9 +639,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return lastDigits === 0; // no rest
     },
 
-    getInputs = function(amount, filterBase, outputBase, offset) {
-      if (!outputBase) {
-        outputBase = filterBase;
+    truncBase = function(amount, base) {
+      var pow = Math.pow(10, base);
+      return Math.trunc(amount / pow ) * pow;
+    },
+
+    getInputs = function(amount, outputBase, filterBase) {
+      if (angular.isUndefined(filterBase)) {
+        filterBase = outputBase;
       }
       var sourcesAmount = 0;
       var sources = [];
@@ -651,29 +654,24 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var maxBase = filterBase;
       var i = 0;
       _.forEach(data.sources, function(source) {
-        var skip = source.consumed || (source.base !== filterBase) || (offset && i++ < offset);
+        var skip = source.consumed || (source.base !== filterBase);
         if (!skip){
           sourcesAmount += (source.base > 0) ? (source.amount * Math.pow(10, source.base)) : source.amount;
           sources.push(source);
-          // Stop if excat amount OR compatible with base
-          if (sourcesAmount === amount ||
-              (sourcesAmount > amount && isBase(sourcesAmount, outputBase))) {
+          // Stop if enough sources
+          if (sourcesAmount >= amount) {
             return false;
           }
         }
       });
 
-      while (sourcesAmount < amount && filterBase > 0) {
+      // IF not enough sources, get add inputs from lower base (recursively)
+      if (sourcesAmount < amount && filterBase > 0) {
         filterBase -= 1;
         var missingAmount = amount - sourcesAmount;
-        var lowerInputs = getInputs(missingAmount, filterBase, outputBase);
-        // Try to get a rounded amount, regarding expected base
-        var lowerOffset = 1;
-        while (lowerInputs.amount > 0 && !isBase(lowerInputs.amount, outputBase)) {
-          lowerOffset += 1;
-          lowerInputs = getInputs(missingAmount, filterBase, outputBase, lowerOffset);
-        }
+        var lowerInputs = getInputs(missingAmount, outputBase, filterBase);
 
+        // Add lower base inputs to result
         if (lowerInputs.amount > 0) {
           minBase = lowerInputs.minBase;
           sourcesAmount += lowerInputs.amount;
@@ -711,35 +709,33 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           if (amount <= 0) {
             reject({message:'ERROR.AMOUNT_NEGATIVE'}); return;
           }
+          amount = Math.floor(amount); // remove decimals
 
-          var inputs= {
+          var inputs = {
             amount: 0,
             minBase: block.unitbase,
             maxBase: block.unitbase + 1,
-            intputs: []
+            sources : []
           };
+          var amountBase = 0;
+          while (inputs.amount < amount && amountBase <= block.unitbase) {
 
-          // Round amount to current base
-          var basePow = block.unitbase ? Math.pow(10, block.unitbase) : 1;
-          if (amount > basePow) {
-            amount = Math.floor(amount / basePow) * basePow;
-          }
-          else {
-            inputs.maxBase = (''+amount).length;
-          }
-          if (amount > data.balance) {
-            reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
-          }
+            // Get inputs, starting to use current base sources
+            inputs = getInputs(amount, block.unitbase);
 
-          var maxAmount = 0;
-          while (inputs.amount < amount && inputs.maxBase > 0) {
-            inputs = getInputs(amount, inputs.maxBase - 1);
-            maxAmount =  (inputs.amount > maxAmount) ? inputs.amount : maxAmount;
+            // Reduce amount (remove last digits)
+            amountBase++;
+            if (inputs.amount < amount && amountBase <= block.unitbase) {
+              amount = truncBase(amount, amountBase);
+            }
           }
 
           if (inputs.amount < amount) {
-            if (inputs.amount === 0) {
-              reject({message:'ERROR.ALL_SOURCES_USED'});
+            if (data.balance < amount) {
+              reject({message:'ERROR.NOT_ENOUGH_CREDIT'}); return;
+            }
+            else if (inputs.amount === 0) {
+              reject({message:'ERROR.ALL_SOURCES_USED'}); return;
             }
             else {
               $translate('COMMON.UD')
@@ -747,14 +743,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                 var params;
                 if(useRelative) {
                   params = {
-                    amount: ($filter('formatDecimal')(maxAmount / data.currentUD)),
+                    amount: ($filter('formatDecimal')(inputs.amount / data.currentUD)),
                     unit: UD,
                     subUnit: $filter('abbreviate')(data.currency)
                   };
                 }
                 else {
                   params = {
-                    amount: ($filter('formatInteger')(maxAmount)),
+                    amount: ($filter('formatInteger')(inputs.amount)),
                     unit: $filter('abbreviate')(data.currency),
                     subUnit: ''
                   };
@@ -766,6 +762,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               });
             }
             return;
+          }
+          if (amountBase > 0) {
+            console.debug("[wallet] Amount has been truncate to " + amount);
           }
 
           var tx = 'Version: 3\n' +
@@ -791,23 +790,27 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
           tx += 'Outputs:\n';
           // AMOUNT:BASE:CONDITIONS
-          if (inputs.maxBase > 0) { // add offset
-            tx += Math.floor(amount / Math.pow(10, inputs.maxBase));
-          }
-          else {
-            tx += amount;
-          }
-          tx += ':'+inputs.maxBase+':SIG('+destPub+')\n';
-
-          if (inputs.amount > amount) {
-            var rest = (inputs.amount-amount);
-            if (inputs.maxBase > 0) { // add offset
-              tx += Math.floor(rest / Math.pow(10, inputs.maxBase));
+          var rest = amount;
+          var outputBase = inputs.maxBase;
+          while(rest > 0) {
+            var outputAmount = truncBase(rest, outputBase);
+            rest -= outputAmount;
+            if (outputAmount > 0) {
+              outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
+              tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n'
             }
-            else {
-              tx += rest;
+            outputBase--;
+          }
+          rest = inputs.amount - amount;
+          outputBase = inputs.maxBase;
+          while(rest > 0) {
+            var outputAmount = truncBase(rest, outputBase);
+            rest -= outputAmount;
+            if (outputAmount > 0) {
+              outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
+              tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n'
             }
-            tx += ':'+inputs.maxBase+':SIG('+data.pubkey+')\n';
+            outputBase--;
           }
 
           tx += "Comment: "+ (!!comments?comments:"") + "\n";
