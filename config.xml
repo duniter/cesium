@@ -4,7 +4,7 @@
   xmlns:cdv="http://cordova.apache.org/ns/1.0"
   id="fr.duniter.cesium"
   version="0.2.8"
-  android-versionCode="280"
+  android-versionCode="9"
   >
   <name>Cesium</name>
   <description>
