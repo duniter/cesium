@@ -53,7 +53,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "**********************************"
 
   if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ && "_$5" != "_" ]]; then
-    ./github.sh $1 $4 $5
+    ./github.sh $1 $4 "'"$5"'"
   else
     echo " WARN - missing arguments: "
     echo "       user:password 'release_description'"
