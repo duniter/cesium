@@ -120,8 +120,8 @@ function NewAccountModalController($scope, $state, UIUtils, CryptoUtils, Wallet,
         .then(function(){
           UIUtils.onError(message)(err);
         });
-      }
-    }
+      };
+    };
 
     UIUtils.loading.show();
 
