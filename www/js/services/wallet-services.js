@@ -717,16 +717,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             maxBase: block.unitbase + 1,
             sources : []
           };
+
+          // Get inputs, starting to use current base sources
           var amountBase = 0;
           while (inputs.amount < amount && amountBase <= block.unitbase) {
-
-            // Get inputs, starting to use current base sources
             inputs = getInputs(amount, block.unitbase);
 
-            // Reduce amount (remove last digits)
-            amountBase++;
-            if (inputs.amount < amount && amountBase <= block.unitbase) {
-              amount = truncBase(amount, amountBase);
+            if (inputs.amount < amount) {
+              // try to reduce amount (replace last digits to zero)
+              amountBase++;
+              if (amountBase <= block.unitbase) {
+                amount = truncBase(amount, amountBase);
+              }
             }
           }
 
@@ -763,11 +765,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             }
             return;
           }
-          if (amountBase > 0) {
+          // Avoid to get outputs on lower base
+          if (amountBase < inputs.minBase && !isBase(amount, inputs.minBase)) {
+            amount = truncBase(amount, inputs.minBase);
+            console.debug("[wallet] Amount has been truncate to " + amount);
+          }
+          else if (amountBase > 0) {
             console.debug("[wallet] Amount has been truncate to " + amount);
           }
 
-          var tx = 'Version: 3\n' +
+
+            var tx = 'Version: 3\n' +
             'Type: Transaction\n' +
             'Currency: ' + data.currency + '\n' +
             'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
@@ -852,59 +860,119 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
+    checkUidNotExists = function(uid, pubkey) {
+      return $q(function(resolve, reject) {
+        BMA.wot.lookup({ search: uid }) // search on uid
+          .then(function(res) {
+            var found = res.results &&
+              res.results.length > 0 &&
+              res.results.some(function(pub){
+                return pub.uids && pub.uids.length > 0 &&
+                  pub.uids.some(function(idty) {
+                    return ((idty.uid === uid) && // check Uid
+                    (pub.pubkey !== pubkey || !idty.revoked)); // check pubkey
+                  });
+              });
+            if (found) { // uid is already used : display a message and call failed callback
+              reject({message: 'ACCOUNT.NEW.MSG_UID_ALREADY_USED'});
+            }
+            else {
+              resolve(uid);
+            }
+          })
+          .catch(function() {
+            resolve(uid); // not found, so OK
+          });
+      });
+    },
+
+    checkPubkeyNotExists = function(uid, pubkey) {
+      return $q(function(resolve, reject) {
+        BMA.wot.lookup({ search: pubkey }) // search on pubkey
+          .then(function(res) {
+            var found = res.results &&
+              res.results.length > 0 &&
+              res.results.some(function(pub){
+                return pub.pubkey === pubkey &&
+                  pub.uids && pub.uids.length > 0 &&
+                  pub.uids.some(function(idty) {
+                    return (!idty.revoked); // excluded revoked uid
+                  });
+              });
+            if (found) { // uid is already used : display a message and reopen the popup
+              reject('ACCOUNT.NEW.MSG_PUBKEY_ALREADY_USED');
+            }
+            else {
+              resolve(uid);
+            }
+          })
+          .catch(function() {
+            resolve(uid); // not found, so OK
+          });
+      });
+    },
+
     /**
     * Send self identity
     */
-    self = function(uid, requirements) {
+    self = function(uid, needToLoadRequirements) {
 
       return $q(function(resolve, reject) {
         if (!BMA.regex.USER_ID.test(uid)){
           reject({message:'ERROR.INVALID_USER_ID'}); return;
         }
-        loadParameters()
-        .then(function() {
-          BMA.blockchain.current()
-            .then(function (block) {
-              // Create identity to sign
-              var identity = 'Version: 2\n' +
-                'Type: Identity\n' +
-                'Currency: ' + data.currency + '\n' +
-                'Issuer: ' + data.pubkey + '\n' +
-                'UniqueID: ' + uid + '\n' +
-                'Timestamp: ' + block.number + '-' + block.hash + '\n';
+        var block;
+        var identity;
+        $q.all([
+          // check uid used by another pubkey
+          checkUidNotExists(uid, data.pubkey),
 
-              CryptoUtils.sign(identity, data.keypair)
-                .then(function (signature) {
-                  var signedIdentity = identity + signature + '\n';
-                  // Send signed identity
-                  BMA.wot.add({identity: signedIdentity})
-                  .then(function (result) {
-                    if (!!requirements) {
-                      // Refresh membership data
-                      loadRequirements()
-                        .then(function () {
-                          resolve();
-                        }).catch(function (err) {
-                        reject(err);
-                      });
-                    }
-                    else {
-                      data.uid = uid;
-                      data.blockUid = block.number + '-' + block.hash;
-                      resolve();
-                    }
-                  })
-                  .catch(function (err) {
-                    if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
-                      reject({ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'});
-                      return;
-                    }
-                    reject(err);
-                  });
+          // Load parameters (need to known the currency)
+          loadParameters(),
+
+          // Get th current block
+          BMA.blockchain.current()
+            .then(function(current) {
+              block = current;
+            })
+        ])
+        // Create identity document to sign
+        .then(function() {
+          identity = 'Version: 2\n' +
+            'Type: Identity\n' +
+            'Currency: ' + data.currency + '\n' +
+            'Issuer: ' + data.pubkey + '\n' +
+            'UniqueID: ' + uid + '\n' +
+            'Timestamp: ' + block.number + '-' + block.hash + '\n';
+
+          return CryptoUtils.sign(identity, data.keypair);
+        })
+        // Add signature
+        .then(function (signature) {
+          var signedIdentity = identity + signature + '\n';
+          // Send to node
+          return BMA.wot.add({identity: signedIdentity})
+          .then(function (result) {
+            if (!!needToLoadRequirements) {
+              // Refresh membership data (if need)
+              loadRequirements()
+                .then(function () {
+                  resolve();
                 }).catch(function (err) {
                 reject(err);
               });
-            }).catch(function (err) {
+            }
+            else {
+              data.uid = uid;
+              data.blockUid = block.number + '-' + block.hash;
+              resolve();
+            }
+          })
+          .catch(function (err) {
+            if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
+              reject({ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'});
+              return;
+            }
             reject(err);
           });
         }).catch(function (err) {
@@ -944,7 +1012,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                       resolve();
                     })
                     .catch(function(err){reject(err);});
-                }, 200);
+                }, 1000); // waiting for node to process membership doc
               }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
           }).catch(function(err){reject(err);});

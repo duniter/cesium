@@ -114,8 +114,16 @@ function NewAccountModalController($scope, $state, UIUtils, CryptoUtils, Wallet,
       return;
     }
 
+    var onErrorLogout = function(message) {
+      return function(err) {
+        Wallet.logout()
+        .then(function(){
+          UIUtils.onError(message)(err);
+        });
+      }
+    }
+
     UIUtils.loading.show();
-    $scope.closeModal();
 
     Wallet.login($scope.formData.username, $scope.formData.password)
     .then(function() {
@@ -131,12 +139,15 @@ function NewAccountModalController($scope, $state, UIUtils, CryptoUtils, Wallet,
           // Send membership IN
           Wallet.membership.inside()
           .then(function() {
+
+            $scope.closeModal();
+
             // Redirect to wallet
             $state.go('app.view_wallet');
           })
-          .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
+          .catch(onErrorLogout('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
         })
-        .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
+        .catch(onErrorLogout('ERROR.SEND_IDENTITY_FAILED'));
     })
     .catch(function(err) {
       UIUtils.loading.hide();

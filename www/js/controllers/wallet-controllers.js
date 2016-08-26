@@ -135,58 +135,6 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
     $scope.registerForm = registerForm;
   };
 
-  $scope.checkUidNotExists = function(uid, pubkey) {
-    return $q(function(resolve, reject) {
-      BMA.wot.lookup({ search: uid }) // search on uid
-        .then(function(res) {
-          var found = res.results &&
-              res.results.length > 0 &&
-              res.results.some(function(pub){
-                return pub.uids && pub.uids.length > 0 &&
-                    pub.uids.some(function(idty) {
-                      return ((idty.uid === uid) && // check Uid
-                              (pub.pubkey !== pubkey || !idty.revoked)); // check pubkey
-                    });
-              });
-          if (found) { // uid is already used : display a message and call failed callback
-            reject('ACCOUNT.NEW.MSG_UID_ALREADY_USED');
-          }
-          else {
-            resolve(uid);
-          }
-        })
-        .catch(function() {
-           resolve(uid);
-        });
-    });
-  };
-
-  $scope.checkPubkeyNotExists = function(uid, pubkey) {
-    return $q(function(resolve, reject) {
-      BMA.wot.lookup({ search: pubkey }) // search on pubkey
-        .then(function(res) {
-          var found = res.results &&
-              res.results.length > 0 &&
-              res.results.some(function(pub){
-                return pub.pubkey === pubkey &&
-                    pub.uids && pub.uids.length > 0 &&
-                    pub.uids.some(function(idty) {
-                      return (!idty.revoked); // excluded revoked uid
-                    });
-              });
-          if (found) { // uid is already used : display a message and reopen the popup
-            reject('ACCOUNT.NEW.MSG_PUBKEY_ALREADY_USED');
-          }
-          else {
-            resolve(uid);
-          }
-        })
-        .catch(function() {
-           resolve(uid);
-        });
-    });
-  };
-
   // Ask uid
   $scope.showUidPopup = function() {
     return $q(function(resolve, reject) {
@@ -231,16 +179,20 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
 
   // Send self identity
   $scope.self= function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+
     $scope.showUidPopup()
     .then(function(uid) {
       UIUtils.loading.show();
 
       Wallet.self(uid)
       .then(function() {
-        $scope.doUpdate();
+        $scope.updateView();
+        UIUtils.loading.hide();
       })
       .catch(function(err){
-         UIUtils.loading.hide();
          UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err)
          .then(function() {
            $scope.self(); // loop
@@ -251,8 +203,16 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
 
   // Send membership IN
   $scope.membershipIn= function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+
     var doMembershipIn = function(retryCount) {
       Wallet.membership.inside()
+      .then(function() {
+        $scope.updateView();
+        UIUtils.loading.hide();
+      })
       .catch(function(err) {
         if (!retryCount || retryCount <= 2) {
           $timeout(function() {
@@ -260,7 +220,10 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
           }, 1000);
         }
         else {
-          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
+          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err)
+            .then(function() {
+              $scope.membershipIn(); // loop
+            });
         }
       });
     };
@@ -276,7 +239,12 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
         .then(function() {
           doMembershipIn();
         })
-        .catch(UIUtils.onError('ERROR.SEND_IDENTITY_FAILED'));
+        .catch(function(err){
+          UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err)
+            .then(function() {
+              $scope.membershipIn(); // loop
+            });
+        });
       }
       else {
         doMembershipIn();
@@ -292,6 +260,11 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
 
   // Send membership IN
   $scope.membershipOut = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+    // TODO Add confirmation message
+
     UIUtils.loading.show();
     Wallet.membership.out()
     .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_OUT_FAILED'));
