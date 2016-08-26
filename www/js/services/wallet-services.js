@@ -792,23 +792,24 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // AMOUNT:BASE:CONDITIONS
           var rest = amount;
           var outputBase = inputs.maxBase;
+          var outputAmount;
           while(rest > 0) {
-            var outputAmount = truncBase(rest, outputBase);
+            outputAmount = truncBase(rest, outputBase);
             rest -= outputAmount;
             if (outputAmount > 0) {
               outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-              tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n'
+              tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
             }
             outputBase--;
           }
           rest = inputs.amount - amount;
           outputBase = inputs.maxBase;
           while(rest > 0) {
-            var outputAmount = truncBase(rest, outputBase);
+            outputAmount = truncBase(rest, outputBase);
             rest -= outputAmount;
             if (outputAmount > 0) {
               outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-              tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n'
+              tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n';
             }
             outputBase--;
           }
