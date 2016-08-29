@@ -377,6 +377,24 @@ $screen-menu:                     845px;
 }
 
 /* ============
+ Header
+=============== */
+
+.bar.bar-header {
+  // Special case for "more options" icon
+  .button.button-clear.button-icon.ion-android-more-vertical,
+  .button.button-clear.button-icon i.ion-android-more-vertical {
+    padding-left: 8px;
+  }
+
+  .buttons .secondary-buttons >
+  .button.button-clear.button-icon.ion-android-more-vertical:first-child {
+    padding-left: 0px !important;
+  }
+
+}
+
+/* ============
  Home page
 =============== */
 
@@ -413,7 +431,7 @@ $screen-menu:                     845px;
     background-size: 144px 144px;
   }
   #home .button {
-     max-width: 350px;
+    max-width: 350px;
   }
 }
 @media screen and (min-width: $screen-md) {
@@ -424,7 +442,7 @@ $screen-menu:                     845px;
   }
 
   #home .button {
-     max-width: 350px;
+    max-width: 350px;
   }
 }
 
@@ -449,45 +467,45 @@ $screen-menu:                     845px;
     height: 100%;
 
     .item.active {
-        background-color: #b2e0ff !important;
+      background-color: #b2e0ff !important;
 
-        .item-content {
-          background-color: transparent;
-          opacity: 1;
-          color: black;
-        }
-      }
-
-      .item {
-        opacity: 0.75;
+      .item-content {
+        background-color: transparent;
+        opacity: 1;
         color: black;
-
-        .item-content {
-          background-color: transparent;
-          opacity: 1;
-        }
       }
+    }
 
-      .item-menu-disable {
-        color: #444 !important;
+    .item {
+      opacity: 0.75;
+      color: black;
+
+      .item-content {
+        background-color: transparent;
+        opacity: 1;
       }
+    }
+
+    .item-menu-disable {
+      color: #444 !important;
+    }
   }
 }
 
 .gray {
-    color: grey !important;
+  color: grey !important;
 }
 .no-padding {
-    padding: 0px !important;
+  padding: 0px !important;
 }
 
 
 .avatar-member {
-    background-image: url(../img/person.png);
+  background-image: url(../img/person.png);
 }
 
 .avatar-wallet {
-    background-image: url(../img/card.png);
+  background-image: url(../img/card.png);
 }
 
 
@@ -526,7 +544,7 @@ $screen-menu:                     845px;
   }
 
   .qrcode.on {
-     right: 30px;
+    right: 30px;
   }
 
   .qrcode.active {
@@ -561,15 +579,15 @@ $screen-menu:                     845px;
 
 @media screen and (max-width: $screen-sm-max) {
   #wallet {
-     .qrcode {
-       top: 8px;
-       width: 60px;
-       max-width: 30%;
-     }
+    .qrcode {
+      top: 8px;
+      width: 60px;
+      max-width: 30%;
+    }
 
-     .qrcode.on {
-        right: 8px;
-     }
+    .qrcode.on {
+      right: 8px;
+    }
 
     .hero.hero-qrcode-active {
       h1,h2,h3,h4,h5,i {
@@ -580,7 +598,7 @@ $screen-menu:                     845px;
 }
 
 .card .card-header,
- .card .card-header{
+.card .card-header{
   font-size: 90%;
   opacity: 0.8;
   filter: alpha(opacity=80);
@@ -636,11 +654,11 @@ $screen-menu:                     845px;
 
 
 .lookupForm .list .item-avatar {
-    min-height: 80px !important;
+  min-height: 80px !important;
 
-    .img {
-        left: 16px !important;
-    }
+  .img {
+    left: 16px !important;
+  }
 }
 
 /**********
@@ -660,12 +678,12 @@ $screen-menu:                     845px;
 .item-avatar-left i.item-image,
 .item-avatar-left .item-content > i:first-child,
 .item-avatar-left .item-content i.item-image {
-    color: #D9D9D9;
-    background-color: #f8f8f8;
-    overflow: hidden !important;
-    font-size: 65px !important;
-    padding-left: 4px;
-    padding-top: 6px;
+  color: #D9D9D9;
+  background-color: #f8f8f8;
+  overflow: hidden !important;
+  font-size: 65px !important;
+  padding-left: 4px;
+  padding-top: 6px;
 }
 
 .item-avatar > i:first-child,
@@ -702,7 +720,7 @@ $screen-menu:                     845px;
 }
 
 .form-errors:last-child {
-    margin: 5px 0 0;
+  margin: 5px 0 0;
 }
 
 .form-error {
@@ -745,11 +763,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 */
 
 .modal.modal-full-height {
-    height: 100% !important;
+  height: 100% !important;
 }
 
 .modal.about .bar.bar-header .button + .title {
-    left: 0px !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
+  left: 0px !important; /* avoid title offset on large screens, if button are 'visible-xs')'*/
 }
 
 /*
@@ -774,7 +792,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 */
 
 .item-thumbnail-left-padding {
-    padding-left: 106px;
+  padding-left: 106px;
 }
 
 .item.item-thumbnail-left, .item-thumbnail-left {
@@ -801,7 +819,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 */
 
 .item-icon-left-padding {
-    padding-left: 40px;
+  padding-left: 40px;
 }
 
 .text-keep-lines {

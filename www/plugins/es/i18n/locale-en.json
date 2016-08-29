@@ -37,10 +37,12 @@
       "TITLE": "Ad",
       "COMMENT_HELP": "Leave a message",
       "SEND_COMMENT_BTN": "Send",
-      "SHOW_MORE_COMMENTS": "Show previous comments"
+      "SHOW_MORE_COMMENTS": "Show previous comments",
+      "MENU_TITLE": "Options",
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad ?<br/><br/> This is irrevocable."
     },
     "TYPE": {
-      "TITLE": "New",
+      "TITLE": "New ad",
       "SELECT_TYPE": "Kind of ad:",
       "OFFER": "Offer",
       "NEED": "Need"
@@ -59,10 +61,15 @@
       "RECORD_CURRENCY": "Currency"
     },
     "ERROR": {
-      "LOAD_CATEGORY_FAILED": "Error while loading market categories",
-      "LOAD_RECORD_FAILED": "Error while loading record.",
-      "FAILED_SAVE_COMMENT": "Error while de la saving comment",
-      "FAILED_REMOVE_COMMENT": "Error while deleting comment"
+      "LOAD_CATEGORY_FAILED": "Loading categories failed",
+      "LOAD_RECORD_FAILED": "Loading ad failed",
+      "REMOVE_RECORD_FAILED": "Deleting ad failed",
+      "FAILED_SAVE_COMMENT": "Saving comment failed",
+      "FAILED_REMOVE_COMMENT": "Deleting comment failed",
+      "RECORD_NOT_EXISTS": "Ad not found"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Ad successfully deleted"
     }
   },
   "REGISTRY": {
@@ -87,7 +94,9 @@
     "VIEW": {
       "TITLE": "Registry",
       "CATEGORY": "Main activity:",
-      "LOCATION": "Address:"
+      "LOCATION": "Address:",
+      "MENU_TITLE": "Options",
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record ?<br/><br/>This is irrevocable."
     },
     "TYPE": {
       "TITLE": "New",
@@ -114,9 +123,14 @@
       "RECORD_PUBKEY_HELP": "Public key to receive payments"
     },
     "ERROR": {
-      "LOAD_CATEGORY_FAILED": "Loading activity list failed",
+      "LOAD_CATEGORY_FAILED": "Loading main activities failed",
       "LOAD_RECORD_FAILED": "Loading failed",
-      "SAVE_RECORD_FAILED": "Saving failed"
+      "REMOVE_RECORD_FAILED": "Deleting failed",
+      "SAVE_RECORD_FAILED": "Saving failed",
+      "RECORD_NOT_EXISTS": "Record not found"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Record successfully deleted"
     }
   },
   "PROFILE": {

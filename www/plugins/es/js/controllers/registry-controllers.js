@@ -6,7 +6,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     $stateProvider
 
     .state('app.registry_lookup', {
-      url: "/registry?q&category&location&type",
+      url: "/registry?q&category&location&type&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup.html",
@@ -354,7 +354,8 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   */
 }
 
-function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $state, $q, BMA, $timeout, esHttp) {
+function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
+                                        Wallet, esRegistry, UIUtils, BMA, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -375,6 +376,17 @@ function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $st
     else {
       $state.go('app.registry_lookup');
     }
+  });
+
+  $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/view_popover_actions.html', {
+    scope: $scope
+  })
+  .then(function(popover) {
+    $scope.actionsPopover = popover;
+  });
+
+  $scope.$on('$destroy', function() {
+    $scope.actionsPopover.remove();
   });
 
   $scope.load = function(id) {
@@ -461,24 +473,32 @@ function ESRegistryRecordViewController($scope, Wallet, esRegistry, UIUtils, $st
     $state.go('app.registry_edit_record', {id: $scope.id});
   };
 
-  // Certify click
-  $scope.certifyIdentity = function(identity) {
-    $scope.loadWallet()
-    .then(function(walletData) {
-      UIUtils.loading.show();
-      Wallet.certify($scope.identity.uid,
-                  $scope.identity.pub,
-                  $scope.identity.timestamp,
-                  $scope.identity.sig)
-      .then(function() {
-        UIUtils.loading.hide();
-        UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-      })
-      .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-    })
-    .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
-  };
+  $scope.delete = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
 
+    // translate
+    var translations;
+    $translate(['REGISTRY.VIEW.REMOVE_CONFIRMATION', 'REGISTRY.INFO.RECORD_REMOVED'])
+    .then(function(res) {
+      translations = res;
+      return UIUtils.alert.confirm(res['REGISTRY.VIEW.REMOVE_CONFIRMATION']);
+    })
+    .then(function(confirm) {
+      if (confirm) {
+        esRegistry.record.remove($scope.id)
+        .then(function () {
+          $ionicHistory.nextViewOptions({
+            historyRoot: true
+          });
+          $state.go('app.registry_lookup');
+          UIUtils.toast.show(translations['REGISTRY.INFO.RECORD_REMOVED']);
+        })
+        .catch(UIUtils.onError('REGISTRY.ERROR.REMOVE_RECORD_FAILED'))
+      }
+    });
+  }
 }
 
 function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $state, $q, $translate, Device,

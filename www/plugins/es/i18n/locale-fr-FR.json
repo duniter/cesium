@@ -19,7 +19,7 @@
     "COMMON": {
       "PRICE": "Prix",
       "BTN_BUY": "Acheter",
-      "BTN_NEW_AD": "Ajouter",
+      "BTN_NEW_AD": "je dépose une annonce",
       "COMMENTS": "Commentaires"
     },
     "SEARCH": {
@@ -37,10 +37,12 @@
       "TITLE": "Annonce",
       "COMMENT_HELP": "Saisir un message, une question...",
       "SEND_COMMENT_BTN": "Envoyer",
-      "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents"
+      "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents",
+      "MENU_TITLE": "Options",
+      "REMOVE_CONFIRMATION" : "Etes-vous sur de vouloir supprimer cette annonce ?<br/><br/>Cette opération est irrévocable."
     },
     "TYPE": {
-      "TITLE": "Nouveau",
+      "TITLE": "Nouvelle annonce",
       "SELECT_TYPE": "Type d'annonce :",
       "OFFER": "Offre, Vente",
       "NEED": "Demande, Recherche"
@@ -61,8 +63,13 @@
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'annonce.",
+      "REMOVE_RECORD_FAILED": "Erreur de la suppression de l'annonce",
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
-      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
+      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire",
+      "RECORD_NOT_EXISTS": "Annonce inexistante"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Annonce supprimée"
     }
   },
   "REGISTRY": {
@@ -71,7 +78,7 @@
     "LOCATION_DIVIDER": "Localisation",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
-    "BTN_NEW": "Ajouter",
+    "BTN_NEW": "Je référence mon organisation",
     "SEARCH": {
       "TITLE": "Annuaire des professionels",
       "TITLE_SMALL_DEVICE": "Annuaire pro",
@@ -87,7 +94,9 @@
     "VIEW": {
       "TITLE": "Annuaire",
       "CATEGORY": "Activité principale :",
-      "LOCATION": "Adresse :"
+      "LOCATION": "Adresse :",
+      "MENU_TITLE": "Options",
+      "REMOVE_CONFIRMATION" : "Etes-vous sur de vouloir supprimer cette fiche ?<br/><br/>Cette opération est irrévocable."
     },
     "TYPE": {
       "TITLE": "Nouveau référencement",
@@ -116,7 +125,12 @@
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la fiche",
-      "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde"
+      "REMOVE_RECORD_FAILED": "Erreur de la suppression de la fiche",
+      "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
+      "RECORD_NOT_EXISTS": "Fiche inexistante"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Fiche supprimée"
     }
   },
   "PROFILE": {

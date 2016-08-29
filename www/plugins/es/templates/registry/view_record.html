@@ -4,8 +4,12 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear ion-android-create visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
-      </button>
+    <button class="button button-bar button-icon button-clear visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
+      <i class="icon ion-android-create"></i>
+    </button>
+    <button class="button button-bar button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
+            ng-click="actionsPopover.show($event)">
+    </button>
   </ion-nav-buttons>
 
   <ion-content class="" scroll="true">
@@ -71,6 +75,11 @@
                   ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
             {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+          </button>
+          <button class="button button-assertive button-clear icon-left ion-trash-a hidden-xs hidden-sm ink"
+                  ng-if="canEdit"
+                  ng-click="delete()">
+            {{'COMMON.BTN_DELETE' | translate}}
           </button>
           <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
                   ng-if="canEdit"

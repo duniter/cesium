@@ -13107,6 +13107,17 @@ a {
   background-color: #f8f8f8; }
 
 /* ============
+ Header
+=============== */
+.bar.bar-header .button.button-clear.button-icon.ion-android-more-vertical,
+.bar.bar-header .button.button-clear.button-icon i.ion-android-more-vertical {
+  padding-left: 8px; }
+
+.bar.bar-header .buttons .secondary-buttons >
+.button.button-clear.button-icon.ion-android-more-vertical:first-child {
+  padding-left: 0px !important; }
+
+/* ============
  Home page
 =============== */
 #home .logo {

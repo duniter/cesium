@@ -94,7 +94,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         getCommons: getCommonsRequest(),
         add: esHttp.record.post(host, port, '/registry/record'),
         update: esHttp.record.post(host, port, '/registry/record/:id/_update'),
-        remove: esHttp.record.remove(host, port, 'esRegistry', 'record'),
+        remove: esHttp.record.remove(host, port, 'registry', 'record'),
         fields: {
           commons: fields.commons
         },

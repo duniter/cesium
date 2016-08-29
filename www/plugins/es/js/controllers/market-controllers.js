@@ -6,7 +6,7 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
     $stateProvider
 
     .state('app.market_lookup', {
-      url: "/market?q&category&location",
+      url: "/market?q&category&location&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/lookup.html",
@@ -332,7 +332,9 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
   };
 }
 
-function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUtils, $state, $q, $timeout, BMA, esHttp, $filter, csSettings) {
+function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state, $translate, $ionicHistory, $q,
+                                      $timeout, $filter,
+                                      Wallet, esMarket, UIUtils,  esHttp, BMA, csSettings) {
   'ngInject';
 
   $scope.formData = {};
@@ -354,6 +356,17 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
     else {
       $state.go('app.market_lookup');
     }
+  });
+
+  $ionicPopover.fromTemplateUrl('plugins/es/templates/market/view_popover_actions.html', {
+    scope: $scope
+  })
+  .then(function(popover) {
+    $scope.actionsPopover = popover;
+  });
+
+  $scope.$on('$destroy', function() {
+    $scope.actionsPopover.remove();
   });
 
   $scope.load = function (id) {
@@ -410,7 +423,13 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
         $scope.loading = false;
         UIUtils.loading.hide();
         $scope.member = null;
-        UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+        if (err && err.ucode === 404) {
+          UIUtils.toast.show('MARKET.ERROR.RECORD_NOT_EXISTS');
+          $state.go('app.market_lookup');
+        }
+        else {
+          UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+        }
       }
     });
 
@@ -473,6 +492,33 @@ function ESMarketRecordViewController($scope, $rootScope, Wallet, esMarket, UIUt
   $scope.edit = function() {
     $state.go('app.market_edit_record', {id: $scope.id, title: $filter('formatSlug')($scope.formData.title)});
   };
+
+  $scope.delete = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+
+    // translate
+    var translations;
+    $translate(['MARKET.VIEW.REMOVE_CONFIRMATION', 'MARKET.INFO.RECORD_REMOVED'])
+    .then(function(res) {
+      translations = res;
+      return UIUtils.alert.confirm(res['MARKET.VIEW.REMOVE_CONFIRMATION']);
+    })
+    .then(function(confirm) {
+      if (confirm) {
+        esMarket.record.remove($scope.id)
+          .then(function () {
+            $ionicHistory.nextViewOptions({
+              historyRoot: true
+            });
+            $state.go('app.market_lookup');
+            UIUtils.toast.show(translations['MARKET.INFO.RECORD_REMOVED']);
+          })
+          .catch(UIUtils.onError('MARKET.ERROR.REMOVE_RECORD_FAILED'));
+      }
+    })
+  }
 }
 
 function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,

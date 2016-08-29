@@ -95,6 +95,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
         getCommons: getRecordCommonsRequest(),
         add: esHttp.record.post(host, port, '/market/record'),
         update: esHttp.record.post(host, port, '/market/record/:id/_update'),
+        remove: esHttp.record.remove(host, port, 'market', 'record'),
         fields: {
           commons: fields.commons
         },

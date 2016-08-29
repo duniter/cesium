@@ -11,7 +11,7 @@
         <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
                id="marketSearchText"
                ng-model="search.text"
-               ng-model-options="{ debounce: 350 }"
+               ng-model-options="{ debounce: 650 }"
                ng-change="doSearch()">
       </label>
 
@@ -66,9 +66,10 @@
         </h4>
       </div>
 
-      <div class="col col-25 hidden-xs hidden-sm" style="text-align:right">
-        <button class="button button-raised button-full button-calm ink"
+      <div class="col hidden-xs hidden-sm" style="display: block">
+        <button class="button button-calm pull-right ink"
                 ng-click="showNewRecordModal()">
+          <i class="icon ion-compose"></i>
           {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
         </button>
       </div>
@@ -78,7 +79,7 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="center assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+    <div class="padding assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
       COMMON.SEARCH_NO_RESULT
     </div>
 
@@ -135,7 +136,7 @@
   </ion-content>
 
   <button id="fab-add-market-record"
-          class="button button-fab button-fab-bottom-right button-assertive icon ion-plus hidden-md hidden-lg spin"
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-compose hidden-md hidden-lg spin"
           ng-click="showNewRecordModal()">
   </button>
 </ion-view>
