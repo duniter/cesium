@@ -517,8 +517,8 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
           })
           .catch(UIUtils.onError('MARKET.ERROR.REMOVE_RECORD_FAILED'));
       }
-    })
-  }
+    });
+  };
 }
 
 function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,

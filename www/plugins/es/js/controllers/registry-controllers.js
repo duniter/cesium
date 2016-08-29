@@ -495,10 +495,10 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           $state.go('app.registry_lookup');
           UIUtils.toast.show(translations['REGISTRY.INFO.RECORD_REMOVED']);
         })
-        .catch(UIUtils.onError('REGISTRY.ERROR.REMOVE_RECORD_FAILED'))
+        .catch(UIUtils.onError('REGISTRY.ERROR.REMOVE_RECORD_FAILED'));
       }
     });
-  }
+  };
 }
 
 function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $state, $q, $translate, Device,
