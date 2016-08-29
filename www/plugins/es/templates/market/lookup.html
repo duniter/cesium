@@ -124,7 +124,10 @@
           </div>
           <div class="col col-20">
             <h3 class="gray" ng-if="rec.category" ng-bind-html="rec.category.name"></h3>
-            <h2 class="badge badge-price badge-calm" ng-bind-html="rec.price" ng-if="rec.price"></h2>
+            <h2 class="badge badge-price badge-calm" ng-if="rec.price">
+              <ng-if ng-if="settings.useRelative">{{::rec.price|formatDecimal}} {{'COMMON.UD'|translate}}<sub>{{::rec.currency|abbreviate}}</sub></ng-if>
+              <ng-if ng-if="!settings.useRelative">{{::rec.price|formatInteger}} {{::rec.currency|abbreviate}}</ng-if>
+            </h2>
           </div>
           <div class="col">
               <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>

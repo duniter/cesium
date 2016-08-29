@@ -56,8 +56,8 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
 
 ;
 
-function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, $timeout, UIUtils, ModalUtils, $filter,
-  $location, BMA) {
+function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q, csSettings,
+                                  UIUtils, ModalUtils, esMarket, BMA) {
   'ngInject';
 
   $scope.search = {
@@ -235,68 +235,85 @@ function ESMarketLookupController($scope, $rootScope, esMarket, $state, $focus, 
   $scope.doRequest = function(request) {
     $scope.search.looking = true;
 
-    esMarket.category.all()
-      .then(function(categories) {
-        return esMarket.record.search(request)
-          .then(function(res){
-            if (res.hits.total === 0) {
-              $scope.search.results = [];
+    var categories;
+    var currentUD;
+
+    $q.all([
+      esMarket.category.all()
+        .then(function (result) {
+          categories = result;
+        }),
+      // Get last UD
+      BMA.blockchain.lastUd()
+        .then(function (res) {
+          currentUD = res;
+        })
+    ])
+    .then(function() {
+      return esMarket.record.search(request);
+    })
+    .then(function(res){
+      if (res.hits.total === 0) {
+        $scope.search.results = [];
+      }
+      else {
+        var formatSlug = $filter('formatSlug');
+        var records = res.hits.hits.reduce(function(result, hit) {
+            var record = hit._source;
+            record.id = hit._id;
+            record.type = hit._type;
+            record.urlTitle = formatSlug(hit._source.title);
+            if (record.category && record.category.id) {
+              record.category = categories[record.category.id];
             }
-            else {
-              var formatSlug = $filter('formatSlug');
-              var records = res.hits.hits.reduce(function(result, hit) {
-                  var record = hit._source;
-                  record.id = hit._id;
-                  record.type = hit._type;
-                  record.urlTitle = formatSlug(hit._source.title);
-                  if (record.category && record.category.id) {
-                    record.category = categories[record.category.id];
-                  }
-                  if (record.thumbnail) {
-                    record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
-                  }
-                  if (hit.highlight) {
-                    if (hit.highlight.title) {
-                        record.title = hit.highlight.title[0];
-                    }
-                    if (hit.highlight.description) {
-                        record.description = hit.highlight.description[0];
-                    }
-                    if (hit.highlight.location) {
-                        record.location = hit.highlight.location[0];
-                    }
-
-                    if (record.category && hit.highlight["category.name"]) {
-                        record.category.name = hit.highlight["category.name"][0];
-                    }
-                  }
-                  return result.concat(record);
-                }, []);
-              $scope.search.results = records;
-
-              if (records.length > 0) {
-                // Set Motion
-                $timeout(function() {
-                  UIUtils.motion.ripple({
-                    startVelocity: 3000
-                  });
-                  // Set Ink
-                  UIUtils.ink();
-                }, 10);
+            if (record.thumbnail) {
+              record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
+            }
+            if (record.price) {
+              console.log(record.price + '-' + csSettings.data.useRelative);
+              if (!csSettings.data.useRelative && (!record.unit || record.unit==='UD')) {
+                record.price = record.price * currentUD;
+              }
+              else if (csSettings.data.useRelative && record.unit==='unit') {
+                record.price = record.price / currentUD;
               }
             }
+            if (hit.highlight) {
+              if (hit.highlight.title) {
+                  record.title = hit.highlight.title[0];
+              }
+              if (hit.highlight.description) {
+                  record.description = hit.highlight.description[0];
+              }
+              if (hit.highlight.location) {
+                  record.location = hit.highlight.location[0];
+              }
+              if (record.category && hit.highlight["category.name"]) {
+                  record.category.name = hit.highlight["category.name"][0];
+              }
+            }
+            return result.concat(record);
+          }, []);
+        $scope.search.results = records;
 
-            $scope.search.looking = false;
-          })
-          .catch(function(err) {
-            $scope.search.looking = false;
-            $scope.search.results = [];
-          });
-      })
-      .catch(function(err) {
-        $scope.search.looking = false;
-        $scope.search.results = [];
-      });
+        if (records.length > 0) {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.ripple({
+              startVelocity: 3000
+            });
+            // Set Ink
+            UIUtils.ink();
+          }, 10);
+        }
+      }
+
+      $scope.search.looking = false;
+    })
+    .catch(function(err) {
+      $scope.search.looking = false;
+      $scope.search.results = [];
+    });
   };
 
   /* -- modals -- */
@@ -380,7 +397,7 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
       // Get last UD
       BMA.blockchain.lastUd()
         .then(function (currentUD) {
-          $rootScope.walletData.currentUD = currentUD;
+          $scope.currentUD = currentUD;
         })
     ])
     .then(function () {
@@ -471,7 +488,7 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
     // Price in UD
     if (!$scope.formData.unit || $scope.formData.unit == 'UD') {
       if (!csSettings.data.useRelative) {
-        $scope.convertedPrice = $scope.formData.price * $rootScope.walletData.currentUD;
+        $scope.convertedPrice = $scope.formData.price * $scope.currentUD;
       }
       else {
         $scope.convertedPrice = $scope.formData.price;
@@ -483,7 +500,7 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
         $scope.convertedPrice = $scope.formData.price;
       }
       else {
-        $scope.convertedPrice =  $scope.formData.price / $rootScope.walletData.currentUD;
+        $scope.convertedPrice =  $scope.formData.price / $scope.currentUD;
       }
     }
   };
@@ -521,7 +538,7 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
   };
 }
 
-function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
+function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicPopover,
   $timeout, ModalUtils, esHttp, $ionicHistory, $focus, csSettings, csCurrency) {
   'ngInject';
 
@@ -564,6 +581,22 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
     });
   });
 
+  $ionicPopover.fromTemplateUrl('plugins/es/templates/market/popover_unit.html', {
+    scope: $scope
+  }).then(function(popover) {
+    $scope.unitPopover = popover;
+  });
+
+  $scope.$on('$destroy', function() {
+    if (!!$scope.unitPopover) {
+      $scope.unitPopover.remove();
+    }
+  });
+
+  $scope.cancel = function() {
+    $scope.closeModal();
+  };
+
   $scope.load = function(id) {
     esMarket.category.all()
     .then(function(categories) {
@@ -582,6 +615,12 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
         }
         else {
           $scope.pictures = [];
+        }
+        if ($scope.formData.price) {
+          $scope.useRelative = (!$scope.formData.unit || $scope.formData.unit == 'UD');
+        }
+        else {
+          $scope.useRelative = csSettings.data.useRelative;
         }
         $scope.loading = false;
         UIUtils.loading.hide();
@@ -607,6 +646,15 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
 
     UIUtils.loading.show();
     var doFinishSave = function(formData) {
+      if (formData.price) {
+        formData.unit = formData.unit || ($scope.useRelative ? 'UD' : 'unit');
+      }
+      else {
+        delete formData.unit;
+      }
+      if (!formData.currency) {
+        formData.currency = $scope.currency;
+      }
       if (!$scope.id) { // Create
         formData.time = esHttp.date.now();
         esMarket.record.add(formData)
@@ -657,7 +705,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state,
   $scope.setUseRelative = function(useRelative) {
     $scope.formData.unit = useRelative ? 'UD' : 'unit';
     $scope.useRelative = useRelative;
-    //$scope.unitPopover.hide();
+    $scope.unitPopover.hide();
   };
 
   $scope.openCurrencyLookup = function() {

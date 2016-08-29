@@ -91,7 +91,7 @@
 
               <!-- price -->
               <ion-item class="item-input item-floating-label item-button-right"
-                        ng-if="!$root.settings.useRelative">
+                        ng-show="!useRelative">
                 <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{currency | abbreviate}})</span>
                 <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{currency | abbreviate}})"
                        ng-model="formData.price"
@@ -103,7 +103,7 @@
                 </span>
               </ion-item>
               <ion-item class="item-input item-floating-label item-button-right"
-                        ng-if="$root.settings.useRelative">
+                        ng-show="useRelative">
                 <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</sub>)</span>
                 <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
                        ng-model="formData.price">
