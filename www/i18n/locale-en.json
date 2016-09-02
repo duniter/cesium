@@ -6,7 +6,8 @@
     "PUBKEY": "Public key",
     "BTN_OK": "OK",
     "BTN_SEND": "Send",
-    "BTN_SEND_MONEY": "Send money",
+    "BTN_SEND_MONEY": "Transfer money",
+    "BTN_SEND_MONEY_SHORT": "Transfer",
     "BTN_SAVE": "Save",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
@@ -49,7 +50,7 @@
     "CURRENCY": "Currency",
     "CURRENCIES": "Currencies",
     "ACCOUNT": "My Account",
-    "TRANSFER": "Send",
+    "TRANSFER": "Transfer",
     "SCAN": "Scan",
     "SETTINGS": "Settings"
   },
@@ -140,7 +141,6 @@
     "SIGNED_ON_BLOCK": "Certify on block",
     "GENERAL_DIVIDER": "General data",
     "TECHNICAL_DIVIDER": "Technical data",
-    "BTN_SEND_MONEY": "Send money",
     "BTN_CERTIFY": "Certify",
     "LOOKUP": {
       "TITLE": "Registry"
@@ -177,7 +177,6 @@
     "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
     "WILL_NEED_RENEW_MEMBERSHIP": "Your membership will expire {{membershipExpiresIn|formatDuration}}",
     "CERTIFICATION_COUNT": "Certifications count",
-    "BTN_SEND_MONEY": "Send",
     "BTN_RECEIVE_MONEY": "Receive",
     "BTN_MEMBERSHIP_IN": "Register as member",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
@@ -206,7 +205,7 @@
   },
   "TRANSFER": {
     "TITLE": "Transfer",
-    "SUB_TITLE": "Send a payment",
+    "SUB_TITLE": "Transfer money",
     "FROM": "From",
     "TO": "To",
     "AMOUNT": "Amount",
@@ -268,12 +267,12 @@
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Identity successfully signed",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "TRANSFER_SENT": "Transaction successfully sent.",
+    "TRANSFER_SENT": "Transfer request successfully sent.",
     "COPY_TO_CLIPBOARD_DONE": "Copy succeed."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
-    "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to send this payment ?</b>"
+    "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>"
   }
 }

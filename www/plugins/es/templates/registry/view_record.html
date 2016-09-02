@@ -71,10 +71,10 @@
         <!-- Buttons bar-->
         <div class="item large-button-bar hidden-xs hidden-sm"
              ng-if="formData.pubkey || canEdit">
-          <button class="button button-raised button-assertive ink-dark"
+          <button class="button button-raised button-calm ink-dark"
                   ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
-            {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+            {{'COMMON.BTN_SEND_MONEY' | translate}}
           </button>
           <button class="button button-assertive button-clear icon-left ion-trash-a hidden-xs hidden-sm ink"
                   ng-if="canEdit"

@@ -6,7 +6,8 @@
     "PUBKEY": "Clé publique",
     "BTN_OK": "OK",
     "BTN_SEND": "Envoyer",
-    "BTN_SEND_MONEY": "Payer",
+    "BTN_SEND_MONEY": "Faire un virement",
+    "BTN_SEND_MONEY_SHORT": "Virement",
     "BTN_SAVE": "Enregistrer",
     "BTN_SHOW": "Voir",
     "BTN_SHOW_PUBKEY": "Voir la clé",
@@ -177,7 +178,6 @@
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt manquer de certifications",
     "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre va expirer {{membershipExpiresIn|formatDuration}}",
     "CERTIFICATION_COUNT": "Nombre de certifications",
-    "BTN_SEND_MONEY": "Payer",
     "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller l'adhésion comme membre",
@@ -205,8 +205,8 @@
     }
   },
   "TRANSFER": {
-    "TITLE": "Payer",
-    "SUB_TITLE": "Envoyer un paiement",
+    "TITLE": "Virement",
+    "SUB_TITLE": "Faire un virement",
     "FROM": "De",
     "TO": "A",
     "AMOUNT": "Montant",
@@ -268,12 +268,12 @@
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Certification envoyée avec succès.",
     "NOT_ENOUGH_CREDIT": "Crédit insuffisant.",
-    "TRANSFER_SENT": "La transaction a été envoyée avec succès.",
+    "TRANSFER_SENT": "Demande de virement envoyée avec succès.",
     "COPY_TO_CLIPBOARD_DONE": "Copie effectuée."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
     "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>",
-    "TRANSFER": "<b>Récapitulatif du paiement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir envoyer ce paiement ?</b>"
+    "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>"
   }
 }
