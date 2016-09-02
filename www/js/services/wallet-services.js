@@ -67,6 +67,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (!csSettings.data.useLocalStorage) {
         csSettings.reset();
       }
+      api.data.raise.reset(data)
     },
 
     reduceTxAndPush = function(txArray, result, processedTxMap, excludePending) {
@@ -775,7 +776,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           }
 
 
-            var tx = 'Version: 3\n' +
+          var tx = 'Version: 3\n' +
             'Type: Transaction\n' +
             'Currency: ' + data.currency + '\n' +
             'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
@@ -1101,6 +1102,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     // Register extension points
     api.registerEvent('data', 'load');
+    api.registerEvent('data', 'reset');
 
     csSettings.api.data.on.changed($rootScope, store);
 

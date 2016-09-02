@@ -58,6 +58,12 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
+    function onWalletReset(data) {
+      data.avatar = null;
+      data.avatarStyle = null;
+      data.profile = null;
+    }
+
     function onWotLoad(data, resolve, reject) {
       if (!data || !data.pubkey) {
         if (resolve) {
@@ -191,7 +197,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function removeListeners() {
-      console.log("[ES] Removing contribution to Wallet and Wot services");
+      console.debug("[ES] Disable plugin contribution");
 
       _.forEach(listeners, function(remove){
         remove();
@@ -200,13 +206,14 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function addListeners() {
-      console.log("[ES] Enable contribution to Wallet and Wot services");
+      console.debug("[ES] Enable plugin contribution");
 
       // Extend Wallet.loadData() and WotService.loadData()
       listeners = [
         Wallet.api.data.on.load($rootScope, onWalletLoad, this),
+        Wallet.api.data.on.reset($rootScope, onWalletReset, this),
         WotService.api.data.on.load($rootScope, onWotLoad, this),
-        WotService.api.data.on.search($rootScope, onWotSearch, this)
+        WotService.api.data.on.search($rootScope, onWotSearch, this),
       ];
     }
 
