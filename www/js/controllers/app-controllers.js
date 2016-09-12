@@ -53,8 +53,8 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUtils, $q, $timeout,
-  BMA, Wallet, $ionicHistory, Device, Modals, csSettings, csConfig, csCurrency
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, screenmatch,
+                       UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig, csCurrency
   ) {
   'ngInject';
 
@@ -66,6 +66,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUti
   ////////////////////////////////////////
   // Load currencies
   ////////////////////////////////////////
+
+  $scope.showCurrencyView = function() {
+    $state.go(screenmatch.is('sm, xs') ? 'app.currency_view': 'app.currency_view_lg');
+  };
 
   $scope.loadCurrencies = function() {
     console.debug("[WARN] $scope.loadCurrencies() si deprecated. use csNetwork.all() instead");

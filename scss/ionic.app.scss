@@ -48,8 +48,8 @@ $cesiumicons-font-path: "../fonts" !default;
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
-$screen-xs-max:                   747px;
-$screen-sm:                       748px;
+$screen-xs-max:                   767px;
+$screen-sm:                       768px;
 $screen-sm-max:                   991px;
 $screen-md:                       992px;
 $screen-md-max:                   1199px;
@@ -74,7 +74,7 @@ $screen-lg:                       1200px;
   }
 }
 
-// Extra small device: Phones (<747px)
+// Extra small device: Phones (<767px)
 @media screen and (max-width: $screen-xs-max) {
     .hidden-xs {
         display: none !important;
@@ -210,21 +210,6 @@ $screen-lg:                       1200px;
 
 }
 
-.gray, .positive{
-  a {
-    color: inherit;
-  }
-
-  a:hover {
-    color: inherit;
-  }
-  a:visited {
-    color: inherit;
-  }
-}
-.item a {
-  text-decoration: none
-}
 
 // Medium devices: Desktops (≥992px)
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
@@ -492,13 +477,30 @@ $screen-menu:                     845px;
   }
 }
 
+
 .gray {
   color: grey !important;
 }
+
+.gray, .positive{
+  a {
+    color: inherit;
+  }
+
+  a:hover {
+    color: inherit;
+  }
+  a:visited {
+    color: inherit;
+  }
+}
+.item a {
+  text-decoration: none;
+}
+
 .no-padding {
   padding: 0px !important;
 }
-
 
 .avatar-member {
   background-image: url(../img/person.png);

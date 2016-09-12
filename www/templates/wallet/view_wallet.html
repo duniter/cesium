@@ -60,16 +60,9 @@
       <div class="col list animate-fade-slide-in-right">
 
         <!-- Certifications -->
-        <a class="item item-icon-left item-icon-right item-text-wrap ink hidden-xs hidden-sm" ng-if="walletData.isMember"
-           ui-sref="app.wallet_view_cert_lg({pubkey:walletData.pubkey, uid:walletData.uid})">
-          <i class="icon ion-ribbon-b"></i>
-          <span clas="input-label">{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
-          <span class="badge"
-                ng-class="{'badge-balanced': walletData.requirements.needCertificationCount==0 && walletData.requirements.willNeedCertificationCount==0, 'badge-assertive': walletData.requirements.needCertificationCount>0 || walletData.requirements.willNeedCertificationCount>0}">{{walletData.requirements.certificationCount}}</span>
-          <i class="gray icon ion-ios-arrow-right"></i>
-        </a>
-        <a class="item item-icon-left item-icon-right item-text-wrap ink visible-xs visible-sm" ng-if="walletData.isMember"
-           ui-sref="app.wallet_view_cert({pubkey:walletData.pubkey})">
+        <a class="item item-icon-left item-icon-right item-text-wrap ink"
+           ng-if="walletData.isMember"
+           ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
           <span clas="input-label">{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
           <span class="badge"

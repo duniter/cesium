@@ -201,7 +201,7 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device
 
 }
 
-function WotIdentityViewController($scope, UIUtils, $timeout, Device, WotService) {
+function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtils, Device, WotService) {
   'ngInject';
 
   $scope.formData = {};
@@ -245,6 +245,13 @@ function WotIdentityViewController($scope, UIUtils, $timeout, Device, WotService
     if (value && Device.isEnable()) {
       Device.clipboard.copy(value);
     }
+  };
+
+  $scope.showCertifications = function() {
+    $state.go(screenmatch.is('sm, xs') ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
+      pubkey: $scope.formData.pubkey,
+      uid: $scope.formData.name || $scope.formData.uid
+    });
   };
 
   $scope.showFab('fab-transfer');
@@ -298,9 +305,9 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
       $scope.loading = false;
 
       // Effects
-      $scope.motionCertifications();
-      $scope.motionGivenCertifications();
-      $scope.motionAvatar();
+      $scope.motionCertifications(100);
+      $scope.motionAvatar(300);
+      $scope.motionGivenCertifications(900);
     });
   };
 
@@ -421,13 +428,13 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
   };
 
   // Show received certifcations (animation need in tabs)
-  $scope.motionCertifications = function() {
+  $scope.motionCertifications = function(timeout) {
     if ($scope.showCertifications) {
       // Effects
       $timeout(function() {
         UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
         UIUtils.ink({selector: '.list.certifications .ink'});
-      }, 10);
+      }, timeout || 10);
       if ($scope.canCertify) {
         $scope.showFab('fab-certify');
       }
@@ -440,13 +447,13 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
   };
 
   // Show given certifcations (animation need in tabs)
-  $scope.motionGivenCertifications = function() {
+  $scope.motionGivenCertifications = function(timeout) {
     if ($scope.showGivenCertifications) {
       // Effects
       $timeout(function() {
         UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
         UIUtils.ink({selector: '.list.given-certifications .ink'});
-      }, 10);
+      }, timeout || 10);
       if ($scope.canSelectAndCertify) {
         $scope.showFab('fab-select-certify');
       }
@@ -458,13 +465,13 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
     }
   };
 
-  $scope.motionAvatar = function() {
+  $scope.motionAvatar = function(timeout) {
     if ($scope.showAvatar) {
       console.log("motionAvatar");
       // Effects
       $timeout(function () {
         UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
-      }, 900);
+      }, timeout || 900);
     }
   };
 

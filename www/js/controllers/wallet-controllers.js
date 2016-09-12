@@ -32,8 +32,8 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $q, $ionicPopup, $timeout,
-  UIUtils, Wallet, BMA, $translate, $ionicPopover, Modals, csSettings) {
+function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch,
+  UIUtils, Wallet, $translate, $ionicPopover, Modals, csSettings) {
   'ngInject';
 
   $scope.walletData = null;
@@ -302,6 +302,13 @@ function WalletController($scope, $q, $ionicPopup, $timeout,
         }
       });
     }, timeout);
+  };
+
+  $scope.showCertifications = function() {
+    $state.go(screenmatch.is('sm, xs') ? 'app.wallet_view_cert' : 'app.wallet_view_cert_lg', {
+      pubkey: $scope.walletData.pubkey,
+      uid: $scope.walletData.name || $scope.walletData.uid
+    });
   };
 
    // TODO: remove auto add account when done

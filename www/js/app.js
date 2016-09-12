@@ -5,13 +5,15 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment',
-  'ngApi', 'angular-cache',
-   // removeIf(no-device)
+  'ngApi', 'angular-cache', 'angular.screenmatch',
+  // removeIf(device)
+  // endRemoveIf(device)
+  // removeIf(no-device)
   'ngCordova',
-   // endRemoveIf(no-device)
-   // removeIf(no-plugin)
-   'cesium.plugins',
-   // endRemoveIf(no-plugin)
+  // endRemoveIf(no-device)
+  // removeIf(no-plugin)
+  'cesium.plugins',
+  // endRemoveIf(no-plugin)
   'cesium.directives', 'cesium.controllers', 'cesium.templates', 'cesium.translations'
   ])
 
@@ -144,6 +146,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .config(function (CacheFactoryProvider) {
     angular.extend(CacheFactoryProvider.defaults, { maxAge: 60 * 1000 /*1min*/});
+  })
+
+  .config(function(screenmatchConfigProvider) {
+    screenmatchConfigProvider.config.rules = 'bootstrap';
   })
 
   // removeIf(no-device)
