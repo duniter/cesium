@@ -6,15 +6,10 @@
 
   <div ng-repeat="currency in knownCurrencies"
        ng-class="{ selected: selectedCurrency == currency }">
-    <a class="item hidden-xs hidden-sm ink" ng-click="selectCurrency(currency.name, true)"
+    <a class="item card card-item stable-bg padding ink" ng-click="selectCurrency(currency.name)"
        ng-class="{ selected: selectedCurrency == currency }">
-      <h3>{{currency.name}}</h3>
-      <h4 class="gray">{{currency.peer}}</h4>
-    </a>
-    <a class="item item-text-wrap visible-xs visible-sm ink" ng-click="selectCurrency(currency.name, false)"
-       ng-class="{ selected: selectedCurrency == currency }">
-      <h3>{{::currency.name}}</h3>
-      <h4 class="gray">{{::currency.peer}}</h4>
+      <h2>{{currency.name}}</h2>
+      <h4 class="gray">{{currency.peer.server}}</h4>
     </a>
   </div>
 </ion-list>

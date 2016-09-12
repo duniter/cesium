@@ -59,7 +59,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
+function CurrencyLookupController($scope, $state, UIUtils, csCurrency, screenmatch) {
   'ngInject';
 
   $scope.selectedCurrency = '';
@@ -80,14 +80,9 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   });
 
   // Called to navigate to the main app
-  $scope.selectCurrency = function(id, large) {
+  $scope.selectCurrency = function(id) {
     $scope.selectedCurrency = id;
-    if (large) {
-      $state.go('app.currency_view_lg', {name: id});
-    }
-    else {
-      $state.go('app.currency_view', {name: id});
-    }
+    $state.go(screenmatch.is('sm, xs') ? 'app.currency_view' : 'app.currency_view_lg', {name: id});
   };
 }
 
@@ -174,9 +169,8 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     if (!$scope.node) {
       return;
     }
-
+    // Load data from node
     var M;
-
     return $q.all([
 
       // Get the currency parameters
@@ -212,7 +206,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
         })
     ])
 
-    // Done
+    // Process loaded data
     .then(function(){
       var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
       var MoverN = Mprev / $scope.Nprev;
@@ -227,11 +221,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
         $scope.MoverN = MoverN;
         $scope.UD = $scope.currentUD;
       }
-      // Set Ink
-      UIUtils.ink({selector: '.peer-item'});
-
       $scope.loading = false;
-
       UIUtils.loading.hide();
     })
     .catch(function(err) {
@@ -247,9 +237,9 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .then(function(){
       // Network
       $scope.loadingPeers = true;
-      $scope.peers = csNetwork.getPeers();
       csNetwork.refreshPeers(true)
-        .then(function() {
+        .then(function(peers) {
+          $scope.peers = peers;
           $scope.checkLoadingPeers();
         })
         .catch(function(err) {
@@ -271,87 +261,4 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     }
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
-
-  $scope.refresh = function() {
-    if (!$scope.node) {
-      return;
-    }
-
-    UIUtils.loading.show();
-
-    var M;
-
-    $q.all([
-
-      // Get the currency parameters
-      $scope.node.blockchain.parameters()
-        .then(function(json){
-          $scope.currency = json.currency;
-          $scope.c = json.c;
-          $scope.dt = json.dt;
-          $scope.sigQty = json.sigQty;
-        }),
-
-      // Get the current block informations
-      $scope.node.blockchain.current()
-        .then(function(block){
-          M = block.monetaryMass;
-          $scope.N = block.membersCount;
-          $scope.time  = moment(block.medianTime*1000).format($scope.datePattern);
-          $scope.difficulty  = block.powMin;
-        }),
-
-      // Get the UD informations
-      $scope.node.blockchain.stats.ud()
-        .then(function(res){
-          if (res.result.blocks.length) {
-            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-            return $scope.node.blockchain.block({ block: lastBlockWithUD })
-              .then(function(block){
-                $scope.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
-                $scope.Nprev = block.membersCount;
-              });
-          }
-        })
-    ])
-
-    // Done
-    .then(function(){
-      var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
-      var MoverN = Mprev / $scope.Nprev;
-      $scope.cactual = 100 * $scope.currentUD / MoverN;
-
-      if ($scope.formData.useRelative) {
-        $scope.M = Mprev / $scope.currentUD;
-        $scope.MoverN = MoverN / $scope.currentUD;
-        $scope.UD = 1;
-      } else {
-        $scope.M = Mprev;
-        $scope.MoverN = MoverN;
-        $scope.UD = $scope.currentUD;
-      }
-      // Set Ink
-      UIUtils.ink({selector: '.peer-item'});
-
-      $scope.loading = false;
-
-      UIUtils.loading.hide();
-    })
-    .catch(function(err) {
-      $scope.loading = false;
-      UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
-    })
-    .then(function(){
-      // Network
-      $scope.loadingPeers = true;
-      $scope.peers = csNetwork.getPeers();
-      csNetwork.refreshPeers(true)
-      .then(function() {
-        $scope.checkLoadingPeers();
-      })
-      .catch(function(err) {
-        $scope.loadingPeers = false;
-      });
-    });
-  };
 }
