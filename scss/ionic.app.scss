@@ -213,73 +213,85 @@ $screen-lg:                       1200px;
 
 // Medium devices: Desktops (≥992px)
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
-    .hidden-md {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .badge {
-      text-overflow: ellipsis !important;
-      white-space: nowrap;
-      overflow: hidden !important;
-      max-width: 400px !important;
-      display: block !important;
-    }
-    .badge:empty {
+  .hidden-md {
       display: none !important;
-    }
+      visibility: hidden !important;
+  }
+  .badge {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden !important;
+    max-width: 400px !important;
+    display: block !important;
+  }
+  .badge:empty {
+    display: none !important;
+  }
+  html{
+    -webkit-user-select: all !important;
+    -moz-user-select: all !important;
+    -ms-user-select: all !important;
+    user-select: all !important;
+  }
 }
 @media screen and (min-width: $screen-lg) {
-    .hidden-md {
-        display: inherit;
-        visibility: visible;
-    }
+  .hidden-md {
+      display: inherit;
+      visibility: visible;
+  }
 }
 @media screen and (max-width: $screen-sm-max) {
-    .hidden-md {
-        display: inherit;
-        visibility: visible;
-    }
+  .hidden-md {
+      display: inherit;
+      visibility: visible;
+  }
 }
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
-    .visible-md {
-        display: inherit !important;
-        visibility: visible !important;
-    }
+  .visible-md {
+      display: inherit !important;
+      visibility: visible !important;
+  }
 }
 @media screen and (min-width: $screen-lg) {
-    .visible-md {
-        display: none;
-        visibility: hidden;
-    }
+  .visible-md {
+      display: none;
+      visibility: hidden;
+  }
 }
 @media screen and (max-width: $screen-sm-max) {
-    .visible-md {
-        display: none;
-        visibility: hidden;
-    }
+  .visible-md {
+      display: none;
+      visibility: hidden;
+  }
 }
 
 
 // Large devices: Desktops (≥1200px)
 @media screen and (min-width: $screen-lg) {
-    .hidden-lg {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .visible-lg {
-        display: inherit !important;
-        visibility: visible !important;
-    }
-    .badge {
-      text-overflow: ellipsis !important;
-      white-space: nowrap;
-      overflow: hidden !important;
-      max-width: 450px !important;
-      display: block !important;
-    }
-    .badge:empty {
+  .hidden-lg {
       display: none !important;
-    }
+      visibility: hidden !important;
+  }
+  .visible-lg {
+      display: inherit !important;
+      visibility: visible !important;
+  }
+  .badge {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden !important;
+    max-width: 450px !important;
+    display: block !important;
+  }
+  .badge:empty {
+    display: none !important;
+  }
+  html{
+    -webkit-user-select: all !important;
+    -moz-user-select: all !important;
+    -ms-user-select: all !important;
+    user-select: all !important;
+  }
 }
 @media screen and (max-width: $screen-md-max) {
     .hidden-lg {
@@ -476,7 +488,6 @@ $screen-menu:                     845px;
     }
   }
 }
-
 
 .gray {
   color: grey !important;
@@ -843,7 +854,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 .text-keep-lines {
-  white-space: pre-line;
+  white-space: pre-line !important;
 }
 
 

@@ -22,23 +22,74 @@ angular.module('cesium.directives', ['cesium.services'])
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', function ($window, Device) {
+  .directive('copyOnClick', function ($window, $document, Device, $ionicPopover, $timeout) {
     'ngInject';
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
-        element.bind('click', function () {
-          if (!Device.clipboard.enable) {
-            if ($window.getSelection && !$window.getSelection().toString() && this.value) {
-              this.setSelectionRange(0, this.value.length);
+        var childScope;
+        var doCopy = function (event) {
+          var value = attrs.copyOnClick;
+          var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
+          if (value && Device.clipboard.enable) {
+            Device.clipboard.copy(value); // copy to clipboard
+          }
+          else if (value) {
+            var showPopover = function() {
+              // Fill child scope
+              childScope.value = value;
+              childScope.rows = rows;
+              scope.copyPopover.show(event);
+              $timeout(function () {
+                var inputs = document.querySelectorAll('.popover-copy ' + (rows <= 1 ? 'input' : 'textarea'));
+                var input;
+                for (var i=0; i<inputs.length; i++) {
+                  if (inputs[i].value === value) {
+                    input = inputs[i];
+                    break;
+                  }
+                }
+                if (input) {
+                  if ($window.getSelection && !$window.getSelection().toString()) {
+                    input.setSelectionRange(0, value.length);
+                    input.focus();
+                  }
+                  else {
+                    input.focus();
+                  }
+                }
+              }, 500); // wait popover to be created and display
+            };
+
+            if (!childScope || !scope.copyPopover) {
+              childScope = scope.$new();
+              childScope.value = value; // Copy value to child scope
+              $ionicPopover.fromTemplateUrl('templates/common/popover_copy.html', {
+                scope: childScope
+              })
+                .then(function (popover) {
+                  scope.copyPopover = popover;
+
+                  // Cleanup the popover when hidden
+                  scope.$on('$remove', function() {
+                    console.debug("remove copy popoover");
+                    //childScope.$on('popover.hidden', function() {
+                    if (!!scope.copyPopover) {
+                      scope.copyPopover.remove();
+                      delete scope.copyPopover;
+                    }
+                  });
+
+                  showPopover();
+                });
+            }
+            else {
+              showPopover();
             }
           }
-        });
-        element.bind('hold', function () {
-          if (Device.clipboard.enable && this.value) {
-            Device.clipboard.copy(this.value);
-          }
-        });
+        };
+        element.bind('click', doCopy);
+        element.bind('hold', doCopy);
       }
     };
   })

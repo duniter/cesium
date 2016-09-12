@@ -54,8 +54,8 @@
       "RECORD_TITLE_HELP": "Title",
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Localization",
-      "RECORD_LOCATION_HELP": "Address, City",
+      "RECORD_LOCATION": "Address",
+      "RECORD_LOCATION_HELP": "Street, City",
       "RECORD_PRICE": "Price",
       "RECORD_PRICE_HELP": "Price (optional)",
       "RECORD_CURRENCY": "Currency"
@@ -75,7 +75,7 @@
   "REGISTRY": {
     "CATEGORY": "Main activity",
     "GENERAL_DIVIDER": "Basic information",
-    "LOCATION_DIVIDER": "Localisation",
+    "LOCATION_DIVIDER": "Address",
     "SOCIAL_NETWORKS_DIVIDER": "Social networks and web site",
     "TECHNICAL_DIVIDER": "Technical data",
     "BTN_NEW": "Add",

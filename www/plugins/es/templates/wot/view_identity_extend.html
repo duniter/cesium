@@ -1,13 +1,25 @@
 <!-- General section -->
 <ng-if ng-if="extensionPoint === 'general'">
 
+  <!-- About me -->
+  <ng-if ng-if="formData.profile.description">
+    <div class="item item-divider" translate>PROFILE.DESCRIPTION</div>
+
+    <ion-item class="item-icon-left">
+      <span class="text-keep-lines">{{formData.profile.description}}
+      </span>
+    </ion-item>
+  </ng-if>
+
+
   <!-- Localisation -->
   <ng-if ng-if="formData.profile.address || formData.profile.city">
     <div class="item item-divider" translate>PROFILE.LOCATION_DIVIDER</div>
 
-    <ion-item class="item-icon-left ink">
-      <h2>{{formData.profile.address}}</h2>
-      <h2>{{formData.profile.city}}</h2>
+    <ion-item class="item-icon-left ink" copy-on-click="{{formData.profile.address ? formData.profile.address + '&#10;' : ''}}{{formData.profile.city}}">
+      <span class="text-keep-lines" ng-if="formData.profile.address">{{formData.profile.address}}
+      </span>
+      <span>{{formData.profile.city}}</span>
     </ion-item>
   </ng-if>
 

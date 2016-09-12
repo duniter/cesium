@@ -240,13 +240,6 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
     });
   };
 
-  // Copy
-  $scope.copy = function(value) {
-    if (value && Device.isEnable()) {
-      Device.clipboard.copy(value);
-    }
-  };
-
   $scope.showCertifications = function() {
     $state.go(screenmatch.is('sm, xs') ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
       pubkey: $scope.formData.pubkey,

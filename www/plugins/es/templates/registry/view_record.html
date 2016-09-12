@@ -12,18 +12,18 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class="" scroll="true">
-      <div class="positive-900-bg hero">
-        <div class="content" ng-if="!loading">
-          <img class="avatar" ng-src="{{thumbnail.src}}" ng-if="thumbnail">
-          <i class="avatar cion-registry-{{formData.type}}" ng-if="!thumbnail"></i>
-          <h3 ng-bind-html="formData.title"></h3>
-          <h4>&nbsp;</h4>
-        </div>
-        <h4 class="content light" ng-if="loading">
-          <ion-spinner icon="android"></ion-spinner>
-        </h4>
+  <ion-content scroll="true">
+    <div class="positive-900-bg hero">
+      <div class="content" ng-if="!loading">
+        <img class="avatar" ng-src="{{thumbnail.src}}" ng-if="thumbnail">
+        <i class="avatar cion-registry-{{formData.type}}" ng-if="!thumbnail"></i>
+        <h3 ng-bind-html="formData.title"></h3>
+        <h4>&nbsp;</h4>
       </div>
+      <h4 class="content light" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </h4>
+    </div>
 
     <div class="row">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
@@ -127,7 +127,7 @@
           </ion-item>
         </ng-if>
 
-        <div class="lazy-load">
+        <ion-item class="lazy-load">
 
           <!-- pictures -->
           <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
@@ -140,8 +140,7 @@
           <!-- pubkey -->
           <div class="item item-icon-left item-text-wrap ink"
                     ng-if="formData.pubkey"
-                    on-hold="copy(formData.pubkey)"
-                    copy-on-click>
+                    copy-on-click="{{::formData.pubkey}}">
             <i class="icon ion-key"></i>
             <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
             <h4 class="dark">{{::formData.pubkey}}</h4>

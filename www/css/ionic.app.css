@@ -12995,7 +12995,12 @@ a {
     max-width: 400px !important;
     display: block !important; }
   .badge:empty {
-    display: none !important; } }
+    display: none !important; }
+  html {
+    -webkit-user-select: all !important;
+    -moz-user-select: all !important;
+    -ms-user-select: all !important;
+    user-select: all !important; } }
 
 @media screen and (min-width: 1200px) {
   .hidden-md {
@@ -13036,7 +13041,12 @@ a {
     max-width: 450px !important;
     display: block !important; }
   .badge:empty {
-    display: none !important; } }
+    display: none !important; }
+  html {
+    -webkit-user-select: all !important;
+    -moz-user-select: all !important;
+    -ms-user-select: all !important;
+    user-select: all !important; } }
 
 @media screen and (max-width: 1199px) {
   .hidden-lg {
@@ -13451,7 +13461,7 @@ a {
   padding-left: 40px; }
 
 .text-keep-lines {
-  white-space: pre-line; }
+  white-space: pre-line !important; }
 
 /*
 * Menu

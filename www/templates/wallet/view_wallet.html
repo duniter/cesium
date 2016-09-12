@@ -74,8 +74,9 @@
         <span class="item item-icon-left item-text-wrap ink in done"
                   ng-if="showDetails"
                   on-hold="copy(walletData.pubkey)"
-                  copy-on-click>
+                  copy-on-click="{{::walletData.pubkey}}">
           <i class="icon ion-key"></i>
+          <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark">{{::walletData.pubkey}}</h4>
         </span>
 

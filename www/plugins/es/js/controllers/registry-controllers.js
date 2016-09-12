@@ -419,7 +419,8 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
               selector: '.list > .item, .list > ng-if > .item',
               startVelocity: 3000
             });
-            UIUtils.ink();
+            UIUtils.ink({
+              selector: '.list .item.ink'});
           }, 10);
           UIUtils.loading.hide();
           $scope.loading = false;

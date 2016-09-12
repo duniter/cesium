@@ -1,0 +1,15 @@
+<ion-popover-view class="popover-copy" style="height: {{(!rows || rows &lt;= 1) ? 50 : rows*22}}px">
+  <ion-content scroll="false">
+    <div class="list">
+      <div class="item item-input">
+        <input type="text"
+               ng-if="!rows || rows &lt;= 1"
+               ng-model="value">
+        <textarea
+            ng-if="rows && rows > 1"
+            ng-model="value"
+                  rows="{{rows}}" cols="10">
+      </div>
+    </div>
+  </ion-content>
+</ion-popover-view>

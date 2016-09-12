@@ -72,9 +72,8 @@
         </ion-item>
 
         <!-- Pubkey -->
-        <ion-item class="item-icon-left item-icon-right item-text-wrap ink"
-                  on-hold="copy(formData.pubkey)"
-                  copy-on-click>
+        <ion-item class="item-icon-left item-text-wrap ink"
+                  copy-on-click="{{formData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark text-left">{{::formData.pubkey}}</h4>
