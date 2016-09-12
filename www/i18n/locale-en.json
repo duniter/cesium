@@ -120,7 +120,8 @@
       "RULES_DIVIDER": "Rules",
       "C_RULE": "c",
       "UD_RULE": "Universal dividend (formula)",
-      "SIG_QTY_RULE": "Required certifications"
+      "SIG_QTY_RULE": "Required certifications",
+      "SIG_STOCK": "Maximal number of certifications<br/>sent by member"
     }
   },
   "PEER": {
@@ -134,14 +135,14 @@
     "REGISTERED_SINCE": "Registered since ",
     "REGISTERED_SINCE_BLOCK": "Registered since block #",
     "NO_CERTIFICATIONS": "No certification",
-    "CERTIFICATIONS_RECEIVED": "Received certifications",
-    "CERTIFICATIONS_RECEIVED_BY": "Received certifications for {{uid}}",
     "EXPIRE_IN": "Expires",
     "PSEUDO": "Pseudonym",
     "SIGNED_ON_BLOCK": "Certify on block",
+    "WRITTEN_ON_BLOCK": "Written on block",
     "GENERAL_DIVIDER": "General data",
     "TECHNICAL_DIVIDER": "Technical data",
     "BTN_CERTIFY": "Certify",
+    "BTN_SELECT_AND_CERTIFY": "New certification",
     "LOOKUP": {
       "TITLE": "Registry"
     },
@@ -149,7 +150,18 @@
       "TITLE": "Search"
     },
     "CERTIFICATIONS": {
-      "TITLE": "{{uid}} - Certifications"
+      "TITLE": "{{uid}} - Certifications",
+      "SUMMARY": "Received certifications",
+      "LIST": "Détails of received certifications",
+      "RECEIVED": "Received certifications",
+      "RECEIVED_BY": "Certifications received by {{uid}}",
+    },
+    "GIVEN_CERTIFICATIONS": {
+      "TITLE": "{{uid}} - Certifications sent",
+      "SUMMARY": "Sent certifications",
+      "LIST": "Détails of sent certifications",
+      "SENT": "Sent certifications",
+      "SENT_BY": "Certifications sent by {{uid}}",
     }
   },
   "LOGIN": {
@@ -169,7 +181,7 @@
     "NO_TX": "No transaction",
     "PENDING_TX": "Pending transactions",
     "ERROR_TX": "Transaction not executed",
-    "ERROR_TX_SENDED": "Sended transactions",
+    "ERROR_TX_SENT": "Sent transactions",
     "ERROR_TX_RECEIVED": "Received transactions",
     "EVENTS": "Events",
     "WAITING_MEMBERSHIP": "Membership sent. Waiting validation.",
@@ -177,6 +189,7 @@
     "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
     "WILL_NEED_RENEW_MEMBERSHIP": "Your membership will expire {{membershipExpiresIn|formatDuration}}",
     "CERTIFICATION_COUNT": "Certifications count",
+    "SIG_STOCK": "Stock of certifications to give",
     "BTN_RECEIVE_MONEY": "Receive",
     "BTN_MEMBERSHIP_IN": "Register as member",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
@@ -231,7 +244,8 @@
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "You could not send certification, because your account is <b>not</b> a member account.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "You could not send certification now, because your are a member yet.<br/>Be patient ! ;-)",
-    "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
+    "NOT_MEMBER_FOR_CERTIFICATION": "Your account is not a member account yet.",
+    "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "This account could not be certfied. No registration found, or need to renew.",
     "LOGIN_FAILED": "Error while sign in.",
     "LOAD_IDENTITY_FAILED": "Could not load identity.",
     "LOAD_REQUIREMENTS_FAILED": "Could not load identity requirements.",
@@ -272,6 +286,7 @@
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
+    "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>"
   }

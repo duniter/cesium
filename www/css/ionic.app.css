@@ -13308,6 +13308,20 @@ a {
     left: 16px !important; }
 
 /**********
+   Motion
+**********/
+.fade-in {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transform: translate3d(-30px, 1px, 0);
+  -webkit-transition: all 1s ease-in-out; }
+
+.fade-in.on {
+  opacity: 1;
+  filter: alpha(opacity=100);
+  -webkit-transform: translate3d(0, 0, 0); }
+
+/**********
    Item > Avatar
 **********/
 .item-avatar {
@@ -13323,9 +13337,10 @@ a {
 .item-avatar-left .item-content i.item-image {
   color: #D9D9D9;
   background-color: #f8f8f8;
+  border: solid 1px #D9D9D9;
   overflow: hidden !important;
   font-size: 65px !important;
-  padding-left: 4px;
+  padding-left: 3px;
   padding-top: 6px; }
 
 .item-avatar > i:first-child,
@@ -13454,3 +13469,19 @@ a {
 #menu .footer a {
   font-size: 14px !important;
   color: grey !important; }
+
+/*
+* Screen - certifications
+*/
+.certifications .item-divider .badge {
+  top: 16px !important; }
+
+.certifications-lg .avatar {
+  left: auto;
+  position: relative;
+  font-size: 55px !important;
+  height: 88px;
+  width: 88px;
+  color: #D9D9D9;
+  background-color: #E0E0E0;
+  border: solid 1px #D9D9D9; }

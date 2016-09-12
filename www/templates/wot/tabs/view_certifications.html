@@ -1,0 +1,53 @@
+        <div class="list animate-fade-slide-in-right certifications">
+          <span class="item item-divider hidden-xs">
+            <span translate>WOT.CERTIFICATIONS.SUMMARY</span>
+          </span>
+
+          <!-- Certifications count -->
+          <div class="item item-icon-left item-text-wrap ink">
+            <i class="icon ion-ribbon-b"></i>
+            <span translate>WOT.CERTIFICATIONS.RECEIVED</span>
+            <span class="badge" ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
+          </div>
+
+          <span class="item item-divider">
+            <span translate>WOT.CERTIFICATIONS.LIST</span>
+            <div class="badge item-note" translate>WOT.EXPIRE_IN</div>
+          </span>
+
+          <span class="item" ng-if="!loading && formData.certifications.length == 0">
+            <h3 translate>WOT.NO_CERTIFICATIONS</h3>
+          </span>
+
+          <a class="item ink"
+                ng-repeat="cert in formData.certifications"
+                ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
+            <span ng-if="cert.isMember">
+              <h3>
+                <i ng-if="!cert.valid" class="icon ion-clock"> </i>
+                <span ng-class="{'positive': cert.isMember}">
+                  <i class="icon ion-person"> </i>
+                  {{::cert.uid}}
+                </span>
+              </h3>
+              <h4 class="gray">
+                <i class="icon ion-key"></i>
+                {{::cert.pubkey | formatPubkey}}
+                <span class="gray" ng-if="cert.valid"> | {{'WOT.WRITTEN_ON_BLOCK' | translate}} #{{::cert.block}}</span>
+                <span class="gray" ng-if="!cert.valid"> | {{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</span>
+              </h4>
+            </span>
+            <span ng-if="!cert.isMember">
+              <h3 class="gray">
+                <i class="icon ion-key"></i>
+                {{::cert.pubkey | formatPubkey}}
+              </h3>
+              <h4 ng-if="!cert.isMember" class="gray">{{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</h4>
+            </span>
+            <div class="badge item-note"
+                 ng-if="cert.valid"
+                 ng-class="{'badge-balanced': !cert.willExpire, 'badge-energized': cert.willExpire}">
+              {{::cert.expiresIn | formatDuration}}
+            </div>
+          </a>
+        </div>

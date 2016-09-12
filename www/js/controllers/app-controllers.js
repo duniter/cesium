@@ -269,6 +269,20 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, UIUti
     }, timeout);
   };
 
-
+  $scope.hideFab = function(id, timeout) {
+    if (!timeout) {
+      timeout = 10;
+    }
+    $timeout(function () {
+      // Could not use 'getElementById', because it return only once element,
+      // but many fabs can have the same id (many view could be loaded at the same time)
+      var fabs = document.getElementsByClassName('button-fab');
+      _.forEach(fabs, function(fab){
+        if (fab.id == id) {
+          fab.classList.toggle('on', false);
+        }
+      });
+    }, timeout);
+  };
 }
 

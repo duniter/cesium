@@ -282,35 +282,125 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function disableEffects() {
-      this.ink = function(){};
+    this.ink = function(){};
 
-      function disableMotion(baseSelector) {
-        return function(options) {
-          if (!options || !options.selector) {
-            options = {
-                selector: (baseSelector + ' .item')
-              };
-          }
-          var parentsInDom = document.querySelectorAll(baseSelector);
-          for (var i = 0; i < parentsInDom.length; i++) {
-              var parent = parentsInDom[i];
-              parent.className = parent.className.replace(/\banimate-[a-z- ]+\b/,'');
-          }
+    function disableMotion(baseSelector) {
+      return function(options) {
+        if (!options || !options.selector) {
+          options = {
+              selector: (baseSelector + ' .item')
+            };
+        }
+        var parentsInDom = document.querySelectorAll(baseSelector);
+        for (var i = 0; i < parentsInDom.length; i++) {
+            var parent = parentsInDom[i];
+            parent.className = parent.className.replace(/\banimate-[a-z- ]+\b/,'');
+        }
 
-          var itemsInDom = document.querySelectorAll(options.selector);
-          for (var j = 0; j < itemsInDom.length; j++) {
-              var child = itemsInDom[j];
-              child.style.webkitTransitionDelay = "0s";
-              child.style.transitionDelay = "0s";
-              child.className += ' in done';
-          }
-        };
-      }
-
-      this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
-      this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
-      this.motion.ripple = disableMotion('.animate-ripple');
+        var itemsInDom = document.querySelectorAll(options.selector);
+        for (var j = 0; j < itemsInDom.length; j++) {
+            var child = itemsInDom[j];
+            child.style.webkitTransitionDelay = "0s";
+            child.style.transitionDelay = "0s";
+            child.className += ' in done';
+        }
+      };
     }
+
+    this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
+    this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
+    this.motion.ripple = disableMotion('.animate-ripple');
+  }
+
+  function showFab(id, timeout) {
+    if (!timeout) {
+      timeout = 900;
+    }
+    $timeout(function () {
+      // Could not use 'getElementById', because it return only once element,
+      // but many fabs can have the same id (many view could be loaded at the same time)
+      var fabs = document.getElementsByClassName('button-fab');
+      _.forEach(fabs, function(fab){
+        if (fab.id == id) {
+          fab.classList.toggle('on', true);
+        }
+      });
+    }, timeout);
+  }
+
+  function hideFab(id, timeout) {
+    if (!timeout) {
+      timeout = 10;
+    }
+    $timeout(function () {
+      // Could not use 'getElementById', because it return only once element,
+      // but many fabs can have the same id (many view could be loaded at the same time)
+      var fabs = document.getElementsByClassName('button-fab');
+      _.forEach(fabs, function(fab){
+        if (fab.id == id) {
+          fab.classList.toggle('on', false);
+        }
+      });
+    }, timeout);
+  }
+
+  ionicMaterialMotion.toggleOn = function(options, timeout) {
+    // We have a single option, so it may be passed as a string or property
+    if (typeof options === 'string') {
+      options = {
+        selector: options
+      };
+    }
+
+    // Fail early & silently log
+    var isInvalidSelector = typeof options.selector === 'undefined' || options.selector === '';
+
+    if (isInvalidSelector) {
+      console.log('invalid toggleOn selector');
+      return false;
+    }
+
+    if (!timeout) {
+      timeout = 900;
+    }
+    $timeout(function () {
+      var items = document.querySelectorAll(options.selector);
+      var itemsCount = items.length;
+      for (var i = 0; i < itemsCount; i++) {
+        var element = items[i];
+        element.classList.toggle('on', true);
+      }
+    }, timeout);
+  };
+
+  ionicMaterialMotion.toggleOff = function(options, timeout) {
+    // We have a single option, so it may be passed as a string or property
+    if (typeof options === 'string') {
+      options = {
+        selector: options
+      };
+    }
+
+    // Fail early & silently log
+    var isInvalidSelector = typeof options.selector === 'undefined' || options.selector === '';
+
+    if (isInvalidSelector) {
+      console.log('invalid toggleOff selector');
+      return false;
+    }
+
+    if (!timeout) {
+      timeout = 900;
+    }
+    $timeout(function () {
+      var items = document.querySelectorAll(options.selector);
+      var itemsCount = items.length;
+      for (var i = 0; i < itemsCount; i++) {
+        var element = items[i];
+        element.classList.toggle('on', false);
+      }
+    }, timeout);
+  };
 
   return {
     alert: {
@@ -328,6 +418,10 @@ angular.module('cesium.utils.services', ['ngResource'])
     onError: onError,
     ink: ionicMaterialInk.displayEffect,
     motion: ionicMaterialMotion,
+    fab: {
+      show: showFab,
+      hide: hideFab
+    },
     disableEffects: disableEffects,
     selection: {
       select: selectElementText,

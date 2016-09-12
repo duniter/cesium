@@ -201,6 +201,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       },
       wot: {
         lookup: csHttp.get(host, port, '/wot/lookup/:search'),
+        certifiedBy: csHttp.get(host, port, '/wot/certified-by/:pubkey'),
+        certifiersOf: csHttp.get(host, port, '/wot/certifiers-of/:pubkey'),
         member: {
           all: getMembers,
           uids: getMemberUidsByPubkey,

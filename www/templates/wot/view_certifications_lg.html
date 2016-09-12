@@ -1,0 +1,85 @@
+<ion-view left-buttons="leftButtons"
+          cache-view="false"
+          >
+    <ion-nav-title>
+      <span class="visible-xs visible-sm">{{::formData.name||formData.uid}}</span>
+      <span class="hidden-xs hidden-sm" translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.name || formData.uid}"></span>
+    </ion-nav-title>
+
+    <ion-nav-buttons side="secondary">
+        <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content class="certifications certifications-lg"
+      ng-init="initLargeView()">
+
+      <div class="center padding" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+
+      <!-- Buttons bar -->
+      <div class="hidden-xs hidden-sm text-center padding"
+           ng-if="canCertify || canSelectAndCertify">
+        <button class="button button-raised button-calm icon-left ion-ribbon-b"
+                ng-if="canCertify"
+                ng-click="certify()"
+                ng-disabled="alreadyCertified">
+          {{'WOT.BTN_CERTIFY' | translate}}
+        </button>
+        <button class="button button-raised button-calm icon-left"
+                ng-if="canSelectAndCertify"
+                ng-click="selectAndCertify()">
+          {{'WOT.BTN_SELECT_AND_CERTIFY' | translate}}
+        </button>
+      </div>
+
+      <!-- certifications tables -->
+      <div class="row responsive-sm responsive-md responsive-lg">
+        <!-- Received recertifications -->
+        <div class="col no-padding">
+          <ng-include src="'templates/wot/tabs/view_certifications.html'"></ng-include>
+        </div>
+
+        <!-- Avatar -->
+        <div class="col col-20 col-avatar hidden-xs hidden-sm hidden-md no-padding" style="margin-top: 100px;">
+          <div class="row no-padding motion fade-in">
+            <div class="col text-center no-padding gray" style="margin-top: 30px;">
+              <i class="icon ion-arrow-right-a" style="font-size:30px"></i>
+            </div>
+            <div class="col text-center no-padding ">
+              <i class="avatar"
+                 ng-style="formData.avatarStyle"
+                 ng-class="{'avatar-member': !formData.avatarStyle && formData.isMember}">
+              </i>
+              <span class="dark text-center">
+                {{::formData.name||formData.uid}}
+              </span>
+            </div>
+            <div class="col text-center no-padding gray" style="margin-top: 30px;">
+              <i class="icon ion-arrow-right-a" style="font-size:30px"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Given recertifications -->
+        <div class="col no-padding">
+          <ng-include src="'templates/wot/tabs/view_given_certifications.html'"></ng-include>
+        </div>
+      </div>
+    </ion-content>
+
+    <!-- fab button -->
+  <div class="visible-xs visible-sm">
+    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-if="canCertify && !alreadyCertified"
+            ng-click="certify()">
+      <i class="icon ion-ribbon-b"></i>
+    </button>
+    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-if="canSelectAndCertify"
+            ng-click="selectAndCertify()">
+      <i class="icon ion-plus"></i>
+    </button>
+  </div>
+</ion-view>

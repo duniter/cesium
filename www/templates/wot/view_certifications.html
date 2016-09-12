@@ -1,7 +1,7 @@
 <ion-view left-buttons="leftButtons">
   <ion-nav-title>
     <span class="visible-xs visible-sm">{{::formData.uid}}</span>
-    <span class="hidden-xs hidden-sm">{{'WOT.CERTIFICATIONS.TITLE'|translate:'{uid: formData.uid }'}}</span>
+    <span class="hidden-xs hidden-sm" translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.uid}"></span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
@@ -9,73 +9,36 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content id="certifications" scroll="true">
+  <ion-content class="certifications" scroll="false">
 
-    <div class="hidden-xs hidden-sm padding" style="text-align:center">
-      <button class="button button-raised icon-left ion-ribbon-b" ng-click="certify()"
-              ng-if="formData.hasSelf && canCertify"
-              ng-disabled="alreadyCertified">
-        {{'WOT.BTN_CERTIFY' | translate}}
-      </button>
-    </div>
+    <ion-tabs class="tabs-icon-top tabs-positive has-header">
 
-    <div class="row no-padding">
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+      <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
+               on-select="setShowCertifications(true)"
+               on-deselect="setShowCertifications(false)">
+        <ion-nav-view name="currency-tab"/>
+        <ion-content>
+          <div class="center padding" ng-if="loading">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
+          <ng-include src="'templates/wot/tabs/view_certifications.html'"/>
+        </ion-content>
+      </ion-tab>
 
-      <div class="col">
+      <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
+               on-select="setShowGivenCertifications(true)"
+               on-deselect="setShowGivenCertifications(false)">
+        <ion-nav-view name="network-tab"/>
+        <ion-content class="padding no-padding-xs">
+          <div class="center padding" ng-if="loading">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
+          <ng-include src="'templates/wot/tabs/view_given_certifications.html'"/>
+        </ion-content>
+      </ion-tab>
 
-        <div class="center padding" ng-if="loading">
-          <ion-spinner icon="android"></ion-spinner>
-        </div>
-
-        <div class="list animate-fade-slide-in-right">
-          <span class="item item-divider">
-            <span class="hidden-xs" translate="WOT.CERTIFICATIONS_RECEIVED_BY" translate-values="{uid: formData.uid}"></span>
-            <span class="visible-xs" translate="WOT.CERTIFICATIONS_RECEIVED" ></span>
-            <div class="badge item-note" translate>WOT.EXPIRE_IN</div>
-          </span>
-
-          <span class="item" ng-if="!loading && certifications.length == 0">
-            <h3 translate>WOT.NO_CERTIFICATIONS</h3>
-          </span>
-
-          <a class="item ink"
-                ng-repeat="cert in formData.certifications"
-                ui-sref="app.wot_view_identity({pubkey:cert.from, uid:cert.uid})">
-            <span ng-if="cert.isMember">
-              <h3
-                ng-class="{'positive': cert.valid}">
-                <i ng-if="!cert.valid" class="icon ion-clock"> </i>
-                <i class="icon ion-person"> </i>
-                {{::cert.uid}}
-              </h3>
-              <h4 class="gray">
-                <i class="icon ion-key"></i>
-                {{::cert.from | formatPubkey}}
-                <span class="gray"> | {{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</span>
-              </h4>
-            </span>
-            <span ng-if="!cert.isMember">
-              <h3 class="gray">
-                <i class="icon ion-key"></i>
-                {{::cert.from | formatPubkey}}
-              </h3>
-              <h4 ng-if="!cert.isMember" class="gray">{{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</h4>
-            </span>
-            <div class="badge item-note"
-                 ng-if="cert.valid"
-                 ng-class="{'badge-balanced': !cert.willExpire, 'badge-energized': cert.willExpire}">
-              {{::cert.expiresIn | formatDuration}}
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
-
-    </div>
+      </ion-tab>
+    </ion-tabs>
 
   </ion-content>
 
@@ -84,7 +47,13 @@
     <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
             ng-click="certify()"
             ng-if="formData.hasSelf && canCertify && !alreadyCertified">
-      <i class="icon ion-ribbon-b"></i></button>
+      <i class="icon ion-ribbon-b"></i>
+    </button>
+    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-if="canSelectAndCertify"
+            ng-click="selectAndCertify()">
+      <i class="icon ion-plus"></i>
+    </button>
   </div>
 
 </ion-view>

@@ -24,15 +24,49 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
+      .state('app.wallet_view_cert', {
+        url: "/wallet/cert/:pubkey/:uid",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
+      .state('app.wallet_view_cert_lg', {
+        url: "/wallet/cert/lg/:pubkey/:uid",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications_lg.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
       .state('app.wot_view_cert', {
         url: "/wot/cert/:pubkey/:uid",
         nativeTransitions: {
-            "type": "flip",
-            "direction": "right"
+          "type": "flip",
+          "direction": "right"
         },
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
+      .state('app.wot_view_cert_lg', {
+        url: "/wot/cert/lg/:pubkey/:uid",
+        nativeTransitions: {
+          "type": "flip",
+          "direction": "right"
+        },
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications_lg.html",
             controller: 'WotCertificationsViewCtrl'
           }
         }
@@ -47,6 +81,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
+
 ;
 
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus) {
@@ -216,11 +251,26 @@ function WotIdentityViewController($scope, UIUtils, $timeout, Device, WotService
 
 }
 
-function WotCertificationsViewController($scope, Wallet, UIUtils, $timeout, WotService) {
+/**
+ * Certifications controller
+ *
+ * @param $scope
+ * @param $timeout
+ * @param $translate
+ * @param Wallet
+ * @param UIUtils
+ * @param WotService
+ * @param Modals
+ * @constructor
+ */
+function WotCertificationsViewController($scope, $timeout, $translate, Wallet, UIUtils, WotService, Modals) {
   'ngInject';
 
   $scope.loading = true;
   $scope.formData = {};
+  $scope.showCertifications = true; // default value (overwrite when tab switch, on small view)
+  $scope.showGivenCertifications = false; // default value (overwrite on 'large' view)
+  $scope.showAvatar = false; // default value (overwrite on 'large' view)
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.pubkey &&
@@ -237,27 +287,24 @@ function WotCertificationsViewController($scope, Wallet, UIUtils, $timeout, WotS
     }
   });
 
-  $scope.load = function(pubkey, force) {
+  $scope.load = function(pubkey) {
     WotService.load(pubkey)
     .then(function(identity){
       $scope.formData = identity;
       $scope.canCertify = $scope.formData.hasSelf && (!Wallet.isLogin() || (!Wallet.isUserPubkey(pubkey)));
+      $scope.canSelectAndCertify = $scope.formData.hasSelf && Wallet.isUserPubkey(pubkey);
       $scope.alreadyCertified = $scope.canCertify ? !!_.findWhere(identity.certifications, { uid: Wallet.data.uid, valid: true }) : false;
 
       $scope.loading = false;
 
       // Effects
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight();
-        UIUtils.ink();
-        if ($scope.canCertify) {
-          $scope.showFab('fab-certify');
-        }
-      }, 10);
+      $scope.motionCertifications();
+      $scope.motionGivenCertifications();
+      $scope.motionAvatar();
     });
   };
 
-  // Certify click
+  // Certify the current identity
   $scope.certify = function() {
     $scope.loadWallet()
     .then(function(walletData) {
@@ -287,8 +334,147 @@ function WotCertificationsViewController($scope, Wallet, UIUtils, $timeout, WotS
     .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
+  // Select an identity and certify
+  $scope.selectAndCertify = function() {
+    $scope.loadWallet()
+      .catch(UIUtils.onError('ERROR.LOGIN_FAILED'))
+      .then(function(walletData) {
+        if (!walletData.isMember) {
+          UIUtils.alert.error(walletData.requirements.needSelf ?
+            'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
+          return;
+        }
+        UIUtils.loading.hide();
+        // Open Wot lookup modal
+        return Modals.showWotLookup();
+      })
+      .then(function(idty) {
+        if (!idty || !idty.pubkey) {
+          return; // cancelled
+        }
+        if (!idty.uid) { // not a member
+          UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
+          return;
+        }
+
+        UIUtils.loading.show();
+        // load selected identity
+        return WotService.load(idty.pubkey);
+      })
+      .then(function(identity) {
+        if (!identity) return; // cancelled
+        UIUtils.loading.hide();
+        if (!identity || !identity.hasSelf) {
+          UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
+          return;
+        }
+
+        // Ask confirmation
+        $translate('CONFIRM.CERTIFY_RULES_TITLE_UID', {uid: identity.uid})
+          .then(function(confirmTitle) {
+            return UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', confirmTitle);
+          })
+          .then(function(confirm){
+            if (!confirm) {
+              return;
+            }
+            UIUtils.loading.show();
+
+            // Send certification
+            Wallet.certify(identity.uid,
+              identity.pubkey,
+              identity.timestamp,
+              identity.sig)
+              .then(function() {
+                UIUtils.loading.hide();
+                UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+              })
+              .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+          });
+      })
+      .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
+
+  };
+
   // Updating wallet data
   $scope.doUpdate = function() {
-    $scope.load($scope.formData.pubkey, true);
+    $scope.load($scope.formData.pubkey);
   };
+
+
+  // Show received certifcations
+  $scope.setShowCertifications = function(show) {
+    $scope.showCertifications = show;
+    $scope.motionCertifications();
+  };
+
+  // Show given certifcations
+  $scope.setShowGivenCertifications = function(show) {
+    $scope.showGivenCertifications = show;
+    $scope.motionGivenCertifications();
+  };
+
+  // Show avatar
+  $scope.setShowAvatar = function(show) {
+    $scope.showAvatar = show;
+    $scope.motionCertifications();
+  };
+
+  // Show received certifcations (animation need in tabs)
+  $scope.motionCertifications = function() {
+    if ($scope.showCertifications) {
+      // Effects
+      $timeout(function() {
+        UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
+        UIUtils.ink({selector: '.list.certifications .ink'});
+      }, 10);
+      if ($scope.canCertify) {
+        $scope.showFab('fab-certify');
+      }
+    }
+    else {
+      if ($scope.canCertify) {
+        $scope.hideFab('fab-certify', 0);
+      }
+    }
+  };
+
+  // Show given certifcations (animation need in tabs)
+  $scope.motionGivenCertifications = function() {
+    if ($scope.showGivenCertifications) {
+      // Effects
+      $timeout(function() {
+        UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
+        UIUtils.ink({selector: '.list.given-certifications .ink'});
+      }, 10);
+      if ($scope.canSelectAndCertify) {
+        $scope.showFab('fab-select-certify');
+      }
+    }
+    else {
+      if ($scope.canSelectAndCertify) {
+        $scope.hideFab('fab-select-certify', 0);
+      }
+    }
+  };
+
+  $scope.motionAvatar = function() {
+    if ($scope.showAvatar) {
+      console.log("motionAvatar");
+      // Effects
+      $timeout(function () {
+        UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
+      }, 900);
+    }
+  };
+
+  $scope.initLargeView = function() {
+    $scope.showCertifications = true;
+    $scope.showGivenCertifications = true;
+    $scope.showAvatar = true;
+    console.log("initLargeView");
+  }
 }
+
+
+

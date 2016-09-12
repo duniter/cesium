@@ -165,10 +165,6 @@
 }
 
 
-#certifications .item-divider .badge {
-  top:16px !important;
-}
-
 .settings .item-divider {
     background-color: #f5f5f5;
 }
@@ -179,4 +175,11 @@
 
 .no-margin {
   margin: 0 !important;
+}
+
+html {
+  -webkit-user-select: all;
+  -moz-user-select: all;
+  -ms-user-select: all;
+  user-select: all;
 }

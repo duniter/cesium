@@ -120,7 +120,8 @@
       "RULES_DIVIDER": "Règles",
       "C_RULE": "c",
       "UD_RULE": "Dividende universel (formule)",
-      "SIG_QTY_RULE": "Certifications requises"
+      "SIG_QTY_RULE": "Nombre de certifications requis<br/>pour devenir membre",
+      "SIG_STOCK": "Nombre maximale de certifications émises<br/>par membre"
     }
   },
   "PEER": {
@@ -134,15 +135,14 @@
     "REGISTERED_SINCE": "Inscription",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
     "NO_CERTIFICATIONS": "Aucune certification",
-    "CERTIFICATIONS_RECEIVED": "Certifications reçues",
-    "CERTIFICATIONS_RECEIVED_BY": "Certifications reçues par {{uid}}",
     "EXPIRE_IN": "Expiration",
     "PSEUDO": "Pseudonyme",
     "SIGNED_ON_BLOCK": "Certifié au bloc",
+    "WRITTEN_ON_BLOCK": "Ecrit au bloc",
     "GENERAL_DIVIDER": "Informations générales",
     "TECHNICAL_DIVIDER": "Informations techniques",
-    "BTN_SEND_MONEY": "Payer",
     "BTN_CERTIFY": "Certifier",
+    "BTN_SELECT_AND_CERTIFY": "Nouvelle certification",
     "LOOKUP": {
       "TITLE": "Annuaire"
     },
@@ -150,7 +150,18 @@
       "TITLE": "Recherche"
     },
     "CERTIFICATIONS": {
-      "TITLE": "{{uid}} - Certifications"
+      "TITLE": "{{uid}} - Certifications",
+      "SUMMARY": "Certifications reçues",
+      "LIST": "Détail des certifications reçues",
+      "RECEIVED": "Certifications reçues",
+      "RECEIVED_BY": "Certifications reçues par {{uid}}",
+    },
+    "GIVEN_CERTIFICATIONS": {
+      "TITLE": "{{uid}} - Certifications émises",
+      "SUMMARY": "Certifications émises",
+      "LIST": "Détail des certifications émises",
+      "SENT": "Certifications émises",
+      "SENT_BY": "Certifications émises par {{uid}}",
     }
   },
   "LOGIN": {
@@ -170,14 +181,15 @@
     "NO_TX": "Aucune transaction",
     "PENDING_TX": "Transactions en cours de traitement",
     "ERROR_TX": "Transactions non executées",
-    "ERROR_TX_SENDED": "Transactions envoyées",
+    "ERROR_TX_SENT": "Transactions envoyées",
     "ERROR_TX_RECEIVED": "Transactions reçues",
     "EVENTS": "Evénements",
     "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt manquer de certifications",
     "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre va expirer {{membershipExpiresIn|formatDuration}}",
-    "CERTIFICATION_COUNT": "Nombre de certifications",
+    "CERTIFICATION_COUNT": "Certifications reçues",
+    "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_MEMBERSHIP_IN": "Devenir membre",
     "BTN_MEMBERSHIP_RENEW": "Renouveller l'adhésion comme membre",
@@ -231,8 +243,9 @@
     "SEND_IDENTITY_FAILED": "Echec de l'inscription.",
     "SEND_CERTIFICATION_FAILED": "Echec de la certification.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vous ne pouvez pas effectuer de certification, car votre compte n'est <b>pas membre</b>.",
-    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas certifier quelqu'un, car vous n'etes pas encore devenu membre.<br/>Patience ! ;-)",
+    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas certifier quelqu'un, car vous n'êtes pas encore devenu membre.<br/>Patience ! ;-)",
     "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
+    "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Compte non certifiable. Aucune demande d'adhésion n'a été faite, ou bien elle n'a pas été renouvellée.",
     "LOGIN_FAILED": "Erreur lors de l'authentification.",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",
     "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'ientité.",
@@ -273,6 +286,7 @@
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
+    "CERTIFY_RULES_TITLE_UID": "Certifier {{uid}}",
     "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>",
     "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>"
   }

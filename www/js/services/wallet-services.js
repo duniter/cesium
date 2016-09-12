@@ -539,6 +539,28 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
     },
 
+    loadSigStock = function() {
+      return $q(function(resolve, reject) {
+        // Get certified by, then count written certification
+        BMA.wot.certifiedBy({pubkey: data.pubkey})
+          .then(function(res){
+            data.sigStock = !res.certifications ? 0 : res.certifications.reduce(function(res, cert) {
+              return cert.written === null ? res : res+1;
+            }, 0);
+            resolve();
+          })
+          .catch(function(err) {
+            if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) {
+              data.sigStock = 0;
+              resolve(); // not found
+            }
+            else {
+              reject(err);
+            }
+          });
+      });
+    },
+
     loadData = function() {
       if (data.loaded) {
         return refreshData();
@@ -563,6 +585,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
           // Get transactions
           loadTransactions(),
+
+          // Load sigStock
+          loadSigStock(),
 
           // API extension
           api.data.raisePromise.load(data)
@@ -615,6 +640,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // Get transactions
           jobs.push(loadTransactions());
         }
+
+
+        // Load sigStock
+        jobs.push(loadSigStock());
+
         // API extension
         jobs.push(api.data.raisePromise.load(data));
 

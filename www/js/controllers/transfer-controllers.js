@@ -163,23 +163,6 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
   };
   $scope.$watch('formData.useComment', $scope.onUseCommentChanged, true);
 
-  $scope.showWotLookupModal = function() {
-    Modals.showWotLookup()
-    .then(function(result){
-      if (result) {
-        if (result.uid) {
-            $scope.destUid = result.uid;
-            $scope.destPub = '';
-        }
-        else {
-            $scope.destUid = '';
-            $scope.destPub = result.pubkey;
-        }
-        $scope.formData.destPub = result.pubkey;
-      }
-    });
-  };
-
   $scope.doTransfer = function() {
     $scope.form.$submitted=true;
     if(!$scope.form.$valid || !$scope.formData.destPub) {
@@ -232,6 +215,24 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
   $scope.setUseRelative = function(useRelative) {
     $scope.formData.useRelative = useRelative;
     $scope.unitPopover.hide();
+  };
+
+  /* -- modals -- */
+  $scope.showWotLookupModal = function() {
+    Modals.showWotLookup()
+      .then(function(result){
+        if (result) {
+          if (result.uid) {
+            $scope.destUid = result.uid;
+            $scope.destPub = '';
+          }
+          else {
+            $scope.destUid = '';
+            $scope.destPub = result.pubkey;
+          }
+          $scope.formData.destPub = result.pubkey;
+        }
+      });
   };
 
 }
