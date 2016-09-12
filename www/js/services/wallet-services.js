@@ -67,7 +67,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (!csSettings.data.useLocalStorage) {
         csSettings.reset();
       }
-      api.data.raise.reset(data)
+      api.data.raise.reset(data);
     },
 
     reduceTxAndPush = function(txArray, result, processedTxMap, excludePending) {

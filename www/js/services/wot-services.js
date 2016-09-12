@@ -315,9 +315,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
                       // Get given certifications
                       return loadGivenCertifications(pubkey, identity.temp.givenCertifications, parameters, medianTime)
-                      .then(function (identity) {
-                        angular.merge(data, identity);
-                      })
+                        .then(function (identity) {
+                          angular.merge(data, identity);
+                        });
                     });
                 }),
 

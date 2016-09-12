@@ -473,7 +473,7 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
     $scope.showGivenCertifications = true;
     $scope.showAvatar = true;
     console.log("initLargeView");
-  }
+  };
 }
 
 
