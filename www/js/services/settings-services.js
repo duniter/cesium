@@ -90,9 +90,12 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
           data.cacheTimeMs = defaultSettings.cacheTimeMs;
 
+
           if (localeChanged) {
             $translate.use(data.locale.id);
           }
+
+          console.debug("[settings] Restored");
 
           // Emit event on changed
           api.data.raise.changed(data);

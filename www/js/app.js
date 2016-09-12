@@ -19,7 +19,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .filter('formatInteger', function() {
     return function(input) {
-      return !input ? '0' : numeral(input).format('0,0').replace(/\,/g, ' ');
+      return !input ? '0' : numeral(input).format('0,0.000 a');
     };
   })
 
@@ -30,7 +30,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       //  return '∞';
       //}
       if (Math.abs(input) < 0.0001) return '~ 0';
-      return numeral(input-0.00005).format('0,0.0000').replace(',', ' ');
+      return numeral(input-0.00005).format('0,0.0000');
     };
   })
 
@@ -119,6 +119,26 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     .useSanitizeValueStrategy(null)
     .fallbackLanguage(['en'])
     .useLoaderCache(true);
+
+    // Add FR language to numeral lib
+    numeral.language('fr-FR', {
+      delimiters: {
+        thousands: ' ',
+        decimal: '.'
+      },
+      abbreviations: {
+        thousand: 'k',
+        million: 'M',
+        billion: 'Md',
+        trillion: 'T'
+      },
+      ordinal: function (number) {
+        return (number === 1) ? 'er' : 'ième';
+      },
+      currency: {
+        symbol: ''
+      }
+    });
   })
 
   .config(function($httpProvider, csConfig) {
@@ -172,7 +192,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig, PluginService
+.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig, PluginService, csSettings
 ) {
   'ngInject';
 
@@ -193,8 +213,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       }
     }
 
-
-
     // Status bar
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
@@ -209,7 +227,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     }
   });
 
-  $rootScope.onLanguageChange = function() {
+  var onLanguageChange = function() {
     var lang = $translate.use();
     console.debug('[app] Locale ['+lang+']');
     moment.locale(lang.substring(0,2));
@@ -217,13 +235,17 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       .then(function(datePattern) {
         $rootScope.datePattern = datePattern;
       });
+    numeral.language(lang);
   };
 
   // Set up moment translation
-  $rootScope.$on('$translateChangeSuccess', $rootScope.onLanguageChange);
+  $rootScope.$on('$translateChangeSuccess', onLanguageChange);
 
   // start plugin
   PluginService.start();
+
+  // set locale to vendor lib
+  onLanguageChange();
 })
 ;
 
