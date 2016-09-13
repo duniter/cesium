@@ -121,7 +121,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     .useLoaderCache(true);
 
     // Add FR language to numeral lib
-    numeral.language('fr-FR', {
+    numeral.language('fr', {
       delimiters: {
         thousands: ' ',
         decimal: '.'
@@ -235,7 +235,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       .then(function(datePattern) {
         $rootScope.datePattern = datePattern;
       });
-    numeral.language(lang);
+    // Set language for numeral lib (for 'fr-FR' -> use 'fr')
+    var numeralLanguage = lang.split('-')[0];
+    numeralLanguage = (numeralLanguage === 'en' || numeralLanguage === 'fr') ? numeralLanguage : 'en';
+    numeral.language(numeralLanguage);
   };
 
   // Set up moment translation
