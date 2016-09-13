@@ -126,7 +126,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     // removeIf(device)
     // Focus on search text (only if NOT device, to avoid keyboard opening)
     $focus('registrySearchText');
-    // removeIf(device)
+    // endRemoveIf(device)
 
   });
 
@@ -532,7 +532,9 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
         UIUtils.loading.hide();
         UIUtils.motion.ripple();
       }
+      // removeIf(device)
       $focus('registry-record-title');
+      // endRemoveIf(device)
     });
   });
 

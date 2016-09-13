@@ -134,17 +134,6 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     csNetwork.close();
   });
 
-  $scope.checkLoadingPeers = function() {
-    if (!csNetwork.data.updatingPeers) {
-      $scope.loadingPeers = false;
-    }
-    else {
-      $timeout(function(){
-        $scope.checkLoadingPeers();
-      }, 1000);
-    }
-  };
-
   $scope.load = function(currency) {
     $scope.name = currency.name;
     $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
@@ -152,10 +141,10 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     UIUtils.loading.show();
 
     if ($scope.loadingPeers){
-      csNetwork.start($scope.node, true/*no wait*/)
+      csNetwork.start($scope.node, false/*waitAllPeers*/)
         .then(function(peers) {
           $scope.peers = peers;
-          $scope.checkLoadingPeers();
+          $scope.waitLoadingPeersFinish();
         });
       $scope.$on('$destroy', function(){
         csNetwork.close();
@@ -230,6 +219,16 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     });
   };
 
+  $scope.waitLoadingPeersFinish = function() {
+    "use strict";
+    if (csNetwork.isBusy()) {
+      $timeout($scope.waitLoadingPeersFinish, 500);
+    }
+    else {
+      $scope.loadingPeers = false;
+    };
+  };
+
   $scope.refresh = function() {
     UIUtils.loading.show();
 
@@ -237,12 +236,12 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .then(function(){
       // Network
       $scope.loadingPeers = true;
-      csNetwork.refreshPeers(true)
+      csNetwork.refreshPeers(false)
         .then(function(peers) {
           $scope.peers = peers;
-          $scope.checkLoadingPeers();
+          $scope.waitLoadingPeersFinish();
         })
-        .catch(function(err) {
+        .catch(function() {
           $scope.loadingPeers = false;
         });
     });

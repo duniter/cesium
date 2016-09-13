@@ -119,7 +119,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     // removeIf(device)
     // Focus on search text (only if NOT device, to avoid keyboard opening)
     $focus('marketSearchText');
-    // removeIf(device)
+    // endRemoveIf(device)
   });
 
 

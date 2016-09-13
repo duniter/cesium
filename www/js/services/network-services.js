@@ -121,7 +121,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
       },
 
-      refreshPeers = function(doNotWaitAllPeers) {
+      refreshPeers = function(waitAllPeers) {
         return $q(function(resolve, reject){
           if (interval) {
             $interval.cancel(interval);
@@ -133,12 +133,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             if (data.newPeers.length) {
               data.peers = data.peers.concat(data.newPeers.splice(0));
               sortPeers();
-              if (doNotWaitAllPeers) {
+              if (!waitAllPeers) {
                 resolved = true;
                 resolve(data.peers);
               }
             } else if (data.updatingPeers && !data.searchingPeersOnNetwork) {
-              // The peer lookup endend, we can make a clean final report
+              // The peer lookup end, we can make a clean final report
               sortPeers();
               data.updatingPeers = false;
               if (!resolved) {
@@ -200,14 +200,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
       },
 
-      start = function(bma, doNotWaitAllPeers) {
+      start = function(bma, waitAllPeers) {
         return $q(function(resolve, reject) {
           close();
           data.bma = bma ? bma : BMA;
           console.info('[network] Starting network [' + bma.node.server + ']');
           var now = new Date();
           startListeningOnSocket(resolve, reject);
-          refreshPeers(doNotWaitAllPeers)
+          refreshPeers(waitAllPeers)
             .then(function(peers){
               resolve(peers);
               console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');

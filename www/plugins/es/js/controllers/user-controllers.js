@@ -62,7 +62,9 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
           }
         });
 
+        // removeIf(device)
         $focus('profile-name');
+        // endRemoveIf(device)
       });
   });
 

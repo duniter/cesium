@@ -102,7 +102,10 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
       }, 100);
     }
     $scope.entered = true;
+    // removeIf(device)
+    // Focus on search text (only if NOT device, to avoid keyboard opening)
     $focus('wotSearchText');
+    // endRemoveIf(device)
   });
 
   $scope.doSearch = function() {
