@@ -22,6 +22,7 @@
     "BTN_EDIT": "Modifier",
     "BTN_DELETE": "Supprimer",
     "BTN_ADD": "Ajouter",
+    "BTN_SEARCH": "Recherche",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
@@ -35,7 +36,14 @@
     "EMPTY_PARENTHESIS": "(vide)",
     "UID": "Pseudonyme",
     "ENABLE": "Activé",
-    "DISABLE": "Désactivé"
+    "DISABLE": "Désactivé",
+    "RESULTS_LIST": "Résultats :",
+    "POPOVER_SHARE": {
+      "TITLE": "Partager",
+      "SHARE_ON_TWITTER": "Partager ce lien sur Twitter",
+      "SHARE_ON_FACEBOOK": "Partager ce lien sur Facebook",
+      "SHARE_ON_DIASPORA": "Partager ce lien sur Diaspora*",
+    }
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
@@ -144,7 +152,9 @@
     "BTN_CERTIFY": "Certifier",
     "BTN_SELECT_AND_CERTIFY": "Nouvelle certification",
     "LOOKUP": {
-      "TITLE": "Annuaire"
+      "TITLE": "Annuaire",
+      "NEWCOMERS": "Dernières adhésions :",
+      "BTN_NEWCOMERS": "Voir les dernières adhésions"
     },
     "MODAL": {
       "TITLE": "Recherche"

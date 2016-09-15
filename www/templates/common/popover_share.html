@@ -1,0 +1,52 @@
+<ion-popover-view class="popover-share" >
+  <ion-content scroll="false">
+    <div class="bar bar-header">
+      <h1 class="title">{{titleKey|translate:titleValues}}</h1>
+      <span class="gray pull-right">{{time|formatDate}}</span>
+    </div>
+    <div class="list no-margin no-padding has-header has-footer block">
+      <div class="item item-input">
+        <input type="text" ng-model="value">
+      </div>
+    </div>
+
+    <!-- Load Facebook SDK for JavaScript -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+    <!-- Your share button code -->
+
+
+    <div class="bar bar-footer ">
+      <div class="button-bar">
+        <a class="button button-icon positive icon ion-social-twitter"
+           href="https://twitter.com/intent/tweet?url={{postUrl|formatEncodeURI}}&amp;text={{postMessage}}"
+           target="_blank"
+           title="{{'COMMON.POPOVER_SHARE.SHARE_ON_TWITTER'|translate}}">
+        </a>
+        <!--a class="button-icon button-small pull-left"
+           href="https://twitter.com/intent/tweet?url={{postUrl|formatEncodeURI}}&amp;text={{postMessage}}"
+           target="_blank"
+           title="{{'COMMON.POPOVER_SHARE.SHARE_ON_FACEBOOK'|translate}}">
+          <i class="icon ion-social-facebook"></i>
+        </a-->
+        <a class="button button-icon positive icon ion-social-diaspora"
+           href="https://sharetodiaspora.github.io/?title={{postMessage}}&amp;url={{postUrl|formatEncodeURI}}"
+           target="_blank"
+           title="{{'COMMON.POPOVER_SHARE.SHARE_ON_DIASPORA'|translate}}">
+        </a>
+        <a class="button-close"
+           title="{{'COMMON.BTN_CLOSE'|translate}}"
+        ng-click="closePopover()">
+          <i class="icon ion-close"></i>
+        </a>
+        </div>
+    </div>
+  </ion-content>
+</ion-popover-view>

@@ -9,11 +9,18 @@
       <form ng-submit="doSearch()"/>
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
-            <input type="text" placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
-                   id="registrySearchText"
+            <input type="text"
+                   class="visible-xs visible-sm"
+                   placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
                    ng-model-options="{ debounce: 350 }"
                    ng-change="doSearch()">
+            <input type="text"
+                   class="hidden-xs hidden-sm"
+                   placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+                   id="registrySearchText"
+                   ng-model="search.text"
+                   on-return="doSearch()">
         </label>
 
         <div class="item item-toggle dark" ng-if="!search.lastRecords">
@@ -54,23 +61,27 @@
         </span>
       </form>
 
-      <div class="row no-padding">
-        <div class="col">
+      <div style="display: block; height: 60px;">
+        <div class="pull-left">
           <h4
-            ng-if="!search.looking && search.lastRecords && search.results.length > 0" translate>
+            ng-if="!search.looking && search.lastRecords && search.results.length" translate>
             REGISTRY.SEARCH.LAST_RECORDS
           </h4>
           <h4
-            ng-if="!search.looking && !search.lastRecords && search.results.length > 0" translate>
-            REGISTRY.SEARCH.RESULTS
+            ng-if="!search.looking && !search.lastRecords && search.results.length" translate>
+            COMMON.RESULTS_LIST
           </h4>
         </div>
 
-        <div class="col hidden-xs hidden-sm" style="display: block">
-          <button class="button button-small button-positive button-clear pull-right ink"
+        <div class="hidden-xs hidden-sm padding-top pull-right">
+          <button class="button button-small button-positive button-clear ink"
                   ng-click="showNewRecordModal()">
             <i class="icon ion-plus"></i>
             {{'REGISTRY.BTN_NEW' | translate}}
+          </button>
+          <button class="button button-small button-stable ink"
+                  ng-click="doSearch()">
+            {{'COMMON.BTN_SEARCH' | translate}}
           </button>
         </div>
       </div>

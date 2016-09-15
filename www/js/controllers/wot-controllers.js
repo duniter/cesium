@@ -84,12 +84,13 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus, screenmatch) {
   'ngInject';
 
   $scope.search = {
     text: '',
     looking: false,
+    newIncomers: true,
     results: []
   };
   $scope.entered = false;
@@ -101,6 +102,11 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
         $scope.doSearch();
       }, 100);
     }
+    else if (!$scope.entered){
+      $timeout(function() {
+        $scope.doGetNewcomers();
+      }, 100);
+    }
     $scope.entered = true;
     // removeIf(device)
     // Focus on search text (only if NOT device, to avoid keyboard opening)
@@ -108,8 +114,11 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     // endRemoveIf(device)
   });
 
-  $scope.doSearch = function() {
+  $scope.doSearch = function(screen) {
+    if (screen && !screenmatch.is(screen)) return; // if screen match AND failed: stop
+
     $scope.search.looking = true;
+    $scope.search.newIncomers = false;
     var text = $scope.search.text.trim();
     if (text.length < 3) {
       $scope.search.results = [];
@@ -129,9 +138,19 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
 
         $scope.search.looking = false;
 
-        $timeout(function() {
-          UIUtils.ink();
-        }, 10);
+        if ($scope.search.results.length > 0) {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.ripple({
+              startVelocity: 3000
+            });
+            // Set Ink
+            UIUtils.ink({
+              selector: '.item.ink'
+            });
+          }, 10);
+        }
+
       })
       .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
     }
@@ -141,8 +160,34 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     $scope.search = {
       text: null,
       looking: false,
+      newIncomers: true,
       results: []
     };
+  };
+
+  $scope.doGetNewcomers= function() {
+    $scope.search.looking = true;
+    $scope.search.newIncomers = true;
+
+    WotService.newcomers(10)
+      .then(function(idties){
+        if (!$scope.search.newIncomers) return; // could have change
+        $scope.search.results = idties || [];
+        $scope.search.looking = false;
+
+        if ($scope.search.results.length > 0) {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.ripple({
+              startVelocity: 3000
+            });
+            // Set Ink
+            UIUtils.ink({
+              selector: '.item.ink'
+            });
+          }, 10);
+        }
+      });
   };
 
   $scope.select = function(identity) {
@@ -154,7 +199,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     else {
       $state.go('app.wot_view_identity', {
         pubkey: identity.pubkey,
-        uid: identity.uid
+        uid: identity.name||identity.uid
       });
     }
   };

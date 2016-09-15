@@ -225,7 +225,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
           ud: getBlockchainWithUd,
-          tx: csHttp.get(host, port, '/blockchain/with/tx')
+          tx: csHttp.get(host, port, '/blockchain/with/tx'),
+          newcomers: csHttp.get(host, port, '/blockchain/with/newcomers'),
         },
         lastUd: getBlockchainLastUd
       },

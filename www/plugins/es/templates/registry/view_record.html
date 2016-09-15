@@ -69,19 +69,23 @@
         </div>
 
         <!-- Buttons bar-->
-        <div class="item large-button-bar hidden-xs hidden-sm"
-             ng-if="formData.pubkey || canEdit">
-          <button class="button button-raised button-calm ink-dark"
+        <div class="item large-button-bar hidden-xs hidden-sm">
+          <button class="button button-small button-stable icon ion-android-share"
+                  ng-click="showSharePopover($event)">
+            {{'COMMON.BTN_SHARE' | translate}}
+          </button>
+          <button class="button button-small button-calm ink-dark"
                   ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
                   ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
             {{'COMMON.BTN_SEND_MONEY' | translate}}
           </button>
-          <button class="button button-assertive button-clear icon-left ion-trash-a hidden-xs hidden-sm ink"
+          <button class="button button-small button-stable icon-left ink-dark"
                   ng-if="canEdit"
                   ng-click="delete()">
-            {{'COMMON.BTN_DELETE' | translate}}
+            <i class="icon ion-trash-a assertive"></i>
+            <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
           </button>
-          <button class="button button-assertive button-raised icon-left ion-android-create hidden-xs hidden-sm ink"
+          <button class="button button-small button-calm icon-left ion-android-create ink"
                   ng-if="canEdit"
                   ng-click="edit()">
             {{'COMMON.BTN_EDIT' | translate}}
@@ -157,7 +161,7 @@
   </ion-content>
 
   <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
-          ng-if="formData.pubkey"
+          ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
           ng-click="showTransferModal({pubkey: formData.pubkey, uid: formData.title})">
   </button>
 

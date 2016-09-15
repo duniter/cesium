@@ -24,12 +24,12 @@ angular.module("cesium.config", [])
 	"plugins": {
 		"es": {
 			"enable": true,
-			"host": "test-net.duniter.fr",
-			"port": "9203"
+			"host": "data.duniter.fr",
+			"port": "80"
 		}
 	},
 	"version": "0.2.14",
-	"build": "2016-09-13T12:24:01.070Z",
+	"build": "2016-09-14T12:16:00.919Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

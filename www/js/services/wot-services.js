@@ -2,7 +2,7 @@
 angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('WotService', function($q, BMA, Api, csSettings) {
+.factory('WotService', function($q, $timeout, BMA, Api, csSettings) {
   'ngInject';
 
   WotService = function(id) {
@@ -383,6 +383,76 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }
           });
       });
+    },
+
+    getNewcomers = function(count) {
+      count = count || 20;
+      return BMA.blockchain.stats.newcomers()
+        .then(function(res) {
+          if (!res.result.blocks || !res.result.blocks.length) {
+            return null;
+          }
+          var blocks = _.sortBy(res.result.blocks, function(n){ return -n; });
+          return getNewcomersRecursive(blocks, 0, 5, count)
+            .then(function(idties){
+              if (idties && !idties.length) {
+                idties = _.sortBy(idties, function(idty){ return -idty.block; });
+                if (idties.length > count) {
+                  idties = idties.slice(0, count); // limit if more than expected count
+                }
+              }
+              return $q(function(resolve) {
+                api.data.raisePromise.search('$¹@', idties)
+                  .then(function () {
+                    resolve(idties);
+                  });
+              });
+            })
+        })
+    },
+
+    getNewcomersRecursive = function(blocks, offset, count, maxResultCount) {
+      return $q(function(resolve, reject) {
+        var result = [];
+        var jobs = [];
+        _.each(blocks.slice(offset, offset+count), function(number) {
+          jobs.push(
+            BMA.blockchain.block({block: number})
+              .then(function(block){
+                if (!block || !block.joiners) return;
+                _.each(block.joiners, function(joiner){
+                  var parts = joiner.split(':');
+                  result.push({
+                    pubkey:parts[0],
+                    uid: parts[parts.length-1],
+                    sigDate: block.medianTime,
+                    block: block.number
+                  });
+                });
+              })
+          )
+        });
+
+        $q.all(jobs)
+          .then(function() {
+            if (result.length < maxResultCount && offset < blocks.length - 1) {
+              $timeout(function() {
+                getNewcomersRecursive(blocks, offset+count, count, maxResultCount - result.length)
+                  .then(function(res) {
+                    resolve(result.concat(res));
+                  });
+              }, 1000);
+            }
+            else {
+              resolve(result);
+            }
+          })
+          .catch(function(err){
+            if (err && err.ucode === 1006) {
+              resolve(result);
+            }
+          });
+      });
     }
     ;
 
@@ -394,6 +464,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       id: id,
       load: loadData,
       search: search,
+      newcomers: getNewcomers,
       // api extension
       api: api
     };

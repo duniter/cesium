@@ -90,6 +90,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
+  .filter('formatHash', function() {
+    return function(input) {
+      return input ? input.substr(0,8) : '';
+    };
+  })
+
   .filter('formatCategory', function() {
     return function(input) {
       return input && input.length > 28 ? input.substr(0,25)+'...' : input;
@@ -106,6 +112,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
         : '';
     };
   })
+
+  // Convert a URI into parameter (e.g. "http://hos/path" -> "http%3A%2F%2Fhost%2Fpath")
+  .filter('formatEncodeURI', function() {
+    return function(input) {
+      return input ? encodeURIComponent(input): '';
+    };
+  })
+
 
   // Translation i18n
   .config(function ($translateProvider) {

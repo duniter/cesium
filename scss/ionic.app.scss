@@ -227,12 +227,14 @@ $screen-lg:                       1200px;
   .badge:empty {
     display: none !important;
   }
+  /*
+  see issue #
   html{
-    -webkit-user-select: all !important;
+    -webkit-user-selectuser-select: all !important;
     -moz-user-select: all !important;
     -ms-user-select: all !important;
     user-select: all !important;
-  }
+  }*/
 }
 @media screen and (min-width: $screen-lg) {
   .hidden-md {
@@ -286,12 +288,12 @@ $screen-lg:                       1200px;
   .badge:empty {
     display: none !important;
   }
-  html{
+  /*html{
     -webkit-user-select: all !important;
     -moz-user-select: all !important;
     -ms-user-select: all !important;
     user-select: all !important;
-  }
+  }*/
 }
 @media screen and (max-width: $screen-md-max) {
     .hidden-lg {
@@ -373,10 +375,83 @@ $screen-menu:                     845px;
   background-color: $stable;
 }
 
-/* ============
- Header
-=============== */
+.popover-share {
+  height: 110px;
 
+  .bar {
+    box-shadow: none !important;
+  }
+  .bar-header {
+    height: 20px;
+    .title {
+      font-size: 12px;
+      font-weight: bold;
+      height: 20px;
+      line-height: 19px;
+      max-width: 260px;
+      margin: 0px 5px;
+    }
+    span {
+      @extend .gray;
+      font-size: 10px;
+      margin: 5px;
+      height: 20px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      margin: 0px 5px;
+      display: block;
+    }
+  }
+  .has-header {
+    top: 20px;
+  }
+  .has-footer {
+    bottom: 40px;
+  }
+  .bar-footer {
+    color: $positive;
+    height: 40px;
+
+    .button-icon {
+      padding: 0 5px;
+    }
+
+    .button-close {
+      @extend .gray;
+      @extend .padding-right;
+      @extend .padding-bottom;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+
+  .item {
+    padding: 5px;
+
+    input {
+      border: 1px solid grey;
+      border-radius: 3px;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3);
+    }
+
+    input:focus {
+      border-color: $positive;
+      outline: 0;
+      box-shadow: inset 0 1px 1px rgba(0,0,0,0.3),0 0 8px #08c;
+    }
+  }
+
+  .list .item {
+    border-bottom: 0px !important;
+  }
+}
+
+/* ============
+ Buttons
+=============== */
 .bar.bar-header {
   // Special case for "more options" icon
   .button.button-clear.button-icon.ion-android-more-vertical,
@@ -389,6 +464,11 @@ $screen-menu:                     845px;
     padding-left: 0px !important;
   }
 
+}
+
+.button-icon {
+  border-color: transparent;
+  box-shadow: none !important;
 }
 
 /* ============
@@ -740,6 +820,12 @@ $screen-menu:                     845px;
 
 .item em {
   font-weight: bold !important;
+}
+
+@media screen and (min-width: $screen-md) {
+  .list .item.item-large {
+    border-bottom: solid 1px #ccc !important;
+  }
 }
 
 /**********

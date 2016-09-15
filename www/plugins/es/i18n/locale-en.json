@@ -15,12 +15,18 @@
     "REGISTRY": "Companies",
     "USER_PROFILE": "My Profile"
   },
+  "COMMENTS": {
+    "DIVIDER": "Comments",
+    "SHOW_MORE_COMMENTS": "Show previous comments",
+    "COMMENT_HELP": "Leave a message, a question...",
+    "BTN_SEND": "Send",
+    "POPOVER_SHARE_TITLE": "Message #{{number}}"
+  },
   "MARKET": {
     "COMMON": {
       "PRICE": "Price",
       "BTN_BUY": "Buy",
-      "BTN_NEW_AD": "New ad",
-      "COMMENTS": "Comments"
+      "BTN_NEW_AD": "New ad"
     },
     "SEARCH": {
       "TITLE": "Market",
@@ -35,10 +41,8 @@
     },
     "VIEW": {
       "TITLE": "Ad",
-      "COMMENT_HELP": "Leave a message",
-      "SEND_COMMENT_BTN": "Send",
-      "SHOW_MORE_COMMENTS": "Show previous comments",
       "MENU_TITLE": "Options",
+      "POPOVER_SHARE_TITLE": "Ad {{title}}",
       "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad ?<br/><br/> This is irrevocable."
     },
     "TYPE": {
@@ -96,6 +100,7 @@
       "CATEGORY": "Main activity:",
       "LOCATION": "Address:",
       "MENU_TITLE": "Options",
+      "POPOVER_SHARE_TITLE": "{{title}}",
       "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record ?<br/><br/>This is irrevocable."
     },
     "TYPE": {

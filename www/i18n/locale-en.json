@@ -22,6 +22,7 @@
     "BTN_EDIT": "Edit",
     "BTN_DELETE": "Delete",
     "BTN_ADD": "Add",
+    "BTN_SEARCH": "Search",
     "NO_ACCOUNT_QUESTION": "No a member ? Register now !",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
@@ -35,7 +36,14 @@
     "EMPTY_PARENTHESIS": "(empty)",
     "UID": "Pseudonym",
     "ENABLE": "Enable",
-    "DISABLE": "Disable"
+    "DISABLE": "Disable",
+    "RESULTS_LIST": "Results:",
+    "POPOVER_SHARE": {
+      "TITLE": "Share",
+      "SHARE_ON_TWITTER": "Share on Twitter",
+      "SHARE_ON_FACEBOOK": "Share on Facebook",
+      "SHARE_ON_DIASPORA": "Share on Diaspora*",
+    }
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choose picture source :",
@@ -144,7 +152,9 @@
     "BTN_CERTIFY": "Certify",
     "BTN_SELECT_AND_CERTIFY": "New certification",
     "LOOKUP": {
-      "TITLE": "Registry"
+      "TITLE": "Registry",
+      "NEWCOMERS": "Last registrations:",
+      "BTN_NEWCOMERS": "See last registrations"
     },
     "MODAL": {
       "TITLE": "Search"

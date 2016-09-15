@@ -22,74 +22,32 @@ angular.module('cesium.directives', ['cesium.services'])
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', function ($window, $document, Device, $ionicPopover, $timeout) {
+  .directive('copyOnClick', function ($window, $document, Device, UIUtils, $ionicPopover, $timeout) {
     'ngInject';
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
-        var childScope;
-        var doCopy = function (event) {
+        //var childScope;
+        var showCopyPopover = function (event) {
           var value = attrs.copyOnClick;
-          var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
           if (value && Device.clipboard.enable) {
             Device.clipboard.copy(value); // copy to clipboard
           }
           else if (value) {
-            var showPopover = function() {
-              // Fill child scope
-              childScope.value = value;
-              childScope.rows = rows;
-              scope.copyPopover.show(event);
-              $timeout(function () {
-                var inputs = document.querySelectorAll('.popover-copy ' + (rows <= 1 ? 'input' : 'textarea'));
-                var input;
-                for (var i=0; i<inputs.length; i++) {
-                  if (inputs[i].value === value) {
-                    input = inputs[i];
-                    break;
-                  }
-                }
-                if (input) {
-                  if ($window.getSelection && !$window.getSelection().toString()) {
-                    input.setSelectionRange(0, value.length);
-                    input.focus();
-                  }
-                  else {
-                    input.focus();
-                  }
-                }
-              }, 500); // wait popover to be created and display
-            };
-
-            if (!childScope || !scope.copyPopover) {
-              childScope = scope.$new();
-              childScope.value = value; // Copy value to child scope
-              $ionicPopover.fromTemplateUrl('templates/common/popover_copy.html', {
-                scope: childScope
-              })
-                .then(function (popover) {
-                  scope.copyPopover = popover;
-
-                  // Cleanup the popover when hidden
-                  scope.$on('$remove', function() {
-                    console.debug("remove copy popoover");
-                    //childScope.$on('popover.hidden', function() {
-                    if (!!scope.copyPopover) {
-                      scope.copyPopover.remove();
-                      delete scope.copyPopover;
-                    }
-                  });
-
-                  showPopover();
-                });
-            }
-            else {
-              showPopover();
-            }
+            var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
+            UIUtils.popover.show(event, {
+              scope: scope,
+              templateUrl: 'templates/common/popover_copy.html',
+              bindings: {
+                value: attrs.copyOnClick,
+                rows: rows
+              },
+              autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea')
+            });
           }
         };
-        element.bind('click', doCopy);
-        element.bind('hold', doCopy);
+        element.bind('click', showCopyPopover);
+        element.bind('hold', showCopyPopover);
       }
     };
   })

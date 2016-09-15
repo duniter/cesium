@@ -25,7 +25,17 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
       }
     })
 
-    .state('app.market_add_record', {
+    .state('app.market_view_record_anchor', {
+      url: "/market/view/:id/:title/:anchor",
+      views: {
+        'menuContent': {
+          templateUrl: "plugins/es/templates/market/view_record.html",
+          controller: 'ESMarketRecordViewCtrl'
+        }
+      }
+    })
+
+      .state('app.market_add_record', {
       cache: false,
       url: "/market/add/:type",
       views: {
@@ -349,7 +359,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
   };
 }
 
-function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state, $translate, $ionicHistory, $q,
+function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $state, $translate, $ionicHistory, $q,
                                       $timeout, $filter,
                                       Wallet, esMarket, UIUtils,  esHttp, BMA, csSettings) {
   'ngInject';
@@ -362,12 +372,12 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
   $scope.maxCommentSize = 10;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope, Wallet, UIUtils, $q, $timeout, esHttp, esMarket);
+  ESCommentsController.call(this, $scope, $timeout, $filter, $state, Wallet, UIUtils, esHttp, esMarket);
 
   $scope.$on('$ionicView.enter', function (e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
-        $scope.load($state.stateParams.id);
+        $scope.load($state.stateParams.id, $state.stateParams.anchor);
       }
     }
     else {
@@ -386,7 +396,7 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
     $scope.actionsPopover.remove();
   });
 
-  $scope.load = function (id) {
+  $scope.load = function (id, anchor) {
 
     var categories;
     $q.all([
@@ -471,6 +481,7 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
         UIUtils.motion.fadeSlideIn({
           selector: '.card-gallery, .card-comment, .lazy-load .item'
         });
+        $anchorScroll(anchor); // scroll (if comment anchor)
       }, 10);
     })
     .catch(function (err) {
@@ -533,6 +544,20 @@ function ESMarketRecordViewController($scope, $rootScope, $ionicPopover, $state,
             UIUtils.toast.show(translations['MARKET.INFO.RECORD_REMOVED']);
           })
           .catch(UIUtils.onError('MARKET.ERROR.REMOVE_RECORD_FAILED'));
+      }
+    });
+  };
+
+  $scope.showSharePopover = function(event) {
+    var title = $scope.formData.title;
+    var url = $state.href('app.market_view_record', {title: title, id: $scope.id}, {absolute: true});
+    UIUtils.popover.share(event, {
+      bindings: {
+        url: url,
+        titleKey: 'MARKET.VIEW.POPOVER_SHARE_TITLE',
+        titleValues: {title: title},
+        time: $scope.formData.time,
+        postMessage: title
       }
     });
   };

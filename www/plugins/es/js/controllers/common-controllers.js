@@ -158,7 +158,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, esHttp, DataService) {
+function ESCommentsController($scope, $timeout, $filter, $state, Wallet, UIUtils, esHttp, DataService) {
   'ngInject';
 
   $scope.maxCommentSize = 10;
@@ -222,6 +222,33 @@ function ESCommentsController($scope, Wallet, UIUtils, $q, $timeout, esHttp, Dat
       $scope.comments.push(obj);
       $scope.commentData = {}; // reset comment
       UIUtils.loading.hide();
+    });
+  };
+
+  $scope.shareComment = function(event, index) {
+    var comment = $scope.comments[index];
+    var params = angular.copy($state.params);
+    var stateUrl;
+    if (params.anchor) {
+      params.anchor= $filter('formatHash')(comment.id);
+      stateUrl = $state.href($state.current.name, params, {absolute: true});
+    }
+    else {
+      stateUrl = $state.href($state.current.name, params, {absolute: true}) + '/' + $filter('formatHash')(comment.id);
+    }
+    var url = stateUrl + '?u=' + comment.uid;
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/common/popover_share.html',
+      scope: $scope,
+      bindings: {
+        titleKey: 'COMMENTS.POPOVER_SHARE_TITLE',
+        titleValues: {number: index+1},
+        date: comment.time,
+        value: url,
+        postUrl: stateUrl,
+        postMessage: comment.message
+      },
+      autoselect: '.popover-share input'
     });
   };
 

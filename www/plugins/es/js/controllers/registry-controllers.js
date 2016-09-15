@@ -25,6 +25,16 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
       }
     })
 
+    .state('app.registry_view_record_anchor', {
+      url: "/registry/view/:id/:title/:anchor",
+      views: {
+        'menuContent': {
+          templateUrl: "plugins/es/templates/registry/view_record.html",
+          controller: 'ESRegistryRecordViewCtrl'
+        }
+      }
+    })
+
     .state('app.registry_add_record', {
       cache: false,
       url: "/registry/add/:type",
@@ -355,6 +365,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 }
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
+                                        $anchorScroll, $filter,
                                         Wallet, esRegistry, UIUtils, BMA, esHttp) {
   'ngInject';
 
@@ -365,12 +376,12 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.canEdit = false;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope, Wallet, UIUtils, $q, $timeout, esHttp, esRegistry);
+  ESCommentsController.call(this, $scope,  $timeout, $filter, $state, Wallet, UIUtils, esHttp, esRegistry);
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if ($state.stateParams && $state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
-        $scope.load($state.stateParams.id);
+        $scope.load($state.stateParams.id, $state.stateParams.anchor);
       }
     }
     else {
@@ -389,7 +400,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
     $scope.actionsPopover.remove();
   });
 
-  $scope.load = function(id) {
+  $scope.load = function(id, anchor) {
     $q.all([
       esRegistry.category.all()
       .then(function(categories) {
@@ -459,6 +470,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           selector: '.card-gallery, .card-comment, .lazy-load .item',
           startVelocity: 3000
         });
+        $anchorScroll(anchor); // scroll (if comment anchor)
       }, 10);
     })
     .catch(function(err) {
@@ -497,6 +509,20 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           UIUtils.toast.show(translations['REGISTRY.INFO.RECORD_REMOVED']);
         })
         .catch(UIUtils.onError('REGISTRY.ERROR.REMOVE_RECORD_FAILED'));
+      }
+    });
+  };
+
+  $scope.showSharePopover = function(event) {
+    var title = $scope.formData.title;
+    var url = $state.href('app.registry_view_record', {title: title, id: $scope.id}, {absolute: true});
+    UIUtils.popover.share(event, {
+      bindings: {
+        url: url,
+        titleKey: 'REGISTRY.VIEW.POPOVER_SHARE_TITLE',
+        titleValues: {title: title},
+        time: $scope.formData.time,
+        postMessage: title
       }
     });
   };

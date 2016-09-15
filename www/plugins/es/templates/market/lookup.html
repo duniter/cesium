@@ -8,11 +8,18 @@
     <form ng-submit="doSearch()">
       <label class="item item-input">
         <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
-               id="marketSearchText"
+        <input type="text"
+               class="visible-xs visible-sm"
+               placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
                ng-model="search.text"
                ng-model-options="{ debounce: 650 }"
                ng-change="doSearch()">
+        <input type="text"
+               class="hidden-xs hidden-sm"
+               placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
+               id="marketSearchText"
+               ng-model="search.text"
+               on-return="doSearch()">
       </label>
 
       <div class="item item-toggle dark" ng-if="!search.lastRecords">
@@ -54,23 +61,27 @@
       </span>
     </form>
 
-    <div class="row no-padding">
-      <div class="col">
+    <div style="display: block; height: 60px;">
+      <div class="pull-left">
         <h4
-          ng-if="!search.looking && search.lastRecords && search.results.length > 0" translate>
+          ng-if="!search.looking && search.lastRecords && search.results.length" translate>
           MARKET.SEARCH.LAST_RECORDS
         </h4>
         <h4
-          ng-if="!search.looking && !search.lastRecords && search.results.length > 0" translate>
-          MARKET.SEARCH.RESULTS
+          ng-if="!search.looking && !search.lastRecords && search.results.length" translate>
+          COMMON.RESULTS_LIST
         </h4>
       </div>
 
-      <div class="col hidden-xs hidden-sm" style="display: block">
-        <button class="button button-calm pull-right ink"
+      <div class="hidden-xs hidden-sm padding-top pull-right">
+        <button class="button button-small button-positive button-clear ink"
                 ng-click="showNewRecordModal()">
           <i class="icon ion-compose"></i>
           {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
+        </button>
+        <button class="button button-small button-stable ink"
+                ng-click="doSearch()">
+          {{'COMMON.BTN_SEARCH' | translate}}
         </button>
       </div>
     </div>
