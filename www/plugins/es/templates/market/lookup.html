@@ -9,56 +9,14 @@
       <label class="item item-input">
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text"
-               class="visible-xs visible-sm"
                placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
                ng-model="search.text"
                ng-model-options="{ debounce: 650 }"
                ng-change="doSearch()">
-        <input type="text"
-               class="hidden-xs hidden-sm"
-               placeholder="{{'MARKET.SEARCH.SEARCH_HELP'|translate}}"
-               id="marketSearchText"
-               ng-model="search.text"
-               on-return="doSearch()">
       </label>
 
-      <div class="item item-toggle dark" ng-if="!search.lastRecords">
-        <span translate>MARKET.SEARCH.BTN_OPTIONS</span>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="search.options">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </div>
-
-      <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
-        <span translate>COMMON.CATEGORY</span>
-        <span class="badge badge-royal badge-text-wrap" ng-bind-html="search.category.name"></span>&nbsp;
-        <i class="gray icon ion-ios-arrow-right"></i>
-      </span>
-
-      <span class="item item-button-right" ng-if="search.options && location.enable">
-        <span translate>MARKET.SEARCH.BTN_AROUND_ME</span>
-        <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="search.localize">
-          <div class="track">
-            <div class="handle"></div>
-          </div>
-        </label>
-      </span>
-
-      <span class="item item-button-right" ng-if="search.options && !location.enable">
-        <span translate>MARKET.SEARCH.LOCATION</span>
-        <div class="item-input-inset">
-          <label class="item-input-wrapper">
-            <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}"
-                   ng-model="search.location"
-                   ng-model-options="{ debounce: 350 }"
-                   ng-change="doSearch()"/>
-          </label>
-        </div>
-      </span>
+      <!-- options -->
+      <ng-include src="plugins/es/templates/market/lookup_options.html"></ng-include>
     </form>
 
     <div style="display: block; height: 60px;">
@@ -68,21 +26,9 @@
           MARKET.SEARCH.LAST_RECORDS
         </h4>
         <h4
-          ng-if="!search.looking && !search.lastRecords && search.results.length" translate>
+          ng-if="!search.looking && !search.lastRecords && (search.text.length || search.options != null)" translate>
           COMMON.RESULTS_LIST
         </h4>
-      </div>
-
-      <div class="hidden-xs hidden-sm padding-top pull-right">
-        <button class="button button-small button-positive button-clear ink"
-                ng-click="showNewRecordModal()">
-          <i class="icon ion-compose"></i>
-          {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
-        </button>
-        <button class="button button-small button-stable ink"
-                ng-click="doSearch()">
-          {{'COMMON.BTN_SEARCH' | translate}}
-        </button>
       </div>
     </div>
 
@@ -101,48 +47,26 @@
          class="item item-record ink padding-xs"
          ui-sref="app.market_view_record({id: rec.id, title: rec.urlTitle})">
 
-        <div class="visible-xs item-text-wrap"
-             ng-class="{'item-thumbnail-left': rec.thumbnail}">
+        <div class="item-text-wrap item-thumbnail-left">
           <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
+          <i class="item-image ion-speakerphone" ng-if="!rec.thumbnail"></i>
           <h2 ng-bind-html="rec.title"></h2>
           <h4 class="gray">
-            <span ng-if="rec.location">
-              <i class="icon ion-location"></i>
-              <span ng-bind-html="rec.location"></span>
-            </span>
+              <span ng-if="rec.location">
+                <i class="icon ion-location"></i>
+                <span ng-bind-html="rec.location"></span>
+              </span>
             <span ng-show="rec.time">
-              <span ng-show="rec.location">|</span>
-              {{::rec.time | formatFromNow}}
-            </span>
+                <span ng-show="rec.location">|</span>
+                {{::rec.time | formatFromNow}}
+              </span>
           </h4>
-        </div>
-
-        <div class="row row-record hidden-xs">
-          <div class="col item-text-wrap item-thumbnail-left-padding"
-               ng-class="{'item-thumbnail-left': rec.thumbnail}">
-            <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail">
-            <h2 ng-bind-html="rec.title"></h2>
-            <h4 class="gray">
-              <i class="icon ion-location" ng-if="rec.location"></i>
-              <span ng-bind-html="rec.location"></span>
-            </h4>
-            <h4 class="gray" ng-if="rec.time">
-              <i class="icon ion-clock" ></i>
-              {{::rec.time | formatFromNow}}
-            </h4>
-            <span  ng-if="rec.picturesCount > 1"
-                   class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
-          </div>
-          <div class="col col-20">
-            <h3 class="gray" ng-if="rec.category" ng-bind-html="rec.category.name"></h3>
-            <h2 class="badge badge-price badge-calm" ng-if="rec.price">
-              <ng-if ng-if="settings.useRelative">{{::rec.price|formatDecimal}} {{'COMMON.UD'|translate}}<sub>{{::rec.currency|abbreviate}}</sub></ng-if>
-              <ng-if ng-if="!settings.useRelative">{{::rec.price|formatInteger}} {{::rec.currency|abbreviate}}</ng-if>
-            </h2>
-          </div>
-          <div class="col">
-              <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>
-          </div>
+          <span  ng-if="rec.picturesCount > 1"
+                 class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
+          <h2 class="badge badge-price badge-calm" ng-if="rec.price">
+            <ng-if ng-if="settings.useRelative">{{::rec.price|formatDecimal}} {{'COMMON.UD'|translate}}<sub>{{::rec.currency|abbreviate}}</sub></ng-if>
+            <ng-if ng-if="!settings.useRelative">{{::rec.price|formatInteger}} {{::rec.currency|abbreviate}}</ng-if>
+          </h2>
         </div>
       </a>
 
@@ -150,7 +74,7 @@
   </ion-content>
 
   <button id="fab-add-market-record"
-          class="button button-fab button-fab-bottom-right button-assertive icon ion-compose hidden-md hidden-lg spin"
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-compose visible-xs visible-sm spin"
           ng-click="showNewRecordModal()">
   </button>
 </ion-view>

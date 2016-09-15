@@ -35,10 +35,7 @@
                   {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
                 </h4>
                 <div class="badge badge-balanced badge-editable" ng-click="showRecordTypeModal()">
-                  <span ng-if="formData.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
-                  <span ng-if="formData.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
-                  <span ng-if="formData.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
-                  <span ng-if="formData.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
+                  {{'REGISTRY.TYPE.ENUM.'+formData.type|translate}}
                 </div>
               </div>
 

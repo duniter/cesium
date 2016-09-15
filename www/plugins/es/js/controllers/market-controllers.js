@@ -15,7 +15,17 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
       }
     })
 
-   .state('app.market_view_record', {
+    .state('app.market_lookup_lg', {
+      url: "/market/lg?q&category&location&reload",
+      views: {
+        'menuContent': {
+          templateUrl: "plugins/es/templates/market/lookup_lg.html",
+          controller: 'ESMarketLookupCtrl'
+        }
+      }
+    })
+
+    .state('app.market_view_record', {
       url: "/market/view/:id/:title",
       views: {
         'menuContent': {

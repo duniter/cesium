@@ -10,55 +10,14 @@
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
             <input type="text"
-                   class="visible-xs visible-sm"
                    placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
                    ng-model="search.text"
                    ng-model-options="{ debounce: 350 }"
                    ng-change="doSearch()">
-            <input type="text"
-                   class="hidden-xs hidden-sm"
-                   placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
-                   id="registrySearchText"
-                   ng-model="search.text"
-                   on-return="doSearch()">
         </label>
 
-        <div class="item item-toggle dark" ng-if="!search.lastRecords">
-            <span translate>REGISTRY.SEARCH.BTN_OPTIONS</span>
-            <label class="toggle toggle-royal">
-                <input type="checkbox" ng-model="search.options">
-                <div class="track">
-                    <div class="handle"></div>
-                </div>
-            </label>
-        </div>
-
-        <div class="item item-icon-right" ng-if="search.options" ng-click="showRecordTypeModal()">
-          <span translate>REGISTRY.SEARCH.TYPE</span>
-          <span class="badge badge-balanced" ng-if="search.type=='shop'" translate>REGISTRY.TYPE.SHOP</span>
-          <span class="badge badge-balanced" ng-if="search.type=='company'" translate>REGISTRY.TYPE.COMPANY</span>
-          <span class="badge badge-balanced" ng-if="search.type=='association'" translate>REGISTRY.TYPE.ASSOCIATION</span>
-          <span class="badge badge-balanced" ng-if="search.type=='institution'" translate>REGISTRY.TYPE.INSTITUTION</span>
-          <i class="gray icon ion-ios-arrow-right"></i>
-        </div>
-
-        <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
-            <span translate>REGISTRY.CATEGORY</span>
-            <span class="badge badge-royal badge-text-wrap" ng-bind-html="search.category.name"></span>&nbsp;
-            <i class="gray icon ion-ios-arrow-right"></i>
-        </span>
-
-        <span class="item item-button-right" ng-if="(search.options) && !location.enable ">
-            <span translate>REGISTRY.SEARCH.LOCATION</span>
-            <div class="item-input-inset">
-                <label class="item-input-wrapper">
-                    <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}"
-                           ng-model="search.location"
-                           ng-model-options="{ debounce: 350 }"
-                           ng-change="doSearch()"/>
-                </label>
-            </div>
-        </span>
+        <!-- options -->
+        <ng-include src="'plugins/es/templates/registry/lookup_options.html'"></ng-include>
       </form>
 
       <div style="display: block; height: 60px;">
@@ -68,21 +27,9 @@
             REGISTRY.SEARCH.LAST_RECORDS
           </h4>
           <h4
-            ng-if="!search.looking && !search.lastRecords && search.results.length" translate>
+            ng-if="!search.looking && !search.lastRecords && (search.text.length || search.options != null)" translate>
             COMMON.RESULTS_LIST
           </h4>
-        </div>
-
-        <div class="hidden-xs hidden-sm padding-top pull-right">
-          <button class="button button-small button-positive button-clear ink"
-                  ng-click="showNewRecordModal()">
-            <i class="icon ion-plus"></i>
-            {{'REGISTRY.BTN_NEW' | translate}}
-          </button>
-          <button class="button button-small button-stable ink"
-                  ng-click="doSearch()">
-            {{'COMMON.BTN_SEARCH' | translate}}
-          </button>
         </div>
       </div>
 
@@ -98,46 +45,23 @@
            ng-if="!search.looking && search.results && search.results.length > 0">
 
         <a ng-repeat="rec in search.results"
-           class="item item-record ink padding-xs"
+           class="item item-record ink padding-xs item-icon-right"
            ui-sref="app.registry_view_record({id: rec.id, title: rec.urlTitle})">
 
-          <div class="visible-xs item-text-wrap"
-               ng-class="{'item-thumbnail-left': rec.thumbnail}">
+          <div class="item-text-wrap item-thumbnail-left-padding"
+               ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">
             <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
+            <i class="item-image icon cion-registry-{{rec.type}}" ng-if="!rec.thumbnail"></i>
             <h2 ng-bind-html="rec.title"></h2>
             <h4 class="gray">
               <span ng-if="rec.city">
-                <i class="icon ion-location"></i>
+                <i class="ion-location"></i>
                 <span ng-bind-html="rec.city"></span>
+                |
               </span>
               <span class="item-text-wrap" ng-show="rec.description" ng-bind-html="rec.description">
               </span>
             </h4>
-          </div>
-
-          <div class="row row-record hidden-xs">
-            <div class="col item-text-wrap item-thumbnail-left-padding"
-                 ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">
-              <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail">
-              <i class="item-image icon cion-registry-{{rec.type}}" ng-if="!rec.thumbnail"></i>
-              <h2 ng-bind-html="rec.title"></h2>
-              <h4 class="gray">
-                <i class="icon ion-location" ng-if="rec.city"></i>
-                <span ng-bind-html="rec.city"></span>
-              </h4>
-              <h4 class="gray" ng-if="rec.time">
-                <i class="icon ion-clock" ></i>
-                {{::rec.time | formatFromNow}}
-              </h4>
-              <span  ng-if="rec.picturesCount > 1"
-                     class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
-            </div>
-            <div class="col col-20 ">
-              <h3 class="gray" ng-if="rec.category">{{::rec.category.name}}</h3>
-            </div>
-            <div class="col">
-              <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>
-            </div>
           </div>
         </a>
       </div>

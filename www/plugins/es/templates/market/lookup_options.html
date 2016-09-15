@@ -1,0 +1,38 @@
+
+    <div class="item item-toggle dark" ng-if="!search.lastRecords">
+      <span translate>MARKET.SEARCH.BTN_OPTIONS</span>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="search.options">
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
+
+    <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
+      <span translate>COMMON.CATEGORY</span>
+      <span class="badge badge-royal badge-text-wrap" ng-bind-html="search.category.name"></span>&nbsp;
+      <i class="gray icon ion-ios-arrow-right"></i>
+    </span>
+
+    <span class="item item-button-right" ng-if="search.options && location.enable">
+      <span translate>MARKET.SEARCH.BTN_AROUND_ME</span>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="search.localize">
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </span>
+
+    <span class="item item-button-right" ng-if="search.options && !location.enable">
+      <span translate>MARKET.SEARCH.LOCATION</span>
+      <div class="item-input-inset">
+        <label class="item-input-wrapper">
+          <input type="text" placeholder="{{'MARKET.SEARCH.LOCATION_HELP'|translate}}"
+                 ng-model="search.location"
+                 ng-model-options="{ debounce: 350 }"
+                 ng-change="doSearch()"/>
+        </label>
+      </div>
+    </span>

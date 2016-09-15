@@ -36,9 +36,17 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, PluginService, csSettings) {
+function ESMenuExtendController($scope, $state, screenmatch, PluginService, csSettings) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
+
+  $scope.showMarketLookupView = function() {
+    $state.go(screenmatch.is('sm, xs') ? 'app.market_lookup': 'app.market_lookup_lg');
+  };
+
+  $scope.showRegistryLookupView = function() {
+    $state.go(screenmatch.is('sm, xs') ? 'app.registry_lookup': 'app.registry_lookup_lg');
+  };
 
   $scope.updateView = function() {
     $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
@@ -51,6 +59,8 @@ function ESMenuExtendController($scope, PluginService, csSettings) {
   });
 
   $scope.updateView();
+
+
 }
 
 function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {

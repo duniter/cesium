@@ -823,7 +823,7 @@ $screen-menu:                     845px;
 }
 
 @media screen and (min-width: $screen-md) {
-  .list .item.item-large {
+  .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important;
   }
 }
@@ -929,6 +929,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   overflow: hidden !important;
   font-size: 50px !important;
   line-height: 80px;
+  padding: 0 15px;
 }
 
 /*

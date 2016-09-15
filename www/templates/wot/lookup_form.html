@@ -21,7 +21,7 @@
         WOT.LOOKUP.NEWCOMERS
       </h4>
       <h4
-        ng-if="!search.looking && !search.newIncomers && search.results.length" translate>
+        ng-if="!search.looking && !search.newIncomers && search.text.length" translate>
         COMMON.RESULTS_LIST
       </h4>
     </div>
@@ -52,7 +52,7 @@
     class="animate-ripple"
     ng-if="!search.looking && search.results.length">
 
-    <ion-item ng-repeat="identity in search.results" class="item-large item-avatar item-icon-right ink" ng-click="select(identity)">
+    <ion-item ng-repeat="identity in search.results" class="item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
 
       <img ng-if="identity.avatar" class="item-image" ng-src="{{::identity.avatar.src}}">
       <i ng-if="!identity.avatar && identity.uid" class="item-image icon ion-person"></i>
@@ -67,13 +67,12 @@
         </span>
         <i class="ion-key"></i>
         {{::identity.pubkey | formatPubkey}}
-        <i class="ion-calendar"></i>
+        <i class="ion-calendar" ng-if="identity.sigDate"></i>
         {{::identity.sigDate | formatDate}}
       </h4>
-      <i class="icon ion-ios-arrow-right"></i>
+      <i class="icon ion-ios-arrow-right visible-xs visible-sm"></i>
       <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
     </ion-item>
 
-    <!--<img src="http://ionicmaterial.com/preview/img/jon-snow.jpg">-->
   </ion-list>
 </div>

@@ -2,16 +2,16 @@
 <!-- Main section -->
 <ng-if ng-if="enable && extensionPoint === 'menu-main'">
 
-  <!-- professionals registry-->
+  <!-- registry-->
   <ion-item menu-close class="item item-icon-left" active-link="active"
-            href="#/app/registry">
+            ng-click="showRegistryLookupView()">
     <i class="icon ion-ios-book"></i>
     <span translate>MENU.REGISTRY</span>
   </ion-item>
 
-  <!-- market place -->
+  <!-- market -->
   <ion-item menu-close class="item item-icon-left" active-link="active"
-            href="#/app/market">
+            ng-click="showMarketLookupView()">
     <i class="icon ion-speakerphone"></i>
     <span translate>MENU.MARKET</span>
   </ion-item>

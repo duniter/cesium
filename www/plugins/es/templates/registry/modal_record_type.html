@@ -9,17 +9,19 @@
         <h3 translate>REGISTRY.TYPE.SELECT_TYPE</h3>
         <button class="button button-block button-stable icon-left cion-registry-shop"
                 ng-click="closeModal('shop')"
-                translate>REGISTRY.TYPE.SHOP</button>
+                translate>REGISTRY.TYPE.ENUM.shop</button>
+
         <button class="button button-block button-stable icon-left cion-registry-association"
-                ng-click="closeModal('association')">
-          {{'REGISTRY.TYPE.ASSOCIATION'|translate}}
-        </button>
+                ng-click="closeModal('association')"
+                translate>REGISTRY.TYPE.ENUM.association</button>
+
         <button class="button button-block button-stable icon-left cion-registry-company"
                 ng-click="closeModal('company')"
-                translate>REGISTRY.TYPE.COMPANY</button>
+                translate>REGISTRY.TYPE.ENUM.company</button>
+
         <button class="button button-block button-stable icon-left cion-registry-institution"
                 ng-click="closeModal('institution')"
-                translate>REGISTRY.TYPE.INSTITUTION</button>
+                translate>REGISTRY.TYPE.ENUM.institution</button>
       </div>
 </ion-content>
 </ion-modal-view>

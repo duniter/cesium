@@ -106,10 +106,12 @@
     "TYPE": {
       "TITLE": "Nouveau référencement",
       "SELECT_TYPE": "Type d'organisation :",
-      "SHOP": "Commerce local",
-      "COMPANY": "Entreprise",
-      "ASSOCIATION": "Association",
-      "INSTITUTION": "Institution"
+      "ENUM": {
+        "shop": "Commerce local",
+        "company": "Entreprise",
+        "association": "Association",
+        "institution": "Institution"
+      }
     },
     "EDIT": {
       "TITLE": "Edition",

@@ -15,7 +15,17 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
       }
     })
 
-   .state('app.registry_view_record', {
+    .state('app.registry_lookup_lg', {
+      url: "/registry/lg?q&category&location&type&reload",
+      views: {
+        'menuContent': {
+          templateUrl: "plugins/es/templates/registry/lookup_lg.html",
+          controller: 'ESRegistryLookupCtrl'
+        }
+      }
+    })
+
+    .state('app.registry_view_record', {
       url: "/registry/view/:id/:title",
       views: {
         'menuContent': {

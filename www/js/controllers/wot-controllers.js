@@ -84,7 +84,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus, screenmatch) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus) {
   'ngInject';
 
   $scope.search = {
@@ -114,9 +114,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     // endRemoveIf(device)
   });
 
-  $scope.doSearch = function(screen) {
-    if (screen && !screenmatch.is(screen)) return; // if screen match AND failed: stop
-
+  $scope.doSearch = function() {
     $scope.search.looking = true;
     $scope.search.newIncomers = false;
     var text = $scope.search.text.trim();
@@ -508,7 +506,6 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
 
   $scope.motionAvatar = function(timeout) {
     if ($scope.showAvatar) {
-      console.log("motionAvatar");
       // Effects
       $timeout(function () {
         UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
@@ -520,7 +517,6 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
     $scope.showCertifications = true;
     $scope.showGivenCertifications = true;
     $scope.showAvatar = true;
-    console.log("initLargeView");
   };
 }
 

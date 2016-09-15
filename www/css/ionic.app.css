@@ -13432,7 +13432,7 @@ a {
   font-weight: bold !important; }
 
 @media screen and (min-width: 992px) {
-  .list .item.item-large {
+  .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important; } }
 
 /**********
@@ -13512,7 +13512,8 @@ a {
   background-color: #f8f8f8;
   overflow: hidden !important;
   font-size: 50px !important;
-  line-height: 80px; }
+  line-height: 80px;
+  padding: 0 15px; }
 
 /*
 * Item icons
