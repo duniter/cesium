@@ -280,7 +280,6 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
               record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
             }
             if (record.price) {
-              console.log(record.price + '-' + csSettings.data.useRelative);
               if (!csSettings.data.useRelative && (!record.unit || record.unit==='UD')) {
                 record.price = record.price * currentUD;
               }
