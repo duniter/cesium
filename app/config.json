@@ -15,8 +15,8 @@
     "plugins":{
       "es": {
         "enable": true,
-        "host": "test-net.duniter.fr",
-        "port": "9203"
+        "host": "data.duniter.fr",
+        "port": "80"
       }
     }
   },
