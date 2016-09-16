@@ -4,8 +4,11 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 .factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
-  var defaultLocale = $translate.use(); // browser default
-  defaultLocale = defaultLocale.startsWith('fr') ? 'fr-FR' : defaultLocale; // convert in app locale (fix #140)
+  fixLocale = function(locale) {
+    // convert in app locale (fix #140)
+    return $translate.use().startsWith('fr') ? 'fr-FR' : 'en';
+  }
+  var defaultLocale = fixLocale($translate.use()); // browser default
 
   CSSettings = function(id) {
 
@@ -57,8 +60,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
           // No settings stored
           if (!storedData) {
-            if (defaultLocale !== $translate.use()) {
-              $translate.use(defaultLocale);
+            if (defaultSettings.locale.id !== $translate.use()) {
+              $translate.use(defaultSettings.locale.id);
               // Emit event on changed
               api.data.raise.changed(data);
             }
@@ -91,8 +94,12 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
             delete storedData.DUNITER_NODE_ES;
           }
 
-          var localeChanged = storedData.locale && storedData.locale.id &&
-            (storedData.locale.id !== data.locale.id || storedData.locale.id !== $translate.use());
+          var localeChanged = false;
+          if (storedData.locale && storedData.locale.id) {
+            // Fix previously stored bad locale
+            storedData.locale.id = fixLocale(storedData.locale.id);
+            localeChanged = (storedData.locale.id !== data.locale.id || storedData.locale.id !== $translate.use());
+          }
 
           // Apply stored settings
           angular.merge(data, storedData);
@@ -103,7 +110,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
           data.cacheTimeMs = defaultSettings.cacheTimeMs;
 
-          // Set the new locale
+          // Apply the new locale (only if need)
           if (localeChanged) {
             $translate.use(data.locale.id);
           }
