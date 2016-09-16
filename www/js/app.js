@@ -19,7 +19,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
   .filter('formatInteger', function() {
     return function(input) {
-      return !input ? '0' : numeral(input).format('0,0.000 a');
+      return !input ? '0' : (input < 10000000 ? numeral(input).format('0,0') : numeral(input).format('0,0.000 a'));
     };
   })
 
