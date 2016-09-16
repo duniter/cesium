@@ -680,8 +680,9 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
 
     UIUtils.loading.show();
     var doFinishSave = function(formData) {
-      if (formData.price) {
+      if (!!formData.price) {
         formData.unit = formData.unit || ($scope.useRelative ? 'UD' : 'unit');
+        formData.price = formData.price.replace(new RegExp('[.,]'), '.'); // fix #124
       }
       else {
         delete formData.unit;
@@ -690,7 +691,8 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
         formData.currency = $scope.currency;
       }
       if (!$scope.id) { // Create
-        formData.time = esHttp.date.now();
+        formData.creationTime = esHttp.date.now();
+        formData.time = formData.creationTime;
         esMarket.record.add(formData)
         .then(function(id) {
           $ionicHistory.nextViewOptions({
@@ -702,9 +704,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
         .catch(UIUtils.onError('Could not save esMarket'));
       }
       else { // Update
-        if (formData.time) {
-          formData.time = esHttp.date.now();
-        }
+        formData.time = esHttp.date.now();
         esMarket.record.update(formData, {id: $scope.id})
         .then(function() {
           $ionicHistory.clearCache() // force reloading of the back view
