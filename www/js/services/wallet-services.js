@@ -143,19 +143,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     login = function(salt, password) {
-        return $q(function(resolve, reject) {
-            CryptoUtils.connect(salt, password).then(
-                function(keypair) {
-                    // Copy result to properties
-                    data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-                    data.keypair = keypair;
-                    if (csSettings.data.useLocalStorage) {
-                      store();
-                    }
-                    resolve(data);
-                }
-            );
-        });
+      return $q(function(resolve, reject) {
+        CryptoUtils.connect(salt, password).then(
+          function(keypair) {
+            // Copy result to properties
+            data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            data.keypair = keypair;
+            if (csSettings.data.useLocalStorage) {
+              store();
+            }
+
+            // Send login event
+            api.data.raise.login(data);
+
+            resolve(data);
+          }
+        );
+      });
     },
 
     logout = function(username, password) {
@@ -163,12 +167,16 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
         resetData(); // will reset keypair
         store(); // store (if local storage enable)
+
+        // Send logout event
+        api.data.raise.logout();
+
         resolve();
       });
     },
 
     isLogin = function() {
-        return !!data.pubkey;
+      return !!data.pubkey;
     },
 
     // If connected and same pubkey
@@ -228,6 +236,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             }
             data.loaded = false;
           }
+
+          api.data.raise.login(data);
 
           // Load parameters
           // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
@@ -1131,6 +1141,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     ;
 
     // Register extension points
+    api.registerEvent('data', 'login');
+    api.registerEvent('data', 'logout');
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'reset');
 

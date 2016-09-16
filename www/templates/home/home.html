@@ -28,12 +28,12 @@
 
       <button type="button"
               class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
-              ng-click="login()" ng-show="!isLogin()" translate>COMMON.BTN_LOGIN</button>
+              ng-click="login()" ng-show="!$root.login" translate>COMMON.BTN_LOGIN</button>
       <button type="button"
               class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
-              ui-sref="app.view_wallet" ng-show="isLogin()" translate>HOME.BTN_ACCOUNT</button>
+              ui-sref="app.view_wallet" ng-show="$root.login" translate>HOME.BTN_ACCOUNT</button>
 
-      <div class="text-center no-padding" ng-show="!isLogin()">
+      <div class="text-center no-padding" ng-show="!$root.login">
         {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
         <br class="visible-xs">
         <b>

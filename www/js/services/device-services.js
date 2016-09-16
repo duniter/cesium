@@ -15,7 +15,12 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
     MAX_WIDTH: 400
   },
   readyPromise,
+
+  // workaround to quickly no is device or not (even before the ready() event)
+  enable = true;
+  // removeIf(device)
   enable = false;
+  // endRemoveIf(device)
 
   // Replace the '$ionicPlatform.ready()', to enable multiple calls
   ready = function () {
@@ -25,9 +30,9 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
     return readyPromise;
   };
 
-  isEnable = function() {
+  /*isEnable = function() {
     return enable;
-  };
+  };*/
 
   getPicture = function(sourceType) {
     return $q(function (resolve, reject) {
@@ -132,7 +137,8 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
 
   return {
     ready: ready,
-    isEnable: isEnable,
+    enable: enable,
+    /*isEnable: isEnable,*/
     clipboard: {
       copy: copy
     },

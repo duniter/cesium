@@ -59,11 +59,11 @@
         <!-- USER Section -->
         <div class="item item-divider"></div>
 
-        <ion-item menu-close class="item item-icon-left item-menu-disable" ng-click="login('app.view_wallet')" ng-if="!isLogin()">
+        <ion-item menu-close class="item item-icon-left item-menu-disable" ng-click="login('app.view_wallet')" ng-if="!$root.login">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
-        <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/wallet" ng-if="isLogin()">
+        <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/wallet" ng-if="$root.login">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
@@ -77,22 +77,22 @@
         </ion-item>
 
         <!-- actions -->
-        <div class="item item-divider" ng-if="isLogin()"></div>
-        <ion-item menu-close class="item item-button-right" ng-if="isLogin()">
+        <div class="item item-divider" ng-if="$root.login"></div>
+        <ion-item menu-close class="item item-button-right" ng-if="$root.login">
           <span translate>MENU.TRANSFER</span>
           <button class="button button-energized-900" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
           </button>
         </ion-item>
         <!-- scan QR code -->
-        <ion-item menu-close class="item item-button-right" ng-if="isDeviceEnable()">
+        <ion-item menu-close class="item item-button-right" ng-if="$root.device.enable">
           <span translate>Scan</span>
           <button class="button button-stable" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
         </ion-item>
         <!-- log out -->
-        <ion-item menu-close class="item item-button-right" ng-if="isLogin()">
+        <ion-item menu-close class="item item-button-right" ng-if="$root.login">
           <span translate>COMMON.BTN_LOGOUT</span>
           <button class="button button-stable" ng-click="logout()">
           <i class="icon ion-log-out"></i>

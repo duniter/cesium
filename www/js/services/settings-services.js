@@ -20,10 +20,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         useRelative: true,
         timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
         timeWarningExpire: 2592000 * 3 /*=3 mois*/,
-        useLocalStorage: Device.isEnable(), // on mobile device, use local storage by default
+        useLocalStorage: Device.enable, // on mobile device, use local storage by default
         walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
         walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
-        rememberMe: Device.isEnable(), // on mobile device, remember me by default
+        rememberMe: Device.enable, // on mobile device, remember me by default
         showUDHistory: true,
         locale: {
           id: defaultLocale

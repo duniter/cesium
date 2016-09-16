@@ -207,7 +207,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
   };
 
   $scope.scanQrCode = function(){
-    if (!Device.isEnable()) {
+    if (!Device.enable) {
       return;
     }
     Device.camera.scan()

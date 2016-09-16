@@ -62,6 +62,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $rootScope.walletData = Wallet.data;
   $rootScope.settings = csSettings.data;
   $rootScope.config = csConfig;
+  $rootScope.device = Device;
+  $rootScope.login = Wallet.isLogin();
 
   ////////////////////////////////////////
   // Load currencies
@@ -81,12 +83,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Device Methods
   ////////////////////////////////////////
 
-  $scope.isDeviceEnable = function() {
-    return Device.isEnable();
-  };
-
   $scope.scanQrCodeAndGo = function() {
-    if (!Device.isEnable()) {
+    if (!Device.enable) {
       return;
     }
     Device.camera.scan()
@@ -215,10 +213,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     .catch(UIUtils.onError());
   };
 
-  // Is connected
-  $scope.isLogin = function() {
-      return Wallet.isLogin();
-  };
+  // add listener on wallet event
+  Wallet.api.data.on.login($scope, function() {
+    $rootScope.login = true;
+  }, this);
+  Wallet.api.data.on.logout($scope, function() {
+    $rootScope.login = false;
+  }, this);
 
   // If connected and same pubkey
   $scope.isUserPubkey = function(pubkey) {

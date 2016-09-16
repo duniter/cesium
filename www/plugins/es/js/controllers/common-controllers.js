@@ -63,11 +63,11 @@ function ESMenuExtendController($scope, $state, screenmatch, PluginService, csSe
 
 }
 
-function ESPicturesEditController($scope, $ionicModal, Wallet, esMarket, UIUtils, $state, CryptoUtils, $q, $ionicPopup, Device, $timeout, ModalUtils) {
+function ESPicturesEditController($scope, UIUtils, $q, Device) {
   'ngInject';
 
   $scope.selectNewPicture = function() {
-    if ($scope.isDeviceEnable()){
+    if (Device.enable){
       openPicturePopup();
     }
     else {

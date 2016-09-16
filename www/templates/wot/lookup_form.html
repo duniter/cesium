@@ -50,6 +50,7 @@
 
   <ion-list
     class="animate-ripple"
+    can-swipe="$root.device.enable"
     ng-if="!search.looking && search.results.length">
 
     <ion-item ng-repeat="identity in search.results" class="item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">

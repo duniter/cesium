@@ -44,9 +44,7 @@
           <input type="file" id="avatarFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
                  style="visibility:hidden; position:absolute;"/>
 
-          <ion-list class="animate-ripple item-text-wrap" ng-init="setForm(profileForm)"
-                  can-swipe="isDeviceEnable()">
-
+          <ion-list class="animate-ripple item-text-wrap" ng-init="setForm(profileForm)">
 
             <div class="item item-divider">
               {{'PROFILE.GENERAL_DIVIDER' | translate}}
