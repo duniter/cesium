@@ -104,16 +104,12 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return;
       }
 
-      text = text.toLowerCase().trim();
+      text = text ? text.toLowerCase().trim() : text;
       var map = {};
 
       var request = {
         query: {},
-        highlight: {
-          fields : {
-            title : {}
-          }
-        },
+        highlight: {fields : {title : {}}},
         from: 0,
         size: 100,
         _source: ["title", "avatar"]
@@ -126,27 +122,32 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }, []);
         request.query.constant_score = {
            filter: {
-             bool: {
-                should: [
-                  {terms : {_id : pubkeys}},
-                  {bool: {
-                    must: [
-                      {match: { title: text}},
-                      {prefix: { title: text}}
-                    ]}
-                  }
-                ]
-             }
+             bool: {should: [{terms : {_id : pubkeys}}]}
            }
-         };
+        };
+        if (!text) {
+          delete request.highlight; // highlight not need
+        }
+        else {
+          request.query.constant_score.filter.bool.should.push(
+            {bool: {must: [
+                {match: {title: text}},
+                {prefix: {title: text}}
+              ]}});
+        }
       }
-      else {
+      else if (text){
         request.query.bool = {
           should: [
-            {match: { title: text}},
-            {prefix: { title: text}}
+            {match: {title: text}},
+            {prefix: {title: text}}
           ]
         };
+      }
+      else {
+        // nothing to search: stop here
+        resolve(datas);
+        return;
       }
 
       var uidsByPubkey;

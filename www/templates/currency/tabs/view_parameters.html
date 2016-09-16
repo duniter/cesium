@@ -14,7 +14,8 @@
             <span class="badge badge-assertive">{{Nprev | formatInteger}}</span>
         </ion-item>
 
-        <ion-item class="item-icon-left">
+        <ion-item class="item-icon-left"
+                  ui-sref="app.wot_lookup({newcomers: N-Nprev})">
             <i class="icon ion-person-add"></i>
             <span translate>CURRENCY.VIEW.INCOMING_MEMBERS</span>
             <span ng-if="N > Nprev" class="badge badge-balanced">+{{N-Nprev | formatInteger}}</span>

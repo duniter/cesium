@@ -5,7 +5,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
     $stateProvider
 
       .state('app.wot_lookup', {
-        url: "/wot?q",
+        url: "/wot?q&newcomers",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup.html",
@@ -96,18 +96,20 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
   $scope.entered = false;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!$scope.entered && $state.stateParams && $state.stateParams.q) { // Query parameter
-      $scope.search.text=$state.stateParams.q;
-      $timeout(function() {
-        $scope.doSearch();
-      }, 100);
+    if (!$scope.entered) {
+      if ($state.stateParams && $state.stateParams.q) { // Query parameter
+        $scope.search.text=$state.stateParams.q;
+        $timeout(function() {
+          $scope.doSearch();
+        }, 100);
+      }
+      else { // get new comers
+        $timeout(function() {
+          $scope.doGetNewcomers($state.stateParams.newcomers);
+        }, 100);
+      }
+      $scope.entered = true;
     }
-    else if (!$scope.entered){
-      $timeout(function() {
-        $scope.doGetNewcomers();
-      }, 100);
-    }
-    $scope.entered = true;
     // removeIf(device)
     // Focus on search text (only if NOT device, to avoid keyboard opening)
     $focus('wotSearchText');
@@ -163,11 +165,13 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
     };
   };
 
-  $scope.doGetNewcomers= function() {
+  $scope.doGetNewcomers= function(size) {
     $scope.search.looking = true;
     $scope.search.newIncomers = true;
 
-    WotService.newcomers(10)
+    size = (size && size > 0) ? size : 10;
+
+    WotService.newcomers(size)
       .then(function(idties){
         if (!$scope.search.newIncomers) return; // could have change
         $scope.search.results = idties || [];

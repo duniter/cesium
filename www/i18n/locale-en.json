@@ -154,6 +154,7 @@
     "LOOKUP": {
       "TITLE": "Registry",
       "NEWCOMERS": "Last registrations:",
+      "REGISTERED": "Registered ",
       "BTN_NEWCOMERS": "See last registrations"
     },
     "MODAL": {

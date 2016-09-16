@@ -65,11 +65,13 @@
           <i class="ion-person"></i>
           {{::identity.uid}}
         </span>
-        <i class="ion-key"></i>
+        <b class="ion-key"></b>
         {{::identity.pubkey | formatPubkey}}
-        <i class="ion-calendar" ng-if="identity.sigDate"></i>
-        {{::identity.sigDate | formatDate}}
       </h4>
+      <p ng-if="identity.sigDate">
+        <i class="ion-clock"></i>
+        {{'WOT.LOOKUP.REGISTERED' | translate}}{{::identity.sigDate | formatFromNow}}
+      </p>
       <i class="icon ion-ios-arrow-right visible-xs visible-sm"></i>
       <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
     </ion-item>
