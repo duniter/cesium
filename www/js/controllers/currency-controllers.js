@@ -226,7 +226,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     }
     else {
       $scope.loadingPeers = false;
-    };
+    }
   };
 
   $scope.refresh = function() {

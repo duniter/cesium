@@ -410,8 +410,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     reject(err);
                   });
               });
-            })
-        })
+            });
+        });
     },
 
     getNewcomersRecursive = function(blocks, offset, size, maxResultSize) {
@@ -436,7 +436,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               .catch(function(err) {
                 reject(err);
               })
-          )
+          );
         });
 
         $q.all(jobs)
