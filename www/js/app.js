@@ -41,7 +41,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       //    return 'NaN';
       //}
       if (Math.abs(input) < 0.0001) return '~ 0';
-      return numeral(input).format(pattern).replace(',', ' ');
+      return numeral(input).format(pattern);
     };
   })
 
@@ -133,26 +133,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     .useSanitizeValueStrategy(null)
     .fallbackLanguage(['en'])
     .useLoaderCache(true);
-
-    // Add FR language to numeral lib
-    numeral.language('fr', {
-      delimiters: {
-        thousands: ' ',
-        decimal: '.'
-      },
-      abbreviations: {
-        thousand: 'k',
-        million: 'M',
-        billion: 'Md',
-        trillion: 'T'
-      },
-      ordinal: function (number) {
-        return (number === 1) ? 'er' : 'ième';
-      },
-      currency: {
-        symbol: ''
-      }
-    });
   })
 
   .config(function($httpProvider, csConfig) {
@@ -206,7 +186,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig, PluginService, csSettings
+.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig, PluginService, $http
 ) {
   'ngInject';
 
@@ -249,10 +229,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
       .then(function(datePattern) {
         $rootScope.datePattern = datePattern;
       });
-    // Set language for numeral lib (for 'fr-FR' -> use 'fr')
-    var numeralLanguage = lang.split('-')[0];
-    numeralLanguage = (numeralLanguage === 'en' || numeralLanguage === 'fr') ? numeralLanguage : 'en';
-    numeral.language(numeralLanguage);
+
+    numeral.language(lang);
   };
 
   // Set up moment translation
