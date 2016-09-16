@@ -5,7 +5,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
   'ngInject';
 
   var defaultLocale = $translate.use(); // browser default
-  defaultLocale = defaultLocale.startsWith('fr') ? 'fr-FR' : browserDefaultLocale; // convert in app locale (fix #140)
+  defaultLocale = defaultLocale.startsWith('fr') ? 'fr-FR' : defaultLocale; // convert in app locale (fix #140)
 
   CSSettings = function(id) {
 
