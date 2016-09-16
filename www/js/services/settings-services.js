@@ -1,7 +1,7 @@
 
-angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config'])
+angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config', 'cesium.device.services'])
 
-.factory('csSettings', function($q, csConfig, Api, localStorage, $translate) {
+.factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
   var defaultLocale = $translate.use(); // browser default
@@ -20,10 +20,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         useRelative: true,
         timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
         timeWarningExpire: 2592000 * 3 /*=3 mois*/,
-        useLocalStorage: false,
+        useLocalStorage: Device.isEnable(), // on mobile device, use local storage by default
         walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
         walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
-        rememberMe: false,
+        rememberMe: Device.isEnable(), // on mobile device, remember me by default
         showUDHistory: true,
         locale: {
           id: defaultLocale
@@ -51,12 +51,16 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
       },
 
-      restore = function() {
+      restore = function(first) {
         return $q(function(resolve, reject){
           var storedData = localStorage.getObject(constants.STORAGE_KEY);
+
+          // No settings stored
           if (!storedData) {
             if (defaultLocale !== $translate.use()) {
               $translate.use(defaultLocale);
+              // Emit event on changed
+              api.data.raise.changed(data);
             }
             resolve();
             return;
@@ -87,7 +91,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
             delete storedData.DUNITER_NODE_ES;
           }
 
-          var localeChanged = storedData.locale && storedData.locale.id && (data.locale.id !== storedData.locale.id);
+          var localeChanged = storedData.locale && storedData.locale.id &&
+            (storedData.locale.id !== data.locale.id || storedData.locale.id !== $translate.use());
+
+          // Apply stored settings
           angular.merge(data, storedData);
 
           // Always force the usage of deffault settings
@@ -96,7 +103,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
           data.cacheTimeMs = defaultSettings.cacheTimeMs;
 
-
+          // Set the new locale
           if (localeChanged) {
             $translate.use(data.locale.id);
           }
