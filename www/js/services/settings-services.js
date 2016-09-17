@@ -4,14 +4,16 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 .factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
-  fixLocale = function(locale) {
-    // convert in app locale (fix #140)
-    return $translate.use().startsWith('fr') ? 'fr-FR' : 'en';
-  };
+  var
 
-  var defaultLocale = fixLocale($translate.use()); // browser default
+    fixLocale = function(locale) {
+      // convert in app locale (fix #140)
+      return $translate.use().startsWith('fr') ? 'fr-FR' : 'en';
+    },
 
-  CSSettings = function(id) {
+    defaultLocale = fixLocale($translate.use()), // browser default
+
+    CSSettings = function(id) {
 
     var
       constants = {

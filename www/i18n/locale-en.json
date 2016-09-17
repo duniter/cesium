@@ -151,6 +151,9 @@
     "TECHNICAL_DIVIDER": "Technical data",
     "BTN_CERTIFY": "Certify",
     "BTN_SELECT_AND_CERTIFY": "New certification",
+    "VIEW": {
+      "POPOVER_SHARE_TITLE": "Identity {{title}}"
+    },
     "LOOKUP": {
       "TITLE": "Registry",
       "NEWCOMERS": "Last registrations:",

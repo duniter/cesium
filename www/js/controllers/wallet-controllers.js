@@ -311,6 +311,19 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch
     });
   };
 
+  $scope.showSharePopover = function() {
+    var title = $scope.walletData.name || $scope.walletData.uid || $scope.walletData.pubkey;
+    var url = $state.href('app.wot_view_identity', {pubkey: $scope.walletData.pubkey, uid: $scope.walletData.name || $scope.walletData.uid}, {absolute: true});
+    UIUtils.popover.share(event, {
+      bindings: {
+        url: url,
+        titleKey: 'WOT.VIEW.POPOVER_SHARE_TITLE',
+        titleValues: {title: title},
+        postMessage: title
+      }
+    });
+  };
+
    // TODO: remove auto add account when done
    /*$timeout(function() {
 

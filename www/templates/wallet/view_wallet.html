@@ -40,9 +40,13 @@
          ng-click="toggleQRCode = !toggleQRCode"></div>
 
     <!-- Buttons bar-->
-    <div class="hidden-xs hidden-sm padding text-center"
-         ng-if="convertedBalance">
-      <button class="button button-raised button-calm ink-dark"
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+      <button class="button button-stable icon ion-android-share ink"
+              ng-click="showSharePopover($event)">
+        {{'COMMON.BTN_SHARE' | translate}}
+      </button>
+      <button class="button button-calm ink"
+              ng-if="convertedBalance"
               ng-click="showTransferModal()">
         {{'COMMON.BTN_SEND_MONEY' | translate}}
       </button>

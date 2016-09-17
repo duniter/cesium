@@ -11,7 +11,7 @@
 
     <div class="item item-icon-right" ng-if="search.options" ng-click="showRecordTypeModal()">
       <span translate>REGISTRY.SEARCH.TYPE</span>
-      <span class="badge badge-balanced" >{{'REGISTRY.TYPE.ENUM.' + search.type|translate}}</span>
+      <span class="badge badge-balanced" ng-if="search.type">{{'REGISTRY.TYPE.ENUM.' + search.type|translate}}</span>
       <i class="gray icon ion-ios-arrow-right"></i>
     </div>
 

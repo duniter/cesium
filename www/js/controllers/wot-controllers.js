@@ -297,6 +297,19 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
     });
   };
 
+  $scope.showSharePopover = function() {
+    var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
+    var url = $state.href('app.wot_view_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.name || $scope.formData.uid}, {absolute: true});
+    UIUtils.popover.share(event, {
+      bindings: {
+        url: url,
+        titleKey: 'WOT.VIEW.POPOVER_SHARE_TITLE',
+        titleValues: {title: title},
+        postMessage: title
+      }
+    });
+  };
+
   $scope.showFab('fab-transfer');
 
 }

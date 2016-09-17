@@ -151,6 +151,9 @@
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_CERTIFY": "Certifier",
     "BTN_SELECT_AND_CERTIFY": "Nouvelle certification",
+    "VIEW": {
+      "POPOVER_SHARE_TITLE": "Identité {{title}}"
+    },
     "LOOKUP": {
       "TITLE": "Annuaire",
       "NEWCOMERS": "Dernières adhésions :",
