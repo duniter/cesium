@@ -40,9 +40,10 @@
     "RESULTS_LIST": "Résultats :",
     "POPOVER_SHARE": {
       "TITLE": "Partager",
-      "SHARE_ON_TWITTER": "Partager ce lien sur Twitter",
-      "SHARE_ON_FACEBOOK": "Partager ce lien sur Facebook",
-      "SHARE_ON_DIASPORA": "Partager ce lien sur Diaspora*",
+      "SHARE_ON_TWITTER": "Partager sur Twitter",
+      "SHARE_ON_FACEBOOK": "Partager sur Facebook",
+      "SHARE_ON_DIASPORA": "Partager sur Diaspora*",
+      "SHARE_ON_GOOGLEPLUS": "Partager sur Google+"
     }
   },
   "SYSTEM": {

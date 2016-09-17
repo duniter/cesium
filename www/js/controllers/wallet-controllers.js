@@ -311,7 +311,7 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch
     });
   };
 
-  $scope.showSharePopover = function() {
+  $scope.showSharePopover = function(event) {
     var title = $scope.walletData.name || $scope.walletData.uid || $scope.walletData.pubkey;
     var url = $state.href('app.wot_view_identity', {pubkey: $scope.walletData.pubkey, uid: $scope.walletData.name || $scope.walletData.uid}, {absolute: true});
     UIUtils.popover.share(event, {

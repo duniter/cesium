@@ -566,7 +566,8 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
         titleKey: 'MARKET.VIEW.POPOVER_SHARE_TITLE',
         titleValues: {title: title},
         time: $scope.formData.time,
-        postMessage: title
+        postMessage: title,
+        postImage: $scope.pictures.length > 0 ? $scope.pictures[0] : null
       }
     });
   };
