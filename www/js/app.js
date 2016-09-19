@@ -246,8 +246,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
 
 // Workaround to add startsWith() if not present
 if (typeof String.prototype.startsWith !== 'function') {
-  console.log("Adding String.prototype.startsWith() -> was missing on this platform");
+  console.debug("Adding String.prototype.startsWith() -> was missing on this platform");
   String.prototype.startsWith = function(prefix) {
       return this.indexOf(prefix) === 0;
+  };
+}
+
+// Workaround to add Math.trunc() if not present - fix #144
+if (Math && typeof Math.trunc !== 'function') {
+  console.debug("Adding Math.trunc() -> was missing on this platform");
+  Math.trunc = function(number) {
+    return (number - 0.5).toFixed();
   };
 }
