@@ -80,21 +80,21 @@
         <div class="item item-divider" ng-if="$root.login"></div>
         <ion-item menu-close class="item item-button-right" ng-if="$root.login">
           <span translate>MENU.TRANSFER</span>
-          <button class="button button-energized-900" ng-click="showTransferModal()">
+          <button class="button button-energized-900 ink-dark" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
           </button>
         </ion-item>
         <!-- scan QR code -->
         <ion-item menu-close class="item item-button-right" ng-if="$root.device.enable">
           <span translate>Scan</span>
-          <button class="button button-stable" ng-click="scanQrCodeAndGo()">
+          <button class="button button-stable ink" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
         </ion-item>
         <!-- log out -->
         <ion-item menu-close class="item item-button-right" ng-if="$root.login">
           <span translate>COMMON.BTN_LOGOUT</span>
-          <button class="button button-stable" ng-click="logout()">
+          <button class="button button-stable ink" ng-click="logout()">
           <i class="icon ion-log-out"></i>
           </button>
         </ion-item>

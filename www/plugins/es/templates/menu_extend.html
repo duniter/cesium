@@ -3,15 +3,21 @@
 <ng-if ng-if="enable && extensionPoint === 'menu-main'">
 
   <!-- registry-->
-  <ion-item menu-close class="item item-icon-left" active-link="active"
-            ng-click="showRegistryLookupView()">
+  <ion-item menu-close class="item item-icon-left"
+            href="#/app/registry"
+            active-link="active"
+            active-link-path-prefix="#/app/registry"
+            ng-click="showRegistryLookupView(); return false;">
     <i class="icon ion-ios-book"></i>
     <span translate>MENU.REGISTRY</span>
   </ion-item>
 
   <!-- market -->
-  <ion-item menu-close class="item item-icon-left" active-link="active"
-            ng-click="showMarketLookupView()">
+  <ion-item menu-close class="item item-icon-left"
+            href="#/app/market"
+            active-link="active"
+            active-link-path-prefix="#/app/market"
+            ng-click="showMarketLookupView(); return false;">
     <i class="icon ion-speakerphone"></i>
     <span translate>MENU.MARKET</span>
   </ion-item>

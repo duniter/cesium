@@ -13470,9 +13470,9 @@ a {
 .badge-editable:hover:before {
   content: " "; }
 
-/*
-* Modals
-*/
+/**********
+   Modals
+**********/
 .modal.modal-full-height {
   height: 100% !important; }
 
@@ -13480,9 +13480,9 @@ a {
   left: 0px !important;
   /* avoid title offset on large screens, if button are 'visible-xs')'*/ }
 
-/*
-* Item buttons
-*/
+/**********
+   Item buttons
+**********/
 .item-button-right > .button,
 .item-button-right .item-content > .button,
 .item-button-right > .buttons,
@@ -13492,9 +13492,9 @@ a {
 .item.large-button-bar {
   margin-bottom: 10px; }
 
-/*
-* Item thumbnail
-*/
+/**********
+   Item thumbnail
+**********/
 .item-thumbnail-left-padding {
   padding-left: 106px; }
 
@@ -13516,35 +13516,70 @@ a {
   line-height: 80px;
   padding: 0 15px; }
 
-/*
-* Item icons
-*/
+@media screen and (max-width: 400px) {
+  .card > .item.item-thumbnail-left,
+  .item-thumbnail-left,
+  .item-thumbnail-left .item-content {
+    padding-left: 84px !important; }
+  .item h2 {
+    font-size: 13px !important; } }
+
+/**********
+   Item icons
+**********/
 .item-icon-left-padding {
   padding-left: 40px; }
 
 .text-keep-lines {
   white-space: pre-line !important; }
 
-/*
-* Menu
-*/
-#menu .item.item-divider {
-  min-height: 5px;
-  height: 5px; }
-
+/**********
+   Screen - Left Menu
+**********/
 #menu .item-button-right > .button,
 .item-button-right .item-content > .button,
 .item-button-right > .buttons,
 .item-button-right .item-content > .buttons {
   top: 8px !important; }
 
-#menu .footer a {
-  font-size: 14px !important;
-  color: grey !important; }
+@media screen and (max-width: 400px) {
+  #menu .item.item-divider {
+    min-height: 2px;
+    height: 2px;
+    padding-top: 0px;
+    padding-bottom: 0px; }
+  #menu .item,
+  #menu .item.item-complex .item-content {
+    height: 40px;
+    min-height: 40px;
+    padding-top: 8px; }
+  #menu .item.item-complex {
+    padding-top: 0px; }
+  #menu .item.item-button-right .button {
+    height: 30px;
+    min-height: 30px;
+    top: 4px; }
+  #menu .item.active a {
+    background-color: #b2e0ff !important; }
+  #menu ion-content.has-footer {
+    bottom: 0px !important;
+    /*ignore footer*/ }
+  body.platform-android #menu .item-icon-left .icon, .item-icon-right .icon {
+    top: 5px; } }
 
-/*
-* Screen - certifications
-*/
+@media screen and (min-width: 401px) {
+  #menu .item.active a {
+    background-color: #b2e0ff !important; }
+  #menu .item.item-divider {
+    min-height: 5px;
+    height: 5px; }
+  #menu .footer a {
+    font-size: 14px !important;
+    color: grey !important; } }
+
+/**********
+   Screen - identity Certifications
+**********/
 .certifications .item-divider .badge {
   top: 16px !important; }
 

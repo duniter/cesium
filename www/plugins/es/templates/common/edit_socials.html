@@ -35,8 +35,11 @@
              on-return="addSocialNetwork();"
              ng-model="socialData.url"/>
     </label>
-    <button class="button button-small button-icon" type="button" ng-click="addSocialNetwork()">
+    <button class="button button-small hidden-xs" type="button" ng-click="addSocialNetwork()">
       {{'COMMON.BTN_ADD'|translate}}
+    </button>
+    <button class="button button-small button-icon icon ion-android-add visible-xs" type="button"
+            ng-click="addSocialNetwork()">
     </button>
   </div>
 
