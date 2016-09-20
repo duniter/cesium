@@ -1,6 +1,6 @@
 angular.module('cesium.modal.services', [])
 
-.factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller) {
+.factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout) {
   'ngInject';
 
 
@@ -31,24 +31,26 @@ angular.module('cesium.modal.services', [])
       modalScope.modal = modal;
 
       modalScope.openModal = function () {
-        modalScope.modal.show();
+        return modalScope.modal.show();
       };
       modalScope.closeModal = function (result) {
         deferred.resolve(result);
-        modalScope.modal.hide();
+        return modalScope.modal.hide();
       };
 
       modalScope.getParameters = function () {
         return parameters;
       };
       modalScope.$on('modal.hidden', function (thisModal) {
-        if (thisModal.currentScope) {
-          var modalScopeId = thisModal.currentScope.$id;
-          if (thisScopeId === modalScopeId) {
+        var currentScope = thisModal.currentScope;
+        var modalScopeId = currentScope ? currentScope.$id : null;
+        // Destroy modal's scope when hide animation finished - fix #145
+        $timeout(function() {
+          if (modalScopeId && thisScopeId === modalScopeId) {
             deferred.resolve(null);
-            _cleanup(thisModal.currentScope);
+            _cleanup(currentScope);
           }
-        }
+        }, 900);
       });
 
       // Invoke the controller
