@@ -86,7 +86,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       Wallet.data.keypair.boxSk = boxKeypair.boxSk;
       Wallet.data.keypair.boxPk = boxKeypair.boxPk;
       console.debug("[ES] Secret box keypair successfully computed");
-      return data.keypair;
+      return Wallet.data.keypair;
     }
 
     function countNewMessages(pubkey, fromTime) {
