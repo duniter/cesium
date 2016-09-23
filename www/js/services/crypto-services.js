@@ -85,14 +85,15 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
           for (i = 0; i < d.length; i++) b[i] = d.charCodeAt(i);
           return b;
       },
-      encode_utf8 = function(arguments) {
-        return nacl.encode_utf8(arguments);
+      encode_utf8 = function(s) {
+        return nacl.encode_utf8(s);
       },
       encode_base58 = function(a) {
         return base58.encode(a);
       },
       decode_base58 = function(a) {
-        var i, a = base58.decode(a);
+        var i;
+        a = base58.decode(a);
         var b = new Uint8Array(a.length);
         for (i = 0; i < a.length; i++) b[i] = a[i];
         return b;

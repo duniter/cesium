@@ -41,7 +41,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       if (data.keypair) {
         delete data.keypair.boxSk;
         delete data.keypair.boxPk;
-      };
+      }
       if (data.messages) {
         delete data.messages;
       }
@@ -154,7 +154,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       return BMA.wot.member.uids()
         .then(function(res) {
           uids = res;
-          return esHttp.post(host, port, '/message/record/_search')(request)
+          return esHttp.post(host, port, '/message/record/_search')(request);
         })
         .then(function(res) {
           if (res.hits.total === 0) {
@@ -196,7 +196,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
               .then(function(user) {
                 msg.uid = user ? user.uid : user;
                 // Decrypt message
-                return decryptMessages([msg], keypair)
+                return decryptMessages([msg], keypair);
               })
               .then(function(){
                 // Fill avatar
@@ -206,7 +206,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
                 return msg;
               });
           }
-        })
+        });
     }
 
     function decryptMessages(messages, keypair) {
@@ -215,7 +215,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       var boxKeypair = getBoxKeypair(keypair);
       var issuerBoxPks = {}; // a map used as cache
 
-      var messages = messages.reduce(function(result, message) {
+      messages = messages.reduce(function(result, message) {
         var issuerBoxPk = issuerBoxPks[message.issuer];
         if (!issuerBoxPk) {
           issuerBoxPk = CryptoUtils.box.keypair.pkFromSignPk(CryptoUtils.util.decode_base58(message.issuer));

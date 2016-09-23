@@ -171,7 +171,7 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
           isReply: true
         });
       });
-  }
+  };
 
   // for DEV only
   /*$timeout(function() {
