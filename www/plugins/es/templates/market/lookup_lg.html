@@ -114,11 +114,16 @@
             </h2>
           </div>
           <div class="col">
-              <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>
+              <h3 class="gray text-wrap" ng-bind-html="rec.description | truncText:500" ng-if="rec.description"></h3>
           </div>
         </div>
       </a>
 
+      <!-- show more items -->
+      <a class="item item-record ink padding-xs"
+         ng-click="doGetMoreLastRecord()" translate>
+        MARKET.SEARCH.SHOW_MORE
+      </a>
     </div>
   </ion-content>
 

@@ -1,0 +1,65 @@
+<ion-view left-buttons="leftButtons" cache-view="false">
+  <ion-nav-title>
+    <span translate>MESSAGE.INBOX.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-loop" ng-click="load()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="padding no-padding-xs">
+
+
+
+    <ion-list>
+      <!-- Buttons bar-->
+      <div class="item large-button-bar hidden-xs hidden-sm">
+        <button class="button button-small button-calm icon ion-compose"
+                ng-click="showNewMessageModal()">
+          {{'MESSAGE.BTN_COMPOSE' | translate}}
+        </button>
+      </div>
+
+      <div class="center" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+
+      <div class="padding gray" ng-if="!loading && messages.length===0 " translate>
+        MESSAGE.INBOX.NO_MESSAGE
+      </div>
+
+      <ion-item
+        class="item item-border-large item-avatar ink"
+        ng-repeat="msg in messages">
+        <img ng-if="msg.avatar" class="item-image" ng-src="{{::msg.avatar.src}}">
+        <i ng-if="!msg.avatar && msg.uid" class="item-image icon ion-person"></i>
+
+        <h4 class="gray pull-right">{{msg.time|formatFromNow}} - {{msg.time|formatDate}}</h4>
+        <h3>
+          <a class="positive"
+             ng-if="msg.name||msg.uid"
+             ui-sref="app.wot_view_identity({pubkey:msg.pubkey, uid:msg.name||msg.uid})">
+            <i class="icon ion-person"></i>
+            {{msg.name||msg.uid}}
+          </a>
+          <a class="gray" ng-if="!msg.name && !msg.uid"
+             ui-sref="app.wot_view_identity({pubkey:msg.pubkey})">
+            <i class="icon ion-key"></i>
+            {{msg.pubkey|formatPubkey}}
+          </a>
+        </h3>
+        <h2 >{{msg.title}}</h2>
+        <p>{{msg.content}}</p>
+        <ion-option-button class="button-positive"
+                           translate>MESSAGE.BTN_RESPOND</ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+  <button id="fab-add-message-record"
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-compose visible-xs visible-sm spin"
+          ng-click="showNewMessageModal()">
+  </button>
+</ion-view>

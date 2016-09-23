@@ -236,20 +236,30 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
   };
   $scope.$watch('search.options', $scope.onToggleOptions, true);
 
-  $scope.doGetLastRecord = function() {
+  $scope.doGetLastRecord = function(offset, size) {
     $scope.search.looking = true;
     $scope.search.lastRecords = true;
+
+    offset = offset || 0;
+    size = size || 20;
 
     var request = {
       sort: {
         "time" : "desc"
       },
-      from: 0,
-      size: 20,
+      from: offset,
+      size: size,
       _source: esMarket.record.fields.commons
     };
 
     $scope.doRequest(request);
+  };
+
+  $scope.doGetMoreLastRecord = function(size) {
+    $scope.doGetLastRecord(
+      $scope.search.results.length, // offset
+      size
+    );
   };
 
   $scope.doRequest = function(request) {

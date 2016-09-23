@@ -25,7 +25,7 @@
               {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
               </span>
               <span ng-if="walletData.isMember">
-                {{walletData.uid}}&nbsp;&nbsp;
+                {{walletData.name||walletData.uid}}&nbsp;&nbsp;
               </span>
               <span ng-if="walletData.pubkey && !formData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
               <span ng-if="walletData.pubkey && formData.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub></span>
@@ -49,7 +49,9 @@
                 ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}"
                 ng-if="formData.useRelative">
         <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub>)</span>
-        <input type="text" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{'COMMON.UD' | translate}} {{unit | abbreviate}})" ng-model="formData.amount"
+        <input type="text"
+               keyboard-attach=""
+               name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{'COMMON.UD' | translate}} {{unit | abbreviate}})" ng-model="formData.amount"
                required>
         <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
         </span>

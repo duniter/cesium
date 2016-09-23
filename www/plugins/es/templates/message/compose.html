@@ -1,0 +1,25 @@
+<ion-view left-buttons="leftButtons"
+          id="composeMessage">
+  <ion-nav-title>
+    <span class="visible-xs visible-sm" translate>MESSAGE.COMPOSE.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doSend()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true">
+    <div class="row">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="col">
+        <h2 class="hidden-xs hidden-sm">
+          {{'MESSAGE.COMPOSE.SUB_TITLE'|translate}}
+        </h2>
+        <h4 class="hidden-xs hidden-sm">&nbsp;</h4>
+        <ng-include src="'plugins/es/templates/message/compose_form.html'"></ng-include>
+      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+    </div>
+  </ion-content>
+</ion-view>

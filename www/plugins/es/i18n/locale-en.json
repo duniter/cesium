@@ -13,7 +13,8 @@
   "MENU": {
     "MARKET": "Ads",
     "REGISTRY": "Companies",
-    "USER_PROFILE": "My Profile"
+    "USER_PROFILE": "My Profile",
+    "USER_MESSAGE": "Messages"
   },
   "COMMENTS": {
     "DIVIDER": "Comments",
@@ -21,6 +22,28 @@
     "COMMENT_HELP": "Leave a message, a question...",
     "BTN_SEND": "Send",
     "POPOVER_SHARE_TITLE": "Message #{{number}}"
+  },
+  "MESSAGE": {
+    "BTN_RESPOND": "Respond",
+    "BTN_COMPOSE": "New message",
+    "INBOX": {
+      "NO_MESSAGE": "No message",
+      "TITLE": "Messages"
+    },
+    "COMPOSE": {
+      "TITLE": "New message",
+      "SUB_TITLE": "New message",
+      "TO": "To",
+      "OBJECT": "Object",
+      "OBJECT_HELP": "Object",
+      "ENCRYPTED_HELP": "Please note this message will by encrypt before sending. Only you and recipient could read it.",
+      "MESSAGE": "Message",
+      "MESSAGE_HELP": "Message content"
+    },
+    "ERROR": {
+      "SEND_MSG_FAILED": "Error while sending message.",
+      "SEARCH_FAILED": "Error while loading messages."
+    }
   },
   "MARKET": {
     "COMMON": {
@@ -34,6 +57,7 @@
       "BTN_ADD": "New",
       "BTN_OPTIONS": "Advanced search",
       "BTN_AROUND_ME": "Around me",
+      "SHOW_MORE": "Show more ads",
       "LOCATION": "Location",
       "LOCATION_HELP": "City",
       "LAST_RECORDS": "Last records:",
@@ -106,10 +130,12 @@
     "TYPE": {
       "TITLE": "New",
       "SELECT_TYPE": "Kind of referencing:",
-      "SHOP": "local shops",
-      "COMPANY": "Company",
-      "ASSOCIATION": "Association",
-      "INSTITUTION": "Institution"
+      "ENUM": {
+        "SHOP": "local shops",
+        "COMPANY": "Company",
+        "ASSOCIATION": "Association",
+        "INSTITUTION": "Institution"
+      }
     },
     "EDIT": {
       "TITLE": "Edit",

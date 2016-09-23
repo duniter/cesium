@@ -149,12 +149,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             // Copy result to properties
             data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
             data.keypair = keypair;
-            if (csSettings.data.useLocalStorage) {
-              store();
-            }
 
             // Send login event
             api.data.raise.login(data);
+
+            if (csSettings.data.useLocalStorage) {
+              store();
+            }
 
             resolve(data);
           }
@@ -1115,7 +1116,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var keypair = {};
           var i;
 
-          // Convert to Uint8Array type
+          // sign Pk : Convert to Uint8Array type
           var signPk = new Uint8Array(32);
           for (i = 0; i < 32; i++) signPk[i] = obj.keypair.signPk[i];
           keypair.signPk = signPk;
@@ -1123,6 +1124,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var signSk = new Uint8Array(64);
           for (i = 0; i < 64; i++) signSk[i] = obj.keypair.signSk[i];
           keypair.signSk = signSk;
+
+          // box Pk : Convert to Uint8Array type
+          if (obj.keypair.boxPk) {
+            var boxPk = new Uint8Array(32);
+            for (i = 0; i < 32; i++) boxPk[i] = obj.keypair.boxPk[i];
+            keypair.boxPk = boxPk;
+          }
+
+          if (obj.keypair.boxSk) {
+            var boxSk = new Uint8Array(32);
+            for (i = 0; i < 64; i++) boxSk[i] = obj.keypair.boxSk[i];
+            keypair.boxSk = boxSk;
+          }
 
           resolve({
             pubkey: obj.pubkey,

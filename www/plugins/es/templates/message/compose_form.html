@@ -1,0 +1,90 @@
+  <form name="messageForm" novalidate="" ng-submit="doSend()">
+
+    <div class="list" ng-init="setForm(messageForm)">
+
+      <a class="item item-icon-right gray ink"
+         ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
+         ng-click="showWotLookupModal()">
+          <span class="gray" translate>MESSAGE.COMPOSE.TO</span>
+          <span class="badge badge-royal">{{destUid}}{{destPub | formatPubkey}}</span>&nbsp;
+          <i class="gray icon ion-ios-arrow-right"></i>
+      </a>
+      <div class="form-errors"
+           ng-if="form.$submitted && !formData.destPub">
+        <div class="form-error">
+          <span translate="ERROR.FIELD_REQUIRED"></span>
+        </div>
+      </div>
+
+      <span class="item item-text-wrap">
+          <span class="gray" translate>TRANSFER.FROM</span>
+          <span class="badge badge-balanced">
+              <ion-spinner icon="android" ng-if="!$root.walletData.pubkey"></ion-spinner>
+              <span ng-if="$root.walletData.pubkey && !$root.walletData.isMember">
+              {{$root.walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
+              </span>
+              <span ng-if="$root.walletData.isMember">
+                {{$root.walletData.name||$root.walletData.uid}}
+              </span>
+          </span>
+      </span>
+
+      <!-- Object -->
+      <label class="item item-input item-floating-label"
+             ng-class="{'item-input-error': form.$submitted && form.title.$invalid}">
+        <span class="input-label">{{'MESSAGE.COMPOSE.OBJECT' | translate}}</span>
+        <input type="text"
+               placeholder="{{'MESSAGE.COMPOSE.OBJECT_HELP' | translate}}"
+               name="title"
+               ng-model="formData.title"
+               ng-maxlength="256"
+               required>
+        </input>
+      </label>
+      <div class="form-errors"
+           ng-show="form.$submitted && form.title.$error"
+           ng-messages="form.title.$error">
+        <div class="form-error" ng-message="maxlength">
+          <span translate="ERROR.FIELD_TOO_LONG"></span>
+        </div>
+        <div class="form-error" ng-message="required">
+          <span translate="ERROR.FIELD_REQUIRED"></span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <label class="item item-input item-floating-label"
+             ng-class="{'item-input-error': form.$submitted && form.content.$invalid}">
+        <span class="input-label">{{'MESSAGE.COMPOSE.MESSAGE' | translate}}</span>
+        <textarea placeholder="{{'MESSAGE.COMPOSE.MESSAGE_HELP' | translate}}"
+                  name="message"
+                  ng-model="formData.content"
+                  rows="10"
+                  ng-maxlength="1024">
+        </textarea>
+      </label>
+      <div class="form-errors"
+           ng-show="form.$submitted && form.content.$error"
+           ng-messages="form.content.$error">
+        <div class="form-error" ng-message="maxlength">
+          <span translate="ERROR.FIELD_TOO_LONG"></span>
+        </div>
+      </div>
+
+      <!-- Encryption help -->
+      <div class="item item-icon-left item-text-wrap ">
+        <i class="icon ion-ios-information-outline positive"></i>
+        <h4 class="positive" translate>MESSAGE.COMPOSE.ENCRYPTED_HELP</h4>
+      </div>
+    </div>
+
+    <div class="padding hidden-xs text-right">
+      <button class="button button-small button-clear button-dark ink"
+              ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
+      </button>
+      <button class="button button-small button-positive ink" type="submit">
+        {{'TRANSFER.BTN_SEND' | translate}}
+      </button>
+    </div>
+  </form>
+

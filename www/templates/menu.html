@@ -9,6 +9,16 @@
       <ion-nav-buttons side="left">
         <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
       </ion-nav-buttons>
+      <ion-nav-buttons side="right">
+        <!-- Allow extension here -->
+        <cs-extension-point name="nav-buttons-right"></cs-extension-point>
+
+        <!-- settings
+        <button class="button button-icon button-clear icon ion-android-settings"
+           active-link="active"
+           ui-sref="app.settings">
+        </button>-->
+      </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="fabContent"></ion-nav-view>
     <ion-nav-view name="menuContent"></ion-nav-view>

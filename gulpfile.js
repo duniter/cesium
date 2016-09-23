@@ -111,7 +111,7 @@ gulp.task('config', function (done) {
 
   if(!config) {
     gutil.log(gutil.colors.red("=> Could not load `" + env + "` environment!"));
-    return done();
+    process.exit(1);
   }
 
   gutil.log(gutil.colors.green("Building `www/js/config.js` for `" + env + "` environment..."));
@@ -121,9 +121,7 @@ gulp.task('config', function (done) {
   config['build'] = (new Date()).toJSON();
   config['newIssueUrl'] = project.bugs.new;
 
-  // TODO : change version in config.xml file
-
-  return ngConstant({
+  ngConstant({
       name: 'cesium.config',
       constants: {"csConfig": config},
       stream: true,
@@ -134,6 +132,7 @@ gulp.task('config', function (done) {
     // Writes into file www/js/config.js
     .pipe(rename('config.js'))
     .pipe(gulp.dest('www/js'))
+    .on('end', done);
     ;
 });
 
@@ -162,6 +161,7 @@ gulp.task('ng_translate', function() {
 });
 
 /* -- Plugins -- */
+
 gulp.task('templatecache_plugin', function (done) {
   gulp.src(paths.templatecache_plugin)
     .pipe(templateCache({

@@ -4,7 +4,8 @@
   <span>{{'COMMENTS.DIVIDER' | translate}}</span>
 </div>
 
-<span class="item item-more-comments" ng-if="comments && comments.length === maxCommentSize">
+<span class="item item-more-comments"
+      ng-if="comments && comments.length === maxCommentSize">
   <small><a ng-click="showMoreComments()" translate>COMMENTS.SHOW_MORE_COMMENTS</a></small>
 </span>
 
@@ -13,7 +14,7 @@
 
   <a name="{{::comment.id|formatHash}}"></a>
 
-  <ion-item class="card card-comment stable-bg item-text-wrap "
+  <ion-item class="card card-comment stable-bg item-text-wrap no-padding"
             ng-class="{'in done': comment.isnew}">
     <div class="padding card-header text-right">
       <a class="pull-left positive" ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.uid})">
@@ -44,24 +45,31 @@
   </ion-item>
 </ng-repeat>
 
-<div class="item item-input-inset hidden-xs hidden-sm">
-  <label class="item-input-wrapper">
-    <input id="commentMessage" type="text" style="width:100%" placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
-           on-return="sendComment();"
-           ng-model="commentData.message"/>
-  </label>
-  <button class="button button-small button-icon" ng-click="sendComment()">
-    {{'COMMENTS.BTN_SEND'|translate}}
-  </button>
+<div class="hidden-xs hidden-sm">
+  <div class="card card-comment item item-input item-button-right">
+    <textarea class="padding" style="background-color: transparent;"
+            rows="5"
+            placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
+            ng-model="commentData.message"></textarea>
+
+    <button class="button button-small button-small-padding" ng-click="sendComment()" translate>
+      COMMON.BTN_SEND
+    </button>
+  </div>
 </div>
 
-<ion-item class="item-input-inset visible-xs visible-sm">
-  <label class="item-input-wrapper">
-  <input id="commentMessage" type="text" style="width:100%" placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
-         on-return="sendComment();"
-         ng-model="commentData.message"/>
-  </label>
-  <a class="button button-clear button-dark button-icon" ng-click="sendComment()">
-    <i class="icon ion-android-send"></i>
-  </a>
-</ion-item>
+<div class="visible-sm visible-sm ">
+  <div class="block">
+    <div class="item  visible-xs item-input-inset">
+      <label class="item-input-wrapper">
+        <input type="text"
+               style="width: 100%"
+               placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
+               on-return="sendComment();"
+               ng-model="commentData.message"/>
+        <button class="button button-small button-small-padding button-icon button-dark button-icon icon ion-android-send gray" ng-click="sendComment()">
+        </button>
+      </label>
+    </div>
+  </div>
+</div>

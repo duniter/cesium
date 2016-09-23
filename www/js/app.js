@@ -120,6 +120,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
+  .filter('truncText', function() {
+    return function(input, size) {
+      size = size || 500;
+      return !input || input.length <= size ? input : (input.substr(0, size) + '...');
+    };
+  })
 
   // Translation i18n
   .config(function ($translateProvider) {
@@ -224,13 +230,31 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
   var onLanguageChange = function() {
     var lang = $translate.use();
     console.debug('[app] Locale ['+lang+']');
-    moment.locale(lang.substring(0,2));
+
+    // config moment lib
+    try {
+      moment.locale(lang.substr(0,2));
+    }
+    catch(err) {
+      moment.locale('en');
+      console.warn('[app] Unknown local for moment lib. Using default');
+    }
+
+    // config numeral lib
+    try {
+      numeral.language(lang.substr(0,2));
+    }
+    catch(err) {
+      numeral.language('en');
+      console.warn('[app] Unknown local for numeral lib. Using default');
+    }
+
+    // Set date pattern (see 'formatDate' filter)
     $translate('COMMON.DATE_PATTERN')
       .then(function(datePattern) {
-        $rootScope.datePattern = datePattern;
+        $rootScope.datePattern = datePattern || 'YYYY-MM-DD HH:mm';
       });
 
-    numeral.language(lang);
   };
 
   // Set up moment translation

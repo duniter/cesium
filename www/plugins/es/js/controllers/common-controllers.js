@@ -9,6 +9,10 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
       // Menu extension points
       PluginServiceProvider.extendState('app', {
          points: {
+           'nav-buttons-right': {
+             templateUrl: "plugins/es/templates/menu_extend.html",
+             controller: "ESMenuExtendCtrl"
+           },
            'menu-main': {
              templateUrl: "plugins/es/templates/menu_extend.html",
              controller: "ESMenuExtendCtrl"

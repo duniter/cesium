@@ -8,6 +8,7 @@ angular.module('cesium.es.plugin', [
     'cesium.es.wot.controllers',
     'cesium.es.market.controllers',
     'cesium.es.registry.controllers',
-    'cesium.es.user.controllers'
+    'cesium.es.user.controllers',
+    'cesium.es.message.controllers'
   ])
 ;

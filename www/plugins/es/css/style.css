@@ -59,11 +59,11 @@
   top: inherit !important;
 }
 
-.col-text-wrap {
+.row-record .col-text-wrap {
     padding: 0;
     margin: 0;
 }
-.col .text-wrap {
+.row-record .col .text-wrap {
     height: 93px;
     white-space: normal;
     position: relative;
@@ -79,7 +79,7 @@
 }
 
 /* Source: See doc: http://stackoverflow.com/questions/15814346 */
-.col .text-wrap:after {
+.row-record .col .text-wrap:after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -127,6 +127,15 @@
   font-size: 55px !important;
   line-height: 88px;
 }
+
+/**
+* Message screen
+*/
+
+#composeMessage .list .item {
+  border-bottom: solid 1px #ccc;
+}
+
 
 /**
 * Add specific Icons

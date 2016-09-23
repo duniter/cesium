@@ -5,7 +5,8 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
     $stateProvider
 
       .state('app.new_transfer', {
-        url: "/transfer",
+        cache: false,
+        url: "/transfer?uid&pubkey",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -15,6 +16,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
       })
 
       .state('app.new_transfer_pubkey_uid', {
+        cache: false,
         url: "/transfer/:pubkey/:uid",
         views: {
           'menuContent': {
@@ -25,6 +27,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
       })
 
       .state('app.new_transfer_pubkey', {
+        cache: false,
         url: "/transfer/:pubkey",
         views: {
           'menuContent': {
@@ -68,14 +71,14 @@ function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $t
     });
   });
 
-  $scope.cancel = function() {
-    $ionicHistory.goBack();
-  };
-
   $scope.setForm = function(form) {
     $scope.form = form;
   };
 
+  // ovveride modal close
+  $scope.closeModal = function() {
+    $ionicHistory.goBack();
+  };
 }
 
 function TransferModalController($scope, $rootScope, $ionicPopover, $translate, $filter, $q, BMA, Wallet, UIUtils, Modals,

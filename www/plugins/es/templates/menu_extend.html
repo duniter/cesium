@@ -1,10 +1,26 @@
 
 <!-- Main section -->
+<ng-if ng-if="enable && extensionPoint === 'nav-buttons-right'">
+  <!-- message
+  <button class="button button-icon button-clear icon ion-email"
+          ui-sref="app.user_message"></button>-->
+
+  <!-- user profile
+  <button class="button button-icon button-clear icon ion-person"
+          ng-if="$root.login"
+          ui-sref="app.user_edit_profile">
+  </button>
+  <button class="button button-icon button-clear icon ion-person"
+          ng-if="!$root.login"
+          ng-click="login('app.user_edit_profile')">
+  </button>-->
+</ng-if>
+
+<!-- Main section -->
 <ng-if ng-if="enable && extensionPoint === 'menu-main'">
 
   <!-- registry-->
   <ion-item menu-close class="item item-icon-left"
-            href="#/app/registry"
             active-link="active"
             active-link-path-prefix="#/app/registry"
             ng-click="showRegistryLookupView();">
@@ -14,7 +30,6 @@
 
   <!-- market -->
   <ion-item menu-close class="item item-icon-left"
-            href="#/app/market"
             active-link="active"
             active-link-path-prefix="#/app/market"
             ng-click="showMarketLookupView();">
@@ -37,6 +52,19 @@
             ng-click="login('app.user_edit_profile')">
     <i class="icon ion-person"></i>
     <span translate>MENU.USER_PROFILE</span>
+  </ion-item>
+
+  <ion-item menu-close class="item item-icon-left" active-link="active"
+            ng-if="$root.login"
+            href="#/app/user/message">
+    <i class="icon ion-email"></i>
+    <span translate>MENU.USER_MESSAGE</span>
+  </ion-item>
+  <ion-item menu-close class="item item-icon-left item-menu-disable" active-link="active"
+            ng-if="!$root.login"
+            ng-click="login('app.user_message')">
+    <i class="icon ion-email"></i>
+    <span translate>MENU.USER_MESSAGE</span>
   </ion-item>
 
 </ng-if>

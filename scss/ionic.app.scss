@@ -466,12 +466,20 @@ $screen-menu:                     845px;
   .button.button-clear.button-icon.ion-android-more-vertical:first-child {
     padding-left: 0px !important;
   }
+}
 
+// Avoid to have not align button on bar-header
+.bar .buttons.pull-right, .bar .title+.button:last-child, .bar .title+.buttons, .bar>.button+.button:last-child, .bar>.button.pull-right {
+  top: 0px !important;
 }
 
 .button-icon {
   border-color: transparent;
   box-shadow: none !important;
+}
+
+.button-small-padding {
+  padding: 0 7px !important;
 }
 
 /* ============
@@ -828,6 +836,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important;
+    max-height: 80px;
   }
 }
 
@@ -899,6 +908,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .item-button-right > .buttons,
 .item-button-right .item-content > .buttons {
   top: 16px;
+
+}
+
+.item-button-right > .button.button-small,
+.item-button-right .item-content > .button.button-small,
+.item-button-right > .buttons .button-small,
+.item-button-right .item-content > .buttons .button-small {
+  font-size: 14px;
 }
 
 .item.large-button-bar {

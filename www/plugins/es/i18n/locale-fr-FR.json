@@ -13,14 +13,37 @@
   "MENU": {
     "MARKET": "Annonces",
     "REGISTRY": "Professionels",
-    "USER_PROFILE": "Mon profil"
+    "USER_PROFILE": "Mon profil",
+    "USER_MESSAGE": "Messages"
   },
   "COMMENTS": {
     "DIVIDER": "Commentaires",
     "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents",
-    "COMMENT_HELP": "Saisir un message, une question...",
+    "COMMENT_HELP": "Nouveau commentaire, question, etc.",
     "BTN_SEND": "Envoyer",
     "POPOVER_SHARE_TITLE": "Message #{{number}}"
+  },
+  "MESSAGE": {
+    "BTN_RESPOND": "Répondre",
+    "BTN_COMPOSE": "Nouveau message",
+    "INBOX": {
+      "NO_MESSAGE": "Aucun message",
+      "TITLE": "Messages"
+    },
+    "COMPOSE": {
+      "TITLE": "Nouveau message",
+      "SUB_TITLE": "Nouveau message",
+      "TO": "A",
+      "OBJECT": "Objet",
+      "OBJECT_HELP": "Objet",
+      "ENCRYPTED_HELP": "Veuillez noter que ce message sera crypté avant son envoi. Seul le destinataire (et vous) pourrez le lire.",
+      "MESSAGE": "Message",
+      "MESSAGE_HELP": "Contenu du message"
+    },
+    "ERROR": {
+      "SEND_MSG_FAILED": "Erreur lors de l'envoi du message.",
+      "SEARCH_FAILED": "Erreur lors de la récupération des messages."
+    }
   },
   "MARKET": {
     "COMMON": {
@@ -34,6 +57,7 @@
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
       "BTN_AROUND_ME": "Autour de moi",
+      "SHOW_MORE": "Voir plus d'annonces",
       "LOCATION": "Localisation",
       "LOCATION_HELP": "Ville",
       "LAST_RECORDS": "Dernières annonces :",

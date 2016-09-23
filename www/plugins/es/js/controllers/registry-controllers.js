@@ -1,6 +1,6 @@
 angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.es.common.controllers'])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
     'ngInject';
 
     $stateProvider
@@ -628,6 +628,8 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
           delete formData.category;
         }
         if (!$scope.id) { // Create
+            formData.creationTime = esHttp.date.now();
+            formData.time = formData.creationTime;
             esRegistry.record.add(formData)
             .then(function(id) {
               UIUtils.loading.hide();
@@ -637,6 +639,7 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
             .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
         }
         else { // Update
+            formData.time = esHttp.date.now();
             esRegistry.record.update(formData, {id: $scope.id})
             .then(function() {
               UIUtils.loading.hide();

@@ -114,7 +114,7 @@ To build Cesium, you will have to:
       
   - Installing nodejs build tools:
 ```
-   npm install -g bower gulp ionic cordova
+   npm install -g bower gulp ionic@1.7.16 cordova
 ```
 
   - Installing other build dependencies:

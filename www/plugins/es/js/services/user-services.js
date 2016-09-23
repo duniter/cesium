@@ -10,7 +10,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, esHttp, csSettings, Wallet, WotService, UIUtils, BMA) {
+.factory('esUser', function($rootScope, $q, esHttp, csSettings, Wallet, WotService, UIUtils, BMA) {
   'ngInject';
 
   function factory(host, port) {
@@ -36,6 +36,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }
         return;
       }
+
       esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: data.pubkey})
       .then(function(res) {
         if (res && res._source) {
@@ -96,7 +97,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
-    function onWotSearch(text, datas, resolve, reject) {
+    function onWotSearch(text, datas, resolve, reject, pubkeyAtributeName) {
       if (!datas) {
         if (resolve) {
           resolve();
@@ -104,6 +105,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return;
       }
 
+      pubkeyAtributeName = pubkeyAtributeName || 'pubkey';
       text = text ? text.toLowerCase().trim() : text;
       var map = {};
 
@@ -116,9 +118,16 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       };
 
       if (datas.length > 0) {
+        // collect pubkeys
         var pubkeys = datas.reduce(function(res, data) {
-          map[data.pubkey] = data;
-          return res.concat(data.pubkey);
+          var pubkey = data[pubkeyAtributeName];
+          var values = map[pubkey];
+          if (!values) {
+            values = [];
+            map[pubkey] = values;
+          }
+          values.push(data);
+          return res.concat(pubkey);
         }, []);
         request.query.constant_score = {
            filter: {
@@ -162,27 +171,29 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }
         else {
           _.forEach(res.hits.hits, function(hit) {
-            var data = map[hit._id];
-            if (!data) {
-              data = {
-                pubkey: hit._id
-              };
-              datas.push(data);
+            var values = map[hit._id];
+            if (!values) {
+              var value = {};
+              value[pubkeyAtributeName] = hit._id;
+              values=[value];
+              datas.push(value);
             }
             var avatar = hit._source.avatar? UIUtils.image.fromAttachment(hit._source.avatar) : null;
-            if (avatar) {
-              data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-              data.avatar=avatar;
-            }
-            data.name=hit._source.title;
-            if (!data.uid) {
-              data.uid = hit._source.uid ? hit._source.uid : uidsByPubkey[data.pubkey];
-            }
-            if (hit.highlight) {
-              if (hit.highlight.title) {
-                  data.name = hit.highlight.title[0];
+            _.forEach(values, function(data) {
+              if (avatar) {
+                data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
+                data.avatar=avatar;
               }
-            }
+              data.name=hit._source.title;
+              if (!data.uid) {
+                data.uid = hit._source.uid ? hit._source.uid : uidsByPubkey[data.pubkey];
+              }
+              if (hit.highlight) {
+                if (hit.highlight.title) {
+                    data.name = hit.highlight.title[0];
+                }
+              }
+            });
           });
         }
         resolve(datas);
@@ -194,6 +205,12 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         else {
           reject(err);
         }
+      });
+    }
+
+    function fillAvatars(datas, pubkeyAtributeName) {
+      return $q(function(resolve, reject) {
+        onWotSearch(null, datas, resolve, reject, pubkeyAtributeName);
       });
     }
 
@@ -251,7 +268,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         get: esHttp.get(host, port, '/user/profile/:id'),
         add: esHttp.record.post(host, port, '/user/profile'),
         update: esHttp.record.post(host, port, '/user/profile/:id/_update'),
-        avatar: esHttp.get(host, port, '/user/profile/:id?_source=avatar')
+        avatar: esHttp.get(host, port, '/user/profile/:id?_source=avatar'),
+        fillAvatars: fillAvatars
       }
     };
   }

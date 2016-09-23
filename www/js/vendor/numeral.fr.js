@@ -8,7 +8,7 @@
    factory(global.numeral)
 }(this, function (numeral) { 'use strict';
 
-    var data = {
+    numeral.language('fr', {
       "delimiters": {
         "thousands": " ",
         "decimal": "."
@@ -25,7 +25,5 @@
       "currency": {
         "symbol": "€"
       }
-    };
-    numeral.language('fr', data);
-    numeral.language('fr-FR', data);
+    });
 }));

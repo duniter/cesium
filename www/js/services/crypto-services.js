@@ -1,63 +1,63 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.crypto.services', ['ngResource'])
+angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'])
 
-.factory('CryptoUtils', function($q, $timeout) {
+.factory('CryptoUtils', function($q, $timeout, Device) {
   'ngInject';
 
-  var async_load_scrypt = function() {
+  var async_load_scrypt = function(on_ready) {
       if (typeof module !== 'undefined' && module.exports) {
           // add node.js implementations
           require('scrypt-em');
-          return scrypt_module_factory();
+          return on_ready(scrypt_module_factory());
       }
       else if (scrypt_module_factory !== null){
-          return scrypt_module_factory();
+          return on_ready(scrypt_module_factory());
       }
       else {
-          return $timeout(async_load_scrypt, 100);
+          return $timeout(function(){async_load_scrypt(on_ready);}, 100);
       }
   },
 
-  async_load_nacl = function() {
-      if (typeof module !== 'undefined' && module.exports) {
-          // add node.js implementations
-          require('nacl_factory');
-          return nacl_factory.instantiate();
-      }
-      else if (nacl_factory !== null){
-          return nacl_factory.instantiate();
-      }
-      else {
-          return $timeout(async_load_nacl, 100);
-      }
+  async_load_nacl = function(on_ready, options) {
+    if (typeof module !== 'undefined' && module.exports) {
+      // add node.js implementations
+      require('nacl_factory');
+      nacl_factory.instantiate(on_ready, options);
+    }
+    else if (nacl_factory !== null){
+      nacl_factory.instantiate(on_ready, options);
+    }
+    else {
+      $timeout(function(){async_load_nacl(on_ready, options);}, 100);
+    }
   },
 
-  async_load_base58 = function() {
+  async_load_base58 = function(on_ready) {
       if (typeof module !== 'undefined' && module.exports) {
           // add node.js implementations
           require('base58');
-          return Base58;
+          return on_ready(Base58);
       }
       else if (Base58 !== null){
-          return Base58;
+          return on_ready(Base58);
       }
       else {
-          return $timeout(async_load_base58, 100);
+          $timeout(function(){async_load_base58(on_ready);}, 100);
       }
   },
 
-  async_load_base64 = function() {
+  async_load_base64 = function(on_ready) {
       if (typeof module !== 'undefined' && module.exports) {
           // add node.js implementations
           require('base58');
-          return Base64;
+        on_ready(Base64);
       }
       else if (Base64 !== null){
-          return Base64;
+        on_ready(Base64);
       }
       else {
-          return setTimetout(async_load_base64, 100);
+         $timetout(function(){async_load_base64(on_ready);}, 100);
       }
   };
 
@@ -65,6 +65,7 @@ angular.module('cesium.crypto.services', ['ngResource'])
     var
       // Const
       crypto_sign_BYTES= 64,
+      crypto_secretbox_KEYBYTES= 32,
       SEED_LENGTH= 32, // Length of the key
       SCRYPT_PARAMS= {
               "N":4096,
@@ -72,18 +73,29 @@ angular.module('cesium.crypto.services', ['ngResource'])
               "p":1
             },
 
-      // load libraries
-      scrypt = async_load_scrypt(),
-      nacl = async_load_nacl(),
-      base58 = async_load_base58(),
-      base64 = async_load_base64(),
+      // libraries handlers
+      scrypt,
+      nacl,
+      base58,
+      base64,
+
+      // functions
       decode_utf8 = function(s) {
           var i, d = unescape(encodeURIComponent(s)), b = new Uint8Array(d.length);
           for (i = 0; i < d.length; i++) b[i] = d.charCodeAt(i);
           return b;
       },
+      encode_utf8 = function(arguments) {
+        return nacl.encode_utf8(arguments);
+      },
       encode_base58 = function(a) {
-          return base58.encode(a);
+        return base58.encode(a);
+      },
+      decode_base58 = function(a) {
+        var i, a = base58.decode(a);
+        var b = new Uint8Array(a.length);
+        for (i = 0; i < a.length; i++) b[i] = a[i];
+        return b;
       },
       hash_sha256 = function(message) {
         return $q(function(resolve, reject) {
@@ -91,6 +103,24 @@ angular.module('cesium.crypto.services', ['ngResource'])
           var hash = nacl.to_hex(nacl.crypto_hash_sha256(msg));
           resolve(hash.toUpperCase());
         });
+      },
+      random_nonce = function() {
+        return nacl.crypto_box_random_nonce();
+      },
+      /**
+       * Converts an array buffer to a string
+       *
+       * @private
+       * @param {ArrayBuffer} buf The buffer to convert
+       * @param {Function} callback The function to call when conversion is complete
+       */
+      array_to_string = function(buf, callback) {
+        var bb = new Blob([new Uint8Array(buf)]);
+        var f = new FileReader();
+        f.onload = function(e) {
+          callback(e.target.result);
+        };
+        f.readAsText(bb);
       },
 
      /**
@@ -101,10 +131,16 @@ angular.module('cesium.crypto.services', ['ngResource'])
                 var seed = scrypt.crypto_scrypt(
                                             nacl.encode_utf8(password),
                                             nacl.encode_utf8(salt),
-                                            4096, 16, 1, 32 // TODO: put in var SCRYPT_PARAMS
+                                            4096, 16, 1, SEED_LENGTH // TODO: put in var SCRYPT_PARAMS
                                          );
-                 var keypair = nacl.crypto_sign_keypair_from_seed(seed);
-                 resolve(keypair);
+                var signKeypair = nacl.crypto_sign_seed_keypair(seed);
+                var boxKeypair = nacl.crypto_box_seed_keypair(seed);
+                 resolve({
+                   signPk: signKeypair.signPk,
+                   signSk: signKeypair.signSk,
+                   boxPk: boxKeypair.boxPk,
+                   boxSk: boxKeypair.boxSk
+                 });
               });
         },
 
@@ -129,7 +165,7 @@ angular.module('cesium.crypto.services', ['ngResource'])
       },
 
       /**
-      * Sign a message, from a wallet
+      * Sign a message, from a key pair
       */
       sign = function(message, keypair) {
         return $q(function(resolve, reject) {
@@ -141,8 +177,107 @@ angular.module('cesium.crypto.services', ['ngResource'])
             var signature = base64.encode(sig);
             resolve(signature);
           });
-      };
+      },
 
+    /**
+     * Compute the box key pair, from a sign key pair
+     */
+    box_keypair_from_sign = function(signKeyPair) {
+      return nacl.crypto_box_keypair_from_sign_sk(signKeyPair.signSk);
+    },
+
+    /**
+     * Compute the box public key, from a sign public key
+     */
+    box_pk_from_sign = function(signPk) {
+      return nacl.crypto_box_pk_from_sign_pk(signPk);
+    },
+
+    /**
+     * Encrypt a message, from a key pair
+     */
+    box = function(message, nonce, recipientPk, senderSk) {
+      return $q(function(resolve, reject) {
+        if (!message) {
+          resolve(message);
+          return;
+        }
+        var messageBin = decode_utf8(message);
+        if (typeof recipientPk === "string") {
+          recipientPk = CryptoUtils.util.decode_base58(recipientPk);
+        }
+
+        //console.debug('Original message: ' + message);
+        message = nacl.encode_utf8(message);
+
+        try {
+          var ciphertextBin = nacl.crypto_box(messageBin, nonce, recipientPk, senderSk);
+          var ciphertext = base64.encode(ciphertextBin);
+          //console.debug('Encrypted message: ' + ciphertext);
+          resolve(ciphertext);
+        }
+        catch(err) {
+          reject(err);
+        }
+      });
+    };
+
+    /**
+     * Decrypt a message, from a key pair
+     */
+    box_open = function(cypherText, nonce, senderPk, recipientSk) {
+      return $q(function(resolve, reject) {
+        if (!cypherText) {
+          resolve(cypherText);
+          return;
+        }
+        var ciphertextBin = base64.decode(cypherText);
+        if (typeof senderPk === "string") {
+          senderPk = CryptoUtils.util.decode_base58(senderPk);
+        }
+
+        try {
+          var message = nacl.crypto_box_open(ciphertextBin, nonce, senderPk, recipientSk);
+          array_to_string(message, function(result) {
+            //console.debug('Decrypted text: ' + result);
+            resolve(result);
+          });
+        }
+        catch(err) {
+          reject(err);
+        }
+
+      });
+    };
+
+    // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
+    Device.ready()
+      .then(function() {
+        console.debug('Loading NaCl...');
+        var now = new Date().getTime();
+        var naclOptions;
+        if (ionic.Platform.grade.toLowerCase()!='a') {
+          console.log('Reduce NaCl memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
+          naclOptions = {
+            requested_total_memory: 16777216
+          };
+        }
+        async_load_nacl(function(lib) {
+          nacl = lib;
+          console.debug('Loaded NaCl in ' + (new Date().getTime() - now) + 'ms');
+        }, naclOptions);
+      });
+
+
+    async_load_scrypt(function(lib) {
+      scrypt = lib;
+    });
+    async_load_base58(function(lib) {
+      base58 = lib;
+    });
+    async_load_base64(function(lib) {
+      base64 = lib;
+    });
     // Service's exposed methods
     return {
         /*
@@ -152,15 +287,25 @@ angular.module('cesium.crypto.services', ['ngResource'])
         base58: base58,
         base64: base64,*/
         util: {
-          encode_utf8: nacl.encode_utf8,
+          encode_utf8: encode_utf8,
           decode_utf8: decode_utf8,
           encode_base58: encode_base58,
+          decode_base58: decode_base58,
           hash: hash_sha256,
-          encode_base64: base64.encode
+          encode_base64: base64.encode,
+          random_nonce: random_nonce
         },
         connect: connect,
         sign: sign,
-        verify: verify
+        verify: verify,
+        box: {
+          keypair: {
+            fromSignKeypair: box_keypair_from_sign,
+            pkFromSignPk: box_pk_from_sign
+          },
+          pack: box,
+          open: box_open
+        }
         //,isCompatible: isCompatible
      };
   }
