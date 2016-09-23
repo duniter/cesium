@@ -1,0 +1,92 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span translate>MESSAGE.VIEW.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <!--<button class="button button-bar button-icon button-clear visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
+      <i class="icon ion-android-create"></i>
+    </button>-->
+    <button class="button button-bar button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
+            ng-click="actionsPopover.show($event)">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true">
+
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+      <div class="col no-padding">
+
+        <div class="center padding" ng-if="loading">
+          <ion-spinner icon="android"></ion-spinner>
+        </div>
+
+        <ion-list class="animate-fade-slide-in item-text-wrap">
+
+
+          <div class="item" ng-class="{'item-avatar': formData.avatar}">
+            <img ng-if="formData.avatar" class="item-image" ng-src="{{::formData.avatar.src}}">
+            <h1 ng-bind-html="formData.title"></h1>
+            <h4>
+              <i class="ion-clock"></i>
+              <span translate>MESSAGE.VIEW.SENDER</span>
+              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.pubkey, uid:formData.uid})">
+                <span ng-if="formData.uid">
+                  <i class="ion-person"></i>
+                  {{::formData.name||formData.uid}}
+                </span>
+                <span ng-if="!formData.uid">
+                  <i class="ion-key"></i>
+                  {{::formData.pubkey|formatPubkey}}
+                </span>
+              </a>
+              <span>
+                {{formData.time|formatFromNow}}
+                <span class="gray hidden-xs">|
+                  {{formData.time | formatDate}}
+                </span>
+              </span>
+            </h4>
+          </div>
+
+          <!-- content -->
+          <ion-item>
+            <h2>
+              <span class="text-keep-lines" ng-bind-html="formData.content"></span>
+            </h2>
+
+            <div class="padding gray" ng-if="!formData.content" translate>
+              MESSAGE.VIEW.NO_CONTENT
+            </div>
+          </ion-item>
+
+          <!-- Buttons bar-->
+          <div class="item large-button-bar hidden-xs hidden-sm">
+            <button class="button button-small button-stable icon-left ink-dark"
+                    ng-click="delete()">
+              <i class="icon ion-trash-a assertive"></i>
+              <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
+            </button>
+            <button class="button button-small button-stable icon ion-reply"
+                    ng-click="showReplyModal()">
+              {{'MESSAGE.BTN_REPLY' | translate}}
+            </button>
+            <!--<button class="button button-small button-stable icon ion-reply"
+                    ng-click="showForwardModal()">
+              {{'MESSAGE.BTN_FORWARD' | translate}}
+            </button>-->
+          </div>
+        </ion-list>
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+    </div>
+  </ion-content>
+
+  <button id="fab-view-message-reply"
+          class="button button-fab button-fab-bottom-right button-calm icon ion-reply visible-xs visible-sm spin"
+          ng-click="showReplyModal()">
+  </button>
+</ion-view>

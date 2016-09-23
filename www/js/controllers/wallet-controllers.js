@@ -32,8 +32,8 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch,
-  UIUtils, Wallet, $translate, $ionicPopover, Modals, csSettings) {
+function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHistory, screenmatch,
+  UIUtils, Wallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
   'ngInject';
 
   $scope.walletData = null;
@@ -42,20 +42,24 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch
   $scope.showDetails = false;
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function() {
     $scope.loadWallet()
       .then(function(walletData) {
-        if (!walletData) {
-          $state.go('app.home');
-        }
         $scope.walletData = walletData;
         $scope.updateView();
         $scope.loading=false;
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', walletData.pubkey, 1100);
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+      })
+      .catch(function(err){
+        if ('CANCELLED' === err) {
+          $ionicHistory.nextViewOptions({
+            historyRoot: true
+          });
+          $state.go('app.home');
+        }
       });
-
   });
 
   $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
@@ -273,7 +277,7 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch
   // Updating wallet data
   $scope.doUpdate = function() {
     UIUtils.loading.show();
-    Wallet.refreshData()
+    return Wallet.refreshData()
     .then(function() {
       $scope.updateView();
       UIUtils.loading.hide();
@@ -324,21 +328,40 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, screenmatch
     });
   };
 
-   // TODO: remove auto add account when done
-   /*$timeout(function() {
+  $scope.showMoreTx = function(fromTime) {
 
-     $scope.newAccount();
-   }, 400);
-   */
+    fromTime = fromTime ||
+      ($scope.walletData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
+      (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
+
+    UIUtils.loading.show();
+    return Wallet.refreshData({tx: {enable: true,fromTime: fromTime}})
+      .then(function() {
+        $scope.updateView();
+        UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        // If http rest limitation: wait then retry
+        if (err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+          $timeout(function() {
+            return $scope.showMoreTx();
+          }, 2000);
+        }
+        else {
+          UIUtils.onError('ERROR.REFRESH_WALLET_DATA')(err);
+        }
+      });
+  };
+
 }
 
 
-function WalletTxErrorController($scope, $rootScope, $ionicPopup, $timeout, UIUtils, Wallet) {
+function WalletTxErrorController($scope, $timeout, UIUtils, Wallet) {
   'ngInject';
 
   $scope.walletData = null;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e) {
     $scope.loadWallet()
       .then(function(walletData) {
         $scope.walletData = walletData;

@@ -57,6 +57,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     };
   })
 
+
   .filter('formatDuration', function() {
     return function(input) {
       return input ? moment(moment().utc().valueOf() + parseInt(input)*1000).startOf('minute').fromNow() : '';
@@ -67,7 +68,13 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     return function(input) {
       if (!input) {return null;}
       var duration = moment(0).startOf('minute').from(moment(parseInt(input)*1000), true);
-      return duration.split(" ").slice(-1)[0]; // keep only the last word (e.g. remove "un" "a"...)
+      return duration.split(' ').slice(-1)[0]; // keep only last words (e.g. remove "un" "a"...)
+    };
+  })
+
+  .filter('formatFromNowShort', function() {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).startOf('minute').fromNow(true) : '';
     };
   })
 

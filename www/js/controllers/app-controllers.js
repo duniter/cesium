@@ -163,8 +163,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     });
   };
 
-  // Login
-  $scope.login = function(state) {
+  // Login and go to wallet
+  $scope.login = function() {
+    $scope.loginAndGo('app.view_wallet');
+  };
+
+  // Login and go to a state
+  $scope.loginAndGo = function(state) {
     if (!Wallet.isLogin()) {
       $scope.showLoginModal()
       .then(function(walletData){
@@ -173,6 +178,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
           $state.go(state ? state : 'app.view_wallet');
         }
       });
+    }
+    else {
+      $state.go(state);
     }
   };
 

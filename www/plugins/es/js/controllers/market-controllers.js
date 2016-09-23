@@ -545,13 +545,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
       $scope.actionsPopover.hide();
     }
 
-    // translate
-    var translations;
-    $translate(['MARKET.VIEW.REMOVE_CONFIRMATION', 'MARKET.INFO.RECORD_REMOVED'])
-    .then(function(res) {
-      translations = res;
-      return UIUtils.alert.confirm(res['MARKET.VIEW.REMOVE_CONFIRMATION']);
-    })
+    UIUtils.alert.confirm('MARKET.VIEW.REMOVE_CONFIRMATION')
     .then(function(confirm) {
       if (confirm) {
         esMarket.record.remove($scope.id)
@@ -560,7 +554,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
               historyRoot: true
             });
             $state.go('app.market_lookup');
-            UIUtils.toast.show(translations['MARKET.INFO.RECORD_REMOVED']);
+            UIUtils.toast.show('MARKET.INFO.RECORD_REMOVED');
           })
           .catch(UIUtils.onError('MARKET.ERROR.REMOVE_RECORD_FAILED'));
       }

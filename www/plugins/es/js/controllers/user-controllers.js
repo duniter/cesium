@@ -18,7 +18,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
 ;
 
-function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filter, $focus, $q, SocialUtils, $translate, $ionicHistory) {
+function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $state, $focus, $q, SocialUtils, $translate, $ionicHistory) {
   'ngInject';
 
   $scope.loading = true;
@@ -34,7 +34,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
     url: null
   };
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e) {
     $scope.loading = true; // to avoid the call of doSave()
     $scope.loadWallet()
       .then(function(walletData) {
@@ -65,6 +65,11 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $filte
         // removeIf(device)
         $focus('profile-name');
         // endRemoveIf(device)
+      })
+      .catch(function(err){
+        if (err === 'CANCELLED') {
+          $state.go('app.home');
+        }
       });
   });
 

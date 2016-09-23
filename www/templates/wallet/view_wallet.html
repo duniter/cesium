@@ -226,6 +226,15 @@
             <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
+
+        <div class="item" ng-if="walletData.tx.fromTime > 0">
+          <p>
+            <a ng-click="showMoreTx()" translate>ACCOUNT.SHOW_MORE_TX</a>
+            <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: walletData.tx.fromTime}"></span>
+            <span class="gray">|</span>
+            <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>
+          </p>
+        </div>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;

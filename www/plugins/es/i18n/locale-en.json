@@ -24,25 +24,43 @@
     "POPOVER_SHARE_TITLE": "Message #{{number}}"
   },
   "MESSAGE": {
-    "BTN_RESPOND": "Respond",
+    "REMOVE_CONFIRMATION": "Are you sure you want to delete this message ?<br/><br/> This is irreversible.",
+    "REPLY_TITLE_PREFIX": "Re: ",
+    "FORWARD_TITLE_PREFIX": "Fw: ",
+    "BTN_REPLY": "Reply",
     "BTN_COMPOSE": "New message",
     "INBOX": {
-      "NO_MESSAGE": "No message",
+      "NO_MESSAGE": "No message received",
       "TITLE": "Messages"
     },
     "COMPOSE": {
       "TITLE": "New message",
+      "TITLE_REPLY": "Reply",
       "SUB_TITLE": "New message",
       "TO": "To",
       "OBJECT": "Object",
       "OBJECT_HELP": "Object",
       "ENCRYPTED_HELP": "Please note this message will by encrypt before sending. Only you and recipient could read it.",
       "MESSAGE": "Message",
-      "MESSAGE_HELP": "Message content"
+      "MESSAGE_HELP": "Message content",
+      "CONTENT_CONFIRMATION": "No message content.<br/><br/>Are your sure you want to send this message ?"
+    },
+    "VIEW": {
+      "TITLE": "Message",
+      "SENDER": "Sent by",
+      "NO_CONTENT": "Empty message"
+    },
+    "INFO": {
+      "MESSAGE_REMOVED": "Message supprimé"
     },
     "ERROR": {
       "SEND_MSG_FAILED": "Error while sending message.",
-      "SEARCH_FAILED": "Error while loading messages."
+      "SEARCH_FAILED": "Error while loading messages.",
+      "LOAD_MESSAGE_FAILED": "Error while loading message.",
+      "MESSAGE_NOT_READABLE": "Unable to read message.",
+      "USER_NOT_RECIPIENT": "You are not the recipient of this message: unable to read it.",
+      "NOT_AUTHENTICATED_MESSAGE": "The authenticity of the message is not certain or its content is corrupted.",
+      "REMOVE_MESSAGE_FAILED": "Error while deleting message"
     }
   },
   "MARKET": {
@@ -67,7 +85,7 @@
       "TITLE": "Ad",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "Ad {{title}}",
-      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad ?<br/><br/> This is irrevocable."
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad ?<br/><br/> This is irreversible."
     },
     "TYPE": {
       "TITLE": "New ad",
@@ -125,7 +143,7 @@
       "LOCATION": "Address:",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "{{title}}",
-      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record ?<br/><br/>This is irrevocable."
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record ?<br/><br/>This is irreversible."
     },
     "TYPE": {
       "TITLE": "New",

@@ -1,7 +1,8 @@
 <ion-modal-view id="transfer" class="modal-full-height">
   <ion-header-bar class="bar-positive">
     <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
-    <h1 class="title" translate>MESSAGE.COMPOSE.TITLE</h1>
+    <h1 class="title" nf=if="!isReply" translate>MESSAGE.COMPOSE.TITLE</h1>
+    <h1 class="title" nf=if="isReply" translate>MESSAGE.COMPOSE.TITLE_REPLY</h1>
 
     <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doSend()">
     </button>

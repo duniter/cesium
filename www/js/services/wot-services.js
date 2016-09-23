@@ -457,7 +457,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }
           })
           .catch(function(err){
-            if (err && err.ucode === 1006) {
+            if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
               resolve(result);
             }
             else {

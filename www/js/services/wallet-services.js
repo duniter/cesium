@@ -12,35 +12,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     constants = {
       STORAGE_KEY: "CESIUM_DATA"
     },
-    data = {
-        pubkey: null,
-        keypair: {
-            signSk: null,
-            signPk: null
-        },
-        uid: null,
-        balance: 0,
-        sources: null,
-        sourcesIndexByKey: null,
-        currency: null,
-        parameters: null,
-        currentUD: null,
-        medianTime: null,
-        tx: {
-          history: [],
-          pendings: [],
-          errors: []
-        },
-        requirements: {},
-        isMember: false,
-        loaded: false,
-        blockUid: null,
-        avatar: null,
-    },
+    data = {},
 
     api = new Api(this, 'WalletService-' + id),
 
-    resetData = function() {
+    resetData = function(init) {
       data.pubkey= null;
       data.keypair ={
                 signSk: null,
@@ -63,11 +39,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.isMember = false;
       data.loaded = false;
       data.blockUid = null;
-      data.avatar = null;
-      if (!csSettings.data.useLocalStorage) {
-        csSettings.reset();
+      if (init) {
+        api.data.raise.init(data);
       }
-      api.data.raise.reset(data);
+      else {
+        if (!csSettings.data.useLocalStorage) {
+          csSettings.reset();
+        }
+        api.data.raise.reset(data);
+      }
     },
 
     reduceTxAndPush = function(txArray, result, processedTxMap, excludePending) {
@@ -252,14 +232,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return data;
     },
 
-    isSourceEquals = function(arg1, arg2) {
-        return arg1.identifier == arg2.identifier &&
-               arg1.noffset == arg2.noffset &&
-               arg1.type == arg2.type &&
-               arg1.base == arg2.base &&
-              arg1.amount == arg2.amount;
-    },
-
     resetRequirements = function() {
       data.requirements = {
         needSelf: true,
@@ -363,7 +335,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    loadTransactions = function() {
+    loadTransactions = function(fromTime) {
       return $q(function(resolve, reject) {
         var txHistory = [];
         var udHistory = [];
@@ -371,14 +343,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
         var now = new Date().getTime();
         var nowInSec = Math.trunc(now / 1000);
-        var fromTime = nowInSec - csSettings.data.walletHistoryTimeSecond;
+        fromTime = fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
         var processedTxMap = {};
 
         var reduceTx = function(res){
           reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
           reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
           reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
-          reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*exclude pending*/);
+          reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*include pending*/);
         };
 
         var jobs = [
@@ -387,16 +359,26 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             .then(reduceTx)
         ];
 
+
         // get TX history since
-        var sliceTime = csSettings.data.walletHistorySliceSecond;
-        for(var i = fromTime - (fromTime % sliceTime); i - sliceTime < nowInSec; i += sliceTime)  {
-          jobs.push(BMA.tx.history.times({pubkey: data.pubkey, from: i, to: i+sliceTime-1})
+        if (fromTime !== -1) {
+          var sliceTime = csSettings.data.walletHistorySliceSecond;
+          for(var i = fromTime - (fromTime % sliceTime); i - sliceTime < nowInSec; i += sliceTime)  {
+            jobs.push(BMA.tx.history.times({pubkey: data.pubkey, from: i, to: i+sliceTime-1})
+              .then(reduceTx)
+            );
+          }
+
+          jobs.push(BMA.tx.history.timesNoCache({pubkey: data.pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
+            .then(reduceTx));
+        }
+
+        // get all TX
+        else {
+          jobs.push(BMA.tx.history.all({pubkey: data.pubkey})
             .then(reduceTx)
           );
         }
-
-        jobs.push(BMA.tx.history.timesNoCache({pubkey: data.pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
-          .then(reduceTx));
 
         // get UD history
         if (csSettings.data.showUDHistory) {
@@ -405,6 +387,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             .then(function(res){
               udHistory = !res.history || !res.history.history ? [] :
                res.history.history.reduce(function(res, ud){
+                 if (ud.time < fromTime) return res; // skip to old UD
                  var amount = (ud.base > 0) ? ud.amount * Math.pow(10, ud.base) : ud.amount;
                  return res.concat({
                    time: ud.time,
@@ -626,49 +609,48 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     refreshData = function(options) {
       if (!options) {
         options = {
-          uds: true,
+          ud: true,
           requirements: true,
           sources: true,
-          tx: true
+          tx: {
+            enable: true,
+            fromTime: data.tx ? data.tx.fromTime : undefined // keep previous time
+          },
+          sigStock: true
         };
       }
-      return $q(function(resolve, reject){
-        var jobs = [];
-        // Get UDs
-        if (options.uds) {
-          jobs.push(loadUDs());
-        }
-        // Get requirements
-        if (options.uds) {
-          jobs.push(loadRequirements()
-            .then(function() {
-              finishLoadRequirements();
-            }));
-        }
-        if (options.sources || options.tx) {
-          // Get sources
-          jobs.push(loadSources());
-          // Get transactions
-          jobs.push(loadTransactions());
-        }
 
+      var jobs = [];
 
-        // Load sigStock
-        jobs.push(loadSigStock());
+      // Get UDs
+      if (options.ud) jobs.push(loadUDs());
 
-        // API extension
-        jobs.push(api.data.raisePromise.load(data));
+      // Get requirements
+      if (options.requirements) {
+        jobs.push(loadRequirements()
+          .then(function() {
+            finishLoadRequirements();
+          }));
+      }
 
-        $q.all(jobs)
-        .then(function() {
-          // Process transactions and sources
-          processTransactionsAndSources()
-          .then(function(){
-            resolve(data);
-          })
-          .catch(function(err){reject(err);});
-        })
-        .catch(function(err){reject(err);});
+      if (options.sources || (options.tx && options.tx.enable)) {
+        // Get sources
+        jobs.push(loadSources());
+
+        // Get transactions
+        jobs.push(loadTransactions(options.tx.fromTime));
+      }
+
+      // Load sigStock
+      if (options.sigStock) jobs.push(loadSigStock());
+
+      // API extension
+      if (options.api) jobs.push(api.data.raisePromise.load(data, options));
+
+      return $q.all(jobs)
+      .then(function() {
+        // Process transactions and sources
+        return processTransactionsAndSources();
       });
     },
 
@@ -1157,10 +1139,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     // Register extension points
     api.registerEvent('data', 'login');
     api.registerEvent('data', 'logout');
+    api.registerEvent('data', 'init');
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'reset');
 
     csSettings.api.data.on.changed($rootScope, store);
+
+    // init data
+    resetData(true);
 
     return {
       id: id,

@@ -94,7 +94,7 @@
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "HISTORY_SETTINGS": "My Account",
-    "DISPLAY_UD_HISTORY": "Show received dividends ?",
+    "DISPLAY_UD_HISTORY": "Display produced dividends ?",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
     "PLUGINS_SETTINGS": "Extensions",
@@ -169,14 +169,14 @@
       "SUMMARY": "Received certifications",
       "LIST": "Détails of received certifications",
       "RECEIVED": "Received certifications",
-      "RECEIVED_BY": "Certifications received by {{uid}}",
+      "RECEIVED_BY": "Certifications received by {{uid}}"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications sent",
       "SUMMARY": "Sent certifications",
       "LIST": "Détails of sent certifications",
       "SENT": "Sent certifications",
-      "SENT_BY": "Certifications sent by {{uid}}",
+      "SENT_BY": "Certifications sent by {{uid}}"
     }
   },
   "LOGIN": {
@@ -194,6 +194,9 @@
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "NO_TX": "No transaction",
+    "SHOW_MORE_TX": "Show more",
+    "SHOW_ALL_TX": "Show all",
+    "TX_FROM_DATE": "(current limit to {{fromTime|formatFromNowShort}})",
     "PENDING_TX": "Pending transactions",
     "ERROR_TX": "Transaction not executed",
     "ERROR_TX_SENT": "Sent transactions",

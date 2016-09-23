@@ -63,6 +63,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       data.avatar = null;
       data.avatarStyle = null;
       data.profile = null;
+      data.name = null;
     }
 
     function onWotLoad(data, resolve, reject) {

@@ -1,7 +1,8 @@
 <ion-view left-buttons="leftButtons"
           id="composeMessage">
   <ion-nav-title>
-    <span class="visible-xs visible-sm" translate>MESSAGE.COMPOSE.TITLE</span>
+    <span class="visible-xs visible-sm" nf=if="!isReply" translate>MESSAGE.COMPOSE.TITLE</span>
+    <span class="visible-xs visible-sm" nf=if="isReply" translate>MESSAGE.COMPOSE.TITLE_REPLY</span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">

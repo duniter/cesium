@@ -14,7 +14,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         NO_MATCHING_MEMBER: 2004,
         NO_IDTY_MATCHING_PUB_OR_UID: 2021,
         MEMBERSHIP_ALREADY_SEND: 2007,
-        IDENTITY_SANDBOX_FULL: 1007
+        IDENTITY_SANDBOX_FULL: 1007,
+        HTTP_LIMITATION: 1006
       },
     regex = {
       USER_ID: "[A-Za-z0-9_-]+",
