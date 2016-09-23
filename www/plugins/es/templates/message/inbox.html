@@ -35,8 +35,12 @@
         class="item item-border-large item-avatar item-icon-right ink"
         ng-repeat="msg in messages"
         ui-sref="app.user_view_message({id:msg.id})">
-        <img ng-if="msg.avatar" class="item-image" ng-src="{{::msg.avatar.src}}">
-        <i ng-if="!msg.avatar && msg.uid" class="item-image icon ion-person"></i>
+        <!--<img ng-if="msg.avatar" class="item-image" ng-src="{{::msg.avatar.src}}">
+        <i ng-if="!msg.avatar && msg.uid" class="item-image icon ion-person"></i>-->
+        <i class="item-image"
+           ng-style="msg.avatarStyle"
+           ng-class="{'icon ion-person': !msg.avatarStyle, 'avatar': msg.avatarStyle}">
+        </i>
 
         <h4 class="gray pull-right">{{msg.time|formatFromNow}} - {{msg.time|formatDate}}</h4>
         <h3>

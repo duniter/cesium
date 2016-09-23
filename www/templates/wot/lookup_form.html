@@ -55,8 +55,10 @@
 
     <ion-item ng-repeat="identity in search.results" class="item item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
 
-      <img ng-if="identity.avatar" class="item-image" ng-src="{{::identity.avatar.src}}">
-      <i ng-if="!identity.avatar && identity.uid" class="item-image icon ion-person"></i>
+      <i class="item-image"
+         ng-style="identity.avatarStyle"
+         ng-class="{'icon ion-person': !identity.avatarStyle, 'avatar': identity.avatarStyle}">
+      </i>
 
       <h2 ng-if="identity.name" ng-bind-html="identity.name"></h2>
       <h2 ng-if="!identity.name && identity.uid">{{::identity.uid}}</h2>
