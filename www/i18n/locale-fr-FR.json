@@ -297,15 +297,17 @@
   },
   "INFO": {
     "POPUP_TITLE": "Information",
-    "CERTIFICATION_DONE": "Certification envoyée avec succès.",
-    "NOT_ENOUGH_CREDIT": "Crédit insuffisant.",
-    "TRANSFER_SENT": "Demande de virement envoyée avec succès.",
-    "COPY_TO_CLIPBOARD_DONE": "Copie effectuée."
+    "CERTIFICATION_DONE": "Certification envoyée avec succès",
+    "NOT_ENOUGH_CREDIT": "Crédit insuffisant",
+    "TRANSFER_SENT": "Demande de virement envoyée avec succès",
+    "COPY_TO_CLIPBOARD_DONE": "Copie effectuée",
+    "MEMBERSHIP_OUT_SENT": "Résiliation envoyée avec succès"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
     "CERTIFY_RULES_TITLE_UID": "Certifier {{uid}}",
     "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>",
-    "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>"
+    "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>",
+    "MEMBERSHIP_OUT": "<b>Avertissement</b> :<br/>Vous allez résilier votre adhésion comme membre. Cette opération est <b>irréversible</b>.<br/></br/><b>Etes-vous sûr de vouloir continuer ?</b>"
   }
 }

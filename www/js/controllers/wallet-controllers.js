@@ -262,15 +262,26 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHisto
     //.catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
   };
 
-  // Send membership IN
-  $scope.membershipOut = function() {
+  // Send membership OUT
+  $scope.membershipOut = function(confirm) {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
-    // TODO Add confirmation message
+
+    // Ask user confirmation
+    if (!confirm) {
+      return UIUtils.alert.confirm('CONFIRM.MEMBERSHIP_OUT')
+      .then(function(confirm) {
+        if (confirm) $scope.membershipOut(true); // loop with confirmation
+      });
+    }
 
     UIUtils.loading.show();
-    Wallet.membership.out()
+    return Wallet.membership.out()
+      .then(function() {
+        UIUtils.loading.hide();
+        UIUtils.toast.show('INFO.MEMBERSHIP_OUT_SENT');
+    })
     .catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_OUT_FAILED'));
   };
 

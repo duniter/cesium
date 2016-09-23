@@ -267,8 +267,8 @@
     "LOGIN_FAILED": "Error while sign in.",
     "LOAD_IDENTITY_FAILED": "Could not load identity.",
     "LOAD_REQUIREMENTS_FAILED": "Could not load identity requirements.",
-    "SEND_MEMBERSHIP_IN_FAILED": "Error while registering as member.",
-    "SEND_MEMBERSHIP_OUT_FAILED": "Error while registering out.",
+    "SEND_MEMBERSHIP_IN_FAILED": "Error while sending registration as member.",
+    "SEND_MEMBERSHIP_OUT_FAILED": "Error while sending membership revocation.",
     "REFRESH_WALLET_DATA": "Could not refresh wallet.",
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters.",
     "GET_CURRENCIES_FAILED": "Unable to load currencies. Please retry later.",
@@ -298,14 +298,16 @@
   "INFO": {
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Identity successfully signed",
-    "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "TRANSFER_SENT": "Transfer request successfully sent.",
-    "COPY_TO_CLIPBOARD_DONE": "Copy succeed."
+    "NOT_ENOUGH_CREDIT": "Not enough credit",
+    "TRANSFER_SENT": "Transfer request successfully sent",
+    "COPY_TO_CLIPBOARD_DONE": "Copy succeed",
+    "MEMBERSHIP_OUT_SENT": "Membership revocation sent"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
-    "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>"
+    "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>",
+    "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue ?</b>"
   }
 }
