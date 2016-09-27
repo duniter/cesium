@@ -5,7 +5,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 .factory('BMA', function($q, csSettings, csHttp, $rootScope) {
   'ngInject';
 
-  function factory(host, port) {
+  function factory(host, port, cacheEnable) {
 
     var
     errorCodes = {
@@ -48,7 +48,9 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       return host2 == host && ((!port && !port2) ||(port == port2));
     }
 
-    var getMembers = csHttp.getWithCache(host, port, '/wot/members');
+    var getMembers = cacheEnable ?
+      csHttp.getWithCache(host, port, '/wot/members') :
+      csHttp.get(host, port, '/wot/members');
 
     function getMemberUidsByPubkey() {
       return getMembers()
@@ -71,8 +73,12 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         });
     }
 
-    var getBlockchainWithUd = csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT);
-    var getBlockchainBlock = csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT);
+    var getBlockchainWithUd = cacheEnable ?
+      csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT) :
+      csHttp.get(host, port, '/blockchain/with/ud');
+    var getBlockchainBlock = cacheEnable ?
+      csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT) :
+      csHttp.get(host, port, '/blockchain/block/:block');
 
     function getBlockchainLastUd() {
       return getBlockchainWithUd()
@@ -220,7 +226,9 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         peers: csHttp.get(host, port, '/network/peers')
       },
       blockchain: {
-        parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
+        parameters: cacheEnable ?
+          csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG) :
+          csHttp.get(host, port, '/blockchain/parameters'),
         current: csHttp.get(host, port, '/blockchain/current'),
         block: getBlockchainBlock,
         membership: csHttp.post(host, port, '/blockchain/membership'),
@@ -236,9 +244,13 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         process: csHttp.post(host, port, '/tx/process'),
         history: {
           all: csHttp.get(host, port, '/tx/history/:pubkey'),
-          times: csHttp.getWithCache(host, port, '/tx/history/:pubkey/times/:from/:to'),
+          times: cacheEnable ?
+            csHttp.getWithCache(host, port, '/tx/history/:pubkey/times/:from/:to') :
+            csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
           timesNoCache: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
-          blocks: csHttp.getWithCache(host, port, '/tx/history/:pubkey/blocks/:from/:to'),
+          blocks: cacheEnable ?
+            csHttp.getWithCache(host, port, '/tx/history/:pubkey/blocks/:from/:to') :
+            csHttp.get(host, port, '/tx/history/:pubkey/blocks/:from/:to'),
           pending: csHttp.get(host, port, '/tx/history/:pubkey/pending')
         }
       },
@@ -269,7 +281,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     };
   }
 
-  var service = factory(csSettings.data.node.host, csSettings.data.node.port);
+  var service = factory(csSettings.data.node.host, csSettings.data.node.port, true /*cache*/);
   service.instance = factory;
 
   // Listen settings changes
@@ -277,7 +289,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
     var nodeServer = csHttp.getServer(settings.node.host, settings.node.port);
     if (nodeServer != service.node.server) {
-      var newService = factory(settings.node.host, settings.node.port);
+      var newService = factory(settings.node.host, settings.node.port, true /*cache*/);
       service.copy(newService); // reload service
     }
 

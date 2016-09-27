@@ -99,7 +99,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             peer.server = server;
             peer.blockNumber = peer.block.replace(/-.+$/, '');
             data.newPeers.push(peer);
-            var node = BMA.instance(peer.getHost(), peer.getPort());
+            var node = BMA.instance(peer.getHost(), peer.getPort(), false);
             return node.blockchain.current()
               .then(function(block){
                 peer.current = block;
@@ -130,18 +130,25 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           var resolved = false;
 
           interval = $interval(function() {
+            console.debug('[network] check if finish...');
             if (data.newPeers.length) {
               data.peers = data.peers.concat(data.newPeers.splice(0));
+              console.debug('[network] New peers found: sort and ad them to result...');
               sortPeers();
               if (!waitAllPeers) {
-                resolved = true;
-                resolve(data.peers);
+                console.debug('[network] Returning to main process (peers will continue to be updating in background)');
+                if (!resolved) {
+                  resolved = true;
+                  resolve(data.peers);
+                }
               }
             } else if (data.updatingPeers && !data.searchingPeersOnNetwork) {
+              console.debug('[network] Finish : all peers found. Stopping new peers check.');
               // The peer lookup end, we can make a clean final report
               sortPeers();
               data.updatingPeers = false;
               if (!resolved) {
+                console.debug('[network] refresh peer finished');
                 resolve(data.peers);
               }
               $interval.cancel(interval);

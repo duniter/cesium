@@ -16,25 +16,27 @@
       <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
                on-select="setShowCertifications(true)"
                on-deselect="setShowCertifications(false)">
-        <ion-nav-view name="currency-tab"/>
-        <ion-content>
-          <div class="center padding" ng-if="loading">
-            <ion-spinner icon="android"></ion-spinner>
-          </div>
-          <ng-include src="'templates/wot/tabs/view_certifications.html'"/>
-        </ion-content>
+        <ion-nav-view name="currency-tab">
+          <ion-content>
+            <div class="center padding" ng-if="loading">
+              <ion-spinner icon="android"></ion-spinner>
+            </div>
+            <ng-include src="'templates/wot/tabs/view_certifications.html'"/>
+          </ion-content>
+        </ion-nav-view>
       </ion-tab>
 
       <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
                on-select="setShowGivenCertifications(true)"
                on-deselect="setShowGivenCertifications(false)">
-        <ion-nav-view name="network-tab"/>
-        <ion-content class="padding no-padding-xs">
-          <div class="center padding" ng-if="loading">
-            <ion-spinner icon="android"></ion-spinner>
-          </div>
-          <ng-include src="'templates/wot/tabs/view_given_certifications.html'"/>
-        </ion-content>
+        <ion-nav-view name="network-tab">
+          <ion-content>
+            <div class="center padding" ng-if="loading">
+              <ion-spinner icon="android"></ion-spinner>
+            </div>
+            <ng-include src="'templates/wot/tabs/view_given_certifications.html'"/>
+          </ion-content>
+        </ion-nav-view>
       </ion-tab>
 
       </ion-tab>

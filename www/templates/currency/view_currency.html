@@ -12,20 +12,22 @@
     </ion-nav-buttons>
 
     <ion-content scroll="false">
-        <ion-tabs class="tabs-icon-top tabs-positive has-header">
+        <ion-tabs class="tabs-icon-top tabs-positive">
 
             <ion-tab title="{{'CURRENCY.VIEW.TAB_CURRENCY'|translate}}" icon="ion-stats-bars">
-                <ion-nav-view name="currency-tab"/>
-                <ion-content>
-                        <ng-include src="'templates/currency/tabs/view_parameters.html'"/>
-                 </ion-content>
+                <ion-nav-view name="currency-tab">
+                  <ion-content>
+                    <ng-include src="'templates/currency/tabs/view_parameters.html'"/>
+                  </ion-content>
+                </ion-nav-view>
             </ion-tab>
 
             <ion-tab title="{{'CURRENCY.VIEW.TAB_NETWORK'|translate}}" icon="ion-network" >
-                <ion-nav-view name="network-tab"/>
-                <ion-content class="padding no-padding-xs">
-                    <ng-include src="'templates/currency/tabs/view_network.html'"/>
-                </ion-content>
+                <ion-nav-view name="network-tab">
+                  <ion-content>
+                      <ng-include src="'templates/currency/tabs/view_network.html'"/>
+                  </ion-content>
+                </ion-nav-view>
             </ion-tab>
 
             </ion-tab>
