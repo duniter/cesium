@@ -38,7 +38,7 @@ if (rootdir && !skip) {
 
     var indexPath = path.join(wwwPath, 'index.html');
 
-    var jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
+    var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
     var cssFilter = filter("**/*.css", { restore: true });
     var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
 
