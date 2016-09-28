@@ -4,22 +4,17 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 .factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
-  var
-
-    fixLocale = function(locale) {
-      // convert in app locale (fix #140)
-      return locale && locale.startsWith('fr') ? 'fr-FR' : 'en';
-    },
-
-    defaultLocale = fixLocale($translate.use()), // browser default
-
     CSSettings = function(id) {
 
-    var
+      function fixLocale (locale) {
+        // convert in app locale (fix #140)
+        return locale && locale.startsWith('fr') ? 'fr-FR' : 'en';
+      }
+
+      var
       constants = {
         STORAGE_KEY: 'CESIUM_SETTINGS'
       },
-
       defaultSettings = angular.merge({
         timeout : 4000,
         cacheTimeMs: 60000, /*1 min*/
@@ -32,7 +27,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         rememberMe: Device.enable, // on mobile device, remember me by default
         showUDHistory: true,
         locale: {
-          id: defaultLocale
+          id: fixLocale($translate.use()) // browser default
         }
       }, csConfig),
 
