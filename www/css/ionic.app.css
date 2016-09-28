@@ -13441,7 +13441,7 @@ a {
 @media screen and (min-width: 992px) {
   .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important;
-    max-height: 80px; } }
+    /*max-height: 80px;*/ } }
 
 /**********
    Form validation
@@ -13565,7 +13565,7 @@ a {
   #menu .item.item-complex .item-content {
     height: 40px;
     min-height: 40px;
-    padding-top: 8px; }
+    padding-top: 12px; }
   #menu .item.item-complex {
     padding-top: 0px; }
   #menu .item.item-button-right .button {

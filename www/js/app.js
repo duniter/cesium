@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 'pascalprecht.translate', 'angularMoment',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
   'ngApi', 'angular-cache', 'angular.screenmatch',
   // removeIf(device)
   // endRemoveIf(device)
@@ -179,18 +179,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     screenmatchConfigProvider.config.rules = 'bootstrap';
   })
 
-  // removeIf(no-device)
-  // FIXME: native transition on a PAD move also move the left menu !
-  /*
-  .config(function($ionicNativeTransitionsProvider){
-    'ngInject';
-    // Use native transition
-    var enableNativeTransitions = ionic.Platform.isAndroid() || ionic.Platform.isIOS();
-    $ionicNativeTransitionsProvider.enable(enableNativeTransitions);
-  })
-  */
-  // endRemoveIf(no-device)
-
   .config(function($ionicConfigProvider) {
     'ngInject';
     // JS scrolling need for iOs (see http://blog.ionic.io/native-scrolling-in-ionic-a-tale-in-rhyme/)
@@ -199,7 +187,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngAnimate', 
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, amMoment, $translate, Device, UIUtils, $ionicConfig, PluginService, $http
+.run(function($rootScope, $translate, Device, UIUtils, $ionicConfig, PluginService, $http
 ) {
   'ngInject';
 

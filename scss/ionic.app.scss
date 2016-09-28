@@ -836,7 +836,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important;
-    max-height: 80px;
+    /*max-height: 80px;*/
   }
 }
 
@@ -1001,7 +1001,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     .item.item-complex .item-content{
       height: 40px;
       min-height: 40px;
-      padding-top: 8px;
+      padding-top: 12px;
     }
 
     .item.item-complex{

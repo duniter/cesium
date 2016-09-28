@@ -231,6 +231,14 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
       .pipe(htmlmin())
       .pipe(gulp.dest(tmpPath)),
 
+    // Copy index.html to debug.html (and remove unused code)
+    gulp.src('./www/index.html')
+      .pipe(removeCode({"no-device": true}))
+      .pipe(removeHtml('.hidden-no-device'))
+      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
+      .pipe(rename("debug.html"))
+      .pipe(gulp.dest(tmpPath)),
+
     // Copy fonts
     gulp.src('./www/fonts/**/*.*')
       .pipe(gulp.dest(tmpPath + '/fonts')),
@@ -247,6 +255,10 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
     // Copy img
     gulp.src('./www/img/**/*.*')
       .pipe(gulp.dest(tmpPath + '/img')),
+
+    // Copy manifest
+    gulp.src('./www/manifest.json')
+      .pipe(gulp.dest(tmpPath)),
 
     // Copy lib/ionic
     gulp.src('./www/lib/ionic/**/*.*')
@@ -313,9 +325,19 @@ gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done
     .on('end', done);
 });
 
-gulp.task('optimize-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
+
+gulp.task('debug-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
   var tmpPath = './platforms/web/www';
-  var jsFilter = filter(["**/*.js", "!**/vendor/*", '!**/config.js'], { restore: true });
+
+  gulp.src(tmpPath + '/debug.html')
+    .pipe(useref())             // Concatenate with gulp-useref
+    .pipe(gulp.dest(tmpPath))
+    .on('end', done);
+});
+
+gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
+  var tmpPath = './platforms/web/www';
+  var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
   var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
 
