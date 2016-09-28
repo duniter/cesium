@@ -28,8 +28,8 @@ angular.module("cesium.config", [])
 			"port": "80"
 		}
 	},
-	"version": "0.3.5",
-	"build": "2016-09-28T07:20:39.921Z",
+	"version": "0.3.6",
+	"build": "2016-09-28T08:07:23.049Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
