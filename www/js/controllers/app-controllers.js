@@ -191,8 +191,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       if (!formData) return;
       var rememberMeChanged = (csSettings.data.rememberMe !== formData.rememberMe);
       if (rememberMeChanged) {
+        csSettings.data.rememberMe = formData.rememberMe;
         csSettings.data.useLocalStorage = csSettings.data.rememberMe ? true : csSettings.data.useLocalStorage;
-        Wallet.store();
+        csSettings.store();
       }
       return Wallet.login(formData.username, formData.password);
     })
