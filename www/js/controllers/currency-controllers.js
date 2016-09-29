@@ -179,7 +179,18 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
           $scope.N = block.membersCount;
           $scope.time  = moment(block.medianTime*1000).format($scope.datePattern);
           $scope.difficulty  = block.powMin;
-        }),
+        })
+        .catch(function(err){
+          // Special case for currency init (root block not exists): use fixed values
+          if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+            $scope.N = 0;
+            $scope.time = Math.trunc(new Date().getTime() / 1000);
+            $scope.difficulty  = 0;
+            return;
+          }
+          throw err;
+        })
+      ,
 
       // Get the UD informations
       $scope.node.blockchain.stats.ud()
@@ -192,6 +203,14 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
                 $scope.Nprev = block.membersCount;
               });
           }
+          // block #0
+          else {
+            $scope.Nprev=0;
+            return $scope.node.blockchain.parameters()
+              .then(function(json){
+                $scope.currentUD = json.ud0;
+              })
+          }
         })
     ])
 
@@ -199,11 +218,11 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .then(function(){
       var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
       var MoverN = Mprev / $scope.Nprev;
-      $scope.cactual = 100 * $scope.currentUD / MoverN;
+      $scope.cactual = MoverN ? 100 * $scope.currentUD / MoverN : 0;
 
       if ($scope.formData.useRelative) {
-        $scope.M = Mprev / $scope.currentUD;
-        $scope.MoverN = MoverN / $scope.currentUD;
+        $scope.M = Mprev ? Mprev / $scope.currentUD : 0;
+        $scope.MoverN = MoverN ? MoverN / $scope.currentUD : 0;
         $scope.UD = 1;
       } else {
         $scope.M = Mprev;

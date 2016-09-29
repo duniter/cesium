@@ -26,6 +26,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   .filter('formatDecimal', function() {
     return function(input) {
       if (input === undefined) return '0';
+      // for DEBUG only
       //if (input === Infinity || input === -Infinity) {
       //  return '∞';
       //}
@@ -37,6 +38,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   .filter('formatNumeral', function() {
     return function(input, pattern) {
       if (input === undefined) return '0';
+      // for DEBUG only
       //if (isNaN(input)) {
       //    return 'NaN';
       //}
