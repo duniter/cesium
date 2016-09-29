@@ -30,7 +30,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     },
     constants = {
       ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'
-    }
+    },
     server = csHttp.getServer(host, port);
 
     function exact(regexpContent) {

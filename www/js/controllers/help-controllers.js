@@ -45,7 +45,7 @@ function HelpController($scope, $state, $timeout, $anchorScroll, csSettings) {
     $scope.locale = csSettings.data.locale.id;
     if ($state.stateParams && $state.stateParams.anchor) {
       $timeout(function () {
-        $anchorScroll($state.stateParams.anchor)
+        $anchorScroll($state.stateParams.anchor);
       }, 100);
     }
   });
@@ -58,7 +58,7 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 
   if (parameters && parameters.anchor) {
     $timeout(function() {
-      $anchorScroll(parameters.anchor)
+      $anchorScroll(parameters.anchor);
     }, 100);
   }
 }
