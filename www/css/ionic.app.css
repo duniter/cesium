@@ -39,7 +39,7 @@ $dark:                            #444 !default;
 .ion-android-add:before,
 .ion-android-add-circle:before,
 .ion-android-alarm-clock:before,
-.ion-android-alert:before,
+.ion-android-alert:before, .icon-alert:before,
 .ion-android-apps:before,
 .ion-android-archive:before,
 .ion-android-arrow-back:before,
@@ -416,7 +416,7 @@ $dark:                            #444 !default;
 .ion-ios-heart-outline:before,
 .ion-ios-help:before,
 .ion-ios-help-empty:before,
-.ion-ios-help-outline:before,
+.ion-ios-help-outline:before, .icon-help:before, #menu .footer .icon-help:before,
 .ion-ios-home:before,
 .ion-ios-home-outline:before,
 .ion-ios-infinite:before,
@@ -794,7 +794,7 @@ $dark:                            #444 !default;
 .ion-android-alarm-clock:before {
   content: ""; }
 
-.ion-android-alert:before {
+.ion-android-alert:before, .icon-alert:before {
   content: ""; }
 
 .ion-android-apps:before {
@@ -1925,7 +1925,7 @@ $dark:                            #444 !default;
 .ion-ios-help-empty:before {
   content: ""; }
 
-.ion-ios-help-outline:before {
+.ion-ios-help-outline:before, .icon-help:before, #menu .footer .icon-help:before {
   content: ""; }
 
 .ion-ios-home:before {
@@ -3479,12 +3479,16 @@ ion-infinite-scroll {
   -webkit-align-items: center;
   -moz-align-items: center;
   align-items: center; }
-  ion-infinite-scroll .icon {
+  ion-infinite-scroll .icon, ion-infinite-scroll .icon-help, ion-infinite-scroll .icon-alert, ion-infinite-scroll #menu .footer .icon-help, #menu .footer ion-infinite-scroll .icon-help {
     color: #666666;
     font-size: 30px;
     color: #666666; }
   ion-infinite-scroll:not(.active) .spinner,
-  ion-infinite-scroll:not(.active) .icon:before {
+  ion-infinite-scroll:not(.active) .icon:before,
+  ion-infinite-scroll:not(.active) .icon-help:before,
+  ion-infinite-scroll:not(.active) .icon-alert:before,
+  ion-infinite-scroll:not(.active) #menu .footer .icon-help:before, #menu .footer
+  ion-infinite-scroll:not(.active) .icon-help:before {
     display: none; }
 
 .overflow-scroll {
@@ -3779,7 +3783,7 @@ a.subdued {
     color: #007aff;
     background: #e4e5e7; }
 
-.action-sheet-has-icons .icon {
+.action-sheet-has-icons .icon, .action-sheet-has-icons .icon-help, .action-sheet-has-icons .icon-alert, .action-sheet-has-icons #menu .footer .icon-help, #menu .footer .action-sheet-has-icons .icon-help {
   position: absolute;
   left: 16px; }
 
@@ -4029,15 +4033,23 @@ a.subdued {
     font-size: 13px;
     line-height: 32px; }
     .bar .button.button-icon:before,
-    .bar .button .icon:before, .bar .button.icon:before, .bar .button.icon-left:before, .bar .button.icon-right:before, .bar button.button-icon:before,
-    .bar button .icon:before, .bar button.icon:before, .bar button.icon-left:before, .bar button.icon-right:before {
+    .bar .button .icon:before,
+    .bar .button .icon-help:before,
+    .bar .button .icon-alert:before,
+    .bar .button #menu .footer .icon-help:before, #menu .footer
+    .bar .button .icon-help:before, .bar .button.icon:before, .bar .button.icon-help:before, .bar .button.icon-alert:before, .bar #menu .footer .button.icon-help:before, #menu .footer .bar .button.icon-help:before, .bar .button.icon-left:before, .bar .button.icon-right:before, .bar button.button-icon:before,
+    .bar button .icon:before,
+    .bar button .icon-help:before,
+    .bar button .icon-alert:before,
+    .bar button #menu .footer .icon-help:before, #menu .footer
+    .bar button .icon-help:before, .bar button.icon:before, .bar button.icon-help:before, .bar button.icon-alert:before, .bar #menu .footer button.icon-help:before, #menu .footer .bar button.icon-help:before, .bar button.icon-left:before, .bar button.icon-right:before {
       padding-right: 2px;
       padding-left: 2px;
       font-size: 20px;
       line-height: 32px; }
     .bar .button.button-icon, .bar button.button-icon {
       font-size: 17px; }
-      .bar .button.button-icon .icon:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before, .bar button.button-icon .icon:before, .bar button.button-icon:before, .bar button.button-icon.icon-left:before, .bar button.button-icon.icon-right:before {
+      .bar .button.button-icon .icon:before, .bar .button.button-icon .icon-help:before, .bar .button.button-icon .icon-alert:before, .bar .button.button-icon #menu .footer .icon-help:before, #menu .footer .bar .button.button-icon .icon-help:before, .bar .button.button-icon:before, .bar .button.button-icon.icon-left:before, .bar .button.button-icon.icon-right:before, .bar button.button-icon .icon:before, .bar button.button-icon .icon-help:before, .bar button.button-icon .icon-alert:before, .bar button.button-icon #menu .footer .icon-help:before, #menu .footer .bar button.button-icon .icon-help:before, .bar button.button-icon:before, .bar button.button-icon.icon-left:before, .bar button.button-icon.icon-right:before {
         vertical-align: top;
         font-size: 32px;
         line-height: 32px; }
@@ -4046,7 +4058,7 @@ a.subdued {
       padding-left: 2px;
       font-weight: 300;
       font-size: 17px; }
-      .bar .button.button-clear .icon:before, .bar .button.button-clear.icon:before, .bar .button.button-clear.icon-left:before, .bar .button.button-clear.icon-right:before, .bar button.button-clear .icon:before, .bar button.button-clear.icon:before, .bar button.button-clear.icon-left:before, .bar button.button-clear.icon-right:before {
+      .bar .button.button-clear .icon:before, .bar .button.button-clear .icon-help:before, .bar .button.button-clear .icon-alert:before, .bar .button.button-clear #menu .footer .icon-help:before, #menu .footer .bar .button.button-clear .icon-help:before, .bar .button.button-clear.icon:before, .bar .button.button-clear.icon-help:before, .bar .button.button-clear.icon-alert:before, .bar #menu .footer .button.button-clear.icon-help:before, #menu .footer .bar .button.button-clear.icon-help:before, .bar .button.button-clear.icon-left:before, .bar .button.button-clear.icon-right:before, .bar button.button-clear .icon:before, .bar button.button-clear .icon-help:before, .bar button.button-clear .icon-alert:before, .bar button.button-clear #menu .footer .icon-help:before, #menu .footer .bar button.button-clear .icon-help:before, .bar button.button-clear.icon:before, .bar button.button-clear.icon-help:before, .bar button.button-clear.icon-alert:before, .bar #menu .footer button.button-clear.icon-help:before, #menu .footer .bar button.button-clear.icon-help:before, .bar button.button-clear.icon-left:before, .bar button.button-clear.icon-right:before {
         font-size: 32px;
         line-height: 32px; }
     .bar .button.back-button, .bar button.back-button {
@@ -4089,7 +4101,7 @@ a.subdued {
 .platform-android .nav-bar-has-subheader .bar {
   background-image: none; }
 
-.platform-android .bar .back-button .icon:before {
+.platform-android .bar .back-button .icon:before, .platform-android .bar .back-button .icon-help:before, .platform-android .bar .back-button .icon-alert:before, .platform-android .bar .back-button #menu .footer .icon-help:before, #menu .footer .platform-android .bar .back-button .icon-help:before {
   font-size: 24px; }
 
 .platform-android .bar .title {
@@ -5138,7 +5150,7 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
   font-size: 10px;
   line-height: 14px; }
 
-.tab-item .icon {
+.tab-item .icon, .tab-item .icon-help, .tab-item .icon-alert, .tab-item #menu .footer .icon-help, #menu .footer .tab-item .icon-help {
   display: block;
   margin: 0 auto;
   height: 32px;
@@ -5149,36 +5161,72 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
 .tabs-icon-right.tabs .tab-item,
 .tabs-icon-right > .tabs .tab-item {
   font-size: 10px; }
-  .tabs-icon-left.tabs .tab-item .icon, .tabs-icon-left.tabs .tab-item .tab-title,
+  .tabs-icon-left.tabs .tab-item .icon, .tabs-icon-left.tabs .tab-item .icon-help, .tabs-icon-left.tabs .tab-item .icon-alert, .tabs-icon-left.tabs .tab-item #menu .footer .icon-help, #menu .footer .tabs-icon-left.tabs .tab-item .icon-help, .tabs-icon-left.tabs .tab-item .tab-title,
   .tabs-icon-left > .tabs .tab-item .icon,
+  .tabs-icon-left > .tabs .tab-item .icon-help,
+  .tabs-icon-left > .tabs .tab-item .icon-alert,
+  .tabs-icon-left > .tabs .tab-item #menu .footer .icon-help, #menu .footer
+  .tabs-icon-left > .tabs .tab-item .icon-help,
   .tabs-icon-left > .tabs .tab-item .tab-title,
   .tabs-icon-right.tabs .tab-item .icon,
+  .tabs-icon-right.tabs .tab-item .icon-help,
+  .tabs-icon-right.tabs .tab-item .icon-alert,
+  .tabs-icon-right.tabs .tab-item #menu .footer .icon-help, #menu .footer
+  .tabs-icon-right.tabs .tab-item .icon-help,
   .tabs-icon-right.tabs .tab-item .tab-title,
   .tabs-icon-right > .tabs .tab-item .icon,
+  .tabs-icon-right > .tabs .tab-item .icon-help,
+  .tabs-icon-right > .tabs .tab-item .icon-alert,
+  .tabs-icon-right > .tabs .tab-item #menu .footer .icon-help, #menu .footer
+  .tabs-icon-right > .tabs .tab-item .icon-help,
   .tabs-icon-right > .tabs .tab-item .tab-title {
     display: inline-block;
     vertical-align: top;
     margin-top: -.1em; }
-    .tabs-icon-left.tabs .tab-item .icon:before, .tabs-icon-left.tabs .tab-item .tab-title:before,
+    .tabs-icon-left.tabs .tab-item .icon:before, .tabs-icon-left.tabs .tab-item .icon-help:before, .tabs-icon-left.tabs .tab-item .icon-alert:before, .tabs-icon-left.tabs .tab-item #menu .footer .icon-help:before, #menu .footer .tabs-icon-left.tabs .tab-item .icon-help:before, .tabs-icon-left.tabs .tab-item .tab-title:before,
     .tabs-icon-left > .tabs .tab-item .icon:before,
+    .tabs-icon-left > .tabs .tab-item .icon-help:before,
+    .tabs-icon-left > .tabs .tab-item .icon-alert:before,
+    .tabs-icon-left > .tabs .tab-item #menu .footer .icon-help:before, #menu .footer
+    .tabs-icon-left > .tabs .tab-item .icon-help:before,
     .tabs-icon-left > .tabs .tab-item .tab-title:before,
     .tabs-icon-right.tabs .tab-item .icon:before,
+    .tabs-icon-right.tabs .tab-item .icon-help:before,
+    .tabs-icon-right.tabs .tab-item .icon-alert:before,
+    .tabs-icon-right.tabs .tab-item #menu .footer .icon-help:before, #menu .footer
+    .tabs-icon-right.tabs .tab-item .icon-help:before,
     .tabs-icon-right.tabs .tab-item .tab-title:before,
     .tabs-icon-right > .tabs .tab-item .icon:before,
+    .tabs-icon-right > .tabs .tab-item .icon-help:before,
+    .tabs-icon-right > .tabs .tab-item .icon-alert:before,
+    .tabs-icon-right > .tabs .tab-item #menu .footer .icon-help:before, #menu .footer
+    .tabs-icon-right > .tabs .tab-item .icon-help:before,
     .tabs-icon-right > .tabs .tab-item .tab-title:before {
       font-size: 24px;
       line-height: 49px; }
 
-.tabs-icon-left > .tabs .tab-item .icon,
-.tabs-icon-left.tabs .tab-item .icon {
+.tabs-icon-left > .tabs .tab-item .icon, .tabs-icon-left > .tabs .tab-item .icon-help, .tabs-icon-left > .tabs .tab-item .icon-alert, .tabs-icon-left > .tabs .tab-item #menu .footer .icon-help, #menu .footer .tabs-icon-left > .tabs .tab-item .icon-help,
+.tabs-icon-left.tabs .tab-item .icon,
+.tabs-icon-left.tabs .tab-item .icon-help,
+.tabs-icon-left.tabs .tab-item .icon-alert,
+.tabs-icon-left.tabs .tab-item #menu .footer .icon-help, #menu .footer
+.tabs-icon-left.tabs .tab-item .icon-help {
   padding-right: 3px; }
 
-.tabs-icon-right > .tabs .tab-item .icon,
-.tabs-icon-right.tabs .tab-item .icon {
+.tabs-icon-right > .tabs .tab-item .icon, .tabs-icon-right > .tabs .tab-item .icon-help, .tabs-icon-right > .tabs .tab-item .icon-alert, .tabs-icon-right > .tabs .tab-item #menu .footer .icon-help, #menu .footer .tabs-icon-right > .tabs .tab-item .icon-help,
+.tabs-icon-right.tabs .tab-item .icon,
+.tabs-icon-right.tabs .tab-item .icon-help,
+.tabs-icon-right.tabs .tab-item .icon-alert,
+.tabs-icon-right.tabs .tab-item #menu .footer .icon-help, #menu .footer
+.tabs-icon-right.tabs .tab-item .icon-help {
   padding-left: 3px; }
 
-.tabs-icon-only > .tabs .icon,
-.tabs-icon-only.tabs .icon {
+.tabs-icon-only > .tabs .icon, .tabs-icon-only > .tabs .icon-help, .tabs-icon-only > .tabs .icon-alert, .tabs-icon-only > .tabs #menu .footer .icon-help, #menu .footer .tabs-icon-only > .tabs .icon-help,
+.tabs-icon-only.tabs .icon,
+.tabs-icon-only.tabs .icon-help,
+.tabs-icon-only.tabs .icon-alert,
+.tabs-icon-only.tabs #menu .footer .icon-help, #menu .footer
+.tabs-icon-only.tabs .icon-help {
   line-height: inherit; }
 
 .tab-item.has-badge {
@@ -5245,7 +5293,7 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
   display: -ms-flexbox;
   display: flex;
   padding: 0; }
-  .item.tabs .icon:before {
+  .item.tabs .icon:before, .item.tabs .icon-help:before, .item.tabs .icon-alert:before, .item.tabs #menu .footer .icon-help:before, #menu .footer .item.tabs .icon-help:before {
     position: relative; }
 
 .tab-item.disabled,
@@ -5674,7 +5722,7 @@ ion-tabs.tabs-striped.tabs-color-active-dark .tab-item.tab-item-active, ion-tabs
   transition: 0.2s opacity linear;
   visibility: hidden;
   opacity: 0; }
-  .loading-container:not(.visible) .icon,
+  .loading-container:not(.visible) .icon, .loading-container:not(.visible) .icon-help, .loading-container:not(.visible) .icon-alert, .loading-container:not(.visible) #menu .footer .icon-help, #menu .footer .loading-container:not(.visible) .icon-help,
   .loading-container:not(.visible) .spinner {
     display: none; }
   .loading-container.visible {
@@ -6141,8 +6189,12 @@ a.item-content {
  * Item Icons
  * --------------------------------------------------
  */
-.item-icon-left .icon,
-.item-icon-right .icon {
+.item-icon-left .icon, .item-icon-left .icon-help, .item-icon-left .icon-alert, .item-icon-left #menu .footer .icon-help, #menu .footer .item-icon-left .icon-help,
+.item-icon-right .icon,
+.item-icon-right .icon-help,
+.item-icon-right .icon-alert,
+.item-icon-right #menu .footer .icon-help, #menu .footer
+.item-icon-right .icon-help {
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
@@ -6158,8 +6210,12 @@ a.item-content {
   top: 0;
   height: 100%;
   font-size: 32px; }
-  .item-icon-left .icon:before,
-  .item-icon-right .icon:before {
+  .item-icon-left .icon:before, .item-icon-left .icon-help:before, .item-icon-left .icon-alert:before, .item-icon-left #menu .footer .icon-help:before, #menu .footer .item-icon-left .icon-help:before,
+  .item-icon-right .icon:before,
+  .item-icon-right .icon-help:before,
+  .item-icon-right .icon-alert:before,
+  .item-icon-right #menu .footer .icon-help:before, #menu .footer
+  .item-icon-right .icon-help:before {
     display: block;
     width: 32px;
     text-align: center; }
@@ -6171,7 +6227,7 @@ a.item-content {
 
 .item-icon-left {
   padding-left: 54px; }
-  .item-icon-left .icon {
+  .item-icon-left .icon, .item-icon-left .icon-help, .item-icon-left .icon-alert, .item-icon-left #menu .footer .icon-help, #menu .footer .item-icon-left .icon-help {
     left: 11px; }
 
 .item-complex.item-icon-left {
@@ -6181,7 +6237,7 @@ a.item-content {
 
 .item-icon-right {
   padding-right: 54px; }
-  .item-icon-right .icon {
+  .item-icon-right .icon, .item-icon-right .icon-help, .item-icon-right .icon-alert, .item-icon-right #menu .footer .icon-help, #menu .footer .item-icon-right .icon-help {
     right: 11px; }
 
 .item-complex.item-icon-right {
@@ -6189,11 +6245,15 @@ a.item-content {
   .item-complex.item-icon-right .item-content {
     padding-right: 54px; }
 
-.item-icon-left.item-icon-right .icon:first-child {
+.item-icon-left.item-icon-right .icon:first-child, .item-icon-left.item-icon-right .icon-help:first-child, .item-icon-left.item-icon-right .icon-alert:first-child, .item-icon-left.item-icon-right #menu .footer .icon-help:first-child, #menu .footer .item-icon-left.item-icon-right .icon-help:first-child {
   right: auto; }
 
-.item-icon-left.item-icon-right .icon:last-child,
-.item-icon-left .item-delete .icon {
+.item-icon-left.item-icon-right .icon:last-child, .item-icon-left.item-icon-right .icon-help:last-child, .item-icon-left.item-icon-right .icon-alert:last-child, .item-icon-left.item-icon-right #menu .footer .icon-help:last-child, #menu .footer .item-icon-left.item-icon-right .icon-help:last-child,
+.item-icon-left .item-delete .icon,
+.item-icon-left .item-delete .icon-help,
+.item-icon-left .item-delete .icon-alert,
+.item-icon-left .item-delete #menu .footer .icon-help, #menu .footer
+.item-icon-left .item-delete .icon-help {
   left: auto; }
 
 .item-icon-left .icon-accessory,
@@ -6235,8 +6295,12 @@ a.item-content {
   min-height: 34px;
   font-size: 18px;
   line-height: 32px; }
-  .item-button-left > .button .icon:before,
-  .item-button-left .item-content > .button .icon:before {
+  .item-button-left > .button .icon:before, .item-button-left > .button .icon-help:before, .item-button-left > .button .icon-alert:before, .item-button-left > .button #menu .footer .icon-help:before, #menu .footer .item-button-left > .button .icon-help:before,
+  .item-button-left .item-content > .button .icon:before,
+  .item-button-left .item-content > .button .icon-help:before,
+  .item-button-left .item-content > .button .icon-alert:before,
+  .item-button-left .item-content > .button #menu .footer .icon-help:before, #menu .footer
+  .item-button-left .item-content > .button .icon-help:before {
     position: relative;
     left: auto;
     width: auto;
@@ -6275,10 +6339,22 @@ button.item.item-button-right {
   min-height: 34px;
   font-size: 18px;
   line-height: 32px; }
-  .item-button-right > .button .icon:before,
+  .item-button-right > .button .icon:before, .item-button-right > .button .icon-help:before, .item-button-right > .button .icon-alert:before, .item-button-right > .button #menu .footer .icon-help:before, #menu .footer .item-button-right > .button .icon-help:before,
   .item-button-right .item-content > .button .icon:before,
+  .item-button-right .item-content > .button .icon-help:before,
+  .item-button-right .item-content > .button .icon-alert:before,
+  .item-button-right .item-content > .button #menu .footer .icon-help:before, #menu .footer
+  .item-button-right .item-content > .button .icon-help:before,
   .item-button-right > .buttons .icon:before,
-  .item-button-right .item-content > .buttons .icon:before {
+  .item-button-right > .buttons .icon-help:before,
+  .item-button-right > .buttons .icon-alert:before,
+  .item-button-right > .buttons #menu .footer .icon-help:before, #menu .footer
+  .item-button-right > .buttons .icon-help:before,
+  .item-button-right .item-content > .buttons .icon:before,
+  .item-button-right .item-content > .buttons .icon-help:before,
+  .item-button-right .item-content > .buttons .icon-alert:before,
+  .item-button-right .item-content > .buttons #menu .footer .icon-help:before, #menu .footer
+  .item-button-right .item-content > .buttons .icon-help:before {
     position: relative;
     left: auto;
     width: auto;
@@ -6488,7 +6564,7 @@ button.item.item-button-right {
   transform: translate3d(-21px, 0, 0); }
   .item-left-edit .button {
     height: 100%; }
-    .item-left-edit .button.icon {
+    .item-left-edit .button.icon, .item-left-edit .button.icon-help, .item-left-edit .button.icon-alert, .item-left-edit #menu .footer .button.icon-help, #menu .footer .item-left-edit .button.icon-help {
       display: -webkit-box;
       display: -webkit-flex;
       display: -moz-box;
@@ -6514,10 +6590,10 @@ button.item.item-button-right {
   -webkit-transition-delay: 125ms;
   transition-delay: 125ms; }
 
-.item-delete .button.icon {
+.item-delete .button.icon, .item-delete .button.icon-help, .item-delete .button.icon-alert, .item-delete #menu .footer .button.icon-help, #menu .footer .item-delete .button.icon-help {
   color: #ef473a;
   font-size: 24px; }
-  .item-delete .button.icon:hover {
+  .item-delete .button.icon:hover, .item-delete .button.icon-help:hover, .item-delete .button.icon-alert:hover, .item-delete #menu .footer .button.icon-help:hover, #menu .footer .item-delete .button.icon-help:hover {
     opacity: .7; }
 
 .item-right-edit {
@@ -6538,7 +6614,7 @@ button.item.item-button-right {
   .item-right-edit .button {
     min-width: 50px;
     height: 100%; }
-    .item-right-edit .button.icon {
+    .item-right-edit .button.icon, .item-right-edit .button.icon-help, .item-right-edit .button.icon-alert, .item-right-edit #menu .footer .button.icon-help, #menu .footer .item-right-edit .button.icon-help {
       display: -webkit-box;
       display: -webkit-flex;
       display: -moz-box;
@@ -6561,7 +6637,7 @@ button.item.item-button-right {
       -webkit-transform: translate3d(0, 0, 0);
       transform: translate3d(0, 0, 0); }
 
-.item-reorder .button.icon {
+.item-reorder .button.icon, .item-reorder .button.icon-help, .item-reorder .button.icon-alert, .item-reorder #menu .footer .button.icon-help, #menu .footer .item-reorder .button.icon-help {
   color: #444;
   font-size: 32px; }
 
@@ -7583,7 +7659,7 @@ textarea {
     margin: 0;
     padding-right: 24px;
     background-color: transparent; }
-  .item-input .button .icon {
+  .item-input .button .icon, .item-input .button .icon-help, .item-input .button .icon-alert, .item-input .button #menu .footer .icon-help, #menu .footer .item-input .button .icon-help {
     -webkit-box-flex: 0;
     -webkit-flex: 0 0 24px;
     -moz-box-flex: 0;
@@ -7607,7 +7683,7 @@ textarea {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none; }
-  .item-input .icon {
+  .item-input .icon, .item-input .icon-help, .item-input .icon-alert, .item-input #menu .footer .icon-help, #menu .footer .item-input .icon-help {
     min-width: 14px; }
 
 .platform-windowsphone .item-input input {
@@ -7681,7 +7757,7 @@ textarea {
   display: block;
   background-color: transparent;
   box-shadow: none; }
-  .item-stacked-label .input-label, .item-stacked-label .icon {
+  .item-stacked-label .input-label, .item-stacked-label .icon, .item-stacked-label .icon-help, .item-stacked-label .icon-alert, .item-stacked-label #menu .footer .icon-help, #menu .footer .item-stacked-label .icon-help {
     display: inline-block;
     padding: 4px 0 0 0px;
     vertical-align: middle; }
@@ -8429,7 +8505,7 @@ input:checked + .checkbox-icon:after {
   .range.range-dark input::-ms-fill-lower {
     background: #444; }
 
-.range .icon {
+.range .icon, .range .icon-help, .range .icon-alert, .range #menu .footer .icon-help, #menu .footer .range .icon-help {
   -webkit-box-flex: 0;
   -webkit-flex: 0;
   -moz-box-flex: 0;
@@ -8606,10 +8682,10 @@ progress {
     bottom: -6px;
     left: -6px;
     content: ' '; }
-  .button .icon {
+  .button .icon, .button .icon-help, .button .icon-alert, .button #menu .footer .icon-help, #menu .footer .button .icon-help {
     vertical-align: top;
     pointer-events: none; }
-  .button .icon:before, .button.icon:before, .button.icon-left:before, .button.icon-right:before {
+  .button .icon:before, .button .icon-help:before, .button .icon-alert:before, .button #menu .footer .icon-help:before, #menu .footer .button .icon-help:before, .button.icon:before, .button.icon-help:before, .button.icon-alert:before, #menu .footer .button.icon-help:before, .button.icon-left:before, .button.icon-right:before {
     display: inline-block;
     padding: 0 0 1px 0;
     vertical-align: inherit;
@@ -8868,7 +8944,7 @@ progress {
   min-height: 30px;
   font-size: 12px;
   line-height: 26px; }
-  .button-small .icon:before, .button-small.icon:before, .button-small.icon-left:before, .button-small.icon-right:before {
+  .button-small .icon:before, .button-small .icon-help:before, .button-small .icon-alert:before, .button-small #menu .footer .icon-help:before, #menu .footer .button-small .icon-help:before, .button-small.icon:before, .button-small.icon-help:before, .button-small.icon-alert:before, #menu .footer .button-small.icon-help:before, .button-small.icon-left:before, .button-small.icon-right:before {
     font-size: 16px;
     line-height: 19px;
     margin-top: 3px; }
@@ -8879,7 +8955,7 @@ progress {
   min-height: 59px;
   font-size: 20px;
   line-height: 53px; }
-  .button-large .icon:before, .button-large.icon:before, .button-large.icon-left:before, .button-large.icon-right:before {
+  .button-large .icon:before, .button-large .icon-help:before, .button-large .icon-alert:before, .button-large #menu .footer .icon-help:before, #menu .footer .button-large .icon-help:before, .button-large.icon:before, .button-large.icon-help:before, .button-large.icon-alert:before, #menu .footer .button-large.icon-help:before, .button-large.icon-left:before, .button-large.icon-right:before {
     padding-bottom: 2px;
     font-size: 32px;
     line-height: 51px; }
@@ -8896,7 +8972,7 @@ progress {
     background: none;
     box-shadow: none;
     opacity: 0.3; }
-  .button-icon .icon:before, .button-icon.icon:before {
+  .button-icon .icon:before, .button-icon .icon-help:before, .button-icon .icon-alert:before, .button-icon #menu .footer .icon-help:before, #menu .footer .button-icon .icon-help:before, .button-icon.icon:before, .button-icon.icon-help:before, .button-icon.icon-alert:before, #menu .footer .button-icon.icon-help:before {
     font-size: 32px; }
 
 .button-clear {
@@ -8958,7 +9034,7 @@ input.button.button-block {
 
 a.button {
   text-decoration: none; }
-  a.button .icon:before, a.button.icon:before, a.button.icon-left:before, a.button.icon-right:before {
+  a.button .icon:before, a.button .icon-help:before, a.button .icon-alert:before, a.button #menu .footer .icon-help:before, #menu .footer a.button .icon-help:before, a.button.icon:before, a.button.icon-help:before, a.button.icon-alert:before, #menu .footer a.button.icon-help:before, a.button.icon-left:before, a.button.icon-right:before {
     margin-top: 2px; }
 
 .button.disabled,
@@ -9035,7 +9111,11 @@ a.button {
   text-overflow: ellipsis;
   white-space: nowrap; }
   .button-bar > .button:before,
-  .button-bar > .button .icon:before {
+  .button-bar > .button .icon:before,
+  .button-bar > .button .icon-help:before,
+  .button-bar > .button .icon-alert:before,
+  .button-bar > .button #menu .footer .icon-help:before, #menu .footer
+  .button-bar > .button .icon-help:before {
     line-height: 44px; }
   .button-bar > .button:first-child {
     border-radius: 4px 0px 0px 4px; }
@@ -9046,7 +9126,11 @@ a.button {
     border-radius: 4px; }
 
 .button-bar > .button-small:before,
-.button-bar > .button-small .icon:before {
+.button-bar > .button-small .icon:before,
+.button-bar > .button-small .icon-help:before,
+.button-bar > .button-small .icon-alert:before,
+.button-bar > .button-small #menu .footer .icon-help:before, #menu .footer
+.button-bar > .button-small .icon-help:before {
   line-height: 28px; }
 
 /**
@@ -9509,7 +9593,7 @@ a.button {
 .stable-border {
   border-color: #b2b2b2; }
 
-.positive, a.positive {
+.positive, .icon-help, a.positive, a.icon-help {
   color: #387ef5; }
 
 .positive-bg {
@@ -9518,7 +9602,7 @@ a.button {
 .positive-border {
   border-color: #0c60ee; }
 
-.calm, a.calm {
+.calm, #menu .footer .icon-help, a.calm, #menu .footer a.icon-help {
   color: #11c1f3; }
 
 .calm-bg {
@@ -9527,7 +9611,7 @@ a.button {
 .calm-border {
   border-color: #0a9dc7; }
 
-.assertive, a.assertive {
+.assertive, .icon-alert, a.assertive, a.icon-alert {
   color: #ef473a; }
 
 .assertive-bg {
@@ -10105,7 +10189,7 @@ a.button {
   box-shadow: none;
   /*    line-height: initial; */ }
 
-.button-bar > .button .icon:before,
+.button-bar > .button .icon:before, .button-bar > .button .icon-help:before, .button-bar > .button .icon-alert:before, .button-bar > .button #menu .footer .icon-help:before, #menu .footer .button-bar > .button .icon-help:before,
 .button-bar > .button:before {
   line-height: initial; }
 
@@ -10611,7 +10695,7 @@ a.button {
 .card.card-gallery > .item {
   background: inherit; }
 
-.card .icon + .icon {
+.card .icon + .icon, .card .icon-help + .icon, .card .icon-alert + .icon, .card #menu .footer .icon-help + .icon, #menu .footer .card .icon-help + .icon, .card .icon + .icon-help, .card .icon-help + .icon-help, .card .icon-alert + .icon-help, .card .icon + .icon-alert, .card .icon-help + .icon-alert, .card .icon-alert + .icon-alert, .card #menu .footer .icon-help + .icon-alert, #menu .footer .card .icon-help + .icon-alert, .card #menu .footer .icon + .icon-help, #menu .footer .card .icon + .icon-help, .card #menu .footer .icon-alert + .icon-help, #menu .footer .card .icon-alert + .icon-help, .card #menu .footer .icon-help + .icon-help, #menu .footer .card .icon-help + .icon-help {
   padding-left: 1rem; }
 
 .card.animate-fade-in {
@@ -10749,10 +10833,10 @@ a.button {
   font-size: 14px;
   width: 100%; }
 
-.item-icon-left .icon {
+.item-icon-left .icon, .item-icon-left .icon-help, .item-icon-left .icon-alert, .item-icon-left #menu .footer .icon-help, #menu .footer .item-icon-left .icon-help {
   left: 16px; }
 
-.item-icon-right .icon {
+.item-icon-right .icon, .item-icon-right .icon-help, .item-icon-right .icon-alert, .item-icon-right #menu .footer .icon-help, #menu .footer .item-icon-right .icon-help {
   right: 16px; }
 
 /*
@@ -11024,7 +11108,7 @@ a.button {
 .login .light-bg {
   background-color: #fff; }
 
-.icon.hero-icon:before {
+.icon.hero-icon:before, .hero-icon.icon-help:before, .hero-icon.icon-alert:before, #menu .footer .hero-icon.icon-help:before {
   line-height: 130px; }
 
 /* Mask
@@ -11220,7 +11304,7 @@ a.button {
 .no-padding, .list.no-padding, .bar.no-padding, .button-bar.no-padding, .card.no-padding, .button.no-padding, .item.no-padding {
   padding: 0; }
 
-.flat, .flat.tabs, .flat.button, .flat.button.icon, .flat.hero {
+.flat, .flat.tabs, .flat.button, .flat.button.icon, .flat.button.icon-help, .flat.button.icon-alert, #menu .footer .flat.button.icon-help, .flat.hero {
   box-shadow: none;
   -webkit-box-shadow: none; }
 
@@ -12515,15 +12599,20 @@ a {
 
 /* Text Colors
 ==================================*/
-.positive,
-.positive *,
+.positive, .icon-help,
+.positive *, .icon-help *,
 *.positive,
+*.icon-help,
 .positive:hover,
-.positive:hover *,
+.icon-help:hover,
+.positive:hover *, .icon-help:hover *,
 *.positive:hover,
+*.icon-help:hover,
 .positive:active,
-.positive:active *,
-*.positive:active {
+.icon-help:active,
+.positive:active *, .icon-help:active *,
+*.positive:active,
+*.icon-help:active {
   color: #3F51B5; }
 
 .positive-900,
@@ -12680,15 +12769,20 @@ a {
 *.energized-100:active {
   color: #FFE0B2; }
 
-.assertive,
-.assertive *,
+.assertive, .icon-alert,
+.assertive *, .icon-alert *,
 *.assertive,
+*.icon-alert,
 .assertive:hover,
-.assertive:hover *,
+.icon-alert:hover,
+.assertive:hover *, .icon-alert:hover *,
 *.assertive:hover,
+*.icon-alert:hover,
 .assertive:active,
-.assertive:active *,
-*.assertive:active {
+.icon-alert:active,
+.assertive:active *, .icon-alert:active *,
+*.assertive:active,
+*.icon-alert:active {
   color: #F44336; }
 
 .assertive-900,
@@ -12799,7 +12893,7 @@ a {
 .bar .button.button-clear {
   color: #fff; }
 
-.bar .button.button-icon .icon:before,
+.bar .button.button-icon .icon:before, .bar .button.button-icon .icon-help:before, .bar .button.button-icon .icon-alert:before, .bar .button.button-icon #menu .footer .icon-help:before, #menu .footer .bar .button.button-icon .icon-help:before,
 .bar .button.button-icon.icon-left:before,
 .bar .button.button-icon.icon-right:before,
 .bar .button.button-icon:before {
@@ -13250,13 +13344,13 @@ a {
 .gray, .popover-share .bar-header span, .popover-share .bar-footer .button-close {
   color: grey !important; }
 
-.gray a, .popover-share .bar-header span a, .popover-share .bar-footer .button-close a, .positive a {
+.gray a, .popover-share .bar-header span a, .popover-share .bar-footer .button-close a, .positive a, .icon-help a {
   color: inherit; }
 
-.gray a:hover, .popover-share .bar-header span a:hover, .popover-share .bar-footer .button-close a:hover, .positive a:hover {
+.gray a:hover, .popover-share .bar-header span a:hover, .popover-share .bar-footer .button-close a:hover, .positive a:hover, .icon-help a:hover {
   color: inherit; }
 
-.gray a:visited, .popover-share .bar-header span a:visited, .popover-share .bar-footer .button-close a:visited, .positive a:visited {
+.gray a:visited, .popover-share .bar-header span a:visited, .popover-share .bar-footer .button-close a:visited, .positive a:visited, .icon-help a:visited {
   color: inherit; }
 
 .item a {
@@ -13440,8 +13534,10 @@ a {
 
 @media screen and (min-width: 992px) {
   .list .item.item-border-large {
-    border-bottom: solid 1px #ccc !important;
-    /*max-height: 80px;*/ } }
+    border-bottom: solid 1px #ccc !important; } }
+
+.list .item.item-border {
+  border-bottom: solid 1px #ccc !important; }
 
 /**********
    Form validation
@@ -13546,6 +13642,9 @@ a {
 .text-keep-lines {
   white-space: pre-line !important; }
 
+.text-italic {
+  font-style: italic !important; }
+
 /**********
    Screen - Left Menu
 **********/
@@ -13577,7 +13676,7 @@ a {
   #menu ion-content.has-footer {
     bottom: 0px !important;
     /*ignore footer*/ }
-  body.platform-android #menu .item-icon-left .icon, .item-icon-right .icon {
+  body.platform-android #menu .item-icon-left .icon, body.platform-android #menu .item-icon-left .icon-help, body.platform-android #menu .item-icon-left .icon-alert, .item-icon-right .icon, .item-icon-right .icon-help, .item-icon-right .icon-alert, .item-icon-right #menu .footer .icon-help, #menu .footer .item-icon-right .icon-help {
     top: 5px; } }
 
 @media screen and (min-width: 401px) {
@@ -13605,3 +13704,21 @@ a {
   color: #D9D9D9;
   background-color: #E0E0E0;
   border: solid 1px #D9D9D9; }
+
+/**********
+   Help
+**********/
+.icon-help {
+  font-size: 38px;
+  vertical-align: middle; }
+
+.icon-alert {
+  font-size: 38px;
+  vertical-align: middle; }
+
+#menu .footer .icon-help {
+  font-size: 25px !important;
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  z-index: 99; }

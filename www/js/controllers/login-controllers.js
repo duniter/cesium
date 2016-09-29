@@ -55,10 +55,10 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
     });
   };
 
-  $scope.showNewAccountModal = function() {
+  $scope.showJoinModal = function() {
     $scope.closeModal();
     $timeout(function() {
-      Modals.showNewAccount();
+      Modals.showJoin();
     }, 300);
   };
 

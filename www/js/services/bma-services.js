@@ -9,14 +9,16 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
     var
     errorCodes = {
-        NO_MATCHING_IDENTITY: 2001,
-        UID_ALREADY_USED: 2003,
-        NO_MATCHING_MEMBER: 2004,
-        NO_IDTY_MATCHING_PUB_OR_UID: 2021,
-        MEMBERSHIP_ALREADY_SEND: 2007,
-        IDENTITY_SANDBOX_FULL: 1007,
-        HTTP_LIMITATION: 1006
-      },
+      HTTP_LIMITATION: 1006,
+      IDENTITY_SANDBOX_FULL: 1007,
+      NO_MATCHING_IDENTITY: 2001,
+      UID_ALREADY_USED: 2003,
+      NO_MATCHING_MEMBER: 2004,
+      NO_IDTY_MATCHING_PUB_OR_UID: 2021,
+      MEMBERSHIP_ALREADY_SEND: 2007,
+      NO_CURRENT_BLOCK: 2010,
+      BLOCK_NOT_FOUND: 2011
+    },
     regex = {
       USER_ID: "[A-Za-z0-9_-]+",
       CURRENCY: "[A-Za-z0-9_-]+",
@@ -26,6 +28,9 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
       URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
     },
+    constants = {
+      ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'
+    }
     server = csHttp.getServer(host, port);
 
     function exact(regexpContent) {
@@ -268,6 +273,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       },
       copy: copy,
       errorCodes: errorCodes,
+      constants: constants,
       regex: {
         USER_ID: exact(regex.USER_ID),
         COMMENT: exact(regex.COMMENT),

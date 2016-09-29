@@ -19,8 +19,8 @@
         <!-- username -->
         <label class="item item-input"
                ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
-          <span class="input-label hidden-xs" translate>LOGIN.USERNAME</span>
-          <input name="username" type="text" placeholder="{{'LOGIN.USERNAME_HELP' | translate}}"
+          <span class="input-label hidden-xs" translate>LOGIN.SALT</span>
+          <input name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                  ng-model="formData.username"
                  class="highlight-light"
                  required>
@@ -95,7 +95,7 @@
       <div class="text-center no-padding">
         {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
         <br class="visible-xs">
-        <a ng-click="showNewAccountModal()" translate>
+        <a ng-click="showJoinModal()" translate>
           LOGIN.CREATE_ACCOUNT
         </a>
       </div>

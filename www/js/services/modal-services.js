@@ -122,22 +122,27 @@ angular.module('cesium.modal.services', [])
   }
 
   function showAbout(parameters) {
-    return ModalUtils.show('templates/home/modal_about.html','AboutCtrl',
+    return ModalUtils.show('templates/modal_about.html','AboutCtrl',
       parameters);
   }
 
-  function showNewAccount(parameters) {
-      return ModalUtils.show('templates/home/modal_new_account.html','NewAccountModalCtrl',
-        parameters, {animation: 'slide-in-up'});
-    }
+  function showJoin(parameters) {
+    return ModalUtils.show('templates/join/modal_join.html','JoinModalCtrl',
+      parameters, {animation: 'slide-in-up'});
+  }
 
+  function showHelp(parameters) {
+    return ModalUtils.show('templates/help/modal_help.html','HelpModalCtrl',
+      parameters);
+  }
 
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
     showWotLookup: showWotLookup,
     showAbout: showAbout,
-    showNewAccount: showNewAccount
+    showJoin: showJoin,
+    showHelp: showHelp
   };
 
 });

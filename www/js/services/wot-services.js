@@ -170,6 +170,16 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             .then(function(block) {
             identity.sigDate = block.time;
             resolve(identity);
+          })
+          .catch(function(err){
+            // Special case for currency init (root block not exists): use now
+            if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && identity.number === '0') {
+              identity.sigDate = new Date().getTime() / 1000;
+              resolve(identity);
+            }
+            else {
+              reject(err);
+            }
           });
         })
         .catch(function(err) {
@@ -300,6 +310,15 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               .then(function(current) {
                 medianTime = current.medianTime;
               })
+              .catch(function(err){
+                // Special case for currency init (root block not exists): use now
+                if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+                  medianTime = new Date().getTime()/1000;
+                }
+                else {
+                  throw err;
+                }
+              })
           ])
           .then(function() {
             return $q.all([
@@ -395,7 +414,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           var blocks = _.sortBy(res.result.blocks, function(n){ return -n; });
           return getNewcomersRecursive(blocks, 0, 5, size)
             .then(function(idties){
-              if (idties && !idties.length) {
+              if (idties && idties.length) {
                 idties = _.sortBy(idties, function(idty){ return -idty.block; });
                 if (idties.length > size) {
                   idties = idties.slice(0, size); // limit if more than expected size
@@ -432,9 +451,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     block: block.number
                   });
                 });
-              })
-              .catch(function(err) {
-                reject(err);
               })
           );
         });

@@ -21,6 +21,28 @@
     }
   },
 
+  "sou": {
+    "timeout": 4000,
+    "cacheTimeMs": 60000,
+    "useRelative": true,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": false,
+    "rememberMe": false,
+    "showUDHistory": false,
+    "node": {
+      "host": "duniter.le-sou.org",
+      "port": "9600"
+    },
+    "plugins":{
+      "es": {
+        "enable": false,
+        "host": "data.duniter.fr",
+        "port": "80"
+      }
+    }
+  },
+
   "dev": {
     "timeout": 6000,
     "cacheTimeMs": 60000,
@@ -31,8 +53,8 @@
     "rememberMe": true,
     "showUDHistory": false,
     "node": {
-      "host": "test-net.duniter.fr",
-      "port": "9201"
+      "host": "192.168.0.28",
+      "port": "9600"
     },
     "plugins":{
       "es": {

@@ -4,6 +4,7 @@
     "APP_VERSION": "v{{version}}",
     "APP_BUILD": "build {{build}}",
     "PUBKEY": "Public key",
+    "MEMBER": "Member",
     "BTN_OK": "OK",
     "BTN_SEND": "Send",
     "BTN_SEND_MONEY": "Transfer money",
@@ -13,6 +14,7 @@
     "BTN_SHOW_PUBKEY": "Show key",
     "BTN_RELATIVE_UNIT": "Use relative unit",
     "BTN_BACK": " Back",
+    "BTN_NEXT": "Next",
     "BTN_CANCEL": "Cancel",
     "BTN_CLOSE": "Close",
     "BTN_LOGIN": "Sign In",
@@ -84,6 +86,7 @@
     "BTN_CURRENCIES": "Explore currencies",
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
+    "BTN_HELP": "Help",
     "BTN_ACCOUNT": "My Account",
     "REPORT_ISSUE": "Report an issue"
   },
@@ -129,7 +132,7 @@
       "RULES_DIVIDER": "Rules",
       "C_RULE": "c",
       "UD_RULE": "Universal dividend (formula)",
-      "SIG_QTY_RULE": "Required certifications",
+      "SIG_QTY_RULE": "Required certifications<br/>to become a member",
       "SIG_STOCK": "Maximal number of certifications<br/>sent by member"
     }
   },
@@ -181,8 +184,8 @@
   },
   "LOGIN": {
     "TITLE": "Login",
-    "USERNAME": "Protection phrase",
-    "USERNAME_HELP": "Protection phrase",
+    "SALT": "Protection phrase",
+    "SALT_HELP": "Protection phrase",
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password",
     "NO_ACCOUNT_QUESTION": "Do not have an account yet ?",
@@ -222,10 +225,20 @@
       "MEMBER_ACCOUNT_HELP": "If you are not yet registered as an individual (One account possible by individual).",
       "WALLET_ACCOUNT": "Simple wallet",
       "WALLET_ACCOUNT_HELP": "If you represent a company, association, etc. or simply need an additional wallet. No universal dividend will be created by this account.",
+      "SALT_WARNING": "Choose a protection phrase.<br/>You need it for each connection on this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there is no mean to retrieve it !",
+      "PASSWORD_WARNING": "Choose a password.<br/>You need it for each connection on this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there is no mean to retrieve it !",
+      "PSEUDO_WARNING": "Choose a pseudonym.<br/>It will be used by other people, to find you easily.<br/><br/>.Commas and accent characters are not allowed.<br/><div class='hidden-xs'><br/>Example : <span class='gray'>JohnDalton, JackieChan, etc.</span>",
       "PSEUDO": "Pseudonym",
       "PSEUDO_HELP": "joe123",
+      "SALT_CONFIRM": "Confirm phrase",
+      "SALT_CONFIRM_HELP": "Confirm phrase",
       "PASSWORD_CONFIRM": "Confirm Password",
       "PASSWORD_CONFIRM_HELP": "Confirm Password",
+      "SLIDE_6_TITLE": "Confirmation:",
+      "COMPUTING_PUBKEY": "Computing...",
+      "LAST_SLIDE_CONGRATULATION": "You completed all required fields.<br/><b>You can send the account creation request</b>.<br/><br/>For information, the public key below identifies your future account.<br/>It can be communicated to third parties to receive their payment.",
+      "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Warning:</b> your protection phrase, password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
+      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Warning:</b> your password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
       "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one.",
       "MSG_PUBKEY_ALREADY_USED": "Public key already used by an existing member.<br/>Please choose another connection parameters."
     },
@@ -258,6 +271,7 @@
     "FIELD_TOO_LONG": "This field value is exeeding max length.",
     "FIELD_ACCENT": "Commas and accent characters not allowed",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
+    "SALT_NOT_CONFIRMED": "Must match previous phrase.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",
     "SEND_CERTIFICATION_FAILED": "Could not certify identity.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "You could not send certification, because your account is <b>not</b> a member account.",
@@ -309,5 +323,25 @@
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>",
     "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue ?</b>"
+  },
+  "HELP": {
+    "TITLE": "Online help",
+    "JOIN": {
+      "SECTION": "Join",
+      "SALT": "(TODO translate)<br/>La phrase de protection est très importante. Elle sert à mélanger le mot de passe, avant qu'il ne servent à calculer la <span class=\"text-italic\">clé publique</span> de votre compte (son numéro) et la clé secrète pour y accéder.<br/><b>Veuillez à bien la mémoriser</b>, car aucun moyen n'est actuellement prévu pour la retrouver en cas de perte.<br/>Par ailleurs, elle ne peut pas être modifiée sans devoir créer un nouveau compte.<br/><br/>Une bonne phrase de protection doit être suffisamment longue (au moins 8 caractères) et le plus originale possible.",
+      "PASSWORD": "(TODO translate)<br/>Le mot de passe est très important. Avec la phrase de protection, il sert à à calculer le numéro (la clé publique) de votre compte, et la clé secrète pour y accéder.<br/><b>Veuillez à bien le mémoriser</b>, car aucun moyen n'est actuellement prévu pour la retrouver en cas de perte.<br/>Par ailleurs, elle ne peut pas être modifiée sans devoir créer un nouveau compte.<br/><br/>Un bon mot de passe contient (idéalement) au moins 8 caractères, dont au moins une majuscule et un chiffre.",
+      "PSEUDO": "(TODO translate)<br/>Le pseudonyme utilisé uniquement dans le cas d'inscription comme <span class=\"text-italic\">membre</span>. Il est toujours associé à un portefeuille (via sa <span class=\"text-italic\">clé publique</span>).<br/>Il est publié sur le réseau, afin que les autres utilisateurs puisse l'identifier, le certifier ou envoyer de la monnaie sur le compte.<br/>Un pseudonyme doit être unique au sein des membres <u>actifs</u> (Un seul membre peut avoir un meme pesudonyme, à un instant donné)."
+    },
+    "GLOSSARY": {
+      "SECTION": "Glossary",
+      "PUBKEY_DEF": "(TODO translate)<br/>Une clé publique identifie un portefeuille de monnaie. Il peut identifier un membre",
+      "MEMBER": "Member",
+      "MEMBER_DEF": "(TODO translate)<br/>Un membre est une personne humaine physique et vivante, désireuse de participer librement à la communauté monétaire. Elle percoit un dividende universel, suivant une période et un montant tels que définis dans les <span class=\"text-italic\">règles de la monnaie</span>",
+      "CURRENCY_RULES": "Currency rules",
+      "CURRENCY_RULES_DEF": "(TODO translate)<br/>Les règles de la monnaie sont définies une fois pour toute. Elle fixe le fonctionnement de la monnaie : le calcul du dividend universel, le nombre de certifications nécessaire pour être membre, le nombre de certification maximum qu'un membre peut donner, etc. <a href=\"#/app/currency/view/\">Voir les règles actuelles</a>.<br/>La non modification des règles dans le temps est possible par l'utilisation d'une <span class=\"text-italic\">BlockChain</span> qui porte et execute ces règles, et en vérifie constamment la bonne application.",
+      "BLOCKCHAIN": "BlockChain",
+      "BLOCKCHAIN_DEF": "(TODO translate)<br/>La BlockChain est un système décentralisé, qui, dans le cas de Duniter, sert à porter et executer les <span class=\"text-italic\">règles de la monnaie</span>.<br/><a href=\"http://fr.duniter.org/presentation/\">En savoir plus sur Duniter</a> et le fonctionnement de sa blockchain.",
+      "UNIVERSAL_DIVIDEND_DEF": "(TODO translate)<br/>Le Dividende Universel (DU) est la quantité de monnaie co-créé par chaque membre, suivant la période et le calcul définie dans les <span class=\"text-italic\">règles de la monnaie</span>.<br/>A chaque échéance, les membres recoivent sur leur compte la meme quantité de nouvelle monnaie.<br/><br/>Le DU subit une croissance régulière, pour rester juste entre les membres (actuels et à venir), calculée en fonction de l'espérance de vie moyenne, telle que démontré dans la Thérorie Relative de la Monnaie (TRM).<br/><a href=\"http://trm.creationmonetaire.info\">En savoir plus sur la TRM</a> et les monnaies libres."
+    }
   }
 }

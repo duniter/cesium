@@ -836,8 +836,10 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important;
-    /*max-height: 80px;*/
   }
+}
+.list .item.item-border {
+  border-bottom: solid 1px #ccc !important;
 }
 
 /**********
@@ -976,6 +978,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   white-space: pre-line !important;
 }
 
+.text-italic {
+  font-style: italic !important;
+}
+
 /**********
    Screen - Left Menu
 **********/
@@ -1064,5 +1070,38 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   color: #D9D9D9;
   background-color: #E0E0E0;
   border: solid 1px #D9D9D9;
+}
+
+
+/**********
+   Help
+**********/
+.icon-help {
+  @extend .icon;
+  @extend .positive;
+  @extend .ion-ios-help-outline;
+
+  font-size: 38px;
+  vertical-align: middle;
+}
+
+.icon-alert {
+  @extend .icon;
+  @extend .assertive;
+  @extend .ion-android-alert;
+
+  font-size: 38px;
+  vertical-align: middle;
+}
+
+#menu .footer .icon-help {
+  @extend .icon;
+  @extend .calm;
+  @extend .ion-ios-help-outline;
+  font-size: 25px !important;
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  z-index: 99;
 }
 

@@ -1,0 +1,22 @@
+<ion-view class="modal slide-in-up ng-enter active ng-enter-active">
+
+    <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CLOSE
+      </button>
+
+      <h1 class="title" translate>HELP.TITLE</h1>
+    </ion-header-bar>
+
+    <ion-content scroll="true" class="padding">
+
+      <ng-include src="'templates/help/help.html'"></ng-include>
+
+      <div class="padding hidden-xs text-center">
+        <button class="button button-positive ink" type="submit"
+                ng-click="closeModal()">
+          {{'COMMON.BTN_CLOSE' | translate}}
+        </button>
+      </div>
+
+    </ion-content>
+</ion-view>

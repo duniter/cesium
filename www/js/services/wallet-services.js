@@ -504,7 +504,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return $q(function(resolve, reject) {
         BMA.blockchain.stats.ud()
         .then(function(res){
-          if (res.result.blocks.length) {
+          // Special case for currency init
+          if (!res.result.blocks.length) {
+            data.currentUD = data.parameters ? data.parameters.ud0 : -1;
+            resolve();
+          }
+          else {
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
@@ -959,6 +964,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             .then(function(current) {
               block = current;
             })
+            .catch(function(err) {
+              // Special case for currency init (root block not exists): use fixed values
+              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+                block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
+              }
+              else {
+                throw err;
+              }
+            })
         ])
         // Create identity document to sign
         .then(function() {
@@ -1012,6 +1026,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return function() {
         return $q(function(resolve, reject) {
           BMA.blockchain.current()
+            .catch(function(err){
+              // Special case for currency init (root block not exists): use fixed values
+              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
+              }
+              else {
+                throw err;
+              }
+            })
           .then(function(block) {
             // Create membership to sign
              var membership = 'Version: 2\n' +
@@ -1051,6 +1074,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return $q(function(resolve, reject) {
 
         BMA.blockchain.current()
+        .catch(function(err){
+          // Special case for currency init (root block not exists): use fixed values
+          if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+            return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
+          }
+          reject(err);
+        })
         .then(function(block) {
           // Create the self part to sign
           var cert = 'Version: 2\n' +

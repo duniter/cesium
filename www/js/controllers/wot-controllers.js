@@ -178,6 +178,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
         $scope.search.looking = false;
 
         if ($scope.search.results.length > 0) {
+
           // Set Motion
           $timeout(function() {
             UIUtils.motion.ripple({
@@ -269,7 +270,7 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
       }
     }
     else {
-      // Redirect to home
+      // Redirect to app
       $state.go('app.home');
     }
   });
@@ -342,7 +343,7 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
         $scope.load($state.stateParams.pubkey.trim());
       }
     }
-    // Redirect o home
+    // Redirect o app
     else {
       $timeout(function() {
         $state.go('app.home', null);
@@ -371,11 +372,12 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
   $scope.certify = function() {
     $scope.loadWallet()
     .then(function(walletData) {
-      if (!walletData.isMember) {
+      console.log(walletData.blockUid);
+      /*if (!walletData.isMember) {
         UIUtils.alert.error(walletData.requirements.needSelf ?
           'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
         return;
-      }
+      }*/
       UIUtils.loading.hide();
       UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
       .then(function(confirm){

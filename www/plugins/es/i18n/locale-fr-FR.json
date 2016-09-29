@@ -16,6 +16,12 @@
     "USER_PROFILE": "Mon profil",
     "USER_MESSAGE": "Messages"
   },
+  "ACCOUNT": {
+    "NEW": {
+      "ORGANIZATION_ACCOUNT": "Compte pour une organisation",
+      "ORGANIZATION_ACCOUNT_HELP": "Si vous représentez une entreprise, une association, etc.<br/>Aucun dividende universel ne sera créé par ce compte."
+    }
+  },
   "COMMENTS": {
     "DIVIDER": "Commentaires",
     "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents",

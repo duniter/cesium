@@ -168,6 +168,10 @@ angular.module('cesium.directives', ['cesium.services'])
 
   var getTemplate = function(extensionPoint) {
     var template = extensionPoint.templateUrl ? $templateCache.get(extensionPoint.templateUrl) : extensionPoint.template;
+    if (!template) {
+      console.error('[plugin] Could not found template for extension :' + (extensionPoint.templateUrl ? extensionPoint.templateUrl : extensionPoint.template));
+      return '';
+    }
     if (extensionPoint.controller) {
       template = '<ng-controller ng-controller="'+extensionPoint.controller+'">' + template + '</div>';
     }

@@ -1,0 +1,29 @@
+<ng-if ng-if="enable && extensionPoint === 'select-account-type'">
+
+  <!-- ornigzation wallet -->
+  <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
+       ng-class="{ activated: accountTypeMember != null && !accountTypeMember }"
+       ng-click="selectAccountType('organization')">
+    <div class="item-content item-text-wrap">
+      <i class="item-image icon dark cion-registry-association"></i>
+      <h2 translate>ACCOUNT.NEW.ORGANIZATION_ACCOUNT</h2>
+      <h4 class="gray" translate>ACCOUNT.NEW.ORGANIZATION_ACCOUNT_HELP</h4>
+      <i class="icon dark ion-ios-arrow-right"></i>
+    </div>
+  </div>
+
+</ng-if>
+
+<!-- Add a slide -->
+<ng-if ng-if="enable && extensionPoint === 'last-slide'">
+
+  <!-- STEP 6: organization type -->
+  <ion-slide-page>
+    <ion-content class="has-header" scroll="false">
+
+      <p>TOTO</p>
+
+    </ion-content>
+  </ion-slide-page>
+
+</ng-if>

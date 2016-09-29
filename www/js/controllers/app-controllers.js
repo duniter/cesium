@@ -11,7 +11,7 @@ angular.module('cesium.app.controllers', ['cesium.services'])
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
   })
 
-  .config(function($stateProvider) {
+  .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
 
     $stateProvider
@@ -22,15 +22,32 @@ angular.module('cesium.app.controllers', ['cesium.services'])
         templateUrl: "templates/menu.html",
         controller: 'AppCtrl'
       })
+
+      .state('app.home', {
+        url: "/home",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/home/home.html",
+            controller: 'AppCtrl'
+          }
+        }
+      })
     ;
 
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/app/home');
+
   })
+
+
 
   .controller('AppCtrl', AppController)
 
   .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
 
   .controller('EmptyModalCtrl', EmptyModalController)
+
+  .controller('AboutCtrl', AboutController)
 
 ;
 
@@ -260,8 +277,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     Modals.showAbout();
   };
 
-  $scope.showNewAccountModal = function() {
-    Modals.showNewAccount();
+  $scope.showJoinModal = function() {
+    Modals.showJoin();
+  };
+
+  $scope.showHelpModal = function(parameters) {
+    Modals.showHelp(parameters);
   };
 
   ////////////////////////////////////////
@@ -300,3 +321,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 }
 
+
+function AboutController($scope, csConfig) {
+  'ngInject';
+  $scope.config = csConfig;
+}
