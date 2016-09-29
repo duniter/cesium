@@ -189,8 +189,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
             return;
           }
           throw err;
-        })
-      ,
+        }),
 
       // Get the UD informations
       $scope.node.blockchain.stats.ud()
@@ -209,7 +208,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
             return $scope.node.blockchain.parameters()
               .then(function(json){
                 $scope.currentUD = json.ud0;
-              })
+              });
           }
         })
     ])
