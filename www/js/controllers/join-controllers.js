@@ -194,12 +194,11 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
         'join-salt' : ( $scope.slides.slider.activeIndex == 3 ?
           'join-password' : 'join-pseudo');
     }
-    console.debug("[join] Ask to show help on " + helpAnchor);
     Modals.showHelp({anchor: helpAnchor});
   };
 
   // TODO: remove auto add account when done
-  $timeout(function() {
+  /*$timeout(function() {
     //$scope.selectCurrency('test_net');
     //$scope.selectAccountType('member');
     $scope.formData.username="azertypoi";
@@ -209,5 +208,5 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
     $scope.formData.pseudo="azertypoi";
     //$scope.doNext();
     //$scope.doNext();
-  }, 400);
+  }, 400);*/
 }
