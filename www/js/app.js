@@ -137,7 +137,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   })
 
   // Translation i18n
-  .config(function ($translateProvider) {
+  .config(function ($translateProvider, csConfig) {
     'ngInject';
 
     $translateProvider
@@ -146,7 +146,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     // Cela fait bugger les placeholder (pb d'affichage des accents en FR)
     //.useSanitizeValueStrategy('sanitize')
     .useSanitizeValueStrategy(null)
-    .fallbackLanguage(['en'])
+    .fallbackLanguage([csConfig.fallbackLanguage ? csConfig.fallbackLanguage : 'en'])
     .useLoaderCache(true);
   })
 

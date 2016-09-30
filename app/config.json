@@ -1,13 +1,14 @@
 {
   "default": {
-    "timeout": 4000,
     "cacheTimeMs": 60000,
-    "useRelative": true,
+    "fallbackLanguage": "en",
+    "rememberMe": false,
+    "showUDHistory": false,
+    "timeout": 4000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": false,
-    "rememberMe": false,
-    "showUDHistory": false,
+    "useRelative": true,
     "node": {
       "host": "test-net.duniter.fr",
       "port": "9201"
@@ -22,14 +23,15 @@
   },
 
   "sou": {
-    "timeout": 4000,
     "cacheTimeMs": 60000,
-    "useRelative": true,
+    "fallbackLanguage": "fr",
+    "rememberMe": false,
+    "showUDHistory": false,
+    "timeout": 4000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": false,
-    "rememberMe": false,
-    "showUDHistory": false,
+    "useRelative": true,
     "node": {
       "host": "duniter.le-sou.org",
       "port": "9600"
@@ -44,14 +46,15 @@
   },
 
   "dev": {
-    "timeout": 6000,
     "cacheTimeMs": 60000,
-    "useRelative": true,
+    "fallbackLanguage": "en",
+    "rememberMe": true,
+    "showUDHistory": false,
+    "timeout": 6000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
-    "rememberMe": true,
-    "showUDHistory": false,
+    "useRelative": true,
     "node": {
       "host": "192.168.0.28",
       "port": "9600"
@@ -59,7 +62,7 @@
     "plugins":{
       "es": {
         "enable": false,
-        "host": "192.168.0.28",
+        "host": "192.168.0.5",
         "port": "9203"
       }
     }

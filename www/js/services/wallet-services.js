@@ -218,11 +218,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             data.loaded = false;
           }
 
-          api.data.raise.login(data);
+          return $q.all([
+            // Call extend api
+            api.data.raisePromise.login(data),
 
-          // Load parameters
-          // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-          return loadParameters();
+            // Load parameters
+            // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+            loadParameters()
+          ]);
         })
         .catch(function(err){reject(err);});
       });

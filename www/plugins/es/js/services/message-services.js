@@ -68,8 +68,12 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           if(resolve) resolve(data);
         })
         .catch(function(err){
-          reject(err);
-          if(reject) reject(data);
+          if(resolve) {
+            resolve(data);
+          }
+          else {
+            throw err;
+          }
         });
     }
 
