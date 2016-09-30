@@ -84,7 +84,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $focus) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, Device, Wallet, WotService, $focus) {
   'ngInject';
 
   $scope.search = {
@@ -171,8 +171,11 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, Device, Wal
 
     size = (size && size > 0) ? size : 10;
 
-    WotService.newcomers(size)
-      .then(function(idties){
+    var searchFunction =  csConfig.initPhase ?
+      WotService.all :
+      WotService.newcomers;
+
+    searchFunction(size).then(function(idties){
         if (!$scope.search.newIncomers) return; // could have change
         $scope.search.results = idties || [];
         $scope.search.looking = false;
@@ -258,14 +261,14 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
   $scope.formData = {};
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams &&
-        $state.stateParams.pubkey &&
-        $state.stateParams.pubkey.trim().length > 0) {
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (state.stateParams &&
+      state.stateParams.pubkey &&
+      state.stateParams.pubkey.trim().length > 0) {
       if ($scope.loading) {
         $scope.load(
-          $state.stateParams.pubkey.trim(),
-          $state.stateParams.uid ? $state.stateParams.uid.trim() : null
+          state.stateParams.pubkey.trim(),
+          state.stateParams.uid ? state.stateParams.uid.trim() : null
         );
       }
     }

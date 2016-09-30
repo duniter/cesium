@@ -481,6 +481,70 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }
           });
       });
+    },
+
+    getAll = function() {
+      var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
+      return getAllRecursive(letters, 0, 5);
+    },
+
+    getAllRecursive = function(letters, offset, size) {
+      return $q(function(resolve, reject) {
+        var result = [];
+        var pubkeys = {};
+        var jobs = [];
+        _.each(letters.slice(offset, offset+size), function(letter) {
+          jobs.push(
+            search(letter)
+              .then(function(idties){
+                if (!idties || !idties.length) return;
+                result = idties.reduce(function(res, idty) {
+                  if (!pubkeys[idty.pubkey]) {
+                    pubkeys[idty.pubkey] = true;
+                    return res.concat(idty);
+                  }
+                  return res;
+                }, result);
+              })
+          );
+        });
+
+        $q.all(jobs)
+          .then(function() {
+            if (offset < letters.length - 1) {
+              $timeout(function() {
+                getAllRecursive(letters, offset+size, size)
+                  .then(function(idties) {
+                    if (!idties || !idties.length) {
+                      resolve(result);
+                      return;
+                    }
+                    resolve(idties.reduce(function(res, idty) {
+                      if (!pubkeys[idty.pubkey]) {
+                        pubkeys[idty.pubkey] = true;
+                        return res.concat(idty);
+                      }
+                      return res;
+                    }, result));
+                  })
+                  .catch(function(err) {
+                    reject(err);
+                  });
+              }, 1000);
+            }
+            else {
+              resolve(result);
+            }
+          })
+          .catch(function(err){
+            if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
+              resolve(result);
+            }
+            else {
+              reject(err);
+            }
+          });
+      });
     }
     ;
 
@@ -493,6 +557,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       load: loadData,
       search: search,
       newcomers: getNewcomers,
+      all: getAll,
       // api extension
       api: api
     };
