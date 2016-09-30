@@ -20,7 +20,7 @@
         <label class="item item-input"
                ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
           <span class="input-label hidden-xs" translate>LOGIN.SALT</span>
-          <input name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+          <input name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                  ng-model="formData.username"
                  class="highlight-light"
                  required>

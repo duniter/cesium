@@ -53,7 +53,9 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
   $scope.isLastSlide = false;
   $scope.search = {
     looking: true
-  };
+  }
+  $scope.showUsername = false;
+  $scope.showPassword = false;
 
   csCurrency.load()
   .then(function (data) {

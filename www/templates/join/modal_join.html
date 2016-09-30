@@ -108,7 +108,14 @@
               <div class="item item-input"
                    ng-class="{ 'item-input-error': saltForm.$submitted && saltForm.username.$invalid}">
                 <span class="input-label" translate>LOGIN.SALT</span>
-                <input name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+                <input ng-if="!showUsername"
+                       name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+                       ng-change="formDataChanged()"
+                       ng-model="formData.username"
+                       ng-minlength="8"
+                       required>
+                <input ng-if="showUsername"
+                       name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                        ng-change="formDataChanged()"
                        ng-model="formData.username"
                        ng-minlength="8"
@@ -131,8 +138,14 @@
               <!-- confirm salt -->
               <div class="item item-input"
                    ng-class="{ 'item-input-error': saltForm.$submitted && saltForm.confirmSalt.$invalid}">
-                <span class="input-label" translate>ACCOUNT.NEW.SALT_CONFIRM</span>
-                <input name="confirmUsername" type="password"
+                <span class="input-label pull-right" translate>ACCOUNT.NEW.SALT_CONFIRM</span>
+                <input ng-if="!showUsername"
+                       name="confirmUsername" type="password"
+                       placeholder="{{'ACCOUNT.NEW.SALT_CONFIRM_HELP' | translate}}"
+                       ng-model="formData.confirmUsername"
+                       compare-to="formData.username">
+                <input ng-if="showUsername"
+                       name="confirmUsername" type="text"
                        placeholder="{{'ACCOUNT.NEW.SALT_CONFIRM_HELP' | translate}}"
                        ng-model="formData.confirmUsername"
                        compare-to="formData.username">
@@ -152,6 +165,17 @@
                 <div class="form-error" ng-message="compareTo">
                   <span translate="ERROR.SALT_NOT_CONFIRMED"></span>
                 </div>
+              </div>
+
+              <!-- Show values -->
+              <div class="item item-toggle dark">
+                <span translate>ACCOUNT.NEW.SHOW_VALUES</span>
+                <label class="toggle toggle-royal">
+                  <input type="checkbox" ng-model="showUsername">
+                  <div class="track">
+                    <div class="handle"></div>
+                  </div>
+                </label>
               </div>
 
               <div class="padding hidden-xs text-right">
@@ -184,7 +208,14 @@
               <div class="item item-input"
                    ng-class="{ 'item-input-error': passwordForm.$submitted && passwordForm.password.$invalid}">
                 <span class="input-label" translate>LOGIN.PASSWORD</span>
-                <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+                <input ng-if="!showPassword"
+                       name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+                       ng-model="formData.password"
+                       ng-change="formDataChanged()"
+                       ng-minlength="8"
+                       required>
+                <input ng-if="showPassword"
+                       name="text" type="text" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                        ng-model="formData.password"
                        ng-change="formDataChanged()"
                        ng-minlength="8"
@@ -208,7 +239,13 @@
               <div class="item item-input"
                    ng-class="{ 'item-input-error': passwordForm.$submitted && passwordForm.confirmPassword.$invalid}">
                 <span class="input-label" translate>ACCOUNT.NEW.PASSWORD_CONFIRM</span>
-                <input name="confirmPassword" type="password"
+                <input ng-if="!showPassword"
+                       name="confirmPassword" type="password"
+                       placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}"
+                       ng-model="formData.confirmPassword"
+                       compare-to="formData.password">
+                <input ng-if="showPassword"
+                       name="confirmPassword" type="text"
                        placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}"
                        ng-model="formData.confirmPassword"
                        compare-to="formData.password">
@@ -230,7 +267,16 @@
                 </div>
               </div>
 
-
+              <!-- Show values -->
+              <div class="item item-toggle dark">
+                <span translate>ACCOUNT.NEW.SHOW_VALUES</span>
+                <label class="toggle toggle-royal">
+                  <input type="checkbox" ng-model="showPassword">
+                  <div class="track">
+                    <div class="handle"></div>
+                  </div>
+                </label>
+              </div>
             </div>
 
             <div class="padding hidden-xs text-right">
