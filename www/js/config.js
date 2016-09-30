@@ -18,6 +18,7 @@ angular.module("cesium.config", [])
 	"timeWarningExpire": 7776000,
 	"useLocalStorage": false,
 	"useRelative": true,
+	"initPhase": false,
 	"node": {
 		"host": "test-net.duniter.fr",
 		"port": "9201"
@@ -29,8 +30,8 @@ angular.module("cesium.config", [])
 			"port": "80"
 		}
 	},
-	"version": "0.3.10",
-	"build": "2016-09-30T07:08:05.684Z",
+	"version": "0.3.11",
+	"build": "2016-09-30T23:47:45.815Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
