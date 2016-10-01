@@ -20,7 +20,13 @@
         <label class="item item-input"
                ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
           <span class="input-label hidden-xs" translate>LOGIN.SALT</span>
-          <input name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+          <input ng-if="!showValues"
+                 name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+                 ng-model="formData.username"
+                 class="highlight-light"
+                 required>
+          <input ng-if="showValues"
+                 name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                  ng-model="formData.username"
                  class="highlight-light"
                  required>
@@ -37,7 +43,13 @@
         <label class="item item-input"
                ng-class="{ 'item-input-error': form.$submitted && form.password.$invalid}">
           <span class="input-label hidden-xs" translate>LOGIN.PASSWORD</span>
-          <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+          <input ng-if="!showValues"
+                 name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
+                 ng-model="formData.password"
+                 select-on-click
+                 required>
+          <input ng-if="showValues"
+                 name="password" type="text" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                  ng-model="formData.password"
                  select-on-click
                  required>
@@ -50,18 +62,28 @@
           </div>
         </div>
 
+        <!-- Show values -->
+        <div class="item item-toggle dark">
+          <span translate>COMMON.SHOW_VALUES</span>
+          <label class="toggle toggle-stable">
+            <input type="checkbox" ng-model="showPassword">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
+        </div>
+
         <!-- remember me -->
         <div class="item item-toggle dark hidden-xs">
-          <div class="input-label">
-            {{'SETTINGS.REMEMBER_ME' | translate}}
-          </div>
-          <label class="toggle toggle-royal">
+          <span translate>SETTINGS.REMEMBER_ME</span>
+          <label class="toggle toggle-calm">
             <input type="checkbox" ng-model="formData.rememberMe">
             <div class="track">
               <div class="handle"></div>
             </div>
           </label>
         </div>
+
 
         <!-- Show public key -->
         <div class="item item-button-right left">

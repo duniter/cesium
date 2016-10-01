@@ -40,6 +40,7 @@
     "ENABLE": "Activé",
     "DISABLE": "Désactivé",
     "RESULTS_LIST": "Résultats :",
+    "SHOW_VALUES": "Afficher les valeurs saisies",
     "POPOVER_SHARE": {
       "TITLE": "Partager",
       "SHARE_ON_TWITTER": "Partager sur Twitter",
@@ -227,7 +228,6 @@
       "WALLET_ACCOUNT": "Simple portefeuille",
       "WALLET_ACCOUNT_HELP": "Pour tous les autres cas, par exemple si vous avez besoin d'un compte supplémentaire.<br/>Aucun dividende universel ne sera créé par ce compte.",
       "SALT_WARNING": "Choisissez votre phrase de protection.<br/>Elle vous sera demandée à chaque connexion sur ce compte.<br/><br/><b>Retenez bien cette phrase</b>.<br/>En cas de perte, aucun moyen n'est actuellement prévu pour la retrouver : plus personne ne pourra accéder à votre compte !",
-      "SHOW_VALUES": "Afficher les valeurs saisies",
       "PASSWORD_WARNING": "Choisissez un mot de passe.<br/>Il vous sera demandé à chaque connexion sur ce compte.<br/><br/><b>Retenez bien ce mot de passe</b>.<br/>En cas de perte, aucun moyen n'est actuellement prévu pour la retrouver : plus personne ne pourra accéder à votre compte !",
       "PSEUDO_WARNING": "Choisissez un pseudonyme.<br/>Il sert aux autres membres, pour vous retrouver plus facilement.<br/><br/>Il ne doit contenir <b>ni espace, ni de caractère accentué</b>.<div class='hidden-xs'><br/>Exemple : <span class='gray'>SophieDupond, MarcelChemin, etc.</span>",
       "PSEUDO": "Pseudonyme",

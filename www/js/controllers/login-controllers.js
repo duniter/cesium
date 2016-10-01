@@ -12,6 +12,7 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
   $scope.formData = {
     rememberMe: csSettings.data.rememberMe
   };
+  $scope.showValues = false;
 
   // Login form submit
   $scope.doLogin = function() {

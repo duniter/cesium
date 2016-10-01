@@ -40,6 +40,7 @@
     "ENABLE": "Enable",
     "DISABLE": "Disable",
     "RESULTS_LIST": "Results:",
+    "SHOW_VALUES": "Display filled values",
     "POPOVER_SHARE": {
       "TITLE": "Share",
       "SHARE_ON_TWITTER": "Share on Twitter",
@@ -227,7 +228,6 @@
       "WALLET_ACCOUNT": "Simple wallet",
       "WALLET_ACCOUNT_HELP": "If you represent a company, association, etc. or simply need an additional wallet. No universal dividend will be created by this account.",
       "SALT_WARNING": "Choose a protection phrase.<br/>You need it for each connection on this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there is no mean to retrieve it !",
-      "SHOW_VALUES": "Display filled values",
       "PASSWORD_WARNING": "Choose a password.<br/>You need it for each connection on this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there is no mean to retrieve it !",
       "PSEUDO_WARNING": "Choose a pseudonym.<br/>It will be used by other people, to find you easily.<br/><br/>.Commas and accent characters are not allowed.<br/><div class='hidden-xs'><br/>Example : <span class='gray'>JohnDalton, JackieChan, etc.</span>",
       "PSEUDO": "Pseudonym",
