@@ -147,6 +147,7 @@
     "REGISTERED_SINCE": "Inscription",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
     "NO_CERTIFICATIONS": "Aucune certification",
+    "NOT_MEMBER_PARENTHESIS": "(non membre)",
     "EXPIRE_IN": "Expiration",
     "PSEUDO": "Pseudonyme",
     "SIGNED_ON_BLOCK": "Certifié au bloc",

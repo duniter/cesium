@@ -147,6 +147,7 @@
     "REGISTERED_SINCE": "Registered since ",
     "REGISTERED_SINCE_BLOCK": "Registered since block #",
     "NO_CERTIFICATIONS": "No certification",
+    "NOT_MEMBER_PARENTHESIS": "(not member)",
     "EXPIRE_IN": "Expires",
     "PSEUDO": "Pseudonym",
     "SIGNED_ON_BLOCK": "Certify on block",
