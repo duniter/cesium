@@ -174,14 +174,14 @@
       "SUMMARY": "Certifications reçues",
       "LIST": "Détail des certifications reçues",
       "RECEIVED": "Certifications reçues",
-      "RECEIVED_BY": "Certifications reçues par {{uid}}",
+      "RECEIVED_BY": "Certifications reçues par {{uid}}"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications émises",
       "SUMMARY": "Certifications émises",
       "LIST": "Détail des certifications émises",
       "SENT": "Certifications émises",
-      "SENT_BY": "Certifications émises par {{uid}}",
+      "SENT_BY": "Certifications émises par {{uid}}"
     }
   },
   "LOGIN": {
