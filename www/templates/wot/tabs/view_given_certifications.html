@@ -24,10 +24,10 @@
           <a class="item ink"
                 ng-repeat="cert in formData.givenCertifications"
                 ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
-            <span ng-if="cert.isMember || cert.wasMember">
+            <span ng-if="cert.isMember">
               <h3>
                 <i ng-if="!cert.valid" class="icon ion-clock"> </i>
-                <span ng-class="{'positive': cert.isMember}">
+                <span class="positive">
                   <i class="icon ion-person"> </i>
                   {{::cert.uid}}
                 </span>
@@ -39,11 +39,16 @@
                 <span class="gray" ng-if="!cert.valid"> | {{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</span>
               </h4>
             </span>
-            <span ng-if="!cert.isMember && !cert.wasMember">
+            <span ng-if="!cert.isMember">
               <h3 class="gray">
-                <i class="icon ion-key"></i>
+                <span ng-if="cert.uid">
+                  <i class="ion-person"> </i>
+                  {{::cert.uid}}
+                </span>
+                <i class="ion-key"></i>
                 {{::cert.pubkey | formatPubkey}}
               </h3>
+              <h5 class="assertive">{{'WOT.NOT_MEMBER_PARENTHESIS'|translate}}</h5>
               <h4 ng-if="!cert.isMember" class="gray">{{'WOT.SIGNED_ON_BLOCK' | translate}} #{{::cert.block}}</h4>
             </span>
             <div class="badge item-note"
