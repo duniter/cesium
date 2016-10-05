@@ -104,7 +104,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.dt = 0;
   $scope.sigQty = 0;
   $scope.sigStock = 0;
-  $scope.time  = 0;
+  $scope.medianTime  = 0;
   $scope.difficulty  = 0;
   $scope.Nprev = 0;
 
@@ -141,11 +141,14 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     UIUtils.loading.show();
 
     if ($scope.loadingPeers){
-      csNetwork.start($scope.node, false/*waitAllPeers*/)
-        .then(function(peers) {
-          $scope.peers = peers;
-          $scope.waitLoadingPeersFinish();
-        });
+      csNetwork.start($scope.node);
+      // Catch event on new peers
+      csNetwork.api.data.on.changed($scope, function(data){
+        $timeout(function() {
+          console.debug("Updating UI Peers");
+          $scope.peers = data.peers;
+        }, 100);
+      });
       $scope.$on('$destroy', function(){
         csNetwork.close();
       });
@@ -177,14 +180,14 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
         .then(function(block){
           M = block.monetaryMass;
           $scope.N = block.membersCount;
-          $scope.time  = moment(block.medianTime*1000).format($scope.datePattern);
+          $scope.medianTime  = block.medianTime;
           $scope.difficulty  = block.powMin;
         })
         .catch(function(err){
           // Special case for currency init (root block not exists): use fixed values
           if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
             $scope.N = 0;
-            $scope.time = Math.trunc(new Date().getTime() / 1000);
+            $scope.medianTime = Math.trunc(new Date().getTime() / 1000);
             $scope.difficulty  = 0;
             return;
           }
@@ -254,14 +257,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .then(function(){
       // Network
       $scope.loadingPeers = true;
-      csNetwork.refreshPeers(false)
-        .then(function(peers) {
-          $scope.peers = peers;
-          $scope.waitLoadingPeersFinish();
-        })
-        .catch(function() {
-          $scope.loadingPeers = false;
-        });
+      csNetwork.refreshPeers();
     });
   };
 

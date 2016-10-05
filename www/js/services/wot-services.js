@@ -333,7 +333,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                       angular.merge(data, identity);
 
                       // Get given certifications
-                      return loadGivenCertifications(pubkey, identity.temp.givenCertifications, parameters, medianTime)
+                      return loadGivenCertifications(pubkey, !identity.temp ? identity.temp : identity.temp.givenCertifications, parameters, medianTime)
                         .then(function (identity) {
                           angular.merge(data, identity);
                         });

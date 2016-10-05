@@ -33,7 +33,7 @@
     "timeWarningExpire": 7776000,
     "useLocalStorage": false,
     "useRelative": true,
-    "initPhase": true,
+    "initPhase": false,
     "node": {
       "host": "duniter.le-sou.org",
       "port": "9600"
@@ -57,10 +57,10 @@
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": true,
-    "initPhase": true,
+    "initPhase": false,
     "node": {
       "host": "192.168.0.28",
-      "port": "9600"
+      "port": "9604"
     },
     "plugins":{
       "es": {
