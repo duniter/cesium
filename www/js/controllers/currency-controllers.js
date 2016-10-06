@@ -147,7 +147,8 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
         $timeout(function() {
           console.debug("Updating UI Peers");
           $scope.peers = data.peers;
-        }, 100);
+          $scope.loadingPeers = csNetwork.isBusy();
+        }, 1000);
       });
       $scope.$on('$destroy', function(){
         csNetwork.close();
@@ -238,16 +239,6 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
       $scope.loading = false;
       UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
     });
-  };
-
-  $scope.waitLoadingPeersFinish = function() {
-    "use strict";
-    if (csNetwork.isBusy()) {
-      $timeout($scope.waitLoadingPeersFinish, 500);
-    }
-    else {
-      $scope.loadingPeers = false;
-    }
   };
 
   $scope.refresh = function() {

@@ -13,6 +13,8 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
     rememberMe: csSettings.data.rememberMe
   };
   $scope.showValues = false;
+  $scope.showPubkeyButton = false;
+  $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a';
 
   // Login form submit
   $scope.doLogin = function() {
@@ -31,29 +33,44 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
 
   $scope.formDataChanged = function() {
     $scope.computing=false;
-    $scope.pubkey = '';
-    /*if (!$scope.isDeviceEnable()){
+    $scope.pubkey = null;
+    if ($scope.autoComputePubkey && $scope.formData.username && $scope.formData.password) {
       $scope.showPubkey();
-    }*/
+    }
+    else {
+      $scope.showPubkeyButton = $scope.formData.username && $scope.formData.password;
+    }
   };
   $scope.$watch('formData.username', $scope.formDataChanged, true);
   $scope.$watch('formData.password', $scope.formDataChanged, true);
 
   $scope.showPubkey = function() {
     $scope.computing=true;
-    CryptoUtils.connect($scope.formData.username, $scope.formData.password).then(
-      function(keypair) {
-        $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-        $scope.computing=false;
-      }
-    )
-    .catch(function(err) {
-      $scope.pubkey = '';
-      $scope.computing=false;
-      UIUtils.loading.hide();
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-    });
+    $scope.showPubkeyButton = false;
+    $scope.pubkey = '';
+    $timeout(function() {
+      var salt = $scope.formData.username;
+      var pwd = $scope.formData.password;
+      CryptoUtils.connect(salt, pwd).then(
+        function (keypair) {
+          // form has changed: retry
+          if (salt !== $scope.formData.username || pwd !== $scope.formData.password) {
+            $scope.showPubkey();
+          }
+          else {
+            $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            $scope.computing = false;
+          }
+        }
+      )
+        .catch(function (err) {
+          $scope.pubkey = '';
+          $scope.computing = false;
+          UIUtils.loading.hide();
+          console.error('>>>>>>>', err);
+          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+        });
+    }, 500);
   };
 
   $scope.showJoinModal = function() {

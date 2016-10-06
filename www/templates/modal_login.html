@@ -87,14 +87,15 @@
 
         <!-- Show public key -->
         <div class="item item-button-right left">
-          <span class="input-label" translate>COMMON.PUBKEY</span>
+          <span ng-if="formData.username && formData.password"
+                class="input-label" translate>COMMON.PUBKEY</span>
           <a class="button button-light button-small ink animate-if"
              ng-click="showPubkey()"
-             ng-if="!(pubkey || computing || !formData.username || !formData.password)"
+             ng-if="showPubkeyButton"
             >
             {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
           </a>
-          <h3 class="gray text-no-wrap" ng-if="pubkey">
+          <h3 class="gray text-no-wrap" ng-if="!computing">
             {{pubkey}}
           </h3>
           <h3 ng-if="computing">

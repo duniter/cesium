@@ -25,6 +25,7 @@
     "BTN_DELETE": "Delete",
     "BTN_ADD": "Add",
     "BTN_SEARCH": "Search",
+    "BTN_CONTINUE": "Continue",
     "NO_ACCOUNT_QUESTION": "No a member ? Register now !",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
@@ -324,7 +325,9 @@
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>",
-    "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue ?</b>"
+    "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue ?</b>",
+    "LOGIN_UNUSED_WALLET": "You are logged into an account that seems <b>inactive</b>.<br/><br/>If this account does not match yours, it's probably a <b>typing error</b> when sign in.<br/><br/><b>Would you still continue with this account?</b>",
+    "LOGIN_UNUSED_WALLET_TITLE": "Typing error ?"
   },
   "HELP": {
     "TITLE": "Online help",

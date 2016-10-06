@@ -133,6 +133,22 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Login and load wallet
   $scope.loadWallet = function(rejectIfError) {
+
+    // Warn if wallet has been never used - see #167
+    var alertIfUnusedWallet = function() {
+      if (Wallet.isNeverUsed()) {
+        UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
+          'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
+            okText: 'COMMON.BTN_CONTINUE'
+          })
+          .then(function (confirm) {
+            if (!confirm) {
+              $scope.logout().then($scope.loadWallet);
+            }
+          });
+      }
+    };
+
     return $q(function(resolve, reject){
 
       if (!Wallet.isLogin()) {
@@ -142,6 +158,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             $rootScope.viewFirstEnter = false;
             Wallet.loadData()
             .then(function(walletData){
+              alertIfUnusedWallet();
               $rootScope.walletData = walletData;
               resolve(walletData);
             })
@@ -162,6 +179,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
         .then(function(walletData){
+          alertIfUnusedWallet();
           $rootScope.walletData = walletData;
           resolve(walletData);
         })
@@ -226,11 +244,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Logout
   $scope.logout = function() {
     UIUtils.loading.show();
-    Wallet.logout()
+    return Wallet.logout()
     .then(function() {
       $ionicSideMenuDelegate.toggleLeft();
       $ionicHistory.clearHistory();
-      $ionicHistory.clearCache()
+      return $ionicHistory.clearCache()
       .then(function() {
         UIUtils.loading.hide();
         $state.go('app.home');

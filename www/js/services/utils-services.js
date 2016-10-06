@@ -71,19 +71,26 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
-  function askConfirm(message, title) {
-    if (!title) {
-      title = 'CONFIRM.POPUP_TITLE';
-    }
+  function askConfirm(message, title, options) {
+    title = title || 'CONFIRM.POPUP_TITLE';
+
+    var defaultOptions = {
+      cssClass: 'confirm',
+      cancelText: 'COMMON.BTN_CANCEL',
+      okText: 'COMMON.BTN_OK'
+    };
+
+    options = options ? angular.merge(defaultOptions, options) : defaultOptions;
+
     return $q(function(resolve, reject) {
-      $translate([message, title, 'COMMON.BTN_CANCEL', 'COMMON.BTN_OK'])
+      $translate([message, title, options.cancelText, options.okText])
       .then(function (translations) {
         $ionicPopup.confirm({
           template: translations[message],
-          cssClass: 'confirm',
+          cssClass: options.cssClass,
           title: translations[title],
-          cancelText: translations['COMMON.BTN_CANCEL'],
-          okText: translations['COMMON.BTN_OK']
+          cancelText: translations[options.cancelText],
+          okText: translations[options.okText]
         })
         .then(function(res) {
           resolve(res);

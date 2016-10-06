@@ -160,6 +160,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return !!data.pubkey;
     },
 
+    isNeverUsed = function() {
+      return !data.pubkey ||
+        (!data.isMember &&
+         !data.tx.history.length &&
+         !data.tx.pendings.length);
+    },
+
     // If connected and same pubkey
     isUserPubkey = function(pubkey) {
       return isLogin() && data.pubkey === pubkey;
@@ -1188,6 +1195,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       login: login,
       logout: logout,
       isLogin: isLogin,
+      isNeverUsed: isNeverUsed,
       isUserPubkey: isUserPubkey,
       getData: getData,
       loadData: loadData,
