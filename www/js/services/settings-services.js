@@ -27,7 +27,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         rememberMe: Device.enable, // on mobile device, remember me by default
         showUDHistory: true,
         locale: {
-          id: fixLocale(csConfig.defaultLanguage || $translate.use()) // browser default
+          id: fixLocale(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
         }
       }, csConfig),
 
