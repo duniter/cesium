@@ -55,11 +55,13 @@
                 ui-sref="app.wot_view_identity({pubkey: formData.pubkey, uid: formData.name||formData.uid})">
                 <i class="avatar"
                    ng-style="formData.avatarStyle"
-                   ng-class="{'avatar-member': !formData.avatarStyle && formData.isMember}">
+                   ng-class="{'avatar-wallet': !formData.avatarStyle && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
                 </i>
-                <h4 class="positive text-center">
+                <h4 class="text-center"
+                  ng-class="{'positive': formData.isMember, 'gray': !formData.isMember}">
                   {{::formData.name||formData.uid}}
                 </h4>
+                <h5 class="assertive" ng-if="(formData.name||formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</h5>
               </a>
             </div>
             <div class="col text-center no-padding gray" style="margin-top: 30px;">

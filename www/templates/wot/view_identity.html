@@ -9,10 +9,14 @@
            ng-style="formData.avatarStyle"
            ng-class="{'avatar-wallet': !formData.avatarStyle && walletData && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
         </i>
-        <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
-        <h3 class="light" ng-if="!formData.name && formData.isMember">{{formData.uid}}</h3>
-        <h3 class="light" ng-if="!formData.name && !formData.isMember">{{formData.pubkey | formatPubkey}}</h3>
-        <h4>&nbsp;</h4>
+        <ng-if ng-if="formData.name">
+          <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
+        </ng-if>
+        <ng-if ng-if="!formData.name">
+          <h3 class="light" ng-if="formData.uid">{{formData.uid}}</h3>
+          <h3 class="light" ng-if="!formData.uid"><i class="ion-key"></i> {{formData.pubkey | formatPubkey}}</h3>
+        </ng-if>
+        <h4 class="assertive"><ng-if ng-if="(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
