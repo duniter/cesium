@@ -25,7 +25,7 @@
 
   "sou": {
     "cacheTimeMs": 60000,
-    "fallbackLanguage": "fr",
+    "fallbackLanguage": "fr-FR",
     "rememberMe": false,
     "showUDHistory": false,
     "timeout": 4000,
@@ -49,7 +49,8 @@
 
   "dev": {
     "cacheTimeMs": 60000,
-    "fallbackLanguage": "en",
+    "fallbackLanguage": "fr-FR",
+    "defaultLanguage": "fr-FR",
     "rememberMe": true,
     "showUDHistory": false,
     "timeout": 6000,
