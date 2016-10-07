@@ -102,7 +102,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             var node = BMA.instance(peer.getHost(), peer.getPort(), false);
             return node.blockchain.current()
               .then(function(block){
-                peer.current = block;
+                peer.currentNumber = block.number;
                 peer.online = true;
                 peer.buid = buid(block);
                 peer.uid = data.uidsByPubkeys[peer.pubkey];

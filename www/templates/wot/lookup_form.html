@@ -7,11 +7,11 @@
              ng-model="search.text"
              ng-model-options="{ debounce: 650 }"
              ng-change="doSearch()">
-    <input type="text"
-           class="hidden-xs hidden-sm"
-           id="wotSearchText" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           on-return="doSearch()">
+      <input type="text"
+             class="hidden-xs hidden-sm"
+             id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             on-return="doSearch()">
   </label>
 
   <div class="padding-top" style="display: block; height: 60px;">

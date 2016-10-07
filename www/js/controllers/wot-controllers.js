@@ -94,6 +94,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
     results: []
   };
   $scope.entered = false;
+  $scope.wotSearchTextId = 'wotSearchText';
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!$scope.entered) {
@@ -112,7 +113,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
     }
     // removeIf(device)
     // Focus on search text (only if NOT device, to avoid keyboard opening)
-    $focus('wotSearchText');
+    $focus($scope.wotSearchTextId);
     // endRemoveIf(device)
   });
 
@@ -237,11 +238,12 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
   };
 }
 
-function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $filter){
+function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, Device, Wallet, WotService, $focus){
   'ngInject';
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, Device, Wallet, WotService, $filter);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, Device, Wallet, WotService, $focus);
 
+  $scope.wotSearchTextId = 'wotSearchTextModal';
   $scope.cancel = function(){
     $scope.closeModal();
   };
@@ -253,6 +255,10 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, Device
     });
   };
 
+  // removeIf(device)
+  // Focus on search text (only if NOT device, to avoid keyboard opening)
+  $focus($scope.wotSearchTextId);
+  // endRemoveIf(device)
 }
 
 function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtils, Device, WotService) {

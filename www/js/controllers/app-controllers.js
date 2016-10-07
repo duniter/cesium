@@ -136,7 +136,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     // Warn if wallet has been never used - see #167
     var alertIfUnusedWallet = function() {
-      if (Wallet.isNeverUsed()) {
+      if (!csConfig.initPhase && Wallet.isNeverUsed()) {
         UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
           'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
             okText: 'COMMON.BTN_CONTINUE'

@@ -142,13 +142,22 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
 
     if ($scope.loadingPeers){
       csNetwork.start($scope.node);
+
       // Catch event on new peers
+      var refreshing = false;
       csNetwork.api.data.on.changed($scope, function(data){
-        $timeout(function() {
-          console.debug("Updating UI Peers");
-          $scope.peers = data.peers;
-          $scope.loadingPeers = csNetwork.isBusy();
-        }, 1000);
+        if (!refreshing) {
+          refreshing = true;
+          $timeout(function() { // Timeout avoid to quick updates
+            console.debug("Updating UI Peers");
+            $scope.peers = data.peers;
+            // Update currency params
+
+            $scope.loadingPeers = csNetwork.isBusy();
+            refreshing = false;
+            $scope.loadParameter();
+          }, 1100);
+        }
       });
       $scope.$on('$destroy', function(){
         csNetwork.close();
