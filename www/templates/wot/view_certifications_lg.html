@@ -23,13 +23,15 @@
       <!-- Buttons bar -->
       <div class="hidden-xs hidden-sm text-center padding"
            ng-if="canCertify || canSelectAndCertify">
-        <button class="button button-raised button-calm icon-left ion-ribbon-b"
+        <button id="helptip-certs-certify"
+                class="button button-raised button-calm icon-left ion-ribbon-b"
                 ng-if="canCertify"
                 ng-click="certify()"
                 ng-disabled="alreadyCertified">
           {{'WOT.BTN_CERTIFY' | translate}}
         </button>
-        <button class="button button-raised button-calm icon-left"
+        <button id="helptip-certs-select-certify"
+                class="button button-raised button-calm icon-left"
                 ng-if="canSelectAndCertify"
                 ng-click="selectAndCertify()">
           {{'WOT.BTN_SELECT_AND_CERTIFY' | translate}}

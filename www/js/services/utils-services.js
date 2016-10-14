@@ -2,7 +2,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
 .factory('UIUtils',
   function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
-           $ionicPopover, $state, $rootScope) {
+           $ionicPopover, $state, $rootScope, $ionicPosition) {
   'ngInject';
 
   function exact(regexpContent) {
@@ -19,7 +19,22 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     regex = {
       IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
-    }
+    },
+    eventMatchers = {
+      'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
+      'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
+    },
+    eventDefaultOptions = {
+        pointerX: 0,
+        pointerY: 0,
+        button: 0,
+        ctrlKey: false,
+        altKey: false,
+        shiftKey: false,
+        metaKey: false,
+        bubbles: true,
+        cancelable: true
+      }
   ;
 
   function alertError(err, subtitle) {
@@ -290,16 +305,22 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function showPopover(event, options) {
+
+    var deferred = $q.defer();
+
     options = options || {};
     options.templateUrl = options.templateUrl ? options.templateUrl : 'templates/common/popover_copy.html';
     options.scope = options.scope || $rootScope;
     options.scope.popovers = options.scope.popovers || {};
     options.autoselect = options.autoselect || false;
     options.bindings = options.bindings || {};
-    var doShowPopover = function(popover) {
+    options.autoremove = !angular.isUndefined(options.autoremove) ? options.autoremove : true;
+
+    var _show = function() {
+      var popover = options.scope.popovers[options.templateUrl];
       // Fill the popover scope
       angular.merge(popover.scope, options.bindings);
-      options.scope.popovers[options.templateUrl].show(event);
+      popover.show(event);
       // Auto select text
       if (options.autoselect) {
         $timeout(function () {
@@ -317,37 +338,66 @@ angular.module('cesium.utils.services', ['ngResource'])
           }
         }, 500); // wait popover to be created and display
       }
+      else {
+        // Auto focus on a element
+        if (options.autofocus) {
+          $timeout(function () {
+            var elements = document.querySelectorAll(options.autofocus);
+            for (var i=0; i<elements.length; i++) {
+              var element = elements[i];
+              if (element != null) {
+                element.focus();
+                break;
+              }
+            }
+          }, 500); // wait popover to be created and display
+        }
+      }
+    };
+
+    var _cleanup = function() {
+      var popover = options.scope.popovers[options.templateUrl];
+      if (popover) {
+        popover.remove();
+        delete options.scope.popovers[options.templateUrl];
+        if (!popover.isResolved) {
+          deferred.resolve();
+        }
+      }
     };
 
     if (!options.scope.popovers[options.templateUrl]) {
       var childScope = options.scope.$new();
-
 
       $ionicPopover.fromTemplateUrl(options.templateUrl, {
         scope: childScope
       })
         .then(function (popover) {
           popover.scope = childScope;
-          childScope.closePopover = function() {
+          popover.isResolved = false;
+
+          childScope.closePopover = function(result) {
             popover.hide();
+            deferred.resolve(result);
+            if (options.removeOnClose) {
+              _cleanup();
+            }
           };
-          options.scope.popovers[options.templateUrl] = popover;
 
           // Cleanup the popover when hidden
           options.scope.$on('$remove', function() {
-            var popover = options.scope.popovers[options.templateUrl];
-            if (popover) {
-              popover.remove();
-              delete options.scope.popovers[options.templateUrl];
-            }
+            _cleanup();
           });
 
-          doShowPopover(popover);
+          options.scope.popovers[options.templateUrl] = popover;
+          _show();
         });
     }
     else {
-      doShowPopover(options.scope.popovers[options.templateUrl]);
+      _show();
     }
+
+    return deferred.promise;
   }
 
   function showSharePopover(event, options) {
@@ -361,6 +411,79 @@ angular.module('cesium.utils.services', ['ngResource'])
     options.bindings.postMessage = options.bindings.postMessage || '';
     options.bindings.titleKey = options.bindings.titleKey || 'COMMON.POPOVER_SHARE.TITLE';
     showPopover(event, options);
+  }
+
+  function showHelptip(id, options) {
+    var element = $window.document.getElementById(id);
+
+    options = options || {};
+    var deferred = options.deferred || $q.defer();
+
+    if(element && !options.timeout) {
+      if (options.preAction) {
+        element[options.preAction]();
+      }
+      options.templateUrl = options.templateUrl ? options.templateUrl : 'templates/common/popover_helptip.html';
+      options.autofocus = options.autofocus || '#helptip-btn-ok';
+      options.bindings = options.bindings || {};
+      options.bindings.icon = options.bindings.icon || {};
+      options.bindings.icon.position = options.bindings.icon.position || false;
+      options.bindings.icon.glyph = options.bindings.icon.glyph ||
+        (options.bindings.icon.position && options.bindings.icon.position.startsWith('bottom-') ? 'ion-arrow-down-c' :'ion-arrow-up-c');
+      options.bindings.icon.class = options.bindings.icon.class || 'calm icon ' + options.bindings.icon.glyph;
+      options.bindings.tour = angular.isDefined(options.bindings.tour) ? options.bindings.tour : false;
+      showPopover(element, options)
+        .then(function(result){
+          if (options.postAction) {
+            element[options.postAction]();
+          }
+          deferred.resolve(result);
+        })
+        .catch(function(err){
+          if (options.postAction) {
+            element[options.postAction]();
+          }
+          deferred.reject(err);
+        });
+    }
+    else {
+
+      // Do timeout if ask
+      if (options.timeout) {
+        var timeout = options.timeout;
+        delete options.timeout;
+        options.deferred = deferred;
+        $timeout(function () {
+          showHelptip(id, options);
+        }, timeout);
+      }
+
+      // No element: reject
+      else if (!angular.isUndefined(options.retry) && !options.retry) {
+
+        if (options.onError === 'continue') {
+          $timeout(function () {
+            deferred.resolve(true);
+          });
+        }
+        else {
+          $timeout(function () {
+            deferred.reject("[helptip] element now found: " + id);
+          });
+        }
+      }
+
+      // Retry until element appears
+      else {
+        options.retry = angular.isUndefined(options.retry) ? 2 : (options.retry-1);
+        options.deferred = deferred;
+        $timeout(function() {
+          showHelptip(id, options);
+        }, options.timeout || 100);
+      }
+    }
+
+    return deferred.promise;
   }
 
   function disableEffects() {
@@ -506,7 +629,8 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     popover: {
       show: showPopover,
-      share: showSharePopover
+      share: showSharePopover,
+      helptip: showHelptip
     },
     disableEffects: disableEffects,
     selection: {

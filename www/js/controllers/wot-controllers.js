@@ -25,7 +25,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wallet_view_cert', {
-        url: "/wallet/cert/:pubkey/:uid",
+        url: "/wallet/cert",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -35,7 +35,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wallet_view_cert_lg', {
-        url: "/wallet/cert/lg/:pubkey/:uid",
+        url: "/wallet/cert/lg",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications_lg.html",
@@ -84,13 +84,16 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, Device, Wallet, WotService, $focus) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus) {
   'ngInject';
+
+  var defaultSearchLimit = 20;
 
   $scope.search = {
     text: '',
     looking: false,
-    newIncomers: true,
+    newcomers: true,
+    limit: defaultSearchLimit,
     results: []
   };
   $scope.entered = false;
@@ -110,6 +113,8 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
         }, 100);
       }
       $scope.entered = true;
+
+      $scope.showHelpTip();
     }
     // removeIf(device)
     // Focus on search text (only if NOT device, to avoid keyboard opening)
@@ -119,7 +124,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
 
   $scope.doSearch = function() {
     $scope.search.looking = true;
-    $scope.search.newIncomers = false;
+    $scope.search.newcomers = false;
     var text = $scope.search.text.trim();
     if (text.length < 3) {
       $scope.search.results = [];
@@ -161,23 +166,24 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
     $scope.search = {
       text: null,
       looking: false,
-      newIncomers: true,
+      newcomers: true,
+      limit: 20,
       results: []
     };
   };
 
-  $scope.doGetNewcomers= function(size) {
-    $scope.search.looking = true;
-    $scope.search.newIncomers = true;
+  $scope.doGetNewcomers= function(limit, more) {
+    $scope.search.looking = more ? false : true;
+    $scope.search.newcomers = true;
 
-    size = (size && size > 0) ? size : 10;
+    $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
 
     var searchFunction =  csConfig.initPhase ?
       WotService.all :
       WotService.newcomers;
 
-    searchFunction(size).then(function(idties){
-        if (!$scope.search.newIncomers) return; // could have change
+    return searchFunction($scope.search.limit).then(function(idties){
+        if (!$scope.search.newcomers) return; // could have change
         $scope.search.results = idties || [];
         $scope.search.looking = false;
 
@@ -194,6 +200,22 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
             });
           }, 10);
         }
+      });
+  };
+
+  $scope.showMoreNewcomers= function() {
+    $scope.search.limit = $scope.search.limit || defaultSearchLimit;
+    $scope.search.limit = $scope.search.limit * 2;
+    if ($scope.search.limit < defaultSearchLimit) {
+      $scope.search.limit = defaultSearchLimit;
+    }
+    $scope.search.lookingMore = true;
+    $scope.doGetNewcomers($scope.search.limit, true)
+      .then(function() {
+        $scope.search.lookingMore = false;
+      })
+      .catch(function(err) {
+        $scope.search.lookingMore = false;
       });
   };
 
@@ -236,12 +258,30 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, D
     })
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
+
+  // Show help tip (show only not already shown tip
+  $scope.showHelpTip = function() {
+    var index = angular.isDefined(index) ? index : csSettings.data.helptip.wot;
+    if (index < 0) return;
+    if (index == 0) index = 1; // skip first step
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+
+    return helptipScope.startWotTour(index, false)
+      .then(function(endIndex) {
+        helptipScope.$destroy();
+        csSettings.data.helptip.wot = endIndex;
+        csSettings.store();
+      });
+  };
 }
 
-function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, Device, Wallet, WotService, $focus){
+function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus){
   'ngInject';
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, Device, Wallet, WotService, $focus);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus);
 
   $scope.wotSearchTextId = 'wotSearchTextModal';
   $scope.cancel = function(){
@@ -253,6 +293,10 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConf
       pubkey: identity.pubkey,
       uid: identity.uid
     });
+  };
+
+  $scope.showHelpTip = function() {
+    // silent
   };
 
   // removeIf(device)
@@ -330,13 +374,14 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
  * @param $scope
  * @param $timeout
  * @param $translate
+ * @param csSettings
  * @param Wallet
  * @param UIUtils
  * @param WotService
  * @param Modals
  * @constructor
  */
-function WotCertificationsViewController($scope, $timeout, $translate, Wallet, UIUtils, WotService, Modals) {
+function WotCertificationsViewController($scope, $timeout, $translate, csSettings, Wallet, UIUtils, WotService, Modals) {
   'ngInject';
 
   $scope.loading = true;
@@ -352,7 +397,15 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
         $scope.load($state.stateParams.pubkey.trim());
       }
     }
-    // Redirect o app
+
+    // Load from wallet pubkey
+    else if (Wallet.isLogin()){
+      if ($scope.loading) {
+        $scope.load(Wallet.data.pubkey);
+      }
+    }
+
+    // Redirect to home
     else {
       $timeout(function() {
         $state.go('app.home', null);
@@ -361,7 +414,7 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
   });
 
   $scope.load = function(pubkey) {
-    WotService.load(pubkey)
+    return WotService.load(pubkey)
     .then(function(identity){
       $scope.formData = identity;
       $scope.canCertify = $scope.formData.hasSelf && (!Wallet.isLogin() || (!Wallet.isUserPubkey(pubkey)));
@@ -374,6 +427,10 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
       $scope.motionCertifications(100);
       $scope.motionAvatar(300);
       $scope.motionGivenCertifications(900);
+
+      // Show help tip
+      var isWallet = Wallet.isUserPubkey(pubkey);
+      $scope.showHelpTip(isWallet);
     });
   };
 
@@ -475,7 +532,6 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
     $scope.load($scope.formData.pubkey);
   };
 
-
   // Show received certifcations
   $scope.setShowCertifications = function(show) {
     $scope.showCertifications = show;
@@ -492,6 +548,33 @@ function WotCertificationsViewController($scope, $timeout, $translate, Wallet, U
   $scope.setShowAvatar = function(show) {
     $scope.showAvatar = show;
     $scope.motionCertifications();
+  };
+
+  // Show help tip
+  $scope.showHelpTip = function(isWallet) {
+    if (!csSettings.data.helptip.enable) return;
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+
+    var index = isWallet ? csSettings.data.helptip.walletCerts : csSettings.data.helptip.wotCerts;
+    if (index < 0) return;
+
+    var startFunc = isWallet ?
+      helptipScope.startWalletCertTour(index, false) :
+      helptipScope.startWotCertTour(index, false);
+
+    return startFunc.then(function(endIndex) {
+        helptipScope.$destroy();
+        if (isWallet) {
+          csSettings.data.helptip.walletCerts = endIndex;
+        }
+        else {
+          csSettings.data.helptip.wotCerts = endIndex;
+        }
+        csSettings.store();
+      });
   };
 
   // Show received certifcations (animation need in tabs)

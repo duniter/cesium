@@ -10,6 +10,9 @@
     "useLocalStorage": false,
     "useRelative": true,
     "initPhase": false,
+    "helptip": {
+      "enable": true
+    },
     "node": {
       "host": "test-net.duniter.fr",
       "port": "9201"
@@ -34,6 +37,9 @@
     "useLocalStorage": false,
     "useRelative": true,
     "initPhase": false,
+    "helptip": {
+      "enable": false
+    },
     "node": {
       "host": "duniter.le-sou.org",
       "port": "9600"
@@ -59,14 +65,17 @@
     "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
+    "helptip": {
+      "enable": false
+    },
     "node": {
-      "host": "192.168.0.5",
-      "port": "9602"
+      "host": "192.168.0.28",
+      "port": "9604"
     },
     "plugins":{
       "es": {
         "enable": false,
-        "host": "192.168.0.5",
+        "host": "192.168.0.28",
         "port": "9203"
       }
     }

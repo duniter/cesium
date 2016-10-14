@@ -13251,6 +13251,31 @@ a {
   .popover-share .list .item {
     border-bottom: 0px !important; }
 
+.popover-helptip .button-close {
+  padding: 8px;
+  height: 25px;
+  font-size: 18.2px; }
+
+.helptip-anchor, .helptip-anchor-center, .helptip-anchor-left, .helptip-anchor-right {
+  display: block;
+  position: absolute;
+  width: 100%;
+  bottom: 0; }
+
+.helptip-anchor-center {
+  text-align: center; }
+
+.helptip-anchor-left {
+  text-align: left; }
+
+.helptip-anchor-right {
+  text-align: right; }
+
+.helptip-anchor a:before, .helptip-anchor-center a:before, .helptip-anchor-left a:before, .helptip-anchor-right a:before,
+.helptip-anchor-left a:before,
+.helptip-anchor-right a:before {
+  content: " "; }
+
 /* ============
  Buttons
 =============== */
@@ -13341,16 +13366,16 @@ a {
     .menu.menu-left .item-menu-disable {
       color: #444 !important; } }
 
-.gray, .popover-share .bar-header span, .popover-share .bar-footer .button-close {
+.gray, .popover-share .bar-header span, .popover-share .bar-footer .button-close, .popover-helptip .button-close {
   color: grey !important; }
 
-.gray a, .popover-share .bar-header span a, .popover-share .bar-footer .button-close a, .positive a, .icon-help a {
+.gray a, .popover-share .bar-header span a, .popover-share .bar-footer .button-close a, .popover-helptip .button-close a, .positive a, .icon-help a {
   color: inherit; }
 
-.gray a:hover, .popover-share .bar-header span a:hover, .popover-share .bar-footer .button-close a:hover, .positive a:hover, .icon-help a:hover {
+.gray a:hover, .popover-share .bar-header span a:hover, .popover-share .bar-footer .button-close a:hover, .popover-helptip .button-close a:hover, .positive a:hover, .icon-help a:hover {
   color: inherit; }
 
-.gray a:visited, .popover-share .bar-header span a:visited, .popover-share .bar-footer .button-close a:visited, .positive a:visited, .icon-help a:visited {
+.gray a:visited, .popover-share .bar-header span a:visited, .popover-share .bar-footer .button-close a:visited, .popover-helptip .button-close a:visited, .positive a:visited, .icon-help a:visited {
   color: inherit; }
 
 .item a {
@@ -13405,7 +13430,7 @@ a {
 #wallet .item .comment {
   font-style: italic !important; }
 
-#wallet .item h3 .gray, #wallet .item h3 .popover-share .bar-header span, .popover-share .bar-header #wallet .item h3 span, #wallet .item h3 .popover-share .bar-footer .button-close, .popover-share .bar-footer #wallet .item h3 .button-close {
+#wallet .item h3 .gray, #wallet .item h3 .popover-share .bar-header span, .popover-share .bar-header #wallet .item h3 span, #wallet .item h3 .popover-share .bar-footer .button-close, .popover-share .bar-footer #wallet .item h3 .button-close, #wallet .item h3 .popover-helptip .button-close, .popover-helptip #wallet .item h3 .button-close {
   font-size: 11px !important; }
 
 #wallet .list .item span {
@@ -13722,3 +13747,10 @@ a {
   left: 12px;
   top: 8px;
   z-index: 99; }
+
+/**********
+   Help Tip
+**********/
+.popover-helptip {
+  background-color: rgba(68, 68, 68, 0.85);
+  height: auto !important; }

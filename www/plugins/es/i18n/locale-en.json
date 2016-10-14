@@ -16,6 +16,12 @@
     "USER_PROFILE": "My Profile",
     "USER_MESSAGE": "Messages"
   },
+  "ACCOUNT": {
+    "NEW": {
+      "ORGANIZATION_ACCOUNT": "Account for an organization",
+      "ORGANIZATION_ACCOUNT_HELP": "If you represent a company, association, etc.<br/>No universal dividend will be created by this account."
+    }
+  },
   "COMMENTS": {
     "DIVIDER": "Comments",
     "SHOW_MORE_COMMENTS": "Show previous comments",
@@ -208,7 +214,11 @@
   },
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Registry and market place",
-    "ENABLE_TOGGLE": "Enable extension ?",
+    "ENABLE_TOGGLE": "Enable extension?",
+    "ENABLE_MARKET_TOGGLE": "Enable market place?",
+    "ENABLE_REGISTRY_TOGGLE": "Enable companies registry?",
+    "ENABLE_MESSAGE_TOGGLE": "Enable messages?",
+    "ENABLE_SETTINGS_TOGGLE": "Enable remote storage for settings?",
     "NODE": "Data node address",
     "NODE_HELP": "server.domain.com:port",
     "POPUP_NODE": {

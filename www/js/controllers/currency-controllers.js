@@ -164,7 +164,11 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
       });
     }
 
+    // Load currency parameters
     $scope.loadParameter();
+
+    // Show help tip
+    $scope.showHelpTip();
   };
 
   $scope.loadParameter = function() {
@@ -274,4 +278,23 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     }
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
+
+  // Show help tip
+  $scope.showHelpTip = function() {
+    if (!csSettings.data.helptip.wallet.enable) return;
+
+    index = csSettings.data.helptip.currency;
+    if (index < 0) return;
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+
+    return helptipScope.startCurrencyTour(index, false)
+      .then(function(endIndex) {
+        helptipScope.$destroy();
+        csSettings.data.helptip.currency = endIndex;
+        csSettings.store();
+      });
+  };
 }

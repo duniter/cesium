@@ -1,0 +1,75 @@
+<ion-popover-view class="popover-helptip" >
+  <ion-content scroll="false" class="list">
+    <p >
+      <i ng-if="icon.position == 'left'"
+         style="font-size: 30px; position: relative; top: 8px; left: 8px;"
+         class="{{icon.class}} pull-left"></i>
+      <i ng-if="icon.position == 'right'"
+         style="font-size: 30px; position: relative; top: 8px; right: 8px;"
+         class="{{icon.class}} pull-right"></i>
+      <i ng-if="icon.position == 'center'"
+         style="font-size: 30px; position: relative; width: 100%; top: 8px; text-align: center; height: 0px;"
+         class="{{icon.class}} pull-right"></i>
+
+      <!-- close button-->
+      <a
+         ng-click="closePopover()" class="pull-right button-close"
+          ng-class="{'pull-left': icon.position === 'right', 'pull-right': icon.position !== 'right'}">
+        <i class="ion-close"></i>
+      </a>
+
+      <span>&nbsp;</span>
+    </p>
+
+    <p class="padding light">
+      <span ng-bind-html="content | translate:contentParams"></span>
+    </p>
+
+    <!-- buttons (if helptip) -->
+    <div class="text-center" ng-if="!tour">
+      <button class="button button-small button-stable"
+              ng-if="!hasNext"
+              ng-click="closePopover(true)"
+              translate>COMMON.BTN_UNDERSTOOD</button>
+      <button class="button button-small button-stable"
+              id="helptip-btn-ok"
+              ng-if="hasNext"
+              ng-click="closePopover(false)"
+              translate>COMMON.BTN_UNDERSTOOD</button>
+      <button id="helptip-btn-ok"
+              class="button button-small button-positive icon-right ink"
+              ng-if="hasNext"
+              ng-click="closePopover(true)">
+              <i class="icon ion-chevron-right "></i>
+      </button>
+    </div>
+
+    <!-- buttons (if feature tour) -->
+    <div class="text-center" ng-if="tour">
+      <button class="button button-small button-positive"
+              id="helptip-btn-ok"
+              ng-if="!hasNext"
+              ng-click="closePopover(false)"
+              translate>COMMON.BTN_CLOSE</button>
+      <button id="helptip-btn-ok"
+              class="button button-small button-positive icon-right ink"
+              ng-if="hasNext"
+              ng-click="closePopover(true)">
+        {{'COMMON.BTN_CONTINUE'|translate}}
+        <i class="icon ion-chevron-right "></i>
+      </button>
+    </div>
+
+    <p>
+      <i ng-if="icon.position == 'bottom-right'"
+         style="font-size: 30px; position: relative; bottom: 8px; right: 8px;"
+         class="{{icon.class}} pull-right"></i>
+      <i ng-if="icon.position == 'bottom-left'"
+         style="font-size: 30px; position: relative; bottom: 8px; left: 8px;"
+         class="{{icon.class}} pull-left"></i>
+      <i ng-if="icon.position == 'bottom-center'"
+         style="font-size: 30px; position: relative; width: 100%; bottom: 8px; text-align: center; height: 0px;"
+         class="{{icon.class}} pull-right"></i>
+    </p>
+  </ion-content>
+</ion-popover-view>

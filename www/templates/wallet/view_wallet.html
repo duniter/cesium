@@ -6,9 +6,11 @@
 
   <ion-nav-buttons side="secondary">
 
-    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
     </button>
-    <button class="button button-icon button-clear" ng-click="actionsPopover.show($event)">
+    <button class="button button-icon button-clear visible-xs visible-sm"
+            id="helptip-wallet-options-xs"
+            ng-click="actionsPopover.show($event)">
       <i class="icon ion-android-more-vertical"></i>
     </button>
   </ion-nav-buttons>
@@ -29,6 +31,9 @@
             <span ng-if="!$root.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="$root.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
         </h4>
+        <div class="helptip-anchor-center">
+          <a id="helptip-wallet-balance">&nbsp;</a>
+        </div>
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
@@ -56,6 +61,12 @@
               ng-click="membershipRenew()">
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
       </button>
+
+      <button id="helptip-wallet-options"
+              class="button button-icon ink"
+              ng-click="actionsPopover.show($event)">
+        <i class="icon ion-android-more-vertical"></i>
+      </button>
     </div>
 
     <div class="row no-padding">
@@ -65,6 +76,7 @@
 
         <!-- Certifications -->
         <a class="item item-icon-left item-icon-right item-text-wrap ink"
+           id="helptip-wallet-certifications"
            ng-if="walletData.isMember"
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
@@ -76,9 +88,10 @@
 
         <!-- Public key -->
         <span class="item item-icon-left item-text-wrap ink in done"
-                  ng-if="showDetails"
-                  on-hold="copy(walletData.pubkey)"
-                  copy-on-click="{{::walletData.pubkey}}">
+                id="wallet-pubkey"
+                ng-if="showDetails"
+                on-hold="copy(walletData.pubkey)"
+                copy-on-click="{{::walletData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark">{{::walletData.pubkey}}</h4>
@@ -165,12 +178,13 @@
                ng-class="{'badge-balanced': tx.amount > 0}">
             <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
             <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
-          </div >
+          </div>
         </span>
 
         <!-- Last Transactions -->
         <span class="item item-divider" ng-if="!loading">
           <span translate>ACCOUNT.LAST_TX</span>
+          <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
           <div class="badge item-note">
             <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
             <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>

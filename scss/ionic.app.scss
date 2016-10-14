@@ -452,6 +452,39 @@ $screen-menu:                     845px;
   }
 }
 
+.popover-helptip {
+  .button-close {
+    @extend .gray;
+    padding: 8px;
+    height: 25px;
+    font-size: 18.2px;
+  }
+}
+
+.helptip-anchor {
+  display:block;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+.helptip-anchor-center {
+  @extend .helptip-anchor;
+  text-align: center;
+}
+.helptip-anchor-left {
+  @extend .helptip-anchor;
+  text-align: left;
+}
+.helptip-anchor-right {
+  @extend .helptip-anchor;
+  text-align: right;
+}
+.helptip-anchor a:before,
+.helptip-anchor-left a:before,
+.helptip-anchor-right a:before {
+  content: " ";
+}
+
 /* ============
  Buttons
 =============== */
@@ -1105,3 +1138,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   z-index: 99;
 }
 
+/**********
+   Help Tip
+**********/
+.popover-helptip {
+  background-color:rgba(68, 68, 68, 0.85);
+  height: auto !important;
+}

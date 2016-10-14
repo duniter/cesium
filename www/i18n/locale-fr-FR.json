@@ -26,6 +26,9 @@
     "BTN_ADD": "Ajouter",
     "BTN_SEARCH": "Recherche",
     "BTN_CONTINUE": "Continuer",
+    "BTN_UNDERSTOOD": "J'ai compris",
+    "BTN_OPTIONS": "Options",
+    "BTN_HELP_TOUR": "Visite guidée",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
@@ -98,6 +101,7 @@
     "NODE": "Adresse du noeud Duniter",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
+    "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
     "HISTORY_SETTINGS": "Mon compte",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
@@ -165,7 +169,9 @@
       "TITLE": "Annuaire",
       "NEWCOMERS": "Dernières adhésions :",
       "REGISTERED": "Inscrit ",
-      "BTN_NEWCOMERS": "Voir les dernières adhésions"
+      "BTN_NEWCOMERS": "Voir les dernières adhésions",
+      "SHOW_MORE_NEWCOMERS": "Afficher plus",
+      "NEWCOMERS_COUNT": "(limite actuelle à {{limit}})"
     },
     "MODAL": {
       "TITLE": "Recherche"
@@ -189,6 +195,7 @@
     "TITLE": "<i class=\"icon ion-locked\"></i> Connexion",
     "SALT": "Phrase de protection",
     "SALT_HELP": "Phrase de protection",
+    "SHOW_SALT": "Voir la phrase de protection",
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe",
     "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
@@ -215,11 +222,11 @@
     "CERTIFICATION_COUNT": "Certifications reçues",
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
-    "BTN_MEMBERSHIP_IN": "Devenir membre",
+    "BTN_MEMBERSHIP_IN": "Devenir membre...",
     "BTN_MEMBERSHIP_RENEW": "Renouveller l'adhésion comme membre",
     "BTN_MEMBERSHIP_OUT": "Arrêter l'adhésion",
-    "BTN_SEND_IDENTITY": "Publier le pseudonyme",
-    "BTN_SHOW_DETAILS": "Afficher les infos techniques",
+    "BTN_SEND_IDENTITY": "Publier son identitié...",
+    "BTN_SHOW_DETAILS": "Afficher la clé publique",
     "NEW": {
       "TITLE": "Inscription",
       "SLIDE_1_TITLE": "Choix de la monnaie :",
@@ -346,7 +353,40 @@
       "CURRENCY_RULES_DEF": "Les règles de la monnaie sont définies une fois pour toute. Elle fixe le fonctionnement de la monnaie : le calcul du dividend universel, le nombre de certifications nécessaire pour être membre, le nombre de certification maximum qu'un membre peut donner, etc. <a href=\"#/app/currency/view/\">Voir les règles actuelles</a>.<br/>La non modification des règles dans le temps est possible par l'utilisation d'une <span class=\"text-italic\">BlockChain</span> qui porte et execute ces règles, et en vérifie constamment la bonne application.",
       "BLOCKCHAIN": "Chaîne de blocs (<span class=\"text-italic\">Blockchain</span>)",
       "BLOCKCHAIN_DEF": "La BlockChain est un système décentralisé, qui, dans le cas de Duniter, sert à porter et executer les <span class=\"text-italic\">règles de la monnaie</span>.<br/><a href=\"http://fr.duniter.org/presentation/\">En savoir plus sur Duniter</a> et le fonctionnement de sa blockchain.",
-      "UNIVERSAL_DIVIDEND_DEF": "Le Dividende Universel (DU) est la quantité de monnaie co-créé par chaque membre, suivant la période et le calcul définie dans les <span class=\"text-italic\">règles de la monnaie</span>.<br/>A chaque échéance, les membres recoivent sur leur compte la meme quantité de nouvelle monnaie.<br/><br/>Le DU subit une croissance régulière, pour rester juste entre les membres (actuels et à venir), calculée en fonction de l'espérance de vie moyenne, telle que démontré dans la Thérorie Relative de la Monnaie (TRM).<br/><a href=\"http://trm.creationmonetaire.info\">En savoir plus sur la TRM</a> et les monnaies libres."
+      "UNIVERSAL_DIVIDEND_DEF": "Le Dividende Universel (DU) est la quantité de monnaie co-créée par chaque membre, suivant la période et le calcul définie dans les <span class=\"text-italic\">règles de la monnaie</span>.<br/>A chaque échéance, les membres recoivent sur leur compte la meme quantité de nouvelle monnaie.<br/><br/>Le DU subit une croissance régulière, pour rester juste entre les membres (actuels et à venir), calculée en fonction de l'espérance de vie moyenne, telle que démontré dans la Thérorie Relative de la Monnaie (TRM).<br/><a href=\"http://trm.creationmonetaire.info\">En savoir plus sur la TRM</a> et les monnaies libres."
+    },
+    "TIP": {
+      "MENU_BTN_CURRENCY": "Le menu <b>{{'MENU.CURRENCY'|translate}}</b> permet la consultation des <b>règles de la monnaie</b> et de son état.",
+      "CURRENCY_WOT": "Le <b>nombre de membres</b> montre l'importance de la communauté et permet de <b>suivre son évolution</b>.",
+      "CURRENCY_MASS": "Suivez ici la <b>quantité totale de monnaie</b> existante et sa <b>répartition moyenne</b> par membre.<br/><br/>Ceci permet de juger de l'<b>importance d'un montant</b>, vis à vis de ce que <b>possède les autres</b> sur leur compte (en moyenne).",
+      "CURRENCY_UNIT_RELATIVE": "L'unité utilisée (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifie que les montants en {{currency|capitalize}} ont été divisés par le <b>Dividende Universel</b> (DU).<br/><br/><small>Cette unité relative est <b>pertinente</b>, car stable malgré la quantitié de monnaie qui augmente en permanence.</small>",
+      "CURRENCY_CHANGE_UNIT": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants <b>directement en {{currency|capitalize}}</b> (plutôt qu'en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
+      "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, c'est à dire relativement au Dividende Universel (le montant co-produit par chaque membre).",
+      "CURRENCY_RULES": "Les <b>règles</b> de la monnaie fixent son fonctionnement <b>exact et prévisible</b>.<br/><br/>Véritable ADN de la monnaie, elles rendent son code monétaire <b>lisible et transparent</b>.",
+      "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> permet l'accès au solde de votre compte et à l'historique de vos transactions.",
+      "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte, l'historique de vos transactions et vos certifications.",
+      "WALLET_CERTIFICATIONS": "En cliquant ici, consultez le détail de vos certifications (données et émises).",
+      "WALLET_BALANCE": "Le <b>solde</b> de votre compte s'affiche ici.",
+      "WALLET_BALANCE_RELATIVE": "{{'HELP.TIP.WALLET_BALANCE'|translate}}<br/><br/>L'unité utilisée (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifie que le montant en {{currency|capitalize}} a été divisé par le <b>Dividende Universel</b> (DU) co-créé par chaque membre.<br/>Actuellement 1 DU vaut {{currentUD}} {{currency|capitalize}}s.",
+      "WALLET_BALANCE_CHANGE_UNIT": "Vous pourrez <b>changer d'unité</b> d'affichage des montants dans<br/><b><i class=\"icon ion-android-settings\"></i>&nbsp;Paramètres</b>.<br/><br/>Par exemple pour visualiser les montants <b>directement en {{currency|capitalize}}</b>, plutôt qu'en relatif.",
+      "WALLET_SEND": "Effectuer un paiement en quelques clics",
+      "WALLET_SEND_NO_MONEY": "Effectuer un paiement en quelques clics.<br/>(Votre solde ne le permet pas encore)",
+      "WALLET_OPTIONS": "Veuillez noter que ce bouton permet l'accès à <b>d'autres actions</b>, moins usuelles.<br/><br/>N'oubliez pas d'y jeter un oeil, quand vous aurez un moment !",
+      "WALLET_RECEIVED_CERTS": "S'affichera ici la liste des personnes qui vous ont certifié.",
+      "WALLET_CERTIFY": "Le bouton <b>Nouvelle certification</b> permet de sélectionner une identitié et de la certifier.<br/><br/>Seuls des utilisateurs <b>déjà membre</b> peuvent en certifier d'autres.",
+      "WALLET_CERT_STOCK": "Votre stock de certification (émises) est limité à <b>{{sigStock}} certifications</b>.<br/><br/>Ce stock se renouvelle avec le temps, au fur et à mesure que les certifications s'invalident.",
+      "MENU_BTN_WOT": "Le menu <b>Annuaire</b> permet de rechercher parmi les <b>utilisateurs</b> de la monnaie (membre ou non).",
+      "WOT_SEARCH_TEXT_XS": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique).<br/><br/>La recherche se lancera automatiquement.",
+      "WOT_SEARCH_TEXT": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique). <br/><br/>Appuyer ensuite sur <b>Entrée</b> pour lancer la recherche.",
+      "WOT_SEARCH_RESULT": "Visualisez la fiche détaillée simplement en <b>cliquant</b> sur une ligne.",
+      "WOT_VIEW_CERTIFICATIONS": "La ligne <b>Certifications reçues</b> montre combien de membres ont validés cette identité.<br/><br/>Ces certifications attestent que ce compte appartient à <b>une personne humaine vivante</b> et qu'il n'existe <b>pas d'autre compte membre</b> pour cette personne.",
+      "WOT_VIEW_CERTIFICATIONS_COUNT": "Il faut au moins <b>{{sigQty}} certifications</b> pour devenir membre et recevoir le <b>Dividende Universel</b>.",
+      "WOT_VIEW_CERTIFICATIONS_CLICK": "Un clic ici permet d'ouvrir <b>la liste de toutes les certifications</b> de l'identité (reçues <u>et</u> émises par elle).",
+      "WOT_VIEW_CERTIFY": "Le bouton <b>Certifier</b> permet d'ajouter votre certification à cette identité.",
+      "CERTIFY_RULES": "<b>Attention :</b> Ne certifier que des <b>personnes physiques vivantes</b>, ne possèdant aucun autre compte déjà certifié.<br/><br/>La confiance portée par la monnaie dépend de la vigilance de chacun !",
+      "MENU_BTN_SETTINGS": "Les <b>Paramètres</b> vous permettront de configurer l'application Cesium.<br/><br/>Vous pourrez par exemple <b>changer l'unité</b> d'affichage de la monnaie.",
+      "END_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
+      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur le lien <b>Crée un compte</b>."
     }
   }
 }

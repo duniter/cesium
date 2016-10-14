@@ -18,6 +18,11 @@
            active-link="active"
            ui-sref="app.settings">
         </button>-->
+        <!-- profile
+        <button class="button button-icon button-clear icon ion-person"
+                active-link="active"
+                ui-sref="app.settings">-->
+        </button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="fabContent"></ion-nav-view>
@@ -52,6 +57,8 @@
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
         </ion-item>
+        <a id="helptip-menu-btn-currency"></a>
+
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
 
@@ -62,6 +69,8 @@
           <i class="icon ion-person-stalker"></i>
           <span translate>MENU.WOT</span>
         </ion-item>
+        <a id="helptip-menu-btn-wot"></a>
+
         <!-- Allow extension here -->
         <cs-extension-point name="menu-main"></cs-extension-point>
 
@@ -69,21 +78,24 @@
         <!-- USER Section -->
         <div class="item item-divider"></div>
 
-        <ion-item menu-close class="item item-icon-left" active-link="active"
+        <ion-item menu-close
+                  class="item item-icon-left" active-link="active"
                   active-link-path-prefix="#/app/wallet"
                   ng-click="loginAndGo('app.view_wallet')"
                   ng-class="{'item-menu-disable': !$root.login}">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
+        <a id="helptip-menu-btn-account"></a>
+
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>
-
 
         <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/settings">
           <i class="icon ion-android-settings"></i>
           <span translate>MENU.SETTINGS</span>
         </ion-item>
+        <a id="helptip-menu-btn-settings"></a>
 
         <!-- actions -->
         <div class="item item-divider" ng-if="$root.login"></div>

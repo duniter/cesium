@@ -42,6 +42,18 @@
         </div>
       </label>
     </div>
+
+    <div class="item item-toggle dark">
+      <div class="input-label">
+        {{'SETTINGS.ENABLE_HELPTIP' | translate}}
+      </div>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.helptip.enable" >
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
     <!-- Allow extension here -->
     <cs-extension-point name="common"></cs-extension-point>
 

@@ -70,8 +70,8 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, screenmatch,
-                       UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig, csCurrency
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller,
+                       screenmatch, UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
 
@@ -83,17 +83,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $rootScope.login = Wallet.isLogin();
 
   ////////////////////////////////////////
-  // Load currencies
+  // Show currency view
   ////////////////////////////////////////
 
   $scope.showCurrencyView = function() {
     $state.go(screenmatch.is('sm, xs') ? 'app.currency_view': 'app.currency_view_lg');
-  };
-
-  $scope.loadCurrencies = function() {
-    console.debug("[WARN] $scope.loadCurrencies() si deprecated. use csNetwork.all() instead");
-    return csCurrency.all()
-      .catch(UIUtils.onError('ERROR.GET_CURRENCY_PARAMETER'));
   };
 
   ////////////////////////////////////////
@@ -128,6 +122,68 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   ////////////////////////////////////////
+  // Show Help tour
+  ////////////////////////////////////////
+
+  $scope.createHelptipScope = function() {
+    if ($rootScope.tour) {
+      return; // avoid other helptip to be launched (e.g. wallet)
+    }
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.$new();
+    $controller('HelpTipCtrl', { '$scope': helptipScope});
+    return helptipScope;
+  };
+
+  $scope.startHelpTour = function() {
+    delete $rootScope.tour;
+    var helptipScope = $scope.createHelptipScope();
+    $rootScope.tour = true; // to avoid other helptip to be launched (e.g. wallet)
+    return helptipScope.startHelpTour()
+    .then(function() {
+      helptipScope.$destroy();
+      delete $rootScope.tour;
+    })
+    .catch(function(err){
+      delete $rootScope.tour;
+    });
+  };
+
+  $scope.isGlobalStart = function() {
+    return $rootScope.tour;
+  }
+
+  $scope.startCurrencyTour = function(index) {
+    index = index || csSettings.data.helptip.currency;
+    if (index < 0) return;
+    // Create a new scope for the tour controller
+    var childScope = $scope.$new();
+    $controller('HelpTourCtrl', { '$scope': childScope});
+    childScope.tour = false;
+    return childScope.startCurrencyTour(index) // skip menu helptip
+      .then(function(endIndex) {
+        childScope.$destroy();
+        csSettings.data.helptip.currency = endIndex;
+        csSettings.store();
+      });
+  };
+
+  $scope.startWotTour = function(index) {
+    index = index || csSettings.data.helptip.wot;
+    if (index < 0) return;
+    // Create a new scope for the tour controller
+    var childScope = $scope.$new();
+    $controller('HelpTourCtrl', { '$scope': childScope});
+    childScope.tour = false;
+    return childScope.startWotTour(1)
+      .then(function(endIndex) {
+        childScope.$destroy();
+        csSettings.data.helptip.wot = endIndex;
+        csSettings.store();
+      });
+  };
+
+  ////////////////////////////////////////
   // Login & wallet
   ////////////////////////////////////////
 
@@ -136,18 +192,24 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     // Warn if wallet has been never used - see #167
     var alertIfUnusedWallet = function() {
-      if (!csConfig.initPhase && Wallet.isNeverUsed()) {
-        UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
-          'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
-            okText: 'COMMON.BTN_CONTINUE'
-          })
-          .then(function (confirm) {
-            if (!confirm) {
-              $scope.logout().then($scope.loadWallet);
-            }
-          });
-      }
+      return $q(function(resolve, reject){
+        if (!csConfig.initPhase && Wallet.isNeverUsed()) {
+          return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
+            'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
+              okText: 'COMMON.BTN_CONTINUE'
+            })
+            .then(function (confirm) {
+              if (!confirm) {
+                $scope.logout().then($scope.loadWallet);
+              }
+              resolve(confirm);
+            });
+        }
+        resolve(true);
+      })
     };
+
+
 
     return $q(function(resolve, reject){
 

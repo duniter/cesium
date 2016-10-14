@@ -82,15 +82,29 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   .filter('abbreviate', function() {
     return function(input) {
-      var unit = '', sepChars = ['-', '_', ' '], currency = input || '';
-      for (var i = 0; i < currency.length; i++) {
-        var c = currency[i];
-        if (i === 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
-          unit += c;
+      var currency = input || '';
+      if (currency.length > 3) {
+        var unit = '', sepChars = ['-', '_', ' '];
+        for (var i = 0; i < currency.length; i++) {
+          var c = currency[i];
+          if (i === 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
+            unit += c;
+          }
         }
+        return unit.toUpperCase();
       }
-      return unit.toUpperCase();
+      else {
+        return currency.toUpperCase();
+      }
     };
+  })
+
+  .filter('capitalize', function() {
+    return function(input) {
+      if (!input) return '';
+      input = input.toLowerCase();
+      return input.substring(0,1).toUpperCase()+input.substring(1);
+    }
   })
 
   .filter('formatPubkey', function() {
@@ -265,7 +279,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 })
 ;
 
-// Workaround to add startsWith() if not present
+// Workaround to add "".startsWith() if not present
 if (typeof String.prototype.startsWith !== 'function') {
   console.debug("Adding String.prototype.startsWith() -> was missing on this platform");
   String.prototype.startsWith = function(prefix) {
@@ -278,5 +292,19 @@ if (Math && typeof Math.trunc !== 'function') {
   console.debug("Adding Math.trunc() -> was missing on this platform");
   Math.trunc = function(number) {
     return (number - 0.5).toFixed();
+  };
+}
+
+// Workaround to add "".format() if not present
+if (typeof String.prototype.format !== 'function') {
+  console.debug("Adding String.prototype.format() -> was missing on this platform");
+  String.prototype.format = function() {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function(match, number) {
+      return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+        ;
+    });
   };
 }

@@ -415,7 +415,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return getNewcomersRecursive(blocks, 0, 5, size)
             .then(function(idties){
               if (idties && idties.length) {
-                idties = _.sortBy(idties, function(idty){ return -idty.block; });
+                idties = _.sortBy(idties, function(idty){
+                  var score = 1;
+                  score += (1000000 * (idty.block));
+                  score += (10      * (900 - idty.uid.toLowerCase().charCodeAt(0)));
+                  return -score;
+                });
                 if (idties.length > size) {
                   idties = idties.slice(0, size); // limit if more than expected size
                 }

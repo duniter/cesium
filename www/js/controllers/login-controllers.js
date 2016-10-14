@@ -4,7 +4,7 @@ angular.module('cesium.login.controllers', ['cesium.services'])
   .controller('LoginModalCtrl', LoginModalController)
 ;
 
-function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, csSettings) {
+function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, csSettings, Device) {
   'ngInject';
 
   $scope.computing = false;
@@ -12,9 +12,13 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
   $scope.formData = {
     rememberMe: csSettings.data.rememberMe
   };
-  $scope.showValues = false;
+  $scope.showSalt = csSettings.data.showLoginSalt;
   $scope.showPubkeyButton = false;
-  $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a';
+  $scope.autoComputePubkey = false;
+
+  Device.ready().then(function() {
+    $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a';
+  });
 
   // Login form submit
   $scope.doLogin = function() {

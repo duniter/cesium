@@ -214,7 +214,11 @@
   },
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Annuaire et place de marché",
-    "ENABLE_TOGGLE": "Activé l'extension ?",
+    "ENABLE_TOGGLE": "Activer toutes les extensions ?",
+    "ENABLE_MARKET_TOGGLE": "Activer les annonces ?",
+    "ENABLE_REGISTRY_TOGGLE": "Activer l'annuaire des pro ?",
+    "ENABLE_MESSAGE_TOGGLE": "Activer la gestion des messages ?",
+    "ENABLE_SETTINGS_TOGGLE": "Activer le stockage distant des paramètres ?",
     "NODE": "Addresse du noeud de données",
     "NODE_HELP": "server.domain.com:port",
     "POPUP_NODE": {

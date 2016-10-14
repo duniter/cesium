@@ -260,7 +260,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function removeListeners() {
-      console.debug("[ES] Disable message service listeners");
+      console.debug("[ES] Disable message extension");
 
       _.forEach(listeners, function(remove){
         remove();
@@ -269,7 +269,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function addListeners() {
-      console.debug("[ES] Enable message service listeners");
+      console.debug("[ES] Enable message extension");
 
       // Extend Wallet.loadData() and WotService.loadData()
       listeners = [

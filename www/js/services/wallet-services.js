@@ -3,7 +3,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('Wallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings, csNetwork) {
+.factory('Wallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings, csNetwork, Device) {
   'ngInject';
 
   Wallet = function(id) {
@@ -73,7 +73,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           }
           var otherReceiver;
           var outputBase;
-          var amount = tx.outputs.reduce(function(sum, output) {
+          var sources;
+          var amount = tx.outputs.reduce(function(sum, output, noffset) {
               var outputArray = output.split(':',3);
               outputBase = parseInt(outputArray[1]);
               var outputAmount = (outputBase > 0) ? parseInt(outputArray[0]) * Math.pow(10, outputBase) : parseInt(outputArray[0]);
@@ -83,6 +84,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               if (outputPubkey == data.pubkey) { // output is for the wallet
                 if (!walletIsIssuer) {
                   return sum + outputAmount;
+                }
+                // If pending: use output as new sources
+                else if (!excludePending && tx.block_number === null){
+                  sources = sources || [];
+                  sources.push({
+                    amount: parseInt(outputArray[0]),
+                    base: outputBase,
+                    type: 'T',
+                    identifier: tx.hash,
+                    noffset: noffset,
+                    consumed: false
+                  });
                 }
               }
               else { // output is for someone else
@@ -102,7 +115,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             time = txPendingsTimeByKey[amount + ':' + tx.hash];
           }
 
-          // Avoid duplicated tx, oar tx to him self
+          // Avoid duplicated tx, or tx to him self
           var txKey = amount + ':' + tx.hash + ':' + time;
           if (!processedTxMap[txKey] && amount !== 0) {
             processedTxMap[txKey] = true;
@@ -115,7 +128,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                hash: tx.hash,
                locktime: tx.locktime,
                block_number: tx.block_number,
-               inputs: (tx.block_number === null ? tx.inputs.slice(0) : null)
+               inputs: (tx.block_number === null ? tx.inputs.slice(0) : null),
+               sources: sources
             });
           }
         }
@@ -466,6 +480,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   return false; // break
                 }
               });
+              if (tx.sources) { // add TX output to source
+                data.sources = data.sources.concat(tx.sources);
+                delete tx.sources;
+              }
             }
             if (valid) {
               balance += tx.amount; // update balance
@@ -813,90 +831,169 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             console.debug("[wallet] Amount has been truncate to " + amount);
           }
 
-
-          var tx = 'Version: 3\n' +
-            'Type: Transaction\n' +
-            'Currency: ' + data.currency + '\n' +
-            'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
-            'Locktime: 0\n' + // no lock
-            'Issuers:\n' +
-             data.pubkey + '\n' +
-             'Inputs:\n';
-
-          _.forEach(inputs.sources, function(source) {
-              // if D : AMOUNT:BASE:D:PUBLIC_KEY:BLOCK_ID
-              // if T : AMOUNT:BASE:T:T_HASH:T_INDEX
-              tx += [source.amount, source.base, source.type, source.identifier,source.noffset].join(':')+"\n";
-          });
-
-          tx += 'Unlocks:\n';
-          for (i=0; i<inputs.sources.length; i++) {
-               // INPUT_INDEX:UNLOCK_CONDITION
-              tx += i + ':SIG(0)\n';
-          }
-
-          tx += 'Outputs:\n';
-          // AMOUNT:BASE:CONDITIONS
-          var rest = amount;
-          var outputBase = inputs.maxBase;
-          var outputAmount;
-          while(rest > 0) {
-            outputAmount = truncBase(rest, outputBase);
-            rest -= outputAmount;
-            if (outputAmount > 0) {
-              outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-              tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
-            }
-            outputBase--;
-          }
-          rest = inputs.amount - amount;
-          outputBase = inputs.maxBase;
-          while(rest > 0) {
-            outputAmount = truncBase(rest, outputBase);
-            rest -= outputAmount;
-            if (outputAmount > 0) {
-              outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-              tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n';
-            }
-            outputBase--;
-          }
-
-          tx += "Comment: "+ (!!comments?comments:"") + "\n";
-
-          CryptoUtils.sign(tx, data.keypair)
-          .then(function(signature) {
-            var signedTx = tx + signature + "\n";
-            BMA.tx.process({transaction: signedTx})
-            .then(function(result) {
+          // Send tx
+          createAndSendTx(block, destPub, amount, inputs, comments)
+            .then(function(res) {
               data.balance -= amount;
               _.forEach(inputs.sources, function(source) {
-                  source.consumed=true;
+                source.consumed=true;
               });
 
+              if (res && res.sources.length) {
+                data.sources = data.sources.concat(res.sources);
+              }
+
               // Add TX to pendings
-              CryptoUtils.util.hash(signedTx)
-              .then(function(hash) {
-                BMA.wot.member.get(destPub)
+              BMA.wot.member.get(destPub)
                 .then(function(member) {
                   data.tx.pendings.unshift({
-                      time: (Math.floor(moment().utc().valueOf() / 1000)),
-                      amount: -amount,
-                      pubkey: destPub,
-                      uid: member ? member.uid : null,
-                      comment: comments,
-                      isUD: false,
-                      hash: hash,
-                      locktime: 0,
-                      block_number: null
-                    });
+                    time: (Math.floor(moment().utc().valueOf() / 1000)),
+                    amount: -amount,
+                    pubkey: destPub,
+                    uid: member ? member.uid : null,
+                    comment: comments,
+                    isUD: false,
+                    hash: res.hash,
+                    locktime: 0,
+                    block_number: null
+                  });
                   store(); // save pendings in local storage
                   resolve(result);
                 }).catch(function(err){reject(err);});
-              });
             }).catch(function(err){reject(err);});
-          }).catch(function(err){reject(err);});
         });
       });
+    },
+
+    /**
+     * Create TX doc and send it
+     * @param block the current block
+     * @param destPub
+     * @param amount
+     * @param inputs
+     * @param comments
+     * @return the hash of the sent TX
+     */
+    createAndSendTx = function(block, destPub, amount, inputs, comments) {
+
+      // Make sure a TX in compact mode has no more than 100 lines (fix #118)
+      if (inputs.sources.length > 40) {
+        console.debug("[Wallet] TX has to many sources. Will chain TX...");
+
+        var firstSlice = {
+          minBase: block.unitbase,
+          maxBase: 0,
+          amount: 0,
+          sources: inputs.sources.slice(0, 39)
+        };
+        _.forEach(firstSlice.sources, function(source) {
+          if (source.base < minBase) firstSlice.minBase = source.base;
+            if (source.base > maxBase) firstSlice.maxBase = source.base;
+          firstSlice.amount += source.amount;
+        });
+
+        // Send inputs first slice
+        return createAndSendTx(block, data.pubkey/*to himself*/, firstSlice.amount, firstSlice) // comment ot need
+          .then(function(res) {
+            _.forEach(firstSlice.sources, function(source) {
+              source.consumed=true;
+            });
+            data.sources.push(res.sources);
+
+            var secondSlice = {
+              minBase: block.unitbase,
+              maxBase: 0,
+              amount: 0,
+              sources: inputs.sources.slice(40).concat(res.sources)
+            };
+            _.forEach(secondSlice.sources, function(source) {
+              if (source.base < minBase) secondSlice.minBase = source.base;
+              if (source.base > maxBase) secondSlice.maxBase = source.base;
+              secondSlice.amount += source.amount;
+            });
+
+            // Send inputs second slice (recursive call)
+            return createAndSendTx(block, destPub, amount, secondSlice, comments);
+          });
+      }
+
+      var tx = 'Version: 3\n' +
+        'Type: Transaction\n' +
+        'Currency: ' + data.currency + '\n' +
+        'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
+        'Locktime: 0\n' + // no lock
+        'Issuers:\n' +
+        data.pubkey + '\n' +
+        'Inputs:\n';
+
+      _.forEach(inputs.sources, function(source) {
+        // if D : AMOUNT:BASE:D:PUBLIC_KEY:BLOCK_ID
+        // if T : AMOUNT:BASE:T:T_HASH:T_INDEX
+        tx += [source.amount, source.base, source.type, source.identifier,source.noffset].join(':')+"\n";
+      });
+
+      tx += 'Unlocks:\n';
+      for (i=0; i<inputs.sources.length; i++) {
+        // INPUT_INDEX:UNLOCK_CONDITION
+        tx += i + ':SIG(0)\n';
+      }
+
+      tx += 'Outputs:\n';
+      // AMOUNT:BASE:CONDITIONS
+      var rest = amount;
+      var outputBase = inputs.maxBase;
+      var outputAmount;
+      var outputOffset = 0;
+      while(rest > 0) {
+        outputAmount = truncBase(rest, outputBase);
+        rest -= outputAmount;
+        if (outputAmount > 0) {
+          outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
+          tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
+          outputOffset++
+        }
+        outputBase--;
+      }
+      rest = inputs.amount - amount;
+      outputBase = inputs.maxBase;
+      var sources = [];
+      while(rest > 0) {
+        outputAmount = truncBase(rest, outputBase);
+        rest -= outputAmount;
+        if (outputAmount > 0) {
+          outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
+          tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n';
+          sources.push({
+            type: 'T',
+            noffset: outputOffset++,
+            amount: outputAmount,
+            base: outputBase
+          });
+        }
+        outputBase--;
+      }
+
+      tx += "Comment: "+ (comments||"") + "\n";
+
+      return CryptoUtils.sign(tx, data.keypair)
+        .then(function(signature) {
+          var signedTx = tx + signature + "\n";
+          return BMA.tx.process({transaction: signedTx})
+            .then(function() {
+              return CryptoUtils.util.hash(signedTx);
+            })
+            .then(function(txHash) {
+              _.forEach(sources, function(output) {
+                output.identifier= txHash;
+                output.consumed = false;
+                output.pending = true;
+              });
+              return {
+                hash: txHash,
+                sources: sources
+              };
+            });
+        });
     },
 
     checkUidNotExists = function(uid, pubkey) {
@@ -1129,9 +1226,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     * De-serialize from JSON string
     */
     fromJson = function(json, failIfInvalid) {
-      if (failIfInvalid === "undefined") {
-        failIfInvalid = true;
-      }
+      failIfInvalid = angular.isUndefined(failIfInvalid) ? true : failIfInvalid;
       return $q(function(resolve, reject) {
         var obj = JSON.parse(json || '{}');
         if (obj && obj.keypair && obj.keypair.signPk && obj.keypair.signSk) {
@@ -1220,8 +1315,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   var service = Wallet('default');
 
   // try to restore wallet
-  service.restore();
-  $rootScope.walletData = service.data;
+  Device.ready().then(function() {
+    service.restore();
+    $rootScope.walletData = service.data;
+  });
 
   service.instance = Wallet;
   return service;

@@ -29,9 +29,10 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
   $scope.$on('$ionicView.enter', function(e) {
     $scope.loading = true; // to avoid the call of Wallet.store()
-    $scope.locales = UIUtils.locales;
-    $scope.formData.locale = _.findWhere($scope.locales, {id: $translate.use()});
+    $scope.locales = angular.copy(UIUtils.locales);
+    var locale = _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
     angular.merge($scope.formData, csSettings.data);
+    $scope.formData.locale = locale;
     if (csSettings.data.locale && csSettings.data.locale.id) {
       $scope.formData.locale = _.findWhere($scope.locales, {id: csSettings.data.locale.id});
     }
@@ -150,15 +151,31 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.onSettingsChanged = function() {
     if (!$scope.loading) {
       $scope.loading = true;
+
+      // Make sure to format helptip
+      $scope.cleanupHelpTip()
+
       angular.merge(csSettings.data, $scope.formData);
       csSettings.store();
       $scope.loading = false;
     }
   };
   $scope.$watch('formData', $scope.onSettingsChanged, true);
+  //$scope.$watch('formData.helptip', $scope.onSettingsChanged, true);
 
 
   $scope.getServer = function() {
     return csHttp.getServer($scope.formData.node.host, $scope.formData.node.port);
+  };
+
+  $scope.cleanupHelpTip = function() {
+    var helptipChanged = $scope.formData.helptip.enable !== csSettings.data.helptip.enable;
+    if (helptipChanged) {
+      var enable = $scope.formData.helptip.enable;
+      // Apply default values
+      $scope.formData.helptip = angular.merge({}, csSettings.defaultSettings.helptip);
+      // Then restore the enable flag
+      $scope.formData.helptip.enable = enable;
+    }
   };
 }

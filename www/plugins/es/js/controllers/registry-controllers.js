@@ -538,8 +538,8 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   };
 }
 
-function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $state, $q, $translate, Device,
-  $ionicHistory, ModalUtils, $focus, $timeout) {
+function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q, Device,
+  $ionicHistory, ModalUtils, $focus, $timeout, esHttp) {
   'ngInject';
 
   $scope.walletData = {};
@@ -726,7 +726,6 @@ function ESRegistryRecordEditController($scope, Wallet, esRegistry, UIUtils, $st
       }
     });
   };
-
 
   $scope.showCategoryModal = function(parameters) {
     // load categories

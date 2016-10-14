@@ -1,34 +1,37 @@
 <div class="lookupForm">
   <label class="item item-input">
-      <i class="icon ion-search placeholder-icon"></i>
-      <input type="text"
-             class="visible-xs visible-sm"
-             placeholder="{{'WOT.SEARCH_HELP'|translate}}"
-             ng-model="search.text"
-             ng-model-options="{ debounce: 650 }"
-             ng-change="doSearch()">
-      <input type="text"
-             class="hidden-xs hidden-sm"
-             id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
-             ng-model="search.text"
-             on-return="doSearch()">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="text"
+           class="visible-xs visible-sm"
+           placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           ng-model-options="{ debounce: 650 }"
+           ng-change="doSearch()">
+    <input type="text"
+           class="hidden-xs hidden-sm"
+           id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           on-return="doSearch()">
+    <div class="helptip-anchor-center">
+      <a id="helptip-wot-search-text"></a>
+    </div>
   </label>
 
   <div class="padding-top" style="display: block; height: 60px;">
     <div class="pull-left">
       <h4
-        ng-if="!search.looking && search.newIncomers && search.results.length" translate>
+        ng-if="!search.looking && search.newcomers && search.results.length" translate>
         WOT.LOOKUP.NEWCOMERS
       </h4>
       <h4
-        ng-if="!search.looking && !search.newIncomers && search.text.length" translate>
+        ng-if="!search.looking && !search.newcomers && search.text.length" translate>
         COMMON.RESULTS_LIST
       </h4>
     </div>
 
     <div class="hidden-xs hidden-sm  pull-right">
       <button class="button button-small button-positive button-clear ink"
-              ng-if="!search.newIncomers"
+              ng-if="!search.newcomers"
               ng-click="doGetNewcomers()">
         <i class="icon ion-clock"></i>
         {{'WOT.LOOKUP.BTN_NEWCOMERS' | translate}}
@@ -44,7 +47,7 @@
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <div class="assertive padding" ng-if="!search.looking && !search.newIncomers && !search.results.length && search.text.length" translate>
+  <div class="assertive padding" ng-if="!search.looking && !search.newcomers && !search.results.length && search.text.length" translate>
     COMMON.SEARCH_NO_RESULT
   </div>
 
@@ -53,12 +56,20 @@
     can-swipe="$root.device.enable"
     ng-if="!search.looking && search.results.length">
 
-    <ion-item ng-repeat="identity in search.results" class="item item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
+    <ion-item
+      ng-repeat="identity in search.results track by identity.uid"
+      id="helptip-wot-search-result-{{$index}}"
+      class="item item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
 
       <i class="item-image"
          ng-style="identity.avatarStyle"
          ng-class="{'icon ion-person': !identity.avatarStyle, 'avatar': identity.avatarStyle}">
       </i>
+
+      <!--span ng-if="$index === 0"
+        style="display:block; position: absolute; width: 100%; bottom: 0; text-align: center">
+        <a id="helptip-wot-search-result">&nbsp;</a>
+      </span-->
 
       <h2 ng-if="identity.name" ng-bind-html="identity.name"></h2>
       <h2 ng-if="!identity.name && identity.uid">{{::identity.uid}}</h2>
@@ -78,6 +89,13 @@
       <i class="icon ion-ios-arrow-right "></i>
       <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
     </ion-item>
+
+    <div class="item" ng-if="search.newcomers">
+      <p>
+        <a ng-click="showMoreNewcomers()" translate>WOT.LOOKUP.SHOW_MORE_NEWCOMERS</a>
+        <span class="gray" translate="WOT.LOOKUP.NEWCOMERS_COUNT" translate-values="{limit: search.limit}"></span>
+      </p>
+    </div>
 
   </ion-list>
 </div>

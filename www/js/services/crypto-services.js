@@ -6,12 +6,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
   'ngInject';
 
   var async_load_scrypt = function(on_ready) {
-      if (typeof module !== 'undefined' && module.exports) {
-          // add node.js implementations
-          require('scrypt-em');
-          return on_ready(scrypt_module_factory());
-      }
-      else if (scrypt_module_factory !== null){
+      if (scrypt_module_factory !== null){
           return on_ready(scrypt_module_factory());
       }
       else {
@@ -20,12 +15,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
   },
 
   async_load_nacl = function(on_ready, options) {
-    if (typeof module !== 'undefined' && module.exports) {
-      // add node.js implementations
-      require('nacl_factory');
-      nacl_factory.instantiate(on_ready, options);
-    }
-    else if (nacl_factory !== null){
+    if (nacl_factory !== null){
       nacl_factory.instantiate(on_ready, options);
     }
     else {
@@ -34,12 +24,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
   },
 
   async_load_base58 = function(on_ready) {
-      if (typeof module !== 'undefined' && module.exports) {
-          // add node.js implementations
-          require('base58');
-          return on_ready(Base58);
-      }
-      else if (Base58 !== null){
+      if (Base58 !== null){
           return on_ready(Base58);
       }
       else {
@@ -48,12 +33,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
   },
 
   async_load_base64 = function(on_ready) {
-      if (typeof module !== 'undefined' && module.exports) {
-          // add node.js implementations
-          require('base58');
-        on_ready(Base64);
-      }
-      else if (Base64 !== null){
+      if (Base64 !== null){
         on_ready(Base64);
       }
       else {
@@ -78,6 +58,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       nacl,
       base58,
       base64,
+      loadedLib = 0,
 
       // functions
       decode_utf8 = function(s) {
@@ -251,34 +232,40 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       });
     };
 
+    isLoaded = function() {
+      return loadedLib === 4;
+    }
+
     // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
     Device.ready()
       .then(function() {
         console.debug('Loading NaCl...');
         var now = new Date().getTime();
-        var naclOptions;
+        var naclOptions = {};
         if (ionic.Platform.grade.toLowerCase()!='a') {
           console.log('Reduce NaCl memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
-          naclOptions = {
-            requested_total_memory: 16777216
-          };
+          naclOptions.requested_total_memory = 16777216;
         }
         async_load_nacl(function(lib) {
           nacl = lib;
+          loadedLib++;
           console.debug('Loaded NaCl in ' + (new Date().getTime() - now) + 'ms');
         }, naclOptions);
+
+        async_load_scrypt(function(lib) {
+          scrypt = lib;
+          loadedLib++;
+        });
+        async_load_base58(function(lib) {
+          base58 = lib;
+          loadedLib++;
+        });
+        async_load_base64(function(lib) {
+          base64 = lib;
+          loadedLib++;
+        });
       });
 
-
-    async_load_scrypt(function(lib) {
-      scrypt = lib;
-    });
-    async_load_base58(function(lib) {
-      base58 = lib;
-    });
-    async_load_base64(function(lib) {
-      base64 = lib;
-    });
     // Service's exposed methods
     return {
         /*
@@ -287,13 +274,14 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
         scrypt: scrypt,
         base58: base58,
         base64: base64,*/
+        isLoaded: isLoaded,
         util: {
           encode_utf8: encode_utf8,
           decode_utf8: decode_utf8,
           encode_base58: encode_base58,
           decode_base58: decode_base58,
           hash: hash_sha256,
-          encode_base64: base64.encode,
+          encode_base64: function() {return base64.encode(arguments)},
           random_nonce: random_nonce
         },
         connect: connect,

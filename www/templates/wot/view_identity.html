@@ -44,20 +44,15 @@
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
         <!-- Certifications count -->
-        <a class="item item-icon-left item-text-wrap item-icon-right ink hidden-xs hidden-sm"
+        <a id="helptip-wot-view-certifications"
+           class="item item-icon-left item-text-wrap item-icon-right ink"
            ng-if="formData.hasSelf"
-           ui-sref="app.wot_view_cert_lg({pubkey:formData.pubkey, uid:formData.uid})">
+           ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
-          <span class="badge" ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
-          <i class="gray icon ion-ios-arrow-right"></i>
-        </a>
-        <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
-           ng-if="formData.hasSelf"
-           ui-sref="app.wot_view_cert({pubkey:formData.pubkey, uid:formData.uid})">
-          <i class="icon ion-ribbon-b"></i>
-          <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
-          <span class="badge" ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
+          <span id="helptip-wot-view-certifications-count"
+                class="badge"
+                ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 

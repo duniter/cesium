@@ -10,12 +10,14 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, esHttp, csSettings, Wallet, WotService, UIUtils, BMA) {
+.factory('esUser', function($rootScope, $q, esHttp, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils) {
   'ngInject';
 
   function factory(host, port) {
 
-    var listeners;
+    var listeners,
+      savedSettingsKeys = ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'plugins'],
+      restoringSettings = false;
 
     function copy(otherNode) {
       removeListeners();
@@ -215,8 +217,106 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
+    function onWalletLogin(data, resolve, reject) {
+      if (!data || !data.pubkey || !data.keypair) {
+        if (resolve) {
+          resolve();
+        }
+        return;
+      }
+      console.debug('[esUser] Loading user settings from ES node...');
+
+      // Waiting to load crypto libs
+      if (!CryptoUtils.isLoaded()) {
+        console.debug('[esUser] Waiting crypto lib loading...');
+        $timeout(function() {
+          onWalletLogin(data, resolve, reject);
+        }, 200);
+        return;
+      }
+
+      // Load settings
+      esHttp.get(host, port, '/user/settings/:id')({id: data.pubkey})
+        .then(function(res) {
+          if (!res || !res._source) {
+            resolve(data);
+            return;
+          }
+          var record = res._source;
+          // Do not apply if same version
+          if (record.time === csSettings.data.time) {
+            console.debug('[esUser] Local settings already up to date');
+            resolve(data);
+            return;
+          };
+          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(data.keypair);
+          var nonce = CryptoUtils.util.decode_base58(record.nonce);
+          // Decrypt settings content
+          return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
+            .then(function(json) {
+              var settings = JSON.parse(json || '{}');
+              settings.time = record.time;
+              angular.merge(csSettings.data, settings);
+              restoringSettings = true;
+              csSettings.store();
+              console.debug('[esUser] Successfully loaded user settings from ES node');
+              console.debug(settings);
+              resolve(data);
+            });
+        })
+        .catch(function(err){
+          if (err && err.ucode && err.ucode == 404) {
+            console.debug('[esUser] No user settings found in ES node...');
+            resolve(data); // not found
+          }
+          else {
+            reject(err);
+          }
+        });
+    }
+
+    function onSettingsChanged(data) {
+      if (!Wallet.isLogin()) return;
+
+      console.debug('[esUser] Saving user settings to ES...');
+
+      var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(Wallet.data.keypair);
+      var nonce = CryptoUtils.util.random_nonce();
+
+      var formData = {
+        issuer: Wallet.data.pubkey,
+        nonce: CryptoUtils.util.encode_base58(nonce),
+        time: Math.trunc(new Date().getTime() / 1000)
+      };
+
+      var dataToSaved = {};
+      _.forEach(savedSettingsKeys, function(key) {
+        dataToSaved[key] = data[key];
+      });
+
+      var json = JSON.stringify(dataToSaved);
+
+      return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
+        .then(function(cypherText) {
+          formData.content = cypherText;
+          return esHttp.record.post(host, port, '/user/settings')(formData);
+        })
+        .then(function() {
+          // Change settings version
+          csSettings.data.time = formData.time;
+          restoringSettings = true;
+          csSettings.store();
+          console.debug('[esUser] User settings saved in ES');
+        })
+        .catch(function(err) {
+          console.error(err);
+          throw new Error(err);
+        })
+      ;
+    }
+
     function removeListeners() {
-      console.debug("[ES] Disable plugin contribution");
+      console.debug("[esUser] Disable user extension");
 
       _.forEach(listeners, function(remove){
         remove();
@@ -225,12 +325,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function addListeners() {
-      console.debug("[ES] Enable plugin contribution");
+      console.debug("[ES] Enable user extension");
 
       // Extend Wallet.loadData() and WotService.loadData()
       listeners = [
         Wallet.api.data.on.load($rootScope, onWalletLoad, this),
         Wallet.api.data.on.reset($rootScope, onWalletReset, this),
+        Wallet.api.data.on.login($rootScope, onWalletLogin, this),
         WotService.api.data.on.load($rootScope, onWotLoad, this),
         WotService.api.data.on.search($rootScope, onWotSearch, this),
       ];
@@ -253,8 +354,24 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     // Listen for settings changed
-    csSettings.api.data.on.changed($rootScope, function(){
+    csSettings.api.data.on.changed($rootScope, function(data){
+      if (restoringSettings) {
+        restoringSettings = false;
+        return;
+      }
+
+      var wasEnable = listeners && listeners.length > 0;
+
       refreshListeners();
+
+      if (!wasEnable && isEnable()) {
+        return $q(function(resolve, reject){
+          onWalletLogin(Wallet.data, resolve, reject);
+        });
+      }
+      else {
+        onSettingsChanged(data);
+      }
     });
 
     // Default action
@@ -271,6 +388,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         update: esHttp.record.post(host, port, '/user/profile/:id/_update'),
         avatar: esHttp.get(host, port, '/user/profile/:id?_source=avatar'),
         fillAvatars: fillAvatars
+      },
+      settings: {
+        get: esHttp.get(host, port, '/user/settings/:id'),
+        add: esHttp.record.post(host, port, '/user/settings'),
+        update: esHttp.record.post(host, port, '/user/settings/:id/_update'),
       }
     };
   }

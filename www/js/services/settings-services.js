@@ -26,6 +26,16 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
         rememberMe: Device.enable, // on mobile device, remember me by default
         showUDHistory: true,
+        showLoginSalt: false,
+        initPhase: false, // For currency start (when block #0 not written)
+        helptip: {
+          enable: true,
+          currency: 0,
+          wot: 0,
+          wotCerts: 0,
+          wallet: 0,
+          walletCerts: 0
+        },
         locale: {
           id: fixLocale(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
         }
@@ -47,23 +57,33 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           localStorage.setObject(constants.STORAGE_KEY, null);
         }
 
-        // Emit event on changed
-        api.data.raise.changed(data);
-
+        // Emit event on store
+        api.data.raisePromise.store(data)
+          .then(function() {
+            // Emit event on changed
+            api.data.raise.changed(data);
+          });
       },
 
       restore = function(first) {
         return $q(function(resolve, reject){
+          console.debug("[settings] Trying to restore settings...");
           var storedData = localStorage.getObject(constants.STORAGE_KEY);
+
+          var finishRestore = function() {
+            console.debug("[settings] Restored");
+
+            // Emit event on changed
+            api.data.raise.changed(data);
+            resolve();
+          };
 
           // No settings stored
           if (!storedData) {
             if (defaultSettings.locale.id !== $translate.use()) {
               $translate.use(defaultSettings.locale.id);
-              // Emit event on changed
-              api.data.raise.changed(data);
+              finishRestore();
             }
-            resolve();
             return;
           }
 
@@ -110,18 +130,15 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
           // Apply the new locale (only if need)
           if (localeChanged) {
-            $translate.use(data.locale.id);
+            $translate.use(fixLocale(data.locale.id));
           }
 
-          console.debug("[settings] Restored");
-
-          // Emit event on changed
-          api.data.raise.changed(data);
-          resolve();
+          finishRestore();
         });
       };
 
     api.registerEvent('data', 'changed');
+    api.registerEvent('data', 'store');
 
     return {
       id: id,
@@ -137,8 +154,9 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
   var service = CSSettings('default');
 
+  service.instance = CSSettings;
+
   service.restore();
 
-  service.instance = CSSettings;
   return service;
 });

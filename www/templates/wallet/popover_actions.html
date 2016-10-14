@@ -5,11 +5,20 @@
   <ion-content scroll="false">
     <div class="list item-text-wrap">
 
-      <a class="item item-icon-left ink"
+      <a class="item item-icon-left item-icon-right ink"
          ng-click="setShowDetails(!showDetails)">
+        <i class="icon ion-key"></i>
+
+        {{'ACCOUNT.BTN_SHOW_DETAILS' | translate}}
+
         <i class="icon"
            ng-class="{'ion-ios-checkmark-empty': showDetails}"></i>
-        {{'ACCOUNT.BTN_SHOW_DETAILS' | translate}}
+      </a>
+
+      <a class="item item-icon-left ink visible-xs visible-sm"
+         ng-click="showSharePopover($event)">
+        <i class="icon ion-android-share"></i>
+        {{'COMMON.BTN_SHARE' | translate}}
       </a>
 
       <a class="item item-icon-left ink"
@@ -38,6 +47,15 @@
             ng-click="self()">
         <i class="icon ion-flag"></i>
         {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+      </a>
+
+      <div class="item-divider hidden-sm hidden-xs"></div>
+
+      <!-- help tour -->
+      <a class="item item-icon-left ink hidden-sm hidden-xs"
+         ng-click="startWalletTour()">
+        <i class="icon ion-easel"></i>
+        {{'COMMON.BTN_HELP_TOUR' | translate}}
       </a>
     </div>
   </ion-content>

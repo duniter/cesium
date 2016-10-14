@@ -32,7 +32,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHistory, screenmatch,
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $ionicHistory, screenmatch,
   UIUtils, Wallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
   'ngInject';
 
@@ -46,10 +46,13 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHisto
     $scope.loadWallet()
       .then(function(walletData) {
         $scope.walletData = walletData;
+        $scope.setShowDetails(angular.isDefined(csSettings.data.wallet, csSettings.data.wallet.showPubkey) ?
+          csSettings.data.wallet.showPubkey: true);
         $scope.updateView();
         $scope.loading=false;
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', walletData.pubkey, 1100);
+        $scope.showHelpTip();
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
@@ -111,6 +114,11 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHisto
     var qrcode = document.getElementById('qrcode');
     qrcode.classList.toggle('visible-xs', !show);
     qrcode.classList.toggle('visible-sm', !show);
+
+    // Update user settings
+    csSettings.data.wallet = csSettings.data.wallet || {};
+    csSettings.data.wallet.showPubkey = show;
+    csSettings.store();
   };
 
   // Transfer
@@ -133,6 +141,34 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHisto
         }, 10);
       }
     });
+  };
+
+  $scope.startWalletTour = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+    return $scope.showHelpTip(0, true);
+  };
+
+  $scope.showHelpTip = function(index, isTour) {
+    if (!isTour && !csSettings.data.helptip.wallet.enable) return;
+    index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
+    isTour = angular.isDefined(isTour) ? isTour : false;
+    if (index < 0) return;
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+    helptipScope.tour = isTour;
+
+    return helptipScope.startWalletTour(index, false)
+      .then(function(endIndex) {
+        helptipScope.$destroy();
+        if (!isTour) {
+          csSettings.data.helptip.wallet = endIndex;
+          csSettings.store();
+        }
+      });
   };
 
   $scope.setRegisterForm = function(registerForm) {
@@ -327,6 +363,9 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state, $ionicHisto
   };
 
   $scope.showSharePopover = function(event) {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
     var title = $scope.walletData.name || $scope.walletData.uid || $scope.walletData.pubkey;
     var url = $state.href('app.wot_view_identity', {pubkey: $scope.walletData.pubkey, uid: $scope.walletData.name || $scope.walletData.uid}, {absolute: true});
     UIUtils.popover.share(event, {
