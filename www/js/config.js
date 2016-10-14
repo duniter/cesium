@@ -20,19 +20,22 @@ angular.module("cesium.config", [])
 	"useLocalStorage": true,
 	"useRelative": true,
 	"initPhase": false,
+	"helptip": {
+		"enable": false
+	},
 	"node": {
 		"host": "192.168.0.28",
 		"port": "9604"
 	},
 	"plugins": {
 		"es": {
-			"enable": false,
-			"host": "192.168.0.28",
-			"port": "9203"
+			"enable": true,
+			"host": "data.duniter.fr",
+			"port": "80"
 		}
 	},
 	"version": "0.3.16",
-	"build": "2016-10-12T10:00:38.327Z",
+	"build": "2016-10-14T21:21:43.099Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

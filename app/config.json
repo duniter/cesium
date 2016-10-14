@@ -74,9 +74,9 @@
     },
     "plugins":{
       "es": {
-        "enable": false,
-        "host": "192.168.0.28",
-        "port": "9203"
+        "enable": true,
+        "host": "data.duniter.fr",
+        "port": "80"
       }
     }
   }

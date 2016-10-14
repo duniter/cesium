@@ -16,7 +16,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
   function factory(host, port) {
 
     var listeners,
-      savedSettingsKeys = ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'plugins'],
+      savedSettingsKeys = ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'plugins', 'helptip'],
       restoringSettings = false;
 
     function copy(otherNode) {
