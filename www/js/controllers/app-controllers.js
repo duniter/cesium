@@ -82,6 +82,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $rootScope.device = Device;
   $rootScope.login = Wallet.isLogin();
 
+  $rootScope.smallscreen = screenmatch.bind('xs, sm', $rootScope);
+
+  $rootScope.smallscreen.active === true; //true if the screen is xs or sm
+
   ////////////////////////////////////////
   // Show currency view
   ////////////////////////////////////////
@@ -126,7 +130,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.createHelptipScope = function() {
-    if ($rootScope.tour) {
+    if ($rootScope.tour || !$rootScope.settings.helptip.enable) {
       return; // avoid other helptip to be launched (e.g. wallet)
     }
     // Create a new scope for the tour controller

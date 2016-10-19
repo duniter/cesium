@@ -10,6 +10,18 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
     var
     api = new Api(this, "WotService-" + id),
 
+    _sortAndLimitIdentities = function(idties, size) {
+      idties = _.sortBy(idties, function(idty){
+        var score = 1;
+        score += (1000000 * (idty.block));
+        score += (10      * (900 - idty.uid.toLowerCase().charCodeAt(0)));
+        return -score;
+      });
+      if (angular.isDefined(size) && idties.length > size) {
+        idties = idties.slice(0, size); // limit if more than expected size
+      }
+      return idties;
+    },
 
     loadRequirements = function(pubkey, uid) {
       return $q(function(resolve, reject) {
@@ -20,7 +32,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             resolve();
             return;
           }
-          if (res.identities.length > 0) {
+          if (res.identities.length > 1) {
             res.identities = _.sortBy(res.identities, function(idty) {
                   var score = 1;
                   score += (100000000000 * ((uid && idty.uid === uid) ? 1 : 0));
@@ -45,7 +57,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }
             return count;
           }, 0) : 0;
-          requirements.isMember = !requirements.needMembership;
+          requirements.isMember = !requirements.needMembership && !requirements.pendingMembership;
           resolve(requirements);
         })
         .catch(function(err) {
@@ -414,17 +426,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           var blocks = _.sortBy(res.result.blocks, function(n){ return -n; });
           return getNewcomersRecursive(blocks, 0, 5, size)
             .then(function(idties){
-              if (idties && idties.length) {
-                idties = _.sortBy(idties, function(idty){
-                  var score = 1;
-                  score += (1000000 * (idty.block));
-                  score += (10      * (900 - idty.uid.toLowerCase().charCodeAt(0)));
-                  return -score;
-                });
-                if (idties.length > size) {
-                  idties = idties.slice(0, size); // limit if more than expected size
-                }
+              if (!idties || !idties.length) {
+                return null;
               }
+              idties = _sortAndLimitIdentities(idties, size);
               return $q(function(resolve, reject) {
                 api.data.raisePromise.search(null, idties)
                   .then(function () {
@@ -437,6 +442,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             });
         });
     },
+
 
     getNewcomersRecursive = function(blocks, offset, size, maxResultSize) {
       return $q(function(resolve, reject) {
@@ -488,9 +494,64 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       });
     },
 
+    getPending = function(size) {
+      size = size || 20;
+      return BMA.wot.member.pending()
+        .then(function(res) {
+          if (!res.memberships || !res.memberships.length) {
+            return null;
+          }
+          var idtiesByBlock = {}; // TODO: workaround for Duniter#667 - https://github.com/duniter/duniter/issues/667
+          var idties = res.memberships.reduce(function(res, ms){
+            if (ms.membership === 'IN') {
+              var idty = {
+                uid: ms.uid,
+                pubkey: ms.pubkey,
+                block: ms.blockNumber,
+                blockHash: ms.blockHash
+              };
+              if (!idtiesByBlock[ms.blockNumber]) {
+                idtiesByBlock[ms.blockNumber] = [idty];
+              }
+              else {
+                idtiesByBlock[ms.blockNumber].push(idty);
+              }
+              return res.concat(idty);
+            }
+            return res;
+          }, []);
+          idties = _sortAndLimitIdentities(idties, size);
+
+          return BMA.blockchain.blocks(_.keys(idtiesByBlock))
+            .then(function(blocks) {
+
+              _.forEach(blocks, function(block){
+                _.forEach(idtiesByBlock[block.number], function(idty) {
+                  idty.sigDate = block.medianTime;
+                  idty.valid = (idty.blockHash === block.hash);
+                  //if (!idty.valid) {
+                    idty.errors = ['INVALID_MS_BLOCK_HASH'];
+                    console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
+                  //}
+                })
+              });
+              return $q(function(resolve, reject) {
+                api.data.raisePromise.search(null, idties)
+                  .then(function () {
+                    resolve(idties);
+                  })
+                  .catch(function(err){
+                    reject(err);
+                  });
+              });
+            })
+
+        });
+    },
+
     getAll = function() {
       var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
-      return getAllRecursive(letters, 0, 5);
+      return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT);
     },
 
     getAllRecursive = function(letters, offset, size) {
@@ -535,7 +596,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   .catch(function(err) {
                     reject(err);
                   });
-              }, 1000);
+              }, BMA.constants.LIMIT_REQUEST_DELAY);
             }
             else {
               resolve(result);
@@ -562,6 +623,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       load: loadData,
       search: search,
       newcomers: getNewcomers,
+      pending: getPending,
       all: getAll,
       // api extension
       api: api

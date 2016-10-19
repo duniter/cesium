@@ -167,11 +167,14 @@
     },
     "LOOKUP": {
       "TITLE": "Annuaire",
-      "NEWCOMERS": "Dernières adhésions :",
+      "NEWCOMERS": "Nouveaux membres :",
+      "PENDING": "Inscriptions en attente :",
       "REGISTERED": "Inscrit ",
-      "BTN_NEWCOMERS": "Voir les dernières adhésions",
-      "SHOW_MORE_NEWCOMERS": "Afficher plus",
-      "NEWCOMERS_COUNT": "(limite actuelle à {{limit}})"
+      "BTN_NEWCOMERS": "nouveaux membres",
+      "BTN_PENDING": "inscriptions en attente",
+      "SHOW_MORE": "Afficher plus",
+      "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
+      "NO_PENDING": "Aucune inscription en attente n'a été trouvée"
     },
     "MODAL": {
       "TITLE": "Recherche"

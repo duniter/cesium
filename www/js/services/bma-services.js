@@ -2,7 +2,7 @@
 
 angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, csSettings, csHttp, $rootScope) {
+.factory('BMA', function($q, csSettings, csHttp, $rootScope, $timeout) {
   'ngInject';
 
   function factory(host, port, cacheEnable) {
@@ -29,7 +29,9 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
     },
     constants = {
-      ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855'
+      ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
+      LIMIT_REQUEST_COUNT: 5, // simultaneous async call of on rest request
+      LIMIT_REQUEST_DELAY: 1000 // time (in second) to wait between to call of a rest request
     },
     server = csHttp.getServer(host, port);
 
@@ -84,6 +86,60 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     var getBlockchainBlock = cacheEnable ?
       csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT) :
       csHttp.get(host, port, '/blockchain/block/:block');
+
+    /**
+     * Return all expected blocks
+     * @param blockNumbers a rray of block number
+    */
+    function getBlockchainBlocks(blockNumbers){
+      return _getBlockchainBlocksRecursive(blockNumbers, 0, constants.LIMIT_REQUEST_COUNT);
+    }
+
+    function _getBlockchainBlocksRecursive(blockNumbers, offset, size) {
+      return $q(function(resolve, reject) {
+        var result = [];
+        var jobs = [];
+        _.each(blockNumbers.slice(offset, offset+size), function(blockNumber) {
+          jobs.push(
+            getBlockchainBlock({block: blockNumber})
+              .then(function(block){
+                if (!block) return;
+                result.push(block);
+              })
+          );
+        });
+
+        $q.all(jobs)
+          .then(function() {
+            if (offset < blockNumbers.length - 1) {
+              $timeout(function() {
+                _getBlockchainBlocksRecursive(blockNumbers, offset+size, size)
+                  .then(function(blocks) {
+                    if (!blocks || !blocks.length) {
+                      resolve(result);
+                      return;
+                    }
+                    resolve(result.concat(blocks));
+                  })
+                  .catch(function(err) {
+                    reject(err);
+                  });
+              }, constants.LIMIT_REQUEST_DELAY);
+            }
+            else {
+              resolve(result);
+            }
+          })
+          .catch(function(err){
+            if (err && err.ucode === errorCodes.HTTP_LIMITATION) {
+              resolve(result);
+            }
+            else {
+              reject(err);
+            }
+          });
+      });
+    }
 
     function getBlockchainLastUd() {
       return getBlockchainWithUd()
@@ -218,7 +274,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         member: {
           all: getMembers,
           uids: getMemberUidsByPubkey,
-          get: getMemberByPubkey
+          get: getMemberByPubkey,
+          pending: csHttp.get(host, port, '/wot/pending')
         },
         requirements: csHttp.get(host, port, '/wot/requirements/:pubkey'),
         add: csHttp.post(host, port, '/wot/add'),
@@ -236,6 +293,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
           csHttp.get(host, port, '/blockchain/parameters'),
         current: csHttp.get(host, port, '/blockchain/current'),
         block: getBlockchainBlock,
+        blocks: getBlockchainBlocks,
         membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
           ud: getBlockchainWithUd,

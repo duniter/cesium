@@ -84,15 +84,15 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus) {
+function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus) {
   'ngInject';
 
   var defaultSearchLimit = 20;
 
   $scope.search = {
     text: '',
-    looking: false,
-    newcomers: true,
+    loading: false,
+    type: 'newcomers',
     limit: defaultSearchLimit,
     results: []
   };
@@ -122,59 +122,44 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     // endRemoveIf(device)
   });
 
+  $scope.resetWotSearch = function() {
+    $scope.search = {
+      text: null,
+      loading: false,
+      type: 'newcomers',
+      limit: defaultSearchLimit,
+      results: []
+    };
+  };
+
   $scope.doSearch = function() {
-    $scope.search.looking = true;
-    $scope.search.newcomers = false;
+    $scope.search.loading = true;
     var text = $scope.search.text.trim();
-    if (text.length < 3) {
+    if (($rootScope.smallscreen.active && text.length < 3) || !text.length) {
       $scope.search.results = [];
-      $scope.search.looking = false;
+      $scope.search.loading = false;
+      $scope.search.type = 'none';
     }
     else {
+      $scope.search.type = 'text';
       WotService.search(text)
       .then(function(idties){
         if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
-        if (!idties || !idties.length) {
-          $scope.search.results = BMA.regex.PUBKEY.test(text) ? [{pubkey: text}] : [];
+        if ((!idties || !idties.length) && BMA.regex.PUBKEY.test(text)) {
+          $scope.doDisplayResult([{pubkey: text}]);
         }
         else {
-          $scope.search.results = idties;
+          $scope.doDisplayResult(idties);
         }
-
-        $scope.search.looking = false;
-
-        if ($scope.search.results.length > 0) {
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.ripple({
-              startVelocity: 3000
-            });
-            // Set Ink
-            UIUtils.ink({
-              selector: '.item.ink'
-            });
-          }, 10);
-        }
-
       })
       .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
     }
   };
 
-  $scope.resetWotSearch = function() {
-    $scope.search = {
-      text: null,
-      looking: false,
-      newcomers: true,
-      limit: 20,
-      results: []
-    };
-  };
-
   $scope.doGetNewcomers= function(limit, more) {
-    $scope.search.looking = more ? false : true;
-    $scope.search.newcomers = true;
+    $scope.search.loading = more ? false : true;
+    $scope.search.type = 'newcomers';
 
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
 
@@ -183,39 +168,34 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
       WotService.newcomers;
 
     return searchFunction($scope.search.limit).then(function(idties){
-        if (!$scope.search.newcomers) return; // could have change
-        $scope.search.results = idties || [];
-        $scope.search.looking = false;
-
-        if ($scope.search.results.length > 0) {
-
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.ripple({
-              startVelocity: 3000
-            });
-            // Set Ink
-            UIUtils.ink({
-              selector: '.item.ink'
-            });
-          }, 10);
-        }
-      });
+      if (!$scope.search.type == 'newcomers') return; // could have change
+      $scope.doDisplayResult(idties);
+    });
   };
 
-  $scope.showMoreNewcomers= function() {
+  $scope.doGetPending= function(limit, more) {
+    $scope.search.loading = more ? false : true;
+    $scope.search.type = 'pending';
+    $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
+    return WotService.pending($scope.search.limit).then(function(res){
+      if (!$scope.search.type == 'pending') return; // could have change
+      $scope.doDisplayResult(res);
+    });
+  };
+
+  $scope.showMore= function() {
     $scope.search.limit = $scope.search.limit || defaultSearchLimit;
     $scope.search.limit = $scope.search.limit * 2;
     if ($scope.search.limit < defaultSearchLimit) {
       $scope.search.limit = defaultSearchLimit;
     }
-    $scope.search.lookingMore = true;
+    $scope.search.loadingMore = true;
     $scope.doGetNewcomers($scope.search.limit, true)
       .then(function() {
-        $scope.search.lookingMore = false;
+        $scope.search.loadingMore = false;
       })
       .catch(function(err) {
-        $scope.search.lookingMore = false;
+        $scope.search.loadingMore = false;
       });
   };
 
@@ -275,6 +255,24 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
         csSettings.data.helptip.wot = endIndex;
         csSettings.store();
       });
+  };
+
+  $scope.doDisplayResult = function(res) {
+    $scope.search.results = res || [];
+    $scope.search.loading = false;
+
+    if (!$scope.search.results.length) return;
+
+    // Set Motion
+    $timeout(function() {
+      UIUtils.motion.ripple({
+        startVelocity: 3000
+      });
+      // Set Ink
+      UIUtils.ink({
+        selector: '.item.ink'
+      });
+    }, 10);
   };
 }
 

@@ -4053,12 +4053,12 @@ a.subdued {
         vertical-align: top;
         font-size: 32px;
         line-height: 32px; }
-    .bar .button.button-clear, .bar button.button-clear {
+    .bar .button.button-clear, .bar .button.button-text, .bar button.button-clear, .bar button.button-text {
       padding-right: 2px;
       padding-left: 2px;
       font-weight: 300;
       font-size: 17px; }
-      .bar .button.button-clear .icon:before, .bar .button.button-clear .icon-help:before, .bar .button.button-clear .icon-alert:before, .bar .button.button-clear #menu .footer .icon-help:before, #menu .footer .bar .button.button-clear .icon-help:before, .bar .button.button-clear.icon:before, .bar .button.button-clear.icon-help:before, .bar .button.button-clear.icon-alert:before, .bar #menu .footer .button.button-clear.icon-help:before, #menu .footer .bar .button.button-clear.icon-help:before, .bar .button.button-clear.icon-left:before, .bar .button.button-clear.icon-right:before, .bar button.button-clear .icon:before, .bar button.button-clear .icon-help:before, .bar button.button-clear .icon-alert:before, .bar button.button-clear #menu .footer .icon-help:before, #menu .footer .bar button.button-clear .icon-help:before, .bar button.button-clear.icon:before, .bar button.button-clear.icon-help:before, .bar button.button-clear.icon-alert:before, .bar #menu .footer button.button-clear.icon-help:before, #menu .footer .bar button.button-clear.icon-help:before, .bar button.button-clear.icon-left:before, .bar button.button-clear.icon-right:before {
+      .bar .button.button-clear .icon:before, .bar .button.button-text .icon:before, .bar .button.button-clear .icon-help:before, .bar .button.button-text .icon-help:before, .bar .button.button-clear .icon-alert:before, .bar .button.button-text .icon-alert:before, .bar .button.button-clear #menu .footer .icon-help:before, #menu .footer .bar .button.button-clear .icon-help:before, .bar .button.button-text #menu .footer .icon-help:before, #menu .footer .bar .button.button-text .icon-help:before, .bar .button.button-clear.icon:before, .bar .button.icon.button-text:before, .bar .button.button-text.icon-help:before, .bar .button.button-text.icon-alert:before, .bar #menu .footer .button.button-text.icon-help:before, #menu .footer .bar .button.button-text.icon-help:before, .bar .button.button-clear.icon-help:before, .bar .button.button-clear.icon-alert:before, .bar #menu .footer .button.button-clear.icon-help:before, #menu .footer .bar .button.button-clear.icon-help:before, .bar .button.button-clear.icon-left:before, .bar .button.icon-left.button-text:before, .bar .button.button-clear.icon-right:before, .bar .button.icon-right.button-text:before, .bar button.button-clear .icon:before, .bar button.button-text .icon:before, .bar button.button-clear .icon-help:before, .bar button.button-text .icon-help:before, .bar button.button-clear .icon-alert:before, .bar button.button-text .icon-alert:before, .bar button.button-clear #menu .footer .icon-help:before, #menu .footer .bar button.button-clear .icon-help:before, .bar button.button-text #menu .footer .icon-help:before, #menu .footer .bar button.button-text .icon-help:before, .bar button.button-clear.icon:before, .bar button.icon.button-text:before, .bar button.button-text.icon-help:before, .bar button.button-text.icon-alert:before, .bar #menu .footer button.button-text.icon-help:before, #menu .footer .bar button.button-text.icon-help:before, .bar button.button-clear.icon-help:before, .bar button.button-clear.icon-alert:before, .bar #menu .footer button.button-clear.icon-help:before, #menu .footer .bar button.button-clear.icon-help:before, .bar button.button-clear.icon-left:before, .bar button.icon-left.button-text:before, .bar button.button-clear.icon-right:before, .bar button.icon-right.button-text:before {
         font-size: 32px;
         line-height: 32px; }
     .bar .button.back-button, .bar button.back-button {
@@ -4118,7 +4118,7 @@ a.subdued {
   .bar-light .button.active, .bar-light .button.activated {
     border-color: #ccc;
     background-color: #fafafa; }
-  .bar-light .button.button-clear {
+  .bar-light .button.button-clear, .bar-light .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4138,7 +4138,7 @@ a.subdued {
   .bar-stable .button.active, .bar-stable .button.activated {
     border-color: #a2a2a2;
     background-color: #e5e5e5; }
-  .bar-stable .button.button-clear {
+  .bar-stable .button.button-clear, .bar-stable .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4158,7 +4158,7 @@ a.subdued {
   .bar-positive .button.active, .bar-positive .button.activated {
     border-color: #0c60ee;
     background-color: #0c60ee; }
-  .bar-positive .button.button-clear {
+  .bar-positive .button.button-clear, .bar-positive .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4178,7 +4178,7 @@ a.subdued {
   .bar-calm .button.active, .bar-calm .button.activated {
     border-color: #0a9dc7;
     background-color: #0a9dc7; }
-  .bar-calm .button.button-clear {
+  .bar-calm .button.button-clear, .bar-calm .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4198,7 +4198,7 @@ a.subdued {
   .bar-assertive .button.active, .bar-assertive .button.activated {
     border-color: #e42112;
     background-color: #e42112; }
-  .bar-assertive .button.button-clear {
+  .bar-assertive .button.button-clear, .bar-assertive .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4218,7 +4218,7 @@ a.subdued {
   .bar-balanced .button.active, .bar-balanced .button.activated {
     border-color: #28a54c;
     background-color: #28a54c; }
-  .bar-balanced .button.button-clear {
+  .bar-balanced .button.button-clear, .bar-balanced .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4238,7 +4238,7 @@ a.subdued {
   .bar-energized .button.active, .bar-energized .button.activated {
     border-color: #e6b500;
     background-color: #e6b500; }
-  .bar-energized .button.button-clear {
+  .bar-energized .button.button-clear, .bar-energized .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4258,7 +4258,7 @@ a.subdued {
   .bar-royal .button.active, .bar-royal .button.activated {
     border-color: #6b46e5;
     background-color: #6b46e5; }
-  .bar-royal .button.button-clear {
+  .bar-royal .button.button-clear, .bar-royal .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -4278,7 +4278,7 @@ a.subdued {
   .bar-dark .button.active, .bar-dark .button.activated {
     border-color: #000;
     background-color: #262626; }
-  .bar-dark .button.button-clear {
+  .bar-dark .button.button-clear, .bar-dark .button.button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
@@ -8713,7 +8713,7 @@ progress {
     .button.button-light.active, .button.button-light.activated {
       border-color: #a2a2a2;
       background-color: #fafafa; }
-    .button.button-light.button-clear {
+    .button.button-light.button-clear, .button.button-light.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8739,7 +8739,7 @@ progress {
     .button.button-stable.active, .button.button-stable.activated {
       border-color: #a2a2a2;
       background-color: #e5e5e5; }
-    .button.button-stable.button-clear {
+    .button.button-stable.button-clear, .button.button-stable.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8755,29 +8755,29 @@ progress {
         background-color: #b2b2b2;
         box-shadow: none;
         color: #fff; }
-  .button.button-positive {
+  .button.button-positive, .button.button-text {
     border-color: transparent;
     background-color: #387ef5;
     color: #fff; }
-    .button.button-positive:hover {
+    .button.button-positive:hover, .button.button-text:hover {
       color: #fff;
       text-decoration: none; }
-    .button.button-positive.active, .button.button-positive.activated {
+    .button.button-positive.active, .button.active.button-text, .button.button-positive.activated, .button.activated.button-text {
       border-color: #a2a2a2;
       background-color: #0c60ee; }
-    .button.button-positive.button-clear {
+    .button.button-positive.button-clear, .button.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
       color: #387ef5; }
-    .button.button-positive.button-icon {
+    .button.button-positive.button-icon, .button.button-icon.button-text {
       border-color: transparent;
       background: none; }
-    .button.button-positive.button-outline {
+    .button.button-positive.button-outline, .button.button-outline.button-text {
       border-color: #387ef5;
       background: transparent;
       color: #387ef5; }
-      .button.button-positive.button-outline.active, .button.button-positive.button-outline.activated {
+      .button.button-positive.button-outline.active, .button.button-outline.active.button-text, .button.button-positive.button-outline.activated, .button.button-outline.activated.button-text {
         background-color: #387ef5;
         box-shadow: none;
         color: #fff; }
@@ -8791,7 +8791,7 @@ progress {
     .button.button-calm.active, .button.button-calm.activated {
       border-color: #a2a2a2;
       background-color: #0a9dc7; }
-    .button.button-calm.button-clear {
+    .button.button-calm.button-clear, .button.button-calm.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8817,7 +8817,7 @@ progress {
     .button.button-assertive.active, .button.button-assertive.activated {
       border-color: #a2a2a2;
       background-color: #e42112; }
-    .button.button-assertive.button-clear {
+    .button.button-assertive.button-clear, .button.button-assertive.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8843,7 +8843,7 @@ progress {
     .button.button-balanced.active, .button.button-balanced.activated {
       border-color: #a2a2a2;
       background-color: #28a54c; }
-    .button.button-balanced.button-clear {
+    .button.button-balanced.button-clear, .button.button-balanced.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8869,7 +8869,7 @@ progress {
     .button.button-energized.active, .button.button-energized.activated {
       border-color: #a2a2a2;
       background-color: #e6b500; }
-    .button.button-energized.button-clear {
+    .button.button-energized.button-clear, .button.button-energized.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8895,7 +8895,7 @@ progress {
     .button.button-royal.active, .button.button-royal.activated {
       border-color: #a2a2a2;
       background-color: #6b46e5; }
-    .button.button-royal.button-clear {
+    .button.button-royal.button-clear, .button.button-royal.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8921,7 +8921,7 @@ progress {
     .button.button-dark.active, .button.button-dark.activated {
       border-color: #a2a2a2;
       background-color: #262626; }
-    .button.button-dark.button-clear {
+    .button.button-dark.button-clear, .button.button-dark.button-text {
       border-color: transparent;
       background: none;
       box-shadow: none;
@@ -8938,7 +8938,7 @@ progress {
         box-shadow: none;
         color: #fff; }
 
-.button-small {
+.button-small, .button-text.button-small {
   padding: 2px 4px 1px;
   min-width: 28px;
   min-height: 30px;
@@ -8975,7 +8975,7 @@ progress {
   .button-icon .icon:before, .button-icon .icon-help:before, .button-icon .icon-alert:before, .button-icon #menu .footer .icon-help:before, #menu .footer .button-icon .icon-help:before, .button-icon.icon:before, .button-icon.icon-help:before, .button-icon.icon-alert:before, #menu .footer .button-icon.icon-help:before {
     font-size: 32px; }
 
-.button-clear {
+.button-clear, .button-text {
   -webkit-transition: opacity 0.1s;
   transition: opacity 0.1s;
   padding: 0 6px;
@@ -8983,15 +8983,15 @@ progress {
   border-color: transparent;
   background: none;
   box-shadow: none; }
-  .button-clear.button-clear {
+  .button-clear.button-clear, .button-text {
     border-color: transparent;
     background: none;
     box-shadow: none;
     color: transparent; }
-  .button-clear.button-icon {
+  .button-clear.button-icon, .button-icon.button-text {
     border-color: transparent;
     background: none; }
-  .button-clear.active, .button-clear.activated {
+  .button-clear.active, .active.button-text, .button-clear.activated, .activated.button-text {
     opacity: 0.3; }
 
 .button-outline {
@@ -10204,7 +10204,7 @@ a.button {
 .bar-footer .buttons-right .button-fab {
   right: 8px; }
 
-.bar .button.button-clear {
+.bar .button.button-clear, .bar .button.button-text {
   box-shadow: none; }
 
 .left-buttons .button-fab {
@@ -10588,6 +10588,7 @@ a.button {
 .button.button-outline.button-energized,
 .button.button-outline.button-light,
 .button.button-outline.button-positive,
+.button.button-outline.button-text,
 .button.button-outline.button-royal,
 .button.button-outline.button-stable,
 .button.button-outline {
@@ -10640,9 +10641,11 @@ a.button {
 .button.button-flat:active {
   color: #fff; }
 
-.button.button-clear,
+.button.button-clear, .button.button-text,
 .button.button-clear:hover,
-.button.button-clear:active {
+.button.button-text:hover,
+.button.button-clear:active,
+.button.button-text:active {
   background: transparent; }
 
 .button-full.ink,
@@ -11799,7 +11802,7 @@ a.button {
  * https://github.com/fians/Waves/blob/master/LICENSE 
  *
  */
-.ink, .button-fab, .button-flat, .button-raised, .button-clear, .popup .button {
+.ink, .button-fab, .button-flat, .button-raised, .button-clear, .button-text, .popup .button {
   position: relative;
   cursor: pointer;
   /*display: inline-block;*/
@@ -11847,6 +11850,7 @@ a.button {
 .button-fab,
 .button-flat,
 .button-clear,
+.button-text,
 .button-raised,
 .ink-button,
 .ink-circle {
@@ -11860,6 +11864,7 @@ a.button {
 .button-flat.activated,
 .button-raised.activated,
 .button-clear.activated,
+.activated.button-text,
 .ink-button.activated,
 .ink.activated,
 .ink-circle.activated,
@@ -11868,6 +11873,7 @@ a.button {
 .button-flat:active,
 .button-raised:active,
 .button-clear:active,
+.button-text:active,
 .ink-button:active,
 .ink:active,
 .ink-circle:active,
@@ -11887,8 +11893,11 @@ a.button {
 .button-raised:visited,
 .button-raised:link,
 .button-clear,
+.button-text,
 .button-clear:visited,
+.button-text:visited,
 .button-clear:link,
+.button-text:link,
 .ink-button-input {
   white-space: nowrap;
   vertical-align: middle;
@@ -11951,7 +11960,7 @@ a.button {
     -webkit-mask-image: none;
 }
 */
-.button-clear .ink-ripple,
+.button-clear .ink-ripple, .button-text .ink-ripple,
 *[class$="-clear"] > .ink-ripple,
 *[class$="-light"] > .ink-ripple,
 *[class$="-stable"] > .ink-ripple,
@@ -12011,28 +12020,36 @@ a {
 ==================================*/
 .positive-bg,
 .button-positive,
+.button-text,
 .bar .button-positive,
+.bar .button-text,
 .header-positive,
 .button-bar-positive,
 .bar-positive,
 .positive-border,
 .positive-bg:hover,
 .bar .button-positive:hover,
+.bar .button-text:hover,
 .button-positive:hover,
+.button-text:hover,
 .header-positive:hover,
 .button-bar-positive:hover,
 .bar-positive:hover,
 .positive-border:hover,
 .positive-bg:active,
 .bar .button-positive:active,
+.bar .button-text:active,
 .button-positive:active,
+.button-text:active,
 .header-positive:active,
 .button-bar-positive:active,
 .bar-positive:active,
 .positive-border:active,
 .positive-bg.activated,
 .bar .button-positive.activated,
+.bar .activated.button-text,
 .button-positive.activated,
+.activated.button-text,
 .header-positive.activated,
 .button-bar-positive.activated,
 .bar-positive.activated,
@@ -12890,7 +12907,7 @@ a {
 .tabs-striped .tabs {
   box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26); }
 
-.bar .button.button-clear {
+.bar .button.button-clear, .bar .button.button-text {
   color: #fff; }
 
 .bar .button.button-icon .icon:before, .bar .button.button-icon .icon-help:before, .bar .button.button-icon .icon-alert:before, .bar .button.button-icon #menu .footer .icon-help:before, #menu .footer .bar .button.button-icon .icon-help:before,
@@ -13279,12 +13296,14 @@ a {
 /* ============
  Buttons
 =============== */
-.bar.bar-header .button.button-clear.button-icon.ion-android-more-vertical,
-.bar.bar-header .button.button-clear.button-icon i.ion-android-more-vertical {
+.bar.bar-header .button.button-clear.button-icon.ion-android-more-vertical, .bar.bar-header .button.button-icon.ion-android-more-vertical.button-text,
+.bar.bar-header .button.button-clear.button-icon i.ion-android-more-vertical,
+.bar.bar-header .button.button-icon.button-text i.ion-android-more-vertical {
   padding-left: 8px; }
 
 .bar.bar-header .buttons .secondary-buttons >
-.button.button-clear.button-icon.ion-android-more-vertical:first-child {
+.button.button-clear.button-icon.ion-android-more-vertical:first-child, .bar.bar-header .buttons .secondary-buttons >
+.button.button-icon.ion-android-more-vertical.button-text:first-child {
   padding-left: 0px !important; }
 
 .bar .buttons.pull-right, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right {
@@ -13296,6 +13315,16 @@ a {
 
 .button-small-padding {
   padding: 0 7px !important; }
+
+.button-text {
+  color: grey !important;
+  font-size: 12px; }
+
+.button-text.button-small {
+  padding: 5px 2px; }
+
+.button-text-positive {
+  color: #387ef5 !important; }
 
 /* ============
  Home page

@@ -171,6 +171,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       startListeningOnSocket = function() {
         data.bma.websocket.block().on('block', function(block) {
+          if (data.updatingPeers) return;
           var uid = buid(block);
           if (data.knownBlocks.indexOf(uid) === -1) {
             console.debug('[network] Receiving block: ' + uid.substring(0, 20));
@@ -178,6 +179,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             // If first block: do NOT refresh peers (will be done in start() method)
             var skipRefreshPeers = data.knownBlocks.length === 1;
             if (!skipRefreshPeers) {
+              data.updatingPeers = true;
               // We wait 2s when a new block is received, just to wait for network propagation
               $timeout(function() {
                 console.debug('[network] new block received by WS: will refresh peers');
@@ -194,14 +196,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
       },
 
-      start = function(bma, waitAllPeers) {
+      start = function(bma) {
         return $q(function(resolve, reject) {
           close();
           data.bma = bma ? bma : BMA;
           console.info('[network] Starting network [' + bma.node.server + ']');
           var now = new Date();
           startListeningOnSocket(resolve, reject);
-          refreshPeers(waitAllPeers)
+          refreshPeers()
             .then(function(peers){
               resolve(peers);
               console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');

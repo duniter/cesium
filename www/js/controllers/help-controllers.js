@@ -109,8 +109,11 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     }
     return promise
       .then(function(next) {
+        if (angular.isUndefined(next)) {
+          return index; // keep same index (no button press: popover just closed)
+        }
         if (!next || index === steps.length - 1) {
-          return next ? -1 : index + 1;
+          return next ? -1 : index+1; // last step OK, so mark has finished
         }
         return $scope.executeStep(partName, steps, index+1);
       })

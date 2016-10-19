@@ -87,7 +87,8 @@
         </a>
 
         <!-- Public key -->
-        <span class="item item-icon-left item-text-wrap ink in done"
+        <span class="item item-icon-left item-text-wrap ink"
+              ng-class="{'in done': !showDetails}"
                 id="wallet-pubkey"
                 ng-if="showDetails"
                 on-hold="copy(walletData.pubkey)"

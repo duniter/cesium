@@ -515,6 +515,23 @@ $screen-menu:                     845px;
   padding: 0 7px !important;
 }
 
+
+.button-text {
+  @extend .button-clear;
+  @extend .button-positive;
+
+  color: grey !important;
+  font-size: 12px;
+}
+.button-text.button-small {
+  @extend .button-small;
+  padding: 5px 2px;
+}
+
+.button-text-positive {
+  color: $positive !important;
+}
+
 /* ============
  Home page
 =============== */

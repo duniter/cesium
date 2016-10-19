@@ -167,11 +167,14 @@
     },
     "LOOKUP": {
       "TITLE": "Registry",
-      "NEWCOMERS": "Last registrations:",
+      "NEWCOMERS": "New members:",
+      "PENDING": "Pending registrations:",
       "REGISTERED": "Registered ",
-      "BTN_NEWCOMERS": "See last registrations",
-      "SHOW_MORE_NEWCOMERS": "Show more",
-      "NEWCOMERS_COUNT": "(current limit to {{limit}})"
+      "BTN_NEWCOMERS": "Last registrations",
+      "BTN_PENDING": "Pending registrations",
+      "SHOW_MORE": "Show more",
+      "SHOW_MORE_COUNT": "(current limit to {{limit}})",
+      "NO_PENDING": "No pending registration has been found"
     },
     "MODAL": {
       "TITLE": "Search"

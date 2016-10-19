@@ -69,12 +69,12 @@
       "enable": false
     },
     "node": {
-      "host": "192.168.0.28",
-      "port": "9604"
+      "host": "duniter.le-sou.org",
+      "port": "9600"
     },
     "plugins":{
       "es": {
-        "enable": true,
+        "enable": false,
         "host": "data.duniter.fr",
         "port": "80"
       }

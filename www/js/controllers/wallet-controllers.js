@@ -151,7 +151,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showHelpTip = function(index, isTour) {
-    if (!isTour && !csSettings.data.helptip.wallet.enable) return;
     index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
     isTour = angular.isDefined(isTour) ? isTour : false;
     if (index < 0) return;
