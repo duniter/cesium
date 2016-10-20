@@ -4,105 +4,117 @@
   <ion-nav-title translate>SETTINGS.TITLE</ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear icon ion-android-more-vertical" ng-click="actionsPopover.show($event)">
+    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="actionsPopover.show($event)">
     </button>
   </ion-nav-buttons>
 
   <ion-content >
-    <div class="item item-toggle dark">
-      <div class="input-label">
-        {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
+
+    <!-- Buttons bar-->
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+      <button class="button button-raised button-stable ink"
+              ng-click="reset()">
+        <i class="icon ion-refresh"></i>
+        {{'SETTINGS.BTN_RESET' | translate}}
+      </button>
+    </div>
+
+    <div class="list item-border-large">
+
+      <div class="item item-toggle dark">
+        <div class="input-label">
+          {{'COMMON.BTN_RELATIVE_UNIT' | translate}}
+        </div>
+        <label class="toggle toggle-royal"
+               id="helptip-settings-btn-unit-relative">
+            <input type="checkbox" ng-model="formData.useRelative">
+            <div class="track">
+                <div class="handle"></div>
+            </div>
+        </label>
       </div>
-      <label class="toggle toggle-royal">
-          <input type="checkbox" ng-model="formData.useRelative">
+
+      <label class="item  item-input item-select">
+        <div class="input-label">
+          {{'COMMON.LANGUAGE' | translate}}
+        </div>
+        <select ng-model="formData.locale"
+                ng-change="changeLanguage(formData.locale.id)"
+                ng-options="l as l.label for l in locales track by l.id">
+        </select>
+      </label>
+
+      <div class="item  item-toggle dark">
+        <div class="input-label">
+         {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
+        </div>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.useLocalStorage" >
           <div class="track">
-              <div class="handle"></div>
+            <div class="handle"></div>
           </div>
-      </label>
-    </div>
-
-    <label class="item item-input item-select">
-      <div class="input-label">
-        {{'COMMON.LANGUAGE' | translate}}
+        </label>
       </div>
-      <select ng-model="formData.locale"
-              ng-change="changeLanguage(formData.locale.id)"
-              ng-options="l as l.label for l in locales track by l.id">
-      </select>
-    </label>
 
-    <div class="item item-toggle dark">
-      <div class="input-label">
-       {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
-      </div>
-      <label class="toggle toggle-royal">
-        <input type="checkbox" ng-model="formData.useLocalStorage" >
-        <div class="track">
-          <div class="handle"></div>
+      <div class="item  item-toggle dark">
+        <div class="input-label">
+          {{'SETTINGS.ENABLE_HELPTIP' | translate}}
         </div>
-      </label>
-    </div>
-
-    <div class="item item-toggle dark">
-      <div class="input-label">
-        {{'SETTINGS.ENABLE_HELPTIP' | translate}}
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.helptip.enable" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
       </div>
-      <label class="toggle toggle-royal">
-        <input type="checkbox" ng-model="formData.helptip.enable" >
-        <div class="track">
-          <div class="handle"></div>
+      <!-- Allow extension here -->
+      <cs-extension-point name="common"></cs-extension-point>
+
+      <span class="item item-divider">
+        {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
+      </span>
+
+      <div class="item item-toggle" >
+        <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
+          {{'SETTINGS.REMEMBER_ME' | translate}}
         </div>
-      </label>
-    </div>
-    <!-- Allow extension here -->
-    <cs-extension-point name="common"></cs-extension-point>
-
-    <span class="item item-divider">
-      {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
-    </span>
-
-    <div class="item item-toggle" >
-      <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
-        {{'SETTINGS.REMEMBER_ME' | translate}}
+        <label class="toggle" ng-class="{'toggle-stable': !formData.useLocalStorage, 'toggle-royal': formData.useLocalStorage}">
+          <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage"
+          >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
       </div>
-      <label class="toggle" ng-class="{'toggle-stable': !formData.useLocalStorage, 'toggle-royal': formData.useLocalStorage}">
-        <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage"
-        >
-        <div class="track">
-          <div class="handle"></div>
-        </div>
-      </label>
-    </div>
 
+      <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
 
-    <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
-
-    <div class="item item-toggle dark">
-      <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
-      <label class="toggle toggle-royal">
-        <input type="checkbox" ng-model="formData.showUDHistory" >
-        <div class="track">
-          <div class="handle"></div>
-        </div>
-      </label>
-    </div>
-
-    <!-- Allow extension here -->
-    <cs-extension-point name="history"></cs-extension-point>
-
-    <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
-
-    <div class="item ink" ng-click="changeNode()">
-      <div class="input-label">
-      {{'SETTINGS.NODE' | translate}}
+      <div class="item  item-toggle dark">
+        <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.showUDHistory" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
       </div>
-      <span class="item-note dark">{{getServer()}}</ng-if></span>
+
+      <!-- Allow extension here -->
+      <cs-extension-point name="history"></cs-extension-point>
+
+      <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
+
+      <div class="item  ink" ng-click="changeNode()">
+        <div class="input-label">
+        {{'SETTINGS.NODE' | translate}}
+        </div>
+        <span class="item-note dark">{{getServer()}}</ng-if></span>
+      </div>
+      <!-- Allow extension here -->
+      <cs-extension-point name="network"></cs-extension-point>
+
+      <!-- Allow extension here -->
+      <cs-extension-point name="plugins"></cs-extension-point>
     </div>
-    <!-- Allow extension here -->
-    <cs-extension-point name="network"></cs-extension-point>
-
-    <!-- Allow extension here -->
-    <cs-extension-point name="plugins"></cs-extension-point>
-
   </ion-content>
 </ion-view>

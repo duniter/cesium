@@ -71,6 +71,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller,
+                       $ionicPopover,
                        screenmatch, UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
@@ -81,6 +82,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $rootScope.config = csConfig;
   $rootScope.device = Device;
   $rootScope.login = Wallet.isLogin();
+  console.debug("$root.login="+$rootScope.login);
 
   $rootScope.smallscreen = screenmatch.bind('xs, sm', $rootScope);
 
@@ -191,9 +193,37 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Login & wallet
   ////////////////////////////////////////
 
+  $scope.showProfilePopover = function(event) {
+    if (!$scope.profilePopover) {
+      //Cleanup the popover when we're done with it!
+      $scope.$on('$destroy', function() {
+        $scope.profilePopover.remove();
+      });
+      return $ionicPopover.fromTemplateUrl('templates/common/popover_profile.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.profilePopover = popover;
+        $scope.showProfilePopover(event);
+      });
+    }
+    else {
+      return $scope.profilePopover.show(event)
+        .then(function() {
+          $timeout(function() {
+            UIUtils.ink({selector: '#profile-popover .ink, #profile-popover .ink-dark'});
+          }, 100);
+        });
+    }
+  };
+
+  $scope.closeProfilePopover = function() {
+    if ($scope.profilePopover) {
+      $scope.profilePopover.hide();
+    }
+  };
+
   // Login and load wallet
   $scope.loadWallet = function(rejectIfError) {
-
     // Warn if wallet has been never used - see #167
     var alertIfUnusedWallet = function() {
       return $q(function(resolve, reject){
@@ -212,8 +242,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         resolve(true);
       })
     };
-
-
 
     return $q(function(resolve, reject){
 
@@ -271,10 +299,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Login and go to a state
   $scope.loginAndGo = function(state) {
+    $scope.closeProfilePopover();
+
     if (!Wallet.isLogin()) {
       $scope.showLoginModal()
       .then(function(walletData){
-        UIUtils.loading.hide();
+        UIUtils.loading.hide(10);
         if (walletData) {
           $state.go(state ? state : 'app.view_wallet');
         }
@@ -308,7 +338,15 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // Logout
-  $scope.logout = function() {
+  $scope.logout = function(force) {
+    if (!force && $scope.profilePopover) {
+      // Make the popover if really closed, to avoid UI refresh on popover buttons
+      $scope.profilePopover.hide()
+        .then(function(){
+          $scope.logout(true);
+        });
+      return;
+    }
     UIUtils.loading.show();
     return Wallet.logout()
     .then(function() {
@@ -324,12 +362,15 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // add listener on wallet event
-  Wallet.api.data.on.login($scope, function() {
+  Wallet.api.data.on.login($scope, function(walletData, resolve, reject) {
     $rootScope.login = true;
-  }, this);
+    console.debug("login detected : update $root.login");
+    if (resolve) resolve();
+  });
   Wallet.api.data.on.logout($scope, function() {
     $rootScope.login = false;
-  }, this);
+    console.debug("logout detected : update $root.login");
+  });
 
   // If connected and same pubkey
   $scope.isUserPubkey = function(pubkey) {
@@ -362,7 +403,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.showJoinModal = function() {
+    $scope.closeProfilePopover();
     Modals.showJoin();
+  };
+
+  $scope.showSettings = function() {
+    $scope.closeProfilePopover();
+    $state.go('app.settings');
   };
 
   $scope.showHelpModal = function(parameters) {
@@ -403,6 +450,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       });
     }, timeout);
   };
+
+
 }
 
 

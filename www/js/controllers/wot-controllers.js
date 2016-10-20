@@ -276,10 +276,10 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   };
 }
 
-function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus){
+function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus){
   'ngInject';
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus);
+  WotLookupController.call(this, $scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus);
 
   $scope.wotSearchTextId = 'wotSearchTextModal';
   $scope.cancel = function(){

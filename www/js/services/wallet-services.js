@@ -137,24 +137,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     login = function(salt, password) {
-      return $q(function(resolve, reject) {
-        CryptoUtils.connect(salt, password).then(
-          function(keypair) {
-            // Copy result to properties
-            data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            data.keypair = keypair;
+      return CryptoUtils.connect(salt, password)
+        .then(function(keypair) {
+          // Copy result to properties
+          data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+          data.keypair = keypair;
 
-            // Send login event
-            api.data.raise.login(data);
-
-            if (csSettings.data.useLocalStorage) {
-              store();
-            }
-
-            resolve(data);
+          // Call extend api
+          return api.data.raisePromise.login(data);
+        })
+        // store if need
+        .then(function() {
+          if (csSettings.data.useLocalStorage) {
+            store();
           }
-        );
-      });
+          return data;
+        });
     },
 
     logout = function(username, password) {
@@ -237,16 +235,20 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               data.tx.pendings = storedData.tx.pendings;
             }
             data.loaded = false;
+
+            return $q.all([
+              // Call extend api
+              api.data.raisePromise.login(data),
+
+              // Load parameters
+              // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+              loadParameters()
+            ]);
           }
-
-          return $q.all([
-            // Call extend api
-            api.data.raisePromise.login(data),
-
-            // Load parameters
+          else {
             // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-            loadParameters()
-          ]);
+            return loadParameters();
+          }
         })
         .catch(function(err){reject(err);});
       });

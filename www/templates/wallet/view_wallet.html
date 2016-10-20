@@ -26,7 +26,7 @@
         </i>
         <h3 class="light" ng-if="walletData.name">{{walletData.name}}</h3>
         <h3 class="light" ng-if="!walletData.name && walletData.isMember">{{walletData.uid}}</h3>
-        <h3 class="light" ng-if="!walletData.name && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
+        <h3 class="light" ng-if="!walletData.name && !walletData.isMember"><i class="icon ion-key"></i> {{::walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
             <span ng-if="!$root.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="$root.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>

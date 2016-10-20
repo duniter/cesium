@@ -31,11 +31,6 @@
   color: inherit;
 }
 
-#home button, #home a {
-    margin-top: 20px;
-    height: 40px;
-}
-
 #home .footer .title {
   padding-top: 0;
   font-size: 14px;
@@ -76,8 +71,6 @@
 .popover .list .item {
   border-bottom: solid 1px #ccc;
 }
-
-
 
 .menu .avatar {
     height: 88px;

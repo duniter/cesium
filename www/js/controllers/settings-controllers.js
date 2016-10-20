@@ -39,13 +39,10 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     UIUtils.loading.hide();
     $scope.loading = false;
 
-    // Set Ink
     $timeout(function() {
       // Set Ink
       UIUtils.ink({selector: '.item'});
-    }, 100);
-
-
+    }, 10);
   });
 
   $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
@@ -177,5 +174,23 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       // Then restore the enable flag
       $scope.formData.helptip.enable = enable;
     }
+  };
+
+  // Show help tip (show only not already shown tip
+  $scope.showHelpTip = function() {
+    var index = angular.isDefined(index) ? index : csSettings.data.helptip.settings;
+    if (index < 0) return;
+    if (index == 0) index = 1; // skip first step
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+
+    return helptipScope.startSettingsTour(index, false)
+      .then(function(endIndex) {
+        helptipScope.$destroy();
+        csSettings.data.helptip.settings = endIndex;
+        csSettings.store();
+      });
   };
 }

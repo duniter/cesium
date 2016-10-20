@@ -80,7 +80,7 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 *  Help Tip
 * ---------------------------- */
 function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, screenmatch,
-                            UIUtils, csSettings, Device, Wallet, BMA) {
+                            UIUtils, csSettings, csCurrency, Device, Wallet, BMA) {
 
   $scope.tour = false; // Is a tour or a helptip ?
 
@@ -219,6 +219,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startCurrencyTour = function(startIndex, hasNext) {
+
+    var contentParams;
+
     var steps = [
 
       function(){
@@ -264,14 +267,13 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function () {
         if (!csSettings.data.useRelative) return true; //skip but continue
+        var smallScreen = screenmatch.is('sm, xs');
         return $scope.showHelpTip('helptip-currency-mass-member-unit', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_UNIT_RELATIVE',
-            contentParams: {
-              currency: Wallet.data.currency
-            },
+            contentParams: contentParams,
             icon: {
-              position: 'center'
+              position: smallScreen ? 'right' : 'center'
             }
           }
         });
@@ -279,29 +281,27 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function () {
         if (!csSettings.data.useRelative) return true; //skip but continue
+        var smallScreen = screenmatch.is('sm, xs');
         return $scope.showHelpTip('helptip-currency-change-unit', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_CHANGE_UNIT',
-            contentParams: {
-              currency: Wallet.data.currency
-            },
+            contentParams: contentParams,
             icon: {
-              position: 'center'
+              position: smallScreen ? 'right' : 'center'
             }
           }
         });
       },
 
       function () {
+        var smallScreen = screenmatch.is('sm, xs');
         if (csSettings.data.useRelative) return true; //skip but continue
         return $scope.showHelpTip('helptip-currency-change-unit', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_CHANGE_UNIT_TO_RELATIVE',
-            contentParams: {
-              currency: Wallet.data.currency
-            },
+            contentParams: contentParams,
             icon: {
-              position: 'center'
+              position: smallScreen ? 'right' : 'center'
             }
           }
         });
@@ -320,7 +320,12 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       }
     ];
 
-    return $scope.executeStep('currency', steps, startIndex);
+    // Get currency parameters, with currentUD
+    return csCurrency.default().then(function(currency) {
+      contentParams = currency.parameters;
+      // Launch steps
+      return $scope.executeStep('currency', steps, startIndex);
+    });
   };
 
   /**
@@ -328,6 +333,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWotTour = function(startIndex, hasNext) {
+
+    var contentParams;
+
     var steps = [
       function() {
         $ionicSideMenuDelegate.toggleLeft(true);
@@ -384,26 +392,21 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
               position: 'center'
             }
           },
-          timeout: 2000
+          timeout: 2500
         });
       },
 
       function() {
-        return BMA.blockchain.parameters()
-          .then(function(parameters) {
-            return $scope.showHelpTip('helptip-wot-view-certifications', {
-              bindings: {
-                content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS_COUNT',
-                contentParams: {
-                  sigQty: parameters ? parameters.sigQty : 'N'
-                },
-                icon: {
-                  position: 'center',
-                  glyph: 'ion-information-circled'
-                }
-              }
-            });
-          });
+        return $scope.showHelpTip('helptip-wot-view-certifications', {
+          bindings: {
+            content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS_COUNT',
+            contentParams: contentParams,
+            icon: {
+              position: 'center',
+              glyph: 'ion-information-circled'
+            }
+          }
+        });
       },
 
       function() {
@@ -418,7 +421,13 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       }
     ];
 
-    return $scope.executeStep('wot', steps, startIndex);
+    // Get currency parameters, with currentUD
+    return csCurrency.default().then(function(currency) {
+      contentParams = currency.parameters;
+      contentParams.currentUD = $rootScope.walletData.currentUD;
+      // Launch steps
+      return $scope.executeStep('wot', steps, startIndex);
+    });
   };
 
   /**
@@ -444,7 +453,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             icon: {
               position: smallScreen ? 'bottom-right' : 'center'
             }
-          }
+          },
+          timeout: smallScreen ? 2000 : 1000
         });
       },
 
@@ -471,6 +481,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletNoLoginTour = function(startIndex, hasNext) {
+    if (Wallet.isLogin()) return $scope.emptyPromise(true); // skip if login
+
     var steps = [
       function () {
         $ionicSideMenuDelegate.toggleLeft(true);
@@ -496,6 +508,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
   $scope.startWalletTour = function(startIndex, hasNext) {
     if (!Wallet.isLogin()) return $scope.emptyPromise(true); // skip if not login
 
+    var contentParams;
+
     var steps = [
       function () {
         $ionicSideMenuDelegate.toggleLeft(true);
@@ -513,16 +527,14 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
+
+        // Go to wallet
         return $state.go('app.view_wallet')
           .then(function () {
             return $scope.showHelpTip('helptip-wallet-balance', {
               bindings: {
                 content: csSettings.data.useRelative ? 'HELP.TIP.WALLET_BALANCE_RELATIVE' : 'HELP.TIP.WALLET_BALANCE',
-                contentParams: {
-                  currency: Wallet.data.currency,
-                  currentUD: Wallet.data.currentUD,
-                  parameters: Wallet.data.parameters
-                },
+                contentParams: contentParams,
                 icon: {
                   position: 'center'
                 }
@@ -535,11 +547,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         return $scope.showHelpTip('helptip-wallet-balance', {
           bindings: {
             content: 'HELP.TIP.WALLET_BALANCE_CHANGE_UNIT',
-            contentParams: {
-              currency: Wallet.data.currency,
-              currentUD: Wallet.data.currentUD,
-              parameters: Wallet.data.parameters
-            },
+            contentParams: contentParams,
             icon: {
               position: 'center',
               glyph: 'ion-information-circled'
@@ -574,7 +582,14 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       }
     ];
 
-    return $scope.executeStep('wallet', steps, startIndex);
+    // Get currency parameters, with currentUD
+    return csCurrency.default().then(function(currency) {
+        contentParams = currency.parameters;
+        contentParams.currentUD = $rootScope.walletData.currentUD;
+        // Launch steps
+        return $scope.executeStep('wallet', steps, startIndex);
+      });
+    ;
   };
 
   /**
@@ -583,6 +598,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    */
   $scope.startWalletCertTour = function(startIndex, hasNext) {
     if (!Wallet.isLogin()) return $scope.emptyPromise(true);
+
+    var contentParams;
 
     var steps = [
 
@@ -635,26 +652,31 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             icon: {
               position: 'center',
               glyph: 'ion-alert-circled'
-            }
+            },
+            hasNext: hasNext
           }
         });
-      },
+      }
 
-      function() {
+      /* FIXME : how to select the left tab ?
+      ,function() {
         return $scope.showHelpTip('helptip-certs-stock', {
           bindings: {
             content: 'HELP.TIP.WALLET_CERT_STOCK',
-            contentParams: Wallet.data.parameters,
+            contentParams: contentParams,
             icon: {
               position: 'center'
             },
             hasNext: hasNext
           }
         });
-      },
+      }*/
     ];
 
-    return $scope.executeStep('certs', steps, startIndex);
+    return csCurrency.default().then(function(currency) {
+      contentParams = currency.parameters;
+      return $scope.executeStep('certs', steps, startIndex);
+    });
   };
 
   /**
@@ -662,22 +684,91 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startSettingsTour = function(startIndex, hasNext) {
+    var contentParams;
     var steps = [
       function () {
-        $ionicSideMenuDelegate.toggleLeft(true);
-        return $scope.showHelpTip('helptip-menu-btn-settings', {
+        var smallScreen = screenmatch.is('sm, xs');
+        if (smallScreen) return true; // skip for small screen
+        var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
+        if (!elements || !elements.length) return true;
+        return $scope.showHelpTip(elements[elements.length -1], {
           bindings: {
-            content: 'HELP.TIP.MENU_BTN_SETTINGS',
+            content: 'HELP.TIP.HEADER_BAR_BTN_PROFILE',
             icon: {
-              position: 'left'
-            },
-            hasNext: hasNext
+              position: 'right'
+            }
           }
         });
+      },
+
+      function () {
+        var smallScreen = screenmatch.is('sm, xs');
+        // small screens
+        if (smallScreen) {
+          $ionicSideMenuDelegate.toggleLeft(true);
+          return $scope.showHelpTip('helptip-menu-btn-settings', {
+            bindings: {
+              content: 'HELP.TIP.MENU_BTN_SETTINGS',
+              icon: {
+                position: 'left'
+              },
+              hasNext: hasNext
+            },
+            timeout: 1000
+          });
+        }
+        // wide screens
+        else {
+          var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
+          if (!elements || !elements.length) return true;
+          var element = elements[elements.length -1];
+          $timeout(function() {
+            angular.element(element).triggerHandler('click');
+          });
+          return $scope.showHelpTip('helptip-popover-profile-btn-settings', {
+            bindings: {
+              content: 'HELP.TIP.MENU_BTN_SETTINGS',
+              icon: {
+                position: 'center'
+              }
+            },
+            timeout: 1000
+          })
+          .then(function(res) {
+            // close profile popover
+            $scope.closeProfilePopover();
+            return res;
+          });
+        }
+      },
+
+      function () {
+        if ($ionicSideMenuDelegate.isOpen()) {
+          $ionicSideMenuDelegate.toggleLeft(false);
+        }
+
+        // Go to settings
+        return $state.go('app.settings')
+          .then(function () {
+            return $scope.showHelpTip('helptip-settings-btn-unit-relative', {
+              bindings: {
+                content: 'HELP.TIP.SETTINGS_CHANGE_UNIT',
+                contentParams: contentParams,
+                icon: {
+                  position: 'right'
+                },
+                hasNext: hasNext
+              },
+              timeout: 1000
+            });
+          });
       }
     ];
 
-    return $scope.executeStep('settings', steps, startIndex);
+    return csCurrency.default().then(function(currency) {
+      contentParams = currency.parameters;
+      return $scope.executeStep('settings', steps, startIndex);
+    });
   };
 
 

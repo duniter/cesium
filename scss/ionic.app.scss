@@ -23,6 +23,9 @@ $dark:                            #444 !default;
 //$assertive:                       #94c11f !default;
 //$balanced:                        #94c11f !default;
 
+$active: #b2e0ff !default;
+$stable-bg: #e0e0e0 !default;
+
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
@@ -570,6 +573,7 @@ $screen-menu:                     845px;
   }
   #home .button {
     max-width: 350px;
+    margin-top: 20px;
   }
 }
 @media screen and (min-width: $screen-md) {
@@ -581,6 +585,7 @@ $screen-menu:                     845px;
 
   #home .button {
     max-width: 350px;
+    margin-top: 20px;
   }
 }
 
@@ -605,7 +610,7 @@ $screen-menu:                     845px;
     height: 100%;
 
     .item.active {
-      background-color: #b2e0ff !important;
+      background-color: $active !important;
 
       .item-content {
         background-color: transparent;
@@ -625,7 +630,7 @@ $screen-menu:                     845px;
     }
 
     .item-menu-disable {
-      color: #444 !important;
+      color: $dark !important;
     }
   }
 }
@@ -762,7 +767,7 @@ $screen-menu:                     845px;
 .item .stable-bg,
 .item-complex .item-content .stable-bg,
 .item-radio .item-content .stable-bg{
-  background-color: #E0E0E0 !important;
+  background-color: $stable-bg !important;
 }
 .card .item {
   background: inherit;
@@ -886,6 +891,15 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   .list .item.item-border-large {
     border-bottom: solid 1px #ccc !important;
+  }
+  .list.item-border-large {
+    .item {
+      border-bottom: solid 1px #ccc !important;
+      margin: 0px;
+    }
+    .item-divider {
+      border-top: 0;
+    }
   }
 }
 .list .item.item-border {
@@ -1071,7 +1085,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     }
 
     .item.active a {
-      background-color: #b2e0ff !important;
+      background-color: $active !important;
     }
 
     ion-content.has-footer {
@@ -1088,7 +1102,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 // other screen
 @media screen and (min-width: $screen-xs) {
   #menu .item.active a {
-    background-color: #b2e0ff !important;
+    background-color: $active !important;
   }
 
   #menu .item.item-divider {
@@ -1118,7 +1132,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   height: 88px;
   width: 88px;
   color: #D9D9D9;
-  background-color: #E0E0E0;
+  background-color: $stable-bg;
   border: solid 1px #D9D9D9;
 }
 
@@ -1161,4 +1175,62 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .popover-helptip {
   background-color:rgba(68, 68, 68, 0.85);
   height: auto !important;
+}
+
+/**********
+   Profile popover
+**********/
+
+#profile-popover {
+  height: 200px;
+  .avatar {
+    height: 90px;
+    width: 90px;
+    left: 20px;
+    top: 20px;
+  }
+  .avatar.avatar-member {
+    border: solid 1px #D9D9D9;
+  }
+  .bar.bar-footer {
+    height: 58px;
+
+    .col .button {
+      max-width: inherit;
+      width: 100%;
+      padding: 5px 0px;
+      margin: 0;
+    }
+  }
+
+  .bar .button-positive {
+    background-color: $positive !important;
+  }
+
+  .bar .button-stable {
+    color: $dark !important;
+  }
+}
+
+.bar-header .button-icon {
+  .avatar {
+    height: 35px;
+    width: 35px;
+    position: relative;
+    left: 0px;
+    top: 4px;
+    border: solid 1px #D9D9D9;
+  }
+
+  .avatar.active {
+    background-color: $stable-bg;
+  }
+
+  .avatar.avatar-member {
+    height: 31px;
+    width: 31px;
+    position: relative;
+    left: 0px;
+    top: 6px;
+  }
 }

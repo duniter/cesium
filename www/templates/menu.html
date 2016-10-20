@@ -9,20 +9,23 @@
       <ion-nav-buttons side="left">
         <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
       </ion-nav-buttons>
-      <ion-nav-buttons side="right">
+      <ion-nav-buttons side="right" >
         <!-- Allow extension here -->
         <cs-extension-point name="nav-buttons-right"></cs-extension-point>
 
-        <!-- settings
-        <button class="button button-icon button-clear icon ion-android-settings"
-           active-link="active"
-           ui-sref="app.settings">
-        </button>-->
-        <!-- profile
-        <button class="button button-icon button-clear icon ion-person"
-                active-link="active"
-                ui-sref="app.settings">-->
-        </button>
+        <!-- profile -->
+        <a id="helptip-header-bar-btn-profile"
+           class="button button-icon button-clear hidden-xs hidden-sm"
+           ng-click="showProfilePopover($event)">
+          <i class="avatar"
+             ng-if="$root.login"
+             ng-style="$root.walletData.avatarStyle"
+             ng-class="{'royal-bg avatar-member': !$root.walletData.avatarStyle}">
+          </i>
+          <i class="avatar avatar-member"
+             ng-if="!$root.login"
+             style="opacity: 0.7"></i>
+        </a>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-nav-view name="fabContent"></ion-nav-view>
@@ -49,15 +52,16 @@
           <span translate>MENU.HOME</span>
         </ion-item>
 
-        <ion-item menu-close class="item item-icon-left"
+        <div menu-close
+             id="helptip-menu-btn-currency"
+             class="item item-icon-left"
                   active-link="active"
                   active-link-path-prefix="#/app/currency"
                   ng-click="showCurrencyView()"
                   ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
-        </ion-item>
-        <a id="helptip-menu-btn-currency"></a>
+        </div>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
@@ -91,7 +95,7 @@
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>
 
-        <ion-item menu-close class="item item-icon-left" active-link="active" href="#/app/settings">
+        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" active-link="active" href="#/app/settings">
           <i class="icon ion-android-settings"></i>
           <span translate>MENU.SETTINGS</span>
         </ion-item>
@@ -113,7 +117,7 @@
           </button>
         </ion-item>
         <!-- log out -->
-        <ion-item menu-close class="item item-button-right" ng-if="$root.login">
+        <ion-item menu-close class="item item-button-right visible-xs visible-sm" ng-if="$root.login">
           <span translate>COMMON.BTN_LOGOUT</span>
           <button class="button button-stable ink" ng-click="logout()">
           <i class="icon ion-log-out"></i>

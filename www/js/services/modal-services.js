@@ -128,7 +128,7 @@ angular.module('cesium.modal.services', [])
 
   function showJoin(parameters) {
     return ModalUtils.show('templates/join/modal_join.html','JoinModalCtrl',
-      parameters, {animation: 'slide-in-up'});
+      parameters);
   }
 
   function showHelp(parameters) {

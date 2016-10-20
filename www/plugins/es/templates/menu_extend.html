@@ -41,7 +41,7 @@
 <!-- User section -->
 <ng-if ng-if="enable && extensionPoint === 'menu-user'">
   <!-- user profile -->
-  <ion-item menu-close class="item item-icon-left" active-link="active"
+  <ion-item menu-close class="item item-icon-left visible-xs visible-sm" active-link="active"
             active-link-path-prefix="#/app/user/profile"
             ng-class="{'item-menu-disable': !$root.login}"
             ng-click="loginAndGo('app.user_edit_profile')">

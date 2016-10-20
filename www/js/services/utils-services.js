@@ -414,7 +414,7 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function showHelptip(id, options) {
-    var element = $window.document.getElementById(id);
+    var element = (typeof id == 'string') ? $window.document.getElementById(id) : id;
 
     options = options || {};
     var deferred = options.deferred || $q.defer();

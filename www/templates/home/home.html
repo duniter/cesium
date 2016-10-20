@@ -12,8 +12,9 @@
 
     <div class="center">
 
+      <br class="hidden-xs"/>
+
       <!-- Help tour -->
-      <br/>
       <button type="button"
               class="button button-block button-stable button-raised icon-left icon ion-easel ink-dark"
               ng-click="startHelpTour()" >
@@ -29,13 +30,6 @@
               class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark hidden-sm hidden-xs"
               ng-if="!options.registry || !options.registry.enable"
               ui-sref="app.currency_view_lg" translate>HOME.BTN_CURRENCY</button>
-      <button type="button"
-              class="button button-block button-stable button-raised icon icon-left ion-ios-world-outline ink-dark visible-sm visible-xs"
-              ng-if="!options.registry || !options.registry.enable"
-              ui-sref="app.currency_view" translate>HOME.BTN_CURRENCY</button>
-
-
-
 
       <button type="button"
               class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
@@ -44,15 +38,23 @@
               class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
               ui-sref="app.view_wallet" ng-show="$root.login" translate>HOME.BTN_ACCOUNT</button>
 
-      <div class="text-center no-padding" ng-show="!$root.login">
+      <br class="visible-xs visible-sm"/>
+      <div class="text-center no-padding "
+           ng-show="!$root.login">
+        <br class="visible-xs visible-sm"/>
         {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
-        <br class="visible-xs">
         <b>
-          <a class="assertive" ng-click="showJoinModal()" translate>
+          <a class="assertive hidden-xs hidden-sm" ng-click="showJoinModal()" translate>
             LOGIN.CREATE_ACCOUNT
           </a>
         </b>
+
       </div>
+
+      <button type="button"
+              class="button button-block button-calm button-raised icon icon-left ion-wand ink-dark visible-xs visible-sm"
+              ng-click="showJoinModal()" ng-show="!$root.login" translate>LOGIN.CREATE_ACCOUNT</button>
+
 
       <div class="text-center no-padding visible-xs stable">
         <br/>

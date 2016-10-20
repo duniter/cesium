@@ -26,7 +26,8 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
           .then(function(res){
             data.currencies.push({
                 name: res.currency,
-                peer: BMA.node
+                peer: BMA.node,
+                parameters: res
               });
 
             // API extension point
@@ -51,6 +52,14 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
         });
       },
 
+      getDefault = function() {
+        return loadData()
+          .then(function(data){
+            if (!data || !data.currencies || !data.currencies.length) throw new Error('No default currency');
+            return data.currencies[0];
+          });
+      },
+
       searchByName = function(name) {
         return loadData()
           .then(function(data){
@@ -66,6 +75,7 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
       id: id,
       load: loadData,
       all: getAll,
+      default: getDefault,
       searchByName: searchByName,
       // api extension
       api: api

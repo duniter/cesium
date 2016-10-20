@@ -34,7 +34,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           wot: 0,
           wotCerts: 0,
           wallet: 0,
-          walletCerts: 0
+          walletCerts: 0,
+          settings: 0
         },
         wallet: {
           showPubkey: true

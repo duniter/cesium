@@ -388,6 +388,8 @@
       "WOT_VIEW_CERTIFY": "(TODO translate)<br/>Le bouton <b>Certifier</b> permet d'ajouter votre certification à cette identité.",
       "CERTIFY_RULES": "<(TODO translate)<br/>b>Attention :</b> Ne certifier que des <b>personnes physiques vivantes</b>, ne possèdant aucun autre compte déjà certifié.<br/><br/>La confiance portée par la monnaie dépend de la vigilance de chacun !",
       "MENU_BTN_SETTINGS": "(TODO translate)<br/>Les <b>Paramètres</b> vous permettront de configurer l'application Cesium.<br/><br/>Vous pourrez par exemple <b>changer l'unité</b> d'affichage de la monnaie.",
+      "HEADER_BAR_BTN_PROFILE": "(TODO translate)<br/>Cliquez ici pour accéder à votre <b>profil utilisateur</b>",
+      "SETTINGS_CHANGE_UNIT": "(TODO translate)<br/>Vous pourrez <b>changer d'unité d'affichage</b> des montants en cliquant ci-dessus.<br/><br/>- Désactivez l'option pour un affichage des montants en {{currency|capitalize}}.<br/>- Activez l'option pour un affichage relatif en {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (tous les montants seront <b>divisés</b> par le Dividende Universel courant).",
       "END_LOGIN": "(TODO translate)<br/>Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
       "END_NOT_LOGIN": "(TODO translate)<br/>Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur le lien <b>Crée un compte</b>."
     }
