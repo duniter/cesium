@@ -7,7 +7,7 @@
     "timeout": 4000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
-    "useLocalStorage": false,
+    "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
     "helptip": {
@@ -29,12 +29,13 @@
   "sou": {
     "cacheTimeMs": 60000,
     "fallbackLanguage": "fr-FR",
+    "defaultLanguage": "fr-FR",
     "rememberMe": false,
     "showUDHistory": false,
     "timeout": 4000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
-    "useLocalStorage": false,
+    "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
     "helptip": {
@@ -47,7 +48,7 @@
     "plugins":{
       "es": {
         "enable": false,
-        "host": "data.duniter.fr",
+        "host": "data.le-sou.org",
         "port": "80"
       }
     }
