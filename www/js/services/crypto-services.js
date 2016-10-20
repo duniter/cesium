@@ -234,7 +234,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
 
     isLoaded = function() {
       return loadedLib === 4;
-    }
+    };
 
     // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
     Device.ready()
@@ -281,7 +281,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
           encode_base58: encode_base58,
           decode_base58: decode_base58,
           hash: hash_sha256,
-          encode_base64: function() {return base64.encode(arguments)},
+          encode_base64: function() {return base64.encode(arguments);},
           random_nonce: random_nonce
         },
         connect: connect,
