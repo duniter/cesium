@@ -391,7 +391,7 @@
       "HEADER_BAR_BTN_PROFILE": "Cliquez ici pour accéder à votre <b>profil utilisateur</b>",
       "SETTINGS_CHANGE_UNIT": "Vous pourrez <b>changer d'unité d'affichage</b> des montants en cliquant ci-dessus.<br/><br/>- Désactivez l'option pour un affichage des montants en {{currency|capitalize}}.<br/>- Activez l'option pour un affichage relatif en {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (tous les montants seront <b>divisés</b> par le Dividende Universel courant).",
       "END_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
-      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur le lien <b>Crée un compte</b>."
+      "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> ci-dessous."
     }
   }
 }

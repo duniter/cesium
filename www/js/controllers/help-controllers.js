@@ -262,7 +262,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
               position: 'center'
             }
           }
-        })
+        });
       },
 
       function () {
@@ -316,7 +316,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             },
             hasNext: hasNext
           }
-        })
+        });
       }
     ];
 
@@ -347,7 +347,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             }
           },
           onError: 'continue'
-        })
+        });
       },
 
       function() {
@@ -583,13 +583,13 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     ];
 
     // Get currency parameters, with currentUD
-    return csCurrency.default().then(function(currency) {
+    return csCurrency.default()
+      .then(function(currency) {
         contentParams = currency.parameters;
         contentParams.currentUD = $rootScope.walletData.currentUD;
         // Launch steps
         return $scope.executeStep('wallet', steps, startIndex);
       });
-    ;
   };
 
   /**
@@ -765,10 +765,11 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       }
     ];
 
-    return csCurrency.default().then(function(currency) {
-      contentParams = currency.parameters;
-      return $scope.executeStep('settings', steps, startIndex);
-    });
+    return csCurrency.default()
+      .then(function(currency) {
+        contentParams = currency.parameters;
+        return $scope.executeStep('settings', steps, startIndex);
+      });
   };
 
 
@@ -777,7 +778,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.finishTour = function() {
-    $ionicSideMenuDelegate.toggleLeft(false);
+    if ($ionicSideMenuDelegate.isOpen()) {
+      $ionicSideMenuDelegate.toggleLeft(false);
+    }
 
     // If login: redirect to wallet
     if (Wallet.isLogin()) {
@@ -794,24 +797,24 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
     // If not login: redirect to home
     else {
-      var parameters;
+      var contentParams;
       return $q.all([
         $state.go('app.home'),
 
-        BMA.blockchain.parameters()
-          .then(function(res) {
-            parameters = res;
+        csCurrency.default()
+          .then(function(parameters) {
+            contentParams = parameters;
           })
         ])
         .then(function(){
           return $scope.showHelpTip('helptip-home-logo', {
            bindings: {
              content: 'HELP.TIP.END_NOT_LOGIN',
-             contentParams: parameters,
+             contentParams: contentParams,
              hasNext: false
            }
           });
         });
     }
-  }
+  };
 }
