@@ -533,7 +533,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     idty.errors = ['INVALID_MS_BLOCK_HASH'];
                     console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
                   //}
-                })
+                });
               });
               return $q(function(resolve, reject) {
                 api.data.raisePromise.search(null, idties)
@@ -544,8 +544,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     reject(err);
                   });
               });
-            })
-
+            });
         });
     },
 

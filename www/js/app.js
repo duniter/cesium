@@ -104,7 +104,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       if (!input) return '';
       input = input.toLowerCase();
       return input.substring(0,1).toUpperCase()+input.substring(1);
-    }
+    };
   })
 
   .filter('formatPubkey', function() {
@@ -301,10 +301,7 @@ if (typeof String.prototype.format !== 'function') {
   String.prototype.format = function() {
     var args = arguments;
     return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined'
-        ? args[number]
-        : match
-        ;
+      return typeof args[number] != 'undefined' ? args[number] : match;
     });
   };
 }

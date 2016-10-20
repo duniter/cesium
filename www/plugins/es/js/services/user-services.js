@@ -248,7 +248,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             console.debug('[esUser] Local settings already up to date');
             resolve(data);
             return;
-          };
+          }
           var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(data.keypair);
           var nonce = CryptoUtils.util.decode_base58(record.nonce);
           // Decrypt settings content

@@ -86,7 +86,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $rootScope.smallscreen = screenmatch.bind('xs, sm', $rootScope);
 
-  $rootScope.smallscreen.active === true; //true if the screen is xs or sm
+  $rootScope.smallscreen.active = true; //true if the screen is xs or sm
 
   ////////////////////////////////////////
   // Show currency view
@@ -155,40 +155,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     });
   };
 
-  $scope.isGlobalStart = function() {
-    return $rootScope.tour;
-  }
-
-  $scope.startCurrencyTour = function(index) {
-    index = index || csSettings.data.helptip.currency;
-    if (index < 0) return;
-    // Create a new scope for the tour controller
-    var childScope = $scope.$new();
-    $controller('HelpTourCtrl', { '$scope': childScope});
-    childScope.tour = false;
-    return childScope.startCurrencyTour(index) // skip menu helptip
-      .then(function(endIndex) {
-        childScope.$destroy();
-        csSettings.data.helptip.currency = endIndex;
-        csSettings.store();
-      });
-  };
-
-  $scope.startWotTour = function(index) {
-    index = index || csSettings.data.helptip.wot;
-    if (index < 0) return;
-    // Create a new scope for the tour controller
-    var childScope = $scope.$new();
-    $controller('HelpTourCtrl', { '$scope': childScope});
-    childScope.tour = false;
-    return childScope.startWotTour(1)
-      .then(function(endIndex) {
-        childScope.$destroy();
-        csSettings.data.helptip.wot = endIndex;
-        csSettings.store();
-      });
-  };
-
   ////////////////////////////////////////
   // Login & wallet
   ////////////////////////////////////////
@@ -240,7 +206,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             });
         }
         resolve(true);
-      })
+      });
     };
 
     return $q(function(resolve, reject){

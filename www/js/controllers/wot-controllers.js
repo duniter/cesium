@@ -144,6 +144,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
       $scope.search.type = 'text';
       WotService.search(text)
       .then(function(idties){
+        if ($scope.search.type != 'text') return; // could have change
         if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
         if ((!idties || !idties.length) && BMA.regex.PUBKEY.test(text)) {
@@ -160,25 +161,22 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   $scope.doGetNewcomers= function(limit, more) {
     $scope.search.loading = more ? false : true;
     $scope.search.type = 'newcomers';
-
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
-
     var searchFunction =  csConfig.initPhase ?
       WotService.all :
       WotService.newcomers;
-
     return searchFunction($scope.search.limit).then(function(idties){
-      if (!$scope.search.type == 'newcomers') return; // could have change
+      if ($scope.search.type != 'newcomers') return; // could have change
       $scope.doDisplayResult(idties);
     });
   };
 
-  $scope.doGetPending= function(limit, more) {
+  $scope.doGetPending = function(limit, more) {
     $scope.search.loading = more ? false : true;
     $scope.search.type = 'pending';
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
     return WotService.pending($scope.search.limit).then(function(res){
-      if (!$scope.search.type == 'pending') return; // could have change
+      if ($scope.search.type != 'pending') return; // could have change
       $scope.doDisplayResult(res);
     });
   };
@@ -190,7 +188,11 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
       $scope.search.limit = defaultSearchLimit;
     }
     $scope.search.loadingMore = true;
-    $scope.doGetNewcomers($scope.search.limit, true)
+    var searchFunction = ($scope.search.type == 'newcomers') ?
+      $scope.doGetNewcomers :
+      $scope.doGetPending;
+
+    searchFunction($scope.search.limit, true)
       .then(function() {
         $scope.search.loadingMore = false;
       })
@@ -243,7 +245,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   $scope.showHelpTip = function() {
     var index = angular.isDefined(index) ? index : csSettings.data.helptip.wot;
     if (index < 0) return;
-    if (index == 0) index = 1; // skip first step
+    if (index === 0) index = 1; // skip first step
 
     // Create a new scope for the tour controller
     var helptipScope = $scope.createHelptipScope();

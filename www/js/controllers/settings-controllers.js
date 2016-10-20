@@ -38,7 +38,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     }
     UIUtils.loading.hide();
     $scope.loading = false;
-
+    $scope.showHelpTip();
     $timeout(function() {
       // Set Ink
       UIUtils.ink({selector: '.item'});
@@ -150,7 +150,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       $scope.loading = true;
 
       // Make sure to format helptip
-      $scope.cleanupHelpTip()
+      $scope.cleanupHelpTip();
 
       angular.merge(csSettings.data, $scope.formData);
       csSettings.store();
@@ -180,7 +180,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.showHelpTip = function() {
     var index = angular.isDefined(index) ? index : csSettings.data.helptip.settings;
     if (index < 0) return;
-    if (index == 0) index = 1; // skip first step
+    if (index === 0) index = 1; // skip first step
 
     // Create a new scope for the tour controller
     var helptipScope = $scope.createHelptipScope();

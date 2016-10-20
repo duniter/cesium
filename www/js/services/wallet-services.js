@@ -952,7 +952,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         if (outputAmount > 0) {
           outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
           tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
-          outputOffset++
+          outputOffset++;
         }
         outputBase--;
       }

@@ -345,7 +345,7 @@ angular.module('cesium.utils.services', ['ngResource'])
             var elements = document.querySelectorAll(options.autofocus);
             for (var i=0; i<elements.length; i++) {
               var element = elements[i];
-              if (element != null) {
+              if (element !== null) {
                 element.focus();
                 break;
               }
