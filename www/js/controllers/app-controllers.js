@@ -142,9 +142,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.startHelpTour = function() {
-    delete $rootScope.tour;
-    var helptipScope = $scope.createHelptipScope();
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. wallet)
+    var helptipScope = $scope.$new();
+    $controller('HelpTipCtrl', { '$scope': helptipScope});
     return helptipScope.startHelpTour()
     .then(function() {
       helptipScope.$destroy();
