@@ -68,7 +68,8 @@
       "MESSAGE_NOT_READABLE": "Unable to read message.",
       "USER_NOT_RECIPIENT": "You are not the recipient of this message: unable to read it.",
       "NOT_AUTHENTICATED_MESSAGE": "The authenticity of the message is not certain or its content is corrupted.",
-      "REMOVE_MESSAGE_FAILED": "Error while deleting message"
+      "REMOVE_MESSAGE_FAILED": "Error while deleting message",
+      "MESSAGE_CONTENT_TOO_LONG": "Value too long ({{maxLength}} characters max)."
     }
   },
   "MARKET": {

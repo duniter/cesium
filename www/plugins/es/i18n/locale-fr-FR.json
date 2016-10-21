@@ -47,7 +47,7 @@
       "TO": "A",
       "OBJECT": "Objet",
       "OBJECT_HELP": "Objet",
-      "ENCRYPTED_HELP": "Veuillez noter que ce message sera crypté avant envoi. Seul le destinataire pourra le lire.",
+      "ENCRYPTED_HELP": "Veuillez noter que ce message sera chiffré avant envoi, afin que seul le destinataire puisse le lire, et qu'il soit assuré que vous soyez bien son auteur.",
       "MESSAGE": "Message",
       "MESSAGE_HELP": "Contenu du message",
       "CONTENT_CONFIRMATION": "Le contenu du message est vide.<br/><br/>Voulez-vous néanmoins envoyer le message ?"
@@ -68,7 +68,8 @@
       "MESSAGE_NOT_READABLE": "Lecture du message impossible.",
       "USER_NOT_RECIPIENT": "Vous n'etes pas le destinataire de ce message : déchiffrement impossible.",
       "NOT_AUTHENTICATED_MESSAGE": "L'authenticité du message est douteuse ou son contenu est corrompu.",
-      "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message"
+      "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message",
+      "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max)."
     }
   },
   "MARKET": {
