@@ -10,8 +10,7 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 60000,
-	"fallbackLanguage": "fr-FR",
-	"defaultLanguage": "fr-FR",
+	"fallbackLanguage": "en",
 	"rememberMe": false,
 	"showUDHistory": false,
 	"timeout": 4000,
@@ -21,21 +20,21 @@ angular.module("cesium.config", [])
 	"useRelative": true,
 	"initPhase": false,
 	"helptip": {
-		"enable": false
+		"enable": true
 	},
 	"node": {
-		"host": "duniter.le-sou.org",
-		"port": "9600"
+		"host": "test-net.duniter.fr",
+		"port": "9201"
 	},
 	"plugins": {
 		"es": {
-			"enable": false,
-			"host": "data.le-sou.org",
+			"enable": true,
+			"host": "data.duniter.fr",
 			"port": "80"
 		}
 	},
 	"version": "0.3.17",
-	"build": "2016-10-20T19:04:23.589Z",
+	"build": "2016-10-21T09:39:32.608Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
