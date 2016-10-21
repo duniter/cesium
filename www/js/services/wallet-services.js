@@ -139,7 +139,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     resetSources = function(){
       data.sources = [];
       data.sourcesIndexByKey = {};
-    };
+    },
 
     addSource = function(src, sources, sourcesIndexByKey) {
       var srcKey = src.type+':'+src.identifier+':'+src.noffset;
@@ -475,47 +475,49 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
              tx.uid = uids[tx.pubkey] || null;
           });
 
+          var processPendingTx = function(tx) {
+            tx.uid = uids[tx.pubkey] || null;
+
+            var consumedSources = [];
+            var valid = true;
+            if (tx.amount > 0) { // do not check sources from received TX
+              valid = false;
+              // TODO get sources from the issuer ?
+            }
+            else {
+              _.forEach(tx.inputs, function(input) {
+                var inputKey = input.split(':').slice(2).join(':');
+                var srcIndex = data.sourcesIndexByKey[inputKey];
+                if (angular.isDefined(srcIndex)) {
+                  consumedSources.push(data.sources[srcIndex]);
+                }
+                else {
+                  valid = false;
+                  return false; // break
+                }
+              });
+              if (tx.sources) { // add source output
+                addSources(tx.sources);
+                delete tx.sources;
+              }
+            }
+            if (valid) {
+              balance += tx.amount; // update balance
+              txPendings.push(tx);
+              _.forEach(consumedSources, function(src) {
+                src.consumed=true;
+              });
+            }
+            else {
+              txErrors.push(tx);
+            }
+          };
+
           var txs = data.tx.pendings;
           var retry = true;
           while(txs && txs.length > 0) {
             // process TX pendings
-            _.forEach(txs, function(tx) {
-              tx.uid = uids[tx.pubkey] || null;
-
-              var consumedSources = [];
-              var valid = true;
-              if (tx.amount > 0) { // do not check sources from received TX
-                valid = false;
-                // TODO get sources from the issuer ?
-              }
-              else {
-                _.forEach(tx.inputs, function(input) {
-                  var inputKey = input.split(':').slice(2).join(':');
-                  var srcIndex = data.sourcesIndexByKey[inputKey];
-                  if (angular.isDefined(srcIndex)) {
-                    consumedSources.push(data.sources[srcIndex]);
-                  }
-                  else {
-                    valid = false;
-                    return false; // break
-                  }
-                });
-                if (tx.sources) { // add source output
-                  addSources(tx.sources);
-                  delete tx.sources;
-                }
-              }
-              if (valid) {
-                balance += tx.amount; // update balance
-                txPendings.push(tx);
-                _.forEach(consumedSources, function(src) {
-                  src.consumed=true;
-                });
-              }
-              else {
-                txErrors.push(tx);
-              }
-            });
+            _.forEach(txs, processPendingTx);
 
             // Retry once (TX could be chained and processed in a wrong order)
             if (txErrors.length > 0 && txPendings.length > 0 && retry) {
