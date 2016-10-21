@@ -281,6 +281,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
 
   // Show help tip
   $scope.showHelpTip = function() {
+    if (!$scope.isLogin()) return;
     index = csSettings.data.helptip.currency;
     if (index < 0) return;
 

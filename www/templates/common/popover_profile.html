@@ -23,11 +23,8 @@
 
     <div class="row" ng-show="$root.login">
       <div class="col col-66 col-offset-33">
-        <!-- profile -->
-        <button class="button button-positive button-small ink"
-                ui-sref="app.user_edit_profile">
-          {{'MENU.USER_PROFILE' | translate}}
-        </button>
+        <!-- Allow extension here -->
+        <cs-extension-point name="profile-popover-user"></cs-extension-point>
       </div>
     </div>
 

@@ -201,6 +201,12 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
           });
       })
 
+      // Header tour
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startHeaderTour(0, true);
+      })
+
       // Settings tour
       .then(function(next){
         if (!next) return false;
@@ -680,14 +686,16 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
   };
 
   /**
-   * Settings tour
+   * header tour
    * @returns {*}
    */
-  $scope.startSettingsTour = function(startIndex, hasNext) {
-    var contentParams;
+  $scope.startHeaderTour = function(startIndex, hasNext) {
+    var smallScreen = screenmatch.is('sm, xs');
+    if (smallScreen) return $scope.emptyPromise(true);
+
     var steps = [
       function () {
-        var smallScreen = screenmatch.is('sm, xs');
+
         if (smallScreen) return true; // skip for small screen
         var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
         if (!elements || !elements.length) return true;
@@ -730,16 +738,44 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
               content: 'HELP.TIP.MENU_BTN_SETTINGS',
               icon: {
                 position: 'center'
-              }
+              },
+              hasNext: hasNext
             },
             timeout: 1000
           })
-          .then(function(res) {
-            // close profile popover
-            $scope.closeProfilePopover();
-            return res;
-          });
+            .then(function(res) {
+              // close profile popover
+              $scope.closeProfilePopover();
+              return res;
+            });
         }
+      }
+    ];
+
+    return $scope.executeStep('header', steps, startIndex);
+  };
+
+  /**
+   * Settings tour
+   * @returns {*}
+   */
+  $scope.startSettingsTour = function(startIndex, hasNext) {
+    var contentParams;
+    var steps = [
+
+      function () {
+        var smallScreen = screenmatch.is('sm, xs');
+        if (!smallScreen) return true;
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-settings', {
+          bindings: {
+            content: 'HELP.TIP.MENU_BTN_SETTINGS',
+            icon: {
+              position: 'left'
+            }
+          },
+          timeout: 1000
+        });
       },
 
       function () {

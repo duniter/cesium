@@ -35,6 +35,7 @@
     "FORWARD_TITLE_PREFIX": "Fw: ",
     "BTN_REPLY": "Reply",
     "BTN_COMPOSE": "New message",
+    "BTN_WRITE": "Write",
     "INBOX": {
       "NO_MESSAGE": "No message received",
       "TITLE": "Messages"

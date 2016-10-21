@@ -1,3 +1,11 @@
+<!-- Buttons section -->
+<ng-if ng-if="extensionPoint === 'buttons'">
+  <button class="button button-stable icon ion-compose"
+          ng-click="showNewMessageModal()">
+    {{'MESSAGE.BTN_WRITE' | translate}}
+  </button>
+</ng-if>
+
 <!-- General section -->
 <ng-if ng-if="extensionPoint === 'general'">
 

@@ -52,7 +52,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
 
 ;
 
-function ESMessageInboxController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, ModalUtils, UIUtils, esMessage) {
+function ESMessageInboxController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, esModals, UIUtils, esMessage) {
   'ngInject';
 
   $scope.loading = true;
@@ -144,14 +144,19 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
   /* -- Modals -- */
 
   $scope.showNewMessageModal = function(parameters) {
-    $scope.loadWallet()
+    return $scope.loadWallet()
+      .then(function() {
+        UIUtils.loading.hide();
+        return esModals.showMessageCompose(parameters);
+      });
+    /*$scope.loadWallet()
       .then(function() {
         UIUtils.loading.hide();
 
         return ModalUtils.show('plugins/es/templates/message/modal_compose.html',
           'ESMessageComposeModalCtrl',
           parameters, {focusFirstInput: true});
-      });
+      });*/
   };
 
   $scope.showReplyModal = function(index) {

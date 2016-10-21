@@ -24,6 +24,16 @@ angular.module('cesium.es.app.controllers', ['ngResource', 'cesium.es.services']
          }
         });
 
+      // Profile popover extension points
+      PluginServiceProvider.extendState('app', {
+        points: {
+          'profile-popover-user': {
+            templateUrl: "plugins/es/templates/common/popover_profile_extend.html",
+            controller: "ESProfilePopoverExtendCtrl"
+          }
+        }
+      });
+
       // New account extension points
       /*PluginServiceProvider.extendState('app', {
         points: {
@@ -43,6 +53,9 @@ angular.module('cesium.es.app.controllers', ['ngResource', 'cesium.es.services']
  .controller('ESJoinCtrl', ESJoinController)
 
  .controller('ESMenuExtendCtrl', ESMenuExtendController)
+
+ .controller('ESProfilePopoverExtendCtrl', ESProfilePopoverExtendController)
+
 
 ;
 
@@ -94,5 +107,40 @@ function ESMenuExtendController($scope, $state, screenmatch, PluginService, csSe
 
   $scope.updateView();
 
+
+}
+
+/**
+ * Control profile popover extension
+ */
+function ESProfilePopoverExtendController($scope, $state, csSettings, Wallet) {
+  'ngInject';
+
+  $scope.updateView = function() {
+    $scope.enable = Wallet.isLogin() && (
+        (csSettings.data.plugins && csSettings.data.plugins.es) ?
+          csSettings.data.plugins.es.enable :
+          !!csSettings.data.plugins.host);
+  };
+
+  csSettings.api.data.on.changed($scope, function() {
+    $scope.updateView();
+  });
+
+  Wallet.api.data.on.login($scope, function(walletData, resolve){
+    $scope.updateView();
+    if (resolve) resolve();
+  });
+
+  Wallet.api.data.on.logout($scope, function(){
+    $scope.updateView();
+  });
+
+  $scope.showUserProfile = function() {
+    $scope.closeProfilePopover();
+    $state.go('app.user_edit_profile');
+  };
+
+  $scope.updateView();
 
 }

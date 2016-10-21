@@ -35,9 +35,10 @@
     "FORWARD_TITLE_PREFIX": "Tr: ",
     "BTN_REPLY": "Répondre",
     "BTN_COMPOSE": "Nouveau message",
+    "BTN_WRITE": "Ecrire",
     "INBOX": {
-      "NO_MESSAGE": "Aucun message reçus",
-      "TITLE": "Messages"
+      "NO_MESSAGE": "Aucun message reçu",
+      "TITLE": "Messages privés"
     },
     "COMPOSE": {
       "TITLE": "Nouveau message",

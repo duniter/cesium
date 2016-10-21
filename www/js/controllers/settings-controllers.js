@@ -28,21 +28,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e) {
-    $scope.loading = true; // to avoid the call of Wallet.store()
-    $scope.locales = angular.copy(UIUtils.locales);
-    var locale = _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
-    angular.merge($scope.formData, csSettings.data);
-    $scope.formData.locale = locale;
-    if (csSettings.data.locale && csSettings.data.locale.id) {
-      $scope.formData.locale = _.findWhere($scope.locales, {id: csSettings.data.locale.id});
-    }
-    UIUtils.loading.hide();
-    $scope.loading = false;
-    $scope.showHelpTip();
-    $timeout(function() {
-      // Set Ink
-      UIUtils.ink({selector: '.item'});
-    }, 10);
+    $scope.load();
   });
 
   $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
@@ -58,6 +44,26 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
   $scope.setPopupForm = function(popupForm) {
     $scope.popupForm = popupForm;
+  };
+
+  $scope.load = function() {
+    $scope.loading = true; // to avoid the call of Wallet.store()
+
+    // Fill locales
+    $scope.locales = angular.copy(UIUtils.locales);
+    var locale = _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
+    angular.merge($scope.formData, csSettings.data);
+    $scope.formData.locale = locale;
+    if (csSettings.data.locale && csSettings.data.locale.id) {
+      $scope.formData.locale = _.findWhere($scope.locales, {id: csSettings.data.locale.id});
+    }
+    $scope.loading = false;
+
+    $timeout(function() {
+      // Set Ink
+      UIUtils.ink({selector: '.item'});
+      $scope.showHelpTip();
+    }, 10);
   };
 
   $scope.reset = function() {
@@ -176,8 +182,9 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     }
   };
 
-  // Show help tip (show only not already shown tip
+  // Show help tip (show only not already shown)
   $scope.showHelpTip = function() {
+    if (!$scope.isLogin()) return;
     var index = angular.isDefined(index) ? index : csSettings.data.helptip.settings;
     if (index < 0) return;
     if (index === 0) index = 1; // skip first step

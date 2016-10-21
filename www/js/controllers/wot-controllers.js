@@ -241,8 +241,9 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
     .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
 
-  // Show help tip (show only not already shown tip
+  // Show help tip (show only not already shown)
   $scope.showHelpTip = function() {
+    if (!$scope.isLogin()) return;
     var index = angular.isDefined(index) ? index : csSettings.data.helptip.wot;
     if (index < 0) return;
     if (index === 0) index = 1; // skip first step
@@ -552,6 +553,7 @@ function WotCertificationsViewController($scope, $timeout, $translate, csSetting
 
   // Show help tip
   $scope.showHelpTip = function(isWallet) {
+    if (!$scope.isLogin()) return;
     if (!csSettings.data.helptip.enable) return;
 
     // Create a new scope for the tour controller

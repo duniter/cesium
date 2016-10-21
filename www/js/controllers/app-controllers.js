@@ -159,6 +159,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Login & wallet
   ////////////////////////////////////////
 
+  $scope.isLogin = function() {
+    return $rootScope.login;
+  };
+
   $scope.showProfilePopover = function(event) {
     if (!$scope.profilePopover) {
       //Cleanup the popover when we're done with it!
@@ -190,23 +194,25 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Login and load wallet
   $scope.loadWallet = function(rejectIfError) {
+
     // Warn if wallet has been never used - see #167
-    var alertIfUnusedWallet = function() {
-      return $q(function(resolve, reject){
-        if (!csConfig.initPhase && Wallet.isNeverUsed()) {
-          return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
-            'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
-              okText: 'COMMON.BTN_CONTINUE'
-            })
-            .then(function (confirm) {
-              if (!confirm) {
-                $scope.logout().then($scope.loadWallet);
-              }
-              resolve(confirm);
-            });
-        }
-        resolve(true);
-      });
+    var _showConfirmIfUnused = function() {
+      var showAlert = !csConfig.initPhase && Wallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet)
+      if (!showAlert) return;
+      UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
+        'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
+          okText: 'COMMON.BTN_CONTINUE'
+        })
+        .then(function (confirm) {
+          if (!confirm) {
+            $scope.logout().then($scope.loadWallet);
+          }
+          else {
+            csSettings.data.wallet = csSettings.data.wallet || {};
+            csSettings.data.wallet.alertIfUnusedWallet = false;
+            csSettings.store();
+          }
+        });
     };
 
     return $q(function(resolve, reject){
@@ -218,7 +224,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             $rootScope.viewFirstEnter = false;
             Wallet.loadData()
             .then(function(walletData){
-              alertIfUnusedWallet();
+              _showConfirmIfUnused();
               $rootScope.walletData = walletData;
               resolve(walletData);
             })
@@ -239,7 +245,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       else if (!Wallet.data.loaded) {
         Wallet.loadData()
         .then(function(walletData){
-          alertIfUnusedWallet();
+          _showConfirmIfUnused();
           $rootScope.walletData = walletData;
           resolve(walletData);
         })
@@ -328,14 +334,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // add listener on wallet event
-  Wallet.api.data.on.login($scope, function(walletData, resolve, reject) {
+  Wallet.api.data.on.login($scope, function(walletData, resolve) {
     $rootScope.login = true;
-    console.debug("login detected : update $root.login");
     if (resolve) resolve();
   });
   Wallet.api.data.on.logout($scope, function() {
     $rootScope.login = false;
-    console.debug("logout detected : update $root.login");
   });
 
   // If connected and same pubkey
