@@ -92,7 +92,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   $scope.search = {
     text: '',
     loading: true,
-    type: 'newcomers',
+    type: null,
     limit: defaultSearchLimit,
     results: []
   };
@@ -160,7 +160,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   };
 
   $scope.doGetNewcomers= function(limit, more) {
-    $scope.search.loading = more ? false : true;
+    $scope.search.loading = !more;
     $scope.search.type = 'newcomers';
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
     var searchFunction =  csConfig.initPhase ?
@@ -176,9 +176,9 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
     $scope.search.loading = more ? false : true;
     $scope.search.type = 'pending';
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
-    return WotService.pending($scope.search.limit).then(function(res){
+    return WotService.pending($scope.search.limit).then(function(idties){
       if ($scope.search.type != 'pending') return; // could have change
-      $scope.doDisplayResult(res);
+      $scope.doDisplayResult(idties);
     });
   };
 
@@ -286,7 +286,6 @@ function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $tim
   WotLookupController.call(this, $scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus);
 
   $scope.search.loading = false;
-  $scope.search.type='text';
   $scope.enableFilter = false;
 
   $scope.wotSearchTextId = 'wotSearchTextModal';
