@@ -9,7 +9,7 @@
     </ion-nav-title>
 
     <ion-nav-buttons side="secondary">
-        <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+        <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
         </button>
     </ion-nav-buttons>
 
@@ -23,6 +23,9 @@
       <!-- Buttons bar -->
       <div class="hidden-xs hidden-sm text-center padding"
            ng-if="canCertify || canSelectAndCertify">
+        <button class="button button-raised icon ion-loop ink"
+                ng-click="doUpdate()">
+        </button>
         <button id="helptip-certs-certify"
                 class="button button-raised button-calm icon-left ion-ribbon-b"
                 ng-if="canCertify"

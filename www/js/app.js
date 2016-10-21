@@ -31,7 +31,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       //  return '∞';
       //}
       if (Math.abs(input) < 0.0001) return '~ 0';
-      return numeral(input-0.00005).format('0,0.0000');
+      return numeral(input/*-0.00005*/).format('0,0.0000');
     };
   })
 

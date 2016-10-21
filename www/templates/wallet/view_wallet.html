@@ -48,8 +48,12 @@
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
       <button class="button button-stable icon ion-android-share ink"
               ng-click="showSharePopover($event)">
-        {{'COMMON.BTN_SHARE' | translate}}
       </button>
+
+      <button class="button button-raised icon ion-loop ink"
+              ng-click="doUpdate()">
+      </button>
+
       <button class="button button-calm ink"
               ng-if="convertedBalance"
               ng-click="showTransferModal()">
@@ -67,6 +71,7 @@
               ng-click="actionsPopover.show($event)">
         <i class="icon ion-android-more-vertical"></i>
       </button>
+
     </div>
 
     <div class="row no-padding">

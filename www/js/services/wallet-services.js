@@ -112,7 +112,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var pubkey = amount > 0 ? otherIssuer : otherReceiver;
           var time = tx.time;
           if (tx.block_number === null) {
-            time = txPendingsTimeByKey[amount + ':' + tx.hash];
+            time = tx.blockstampTime || txPendingsTimeByKey[amount + ':' + tx.hash];
           }
 
           // Avoid duplicated tx, or tx to him self
@@ -133,6 +133,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             });
           }
         }
+      });
+    },
+
+    resetSources = function(){
+      data.sources = [];
+      data.sourcesIndexByKey = {};
+    };
+
+    addSource = function(src, sources, sourcesIndexByKey) {
+      var srcKey = src.type+':'+src.identifier+':'+src.noffset;
+      if (angular.isUndefined(sourcesIndexByKey[srcKey])) {
+        sources.push(src);
+        sourcesIndexByKey[srcKey] = sources.length - 1;
+      }
+    },
+
+    addSources = function(sources) {
+      _(sources).forEach(function(src) {
+        addSource(src, data.sources, data.sourcesIndexByKey);
       });
     },
 
@@ -336,26 +355,20 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         // Get transactions
         BMA.tx.sources({pubkey: data.pubkey})
         .then(function(res){
-          var sources = [];
-          var sourcesIndexByKey = [];
+          resetSources();
           var balance = 0;
           if (res.sources) {
             _.forEach(res.sources, function(src) {
-              var srcKey = src.type+':'+src.identifier+':'+src.noffset;
               src.consumed = false;
               balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
-              sources.push(src);
-              sourcesIndexByKey[srcKey] = sources.length -1 ;
             });
+            addSources(res.sources);
           }
-          data.sources = sources;
-          data.sourcesIndexByKey = sourcesIndexByKey;
           data.balance = balance;
           resolve();
         })
         .catch(function(err) {
-          data.sources = [];
-          data.sourcesIndexByKey = [];
+          resetSources();
           reject(err);
         });
       });
@@ -457,47 +470,63 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var txErrors = [];
           var balance = data.balance;
 
-          _.forEach(data.tx.history, function(tx) { // process TX history
+          // process TX history
+          _.forEach(data.tx.history, function(tx) {
              tx.uid = uids[tx.pubkey] || null;
           });
 
-          _.forEach(data.tx.pendings, function(tx) { // process TX pendings
-            tx.uid = uids[tx.pubkey] || null;
+          var txs = data.tx.pendings;
+          var retry = true;
+          while(txs && txs.length > 0) {
+            // process TX pendings
+            _.forEach(txs, function(tx) {
+              tx.uid = uids[tx.pubkey] || null;
 
-            var sources = [];
-            var valid = true;
-            if (tx.amount > 0) { // do not check sources from received TX
-              valid = false;
-              // TODO get sources from the issuer ?
-            }
-            else {
-              _.forEach(tx.inputs, function(input) {
-                var inputKey = input.split(':').slice(2).join(':');
-                var srcIndex = data.sourcesIndexByKey[inputKey];
-                if (!angular.isUndefined(srcIndex)) {
-                  sources.push(data.sources[srcIndex]);
-                }
-                else {
-                  valid = false;
-                  return false; // break
-                }
-              });
-              if (tx.sources) { // add TX output to source
-                data.sources = data.sources.concat(tx.sources);
-                delete tx.sources;
+              var consumedSources = [];
+              var valid = true;
+              if (tx.amount > 0) { // do not check sources from received TX
+                valid = false;
+                // TODO get sources from the issuer ?
               }
-            }
-            if (valid) {
-              balance += tx.amount; // update balance
-              txPendings.push(tx);
-              _.forEach(sources, function(src) {
-                src.consumed=true;
-              });
+              else {
+                _.forEach(tx.inputs, function(input) {
+                  var inputKey = input.split(':').slice(2).join(':');
+                  var srcIndex = data.sourcesIndexByKey[inputKey];
+                  if (angular.isDefined(srcIndex)) {
+                    consumedSources.push(data.sources[srcIndex]);
+                  }
+                  else {
+                    valid = false;
+                    return false; // break
+                  }
+                });
+                if (tx.sources) { // add source output
+                  addSources(tx.sources);
+                  delete tx.sources;
+                }
+              }
+              if (valid) {
+                balance += tx.amount; // update balance
+                txPendings.push(tx);
+                _.forEach(consumedSources, function(src) {
+                  src.consumed=true;
+                });
+              }
+              else {
+                txErrors.push(tx);
+              }
+            });
+
+            // Retry once (TX could be chained and processed in a wrong order)
+            if (txErrors.length > 0 && txPendings.length > 0 && retry) {
+              txs = txErrors;
+              txErrors = [];
+              retry = false;
             }
             else {
-              txErrors.push(tx);
+              txs = null;
             }
-          });
+          }
 
           data.tx.pendings = txPendings;
           data.tx.errors = txErrors;
@@ -712,16 +741,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var minBase = filterBase;
       var maxBase = filterBase;
       var i = 0;
-      _.forEach(data.sources, function(source) {
+      _.find(data.sources, function(source) {
         var skip = source.consumed || (source.base !== filterBase);
         if (!skip){
           sourcesAmount += (source.base > 0) ? (source.amount * Math.pow(10, source.base)) : source.amount;
           sources.push(source);
-          // Stop if enough sources
-          if (sourcesAmount >= amount) {
-            return false;
-          }
         }
+        // Stop if enough sources
+        return (sourcesAmount >= amount);
       });
 
       // IF not enough sources, get add inputs from lower base (recursively)
@@ -841,8 +868,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                 source.consumed=true;
               });
 
+              // Add new sources
               if (res && res.sources.length) {
-                data.sources = data.sources.concat(res.sources);
+                addSources(res.sources);
               }
 
               // Add TX to pendings
@@ -860,7 +888,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                     block_number: null
                   });
                   store(); // save pendings in local storage
-                  resolve(result);
+                  resolve();
                 }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
         });
