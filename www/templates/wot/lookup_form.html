@@ -17,30 +17,32 @@
     </div>
   </label>
 
-  <div class="padding-top" style="display: block; height: 60px;">
-    <div class="pull-left">
+  <div class="padding-top padding-xs" style="display: block; height: 60px;">
+    <div class="pull-left" ng-if="!search.loading">
       <h4
-        ng-if="!search.loading && search.type=='newcomers'" translate>
+        ng-if="search.type=='newcomers'" translate>
         WOT.LOOKUP.NEWCOMERS
       </h4>
       <h4
-        ng-if="!search.loading && search.type=='pending'" translate>
+        ng-if="search.type=='pending'" translate>
         WOT.LOOKUP.PENDING
       </h4>
       <h4
-        ng-if="!search.loading && search.type=='text'" translate>
+        ng-if="search.type=='text'" translate>
         COMMON.RESULTS_LIST
       </h4>
     </div>
 
-    <div class="hidden-xs hidden-sm  pull-right ">
-      <a class="button button-text button-small ink icon ion-person"
+    <div class=" pull-right hidden-xs hidden-sm">
+      <a ng-if="enableFilter"
+         class="button button-text button-small ink icon ion-person"
          ng-class="{'button-text-positive': search.type=='newcomers'}"
          ng-click="doGetNewcomers()">
         {{'WOT.LOOKUP.BTN_NEWCOMERS' | translate}}
       </a>
       &nbsp;
-      <a class="button button-text button-small ink icon ion-clock"
+      <a ng-if="enableFilter"
+         class="button button-text button-small ink icon ion-clock"
          ng-class="{'button-text-positive': search.type=='pending'}"
          ng-click="doGetPending()" class="badge-balanced">
         {{'WOT.LOOKUP.BTN_PENDING' | translate}}

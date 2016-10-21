@@ -91,13 +91,14 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
 
   $scope.search = {
     text: '',
-    loading: false,
+    loading: true,
     type: 'newcomers',
     limit: defaultSearchLimit,
     results: []
   };
   $scope.entered = false;
   $scope.wotSearchTextId = 'wotSearchText';
+  $scope.enableFilter = true;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!$scope.entered) {
@@ -283,6 +284,10 @@ function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $tim
   'ngInject';
 
   WotLookupController.call(this, $scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus);
+
+  $scope.search.loading = false;
+  $scope.search.type='text';
+  $scope.enableFilter = false;
 
   $scope.wotSearchTextId = 'wotSearchTextModal';
   $scope.cancel = function(){

@@ -5,7 +5,7 @@
 
   <ion-nav-buttons side="secondary">
 
-    <button class="button button-icon button-clear icon ion-loop" ng-click="load()">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
     </button>
   </ion-nav-buttons>
 
@@ -14,9 +14,13 @@
     <!-- Buttons bar-->
     <ion-list>
       <div class="item large-button-bar hidden-xs hidden-sm">
-        <button class="button button-small button-calm icon ion-compose"
+
+        <button class="button button-calm icon ion-compose"
                 ng-click="showNewMessageModal()">
           {{'MESSAGE.BTN_COMPOSE' | translate}}
+        </button>
+
+        <button class="button button-stable icon ion-loop" ng-click="load()">
         </button>
       </div>
 

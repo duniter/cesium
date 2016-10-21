@@ -175,6 +175,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             }, []);
 
             console.debug('[ES] [message] Loading ' + messages.length + ' messages');
+
+            // Update message count
+            Wallet.data.messages = Wallet.data.messages || {};
+            Wallet.data.messages.count = messages.length;
+
             return decryptMessages(messages, keypair)
               .then(function(){
                 return esUser.profile.fillAvatars(messages, 'pubkey');
@@ -259,6 +264,16 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         });
     }
 
+    function removeMessage(id) {
+      return esHttp.record.remove(host, port, 'message', 'record')(id)
+        .then(function(res) {
+          // update message count
+          Wallet.data.messages = Wallet.data.messages || {};
+          Wallet.data.messages.count = Wallet.data.messages.count > 0 ? Wallet.data.messages.count-1 : 0;
+          return res;
+        });
+    }
+
     function removeListeners() {
       console.debug("[ES] Disable message extension");
 
@@ -274,7 +289,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       // Extend Wallet.loadData() and WotService.loadData()
       listeners = [
         Wallet.api.data.on.login($rootScope, onWalletLoad, this),
-        Wallet.api.data.on.load($rootScope, onWalletLoad, this),
+        //Wallet.api.data.on.load($rootScope, onWalletLoad, this),
         Wallet.api.data.on.init($rootScope, onWalletInit, this),
         Wallet.api.data.on.reset($rootScope, onWalletReset, this),
       ];
@@ -316,7 +331,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       searchAndDecrypt: searchAndDecrypt,
       get: getAndDecrypt,
       send: sendMessage,
-      remove: esHttp.record.remove(host, port, 'message', 'record'),
+      remove: removeMessage,
       fields: {
         commons: fields.commons
       }

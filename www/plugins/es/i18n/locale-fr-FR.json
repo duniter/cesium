@@ -58,7 +58,8 @@
       "NO_CONTENT": "Message vide"
     },
     "INFO": {
-      "MESSAGE_REMOVED": "Message supprimé"
+      "MESSAGE_REMOVED": "Message supprimé",
+      "MESSAGE_SENT": "Message envoyé"
     },
     "ERROR": {
       "SEND_MSG_FAILED": "Erreur lors de l'envoi du message.",

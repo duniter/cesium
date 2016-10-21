@@ -103,6 +103,7 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
     return esMessage.searchAndDecrypt(request, $rootScope.walletData.keypair)
       .then(function(messages) {
         $scope.messages = messages;
+
         UIUtils.loading.hide();
         $scope.loading = false;
 
@@ -147,16 +148,11 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
     return $scope.loadWallet()
       .then(function() {
         UIUtils.loading.hide();
-        return esModals.showMessageCompose(parameters);
+        return esModals.showMessageCompose(parameters)
+          .then(function() {
+            UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+          });
       });
-    /*$scope.loadWallet()
-      .then(function() {
-        UIUtils.loading.hide();
-
-        return ModalUtils.show('plugins/es/templates/message/modal_compose.html',
-          'ESMessageComposeModalCtrl',
-          parameters, {focusFirstInput: true});
-      });*/
   };
 
   $scope.showReplyModal = function(index) {
@@ -175,6 +171,9 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
           content: content,
           isReply: true
         });
+      })
+      .then(function() {
+        UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
       });
   };
 
