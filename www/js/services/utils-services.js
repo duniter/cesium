@@ -19,22 +19,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     regex = {
       IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
-    },
-    eventMatchers = {
-      'HTMLEvents': /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
-      'MouseEvents': /^(?:click|dblclick|mouse(?:down|up|over|move|out))$/
-    },
-    eventDefaultOptions = {
-        pointerX: 0,
-        pointerY: 0,
-        button: 0,
-        ctrlKey: false,
-        altKey: false,
-        shiftKey: false,
-        metaKey: false,
-        bubbles: true,
-        cancelable: true
-      }
+    }
   ;
 
   function alertError(err, subtitle) {

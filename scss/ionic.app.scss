@@ -1182,7 +1182,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
    Help Tip
 **********/
 .popover-helptip {
-  background-color:rgba(68, 68, 68, 0.85);
+  background-color:rgba(68, 68, 68, 0.85) !important;
   height: auto !important;
 }
 

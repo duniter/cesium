@@ -125,10 +125,7 @@
                    ng-show="saltForm.$submitted && saltForm.username.$error"
                    ng-messages="saltForm.username.$error">
                 <div class="form-error" ng-message="minlength">
-                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
-                </div>
-                <div class="form-error" ng-message="maxlength">
-                  <span translate="ERROR.FIELD_TOO_LONG"></span>
+                  <span translate="ERROR.FIELD_TOO_SHORT_WITH_LENGTH" translate-values="{minLength: 8}"></span>
                 </div>
                 <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
@@ -225,7 +222,7 @@
                    ng-show="passwordForm.$submitted && passwordForm.password.$error"
                    ng-messages="passwordForm.password.$error">
                 <div class="form-error" ng-message="minlength">
-                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                  <span translate="ERROR.FIELD_TOO_SHORT_WITH_LENGTH" translate-values="{minLength: 8}"></span>
                 </div>
                 <div class="form-error" ng-message="maxlength">
                   <span translate="ERROR.FIELD_TOO_LONG"></span>
@@ -322,10 +319,10 @@
                    ng-show="pseudoForm.$submitted && pseudoForm.pseudo.$error"
                    ng-messages="pseudoForm.pseudo.$error">
                 <div class="form-error" ng-message="minlength">
-                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                  <span translate="ERROR.FIELD_TOO_SHORT_WITH_LENGTH" translate-values="{minLength: 3}"></span>
                 </div>
                 <div class="form-error" ng-message="maxlength">
-                  <span translate="ERROR.FIELD_TOO_LONG"></span>
+                  <span translate="ERROR.FIELD_TOO_LONG_WITH_LENGTH" translate-values="{maxLength: 100}"></span>
                 </div>
                 <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>

@@ -13796,7 +13796,7 @@ a {
    Help Tip
 **********/
 .popover-helptip {
-  background-color: rgba(68, 68, 68, 0.85);
+  background-color: rgba(68, 68, 68, 0.85) !important;
   height: auto !important; }
 
 /**********

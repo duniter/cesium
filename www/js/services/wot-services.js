@@ -501,26 +501,46 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           if (!res.memberships || !res.memberships.length) {
             return null;
           }
-          var idtiesByBlock = {}; // TODO: workaround for Duniter#667 - https://github.com/duniter/duniter/issues/667
-          var idties = res.memberships.reduce(function(res, ms){
-            if (ms.membership === 'IN') {
+          var idtiesByBlock = {};
+          var idtiesByPubkey = {};
+          var idties = [];
+          _.forEach(res.memberships, function(ms){
+            if (ms.membership == 'IN') {
               var idty = {
                 uid: ms.uid,
                 pubkey: ms.pubkey,
                 block: ms.blockNumber,
                 blockHash: ms.blockHash
               };
-              if (!idtiesByBlock[ms.blockNumber]) {
-                idtiesByBlock[ms.blockNumber] = [idty];
+              var otherIdtySamePubkey = idtiesByPubkey[ms.pubkey];
+              if (otherIdtySamePubkey && idty.block > otherIdtySamePubkey.block) {
+                return; // skip
+              }
+              idtiesByPubkey[idty.pubkey] = idty;
+              if (!idtiesByBlock[idty.block]) {
+                idtiesByBlock[idty.block] = [idty];
               }
               else {
-                idtiesByBlock[ms.blockNumber].push(idty);
+                idtiesByBlock[idty.block].push(idty);
               }
-              return res.concat(idty);
+
+              // Remove previous idty from maps
+              if (otherIdtySamePubkey) {
+                idtiesByBlock[otherIdtySamePubkey.block] = idtiesByBlock[otherIdtySamePubkey.block].reduce(function(res, aidty){
+                  if (aidty.pubkey == otherIdtySamePubkey.pubkey) return res; // if match idty to remove, to NOT add
+                  return (res||[]).concat(aidty);
+                }, null);
+                if (idtiesByBlock[otherIdtySamePubkey.block] === null) {
+                  delete idtiesByBlock[otherIdtySamePubkey.block];
+                }
+                return;
+              }
+              else {
+                idties.push(idty);
+              }
             }
-            return res;
-          }, []);
-          idties = _sortAndLimitIdentities(idties, size);
+          });
+          idties = _sortAndLimitIdentities(idtiesByPubkey, size);
 
           return BMA.blockchain.blocks(_.keys(idtiesByBlock))
             .then(function(blocks) {
@@ -528,11 +548,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               _.forEach(blocks, function(block){
                 _.forEach(idtiesByBlock[block.number], function(idty) {
                   idty.sigDate = block.medianTime;
-                  idty.valid = (idty.blockHash === block.hash);
-                  //if (!idty.valid) {
+                  if (idty.blockHash !== block.hash) {
                     idty.errors = ['INVALID_MS_BLOCK_HASH'];
                     console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
-                  //}
+                  }
                 });
               });
               return $q(function(resolve, reject) {

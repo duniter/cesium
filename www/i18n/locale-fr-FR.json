@@ -44,7 +44,7 @@
     "ENABLE": "Activé",
     "DISABLE": "Désactivé",
     "RESULTS_LIST": "Résultats :",
-    "SHOW_VALUES": "Afficher les valeurs saisies",
+    "SHOW_VALUES": "Afficher les valeurs en clair ?",
     "POPOVER_SHARE": {
       "TITLE": "Partager",
       "SHARE_ON_TWITTER": "Partager sur Twitter",
@@ -281,7 +281,9 @@
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
     "FIELD_REQUIRED": "Champ obligatoire.",
     "FIELD_TOO_SHORT": "Valeur trop courte.",
+    "FIELD_TOO_SHORT_WITH_LENGTH": "Valeur trop courte ({{minLength}} caractères min)",
     "FIELD_TOO_LONG": "Valeur trop longue",
+    "FIELD_TOO_LONG_WITH_LENGTH": "Valeur trop longue ({{maxLength}} caractères max)",
     "FIELD_ACCENT": "Caractères accentués et virgules non autorisés",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SALT_NOT_CONFIRMED": "Ne correspond pas à la phrase de protection.",
