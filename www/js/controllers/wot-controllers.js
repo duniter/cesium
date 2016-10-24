@@ -84,7 +84,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus) {
+function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover) {
   'ngInject';
 
   var defaultSearchLimit = 20;
@@ -160,6 +160,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   };
 
   $scope.doGetNewcomers= function(limit, more) {
+    $scope.hideActionsPopover();
     $scope.search.loading = !more;
     $scope.search.type = 'newcomers';
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
@@ -173,6 +174,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   };
 
   $scope.doGetPending = function(limit, more) {
+    $scope.hideActionsPopover();
     $scope.search.loading = more ? false : true;
     $scope.search.type = 'pending';
     $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
@@ -278,12 +280,39 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
       });
     }, 10);
   };
+
+  /* -- show/hide popup -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('templates/wot/lookup_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
 }
 
-function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus){
+function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover){
   'ngInject';
 
-  WotLookupController.call(this, $scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus);
+  WotLookupController.call(this, $scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover);
 
   $scope.search.loading = false;
   $scope.enableFilter = false;

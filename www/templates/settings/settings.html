@@ -57,8 +57,7 @@
       </div>
 
       <div class="item  item-toggle dark">
-        <div class="input-label">
-          {{'SETTINGS.ENABLE_HELPTIP' | translate}}
+        <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_HELPTIP' | translate">
         </div>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.helptip.enable" >

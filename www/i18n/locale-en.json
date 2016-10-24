@@ -45,6 +45,7 @@
     "DISABLE": "Disable",
     "RESULTS_LIST": "Results:",
     "SHOW_VALUES": "Display filled values",
+    "POPOVER_ACTIONS_TITLE": "Options",
     "POPOVER_SHARE": {
       "TITLE": "Share",
       "SHARE_ON_TWITTER": "Share on Twitter",
@@ -107,7 +108,6 @@
     "AUTHENTICATION_SETTINGS": "Authentication",
     "REMEMBER_ME": "Remember me",
     "PLUGINS_SETTINGS": "Extensions",
-    "MENU_TITLE": "Options",
     "BTN_RESET": "Restore default values",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
@@ -206,7 +206,6 @@
   },
   "ACCOUNT": {
     "TITLE": "My Account",
-    "MENU_TITLE": "Wallet actions",
     "BALANCE": "Balance",
     "LAST_TX": "Last transactions",
     "NO_TX": "No transaction",
@@ -280,8 +279,10 @@
     "UNKNOWN_ERROR": "Unknown error",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
     "FIELD_REQUIRED": "This field is required.",
-    "FIELD_TOO_SHORT": "This field value is too short.",
-    "FIELD_TOO_LONG": "This field value is exceeding max length.",
+    "FIELD_TOO_SHORT": "Value is too short (min {{minLength]] characters).",
+    "FIELD_TOO_SHORT_WITH_LENGTH": "This field value is too short.",
+    "FIELD_TOO_LONG": "Value is exceeding max length.",
+    "FIELD_TOO_LONG_WITH_LENGTH": "Value is too long (max {{maxLength}} characters).",
     "FIELD_ACCENT": "Commas and accent characters not allowed",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SALT_NOT_CONFIRMED": "Must match previous phrase.",

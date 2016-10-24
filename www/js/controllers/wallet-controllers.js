@@ -105,70 +105,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     }, 10);
   };
 
-  $scope.setShowDetails = function(show) {
-    $scope.showDetails = show;
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
-    // Change QRcode visibility
-    var qrcode = document.getElementById('qrcode');
-    qrcode.classList.toggle('visible-xs', !show);
-    qrcode.classList.toggle('visible-sm', !show);
-
-    // Update user settings
-    csSettings.data.wallet = csSettings.data.wallet || {};
-    csSettings.data.wallet.showPubkey = show;
-    csSettings.store();
-  };
-
-  // Transfer
-  $scope.showTransferModal = function() {
-    if (!$scope.hasCredit) {
-      UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
-      return;
-    }
-    Modals.showTransfer()
-    .then(function(done){
-      if (done) {
-        UIUtils.alert.info('INFO.TRANSFER_SENT');
-        // Set Motion
-        $timeout(function() {
-          UIUtils.motion.ripple({
-            selector: '.item-pending'
-          });
-          // Set Ink
-          UIUtils.ink({selector: '.item-pending'});
-        }, 10);
-      }
-    });
-  };
-
-  $scope.startWalletTour = function() {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
-    return $scope.showHelpTip(0, true);
-  };
-
-  $scope.showHelpTip = function(index, isTour) {
-    index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
-    isTour = angular.isDefined(isTour) ? isTour : false;
-    if (index < 0) return;
-
-    // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope();
-    if (!helptipScope) return; // could be undefined, if a global tour already is already started
-    helptipScope.tour = isTour;
-
-    return helptipScope.startWalletTour(index, false)
-      .then(function(endIndex) {
-        helptipScope.$destroy();
-        if (!isTour) {
-          csSettings.data.helptip.wallet = endIndex;
-          csSettings.store();
-        }
-      });
-  };
 
   $scope.setRegisterForm = function(registerForm) {
     $scope.registerForm = registerForm;
@@ -218,9 +154,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Send self identity
   $scope.self= function() {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
+    $scope.hideActionsPopover();
 
     $scope.showUidPopup()
     .then(function(uid) {
@@ -242,9 +176,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Send membership IN
   $scope.membershipIn= function() {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
+    $scope.hideActionsPopover();
 
     var doMembershipIn = function(retryCount) {
       Wallet.membership.inside()
@@ -299,9 +231,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Send membership OUT
   $scope.membershipOut = function(confirm) {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
+    $scope.hideActionsPopover();
 
     // Ask user confirmation
     if (!confirm) {
@@ -329,6 +259,80 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       UIUtils.loading.hide();
     })
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+  };
+
+  /* -- show display -- */
+
+
+  $scope.setShowDetails = function(show) {
+    $scope.showDetails = show;
+    $scope.hideActionsPopover();
+
+    // Change QRcode visibility
+    var qrcode = document.getElementById('qrcode');
+    qrcode.classList.toggle('visible-xs', !show);
+    qrcode.classList.toggle('visible-sm', !show);
+
+    if (show && !$scope.loading) {
+      $timeout(function (){
+        var pubkeyElement = document.getElementById('wallet-pubkey');
+        pubkeyElement.classList.toggle('done', true);
+        pubkeyElement.classList.toggle('in', true);
+      }, 500);
+    }
+
+    // Update user settings
+    csSettings.data.wallet = csSettings.data.wallet || {};
+    csSettings.data.wallet.showPubkey = show;
+    csSettings.store();
+  };
+
+  // Transfer
+  $scope.showTransferModal = function() {
+    if (!$scope.hasCredit) {
+      UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
+      return;
+    }
+    Modals.showTransfer()
+      .then(function(done){
+        if (done) {
+          UIUtils.alert.info('INFO.TRANSFER_SENT');
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.ripple({
+              selector: '.item-pending'
+            });
+            // Set Ink
+            UIUtils.ink({selector: '.item-pending'});
+          }, 10);
+        }
+      });
+  };
+
+  $scope.startWalletTour = function() {
+    $scope.hideActionsPopover();
+
+    return $scope.showHelpTip(0, true);
+  };
+
+  $scope.showHelpTip = function(index, isTour) {
+    index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
+    isTour = angular.isDefined(isTour) ? isTour : false;
+    if (index < 0) return;
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+    helptipScope.tour = isTour;
+
+    return helptipScope.startWalletTour(index, false)
+      .then(function(endIndex) {
+        helptipScope.$destroy();
+        if (!isTour) {
+          csSettings.data.helptip.wallet = endIndex;
+          csSettings.store();
+        }
+      });
   };
 
   $scope.showQRCode = function(id, text, timeout) {
@@ -361,10 +365,33 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     });
   };
 
-  $scope.showSharePopover = function(event) {
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
+  };
+
+  $scope.showSharePopover = function(event) {
+    $scope.hideActionsPopover();
+
     var title = $scope.walletData.name || $scope.walletData.uid || $scope.walletData.pubkey;
     var url = $state.href('app.wot_view_identity', {pubkey: $scope.walletData.pubkey, uid: $scope.walletData.name || $scope.walletData.uid}, {absolute: true});
     UIUtils.popover.share(event, {

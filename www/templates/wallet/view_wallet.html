@@ -10,7 +10,7 @@
     </button>
     <button class="button button-icon button-clear visible-xs visible-sm"
             id="helptip-wallet-options-xs"
-            ng-click="actionsPopover.show($event)">
+            ng-click="showActionsPopover($event)">
       <i class="icon ion-android-more-vertical"></i>
     </button>
   </ion-nav-buttons>
@@ -68,7 +68,7 @@
 
       <button id="helptip-wallet-options"
               class="button button-icon ink"
-              ng-click="actionsPopover.show($event)">
+              ng-click="showActionsPopover($event)">
         <i class="icon ion-android-more-vertical"></i>
       </button>
 
@@ -92,12 +92,11 @@
         </a>
 
         <!-- Public key -->
-        <span class="item item-icon-left item-text-wrap ink"
-              ng-class="{'in done': !showDetails}"
-                id="wallet-pubkey"
-                ng-if="showDetails"
-                on-hold="copy(walletData.pubkey)"
-                copy-on-click="{{::walletData.pubkey}}">
+        <span id="wallet-pubkey"
+              class="item item-icon-left item-text-wrap ink"
+              ng-if="showDetails"
+              on-hold="copy(walletData.pubkey)"
+              copy-on-click="{{::walletData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark">{{::walletData.pubkey}}</h4>

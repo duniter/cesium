@@ -73,9 +73,13 @@ $screen-lg:                       1200px;
 //
 // >>Autre doc http://getbootstrap.com/css/#responsive-utilities-classes
 //
-@media screen and (max-width: 400px) {
+@media screen and (max-width: $screen-xxs-max) {
   @-ms-viewport{
     width: 320px;
+  }
+
+  .item .badge {
+    right: 16px;
   }
 }
 
@@ -95,6 +99,9 @@ $screen-lg:                       1200px;
     .badge:empty {
       display: none !important;
     }
+    .item .badge {
+      right: 16px;
+    }
 }
 @media screen and (min-width: $screen-sm) {
     .hidden-xs {
@@ -106,6 +113,9 @@ $screen-lg:                       1200px;
     }
     .button.hidden-xs {
       display: inline-block;
+    }
+  .item-toggle .toggle {
+      right: 32px;
     }
 }
 @media screen and (max-width: $screen-xs-max) {
@@ -380,6 +390,16 @@ $screen-menu:                     845px;
   background-color: $stable;
 }
 
+/**********
+   Share popover
+**********/
+
+@media (max-width: $screen-xs-max) {
+  .popover-share {
+    width: auto;
+  }
+}
+
 .popover-share {
   height: 110px;
 
@@ -455,38 +475,6 @@ $screen-menu:                     845px;
   }
 }
 
-.popover-helptip {
-  .button-close {
-    @extend .gray;
-    padding: 8px;
-    height: 25px;
-    font-size: 18.2px;
-  }
-}
-
-.helptip-anchor {
-  display:block;
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-}
-.helptip-anchor-center {
-  @extend .helptip-anchor;
-  text-align: center;
-}
-.helptip-anchor-left {
-  @extend .helptip-anchor;
-  text-align: left;
-}
-.helptip-anchor-right {
-  @extend .helptip-anchor;
-  text-align: right;
-}
-.helptip-anchor a:before,
-.helptip-anchor-left a:before,
-.helptip-anchor-right a:before {
-  content: " ";
-}
 
 /* ============
  Buttons
@@ -1181,9 +1169,96 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 /**********
    Help Tip
 **********/
+
 .popover-helptip {
   background-color:rgba(68, 68, 68, 0.85) !important;
   height: auto !important;
+
+  .button-close {
+    @extend .gray;
+    padding: 8px;
+    height: 25px;
+    font-size: 18.2px;
+  }
+}
+
+.helptip-anchor {
+  display:block;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+.helptip-anchor-center {
+  @extend .helptip-anchor;
+  text-align: center;
+}
+.helptip-anchor-left {
+  @extend .helptip-anchor;
+  text-align: left;
+}
+.helptip-anchor-right {
+  @extend .helptip-anchor;
+  text-align: right;
+}
+.helptip-anchor a:before,
+.helptip-anchor-left a:before,
+.helptip-anchor-right a:before {
+  content: " ";
+}
+
+
+@media (max-width: $screen-xs-max) {
+  .popover-helptip {
+    width: auto;
+  }
+}
+.popover-helptip {
+  .icon.icon-left {
+    @extend .pull-left;
+    font-size: 30px;
+    position: relative;
+    top: 8px;
+    left: 8px;
+  }
+  .icon.icon-right {
+    @extend .pull-right;
+    font-size: 30px;
+    position: relative;
+    top: 8px;
+    right: 8px;
+  }
+  .icon.icon-center {
+    @extend .pull-right;
+    font-size: 30px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    top: 8px;
+    height: 0px;
+  }
+  .icon.icon-bottom-right {
+    @extend .pull-right;
+    font-size: 30px;
+    position: relative;
+    bottom: 8px;
+    right: 8px;
+  }
+  .icon.icon-bottom-left {
+    @extend .pull-left;
+    font-size: 30px;
+    position: relative;
+    bottom: 8px;
+    left: 8px;
+  }
+  .icon.icon-bottom-center {
+    @extend .pull-right;
+    font-size: 30px;
+    position: relative;
+    width: 100%;
+    bottom: 8px;
+    text-align: center;
+    height: 0px;
+  }
 }
 
 /**********

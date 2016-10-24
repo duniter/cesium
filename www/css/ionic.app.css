@@ -4090,8 +4090,68 @@ a.subdued {
     display: inherit; }
   .bar .title + .button:last-child,
   .bar > .button + .button:last-child,
-  .bar > .button.pull-right,
+  .bar > .button.pull-right, .popover-helptip
+  .bar > .button.icon.icon-right, .popover-helptip
+  .bar > .button.icon-right.icon-help, .popover-helptip
+  .bar > .button.icon-right.icon-alert, .popover-helptip #menu .footer
+  .bar > .button.icon-right.icon-help, #menu .footer .popover-helptip
+  .bar > .button.icon-right.icon-help, .popover-helptip
+  .bar > .button.icon.icon-center, .popover-helptip
+  .bar > .button.icon-center.icon-help, .popover-helptip
+  .bar > .button.icon-center.icon-alert, .popover-helptip #menu .footer
+  .bar > .button.icon-center.icon-help, #menu .footer .popover-helptip
+  .bar > .button.icon-center.icon-help, .popover-helptip
+  .bar > .button.icon.icon-bottom-right, .popover-helptip
+  .bar > .button.icon-bottom-right.icon-help, .popover-helptip
+  .bar > .button.icon-bottom-right.icon-alert, .popover-helptip #menu .footer
+  .bar > .button.icon-bottom-right.icon-help, #menu .footer .popover-helptip
+  .bar > .button.icon-bottom-right.icon-help, .popover-helptip
+  .bar > .button.icon.icon-bottom-center, .popover-helptip
+  .bar > .button.icon-bottom-center.icon-help, .popover-helptip
+  .bar > .button.icon-bottom-center.icon-alert, .popover-helptip #menu .footer
+  .bar > .button.icon-bottom-center.icon-help, #menu .footer .popover-helptip
+  .bar > .button.icon-bottom-center.icon-help,
   .bar .buttons.pull-right,
+  .bar .popover-helptip .buttons.icon.icon-right, .popover-helptip
+  .bar .buttons.icon.icon-right,
+  .bar .popover-helptip .buttons.icon-right.icon-help, .popover-helptip
+  .bar .buttons.icon-right.icon-help,
+  .bar .popover-helptip .buttons.icon-right.icon-alert, .popover-helptip
+  .bar .buttons.icon-right.icon-alert,
+  .bar .popover-helptip #menu .footer .buttons.icon-right.icon-help, .popover-helptip #menu .footer
+  .bar .buttons.icon-right.icon-help,
+  .bar #menu .footer .popover-helptip .buttons.icon-right.icon-help, #menu .footer .popover-helptip
+  .bar .buttons.icon-right.icon-help,
+  .bar .popover-helptip .buttons.icon.icon-center, .popover-helptip
+  .bar .buttons.icon.icon-center,
+  .bar .popover-helptip .buttons.icon-center.icon-help, .popover-helptip
+  .bar .buttons.icon-center.icon-help,
+  .bar .popover-helptip .buttons.icon-center.icon-alert, .popover-helptip
+  .bar .buttons.icon-center.icon-alert,
+  .bar .popover-helptip #menu .footer .buttons.icon-center.icon-help, .popover-helptip #menu .footer
+  .bar .buttons.icon-center.icon-help,
+  .bar #menu .footer .popover-helptip .buttons.icon-center.icon-help, #menu .footer .popover-helptip
+  .bar .buttons.icon-center.icon-help,
+  .bar .popover-helptip .buttons.icon.icon-bottom-right, .popover-helptip
+  .bar .buttons.icon.icon-bottom-right,
+  .bar .popover-helptip .buttons.icon-bottom-right.icon-help, .popover-helptip
+  .bar .buttons.icon-bottom-right.icon-help,
+  .bar .popover-helptip .buttons.icon-bottom-right.icon-alert, .popover-helptip
+  .bar .buttons.icon-bottom-right.icon-alert,
+  .bar .popover-helptip #menu .footer .buttons.icon-bottom-right.icon-help, .popover-helptip #menu .footer
+  .bar .buttons.icon-bottom-right.icon-help,
+  .bar #menu .footer .popover-helptip .buttons.icon-bottom-right.icon-help, #menu .footer .popover-helptip
+  .bar .buttons.icon-bottom-right.icon-help,
+  .bar .popover-helptip .buttons.icon.icon-bottom-center, .popover-helptip
+  .bar .buttons.icon.icon-bottom-center,
+  .bar .popover-helptip .buttons.icon-bottom-center.icon-help, .popover-helptip
+  .bar .buttons.icon-bottom-center.icon-help,
+  .bar .popover-helptip .buttons.icon-bottom-center.icon-alert, .popover-helptip
+  .bar .buttons.icon-bottom-center.icon-alert,
+  .bar .popover-helptip #menu .footer .buttons.icon-bottom-center.icon-help, .popover-helptip #menu .footer
+  .bar .buttons.icon-bottom-center.icon-help,
+  .bar #menu .footer .popover-helptip .buttons.icon-bottom-center.icon-help, #menu .footer .popover-helptip
+  .bar .buttons.icon-bottom-center.icon-help,
   .bar .title + .buttons {
     position: absolute;
     top: 5px;
@@ -11273,10 +11333,10 @@ a.button {
 .static {
   position: static; }
 
-.pull-left {
+.pull-left, .popover-helptip .icon.icon-left, .popover-helptip .icon-left.icon-help, .popover-helptip .icon-left.icon-alert, .popover-helptip #menu .footer .icon-left.icon-help, #menu .footer .popover-helptip .icon-left.icon-help, .popover-helptip .icon.icon-bottom-left, .popover-helptip .icon-bottom-left.icon-help, .popover-helptip .icon-bottom-left.icon-alert, .popover-helptip #menu .footer .icon-bottom-left.icon-help, #menu .footer .popover-helptip .icon-bottom-left.icon-help {
   float: left; }
 
-.pull-right {
+.pull-right, .popover-helptip .icon.icon-right, .popover-helptip .icon-right.icon-help, .popover-helptip .icon-right.icon-alert, .popover-helptip #menu .footer .icon-right.icon-help, #menu .footer .popover-helptip .icon-right.icon-help, .popover-helptip .icon.icon-center, .popover-helptip .icon-center.icon-help, .popover-helptip .icon-center.icon-alert, .popover-helptip #menu .footer .icon-center.icon-help, #menu .footer .popover-helptip .icon-center.icon-help, .popover-helptip .icon.icon-bottom-right, .popover-helptip .icon-bottom-right.icon-help, .popover-helptip .icon-bottom-right.icon-alert, .popover-helptip #menu .footer .icon-bottom-right.icon-help, #menu .footer .popover-helptip .icon-bottom-right.icon-help, .popover-helptip .icon.icon-bottom-center, .popover-helptip .icon-bottom-center.icon-help, .popover-helptip .icon-bottom-center.icon-alert, .popover-helptip #menu .footer .icon-bottom-center.icon-help, #menu .footer .popover-helptip .icon-bottom-center.icon-help {
   float: right; }
 
 .double-padding, .ionic-content.double-padding {
@@ -12987,7 +13047,9 @@ a {
 
 @media screen and (max-width: 400px) {
   @-ms-viewport {
-    width: 320px; } }
+    width: 320px; }
+  .item .badge {
+    right: 16px; } }
 
 @media screen and (max-width: 767px) {
   .hidden-xs {
@@ -13000,7 +13062,9 @@ a {
     max-width: 300px !important;
     display: block !important; }
   .badge:empty {
-    display: none !important; } }
+    display: none !important; }
+  .item .badge {
+    right: 16px; } }
 
 @media screen and (min-width: 768px) {
   .hidden-xs {
@@ -13009,7 +13073,9 @@ a {
   .row.hidden-xs {
     display: flex !important; }
   .button.hidden-xs {
-    display: inline-block; } }
+    display: inline-block; }
+  .item-toggle .toggle {
+    right: 32px; } }
 
 @media screen and (max-width: 767px) {
   .visible-xs {
@@ -13219,6 +13285,13 @@ a {
 #unitPopover .item.selected {
   background-color: #f8f8f8; }
 
+/**********
+   Share popover
+**********/
+@media (max-width: 767px) {
+  .popover-share {
+    width: auto; } }
+
 .popover-share {
   height: 110px; }
   .popover-share .bar {
@@ -13268,31 +13341,6 @@ a {
   .popover-share .list .item {
     border-bottom: 0px !important; }
 
-.popover-helptip .button-close {
-  padding: 8px;
-  height: 25px;
-  font-size: 18.2px; }
-
-.helptip-anchor, .helptip-anchor-center, .helptip-anchor-left, .helptip-anchor-right {
-  display: block;
-  position: absolute;
-  width: 100%;
-  bottom: 0; }
-
-.helptip-anchor-center {
-  text-align: center; }
-
-.helptip-anchor-left {
-  text-align: left; }
-
-.helptip-anchor-right {
-  text-align: right; }
-
-.helptip-anchor a:before, .helptip-anchor-center a:before, .helptip-anchor-left a:before, .helptip-anchor-right a:before,
-.helptip-anchor-left a:before,
-.helptip-anchor-right a:before {
-  content: " "; }
-
 /* ============
  Buttons
 =============== */
@@ -13306,7 +13354,7 @@ a {
 .button.button-icon.ion-android-more-vertical.button-text:first-child {
   padding-left: 0px !important; }
 
-.bar .buttons.pull-right, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right {
+.bar .buttons.pull-right, .bar .popover-helptip .buttons.icon.icon-right, .popover-helptip .bar .buttons.icon.icon-right, .bar .popover-helptip .buttons.icon-right.icon-help, .popover-helptip .bar .buttons.icon-right.icon-help, .bar .popover-helptip .buttons.icon-right.icon-alert, .popover-helptip .bar .buttons.icon-right.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-right.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-right.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-right.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-right.icon-help, .bar .popover-helptip .buttons.icon.icon-center, .popover-helptip .bar .buttons.icon.icon-center, .bar .popover-helptip .buttons.icon-center.icon-help, .popover-helptip .bar .buttons.icon-center.icon-help, .bar .popover-helptip .buttons.icon-center.icon-alert, .popover-helptip .bar .buttons.icon-center.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-center.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-center.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-center.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-center.icon-help, .bar .popover-helptip .buttons.icon.icon-bottom-right, .popover-helptip .bar .buttons.icon.icon-bottom-right, .bar .popover-helptip .buttons.icon-bottom-right.icon-help, .popover-helptip .bar .buttons.icon-bottom-right.icon-help, .bar .popover-helptip .buttons.icon-bottom-right.icon-alert, .popover-helptip .bar .buttons.icon-bottom-right.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-bottom-right.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-bottom-right.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-bottom-right.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-bottom-right.icon-help, .bar .popover-helptip .buttons.icon.icon-bottom-center, .popover-helptip .bar .buttons.icon.icon-bottom-center, .bar .popover-helptip .buttons.icon-bottom-center.icon-help, .popover-helptip .bar .buttons.icon-bottom-center.icon-help, .bar .popover-helptip .buttons.icon-bottom-center.icon-alert, .popover-helptip .bar .buttons.icon-bottom-center.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-bottom-center.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-bottom-center.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-bottom-center.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-bottom-center.icon-help, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right, .popover-helptip .bar > .button.icon.icon-right, .popover-helptip .bar > .button.icon-right.icon-help, .popover-helptip .bar > .button.icon-right.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-right.icon-help, #menu .footer .popover-helptip .bar > .button.icon-right.icon-help, .popover-helptip .bar > .button.icon.icon-center, .popover-helptip .bar > .button.icon-center.icon-help, .popover-helptip .bar > .button.icon-center.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-center.icon-help, #menu .footer .popover-helptip .bar > .button.icon-center.icon-help, .popover-helptip .bar > .button.icon.icon-bottom-right, .popover-helptip .bar > .button.icon-bottom-right.icon-help, .popover-helptip .bar > .button.icon-bottom-right.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-bottom-right.icon-help, #menu .footer .popover-helptip .bar > .button.icon-bottom-right.icon-help, .popover-helptip .bar > .button.icon.icon-bottom-center, .popover-helptip .bar > .button.icon-bottom-center.icon-help, .popover-helptip .bar > .button.icon-bottom-center.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-bottom-center.icon-help, #menu .footer .popover-helptip .bar > .button.icon-bottom-center.icon-help {
   top: 0px !important; }
 
 .button-icon {
@@ -13798,6 +13846,74 @@ a {
 .popover-helptip {
   background-color: rgba(68, 68, 68, 0.85) !important;
   height: auto !important; }
+  .popover-helptip .button-close {
+    padding: 8px;
+    height: 25px;
+    font-size: 18.2px; }
+
+.helptip-anchor, .helptip-anchor-center, .helptip-anchor-left, .helptip-anchor-right {
+  display: block;
+  position: absolute;
+  width: 100%;
+  bottom: 0; }
+
+.helptip-anchor-center {
+  text-align: center; }
+
+.helptip-anchor-left {
+  text-align: left; }
+
+.helptip-anchor-right {
+  text-align: right; }
+
+.helptip-anchor a:before, .helptip-anchor-center a:before, .helptip-anchor-left a:before, .helptip-anchor-right a:before,
+.helptip-anchor-left a:before,
+.helptip-anchor-right a:before {
+  content: " "; }
+
+@media (max-width: 767px) {
+  .popover-helptip {
+    width: auto; } }
+
+.popover-helptip .icon.icon-left, .popover-helptip .icon-left.icon-help, .popover-helptip .icon-left.icon-alert, .popover-helptip #menu .footer .icon-left.icon-help, #menu .footer .popover-helptip .icon-left.icon-help {
+  font-size: 30px;
+  position: relative;
+  top: 8px;
+  left: 8px; }
+
+.popover-helptip .icon.icon-right, .popover-helptip .icon-right.icon-help, .popover-helptip .icon-right.icon-alert, .popover-helptip #menu .footer .icon-right.icon-help, #menu .footer .popover-helptip .icon-right.icon-help {
+  font-size: 30px;
+  position: relative;
+  top: 8px;
+  right: 8px; }
+
+.popover-helptip .icon.icon-center, .popover-helptip .icon-center.icon-help, .popover-helptip .icon-center.icon-alert, .popover-helptip #menu .footer .icon-center.icon-help, #menu .footer .popover-helptip .icon-center.icon-help {
+  font-size: 30px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  top: 8px;
+  height: 0px; }
+
+.popover-helptip .icon.icon-bottom-right, .popover-helptip .icon-bottom-right.icon-help, .popover-helptip .icon-bottom-right.icon-alert, .popover-helptip #menu .footer .icon-bottom-right.icon-help, #menu .footer .popover-helptip .icon-bottom-right.icon-help {
+  font-size: 30px;
+  position: relative;
+  bottom: 8px;
+  right: 8px; }
+
+.popover-helptip .icon.icon-bottom-left, .popover-helptip .icon-bottom-left.icon-help, .popover-helptip .icon-bottom-left.icon-alert, .popover-helptip #menu .footer .icon-bottom-left.icon-help, #menu .footer .popover-helptip .icon-bottom-left.icon-help {
+  font-size: 30px;
+  position: relative;
+  bottom: 8px;
+  left: 8px; }
+
+.popover-helptip .icon.icon-bottom-center, .popover-helptip .icon-bottom-center.icon-help, .popover-helptip .icon-bottom-center.icon-alert, .popover-helptip #menu .footer .icon-bottom-center.icon-help, #menu .footer .popover-helptip .icon-bottom-center.icon-help {
+  font-size: 30px;
+  position: relative;
+  width: 100%;
+  bottom: 8px;
+  text-align: center;
+  height: 0px; }
 
 /**********
    Profile popover

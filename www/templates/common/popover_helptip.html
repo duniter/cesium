@@ -1,15 +1,9 @@
 <ion-popover-view class="popover-helptip" >
   <ion-content scroll="false" class="list">
     <p >
-      <i ng-if="icon.position == 'left'"
-         style="font-size: 30px; position: relative; top: 8px; left: 8px;"
-         class="{{icon.class}} pull-left"></i>
-      <i ng-if="icon.position == 'right'"
-         style="font-size: 30px; position: relative; top: 8px; right: 8px;"
-         class="{{icon.class}} pull-right"></i>
-      <i ng-if="icon.position == 'center'"
-         style="font-size: 30px; position: relative; width: 100%; top: 8px; text-align: center; height: 0px;"
-         class="{{icon.class}} pull-right"></i>
+      <ng-if ng-if="icon.position && !icon.position.startsWith('bottom-')">
+        <i class="{{icon.class}} icon-{{icon.position}}"></i>
+      </ng-if>
 
       <!-- close button-->
       <a
@@ -61,15 +55,9 @@
     </div>
 
     <p>
-      <i ng-if="icon.position == 'bottom-right'"
-         style="font-size: 30px; position: relative; bottom: 8px; right: 8px;"
-         class="{{icon.class}} pull-right"></i>
-      <i ng-if="icon.position == 'bottom-left'"
-         style="font-size: 30px; position: relative; bottom: 8px; left: 8px;"
-         class="{{icon.class}} pull-left"></i>
-      <i ng-if="icon.position == 'bottom-center'"
-         style="font-size: 30px; position: relative; width: 100%; bottom: 8px; text-align: center; height: 0px;"
-         class="{{icon.class}} pull-right"></i>
+      <ng-if ng-if="icon.position && icon.position.startsWith('bottom-')">
+        <i class="{{icon.class}} icon-{{icon.position}}"></i>
+      </ng-if>
     </p>
   </ion-content>
 </ion-popover-view>

@@ -45,6 +45,7 @@
     "DISABLE": "Désactivé",
     "RESULTS_LIST": "Résultats :",
     "SHOW_VALUES": "Afficher les valeurs en clair ?",
+    "POPOVER_ACTIONS_TITLE": "Options",
     "POPOVER_SHARE": {
       "TITLE": "Partager",
       "SHARE_ON_TWITTER": "Partager sur Twitter",
@@ -101,13 +102,12 @@
     "NODE": "Adresse du noeud Duniter",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
-    "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
+    "ENABLE_HELPTIP": "Activer les bulles d'aide<span class=\"hidden-xs\"> contextuelles</span>",
     "HISTORY_SETTINGS": "Mon compte",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "REMEMBER_ME": "Se souvenir de moi",
     "PLUGINS_SETTINGS": "Extensions",
-    "MENU_TITLE": "Options",
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
@@ -170,8 +170,8 @@
       "NEWCOMERS": "Nouveaux membres :",
       "PENDING": "Inscriptions en attente :",
       "REGISTERED": "Inscrit ",
-      "BTN_NEWCOMERS": "nouveaux membres",
-      "BTN_PENDING": "inscriptions en attente",
+      "BTN_NEWCOMERS": "Nouveaux membres",
+      "BTN_PENDING": "Inscriptions en attente",
       "SHOW_MORE": "Afficher plus",
       "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
       "NO_PENDING": "Aucune inscription en attente n'a été trouvée"
@@ -206,7 +206,6 @@
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
-    "MENU_TITLE": "Options",
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
     "NO_TX": "Aucune transaction",

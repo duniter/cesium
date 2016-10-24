@@ -9,12 +9,12 @@
         </div>
 
         <a class="peer-item item item-icon-left"
-           collection-repeat="peer in peers"
+           ng-repeat="peer in peers track by peer.server"
            ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock) }"
            ui-sref="app.view_peer({server: peer.server})">
             <i class="icon ion-android-globe"></i>
-            <h3><span ng-class="{ positive: peer.uid }">{{::peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{::peer.dns && ' | ' + peer.dns}}</span></h3>
-            <h4>{{::peer.server}}</h4>
+            <h3><span ng-class="{ positive: peer.uid }">{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
+            <h4>{{peer.server}}</h4>
             <span class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
         </a>
     </div>
