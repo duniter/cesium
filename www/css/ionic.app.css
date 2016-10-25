@@ -13865,6 +13865,9 @@ a {
     height: 25px;
     font-size: 18.2px; }
 
+.nobackdrop .popover-backdrop.active {
+  background-color: transparent !important; }
+
 .helptip-anchor, .helptip-anchor-center, .helptip-anchor-left, .helptip-anchor-right {
   display: block;
   position: absolute;

@@ -35,6 +35,7 @@
           <a id="helptip-wallet-balance">&nbsp;</a>
         </div>
       </div>
+
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
@@ -203,13 +204,10 @@
         </span>
 
         <!-- TX history -->
-        <span class="item item-badge-right"
+        <!-- (make sure to keep ng-if=!loading to avoid division by zero on Firefox, because currentUD not loaded -->
+        <span ng-if="!loading"
+              class="item item-badge-right"
               ng-repeat="tx in walletData.tx.history">
-        <!-- TODO Use collection-repeat : but scrollbars are not visible on browsers
-        <span class="item item-badge-right"
-              collection-repeat="tx in walletData.tx.history"
-              collection-item-height="74">
-        -->
           <h2>
             <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
               <span ng-if="tx.uid">
@@ -244,7 +242,7 @@
                ng-class="{'badge-balanced': tx.amount > 0}">
             <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
             <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
-          </div >
+          </div>
         </span>
 
         <div class="item" ng-if="walletData.tx.fromTime > 0">

@@ -10,7 +10,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, $timeout, esHttp, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils, Device) {
+.factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils, Device) {
   'ngInject';
 
   function factory(host, port) {

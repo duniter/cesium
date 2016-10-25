@@ -263,20 +263,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
               loadParameters(),
 
-              // Get current UD
+              // Load current UD is need by features tour
               loadCurrentUD()
             ])
           }
           else {
-            return $q.all([
-              // Load parameters
-              // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-              loadParameters(),
-
-              // Get current UD
-              // This prevent division by zero (in TX history)
-              loadCurrentUD()
-            ]);
+            // Load parameters
+            // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+            return loadParameters();
           }
         })
         .then(function(){

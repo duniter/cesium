@@ -306,87 +306,112 @@ angular.module('cesium.utils.services', ['ngResource'])
     options.scope.popovers = options.scope.popovers || {};
     options.autoselect = options.autoselect || false;
     options.bindings = options.bindings || {};
-    options.autoremove = !angular.isUndefined(options.autoremove) ? options.autoremove : true;
+    options.autoremove = angular.isDefined(options.autoremove) ? options.autoremove : true;
+    options.backdropClickToClose = angular.isDefined(options.backdropClickToClose) ? options.backdropClickToClose : true;
+    options.focusFirstInput = angular.isDefined(options.focusFirstInput) ? options.focusFirstInput : false;
 
-    var _show = function() {
-      var popover = options.scope.popovers[options.templateUrl];
+    var _show = function(popover) {
+      popover = popover || options.scope.popovers[options.templateUrl];
+      popover.isResolved=false;
+      popover.deferred=deferred;
+      popover.options=options;
       // Fill the popover scope
       angular.merge(popover.scope, options.bindings);
-      popover.show(event);
-      // Auto select text
-      if (options.autoselect) {
-        $timeout(function () {
-          var inputs = document.querySelectorAll(options.autoselect);
-          for (var i=0; i<inputs.length; i++) {
-            var input = inputs[i];
-            if ($window.getSelection && !$window.getSelection().toString()) {
-              input.setSelectionRange(0, input.value.length);
-              input.focus();
+      $timeout(function() { // This is need for Firefox
+        popover.show(event)
+        .then(function() {
+          // Auto select text
+          if (options.autoselect) {
+            var inputs = document.querySelectorAll(options.autoselect);
+            for (var i=0; i<inputs.length; i++) {
+              var input = inputs[i];
+              if ($window.getSelection && !$window.getSelection().toString()) {
+                input.setSelectionRange(0, input.value.length);
+                input.focus();
+              }
+              else {
+                input.focus();
+              }
+              break;
             }
-            else {
-              input.focus();
-            }
-            break;
           }
-        }, 500); // wait popover to be created and display
-      }
-      else {
-        // Auto focus on a element
-        if (options.autofocus) {
-          $timeout(function () {
-            var elements = document.querySelectorAll(options.autofocus);
-            for (var i=0; i<elements.length; i++) {
-              var element = elements[i];
-              if (element !== null) {
-                element.focus();
-                break;
+          else {
+            // Auto focus on a element
+            if (options.autofocus) {
+              var elements = document.querySelectorAll(options.autofocus);
+              for (var i=0; i<elements.length; i++) {
+                var element = elements[i];
+                if (element !== null) {
+                  element.focus();
+                  break;
+                }
               }
             }
-          }, 500); // wait popover to be created and display
-        }
-      }
+          }
+
+          // Callback 'afterShow'
+          if (options.afterShow) options.afterShow(popover);
+        });
+      });
     };
 
-    var _cleanup = function() {
-      var popover = options.scope.popovers[options.templateUrl];
+    var _cleanup = function(popover) {
+      popover = popover || options.scope.popovers[options.templateUrl];
       if (popover) {
-        popover.remove();
         delete options.scope.popovers[options.templateUrl];
-        if (!popover.isResolved) {
-          deferred.resolve();
-        }
+        return popover.remove();
       }
     };
 
-    if (!options.scope.popovers[options.templateUrl]) {
+    var popover = options.scope.popovers[options.templateUrl];
+    if (!popover) {
       var childScope = options.scope.$new();
 
       $ionicPopover.fromTemplateUrl(options.templateUrl, {
-        scope: childScope
+        scope: childScope,
+        backdropClickToClose: options.backdropClickToClose
       })
         .then(function (popover) {
           popover.scope = childScope;
           popover.isResolved = false;
 
           childScope.closePopover = function(result) {
-            popover.hide();
-            deferred.resolve(result);
-            if (options.removeOnClose) {
-              _cleanup();
-            }
+            var autoremove = popover.options.autoremove;
+            delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
+            popover.hide()
+              .then(function() {
+                if (autoremove) {
+                  return _cleanup(popover);
+                }
+              })
+              .then(function() {
+                popover.deferred.resolve(result);
+                delete popover.deferred;
+                delete popover.options;
+              });
           };
+
+          // Execute action on hidden popover
+          options.scope.$on('popover.hidden', function() {
+            if (popover.options.autoremove) {
+              _cleanup(popover);
+            }
+          });
 
           // Cleanup the popover when hidden
           options.scope.$on('$remove', function() {
+            if (popover.deferred) {
+              popover.deferred.resolve();
+            }
             _cleanup();
           });
 
           options.scope.popovers[options.templateUrl] = popover;
-          _show();
+          _show(popover);
         });
     }
     else {
-      _show();
+      _show(popover);
     }
 
     return deferred.promise;

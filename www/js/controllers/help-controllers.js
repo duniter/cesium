@@ -128,8 +128,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     options.bindings.value =options.bindings.value || '';
     options.bindings.hasNext = angular.isDefined(options.bindings.hasNext) ? options.bindings.hasNext : true;
     options.timeout = options.timeout || (Device.enable ? 900 : 500);
-    options.removeOnClose = true; // Avoid later hide(), after show() of the second popover
+    options.autoremove = true; // avoid memory leak
     options.bindings.tour = $scope.tour;
+    options.backdropClickToClose = !$scope.tour;
     return UIUtils.popover.helptip(id, options);
   };
 
@@ -454,7 +455,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
               position: UIUtils.screen.isSmall() ? 'bottom-right' : 'center'
             }
           },
-          timeout: UIUtils.screen.isSmall() ? 2000 : 1000
+          timeout: UIUtils.screen.isSmall() ? 2000 : 1000,
+          retry: 10
         });
       },
 
@@ -537,7 +539,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
                 icon: {
                   position: 'center'
                 }
-              }
+              },
+              retry: 10 // 10 * 500 = 5s max
             });
           });
       },
@@ -635,7 +638,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
               position: UIUtils.screen.isSmall() ? 'bottom-right' : 'center'
             }
           },
-          timeout: UIUtils.screen.isSmall() ? 2000 : 500
+          timeout: UIUtils.screen.isSmall() ? 2000 : 500,
+          retry: 10
         });
       },
 

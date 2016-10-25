@@ -126,8 +126,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Show Help tour
   ////////////////////////////////////////
 
-  $scope.createHelptipScope = function() {
-    if ($rootScope.tour || !$rootScope.settings.helptip.enable) {
+  $scope.createHelptipScope = function(isTour) {
+    if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable)) {
       return; // avoid other helptip to be launched (e.g. wallet)
     }
     // Create a new scope for the tour controller
@@ -138,8 +138,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.startHelpTour = function() {
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. wallet)
-    var helptipScope = $scope.$new();
-    $controller('HelpTipCtrl', { '$scope': helptipScope});
+    var helptipScope = $scope.createHelptipScope(true);
     return helptipScope.startHelpTour()
     .then(function() {
       helptipScope.$destroy();
@@ -159,31 +158,22 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.showProfilePopover = function(event) {
-    if (!$scope.profilePopover) {
-      //Cleanup the popover when we're done with it!
-      $scope.$on('$destroy', function() {
-        $scope.profilePopover.remove();
-      });
-      return $ionicPopover.fromTemplateUrl('templates/common/popover_profile.html', {
-        scope: $scope
-      }).then(function(popover) {
+    return UIUtils.popover.show(event, {
+      templateUrl :'templates/common/popover_profile.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
         $scope.profilePopover = popover;
-        $scope.showProfilePopover(event);
-      });
-    }
-    else {
-      return $scope.profilePopover.show(event)
-        .then(function() {
-          $timeout(function() {
-            UIUtils.ink({selector: '#profile-popover .ink, #profile-popover .ink-dark'});
-          }, 100);
-        });
-    }
+        $timeout(function() {
+          UIUtils.ink({selector: '#profile-popover .ink, #profile-popover .ink-dark'});
+        }, 100);
+      }
+    });
   };
 
   $scope.closeProfilePopover = function() {
-    if ($scope.profilePopover) {
-      $scope.profilePopover.hide();
+    if ($scope.profilePopover && $scope.profilePopover.isShown()) {
+      $timeout(function(){$scope.profilePopover.hide()});
     }
   };
 
@@ -211,11 +201,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     };
 
     return $q(function(resolve, reject){
-
-      Device.ready()
-
       if (!Wallet.isLogin()) {
-        $scope.showLoginModal()
+        return $scope.showLoginModal()
         .then(function(walletData) {
           if (walletData) {
             $rootScope.viewFirstEnter = false;
@@ -240,7 +227,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         });
       }
       else if (!Wallet.data.loaded) {
-        Wallet.loadData()
+        return Wallet.loadData()
         .then(function(walletData){
           _showConfirmIfUnused();
           $rootScope.walletData = walletData;
@@ -263,7 +250,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Login and go to wallet
   $scope.login = function() {
-    $scope.loginAndGo('app.view_wallet');
+    return $scope.loginAndGo('app.view_wallet');
   };
 
   // Login and go to a state
@@ -271,7 +258,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     $scope.closeProfilePopover();
 
     if (!Wallet.isLogin()) {
-      $scope.showLoginModal()
+      return $scope.showLoginModal()
       .then(function(walletData){
         UIUtils.loading.hide(10);
         if (walletData) {
@@ -280,7 +267,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       });
     }
     else {
-      $state.go(state);
+      return $state.go(state);
     }
   };
 
@@ -350,7 +337,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Open transfer modal
   $scope.showTransferModal = function(parameters) {
-    $scope.loadWallet()
+    return $scope.loadWallet()
     .then(function(walletData){
       UIUtils.loading.hide();
       if (walletData) {
@@ -366,21 +353,21 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.showAboutModal = function() {
-    Modals.showAbout();
+    return Modals.showAbout();
   };
 
   $scope.showJoinModal = function() {
     $scope.closeProfilePopover();
-    Modals.showJoin();
+    return Modals.showJoin();
   };
 
   $scope.showSettings = function() {
     $scope.closeProfilePopover();
-    $state.go('app.settings');
+    return $state.go('app.settings');
   };
 
   $scope.showHelpModal = function(parameters) {
-    Modals.showHelp(parameters);
+    return Modals.showHelp(parameters);
   };
 
   ////////////////////////////////////////

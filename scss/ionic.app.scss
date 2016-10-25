@@ -1193,6 +1193,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+// Empeche les clignotement du backdrop, pendant le feature tour
+.nobackdrop .popover-backdrop.active{
+  background-color: transparent !important;
+}
+
 .helptip-anchor {
   display:block;
   position: absolute;

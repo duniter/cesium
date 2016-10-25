@@ -31,17 +31,6 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     $scope.load();
   });
 
-  $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
-    scope: $scope
-  }).then(function(popover) {
-    $scope.actionsPopover = popover;
-  });
-
-  //Cleanup the popover when we're done with it!
-  $scope.$on('$destroy', function() {
-    $scope.actionsPopover.remove();
-  });
-
   $scope.setPopupForm = function(popupForm) {
     $scope.popupForm = popupForm;
   };
@@ -182,15 +171,47 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     }
   };
 
+  /* -- modals & popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
+  $scope.startSettingsTour = function() {
+    $scope.hideActionsPopover();
+
+    return $scope.showHelpTip(0, true);
+  };
+
   // Show help tip (show only not already shown)
-  $scope.showHelpTip = function() {
-    if (!$scope.isLogin()) return;
+  $scope.showHelpTip = function(index, tour) {
+    if (!$scope.isLogin() && !tour) return;
     var index = angular.isDefined(index) ? index : csSettings.data.helptip.settings;
     if (index < 0) return;
     if (index === 0) index = 1; // skip first step
 
     // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope();
+    var helptipScope = $scope.createHelptipScope(tour);
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
 
     return helptipScope.startSettingsTour(index, false)

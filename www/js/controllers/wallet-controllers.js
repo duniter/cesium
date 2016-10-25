@@ -48,7 +48,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.setShowDetails(angular.isDefined(csSettings.data.wallet, csSettings.data.wallet.showPubkey) ?
           csSettings.data.wallet.showPubkey: true);
         $scope.updateView();
-        $scope.loading=false;
+        $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', $rootScope.walletData.pubkey, 1100);
         $scope.showHelpTip();
@@ -310,7 +310,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.startWalletTour = function() {
     $scope.hideActionsPopover();
-
     return $scope.showHelpTip(0, true);
   };
 
@@ -320,7 +319,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     if (index < 0) return;
 
     // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope();
+    var helptipScope = $scope.createHelptipScope(isTour);
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
     helptipScope.tour = isTour;
 
