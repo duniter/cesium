@@ -10,7 +10,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, $timeout, esHttp, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils) {
+.factory('esUser', function($rootScope, $q, $timeout, esHttp, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils, Device) {
   'ngInject';
 
   function factory(host, port) {
@@ -387,6 +387,27 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
       else {
         onSettingsChanged(data);
+      }
+    });
+
+    // Ask (once) user to enable ES plugin
+    Device.ready().then(function() {
+
+      if (csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.askEnable && // if config ask enable
+        csSettings.data.plugins.es && !csSettings.data.plugins.es.enable // AND user settings has disable plugin
+        && csSettings.data.plugins.es.askEnable // AND user has not yet answer 'NO'
+      ) {
+        UIUtils.alert.confirm('ES_SETTINGS.CONFIRM.ASK_ENABLE', 'ES_SETTINGS.CONFIRM.ASK_ENABLE_TITLE', {
+          cancelText: 'COMMON.BTN_NO',
+          okText: 'COMMON.BTN_YES'
+        })
+          .then(function (confirm) {
+            if (confirm) {
+              csSettings.data.plugins.es.enable = true;
+            }
+            csSettings.data.plugins.es.askEnable = false;
+            csSettings.store();
+          });
       }
     });
 

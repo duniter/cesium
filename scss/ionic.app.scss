@@ -655,19 +655,30 @@ $screen-menu:                     845px;
   background-image: url(../img/card.png);
 }
 
+/* ----
+    Popup alert
+   ---- */
 
+.popup-container.warning,
 .popup-container.confirm {
   .popup {
     min-width: 250px !important;
     width: 350px !important;
   }
-
   .popup-head {
-    background-color: $positive;
-
     h1, h2, h3, h5, h6, p {
       color: white;
     }
+  }
+}
+.popup-container.warning {
+  .popup-head {
+    background-color: $assertive;
+  }
+}
+.popup-container.confirm {
+  .popup-head {
+    background-color: $positive;
   }
 }
 

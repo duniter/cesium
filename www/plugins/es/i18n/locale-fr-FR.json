@@ -216,17 +216,21 @@
     }
   },
   "ES_SETTINGS": {
-    "PLUGIN_NAME": "Annuaire et place de marché",
-    "ENABLE_TOGGLE": "Activer toutes les extensions ?",
+    "PLUGIN_NAME": "Annonces, professionnels et messages privés",
+    "ENABLE_TOGGLE": "Activer l'extension ?",
     "ENABLE_MARKET_TOGGLE": "Activer les annonces ?",
     "ENABLE_REGISTRY_TOGGLE": "Activer l'annuaire des pro ?",
-    "ENABLE_MESSAGE_TOGGLE": "Activer la gestion des messages ?",
+    "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
     "ENABLE_SETTINGS_TOGGLE": "Activer le stockage distant des paramètres ?",
     "NODE": "Addresse du noeud de données",
     "NODE_HELP": "server.domain.com:port",
     "POPUP_NODE": {
       "TITLE" : "Noeud de données",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
+    },
+    "CONFIRM": {
+      "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",
+      "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Annonces</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Annuaire des professionnels</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> (recommandé) ?"
     }
   }
 }

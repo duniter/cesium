@@ -6,6 +6,8 @@
     "PUBKEY": "Clé publique",
     "MEMBER": "Membre",
     "BTN_OK": "OK",
+    "BTN_YES": "Oui",
+    "BTN_NO": "Non",
     "BTN_SEND": "Envoyer",
     "BTN_SEND_MONEY": "Faire un virement",
     "BTN_SEND_MONEY_SHORT": "Virement",

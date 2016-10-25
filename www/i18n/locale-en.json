@@ -6,6 +6,8 @@
     "PUBKEY": "Public key",
     "MEMBER": "Member",
     "BTN_OK": "OK",
+    "BTN_YES": "Yes",
+    "BTN_NO": "No",
     "BTN_SEND": "Send",
     "BTN_SEND_MONEY": "Transfer money",
     "BTN_SEND_MONEY_SHORT": "Transfer",

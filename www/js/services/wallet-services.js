@@ -261,12 +261,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
               // Load parameters
               // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-              loadParameters()
+              loadParameters(),
+
+              // Get current UD
+              loadCurrentUD()
             ])
           }
           else {
-            // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-            return loadParameters();
+            return $q.all([
+              // Load parameters
+              // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+              loadParameters(),
+
+              // Get current UD
+              // This prevent division by zero (in TX history)
+              loadCurrentUD()
+            ]);
           }
         })
         .then(function(){
@@ -564,33 +574,31 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    loadUDs = function() {
-      return $q(function(resolve, reject) {
-        BMA.blockchain.stats.ud()
+    loadCurrentUD = function() {
+      return BMA.blockchain.stats.ud()
         .then(function(res){
           // Special case for currency init
           if (!res.result.blocks.length) {
             data.currentUD = data.parameters ? data.parameters.ud0 : -1;
-            resolve();
+            return data.currentUD ;
           }
           else {
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
                 data.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
-                resolve();
+                return data.currentUD;
               })
               .catch(function(err) {
                 data.currentUD = null;
-                reject(err);
+                throw err;
               });
             }
         })
         .catch(function(err) {
           data.currentUD = null;
-          reject(err);
+          throw err;
         });
-      });
     },
 
     // Must be call after loadParameters() and loadRequirements()
@@ -637,8 +645,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // Get currency parameters
           loadParameters(),
 
-          // Get UDs
-          loadUDs(),
+          // Get current UD
+          loadCurrentUD(),
 
           // Get requirements
           loadRequirements(),
@@ -678,7 +686,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     refreshData = function(options) {
       if (!options) {
         options = {
-          ud: true,
+          currentUd: true,
           requirements: true,
           sources: true,
           tx: {
@@ -691,8 +699,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
       var jobs = [];
 
-      // Get UDs
-      if (options.ud) jobs.push(loadUDs());
+      // Get current UD
+      if (options.currentUd) jobs.push(loadCurrentUD());
 
       // Get requirements
       if (options.requirements) {

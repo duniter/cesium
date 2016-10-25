@@ -23,11 +23,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
-  .filter('formatDecimal', function() {
+  .filter('formatDecimal', function($rootScope) {
     return function(input) {
       if (input === undefined) return '0';
       if (input === Infinity || input === -Infinity) {
-        console.warn("formatDecimal: division by zero ? (is currentUD defined ?)");
+        console.warn("formatDecimal: division by zero ? (is currentUD defined ?) = "  + $rootScope.walletData.currentUD);
         return 'error';
       }
       if (Math.abs(input) < 0.0001) return '~ 0';

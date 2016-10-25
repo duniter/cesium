@@ -227,6 +227,10 @@
     "POPUP_NODE": {
       "TITLE" : "Data Node",
       "HELP" : "Set the address of the node to use:"
+    },
+    "CONFIRM": {
+      "ASK_ENABLE_TITLE": "New features",
+      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ad</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>There have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> this features (recommended) ?"
     }
   }
 }

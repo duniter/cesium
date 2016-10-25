@@ -20,6 +20,7 @@
     "plugins":{
       "es": {
         "enable": true,
+        "askEnable": false,
         "host": "data.duniter.fr",
         "port": "80"
       }
@@ -48,6 +49,7 @@
     "plugins":{
       "es": {
         "enable": false,
+        "askEnable": true,
         "host": "data.le-sou.org",
         "port": "80"
       }
@@ -76,6 +78,7 @@
     "plugins":{
       "es": {
         "enable": false,
+        "askEnable": true,
         "host": "data.duniter.fr",
         "port": "80"
       }
