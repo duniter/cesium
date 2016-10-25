@@ -5,6 +5,12 @@
   <ion-content scroll="false">
     <div class="list item-text-wrap">
 
+      <a class="item item-icon-left ink"
+         ng-click="showSharePopover($event)">
+        <i class="icon ion-android-share"></i>
+        {{'COMMON.BTN_SHARE' | translate}}
+      </a>
+
       <a class="item item-icon-left assertive ink "
          ng-if="canEdit"
          ng-click="delete()">

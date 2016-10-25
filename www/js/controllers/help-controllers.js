@@ -246,8 +246,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        var smallScreen = screenmatch.is('sm, xs');
-        return $state.go(smallScreen ? 'app.currency_view' : 'app.currency_view_lg')
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg')
           .then(function () {
             return $scope.showHelpTip('helptip-currency-newcomers', {
               bindings: {
@@ -273,13 +272,12 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function () {
         if (!csSettings.data.useRelative) return true; //skip but continue
-        var smallScreen = screenmatch.is('sm, xs');
         return $scope.showHelpTip('helptip-currency-mass-member-unit', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_UNIT_RELATIVE',
             contentParams: contentParams,
             icon: {
-              position: smallScreen ? 'right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'right' : 'center'
             }
           }
         });
@@ -287,27 +285,25 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function () {
         if (!csSettings.data.useRelative) return true; //skip but continue
-        var smallScreen = screenmatch.is('sm, xs');
         return $scope.showHelpTip('helptip-currency-change-unit', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_CHANGE_UNIT',
             contentParams: contentParams,
             icon: {
-              position: smallScreen ? 'right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'right' : 'center'
             }
           }
         });
       },
 
       function () {
-        var smallScreen = screenmatch.is('sm, xs');
         if (csSettings.data.useRelative) return true; //skip but continue
         return $scope.showHelpTip('helptip-currency-change-unit', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_CHANGE_UNIT_TO_RELATIVE',
             contentParams: contentParams,
             icon: {
-              position: smallScreen ? 'right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'right' : 'center'
             }
           }
         });
@@ -362,10 +358,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         }
         return $state.go('app.wot_lookup')
           .then(function(){
-            var smallScreen = screenmatch.is('sm, xs');
             return $scope.showHelpTip('helptip-wot-search-text', {
               bindings: {
-                content: smallScreen ? 'HELP.TIP.WOT_SEARCH_TEXT_XS' : 'HELP.TIP.WOT_SEARCH_TEXT',
+                content: UIUtils.screen.isSmall() ? 'HELP.TIP.WOT_SEARCH_TEXT_XS' : 'HELP.TIP.WOT_SEARCH_TEXT',
                 icon: {
                   position: 'center'
                 }
@@ -452,21 +447,19 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             angular.element(element).triggerHandler('click');
           });
         }
-        var smallScreen = screenmatch.is('sm, xs');
-        return $scope.showHelpTip(smallScreen ? 'fab-certify': 'helptip-certs-certify', {
+        return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'fab-certify': 'helptip-certs-certify', {
           bindings: {
             content: 'HELP.TIP.WOT_VIEW_CERTIFY',
             icon: {
-              position: smallScreen ? 'bottom-right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'bottom-right' : 'center'
             }
           },
-          timeout: smallScreen ? 2000 : 1000
+          timeout: UIUtils.screen.isSmall() ? 2000 : 1000
         });
       },
 
       function() {
-        var smallScreen = screenmatch.is('sm, xs');
-        return $scope.showHelpTip(smallScreen ? 'fab-certify': 'helptip-certs-certify', {
+        return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'fab-certify': 'helptip-certs-certify', {
           bindings: {
             content: 'HELP.TIP.CERTIFY_RULES',
             icon: {
@@ -575,12 +568,11 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function () {
-        var smallScreen = screenmatch.is('sm, xs');
-        return $scope.showHelpTip(smallScreen ? 'helptip-wallet-options-xs' : 'helptip-wallet-options', {
+        return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'helptip-wallet-options-xs' : 'helptip-wallet-options', {
           bindings: {
             content: 'HELP.TIP.WALLET_OPTIONS',
             icon: {
-              position: smallScreen ? 'right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'right' : 'center'
             },
             hasNext: hasNext
           }
@@ -618,8 +610,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             angular.element(element).triggerHandler('click');
           });
         }
-        var smallScreen = screenmatch.is('sm, xs');
-        if (!smallScreen) return true; // skip this helptip if not in tabs mode
+        if (!UIUtils.screen.isSmall()) return true; // skip this helptip if not in tabs mode
         return $scope.showHelpTip('helptip-received-certs', {
           bindings: {
             content: 'HELP.TIP.WALLET_RECEIVED_CERTS'
@@ -628,8 +619,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function() {
-        var smallScreen = screenmatch.is('sm, xs');
-        if (smallScreen) {
+        if (UIUtils.screen.isSmall()) {
           // Select the second tabs
           $timeout(function() {
             var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
@@ -638,14 +628,14 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             }
           }, 100);
         }
-        return $scope.showHelpTip(smallScreen ? 'fab-select-certify': 'helptip-certs-select-certify', {
+        return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'fab-select-certify': 'helptip-certs-select-certify', {
           bindings: {
             content: 'HELP.TIP.WALLET_CERTIFY',
             icon: {
-              position: smallScreen ? 'bottom-right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'bottom-right' : 'center'
             }
           },
-          timeout: smallScreen ? 2000 : 500
+          timeout: UIUtils.screen.isSmall() ? 2000 : 500
         });
       },
 
@@ -690,13 +680,12 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startHeaderTour = function(startIndex, hasNext) {
-    var smallScreen = screenmatch.is('sm, xs');
-    if (smallScreen) return $scope.emptyPromise(true);
+    if (UIUtils.screen.isSmall()) return $scope.emptyPromise(true);
 
     var steps = [
       function () {
 
-        if (smallScreen) return true; // skip for small screen
+        if (UIUtils.screen.isSmall()) return true; // skip for small screen
         var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
         if (!elements || !elements.length) return true;
         return $scope.showHelpTip(elements[elements.length -1], {
@@ -710,9 +699,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function () {
-        var smallScreen = screenmatch.is('sm, xs');
         // small screens
-        if (smallScreen) {
+        if (UIUtils.screen.isSmall()) {
           $ionicSideMenuDelegate.toggleLeft(true);
           return $scope.showHelpTip('helptip-menu-btn-settings', {
             bindings: {
@@ -764,8 +752,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     var steps = [
 
       function () {
-        var smallScreen = screenmatch.is('sm, xs');
-        if (!smallScreen) return true;
+        if (!UIUtils.screen.isSmall()) return true;
         $ionicSideMenuDelegate.toggleLeft(true);
         return $scope.showHelpTip('helptip-menu-btn-settings', {
           bindings: {

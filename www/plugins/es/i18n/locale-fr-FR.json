@@ -12,7 +12,7 @@
   },
   "MENU": {
     "MARKET": "Annonces",
-    "REGISTRY": "Professionels",
+    "REGISTRY": "Professionnels",
     "USER_PROFILE": "Mon profil",
     "USER_MESSAGE": "Messages"
   },
@@ -135,7 +135,7 @@
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_NEW": "Je référence mon organisation",
     "SEARCH": {
-      "TITLE": "Annuaire des professionels",
+      "TITLE": "Annuaire des professionnels",
       "TITLE_SMALL_DEVICE": "Annuaire pro",
       "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
       "BTN_ADD": "Nouveau",

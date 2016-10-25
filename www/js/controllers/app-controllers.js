@@ -82,18 +82,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $rootScope.config = csConfig;
   $rootScope.device = Device;
   $rootScope.login = Wallet.isLogin();
-  console.debug("$root.login="+$rootScope.login);
-
-  $rootScope.smallscreen = screenmatch.bind('xs, sm', $rootScope);
-
-  $rootScope.smallscreen.active = true; //true if the screen is xs or sm
 
   ////////////////////////////////////////
   // Show currency view
   ////////////////////////////////////////
 
   $scope.showCurrencyView = function() {
-    $state.go(screenmatch.is('sm, xs') ? 'app.currency_view': 'app.currency_view_lg');
+    $state.go(UIUtils.screen.isSmall() ? 'app.currency_view': 'app.currency_view_lg');
   };
 
   ////////////////////////////////////////

@@ -376,7 +376,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
                                         $anchorScroll, $filter,
-                                        Wallet, esRegistry, UIUtils, BMA, esHttp) {
+                                        Wallet, esRegistry, esUser, UIUtils, BMA, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -399,17 +399,6 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
     }
   });
 
-  $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/view_popover_actions.html', {
-    scope: $scope
-  })
-  .then(function(popover) {
-    $scope.actionsPopover = popover;
-  });
-
-  $scope.$on('$destroy', function() {
-    $scope.actionsPopover.remove();
-  });
-
   $scope.load = function(id, anchor) {
     $q.all([
       esRegistry.category.all()
@@ -429,8 +418,11 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           }
           $scope.canEdit = Wallet.isUserPubkey($scope.formData.issuer);
 
-          // Load issuer as member
-          return BMA.wot.member.get($scope.formData.issuer);
+          // Load avatar and name (and uid)
+          return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
+            .then(function(idties) {
+              return idties[0];
+            })
         })
         .then(function(member){
           $scope.issuer = member;
@@ -497,9 +489,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   };
 
   $scope.delete = function() {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
+    $scope.hideActionsPopover();
 
     // translate
     var translations;
@@ -523,7 +513,34 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
     });
   };
 
+  /* -- modals & popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/registry/view_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
   $scope.showSharePopover = function(event) {
+    $scope.hideActionsPopover();
     var title = $scope.formData.title;
     var url = $state.href('app.registry_view_record', {title: title, id: $scope.id}, {absolute: true});
     UIUtils.popover.share(event, {
@@ -536,6 +553,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
       }
     });
   };
+
 }
 
 function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q, Device,

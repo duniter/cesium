@@ -7,7 +7,7 @@
       <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-style="formData.avatarStyle"
-           ng-class="{'avatar-wallet': !formData.avatarStyle && walletData && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
+           ng-class="{'avatar-wallet': !formData.avatarStyle && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
         </i>
         <ng-if ng-if="formData.name">
           <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>

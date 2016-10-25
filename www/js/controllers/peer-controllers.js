@@ -4,7 +4,7 @@ function PeerController($scope, $rootScope, $ionicSlideBoxDelegate, $ionicModal,
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     if (!$rootScope.memberUidsByPubkeys) {
-      BMA.wot.member.uids(true/*cache*/)
+      BMA.wot.member.uids()
       .then(function(uids){
         $rootScope.memberUidsByPubkeys = uids;
         $scope.showPeer($state.stateParams.server);

@@ -1,6 +1,6 @@
 angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services', 'cesium.es.http.services'])
 
-.factory('esComment', function($q, BMA, esHttp) {
+.factory('esComment', function($q, BMA, esHttp, esUser) {
   'ngInject';
 
   function factory(host, port, index) {
@@ -46,16 +46,16 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
               resolve([]);
             }
             else {
-              BMA.wot.member.uids(true/*cache*/)
-              .then(function(uids){
-                var result = res.hits.hits.reduce(function(result, hit) {
-                  var comment = hit._source;
-                  comment.id = hit._id;
-                  comment.uid = uids[comment.issuer];
-                  return result.concat(comment);
-                }, []);
+              var result = res.hits.hits.reduce(function(result, hit) {
+                var comment = hit._source;
+                comment.id = hit._id;
+                return result.concat(comment);
+              }, []);
 
-                resolve(result);
+              // fill avatars (and uid)
+              esUser.profile.fillAvatars(result, 'issuer')
+                .then(function() {
+                  resolve(result);
               })
               .catch(errorFct);
             }

@@ -2,7 +2,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
 .factory('UIUtils',
   function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
-           $ionicPopover, $state, $rootScope, $ionicPosition) {
+           $ionicPopover, $state, $rootScope, screenmatch) {
   'ngInject';
 
   function exact(regexpContent) {
@@ -19,6 +19,9 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     regex = {
       IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
+    },
+    data = {
+      smallscreen: screenmatch.bind('xs, sm', $rootScope)
     }
   ;
 
@@ -157,6 +160,10 @@ angular.module('cesium.utils.services', ['ngResource'])
         return alertError(fullMsg, subtitle);
       }
     };
+  }
+
+  function isSmallScreen() {
+    return data.smallscreen.active;
   }
 
   function selectElementText(el) {
@@ -606,6 +613,9 @@ angular.module('cesium.utils.services', ['ngResource'])
       show: showToast
     },
     onError: onError,
+    screen: {
+      isSmall: isSmallScreen
+    },
     ink: ionicMaterialInk.displayEffect,
     motion: ionicMaterialMotion,
     fab: {

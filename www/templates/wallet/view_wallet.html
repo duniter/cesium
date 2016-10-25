@@ -26,7 +26,7 @@
         </i>
         <h3 class="light" ng-if="walletData.name">{{walletData.name}}</h3>
         <h3 class="light" ng-if="!walletData.name && walletData.isMember">{{walletData.uid}}</h3>
-        <h3 class="light" ng-if="!walletData.name && !walletData.isMember"><i class="icon ion-key"></i> {{::walletData.pubkey | formatPubkey}}</h3>
+        <h3 class="light" ng-if="!walletData.name && !walletData.isMember"><i class="icon ion-key"></i> {{walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
             <span ng-if="!$root.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="$root.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
@@ -94,12 +94,13 @@
         <!-- Public key -->
         <span id="wallet-pubkey"
               class="item item-icon-left item-text-wrap ink"
+
               ng-if="showDetails"
               on-hold="copy(walletData.pubkey)"
-              copy-on-click="{{::walletData.pubkey}}">
+              copy-on-click="{{walletData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
-          <h4 id="pubkey" class="dark">{{::walletData.pubkey}}</h4>
+          <h4 id="pubkey" class="dark">{{walletData.pubkey}}</h4>
         </span>
 
         <!-- Errors transactions-->

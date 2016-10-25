@@ -83,16 +83,16 @@ function ESJoinController($scope, $state, csSettings, PluginService) {
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $state, screenmatch, PluginService, csSettings) {
+function ESMenuExtendController($scope, $state, PluginService, csSettings,UIUtils) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
 
   $scope.showMarketLookupView = function() {
-    $state.go(screenmatch.is('sm, xs') ? 'app.market_lookup': 'app.market_lookup_lg');
+    $state.go(UIUtils.screen.isSmall() ? 'app.market_lookup': 'app.market_lookup_lg');
   };
 
   $scope.showRegistryLookupView = function() {
-    $state.go(screenmatch.is('sm, xs') ? 'app.registry_lookup': 'app.registry_lookup_lg');
+    $state.go(UIUtils.screen.isSmall() ? 'app.registry_lookup': 'app.registry_lookup_lg');
   };
 
   $scope.updateView = function() {

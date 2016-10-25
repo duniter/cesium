@@ -84,7 +84,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover) {
   'ngInject';
 
   var defaultSearchLimit = 20;
@@ -136,7 +136,7 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
   $scope.doSearch = function() {
     $scope.search.loading = true;
     var text = $scope.search.text.trim();
-    if (($rootScope.smallscreen.active && text.length < 3) || !text.length) {
+    if ((UIUtils.screen.isSmall() && text.length < 3) || !text.length) {
       $scope.search.results = [];
       $scope.search.loading = false;
       $scope.search.type = 'none';
@@ -309,10 +309,10 @@ function WotLookupController($scope, $rootScope, BMA, $state, UIUtils, $timeout,
 
 }
 
-function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover){
+function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover){
   'ngInject';
 
-  WotLookupController.call(this, $scope, $rootScope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover);
 
   $scope.search.loading = false;
   $scope.enableFilter = false;
@@ -339,7 +339,7 @@ function WotLookupModalController($scope, $rootScope, BMA, $state, UIUtils, $tim
   // endRemoveIf(device)
 }
 
-function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtils, Device, WotService) {
+function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService) {
   'ngInject';
 
   $scope.formData = {};
@@ -379,7 +379,7 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
   };
 
   $scope.showCertifications = function() {
-    $state.go(screenmatch.is('sm, xs') ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
+    $state.go(UIUtils.screen.isSmall() ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
       pubkey: $scope.formData.pubkey,
       uid: $scope.formData.name || $scope.formData.uid
     });
@@ -415,7 +415,7 @@ function WotIdentityViewController($scope, $state, screenmatch, $timeout, UIUtil
  * @param Modals
  * @constructor
  */
-function WotCertificationsViewController($scope, $timeout, $translate, csSettings, Wallet, UIUtils, WotService, Modals) {
+function WotCertificationsViewController($scope, $rootScope, $timeout, $translate, csSettings, Wallet, UIUtils, WotService, Modals) {
   'ngInject';
 
   $scope.loading = true;
@@ -471,13 +471,12 @@ function WotCertificationsViewController($scope, $timeout, $translate, csSetting
   // Certify the current identity
   $scope.certify = function() {
     $scope.loadWallet()
-    .then(function(walletData) {
-      console.log(walletData.blockUid);
-      /*if (!walletData.isMember) {
-        UIUtils.alert.error(walletData.requirements.needSelf ?
+    .then(function() {
+      if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
+        UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
           'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
         return;
-      }*/
+      }
       UIUtils.loading.hide();
       UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
       .then(function(confirm){
@@ -503,9 +502,9 @@ function WotCertificationsViewController($scope, $timeout, $translate, csSetting
   $scope.selectAndCertify = function() {
     $scope.loadWallet()
       .catch(UIUtils.onError('ERROR.LOGIN_FAILED'))
-      .then(function(walletData) {
-        if (!walletData.isMember) {
-          UIUtils.alert.error(walletData.requirements.needSelf ?
+      .then(function() {
+        if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
+          UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
             'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;
         }

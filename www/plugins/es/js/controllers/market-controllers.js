@@ -380,7 +380,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
 
 function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $state, $translate, $ionicHistory, $q,
                                       $timeout, $filter,
-                                      Wallet, esMarket, UIUtils,  esHttp, BMA, csSettings) {
+                                      Wallet, esMarket, UIUtils,  esHttp, esUser, BMA, csSettings) {
   'ngInject';
 
   $scope.formData = {};
@@ -402,17 +402,6 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
     else {
       $state.go('app.market_lookup');
     }
-  });
-
-  $ionicPopover.fromTemplateUrl('plugins/es/templates/market/view_popover_actions.html', {
-    scope: $scope
-  })
-  .then(function(popover) {
-    $scope.actionsPopover = popover;
-  });
-
-  $scope.$on('$destroy', function() {
-    $scope.actionsPopover.remove();
   });
 
   $scope.load = function (id, anchor) {
@@ -442,8 +431,10 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
         $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
       }
       $scope.canEdit = $scope.formData && Wallet.isUserPubkey($scope.formData.issuer);
-
-      return BMA.wot.member.get($scope.formData.issuer);
+      return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
+        .then(function(idties) {
+          return idties[0];
+        })
     })
     .then(function (member) {
       $scope.issuer = member;
@@ -541,9 +532,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
   };
 
   $scope.delete = function() {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
-    }
+    $scope.hideActionsPopover();
 
     UIUtils.alert.confirm('MARKET.VIEW.REMOVE_CONFIRMATION')
     .then(function(confirm) {
@@ -561,7 +550,35 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
     });
   };
 
+  /* -- modals & popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/market/view_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
   $scope.showSharePopover = function(event) {
+    $scope.hideActionsPopover();
+
     var title = $scope.formData.title;
     var url = $state.href('app.market_view_record', {title: title, id: $scope.id}, {absolute: true});
     UIUtils.popover.share(event, {

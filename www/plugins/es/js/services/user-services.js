@@ -163,17 +163,23 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
 
       var uidsByPubkey;
-      BMA.wot.member.uids()
-      .then(function(res){
-        uidsByPubkey = res;
-        return esHttp.post(host, port, '/user/profile/_search?pretty')(request);
-      })
-      .then(function(res) {
-        if (res.hits.total === 0) {
+      var hits;
+      $q.all([
+        BMA.wot.member.uids()
+          .then(function(res){
+            uidsByPubkey = res;
+          }),
+        esHttp.post(host, port, '/user/profile/_search?pretty')(request)
+          .then(function(res){
+            hits = res.hits;
+          })
+      ])
+      .then(function() {
+        if (hits.total === 0) {
           resolve(datas);
         }
         else {
-          _.forEach(res.hits.hits, function(hit) {
+          _.forEach(hits.hits, function(hit) {
             var values = map[hit._id];
             if (!values) {
               var value = {};
@@ -189,7 +195,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               }
               data.name=hit._source.title;
               if (!data.uid) {
-                data.uid = hit._source.uid ? hit._source.uid : uidsByPubkey[data.pubkey];
+                data.uid = hit._source.uid ? hit._source.uid : uidsByPubkey[data[pubkeyAtributeName]];
               }
               if (hit.highlight) {
                 if (hit.highlight.title) {

@@ -34,16 +34,16 @@
         <span class="item item-divider">
           <span translate>ACCOUNT.ERROR_TX_SENT</span>
           <div class="badge item-note">
-            <span ng-if="!$root.settings.useRelative">({{walletData.currency | abbreviate}})</span>
-            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{$root.walletData.currency | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{$root.walletData.currency | abbreviate}}</sub>)</span>
           </div>
         </span>
 
-        <span class="item" ng-if="!walletData.tx.errors.length">
+        <span class="item" ng-if="!$root.walletData.tx.errors.length">
           <h3 translate>ACCOUNT.NO_TX</h3>
         </span>
 
-        <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.errors | filter: filterNegative('amount')">
+        <span class="item ink item-badge-right" ng-repeat="tx in $root.walletData.tx.errors | filter: filterNegative('amount')">
           <h2>
             <i class="icon" ng-class="{'ion-clock': tx.valid, 'ion-close-circled assertive': !tx.valid}"> </i>
             <span ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
@@ -67,7 +67,7 @@
           </h3>
           <div class="badge item-note assertive">
             <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-            <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span ng-if="$root.settings.useRelative">{{::tx.amount/$root.walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
 
@@ -75,16 +75,16 @@
         <span class="item item-divider">
           <span translate>ACCOUNT.ERROR_TX_RECEIVED</span>
           <div class="badge item-note">
-            <span ng-if="!$root.settings.useRelative">({{walletData.currency | abbreviate}})</span>
-            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{$root.walletData.currency | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{$root.walletData.currency | abbreviate}}</sub>)</span>
           </div>
         </span>
 
-        <span class="item" ng-if="!walletData.tx.errors.length">
+        <span class="item" ng-if="!$root.walletData.tx.errors.length">
           <h3 translate>ACCOUNT.NO_TX</h3>
         </span>
 
-        <span class="item ink item-badge-right" ng-repeat="tx in walletData.tx.errors | filter: filterPositive('amount')">
+        <span class="item ink item-badge-right" ng-repeat="tx in $root.walletData.tx.errors | filter: filterPositive('amount')">
           <h2>
             <i class="icon" ng-class="{'ion-clock': tx.valid, 'ion-close-circled assertive': !tx.valid}"> </i>
             <span ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
@@ -108,7 +108,7 @@
           </h3>
           <div class="badge badge-assertive item-note">
             <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-            <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span ng-if="$root.settings.useRelative">{{::tx.amount/$root.walletData.currentUD | formatDecimal}}</span>
           </div >
         </span>
       </div>

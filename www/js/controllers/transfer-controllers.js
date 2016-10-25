@@ -63,8 +63,7 @@ function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $t
     }
 
     $scope.loadWallet()
-    .then(function(walletData) {
-      $scope.walletData = walletData;
+    .then(function() {
       $scope.formData.useRelative = csSettings.data.useRelative;
       $scope.onUseRelativeChanged();
       UIUtils.loading.hide();
@@ -85,7 +84,6 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
                                  csSettings, parameters) {
   'ngInject';
 
-  $scope.walletData = $rootScope.walletData;
   $scope.convertedBalance = 0;
   $scope.formData = {
     destPub: null,
@@ -137,12 +135,12 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
 
   // When changing use relative UD
   $scope.onUseRelativeChanged = function() {
-    $scope.unit = $scope.walletData.currency;
+    $scope.unit = $rootScope.walletData.currency;
     if ($scope.formData.useRelative) {
-      $scope.convertedBalance = $scope.walletData.balance / $scope.walletData.currentUD;
-      $scope.udAmount = $scope.amount * $scope.walletData.currentUD;
+      $scope.convertedBalance = $rootScope.walletData.balance / $rootScope.walletData.currentUD;
+      $scope.udAmount = $scope.amount * $rootScope.walletData.currentUD;
     } else {
-      $scope.convertedBalance = $scope.walletData.balance;
+      $scope.convertedBalance = $rootScope.walletData.balance;
       // Convert to number
       $scope.formData.amount = (!!$scope.formData.amount && typeof $scope.formData.amount == "string") ?
           Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.'))) :
@@ -150,9 +148,9 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
       // Compute UD
       $scope.udAmount = (!!$scope.formData.amount &&
         typeof $scope.formData.amount == "number" &&
-        !!$scope.walletData.currentUD &&
-        typeof $scope.walletData.currentUD == "number") ?
-          $scope.formData.amount / $scope.walletData.currentUD :null;
+        !!$rootScope.walletData.currentUD &&
+        typeof $rootScope.walletData.currentUD == "number") ?
+          $scope.formData.amount / $rootScope.walletData.currentUD :null;
     }
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
@@ -179,7 +177,7 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
       var amount = $scope.formData.amount;
       if ($scope.formData.useRelative && !!amount &&
           typeof amount == "string") {
-        amount = $scope.walletData.currentUD *
+        amount = $rootScope.walletData.currentUD *
                  amount.replace(new RegExp('[.,]'), '.');
       }
 
@@ -197,10 +195,10 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
       $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
       .then(function(translations){
         $translate('CONFIRM.TRANSFER', {
-          from: $scope.walletData.isMember ? $scope.walletData.uid : $filter('formatPubkey')($scope.walletData.pubkey),
+          from: $rootScope.walletData.isMember ? $rootScope.walletData.uid : $filter('formatPubkey')($rootScope.walletData.pubkey),
           to: $scope.destUid ? $scope.destUid : $scope.destPub,
           amount: $scope.formData.amount,
-          unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.walletData.parameters.currency),
+          unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($rootScope.walletData.parameters.currency),
           comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
         })
         .then(function(confirmMsg) {

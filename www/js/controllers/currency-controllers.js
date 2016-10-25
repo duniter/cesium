@@ -59,7 +59,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyLookupController($scope, $state, UIUtils, csCurrency, screenmatch) {
+function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   'ngInject';
 
   $scope.selectedCurrency = '';
@@ -82,7 +82,7 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency, screenmat
   // Called to navigate to the main app
   $scope.selectCurrency = function(id) {
     $scope.selectedCurrency = id;
-    $state.go(screenmatch.is('sm, xs') ? 'app.currency_view' : 'app.currency_view_lg', {name: id});
+    $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg', {name: id});
   };
 }
 

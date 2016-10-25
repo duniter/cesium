@@ -17,15 +17,20 @@
   <ion-item class="card card-comment stable-bg item-text-wrap no-padding"
             ng-class="{'in done': comment.isnew}">
     <div class="padding card-header text-right">
-      <a class="pull-left positive" ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.uid})">
-        <i class="icon ion-person"></i>
-        {{::comment.uid}}
+      <a class="pull-left"
+         ng-class="{'positive': comment.uid, 'dark': !comment.uid}"
+         ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.name||comment.uid})">
+        <i class="icon"
+            ng-class="{'ion-person': comment.uid, 'ion-key': !comment.uid}"></i>
+        {{::comment.name||comment.uid||comment.issuer}}
       </a>
       <a class="gray pull-right" ng-click="shareComment($event, $index)">&nbsp;
         {{::comment.time | formatFromNow}}
       </a>
     </div>
-    <div class="item done in">
+    <div class="item item-avatar done in">
+      <span class="avatar"
+            ng-style="comment.avatarStyle"></span>
       {{::comment.message}}
       <div class="card-footer text-right gray">
         <a class="pull-right" ng-click="shareComment($event, $index)">

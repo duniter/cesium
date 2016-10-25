@@ -155,9 +155,9 @@ function ESCommentsController($scope, $timeout, $filter, $state, Wallet, UIUtils
       comment.issuer = walletData.pubkey;
       var obj = {};
       angular.copy(comment, obj);
-      if (walletData.uid) {
-        obj.uid = walletData.uid;
-      }
+      obj.uid = walletData.isMember ? walletData.uid : null;
+      obj.name = walletData.name;
+      obj.avatarStyle = walletData.avatarStyle;
       obj.isnew = true; // use to  prevent visibility hidden (if animation)
       // Create
       if (!comment.id) {
