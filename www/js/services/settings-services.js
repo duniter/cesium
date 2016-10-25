@@ -145,6 +145,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
     api.registerEvent('data', 'changed');
     api.registerEvent('data', 'store');
+    api.registerEvent('data', 'ready');
 
     return {
       id: id,
@@ -162,7 +163,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
   service.instance = CSSettings;
 
-  service.restore();
+  service.restore()
+    .then(function() {
+      service.api.data.raise.ready();
+    });
 
   return service;
 });

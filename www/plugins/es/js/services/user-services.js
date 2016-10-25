@@ -10,7 +10,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, esHttp, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils) {
+.factory('esUser', function($rootScope, $q, $timeout, esHttp, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils) {
   'ngInject';
 
   function factory(host, port) {
@@ -230,7 +230,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }
         return;
       }
-      console.debug('[esUser] Loading user settings from ES node...');
 
       // Waiting to load crypto libs
       if (!CryptoUtils.isLoaded()) {
@@ -240,6 +239,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }, 200);
         return;
       }
+
+      console.debug('[esUser] Loading user settings from ES node...');
 
       // Load settings
       esHttp.get(host, port, '/user/settings/:id')({id: data.pubkey})
@@ -283,6 +284,15 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     function onSettingsChanged(data) {
       if (!Wallet.isLogin()) return;
+
+      // Waiting to load crypto libs
+      if (!CryptoUtils.isLoaded()) {
+        console.debug('[esUser] Waiting crypto lib loading...');
+        $timeout(function() {
+          onSettingsChanged(data);
+        }, 200);
+        return;
+      }
 
       console.debug('[esUser] Saving user settings to ES...');
 

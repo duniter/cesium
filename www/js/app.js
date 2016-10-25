@@ -26,10 +26,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   .filter('formatDecimal', function() {
     return function(input) {
       if (input === undefined) return '0';
-      // for DEBUG only
-      //if (input === Infinity || input === -Infinity) {
-      //  return '∞';
-      //}
+      if (input === Infinity || input === -Infinity) {
+        console.warn("formatDecimal: division by zero ? (is currentUD defined ?)");
+        return 'error';
+      }
       if (Math.abs(input) < 0.0001) return '~ 0';
       return numeral(input/*-0.00005*/).format('0,0.0000');
     };

@@ -262,12 +262,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               // Load parameters
               // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
               loadParameters()
-            ]);
+            ])
           }
           else {
             // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
             return loadParameters();
           }
+        })
+        .then(function(){
+          resolve(data);
         })
         .catch(function(err){reject(err);});
       });
@@ -1347,9 +1350,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   var service = Wallet('default');
 
   // try to restore wallet
-  Device.ready().then(function() {
-    service.restore();
-    $rootScope.walletData = service.data;
+  csSettings.api.data.on.ready($rootScope, function() {
+    service.restore()
+      .then(function(data) {
+        $rootScope.walletData = data;
+      });
   });
 
   service.instance = Wallet;

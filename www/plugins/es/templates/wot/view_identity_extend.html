@@ -1,5 +1,5 @@
 <!-- Buttons section -->
-<ng-if ng-if="extensionPoint === 'buttons'">
+<ng-if ng-if="enable && extensionPoint === 'buttons'">
   <button class="button button-stable icon ion-compose"
           ng-click="showNewMessageModal()">
     {{'MESSAGE.BTN_WRITE' | translate}}
@@ -7,7 +7,7 @@
 </ng-if>
 
 <!-- General section -->
-<ng-if ng-if="extensionPoint === 'general'">
+<ng-if ng-if="enable && extensionPoint === 'general'">
 
   <!-- About me -->
   <ng-if ng-if="formData.profile.description">
@@ -52,7 +52,7 @@
 </ng-if>
 
 <!-- Technical section-->
-<ng-if ng-if="formData.profile && extensionPoint == 'technical'">
+<ng-if ng-if="enable && formData.profile && extensionPoint == 'technical'">
 
 
 </ng-if>

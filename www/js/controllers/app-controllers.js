@@ -212,6 +212,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     return $q(function(resolve, reject){
 
+      Device.ready()
+
       if (!Wallet.isLogin()) {
         $scope.showLoginModal()
         .then(function(walletData) {

@@ -1,22 +1,24 @@
 angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
-  .config(function(PluginServiceProvider) {
+  .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
-    PluginServiceProvider
 
-    .extendState('app.wot_view_identity', {
-       points: {
-         'general': {
-           templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
-           controller: 'ESWotIdentityViewCtrl'
-         },
-         'buttons': {
-           templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
-           controller: 'ESWotIdentityViewCtrl'
-         }
-       }
-      })
-    ;
+    var enable = csConfig.plugins && csConfig.plugins.es;
+    if (enable) {
+      PluginServiceProvider.extendState('app.wot_view_identity', {
+          points: {
+            'general': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            },
+            'buttons': {
+              templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
+              controller: 'ESWotIdentityViewCtrl'
+            }
+          }
+        })
+      ;
+    }
 
   })
 
@@ -24,10 +26,24 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
 ;
 
-function ESWotIdentityViewController($scope, PluginService, esModals) {
+function ESWotIdentityViewController($scope, csSettings, PluginService, esModals) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
+
+  $scope.updateView = function() {
+    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
+      csSettings.data.plugins.es.enable :
+      !!csSettings.data.plugins.host;
+  };
+
+  csSettings.api.data.on.changed($scope, function() {
+    $scope.updateView();
+  });
+
+  $scope.updateView();
+
+  /* -- modals -- */
 
   $scope.showNewMessageModal = function() {
     return $scope.loadWallet()
