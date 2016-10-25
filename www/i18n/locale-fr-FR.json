@@ -112,6 +112,7 @@
     "REMEMBER_ME": "Se souvenir de moi",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
+    "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\"> (Informations détaillées sur les noeuds)</span>",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"

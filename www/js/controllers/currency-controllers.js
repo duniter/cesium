@@ -107,6 +107,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.medianTime  = 0;
   $scope.difficulty  = 0;
   $scope.Nprev = 0;
+  $scope.screen = UIUtils.screen;
 
   $scope.$on('$ionicView.enter', function(e, $state) {
     $translate(['COMMON.DATE_PATTERN'])

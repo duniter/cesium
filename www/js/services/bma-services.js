@@ -261,7 +261,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
     return {
       node: {
-        summary: csHttp.get(host, port, '/node/summary'),
+        summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG),
         server: server,
         host: host,
         port: port,
@@ -299,6 +299,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
           ud: getBlockchainWithUd,
           tx: csHttp.get(host, port, '/blockchain/with/tx'),
           newcomers: csHttp.get(host, port, '/blockchain/with/newcomers'),
+          hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey'),
         },
         lastUd: getBlockchainLastUd
       },

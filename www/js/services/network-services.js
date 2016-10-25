@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, Api) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, Api, csSettings) {
   'ngInject';
 
   factory = function(id) {
@@ -83,42 +83,66 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           score += (100000000 * (peer.online ? 1 : 0));
           score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
           score += (1000     * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
-          score += (1       * (peer.uid ? peer.uid.charCodeAt(0) : 0)); // alphabetical order
+          score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
           return -score;
         });
       },
 
-      processPeer = function(peer) {
-        if (peer) {
-          peer = new Peer(peer);
-          var server = peer.getServer();
-          // Test each peer only once
-          if (!data.knownPeers[server]) {
-            data.knownPeers[server] = true;
-            peer.dns = peer.getDns();
-            peer.server = server;
-            peer.blockNumber = peer.block.replace(/-.+$/, '');
-            data.newPeers.push(peer);
-            var node = BMA.instance(peer.getHost(), peer.getPort(), false);
-            return node.blockchain.current()
-              .then(function(block){
-                peer.currentNumber = block.number;
-                peer.online = true;
-                peer.buid = buid(block);
-                peer.uid = data.uidsByPubkeys[peer.pubkey];
-                if (data.knownBlocks.indexOf(peer.buid) === -1) {
-                  data.knownBlocks.push(peer.buid);
-                }
-                console.debug('[network] Peer [' + server + ']    status [UP]   block [' + peer.buid.substring(0, 20) + ']');
+      processPeer = function(peer, refresh) {
+        if (!peer) return;
+        peer = new Peer(peer);
+        var server = peer.getServer();
+        // Test each peer only once
+        if (!refresh && data.knownPeers[server]) return;
+        var skipPushToNew = refresh && !data.knownPeers[server];
+        data.knownPeers[server] = true;
+        peer.dns = peer.getDns();
+        peer.server = server;
+        peer.blockNumber = peer.block.replace(/-.+$/, '');
+        peer.uid = data.uidsByPubkeys[peer.pubkey];
+        var node = BMA.instance(peer.getHost(), peer.getPort(), false);
+        var jobs  = [
+          node.blockchain.current()
+          .then(function(block){
+            peer.currentNumber = block.number;
+            peer.online = true;
+            peer.buid = buid(block);
+            if (data.knownBlocks.indexOf(peer.buid) === -1) {
+              data.knownBlocks.push(peer.buid);
+            }
+          })
+         ];
+        if (csSettings.data.expertMode) {
+          // Get Version
+          jobs.push(node.node.summary()
+            .then(function(res){
+              peer.version = res && res.duniter && res.duniter.version;
+            }));
+
+          // Get hardship
+          if (peer.uid) {
+            jobs.push(node.blockchain.stats.hardship({pubkey: peer.pubkey})
+              .then(function(res){
+                peer.level = res && res.level;
+              }).catch(function() {
+                peer.level = null;
               })
-              .catch(function(err) {
-                // node is DOWN
-                peer.online=false;
-                peer.buid = null;
-                console.debug('[network] Peer [' + server + '] status [DOWN]');
-              });
+            );
           }
         }
+        $q.all(jobs)
+          .then(function() {
+            if (!skipPushToNew) data.newPeers.push(peer);
+            console.debug('[network] Peer [' + server + ']    status [UP]   block [' + peer.buid.substring(0, 20) + ']');
+          })
+          .catch(function(err) {
+            // node is DOWN
+            peer.online=false;
+            peer.buid = null;
+            peer.uid = data.uidsByPubkeys[peer.pubkey];
+            if (!skipPushToNew) data.newPeers.push(peer);
+            console.debug('[network] Peer [' + server + '] status [DOWN]');
+          });
       },
 
       refreshPeers = function() {
@@ -170,6 +194,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       },
 
       startListeningOnSocket = function() {
+        // Listen for new block
         data.bma.websocket.block().on('block', function(block) {
           if (data.updatingPeers) return;
           var uid = buid(block);
@@ -188,11 +213,20 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             }
           }
         });
+        // Listen for new peer
         data.bma.websocket.peer().on('peer', function(peer) {
-          processPeer(peer);
-          if (!data.updatingPeers) {
-            sortPeers();
-          }
+          // Waiting block propagation
+          $timeout(function() {
+            var promise = processPeer(peer, true);
+            if (promise) promise.then(function() {
+              if (!data.updatingPeers && data.newPeers.length) {
+                data.peers = data.peers.concat(data.newPeers.splice(0));
+                console.debug('[network] New peers found: sort and ad them to result...');
+              }
+              sortPeers();
+              api.data.raise.changed(data); // send event to plugins
+            }, 500);
+          })
         });
       },
 

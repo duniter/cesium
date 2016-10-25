@@ -112,6 +112,7 @@
     "REMEMBER_ME": "Remember me",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restore default values",
+    "EXPERT_MODE": "Enable expert mode<span class=\"hidden-xs\"> (Display more details on peers)</span>",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
       "HELP" : "Set the address of the node to use:"

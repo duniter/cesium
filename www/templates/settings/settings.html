@@ -40,7 +40,7 @@
         </label>
       </div>
 
-      <label class="item  item-input item-select">
+      <label class="item item-input item-select">
         <div class="input-label">
           {{'COMMON.LANGUAGE' | translate}}
         </div>
@@ -50,7 +50,7 @@
         </select>
       </label>
 
-      <div class="item  item-toggle dark">
+      <div class="item item-toggle dark">
         <div class="input-label">
          {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
         </div>
@@ -62,7 +62,7 @@
         </label>
       </div>
 
-      <div class="item  item-toggle dark">
+      <div class="item item-toggle dark">
         <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_HELPTIP' | translate">
         </div>
         <label class="toggle toggle-royal">
@@ -94,7 +94,7 @@
 
       <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
 
-      <div class="item  item-toggle dark">
+      <div class="item item-toggle dark">
         <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.showUDHistory" >
@@ -109,12 +109,22 @@
 
       <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
-      <div class="item  ink" ng-click="changeNode()">
+      <div class="item ink" ng-click="changeNode()">
         <div class="input-label">
         {{'SETTINGS.NODE' | translate}}
         </div>
         <span class="item-note dark">{{getServer()}}</ng-if></span>
       </div>
+      <div class="item item-toggle dark hidden-sm hidden-xs hidden-md">
+        <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.expertMode" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
       <!-- Allow extension here -->
       <cs-extension-point name="network"></cs-extension-point>
 

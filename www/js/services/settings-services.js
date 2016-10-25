@@ -28,6 +28,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         showUDHistory: true,
         showLoginSalt: false,
         initPhase: false, // For currency start (when block #0 not written)
+        expertMode: true,
         helptip: {
           enable: true,
           currency: 0,
