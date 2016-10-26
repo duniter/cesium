@@ -394,8 +394,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     Device.ready().then(function() {
 
       if (csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.askEnable && // if config ask enable
-        csSettings.data.plugins.es && !csSettings.data.plugins.es.enable // AND user settings has disable plugin
-        && csSettings.data.plugins.es.askEnable // AND user has not yet answer 'NO'
+        csSettings.data.plugins.es && !csSettings.data.plugins.es.enable && // AND user settings has disable plugin
+        csSettings.data.plugins.es.askEnable // AND user has not yet answer 'NO'
       ) {
         UIUtils.alert.confirm('ES_SETTINGS.CONFIRM.ASK_ENABLE', 'ES_SETTINGS.CONFIRM.ASK_ENABLE_TITLE', {
           cancelText: 'COMMON.BTN_NO',

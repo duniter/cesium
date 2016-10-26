@@ -1,7 +1,8 @@
 
     <div class="list">
 
-        <div class="item item-divider item-icon-right">
+        <div id="helptip-currency-peers"
+             class="item item-divider item-icon-right">
             {{'PEER.PEERS'|translate}}
             <ion-spinner class="icon" icon="android" ng-if="loadingPeers"></ion-spinner>
             <a class="icon ion-loop gray hidden-xs hidden-sm" ng-if="!loadingPeers" ng-click="refresh()">
@@ -10,6 +11,7 @@
 
         <a class="peer-item item item-icon-left"
            ng-repeat="peer in peers track by peer.server"
+           id="helptip-currency-peer-{{$index}}"
            ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
            ui-sref="app.view_peer({server: peer.server})">
             <i class="icon ion-android-globe"></i>
@@ -26,7 +28,8 @@
                 <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
               </div>
               <div class="col col-20 no-padding">
-                <span class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
+                <span id="helptip-currency-peer-{{$index}}-block"
+                  class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
               </div>
             </div>
         </a>

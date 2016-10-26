@@ -79,8 +79,8 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 /* ----------------------------
 *  Help Tip
 * ---------------------------- */
-function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, screenmatch,
-                            UIUtils, csSettings, csCurrency, Device, Wallet, BMA) {
+function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $translate, $sce,
+                           UIUtils, csConfig, csSettings, csCurrency, Device, Wallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?
 
@@ -132,6 +132,10 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     options.bindings.tour = $scope.tour;
     options.backdropClickToClose = !$scope.tour;
     return UIUtils.popover.helptip(id, options);
+  };
+
+  $scope.showHelpModal = function(helpAnchor) {
+    Modals.showHelp({anchor: helpAnchor});
   };
 
   $scope.startHelpTour = function() {
@@ -227,6 +231,18 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    */
   $scope.startCurrencyTour = function(startIndex, hasNext) {
 
+    var showNetworkViewIsNeed  = function() {
+      if ($state.is('app.currency_view')) {
+        // Select the second tabs
+        $timeout(function () {
+          var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
+          if (tabs && tabs.length == 2) {
+            angular.element(tabs[1]).triggerHandler('click');
+          }
+        }, 100);
+      }
+    };
+
     var contentParams;
 
     var steps = [
@@ -255,7 +271,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
                 icon: {
                   position: 'center'
                 }
-              }
+              },
+              timeout: 1200 // need for Firefox
             });
           });
       },
@@ -316,6 +333,65 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             content: 'HELP.TIP.CURRENCY_RULES',
             icon: {
               position: 'bottom-left'
+            }
+          }
+        });
+      },
+
+      function() {
+        showNetworkViewIsNeed();
+        return $scope.showHelpTip('helptip-currency-peers', {
+          bindings: {
+            content: 'HELP.TIP.CURRENCY_BLOCKCHAIN',
+            icon: {
+              position: 'center',
+              glyph: 'ion-information-circled'
+            }
+          }
+        });
+      },
+
+      function() {
+        showNetworkViewIsNeed();
+        return $scope.showHelpTip('helptip-currency-peer-0', {
+          bindings: {
+            content: 'HELP.TIP.CURRENCY_PEERS',
+            icon: {
+              position: 'center'
+            }
+          },
+          timeout: 1000,
+          retry: 20
+        });
+      },
+
+
+      function() {
+        showNetworkViewIsNeed();
+        return $scope.showHelpTip('helptip-currency-peer-0-block', {
+          bindings: {
+            content: 'HELP.TIP.CURRENCY_PEERS_BLOCK_NUMBER',
+            icon: {
+              position: 'right'
+            }
+          }
+        });
+      },
+
+      function() {
+        showNetworkViewIsNeed();
+        var locale = csSettings.data.locale.id;
+        return $scope.showHelpTip('helptip-currency-peers', {
+          bindings: {
+            content: 'HELP.TIP.CURRENCY_PEERS_PARTICIPATE',
+            contentParams: {
+              installDocUrl: (csConfig.helptip && csConfig.helptip.installDocUrl) ?
+                (csConfig.helptip.installDocUrl[locale] ? csConfig.helptip.installDocUrl[locale] : csConfig.helptip.installDocUrl) :
+                'http://duniter.org'
+            },
+            icon: {
+              position: 'center',
+              glyph: 'ion-information-circled'
             },
             hasNext: hasNext
           }
@@ -622,7 +698,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function() {
-        if (UIUtils.screen.isSmall()) {
+        if ($state.is('app.wallet_view_cert')) {
           // Select the second tabs
           $timeout(function() {
             var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');

@@ -320,32 +320,25 @@ angular.module('cesium.utils.services', ['ngResource'])
       $timeout(function() { // This is need for Firefox
         popover.show(event)
         .then(function() {
+          var element;
           // Auto select text
           if (options.autoselect) {
-            var inputs = document.querySelectorAll(options.autoselect);
-            for (var i=0; i<inputs.length; i++) {
-              var input = inputs[i];
+            element = document.querySelectorAll(options.autoselect)[0];
+            if (element) {
               if ($window.getSelection && !$window.getSelection().toString()) {
-                input.setSelectionRange(0, input.value.length);
-                input.focus();
+                element.setSelectionRange(0, element.value.length);
+                element.focus();
               }
               else {
-                input.focus();
+                element.focus();
               }
-              break;
             }
           }
           else {
             // Auto focus on a element
             if (options.autofocus) {
-              var elements = document.querySelectorAll(options.autofocus);
-              for (var i=0; i<elements.length; i++) {
-                var element = elements[i];
-                if (element !== null) {
-                  element.focus();
-                  break;
-                }
-              }
+              element = document.querySelectorAll(options.autofocus)[0];
+              if (element) element.focus();
             }
           }
 
@@ -393,7 +386,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
           // Execute action on hidden popover
           options.scope.$on('popover.hidden', function() {
-            if (popover.options.autoremove) {
+            if (popover.options && popover.options.autoremove) {
               _cleanup(popover);
             }
           });

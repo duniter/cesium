@@ -422,7 +422,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
             .then(function(idties) {
               return idties[0];
-            })
+            });
         })
         .then(function(member){
           $scope.issuer = member;

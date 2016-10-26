@@ -206,7 +206,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   // Show help tip (show only not already shown)
   $scope.showHelpTip = function(index, tour) {
     if (!$scope.isLogin() && !tour) return;
-    var index = angular.isDefined(index) ? index : csSettings.data.helptip.settings;
+    index = angular.isDefined(index) ? index : csSettings.data.helptip.settings;
     if (index < 0) return;
     if (index === 0) index = 1; // skip first step
 

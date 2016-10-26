@@ -16,7 +16,8 @@
     </p>
 
     <p class="padding light">
-      <span ng-bind-html="content | translate:contentParams"></span>
+      <ng-bind-html ng-bind-html="content | translate:contentParams"></ng-bind-html>
+      <ng-bind-html ng-bind-html="trustContent"></ng-bind-html>
     </p>
 
     <!-- buttons (if helptip) -->

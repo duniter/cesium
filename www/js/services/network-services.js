@@ -215,7 +215,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
         // Listen for new peer
         data.bma.websocket.peer().on('peer', function(peer) {
-          // Waiting block propagation
           $timeout(function() {
             var promise = processPeer(peer, true);
             if (promise) promise.then(function() {
@@ -225,8 +224,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               }
               sortPeers();
               api.data.raise.changed(data); // send event to plugins
-            }, 500);
-          })
+            }, 1000); // Waiting block propagation
+          });
         });
       },
 
