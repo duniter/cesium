@@ -150,7 +150,8 @@
     "TITLE": "Noeud",
     "PEERS": "Noeuds",
     "KNOWN_PEERS": "Noeuds connus",
-    "SIGNED_ON_BLOCK": "Signé sur le bloc"
+    "SIGNED_ON_BLOCK": "Signé sur le bloc",
+    "MIRROR": "mirroir"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",

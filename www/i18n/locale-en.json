@@ -150,7 +150,8 @@
     "TITLE": "Peer",
     "PEERS": "Peers",
     "KNOWN_PEERS": "Known peers",
-    "SIGNED_ON_BLOCK": "Signed on block"
+    "SIGNED_ON_BLOCK": "Signed on block",
+    "MIRROR": "mirror"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
