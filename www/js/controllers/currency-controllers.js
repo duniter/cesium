@@ -262,7 +262,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .then(function(){
       // Network
       $scope.loadingPeers = true;
-      csNetwork.refreshPeers();
+      csNetwork.loadPeers();
     });
   };
 

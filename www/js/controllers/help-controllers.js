@@ -340,7 +340,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function() {
         showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-peers', {
+        return $scope.showHelpTip('helptip-currency-blockchain', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_BLOCKCHAIN',
             icon: {
