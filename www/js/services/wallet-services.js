@@ -265,7 +265,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
               // Load current UD is need by features tour
               loadCurrentUD()
-            ])
+            ]);
           }
           else {
             // Load parameters
