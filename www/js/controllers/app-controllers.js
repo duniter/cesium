@@ -173,7 +173,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.closeProfilePopover = function() {
     if ($scope.profilePopover && $scope.profilePopover.isShown()) {
-      $timeout(function(){$scope.profilePopover.hide()});
+      $timeout(function(){$scope.profilePopover.hide();});
     }
   };
 

@@ -59,7 +59,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.searchingPeersOnNetwork = true;
         data.updatingPeers = true;
 
-        var newPeers = []
+        var newPeers = [];
 
         if (interval) {
           $interval.cancel(interval);
