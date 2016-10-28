@@ -39,6 +39,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.isMember = false;
       data.loaded = false;
       data.blockUid = null;
+      data.events = [];
       if (init) {
         api.data.raise.init(data);
       }
@@ -602,6 +603,20 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
           data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
           (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+
+      // Add user message
+      if (data.requirements.pendingMembership) {
+        data.events.push({type:'pending',message: 'ACCOUNT.WAITING_MEMBERSHIP'});
+      }
+      if (data.requirements.needCertificationCount > 0) {
+        data.events.push({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements});
+      }
+      if (data.requirements.willNeedCertificationCount > 0) {
+        data.events.push({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements});
+      }
+      if (data.requirements.needRenew) {
+        data.events.push({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements});
+      }
     },
 
     loadSigStock = function() {
@@ -662,8 +677,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           processTransactionsAndSources()
           .then(function() {
             finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
-            data.loaded = true;
-            resolve(data);
+
+            api.data.raisePromise.finishLoad(data)
+              .then(function() {
+                data.loaded = true;
+                resolve(data);
+              });
           })
           .catch(function(err) {
             data.loaded = false;
@@ -722,6 +741,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       .then(function() {
         // Process transactions and sources
         return processTransactionsAndSources();
+      })
+      .then(function(){
+        return api.data.raisePromise.finishLoad(data);
       });
     },
 
@@ -1249,6 +1271,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
+    addEvent = function(event) {
+      event = event || {};
+      event.type = event.type || 'info';
+      event.message = event.message || '';
+      event.messageParams = event.messageParams || {};
+      data.events.push(event);
+    },
+
     /**
     * Serialize to JSON string
     */
@@ -1313,6 +1343,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'init');
     api.registerEvent('data', 'load');
+    api.registerEvent('data', 'finishLoad');
     api.registerEvent('data', 'reset');
 
     csSettings.api.data.on.changed($rootScope, store);
@@ -1338,6 +1369,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       membership: {
         inside: membership(true),
         out: membership(false)
+      },
+      events: {
+        add: addEvent
       },
       certify: certify,
       store: store,

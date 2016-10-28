@@ -20,6 +20,9 @@
     "NEW": {
       "ORGANIZATION_ACCOUNT": "Compte pour une organisation",
       "ORGANIZATION_ACCOUNT_HELP": "Si vous représentez une entreprise, une association, etc.<br/>Aucun dividende universel ne sera créé par ce compte."
+    },
+    "EVENT": {
+      "MEMBER_WITHOUT_PROFILE": "Pour obtenir vos certifications plus rapidement, completez <a href=\"#/app/user/profile/edit\">votre profil utilisateur</a>. Les membres accorderont plus facilement leur confiance à une identité vérifiable."
     }
   },
   "COMMENTS": {
@@ -212,7 +215,7 @@
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>"
     },
     "INFO": {
-      "PROFILE_SAVED": "Profil sauvegardé"
+      "PROFILE_SAVED": "Profil sauvegardé",
     }
   },
   "ES_SETTINGS": {

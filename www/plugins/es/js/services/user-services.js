@@ -52,8 +52,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         resolve(data);
       })
       .catch(function(err){
+        // no profile defined
         if (err && err.ucode && err.ucode == 404) {
-          resolve(data); // not found
+          resolve(data);
         }
         else {
           reject(err);
@@ -61,8 +62,16 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
+    function onWalletFinishLoad(data, resolve) {
+      // If membership pending, but not enough certifications: suggest to fill user profile
+      if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
+        data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
+      }
+      resolve(data);
+    }
+
     function onWalletReset(data) {
-      data.avatar = null;
+      //data.avatar = null;
       data.avatarStyle = null;
       data.profile = null;
       data.name = null;
@@ -83,7 +92,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           data.profile = res._source;
           if (avatar) {
             data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-            data.avatar=avatar;
+            //data.avatar=avatar;
             delete res._source.avatar;
           }
           data.profile = res._source;
@@ -169,18 +178,18 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           .then(function(res){
             uidsByPubkey = res;
           }),
-        esHttp.post(host, port, '/user/profile/_search?pretty')(request)
+        esHttp.post(host, port, '/user/profile/_search')(request)
           .then(function(res){
             hits = res.hits;
           })
       ])
       .then(function() {
+        _.forEach(datas, function(data) {
+          if (!data.uid && data[pubkeyAtributeName]) {
+            data.uid = uidsByPubkey[data[pubkeyAtributeName]];
+          }
+        });
         if (hits.total === 0) {
-          _.forEach(datas, function(data) {
-            if (!data.uid && data[pubkeyAtributeName]) {
-              data.uid = uidsByPubkey[data[pubkeyAtributeName]];
-            }
-          });
           resolve(datas);
         }
         else {
@@ -199,8 +208,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
                 data.avatar=avatar;
               }
               data.name=hit._source.title;
-              if (!data.uid) {
-                data.uid = hit._source.uid ? hit._source.uid : uidsByPubkey[data[pubkeyAtributeName]];
+              if (!data.uid && hit._source.uid) {
+                data.uid = hit._source.uid;
               }
               if (hit.highlight) {
                 if (hit.highlight.title) {
@@ -351,6 +360,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       // Extend Wallet.loadData() and WotService.loadData()
       listeners = [
         Wallet.api.data.on.load($rootScope, onWalletLoad, this),
+        Wallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
         Wallet.api.data.on.reset($rootScope, onWalletReset, this),
         Wallet.api.data.on.login($rootScope, onWalletLogin, this),
         WotService.api.data.on.load($rootScope, onWotLoad, this),

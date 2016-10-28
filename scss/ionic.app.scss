@@ -733,6 +733,21 @@ $screen-menu:                     845px;
     top:16px !important;
   }
 
+  .item.item-wallet-event {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    min-height: 30px;
+    max-height: auto;
+    height: auto;
+  }
+
+  .item.item-wallet-event:last-child {
+    min-height: 48px;
+  }
+
+  .item.item-icon-left.item-wallet-event .icon {
+    font-size: 15px;
+  }
 }
 
 @media screen and (max-width: $screen-sm-max) {
@@ -781,6 +796,12 @@ $screen-menu:                     845px;
 
 .card .item .card-footer {
   margin-bottom: 5px;
+}
+
+.card.card-comment .avatar{
+  box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
+  top: 7px;
+  background-color: #D9D9D9;
 }
 
 .gallery .card-gallery,

@@ -25,11 +25,11 @@
       </h4>
     </div>
 
-    <div class="row">
+    <div class="row no-padding-xs">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
       </div>
 
-      <div class="col list animate-fade-slide-in item-text-wrap">
+      <div class="col list animate-fade-slide-in item-text-wrap no-padding-xs">
 
         <div class="item">
           <h2 class="gray">
@@ -46,18 +46,18 @@
           <h4>
             <i class="icon ion-clock" ng-if="formData.time"></i>
             <span translate>COMMON.SUBMIT_BY</span>
-            <a ng-class="{'positive': issuer.uid, 'dark': !issuer.uid}"
+            <a ng-class="{'positive': issuer.uid, 'gray': !issuer.uid}"
                ui-sref="app.wot_view_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
               <ng-if ng-if="issuer.uid">
                 <i class="icon ion-person"></i>
                 {{::issuer.name||issuer.uid}}
               </ng-if>
-              <ng-if ng-if="!issuer.uid">
+              <span ng-if="!issuer.uid">
                 <i class="icon ion-key"></i>
                 {{issuer.pubkey|formatPubkey}}
-              </ng-if>
+              </span>
             </a>
-            <span>
+            <span >
                 {{formData.time|formatFromNow}}
                 <h4 class="gray hidden-xs">|
                   {{formData.time | formatDate}}

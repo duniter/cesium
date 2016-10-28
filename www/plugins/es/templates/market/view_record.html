@@ -23,7 +23,7 @@
           <ion-spinner icon="android"></ion-spinner>
         </div>
 
-        <ion-list class="animate-fade-slide-in item-text-wrap">
+        <ion-list class="animate-fade-slide-in item-text-wrap no-padding-xs">
 
           <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
             <img ng-src="{{thumbnail.src}}" nf-if="thumbnail">
@@ -42,16 +42,16 @@
             <h4>
               <i class="icon ion-clock"></i>
               <span translate>COMMON.SUBMIT_BY</span>
-              <a ng-class="{'positive': issuer.uid, 'dark': !issuer.uid}"
+              <a ng-class="{'positive': issuer.uid, 'gray': !issuer.uid}"
                  ui-sref="app.wot_view_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
                 <ng-if ng-if="issuer.uid">
                   <i class="icon ion-person"></i>
-                  {{::issuer.name||issuer.uid}}
+                  {{issuer.name||issuer.uid}}
                 </ng-if>
-                <ng-if ng-if="!issuer.uid">
+                <span ng-if="!issuer.uid">
                   <i class="icon ion-key"></i>
-                  {{::issuer.pubkey|formatPubkey}}
-                </ng-if>
+                  {{issuer.pubkey|formatPubkey}}
+                </span>
               </a>
               <span>
                 {{formData.time|formatFromNow}}

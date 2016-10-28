@@ -20,9 +20,14 @@
       <a class="pull-left"
          ng-class="{'positive': comment.uid, 'dark': !comment.uid}"
          ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.name||comment.uid})">
-        <i class="icon"
-            ng-class="{'ion-person': comment.uid, 'ion-key': !comment.uid}"></i>
-        {{::comment.name||comment.uid||comment.issuer}}
+        <ng-if ng-if="comment.uid">
+          <i class="icon ion-person"></i>
+          {{::comment.name||comment.uid}}
+        </ng-if>
+        <span ng-if="!comment.uid">
+          <i class="icon ion-key"></i>
+          {{::comment.issuer|formatPubkey}}
+        </span>
       </a>
       <a class="gray pull-right" ng-click="shareComment($event, $index)">&nbsp;
         {{::comment.time | formatFromNow}}
@@ -30,7 +35,8 @@
     </div>
     <div class="item item-avatar done in">
       <span class="avatar"
-            ng-style="comment.avatarStyle"></span>
+            ng-style="comment.avatarStyle"
+            ng-class="{'avatar-member': !comment.avatarStyle && comment.uid, 'avatar-wallet': !comment.avatarStyle && !comment.uid}"></span>
       {{::comment.message}}
       <div class="card-footer text-right gray">
         <a class="pull-right" ng-click="shareComment($event, $index)">

@@ -13532,6 +13532,19 @@ a {
 #wallet .item-divider .badge {
   top: 16px !important; }
 
+#wallet .item.item-wallet-event {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  min-height: 30px;
+  max-height: auto;
+  height: auto; }
+
+#wallet .item.item-wallet-event:last-child {
+  min-height: 48px; }
+
+#wallet .item.item-icon-left.item-wallet-event .icon, #wallet .item.item-icon-left.item-wallet-event .icon-help, #wallet .item.item-icon-left.item-wallet-event .icon-alert {
+  font-size: 15px; }
+
 @media screen and (max-width: 991px) {
   #wallet .qrcode {
     top: 8px;
@@ -13564,6 +13577,11 @@ a {
 
 .card .item .card-footer {
   margin-bottom: 5px; }
+
+.card.card-comment .avatar {
+  box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
+  top: 7px;
+  background-color: #D9D9D9; }
 
 .gallery .card-gallery,
 .gallery .card.card-gallery {

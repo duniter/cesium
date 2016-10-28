@@ -115,34 +115,20 @@
         </a>
 
         <!-- Events -->
-        <span class="item item-divider" ng-if="walletData.requirements.pendingMembership||walletData.requirements.needCertificationCount > 0||walletData.requirements.willNeedCertificationCount > 0">
+        <span class="item item-divider" ng-if="walletData.events.length">
           {{'ACCOUNT.EVENTS' | translate}}
         </span>
 
-        <span class="item item-text-wrap" ng-if="walletData.requirements.pendingMembership">
-          <h3>
-            <i class="icon ion-clock"></i>
-            {{'ACCOUNT.WAITING_MEMBERSHIP' | translate}}
-          </h3>
+        <div>
+        <span
+          class="item item-text-wrap item-icon-left item-wallet-event"
+          ng-repeat="event in walletData.events">
+            <i class="icon" ng-class="{'ion-information-circled royal': event.type=='info','ion-alert-circled': event.type=='warn','ion-clock': event.type=='pending'}"
+            ></i>
+            <span ng-class="{'dark': event.type=='warn'}"
+              ng-bind-html="event.message | translate:event.messageParams"></span>
         </span>
-        <span class="item item-text-wrap" ng-if="walletData.requirements.needCertificationCount > 0">
-          <h3>
-            <i class="icon ion-alert-circled"></i>
-            {{'ACCOUNT.WAITING_CERTIFICATIONS' | translate:walletData.requirements}}
-          </h3>
-        </span>
-        <span class="item item-text-wrap" ng-if="walletData.requirements.willNeedCertificationCount > 0">
-          <h3>
-            <i class="icon ion-alert-circled"></i>
-            {{'ACCOUNT.WILL_MISSING_CERTIFICATIONS' | translate:walletData.requirements}}
-          </h3>
-        </span>
-        <span class="item item-text-wrap" ng-if="walletData.requirements.needRenew">
-          <h3>
-            <i class="icon ion-alert-circled"></i>
-            {{'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP' | translate:walletData.requirements}}
-          </h3>
-        </span>
+        </div>
 
         <!-- Pending transactions -->
         <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
