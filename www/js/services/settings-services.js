@@ -28,7 +28,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         showUDHistory: true,
         showLoginSalt: false,
         initPhase: false, // For currency start (when block #0 not written)
-        expertMode: true,
+        expertMode: false,
         helptip: {
           enable: true,
           currency: 0,
@@ -130,10 +130,11 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           angular.merge(data, storedData);
 
           // Always force the usage of deffault settings
-          // This is a workaround for DEV (TODO: implement edition in settings)
+          // This is a workaround for DEV (TODO: implement edition in settings ?)
           data.timeWarningExpire = defaultSettings.timeWarningExpire;
           data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
           data.cacheTimeMs = defaultSettings.cacheTimeMs;
+          data.timeout = defaultSettings.timeout;
 
           // Apply the new locale (only if need)
           if (localeChanged) {

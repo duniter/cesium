@@ -176,6 +176,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       ])
       .then(function() {
         if (hits.total === 0) {
+          _.forEach(datas, function(data) {
+            if (!data.uid && data[pubkeyAtributeName]) {
+              data.uid = uidsByPubkey[data[pubkeyAtributeName]];
+            }
+          });
           resolve(datas);
         }
         else {

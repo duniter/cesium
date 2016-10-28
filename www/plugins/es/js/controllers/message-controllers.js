@@ -315,7 +315,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, W
 }
 
 
-function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHistory, UIUtils, esModals, esMessage) {
+function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHistory, UIUtils, esModals, esMessage, esUser) {
   'ngInject';
 
   $scope.formData = {};
@@ -346,9 +346,9 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
 
             if (!message.valid) {
 
-              return UIUtils.alert.error(!$scope.isUserPubkey(message.pubkey) ? 'MESSAGE.ERROR.USER_NOT_RECIPIENT': 'MESSAGE.ERROR.NOT_AUTHENTICATED_MESSAGE',
+              return UIUtils.alert.error(!$scope.isUserPubkey(message.recipient) ? 'MESSAGE.ERROR.USER_NOT_RECIPIENT' : 'MESSAGE.ERROR.NOT_AUTHENTICATED_MESSAGE',
                 'MESSAGE.ERROR.MESSAGE_NOT_READABLE')
-                .then(function() {
+                .then(function () {
                   $state.go('app.user_message');
                 });
             }
@@ -356,6 +356,15 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
             $scope.formData = message;
             $scope.canDelete = true;
             $scope.loading = false;
+
+            // Load avatar and name (and uid)
+            return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
+              .then(function (idties) {
+                return idties[0];
+              });
+          })
+          .then(function(member) {
+            $scope.issuer = member;
 
             // Set Motion (only direct children, to exclude .lazy-load children)
             $timeout(function () {

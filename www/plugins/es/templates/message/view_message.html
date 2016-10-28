@@ -26,20 +26,20 @@
         <ion-list class="animate-fade-slide-in item-text-wrap">
 
 
-          <div class="item" ng-class="{'item-avatar': formData.avatar}">
-            <img ng-if="formData.avatar" class="item-image" ng-src="{{::formData.avatar.src}}">
+          <div class="item" ng-class="{'item-avatar': issuer.avatar}">
+            <img ng-if="issuer.avatar" class="item-image" ng-src="{{::issuer.avatar.src}}">
             <h1 ng-bind-html="formData.title"></h1>
             <h4>
               <i class="ion-clock"></i>
               <span translate>MESSAGE.VIEW.SENDER</span>
-              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.pubkey, uid:formData.uid})">
-                <span ng-if="formData.uid">
+              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid: issuer.name||issuer.uid})">
+                <span ng-if="issuer.uid">
                   <i class="ion-person"></i>
-                  {{::formData.name||formData.uid}}
+                  {{issuer.name||issuer.uid}}
                 </span>
-                <span ng-if="!formData.uid">
+                <span ng-if="!issuer.uid">
                   <i class="ion-key"></i>
-                  {{::formData.pubkey|formatPubkey}}
+                  {{formData.pubkey|formatPubkey}}
                 </span>
               </a>
               <span>

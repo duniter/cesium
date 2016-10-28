@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, Api, csSettings) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, Api, csSettings, UIUtils) {
   'ngInject';
 
   factory = function(id) {
@@ -129,12 +129,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             }
             console.debug('[network] Peer [' + peer.server + ']    status [UP]   block [' + peer.buid.substring(0, 20) + ']');
 
-            if (csSettings.data.expertMode) {
+            if (csSettings.data.expertMode && !UIUtils.screen.isSmall()) {
               // Get Version
               return node.node.summary()
                 .then(function(res){
                   peer.version = res && res.duniter && res.duniter.version;
-                  // Get hardship
+                  // Get hardship (if member peer)
                   if (peer.uid) {
                     return node.blockchain.stats.hardship({pubkey: peer.pubkey})
                       .then(function (res) {

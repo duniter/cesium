@@ -44,9 +44,14 @@
               <span translate>COMMON.SUBMIT_BY</span>
               <a ng-class="{'positive': issuer.uid, 'dark': !issuer.uid}"
                  ui-sref="app.wot_view_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
-                <i class="icon"
-                   ng-class="{'ion-person': issuer.uid, 'ion-key': !issuer.uid}"></i>
-                {{::issuer.name||issuer.uid||issuer.pubkey}}
+                <ng-if ng-if="issuer.uid">
+                  <i class="icon ion-person""></i>
+                  {{::issuer.name||issuer.uid}}
+                </ng-if>
+                <ng-if ng-if="!issuer.uid">
+                  <i class="icon ion-key""></i>
+                  {{::issuer.pubkey|formatPubkey}}
+                </ng-if>
               </a>
               <span>
                 {{formData.time|formatFromNow}}

@@ -415,7 +415,7 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService
  * @param Modals
  * @constructor
  */
-function WotCertificationsViewController($scope, $rootScope, $timeout, $translate, csSettings, Wallet, UIUtils, WotService, Modals) {
+function WotCertificationsViewController($scope, $rootScope, $timeout, $translate, csConfig, csSettings, Wallet, UIUtils, WotService, Modals) {
   'ngInject';
 
   $scope.loading = true;

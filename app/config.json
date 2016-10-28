@@ -4,12 +4,13 @@
     "fallbackLanguage": "en",
     "rememberMe": false,
     "showUDHistory": false,
-    "timeout": 4000,
+    "timeout": 10000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
+    "expertMode": false,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -34,12 +35,13 @@
     "defaultLanguage": "fr-FR",
     "rememberMe": false,
     "showUDHistory": false,
-    "timeout": 4000,
+    "timeout": 15000,
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
+    "expertMode": false,
     "helptip": {
       "enable": false,
       "installDocUrl": {
@@ -49,7 +51,7 @@
     },
     "node": {
       "host": "duniter.le-sou.org",
-      "port": "9600"
+      "port": "80"
     },
     "plugins":{
       "es": {
@@ -73,6 +75,7 @@
     "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
+    "expertMode": false,
     "helptip": {
       "enable": true,
       "installDocUrl": {
