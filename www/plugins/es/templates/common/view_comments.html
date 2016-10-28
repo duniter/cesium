@@ -37,7 +37,7 @@
       <span class="avatar"
             ng-style="comment.avatarStyle"
             ng-class="{'avatar-member': !comment.avatarStyle && comment.uid, 'avatar-wallet': !comment.avatarStyle && !comment.uid}"></span>
-      {{::comment.message}}
+      <span ng-bind-html="comment.message"></span>
       <div class="card-footer text-right gray">
         <a class="pull-right" ng-click="shareComment($event, $index)">
           &nbsp;<b class="icon ion-android-share-alt"></b>&nbsp;

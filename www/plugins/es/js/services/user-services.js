@@ -71,7 +71,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function onWalletReset(data) {
-      //data.avatar = null;
+      data.avatar = null;
       data.avatarStyle = null;
       data.profile = null;
       data.name = null;
@@ -92,7 +92,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           data.profile = res._source;
           if (avatar) {
             data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-            //data.avatar=avatar;
+            data.avatar=avatar;
             delete res._source.avatar;
           }
           data.profile = res._source;
@@ -171,12 +171,15 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return;
       }
 
-      var uidsByPubkey;
       var hits;
       $q.all([
         BMA.wot.member.uids()
-          .then(function(res){
-            uidsByPubkey = res;
+          .then(function(uidsByPubkey){
+            _.forEach(datas, function(data) {
+              if (!data.uid && data[pubkeyAtributeName]) {
+                data.uid = uidsByPubkey[data[pubkeyAtributeName]];
+              }
+            });
           }),
         esHttp.post(host, port, '/user/profile/_search')(request)
           .then(function(res){
@@ -184,11 +187,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           })
       ])
       .then(function() {
-        _.forEach(datas, function(data) {
-          if (!data.uid && data[pubkeyAtributeName]) {
-            data.uid = uidsByPubkey[data[pubkeyAtributeName]];
-          }
-        });
         if (hits.total === 0) {
           resolve(datas);
         }
@@ -208,9 +206,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
                 data.avatar=avatar;
               }
               data.name=hit._source.title;
-              if (!data.uid && hit._source.uid) {
-                data.uid = hit._source.uid;
-              }
               if (hit.highlight) {
                 if (hit.highlight.title) {
                     data.name = hit.highlight.title[0];
