@@ -141,7 +141,7 @@ angular.module('cesium.directives', ['cesium.services'])
         $compile(element.contents())(scope);
       }
     }
-  }
+  };
 }])
 
 /**
