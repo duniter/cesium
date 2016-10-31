@@ -67,6 +67,13 @@
           <span class="badge badge-balanced">{{::formData.sigDate | formatFromNow}}</span>
         </ion-item>
 
+        <div
+          class="item item-text-wrap item-icon-left item-wallet-event assertive"
+          ng-repeat="event in formData.events | filter: {type: 'error'}">
+          <i class="icon ion-alert-circled"></i>
+          <span trust-as-html="event.message | translate:event.messageParams"></span>
+        </div>
+
         <cs-extension-point name="general"></cs-extension-point>
 
         <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>

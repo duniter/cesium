@@ -155,11 +155,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.self= function() {
     $scope.hideActionsPopover();
 
-    $scope.showUidPopup()
+    return $scope.showUidPopup()
     .then(function(uid) {
       UIUtils.loading.show();
 
-      Wallet.self(uid)
+      return Wallet.self(uid)
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();
@@ -173,12 +173,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     });
   };
 
-  // Send membership IN
-  $scope.membershipIn= function() {
-    $scope.hideActionsPopover();
-
-    var doMembershipIn = function(retryCount) {
-      Wallet.membership.inside()
+  $scope.doMembershipIn = function(retryCount) {
+    return Wallet.membership.inside()
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();
@@ -196,18 +192,23 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
             });
         }
       });
-    };
+  };
 
-    $scope.showUidPopup()
+
+  // Send membership IN
+  $scope.membershipIn= function() {
+    $scope.hideActionsPopover();
+
+    return $scope.showUidPopup()
     .then(function (uid) {
       UIUtils.loading.show();
-      // If uid changed, or selft blockUid not retrieve : do self() first
+      // If uid changed, or self blockUid not retrieve : do self() first
       if (!$rootScope.walletData.blockUid || uid != $rootScope.walletData.uid) {
         $rootScope.walletData.blockUid = null;
         $rootScope.walletData.uid = uid;
         Wallet.self(uid, false/*do NOT load membership here*/)
         .then(function() {
-          doMembershipIn();
+          $scope.doMembershipIn();
         })
         .catch(function(err){
           UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err)
@@ -217,7 +218,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         });
       }
       else {
-        doMembershipIn();
+        $scope.doMembershipIn();
       }
     })
     .catch(function(err){
@@ -225,7 +226,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
        UIUtils.alert.info(err);
        $scope.membershipIn(); // loop
     });
-    //.catch(UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED'));
   };
 
   // Send membership OUT
@@ -260,8 +260,61 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
-  /* -- show display -- */
+  /**
+   * Renew membership
+   */
+  $scope.renewMembership = function() {
+    return UIUtils.alert.confirm("CONFIRM.RENEW_MEMBERSHIP")
+      .then(function() {
+        UIUtils.loading.show();
+        return $scope.doMembershipIn();
+      })
+      .catch(function(err){
+        UIUtils.loading.hide();
+        UIUtils.alert.info(err);
+        $scope.renewMembership(); // loop
+      });
+  };
 
+  /**
+   * Fix membership, when existing MS reference an invalid block
+   */
+  $scope.fixMembership = function() {
+    if (!$rootScope.walletData.uid) return;
+
+    return UIUtils.alert.confirm("CONFIRM.FIX_MEMBERSHIP")
+      .then(function(confirm) {
+        if (!confirm) return;
+        UIUtils.loading.show();
+        // Reset membership data
+        $rootScope.walletData.blockUid = null;
+        $rootScope.walletData.sigDate = null;
+        return Wallet.self($rootScope.walletData.uid, false/*do NOT load membership here*/);
+      })
+      .then(function() {
+        return $scope.doMembershipIn();
+      })
+      .catch(function(err){
+        UIUtils.loading.hide();
+        UIUtils.alert.info(err);
+        $scope.fixMembership(); // loop
+      });
+  };
+
+  /**
+   * Catch click for quick fix
+   * @param fix
+   */
+  $scope.doQuickFix = function(event) {
+    if (event == 'renew') {
+      $scope.renewMembership();
+    }
+    else if (event == 'fixMembership)') {
+      $scope.fixMembership();
+    }
+  };
+
+  /* -- popup / UI -- */
 
   $scope.setShowDetails = function(show) {
     $scope.showDetails = show;

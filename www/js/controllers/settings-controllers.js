@@ -27,7 +27,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function(e) {
+  $scope.$on('$ionicView.enter', function() {
     $scope.load();
   });
 

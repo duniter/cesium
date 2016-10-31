@@ -326,7 +326,10 @@
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special characters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
-    "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>)."
+    "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network nodes are cancelled): the person must renew its application for membership <b>before</b> being certified.",
+    "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>).",
+    "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
+    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -342,8 +345,10 @@
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity ?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer ?</b>",
     "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue ?</b>",
+    "LOGIN_UNUSED_WALLET_TITLE": "Typing error ?",
     "LOGIN_UNUSED_WALLET": "You are logged into an account that seems <b>inactive</b>.<br/><br/>If this account does not match yours, it's probably a <b>typing error</b> when sign in.<br/><br/><b>Would you still continue with this account?</b>",
-    "LOGIN_UNUSED_WALLET_TITLE": "Typing error ?"
+    "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure ?</b>",
+    "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure ?</b>"
   },
   "HELP": {
     "TITLE": "Online help",

@@ -8,9 +8,7 @@
       <a class="item item-icon-left item-icon-right ink"
          ng-click="setShowDetails(!showDetails)">
         <i class="icon ion-key"></i>
-
         {{'ACCOUNT.BTN_SHOW_DETAILS' | translate}}
-
         <i class="icon"
            ng-class="{'ion-ios-checkmark-empty': showDetails}"></i>
       </a>
@@ -30,7 +28,7 @@
 
       <a class="item item-icon-left ink visible-xs visible-sm"
               ng-if="walletData.requirements.needRenew"
-              ng-click="membershipRenew()">
+              ng-click="renewMembership()">
         <i class="icon ion-loop"></i>
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
       </a>

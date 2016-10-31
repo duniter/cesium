@@ -49,11 +49,11 @@ function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $t
 
   TransferModalController.call(this, $scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, csSettings);
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    if (!!$state.stateParams && !!$state.stateParams.pubkey) {
-      $scope.formData.destPub = $state.stateParams.pubkey;
-      if (!!$state.stateParams.uid) {
-        $scope.destUid = $state.stateParams.uid;
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (!!state.stateParams && !!state.stateParams.pubkey) {
+      $scope.formData.destPub = state.stateParams.pubkey;
+      if (!!state.stateParams.uid) {
+        $scope.destUid = state.stateParams.uid;
         $scope.destPub = '';
       }
       else {

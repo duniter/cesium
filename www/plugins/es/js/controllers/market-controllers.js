@@ -90,7 +90,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     options: null
   };
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
       var hasOptions = false;
       var runSearch = false;
@@ -110,20 +110,20 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       };
 
       // Search by text
-      if ($state.stateParams && $state.stateParams.q) { // Query parameter
-        $scope.search.text=$state.stateParams.q;
+      if (state.stateParams && state.stateParams.q) { // Query parameter
+        $scope.search.text=state.stateParams.q;
         hasOptions = runSearch = true;
       }
 
       // Search on location
-      if ($state.stateParams && $state.stateParams.location) {
-        $scope.search.location = $state.stateParams.location;
+      if (state.stateParams && state.stateParams.location) {
+        $scope.search.location = state.stateParams.location;
         hasOptions = runSearch = true;
       }
 
       // Search on category
-      if ($state.stateParams && $state.stateParams.category) {
-        esMarket.category.get({id: $state.stateParams.category})
+      if (state.stateParams && state.stateParams.category) {
+        esMarket.category.get({id: state.stateParams.category})
         .then(function(cat) {
           $scope.search.category = cat;
           hasOptions = runSearch = true;
@@ -393,10 +393,10 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
 
   ESCommentsController.call(this, $scope, $timeout, $filter, $state, Wallet, UIUtils, esHttp, esMarket);
 
-  $scope.$on('$ionicView.enter', function (e, $state) {
-    if ($state.stateParams && $state.stateParams.id) { // Load by id
+  $scope.$on('$ionicView.enter', function (e, state) {
+    if (state.stateParams && state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
-        $scope.load($state.stateParams.id, $state.stateParams.anchor);
+        $scope.load(state.stateParams.id, state.stateParams.anchor);
       }
     }
     else {
@@ -609,7 +609,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
     $scope.form = form;
   };
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e, state) {
     // Load currencies list
     csCurrency.all()
     .then(function(currencies){
@@ -622,12 +622,12 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
     .then(function(walletData) {
       $scope.useRelative = csSettings.data.useRelative;
       $scope.walletData = walletData;
-      if ($state.stateParams && $state.stateParams.id) { // Load by id
-        $scope.load($state.stateParams.id);
+      if (state.stateParams && state.stateParams.id) { // Load by id
+        $scope.load(state.stateParams.id);
       }
       else {
-        if ($state.stateParams && $state.stateParams.type) { // New record
-          $scope.formData.type=$state.stateParams.type;
+        if (state.stateParams && state.stateParams.type) { // New record
+          $scope.formData.type=state.stateParams.type;
         }
         $scope.loading = false;
         UIUtils.loading.hide();

@@ -90,7 +90,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     options: null
   };
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
       var hasOptions = false;
       var runSearch = false;
@@ -110,26 +110,26 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
       };
 
       // Search by text
-      if ($state.stateParams && $state.stateParams.q) {
-        $scope.search.text=$state.stateParams.q;
+      if (state.stateParams && state.stateParams.q) {
+        $scope.search.text=state.stateParams.q;
         runSearch = true;
       }
 
       // Search on type
-      if ($state.stateParams && $state.stateParams.type) {
-        $scope.search.type = $state.stateParams.type;
+      if (state.stateParams && state.stateParams.type) {
+        $scope.search.type = state.stateParams.type;
         hasOptions = runSearch = true;
       }
 
       // Search on location
-      if ($state.stateParams && $state.stateParams.location) {
-        $scope.search.location = $state.stateParams.location;
+      if (state.stateParams && state.stateParams.location) {
+        $scope.search.location = state.stateParams.location;
         hasOptions = runSearch = true;
       }
 
       // Search on category
-      if ($state.stateParams && $state.stateParams.category) {
-        esRegistry.category.get({id: $state.stateParams.category})
+      if (state.stateParams && state.stateParams.category) {
+        esRegistry.category.get({id: state.stateParams.category})
         .then(function(cat) {
           $scope.search.category = cat;
           hasOptions = runSearch = true;
@@ -388,10 +388,10 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
 
   ESCommentsController.call(this, $scope,  $timeout, $filter, $state, Wallet, UIUtils, esHttp, esRegistry);
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams && $state.stateParams.id) { // Load by id
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (state.stateParams && state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
-        $scope.load($state.stateParams.id, $state.stateParams.anchor);
+        $scope.load(state.stateParams.id, state.stateParams.anchor);
       }
     }
     else {
@@ -571,16 +571,16 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
     $scope.form = form;
   };
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e, state) {
     $scope.loadWallet()
     .then(function(walletData) {
       $scope.walletData = walletData;
-      if ($state.stateParams && $state.stateParams.id) { // Load by id
-        $scope.load($state.stateParams.id);
+      if (state.stateParams && state.stateParams.id) { // Load by id
+        $scope.load(state.stateParams.id);
       }
       else {
-        if ($state.stateParams && $state.stateParams.type) {
-          $scope.formData.type=$state.stateParams.type;
+        if (state.stateParams && state.stateParams.type) {
+          $scope.formData.type=state.stateParams.type;
         }
         $scope.loading = false;
         UIUtils.loading.hide();

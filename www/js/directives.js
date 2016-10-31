@@ -130,6 +130,20 @@ angular.module('cesium.directives', ['cesium.services'])
     };
   })
 
+.directive('trustAsHtml', ['$compile', function($compile){
+  return {
+    restrict: 'AE',
+    link: function(scope, element, attrs)  {
+      var value = attrs.trustAsHtml;
+      if (value) {
+        var html = scope.$eval(value);
+        element.append(html);
+        $compile(element.contents())(scope);
+      }
+    }
+  }
+}])
+
 /**
 * Close the current modal
 */
@@ -191,10 +205,10 @@ angular.module('cesium.directives', ['cesium.services'])
     }
 
     return {
-      pre: function(scope, iElement, iAttrs, controller){
+      pre: function(scope, iElement, iAttrs){
         PluginService.extensions.points.current.set(iAttrs.name);
       },
-      post: function(scope, iElement, iAttrs, controller){
+      post: function(){
         PluginService.extensions.points.current.set();
       }
     };
@@ -203,8 +217,6 @@ angular.module('cesium.directives', ['cesium.services'])
 
   return {
     restrict: "E",
-    //link: linker,
-    //controller: controller,
     compile: compiler,
     scope: {
         content:'='

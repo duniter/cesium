@@ -109,12 +109,12 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.Nprev = 0;
   $scope.screen = UIUtils.screen;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e, state) {
     $translate(['COMMON.DATE_PATTERN'])
     .then(function($translations) {
       $scope.datePattern = $translations['COMMON.DATE_PATTERN'];
-      if ($state.stateParams && $state.stateParams.name) { // Load by name
-        csCurrency.searchByName($state.stateParams.name)
+      if (state.stateParams && state.stateParams.name) { // Load by name
+        csCurrency.searchByName(state.stateParams.name)
         .then(function(currency){
           $scope.load(currency);
         });

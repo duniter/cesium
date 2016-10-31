@@ -36,10 +36,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
          errors: []
        };
       data.requirements = {};
-      data.isMember = false;
-      data.loaded = false;
       data.blockUid = null;
+      data.sigDate = null;
+      data.isMember = false;
       data.events = [];
+      data.loaded = false;
       if (init) {
         api.data.raise.init(data);
       }
@@ -175,7 +176,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
     },
 
-    logout = function(username, password) {
+    logout = function() {
       return $q(function(resolve, reject) {
 
         resetData(); // will reset keypair
@@ -299,6 +300,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       };
       data.blockUid = null;
       data.isMember = false;
+      data.sigDate = null;
+      data.events = [];
     },
 
     loadRequirements = function() {
@@ -341,7 +344,32 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             return count;
           }, 0) : 0;
           data.isMember = !data.requirements.needSelf && !data.requirements.needMembership;
-          resolve();
+
+          var blockParts = idty.meta.timestamp.split('-', 2);
+          var blockNumber = parseInt(blockParts[0]);
+          var blockHash = blockParts[1];
+          // Retrieve registration date
+          return BMA.blockchain.block({block: blockNumber})
+            .then(function(block) {
+              data.sigDate = block.time;
+
+              // Check if self has been done on a valid block
+              if (blockNumber!== 0 && blockHash !== block.hash) {
+                addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH'});
+                console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(data.uid));
+              }
+              resolve();
+            })
+            .catch(function(err){
+              // Special case for currency init (root block not exists): use now
+              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockParts.number === '0') {
+                data.sigDate = Math.trunc(new Date().getTime() / 1000);
+                resolve();
+              }
+              else {
+                reject(err);
+              }
+            });
         })
         .catch(function(err) {
           resetRequirements();
@@ -406,7 +434,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             .then(reduceTx)
         ];
 
-
         // get TX history since
         if (fromTime !== -1) {
           var sliceTime = csSettings.data.walletHistorySliceSecond;
@@ -445,6 +472,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                }, []);
             }));
         }
+
         // Execute jobs
         $q.all(jobs)
         .then(function(){
@@ -605,6 +633,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
 
       // Add user message
+      data.events = [];
       if (data.requirements.pendingMembership) {
         data.events.push({type:'pending',message: 'ACCOUNT.WAITING_MEMBERSHIP'});
       }

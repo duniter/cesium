@@ -96,14 +96,14 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 uid: idty.uid,
                 pubkey: res.pubkey,
                 timestamp: idty.meta.timestamp,
-                number: blockUid[0],
+                number: parseInt(blockUid[0]),
                 hash: blockUid[1],
                 revoked: idty.revoked,
                 revokedSig: idty.revocation_sig,
                 sig: idty.self
               });
             }, []));
-          }, [])[0];
+          }, [])[0]; // TODO : check if a sort before is not better ?
           identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
 
           // Retrieve certifications
@@ -181,6 +181,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return BMA.blockchain.block({block: identity.number})
             .then(function(block) {
             identity.sigDate = block.time;
+
+            // Check if self has been done on a valid block
+            if (identity.number !== 0 && identity.hash !== block.hash) {
+              addEvent(identity, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
+              console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(identity.uid));
+            }
             resolve(identity);
           })
           .catch(function(err){
@@ -548,8 +554,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               _.forEach(blocks, function(block){
                 _.forEach(idtiesByBlock[block.number], function(idty) {
                   idty.sigDate = block.medianTime;
-                  if (idty.blockHash !== block.hash) {
-                    idty.errors = ['INVALID_MS_BLOCK_HASH'];
+                  if (block.number !== 0 && idty.blockHash !== block.hash) {
+                    addEvent(idty, {type:'error', message: 'ERROR.WOT_PENDING_INVALID_BLOCK_HASH'});
                     console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
                   }
                 });
@@ -629,6 +635,15 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }
           });
       });
+    },
+
+    addEvent = function(data, event) {
+      event = event || {};
+      event.type = event.type || 'info';
+      event.message = event.message || '';
+      event.messageParams = event.messageParams || {};
+      data.events = data.events || [];
+      data.events.push(event);
     }
     ;
 

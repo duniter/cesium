@@ -29,7 +29,7 @@ angular.module('cesium.currency-charts.controllers', ['cesium.services'])
 function CurrencyUdController($scope, BMA, $q) {
   'ngInject';
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function() {
       $scope.loadUds()
       .then(function (dataXY) {
         // TODO: plot

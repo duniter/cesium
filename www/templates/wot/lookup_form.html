@@ -97,9 +97,16 @@
         <span class="positive" ng-if="identity.name && identity.uid">
           <i class="ion-person"></i>
           {{::identity.uid}}
+          &nbsp;
         </span>
         <b class="ion-key"></b>
         {{::identity.pubkey | formatPubkey}}
+        <span ng-if="identity.events"
+              ng-repeat="event in identity.events"
+              class="assertive">
+          <i class="ion-alert-circled " ng-if="!identity.valid"></i>
+          <span ng-bind-html="event.message|translate:event.messageParams"></span>
+        </span>
       </h4>
       <i class="icon ion-ios-arrow-right "></i>
       <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>

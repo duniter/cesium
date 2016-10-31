@@ -100,17 +100,17 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
   $scope.wotSearchTextId = 'wotSearchText';
   $scope.enableFilter = true;
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
+  $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered) {
-      if ($state.stateParams && $state.stateParams.q) { // Query parameter
-        $scope.search.text=$state.stateParams.q;
+      if (state.stateParams && state.stateParams.q) { // Query parameter
+        $scope.search.text=state.stateParams.q;
         $timeout(function() {
           $scope.doSearch();
         }, 100);
       }
       else { // get new comers
         $timeout(function() {
-          $scope.doGetNewcomers($state.stateParams.newcomers);
+          $scope.doGetNewcomers(state.stateParams.newcomers);
         }, 100);
       }
       $scope.entered = true;
@@ -415,7 +415,7 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService
  * @param Modals
  * @constructor
  */
-function WotCertificationsViewController($scope, $rootScope, $timeout, $translate, csConfig, csSettings, Wallet, UIUtils, WotService, Modals) {
+function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, Wallet, UIUtils, WotService, Modals) {
   'ngInject';
 
   $scope.loading = true;
@@ -424,11 +424,11 @@ function WotCertificationsViewController($scope, $rootScope, $timeout, $translat
   $scope.showGivenCertifications = false; // default value (overwrite on 'large' view)
   $scope.showAvatar = false; // default value (overwrite on 'large' view)
 
-  $scope.$on('$ionicView.enter', function(e, $state) {
-    if ($state.stateParams && $state.stateParams.pubkey &&
-        $state.stateParams.pubkey.trim().length >  0) {
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (state.stateParams && state.stateParams.pubkey &&
+      state.stateParams.pubkey.trim().length >  0) {
       if ($scope.loading) {
-        $scope.load($state.stateParams.pubkey.trim());
+        $scope.load(state.stateParams.pubkey.trim());
       }
     }
 
