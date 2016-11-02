@@ -56,6 +56,7 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
   };
   $scope.showUsername = false;
   $scope.showPassword = false;
+  $scope.smallscreen = UIUtils.screen.isSmall();
 
   csCurrency.load()
   .then(function (data) {
@@ -77,7 +78,6 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
     $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slideNext();
     $scope.slides.slider.lockSwipes();
-    console.log($scope.slides.slider.activeIndex);
     $scope.isLastSlide = $scope.formData.isMember ? ($scope.slides.slider.activeIndex === 5) : ($scope.slides.slider.activeIndex === 4);
   };
 

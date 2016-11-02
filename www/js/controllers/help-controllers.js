@@ -332,7 +332,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
           bindings: {
             content: 'HELP.TIP.CURRENCY_RULES',
             icon: {
-              position: 'bottom-left'
+              position: 'center',
+              glyph: 'ion-information-circled'
             }
           }
         });
@@ -453,7 +454,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             icon: {
               position: 'center'
             }
-          }
+          },
+          timeout: 700,
+          retry: 15
         });
       },
 
@@ -493,7 +496,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS_CLICK',
             icon: {
               position: 'center'
-            }
+            },
+            hasNext: hasNext
           }
         });
       }
@@ -616,7 +620,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
                   position: 'center'
                 }
               },
-              retry: 10 // 10 * 500 = 5s max
+              retry: 20 // 10 * 500 = 5s max
             });
           });
       },
@@ -677,6 +681,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     if (!Wallet.isLogin()) return $scope.emptyPromise(true);
 
     var contentParams;
+    var skipAll = false;
 
     var steps = [
 
@@ -684,7 +689,10 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         // If on wallet : click on certifications
         if ($state.is('app.view_wallet')) {
           var element = $window.document.getElementById('helptip-wallet-certifications');
-          if (!element) return true;
+          if (!element) {
+            skipAll = true;
+            return true;
+          }
           $timeout(function() {
             angular.element(element).triggerHandler('click');
           });
@@ -698,6 +706,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function() {
+        if (skipAll) return true;
         if ($state.is('app.wallet_view_cert')) {
           // Select the second tabs
           $timeout(function() {
@@ -721,7 +730,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
 
       function() {
-        if ($scope.tour) return true; // skip Rules if features tour (already display)
+        if ($scope.tour || skipAll) return hasNext; // skip Rules if features tour (already display)
         return $scope.showHelpTip('helptip-certs-stock', {
           bindings: {
             content: 'HELP.TIP.CERTIFY_RULES',
@@ -762,13 +771,19 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
   $scope.startHeaderTour = function(startIndex, hasNext) {
     if (UIUtils.screen.isSmall()) return $scope.emptyPromise(true);
 
+    function _getProfilBtnElement() {
+      var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
+      if (!elements || !elements.length) return null;
+      return _.find(elements, function(el) {return el.offsetWidth > 0;});
+    }
+
     var steps = [
       function () {
 
         if (UIUtils.screen.isSmall()) return true; // skip for small screen
-        var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
-        if (!elements || !elements.length) return true;
-        return $scope.showHelpTip(elements[elements.length -1], {
+        var element = _getProfilBtnElement();
+        if (!element) return true;
+        return $scope.showHelpTip(element, {
           bindings: {
             content: 'HELP.TIP.HEADER_BAR_BTN_PROFILE',
             icon: {
@@ -795,9 +810,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         }
         // wide screens
         else {
-          var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
-          if (!elements || !elements.length) return true;
-          var element = elements[elements.length -1];
+          var element = _getProfilBtnElement();
+          if (!element) return true;
           $timeout(function() {
             angular.element(element).triggerHandler('click');
           });

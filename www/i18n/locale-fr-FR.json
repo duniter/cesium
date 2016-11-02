@@ -161,8 +161,8 @@
     "NOT_MEMBER_PARENTHESIS": "(non membre)",
     "EXPIRE_IN": "Expiration",
     "PSEUDO": "Pseudonyme",
-    "SIGNED_ON_BLOCK": "Certifié au bloc",
-    "WRITTEN_ON_BLOCK": "Ecrit au bloc",
+    "SIGNED_ON_BLOCK": "Certifié au bloc #{{block}}",
+    "WRITTEN_ON_BLOCK": "Ecrit au bloc #{{block}}",
     "GENERAL_DIVIDER": "Informations générales",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_CERTIFY": "Certifier",
@@ -189,6 +189,7 @@
       "TITLE": "{{uid}} - Certifications",
       "SUMMARY": "Certifications reçues",
       "LIST": "Détail des certifications reçues",
+      "PENDING_LIST": "Certifications en attente de traitement",
       "RECEIVED": "Certifications reçues",
       "RECEIVED_BY": "Certifications reçues par {{uid}}"
     },

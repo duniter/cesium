@@ -71,8 +71,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller,
-                       $ionicPopover,
-                       screenmatch, UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig
+                       UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
 
@@ -84,8 +83,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $rootScope.login = Wallet.isLogin();
 
   ////////////////////////////////////////
-  // Show currency view
+  // Show view
   ////////////////////////////////////////
+
+  $scope.showHome = function() {
+    $state.go('app.home');
+  };
 
   $scope.showCurrencyView = function() {
     $state.go(UIUtils.screen.isSmall() ? 'app.currency_view': 'app.currency_view_lg');

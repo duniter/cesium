@@ -11,7 +11,8 @@
     "angular-moment": "^0.10.3",
     "angular-animate": "1.4.3",
     "angular-sanitize": "1.5.3",
-    "angular": "1.5.3"
+    "angular": "1.5.3",
+    "js-scrypt": "1.2.0"
   },
   "resolutions": {
     "angular-sanitize": "1.5.3",

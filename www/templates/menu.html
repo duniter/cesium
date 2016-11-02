@@ -38,8 +38,8 @@
                  expose-aside-when="large"
                  enable-menu-with-back-views="false"
                  width="225">
-    <ion-header-bar class="bar bar-header">
-      <h1 class="title royal" translate>
+    <ion-header-bar class="bar bar-header" ng-click="showHome()" menu-close>
+      <h1 class="title dark" translate>
         MENU.TITLE
       </h1>
     </ion-header-bar>
@@ -47,7 +47,7 @@
       <ion-list class="list">
 
         <!-- DISCOVER Section -->
-        <ion-item menu-close class="item-icon-left" href="#/app/home" active-link="active">
+        <ion-item menu-close class="item-icon-left hidden-xs" href="#/app/home" active-link="active">
           <i class="icon ion-home"></i>
           <span translate>MENU.HOME</span>
         </ion-item>

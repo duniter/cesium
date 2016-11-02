@@ -461,6 +461,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       // Do timeout if ask
       if (options.timeout) {
         var timeout = options.timeout;
+        options.retryTimeout = options.retryTimeout || timeout;
         delete options.timeout;
         options.deferred = deferred;
         $timeout(function () {
@@ -469,7 +470,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       }
 
       // No element: reject
-      else if (!angular.isUndefined(options.retry) && !options.retry) {
+      else if (angular.isDefined(options.retry) && !options.retry) {
 
         if (options.onError === 'continue') {
           $timeout(function () {
@@ -489,7 +490,7 @@ angular.module('cesium.utils.services', ['ngResource'])
         options.deferred = deferred;
         $timeout(function() {
           showHelptip(id, options);
-        }, options.timeout || 100);
+        }, options.timeout || options.retryTimeout || 100);
       }
     }
 

@@ -89,7 +89,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       return $q(function(resolve, reject) {
         BMA.wot.lookup({ search: pubkey })
         .then(function(res){
-          var identity = res.results.reduce(function(idties, res) {
+          var identities = res.results.reduce(function(idties, res) {
             return idties.concat(res.uids.reduce(function(uids, idty) {
               var blockUid = idty.meta.timestamp.split('-', 2);
               return uids.concat({
@@ -103,7 +103,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 sig: idty.self
               });
             }, []));
-          }, [])[0]; // TODO : check if a sort before is not better ?
+          }, []);
+          // Choose the more updated identity
+          var identity = identities.length == 1 ?
+            identities[0] :
+            _.sortBy(identities, 'number')[identities.length-1];
+
           identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
 
           // Retrieve certifications
@@ -112,6 +117,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             return map;
           }, {});
           var certPubkeys = [];
+          identity.hasPendingCertifications = false;
           var certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
             return certs.concat(res.uids.reduce(function(certs, idty) {
               return certs.concat(idty.others.reduce(function(certs, cert) {
@@ -122,9 +128,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   block: (cert.meta && cert.meta.block_number) ? cert.meta.block_number : 0,
                   expiresIn: expiresIn,
                   willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
-                  valid: (expiresIn && expiresIn > 0),
+                  pending: !expiresIn,
                   isMember: cert.isMember
                 };
+                if (result.pending && !identity.hasPendingCertifications) {
+                  identity.hasPendingCertifications = true;
+                }
                 if (!certPubkeys[cert.pubkey]) {
                   certPubkeys[cert.pubkey] = result;
                 }
@@ -133,10 +142,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     certPubkeys[cert.pubkey] = result;
                   }
                   else {
-                    result = null; // skip
+                    return certs; // skip this result
                   }
                 }
-                return result !== null ? certs.concat(result) : certs;
+                return certs.concat(result);
               }, certs));
             }, certs));
           }, []);

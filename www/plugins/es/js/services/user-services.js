@@ -276,7 +276,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               restoringSettings = true;
               csSettings.store();
               console.debug('[esUser] Successfully loaded user settings from ES node');
-              console.debug(settings);
               resolve(data);
             });
         })

@@ -5,12 +5,12 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
 .factory('CryptoUtils', function($q, $timeout, Device) {
   'ngInject';
 
-  var async_load_scrypt = function(on_ready) {
+  var async_load_scrypt = function(on_ready, options) {
       if (scrypt_module_factory !== null){
-          return on_ready(scrypt_module_factory());
+        on_ready(scrypt_module_factory(options.requested_total_memory));
       }
       else {
-          return $timeout(function(){async_load_scrypt(on_ready);}, 100);
+          $timeout(function(){async_load_scrypt(on_ready, options);}, 100);
       }
   },
 
@@ -242,20 +242,22 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
         console.debug('Loading NaCl...');
         var now = new Date().getTime();
         var naclOptions = {};
+        var scryptOptions = {};
         if (ionic.Platform.grade.toLowerCase()!='a') {
           console.log('Reduce NaCl memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
-          naclOptions.requested_total_memory = 16777216;
+          naclOptions.requested_total_memory = 16 * 1048576; // 16 Mo
+          console.log('Reduce Scrypt memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
+          scryptOptions.requested_total_memory = 16 * 1048576; // 16 Mo
         }
         async_load_nacl(function(lib) {
           nacl = lib;
           loadedLib++;
           console.debug('Loaded NaCl in ' + (new Date().getTime() - now) + 'ms');
         }, naclOptions);
-
         async_load_scrypt(function(lib) {
           scrypt = lib;
           loadedLib++;
-        });
+        }, scryptOptions);
         async_load_base58(function(lib) {
           base58 = lib;
           loadedLib++;
@@ -268,12 +270,6 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
 
     // Service's exposed methods
     return {
-        /*
-        TODO: uncomment if need to expose
-        nacl: nacl,
-        scrypt: scrypt,
-        base58: base58,
-        base64: base64,*/
         isLoaded: isLoaded,
         util: {
           encode_utf8: encode_utf8,
@@ -295,7 +291,6 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
           pack: box,
           open: box_open
         }
-        //,isCompatible: isCompatible
      };
   }
 
