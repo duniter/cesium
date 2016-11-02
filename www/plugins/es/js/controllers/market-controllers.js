@@ -80,14 +80,18 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
                                   UIUtils, ModalUtils, esMarket, BMA) {
   'ngInject';
 
+  var defaultSearchLimit = 20;
+
   $scope.search = {
     text: '',
     lastRecords: true,
     results: [],
-    looking: true,
+    loading: true,
     category: null,
     location: null,
-    options: null
+    options: null,
+    limit: defaultSearchLimit,
+    loadingMore: false
   };
 
   $scope.$on('$ionicView.enter', function(e, state) {
@@ -143,8 +147,12 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
   });
 
 
-  $scope.doSearch = function() {
-    $scope.search.looking = true;
+  $scope.doSearch = function(offset, size) {
+    offset = offset || 0;
+    size = size || defaultSearchLimit;
+    var more = offset > 0;
+
+    $scope.search.loading = more ? $scope.search.loading : true;
     $scope.search.lastRecords = false;
     if (!$scope.search.options) {
       $scope.search.options = false;
@@ -159,8 +167,8 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
           "category.name" : {}
         }
       },
-      from: 0,
-      size: 20,
+      from: offset,
+      size: size,
       _source: esMarket.record.fields.commons
     };
     var text = $scope.search.text.trim();
@@ -226,22 +234,15 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       request.query.bool.filter =  filters;
     }
 
-    $scope.doRequest(request);
+    return $scope.doRequest(request, more);
   };
-
-  $scope.onToggleOptions = function() {
-    if ($scope.search.entered) {
-      $scope.doSearch();
-    }
-  };
-  $scope.$watch('search.options', $scope.onToggleOptions, true);
 
   $scope.doGetLastRecord = function(offset, size) {
-    $scope.search.looking = true;
     $scope.search.lastRecords = true;
 
     offset = offset || 0;
-    size = size || 20;
+    size = size || defaultSearchLimit;
+    var more = offset > 0;
 
     var request = {
       sort: {
@@ -252,23 +253,39 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       _source: esMarket.record.fields.commons
     };
 
-    $scope.doRequest(request);
+    return $scope.doRequest(request, more);
   };
 
-  $scope.doGetMoreLastRecord = function(size) {
-    $scope.doGetLastRecord(
+  $scope.showMore= function() {
+    $scope.search.limit = $scope.search.limit || defaultSearchLimit;
+    $scope.search.limit = $scope.search.limit * 2;
+    if ($scope.search.limit < defaultSearchLimit) {
+      $scope.search.limit = defaultSearchLimit;
+    }
+    $scope.search.loadingMore = true;
+    var searchFunction = ($scope.search.lastRecords) ?
+      $scope.doGetLastRecord :
+      $scope.doSearch;
+
+    return searchFunction(
       $scope.search.results.length, // offset
-      size
-    );
+      $scope.search.limit
+    )
+      .then(function() {
+        $scope.search.loadingMore = false;
+      })
+      .catch(function(err) {
+        $scope.search.loadingMore = false;
+      });
   };
 
-  $scope.doRequest = function(request) {
-    $scope.search.looking = true;
+  $scope.doRequest = function(request, more) {
+    $scope.search.loading = more ? $scope.search.loading : true;
 
     var categories;
     var currentUD;
 
-    $q.all([
+    return $q.all([
       esMarket.category.all()
         .then(function (result) {
           categories = result;
@@ -283,8 +300,8 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       return esMarket.record.search(request);
     })
     .then(function(res){
-      if (res.hits.total === 0) {
-        $scope.search.results = [];
+      if (!res.hits.hits.length) {
+        $scope.search.results = more ? $scope.search.results : [];
       }
       else {
         var formatSlug = $filter('formatSlug');
@@ -323,7 +340,14 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
             }
             return result.concat(record);
           }, []);
-        $scope.search.results = records;
+        if (!more) {
+          $scope.search.results = records;
+        }
+        else {
+          _.forEach(records, function(record) {
+            $scope.search.results.push(record);
+          });
+        }
 
         if (records.length > 0) {
           // Set Motion
@@ -332,20 +356,33 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
               startVelocity: 3000
             });
             // Set Ink
-            UIUtils.ink();
+            UIUtils.ink({
+              selector: '.item.ink'
+            });
           }, 10);
         }
       }
 
-      $scope.search.looking = false;
+      $scope.search.hasMore = $scope.search.results.length === $scope.search.limit;
+      $scope.search.loading = false;
     })
     .catch(function(err) {
-      $scope.search.looking = false;
-      $scope.search.results = [];
+      $scope.search.loading = false;
+      $scope.search.results = more ? $scope.search.results : [];
     });
   };
 
+  /* -- options -- */
+
+  $scope.onToggleOptions = function() {
+    if ($scope.search.entered) {
+      $scope.doSearch();
+    }
+  };
+  $scope.$watch('search.options', $scope.onToggleOptions, true);
+
   /* -- modals -- */
+
   $scope.showCategoryModal = function() {
     // load categories
     esMarket.category.all()

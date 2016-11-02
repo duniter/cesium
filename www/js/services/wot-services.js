@@ -464,7 +464,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   result.push({
                     pubkey:parts[0],
                     uid: parts[parts.length-1],
-                    sigDate: block.medianTime,
+                    memberDate: block.medianTime,
                     block: block.number
                   });
                 });

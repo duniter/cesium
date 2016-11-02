@@ -18,6 +18,10 @@
   background-color: #f5f5f5 !important;
 }
 
+/**********
+   Record list
+**********/
+
 .item-record {
   height: 100px !important;
   padding-top: 5px !important;
@@ -105,6 +109,10 @@
   min-height: inherit !important;
 }
 
+/**********
+   Record view
+**********/
+
 .hero .content .button.button-camera {
   display: block;
   position: absolute;
@@ -136,6 +144,14 @@
   border-bottom: solid 1px #ccc;
 }
 
+/**
+* Market record screen
+*/
+
+.market.view-record h1 {
+  font-size: 25px;
+  margin-top: 5px;
+}
 
 /**
 * Add specific Icons

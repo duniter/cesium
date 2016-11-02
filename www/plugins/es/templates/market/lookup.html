@@ -19,29 +19,29 @@
       <ng-include src="'plugins/es/templates/market/lookup_options.html'"></ng-include>
     </form>
 
-    <div style="display: block; height: 60px;">
+    <div class="padding-top padding-xs" style="display: block; height: 60px;">
       <div class="pull-left">
         <h4
-          ng-if="!search.looking && search.lastRecords && search.results.length" translate>
+          ng-if="!search.loading && search.lastRecords && search.results.length" translate>
           MARKET.SEARCH.LAST_RECORDS
         </h4>
         <h4
-          ng-if="!search.looking && !search.lastRecords && (search.text.length || search.options != null)" translate>
+          ng-if="!search.loading && !search.lastRecords && (search.text.length || search.options != null)" translate>
           COMMON.RESULTS_LIST
         </h4>
       </div>
     </div>
 
-    <div class="center" ng-if="search.looking">
+    <div class="center" ng-if="search.loading">
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="padding assertive" ng-if="!search.looking && search.results.length===0 && search.options != null" translate>
+    <div class="padding assertive" ng-if="!search.loading && search.results.length===0 && search.options != null" translate>
       COMMON.SEARCH_NO_RESULT
     </div>
 
     <div class="list animate-ripple"
-         ng-if="!search.looking && search.results && search.results.length > 0">
+         ng-if="!search.loading && search.results.length">
 
       <a ng-repeat="rec in search.results"
          class="item item-record ink padding-xs"
@@ -71,14 +71,16 @@
       </a>
 
       <!-- show more items -->
-      <a class="item item-record ink padding-xs"
-         ng-click="doGetMoreLastRecord()" translate>
-        MARKET.SEARCH.SHOW_MORE
-      </a>
+      <div class="center" ng-if="search.loadingMore">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+      <a class="item text-center button button-stable button-full ink "
+         ng-if="search.hasMore && !search.loadingMore"
+         ng-click="showMore()" translate>MARKET.SEARCH.SHOW_MORE</a>
     </div>
   </ion-content>
 
-  <button id="fab-add-market-record"
+  <button id="fab-add-market-record bu"
           class="button button-fab button-fab-bottom-right button-assertive icon ion-compose visible-xs visible-sm spin"
           ng-click="showNewRecordModal()">
   </button>

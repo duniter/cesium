@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="market view-record">
   <ion-nav-title>
     <span translate>MARKET.VIEW.TITLE</span>
   </ion-nav-title>
@@ -26,14 +26,49 @@
         <ion-list class="animate-fade-slide-in item-text-wrap no-padding-xs">
 
           <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
-            <img ng-src="{{thumbnail.src}}" nf-if="thumbnail">
+            <img ng-src="{{thumbnail.src}}" ng-if="thumbnail">
             <h1 ng-bind-html="formData.title"></h1>
-            <h2 class="gray">
+            <h2 class="gray hidden-xs">
               <a ng-if="formData.location" ui-sref="app.market_lookup({location:formData.location})">
                 <i class="icon ion-location"></i>
                 <span ng-bind-html="formData.location"></span>
               </a>
               <span ng-if="formData.location && category.name">&nbsp;|&nbsp;</span>
+              <a ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
+                <i class="icon ion-flag"></i>
+                <span ng-bind-html="category.name"></span>
+              </a>
+            </h2>
+            <h4 class="hidden-xs">
+              <i class="icon ion-clock"></i>
+              <span translate>COMMON.SUBMIT_BY</span>
+              <a ng-class="{'positive': issuer.uid, 'gray': !issuer.uid}"
+                 ui-sref="app.wot_view_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
+                <ng-if ng-if="issuer.uid">
+                  <i class="icon ion-person"></i>
+                  {{issuer.name||issuer.uid}}
+                </ng-if>
+                <span ng-if="!issuer.uid">
+                  <i class="icon ion-key"></i>
+                  {{issuer.pubkey|formatPubkey}}
+                </span>
+              </a>
+              <span>
+                {{formData.time|formatFromNow}}
+                <span class="gray hidden-xs">|
+                  {{formData.time | formatDate}}
+                </span>
+              </span>
+            </h4>
+          </div>
+
+          <div class="item visible-xs no-padding-top no-padding-bottom">
+            <h2 class="gray">
+              <a ng-if="formData.location" ui-sref="app.market_lookup({location:formData.location})">
+                <i class="icon ion-location"></i>
+                <span ng-bind-html="formData.location"></span>
+              </a>
+              <br/>
               <a ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
                 <i class="icon ion-flag"></i>
                 <span ng-bind-html="category.name"></span>

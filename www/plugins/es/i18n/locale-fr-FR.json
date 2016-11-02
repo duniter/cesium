@@ -87,7 +87,8 @@
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
       "BTN_AROUND_ME": "Autour de moi",
-      "SHOW_MORE": "Voir plus d'annonces",
+      "SHOW_MORE": "Afficher plus",
+      "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
       "LOCATION": "Localisation",
       "LOCATION_HELP": "Ville",
       "LAST_RECORDS": "Dernières annonces :",
@@ -161,10 +162,10 @@
       "TITLE": "Nouveau référencement",
       "SELECT_TYPE": "Type d'organisation :",
       "ENUM": {
-        "shop": "Commerce local",
-        "company": "Entreprise",
-        "association": "Association",
-        "institution": "Institution"
+        "SHOP": "Commerce local",
+        "COMPANY": "Entreprise",
+        "ASSOCIATION": "Association",
+        "INSTITUTION": "Institution"
       }
     },
     "EDIT": {

@@ -13762,11 +13762,7 @@ a {
 .item-thumbnail-left > i:first-child,
 .item-thumbnail-left i.item-image,
 .item-thumbnail-left .item-content > i:first-child,
-.item-thumbnail-left .item-content i.item-image,
-.item-thumbnail-left-left > i:first-child,
-.item-thumbnail-left-left i.item-image,
-.item-thumbnail-left-left .item-content > i:first-child,
-.item-thumbnail-left-left .item-content i.item-image {
+.item-thumbnail-left .item-content i.item-image {
   color: #D9D9D9;
   background-color: #f8f8f8;
   overflow: hidden !important;
@@ -13779,6 +13775,12 @@ a {
   .item-thumbnail-left,
   .item-thumbnail-left .item-content {
     padding-left: 84px !important; }
+  .item-thumbnail-left > img:first-child,
+  .item-thumbnail-left img.item-image,
+  .item-thumbnail-left .item-content > img:first-child,
+  .item-thumbnail-left .item-content img.item-image {
+    max-width: 70px;
+    max-height: 70px; }
   .item h2 {
     font-size: 13px !important; } }
 

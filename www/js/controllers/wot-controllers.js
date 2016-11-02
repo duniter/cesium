@@ -163,7 +163,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     $scope.hideActionsPopover();
     $scope.search.loading = !more;
     $scope.search.type = 'newcomers';
-    $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
+    $scope.search.limit = (limit && limit > 0) ? limit : defaultSearchLimit;
     var searchFunction =  csConfig.initPhase ?
       WotService.all :
       WotService.newcomers;
@@ -177,7 +177,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     $scope.hideActionsPopover();
     $scope.search.loading = more ? false : true;
     $scope.search.type = 'pending';
-    $scope.search.limit = (limit && limit > 0) ? limit : $scope.search.limit;
+    $scope.search.limit = (limit && limit > 0) ? limit : defaultSearchLimit;
     return WotService.pending($scope.search.limit).then(function(idties){
       if ($scope.search.type != 'pending') return; // could have change
       $scope.doDisplayResult(idties);
@@ -195,7 +195,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
       $scope.doGetNewcomers :
       $scope.doGetPending;
 
-    searchFunction($scope.search.limit, true)
+    return searchFunction($scope.search.limit, true)
       .then(function() {
         $scope.search.loadingMore = false;
       })
@@ -266,6 +266,9 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
   $scope.doDisplayResult = function(res) {
     $scope.search.results = res || [];
     $scope.search.loading = false;
+    $scope.search.hasMore = $scope.search.results.length >=  $scope.search.limit;
+
+    $scope.smallscreen = UIUtils.screen.isSmall();
 
     if (!$scope.search.results.length) return;
 
@@ -279,6 +282,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
         selector: '.item.ink'
       });
     }, 10);
+
   };
 
   /* -- show/hide popup -- */

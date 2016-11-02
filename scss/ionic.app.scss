@@ -1034,11 +1034,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 .item-thumbnail-left > i:first-child,
 .item-thumbnail-left i.item-image,
 .item-thumbnail-left .item-content > i:first-child,
-.item-thumbnail-left .item-content i.item-image,
-.item-thumbnail-left-left > i:first-child,
-.item-thumbnail-left-left i.item-image,
-.item-thumbnail-left-left .item-content > i:first-child,
-.item-thumbnail-left-left .item-content i.item-image {
+.item-thumbnail-left .item-content i.item-image {
   color: $item-default-active-bg;
   background-color: $stable;
   overflow: hidden !important;
@@ -1052,6 +1048,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   .item-thumbnail-left,
   .item-thumbnail-left .item-content {
     padding-left: 84px !important;
+  }
+
+  .item-thumbnail-left > img:first-child,
+  .item-thumbnail-left img.item-image,
+  .item-thumbnail-left .item-content > img:first-child,
+  .item-thumbnail-left .item-content img.item-image {
+    max-width: 70px;
+    max-height: 70px;
   }
 
   .item h2 {
