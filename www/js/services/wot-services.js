@@ -192,7 +192,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             identity.sigDate = block.time;
 
             // Check if self has been done on a valid block
-            if (identity.number !== 0 && identity.hash !== block.hash) {
+            if (!identity.isMember && identity.number !== 0 && identity.hash !== block.hash) {
               addEvent(identity, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
               console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(identity.uid));
             }

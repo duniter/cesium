@@ -354,7 +354,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               data.sigDate = block.time;
 
               // Check if self has been done on a valid block
-              if (blockNumber!== 0 && blockHash !== block.hash) {
+              if (!data.isMember && blockNumber!== 0 && blockHash !== block.hash) {
                 addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH'});
                 console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(data.uid));
               }
