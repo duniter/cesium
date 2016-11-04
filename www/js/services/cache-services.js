@@ -10,7 +10,7 @@ angular.module('cesium.cache.services', ['ngResource', 'angular-cache'])
         LONG: 1 * 60  * 60 * 1000 /*5 min*/,
         SHORT: csSettings.data.cacheTimeMs
       },
-      cacheNames = [];
+      cacheNames = []
     ;
 
     function getOrCreateCache(prefix, maxAge, onExpire){
