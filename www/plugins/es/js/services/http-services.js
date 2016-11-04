@@ -3,7 +3,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, CryptoUtils, csHttp, $rootScope, csConfig, csSettings, Wallet) {
+.factory('esHttp', function($q, CryptoUtils, csHttp, $rootScope, csConfig, csSettings, csWallet) {
   'ngInject';
 
   function factory() {
@@ -27,7 +27,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 
       return function(record, params) {
         return $q(function(resolve, reject) {
-          if (!Wallet.isLogin()) {
+          if (!csWallet.isLogin()) {
             reject('Wallet must be login before sending record to ES node'); return;
           }
           var errorFct = function(err) {
@@ -67,7 +67,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       var postHistoryDelete = csHttp.post(host, node, '/history/delete');
       return function(id) {
         return $q(function(resolve, reject) {
-          if (!Wallet.isLogin()) {
+          if (!csWallet.isLogin()) {
             reject('Wallet must be login before sending record to ES node'); return;
           }
           var errorFct = function(err) {

@@ -42,6 +42,7 @@
     "UNIVERSAL_DIVIDEND": "Dividende universel",
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YYYY HH:mm",
+    "DATE_SHORT_PATTERN": "DD/MM/YYYY",
     "EMPTY_PARENTHESIS": "(vide)",
     "UID": "Pseudonyme",
     "ENABLE": "Activé",
@@ -112,7 +113,7 @@
     "REMEMBER_ME": "Se souvenir de moi",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
-    "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\"> (Informations détaillées sur les noeuds)</span>",
+    "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\">(affichage plus détaillé)</span>",
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
@@ -157,12 +158,15 @@
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
     "REGISTERED_SINCE": "Inscription",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
-    "NO_CERTIFICATIONS": "Aucune certification",
+    "NO_CERTIFICATION": "Aucune certification validée",
+    "NO_GIVEN_CERTIFICATION": "Aucune certification émise",
     "NOT_MEMBER_PARENTHESIS": "(non membre)",
     "EXPIRE_IN": "Expiration",
+    "NOT_WRITTEN_EXPIRE_IN": "Date limite<br/>de traitement",
+    "EXPIRED": "Expiré",
     "PSEUDO": "Pseudonyme",
-    "SIGNED_ON_BLOCK": "Certifié au bloc #{{block}}",
-    "WRITTEN_ON_BLOCK": "Ecrit au bloc #{{block}}",
+    "SIGNED_ON_BLOCK": "Emise au bloc #{{block}}",
+    "WRITTEN_ON_BLOCK": "Ecrite au bloc #{{block}}",
     "GENERAL_DIVIDER": "Informations générales",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_CERTIFY": "Certifier",
@@ -197,6 +201,7 @@
       "TITLE": "{{uid}} - Certifications émises",
       "SUMMARY": "Certifications émises",
       "LIST": "Détail des certifications émises",
+      "PENDING_LIST": "Certifications en attente de traitement",
       "SENT": "Certifications émises",
       "SENT_BY": "Certifications émises par {{uid}}"
     }
@@ -331,7 +336,10 @@
     "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé) : cette personne doit renouveller sa demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_SANDBOX_FULL": "Le noeud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de noeud (via le menu <b>Paramètres</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
-    "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('renew')\">envoyer une nouvelle demande</a> pour résoudre ce problème."
+    "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('renew')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
+    "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDuration}}).",
+    "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDuration}}).",
+    "UNABLE_TO_CERTIFY_TITLE": "Certification impossible"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

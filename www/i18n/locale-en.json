@@ -42,6 +42,7 @@
     "UNIVERSAL_DIVIDEND": "Universal dividend",
     "UD": "UD",
     "DATE_PATTERN": "MM/DD/YYYY HH:mm",
+    "DATE_SHORT_PATTERN": "MM/DD/YYYY",
     "EMPTY_PARENTHESIS": "(empty)",
     "UID": "Pseudonym",
     "ENABLE": "Enable",
@@ -112,7 +113,7 @@
     "REMEMBER_ME": "Remember me",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restore default values",
-    "EXPERT_MODE": "Enable expert mode<span class=\"hidden-xs\"> (Display more details on peers)</span>",
+    "EXPERT_MODE": "Enable expert mode<span class=\"hidden-xs\">(display more details)</span>",
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
       "HELP" : "Set the address of the node to use:"
@@ -157,9 +158,12 @@
     "SEARCH_HELP": "Search (member or public key)",
     "REGISTERED_SINCE": "Registered since ",
     "REGISTERED_SINCE_BLOCK": "Registered since block #",
-    "NO_CERTIFICATIONS": "No certification",
+    "NO_CERTIFICATION": "No received certification",
+    "NO_GIVEN_CERTIFICATION": "No given certification",
     "NOT_MEMBER_PARENTHESIS": "(not member)",
     "EXPIRE_IN": "Expires",
+    "NOT_WRITTEN_EXPIRE_IN": "Deadline<br/>treatment",
+    "EXPIRED": "Expired",
     "PSEUDO": "Pseudonym",
     "SIGNED_ON_BLOCK": "Certify on block #{{block}}",
     "WRITTEN_ON_BLOCK": "Written on block #{{block}}",
@@ -197,6 +201,7 @@
       "TITLE": "{{uid}} - Certifications sent",
       "SUMMARY": "Sent certifications",
       "LIST": "Détails of sent certifications",
+      "PENDING_LIST": "Pending certifications",
       "SENT": "Sent certifications",
       "SENT_BY": "Certifications sent by {{uid}}"
     }
@@ -331,7 +336,10 @@
     "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network nodes are cancelled): the person must renew its application for membership <b>before</b> being certified.",
     "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
-    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue."
+    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
+    "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
+    "IDENTITY_ALREADY_CERTIFY_PENDING": "You have <b>already certified</b> that identity.<br/><br/>Your certification is still pending (Deadline for treatment {{expiresIn|formatDuration}}).",
+    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

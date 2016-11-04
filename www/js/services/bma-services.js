@@ -2,7 +2,7 @@
 
 angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, csSettings, csHttp, $rootScope, $timeout) {
+.factory('BMA', function($q, csSettings, csHttp, csCache, $rootScope, $timeout) {
   'ngInject';
 
   function factory(host, port, cacheEnable) {
@@ -42,7 +42,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     function copy(otherNode) {
       if (!!this.instance) { // if main service impl
         var instance = this.instance; // keep factory
-        csHttp.cache.clearAll(); // clean cache for old node
+        csCache.clearAll(); // clean all caches
         angular.copy(otherNode, this);
         this.instance = instance;
       }

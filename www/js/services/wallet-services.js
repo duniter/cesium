@@ -3,10 +3,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('Wallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings, csNetwork, Device) {
+.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings) {
   'ngInject';
 
-  Wallet = function(id) {
+  factory = function(id) {
 
     var
     constants = {
@@ -483,7 +483,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.tx.pendings = txPendings;
           data.tx.fromTime = fromTime;
           data.tx.toTime = data.tx.history.length ? data.tx.history[0].time /*=max(tx.time)*/: fromTime;
-          console.log('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
+          console.debug('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
           resolve();
         })
         .catch(function(err) {
@@ -1412,7 +1412,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     };
   };
 
-  var service = Wallet('default');
+  var service = factory('default');
 
   // try to restore wallet
   csSettings.api.data.on.ready($rootScope, function() {
@@ -1422,6 +1422,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
   });
 
-  service.instance = Wallet;
+  service.instance = factory;
   return service;
 });

@@ -10,7 +10,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, Wallet, WotService, UIUtils, BMA, CryptoUtils, Device) {
+.factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, Device) {
   'ngInject';
 
   function factory(host, port) {
@@ -242,14 +242,14 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       // Waiting to load crypto libs
       if (!CryptoUtils.isLoaded()) {
-        console.debug('[esUser] Waiting crypto lib loading...');
+        console.debug('[ES] [user] Waiting crypto lib loading...');
         $timeout(function() {
           onWalletLogin(data, resolve, reject);
         }, 200);
         return;
       }
 
-      console.debug('[esUser] Loading user settings from ES node...');
+      console.debug('[ES] [user] Loading user settings from ES node...');
 
       // Load settings
       esHttp.get(host, port, '/user/settings/:id')({id: data.pubkey})
@@ -261,7 +261,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           var record = res._source;
           // Do not apply if same version
           if (record.time === csSettings.data.time) {
-            console.debug('[esUser] Local settings already up to date');
+            console.debug('[ES] [user] Local settings already up to date');
             resolve(data);
             return;
           }
@@ -275,13 +275,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               angular.merge(csSettings.data, settings);
               restoringSettings = true;
               csSettings.store();
-              console.debug('[esUser] Successfully loaded user settings from ES node');
+              console.debug('[ES] [user] Successfully loaded user settings from ES node');
               resolve(data);
             });
         })
         .catch(function(err){
           if (err && err.ucode && err.ucode == 404) {
-            console.debug('[esUser] No user settings found in ES node...');
+            console.debug('[ES] [user] No user settings found in ES node...');
             resolve(data); // not found
           }
           else {
@@ -291,24 +291,24 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function onSettingsChanged(data) {
-      if (!Wallet.isLogin()) return;
+      if (!csWallet.isLogin()) return;
 
       // Waiting to load crypto libs
       if (!CryptoUtils.isLoaded()) {
-        console.debug('[esUser] Waiting crypto lib loading...');
+        console.debug('[ES] [user] Waiting crypto lib loading...');
         $timeout(function() {
           onSettingsChanged(data);
         }, 200);
         return;
       }
 
-      console.debug('[esUser] Saving user settings to ES...');
+      console.debug('[ES] [user] Saving user settings to ES...');
 
-      var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(Wallet.data.keypair);
+      var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair);
       var nonce = CryptoUtils.util.random_nonce();
 
       var formData = {
-        issuer: Wallet.data.pubkey,
+        issuer: csWallet.data.pubkey,
         nonce: CryptoUtils.util.encode_base58(nonce),
         time: Math.trunc(new Date().getTime() / 1000)
       };
@@ -330,7 +330,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           csSettings.data.time = formData.time;
           restoringSettings = true;
           csSettings.store();
-          console.debug('[esUser] User settings saved in ES');
+          console.debug('[ES] [user] User settings saved in ES');
         })
         .catch(function(err) {
           console.error(err);
@@ -340,7 +340,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function removeListeners() {
-      console.debug("[esUser] Disable user extension");
+      console.debug("[ES] [user] Disable");
 
       _.forEach(listeners, function(remove){
         remove();
@@ -349,16 +349,16 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function addListeners() {
-      console.debug("[ES] Enable user extension");
+      console.debug("[ES] [user] Enable");
 
-      // Extend Wallet.loadData() and WotService.loadData()
+      // Extend csWallet.loadData() and csWot.loadData()
       listeners = [
-        Wallet.api.data.on.load($rootScope, onWalletLoad, this),
-        Wallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
-        Wallet.api.data.on.reset($rootScope, onWalletReset, this),
-        Wallet.api.data.on.login($rootScope, onWalletLogin, this),
-        WotService.api.data.on.load($rootScope, onWotLoad, this),
-        WotService.api.data.on.search($rootScope, onWotSearch, this),
+        csWallet.api.data.on.load($rootScope, onWalletLoad, this),
+        csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
+        csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
+        csWot.api.data.on.load($rootScope, onWotLoad, this),
+        csWot.api.data.on.search($rootScope, onWotSearch, this),
       ];
     }
 
@@ -391,7 +391,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       if (!wasEnable && isEnable()) {
         return $q(function(resolve, reject){
-          onWalletLogin(Wallet.data, resolve, reject);
+          onWalletLogin(csWallet.data, resolve, reject);
         });
       }
       else {

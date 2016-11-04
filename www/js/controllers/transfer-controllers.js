@@ -44,10 +44,10 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, $ionicHistory) {
+function TransferController($scope, $rootScope, $state, BMA, csWallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, $ionicHistory) {
   'ngInject';
 
-  TransferModalController.call(this, $scope, $rootScope, $state, BMA, Wallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, csSettings);
+  TransferModalController.call(this, $scope, $rootScope, $state, BMA, csWallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, csSettings);
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!!state.stateParams && !!state.stateParams.pubkey) {
@@ -80,7 +80,7 @@ function TransferController($scope, $rootScope, $state, BMA, Wallet, UIUtils, $t
   };
 }
 
-function TransferModalController($scope, $rootScope, $ionicPopover, $translate, $filter, $q, BMA, Wallet, UIUtils, Modals,
+function TransferModalController($scope, $rootScope, $ionicPopover, $translate, $filter, $q, BMA, csWallet, UIUtils, Modals,
                                  csSettings, parameters) {
   'ngInject';
 
@@ -181,7 +181,7 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
                  amount.replace(new RegExp('[.,]'), '.');
       }
 
-      Wallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
+      csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
       .then(function() {
         UIUtils.loading.hide();
         $scope.closeModal(true);

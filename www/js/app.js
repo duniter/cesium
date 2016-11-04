@@ -53,6 +53,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  .filter('formatDateShort', function($rootScope) {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).local().format($rootScope.dateShortPattern || 'YYYY-MM-DD') : '';
+    };
+  })
+
   .filter('formatFromNow', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).startOf('minute').fromNow() : '';
@@ -261,9 +267,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     }
 
     // Set date pattern (see 'formatDate' filter)
-    $translate('COMMON.DATE_PATTERN')
-      .then(function(datePattern) {
-        $rootScope.datePattern = datePattern || 'YYYY-MM-DD HH:mm';
+    $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN'])
+      .then(function(translations) {
+        $rootScope.datePattern = translations['COMMON.DATE_PATTERN'];
+        if ($rootScope.datePattern == 'COMMON.DATE_PATTERN') {
+          $rootScope.datePattern = 'YYYY-MM-DD HH:mm';
+        }
+        $rootScope.dateShortPattern = translations['COMMON.DATE_SHORT_PATTERN'];
+        if ($rootScope.dateShortPattern == 'COMMON.DATE_SHORT_PATTERN') {
+          $rootScope.dateShortPattern = 'YYYY-MM-DD';
+        }
       });
 
   };

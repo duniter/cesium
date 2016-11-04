@@ -71,16 +71,16 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller,
-                       UIUtils, BMA, Wallet, Device, Modals, csSettings, csConfig
+                       UIUtils, BMA, csWallet, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
 
   $scope.search = {};
-  $rootScope.walletData = Wallet.data;
+  $rootScope.walletData = csWallet.data;
   $rootScope.settings = csSettings.data;
   $rootScope.config = csConfig;
   $rootScope.device = Device;
-  $rootScope.login = Wallet.isLogin();
+  $rootScope.login = csWallet.isLogin();
 
   ////////////////////////////////////////
   // Show view
@@ -131,7 +131,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.createHelptipScope = function(isTour) {
     if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable)) {
-      return; // avoid other helptip to be launched (e.g. wallet)
+      return; // avoid other helptip to be launched (e.g. csWallet)
     }
     // Create a new scope for the tour controller
     var helptipScope = $scope.$new();
@@ -140,7 +140,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   $scope.startHelpTour = function() {
-    $rootScope.tour = true; // to avoid other helptip to be launched (e.g. wallet)
+    $rootScope.tour = true; // to avoid other helptip to be launched (e.g. csWallet)
     var helptipScope = $scope.createHelptipScope(true);
     return helptipScope.startHelpTour()
     .then(function() {
@@ -185,7 +185,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     // Warn if wallet has been never used - see #167
     var _showConfirmIfUnused = function() {
-      var showAlert = !csConfig.initPhase && Wallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
+      var showAlert = !csConfig.initPhase && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
       if (!showAlert) return;
       UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
         'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
@@ -204,12 +204,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     };
 
     return $q(function(resolve, reject){
-      if (!Wallet.isLogin()) {
+      if (!csWallet.isLogin()) {
         return $scope.showLoginModal()
         .then(function(walletData) {
           if (walletData) {
             $rootScope.viewFirstEnter = false;
-            Wallet.loadData()
+            csWallet.loadData()
             .then(function(walletData){
               _showConfirmIfUnused();
               $rootScope.walletData = walletData;
@@ -229,8 +229,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
           }
         });
       }
-      else if (!Wallet.data.loaded) {
-        return Wallet.loadData()
+      else if (!csWallet.data.loaded) {
+        return csWallet.loadData()
         .then(function(walletData){
           _showConfirmIfUnused();
           $rootScope.walletData = walletData;
@@ -246,7 +246,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         });
       }
       else {
-        resolve(Wallet.data);
+        resolve(csWallet.data);
       }
     });
   };
@@ -260,7 +260,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.loginAndGo = function(state) {
     $scope.closeProfilePopover();
 
-    if (!Wallet.isLogin()) {
+    if (!csWallet.isLogin()) {
       return $scope.showLoginModal()
       .then(function(walletData){
         UIUtils.loading.hide(10);
@@ -285,7 +285,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         csSettings.data.useLocalStorage = csSettings.data.rememberMe ? true : csSettings.data.useLocalStorage;
         csSettings.store();
       }
-      return Wallet.login(formData.username, formData.password);
+      return csWallet.login(formData.username, formData.password);
     })
     .then(function(walletData){
       if (walletData) {
@@ -307,7 +307,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       return;
     }
     UIUtils.loading.show();
-    return Wallet.logout()
+    return csWallet.logout()
     .then(function() {
       $ionicSideMenuDelegate.toggleLeft();
       $ionicHistory.clearHistory();
@@ -321,17 +321,17 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // add listener on wallet event
-  Wallet.api.data.on.login($scope, function(walletData, resolve) {
+  csWallet.api.data.on.login($scope, function(walletData, resolve) {
     $rootScope.login = true;
     if (resolve) resolve();
   });
-  Wallet.api.data.on.logout($scope, function() {
+  csWallet.api.data.on.logout($scope, function() {
     $rootScope.login = false;
   });
 
   // If connected and same pubkey
   $scope.isUserPubkey = function(pubkey) {
-    return Wallet.isUserPubkey(pubkey);
+    return csWallet.isUserPubkey(pubkey);
   };
 
   ////////////////////////////////////////

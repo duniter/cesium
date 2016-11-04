@@ -376,7 +376,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
                                         $anchorScroll, $filter,
-                                        Wallet, esRegistry, esUser, UIUtils, BMA, esHttp) {
+                                        csWallet, esRegistry, esUser, UIUtils, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -386,7 +386,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.canEdit = false;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope,  $timeout, $filter, $state, Wallet, UIUtils, esHttp, esRegistry);
+  ESCommentsController.call(this, $scope,  $timeout, $filter, $state, csWallet, UIUtils, esHttp, esRegistry);
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -416,7 +416,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           else {
             delete $scope.thumbnail;
           }
-          $scope.canEdit = Wallet.isUserPubkey($scope.formData.issuer);
+          $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
 
           // Load avatar and name (and uid)
           return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])

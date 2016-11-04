@@ -36,7 +36,7 @@ function JoinController($timeout, Modals) {
 }
 
 
-function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Modals, Wallet, csCurrency, PluginService) {
+function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWallet, csCurrency) {
   'ngInject';
 
   $scope.formData = {
@@ -150,7 +150,7 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
 
     var onErrorLogout = function(message) {
       return function(err) {
-        Wallet.logout()
+        csWallet.logout()
         .then(function(){
           UIUtils.onError(message)(err);
         });
@@ -159,7 +159,7 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
 
     UIUtils.loading.show();
 
-    Wallet.login($scope.formData.username, $scope.formData.password)
+    csWallet.login($scope.formData.username, $scope.formData.password)
     .then(function() {
       if (!$scope.formData.isMember) {
         // Redirect to wallet
@@ -168,10 +168,10 @@ function JoinModalController($scope, $state, $timeout, UIUtils, CryptoUtils, Mod
       }
 
       // Send self
-      Wallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
+      csWallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
         .then(function() {
           // Send membership IN
-          Wallet.membership.inside()
+          csWallet.membership.inside()
           .then(function() {
 
             $scope.closeModal();

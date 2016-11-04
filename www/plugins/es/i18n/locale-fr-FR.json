@@ -197,8 +197,8 @@
   },
   "PROFILE": {
     "UID": "Pseudonyme",
-    "TITLE": "Nom",
-    "TITLE_HELP": "Nom",
+    "TITLE": "Nom, Prénom",
+    "TITLE_HELP": "Nom, Prénom",
     "DESCRIPTION": "A propos de moi",
     "DESCRIPTION_HELP": "A propos de moi...",
     "ADDRESS": "Rue",

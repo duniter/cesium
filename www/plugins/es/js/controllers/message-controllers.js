@@ -185,10 +185,10 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
 }
 
 
-function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, CryptoUtils, Wallet, esHttp, esMessage) {
+function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage) {
   'ngInject';
 
-  ESMessageComposeModalController.call(this, $scope, Modals, UIUtils, CryptoUtils, Wallet, esHttp, esMessage);
+  ESMessageComposeModalController.call(this, $scope, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage);
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!!state.stateParams && !!state.stateParams.pubkey) {
@@ -227,7 +227,7 @@ function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, Cry
 
 }
 
-function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, Wallet, esHttp, esMessage, parameters) {
+function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage, parameters) {
   'ngInject';
 
   $scope.formData = {
@@ -257,7 +257,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, W
 
     UIUtils.loading.show();
     var data = {
-      issuer: Wallet.data.pubkey,
+      issuer: csWallet.data.pubkey,
       recipient: $scope.formData.destPub,
       title: $scope.formData.title,
       content: $scope.formData.content,
@@ -265,7 +265,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, W
       nonce: CryptoUtils.util.random_nonce()
     };
 
-    esMessage.send(data, Wallet.data.keypair)
+    esMessage.send(data, csWallet.data.keypair)
       .then(function(id) {
         $scope.id=id;
         UIUtils.loading.hide();

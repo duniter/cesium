@@ -79,8 +79,8 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 /* ----------------------------
 *  Help Tip
 * ---------------------------- */
-function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $translate, $sce,
-                           UIUtils, csConfig, csSettings, csCurrency, Device, Wallet) {
+function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+                           UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?
 
@@ -183,7 +183,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       // Wallet tour (if login)
       .then(function(next){
         if (!next) return false;
-        if (!Wallet.isLogin()) return true; // not login: continue
+        if (!csWallet.isLogin()) return true; // not login: continue
         return $scope.startWalletTour(0, true)
           .then(function(endIndex){
             if (!endIndex) return false;
@@ -196,7 +196,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       // Wallet certifications tour
       .then(function(next){
         if (!next) return false;
-        if (!Wallet.isLogin()) return true; // not login: continue
+        if (!csWallet.isLogin()) return true; // not login: continue
         return $scope.startWalletCertTour(0, true)
           .then(function(endIndex){
             if (!endIndex) return false;
@@ -562,7 +562,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletNoLoginTour = function(startIndex, hasNext) {
-    if (Wallet.isLogin()) return $scope.emptyPromise(true); // skip if login
+    if (csWallet.isLogin()) return $scope.emptyPromise(true); // skip if login
 
     var steps = [
       function () {
@@ -587,7 +587,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletTour = function(startIndex, hasNext) {
-    if (!Wallet.isLogin()) return $scope.emptyPromise(true); // skip if not login
+    if (!csWallet.isLogin()) return $scope.emptyPromise(true); // skip if not login
 
     var contentParams;
 
@@ -678,7 +678,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletCertTour = function(startIndex, hasNext) {
-    if (!Wallet.isLogin()) return $scope.emptyPromise(true);
+    if (!csWallet.isLogin()) return $scope.emptyPromise(true);
 
     var contentParams;
     var skipAll = false;
@@ -900,7 +900,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     }
 
     // If login: redirect to wallet
-    if (Wallet.isLogin()) {
+    if (csWallet.isLogin()) {
       return $state.go('app.view_wallet')
         .then(function(){
           return $scope.showHelpTip('helptip-wallet-balance', {

@@ -36,7 +36,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   };
 
   $scope.load = function() {
-    $scope.loading = true; // to avoid the call of Wallet.store()
+    $scope.loading = true; // to avoid the call of csWallet.store()
 
     // Fill locales
     $scope.locales = angular.copy(UIUtils.locales);

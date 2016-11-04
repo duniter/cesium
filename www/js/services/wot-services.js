@@ -2,138 +2,188 @@
 angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('WotService', function($q, $timeout, BMA, Api, csSettings) {
+.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csSettings, csCache) {
   'ngInject';
 
-  WotService = function(id) {
+  factory = function(id) {
 
     var
-    api = new Api(this, "WotService-" + id),
+      api = new Api(this, "csWot-" + id),
+      identityCache = csCache.get('csWot-idty-', csCache.constants.SHORT),
 
-    _sortAndLimitIdentities = function(idties, size) {
-      idties = _.sortBy(idties, function(idty){
-        var score = 1;
-        score += (1000000 * (idty.block));
-        score += (10      * (900 - idty.uid.toLowerCase().charCodeAt(0)));
-        return -score;
-      });
-      if (angular.isDefined(size) && idties.length > size) {
-        idties = idties.slice(0, size); // limit if more than expected size
-      }
-      return idties;
-    },
-
-    loadRequirements = function(pubkey, uid) {
-      return $q(function(resolve, reject) {
-        // Get requirements
-        BMA.wot.requirements({pubkey: pubkey})
-        .then(function(res){
-          if (!res.identities || res.identities.length === 0) {
-            resolve();
-            return;
-          }
-          if (res.identities.length > 1) {
-            res.identities = _.sortBy(res.identities, function(idty) {
-                  var score = 1;
-                  score += (100000000000 * ((uid && idty.uid === uid) ? 1 : 0));
-                  score += (1000000      * idty.membershipExpiresIn);
-                  score += (10           * idty.membershipPendingExpiresIn);
-                  return -score;
-                });
-          }
-          var requirements = res.identities[0];
-          // Add useful custom fields
-          requirements.hasSelf = true;
-          requirements.needMembership = (requirements.membershipExpiresIn === 0 &&
-                                              requirements.membershipPendingExpiresIn <= 0 );
-          requirements.needRenew = !requirements.needMembership && (requirements.membershipExpiresIn <= csSettings.data.timeWarningExpire &&
-                                        requirements.membershipPendingExpiresIn <= 0 );
-          requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
-          requirements.pendingMembership = (requirements.membershipPendingExpiresIn > 0);
-          requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
-          requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
-            if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
-              return count + 1;
-            }
-            return count;
-          }, 0) : 0;
-          requirements.isMember = !requirements.needMembership && !requirements.pendingMembership;
-          resolve(requirements);
-        })
-        .catch(function(err) {
-          // If not a member: continue
-          if (!!err &&
-              (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
-               err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
-            resolve({
-              hasSelf: false,
-              needMembership: true,
-              canMembershipOut: false,
-              needRenew: false,
-              pendingMembership: false,
-              certificationCount: 0,
-              certifications: [],
-              needCertifications: false,
-              needCertificationCount: 0,
-              willNeedCertificationCount: 0
-            });
-          }
-          else {
-            reject(err);
-          }
+      _sortAndLimitIdentities = function(idties, size) {
+        idties = _.sortBy(idties, function(idty){
+          var score = 1;
+          score += (1000000 * (idty.block));
+          score += (10      * (900 - idty.uid.toLowerCase().charCodeAt(0)));
+          return -score;
         });
-      });
-    },
+        if (angular.isDefined(size) && idties.length > size) {
+          idties = idties.slice(0, size); // limit if more than expected size
+        }
+        return idties;
+      },
 
-    loadIdentity = function(pubkey, requirements, parameters) {
-      return $q(function(resolve, reject) {
-        BMA.wot.lookup({ search: pubkey })
-        .then(function(res){
-          var identities = res.results.reduce(function(idties, res) {
-            return idties.concat(res.uids.reduce(function(uids, idty) {
-              var blockUid = idty.meta.timestamp.split('-', 2);
-              return uids.concat({
-                uid: idty.uid,
-                pubkey: res.pubkey,
-                timestamp: idty.meta.timestamp,
-                number: parseInt(blockUid[0]),
-                hash: blockUid[1],
-                revoked: idty.revoked,
-                revokedSig: idty.revocation_sig,
-                sig: idty.self
+      loadRequirements = function(pubkey, uid) {
+        return $q(function(resolve, reject) {
+          // Get requirements
+          BMA.wot.requirements({pubkey: pubkey})
+          .then(function(res){
+            if (!res.identities || res.identities.length === 0) {
+              resolve();
+              return;
+            }
+            if (res.identities.length > 1) {
+              res.identities = _.sortBy(res.identities, function(idty) {
+                    var score = 1;
+                    score += (100000000000 * ((uid && idty.uid === uid) ? 1 : 0));
+                    score += (1000000      * idty.membershipExpiresIn);
+                    score += (10           * idty.membershipPendingExpiresIn);
+                    return -score;
+                  });
+            }
+            var requirements = res.identities[0];
+            // Add useful custom fields
+            requirements.hasSelf = true;
+            requirements.needMembership = (requirements.membershipExpiresIn === 0 &&
+                                                requirements.membershipPendingExpiresIn <= 0 );
+            requirements.needRenew = !requirements.needMembership && (requirements.membershipExpiresIn <= csSettings.data.timeWarningExpire &&
+                                          requirements.membershipPendingExpiresIn <= 0 );
+            requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
+            requirements.pendingMembership = (requirements.membershipPendingExpiresIn > 0);
+            requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
+            requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
+              if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
+                return count + 1;
+              }
+              return count;
+            }, 0) : 0;
+            requirements.isMember = !requirements.needMembership && !requirements.pendingMembership;
+            resolve(requirements);
+          })
+          .catch(function(err) {
+            // If not a member: continue
+            if (!!err &&
+                (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
+                 err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
+              resolve({
+                hasSelf: false,
+                needMembership: true,
+                canMembershipOut: false,
+                needRenew: false,
+                pendingMembership: false,
+                certificationCount: 0,
+                certifications: [],
+                needCertifications: false,
+                needCertificationCount: 0,
+                willNeedCertificationCount: 0
               });
-            }, []));
-          }, []);
-          // Choose the more updated identity
-          var identity = identities.length == 1 ?
-            identities[0] :
-            _.sortBy(identities, 'number')[identities.length-1];
+            }
+            else {
+              reject(err);
+            }
+          });
+        });
+      },
 
-          identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
+      loadIdentity = function(pubkey, requirements, parameters, medianTime) {
+        return $q(function(resolve, reject) {
+          BMA.wot.lookup({ search: pubkey })
+          .then(function(res){
+            var identities = res.results.reduce(function(idties, res) {
+              return idties.concat(res.uids.reduce(function(uids, idty) {
+                var blockUid = idty.meta.timestamp.split('-', 2);
+                return uids.concat({
+                  uid: idty.uid,
+                  pubkey: res.pubkey,
+                  timestamp: idty.meta.timestamp,
+                  number: parseInt(blockUid[0]),
+                  hash: blockUid[1],
+                  revoked: idty.revoked,
+                  revokedSig: idty.revocation_sig,
+                  sig: idty.self
+                });
+              }, []));
+            }, []);
+            // Choose the more updated identity
+            var identity = identities.length == 1 ?
+              identities[0] :
+              _.sortBy(identities, 'number')[identities.length-1];
 
-          // Retrieve certifications
-          var expiresInByPub = requirements.certifications.reduce(function(map, cert){
-            map[cert.from]=cert.expiresIn;
-            return map;
-          }, {});
-          var certPubkeys = [];
-          identity.hasPendingCertifications = false;
-          var certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
-            return certs.concat(res.uids.reduce(function(certs, idty) {
-              return certs.concat(idty.others.reduce(function(certs, cert) {
-                var expiresIn = cert.isMember ? expiresInByPub[cert.pubkey] : null;
+            identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
+
+            // Retrieve certifications
+            var expiresInByPub = requirements.certifications.reduce(function(map, cert){
+              map[cert.from]=cert.expiresIn;
+              return map;
+            }, {});
+            var certPubkeys = [];
+            var pendingCertBlocks = {};
+            identity.hasPendingCertifications = false;
+            var certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
+              return certs.concat(res.uids.reduce(function(certs, idty) {
+                return certs.concat(idty.others.reduce(function(certs, cert) {
+                  var expiresIn = cert.isMember ? expiresInByPub[cert.pubkey] : null;
+                  var certTime = expiresIn ? (medianTime - parameters.sigValidity + expiresIn) : null;
+                  var result = {
+                    pubkey: cert.pubkey,
+                    uid: cert.uids[0],
+                    time: certTime,
+                    block: (cert.meta && cert.meta.block_number) ? cert.meta.block_number : 0,
+                    expiresIn: expiresIn,
+                    willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
+                    pending: !expiresIn,
+                    isMember: cert.isMember
+                  };
+                  if (result.pending) {
+                    identity.hasPendingCertifications = true;
+                    if (!pendingCertBlocks[result.block]) {
+                      pendingCertBlocks[result.block] = [result];
+                    }
+                    else {
+                      pendingCertBlocks[result.block].push(result);
+                    }
+                  }
+                  if (!certPubkeys[cert.pubkey]) {
+                    certPubkeys[cert.pubkey] = result;
+                  }
+                  else { // if duplicated cert: keep the most recent
+                    if (result.block > certPubkeys[cert.pubkey].block) {
+                      certPubkeys[cert.pubkey] = result;
+                    }
+                    else {
+                      return certs; // skip this result
+                    }
+                  }
+                  return certs.concat(result);
+                }, certs));
+              }, certs));
+            }, []);
+            identity.certifications = _.sortBy(certifications, function(cert){
+              var score = 1;
+              score += (1000000000000 * (cert.expiresIn ? cert.expiresIn : 0));
+              score += (10000000      * (cert.isMember ? 1 : 0));
+              score += (10            * (cert.block ? cert.block : 0));
+              return -score;
+            });
+            identity.certificationCount = requirements.certificationCount;
+            identity.isMember = requirements.isMember;
+            delete requirements.certifications;
+            delete requirements.certificationCount;
+
+            // Store given certs
+            certPubkeys = [];
+            var givenCertifications = !res.results ? [] : res.results.reduce(function(certs, res) {
+              return certs.concat(res.signed.reduce(function(certs, cert) {
+                var blockUid = cert.meta ? cert.meta.timestamp.split('-', 2) : [null, null];
                 var result = {
                   pubkey: cert.pubkey,
-                  uid: cert.uids[0],
-                  block: (cert.meta && cert.meta.block_number) ? cert.meta.block_number : 0,
-                  expiresIn: expiresIn,
-                  willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
-                  pending: !expiresIn,
-                  isMember: cert.isMember
+                  uid: cert.uid,
+                  block: blockUid[0],
+                  hash: blockUid[1],
+                  isMember: cert.isMember,
+                  wasMember: cert.wasMember
                 };
-                if (result.pending && !identity.hasPendingCertifications) {
-                  identity.hasPendingCertifications = true;
-                }
                 if (!certPubkeys[cert.pubkey]) {
                   certPubkeys[cert.pubkey] = result;
                 }
@@ -147,120 +197,113 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 }
                 return certs.concat(result);
               }, certs));
-            }, certs));
-          }, []);
-          identity.certifications = _.sortBy(certifications, function(cert){
-            var score = 1;
-            score += (1000000000000 * (cert.expiresIn ? cert.expiresIn : 0));
-            score += (10000000      * (cert.isMember ? 1 : 0));
-            score += (10            * (cert.block ? cert.block : 0));
-            return -score;
-          });
-          identity.certificationCount = requirements.certificationCount;
-          identity.isMember = requirements.isMember;
-          delete requirements.certifications;
-          delete requirements.certificationCount;
+            }, []);
+            identity.temp = {
+              givenCertifications: givenCertifications // will be used in loadGivenCertifications()
+            };
+            identity.sigQty =  parameters.sigQty;
+            identity.sigStock =  parameters.sigStock;
 
-          // Store given certs
-          certPubkeys = [];
-          var givenCertifications = !res.results ? [] : res.results.reduce(function(certs, res) {
-            return certs.concat(res.signed.reduce(function(certs, cert) {
-              if (!certPubkeys[cert.pubkey]) { // skip duplicated certs
-                certPubkeys[cert.pubkey] = true;
-                var blockUid = cert.meta ? cert.meta.timestamp.split('-', 2) : [null, null];
-                return certs.concat({
-                  pubkey: cert.pubkey,
-                  uid: cert.uid,
-                  block: blockUid[0],
-                  hash: blockUid[1],
-                  isMember: cert.isMember,
-                  wasMember: cert.wasMember
+            var blocks = [identity.number].concat(_.keys(pendingCertBlocks));
+
+            // Retrieve block time, from number
+            return BMA.blockchain.blocks(_.uniq(blocks)).then(function(blocks){
+              _.forEach(blocks, function(block){
+                // Retrieve self time
+                if (identity.number && block.number === identity.number) {
+                  identity.sigDate = block.time;
+
+                  // Check if self has been done on a valid block
+                  if (!identity.isMember && identity.number !== 0 && identity.hash !== block.hash) {
+                    addEvent(identity, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
+                    console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(identity.uid));
+                  }
+                }
+
+                // Set time of pending certs
+                _.forEach(pendingCertBlocks[block.number], function(cert) {
+                  cert.time = block.medianTime;
+                  cert.expiresIn = Math.max(0, cert.time + parameters.sigWindow - medianTime);
+                  cert.valid = (cert.expiresIn > 0);
                 });
+              });
+
+              resolve(identity);
+            })
+            .catch(function(err){
+              // Special case for currency init (root block not exists): use now
+              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && identity.number === '0') {
+                identity.sigDate = Math.trunc(new Date().getTime() / 1000);
+                resolve(identity);
               }
-              return certs;
-            }, certs));
-          }, []);
-          identity.temp = {
-            givenCertifications: givenCertifications
-          };
-          identity.sigQty =  parameters.sigQty;
-          identity.sigStockMax =  parameters.sigStock;
-
-          // Retrieve registration date
-          return BMA.blockchain.block({block: identity.number})
-            .then(function(block) {
-            identity.sigDate = block.time;
-
-            // Check if self has been done on a valid block
-            if (!identity.isMember && identity.number !== 0 && identity.hash !== block.hash) {
-              addEvent(identity, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
-              console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(identity.uid));
-            }
-            resolve(identity);
+              else {
+                reject(err);
+              }
+            });
           })
-          .catch(function(err){
-            // Special case for currency init (root block not exists): use now
-            if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && identity.number === '0') {
-              identity.sigDate = Math.trunc(new Date().getTime() / 1000);
+          .catch(function(err) {
+            if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) { // Identity not found (if no self)
+              var identity = {
+                uid: null,
+                pubkey: pubkey,
+                hasSelf: false
+              };
               resolve(identity);
             }
             else {
               reject(err);
             }
           });
-        })
-        .catch(function(err) {
-          if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) { // Identity not found (if no self)
-            var identity = {
-              uid: null,
-              pubkey: pubkey,
-              hasSelf: false
-            };
-            resolve(identity);
-          }
-          else {
-            reject(err);
-          }
         });
-      });
-    },
+      },
 
       loadGivenCertifications = function(pubkey, lookupGivenCertifications, parameters, medianTime) {
         return $q(function(resolve, reject) {
 
-          var lookupCertsMap = !lookupGivenCertifications ? {} : lookupGivenCertifications.reduce(function(map, cert){
-            map[cert.pubkey] = cert;
-            return map;
+          var lookupCertsMap = !lookupGivenCertifications ? {} : lookupGivenCertifications.reduce(function(res, cert){
+            res[cert.pubkey] = cert;
+            return res;
           }, {});
 
           BMA.wot.certifiedBy({ pubkey: pubkey })
             .then(function(res){
-              var sigStock = 0;
+              var givenCertificationCount = 0;
+
               var certifications = res.certifications.reduce(function(res, cert) {
                 var certTime = cert.cert_time ? cert.cert_time.medianTime : null;
-                var expiresIn = (cert.written === null || certTime === null) ? 0 : (certTime + parameters.sigValidity - medianTime);
+                var expiresIn = (!cert.written || !certTime) ? 0 : (certTime + parameters.sigValidity - medianTime);
                 expiresIn = (expiresIn < 0) ? 0 : expiresIn;
-                sigStock = (expiresIn > 0) ? sigStock+1 : sigStock;
+                givenCertificationCount = (expiresIn > 0) ? givenCertificationCount+1 : givenCertificationCount;
                 delete lookupCertsMap[cert.pubkey];
-                return res.concat({
+                var result = {
+                  pubkey: cert.pubkey,
+                  uid: cert.uid,
+                  time: certTime,
                   isMember: cert.isMember,
                   wasMember: cert.wasMember,
-                  uid: cert.uid,
-                  pubkey: cert.pubkey,
-                  time: certTime,
                   expiresIn: expiresIn,
-                  valid: (expiresIn > 0),
+                  willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
+                  pending: false,
                   block: (cert.written !== null) ? cert.written.number :
                     (cert.cert_time ? cert.cert_time.block : null)
-                });
+                };
+                return res.concat(result);
               }, []);
 
-              // Add missing certs found in lookup (e.g. not written certs)
-              certifications = _.keys(lookupCertsMap).reduce(function(res, pubkey){
-                var cert = lookupCertsMap[pubkey];
-                cert.valid = false;
-                return res.concat(cert);
-              }, certifications);
+              // Add pending certs (found in lookup - see loadIdentity())
+              var pendingCertBlocks = {};
+              var pendingCertifications = _.forEach(_.values(lookupCertsMap), function(cert){
+                cert.pending = true;
+                if (!pendingCertBlocks[cert.block]) {
+                  pendingCertBlocks[cert.block] = [cert];
+                }
+                else {
+                  pendingCertBlocks[cert.block].push(cert);
+                }
+              });
+
+              var hasPendingGivenCertifications = pendingCertifications.length > 0;
+              certifications = certifications.concat(pendingCertifications);
 
               certifications = _.sortBy(certifications, function(cert){
                 var score = 1;
@@ -270,15 +313,35 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 return -score;
               });
 
-              resolve({
-                sigStock: sigStock,
+              var result = {
+                givenCertificationCount: givenCertificationCount,
+                hasPendingGivenCertifications: hasPendingGivenCertifications,
                 givenCertifications: certifications
-              });
+              };
+              var pendingCertBlockNumbers = _.keys(pendingCertBlocks);
+              if (!pendingCertBlockNumbers.length) {
+                resolve(result);
+              }
+              else {
+                // Add time to pending cert
+                BMA.blockchain.blocks(_.uniq(pendingCertBlockNumbers)).then(function(blocks){
+                  _.forEach(blocks, function(block){
+                    _.forEach(pendingCertBlocks[block.number], function(cert) {
+                      cert.time = block.medianTime;
+                      cert.expiresIn = Math.max(0, cert.time + parameters.sigWindow - medianTime);
+                      cert.valid = (cert.expiresIn > 0);
+                    });
+                  });
+
+                  resolve(result);
+                });
+              }
             })
             .catch(function(err) {
               if (!!err && err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER) { // member not found
                 resolve({
-                  sigStock: 0,
+                  givenCertificationCount: 0,
+                  hasPendingGivenCertifications: false,
                   givenCertifications: []
                 });
               }
@@ -289,40 +352,47 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         });
       },
 
-    loadSources = function(pubkey) {
-      return $q(function(resolve, reject) {
-        // Get transactions
-        BMA.tx.sources({pubkey: pubkey})
-        .then(function(res){
-          var sources = [];
-          var sourcesIndexByKey = [];
-          var balance = 0;
-          if (!!res.sources && res.sources.length > 0) {
-            _.forEach(res.sources, function(src) {
-              var srcKey = src.type+':'+src.identifier+':'+src.noffset;
-              src.consumed = false;
-              balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
-              sources.push(src);
-              sourcesIndexByKey[srcKey] = sources.length -1 ;
+      loadSources = function(pubkey) {
+        return $q(function(resolve, reject) {
+          // Get transactions
+          BMA.tx.sources({pubkey: pubkey})
+          .then(function(res){
+            var sources = [];
+            var sourcesIndexByKey = [];
+            var balance = 0;
+            if (!!res.sources && res.sources.length > 0) {
+              _.forEach(res.sources, function(src) {
+                var srcKey = src.type+':'+src.identifier+':'+src.noffset;
+                src.consumed = false;
+                balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
+                sources.push(src);
+                sourcesIndexByKey[srcKey] = sources.length -1 ;
+              });
+            }
+            resolve({
+              sources: sources,
+              sourcesIndexByKey: sourcesIndexByKey,
+              balance: balance
             });
-          }
-          resolve({
-            sources: sources,
-            sourcesIndexByKey: sourcesIndexByKey,
-            balance: balance
+          })
+          .catch(function(err) {
+            reject(err);
           });
-        })
-        .catch(function(err) {
-          reject(err);
         });
-      });
-    },
+      },
 
-    loadData = function(pubkey, uid) {
+      loadData = function(pubkey, withCache, uid) {
         return $q(function(resolve, reject){
-          var data = {
-            pubkey: pubkey
-          };
+          // Check cached data
+          var data = withCache ? identityCache.get(pubkey) : null;
+          if (data) {
+            console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
+            resolve(data);
+            return;
+          }
+          console.debug("[wot] Loading identity " + pubkey.substring(0, 8));
+          var now = new Date().getTime();
+          data = {pubkey: pubkey};
 
           var parameters;
           var medianTime;
@@ -355,7 +425,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   data.requirements = requirements;
 
                   // Get identity
-                  return loadIdentity(pubkey, requirements, parameters)
+                  return loadIdentity(pubkey, requirements, parameters, medianTime)
                     .then(function (identity) {
                       angular.merge(data, identity);
 
@@ -378,282 +448,284 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             ]);
           })
           .then(function() {
+            identityCache.put(pubkey, data); // add to cache
+            console.debug('[wallet] Identity '+ pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
             resolve(data);
           })
           .catch(function(err) {
             reject(err);
           });
         });
-    },
+      },
 
-    search = function(text) {
-      return $q(function(resolve, reject) {
-        if (!text || text.trim() !== text) {
-          resolve();
-        }
-        return BMA.wot.lookup({ search: text })
-          .then(function(res){
-            var idtyKeys = [];
-            var idties = res.results.reduce(function(idties, res) {
-              return idties.concat(res.uids.reduce(function(uids, idty) {
-                var blocUid = idty.meta.timestamp.split('-', 2);
-                var idtyKey = idty.uid + '-' + res.pubkey;
-                if (!idtyKeys[idtyKey] && !idty.revoked) {
-                  idtyKeys[idtyKey] = true;
-                  return uids.concat({
-                    uid: idty.uid,
-                    pubkey: res.pubkey,
-                    number: blocUid[0],
-                    hash: blocUid[1]
-                  });
-                }
-                return uids;
-              }, []));
-            }, []);
+      search = function(text) {
+        return $q(function(resolve, reject) {
+          if (!text || text.trim() !== text) {
+            resolve();
+          }
+          return BMA.wot.lookup({ search: text })
+            .then(function(res){
+              var idtyKeys = [];
+              var idties = res.results.reduce(function(idties, res) {
+                return idties.concat(res.uids.reduce(function(uids, idty) {
+                  var blocUid = idty.meta.timestamp.split('-', 2);
+                  var idtyKey = idty.uid + '-' + res.pubkey;
+                  if (!idtyKeys[idtyKey] && !idty.revoked) {
+                    idtyKeys[idtyKey] = true;
+                    return uids.concat({
+                      uid: idty.uid,
+                      pubkey: res.pubkey,
+                      number: blocUid[0],
+                      hash: blocUid[1]
+                    });
+                  }
+                  return uids;
+                }, []));
+              }, []);
 
-            api.data.raisePromise.search(text, idties)
-            .then(function() {
-              resolve(idties);
-            });
-          })
-          .catch(function(err) {
-            if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
-              var idties = [];
               api.data.raisePromise.search(text, idties)
               .then(function() {
                 resolve(idties);
               });
-            }
-            else {
-              reject(err);
-            }
-          });
-      });
-    },
-
-    getNewcomers = function(size) {
-      size = size || 20;
-      return BMA.blockchain.stats.newcomers()
-        .then(function(res) {
-          if (!res.result.blocks || !res.result.blocks.length) {
-            return null;
-          }
-          var blocks = _.sortBy(res.result.blocks, function(n){ return -n; });
-          return getNewcomersRecursive(blocks, 0, 5, size)
-            .then(function(idties){
-              if (!idties || !idties.length) {
-                return null;
-              }
-              idties = _sortAndLimitIdentities(idties, size);
-              return $q(function(resolve, reject) {
-                api.data.raisePromise.search(null, idties)
-                  .then(function () {
-                    resolve(idties);
-                  })
-                  .catch(function(err){
-                    reject(err);
-                  });
-              });
-            });
-        });
-    },
-
-
-    getNewcomersRecursive = function(blocks, offset, size, maxResultSize) {
-      return $q(function(resolve, reject) {
-        var result = [];
-        var jobs = [];
-        _.each(blocks.slice(offset, offset+size), function(number) {
-          jobs.push(
-            BMA.blockchain.block({block: number})
-              .then(function(block){
-                if (!block || !block.joiners) return;
-                _.each(block.joiners, function(joiner){
-                  var parts = joiner.split(':');
-                  result.push({
-                    pubkey:parts[0],
-                    uid: parts[parts.length-1],
-                    memberDate: block.medianTime,
-                    block: block.number
-                  });
+            })
+            .catch(function(err) {
+              if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
+                var idties = [];
+                api.data.raisePromise.search(text, idties)
+                .then(function() {
+                  resolve(idties);
                 });
-              })
-          );
-        });
-
-        $q.all(jobs)
-          .then(function() {
-            if (result.length < maxResultSize && offset < blocks.length - 1) {
-              $timeout(function() {
-                getNewcomersRecursive(blocks, offset+size, size, maxResultSize - result.length)
-                  .then(function(res) {
-                    resolve(result.concat(res));
-                  })
-                  .catch(function(err) {
-                    reject(err);
-                  });
-              }, 1000);
-            }
-            else {
-              resolve(result);
-            }
-          })
-          .catch(function(err){
-            if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
-              resolve(result);
-            }
-            else {
-              reject(err);
-            }
-          });
-      });
-    },
-
-    getPending = function(size) {
-      size = size || 20;
-      return BMA.wot.member.pending()
-        .then(function(res) {
-          if (!res.memberships || !res.memberships.length) {
-            return null;
-          }
-          var idtiesByBlock = {};
-          var idtiesByPubkey = {};
-          var idties = [];
-          _.forEach(res.memberships, function(ms){
-            if (ms.membership == 'IN') {
-              var idty = {
-                uid: ms.uid,
-                pubkey: ms.pubkey,
-                block: ms.blockNumber,
-                blockHash: ms.blockHash
-              };
-              var otherIdtySamePubkey = idtiesByPubkey[ms.pubkey];
-              if (otherIdtySamePubkey && idty.block > otherIdtySamePubkey.block) {
-                return; // skip
-              }
-              idtiesByPubkey[idty.pubkey] = idty;
-              if (!idtiesByBlock[idty.block]) {
-                idtiesByBlock[idty.block] = [idty];
               }
               else {
-                idtiesByBlock[idty.block].push(idty);
+                reject(err);
               }
-
-              // Remove previous idty from maps
-              if (otherIdtySamePubkey) {
-                idtiesByBlock[otherIdtySamePubkey.block] = idtiesByBlock[otherIdtySamePubkey.block].reduce(function(res, aidty){
-                  if (aidty.pubkey == otherIdtySamePubkey.pubkey) return res; // if match idty to remove, to NOT add
-                  return (res||[]).concat(aidty);
-                }, null);
-                if (idtiesByBlock[otherIdtySamePubkey.block] === null) {
-                  delete idtiesByBlock[otherIdtySamePubkey.block];
-                }
-                return;
-              }
-              else {
-                idties.push(idty);
-              }
-            }
-          });
-          idties = _sortAndLimitIdentities(idtiesByPubkey, size);
-
-          return BMA.blockchain.blocks(_.keys(idtiesByBlock))
-            .then(function(blocks) {
-
-              _.forEach(blocks, function(block){
-                _.forEach(idtiesByBlock[block.number], function(idty) {
-                  idty.sigDate = block.medianTime;
-                  if (block.number !== 0 && idty.blockHash !== block.hash) {
-                    addEvent(idty, {type:'error', message: 'ERROR.WOT_PENDING_INVALID_BLOCK_HASH'});
-                    console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
-                  }
-                });
-              });
-              return $q(function(resolve, reject) {
-                api.data.raisePromise.search(null, idties)
-                  .then(function () {
-                    resolve(idties);
-                  })
-                  .catch(function(err){
-                    reject(err);
-                  });
-              });
             });
         });
-    },
+      },
 
-    getAll = function() {
-      var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
-      return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT);
-    },
-
-    getAllRecursive = function(letters, offset, size) {
-      return $q(function(resolve, reject) {
-        var result = [];
-        var pubkeys = {};
-        var jobs = [];
-        _.each(letters.slice(offset, offset+size), function(letter) {
-          jobs.push(
-            search(letter)
+      getNewcomers = function(size) {
+        size = size || 20;
+        return BMA.blockchain.stats.newcomers()
+          .then(function(res) {
+            if (!res.result.blocks || !res.result.blocks.length) {
+              return null;
+            }
+            var blocks = _.sortBy(res.result.blocks, function(n){ return -n; });
+            return getNewcomersRecursive(blocks, 0, 5, size)
               .then(function(idties){
-                if (!idties || !idties.length) return;
-                result = idties.reduce(function(res, idty) {
-                  if (!pubkeys[idty.pubkey]) {
-                    pubkeys[idty.pubkey] = true;
-                    return res.concat(idty);
-                  }
-                  return res;
-                }, result);
-              })
-          );
-        });
-
-        $q.all(jobs)
-          .then(function() {
-            if (offset < letters.length - 1) {
-              $timeout(function() {
-                getAllRecursive(letters, offset+size, size)
-                  .then(function(idties) {
-                    if (!idties || !idties.length) {
-                      resolve(result);
-                      return;
-                    }
-                    resolve(idties.reduce(function(res, idty) {
-                      if (!pubkeys[idty.pubkey]) {
-                        pubkeys[idty.pubkey] = true;
-                        return res.concat(idty);
-                      }
-                      return res;
-                    }, result));
-                  })
-                  .catch(function(err) {
-                    reject(err);
-                  });
-              }, BMA.constants.LIMIT_REQUEST_DELAY);
-            }
-            else {
-              resolve(result);
-            }
-          })
-          .catch(function(err){
-            if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
-              resolve(result);
-            }
-            else {
-              reject(err);
-            }
+                if (!idties || !idties.length) {
+                  return null;
+                }
+                idties = _sortAndLimitIdentities(idties, size);
+                return $q(function(resolve, reject) {
+                  api.data.raisePromise.search(null, idties)
+                    .then(function () {
+                      resolve(idties);
+                    })
+                    .catch(function(err){
+                      reject(err);
+                    });
+                });
+              });
           });
-      });
-    },
+      },
 
-    addEvent = function(data, event) {
-      event = event || {};
-      event.type = event.type || 'info';
-      event.message = event.message || '';
-      event.messageParams = event.messageParams || {};
-      data.events = data.events || [];
-      data.events.push(event);
-    }
+
+      getNewcomersRecursive = function(blocks, offset, size, maxResultSize) {
+        return $q(function(resolve, reject) {
+          var result = [];
+          var jobs = [];
+          _.each(blocks.slice(offset, offset+size), function(number) {
+            jobs.push(
+              BMA.blockchain.block({block: number})
+                .then(function(block){
+                  if (!block || !block.joiners) return;
+                  _.each(block.joiners, function(joiner){
+                    var parts = joiner.split(':');
+                    result.push({
+                      pubkey:parts[0],
+                      uid: parts[parts.length-1],
+                      memberDate: block.medianTime,
+                      block: block.number
+                    });
+                  });
+                })
+            );
+          });
+
+          $q.all(jobs)
+            .then(function() {
+              if (result.length < maxResultSize && offset < blocks.length - 1) {
+                $timeout(function() {
+                  getNewcomersRecursive(blocks, offset+size, size, maxResultSize - result.length)
+                    .then(function(res) {
+                      resolve(result.concat(res));
+                    })
+                    .catch(function(err) {
+                      reject(err);
+                    });
+                }, 1000);
+              }
+              else {
+                resolve(result);
+              }
+            })
+            .catch(function(err){
+              if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
+                resolve(result);
+              }
+              else {
+                reject(err);
+              }
+            });
+        });
+      },
+
+      getPending = function(size) {
+        size = size || 20;
+        return BMA.wot.member.pending()
+          .then(function(res) {
+            if (!res.memberships || !res.memberships.length) {
+              return null;
+            }
+            var idtiesByBlock = {};
+            var idtiesByPubkey = {};
+            var idties = [];
+            _.forEach(res.memberships, function(ms){
+              if (ms.membership == 'IN') {
+                var idty = {
+                  uid: ms.uid,
+                  pubkey: ms.pubkey,
+                  block: ms.blockNumber,
+                  blockHash: ms.blockHash
+                };
+                var otherIdtySamePubkey = idtiesByPubkey[ms.pubkey];
+                if (otherIdtySamePubkey && idty.block > otherIdtySamePubkey.block) {
+                  return; // skip
+                }
+                idtiesByPubkey[idty.pubkey] = idty;
+                if (!idtiesByBlock[idty.block]) {
+                  idtiesByBlock[idty.block] = [idty];
+                }
+                else {
+                  idtiesByBlock[idty.block].push(idty);
+                }
+
+                // Remove previous idty from maps
+                if (otherIdtySamePubkey) {
+                  idtiesByBlock[otherIdtySamePubkey.block] = idtiesByBlock[otherIdtySamePubkey.block].reduce(function(res, aidty){
+                    if (aidty.pubkey == otherIdtySamePubkey.pubkey) return res; // if match idty to remove, to NOT add
+                    return (res||[]).concat(aidty);
+                  }, null);
+                  if (idtiesByBlock[otherIdtySamePubkey.block] === null) {
+                    delete idtiesByBlock[otherIdtySamePubkey.block];
+                  }
+                  return;
+                }
+                else {
+                  idties.push(idty);
+                }
+              }
+            });
+            idties = _sortAndLimitIdentities(idtiesByPubkey, size);
+
+            return BMA.blockchain.blocks(_.keys(idtiesByBlock))
+              .then(function(blocks) {
+
+                _.forEach(blocks, function(block){
+                  _.forEach(idtiesByBlock[block.number], function(idty) {
+                    idty.sigDate = block.medianTime;
+                    if (block.number !== 0 && idty.blockHash !== block.hash) {
+                      addEvent(idty, {type:'error', message: 'ERROR.WOT_PENDING_INVALID_BLOCK_HASH'});
+                      console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
+                    }
+                  });
+                });
+                return $q(function(resolve, reject) {
+                  api.data.raisePromise.search(null, idties)
+                    .then(function () {
+                      resolve(idties);
+                    })
+                    .catch(function(err){
+                      reject(err);
+                    });
+                });
+              });
+          });
+      },
+
+      getAll = function() {
+        var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
+        return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT);
+      },
+
+      getAllRecursive = function(letters, offset, size) {
+        return $q(function(resolve, reject) {
+          var result = [];
+          var pubkeys = {};
+          var jobs = [];
+          _.each(letters.slice(offset, offset+size), function(letter) {
+            jobs.push(
+              search(letter)
+                .then(function(idties){
+                  if (!idties || !idties.length) return;
+                  result = idties.reduce(function(res, idty) {
+                    if (!pubkeys[idty.pubkey]) {
+                      pubkeys[idty.pubkey] = true;
+                      return res.concat(idty);
+                    }
+                    return res;
+                  }, result);
+                })
+            );
+          });
+
+          $q.all(jobs)
+            .then(function() {
+              if (offset < letters.length - 1) {
+                $timeout(function() {
+                  getAllRecursive(letters, offset+size, size)
+                    .then(function(idties) {
+                      if (!idties || !idties.length) {
+                        resolve(result);
+                        return;
+                      }
+                      resolve(idties.reduce(function(res, idty) {
+                        if (!pubkeys[idty.pubkey]) {
+                          pubkeys[idty.pubkey] = true;
+                          return res.concat(idty);
+                        }
+                        return res;
+                      }, result));
+                    })
+                    .catch(function(err) {
+                      reject(err);
+                    });
+                }, BMA.constants.LIMIT_REQUEST_DELAY);
+              }
+              else {
+                resolve(result);
+              }
+            })
+            .catch(function(err){
+              if (err && err.ucode === BMA.errorCodes.HTTP_LIMITATION) {
+                resolve(result);
+              }
+              else {
+                reject(err);
+              }
+            });
+        });
+      },
+
+      addEvent = function(data, event) {
+        event = event || {};
+        event.type = event.type || 'info';
+        event.message = event.message || '';
+        event.messageParams = event.messageParams || {};
+        data.events = data.events || [];
+        data.events.push(event);
+      }
     ;
 
     // Register extension points
@@ -672,8 +744,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
     };
   };
 
-  var service = WotService('default');
+  var service = factory('default');
 
-  service.instance = WotService;
+  service.instance = factory;
   return service;
 });

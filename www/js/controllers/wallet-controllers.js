@@ -33,7 +33,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $ionicHistory,
-                          UIUtils, Wallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
+                          UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
   'ngInject';
 
   $scope.convertedBalance = null;
@@ -159,7 +159,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     .then(function(uid) {
       UIUtils.loading.show();
 
-      return Wallet.self(uid)
+      return csWallet.self(uid)
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();
@@ -174,7 +174,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.doMembershipIn = function(retryCount) {
-    return Wallet.membership.inside()
+    return csWallet.membership.inside()
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();
@@ -206,7 +206,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       if (!$rootScope.walletData.blockUid || uid != $rootScope.walletData.uid) {
         $rootScope.walletData.blockUid = null;
         $rootScope.walletData.uid = uid;
-        Wallet.self(uid, false/*do NOT load membership here*/)
+        csWallet.self(uid, false/*do NOT load membership here*/)
         .then(function() {
           $scope.doMembershipIn();
         })
@@ -241,7 +241,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     }
 
     UIUtils.loading.show();
-    return Wallet.membership.out()
+    return csWallet.membership.out()
       .then(function() {
         UIUtils.loading.hide();
         UIUtils.toast.show('INFO.MEMBERSHIP_OUT_SENT');
@@ -252,7 +252,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   // Updating wallet data
   $scope.doUpdate = function() {
     UIUtils.loading.show();
-    return Wallet.refreshData()
+    return csWallet.refreshData()
     .then(function() {
       $scope.updateView();
       UIUtils.loading.hide();
@@ -316,6 +316,15 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   /* -- popup / UI -- */
 
+  $scope.toggleShowDetails = function() {
+    // Update user settings
+    csSettings.data.wallet = csSettings.data.wallet || {};
+    csSettings.data.wallet.showPubkey = !$scope.showDetails;
+    csSettings.store();
+
+    $scope.setShowDetails(csSettings.data.wallet.showPubkey);
+  };
+
   $scope.setShowDetails = function(show) {
     $scope.showDetails = show;
     $scope.hideActionsPopover();
@@ -332,11 +341,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         pubkeyElement.classList.toggle('in', true);
       }, 500);
     }
-
-    // Update user settings
-    csSettings.data.wallet = csSettings.data.wallet || {};
-    csSettings.data.wallet.showPubkey = show;
-    csSettings.store();
   };
 
   // Transfer
@@ -462,7 +466,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
-    return Wallet.refreshData({tx: {enable: true,fromTime: fromTime}})
+    return csWallet.refreshData({tx: {enable: true,fromTime: fromTime}})
       .then(function() {
         $scope.updateView();
         UIUtils.loading.hide();
@@ -483,7 +487,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxErrorController($scope, $timeout, UIUtils, Wallet) {
+function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
   'ngInject';
 
   $scope.$on('$ionicView.enter', function(e) {
@@ -508,7 +512,7 @@ function WalletTxErrorController($scope, $timeout, UIUtils, Wallet) {
   // Updating wallet data
   $scope.doUpdate = function() {
     UIUtils.loading.show();
-    Wallet.refreshData()
+    csWallet.refreshData()
     .then(function() {
       $scope.updateView();
       UIUtils.loading.hide();

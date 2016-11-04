@@ -113,11 +113,11 @@ function ESMenuExtendController($scope, $state, PluginService, csSettings,UIUtil
 /**
  * Control profile popover extension
  */
-function ESProfilePopoverExtendController($scope, $state, csSettings, Wallet) {
+function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) {
   'ngInject';
 
   $scope.updateView = function() {
-    $scope.enable = Wallet.isLogin() && (
+    $scope.enable = csWallet.isLogin() && (
         (csSettings.data.plugins && csSettings.data.plugins.es) ?
           csSettings.data.plugins.es.enable :
           !!csSettings.data.plugins.host);
@@ -127,12 +127,12 @@ function ESProfilePopoverExtendController($scope, $state, csSettings, Wallet) {
     $scope.updateView();
   });
 
-  Wallet.api.data.on.login($scope, function(walletData, resolve){
+  csWallet.api.data.on.login($scope, function(walletData, resolve){
     $scope.updateView();
     if (resolve) resolve();
   });
 
-  Wallet.api.data.on.logout($scope, function(){
+  csWallet.api.data.on.logout($scope, function(){
     $scope.updateView();
   });
 

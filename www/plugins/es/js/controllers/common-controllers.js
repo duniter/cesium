@@ -114,7 +114,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, $timeout, $filter, $state, Wallet, UIUtils, esHttp, DataService) {
+function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUtils, esHttp, DataService) {
   'ngInject';
 
   $scope.maxCommentSize = 10;
@@ -219,7 +219,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, Wallet, UIUtils
     if (!comment || !comment.id) {return;}
     $scope.comments.splice(index, 1);
 
-    DataService.record.comment.remove(comment.id, Wallet.data.keypair)
+    DataService.record.comment.remove(comment.id, csWallet.data.keypair)
     .catch(UIUtils.onError('esMarket.ERROR.FAILED_REMOVE_COMMENT'));
   };
 }

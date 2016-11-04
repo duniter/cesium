@@ -10,7 +10,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
   })
 
-.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, Wallet, BMA) {
+.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, csWallet, BMA) {
   'ngInject';
 
   function factory(host, port) {
@@ -79,7 +79,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
 
     function getBoxKeypair(keypair) {
-      keypair = keypair || (Wallet.isLogin() ? Wallet.data.keypair : keypair);
+      keypair = keypair || (csWallet.isLogin() ? csWallet.data.keypair : keypair);
       if (!keypair) {
         throw new Error('no keypair, and user not connected.');
       }
@@ -87,14 +87,14 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         return keypair;
       }
       var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
-      Wallet.data.keypair.boxSk = boxKeypair.boxSk;
-      Wallet.data.keypair.boxPk = boxKeypair.boxPk;
+      csWallet.data.keypair.boxSk = boxKeypair.boxSk;
+      csWallet.data.keypair.boxPk = boxKeypair.boxPk;
       console.debug("[ES] Secret box keypair successfully computed");
-      return Wallet.data.keypair;
+      return csWallet.data.keypair;
     }
 
     function countNewMessages(pubkey, fromTime) {
-      pubkey = pubkey || (Wallet.isLogin() ? Wallet.data.pubkey : pubkey);
+      pubkey = pubkey || (csWallet.isLogin() ? csWallet.data.pubkey : pubkey);
       if (!pubkey) {
         throw new Error('no pubkey, and user not connected.');
       }
@@ -165,7 +165,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             return [];
           }
           else {
-            var walletPubkey = Wallet.isLogin() ? Wallet.data.pubkey : null;
+            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
             var messages = res.hits.hits.reduce(function(result, hit) {
               var msg = hit._source;
               msg.id = hit._id;
@@ -177,8 +177,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             console.debug('[ES] [message] Loading ' + messages.length + ' messages');
 
             // Update message count
-            Wallet.data.messages = Wallet.data.messages || {};
-            Wallet.data.messages.count = messages.length;
+            csWallet.data.messages = csWallet.data.messages || {};
+            csWallet.data.messages.count = messages.length;
 
             return decryptMessages(messages, keypair)
               .then(function(){
@@ -195,7 +195,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             return;
           }
           else {
-            var walletPubkey = Wallet.isLogin() ? Wallet.data.pubkey : null;
+            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
             var msg = hit._source;
             msg.id = hit._id;
             msg.pubkey = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
@@ -268,8 +268,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       return esHttp.record.remove(host, port, 'message', 'record')(id)
         .then(function(res) {
           // update message count
-          Wallet.data.messages = Wallet.data.messages || {};
-          Wallet.data.messages.count = Wallet.data.messages.count > 0 ? Wallet.data.messages.count-1 : 0;
+          csWallet.data.messages = csWallet.data.messages || {};
+          csWallet.data.messages.count = csWallet.data.messages.count > 0 ? csWallet.data.messages.count-1 : 0;
           return res;
         });
     }
@@ -286,12 +286,12 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     function addListeners() {
       console.debug("[ES] Enable message extension");
 
-      // Extend Wallet.loadData() and WotService.loadData()
+      // Extend csWallet.loadData()
       listeners = [
-        Wallet.api.data.on.login($rootScope, onWalletLoad, this),
-        //Wallet.api.data.on.load($rootScope, onWalletLoad, this),
-        Wallet.api.data.on.init($rootScope, onWalletInit, this),
-        Wallet.api.data.on.reset($rootScope, onWalletReset, this),
+        csWallet.api.data.on.login($rootScope, onWalletLoad, this),
+        //csWallet.api.data.on.load($rootScope, onWalletLoad, this),
+        csWallet.api.data.on.init($rootScope, onWalletInit, this),
+        csWallet.api.data.on.reset($rootScope, onWalletReset, this),
       ];
     }
 
@@ -314,8 +314,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     // Listen for settings changed
     csSettings.api.data.on.changed($rootScope, function(){
       refreshListeners();
-      if (isEnable() && !Wallet.data.messages) {
-        onWalletLoad(Wallet.data);
+      if (isEnable() && !csWallet.data.messages) {
+        onWalletLoad(csWallet.data);
       }
     });
 

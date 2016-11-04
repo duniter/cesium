@@ -84,7 +84,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover) {
+function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover) {
   'ngInject';
 
   var defaultSearchLimit = 20;
@@ -143,7 +143,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     }
     else {
       $scope.search.type = 'text';
-      WotService.search(text)
+      csWot.search(text)
       .then(function(idties){
         if ($scope.search.type != 'text') return; // could have change
         if ($scope.search.text.trim() !== text) return; // search text has changed before received response
@@ -165,8 +165,8 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     $scope.search.type = 'newcomers';
     $scope.search.limit = (limit && limit > 0) ? limit : defaultSearchLimit;
     var searchFunction =  csConfig.initPhase ?
-      WotService.all :
-      WotService.newcomers;
+      csWot.all :
+      csWot.newcomers;
     return searchFunction($scope.search.limit).then(function(idties){
       if ($scope.search.type != 'newcomers') return; // could have change
       $scope.doDisplayResult(idties);
@@ -178,7 +178,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     $scope.search.loading = more ? false : true;
     $scope.search.type = 'pending';
     $scope.search.limit = (limit && limit > 0) ? limit : defaultSearchLimit;
-    return WotService.pending($scope.search.limit).then(function(idties){
+    return csWot.pending($scope.search.limit).then(function(idties){
       if ($scope.search.type != 'pending') return; // could have change
       $scope.doDisplayResult(idties);
     });
@@ -206,7 +206,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
 
   $scope.select = function(identity) {
     // identity = self -> open the user wallet
-    if (Wallet.isUserPubkey(identity.pubkey)) {
+    if (csWallet.isUserPubkey(identity.pubkey)) {
       $state.go('app.view_wallet');
     }
     // Open identity view
@@ -313,10 +313,10 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
 
 }
 
-function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover){
+function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover){
   'ngInject';
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, Wallet, WotService, $focus, $ionicPopover);
+  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover);
 
   $scope.search.loading = false;
   $scope.enableFilter = false;
@@ -343,7 +343,7 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConf
   // endRemoveIf(device)
 }
 
-function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService) {
+function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
   'ngInject';
 
   $scope.formData = {};
@@ -353,11 +353,9 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService
     if (state.stateParams &&
       state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length > 0) {
-      if ($scope.loading) {
-        $scope.load(
-          state.stateParams.pubkey.trim(),
-          state.stateParams.uid ? state.stateParams.uid.trim() : null
-        );
+      if ($scope.loading) { // load once
+        $scope.load(state.stateParams.pubkey.trim(),
+                    true /*withCache*/);
       }
     }
     else {
@@ -366,8 +364,8 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService
     }
   });
 
-  $scope.load = function(pubkey) {
-    WotService.load(pubkey)
+  $scope.load = function(pubkey, withCache) {
+    csWot.load(pubkey, withCache)
     .then(function(identity){
       $scope.formData = identity;
       $scope.loading = false;
@@ -391,7 +389,7 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService
 
   $scope.showSharePopover = function(event) {
     var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
-    var url = $state.href('app.wot_view_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.name || $scope.formData.uid}, {absolute: true});
+    var url = $state.href('app.wot_view_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid}, {absolute: true});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,
@@ -413,13 +411,13 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, WotService
  * @param $timeout
  * @param $translate
  * @param csSettings
- * @param Wallet
+ * @param csWallet
  * @param UIUtils
- * @param WotService
+ * @param csWot
  * @param Modals
  * @constructor
  */
-function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, Wallet, UIUtils, WotService, Modals) {
+function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals) {
   'ngInject';
 
   $scope.loading = true;
@@ -432,14 +430,14 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     if (state.stateParams && state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length >  0) {
       if ($scope.loading) {
-        $scope.load(state.stateParams.pubkey.trim());
+        $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/);
       }
     }
 
     // Load from wallet pubkey
-    else if (Wallet.isLogin()){
+    else if (csWallet.isLogin()){
       if ($scope.loading) {
-        $scope.load(Wallet.data.pubkey);
+        $scope.load(csWallet.data.pubkey, true /*withCache*/);
       }
     }
 
@@ -451,13 +449,13 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     }
   });
 
-  $scope.load = function(pubkey) {
-    return WotService.load(pubkey)
+  $scope.load = function(pubkey, withCache) {
+    return csWot.load(pubkey, withCache)
     .then(function(identity){
       $scope.formData = identity;
-      $scope.canCertify = $scope.formData.hasSelf && (!Wallet.isLogin() || (!Wallet.isUserPubkey(pubkey)));
-      $scope.canSelectAndCertify = $scope.formData.hasSelf && Wallet.isUserPubkey(pubkey);
-      $scope.alreadyCertified = $scope.canCertify ? !!_.findWhere(identity.certifications, { uid: Wallet.data.uid, valid: true }) : false;
+      $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
+      $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
+      $scope.alreadyCertified = $scope.canCertify ? !!_.findWhere(identity.certifications, { uid: csWallet.data.uid, valid: true }) : false;
 
       $scope.loading = false;
 
@@ -467,7 +465,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       $scope.motionGivenCertifications(900);
 
       // Show help tip
-      var isWallet = Wallet.isUserPubkey(pubkey);
+      var isWallet = csWallet.isUserPubkey(pubkey);
       $scope.showHelpTip(isWallet);
     });
   };
@@ -488,7 +486,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
           return;
         }
         UIUtils.loading.show();
-        Wallet.certify($scope.formData.uid,
+        csWallet.certify($scope.formData.uid,
                     $scope.formData.pubkey,
                     $scope.formData.timestamp,
                     $scope.formData.sig)
@@ -527,13 +525,33 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
 
         UIUtils.loading.show();
         // load selected identity
-        return WotService.load(idty.pubkey);
+        return csWot.load(idty.pubkey, false /*no cache*/);
       })
       .then(function(identity) {
         if (!identity) return; // cancelled
         UIUtils.loading.hide();
         if (!identity || !identity.hasSelf) {
           UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
+          return;
+        }
+
+        // Check not already certified
+        var previousCert = _.findWhere(identity.certifications, { uid: csWallet.data.uid, pending: false, valid: true});
+        if (previousCert) {
+          $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
+            .then(function(message) {
+              UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+            });
+          return;
+        }
+
+        // Check not pending certification
+        previousCert = _.findWhere(identity.certifications, { uid: csWallet.data.uid, pending: true, valid: true});
+        if (previousCert) {
+          $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
+            .then(function(message) {
+              UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+            });
           return;
         }
 
@@ -549,7 +567,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
             UIUtils.loading.show();
 
             // Send certification
-            Wallet.certify(identity.uid,
+            csWallet.certify(identity.uid,
               identity.pubkey,
               identity.timestamp,
               identity.sig)
@@ -566,7 +584,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
 
   // Updating wallet data
   $scope.doUpdate = function() {
-    $scope.load($scope.formData.pubkey);
+    $scope.load($scope.formData.pubkey, false /*no cache*/);
   };
 
   // Show received certifcations

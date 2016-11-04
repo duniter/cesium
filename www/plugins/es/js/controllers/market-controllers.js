@@ -417,7 +417,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
 
 function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $state, $translate, $ionicHistory, $q,
                                       $timeout, $filter,
-                                      Wallet, esMarket, UIUtils,  esHttp, esUser, BMA, csSettings) {
+                                      csWallet, esMarket, UIUtils,  esHttp, esUser, BMA, csSettings) {
   'ngInject';
 
   $scope.formData = {};
@@ -428,7 +428,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
   $scope.maxCommentSize = 10;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope, $timeout, $filter, $state, Wallet, UIUtils, esHttp, esMarket);
+  ESCommentsController.call(this, $scope, $timeout, $filter, $state, csWallet, UIUtils, esHttp, esMarket);
 
   $scope.$on('$ionicView.enter', function (e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -467,7 +467,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
       if (hit._source.thumbnail) {
         $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
       }
-      $scope.canEdit = $scope.formData && Wallet.isUserPubkey($scope.formData.issuer);
+      $scope.canEdit = $scope.formData && csWallet.isUserPubkey($scope.formData.issuer);
       return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
         .then(function(idties) {
           return idties[0];

@@ -75,7 +75,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             $interval.cancel(interval);
             console.debug('[network] Finish : all peers found. Stopping new peers check.');
             // The peer lookup end, we can make a clean final report
-            sortPeers();
+            sortPeers(true/*update main buid*/);
           }
         }, 1000);
 
@@ -167,12 +167,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         newPeers = newPeers || data.newPeers;
         if (newPeers.length) {
           data.peers = data.peers.concat(newPeers.splice(0));
-          console.debug('[network] New peers found: sort and add them to result...');
+          console.debug('[network] New peers found: add them to result and sort...');
           sortPeers();
         }
       },
 
-      sortPeers = function() {
+      sortPeers = function(updateMainBuid) {
         // Count peer by current block uid
         var currents = {};
         _.forEach(data.peers, function(peer){
@@ -187,9 +187,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         var mainBlock = _.max(buids, function(obj) {
           return obj.count;
         });
-        data.mainBuid = mainBlock.buid;
         _.forEach(data.peers, function(peer){
-          peer.hasMainConsensusBlock = peer.buid == data.mainBuid;
+          peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
           peer.hasConsensusBlock = !peer.hasMainConsensusBlock && currents[peer.buid] > 1;
         });
         data.peers = _.uniq(data.peers, false, function(peer) {
@@ -203,6 +202,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
           return -score;
         });
+        if (updateMainBuid) {
+          // TODO: raise a special event if changed ?
+          data.mainBuid = mainBlock.buid;
+          //api.data.raise.changed(data); // raise event
+        }
         api.data.raise.changed(data); // raise event
       },
 
@@ -311,6 +315,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
     // Register extension points
     api.registerEvent('data', 'changed');
+    api.registerEvent('data', 'rollback');
 
     return {
       id: id,
