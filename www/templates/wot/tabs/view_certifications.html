@@ -8,17 +8,32 @@
                class="item item-icon-left item-text-wrap ink">
             <i class="icon ion-ribbon-b"></i>
             <span translate>WOT.CERTIFICATIONS.RECEIVED</span>
-            <span class="badge" ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty, 'badge-assertive': formData.certificationCount < formData.sigQty}">{{formData.certificationCount}}</span>
+
+            <span id="helptip-wot-view-certifications-count"
+                  class="badge"
+                  ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty,
+                             'badge-energized': formData.certificationCount < formData.sigQty && formData.certificationCount + formData.pendingCertificationCount >= formData.sigQty,
+                             'badge-assertive': formData.certificationCount + formData.pendingCertificationCount < formData.sigQty}">
+              <span ng-if="formData.certificationCount || !formData.pendingCertificationCount">
+                 <i ng-if="formData.certificationCount >= formData.sigQty" class="ion-android-done"></i>
+                {{formData.certificationCount}}
+              </span>
+              <span ng-if="formData.pendingCertificationCount">
+                <ng-if ng-if="formData.certificationCount">+ </ng-if>
+                <i class="ion-clock"></i>
+                {{formData.pendingCertificationCount}}
+              </span>
+            </span>
           </div>
 
           <!-- pending certifications -->
-          <span class="item item-divider" ng-if="formData.hasPendingCertifications">
+          <span class="item item-divider" ng-if="formData.pendingCertificationCount">
             <span translate>WOT.CERTIFICATIONS.PENDING_LIST</span>
             <div class="badge item-note" style="text-align: right !important;" translate>WOT.NOT_WRITTEN_EXPIRE_IN</div>
           </span>
 
           <a class="item ink"
-             ng-if="formData.hasPendingCertifications"
+             ng-if="formData.pendingCertificationCount"
              ng-repeat="cert in formData.certifications | filter: {pending: true}"
              ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
             <span ng-if="cert.isMember">
@@ -43,6 +58,10 @@
                   <i class="ion-person"> </i>
                   {{::cert.uid}}
                 </span>
+                <span ng-if="!cert.uid">
+                  <i class="ion-key"> </i>
+                  {{::cert.pubkey | formatPubkey}}
+                </span>
               </h3>
               <h5 class="assertive">{{'WOT.NOT_MEMBER_PARENTHESIS'|translate}}</h5>
               <h4 class="gray">
@@ -55,7 +74,7 @@
               </h4>
             </span>
             <div class="badge badge-stable" ng-if="cert.expiresIn">
-              {{::cert.expiresIn | formatDuration}}
+              {{::cert.expiresIn | formatDurationTo}}
             </div>
             <div class="badge badge-assertive" ng-if="!cert.expiresIn">
               {{::'WOT.EXPIRED' | translate}}
@@ -75,16 +94,14 @@
                 ng-repeat="cert in formData.certifications | filter: {pending: false}"
                 ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
             <span ng-if="cert.isMember">
-              <h3>
-                <span class="positive">
-                  <i class="ion-person"> </i>
-                  {{::cert.uid}}
-                </span>
+              <h3 class="positive">
+                <i class="ion-person"></i>
+                {{::cert.uid}}
               </h3>
               <h4 class="gray">
                 <i class="ion-key"></i>
                 {{::cert.pubkey | formatPubkey}}
-                <span class="gray"> | {{cert.time|formatDate}}</span>
+                <span class="gray"> | {{::cert.time|formatDate}}</span>
                 <span class="gray" ng-if="$root.settings.expertMode"> | {{::'WOT.WRITTEN_ON_BLOCK' | translate:cert}}</span>
               </h4>
             </span>
@@ -94,22 +111,24 @@
                   <i class="ion-person"> </i>
                   {{::cert.uid}}
                 </span>
-                <i class="ion-key"></i>
-                {{::cert.pubkey | formatPubkey}}
+                <span ng-if="!cert.uid">
+                   <i class="ion-key"></i>
+                  {{::cert.pubkey | formatPubkey}}
+                </span>
               </h3>
-              <h5 class="assertive">{{'WOT.NOT_MEMBER_PARENTHESIS'|translate}}</h5>
+              <h5 class="assertive">{{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}</h5>
               <h4 class="gray">
                 <span ng-if="cert.uid">
                   <i class="ion-key"></i>
                   {{::cert.pubkey | formatPubkey}}
                 </span>
-                <span class="gray"> | {{cert.time|formatDate}}</span>
-                <span class="gray" ng-if="$root.settings.expertMode"> | {{'WOT.SIGNED_ON_BLOCK' | translate:cert}}</span>
+                <span class="gray"> | {{::cert.time|formatDate}}</span>
+                <span class="gray" ng-if="$root.settings.expertMode"> | {{'WOT.WRITTEN_ON_BLOCK' | translate:cert}}</span>
               </h4>
             </span>
             <div class="badge" ng-if="cert.expiresIn"
                  ng-class="{'badge-balanced': !cert.willExpire, 'badge-energized': cert.willExpire}">
-              {{::cert.expiresIn | formatDuration}}
+              {{::cert.expiresIn | formatDurationTo}}
             </div>
             <div class="badge badge-assertive" ng-if="!cert.expiresIn">
               {{::'WOT.EXPIRED' | translate}}

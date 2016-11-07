@@ -144,7 +144,9 @@
       "C_RULE": "Croissance",
       "UD_RULE": "Dividende universel (formule)",
       "SIG_QTY_RULE": "Nombre de certifications requises<br/>pour devenir membre",
-      "SIG_STOCK": "Nombre maximal de certifications émises<br/>par membre"
+      "SIG_STOCK": "Nombre maximal de certifications émises<br/>par membre",
+      "SIG_PERIOD": "Délai minimal d'attente entre 2 certifications<br/>successives émises par une même personne.",
+      "SIG_WINDOW": "Délai maximal d'attente avant<br/>prise en compte d'une certification"
     }
   },
   "PEER": {
@@ -232,7 +234,7 @@
     "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt manquer de certifications",
-    "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre va expirer {{membershipExpiresIn|formatDuration}}. Pensez <a ng-click=\"doQuickFix('renew')\">renouveller votre adhésion</a> d'ici là.",
+    "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre va expirer {{membershipExpiresIn|formatDurationTo}}. Pensez <a ng-click=\"doQuickFix('renew')\">renouveller votre adhésion</a> d'ici là.",
     "CERTIFICATION_COUNT": "Certifications reçues",
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
@@ -337,8 +339,8 @@
     "IDENTITY_SANDBOX_FULL": "Le noeud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de noeud (via le menu <b>Paramètres</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
     "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('renew')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
-    "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDuration}}).",
-    "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDuration}}).",
+    "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
+    "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDurationTo}}).",
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible"
   },
   "INFO": {

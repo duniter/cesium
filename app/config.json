@@ -95,5 +95,39 @@
         "port": "80"
       }
     }
+  },
+
+  "dev2": {
+    "cacheTimeMs": 60000,
+    "fallbackLanguage": "fr-FR",
+    "defaultLanguage": "fr-FR",
+    "rememberMe": true,
+    "showUDHistory": false,
+    "timeout": 6000,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": true,
+    "useRelative": true,
+    "initPhase": false,
+    "expertMode": true,
+    "helptip": {
+      "enable": false,
+      "installDocUrl": {
+        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
+        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      }
+    },
+    "node": {
+      "host": "cgeek.fr",
+      "port": "9330"
+    },
+    "plugins":{
+      "es": {
+        "enable": false,
+        "askEnable": false,
+        "host": "data.duniter.fr",
+        "port": "80"
+      }
+    }
   }
 }

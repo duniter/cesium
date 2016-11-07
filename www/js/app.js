@@ -66,9 +66,15 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   })
 
 
-  .filter('formatDuration', function() {
+  .filter('formatDurationTo', function() {
     return function(input) {
       return input ? moment(moment().utc().valueOf() + parseInt(input)*1000).startOf('minute').fromNow() : '';
+    };
+  })
+
+  .filter('formatDuration', function() {
+    return function(input) {
+      return input ? moment(0).startOf('minute').from(moment(parseInt(input)*1000), true) : '';
     };
   })
 

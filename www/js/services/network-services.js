@@ -227,7 +227,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               // We wait 2s when a new block is received, just to wait for network propagation
               $timeout(function() {
                 console.debug('[network] new block received by WS: will refresh peers');
-                refreshPeers();
+                loadPeers();
               }, 2000);
             }
           }
