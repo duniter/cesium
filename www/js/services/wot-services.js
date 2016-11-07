@@ -426,7 +426,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             // Get identity using lookup
             loadIdentityByLookup(pubkey)
               .then(function (identity) {
-                  angular.merge(data, identity)
+                  angular.merge(data, identity);
               })
           ])
           .then(function() {
@@ -455,7 +455,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
               // API extension
               api.data.raisePromise.load(data)
-            ])
+            ]);
           })
           .then(function() {
             delete data.lookup; // not need anymore
