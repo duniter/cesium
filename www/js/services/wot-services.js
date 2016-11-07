@@ -328,7 +328,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               return res;
             }, {});
             certifications = certifications.reduce(function(res, cert) {
-              return (!cert.pending || (cert.valid && !writtenCertByPubkey[cert.pubkey])) ? res.concat(cert) : res;
+              if (!cert.pending || (cert.valid && !writtenCertByPubkey[cert.pubkey])) {
+                return res.concat(cert);
+              }
+              pendingCertificationCount--;
+              return res;
             }, []);
 
             // Final sort
