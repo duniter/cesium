@@ -9,15 +9,20 @@
                class="item item-icon-left item-text-wrap ink">
             <i class="icon ion-ribbon-a"></i>
             <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
-            <span id="helptip-wot-view-certifications-count"
-                  ng-if="formData.pendingGivenCertificationCount && !formData.givenCertificationCount"
-                  class="badge badge-energized">
-            <i class="ion-clock"></i>
-            {{formData.pendingCertificationCount}}</span>
-            <span id="helptip-wot-view-certifications-count"
-                  ng-if="!formData.pendingGivenCertificationCount || formData.givenCertificationCount"
-                  class="badge"
-                  ng-class="{'badge-balanced': formData.givenCertificationCount < formData.sigStock, 'badge-assertive': formData.givenCertificationCount >= formData.sigStock}">{{formData.givenCertificationCount}} / {{formData.sigStock}}</span>
+
+            <span class="badge"
+                  ng-class="{'badge-balanced': formData.givenCertificationCount < formData.sigStock, 'badge-assertive': formData.givenCertificationCount >= formData.sigStock}">
+              <span>
+                <i ng-if="formData.givenCertificationCount" class="ion-android-done"></i>
+                {{formData.givenCertificationCount}}
+              </span>
+              <span ng-if="formData.pendingGivenCertificationCount">
+                (<ng-if ng-if="formData.givenCertificationCount">+ </ng-if>
+                <i class="ion-clock"></i>
+                {{formData.pendingGivenCertificationCount}})
+              </span>
+              <small>/ {{formData.sigStock}}</small>
+            </span>
           </div>
 
           <!-- pending given certifications -->
