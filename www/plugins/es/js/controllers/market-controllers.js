@@ -6,7 +6,7 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
     $stateProvider
 
     .state('app.market_lookup', {
-      url: "/market?q&category&location&reload",
+      url: "/market?q&category&location&reload&type",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/lookup.html",
@@ -16,7 +16,7 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
     })
 
     .state('app.market_lookup_lg', {
-      url: "/market/lg?q&category&location&reload",
+      url: "/market/lg?q&category&location&reload&type",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/lookup_lg.html",
@@ -117,6 +117,12 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       // Search by text
       if (state.stateParams && state.stateParams.q) { // Query parameter
         $scope.search.text=state.stateParams.q;
+        hasOptions = runSearch = true;
+      }
+
+      // Search on type
+      if (state.stateParams && state.stateParams.type) {
+        $scope.search.type = state.stateParams.type;
         hasOptions = runSearch = true;
       }
 
