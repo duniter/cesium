@@ -92,7 +92,9 @@
       "LOCATION": "Localisation",
       "LOCATION_HELP": "Ville",
       "LAST_RECORDS": "Dernières annonces :",
-      "RESULTS": "Résultats :"
+      "RESULTS": "Résultats :",
+      "BTN_OFFERS": "Offres",
+      "BTN_NEEDS": "Demandes"
     },
     "VIEW": {
       "TITLE": "Annonce",
@@ -120,6 +122,8 @@
       "RECORD_CURRENCY": "Monnaie"
     },
     "ERROR": {
+      "FAILED_SAVE_RECORD": "Erreur lors de l'enregistrement de l'annonce",
+      "FAILED_UPDATE_RECORD": "Erreur lors de la mise à jour de l'annonce",
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'annonce.",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de l'annonce",

@@ -5,6 +5,12 @@
 
   <ion-content class="lookupForm padding no-padding-xs">
 
+    <button class="button button-small button-positive button-clear ink pull-right padding-right"
+            ng-click="showNewRecordModal()">
+      <i class="icon ion-compose"></i>
+      {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
+    </button>
+
     <form ng-submit="doSearch()">
       <label class="item item-input">
         <i class="icon ion-search placeholder-icon"></i>
@@ -26,24 +32,31 @@
       <ng-include src="'plugins/es/templates/market/lookup_options.html'"></ng-include>
     </form>
 
-    <div style="display: block; height: 60px;">
-      <div class="pull-left">
+    <div class="padding-top padding-xs" style="display: block; height: 60px;">
+      <div class="pull-left" ng-if="!search.loading">
         <h4
-          ng-if="!search.loading && search.lastRecords && search.results.length" translate>
+          ng-if="search.lastRecords && search.results.length" translate>
           MARKET.SEARCH.LAST_RECORDS
         </h4>
         <h4
-          ng-if="!search.loading && !search.lastRecords && (search.text.length || search.options != null)" translate>
+          ng-if="!search.lastRecords && (search.text.length || search.options != null)" translate>
           COMMON.RESULTS_LIST
         </h4>
       </div>
 
-      <div class="hidden-xs hidden-sm padding-top pull-right">
-        <button class="button button-small button-positive button-clear ink"
-                ng-click="showNewRecordModal()">
-          <i class="icon ion-compose"></i>
-          {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
-        </button>
+      <div class="hidden-xs hidden-sm pull-right">
+        <a class="button button-text button-small ink icon cion-market-offer"
+           ng-class="{'button-text-positive': search.type=='offer'}"
+           ng-click="setType('offer')">
+          {{'MARKET.SEARCH.BTN_OFFERS' | translate}}
+        </a>
+        &nbsp;
+        <a class="button button-text button-small ink icon cion-market-need"
+           ng-class="{'button-text-positive': search.type=='need'}"
+           ng-click="setType('need')">
+          {{'MARKET.SEARCH.BTN_NEEDS' | translate}}
+        </a>
+        &nbsp;
         <button class="button button-small button-stable ink"
                 ng-click="doSearch()">
           {{'COMMON.BTN_SEARCH' | translate}}

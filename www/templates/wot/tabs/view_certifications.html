@@ -52,18 +52,20 @@
               </h4>
             </span>
             <span ng-if="!cert.isMember">
-              <h3 class="gray">
+              <h3>
                  <i class="icon ion-clock"> </i>
-                 <span ng-if="cert.uid">
+                 <span ng-if="cert.uid" class="dark">
                   <i class="ion-person"> </i>
                   {{::cert.uid}}
                 </span>
-                <span ng-if="!cert.uid">
+                <span ng-if="!cert.uid" class="gray">
                   <i class="ion-key"> </i>
                   {{::cert.pubkey | formatPubkey}}
                 </span>
               </h3>
-              <h5 class="assertive">{{'WOT.NOT_MEMBER_PARENTHESIS'|translate}}</h5>
+              <h5 class="assertive">
+                {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
+              </h5>
               <h4 class="gray">
                 <span ng-if="cert.uid">
                   <i class="ion-key"></i>

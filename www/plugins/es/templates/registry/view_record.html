@@ -40,7 +40,7 @@
             <span ng-if="formData.city && formData.type">&nbsp;|&nbsp;</span>
             <a ng-if="formData.type" ui-sref="app.registry_lookup({type:formData.type})">
               <i class="icon ion-flag"></i>
-              {{'REGISTRY.TYPE.ENUM.'+formData.type|translate}}
+              {{'REGISTRY.TYPE.ENUM.'+formData.type|upper|translate}}
             </a>
           </h2>
           <h4>

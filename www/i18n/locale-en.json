@@ -298,6 +298,7 @@
     "FIELD_TOO_LONG": "Value is exceeding max length.",
     "FIELD_TOO_LONG_WITH_LENGTH": "Value is too long (max {{maxLength}} characters).",
     "FIELD_ACCENT": "Commas and accent characters not allowed",
+    "FIELD_NOT_NUMBER": "Value is not a number",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SALT_NOT_CONFIRMED": "Must match previous phrase.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",

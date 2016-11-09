@@ -92,7 +92,9 @@
       "LOCATION": "Location",
       "LOCATION_HELP": "City",
       "LAST_RECORDS": "Last records:",
-      "RESULTS": "Results:"
+      "RESULTS": "Results:",
+      "BTN_OFFERS": "Offers",
+      "BTN_NEEDS": "Needs"
     },
     "VIEW": {
       "TITLE": "Ad",
@@ -120,6 +122,8 @@
       "RECORD_CURRENCY": "Currency"
     },
     "ERROR": {
+      "FAILED_SAVE_RECORD": "Saving ad failed",
+      "FAILED_UPDATE_RECORD": "Updating Ad failed",
       "LOAD_CATEGORY_FAILED": "Loading categories failed",
       "LOAD_RECORD_FAILED": "Loading ad failed",
       "REMOVE_RECORD_FAILED": "Deleting ad failed",

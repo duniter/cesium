@@ -166,7 +166,7 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
 
   $scope.doTransfer = function() {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid || !$scope.formData.destPub) {
+    if(!$scope.form.$valid || !$scope.formData.destPub || !$scope.formData.amount) {
       return;
     }
 
@@ -175,10 +175,11 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
       UIUtils.loading.show();
 
       var amount = $scope.formData.amount;
-      if ($scope.formData.useRelative && !!amount &&
-          typeof amount == "string") {
-        amount = $rootScope.walletData.currentUD *
-                 amount.replace(new RegExp('[.,]'), '.');
+      if (typeof amount == "string") {
+        amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
+      }
+      if ($scope.formData.useRelative) {
+        amount = $rootScope.walletData.currentUD * amount;
       }
 
       csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)

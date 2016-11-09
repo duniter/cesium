@@ -700,6 +700,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
           // API extension
           api.data.raisePromise.load(data)
+            .catch(function(err) {
+              console.debug('Error while loading wallet data, on extension point.');
+              console.error(err);
+            })
         ])
         .then(function() {
           // Process transactions and sources

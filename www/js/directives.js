@@ -3,12 +3,9 @@ angular.module('cesium.directives', ['cesium.services'])
   // Add new compare-to directive (need for form validation)
   .directive("compareTo", function() {
       return {
-          require: "ngModel",
-          /*scope: {
-              otherModelValue: "=compareTo"
-          },*/
+          require: "?ngModel",
           link: function(scope, element, attributes, ngModel) {
-            if (attributes.compareTo) {
+            if (ngModel && attributes.compareTo) {
               ngModel.$validators.compareTo = function(modelValue) {
                   return modelValue == scope.$eval(attributes.compareTo);
               };
@@ -19,6 +16,21 @@ angular.module('cesium.directives', ['cesium.services'])
             }
           }
       };
+  })
+
+  .directive('number', function() {
+    var NUMBER_REGEXP = new RegExp('^[0-9]+([.,][0-9]+)?$');
+
+    return {
+      require: '?ngModel',
+      link: function(scope, element, attributes, ngModel) {
+        if (ngModel) {
+          ngModel.$validators.number = function(modelValue) {
+            return ngModel.$isEmpty(modelValue) || NUMBER_REGEXP.test(modelValue);
+          };
+        }
+      }
+    };
   })
 
   // Add a copy-on-click directive

@@ -84,6 +84,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
 
   $scope.search = {
     text: '',
+    type: null,
     lastRecords: true,
     results: [],
     loading: true,
@@ -146,6 +147,12 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     // endRemoveIf(device)
   });
 
+  $scope.setType = function(type) {
+    if (type != $scope.search.type) {
+      $scope.search.type = type;
+      $scope.doSearch();
+    }
+  };
 
   $scope.doSearch = function(offset, size) {
     offset = offset || 0;
@@ -221,16 +228,21 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
       filters.push({match_phrase: { location: $scope.search.location}});
     }
+    if ($scope.search.type) {
+      filters.push({term: {type: $scope.search.type}});
+    }
 
-    if (matches.length === 0 && filters.length === 0) {
+    if (!matches.length && !filters.length) {
       $scope.doGetLastRecord();
       return;
     }
-    request.query.bool = {};
+    request.query = {};
     if (matches.length > 0) {
+      request.query.bool = request.query.bool || {};
       request.query.bool.should =  matches;
     }
     if (filters.length > 0) {
+      request.query.bool = request.query.bool || {};
       request.query.bool.filter =  filters;
     }
 
@@ -636,7 +648,9 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
   'ngInject';
 
   $scope.walletData = {};
-  $scope.formData = {};
+  $scope.formData = {
+    price: null
+  };
   $scope.id = null;
   $scope.category = {};
   $scope.pictures = [];
@@ -668,7 +682,9 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
         }
         $scope.loading = false;
         UIUtils.loading.hide();
-        UIUtils.motion.ripple();
+        $timeout(function(){
+          UIUtils.motion.ripple();
+        }, 100);
       }
       $focus('market-record-title');
     });
@@ -739,9 +755,11 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
 
     UIUtils.loading.show();
     var doFinishSave = function(formData) {
+      if (!!formData.price && typeof formData.price == "string") {
+        formData.price = parseFloat(formData.price.replace(new RegExp('[.,]'), '.')); // fix #124
+      }
       if (!!formData.price) {
         formData.unit = formData.unit || ($scope.useRelative ? 'UD' : 'unit');
-        formData.price = formData.price.replace(new RegExp('[.,]'), '.'); // fix #124
       }
       else {
         delete formData.unit;
@@ -760,7 +778,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
           $state.go('app.market_view_record', {id: id});
           UIUtils.loading.hide(10);
         })
-        .catch(UIUtils.onError('Could not save esMarket'));
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_RECORD'));
       }
       else { // Update
         formData.time = esHttp.date.now();
@@ -772,7 +790,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
             UIUtils.loading.hide(10);
           });
         })
-        .catch(UIUtils.onError('Could not update esMarket'));
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_UPDATE_RECORD'));
       }
     };
 

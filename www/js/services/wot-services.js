@@ -208,14 +208,17 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           });
       },
 
-      loadCertifications = function(getFunction, pubkey, lookupCertifications, lookupIsIdentity, parameters, medianTime) {
+      loadCertifications = function(getFunction, pubkey, lookupCertifications, parameters, medianTime) {
 
         function _certId(pubkey, block) {
           return pubkey + '-' + block;
         }
+
+        // TODO : remove this later (when all node will use duniter v0.50+)
+        var lookupHasCertTime = true; // Will be set ti FALSE before Duniter v0.50
         var lookupCerticationsByCertId = lookupCertifications ? lookupCertifications.reduce(function(res, cert){
-          var certId = _certId(cert.pubkey, lookupIsIdentity ? cert.sigDate :
-            (cert.cert_time ? cert.cert_time.block : 0));
+          var certId = _certId(cert.pubkey, cert.cert_time ? cert.cert_time.block : cert.sigDate);
+          if (!cert.cert_time) lookupHasCertTime = false;
           res[certId] = cert;
           return res;
         }, {}) : {};
@@ -242,11 +245,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               if (!pending && expiresIn > 0) certificationCount++;
               else if (pending) pendingCertificationCount++;
               // Remove from lookup certs
-              var certId = _certId(cert.pubkey, lookupIsIdentity ? cert.sigDate :
-                (cert.cert_time ? cert.cert_time.block : 0));
+              var certId = _certId(cert.pubkey, lookupHasCertTime && cert.cert_time ? cert.cert_time.block : cert.sigDate);
               delete lookupCerticationsByCertId[certId];
-              //
-              var valid = (expiresIn > 0);
 
               // Add to result list
               return res.concat({
@@ -260,7 +260,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 pending: pending,
                 block: (cert.written !== null) ? cert.written.number :
                   (cert.cert_time ? cert.cert_time.block : null),
-                valid: valid
+                valid: (expiresIn > 0)
               });
             }, []);
           })
@@ -276,47 +276,51 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
           // Add pending certs (found in lookup - see loadIdentityByLookup())
           .then(function(certifications) {
-            var pendingCertBlocks = {};
-            var pendingCertifications = _.forEach(_.values(lookupCerticationsByCertId), function(cert){
-              cert.pending = true;
-              // TODO : workaround - waiting for Duniter issue https://github.com/duniter/duniter/issues/692
-              var block = cert.cert_time ? cert.cert_time.block :
+            var pendingCertifications = _.values(lookupCerticationsByCertId);
+            if (!pendingCertifications.length) return certifications; // No more pending continue
+
+            var pendingCertByBlocks = pendingCertifications.reduce(function(res, cert){
+              var block = lookupHasCertTime && cert.cert_time ? cert.cert_time.block :
                 (cert.sigDate ? cert.sigDate.split('-')[0] : null);
               if (block) {
-                if (!pendingCertBlocks[block]) {
-                  pendingCertBlocks[block] = [cert];
+                if (!res[block]) {
+                  res[block] = [cert];
                 }
                 else {
-                  pendingCertBlocks[block].push(cert);
+                  res[block].push(cert);
                 }
               }
-            });
-            var pendingBlockNumbers = _.keys(pendingCertBlocks);
-            if (!pendingBlockNumbers.length) {
-              return certifications; // No more pending continue
-            }
+              return res;
+            }, {});
 
-            else {
-              // Set time to pending cert, from blocks
-              return BMA.blockchain.blocks(pendingBlockNumbers).then(function(blocks){
-                _.forEach(blocks, function(block){
-                  _.forEach(pendingCertBlocks[block.number], function(cert) {
-                    cert.time = block.medianTime;
-                    cert.expiresIn = Math.max(0, cert.time + parameters.sigWindow - medianTime);
-                    cert.valid = (cert.expiresIn > 0);
+            // Set time to pending cert, from blocks
+            return BMA.blockchain.blocks(_.keys(pendingCertByBlocks)).then(function(blocks){
+              certifications = blocks.reduce(function(res, block){
+                return res.concat(pendingCertByBlocks[block.number].reduce(function(res, cert) {
+                  var certTime = block.medianTime;
+                  var expiresIn = Math.max(0, certTime + parameters.sigWindow - medianTime);
+                  var valid = (expiresIn > 0);
+                  if (!valid) return res; // Keep only valid cert
+                  pendingCertificationCount++;
+                  return res.concat({
+                    pubkey: cert.pubkey,
+                    uid: cert.uid,
+                    isMember: cert.isMember,
+                    wasMember: cert.wasMember,
+                    time: certTime,
+                    expiresIn: expiresIn,
+                    willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
+                    pending: true,
+                    block: lookupHasCertTime && cert.cert_time ? cert.cert_time.block :
+                      (cert.sigDate ? cert.sigDate.split('-')[0] : null),
+                    valid: valid
                   });
-                });
-
-                // Keep only valid cert
-                pendingCertifications = pendingCertifications.reduce(function(res, cert) {
-                  return !cert.valid ? res : res.concat(cert);
-                }, []);
-
-                pendingCertificationCount += pendingCertifications.length;
-                return !pendingCertificationCount ? certifications : certifications.concat(pendingCertifications);
-              });
-            }
+                }, []));
+              }, certifications);
+              return certifications;
+            });
           })
+
           // Sort and return result
           .then(function(certifications) {
 
@@ -436,7 +440,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           .then(function() {
             return $q.all([
               // Get received certifications
-              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications : null, false, parameters, medianTime)
+              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications : null, parameters, medianTime)
                 .then(function (res) {
                   data.certifications = res.certifications;
                   data.certificationCount = res.certificationCount;
@@ -444,7 +448,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 }),
 
               // Get given certifications
-              loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, true, parameters, medianTime)
+              loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime)
                   .then(function (res) {
                     data.givenCertifications = res.certifications;
                     data.givenCertificationCount = res.certificationCount;
@@ -459,6 +463,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
               // API extension
               api.data.raisePromise.load(data)
+                .catch(function(err) {
+                console.debug('Error while loading identity data, on extension point.');
+                console.error(err);
+              })
+
             ]);
           })
           .then(function() {
@@ -525,24 +534,28 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             if (!res.result.blocks || !res.result.blocks.length) {
               return null;
             }
-            var blocks = _.sortBy(res.result.blocks, function(n){ return -n; });
-            return getNewcomersRecursive(blocks, 0, 5, size)
-              .then(function(idties){
-                if (!idties || !idties.length) {
-                  return null;
-                }
-                idties = _sortAndLimitIdentities(idties, size);
-                return $q(function(resolve, reject) {
-                  api.data.raisePromise.search(null, idties)
-                    .then(function () {
-                      resolve(idties);
-                    })
-                    .catch(function(err){
-                      reject(err);
-                    });
+            var blocks = _.sortBy(res.result.blocks, function (n) {
+              return -n;
+            });
+            return getNewcomersRecursive(blocks, 0, 5, size);
+          })
+          .then(function(idties){
+            if (!idties || !idties.length) {
+              return null;
+            }
+            idties = _sortAndLimitIdentities(idties, size);
+
+            // Extension point
+            return api.data.raisePromise.search(null, idties)
+                .then(function () {
+                  return idties;
+                })
+                .catch(function(err) {
+                  console.debug('Error while search identities, on extension point.');
+                  console.error(err);
+                  return idties;
                 });
-              });
-          });
+            });
       },
 
 
@@ -626,7 +639,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   idtiesByBlock[idty.block].push(idty);
                 }
 
-                // Remove previous idty from maps
+                // Remove previous idty from map
                 if (otherIdtySamePubkey) {
                   idtiesByBlock[otherIdtySamePubkey.block] = idtiesByBlock[otherIdtySamePubkey.block].reduce(function(res, aidty){
                     if (aidty.pubkey == otherIdtySamePubkey.pubkey) return res; // if match idty to remove, to NOT add
@@ -644,7 +657,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             });
             idties = _sortAndLimitIdentities(idtiesByPubkey, size);
 
-            return BMA.blockchain.blocks(_.keys(idtiesByBlock))
+            return  $q.all([
+              // Get time from blocks
+              BMA.blockchain.blocks(_.keys(idtiesByBlock))
               .then(function(blocks) {
 
                 _.forEach(blocks, function(block){
@@ -656,15 +671,17 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     }
                   });
                 });
-                return $q(function(resolve, reject) {
-                  api.data.raisePromise.search(null, idties)
-                    .then(function () {
-                      resolve(idties);
-                    })
-                    .catch(function(err){
-                      reject(err);
-                    });
-                });
+              }),
+
+              // Extension point
+              api.data.raisePromise.search(null, idties)
+                .catch(function(err) {
+                  console.debug('Error while search identities, on extension point.');
+                  console.error(err);
+                })
+              ])
+              .then(function() {
+                return idties;
               });
           });
       },

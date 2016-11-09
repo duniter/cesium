@@ -35,7 +35,7 @@
                   {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
                 </h4>
                 <div class="badge badge-balanced badge-editable" ng-click="showRecordTypeModal()">
-                  {{'REGISTRY.TYPE.ENUM.'+formData.type|translate}}
+                  {{'REGISTRY.TYPE.ENUM.'+formData.type|upper|translate}}
                 </div>
               </div>
 
@@ -78,7 +78,7 @@
               <!-- category -->
               <div class="item item-icon-right ink"
                    ng-if="loading || formData.type==='company' || formData.type==='shop'"
-                   ng-class="{'item-input-error': form.$submitted && !category.id}"
+                   ng-class="{'item-input-error': form.$submitted && !category.id, 'done in': !loading}"
                    ng-click="showCategoryModal()">
                 <span translate>REGISTRY.CATEGORY</span>
                 <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;

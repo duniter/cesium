@@ -23,15 +23,18 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
-  .filter('formatDecimal', function($rootScope) {
+  .filter('formatDecimal', function(csConfig) {
+    var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
+    var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+
     return function(input) {
       if (input === undefined) return '0';
       if (input === Infinity || input === -Infinity) {
         console.warn("formatDecimal: division by zero ? (is currentUD defined ?) = "  + $rootScope.walletData.currentUD);
         return 'error';
       }
-      if (Math.abs(input) < 0.0001) return '~ 0';
-      return numeral(input/*-0.00005*/).format('0,0.0000');
+      if (Math.abs(input) < minValue) return '~ 0';
+      return numeral(input/*-0.00005*/).format(format);
     };
   })
 
@@ -116,6 +119,13 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       if (!input) return '';
       input = input.toLowerCase();
       return input.substring(0,1).toUpperCase()+input.substring(1);
+    };
+  })
+
+  .filter('upper', function() {
+    return function(input) {
+      if (!input) return '';
+      return input.toUpperCase();
     };
   })
 

@@ -95,8 +95,7 @@
         <!-- Public key -->
         <span id="wallet-pubkey"
               class="item item-icon-left item-text-wrap ink"
-
-              ng-if="showDetails"
+              ng-show="showDetails"
               on-hold="copy(walletData.pubkey)"
               copy-on-click="{{walletData.pubkey}}">
           <i class="icon ion-key"></i>

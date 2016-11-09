@@ -27,7 +27,7 @@
         <ng-include src="'plugins/es/templates/market/lookup_options.html'"></ng-include>
       </form>
 
-      <div style="display: block; height: 60px;">
+      <div class="padding-top padding-xs" style="display: block; height: 60px;">
         <div class="pull-left">
           <h4
             ng-if="!search.looking && search.lastRecords && search.results.length" translate>
@@ -39,7 +39,7 @@
           </h4>
         </div>
 
-        <div class="hidden-xs hidden-sm padding-top pull-right">
+        <div class="hidden-xs hidden-sm pull-right">
           <button class="button button-small button-positive button-clear ink"
                   ng-click="showNewRecordModal()">
             <i class="icon ion-plus"></i>

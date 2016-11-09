@@ -22,7 +22,6 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
       }
     }
 
-
     function getCategoriesRequest() {
       var doRequest = esHttp.get(host, port, '/market/category/_search?sort=order&from=0&size=1000&_source=name,parent');
       return function() {

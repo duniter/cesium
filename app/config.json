@@ -11,6 +11,7 @@
     "useRelative": true,
     "initPhase": false,
     "expertMode": false,
+    "decimalCount": 4,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -42,6 +43,7 @@
     "useRelative": true,
     "initPhase": false,
     "expertMode": false,
+    "decimalCount": 2,
     "helptip": {
       "enable": false,
       "installDocUrl": {
@@ -76,6 +78,7 @@
     "useRelative": true,
     "initPhase": false,
     "expertMode": false,
+    "decimalCount": 2,
     "helptip": {
       "enable": true,
       "installDocUrl": {

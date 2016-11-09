@@ -11,7 +11,7 @@
             <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
 
             <span class="badge"
-                  ng-class="{'badge-balanced': formData.givenCertificationCount < formData.sigStock, 'badge-assertive': formData.givenCertificationCount >= formData.sigStock}">
+                  ng-class="{'badge-calm': formData.givenCertificationCount < formData.sigStock, 'badge-assertive': formData.givenCertificationCount >= formData.sigStock}">
               <span>
                 <i ng-if="formData.givenCertificationCount" class="ion-android-done"></i>
                 {{formData.givenCertificationCount}}
@@ -51,17 +51,20 @@
               </h4>
             </span>
             <span ng-if="!cert.isMember">
-              <h3 class="gray">
-                <span ng-if="cert.uid">
+              <h3>
+                <i class="icon ion-clock"> </i>
+                <span ng-if="cert.uid" class="dark">
                   <i class="ion-person"> </i>
                   {{::cert.uid}}
                 </span>
-                <span ng-if="!cert.uid">
+                <span ng-if="!cert.uid" class="gray">
                   <i class="ion-key"> </i>
                   {{::cert.pubkey | formatPubkey}}
                 </span>
               </h3>
-              <h5 class="assertive">{{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}</h5>
+              <h5 class="assertive">
+                {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
+              </h5>
               <h4 class="gray">
                 <span ng-if="cert.uid">
                   <i class="ion-key"> </i>
