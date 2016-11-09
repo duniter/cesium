@@ -147,10 +147,15 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     // endRemoveIf(device)
   });
 
-  $scope.setType = function(type) {
+  $scope.setAdType = function(type) {
     if (type != $scope.search.type) {
       $scope.search.type = type;
-      $scope.doSearch();
+      if ($scope.search.lastRecords) {
+        $scope.doGetLastRecord();
+      }
+      else {
+        $scope.doSearch();
+      }
     }
   };
 
@@ -228,14 +233,16 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
       filters.push({match_phrase: { location: $scope.search.location}});
     }
-    if ($scope.search.type) {
-      filters.push({term: {type: $scope.search.type}});
-    }
 
     if (!matches.length && !filters.length) {
       $scope.doGetLastRecord();
       return;
     }
+
+    if ($scope.search.type) {
+      filters.push({term: {type: $scope.search.type}});
+    }
+
     request.query = {};
     if (matches.length > 0) {
       request.query.bool = request.query.bool || {};
@@ -258,12 +265,16 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
 
     var request = {
       sort: {
-        "time" : "desc"
+        "creationTime" : "desc"
       },
       from: offset,
       size: size,
       _source: esMarket.record.fields.commons
     };
+
+    if ($scope.search.type) {
+      request.query = {bool: {filter: {term: {type: $scope.search.type}}}};
+    }
 
     return $scope.doRequest(request, more);
   };
@@ -317,41 +328,46 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       }
       else {
         var formatSlug = $filter('formatSlug');
-        var records = res.hits.hits.reduce(function(result, hit) {
-            var record = hit._source;
-            record.id = hit._id;
-            record.type = hit._type;
-            record.urlTitle = formatSlug(hit._source.title);
-            if (record.category && record.category.id) {
-              record.category = categories[record.category.id];
+        var records = res.hits.hits.reduce(function(res, hit) {
+          // Filter on type (workaround if filter on term 'type' not working)
+          if ($scope.search.type && $scope.search.type != hit._source.type) {
+            return res;
+          }
+          var record = hit._source;
+          record.id = hit._id;
+          record.urlTitle = formatSlug(hit._source.title);
+          if (record.category && record.category.id) {
+            record.category = categories[record.category.id];
+          }
+          if (record.thumbnail) {
+            record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
+          }
+          if (record.price) {
+            if (!csSettings.data.useRelative && (!record.unit || record.unit==='UD')) {
+              record.price = record.price * currentUD;
             }
-            if (record.thumbnail) {
-              record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
+            else if (csSettings.data.useRelative && record.unit==='unit') {
+              record.price = record.price / currentUD;
             }
-            if (record.price) {
-              if (!csSettings.data.useRelative && (!record.unit || record.unit==='UD')) {
-                record.price = record.price * currentUD;
-              }
-              else if (csSettings.data.useRelative && record.unit==='unit') {
-                record.price = record.price / currentUD;
-              }
+          }
+          if (hit.highlight) {
+            if (hit.highlight.title) {
+                record.title = hit.highlight.title[0];
             }
-            if (hit.highlight) {
-              if (hit.highlight.title) {
-                  record.title = hit.highlight.title[0];
-              }
-              if (hit.highlight.description) {
-                  record.description = hit.highlight.description[0];
-              }
-              if (hit.highlight.location) {
-                  record.location = hit.highlight.location[0];
-              }
-              if (record.category && hit.highlight["category.name"]) {
-                  record.category.name = hit.highlight["category.name"][0];
-              }
+            if (hit.highlight.description) {
+                record.description = hit.highlight.description[0];
             }
-            return result.concat(record);
-          }, []);
+            if (hit.highlight.location) {
+                record.location = hit.highlight.location[0];
+            }
+            if (record.category && hit.highlight["category.name"]) {
+                record.category.name = hit.highlight["category.name"][0];
+            }
+          }
+          return res.concat(record);
+        }, []);
+
+        // Replace results, or append if 'show more' clicked
         if (!more) {
           $scope.search.results = records;
         }

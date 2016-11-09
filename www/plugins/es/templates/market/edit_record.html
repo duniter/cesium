@@ -27,7 +27,7 @@
           <form name="recordForm" novalidate="" ng-submit="save()">
             <div class="list animate-ripple" ng-init="setForm(recordForm)">
 
-              <div class="item hidden-xs">
+              <div class="item hidden-xs item-text-wrap">
                 <h1 ng-if="id" ng-bind-html="formData.title"></h1>
                 <h1 ng-if="!id" translate>MARKET.EDIT.TITLE_NEW</h1>
               </div>
@@ -37,8 +37,7 @@
                   {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
                 </h4>
                 <div class="badge badge-balanced badge-editable" ng-click="showRecordTypeModal()">
-                  <span ng-if="formData.type=='offer'" translate>MARKET.TYPE.OFFER</span>
-                  <span ng-if="formData.type=='need'" translate>MARKET.TYPE.NEED</span>
+                  <span>{{'MARKET.TYPE.'+formData.type|upper|translate}}</span>
                 </div>
               </div>
 

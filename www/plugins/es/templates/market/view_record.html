@@ -25,9 +25,9 @@
 
         <ion-list class="animate-fade-slide-in item-text-wrap no-padding-xs">
 
-          <div class="item" ng-class="{'item-thumbnail-left': thumbnail}">
+          <div class="item item-text-wrap" ng-class="{'item-thumbnail-left': thumbnail}">
             <img ng-src="{{thumbnail.src}}" ng-if="thumbnail">
-            <h1 ng-bind-html="formData.title"></h1>
+            <h1 class="padding-top" ng-bind-html="formData.title"></h1>
             <h2 class="gray hidden-xs">
               <a ng-if="formData.location" ui-sref="app.market_lookup({location:formData.location})">
                 <i class="icon ion-location"></i>
@@ -60,6 +60,9 @@
                 </span>
               </span>
             </h4>
+            <div class="badge badge-balanced">
+              <span>{{'MARKET.TYPE.'+formData.type|upper|translate}}</span>
+            </div>
           </div>
 
           <div class="item visible-xs no-padding-top no-padding-bottom">
