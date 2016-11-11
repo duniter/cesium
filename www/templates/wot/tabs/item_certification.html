@@ -1,0 +1,46 @@
+
+            <span ng-if="cert.isMember">
+              <h3>
+                <i class="icon ion-clock" ng-if="cert.pending"> </i>
+                <span class="positive">
+                  <i class="ion-person"> </i>
+                  {{::cert.uid}}
+                </span>
+              </h3>
+              <h4 class="gray">
+                <i class="ion-key"></i>
+                {{::cert.pubkey | formatPubkey}}
+                <span class="gray"> | {{::cert.time|formatDate}}</span>
+                <span class="gray" ng-if="$root.settings.expertMode"> | {{::cert.pending ? 'WOT.SIGNED_ON_BLOCK' : 'WOT.WRITTEN_ON_BLOCK' | translate:cert}}</span>
+              </h4>
+            </span>
+            <span ng-if="!cert.isMember">
+              <h3>
+                 <i class="icon ion-clock" ng-if="cert.pending"> </i>
+                 <span ng-if="cert.uid" class="dark">
+                  <i class="ion-person"> </i>
+                  {{::cert.uid}}
+                </span>
+                <span ng-if="!cert.uid" class="gray">
+                  <i class="ion-key"> </i>
+                  {{::cert.pubkey | formatPubkey}}
+                </span>
+              </h3>
+              <h5 class="assertive">
+                {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
+              </h5>
+              <h4 class="gray">
+                <span ng-if="cert.uid">
+                  <i class="ion-key"></i>
+                  {{::cert.pubkey | formatPubkey}}
+                </span>
+                <span class="gray"> | {{::cert.time|formatDate}}</span>
+                <span class="gray" ng-if="$root.settings.expertMode"> | {{::cert.pending ? 'WOT.SIGNED_ON_BLOCK' : 'WOT.WRITTEN_ON_BLOCK' | translate:cert}}</span>
+              </h4>
+            </span>
+            <div class="badge badge-stable" ng-if="cert.expiresIn">
+              {{::cert.expiresIn | formatDurationTo}}
+            </div>
+            <div class="badge badge-assertive" ng-if="!cert.expiresIn">
+              {{::'WOT.EXPIRED' | translate}}
+            </div>

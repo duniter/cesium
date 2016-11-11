@@ -55,17 +55,17 @@
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
           <span id="helptip-wot-view-certifications-count"
                 class="badge"
-                ng-class="{'badge-balanced': formData.certificationCount >= formData.sigQty,
-                 'badge-energized': formData.certificationCount < formData.sigQty && formData.certificationCount + formData.pendingCertificationCount >= formData.sigQty,
-                 'badge-assertive': formData.certificationCount < formData.sigQty}">
-            <span ng-if="formData.certificationCount || !formData.pendingCertificationCount">
-              <i ng-if="formData.certificationCount >= formData.sigQty" class="ion-android-done"></i>
-              {{formData.certificationCount}}
+                ng-class="{'badge-balanced': formData.received_cert.length >= formData.sigQty,
+                 'badge-energized': formData.received_cert.length < formData.sigQty && formData.received_cert.length + formData.received_cert_pending.length >= formData.sigQty,
+                 'badge-assertive': formData.received_cert.length < formData.sigQty}">
+            <span ng-if="formData.received_cert.length || !formData.received_cert_pending.length">
+              <i ng-if="formData.received_cert.length >= formData.sigQty" class="ion-android-done"></i>
+              {{formData.received_cert.length}}
             </span>
-            <span ng-if="formData.pendingCertificationCount">
+            <span ng-if="formData.received_cert_pending.length">
               <ng-if ng-if="formData.certificationCount">+ </ng-if>
               <i class="ion-clock"></i>
-              {{formData.pendingCertificationCount}}
+              {{formData.received_cert_pending.length}}
             </span>
           </span>
           <i class="gray icon ion-ios-arrow-right"></i>

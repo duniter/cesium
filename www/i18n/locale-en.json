@@ -186,7 +186,7 @@
       "BTN_PENDING": "Pending registrations",
       "SHOW_MORE": "Show more",
       "SHOW_MORE_COUNT": "(current limit to {{limit}})",
-      "NO_PENDING": "No pending registration has been found"
+      "NO_PENDING": "No pending registration has in found"
     },
     "MODAL": {
       "TITLE": "Search"
@@ -197,7 +197,8 @@
       "LIST": "Details of received certifications",
       "PENDING_LIST": "Pending certifications",
       "RECEIVED": "Received certifications",
-      "RECEIVED_BY": "Certifications received by {{uid}}"
+      "RECEIVED_BY": "Certifications received by {{uid}}",
+      "ERROR": "Received certifications in error"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications sent",
@@ -205,7 +206,8 @@
       "LIST": "Détails of sent certifications",
       "PENDING_LIST": "Pending certifications",
       "SENT": "Sent certifications",
-      "SENT_BY": "Certifications sent by {{uid}}"
+      "SENT_BY": "Certifications sent by {{uid}}",
+      "ERROR": "Sent certifications with error"
     }
   },
   "LOGIN": {

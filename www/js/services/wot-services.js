@@ -24,6 +24,17 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         return idties;
       },
 
+      _sortCertifications = function(certifications) {
+        certifications = _.sortBy(certifications, function(cert){
+          var score = 1;
+          score += (1000000000000 * (cert.expiresIn ? cert.expiresIn : 0));
+          score += (10000000      * (cert.isMember ? 1 : 0));
+          score += (10            * (cert.block ? cert.block : 0));
+          return -score;
+        });
+        return certifications;
+      },
+
       loadRequirements = function(pubkey, uid) {
         return $q(function(resolve, reject) {
           // Get requirements
@@ -120,7 +131,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     pubkey: cert.pubkey,
                     uid: cert.uids[0],
                     cert_time:  {
-                      block: (cert.meta && cert.meta.block_number)  ? cert.meta.block_number : 0
+                      block: (cert.meta && cert.meta.block_number)  ? cert.meta.block_number : 0,
+                      block_hash: (cert.meta && cert.meta.block_hash)  ? cert.meta.block_hash : null
                     },
                     isMember: cert.isMember,
                     wasMember: cert.wasMember
@@ -149,6 +161,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 var result = {
                   pubkey: cert.pubkey,
                   uid: cert.uid,
+                  cert_time:  {
+                    block: (cert.cert_time && cert.cert_time.block)  ? cert.cert_time.block : 0,
+                    block_hash: (cert.cert_time && cert.cert_time.block_hash)  ? cert.cert_time.block_hash : null
+                  },
                   sigDate: cert.meta ? cert.meta.timestamp : null,
                   isMember: cert.isMember,
                   wasMember: cert.wasMember
@@ -177,7 +193,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 // Check if self has been done on a valid block
                 if (!identity.isMember && identity.number !== 0 && identity.hash !== block.hash) {
                   addEvent(identity, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
-                  console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(identity.uid));
+                  console.debug("[wot] Invalid membership for {0}: block hash changed".format(identity.uid));
                 }
 
                 return identity;
@@ -208,7 +224,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           });
       },
 
-      loadCertifications = function(getFunction, pubkey, lookupCertifications, parameters, medianTime) {
+      loadCertifications = function(getFunction, pubkey, lookupCertifications, parameters, medianTime, certifiersOf) {
 
         function _certId(pubkey, block) {
           return pubkey + '-' + block;
@@ -223,8 +239,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return res;
         }, {}) : {};
 
-        var certificationCount = 0;
-        var pendingCertificationCount = 0;
         var isMember = true;
 
         return getFunction({ pubkey: pubkey })
@@ -241,9 +255,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 (certTime + parameters.sigWindow - medianTime) :
                 (certTime + parameters.sigValidity - medianTime));
               expiresIn = (expiresIn < 0) ? 0 : expiresIn;
-              // Increment counter
-              if (!pending && expiresIn > 0) certificationCount++;
-              else if (pending) pendingCertificationCount++;
               // Remove from lookup certs
               var certId = _certId(cert.pubkey, lookupHasCertTime && cert.cert_time ? cert.cert_time.block : cert.sigDate);
               delete lookupCerticationsByCertId[certId];
@@ -299,9 +310,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 return res.concat(pendingCertByBlocks[block.number].reduce(function(res, cert) {
                   var certTime = block.medianTime;
                   var expiresIn = Math.max(0, certTime + parameters.sigWindow - medianTime);
-                  var valid = (expiresIn > 0);
-                  if (!valid) return res; // Keep only valid cert
-                  pendingCertificationCount++;
+                  var validBuid = (!cert.cert_time || !cert.cert_time.block_hash || cert.cert_time.block_hash == block.hash);
+                  if (!validBuid) {
+                    console.debug("[wot] Invalid cert {0}: block hash changed".format(cert.pubkey.substring(0,8)));
+                  }
+                  var valid = (expiresIn > 0) && (!certifiersOf || cert.isMember) && validBuid;
                   return res.concat({
                     pubkey: cert.pubkey,
                     uid: cert.uid,
@@ -312,7 +325,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     willExpire: (expiresIn && expiresIn <= csSettings.data.timeWarningExpire),
                     pending: true,
                     block: lookupHasCertTime && cert.cert_time ? cert.cert_time.block :
-                      (cert.sigDate ? cert.sigDate.split('-')[0] : null),
+                    (cert.sigDate ? cert.sigDate.split('-')[0] : null),
                     valid: valid
                   });
                 }, []));
@@ -331,27 +344,30 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }
               return res;
             }, {});
-            certifications = certifications.reduce(function(res, cert) {
-              if (!cert.pending || (cert.valid && !writtenCertByPubkey[cert.pubkey])) {
-                return res.concat(cert);
-              }
-              pendingCertificationCount--;
-              return res;
-            }, []);
 
             // Final sort
-            certifications = _.sortBy(certifications, function(cert){
-              var score = 1;
-              score += (1000000000000 * (cert.expiresIn ? cert.expiresIn : 0));
-              score += (10000000      * (cert.isMember ? 1 : 0));
-              score += (10            * (cert.block ? cert.block : 0));
-              return -score;
-            });
+            certifications = _sortCertifications(certifications);
+
+            // Split into valid/pending/error
+            var pendingCertifications = [];
+            var errorCertifications = [];
+            var validCertifications = certifications.reduce(function(res, cert) {
+              if (cert.pending) {
+                if (cert.valid && !writtenCertByPubkey[cert.pubkey]) {
+                  pendingCertifications.push(cert);
+                }
+                else if (!cert.valid && !writtenCertByPubkey[cert.pubkey]){
+                  errorCertifications.push(cert);
+                }
+                return res;
+              }
+              return res.concat(cert);
+            }, []);
 
             return {
-              pendingCertificationCount: pendingCertificationCount,
-              certificationCount: certificationCount,
-              certifications: certifications
+              valid: validCertifications,
+              pending: pendingCertifications,
+              error: errorCertifications
             };
           })
           ;
@@ -438,21 +454,22 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               })
           ])
           .then(function() {
+
             return $q.all([
               // Get received certifications
-              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications : null, parameters, medianTime)
+              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications : null, parameters, medianTime, true/*certifiersOf*/)
                 .then(function (res) {
-                  data.certifications = res.certifications;
-                  data.certificationCount = res.certificationCount;
-                  data.pendingCertificationCount = res.pendingCertificationCount;
+                  data.received_cert = res.valid;
+                  data.received_cert_pending = res.pending;
+                  data.received_cert_error = res.error;
                 }),
 
               // Get given certifications
-              loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime)
+              loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime, false/*certifiersOf*/)
                   .then(function (res) {
-                    data.givenCertifications = res.certifications;
-                    data.givenCertificationCount = res.certificationCount;
-                    data.pendingGivenCertificationCount = res.pendingCertificationCount;
+                    data.given_cert = res.valid;
+                    data.given_cert_pending = res.pending;
+                    data.given_cert_error = res.error;
                   }),
 
               // Get sources
