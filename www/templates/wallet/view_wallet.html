@@ -24,9 +24,8 @@
            ng-style="walletData.avatarStyle"
            ng-class="{'avatar-wallet': !walletData.avatarStyle && !walletData.isMember, 'avatar-member': !walletData.avatarStyle && walletData.isMember}">
         </i>
-        <h3 class="light" ng-if="walletData.name">{{walletData.name}}</h3>
-        <h3 class="light" ng-if="!walletData.name && walletData.isMember">{{walletData.uid}}</h3>
-        <h3 class="light" ng-if="!walletData.name && !walletData.isMember"><i class="icon ion-key"></i> {{walletData.pubkey | formatPubkey}}</h3>
+        <h3 class="light" ng-if="walletData.name || walletData.uid">{{walletData.name || walletData.uid}}</h3>
+        <h3 class="light" ng-if="!walletData.name && !walletData.uid"><i class="icon ion-key"></i> {{walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
             <span ng-if="!$root.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
             <span ng-if="$root.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
@@ -83,7 +82,7 @@
         <!-- Certifications -->
         <a class="item item-icon-left item-icon-right item-text-wrap ink"
            id="helptip-wallet-certifications"
-           ng-if="walletData.isMember"
+           ng-if="walletData.isMember||walletData.requirements.pendingMembership"
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
           <span clas="input-label">{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>

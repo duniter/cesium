@@ -83,8 +83,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 canMembershipOut: false,
                 needRenew: false,
                 pendingMembership: false,
-                certificationCount: 0,
-                certifications: [],
                 needCertifications: false,
                 needCertificationCount: 0,
                 willNeedCertificationCount: 0
@@ -684,7 +682,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     idty.sigDate = block.medianTime;
                     if (block.number !== 0 && idty.blockHash !== block.hash) {
                       addEvent(idty, {type:'error', message: 'ERROR.WOT_PENDING_INVALID_BLOCK_HASH'});
-                      console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(idty.uid));
+                      console.debug("Invalid membership for uid={0}: block hash changed".format(idty.uid));
                     }
                   });
                 });

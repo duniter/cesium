@@ -306,7 +306,7 @@
     "SEND_IDENTITY_FAILED": "Echec de l'inscription.",
     "SEND_CERTIFICATION_FAILED": "Echec de la certification.",
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY": "Vous ne pouvez pas effectuer de certification, car votre compte n'est <b>pas membre</b>.",
-    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas certifier quelqu'un, car vous n'êtes pas encore devenu membre.<br/>Patience ! ;-)",
+    "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas effectuer de certification, car votre compte n'est <p>pas encore membre</b>.<br/><br/>Il vous manque encore des certification pour devenir membre.",
     "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Compte non certifiable. Aucune demande d'adhésion n'a été faite, ou bien elle n'a pas été renouvellée.",
     "LOGIN_FAILED": "Erreur lors de l'authentification.",

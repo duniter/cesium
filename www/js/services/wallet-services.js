@@ -196,6 +196,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     isNeverUsed = function() {
       return !data.pubkey ||
         (!data.isMember &&
+        (!data.requirements || !data.requirements.pendingMembership) &&
          !data.tx.history.length &&
          !data.tx.pendings.length);
     },
@@ -329,7 +330,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.blockUid = idty.meta.timestamp;
           // Add useful custom fields
           data.requirements.needSelf = false;
-          data.requirements.needMembership = (data.requirements.membershipExpiresIn === 0 &&
+          data.requirements.needMembership = (data.requirements.membershipExpiresIn <= 0 &&
                                               data.requirements.membershipPendingExpiresIn <= 0 );
           data.requirements.needRenew = (!data.requirements.needMembership &&
                                          data.requirements.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
@@ -343,7 +344,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             }
             return count;
           }, 0) : 0;
-          data.isMember = !data.requirements.needSelf && !data.requirements.needMembership;
+          data.isMember = (data.requirements.membershipExpiresIn > 0);
 
           var blockParts = idty.meta.timestamp.split('-', 2);
           var blockNumber = parseInt(blockParts[0]);
@@ -354,9 +355,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               data.sigDate = block.time;
 
               // Check if self has been done on a valid block
-              if (!data.isMember && blockNumber!== 0 && blockHash !== block.hash) {
+              if (!data.isMember && blockNumber !== 0 && blockHash !== block.hash) {
                 addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH'});
-                console.debug("Invalid membership for uid={0}: block hash not match a real block (block cancelled)".format(data.uid));
+                console.debug("Invalid membership for uid={0}: block hash changed".format(data.uid));
               }
               resolve();
             })
@@ -739,11 +740,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             enable: true,
             fromTime: data.tx ? data.tx.fromTime : undefined // keep previous time
           },
-          sigStock: true
+          sigStock: true,
+          api: true
         };
       }
 
       var jobs = [];
+
+      // Reset events
+      data.events = [];
 
       // Get current UD
       if (options.currentUd) jobs.push(loadCurrentUD());
@@ -1223,85 +1228,91 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     */
     membership = function(sideIn) {
       return function() {
-        return $q(function(resolve, reject) {
-          BMA.blockchain.current()
+        var membership;
+        return BMA.blockchain.current()
             .catch(function(err){
               // Special case for currency init (root block not exists): use fixed values
               if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
                 return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
               }
-              else {
-                throw err;
-              }
+              throw err;
             })
           .then(function(block) {
             // Create membership to sign
-             var membership = 'Version: 2\n' +
-                     'Type: Membership\n' +
-                     'Currency: ' + data.currency + '\n' +
-                     'Issuer: ' + data.pubkey + '\n' +
-                     'Block: ' + block.number + '-' + block.hash + '\n' +
-                     'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n' +
-                     'UserID: ' + data.uid + '\n' +
-                     'CertTS: ' + data.blockUid + '\n';
+            membership = 'Version: 2\n' +
+              'Type: Membership\n' +
+              'Currency: ' + data.currency + '\n' +
+              'Issuer: ' + data.pubkey + '\n' +
+              'Block: ' + block.number + '-' + block.hash + '\n' +
+              'Membership: ' + (!!sideIn ? "IN" : "OUT" ) + '\n' +
+              'UserID: ' + data.uid + '\n' +
+              'CertTS: ' + data.blockUid + '\n';
 
-            CryptoUtils.sign(membership, data.keypair)
-            .then(function(signature) {
-              var signedMembership = membership + signature + '\n';
-              // Send signed membership
-              BMA.blockchain.membership({membership: signedMembership})
-              .then(function(result) {
-                $timeout(function() {
-                  loadRequirements()
-                    .then(function() {
-                      finishLoadRequirements();
-                      resolve();
-                    })
-                    .catch(function(err){reject(err);});
-                }, 1000); // waiting for node to process membership doc
-              }).catch(function(err){reject(err);});
-            }).catch(function(err){reject(err);});
-          }).catch(function(err){reject(err);});
-        });
+            return CryptoUtils.sign(membership, data.keypair);
+          })
+          .then(function(signature) {
+            var signedMembership = membership + signature + '\n';
+            // Send signed membership
+            return BMA.blockchain.membership({membership: signedMembership});
+          })
+          .then(function() {
+            return $timeout(function() {
+              return loadRequirements();
+            }, 1000); // waiting for node to process membership doc
+          })
+          .then(function() {
+            finishLoadRequirements();
+          });
       };
     },
 
     /**
     * Send identity certification
     */
-    certify = function(uid, pubkey, timestamp, signature) {
-      return $q(function(resolve, reject) {
+    certify = function(uid, pubkey, timestamp, signature, isMember, wasMember) {
+      var current;
+      var cert;
 
-        BMA.blockchain.current()
+      return BMA.blockchain.current()
         .catch(function(err){
           // Special case for currency init (root block not exists): use fixed values
           if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-            return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
+            return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH, medianTime: Math.trunc(new Date().getTime() / 1000)};
           }
-          reject(err);
+          throw err;
         })
         .then(function(block) {
+          current = block;
           // Create the self part to sign
-          var cert = 'Version: 2\n' +
-                     'Type: Certification\n' +
-                     'Currency: ' + data.currency + '\n' +
-                     'Issuer: ' + data.pubkey + '\n' +
-                     'IdtyIssuer: '+ pubkey + '\n' +
-                     'IdtyUniqueID: '+ uid + '\n' +
-                     'IdtyTimestamp: '+ timestamp + '\n' +
-                     'IdtySignature: '+ signature + '\n' +
-                     'CertTimestamp: '+ block.number + '-' + block.hash + '\n';
+          cert = 'Version: 2\n' +
+            'Type: Certification\n' +
+            'Currency: ' + data.currency + '\n' +
+            'Issuer: ' + data.pubkey + '\n' +
+            'IdtyIssuer: ' + pubkey + '\n' +
+            'IdtyUniqueID: ' + uid + '\n' +
+            'IdtyTimestamp: ' + timestamp + '\n' +
+            'IdtySignature: ' + signature + '\n' +
+            'CertTimestamp: ' + block.number + '-' + block.hash + '\n';
 
-          CryptoUtils.sign(cert, data.keypair)
-          .then(function(signature) {
-            var signedCert = cert + signature + '\n';
-            BMA.wot.certify({cert: signedCert})
-              .then(function(result) {
-                resolve(result);
-              }).catch(function(err){reject(err);});
-          }).catch(function(err){reject(err);});
-        }).catch(function(err){reject(err);});
-      });
+          return CryptoUtils.sign(cert, data.keypair);
+        })
+        .then(function(signature) {
+          var signedCert = cert + signature + '\n';
+          return BMA.wot.certify({cert: signedCert});
+        })
+        .then(function() {
+          return {
+            pubkey: pubkey,
+            uid: uid,
+            time: current.medianTime,
+            isMember: isMember,
+            wasMember: wasMember,
+            expiresIn: data.parameters.sigWindow,
+            pending: true,
+            block: current.number,
+            valid: true
+          };
+        });
     },
 
     addEvent = function(event) {

@@ -455,7 +455,10 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       $scope.formData = identity;
       $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
       $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
-      $scope.alreadyCertified = $scope.canCertify ? !!_.findWhere(identity.received_cert, { uid: csWallet.data.uid, valid: true }) : false;
+      $scope.alreadyCertified = $scope.canCertify ?
+        (!csWallet.isLogin() ||
+         !!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
+         !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true })) : false;
 
       $scope.loading = false;
 
@@ -474,12 +477,34 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
   $scope.certify = function() {
     $scope.loadWallet()
     .then(function() {
+      UIUtils.loading.hide();
+
       if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
         UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
           'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
         return;
       }
-      UIUtils.loading.hide();
+
+      // Check not already certified
+      var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: csWallet.data.pubkey, valid: true});
+      if (previousCert) {
+        $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
+          .then(function(message) {
+            UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+          });
+        return;
+      }
+
+      // Check not pending certification
+      previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true});
+      if (previousCert) {
+        $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
+          .then(function(message) {
+            UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+          });
+        return;
+      }
+
       UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
       .then(function(confirm){
         if (!confirm) {
@@ -489,10 +514,19 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         csWallet.certify($scope.formData.uid,
                     $scope.formData.pubkey,
                     $scope.formData.timestamp,
-                    $scope.formData.sig)
-        .then(function() {
+                    $scope.formData.sig,
+                    $scope.formData.isMember,
+                    $scope.formData.wasMember)
+        .then(function(cert) {
           UIUtils.loading.hide();
-          UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+          if (cert) {
+            cert.uid = csWallet.data.uid;
+            cert.pubkey = csWallet.data.pubkey;
+            cert.isMember = csWallet.data.isMember;
+            UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+            $scope.formData.received_cert_pending.unshift(cert);
+            $scope.motionCertifications();
+          }
         })
         .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
       });
@@ -506,7 +540,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       .catch(UIUtils.onError('ERROR.LOGIN_FAILED'))
       .then(function() {
         if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
-          UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
+          UIUtils.alert.error($rootScope.walletData.requirements.needSelf || $rootScope.walletData.requirements.needMembership ?
             'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;
         }
@@ -536,7 +570,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         }
 
         // Check not already certified
-        var previousCert = _.findWhere(identity.certifications, { uid: csWallet.data.uid, pending: false, valid: true});
+        var previousCert = _.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true});
         if (previousCert) {
           $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
             .then(function(message) {
@@ -546,7 +580,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         }
 
         // Check not pending certification
-        previousCert = _.findWhere(identity.certifications, { uid: csWallet.data.uid, pending: true, valid: true});
+        previousCert = _.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true});
         if (previousCert) {
           $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
             .then(function(message) {
@@ -570,10 +604,16 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
             csWallet.certify(identity.uid,
               identity.pubkey,
               identity.timestamp,
-              identity.sig)
-              .then(function() {
+              identity.sig,
+              identity.isMember,
+              identity.wasMember)
+              .then(function(cert) {
                 UIUtils.loading.hide();
-                UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+                if (cert) {
+                  UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+                  $scope.formData.given_cert_pending.unshift(cert);
+                  $scope.motionGivenCertifications();
+                }
               })
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
           });
