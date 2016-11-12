@@ -455,10 +455,9 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       $scope.formData = identity;
       $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
       $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
-      $scope.alreadyCertified = $scope.canCertify ?
-        (!csWallet.isLogin() ||
-         !!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
-         !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true })) : false;
+      $scope.alreadyCertified = !$scope.canCertify || !csWallet.isLogin() ? false :
+        (!!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
+         !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true }));
 
       $scope.loading = false;
 
