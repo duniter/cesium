@@ -189,9 +189,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 identity.sigDate = block.time;
 
                 // Check if self has been done on a valid block
-                if (!identity.isMember && identity.number !== 0 && identity.hash !== block.hash) {
-                  addEvent(identity, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
-                  console.debug("[wot] Invalid membership for {0}: block hash changed".format(identity.uid));
+                if (identity.number !== 0 && identity.hash !== block.hash) {
+                  identity.hasBadSelfBlock = true;
                 }
 
                 return identity;
@@ -452,6 +451,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               })
           ])
           .then(function() {
+            if (data.hasBadSelfBlock) {
+              delete data.hasBadSelfBlock;
+              if (!data.isMember) {
+                addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
+                console.debug("[wot] Invalid membership for {0}: block hash changed".format(data.uid));
+              }
+            }
 
             return $q.all([
               // Get received certifications

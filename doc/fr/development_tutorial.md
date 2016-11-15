@@ -357,22 +357,29 @@ __Note :__ La version d'AngularJS utilisée est une 1.x : la 2.x change complèt
 
 ### Sous Chrome
 
-Ouvrir l'application dans Chrome à l'adresse http://localhost:8100
+#### Ouvrir l'explorateur de sources
 
-Ouvrir la console de développeur : "Option > Plus d'outils > Outils de développement"
+Ouvrez l'application dans Chrome à l'adresse http://localhost:8100
 
-Dans l'explorateur de fichier javascript : 
- 
- * Chercher et visualisé le fichier "js/controllers/wot-controllers.js"
- * Chercher la méthode "certifyIdentity()"
- * Placer un point d'arrêt.
+Ouvrez les outils de développement :
+ * Menu `Option > Plus d'outils > Outils de développement`
+ * ou par le raccourcis clavier : `Ctrl + Maj + i`
 
-Dans l'application web : 
+#### Débugger la certification d'un utilisateur
 
- * Dans le menu de gauche, cliquer sur "Annuaire";
- * Recherche un utilisateur;
- * Cliquer sur l'utilisateur pour visualiser son identité
- * Cliquer sur le bouton "Certifier"
+Ouvrez l'explorateur de source, puis cherchez le fichier `dist/dist_js/app/controllers/wot-controllers.js`.
+
+Recherchez la méthode `$scope.certify()`, et placez y un point d'arrêt.
+
+Naviguez dans l'application Cesium de la manière suivante : 
+
+ * Cliuquez dans le menu (à gauche) `Annuaire`;
+ * Recherche un utilisateur, puis visualiser son identité;
+ * Dans `Certification reçues`, cliquez sur le bouton `Certifier`;
  * Vérifier que la console s'arrête sur le point d'arrêt.
 
-Pour découvrir le code, il est intéressant
+<img src="https://forum.duniter.org/uploads/default/original/2X/e/eca671a6d24b8e11566cfcca11b65e6c9c9c370c.png" width="690" height="223">
+
+Découvrez le code en déroulant l'action pas à pas.
+
+> Utiliser les touches de `F9` à `F11`, pour rentrer dans une méthode (F11), avancer pas à pas (F10) ou jusqu'au prochain point d'arrêt (F9), etc. 
