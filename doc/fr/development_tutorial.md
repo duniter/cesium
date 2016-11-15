@@ -2,9 +2,7 @@
 
 Cet article est un tutoriel d'initiation au code source du logiciel Cesium. Celui-ci vous permettra, à travers une succession d'étapes, d'accéder à la maîtrise des outils et méthodes utilisés quotidiennement par les développeurs de Cesium pour créer et modifier le logiciel.
 
-A la fin de ce tutoriel, vous serez donc *capable de modifier le logiciel*. Et si le cœur vous en dit, vous pourrez même réaliser une modification et partager celle-ci avec le dépôt de code principal, afin que celle-ci soit officiellement intégrée et disponible aux utilisateurs !
-
-A vos claviers !
+A la fin de ce tutoriel, vous serez donc *capable de modifier le logiciel*. 
 
 ## Niveau I : récupérer le code source
 
@@ -126,14 +124,16 @@ cd cesium
 Puis, lancez le téléchargement et l'installation des modules Cesium à l'aide de la commande : 
 
 ```bash
-npm install -g bower gulp ionic cordova
+npm install -g bower gulp ionic@1.7.16 cordova
 ```
+
 Puis pour les dépendances non globales :
+
 ```bash
 npm install
 ```
 
-> Le processus d'installation peut prendre plusieurs minutes. En effet, il faut télécharger toutes les dépendances de Cesium et même en compiler certaines.
+> Le processus d'installation peut prendre plusieurs minutes. En effet, il faut télécharger toutes les dépendances de Cesium.
 
 Si tout s'est bien passé, vous devriez obtenir une fin d'arborescence dans la console, et l'invité de commande devrait vous avoir rendu la main : 
 
@@ -154,12 +154,13 @@ Si tout s'est bien passé, vous devriez obtenir une fin d'arborescence dans la c
 npm WARN cesium@0.0.1 No repository field.
 npm WARN cesium@0.0.1 No license field.
 
-blavenie@~$
+user1@~$
 ```
 
 > Il se peut que vous obteniez des messages `npm WARN [...]`. Rien de grave : comme le nom du message l'indique, il s'agit simplement d'un avertissement non bloquant pour la suite des événements.
 
 Puis installer les dépendences via bower :
+
 ```bash
 bower install
 ```
@@ -169,11 +170,11 @@ bower install
 Pour développer sous NodeJS, vous pouvez utiliser l'IDE de votre choix :
 
  * Par exemple Sublime Text (non libre) : https://www.sublimetext.com/
- * Autre possibilité : WebStorm (non libre mais fonctionnement très avancé). cf Post de cgeek sur le développement de Duniter.
+ * Autre possibilité : WebStorm (non libre mais fonctionnement très avancé).
 
 ### Installer Chrome et/ou Firefox
 
-Pour débugger plus facilement le javascript Cesium, il est plus facile Les navigateur Chrome
+Pour débugger plus facilement le javascript Cesium, il est plus facile d'utiliser le navigateur Chrome
 
 ## Niveau III : maîtriser les commandes usuelles
 
@@ -184,63 +185,120 @@ Ce troisième niveau permet de découvrir les quelques (cinq) commandes que vous
 
 ### Configurer Cesium
 
-La configuration par défaut de notre environnement est visible dans le fichier : app/config.json
+La configuration par défaut de notre environnement est visible dans le fichier `app/config.json`. Plusieurs profils y sont présents : `default`, `dev`, etc.
 
-```bash
+```json
 {
-          "default": {
-            "APP_CONFIG": {
-              "DUNITER_NODE": "cgeek.fr:9330",
-              "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
-              "TIMEOUT": 4000,
-              "DEBUG": false,
-              "NATIVE_TRANSITION": false
-            }      
-          },
-          "duniter-fr": {
-            "APP_CONFIG": {
-              "DUNITER_NODE": "cgeek.fr:9330",
-              "NEW_ISSUE_LINK": "https://github.com/duniter/cesium/issues/new?labels=bug",
-              "TIMEOUT": 4000,
-              "DEBUG": false,
-              "NATIVE_TRANSITION": false
-            }       
-          },
-         (...)
-        "dev": {
-            "APP_CONFIG": {
-              "DUNITER_NODE": "localhost:9201",
-              "TIMEOUT": 4000,
-              "DEBUG": false,
-              "NATIVE_TRANSITION": true
-            }
-          }
+   "default": {
+       "cacheTimeMs": 60000,
+       "fallbackLanguage": "en",
+       "rememberMe": false,
+       "showUDHistory": false,
+       "timeout": 10000,
+       "timeWarningExpireMembership": 5184000,
+       "timeWarningExpire": 7776000,
+       "useLocalStorage": true,
+       "useRelative": true,
+       "initPhase": false,
+       "expertMode": false,
+       "decimalCount": 4,
+       "helptip": {
+         "enable": true,
+         "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+       },
+       "node": {
+         "host": "cgeek.fr",
+         "port": "9330"
+       },
+       "plugins":{
+         "es": {
+           "enable": true,
+           "askEnable": false,
+           "host": "data.duniter.fr",
+           "port": "80"
+         }
+       }
+     },
+     
+     (...)
+     "dev": {
+         "cacheTimeMs": 60000,
+         "fallbackLanguage": "fr-FR",
+         "defaultLanguage": "fr-FR",
+         "rememberMe": true,
+         "showUDHistory": false,
+         "timeout": 6000,
+         "timeWarningExpireMembership": 5184000,
+         "timeWarningExpire": 7776000,
+         "useLocalStorage": true,
+         "useRelative": true,
+         "initPhase": false,
+         "expertMode": false,
+         "decimalCount": 2,
+         "helptip": {
+           "enable": true,
+         },
+         "node": {
+           "host": "localhost",
+           "port": "9600"
+         },
+         "plugins":{
+           "es": {
+             "enable": false
+           }
+         }
+       },
 }
 ```
 
 Nous utiliserons la configuration "dev", pour utiliser votre noeud Duniter.
-Pour activer cette configuration, lancez la commande :
+
+Modifiez les valeurs `host` et `port` du profil de configuration `dev`, afin qu'elles correspondent à votre noeud Duniter :
+
+```json
+  "dev: {
+  ...
+         "node": {
+           "host": "localhost",
+           "port": "9600"
+         },
+  ...
+```
+
+Désactivez le plugin "es" (utilisé pour Cesium+) :
+
+```json
+  "dev: {
+  ...
+         "plugins":{
+           "es": {
+             "enable": false
+           }
+         }
+  ...
+```
+
+Pour activer cette configuration, lancez maintenant la commande :
 
 ```bash
- gulp default --env dev
+ gulp config --env dev
 ```
 
 ```bash
 [17:32:34] Using gulpfile ~/git/duniter/cesium/gulpfile.js
-[17:32:34] Starting 'sass'...
 [17:32:34] Starting 'config'...
 [17:32:34] Building `www/js/config.js` for `dev` environment...
-[17:32:34] Finished 'config' after 71 ms
-[17:32:36] Finished 'sass' after 1.2 s
-[17:32:36] Starting 'default'...
-[17:32:36] Finished 'default' after 10 μs
+[17:32:36] Finished 'config' after 10 μs
 ```
+
+> Cette commande sera à relancer à cachune de vos modifications du fichier `app/config`.
 
 Cesium est maintenant configuré pour utiliser votre noeud Duniter local.
 
 ### Lancer Cesium (mode web)
 
-Moment fatidique ! Il ne vous reste plus qu'à lancer l'application (en mode web) pour savoir si tout s'est bien passé et que vous êtes prêts pour la suite.
+Il ne vous reste plus qu'à lancer l'application pour savoir si tout s'est bien passé et que vous êtes prêts pour la suite.
+
 Lancez la commande suivante : 
 
 ```bash
@@ -262,8 +320,11 @@ Ionic server commands, enter:
 
 ionic $ 
 ```
-Vous pouvez ouvrir un navigateur web à l'adresse suivante : http://localhost:8100 
-Vous verrez la page d'accueil de Cesium.
+
+Vous pouvez ouvrir un navigateur web à l'adresse suivante : http://localhost:8100
+Vous devriez y voir la page d'accueil de Cesium. 
+ 
+Bravo, vous avez une installation de Cesium opérationnelle !
 
 ### Documentation
 
@@ -282,6 +343,9 @@ Chercher et répérer dans le code :
 * les templates HTML qui porte les IHM : www/templates
 * les controllers (JS)  : www/js/controllers
 * les services (JS)  : www/js/services
+
+<img src="https://forum.duniter.org/uploads/default/original/2X/a/a5078db3abdf71c87f245e948ce94a181b0e0f37.png" width="690" height="369">
+
 
 ### Aller plus loin dans le code
 
