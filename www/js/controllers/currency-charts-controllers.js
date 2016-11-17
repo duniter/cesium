@@ -26,51 +26,34 @@ angular.module('cesium.currency-charts.controllers', ['cesium.services'])
 
 ;
 
-function CurrencyUdController($scope, BMA, $q) {
+function CurrencyUdController($scope, BMA, $q, csHttp) {
   'ngInject';
 
   $scope.$on('$ionicView.enter', function() {
       $scope.loadUds()
-      .then(function (dataXY) {
+      .then(function (res) {
         // TODO: plot
+        console.log(res);
       });
     });
 
   $scope.loadUds = function() {
-    return $q(function(resolve, reject) {
-      BMA.blockchain.stats.ud()
-      .then(function (res) {
-        if (res.result.blocks.length) {
-          var uds = [];
-          var blockRequests = [];
-          res.result.blocks.forEach(function(number) {
-            blockRequests.push(
-              BMA.blockchain.block({ block: number })
-              .then(function(block){
-                uds.push({
-                  number: block.number,
-                  dividend: block.dividend,
-                  medianTime: block.medianTime
-                });
-              })
-            );
-          });
-          $q.all(blockRequests)
-          .then(function() {
-            _.sortBy(uds, function(b){return b.number;});
-            var x = uds.reduce(function(values, block) {
-              return values.concat(block.medianTime);
-            }, []);
-            var y = uds.reduce(function(values, block) {
-              return values.concat(block.dividend);
-            }, []);
-            resolve({x: x, y: y});
-          });
-        }
-        else {
-          resolve([]);
-        }
-      });
+    var request = {
+        query: {
+          /*TODO */
+        },
+        from: 0,
+        size: 10000,
+        sort: "number"
+        _source: ['number','dividend','medianTime']
+      };
+
+    var httpPost = csHttp.post('localhost', '9200', '/test_net/block/_search?pretty');
+    return httpPost(request)
+    .then(function (res) {
+      console.log(res);
+      // TODO transform data into array (X, Y, etc.)
+      return res;
     });
   };
 
