@@ -146,7 +146,8 @@
       "SIG_QTY_RULE": "Required certifications<br/>to become a member",
       "SIG_STOCK": "Maximal number of certifications<br/>sent by member",
       "SIG_PERIOD": "Minimum delay between 2 certifications<br/>of a same issuer.",
-      "SIG_WINDOW": "Maximum delay a certification can wait<br/>before being expired for non-writing."
+      "SIG_WINDOW": "Maximum delay a certification can wait<br/>before being expired for non-writing.",
+      "STEP_MAX": "Maximal distance in the web of trust<br/>between each member and a newcomer"
     }
   },
   "PEER": {

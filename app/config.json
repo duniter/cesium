@@ -77,7 +77,7 @@
     "useLocalStorage": true,
     "useRelative": true,
     "initPhase": false,
-    "expertMode": false,
+    "expertMode": true,
     "decimalCount": 2,
     "helptip": {
       "enable": true,
@@ -87,12 +87,12 @@
       }
     },
     "node": {
-      "host": "duniter.le-sou.org",
-      "port": "9600"
+      "host": "cgeek.fr",
+      "port": "9330"
     },
     "plugins":{
       "es": {
-        "enable": true,
+        "enable": false,
         "askEnable": true,
         "host": "data.le-sou.org",
         "port": "80"

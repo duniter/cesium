@@ -192,6 +192,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
           $scope.sigStock = json.sigStock;
           $scope.sigWindow = json.sigWindow;
           $scope.sigPeriod = json.sigPeriod;
+          $scope.stepMax = json.stepMax;
         }),
 
       // Get the current block informations
