@@ -25,6 +25,7 @@ Cesium can be easily installed on most web server.
 if you don't allready use nodejs, see [Prerequisite](https://github.com/duniter/cesium#prerequisite)
 ```bash
 git clone https://github.com/duniter/cesium.git
+cd cesium
 npm install
 npm start
 ```
