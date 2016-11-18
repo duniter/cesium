@@ -146,7 +146,8 @@
       "SIG_QTY_RULE": "Nombre de certifications requises<br/>pour devenir membre",
       "SIG_STOCK": "Nombre maximal de certifications émises<br/>par membre",
       "SIG_PERIOD": "Délai minimal d'attente entre 2 certifications<br/>successives émises par une même personne.",
-      "SIG_WINDOW": "Délai maximal d'attente avant<br/>prise en compte d'une certification"
+      "SIG_WINDOW": "Délai maximal d'attente avant<br/>prise en compte d'une certification",
+      "STEP_MAX": "Distance maximale dans la toile de confiance<br/>entre chaque membre et un nouvel entrant"
     }
   },
   "PEER": {
