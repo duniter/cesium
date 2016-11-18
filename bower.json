@@ -18,6 +18,6 @@
     "angular-sanitize": "1.5.3",
     "angular-animate": "1.5.3",
     "angular": "1.5.3",
-    "ionic": "1.7.16"
+    "ionic": "1.3.1"
   }
 }
