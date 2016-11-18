@@ -77,7 +77,7 @@
   },
   "ABOUT": {
     "TITLE": "A propos",
-    "LICENSE": "Application <b>libre de droit</b> (licence GNU GPLv3).",
+    "LICENSE": "Application <b>libre</b> (licence GNU GPLv3).",
     "CODE": "Code source :",
     "DEVELOPERS": "Développé par :",
     "FORUM": "Forum :",
@@ -395,7 +395,7 @@
       "CURRENCY_BLOCKCHAIN": "Toutes les opérations de la monnaie sont enregistrées dans un grand livre de compte <b>public et infalsifiable</b>, appellé aussi <b>chaine de blocs</b> (<em>BlockChain</em> en anglais).",
       "CURRENCY_PEERS": "Les <b>noeuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de noeuds, plus la monnaie à une gestion <b>décentralisée</b> et digne de confiance.",
       "CURRENCY_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> indique le <b>dernier bloc validé</b> pour ce noeud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres noeuds</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un noeud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre de droit et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
+      "CURRENCY_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un noeud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> permet l'accès au solde de votre compte et à l'historique de vos transactions.",
       "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte, l'historique de vos transactions et vos certifications.",
       "WALLET_CERTIFICATIONS": "En cliquant ici, consultez le détail de vos certifications (reçues et émises).",
