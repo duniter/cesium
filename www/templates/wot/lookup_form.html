@@ -72,7 +72,7 @@
     ng-if="!search.loading && search.results.length">
 
     <ion-item
-      ng-repeat="identity in search.results track by identity.uid"
+      ng-repeat="identity in search.results track by identity.id"
       id="helptip-wot-search-result-{{$index}}"
       class="item item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
 

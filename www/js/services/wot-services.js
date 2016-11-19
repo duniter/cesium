@@ -518,6 +518,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   if (!idtyKeys[idtyKey] && !idty.revoked) {
                     idtyKeys[idtyKey] = true;
                     return uids.concat({
+                      id: idtyKey,
                       uid: idty.uid,
                       pubkey: res.pubkey,
                       number: blocUid[0],
@@ -591,9 +592,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   if (!block || !block.joiners) return;
                   _.each(block.joiners, function(joiner){
                     var parts = joiner.split(':');
+                    var idtyKey = parts[parts.length-1] + '-' + parts[0];
                     result.push({
-                      pubkey:parts[0],
+                      id: idtyKey,
                       uid: parts[parts.length-1],
+                      pubkey:parts[0],
                       memberDate: block.medianTime,
                       block: block.number
                     });
@@ -642,7 +645,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             var idties = [];
             _.forEach(res.memberships, function(ms){
               if (ms.membership == 'IN') {
+                var idtyKey = ms.uid + '-' + ms.pubkey;
                 var idty = {
+                  id: idtyKey,
                   uid: ms.uid,
                   pubkey: ms.pubkey,
                   block: ms.blockNumber,
