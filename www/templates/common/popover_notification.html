@@ -1,0 +1,27 @@
+<ion-popover-view class="fit hidden-xs hidden-sm popover-notification">
+  <ion-header-bar class="stable-bg block">
+    <div class="title" translate>COMMON.POPOVER_NOTIFICATIONS.TITLE</div>
+
+    <div class="pull-right">
+      <a class="positive"
+         ng-click="markAllAsRead()"
+         translate>COMMON.POPOVER_NOTIFICATIONS.MARK_ALL_AS_READ</a>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="true">
+    <ion-list>
+      <a ng-repeat="notification in $root.walletData.notifications.history"
+         class="item item-text-wrap ink "
+         ng-class="{'unread': !notification.read}"
+         ng-click="closePopover(notification)">
+
+        <span ng-bind-html="notification.message|translate:notification.messageParams"></span>
+        <h4>
+          <span class="dark"><i class="icon ion-clock"></i>&nbsp;{{notification.time|formatFromNow}}</span>
+          <span class="gray">| {{notification.time|formatDate}}</span>
+        </h4>
+
+      </a>
+    </ion-list>
+  </ion-content>
+</ion-popover-view>

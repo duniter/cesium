@@ -13,10 +13,21 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 .factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, Device) {
   'ngInject';
 
-  function factory(host, port) {
+  function factory(host, port, wsPort) {
 
     var listeners,
-      savedSettingsKeys = ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'plugins', 'helptip'],
+      settingsSaveSpec = {
+        includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
+        excludes: ['time'],
+        plugins: {
+          es: {
+            excludes: ['enable', 'host', 'port', 'wsPort']
+          }
+        },
+        helptip: {
+          excludes: ['installDocUrl']
+        }
+      },
       restoringSettings = false;
 
     function copy(otherNode) {
@@ -31,6 +42,33 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
     }
 
+    function copyUsingSpec(data, copySpec) {
+      var result = {};
+
+      // Add implicit includes
+      if (copySpec.includes) {
+        _.forEach(_.keys(copySpec), function(key) {
+          if (key != "includes" && key != "excludes") {
+            copySpec.includes.push(key);
+          }
+        });
+      }
+
+      _.forEach(_.keys(data), function(key) {
+        if ((!copySpec.includes || _.contains(copySpec.includes, key)) &&
+          (!copySpec.excludes || !_.contains(copySpec.excludes, key))) {
+          if (data[key] && (typeof data[key] == 'object') &&
+            copySpec[key] && (typeof copySpec[key] == 'object')) {
+            result[key] = copyUsingSpec(data[key], copySpec[key]);
+          }
+          else {
+            result[key] = data[key];
+          }
+        }
+      });
+      return result;
+    }
+
     function onWalletLoad(data, resolve, reject) {
       if (!data || !data.pubkey) {
         if (resolve) {
@@ -39,16 +77,21 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return;
       }
 
-      esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: data.pubkey})
-      .then(function(res) {
-        if (res && res._source) {
-          data.name = res._source.title;
-          var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
-          if (avatar) {
-            data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-            data.avatar=avatar;
-          }
-        }
+      $q.all([
+        // Load avatar and title
+        esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: data.pubkey})
+          .then(function(res) {
+            if (res && res._source) {
+              data.name = res._source.title;
+              var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
+              if (avatar) {
+                data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
+                data.avatar=avatar;
+              }
+            }
+          })
+      ])
+      .then(function() {
         resolve(data);
       })
       .catch(function(err){
@@ -232,6 +275,78 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       });
     }
 
+    // Load settings
+    function loadSettings(pubkey, keypair) {
+      return esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
+        .then(function(res) {
+          if (!res || !res._source) {
+            return;
+          }
+          var record = res._source;
+          // Do not apply if same version
+          if (record.time === csSettings.data.time) {
+            console.debug('[ES] [user] Local settings already up to date');
+            return;
+          }
+          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
+          var nonce = CryptoUtils.util.decode_base58(record.nonce);
+          // Decrypt settings content
+          return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
+            .then(function(json) {
+              var settings = JSON.parse(json || '{}');
+              settings.time = record.time;
+              return settings
+            });
+        })
+        .catch(function(err){
+          if (err && err.ucode && err.ucode == 404) {
+            return null; // not found
+          }
+          else {
+            throw err;
+          }
+        });
+    }
+
+    // Load user notifications
+    function loadNotifications(pubkey) {
+      var request = {
+        query: {
+          bool: {
+            must: [
+              {term: {recipient: pubkey}}
+            ]
+          }
+        },
+        sort : [
+          { "time" : {"order" : "desc"}}
+        ],
+        from: 0,
+        size: 100,
+        _source: ["type", "code", "params", "reference", "recipient", "time"]
+      };
+
+      var excludesCodes = [];
+
+      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
+        excludesCodes.push('TX_SENT');
+      }
+      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
+        excludesCodes.push('TX_RECEIVED');
+      }
+      if (excludesCodes.length) {
+        request.query.bool.must_not = {terms: { code: excludesCodes}};
+      }
+
+      return esHttp.post(host, port, '/user/event/_search')(request)
+        .then(function(res) {
+          if (!res.hits || !res.hits.total) return;
+          return res.hits.hits.reduce(function(res, hit) {
+            return res.concat(new Notification(hit._source))
+          }, []);
+        })
+    }
+
     function onWalletLogin(data, resolve, reject) {
       if (!data || !data.pubkey || !data.keypair) {
         if (resolve) {
@@ -249,46 +364,58 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return;
       }
 
-      console.debug('[ES] [user] Loading user settings from ES node...');
+      console.debug('[ES] [user] Loading user data from ES node...');
 
-      // Load settings
-      esHttp.get(host, port, '/user/settings/:id')({id: data.pubkey})
-        .then(function(res) {
-          if (!res || !res._source) {
-            resolve(data);
-            return;
-          }
-          var record = res._source;
-          // Do not apply if same version
-          if (record.time === csSettings.data.time) {
-            console.debug('[ES] [user] Local settings already up to date');
-            resolve(data);
-            return;
-          }
-          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(data.keypair);
-          var nonce = CryptoUtils.util.decode_base58(record.nonce);
-          // Decrypt settings content
-          return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
-            .then(function(json) {
-              var settings = JSON.parse(json || '{}');
-              settings.time = record.time;
-              angular.merge(csSettings.data, settings);
-              restoringSettings = true;
-              csSettings.store();
-              console.debug('[ES] [user] Successfully loaded user settings from ES node');
-              resolve(data);
-            });
-        })
-        .catch(function(err){
-          if (err && err.ucode && err.ucode == 404) {
-            console.debug('[ES] [user] No user settings found in ES node...');
-            resolve(data); // not found
-          }
-          else {
-            reject(err);
-          }
-        });
+      $q.all([
+        // Load settings
+        loadSettings(data.pubkey, data.keypair)
+          .then(function(settings) {
+            if (!settings) { // not found
+              // make sure to remove save timestamp
+              delete csSettings.data.time;
+              return;
+            }
+            angular.merge(csSettings.data, settings);
+            restoringSettings = true;
+            csSettings.store();
+          }),
+
+        // Load user notifications
+        loadNotifications(data.pubkey)
+          .then(function(notifications) {
+            data.notifications.history = notifications;
+            data.notifications.unreadCount = notifications ? notifications.length : 0;
+          })
+      ])
+      .then(function() {
+        console.debug('[ES] [user] Successfully loaded user data from ES node');
+        resolve(data);
+      })
+      .catch(function(err){
+        if (err && err.ucode && err.ucode == 404) {
+          console.debug('[ES] [user] No user data found in ES node...');
+          resolve(data); // not found
+        }
+        else {
+          reject(err);
+        }
+      })
+      .then(function(){
+        // Listen new events
+        esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale')
+          .on(function(event) {
+              $rootScope.$apply(function() {
+                $rootScope.walletData.notifications.history.splice(0, 0, new Notification(event));
+                $rootScope.walletData.notifications.unreadCount++;
+              });
+            },
+            {pubkey: data.pubkey, locale: csSettings.data.locale.id}
+          );
+      });
+
     }
+
+
 
     function onSettingsChanged(data) {
       if (!csWallet.isLogin()) return;
@@ -307,34 +434,35 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair);
       var nonce = CryptoUtils.util.random_nonce();
 
-      var formData = {
+      var record = {
         issuer: csWallet.data.pubkey,
         nonce: CryptoUtils.util.encode_base58(nonce),
-        time: Math.trunc(new Date().getTime() / 1000)
+        time: esHttp.date.now()
       };
 
-      var dataToSaved = {};
-      _.forEach(savedSettingsKeys, function(key) {
-        dataToSaved[key] = data[key];
-      });
+      var filteredData = copyUsingSpec(data, settingsSaveSpec);
 
-      var json = JSON.stringify(dataToSaved);
+      var json = JSON.stringify(filteredData);
 
       return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
         .then(function(cypherText) {
-          formData.content = cypherText;
-          return esHttp.record.post(host, port, '/user/settings')(formData);
+          record.content = cypherText;
+          return !data.time ?
+            // create
+            esHttp.record.post(host, port, '/user/settings')(record) :
+            // or update
+            esHttp.record.post(host, port, '/user/settings/:pubkey/_update')(record, {pubkey: record.issuer});
         })
         .then(function() {
           // Change settings version
-          csSettings.data.time = formData.time;
+          csSettings.data.time = record.time;
           restoringSettings = true;
           csSettings.store();
           console.debug('[ES] [user] User settings saved in ES');
         })
         .catch(function(err) {
           console.error(err);
-          throw new Error(err);
+          throw err;
         })
       ;
     }
@@ -439,14 +567,23 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         get: esHttp.get(host, port, '/user/settings/:id'),
         add: esHttp.record.post(host, port, '/user/settings'),
         update: esHttp.record.post(host, port, '/user/settings/:id/_update'),
+      },
+      websocket: {
+        event: function() {
+          return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale');
+        },
+        change: function() {
+          return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
+        }
       }
     };
   }
 
   var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
   var port = host ? csSettings.data.plugins.es.port : null;
+  var wsPort = host ? csSettings.data.plugins.es.wsPort : port;
 
-  var service = factory(host, port);
+  var service = factory(host, port, wsPort);
   service.instance = factory;
   return service;
 })

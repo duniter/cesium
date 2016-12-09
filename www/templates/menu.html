@@ -13,6 +13,16 @@
         <!-- Allow extension here -->
         <cs-extension-point name="nav-buttons-right"></cs-extension-point>
 
+        <!-- notifications -->
+        <button class="button button-clear  hidden-xs hidden-sm icon ion-android-notifications"
+                ng-if="$root.login"
+                active-link="gray"
+                ng-click="showNotificationsPopover($event)">
+          <span
+            ng-if="$root.walletData.notifications.unreadCount"
+            class="badge badge-button badge-positive">{{$root.walletData.notifications.unreadCount}}</span>
+        </button>
+
         <!-- profile -->
         <a id="helptip-header-bar-btn-profile"
            class="button button-icon button-clear hidden-xs hidden-sm"

@@ -62,5 +62,29 @@
       </div>
       <span class="item-note" ng-class="{'dark': formData.enable}">{{getServer()}}</span>
     </div>
+
+    <span class="item item-divider" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>
+
+    <span class="item gray item-text-wrap" translate>ES_SETTINGS.NOTIFICATIONS.HELP_TEXT</span>
+
+    <div class="item item-toggle dark">
+      <div class="input-label" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_SENT</div>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.notifications.txSent" >
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
+    <div class="item item-toggle dark">
+      <div class="input-label" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_RECEIVED</div>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.notifications.txReceived" >
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
+
   </ion-content>
 </ion-view>

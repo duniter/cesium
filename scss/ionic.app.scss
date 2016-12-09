@@ -476,6 +476,33 @@ $screen-menu:                     845px;
 }
 
 
+/**********
+   Notifications popover
+**********/
+
+
+.popover-notification {
+
+  .bar-header {
+    .title {
+      color: black;
+      text-align: left;
+      left: 0px !important;
+    }
+    .pull-right {
+      margin-right: 10px;
+    }
+    a {
+      font-size: 14px;
+    }
+  }
+
+  .item.unread {
+    background-color: rgb(236, 240, 247) !important;
+    border-color: rgb(221, 223, 226) !important;
+  }
+}
+
 /* ============
  Buttons
 =============== */

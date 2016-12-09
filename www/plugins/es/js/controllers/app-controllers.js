@@ -83,7 +83,7 @@ function ESJoinController($scope, $state, csSettings, PluginService) {
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $state, PluginService, csSettings,UIUtils) {
+function ESMenuExtendController($scope, $state, PluginService, csSettings, csWallet, esUser, UIUtils, $translate) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
 

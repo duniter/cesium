@@ -140,16 +140,22 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     function ws(uri) {
       var sock = null;
       return {
-        on: function(type, callback) {
+        on: function(callback, params) {
           if (!sock) {
-            sock = new WebSocket(uri);
-            sockets.push(this);
+            var self = this;
+            prepare(uri, params, {}, function(uri) {
+              sock = new WebSocket(uri);
+              sockets.push(self);
+            });
           }
           sock.onmessage = function(e) {
             callback(JSON.parse(e.data));
           };
+          sock.onerror = function(e) {
+            console.error(e);
+          };
         },
-        close: function(type, callback) {
+        close: function() {
           if (!!sock) {
             sock.close();
             sock = null;

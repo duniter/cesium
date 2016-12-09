@@ -18,10 +18,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     resetData = function(init) {
       data.pubkey= null;
-      data.keypair ={
-                signSk: null,
-                signPk: null
-            };
+      data.keypair = {
+          signSk: null,
+          signPk: null
+        };
       data.uid = null;
       data.balance = 0;
       data.sources = null;
@@ -30,16 +30,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.parameters = null;
       data.currentUD = null;
       data.medianTime = null;
-      data.tx = {
-         history: [],
-         pendings: [],
-         errors: []
-       };
+      data.tx = data.tx || {};
+      data.tx.history = [];
+      data.tx.pendings = [];
+      data.tx.errors = [];
       data.requirements = {};
       data.blockUid = null;
       data.sigDate = null;
       data.isMember = false;
       data.events = [];
+      data.notifications = data.notifications || {};
+      data.notifications.history = [];
+      data.notifications.unreadCount = 0;
+      data.notifications.readTime = 0;
       data.loaded = false;
       if (init) {
         api.data.raise.init(data);
@@ -79,7 +82,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var amount = tx.outputs.reduce(function(sum, output, noffset) {
               var outputArray = output.split(':',3);
               outputBase = parseInt(outputArray[1]);
-              var outputAmount = (outputBase > 0) ? parseInt(outputArray[0]) * Math.pow(10, outputBase) : parseInt(outputArray[0]);
+              var outputAmount = powBase(parseInt(outputArray[0]), outputBase);
               var outputCondArray = outputArray[2].split('(', 3);
               var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
                    outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
@@ -302,7 +305,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.blockUid = null;
       data.isMember = false;
       data.sigDate = null;
-      data.events = [];
+      data.events = data.events.reduce(function(res, event) {
+        if (event.message.startsWith('ACCOUNT.')) return res;
+        return res.concat(event);
+      },[]);
     },
 
     loadRequirements = function() {
@@ -397,7 +403,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           if (res.sources) {
             _.forEach(res.sources, function(src) {
               src.consumed = false;
-              balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
+              balance += powBase(src.amount, src.base);
             });
             addSources(res.sources);
           }
@@ -463,7 +469,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               udHistory = !res.history || !res.history.history ? [] :
                res.history.history.reduce(function(res, ud){
                  if (ud.time < fromTime) return res; // skip to old UD
-                 var amount = (ud.base > 0) ? ud.amount * Math.pow(10, ud.base) : ud.amount;
+                 var amount = powBase(ud.amount, ud.base);
                  return res.concat({
                    time: ud.time,
                    amount: amount,
@@ -610,7 +616,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
-                data.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
+                data.currentUD = powBase(block.dividend, block.unitbase);
                 return data.currentUD;
               })
               .catch(function(err) {
@@ -633,8 +639,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
           (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
 
-      // Add user message
-      data.events = [];
+      // Add user events
+      data.events = data.events.reduce(function(res, event) {
+        if (event.message.startsWith('ACCOUNT.')) return res;
+        return res.concat(event);
+      },[]);
       if (data.requirements.pendingMembership) {
         data.events.push({type:'pending',message: 'ACCOUNT.WAITING_MEMBERSHIP'});
       }
@@ -786,9 +795,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     isBase = function(amount, base) {
-      if (!base) {
-        return true;
-      }
+      if (!base) return true; // no base
+      if (amount < Math.pow(10, base)) return false; // too small
       var rest = '00000000' + amount;
       var lastDigits = parseInt(rest.substring(rest.length-base));
       return lastDigits === 0; // no rest
@@ -796,7 +804,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     truncBase = function(amount, base) {
       var pow = Math.pow(10, base);
+      if (amount < pow) return pow; // min value = 1*10^base
       return Math.trunc(amount / pow ) * pow;
+    },
+
+    powBase = function(amount, base) {
+      return base <= 0 ? amount : amount * Math.pow(10, base);
     },
 
     getInputs = function(amount, outputBase, filterBase) {
@@ -807,11 +820,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var sources = [];
       var minBase = filterBase;
       var maxBase = filterBase;
-      var i = 0;
       _.find(data.sources, function(source) {
-        var skip = source.consumed || (source.base !== filterBase);
-        if (!skip){
-          sourcesAmount += (source.base > 0) ? (source.amount * Math.pow(10, source.base)) : source.amount;
+        if (!source.consumed && source.base == filterBase){
+          sourcesAmount += powBase(source.amount, source.base);
           sources.push(source);
         }
         // Stop if enough sources
@@ -1066,6 +1077,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             amount: outputAmount,
             base: outputBase
           });
+          outputOffset++;
         }
         outputBase--;
       }

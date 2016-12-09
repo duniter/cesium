@@ -240,5 +240,19 @@
       "ASK_ENABLE_TITLE": "New features",
       "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ad</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>There have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> this features (recommended) ?"
     }
+  },
+  "EVENT": {
+    "NODE_STARTED": "Your node ES API <b>{{p0}}</b> is UP",
+    "MEMBER_JOIN": "You become a <b>member</b> of currency <b>{{p0}}</b>!",
+    "MEMBER_LEAVE": "You are <b>not member anymore</b> of currency <b>{{p0}}</b>!",
+    "MEMBER_ACTIVE": "Your membership to <b>{{p0}}</b> has been <b>renew successfully</b>.",
+    "TX_SENT": "Your payment to <b>{{p0|formatPubkey}}</b> was executed.",
+    "TX_RECEIVED": "You received a payment from <b>{{p0|formatPubkey}}</b>.",
+    "MARKET": {
+      "NEW_COMMENT": "<b>{{p0}}</b> commented on your ad: <b>{{p1}}</b>"
+    },
+    "REGISTRY": {
+      "NEW_COMMENT": "<b>{{p0}}</b> commented on your referencing: <b>{{p1}}</b>"
+    }
   }
 }

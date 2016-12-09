@@ -56,6 +56,19 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         angular.merge(data, defaultSettings);
       },
 
+      getByPath = function(path, defaultValue) {
+        var obj = data;
+        _.each(path.split('.'), function(key) {
+          obj = obj[key];
+          if (angular.isUndefined(obj)) {
+            obj = defaultValue;
+            return; // stop
+          }
+        });
+
+        return obj;
+      },
+
       store = function() {
         if (data.useLocalStorage) {
           localStorage.setObject(constants.STORAGE_KEY, data);
@@ -152,6 +165,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     return {
       id: id,
       data: data,
+      getByPath: getByPath,
       reset: reset,
       store: store,
       restore: restore,

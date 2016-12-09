@@ -214,7 +214,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       startListeningOnSocket = function() {
         // Listen for new block
-        data.bma.websocket.block().on('block', function(block) {
+        data.bma.websocket.block().on(function(block) {
           if (data.updatingPeers) return;
           var uid = buid(block);
           if (data.knownBlocks.indexOf(uid) === -1) {
@@ -233,7 +233,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           }
         });
         // Listen for new peer
-        data.bma.websocket.peer().on('peer', function(peer) {
+        data.bma.websocket.peer().on(function(peer) {
           if (!peer || data.updatingPeers) return;
           peer = new Peer(peer);
           var existingPeer = _.where(data.peers, {server: peer.getServer()});

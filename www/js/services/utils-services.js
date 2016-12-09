@@ -386,6 +386,9 @@ angular.module('cesium.utils.services', ['ngResource'])
 
           // Execute action on hidden popover
           options.scope.$on('popover.hidden', function() {
+            if (popover.options && popover.options.afterHidden) {
+              popover.options.afterHidden();
+            }
             if (popover.options && popover.options.autoremove) {
               _cleanup(popover);
             }

@@ -94,6 +94,39 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     $state.go(UIUtils.screen.isSmall() ? 'app.currency_view': 'app.currency_view_lg');
   };
 
+  $scope.showNotificationsPopover = function(event) {
+    return UIUtils.popover.show(event, {
+      templateUrl :'templates/common/popover_notification.html',
+      scope: $scope,
+      autoremove: false, // reuse popover
+      afterShow: function(popover) {
+        if (!popover.scope.markAllAsRead) {
+          popover.scope.markAllAsRead = function() {
+            $rootScope.walletData.notifications.unreadCount = 0;
+            var lastNotification = $rootScope.walletData.notifications.history[0];
+            $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
+            _.forEach($rootScope.walletData.notifications.history, function (item) {
+              item.read = true;
+            });
+          };
+        }
+
+        $timeout(function() {
+          UIUtils.ink({selector: '.notification-popover .ink'});
+        }, 100);
+      },
+      afterHidden: function() {
+        $rootScope.walletData.notifications.unreadCount = 0;
+        var lastNotification = $rootScope.walletData.notifications.history[0];
+        $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
+      }
+    })
+    .then(function(notification) {
+      if (!notification || !notification.state) return;
+      $state.go(notification.state, notification.stateParams);
+    });
+  };
+
   ////////////////////////////////////////
   // Device Methods
   ////////////////////////////////////////

@@ -236,9 +236,29 @@
       "TITLE" : "Noeud de données",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
     },
+    "NOTIFICATIONS": {
+      "DIVIDER": "Notifications",
+      "HELP_TEXT": "Vous pouvez recevoir différentes sortes de notification. Activez uniquement celles qui vous sont utiles.",
+      "ENABLE_TX_SENT": "Notifier la validation des <b>paiement émis</b> ?",
+      "ENABLE_TX_RECEIVED": "Notifier la validation des <b>paiement reçus</b> ?"
+    },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",
       "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Annonces</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Annuaire des professionnels</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> (recommandé) ?"
+    }
+  },
+  "EVENT": {
+    "NODE_STARTED": "Votre noeud ES API <b>{{p0}}</b> est démarré",
+    "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{p0}}</b> !",
+    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{p0}}</b>!",
+    "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{p0}}</b> a été <b>pris en compte</b>.",
+    "TX_SENT": "Votre paiement à <b>{{p0|formatPubkey}}</b> a été effectué.",
+    "TX_RECEIVED": "Vous avez reçu un paiement de <b>{{p0|formatPubkey}}</b>.",
+    "MARKET": {
+      "NEW_COMMENT": "<b>{{p0}}</b> a commenté votre annonce: <b>{{p1}}</b>"
+    },
+    "REGISTRY": {
+      "NEW_COMMENT": "<b>{{p0}}</b> a commenté votre référencement: <b>{{p1}}</b>"
     }
   }
 }

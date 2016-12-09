@@ -161,6 +161,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       post: post,
       getUrl : csHttp.getUrl,
       getServer: csHttp.getServer,
+      ws: csHttp.ws,
       record: {
         post: postRecord,
         remove: removeRecord
