@@ -791,6 +791,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       })
       .then(function(){
         return api.data.raisePromise.finishLoad(data);
+      })
+      .then(function(){
+        return data;
       });
     },
 

@@ -160,7 +160,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     // Load unread notifications count
-    function loadUnreadNotificationsCount(pubkey) {
+    function loadUnreadNotificationsCount(pubkey, readTime) {
       var request = {
         query: {
           bool: {
@@ -172,6 +172,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         }
       };
 
+      // Filter codes
       var excludesCodes = [];
       if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
         excludesCodes.push('TX_SENT');
@@ -181,6 +182,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
       if (excludesCodes.length) {
         request.query.bool.must_not = {terms: { code: excludesCodes}};
+      }
+
+      // Filter time
+      if (readTime) {
+        request.query.bool.must.push({range: {time: {gte: readTime}}});
       }
 
       return esHttp.post(host, port, '/user/event/_count')(request)
@@ -204,13 +210,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         sort : [
           { "time" : {"order" : "desc"}}
         ],
-        from:from,
+        from: from,
         size: size,
         _source: ["type", "code", "params", "reference", "recipient", "time", "hash", "read_signature"]
       };
 
+      // Filter codes
       var excludesCodes = [];
-
       if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
         excludesCodes.push('TX_SENT');
       }
@@ -224,20 +230,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return esHttp.post(host, port, '/user/event/_search')(request)
         .then(function(res) {
           if (!res.hits || !res.hits.total) return;
-          var unreadCount = 0;
-          var history = res.hits.hits.reduce(function(res, hit) {
+          return res.hits.hits.reduce(function(res, hit) {
             var item = new Notification(hit._source, markNotificationAsRead);
             item.id = hit._id;
-            unreadCount = item.read ? unreadCount : unreadCount+1;
             return res.concat(item)
           }, []);
-          return {
-            history: history,
-            unreadCount: unreadCount
-          };
         });
     }
-
 
     // Mark a notification as read
     function markNotificationAsRead(notification) {
@@ -274,7 +273,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
 
       console.debug('[ES] [user] Loading user data from ES node...');
-
       $q.all([
         // Load settings
         loadSettings(data.pubkey, data.keypair)
@@ -290,9 +288,12 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           }),
 
         // Load unread notifications count
-        loadUnreadNotificationsCount(data.pubkey)
+        loadUnreadNotificationsCount(
+            data.pubkey,
+            csSettings.data.wallet ? csSettings.data.wallet.notificationReadTime : 0)
           .then(function(unreadCount) {
             data.notifications.unreadCount = unreadCount;
+            data.notifications.history = null; // remove list (usefull when settings changed)
           }),
 
         // Load profile avatar and name
@@ -340,16 +341,24 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
 
       // Load user notifications
-      loadNotifications(data.pubkey, options.notifications.from, options.notifications.size)
-        .then(function(notifications) {
-          data.notifications.history = notifications.history;
-          data.notifications.unreadCount = notifications.unreadCount;
-          deferred.resolve(data);
-        })
-        .catch(function(err) {
-          deferred.reject(err);
-        })
-      ;
+      loadNotifications(data.pubkey,
+        options.notifications.from,
+        options.notifications.size)
+      .then(function(notifications) {
+        if (!notifications || !notifications.length || !options.notifications.from) {
+          data.notifications.history = notifications;
+        }
+        else {
+          // Concat (but keep original array - for data binding)
+          _.forEach(notifications, function(notification){
+            data.notifications.history.push(notification);
+          });
+        }
+        deferred.resolve(data);
+      })
+      .catch(function(err) {
+        deferred.reject(err);
+      });
 
       return deferred.promise;
     }
@@ -542,6 +551,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         .then(function() {
           // Change settings version
           csSettings.data.time = record.time;
+          // Force notifications reload
+          csWallet.data.notifications.history = [];
           restoringSettings = true;
           csSettings.store();
           console.debug('[ES] [user] User settings saved in ES');

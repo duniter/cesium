@@ -34,7 +34,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     function onWalletInit(data) {
       data.messages = data.messages || {};
-      data.messages.count = null;
+      data.messages.unreadCount = null;
     }
 
     function onWalletReset(data) {
@@ -54,24 +54,20 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         return deferred.promise;
       }
 
-      var lastMessageTime = csSettings.data && csSettings.data.plugins && csSettings.data.plugins.es ?
-        csSettings.data.plugins.es.lastMessageTime :
-        undefined;
-
-      // Count new messages
-      countNewMessages(data.pubkey, lastMessageTime)
-        .then(function(count){
+      // Count unread messages
+      countUnreadMessages(data.pubkey)
+        .then(function(unreadCount){
           data.messages = data.messages || {};
-          data.messages.count = count;
-          console.debug('[ES] [message] Detecting ' + count + (lastMessageTime ? ' unread' : '') + ' messages');
+          data.messages.unreadCount = unreadCount;
+          console.debug('[ES] [message] Detecting ' + unreadCount + ' unread messages');
           deferred.resolve(data);
         })
         .catch(function(err){
+          console.error('Error chile counting message: ' + (err.message ? err.message : err));
           deferred.resolve(data);
         });
       return deferred.promise;
     }
-
 
     function getBoxKeypair(keypair) {
       keypair = keypair || (csWallet.isLogin() ? csWallet.data.keypair : keypair);
@@ -88,25 +84,26 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       return csWallet.data.keypair;
     }
 
-    function countNewMessages(pubkey, fromTime) {
+    function countUnreadMessages(pubkey) {
       pubkey = pubkey || (csWallet.isLogin() ? csWallet.data.pubkey : pubkey);
       if (!pubkey) {
         throw new Error('no pubkey, and user not connected.');
       }
 
       var request = {
-        size: 0,
-        query: {constant_score: {filter: [{term: {recipient: pubkey}}]}}
+        query: {
+          bool: {
+            must: [
+              {term: {recipient: pubkey}},
+              {missing: { field : "read_signature" }}
+            ]
+          }
+        }
       };
 
-      // Add time filter
-      if (fromTime) {
-        request.query.constant_score.filter.push({range: {time: {gt: fromTime}}});
-      }
-
-      return esHttp.post(host, port, '/message/record/_search')(request)
+      return esHttp.post(host, port, '/message/record/_count')(request)
         .then(function(res) {
-          return res.hits ? res.hits.total : 0;
+          return res.count;
         });
     }
 
@@ -195,6 +192,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             msg.id = hit._id;
             msg.pubkey = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
 
+            msg.read = !!msg.read_signature;
+            delete msg.read_signature;
+
             // Get uid (if member)
             return BMA.wot.member.get(msg.pubkey)
               .then(function(user) {
@@ -269,6 +269,22 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         });
     }
 
+    // Mark a message as read
+    function markMessageAsRead(message) {
+      if (message.read) {
+        var deferred = $q.defer();
+        deferred.resolve();
+        return deferred.promise;
+      }
+      message.read = true;
+      csWallet.data.messages = csWallet.data.messages || {};
+      csWallet.data.messages.unreadCount = csWallet.data.messages.unreadCount ? csWallet.data.messages.unreadCount-1 : 0;
+      return CryptoUtils.sign(message.hash, csWallet.data.keypair)
+        .then(function(signature){
+          return esHttp.post(host, port, '/message/record/:id/_read')(signature, {id:message.id})
+        });
+    }
+
     function removeListeners() {
       console.debug("[ES] Disable message extension");
 
@@ -326,6 +342,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       get: getAndDecrypt,
       send: sendMessage,
       remove: removeMessage,
+      markAsRead: markMessageAsRead,
       fields: {
         commons: fields.commons
       }

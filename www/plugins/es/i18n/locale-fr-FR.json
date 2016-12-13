@@ -72,7 +72,8 @@
       "USER_NOT_RECIPIENT": "Vous n'etes pas le destinataire de ce message : déchiffrement impossible.",
       "NOT_AUTHENTICATED_MESSAGE": "L'authenticité du message est douteuse ou son contenu est corrompu.",
       "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message",
-      "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max)."
+      "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max).",
+      "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'."
     }
   },
   "MARKET": {
@@ -249,13 +250,15 @@
   },
   "EVENT": {
     "NODE_STARTED": "Votre noeud ES API <b>{{p0}}</b> est démarré",
-    "NODE_BMA_DOWN": "Noeud <b>{{p0}}:{{p1}}</b> injoignable (utilisé par votre ES API <b>{{p2}}</b>).<br/>Date de la dernière connection : {{p3|formatDate}}.",
-    "NODE_BMA_UP": "Noeud <b>{{p0}}:{{p1}}</b> à nouveau accessible.",
+    "NODE_BMA_DOWN": "Le noeud <b>{{p0}}:{{p1}}</b> (utilisé par votre noeud ES API) est <b>injoignable</b>.",
+    "NODE_BMA_UP": "Le noeud <b>{{p0}}:{{p1}}</b> est à nouveau accessible.",
     "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{p0}}</b> !",
     "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{p0}}</b>!",
     "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{p0}}</b> a été <b>pris en compte</b>.",
-    "TX_SENT": "Votre paiement à <b>{{p0|formatPubkey}}</b> a été effectué.",
-    "TX_RECEIVED": "Vous avez reçu un paiement de <b>{{p0|formatPubkey}}</b>.",
+    "TX_SENT": "Votre paiement à <a ui-sref=\"app.wot_view_identity({pubkey:'{{p1}}', uid:'{{p0}}'})\">{{p0}}</a> a été effectué.",
+    "TX_SENT_MULTI": "Votre paiement à <b>{{p0}}</b> a été effectué.",
+    "TX_RECEIVED": "Vous avez reçu un paiement de <a ui-sref=\"app.wot_view_identity({pubkey:'{{p1}}', uid:'{{p0}}'})\">{{p0}}</a>.",
+    "TX_RECEIVED_MULTI": "Vous avez reçu un paiement de <b>{{p0}}</b>.",
     "MARKET": {
       "NEW_COMMENT": "<b>{{p0}}</b> a commenté votre annonce: <b>{{p1}}</b>"
     },

@@ -325,7 +325,35 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   $scope.$on('$ionicView.enter', function (e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
-        $scope.load(state.stateParams.id);
+        $scope.load(state.stateParams.id)
+          .then(function(message) {
+            $scope.loading = false;
+            UIUtils.loading.hide();
+            if (!message) return;
+
+            $scope.id = message.id;
+            $scope.formData = message;
+            $scope.canDelete = true;
+            $timeout(function () {
+              UIUtils.motion.fadeSlideIn({
+                selector: '.view-message .animate-fade-slide-in .item',
+                startVelocity: 3000
+              });
+            });
+            // Mark as read
+            if (!message.read) {
+              $timeout(function() {
+                // Message has NOT changed
+                if ($scope.id == message.id) {
+                  esMessage.markAsRead(message)
+                    .then(function() {
+                      console.debug("[message] marked as read");
+                    })
+                    .catch(UIUtils.onError('MESSAGE.ERROR.MARK_AS_READ_FAILED'));
+                }
+              }, 2000); // 2s
+            }
+          });
       }
 
       $scope.showFab('fab-view-message-reply');
@@ -337,51 +365,26 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
 
   $scope.load = function(id) {
 
-    $scope.loadWallet()
-      .then(function(){
-        UIUtils.loading.hide();
-
-        return esMessage.get({id: id})
-          .then(function(message) {
-
-            if (!message.valid) {
-
-              return UIUtils.alert.error(!$scope.isUserPubkey(message.recipient) ? 'MESSAGE.ERROR.USER_NOT_RECIPIENT' : 'MESSAGE.ERROR.NOT_AUTHENTICATED_MESSAGE',
-                'MESSAGE.ERROR.MESSAGE_NOT_READABLE')
-                .then(function () {
-                  $state.go('app.user_message');
-                });
-            }
-
-            $scope.formData = message;
-            $scope.canDelete = true;
-            $scope.loading = false;
-
-            // Load avatar and name (and uid)
-            return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
-              .then(function (idties) {
-                return idties[0];
-              });
-          })
-          .then(function(member) {
-            $scope.issuer = member;
-
-            // Set Motion (only direct children, to exclude .lazy-load children)
-            $timeout(function () {
-              UIUtils.motion.fadeSlideIn({
-                startVelocity: 3000
-              });
-            }, 10);
-          })
-          .catch(UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGE_FAILED'));
+    return $scope.loadWallet()
+      .then(function() {
+        return esMessage.get({id: id});
       })
-      .catch(function(err){
-        if (err === 'CANCELLED') {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.user_message');
+      .catch(UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGE_FAILED'))
+      .then(function(message) {
+        if (!message.valid) {
+          return UIUtils.alert.error(!$scope.isUserPubkey(message.recipient) ? 'MESSAGE.ERROR.USER_NOT_RECIPIENT' : 'MESSAGE.ERROR.NOT_AUTHENTICATED_MESSAGE',
+            'MESSAGE.ERROR.MESSAGE_NOT_READABLE')
+            .then(function () {
+              $state.go('app.user_message');
+            });
         }
+
+        // Load avatar and name (and uid)
+        return esUser.profile.fillAvatars([{pubkey: message.issuer}])
+          .then(function (idties) {
+            $scope.issuer = idties[0];
+            return message;
+          });
       });
   };
 

@@ -1,4 +1,11 @@
-<ion-view view-title="{{'COMMON.NOTIFICATIONS.TITLE' | translate}}" id="notification">
+<ion-view left-buttons="leftButtons"
+          class="pane"
+          cache-view="false"
+          id="notification">
+  <ion-nav-title>
+    {{'COMMON.NOTIFICATIONS.TITLE' | translate}}
+  </ion-nav-title>
+
   <ion-content class="padding no-padding-xs" scroll="true">
 
     <!-- Buttons bar-->
@@ -25,10 +32,10 @@
 
         <div class="list animate-fade-slide-in-right">
 
-          <a ng-repeat="notification in search.results"
+          <div ng-repeat="notification in search.results"
                ng-click="onSelect(notification)">
             <ng-include src="'templates/common/item_notification.html'"></ng-include>
-          </a>
+          </div>
 
           <!-- show more items -->
           <div class="item padding done in" ng-if="search.loadingMore">

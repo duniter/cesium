@@ -23,7 +23,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
-  .filter('formatDecimal', function(csConfig) {
+  .filter('formatDecimal', function(csConfig, $rootScope) {
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
     var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
 

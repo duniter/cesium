@@ -9,8 +9,8 @@
           active-link-path-prefix="#/app/user/message"
           ng-click="loginAndGo('app.user_message')">
     <span
-      ng-if="$root.walletData.messages.count"
-      class="badge badge-button badge-positive">{{$root.walletData.messages.count}}</span>
+      ng-if="$root.walletData.messages.unreadCount"
+      class="badge badge-button badge-positive">{{$root.walletData.messages.unreadCount}}</span>
   </button>
 </ng-if>
 

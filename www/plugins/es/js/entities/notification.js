@@ -32,6 +32,16 @@ function Notification(json, onReadCallback) {
   // TX
   if (json.code.startsWith('TX_')) {
     that.icon = 'ion-card';
+    var pubkeys = json.params.length > 1 ? json.params[1] : null;
+    if (pubkeys && pubkeys.indexOf(',') == -1) {
+      /*that.state = 'app.wot_view_identity';
+      that.stateParams = {
+        pubkey: pubkeys,
+        uid: json.params[0]
+      };*/
+      that.pubkey = pubkeys;
+      that.name = json.params[0];
+    }
   }
 
   // member
@@ -87,6 +97,6 @@ function Notification(json, onReadCallback) {
   }
   // error message
   else if (json.type == 'ERROR') {
-    that.icon = 'ion-alert';
+    that.icon = 'ion-alert-circled assertive';
   }
 }

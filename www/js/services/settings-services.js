@@ -41,7 +41,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         },
         wallet: {
           showPubkey: true,
-          alertIfUnusedWallet: true
+          alertIfUnusedWallet: true,
+          notificationReadTime: 0
         },
         locale: {
           id: fixLocale(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default

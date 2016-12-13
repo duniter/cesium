@@ -262,18 +262,18 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     return $scope.doRequest(request, more);
   };
 
-  $scope.doGetLastRecord = function(offset, size) {
+  $scope.doGetLastRecord = function(from, size) {
     $scope.search.lastRecords = true;
 
-    offset = offset || 0;
+    from = from || 0;
     size = size || defaultSearchLimit;
-    var more = offset > 0;
+    var more = from > 0;
 
     var request = {
       sort: {
         "creationTime" : "desc"
       },
-      from: offset,
+      from: from,
       size: size,
       _source: esMarket.record.fields.commons
     };
@@ -378,9 +378,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
           $scope.search.results = records;
         }
         else {
-          _.forEach(records, function(record) {
-            $scope.search.results.push(record);
-          });
+          $scope.search.results.splice($scope.search.results.length-1, 0, records);
         }
 
         if (records.length > 0) {
@@ -397,7 +395,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
         }
       }
 
-      $scope.search.hasMore = $scope.search.results.length === $scope.search.limit;
+      $scope.search.hasMore = $scope.search.results.length >= $scope.search.limit;
       $scope.search.loading = false;
     })
     .catch(function(err) {

@@ -99,26 +99,17 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       templateUrl :'templates/common/popover_notification.html',
       scope: $scope,
       autoremove: false, // reuse popover
-      afterShow: function(popover) {
-        if (!popover.scope.markAllAsRead) {
-          popover.scope.markAllAsRead = function() {
-            $rootScope.walletData.notifications.unreadCount = 0;
-            var lastNotification = $rootScope.walletData.notifications.history[0];
-            $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
-            _.forEach($rootScope.walletData.notifications.history, function (item) {
-              if (item.onRead && typeof item.onRead == 'function') item.onRead();
-            });
-          };
-        }
-
-        $timeout(function() {
-          UIUtils.ink({selector: '.notification-popover .ink'});
-        }, 100);
-      },
       afterHidden: function() {
-        $rootScope.walletData.notifications.unreadCount = 0;
-        var lastNotification = $rootScope.walletData.notifications.history[0];
-        $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
+        csWallet.data.notifications.unreadCount = 0;
+        if (csWallet.data.notifications && csWallet.data.notifications.history.length) {
+          var lastNotification = csWallet.data.notifications.history[0];
+          var readTime = lastNotification ? lastNotification.time : 0;
+          csSettings.data.wallet = csSettings.data.wallet || {};
+          if (readTime && csSettings.data.wallet.notificationReadTime != readTime) {
+            csSettings.data.wallet.notificationReadTime = readTime;
+            csSettings.store();
+          }
+        }
       }
     })
     .then(function(item) {
@@ -357,9 +348,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // add listener on wallet event
-  csWallet.api.data.on.login($scope, function(walletData, resolve) {
+  csWallet.api.data.on.login($scope, function(walletData, deferred) {
+    deferred = deferred || $q.defer();
     $rootScope.login = true;
-    if (resolve) resolve();
+    deferred.resolve();
+    return deferred.promise;
   });
   csWallet.api.data.on.logout($scope, function() {
     $rootScope.login = false;

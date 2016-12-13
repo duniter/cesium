@@ -16,11 +16,11 @@
       COMMON.NOTIFICATIONS.NO_RESULT
     </div>
     <ion-list>
-      <a ng-repeat="notification in search.results"
+      <div ng-repeat="notification in search.results"
          ng-click="closePopover(notification)">
 
         <ng-include src="'templates/common/item_notification.html'"></ng-include>
-      </a>
+      </div>
     </ion-list>
   </ion-content>
 
