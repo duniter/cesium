@@ -236,6 +236,12 @@
       "TITLE" : "Data Node",
       "HELP" : "Set the address of the node to use:"
     },
+    "NOTIFICATIONS": {
+      "DIVIDER": "Notifications",
+      "HELP_TEXT": "Enable the types of notifications you want to receive:",
+      "ENABLE_TX_SENT": "Notify the validation of <b>sent payments</b>?",
+      "ENABLE_TX_RECEIVED": "Notify the validation of <b>received payments</b>?"
+    },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "New features",
       "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ad</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>There have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> this features (recommended) ?"
@@ -243,6 +249,8 @@
   },
   "EVENT": {
     "NODE_STARTED": "Your node ES API <b>{{p0}}</b> is UP",
+    "NODE_BMA_DOWN": "Node <b>{{p0}}:{{p1}}</b> unreacheable (used by your ES API <b>{{p2}}</b>).<br/>Date of last connexion: {{p3|formatDate}}.",
+    "NODE_BMA_UP": "Node <b>{{p0}}:{{p1}}</b> is reacheable again.",
     "MEMBER_JOIN": "You become a <b>member</b> of currency <b>{{p0}}</b>!",
     "MEMBER_LEAVE": "You are <b>not member anymore</b> of currency <b>{{p0}}</b>!",
     "MEMBER_ACTIVE": "Your membership to <b>{{p0}}</b> has been <b>renew successfully</b>.",

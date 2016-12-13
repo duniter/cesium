@@ -483,19 +483,71 @@ $screen-menu:                     845px;
 
 .popover-notification {
 
-  .bar-header {
+  .bar-header, .bar-footer {
+    height: 30px;
+
     .title {
       color: black;
       text-align: left;
       left: 0px !important;
+      font-size: 14px;
+      line-height: 30px;
     }
     .pull-right {
       margin-right: 10px;
     }
     a {
       font-size: 14px;
+      text-decoration: none;
+      line-height: 30px;
     }
   }
+
+  .has-footer {
+    bottom: 28px;
+  }
+
+  .has-header {
+    top: 30px;
+  }
+
+  .item.unread {
+    background-color: rgb(236, 240, 247) !important;
+    border-color: rgb(221, 223, 226) !important;
+  }
+
+  .item-thumbnail-left,
+  .item-thumbnail-left .item-content {
+    padding-top: 8px;
+    padding-left: 70px;
+    min-height: 80px !important;
+  }
+
+  .item.item-thumbnail-left, .item-thumbnail-left {
+    min-height: 80px !important;
+  }
+
+  .item-thumbnail-left > img:first-child,
+  .item-thumbnail-left .item-image,
+  .item-thumbnail-left .item-content > img:first-child,
+  .item-thumbnail-left .item-content .item-image {
+    top: 12px;
+    left: 8px;
+    max-width: 55px;
+    max-height: 55px;
+  }
+
+  .item-thumbnail-left > i:first-child,
+  .item-thumbnail-left i.item-image,
+  .item-thumbnail-left .item-content > i:first-child,
+  .item-thumbnail-left .item-content i.item-image {
+    font-size: 40px !important;
+    line-height: 40px;
+    padding: 8px 0px;
+  }
+}
+
+#notification {
 
   .item.unread {
     background-color: rgb(236, 240, 247) !important;
@@ -652,6 +704,10 @@ $screen-menu:                     845px;
 
 .gray {
   color: grey !important;
+
+  b {
+    color: grey !important;
+  }
 }
 
 .gray, .positive{

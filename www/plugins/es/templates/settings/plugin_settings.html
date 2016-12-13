@@ -67,19 +67,19 @@
 
     <span class="item gray item-text-wrap" translate>ES_SETTINGS.NOTIFICATIONS.HELP_TEXT</span>
 
-    <div class="item item-toggle dark">
-      <div class="input-label" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_SENT</div>
+    <div class="item item-toggle dark" >
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_SENT</div>
       <label class="toggle toggle-royal">
-        <input type="checkbox" ng-model="formData.notifications.txSent" >
+        <input type="checkbox" ng-model="formData.notifications.txSent" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>
       </label>
     </div>
-    <div class="item item-toggle dark">
-      <div class="input-label" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_RECEIVED</div>
+    <div class="item item-toggle dark" >
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_RECEIVED</div>
       <label class="toggle toggle-royal">
-        <input type="checkbox" ng-model="formData.notifications.txReceived" >
+        <input type="checkbox" ng-model="formData.notifications.txReceived" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>

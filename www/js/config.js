@@ -29,8 +29,8 @@ angular.module("cesium.config", [])
 		}
 	},
 	"node": {
-		"host": "test-net.duniter.fr",
-		"port": "9201"
+		"host": "192.168.0.28",
+		"port": 21378
 	},
 	"plugins": {
 		"es": {

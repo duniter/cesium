@@ -106,7 +106,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             var lastNotification = $rootScope.walletData.notifications.history[0];
             $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
             _.forEach($rootScope.walletData.notifications.history, function (item) {
-              item.read = true;
+              if (item.onRead && typeof item.onRead == 'function') item.onRead();
             });
           };
         }
@@ -121,9 +121,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
       }
     })
-    .then(function(notification) {
-      if (!notification || !notification.state) return;
-      $state.go(notification.state, notification.stateParams);
+    .then(function(item) {
+      if (!item) return;
+      if (item.onRead && typeof item.onRead == 'function') item.onRead();
+      if (item.state) {
+        $state.go(item.state, item.stateParams);
+      }
     });
   };
 

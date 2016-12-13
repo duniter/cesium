@@ -47,12 +47,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       }
     }
 
-    function onWalletLoad(data, resolve, reject) {
+    function onWalletLogin(data, deferred) {
+      deferred = deferred || $q.defer();
       if (!data || !data.pubkey) {
-        if (resolve) {
-          resolve();
-        }
-        return;
+        deferred.resolve();
+        return deferred.promise;
       }
 
       var lastMessageTime = csSettings.data && csSettings.data.plugins && csSettings.data.plugins.es ?
@@ -65,16 +64,12 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           data.messages = data.messages || {};
           data.messages.count = count;
           console.debug('[ES] [message] Detecting ' + count + (lastMessageTime ? ' unread' : '') + ' messages');
-          if(resolve) resolve(data);
+          deferred.resolve(data);
         })
         .catch(function(err){
-          if(resolve) {
-            resolve(data);
-          }
-          else {
-            throw err;
-          }
+          deferred.resolve(data);
         });
+      return deferred.promise;
     }
 
 
@@ -288,8 +283,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
       // Extend csWallet.loadData()
       listeners = [
-        csWallet.api.data.on.login($rootScope, onWalletLoad, this),
-        //csWallet.api.data.on.load($rootScope, onWalletLoad, this),
+        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.init($rootScope, onWalletInit, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
       ];

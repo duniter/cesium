@@ -167,12 +167,12 @@ function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUti
         .then(function (id){
           obj.id = id;
         })
-        .catch(UIUtils.onError('esMarket.ERROR.FAILED_SAVE_COMMENT'));
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
       }
       // Update
       else {
         DataService.record.comment.update(comment, {id: comment.id})
-        .catch(UIUtils.onError('esMarket.ERROR.FAILED_SAVE_COMMENT'));
+        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
       }
 
       $scope.comments.push(obj);
@@ -220,7 +220,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUti
     $scope.comments.splice(index, 1);
 
     DataService.record.comment.remove(comment.id, csWallet.data.keypair)
-    .catch(UIUtils.onError('esMarket.ERROR.FAILED_REMOVE_COMMENT'));
+    .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
   };
 }
 

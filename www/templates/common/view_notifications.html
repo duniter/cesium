@@ -1,0 +1,51 @@
+<ion-view view-title="{{'COMMON.NOTIFICATIONS.TITLE' | translate}}" id="notification">
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <!-- Buttons bar-->
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+
+      <button class="button button-raised icon-left ion-checkmark ink"
+              ng-click="markAllAsRead()">
+        {{'COMMON.NOTIFICATIONS.MARK_ALL_AS_READ' | translate}}
+      </button>
+    </div>
+
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+      <div class="col ">
+
+        <div class="center" ng-if="search.loading">
+          <ion-spinner icon="android"></ion-spinner>
+        </div>
+
+        <div class="padding assertive" ng-if="!search.loading && !search.results.length" translate>
+          COMMON.NOTIFICATIONS.NO_RESULT
+        </div>
+
+        <div class="list animate-fade-slide-in-right">
+
+          <a ng-repeat="notification in search.results"
+               ng-click="onSelect(notification)">
+            <ng-include src="'templates/common/item_notification.html'"></ng-include>
+          </a>
+
+          <!-- show more items -->
+          <div class="item padding done in" ng-if="search.loadingMore">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
+          <div class="item" ng-if="!search.loadingMore && search.hasMore">
+            <p>
+              <a ng-click="showMore()" translate>COMMON.SHOW_MORE</a>
+              <span class="gray" translate="COMMON.SHOW_MORE_COUNT" translate-values="{limit: search.limit}"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+    </div>
+
+  </ion-content>
+</ion-popover-view>

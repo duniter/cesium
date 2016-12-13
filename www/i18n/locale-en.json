@@ -50,6 +50,8 @@
     "RESULTS_LIST": "Results:",
     "SHOW_VALUES": "Display filled values",
     "POPOVER_ACTIONS_TITLE": "Options",
+    "SHOW_MORE": "Show more",
+    "SHOW_MORE_COUNT": "(current limit to {{limit}})",
     "POPOVER_SHARE": {
       "TITLE": "Share",
       "SHARE_ON_TWITTER": "Share on Twitter",
@@ -59,7 +61,9 @@
     },
     "POPOVER_NOTIFICATIONS": {
       "TITLE": "Notifications",
-      "MARK_ALL_AS_READ": "Mark all as read"
+      "MARK_ALL_AS_READ": "Mark all as read",
+      "NO_RESULT": "No notification",
+      "SHOW_ALL": "Show all"
     }
   },
   "SYSTEM": {
@@ -348,7 +352,8 @@
     "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
     "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "You have <b>already certified</b> that identity.<br/><br/>Your certification is still pending (Deadline for treatment {{expiresIn|formatDuration}}).",
-    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify"
+    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify",
+    "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

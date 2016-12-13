@@ -1,0 +1,11 @@
+
+  <div class="item item-text-wrap ink item-thumbnail-left"
+     ng-class="{'unread': !notification.read}">
+    <img ng-src="{{::notification.thumbnail.src}}" ng-if="notification.thumbnail"></img>
+    <i class="item-image {{::notification.icon}}" ng-if="!notification.thumbnail"></i>
+    <span ng-bind-html="notification.message|translate:notification.messageParams"></span>
+    <h4>
+      <span class="dark"><i class="icon ion-clock"></i>&nbsp;{{notification.time|formatFromNow}}</span>
+      <span class="gray">| {{notification.time|formatDate}}</span>
+    </h4>
+  </div>

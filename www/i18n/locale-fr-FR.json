@@ -50,6 +50,8 @@
     "RESULTS_LIST": "Résultats :",
     "SHOW_VALUES": "Afficher les valeurs en clair ?",
     "POPOVER_ACTIONS_TITLE": "Options",
+    "SHOW_MORE": "Afficher plus",
+    "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
     "POPOVER_SHARE": {
       "TITLE": "Partager",
       "SHARE_ON_TWITTER": "Partager sur Twitter",
@@ -57,9 +59,11 @@
       "SHARE_ON_DIASPORA": "Partager sur Diaspora*",
       "SHARE_ON_GOOGLEPLUS": "Partager sur Google+"
     },
-    "POPOVER_NOTIFICATIONS": {
+    "NOTIFICATIONS": {
       "TITLE": "Notifications",
-      "MARK_ALL_AS_READ": "Tout marquer comme lu"
+      "MARK_ALL_AS_READ": "Tout marquer comme lu",
+      "NO_RESULT": "Aucune notification",
+      "SHOW_ALL": "Voir tout"
     }
   },
   "SYSTEM": {
@@ -348,7 +352,8 @@
     "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('renew')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
     "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDurationTo}}).",
-    "UNABLE_TO_CERTIFY_TITLE": "Certification impossible"
+    "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
+    "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

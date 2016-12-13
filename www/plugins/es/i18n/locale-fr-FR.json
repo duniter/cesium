@@ -238,7 +238,7 @@
     },
     "NOTIFICATIONS": {
       "DIVIDER": "Notifications",
-      "HELP_TEXT": "Vous pouvez recevoir différentes sortes de notification. Activez uniquement celles qui vous sont utiles.",
+      "HELP_TEXT": "Activez les types de notifications que vous souhaitez recevoir :",
       "ENABLE_TX_SENT": "Notifier la validation des <b>paiement émis</b> ?",
       "ENABLE_TX_RECEIVED": "Notifier la validation des <b>paiement reçus</b> ?"
     },
@@ -249,6 +249,8 @@
   },
   "EVENT": {
     "NODE_STARTED": "Votre noeud ES API <b>{{p0}}</b> est démarré",
+    "NODE_BMA_DOWN": "Noeud <b>{{p0}}:{{p1}}</b> injoignable (utilisé par votre ES API <b>{{p2}}</b>).<br/>Date de la dernière connection : {{p3|formatDate}}.",
+    "NODE_BMA_UP": "Noeud <b>{{p0}}:{{p1}}</b> à nouveau accessible.",
     "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{p0}}</b> !",
     "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{p0}}</b>!",
     "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{p0}}</b> a été <b>pris en compte</b>.",

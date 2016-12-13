@@ -505,9 +505,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     processTransactionsAndSources = function() {
-      return $q(function(resolve, reject){
-
-        BMA.wot.member.uids()
+      return BMA.wot.member.uids()
         .then(function(uids){
           var txPendings = [];
           var txErrors = [];
@@ -576,12 +574,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.tx.pendings = txPendings;
           data.tx.errors = txErrors;
           data.balance = balance;
-          resolve();
-        })
-        .catch(function(err) {
-          reject(err);
         });
-      });
     },
 
     loadParameters = function() {
@@ -680,9 +673,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    loadData = function() {
+    loadData = function(options) {
       if (data.loaded) {
-        return refreshData();
+        return refreshData(options);
       }
 
       return $q(function(resolve, reject){
@@ -709,7 +702,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           loadSigStock(),
 
           // API extension
-          api.data.raisePromise.load(data)
+          api.data.raisePromise.load(data, null)
             .catch(function(err) {
               console.debug('Error while loading wallet data, on extension point.');
               console.error(err);
@@ -750,7 +743,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             fromTime: data.tx ? data.tx.fromTime : undefined // keep previous time
           },
           sigStock: true,
-          api: true
+          api: true,
+          notifications: {
+            enable: true,
+            from: 0,
+            size: 100
+          }
         };
       }
 
@@ -781,13 +779,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // Load sigStock
       if (options.sigStock) jobs.push(loadSigStock());
 
-      // API extension
-      if (options.api) jobs.push(api.data.raisePromise.load(data, options));
+      // API extension (force if no other jobs)
+      if (!jobs.length || options.api) jobs.push(api.data.raisePromise.load(data, options));
 
       return $q.all(jobs)
       .then(function() {
-        // Process transactions and sources
-        return processTransactionsAndSources();
+        if (options.sources || (options.tx && options.tx.enable)) {
+          // Process transactions and sources
+          return processTransactionsAndSources();
+        }
       })
       .then(function(){
         return api.data.raisePromise.finishLoad(data);
@@ -1395,11 +1395,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     ;
 
     // Register extension points
-    api.registerEvent('data', 'login');
-    api.registerEvent('data', 'logout');
     api.registerEvent('data', 'init');
+    api.registerEvent('data', 'login');
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'finishLoad');
+    api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
 
     csSettings.api.data.on.changed($rootScope, store);

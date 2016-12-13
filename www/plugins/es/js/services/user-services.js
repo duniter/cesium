@@ -69,48 +69,185 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return result;
     }
 
-    function onWalletLoad(data, resolve, reject) {
-      if (!data || !data.pubkey) {
-        if (resolve) {
-          resolve();
-        }
-        return;
-      }
-
-      $q.all([
-        // Load avatar and title
-        esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: data.pubkey})
-          .then(function(res) {
-            if (res && res._source) {
-              data.name = res._source.title;
-              var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
-              if (avatar) {
-                data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-                data.avatar=avatar;
-              }
+    function loadProfileAvatarAndName(pubkey) {
+      return esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: pubkey})
+        .then(function(res) {
+          var profile;
+          if (res && res._source) {
+            profile = {name: res._source.title};
+            var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
+            if (avatar) {
+              profile.avatarStyle={'background-image':'url("'+avatar.src+'")'};
+              profile.avatar=avatar;
             }
-          })
-      ])
-      .then(function() {
-        resolve(data);
-      })
-      .catch(function(err){
-        // no profile defined
-        if (err && err.ucode && err.ucode == 404) {
-          resolve(data);
-        }
-        else {
-          reject(err);
-        }
-      });
+          }
+          return profile;
+        })
+        .catch(function(err){
+          // no profile defined
+          if (err && err.ucode && err.ucode == 404) {
+            return null;
+          }
+          else {
+            throw err;
+          }
+        });
     }
 
-    function onWalletFinishLoad(data, resolve) {
-      // If membership pending, but not enough certifications: suggest to fill user profile
-      if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
-        data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
+    function loadProfile(pubkey) {
+      return esHttp.get(host, port, '/user/profile/:id')({id: pubkey})
+        .then(function(res) {
+          var profile;
+          if (res && res._source) {
+            profile = {name: res._source.title};
+            var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
+            if (avatar) {
+              profile.avatarStyle={'background-image':'url("'+avatar.src+'")'};
+              profile.avatar=avatar;
+              delete res._source.avatar;
+            }
+            profile.source = res._source;
+          }
+          return profile;
+        })
+        .catch(function(err){
+          // no profile defined
+          if (err && err.ucode && err.ucode == 404) {
+            return null;
+          }
+          else {
+            throw err;
+          }
+        });
+    }
+
+
+    function fillAvatars(datas, pubkeyAtributeName) {
+      return onWotSearch(null, datas, null, pubkeyAtributeName);
+    }
+
+    // Load settings
+    function loadSettings(pubkey, keypair) {
+      return esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
+        .then(function(res) {
+          if (!res || !res._source) {
+            return;
+          }
+          var record = res._source;
+          // Do not apply if same version
+          if (record.time === csSettings.data.time) {
+            console.debug('[ES] [user] Local settings already up to date');
+            return;
+          }
+          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
+          var nonce = CryptoUtils.util.decode_base58(record.nonce);
+          // Decrypt settings content
+          return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
+            .then(function(json) {
+              var settings = JSON.parse(json || '{}');
+              settings.time = record.time;
+              return settings
+            });
+        })
+        .catch(function(err){
+          if (err && err.ucode && err.ucode == 404) {
+            return null; // not found
+          }
+          else {
+            throw err;
+          }
+        });
+    }
+
+    // Load unread notifications count
+    function loadUnreadNotificationsCount(pubkey) {
+      var request = {
+        query: {
+          bool: {
+            must: [
+              {term: {recipient: pubkey}},
+              {missing: { field : "read_signature" }}
+            ]
+          }
+        }
+      };
+
+      var excludesCodes = [];
+      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
+        excludesCodes.push('TX_SENT');
       }
-      resolve(data);
+      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
+        excludesCodes.push('TX_RECEIVED');
+      }
+      if (excludesCodes.length) {
+        request.query.bool.must_not = {terms: { code: excludesCodes}};
+      }
+
+      return esHttp.post(host, port, '/user/event/_count')(request)
+        .then(function(res) {
+          return res.count;
+        });
+    }
+
+    // Load user notifications
+    function loadNotifications(pubkey, from, size) {
+      from = from || 0;
+      size = size || 40;
+      var request = {
+        query: {
+          bool: {
+            must: [
+              {term: {recipient: pubkey}}
+            ]
+          }
+        },
+        sort : [
+          { "time" : {"order" : "desc"}}
+        ],
+        from:from,
+        size: size,
+        _source: ["type", "code", "params", "reference", "recipient", "time", "hash", "read_signature"]
+      };
+
+      var excludesCodes = [];
+
+      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
+        excludesCodes.push('TX_SENT');
+      }
+      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
+        excludesCodes.push('TX_RECEIVED');
+      }
+      if (excludesCodes.length) {
+        request.query.bool.must_not = {terms: { code: excludesCodes}};
+      }
+
+      return esHttp.post(host, port, '/user/event/_search')(request)
+        .then(function(res) {
+          if (!res.hits || !res.hits.total) return;
+          var unreadCount = 0;
+          var history = res.hits.hits.reduce(function(res, hit) {
+            var item = new Notification(hit._source, markNotificationAsRead);
+            item.id = hit._id;
+            unreadCount = item.read ? unreadCount : unreadCount+1;
+            return res.concat(item)
+          }, []);
+          return {
+            history: history,
+            unreadCount: unreadCount
+          };
+        });
+    }
+
+
+    // Mark a notification as read
+    function markNotificationAsRead(notification) {
+      return CryptoUtils.sign(notification.hash, csWallet.data.keypair)
+        .then(function(signature){
+          return esHttp.post(host, port, '/user/event/:id/_read')(signature, {id:notification.id})
+        })
+        .catch(function(err) {
+          console.error('Error while trying to mark event as read:' + (err.message ? err.message : err));
+        });
     }
 
     function onWalletReset(data) {
@@ -120,44 +257,118 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       data.name = null;
     }
 
-    function onWotLoad(data, resolve, reject) {
-      if (!data || !data.pubkey) {
-        if (resolve) {
-          resolve();
-        }
+    function onWalletLogin(data, deferred) {
+      deferred = deferred || $q.defer();
+      if (!data || !data.pubkey || !data.keypair) {
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      // Waiting to load crypto libs
+      if (!CryptoUtils.isLoaded()) {
+        console.debug('[ES] [user] Waiting crypto lib loading...');
+        $timeout(function() {
+          onWalletLogin(data, deferred);
+        }, 200);
         return;
       }
-      esHttp.get(host, port, '/user/profile/:id')({id: data.pubkey})
-      .then(function(res) {
-        if (res && res._source) {
-          data.name = res._source.title;
-          var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
-          data.profile = res._source;
-          if (avatar) {
-            data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-            data.avatar=avatar;
-            delete res._source.avatar;
-          }
-          data.profile = res._source;
-        }
-        resolve(data);
-      })
-      .catch(function(err){
-        if (err && err.ucode && err.ucode == 404) {
-          resolve(data); // not found
-        }
-        else {
-          reject(err);
-        }
-      });
+
+      console.debug('[ES] [user] Loading user data from ES node...');
+
+      $q.all([
+        // Load settings
+        loadSettings(data.pubkey, data.keypair)
+          .then(function(settings) {
+            if (!settings) { // not found
+              // make sure to remove save timestamp
+              delete csSettings.data.time;
+              return;
+            }
+            angular.merge(csSettings.data, settings);
+            restoringSettings = true;
+            csSettings.store();
+          }),
+
+        // Load unread notifications count
+        loadUnreadNotificationsCount(data.pubkey)
+          .then(function(unreadCount) {
+            data.notifications.unreadCount = unreadCount;
+          }),
+
+        // Load profile avatar and name
+        loadProfileAvatarAndName(data.pubkey)
+          .then(function(profile) {
+            if (profile) {
+              data.name = profile.name;
+              data.avatarStyle = profile.avatarStyle;
+              data.avatar = profile.avatar;
+            }
+          })
+      ])
+        .then(function() {
+          console.debug('[ES] [user] Successfully loaded user data from ES node');
+          deferred.resolve(data);
+        })
+        .catch(function(err){
+          deferred.reject(err);
+        })
+
+        // Listen new events
+        .then(function(){
+          esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale')
+            .on(function(event) {
+                $rootScope.$apply(function() {
+                  $rootScope.walletData.notifications.history.splice(0, 0, new Notification(event));
+                  $rootScope.walletData.notifications.unreadCount++;
+                });
+              },
+              {pubkey: data.pubkey, locale: csSettings.data.locale.id}
+            );
+        });
+
+      return deferred.promise;
     }
 
-    function onWotSearch(text, datas, resolve, reject, pubkeyAtributeName) {
+    function onWalletLoad(data, options, deferred) {
+      deferred = deferred || $q.defer();
+
+      options = options || {};
+      options.notifications = options.notifications || {};
+      if (!options.notifications.enable) {
+        deferred.resolve(data);
+        return deferred.promise;
+      }
+
+      // Load user notifications
+      loadNotifications(data.pubkey, options.notifications.from, options.notifications.size)
+        .then(function(notifications) {
+          data.notifications.history = notifications.history;
+          data.notifications.unreadCount = notifications.unreadCount;
+          deferred.resolve(data);
+        })
+        .catch(function(err) {
+          deferred.reject(err);
+        })
+      ;
+
+      return deferred.promise;
+    }
+
+    function onWalletFinishLoad(data, deferred) {
+      deferred = deferred || $q.defer();
+      // If membership pending, but not enough certifications: suggest to fill user profile
+      if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
+        data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
+      }
+      deferred.resolve();
+      return deferred.promise;
+    }
+
+    function onWotSearch(text, datas, deferred, pubkeyAtributeName) {
+      deferred = deferred || $q.defer();
       if (!datas) {
-        if (resolve) {
-          resolve();
-        }
-        return;
+        deferred.resolve();
+        return deferred.promise;
       }
 
       pubkeyAtributeName = pubkeyAtributeName || 'pubkey';
@@ -210,7 +421,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
       else {
         // nothing to search: stop here
-        resolve(datas);
+        deferred.resolve(datas);
         return;
       }
 
@@ -230,10 +441,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           })
       ])
       .then(function() {
-        if (hits.total === 0) {
-          resolve(datas);
-        }
-        else {
+        if (hits.total > 0) {
           _.forEach(hits.hits, function(hit) {
             var values = map[hit._id];
             if (!values) {
@@ -257,165 +465,43 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             });
           });
         }
-        resolve(datas);
+        deferred.resolve(datas);
       })
       .catch(function(err){
         if (err && err.ucode && err.ucode == 404) {
-          resolve(datas);
+          deferred.resolve(datas);
         }
         else {
-          reject(err);
+          deferred.reject(err);
         }
       });
+
+      return deferred.promise;
     }
 
-    function fillAvatars(datas, pubkeyAtributeName) {
-      return $q(function(resolve, reject) {
-        onWotSearch(null, datas, resolve, reject, pubkeyAtributeName);
-      });
-    }
+    function onWotLoad(data, deferred) {
+      deferred = deferred || $q.defer();
+      if (!data || !data.pubkey) {
+        deferred.resolve();
+        return deferred.promise;
+      }
 
-    // Load settings
-    function loadSettings(pubkey, keypair) {
-      return esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
-        .then(function(res) {
-          if (!res || !res._source) {
-            return;
+      // Load full profile
+      loadProfile(data.pubkey)
+        .then(function(profile) {
+          if (profile) {
+            data.name = profile.name;
+            data.avatarStyle = profile.avatarStyle;
+            data.avatar = profile.avatar;
+            data.profile = profile.source;
           }
-          var record = res._source;
-          // Do not apply if same version
-          if (record.time === csSettings.data.time) {
-            console.debug('[ES] [user] Local settings already up to date');
-            return;
-          }
-          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
-          var nonce = CryptoUtils.util.decode_base58(record.nonce);
-          // Decrypt settings content
-          return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
-            .then(function(json) {
-              var settings = JSON.parse(json || '{}');
-              settings.time = record.time;
-              return settings
-            });
+          deferred.resolve(data);
         })
         .catch(function(err){
-          if (err && err.ucode && err.ucode == 404) {
-            return null; // not found
-          }
-          else {
-            throw err;
-          }
+          deferred.reject(err);
         });
+      return deferred.promise;
     }
-
-    // Load user notifications
-    function loadNotifications(pubkey) {
-      var request = {
-        query: {
-          bool: {
-            must: [
-              {term: {recipient: pubkey}}
-            ]
-          }
-        },
-        sort : [
-          { "time" : {"order" : "desc"}}
-        ],
-        from: 0,
-        size: 100,
-        _source: ["type", "code", "params", "reference", "recipient", "time"]
-      };
-
-      var excludesCodes = [];
-
-      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
-        excludesCodes.push('TX_SENT');
-      }
-      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
-        excludesCodes.push('TX_RECEIVED');
-      }
-      if (excludesCodes.length) {
-        request.query.bool.must_not = {terms: { code: excludesCodes}};
-      }
-
-      return esHttp.post(host, port, '/user/event/_search')(request)
-        .then(function(res) {
-          if (!res.hits || !res.hits.total) return;
-          return res.hits.hits.reduce(function(res, hit) {
-            return res.concat(new Notification(hit._source))
-          }, []);
-        })
-    }
-
-    function onWalletLogin(data, resolve, reject) {
-      if (!data || !data.pubkey || !data.keypair) {
-        if (resolve) {
-          resolve();
-        }
-        return;
-      }
-
-      // Waiting to load crypto libs
-      if (!CryptoUtils.isLoaded()) {
-        console.debug('[ES] [user] Waiting crypto lib loading...');
-        $timeout(function() {
-          onWalletLogin(data, resolve, reject);
-        }, 200);
-        return;
-      }
-
-      console.debug('[ES] [user] Loading user data from ES node...');
-
-      $q.all([
-        // Load settings
-        loadSettings(data.pubkey, data.keypair)
-          .then(function(settings) {
-            if (!settings) { // not found
-              // make sure to remove save timestamp
-              delete csSettings.data.time;
-              return;
-            }
-            angular.merge(csSettings.data, settings);
-            restoringSettings = true;
-            csSettings.store();
-          }),
-
-        // Load user notifications
-        loadNotifications(data.pubkey)
-          .then(function(notifications) {
-            data.notifications.history = notifications;
-            data.notifications.unreadCount = notifications ? notifications.length : 0;
-          })
-      ])
-      .then(function() {
-        console.debug('[ES] [user] Successfully loaded user data from ES node');
-        resolve(data);
-      })
-      .catch(function(err){
-        if (err && err.ucode && err.ucode == 404) {
-          console.debug('[ES] [user] No user data found in ES node...');
-          resolve(data); // not found
-        }
-        else {
-          reject(err);
-        }
-      })
-      .then(function(){
-        // Listen new events
-        esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale')
-          .on(function(event) {
-              $rootScope.$apply(function() {
-                $rootScope.walletData.notifications.history.splice(0, 0, new Notification(event));
-                $rootScope.walletData.notifications.unreadCount++;
-              });
-            },
-            {pubkey: data.pubkey, locale: csSettings.data.locale.id}
-          );
-      });
-
-    }
-
-
 
     function onSettingsChanged(data) {
       if (!csWallet.isLogin()) return;
@@ -481,10 +567,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       // Extend csWallet.loadData() and csWot.loadData()
       listeners = [
+        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.load($rootScope, onWalletLoad, this),
         csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
-        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWot.api.data.on.load($rootScope, onWotLoad, this),
         csWot.api.data.on.search($rootScope, onWotSearch, this),
       ];
@@ -518,9 +604,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       refreshListeners();
 
       if (!wasEnable && isEnable()) {
-        return $q(function(resolve, reject){
-          onWalletLogin(csWallet.data, resolve, reject);
-        });
+        return onWalletLogin(csWallet.data);
       }
       else {
         onSettingsChanged(data);

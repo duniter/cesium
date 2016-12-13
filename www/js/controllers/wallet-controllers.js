@@ -98,9 +98,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     $scope.refreshConvertedBalance();
     // Set Motion
     $timeout(function() {
-      UIUtils.motion.fadeSlideInRight();
+      UIUtils.motion.fadeSlideInRight({selector: '#wallet .animate-fade-slide-in-right .item'});
       // Set Ink
-      UIUtils.ink({selector: '.item'});
+      UIUtils.ink({selector: '#wallet .animate-fade-slide-in-right .item'});
     }, 10);
   };
 
