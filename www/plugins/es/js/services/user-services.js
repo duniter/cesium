@@ -10,10 +10,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, Device) {
+.factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, Device, Api) {
   'ngInject';
 
-  function factory(host, port, wsPort) {
+  function factory(id, host, port, wsPort) {
 
     var listeners,
       settingsSaveSpec = {
@@ -28,8 +28,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           excludes: ['installDocUrl']
         }
       },
-      restoringSettings = false;
-
+      restoringSettings = false,
+      api = new Api(this, 'esUser-' + id)
+    ;
     function copy(otherNode) {
       removeListeners();
       if (!!this.instance) {
@@ -159,96 +160,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         });
     }
 
-    // Load unread notifications count
-    function loadUnreadNotificationsCount(pubkey, readTime) {
-      var request = {
-        query: {
-          bool: {
-            must: [
-              {term: {recipient: pubkey}},
-              {missing: { field : "read_signature" }}
-            ]
-          }
-        }
-      };
-
-      // Filter codes
-      var excludesCodes = [];
-      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
-        excludesCodes.push('TX_SENT');
-      }
-      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
-        excludesCodes.push('TX_RECEIVED');
-      }
-      if (excludesCodes.length) {
-        request.query.bool.must_not = {terms: { code: excludesCodes}};
-      }
-
-      // Filter time
-      if (readTime) {
-        request.query.bool.must.push({range: {time: {gte: readTime}}});
-      }
-
-      return esHttp.post(host, port, '/user/event/_count')(request)
-        .then(function(res) {
-          return res.count;
-        });
-    }
-
-    // Load user notifications
-    function loadNotifications(pubkey, from, size) {
-      from = from || 0;
-      size = size || 40;
-      var request = {
-        query: {
-          bool: {
-            must: [
-              {term: {recipient: pubkey}}
-            ]
-          }
-        },
-        sort : [
-          { "time" : {"order" : "desc"}}
-        ],
-        from: from,
-        size: size,
-        _source: ["type", "code", "params", "reference", "recipient", "time", "hash", "read_signature"]
-      };
-
-      // Filter codes
-      var excludesCodes = [];
-      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
-        excludesCodes.push('TX_SENT');
-      }
-      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
-        excludesCodes.push('TX_RECEIVED');
-      }
-      if (excludesCodes.length) {
-        request.query.bool.must_not = {terms: { code: excludesCodes}};
-      }
-
-      return esHttp.post(host, port, '/user/event/_search')(request)
-        .then(function(res) {
-          if (!res.hits || !res.hits.total) return;
-          return res.hits.hits.reduce(function(res, hit) {
-            var item = new Notification(hit._source, markNotificationAsRead);
-            item.id = hit._id;
-            return res.concat(item)
-          }, []);
-        });
-    }
-
-    // Mark a notification as read
-    function markNotificationAsRead(notification) {
-      return CryptoUtils.sign(notification.hash, csWallet.data.keypair)
-        .then(function(signature){
-          return esHttp.post(host, port, '/user/event/:id/_read')(signature, {id:notification.id})
-        })
-        .catch(function(err) {
-          console.error('Error while trying to mark event as read:' + (err.message ? err.message : err));
-        });
-    }
-
     function onWalletReset(data) {
       data.avatar = null;
       data.avatarStyle = null;
@@ -287,15 +198,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             csSettings.store();
           }),
 
-        // Load unread notifications count
-        loadUnreadNotificationsCount(
-            data.pubkey,
-            csSettings.data.wallet ? csSettings.data.wallet.notificationReadTime : 0)
-          .then(function(unreadCount) {
-            data.notifications.unreadCount = unreadCount;
-            data.notifications.history = null; // remove list (usefull when settings changed)
-          }),
-
         // Load profile avatar and name
         loadProfileAvatarAndName(data.pubkey)
           .then(function(profile) {
@@ -306,57 +208,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             }
           })
       ])
-        .then(function() {
-          console.debug('[ES] [user] Successfully loaded user data from ES node');
-          deferred.resolve(data);
-        })
-        .catch(function(err){
-          deferred.reject(err);
-        })
-
-        // Listen new events
-        .then(function(){
-          esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale')
-            .on(function(event) {
-                $rootScope.$apply(function() {
-                  $rootScope.walletData.notifications.history.splice(0, 0, new Notification(event));
-                  $rootScope.walletData.notifications.unreadCount++;
-                });
-              },
-              {pubkey: data.pubkey, locale: csSettings.data.locale.id}
-            );
-        });
-
-      return deferred.promise;
-    }
-
-    function onWalletLoad(data, options, deferred) {
-      deferred = deferred || $q.defer();
-
-      options = options || {};
-      options.notifications = options.notifications || {};
-      if (!options.notifications.enable) {
-        deferred.resolve(data);
-        return deferred.promise;
-      }
-
-      // Load user notifications
-      loadNotifications(data.pubkey,
-        options.notifications.from,
-        options.notifications.size)
-      .then(function(notifications) {
-        if (!notifications || !notifications.length || !options.notifications.from) {
-          data.notifications.history = notifications;
-        }
-        else {
-          // Concat (but keep original array - for data binding)
-          _.forEach(notifications, function(notification){
-            data.notifications.history.push(notification);
-          });
-        }
+      .then(function() {
+        console.debug('[ES] [user] Successfully loaded user data from ES node');
         deferred.resolve(data);
       })
-      .catch(function(err) {
+      .catch(function(err){
         deferred.reject(err);
       });
 
@@ -376,13 +232,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     function onWotSearch(text, datas, deferred, pubkeyAtributeName) {
       deferred = deferred || $q.defer();
       if (!datas) {
-        deferred.resolve();
+        deferred.resolve(datas);
         return deferred.promise;
       }
 
       pubkeyAtributeName = pubkeyAtributeName || 'pubkey';
       text = text ? text.toLowerCase().trim() : text;
-      var map = {};
+      var dataByPubkey = {};
 
       var request = {
         query: {},
@@ -394,21 +250,24 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       if (datas.length > 0) {
         // collect pubkeys
-        var pubkeys = datas.reduce(function(res, data) {
+        _.forEach(datas, function(data) {
           var pubkey = data[pubkeyAtributeName];
-          var values = map[pubkey];
-          if (!values) {
-            values = [];
-            map[pubkey] = values;
+          if (pubkey) {
+            var values = dataByPubkey[pubkey];
+            if (!values) {
+              values = [];
+              dataByPubkey[pubkey] = values;
+            }
+            values.push(data);
           }
-          values.push(data);
-          return res.concat(pubkey);
-        }, []);
+        });
+        var pubkeys = _.keys(dataByPubkey);
         request.query.constant_score = {
            filter: {
              bool: {should: [{terms : {_id : pubkeys}}]}
            }
         };
+        request.size = request.length;
         if (!text) {
           delete request.highlight; // highlight not need
         }
@@ -431,7 +290,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       else {
         // nothing to search: stop here
         deferred.resolve(datas);
-        return;
+        return deferred.promise;
       }
 
       var hits;
@@ -452,7 +311,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       .then(function() {
         if (hits.total > 0) {
           _.forEach(hits.hits, function(hit) {
-            var values = map[hit._id];
+            var values = dataByPubkey[hit._id];
             if (!values) {
               var value = {};
               value[pubkeyAtributeName] = hit._id;
@@ -551,8 +410,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         .then(function() {
           // Change settings version
           csSettings.data.time = record.time;
-          // Force notifications reload
-          csWallet.data.notifications.history = [];
           restoringSettings = true;
           csSettings.store();
           console.debug('[ES] [user] User settings saved in ES');
@@ -579,11 +436,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       // Extend csWallet.loadData() and csWot.loadData()
       listeners = [
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
-        csWallet.api.data.on.load($rootScope, onWalletLoad, this),
         csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
+        csWallet.api.data.on.init($rootScope, onWalletReset, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
         csWot.api.data.on.load($rootScope, onWotLoad, this),
-        csWot.api.data.on.search($rootScope, onWotSearch, this),
+        csWot.api.data.on.search($rootScope, onWotSearch, this)
       ];
     }
 
@@ -678,7 +535,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
   var port = host ? csSettings.data.plugins.es.port : null;
   var wsPort = host ? csSettings.data.plugins.es.wsPort : port;
 
-  var service = factory(host, port, wsPort);
+  var service = factory('default', host, port, wsPort);
   service.instance = factory;
   return service;
 })

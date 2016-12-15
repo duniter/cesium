@@ -46,10 +46,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.wot_view_cert', {
         url: "/wot/cert/:pubkey/:uid",
-        nativeTransitions: {
-          "type": "flip",
-          "direction": "right"
-        },
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -60,10 +56,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.wot_view_cert_lg', {
         url: "/wot/cert/lg/:pubkey/:uid",
-        nativeTransitions: {
-          "type": "flip",
-          "direction": "right"
-        },
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications_lg.html",

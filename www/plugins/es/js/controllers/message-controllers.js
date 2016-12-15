@@ -1,6 +1,6 @@
 angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.es.message.controllers'])
 
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function($stateProvider) {
     'ngInject';
 
     $stateProvider
@@ -48,7 +48,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
 
   .controller('ESMessageViewCtrl', ESMessageViewController)
 
-
+  .controller('PopoverMessageCtrl', PopoverMessageController)
 
 ;
 
@@ -80,27 +80,12 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
   });
 
   $scope.load = function(size, offset) {
-    offset = offset || 0;
-    size = size || 20;
+    var options  = {};
+    options.from = offset || 0;
+    options.size = size || 20;
 
     $scope.loading = true;
-    var request = {
-      sort: {
-        "time" : "desc"
-      },
-      query: {bool: {filter: {term: {recipient: $rootScope.walletData.pubkey}}}},
-      from: offset,
-      size: size,
-      _source: esMessage.fields.commons
-    };
-
-    return $scope.doRequest(request);
-
-  };
-
-  $scope.doRequest = function(request) {
-
-    return esMessage.searchAndDecrypt(request, $rootScope.walletData.keypair)
+    return esMessage.load($rootScope.walletData.keypair, options)
       .then(function(messages) {
         $scope.messages = messages;
 
@@ -149,8 +134,8 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
       .then(function() {
         UIUtils.loading.hide();
         return esModals.showMessageCompose(parameters)
-          .then(function() {
-            UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+          .then(function(sent) {
+            if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
           });
       });
   };
@@ -165,15 +150,15 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
         content = content ? content.replace(/\n/g, '\n > ') : null;
         content = content ? content +'\n' : null;
         return esModals.showMessageCompose({
-          destPub: message.pubkey,
+          destPub: message.issuer,
           destUid: message.name||message.uid,
           title: prefix + message.title,
           content: content,
           isReply: true
         });
       })
-      .then(function() {
-        UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+      .then(function(sent) {
+        if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
       });
   };
 
@@ -344,7 +329,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
             if (!message.read) {
               $timeout(function() {
                 // Message has NOT changed
-                if ($scope.id == message.id) {
+                if ($scope.id === message.id) {
                   esMessage.markAsRead(message)
                     .then(function() {
                       console.debug("[message] marked as read");
@@ -378,13 +363,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
               $state.go('app.user_message');
             });
         }
-
-        // Load avatar and name (and uid)
-        return esUser.profile.fillAvatars([{pubkey: message.issuer}])
-          .then(function (idties) {
-            $scope.issuer = idties[0];
-            return message;
-          });
+        return message;
       });
   };
 
@@ -418,12 +397,108 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
         content = content ? content.replace(/\n/g, '\n > ') : null;
         content = content ? content +'\n' : null;
         return esModals.showMessageCompose({
-            destPub: $scope.formData.pubkey,
+            destPub: $scope.formData.issuer,
             destUid: $scope.formData.name||$scope.formData.uid,
             title: prefix + $scope.formData.title,
             content: content,
             isReply: true
           });
+      })
+      .then(function(sent) {
+        if (sent) {
+          UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT')
+            .then(function() {
+              $ionicHistory.goBack();
+            });
+        }
+      })
+    ;
+  };
+}
+
+function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotification, esMessage, esModals) {
+  'ngInject';
+
+  var defaultSearchLimit = 40;
+
+  $scope.search = {
+    loading : true,
+    results: null,
+    hasMore : false,
+    loadingMore : false,
+    limit: defaultSearchLimit
+  };
+
+  $scope.load = function(from, size) {
+    var options = {};
+    options.from = from || 0;
+    options.size = size || defaultSearchLimit;
+    return esMessage.notifications.load(options)
+      .then(function(notifications) {
+        $scope.search.results = notifications;
+        $scope.search.loading = false;
+        $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
+        $scope.updateView();
+      })
+      .catch(function(err) {
+        $scope.search.loading = false;
+        $scope.search.results = [];
+        $scope.search.hasMore = false;
+        UIUtils.onError('ERROR.LOAD_NOTIFICATIONS_FAILED')(err);
       });
   };
+
+  $scope.updateView = function() {
+
+    // Set Motion and Ink
+    $timeout(function() {
+      UIUtils.ink({selector: '.popover-popover .item.ink'});
+    }, 100);
+  };
+
+  $scope.showMore = function() {
+    $scope.search.limit = $scope.search.limit || defaultSearchLimit;
+    $scope.search.limit = $scope.search.limit * 2;
+    if ($scope.search.limit < defaultSearchLimit) {
+      $scope.search.limit = defaultSearchLimit;
+    }
+    $scope.search.loadingMore = true;
+    $scope.load(
+      $scope.search.results.length, // from
+      $scope.search.limit)
+      .then(function() {
+        $scope.search.loadingMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+      });
+  };
+
+  $scope.onNewNotification = function(notification) {
+    if (!$scope.search.loading && !$scope.search.loadingMore &&  notification.isMessage) {
+      console.log("[popover] detected new message (from notification)");
+      $scope.search.results.splice(0,0,notification);
+      $scope.updateView();
+    }
+  };
+
+  $scope.select = function(notification) {
+    if (!notification.read) notification.read = true;
+    $state.go('app.user_view_message', {id: notification.id});
+    $scope.closePopover(notification);
+  };
+
+  if ($scope.search.loading) {
+    $scope.load();
+  }
+
+  /* -- Modals -- */
+
+  $scope.showNewMessageModal = function(parameters) {
+    $scope.closePopover();
+    return esModals.showMessageCompose(parameters)
+      .then(function(sent) {
+        if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+      });
+  };
+
+  esNotification.api.data.on.new($scope, $scope.onNewNotification);
 }

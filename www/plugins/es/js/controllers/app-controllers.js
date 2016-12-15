@@ -83,7 +83,7 @@ function ESJoinController($scope, $state, csSettings, PluginService) {
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $state, PluginService, csSettings, csWallet, esUser, UIUtils, $translate) {
+function ESMenuExtendController($scope, $state, PluginService, csSettings, UIUtils) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
 
@@ -93,6 +93,22 @@ function ESMenuExtendController($scope, $state, PluginService, csSettings, csWal
 
   $scope.showRegistryLookupView = function() {
     $state.go(UIUtils.screen.isSmall() ? 'app.registry_lookup': 'app.registry_lookup_lg');
+  };
+
+  $scope.showNotificationsPopover = function(event) {
+    return UIUtils.popover.show(event, {
+        templateUrl :'plugins/es/templates/notification/popover_notification.html',
+        scope: $scope,
+        autoremove: false // reuse popover
+      });
+  };
+
+  $scope.showMessagesPopover = function(event) {
+    return UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/message/popover_message.html',
+      scope: $scope,
+      autoremove: false // reuse popover
+    });
   };
 
   $scope.updateView = function() {
@@ -106,7 +122,6 @@ function ESMenuExtendController($scope, $state, PluginService, csSettings, csWal
   });
 
   $scope.updateView();
-
 
 }
 

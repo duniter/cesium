@@ -18,7 +18,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     var
     listeners,
     fields = {
-      commons: ["issuer", "recipient", "title", "content", "time", "nonce"]
+      commons: ["issuer", "recipient", "title", "content", "time", "nonce", "read_signature"],
+      notifications: ["issuer", "time", "hash", "read_signature"]
     };
 
     function copy(otherNode) {
@@ -107,7 +108,6 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         });
     }
 
-
     function sendMessage(message, keypair) {
       var boxKeypair = getBoxKeypair(keypair);
 
@@ -145,13 +145,66 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       });
     }
 
-    function searchAndDecrypt(request, keypair) {
-      var uids;
-      return BMA.wot.member.uids()
+    function loadMessageNotifications(options) {
+      if (!csWallet.isLogin()) {
+        return $timeout(function(){return []});
+      }
+      options = options || {};
+      options.from = options.from || 0;
+      options.size = options.size || 10;
+      var request = {
+        sort: {
+          "time" : "desc"
+        },
+        query: {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}},
+        from: options.from,
+        size: options.size,
+        _source: fields.notifications
+      };
+
+      return esHttp.post(host, port, '/message/record/_search')(request)
         .then(function(res) {
-          uids = res;
-          return esHttp.post(host, port, '/message/record/_search')(request);
-        })
+          if (res.hits.total === 0) {
+            return [];
+          }
+          else {
+            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
+            var notifications = res.hits.hits.reduce(function(result, hit) {
+              var msg = hit._source;
+              msg.id = hit._id;
+              msg.issuer = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
+              msg.read = !!msg.read_signature;
+              delete msg.read_signature; // not need anymore
+              return result.concat(msg);
+            }, []);
+            return esUser.profile.fillAvatars(notifications, 'issuer');
+          }
+        });
+    }
+
+    function loadMessages(keypair, options) {
+      if (!csWallet.isLogin()) {
+        return $timeout(function(){return []});
+      }
+
+      options = options || {};
+      options.from = options.from || 0;
+      options.size = options.size || 10;
+      var request = {
+        sort: {
+          "time" : "desc"
+        },
+        query: {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}},
+        from: options.from,
+        size: options.size,
+        _source: fields.commons
+      };
+
+      return searchAndDecrypt(request, keypair);
+    }
+
+    function searchAndDecrypt(request, keypair) {
+      return esHttp.post(host, port, '/message/record/_search')(request)
         .then(function(res) {
           if (res.hits.total === 0) {
             return [];
@@ -161,8 +214,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             var messages = res.hits.hits.reduce(function(result, hit) {
               var msg = hit._source;
               msg.id = hit._id;
-              msg.pubkey = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
-              msg.uid = uids[msg.pubkey];
+              msg.issuer = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
+              msg.read = !!msg.read_signature;
+              delete msg.read_signature; // not need anymore
               return result.concat(msg);
             }, []);
 
@@ -174,7 +228,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
             return decryptMessages(messages, keypair)
               .then(function(){
-                return esUser.profile.fillAvatars(messages, 'pubkey');
+                return esUser.profile.fillAvatars(messages, 'issuer');
               });
           }
         });
@@ -186,30 +240,21 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           if (!hit.found) {
             return;
           }
-          else {
-            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
-            var msg = hit._source;
-            msg.id = hit._id;
-            msg.pubkey = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
+          var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
+          var msg = hit._source;
+          msg.id = hit._id;
+          msg.read = !!msg.read_signature;
+          delete msg.read_signature; // not need anymore
 
-            msg.read = !!msg.read_signature;
-            delete msg.read_signature;
-
-            // Get uid (if member)
-            return BMA.wot.member.get(msg.pubkey)
-              .then(function(user) {
-                msg.uid = user ? user.uid : user;
-                // Decrypt message
-                return decryptMessages([msg], keypair);
-              })
-              .then(function(){
-                // Fill avatar
-                return esUser.profile.fillAvatars([msg], 'pubkey');
-              })
-              .then(function() {
-                return msg;
-              });
-          }
+          // Decrypt message
+          return decryptMessages([msg], keypair)
+            .then(function(){
+              // Fill avatar
+              return esUser.profile.fillAvatars([msg], 'issuer');
+            })
+            .then(function() {
+              return msg;
+            });
         });
     }
 
@@ -338,6 +383,10 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         server: esHttp.getServer(host, port)
       },
       search: esHttp.post(host, port, '/message/record/_search'),
+      notifications: {
+        load: loadMessageNotifications
+      },
+      load: loadMessages,
       searchAndDecrypt: searchAndDecrypt,
       get: getAndDecrypt,
       send: sendMessage,

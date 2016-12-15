@@ -144,6 +144,20 @@
   border-bottom: solid 1px #ccc;
 }
 
+.inboxMessage .list .item h2.unread {
+  font-weight: bold !important;
+}
+.inboxMessage .list .item h2.read {
+  color: #444 !default;
+}
+.inboxMessage .list .item {
+  height: 80px;
+}
+.inboxMessage .list .item-content {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 /**
 * Market record screen
 */

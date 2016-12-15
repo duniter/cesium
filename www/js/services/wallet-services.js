@@ -14,7 +14,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
     data = {},
 
-    api = new Api(this, 'WalletService-' + id),
+    api = new Api(this, 'csWallet-' + id),
 
     resetData = function(init) {
       data.pubkey= null;
@@ -39,10 +39,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.sigDate = null;
       data.isMember = false;
       data.events = [];
-      data.notifications = data.notifications || {};
-      data.notifications.history = [];
-      data.notifications.unreadCount = 0;
-      data.notifications.readTime = 0;
       data.loaded = false;
       if (init) {
         api.data.raise.init(data);
@@ -743,12 +739,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             fromTime: data.tx ? data.tx.fromTime : undefined // keep previous time
           },
           sigStock: true,
-          api: true,
-          notifications: {
-            enable: true,
-            from: 0,
-            size: 100
-          }
+          api: true
         };
       }
 

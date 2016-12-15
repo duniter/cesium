@@ -94,33 +94,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     $state.go(UIUtils.screen.isSmall() ? 'app.currency_view': 'app.currency_view_lg');
   };
 
-  $scope.showNotificationsPopover = function(event) {
-    return UIUtils.popover.show(event, {
-      templateUrl :'templates/common/popover_notification.html',
-      scope: $scope,
-      autoremove: false, // reuse popover
-      afterHidden: function() {
-        csWallet.data.notifications.unreadCount = 0;
-        if (csWallet.data.notifications && csWallet.data.notifications.history.length) {
-          var lastNotification = csWallet.data.notifications.history[0];
-          var readTime = lastNotification ? lastNotification.time : 0;
-          csSettings.data.wallet = csSettings.data.wallet || {};
-          if (readTime && csSettings.data.wallet.notificationReadTime != readTime) {
-            csSettings.data.wallet.notificationReadTime = readTime;
-            csSettings.store();
-          }
-        }
-      }
-    })
-    .then(function(item) {
-      if (!item) return;
-      if (item.onRead && typeof item.onRead == 'function') item.onRead();
-      if (item.state) {
-        $state.go(item.state, item.stateParams);
-      }
-    });
-  };
-
   ////////////////////////////////////////
   // Device Methods
   ////////////////////////////////////////

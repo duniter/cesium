@@ -5,7 +5,6 @@ angular.module('cesium.controllers', [
     'cesium.login.controllers',
     'cesium.help.controllers',
     'cesium.wallet.controllers',
-    'cesium.notification.controllers',
     'cesium.currency.controllers',
     /*'cesium.currency-charts.controllers',*/
     'cesium.wot.controllers',

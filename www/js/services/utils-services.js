@@ -14,8 +14,8 @@ angular.module('cesium.utils.services', ['ngResource'])
     CONST = {
       MAX_HEIGHT: 400,
       MAX_WIDTH: 400,
-      THUMB_MAX_HEIGHT: 150,
-      THUMB_MAX_WIDTH: 150
+      THUMB_MAX_HEIGHT: 100,
+      THUMB_MAX_WIDTH: 100
     },
     regex = {
       IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
@@ -132,10 +132,10 @@ angular.module('cesium.utils.services', ['ngResource'])
     if (!duration) {
       duration = 2000; // 2s
     }
-    $translate([message])
-    .then(function(translations){
-      $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
-    });
+    return $translate([message])
+      .then(function(translations){
+        $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
+      });
   }
 
   function onError(msg, reject/*optional*/) {

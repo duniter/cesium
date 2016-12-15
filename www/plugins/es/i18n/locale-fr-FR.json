@@ -8,7 +8,14 @@
     "BTN_PUBLISH": "Publier",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
-    "BTN_ADD_PICTURE": "Ajouter une photo"
+    "BTN_ADD_PICTURE": "Ajouter une photo",
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_AS_READ": "Tout marquer comme lu",
+      "NO_RESULT": "Aucune notification",
+      "SETTINGS": "Paramètres",
+      "SHOW_ALL": "Voir tout"
+    }
   },
   "MENU": {
     "MARKET": "Annonces",
@@ -39,6 +46,10 @@
     "BTN_REPLY": "Répondre",
     "BTN_COMPOSE": "Nouveau message",
     "BTN_WRITE": "Ecrire",
+    "POPOVER": {
+      "TITLE": "Messages",
+      "MESSAGE_RECEIVED": "Vous avez <b>reçu un message</b><br/>de"
+    },
     "INBOX": {
       "NO_MESSAGE": "Aucun message reçu",
       "TITLE": "Messages privés"
@@ -249,21 +260,21 @@
     }
   },
   "EVENT": {
-    "NODE_STARTED": "Votre noeud ES API <b>{{p0}}</b> est démarré",
-    "NODE_BMA_DOWN": "Le noeud <b>{{p0}}:{{p1}}</b> (utilisé par votre noeud ES API) est <b>injoignable</b>.",
-    "NODE_BMA_UP": "Le noeud <b>{{p0}}:{{p1}}</b> est à nouveau accessible.",
-    "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{p0}}</b> !",
-    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{p0}}</b>!",
-    "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{p0}}</b> a été <b>pris en compte</b>.",
-    "TX_SENT": "Votre paiement à <a ui-sref=\"app.wot_view_identity({pubkey:'{{p1}}', uid:'{{p0}}'})\">{{p0}}</a> a été effectué.",
-    "TX_SENT_MULTI": "Votre paiement à <b>{{p0}}</b> a été effectué.",
-    "TX_RECEIVED": "Vous avez reçu un paiement de <a ui-sref=\"app.wot_view_identity({pubkey:'{{p1}}', uid:'{{p0}}'})\">{{p0}}</a>.",
-    "TX_RECEIVED_MULTI": "Vous avez reçu un paiement de <b>{{p0}}</b>.",
+    "NODE_STARTED": "Votre noeud ES API <b>{{params[0]}}</b> est démarré",
+    "NODE_BMA_DOWN": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> (utilisé par votre noeud ES API) est <b>injoignable</b>.",
+    "NODE_BMA_UP": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> est à nouveau accessible.",
+    "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{params[0]}}</b> !",
+    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>!",
+    "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{params[0]}}</b> a été <b>pris en compte</b>.",
+    "TX_SENT": "Votre <b>paiement</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectué.",
+    "TX_SENT_MULTI": "Votre <b>paiement</b> à <b>{{params[1]}}</b> a été effectué.",
+    "TX_RECEIVED": "Vous avez <b>reçu un paiement</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "TX_RECEIVED_MULTI": "Vous avez <b>reçu un paiement</b> de <b>{{params[1]}}</b>.",
     "MARKET": {
-      "NEW_COMMENT": "<b>{{p0}}</b> a commenté votre annonce: <b>{{p1}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre annonce: <b>{{params[2]}}</b>"
     },
     "REGISTRY": {
-      "NEW_COMMENT": "<b>{{p0}}</b> a commenté votre référencement: <b>{{p1}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement: <b>{{params[2]}}</b>"
     }
   }
 }

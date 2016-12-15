@@ -8,7 +8,14 @@
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
-    "BTN_ADD_PICTURE": "Add picture"
+    "BTN_ADD_PICTURE": "Add picture",
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_AS_READ": "Mark all as read",
+      "NO_RESULT": "No notification",
+      "SETTINGS": "Paramètres",
+      "SHOW_ALL": "Show all"
+    }
   },
   "MENU": {
     "MARKET": "Ads",
@@ -39,6 +46,10 @@
     "BTN_REPLY": "Reply",
     "BTN_COMPOSE": "New message",
     "BTN_WRITE": "Write",
+    "POPOVER": {
+      "TITLE": "Messages",
+      "MESSAGE_RECEIVED": "You <b>received a message</b><br/>from"
+    },
     "INBOX": {
       "NO_MESSAGE": "No message received",
       "TITLE": "Messages"
@@ -72,7 +83,8 @@
       "USER_NOT_RECIPIENT": "You are not the recipient of this message: unable to read it.",
       "NOT_AUTHENTICATED_MESSAGE": "The authenticity of the message is not certain or its content is corrupted.",
       "REMOVE_MESSAGE_FAILED": "Error while deleting message",
-      "MESSAGE_CONTENT_TOO_LONG": "Value too long ({{maxLength}} characters max)."
+      "MESSAGE_CONTENT_TOO_LONG": "Value too long ({{maxLength}} characters max).",
+      "MARK_AS_READ_FAILED": "Unable to mark the message as 'read'."
     }
   },
   "MARKET": {
@@ -248,19 +260,21 @@
     }
   },
   "EVENT": {
-    "NODE_STARTED": "Your node ES API <b>{{p0}}</b> is UP",
-    "NODE_BMA_DOWN": "Node <b>{{p0}}:{{p1}}</b> unreacheable (used by your ES API <b>{{p2}}</b>).<br/>Date of last connexion: {{p3|formatDate}}.",
-    "NODE_BMA_UP": "Node <b>{{p0}}:{{p1}}</b> is reacheable again.",
-    "MEMBER_JOIN": "You become a <b>member</b> of currency <b>{{p0}}</b>!",
-    "MEMBER_LEAVE": "You are <b>not member anymore</b> of currency <b>{{p0}}</b>!",
-    "MEMBER_ACTIVE": "Your membership to <b>{{p0}}</b> has been <b>renew successfully</b>.",
-    "TX_SENT": "Your payment to <b>{{p0|formatPubkey}}</b> was executed.",
-    "TX_RECEIVED": "You received a payment from <b>{{p0|formatPubkey}}</b>.",
+    "NODE_STARTED": "Your node ES API <b>{{params[0]}}</b> is UP",
+    "NODE_BMA_DOWN": "Node <b>{{params[0]}}:{{params[1]}}</b> unreacheable (used by your ES API <b>{{params[2]}}</b>).<br/>Date of last connexion: {{p3|formatDate}}.",
+    "NODE_BMA_UP": "Node <b>{{p0}}:{{params[1]}}</b> is reacheable again.",
+    "MEMBER_JOIN": "You become a <b>member</b> of currency <b>{{params[0]}}</b>!",
+    "MEMBER_LEAVE": "You are <b>not member anymore</b> of currency <b>{{params[0]}}</b>!",
+    "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renew successfully</b>.",
+    "TX_SENT": "TODO translate:Your payment to <b>{{params[1]}}</b> was executed.",
+    "TX_SENT_MULTI": "Your payment to <b>{{params[1]}}</b> was executed.",
+    "TX_RECEIVED": "TODO translate: You received a payment from <b>{{params[1]}}</b>.",
+    "TX_RECEIVED_MULTI": "You received a payment from <b>{{params[1]}}</b>.",
     "MARKET": {
-      "NEW_COMMENT": "<b>{{p0}}</b> commented on your ad: <b>{{p1}}</b>"
+      "NEW_COMMENT": "<b>{{params[1]}}</b> commented on your ad: <b>{{params[2]}}</b>"
     },
     "REGISTRY": {
-      "NEW_COMMENT": "<b>{{p0}}</b> commented on your referencing: <b>{{p1}}</b>"
+      "NEW_COMMENT": "<b>{{params[1]}}</b> commented on your referencing: <b>{{params[2]}}</b>"
     }
   }
 }

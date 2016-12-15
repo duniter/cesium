@@ -81,9 +81,11 @@
          ng-class="{'icon ion-person': !identity.avatarStyle, 'avatar': identity.avatarStyle}">
       </i>
 
-      <h2 ng-if="identity.name" ng-bind-html="identity.name"></h2>
-      <h2 ng-if="!identity.name && identity.uid">{{::identity.uid}}</h2>
-      <h2 ng-if="!identity.name && !identity.uid">{{::identity.pubkey|formatPubkey}}</h2>
+      <h2>
+        <ng-if ng-if="identity.name||identity.uid" ng-bind-html="identity.name||identity.uid"></ng-if>
+        <ng-if ng-if="!identity.name && !identity.uid">{{::identity.pubkey|formatPubkey}}</ng-if>
+      </h2>
+
       <h4 class="gray"
           ng-class="{'pull-right': !smallscreen}"
           ng-if="identity.sigDate">
@@ -99,8 +101,7 @@
       <h4 class="gray">
         <span class="positive" ng-if="identity.name && identity.uid">
           <i class="ion-person"></i>
-          {{::identity.uid}}
-          &nbsp;
+          {{::identity.uid}}&nbsp;
         </span>
         <b class="ion-key"></b>
         {{::identity.pubkey | formatPubkey}}

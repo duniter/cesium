@@ -10,6 +10,7 @@ angular.module('cesium.es.plugin', [
     'cesium.es.market.controllers',
     'cesium.es.registry.controllers',
     'cesium.es.user.controllers',
-    'cesium.es.message.controllers'
+    'cesium.es.message.controllers',
+    'cesium.es.notification.controllers'
   ])
 ;

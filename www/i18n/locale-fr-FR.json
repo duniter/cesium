@@ -58,12 +58,6 @@
       "SHARE_ON_FACEBOOK": "Partager sur Facebook",
       "SHARE_ON_DIASPORA": "Partager sur Diaspora*",
       "SHARE_ON_GOOGLEPLUS": "Partager sur Google+"
-    },
-    "NOTIFICATIONS": {
-      "TITLE": "Notifications",
-      "MARK_ALL_AS_READ": "Tout marquer comme lu",
-      "NO_RESULT": "Aucune notification",
-      "SHOW_ALL": "Voir tout"
     }
   },
   "SYSTEM": {

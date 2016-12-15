@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons" cache-view="false">
+<ion-view left-buttons="leftButtons" cache-view="false" class="inboxMessage">
   <ion-nav-title>
     <span translate>MESSAGE.INBOX.TITLE</span>
   </ion-nav-title>
@@ -31,7 +31,7 @@
 
     <ion-list class="animate-ripple" ng-if="!loading">
 
-      <div class="padding gray" ng-if="messages.length===0 " translate>
+      <div class="padding gray" ng-if="!messages.length" translate>
         MESSAGE.INBOX.NO_MESSAGE
       </div>
 
@@ -44,22 +44,25 @@
            ng-class="{'icon ion-person': !msg.avatarStyle, 'avatar': msg.avatarStyle}">
         </i>
 
-        <h4 class="gray pull-right">{{msg.time|formatFromNow}} - {{msg.time|formatDate}}</h4>
+        <h4 class="pull-right">
+          <span class="dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</span>
+          <span class="gray">| {{::msg.time|formatDate}}</span>
+        </h4>
         <h3>
           <a class="positive"
              ng-if="msg.name||msg.uid"
-             ui-sref="app.wot_view_identity({pubkey:msg.pubkey, uid:msg.name||msg.uid})">
+             ui-sref="app.wot_view_identity({pubkey:msg.issuer, uid:msg.name||msg.uid})">
             <i class="ion-person"></i>
-            {{msg.name||msg.uid}}
+            {{::msg.name||msg.uid}}
           </a>
           <a class="gray" ng-if="!msg.name && !msg.uid"
-             ui-sref="app.wot_view_identity({pubkey:msg.pubkey})">
+             ui-sref="app.wot_view_identity({pubkey:msg.issuer})">
             <i class="ion-key"></i>
-            {{msg.pubkey|formatPubkey}}
+            {{::msg.issuer|formatPubkey}}
           </a>
         </h3>
-        <h2 >{{msg.title}}</h2>
-        <p>{{msg.content}}</p>
+        <h2 ng-class="{'unread': !msg.read}">{{::msg.title}}</h2>
+        <p>{{::msg.content}}</p>
         <i class="icon ion-ios-arrow-right "></i>
         <ion-option-button class="button-stable"
                            ng-click="showReplyModal($index)"
