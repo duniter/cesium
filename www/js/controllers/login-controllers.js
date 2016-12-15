@@ -17,7 +17,8 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
   $scope.autoComputePubkey = false;
 
   Device.ready().then(function() {
-    $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a';
+    $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a' &&
+      !UIUtils.screen.isSmall();
   });
 
   // Login form submit

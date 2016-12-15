@@ -21,6 +21,18 @@ Try it at: http://cesium.duniter.fr
 
 Cesium can be easily installed on most web server.
 
+#### Minimal install from source
+if you don't allready use nodejs, see [Prerequisite](https://github.com/duniter/cesium#prerequisite)
+```bash
+git clone https://github.com/duniter/cesium.git
+cd cesium
+npm install
+npm start
+```
+Answer asked questions.
+
+Your cesium instance is now reacheable on : [http://localhost:8100/](http://localhost:8100/) or an other ip if your listen on an other interface.
+
 #### Installation script
 
 For Linux distribution, a installation script could be used to:

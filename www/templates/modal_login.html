@@ -23,11 +23,13 @@
           <input ng-if="!showSalt"
                  name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                  ng-model="formData.username"
+                 ng-model-options="{ debounce: 650 }"
                  class="highlight-light"
                  required>
           <input ng-if="showSalt"
                  name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                  ng-model="formData.username"
+                 ng-model-options="{ debounce: 650 }"
                  class="highlight-light"
                  required>
         </label>
@@ -56,6 +58,7 @@
           <span class="input-label hidden-xs" translate>LOGIN.PASSWORD</span>
           <input name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                  ng-model="formData.password"
+                 ng-model-options="{ debounce: 650 }"
                  select-on-click
                  required>
         </label>
