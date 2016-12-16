@@ -797,8 +797,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     truncBase = function(amount, base) {
+      var pow = Math.pow(10, base); // = min value in this base
+      if (amount < pow) return 0;
+      return Math.trunc(amount / pow ) * pow;
+    },
+
+    truncBaseOrMinBase = function(amount, base) {
       var pow = Math.pow(10, base);
-      if (amount < pow) return pow; // min value = 1*10^base
+      if (amount < pow) return pow; //
       return Math.trunc(amount / pow ) * pow;
     },
 
@@ -925,7 +931,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           }
           // Avoid to get outputs on lower base
           if (amountBase < inputs.minBase && !isBase(amount, inputs.minBase)) {
-            amount = truncBase(amount, inputs.minBase);
+            amount = truncBaseOrMinBase(amount, inputs.minBase);
             console.debug("[wallet] Amount has been truncate to " + amount);
           }
           else if (amountBase > 0) {
@@ -982,6 +988,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (inputs.sources.length > 40) {
         console.debug("[Wallet] TX has to many sources. Will chain TX...");
 
+        // Compute a slice of sources
         var firstSlice = {
           minBase: block.unitbase,
           maxBase: 0,
@@ -989,9 +996,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           sources: inputs.sources.slice(0, 39)
         };
         _.forEach(firstSlice.sources, function(source) {
-          if (source.base < minBase) firstSlice.minBase = source.base;
-            if (source.base > maxBase) firstSlice.maxBase = source.base;
-          firstSlice.amount += source.amount;
+          if (source.base < firstSlice.minBase) firstSlice.minBase = source.base;
+          if (source.base > firstSlice.maxBase) firstSlice.maxBase = source.base;
+          firstSlice.amount += powBase(source.amount, source.base);
         });
 
         // Send inputs first slice
@@ -1009,8 +1016,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               sources: inputs.sources.slice(40).concat(res.sources)
             };
             _.forEach(secondSlice.sources, function(source) {
-              if (source.base < minBase) secondSlice.minBase = source.base;
-              if (source.base > maxBase) secondSlice.maxBase = source.base;
+              if (source.base < secondSlice.minBase) secondSlice.minBase = source.base;
+              if (source.base > secondSlice.maxBase) secondSlice.maxBase = source.base;
               secondSlice.amount += source.amount;
             });
 
@@ -1046,28 +1053,32 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var outputBase = inputs.maxBase;
       var outputAmount;
       var outputOffset = 0;
-      while(rest > 0) {
-        outputAmount = truncBase(rest, outputBase);
-        rest -= outputAmount;
-        if (outputAmount > 0) {
-          outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-          tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
-          outputOffset++;
+      var newSources = [];
+      // Outputs to receiver (if not himself)
+      if (destPub !== data.pubkey) {
+        while(rest > 0) {
+          outputAmount = truncBase(rest, outputBase);
+          rest -= outputAmount;
+          if (outputAmount > 0) {
+            outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
+            tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
+            outputOffset++;
+          }
+          outputBase--;
         }
-        outputBase--;
+        rest = inputs.amount - amount;
+        outputBase = inputs.maxBase;
       }
-      rest = inputs.amount - amount;
-      outputBase = inputs.maxBase;
-      var sources = [];
+      // Outputs to himself
       while(rest > 0) {
         outputAmount = truncBase(rest, outputBase);
         rest -= outputAmount;
         if (outputAmount > 0) {
           outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
           tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n';
-          sources.push({
+          newSources.push({
             type: 'T',
-            noffset: outputOffset++,
+            noffset: outputOffset,
             amount: outputAmount,
             base: outputBase
           });
@@ -1082,18 +1093,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(signature) {
           var signedTx = tx + signature + "\n";
           return BMA.tx.process({transaction: signedTx})
+            .catch(function(err) {
+              if (err && err.ucode === BMA.errorCodes.TX_ALREADY_PROCESSED) {
+                // continue
+                return;
+              }
+              throw err;
+            })
             .then(function() {
               return CryptoUtils.util.hash(signedTx);
             })
             .then(function(txHash) {
-              _.forEach(sources, function(output) {
+              _.forEach(newSources, function(output) {
                 output.identifier= txHash;
                 output.consumed = false;
                 output.pending = true;
               });
               return {
                 hash: txHash,
-                sources: sources
+                sources: newSources
               };
             });
         });
