@@ -56,17 +56,17 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
     return esNotification.load(csWallet.data.pubkey, options)
-      .then(function(notifications) {
-        $scope.search.results = notifications;
+      .then(function(res) {
+        $scope.search.results = res || [];
         $scope.search.loading = false;
-        $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
+        $scope.search.hasMore = $scope.search.results.length >= $scope.search.limit;
         $scope.updateView();
       })
       .catch(function(err) {
         $scope.search.loading = false;
         $scope.search.results = [];
         $scope.search.hasMore = false;
-        UIUtils.onError('ERROR.LOAD_NOTIFICATIONS_FAILED')(err);
+        UIUtils.onError('COMMON.NOTIFICATIONS.LOAD_NOTIFICATIONS_FAILED')(err);
       });
   };
 
@@ -97,7 +97,7 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
 
   $scope.showMore = function() {
     $scope.search.limit = $scope.search.limit || defaultSearchLimit;
-    $scope.search.limit = $scope.search.limit * 2;
+    $scope.search.limit += defaultSearchLimit;
     if ($scope.search.limit < defaultSearchLimit) {
       $scope.search.limit = defaultSearchLimit;
     }

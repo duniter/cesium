@@ -26,78 +26,68 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       var postRequest = csHttp.post(host, node, path);
 
       return function(record, params) {
-        return $q(function(resolve, reject) {
-          if (!csWallet.isLogin()) {
-            reject('Wallet must be login before sending record to ES node'); return;
-          }
-          var errorFct = function(err) {
-            reject(err);
-          };
-          if (!record.time) {
-            record.time = getTimeNow();
-          }
-          var keypair = $rootScope.walletData.keypair;
-          var obj = {};
-          angular.copy(record, obj);
-          delete obj.signature;
-          delete obj.hash;
-          obj.issuer = $rootScope.walletData.pubkey;
-          var str = JSON.stringify(obj);
+        if (!csWallet.isLogin()) {
+          var deferred = $q.defer();
+          deferred.reject('Wallet must be login before sending record to ES node');
+          return deferred.promise;
+        }
 
-          CryptoUtils.util.hash(str)
+        if (!record.time) {
+          record.time = getTimeNow();
+        }
+        var keypair = $rootScope.walletData.keypair;
+        var obj = {};
+        angular.copy(record, obj);
+        delete obj.signature;
+        delete obj.hash;
+        obj.issuer = $rootScope.walletData.pubkey;
+        var str = JSON.stringify(obj);
+
+        return CryptoUtils.util.hash(str)
           .then(function(hash) {
-            CryptoUtils.sign(str, keypair)
-            .then(function(signature) {
-              obj.hash = hash;
-              obj.signature = signature;
-              postRequest(obj, params)
-              .then(function (id){
-                resolve(id);
-              })
-              .catch(errorFct);
-            })
-            .catch(errorFct);
-          })
-          .catch(errorFct);
-        });
+            return CryptoUtils.sign(str, keypair)
+              .then(function(signature) {
+                obj.hash = hash;
+                obj.signature = signature;
+                return postRequest(obj, params)
+                  .then(function (id){
+                    return id;
+                  });
+              });
+            });
       };
     }
 
     function removeRecord(host, node, index, type) {
       var postHistoryDelete = csHttp.post(host, node, '/history/delete');
       return function(id) {
-        return $q(function(resolve, reject) {
-          if (!csWallet.isLogin()) {
-            reject('Wallet must be login before sending record to ES node'); return;
-          }
-          var errorFct = function(err) {
-            reject(err);
-          };
-          var keypair = $rootScope.walletData.keypair;
-          var obj = {
-            index: index,
-            type: type,
-            id: id,
-            issuer: $rootScope.walletData.pubkey,
-            time: getTimeNow()
-          };
-          var str = JSON.stringify(obj);
-          CryptoUtils.util.hash(str)
+        if (!csWallet.isLogin()) {
+          var deferred = $q.defer();
+          deferred.reject('Wallet must be login before sending record to ES node');
+          return deferred.promise;
+        }
+
+        var keypair = $rootScope.walletData.keypair;
+        var obj = {
+          index: index,
+          type: type,
+          id: id,
+          issuer: $rootScope.walletData.pubkey,
+          time: getTimeNow()
+        };
+        var str = JSON.stringify(obj);
+        return CryptoUtils.util.hash(str)
           .then(function(hash) {
-            CryptoUtils.sign(str, keypair)
-            .then(function(signature) {
-              obj.hash = hash;
-              obj.signature = signature;
-              postHistoryDelete(obj)
-              .then(function (id){
-                resolve(id);
-              })
-              .catch(errorFct);
-            })
-            .catch(errorFct);
-          })
-          .catch(errorFct);
-        });
+            return CryptoUtils.sign(str, keypair)
+              .then(function(signature) {
+                obj.hash = hash;
+                obj.signature = signature;
+                return postHistoryDelete(obj)
+                  .then(function (id){
+                    return id;
+                  });
+              });
+          });
       };
     }
 

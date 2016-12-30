@@ -5,80 +5,104 @@
 </div>
 
 <span class="item item-more-comments"
-      ng-if="comments && comments.length === maxCommentSize">
+      ng-if="comments.hasMore">
   <small><a ng-click="showMoreComments()" translate>COMMENTS.SHOW_MORE_COMMENTS</a></small>
 </span>
 
-<ng-repeat  ng-if="comments && comments.length>0"
-            ng-repeat="comment in comments track by comment.id">
+<ng-repeat ng-repeat="comment in comments.result track by comment.id"
 
-  <a name="{{::comment.id|formatHash}}"></a>
-
-  <ion-item class="card card-comment stable-bg item-text-wrap no-padding"
-            ng-class="{'in done': comment.isnew}">
-    <div class="padding card-header text-right">
-      <a class="pull-left"
-         ng-class="{'positive': comment.uid, 'dark': !comment.uid}"
-         ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.name||comment.uid})">
-        <ng-if ng-if="comment.uid">
-          <i class="icon ion-person"></i>
-          {{::comment.name||comment.uid}}
-        </ng-if>
-        <span ng-if="!comment.uid">
-          <i class="icon ion-key"></i>
-          {{::comment.issuer|formatPubkey}}
-        </span>
-      </a>
-      <a class="gray pull-right" ng-click="shareComment($event, $index)">&nbsp;
-        {{::comment.time | formatFromNow}}
-      </a>
-    </div>
-    <div class="item item-avatar done in">
-      <span class="avatar"
-            ng-style="comment.avatarStyle"
-            ng-class="{'avatar-member': !comment.avatarStyle && comment.uid, 'avatar-wallet': !comment.avatarStyle && !comment.uid}"></span>
-      <span ng-bind-html="comment.message"></span>
-      <div class="card-footer text-right gray">
-        <a class="pull-right" ng-click="shareComment($event, $index)">
-          &nbsp;<b class="icon ion-android-share-alt"></b>&nbsp;
-        </a>
-        <span class="pull-right">&nbsp;&nbsp;</span>
-        <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="editComment($index)">
-          &nbsp;<b class="icon ion-edit"></b>&nbsp;
-        </a>
-        <span class="pull-right">&nbsp;&nbsp;</span>
-        <a class="pull-right" ng-if="isUserPubkey(comment.issuer)" ng-click="removeComment($index)">
-          &nbsp;<b class="icon ion-trash-a"></b>&nbsp;
-        </a>
-      </div>
-    </div>
-
-  </ion-item>
+           ng-include="'plugins/es/templates/common/item_comment.html'">
 </ng-repeat>
 
 <div class="hidden-xs hidden-sm">
   <div class="card card-comment item item-input item-button-right">
-    <textarea class="padding" style="background-color: transparent;"
-            rows="5"
-            placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
-            ng-model="commentData.message"></textarea>
 
-    <button class="button button-small button-small-padding" ng-click="sendComment()" translate>
-      COMMON.BTN_SEND
-    </button>
+    <!-- reply to comment-->
+    <ng-if ng-if="formCommentData.parent">
+      <div class="padding card-header text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
+      <div class="padding-left">
+        <div class="card card-avatar card-avatar-small stable-900-bg item-text-wrap no-padding in done">
+          <ng-include ng-if="formCommentData.parent.message"
+                      ng-init="comment = formCommentData.parent"
+                      src="'plugins/es/templates/common/item_comment_content.html'">
+          </ng-include>
+          <div class="item dark done in gray" ng-if="!formCommentData.parent.message">
+            {{::'COMMENTS.DELETED_COMMENT'|translate}}
+          </div>
+          <div class="card-footer text-right gray">
+            <div class="pull-right">
+              <a class="ion-close" ng-click="cancelCommentReplyTo()">
+                {{::'COMMENTS.CANCEL_REPLY_TO'|translate}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-if>
+    <textarea class="padding"
+              style="background-color: transparent;"
+              id="comment-form-textarea"
+              rows="3"
+              placeholder="{{formCommentData.replyTo ? 'COMMENTS.COMMENT_HELP_REPLY_TO' : 'COMMENTS.COMMENT_HELP'|translate}}"
+              ng-model="formCommentData.message">
+    </textarea>
+    <div class="card-footer text-right">
+      <button class="button button-small button-small-padding"
+              ng-class="{'button-positive': formCommentData.message.length}"
+              ng-if="!formCommentData.id"
+              ng-click="saveComment()" translate>
+        COMMON.BTN_SEND
+      </button>
+      <!-- Edit buttons -->
+      <ng-if ng-if="formCommentData.id">
+        <button class="button button-small button-small-padding"
+                ng-click="cancelReplyComment()" translate>
+          COMMON.BTN_CANCEL
+        </button>
+        <button class="button button-small button-small-padding button-positive"
+                ng-click="saveComment()" translate>
+          COMMON.BTN_SAVE
+        </button>
+      </ng-if>
+    </div>
   </div>
 </div>
 
-<div class="visible-sm visible-sm ">
+<div class="visible-xs visible-sm">
   <div class="block">
-    <div class="item  visible-xs item-input-inset">
+    <div class="item item-input-inset">
+
+      <!-- reply to comment-->
+      <ng-if ng-if="formCommentData.parent">
+        <div class="padding text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
+        <div class="padding-left expanded">
+          <div class="card card-comment stable-900-bg item-text-wrap no-padding in done">
+            <ng-include ng-if="formCommentData.parent.message"
+                        ng-init="comment = formCommentData.parent"
+                        src="'plugins/es/templates/common/item_comment_content.html'">
+            </ng-include>
+            <span ng-if="!formCommentData.parent.message" translate>
+              COMMENTS.DELETED_COMMENT
+            </span>
+            <div class="card-footer text-right gray">
+              <div class="pull-right">
+                <a class="ion-close" ng-click="cancelCommentReplyTo()">
+                  {{::'COMMENTS.CANCEL_REPLY_TO'|translate}}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-if>
+
       <div class="item-input-wrapper">
         <input type="text"
+               id="comment-form-input"
                style="width: 100%"
                placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
-               on-return="sendComment();"
-               ng-model="commentData.message"/>
-        <button class="button button-small button-small-padding button-icon button-dark button-icon icon ion-android-send gray" ng-click="sendComment()">
+               on-return="saveComment();"
+               ng-model="formCommentData.message"/>
+        <button class="button button-small button-small-padding button-icon button-dark button-icon icon ion-android-send gray" ng-click="saveComment()">
         </button>
       </div>
     </div>

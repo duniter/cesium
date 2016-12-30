@@ -3,7 +3,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
 .factory('esMarket', function($q, csSettings, esHttp, esComment) {
   'ngInject';
 
-  function factory(host, port) {
+  function factory(host, port, wsPort) {
 
     var
     categories = [],
@@ -101,15 +101,16 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
         picture: {
           all: esHttp.get(host, port, '/market/record/:id?_source=pictures')
         },
-        comment: esComment.instance(host, port, 'market')
+        comment: esComment.instance(host, port, wsPort, 'market')
       }
     };
   }
 
   var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
   var port = host ? csSettings.data.plugins.es.port : null;
+  var wsPort = host && csSettings.data.plugins.es.wsPort ? csSettings.data.plugins.es.wsPort : port;
 
-  var service = factory(host, port);
+  var service = factory(host, port, wsPort);
 
   service.instance = factory;
   return service;

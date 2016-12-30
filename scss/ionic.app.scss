@@ -24,7 +24,7 @@ $dark:                            #444 !default;
 //$balanced:                        #94c11f !default;
 
 $active: #b2e0ff !default;
-$stable-bg: #e0e0e0 !default;
+$stable-900-bg: #e0e0e0 !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -869,14 +869,25 @@ $screen-menu:                     845px;
   filter: alpha(opacity=80);
 }
 
+.card.stable-900-bg,
+.card .stable-900-bg,
+.item.stable-900-bg,
+.item .stable-900-bg,
+.item-complex .item-content .stable-900-bg,
+.item-radio .item-content .stable-900-bg{
+  background-color: $stable-900-bg !important;
+}
+.card .item {
+  background: inherit;
+}
+
+.card.stable-bg,
+.card .stable-bg,
 .item.stable-bg,
 .item .stable-bg,
 .item-complex .item-content .stable-bg,
 .item-radio .item-content .stable-bg{
-  background-color: $stable-bg !important;
-}
-.card .item {
-  background: inherit;
+  background-color: $stable !important;
 }
 
 .card .card-header {
@@ -885,16 +896,81 @@ $screen-menu:                     845px;
   min-height: 25px;
 }
 
-
 .card .item .card-footer {
   margin-bottom: 5px;
 }
 
-.card.card-comment .avatar{
-  box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
-  top: 7px;
-  background-color: #D9D9D9;
+.card.card-avatar {
+  .avatar {
+    box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
+    top: 7px;
+    background-color: #D9D9D9;
+  }
+  .item.item-avatar {
+    padding-top: 10px;
+    padding-bottom: 2px;
+    min-height: 45px !important;
+  }
+  .card-footer {
+    padding-left: 88px;
+
+    .pull-right {
+      a {
+        margin-right: 8px;
+      }
+    }
+  }
 }
+
+a.underline:focus,
+.underline a:focus,
+.a.underline:active,
+.underline a:active,
+a.underline:hover,
+.underline a:hover {
+  outline: 1px !important;
+  text-decoration: underline !important;
+}
+
+.animate-fade-slide-in .expanded .item,
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded .item,
+.animate-ripple .expanded.item
+.card-avatar-small.expanded .item
+.card-avatar-small .expanded .item
+.card-avatar-small.expanded .card.card-comment
+.card-avatar-small .expanded .card.card-comment
+{
+  @extend .done;
+  @extend .in;
+}
+
+.card-avatar-small.card,
+.card-avatar-small .card,
+.card-avatar-small .card.card-avatar,
+.card-avatar-small .card .card-avatar {
+
+  min-height: 45px;
+
+  .avatar, .item-avatar .avatar {
+    box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.26);
+    height: 30px !important;
+    width: 30px !important;
+    left: 5px !important;
+  }
+
+  .item.item-avatar {
+    min-height: 25px !important;
+    padding-left: 42px !important;
+  }
+  .card-footer {
+    padding-top: 0px;
+    padding-left: 42px !important;
+  }
+}
+
 
 .gallery .card-gallery,
 .gallery .card.card-gallery{
@@ -1282,7 +1358,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   height: 88px;
   width: 88px;
   color: #D9D9D9;
-  background-color: $stable-bg;
+  background-color: $stable-900-bg;
   border: solid 1px #D9D9D9;
 }
 
@@ -1465,7 +1541,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 
   .avatar.active {
-    background-color: $stable-bg;
+    background-color: $stable-900-bg;
   }
 
   .avatar.avatar-member {

@@ -14,7 +14,8 @@
       "MARK_ALL_AS_READ": "Tout marquer comme lu",
       "NO_RESULT": "Aucune notification",
       "SETTINGS": "Paramètres",
-      "SHOW_ALL": "Voir tout"
+      "SHOW_ALL": "Voir tout",
+      "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
     }
   },
   "MENU": {
@@ -35,9 +36,17 @@
   "COMMENTS": {
     "DIVIDER": "Commentaires",
     "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents",
-    "COMMENT_HELP": "Nouveau commentaire, question, etc.",
+    "COMMENT_HELP": "Votre commentaire, question, etc.",
+    "COMMENT_HELP_REPLY_TO": "Votre réponse...",
     "BTN_SEND": "Envoyer",
-    "POPOVER_SHARE_TITLE": "Message #{{number}}"
+    "POPOVER_SHARE_TITLE": "Message #{{number}}",
+    "REPLY": "Répondre",
+    "REPLY_TO": "Réponse à :",
+    "REPLY_TO_LINK": "En réponse à ",
+    "REPLY_TO_DELETED_COMMENT": "En réponse à un commentaire supprimé",
+    "CANCEL_REPLY_TO": "Annuler",
+    "REPLY_COUNT": "{{replyCount}} réponses",
+    "DELETED_COMMENT": "Commentaire supprimé"
   },
   "MESSAGE": {
     "REMOVE_CONFIRMATION": "Etes-vous sur de vouloir supprimer ce message ?<br/><br/>Cette opération est irréversible.",
@@ -50,8 +59,11 @@
       "TITLE": "Messages",
       "MESSAGE_RECEIVED": "Vous avez <b>reçu un message</b><br/>de"
     },
-    "INBOX": {
-      "NO_MESSAGE": "Aucun message reçu",
+    "LIST": {
+      "NO_MESSAGE_INBOX": "Aucun message reçu",
+      "NO_MESSAGE_OUTBOX": "Aucun message envoyé",
+      "INBOX": "Boite de réception",
+      "OUTBOX": "Messages envoyés",
       "TITLE": "Messages privés"
     },
     "COMPOSE": {
@@ -77,14 +89,15 @@
     },
     "ERROR": {
       "SEND_MSG_FAILED": "Erreur lors de l'envoi du message.",
-      "SEARCH_FAILED": "Erreur lors de la récupération des messages.",
+      "LOAD_MESSAGES_FAILED": "Erreur lors de la récupération des messages.",
       "LOAD_MESSAGE_FAILED": "Erreur lors de la récupération du message.",
       "MESSAGE_NOT_READABLE": "Lecture du message impossible.",
       "USER_NOT_RECIPIENT": "Vous n'etes pas le destinataire de ce message : déchiffrement impossible.",
       "NOT_AUTHENTICATED_MESSAGE": "L'authenticité du message est douteuse ou son contenu est corrompu.",
       "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message",
       "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max).",
-      "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'."
+      "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
+      "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages."
     }
   },
   "MARKET": {
@@ -137,6 +150,7 @@
       "FAILED_SAVE_RECORD": "Erreur lors de l'enregistrement de l'annonce",
       "FAILED_UPDATE_RECORD": "Erreur lors de la mise à jour de l'annonce",
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
+      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'annonce.",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de l'annonce",
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
@@ -203,6 +217,7 @@
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la fiche",
+      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de la fiche",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Fiche inexistante"

@@ -29,8 +29,8 @@ angular.module("cesium.config", [])
 		}
 	},
 	"node": {
-		"host": "192.168.0.28",
-		"port": 21378
+		"host": "test-net.duniter.fr",
+		"port": "9201"
 	},
 	"plugins": {
 		"es": {
@@ -40,18 +40,14 @@ angular.module("cesium.config", [])
 			"port": 9200,
 			"wsPort": 9400,
 			"notifications": {
-				"txReceived": true,
-        "txSent": false
+				"tx": {
+					"enable": false
+				}
 			}
 		}
 	},
-<<<<<<< HEAD
-	"version": "0.5.1",
-	"build": "2016-12-08T17:20:54.422Z",
-=======
 	"version": "0.5.2",
-	"build": "2016-11-19T12:56:03.326Z",
->>>>>>> origin/master
+	"build": "2016-12-15T13:50:47.026Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

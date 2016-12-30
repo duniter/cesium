@@ -9,8 +9,8 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
         url: "/user/message",
         views: {
           'menuContent': {
-            templateUrl: "plugins/es/templates/message/inbox.html",
-            controller: 'ESMessageInboxCtrl'
+            templateUrl: "plugins/es/templates/message/list.html",
+            controller: 'ESMessageListCtrl'
           }
         }
       })
@@ -28,7 +28,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
 
       .state('app.user_view_message', {
         cache: false,
-        url: "/user/message/view/:id",
+        url: "/user/message/view/:type/:id",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/message/view_message.html",
@@ -40,7 +40,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
     ;
   })
 
-  .controller('ESMessageInboxCtrl', ESMessageInboxController)
+  .controller('ESMessageListCtrl', ESMessageListController)
 
   .controller('ESMessageComposeCtrl', ESMessageComposeController)
 
@@ -52,10 +52,11 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
 
 ;
 
-function ESMessageInboxController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, esModals, UIUtils, esMessage) {
+function ESMessageListController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, esModals, UIUtils, esMessage) {
   'ngInject';
 
   $scope.loading = true;
+  $scope.type = 'inbox';
   $scope.messages = [];
 
   $scope.$on('$ionicView.enter', function(e) {
@@ -83,6 +84,7 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
     var options  = {};
     options.from = offset || 0;
     options.size = size || 20;
+    options.type = $scope.type;
 
     $scope.loading = true;
     return esMessage.load($rootScope.walletData.keypair, options)
@@ -104,7 +106,7 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
         }
       })
       .catch(function(err) {
-        UIUtils.onError('MESSAGE.ERROR.SEARCH_FAILED')(err);
+        UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGES_FAILED')(err);
         $scope.messages = [];
         $scope.loading = false;
       });
@@ -117,7 +119,7 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
     UIUtils.alert.confirm('MESSAGE.REMOVE_CONFIRMATION')
       .then(function(confirm) {
         if (confirm) {
-          esMessage.remove(message.id)
+          esMessage.remove(message.id, $scope.type)
             .then(function () {
               $scope.messages.splice(index,1); // remove from messages array
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
@@ -125,6 +127,11 @@ function ESMessageInboxController($scope, $rootScope, $state, $timeout, $transla
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));
         }
       });
+  };
+
+  $scope.setType = function(type) {
+    $scope.type = type;
+    $scope.load();
   };
 
   /* -- Modals -- */
@@ -310,7 +317,9 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   $scope.$on('$ionicView.enter', function (e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
       if ($scope.loading) { // prevent reload if same id
-        $scope.load(state.stateParams.id)
+        $scope.type = state.stateParams.type || 'inbox';
+
+        $scope.load(state.stateParams.id, $scope.type)
           .then(function(message) {
             $scope.loading = false;
             UIUtils.loading.hide();
@@ -348,11 +357,12 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
     }
   });
 
-  $scope.load = function(id) {
+  $scope.load = function(id, type) {
+    type = type || 'inbox';
 
     return $scope.loadWallet()
       .then(function() {
-        return esMessage.get({id: id});
+        return esMessage.get({type: type, id: id});
       })
       .catch(UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGE_FAILED'))
       .then(function(message) {
@@ -375,12 +385,12 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
     UIUtils.alert.confirm('MESSAGE.REMOVE_CONFIRMATION')
       .then(function(confirm) {
         if (confirm) {
-          esMessage.remove($scope.formData.id)
+          esMessage.remove($scope.id, $scope.type)
             .then(function () {
               $ionicHistory.nextViewOptions({
                 historyRoot: true
               });
-              $state.go('app.user_message');
+              $state.go('app.user_message_type', {type});
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));
@@ -391,13 +401,14 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   /* -- Modals -- */
 
   $scope.showReplyModal = function() {
+    var recipientField = ($scope.type == 'inbox') ? 'issuer' : 'recipient';
     $translate('MESSAGE.REPLY_TITLE_PREFIX')
       .then(function (prefix) {
         var content = $scope.formData.content ? $scope.formData.content.replace(/^/g, ' > ') : null;
         content = content ? content.replace(/\n/g, '\n > ') : null;
         content = content ? content +'\n' : null;
         return esModals.showMessageCompose({
-            destPub: $scope.formData.issuer,
+            destPub: $scope.formData[recipientField],
             destUid: $scope.formData.name||$scope.formData.uid,
             title: prefix + $scope.formData.title,
             content: content,
@@ -444,7 +455,7 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotificat
         $scope.search.loading = false;
         $scope.search.results = [];
         $scope.search.hasMore = false;
-        UIUtils.onError('ERROR.LOAD_NOTIFICATIONS_FAILED')(err);
+        UIUtils.onError('MESSAGE.ERROR.LOAD_NOTIFICATIONS_FAILED')(err);
       });
   };
 

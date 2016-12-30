@@ -80,6 +80,8 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry, UIUtils, ModalUtils, $filter, BMA) {
   'ngInject';
 
+  var defaultSearchLimit = 10;
+
   $scope.search = {
     text: '',
     results: [],
@@ -106,6 +108,11 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
             $scope.doGetLastRecord();
           }, 100);
         }
+        // removeIf(device)
+        // Focus on search text (only if NOT device, to avoid keyboard opening)
+        $focus('registrySearchText');
+        // endRemoveIf(device)
+
         $scope.entered = true;
       };
 
@@ -142,11 +149,6 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
       }
     }
     $scope.showFab('fab-add-registry-record');
-
-    // removeIf(device)
-    // Focus on search text (only if NOT device, to avoid keyboard opening)
-    $focus('registrySearchText');
-    // endRemoveIf(device)
 
   });
 
@@ -247,81 +249,111 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   };
   $scope.$watch('search.options', $scope.onToggleOptions, true);
 
-  $scope.doGetLastRecord = function() {
-    $scope.search.looking = true;
+  $scope.doGetLastRecord = function(offset, size) {
+    offset = offset || 0;
+    size = size || defaultSearchLimit;
+    if (size < defaultSearchLimit) size = defaultSearchLimit;
+
     $scope.search.lastRecords = true;
 
     var request = {
       sort: {
         "time" : "desc"
       },
-      from: 0,
-      size: 20,
+      from: offset,
+      size: size,
       _source: esRegistry.record.fields.commons
     };
 
-    $scope.doRequest(request);
+    return $scope.doRequest(request, offset, size);
   };
 
-  $scope.doRequest = function(request) {
-    $scope.search.looking = true;
+  $scope.doRequest = function(request, offset, size) {
+    $scope.search.loading = (offset === 0);
 
-    esRegistry.category.all()
-      .then(function(categories) {
-        esRegistry.record.search(request)
-          .then(function(res){
-            if (res.hits.total === 0) {
-              $scope.search.results = [];
+    var categories;
+    return esRegistry.category.all()
+      .then(function(res) {
+        categories = res;
+        return esRegistry.record.search(request);
+      })
+      .then(function(res){
+        if (res.hits.total === 0) {
+          $scope.search.results = (offset > 0) ? $scope.search.results : [];
+          $scope.search.loading = false;
+          $scope.search.hasMore = false;
+          return;
+        }
+        var formatSlug = $filter('formatSlug');
+        var records = res.hits.hits.reduce(function(result, hit) {
+          var record = hit._source;
+          record.id = hit._id;
+          record.urlTitle = formatSlug(hit._source.title);
+          if (record.category && record.category.id) {
+            record.category = categories[record.category.id];
+          }
+          if (record.thumbnail) {
+            record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
+          }
+          if (hit.highlight) {
+            if (hit.highlight.title) {
+                record.title = hit.highlight.title[0];
             }
-            else {
-              var formatSlug = $filter('formatSlug');
-              var records = res.hits.hits.reduce(function(result, hit) {
-                  var record = hit._source;
-                  record.id = hit._id;
-                  record.urlTitle = formatSlug(hit._source.title);
-                  if (record.category && record.category.id) {
-                    record.category = categories[record.category.id];
-                  }
-                  if (record.thumbnail) {
-                    record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
-                  }
-                  if (hit.highlight) {
-                    if (hit.highlight.title) {
-                        record.title = hit.highlight.title[0];
-                    }
-                    if (hit.highlight.description) {
-                        record.description = hit.highlight.description[0];
-                    }
-                    if (hit.highlight.location) {
-                        record.location = hit.highlight.location[0];
-                    }
-                  }
-                  return result.concat(record);
-                }, []);
-              $scope.search.results = records;
-
-              if (records.length > 0) {
-                // Set Motion
-                $timeout(function() {
-                  UIUtils.motion.ripple({
-                    startVelocity: 3000
-                  });
-                  // Set Ink
-                  UIUtils.ink();
-                }, 10);
-              }
+            if (hit.highlight.description) {
+                record.description = hit.highlight.description[0];
             }
+            if (hit.highlight.location) {
+                record.location = hit.highlight.location[0];
+            }
+          }
+          return result.concat(record);
+        }, []);
 
-            $scope.search.looking = false;
-          })
-          .catch(function(err) {
-            $scope.search.looking = false;
-            $scope.search.results = [];
-          });
+        // Replace results, or append if 'show more' clicked
+        if (offset === 0) {
+          $scope.search.results = records;
+        }
+        else {
+          $scope.search.results = $scope.search.results.concat(records);
+        }
+        $scope.search.hasMore = $scope.search.results.length >= offset + size;
+        $scope.search.loading = false;
+
+        if (records.length > 0) {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.ripple({
+              startVelocity: 3000
+            });
+            // Set Ink
+            UIUtils.ink();
+          }, 10);
+        }
       })
       .catch(function(err) {
-        $scope.search.looking = false;
-        $scope.search.results = [];
+        $scope.search.loading = false;
+        $scope.search.results = (offset > 0) ? $scope.search.results : [];
+        $scope.search.hasMore = false;
+        UIUtils.onError('REGISTRY.ERROR.LOOKUP_RECORDS_FAILED')(err);
+      });
+  };
+
+  $scope.showMore= function() {
+    var offset = $scope.search.results ? $scope.search.results.length : 0;
+
+    $scope.search.loadingMore = true;
+
+    var searchFunction = ($scope.search.lastRecords) ?
+      $scope.doGetLastRecord :
+      $scope.doSearch;
+
+    return searchFunction(offset)
+      .then(function() {
+        $scope.search.loadingMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+      })
+      .catch(function(err) {
+        $scope.search.loadingMore = false;
       });
   };
 
@@ -336,7 +368,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     });
   };
 
-  $scope.showCategoryModal = function(parameters) {
+  $scope.showCategoryModal = function() {
     // load categories
     esRegistry.category.all()
     .then(function(categories){
@@ -375,7 +407,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 }
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
-                                        $anchorScroll, $filter,
+                                        $anchorScroll, $filter, $focus,
                                         csWallet, esRegistry, esUser, UIUtils, esHttp) {
   'ngInject';
 
@@ -386,7 +418,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.canEdit = false;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope,  $timeout, $filter, $state, csWallet, UIUtils, esHttp, esRegistry);
+  ESCommentsController.call(this, $scope,  $timeout, $filter, $state, $focus, UIUtils, esHttp, esRegistry);
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -400,86 +432,98 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   });
 
   $scope.load = function(id, anchor) {
-    $q.all([
-      esRegistry.category.all()
-      .then(function(categories) {
-        esRegistry.record.getCommons({id: id})
-        .then(function (hit) {
-          $scope.id= hit._id;
-          $scope.formData = hit._source;
-          if (hit._source.category && hit._source.category.id){
-            $scope.category = categories[hit._source.category.id];
-          }
-          if (hit._source.thumbnail) {
-            $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
-          }
-          else {
-            delete $scope.thumbnail;
-          }
-          $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
+    var categories;
 
-          // Load avatar and name (and uid)
-          return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
-            .then(function(idties) {
-              return idties[0];
-            });
-        })
-        .then(function(member){
-          $scope.issuer = member;
-          // Set Motion (only direct children, to exclude .lazy-load children)
-          $timeout(function() {
-            UIUtils.motion.fadeSlideIn({
-              selector: '.list > .item, .list > ng-if > .item',
-              startVelocity: 3000
-            });
-            UIUtils.ink({
-              selector: '.list .item.ink'});
-          }, 10);
-          UIUtils.loading.hide();
-          $scope.loading = false;
-        })
-        .catch(function(err) {
-          // Retry (ES could have error)
-          if (!$scope.secondTry) {
-            $scope.secondTry = true;
-            $q(function() {
-              $scope.load(id);
-            }, 100);
-          }
-          else {
-            UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
-          }
-        });
-      }),
-
-      // Load pictures
-      esRegistry.record.picture.all({id: id})
-      .then(function(hit) {
-        if (hit._source.pictures) {
-          $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-            return res.concat(UIUtils.image.fromAttachment(pic.file));
-          }, []);
+    esRegistry.category.all()
+      .then(function(res) {
+        categories = res;
+        return esRegistry.record.getCommons({id: id});
+      })
+      .then(function (hit) {
+        $scope.id= hit._id;
+        $scope.formData = hit._source;
+        if (hit._source.category && hit._source.category.id){
+          $scope.category = categories[hit._source.category.id];
         }
-      }),
+        if (hit._source.thumbnail) {
+          $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
+        }
+        else {
+          delete $scope.thumbnail;
+        }
+        $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
 
-      // Load comments
-      $scope.loadComments(id)
-    ])
-    .then(function() {
-      // Set Motion
-      $timeout(function() {
-        UIUtils.motion.fadeSlideIn({
-          selector: '.card-gallery, .card-comment, .lazy-load .item',
-          startVelocity: 3000
-        });
-        $anchorScroll(anchor); // scroll (if comment anchor)
-      }, 10);
-    })
-    .catch(function(err) {
-      $scope.pictures = [];
-      $scope.comments = [];
-      UIUtils.onError('esRegistry.ERROR.LOAD_RECORD_FAILED')(err);
-    });
+        // Load avatar and name (and uid)
+        return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
+          .then(function(idties) {
+            return idties[0];
+          });
+      })
+      .then(function(member){
+        $scope.issuer = member;
+        // Set Motion (only direct children, to exclude .lazy-load children)
+        $timeout(function() {
+          UIUtils.motion.fadeSlideIn({
+            selector: '.list > .item, .list > ng-if > .item',
+            startVelocity: 3000
+          });
+          UIUtils.ink({
+            selector: '.list .item.ink'});
+        }, 10);
+        UIUtils.loading.hide();
+        $scope.loading = false;
+      })
+      .catch(function(err) {
+        // Retry (ES could have error)
+        if (!$scope.secondTry) {
+          $scope.secondTry = true;
+          $q(function() {
+            $scope.load(id);
+          }, 100);
+        }
+        else {
+          $scope.loading = false;
+          if (err && err.ucode === 404) {
+            UIUtils.toast.show('REGISTRY.ERROR.RECORD_NOT_EXISTS');
+            $state.go(UIUtils.screen.isSmall() ? 'app.registry_lookup' : 'app.registry_lookup_lg');
+          }
+          else {
+            UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);
+          }
+        }
+      });
+
+    // Continue loading other data
+    $timeout(function() {
+      $q.all([
+        // Load pictures
+        esRegistry.record.picture.all({id: id})
+          .then(function(hit) {
+            if (hit._source.pictures) {
+              $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
+                return res.concat(UIUtils.image.fromAttachment(pic.file));
+              }, []);
+            }
+          }),
+
+        // Load comments
+        $scope.loadComments(id)
+      ])
+      .then(function() {
+        // Set Motion
+        $timeout(function(){
+          UIUtils.motion.fadeSlideIn({
+            selector: '.card-gallery, .card-comment, .lazy-load .item',
+            startVelocity: 3000
+          });
+          $anchorScroll(anchor); // scroll (if comment anchor)
+        }, 10);
+      })
+      .catch(function() {
+        $scope.pictures = [];
+        $scope.comments = [];
+      });
+    }, 100);
   };
 
   // Edit click

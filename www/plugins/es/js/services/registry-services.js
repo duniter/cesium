@@ -3,7 +3,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 .factory('esRegistry', function($q, csSettings, esHttp, esComment) {
   'ngInject';
 
-  function factory(host, port) {
+  function factory(host, port, wsPort) {
 
     var
     categories = [],
@@ -101,7 +101,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         picture: {
           all: esHttp.get(host, port, '/registry/record/:id?_source=pictures')
         },
-        comment: esComment.instance(host, port, 'registry')
+        comment: esComment.instance(host, port, wsPort, 'registry')
       },
       currency: {
         all: esHttp.get(host, port, '/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
@@ -112,8 +112,9 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
   var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
   var port = host ? csSettings.data.plugins.es.port : null;
+  var wsPort = host && csSettings.data.plugins.es.wsPort ? csSettings.data.plugins.es.wsPort : port;
 
-  var service = factory(host, port);
+  var service = factory(host, port, wsPort);
   service.instance = factory;
 
   return service;

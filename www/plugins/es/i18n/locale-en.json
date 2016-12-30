@@ -14,7 +14,8 @@
       "MARK_ALL_AS_READ": "Mark all as read",
       "NO_RESULT": "No notification",
       "SETTINGS": "Paramètres",
-      "SHOW_ALL": "Show all"
+      "SHOW_ALL": "Show all",
+      "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
     }
   },
   "MENU": {

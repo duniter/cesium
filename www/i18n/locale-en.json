@@ -346,8 +346,7 @@
     "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
     "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "You have <b>already certified</b> that identity.<br/><br/>Your certification is still pending (Deadline for treatment {{expiresIn|formatDuration}}).",
-    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify",
-    "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
+    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

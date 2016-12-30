@@ -91,6 +91,17 @@
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 
+        <!-- Uid -->
+        <span id="wallet-uid"
+              class="item item-icon-left item-text-wrap ink"
+              ng-show="showDetails"
+              ng-if="walletData.uid"
+              on-hold="copy(walletData.uid)"
+              copy-on-click="{{walletData.uid}}">
+          <span translate>COMMON.UID</span>
+          <span class="badge badge-stable">{{walletData.uid}}</span>
+        </span>
+
         <!-- Public key -->
         <span id="wallet-pubkey"
               class="item item-icon-left item-text-wrap ink"
@@ -119,10 +130,9 @@
 
         <div
           class="item item-text-wrap item-icon-left item-wallet-event"
-          ng-class="{'assertive': event.type=='error'}"
           ng-repeat="event in walletData.events">
-            <i class="icon" ng-class="{'ion-information-circled royal': event.type=='info','ion-alert-circled': event.type=='warn'||event.type=='error','ion-clock': event.type=='pending'}"
-            ></i>
+            <i class="icon"
+               ng-class="{'ion-information-circled royal': event.type=='info','ion-alert-circled': event.type=='warn'||event.type=='error','assertive': event.type=='error','ion-clock': event.type=='pending'}"></i>
             <span trust-as-html="event.message | translate:event.messageParams"></span>
         </div>
 

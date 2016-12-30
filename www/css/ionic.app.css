@@ -10767,7 +10767,12 @@ a.button {
   -webkit-transform: translate3d(-30px, 1px, 0);
   -webkit-transition: all 1s ease-in-out; }
 
-.card.animate-fade-in.done {
+.card.animate-fade-in.done, .animate-fade-slide-in .expanded .card.animate-fade-in.item,
+.animate-fade-slide-in .card.animate-fade-in.expanded.item,
+.animate-fade-slide-in-right .expanded .card.animate-fade-in.item,
+.animate-fade-slide-in-right .card.animate-fade-in.expanded.item,
+.animate-ripple .expanded .card.animate-fade-in.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.animate-fade-in.card-comment {
   opacity: 1;
   filter: alpha(opacity=100);
   -webkit-transform: translate3d(0, 0, 0); }
@@ -11442,18 +11447,102 @@ a.button {
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1); }
 
+.animate-blinds .in, .animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-blinds .expanded.item, .animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-blinds .expanded.item, .animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded .animate-blinds .item, .animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds .card.card-comment,
+.animate-blinds.done > *, .animate-fade-slide-in .expanded .animate-blinds.item > *,
+.animate-fade-slide-in .animate-blinds.expanded.item > *,
+.animate-fade-slide-in-right .expanded .animate-blinds.item > *,
+.animate-fade-slide-in-right .animate-blinds.expanded.item > *,
+.animate-ripple .expanded .animate-blinds.item > *,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment > *,
 .animate-blinds .in,
-.animate-blinds.done > *,
-.animate-blinds .in,
-.animate-blinds.done > * {
+.animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-blinds .card.card-comment,
+.animate-blinds.done > *, .animate-fade-slide-in .expanded .animate-blinds.item > *,
+.animate-fade-slide-in .animate-blinds.expanded.item > *,
+.animate-fade-slide-in-right .expanded .animate-blinds.item > *,
+.animate-fade-slide-in-right .animate-blinds.expanded.item > *,
+.animate-ripple .expanded .animate-blinds.item > *,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment > * {
   -ms-transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0); }
 
+.animate-blinds .in, .animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-blinds .expanded.item, .animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-blinds .expanded.item, .animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded .animate-blinds .item, .animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds .card.card-comment,
+.animate-blinds.done .item, .animate-fade-slide-in .expanded .animate-blinds.item .item,
+.animate-fade-slide-in .animate-blinds.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-blinds.item .item,
+.animate-fade-slide-in-right .animate-blinds.expanded.item .item,
+.animate-ripple .expanded .animate-blinds.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .item,
 .animate-blinds .in,
-.animate-blinds.done .item,
-.animate-blinds .in,
-.animate-blinds.done .item {
+.animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-blinds .card.card-comment,
+.animate-blinds.done .item, .animate-fade-slide-in .expanded .animate-blinds.item .item,
+.animate-fade-slide-in .animate-blinds.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-blinds.item .item,
+.animate-fade-slide-in-right .animate-blinds.expanded.item .item,
+.animate-ripple .expanded .animate-blinds.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .item {
   visibility: visible; }
 
 .animate-blinds .item,
@@ -11465,10 +11554,54 @@ a.button {
   opacity: 0;
   filter: alpha(opacity=0); }
 
-.animate-blinds .in,
+.animate-blinds .in, .animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-blinds .expanded.item, .animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-blinds .expanded.item, .animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded .animate-blinds .item, .animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds .card.card-comment,
 .animate-blinds.done,
+.animate-fade-slide-in .expanded .animate-blinds.item,
+.animate-fade-slide-in .animate-blinds.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-blinds.item,
+.animate-fade-slide-in-right .animate-blinds.expanded.item,
+.animate-ripple .expanded .animate-blinds.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment,
 .animate-blinds .in,
-.animate-blinds.done {
+.animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-blinds .card.card-comment,
+.animate-blinds.done,
+.animate-fade-slide-in .expanded .animate-blinds.item,
+.animate-fade-slide-in .animate-blinds.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-blinds.item,
+.animate-fade-slide-in-right .animate-blinds.expanded.item,
+.animate-ripple .expanded .animate-blinds.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment {
   -ms-transform: scale3d(1, 1, 1);
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1);
@@ -11477,14 +11610,116 @@ a.button {
   opacity: 1;
   filter: alpha(opacity=100); }
 
-.animate-blinds .in,
+.animate-blinds .in, .animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-blinds .expanded.item, .animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded .animate-blinds .item, .animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-blinds .expanded.item, .animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded .animate-blinds .item, .animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds .card.card-comment,
 .animate-blinds.done,
+.animate-fade-slide-in .expanded .animate-blinds.item,
+.animate-fade-slide-in .animate-blinds.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-blinds.item,
+.animate-fade-slide-in-right .animate-blinds.expanded.item,
+.animate-ripple .expanded .animate-blinds.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment,
 .animate-blinds .in,
-.animate-blinds.done {
+.animate-blinds .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-blinds .expanded.item,
+.animate-blinds
+.animate-ripple .expanded .item,
+.animate-ripple .expanded
+.animate-blinds .item,
+.animate-blinds
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-blinds .card.card-comment,
+.animate-blinds.done,
+.animate-fade-slide-in .expanded .animate-blinds.item,
+.animate-fade-slide-in .animate-blinds.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-blinds.item,
+.animate-fade-slide-in-right .animate-blinds.expanded.item,
+.animate-ripple .expanded .animate-blinds.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment {
   visibility: visible; }
 
-.animate-blinds.done .in,
-.animate-blinds.done .in {
+.animate-blinds.done .in, .animate-fade-slide-in .expanded .animate-blinds.item .in,
+.animate-fade-slide-in .animate-blinds.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-blinds.item .in,
+.animate-fade-slide-in-right .animate-blinds.expanded.item .in,
+.animate-ripple .expanded .animate-blinds.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .in, .animate-blinds.done .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded .animate-blinds.done .item, .animate-fade-slide-in .expanded .animate-blinds.item .item, .animate-fade-slide-in .animate-blinds.expanded.item .item, .animate-blinds.done
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-blinds.done .expanded.item, .animate-blinds.done
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded .animate-blinds.done .item, .animate-fade-slide-in-right .expanded .animate-blinds.item .item, .animate-fade-slide-in-right .animate-blinds.expanded.item .item, .animate-blinds.done
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-blinds.done .expanded.item, .animate-blinds.done
+.animate-ripple .expanded .item,
+.animate-ripple .expanded .animate-blinds.done .item, .animate-ripple .expanded .animate-blinds.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .item, .animate-blinds.done
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.done .card.card-comment,
+.animate-fade-slide-in
+.animate-ripple .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-fade-slide-in-right
+.animate-ripple .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in-right .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-blinds.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .card.card-comment,
+.animate-blinds.done .in, .animate-fade-slide-in .expanded .animate-blinds.item .in,
+.animate-fade-slide-in .animate-blinds.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-blinds.item .in,
+.animate-fade-slide-in-right .animate-blinds.expanded.item .in,
+.animate-ripple .expanded .animate-blinds.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .in,
+.animate-blinds.done .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded
+.animate-blinds.done .item, .animate-fade-slide-in .expanded .animate-blinds.item .item, .animate-fade-slide-in .animate-blinds.expanded.item .item,
+.animate-blinds.done
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-blinds.done .expanded.item,
+.animate-blinds.done
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded
+.animate-blinds.done .item, .animate-fade-slide-in-right .expanded .animate-blinds.item .item, .animate-fade-slide-in-right .animate-blinds.expanded.item .item,
+.animate-blinds.done
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-blinds.done .expanded.item,
+.animate-blinds.done
+.animate-ripple .expanded .item,
+.animate-ripple .expanded
+.animate-blinds.done .item, .animate-ripple .expanded .animate-blinds.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .item,
+.animate-blinds.done
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-blinds.done .card.card-comment,
+.animate-fade-slide-in
+.animate-ripple .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-fade-slide-in-right
+.animate-ripple .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in-right .animate-blinds.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-blinds.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .card.card-comment {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11495,8 +11730,18 @@ a.button {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out; }
 
-.animate-blinds.done .has-mask-reverse:after,
-.animate-blinds.done .has-mask-reverse:after {
+.animate-blinds.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-blinds.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-blinds.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-blinds.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-blinds.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-blinds.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .has-mask-reverse:after,
+.animate-blinds.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-blinds.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-blinds.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-blinds.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-blinds.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-blinds.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-blinds.card.card-comment .has-mask-reverse:after {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11514,12 +11759,44 @@ a.button {
 
 /* Motion: Ripple
 ==================================*/
-.animate-ripple .done,
-.animate-ripple .done {
+.animate-ripple .done, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .done, .animate-fade-slide-in .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment {
   visibility: hidden; }
 
-.animate-ripple .done,
-.animate-ripple .done {
+.animate-ripple .done, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .done, .animate-fade-slide-in .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment {
   -ms-transform: scale3d(0.8, 0, 1);
   -webkit-transform: scale3d(0.8, 0, 1);
   transform: scale3d(0.8, 0, 1);
@@ -11533,14 +11810,66 @@ a.button {
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1); }
 
-.animate-ripple .in, .animate-ripple.done,
-.animate-ripple .in, .animate-ripple.done {
+.animate-ripple .in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment,
+.animate-ripple .in, .animate-fade-slide-in .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment {
   -ms-transform: scale3d(1, 1, 1);
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1); }
 
-.animate-ripple .in, .animate-ripple.done,
-.animate-ripple .in, .animate-ripple.done {
+.animate-ripple .in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment,
+.animate-ripple .in, .animate-fade-slide-in .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment {
   visibility: visible; }
 
 .animate-ripple .item {
@@ -11550,15 +11879,41 @@ a.button {
   opacity: 0;
   filter: alpha(opacity=0); }
 
-.animate-ripple .item.in {
+.animate-ripple .item.in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .item.expanded,
+.animate-fade-slide-in .animate-ripple .item.expanded,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .item.expanded,
+.animate-fade-slide-in-right .animate-ripple .item.expanded, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .item.card.card-comment {
   opacity: 1;
   filter: alpha(opacity=100); }
 
-.animate-ripple .done {
+.animate-ripple .done, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment {
   visibility: hidden; }
 
-.animate-ripple .done,
-.animate-ripple .done {
+.animate-ripple .done, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .done, .animate-fade-slide-in .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-ripple .item,
+.animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment {
   -ms-transform: scale3d(0.8, 0, 1);
   -webkit-transform: scale3d(0.8, 0, 1);
   transform: scale3d(0.8, 0, 1);
@@ -11608,17 +11963,81 @@ a.button {
     opacity: 0.6;
 }
 */
-.animate-ripple .in, .animate-ripple.done, .animate-ripple .in, .animate-ripple.done {
+.animate-ripple .in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment, .animate-ripple .in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment {
   -ms-transform: scale3d(1, 1, 1);
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1);
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out; }
 
-.animate-ripple .in, .animate-ripple.done, .animate-ripple .in, .animate-ripple.done {
+.animate-ripple .in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment, .animate-ripple .in, .animate-fade-slide-in .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple .item, .animate-ripple
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple .expanded.item, .animate-ripple .expanded .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple.done, .animate-fade-slide-in .expanded .animate-ripple.item,
+.animate-fade-slide-in .animate-ripple.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.item,
+.animate-fade-slide-in-right .animate-ripple.expanded.item,
+.animate-ripple .expanded .animate-ripple.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment {
   visibility: visible; }
 
-.animate-ripple.done .in, .animate-ripple.done .in {
+.animate-ripple.done .in, .animate-fade-slide-in .expanded .animate-ripple.item .in,
+.animate-fade-slide-in .animate-ripple.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-ripple.item .in,
+.animate-fade-slide-in-right .animate-ripple.expanded.item .in,
+.animate-ripple .expanded .animate-ripple.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .in, .animate-fade-slide-in .expanded .animate-ripple.done .item, .animate-fade-slide-in .expanded .animate-ripple.item .item, .animate-fade-slide-in .animate-ripple.expanded.item .item, .animate-ripple.done
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple.done .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.done .item, .animate-fade-slide-in-right .expanded .animate-ripple.item .item, .animate-fade-slide-in-right .animate-ripple.expanded.item .item, .animate-ripple.done
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple.done .expanded.item, .animate-ripple.done .expanded .item, .animate-ripple .expanded .animate-ripple.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .item, .animate-ripple.done .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-fade-slide-in .animate-ripple.expanded.item .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-fade-slide-in-right .animate-ripple.expanded.item .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-ripple.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .card.card-comment, .animate-ripple.done .in, .animate-fade-slide-in .expanded .animate-ripple.item .in,
+.animate-fade-slide-in .animate-ripple.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-ripple.item .in,
+.animate-fade-slide-in-right .animate-ripple.expanded.item .in,
+.animate-ripple .expanded .animate-ripple.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .in, .animate-fade-slide-in .expanded .animate-ripple.done .item, .animate-fade-slide-in .expanded .animate-ripple.item .item, .animate-fade-slide-in .animate-ripple.expanded.item .item, .animate-ripple.done
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in .animate-ripple.done .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-ripple.done .item, .animate-fade-slide-in-right .expanded .animate-ripple.item .item, .animate-fade-slide-in-right .animate-ripple.expanded.item .item, .animate-ripple.done
+.animate-fade-slide-in-right .expanded.item,
+.animate-fade-slide-in-right .animate-ripple.done .expanded.item, .animate-ripple.done .expanded .item, .animate-ripple .expanded .animate-ripple.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .item, .animate-ripple.done .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-fade-slide-in .animate-ripple.expanded.item .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-fade-slide-in-right .animate-ripple.expanded.item .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-ripple.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .card.card-comment {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11628,7 +12047,17 @@ a.button {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out; }
 
-.animate-ripple.done .has-mask-reverse:after, .animate-ripple.done .has-mask-reverse:after {
+.animate-ripple.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-ripple.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-ripple.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-ripple.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-ripple.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-ripple.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .has-mask-reverse:after, .animate-ripple.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-ripple.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-ripple.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-ripple.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-ripple.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-ripple.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-ripple.card.card-comment .has-mask-reverse:after {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11658,18 +12087,62 @@ a.button {
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1); }
 
-.animate-fade-slide-in .in,
-.animate-fade-slide-in.done .item,
-.animate-fade-slide-in .in,
-.animate-fade-slide-in.done .item {
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in .item,
+.animate-ripple .expanded .animate-fade-slide-in .item, .animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in .card.card-comment,
+.animate-fade-slide-in.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .item,
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-fade-slide-in .item,
+.animate-ripple .expanded
+.animate-fade-slide-in .item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in .card.card-comment,
+.animate-fade-slide-in.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .item {
   -ms-transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0); }
 
-.animate-fade-slide-in .in,
-.animate-fade-slide-in.done .item,
-.animate-fade-slide-in .in,
-.animate-fade-slide-in.done .item {
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in .item,
+.animate-ripple .expanded .animate-fade-slide-in .item, .animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in .card.card-comment,
+.animate-fade-slide-in.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .item,
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-fade-slide-in .item,
+.animate-ripple .expanded
+.animate-fade-slide-in .item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in .card.card-comment,
+.animate-fade-slide-in.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .item {
   visibility: visible; }
 
 .list .item.item-bg-image,
@@ -11690,10 +12163,34 @@ a.button {
   opacity: 0;
   filter: alpha(opacity=0); }
 
-.animate-fade-slide-in .in,
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in .item,
+.animate-ripple .expanded .animate-fade-slide-in .item, .animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in .card.card-comment,
 .animate-fade-slide-in.done,
-.animate-fade-slide-in .in,
-.animate-fade-slide-in.done {
+.animate-fade-slide-in .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment,
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-fade-slide-in .item,
+.animate-ripple .expanded
+.animate-fade-slide-in .item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in .card.card-comment,
+.animate-fade-slide-in.done,
+.animate-fade-slide-in .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment {
   -ms-transform: scale3d(1, 1, 1);
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1);
@@ -11702,14 +12199,72 @@ a.button {
   opacity: 1;
   filter: alpha(opacity=100); }
 
-.animate-fade-slide-in .in,
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in .item,
+.animate-ripple .expanded .animate-fade-slide-in .item, .animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in .card.card-comment,
 .animate-fade-slide-in.done,
-.animate-fade-slide-in .in,
-.animate-fade-slide-in.done {
+.animate-fade-slide-in .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment,
+.animate-fade-slide-in .in, .animate-fade-slide-in .expanded .item, .animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-fade-slide-in .item,
+.animate-ripple .expanded
+.animate-fade-slide-in .item,
+.animate-fade-slide-in
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in .card.card-comment,
+.animate-fade-slide-in.done,
+.animate-fade-slide-in .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment {
   visibility: visible; }
 
-.animate-fade-slide-in.done .in,
-.animate-fade-slide-in.done .in {
+.animate-fade-slide-in.done .in, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .in,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .in,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .in,
+.animate-ripple .expanded .animate-fade-slide-in.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .in, .animate-fade-slide-in.done .expanded .item, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .item, .animate-fade-slide-in .animate-fade-slide-in.expanded.item .item, .animate-fade-slide-in.done .expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.done .item, .animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .item, .animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in.done .item, .animate-ripple .expanded .animate-fade-slide-in.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .item, .animate-fade-slide-in.done
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.done .card.card-comment,
+.animate-ripple .animate-fade-slide-in.expanded.item .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.expanded.item .card.card-comment,
+.animate-fade-slide-in-right
+.animate-ripple .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-fade-slide-in.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .card.card-comment,
+.animate-fade-slide-in.done .in, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .in,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .in,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .in,
+.animate-ripple .expanded .animate-fade-slide-in.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .in, .animate-fade-slide-in.done .expanded .item, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .item, .animate-fade-slide-in .animate-fade-slide-in.expanded.item .item, .animate-fade-slide-in.done .expanded.item,
+.animate-fade-slide-in-right .expanded
+.animate-fade-slide-in.done .item, .animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .item, .animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .item,
+.animate-ripple .expanded
+.animate-fade-slide-in.done .item, .animate-ripple .expanded .animate-fade-slide-in.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .item,
+.animate-fade-slide-in.done
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in.done .card.card-comment,
+.animate-ripple .animate-fade-slide-in.expanded.item .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.expanded.item .card.card-comment,
+.animate-fade-slide-in-right
+.animate-ripple .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-fade-slide-in.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .card.card-comment {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11720,8 +12275,18 @@ a.button {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out; }
 
-.animate-fade-slide-in.done .has-mask-reverse:after,
-.animate-fade-slide-in.done .has-mask-reverse:after {
+.animate-fade-slide-in.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-fade-slide-in.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .has-mask-reverse:after,
+.animate-fade-slide-in.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-fade-slide-in.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-fade-slide-in.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-fade-slide-in.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-fade-slide-in.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in.card.card-comment .has-mask-reverse:after {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11752,18 +12317,58 @@ a.button {
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1); }
 
-.animate-fade-slide-in-right .in,
-.animate-fade-slide-in-right.done > *,
-.animate-fade-slide-in-right .in,
-.animate-fade-slide-in-right.done > * {
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right .card.card-comment,
+.animate-fade-slide-in-right.done > *, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item > *,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item > *,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item > *,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item > *,
+.animate-ripple .expanded .animate-fade-slide-in-right.item > *,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment > *,
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded
+.animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded
+.animate-fade-slide-in-right .item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in-right .card.card-comment,
+.animate-fade-slide-in-right.done > *, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item > *,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item > *,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item > *,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item > *,
+.animate-ripple .expanded .animate-fade-slide-in-right.item > *,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment > * {
   -ms-transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0); }
 
-.animate-fade-slide-in-right .in,
-.animate-fade-slide-in-right.done .item,
-.animate-fade-slide-in-right .in,
-.animate-fade-slide-in-right.done .item {
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right .card.card-comment,
+.animate-fade-slide-in-right.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .item,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .item,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in-right.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .item,
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded
+.animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded
+.animate-fade-slide-in-right .item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in-right .card.card-comment,
+.animate-fade-slide-in-right.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .item,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .item,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .item,
+.animate-ripple .expanded .animate-fade-slide-in-right.item .item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .item {
   visibility: visible; }
 
 .animate-fade-slide-in-right .item,
@@ -11780,10 +12385,32 @@ a.button {
   opacity: 0;
   filter: alpha(opacity=0); }
 
-.animate-fade-slide-in-right .in,
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right .card.card-comment,
 .animate-fade-slide-in-right.done,
-.animate-fade-slide-in-right .in,
-.animate-fade-slide-in-right.done {
+.animate-fade-slide-in .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment,
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded
+.animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded
+.animate-fade-slide-in-right .item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in-right .card.card-comment,
+.animate-fade-slide-in-right.done,
+.animate-fade-slide-in .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment {
   -ms-transform: scale3d(1, 1, 1);
   -webkit-transform: scale3d(1, 1, 1);
   transform: scale3d(1, 1, 1);
@@ -11792,14 +12419,68 @@ a.button {
   opacity: 1;
   filter: alpha(opacity=100); }
 
-.animate-fade-slide-in-right .in,
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right .item, .animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right .card.card-comment,
 .animate-fade-slide-in-right.done,
-.animate-fade-slide-in-right .in,
-.animate-fade-slide-in-right.done {
+.animate-fade-slide-in .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment,
+.animate-fade-slide-in-right .in, .animate-fade-slide-in .expanded
+.animate-fade-slide-in-right .item, .animate-fade-slide-in-right .expanded .item, .animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded
+.animate-fade-slide-in-right .item,
+.animate-fade-slide-in-right
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in-right .card.card-comment,
+.animate-fade-slide-in-right.done,
+.animate-fade-slide-in .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right.item,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment {
   visibility: visible; }
 
-.animate-fade-slide-in-right.done .in,
-.animate-fade-slide-in-right.done .in {
+.animate-fade-slide-in-right.done .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .in,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .in,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .in,
+.animate-ripple .expanded .animate-fade-slide-in-right.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .item, .animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .item, .animate-fade-slide-in-right.done .expanded .item, .animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .item, .animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .item, .animate-fade-slide-in-right.done .expanded.item,
+.animate-ripple .expanded .animate-fade-slide-in-right.done .item, .animate-ripple .expanded .animate-fade-slide-in-right.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .item, .animate-fade-slide-in-right.done
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.done .card.card-comment,
+.animate-fade-slide-in
+.animate-ripple .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .animate-fade-slide-in-right.expanded.item .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.expanded.item .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-fade-slide-in-right.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .card.card-comment,
+.animate-fade-slide-in-right.done .in, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .in,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .in,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .in,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .in,
+.animate-ripple .expanded .animate-fade-slide-in-right.item .in,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .in, .animate-fade-slide-in .expanded
+.animate-fade-slide-in-right.done .item, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .item, .animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .item, .animate-fade-slide-in-right.done .expanded .item, .animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .item, .animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .item, .animate-fade-slide-in-right.done .expanded.item,
+.animate-ripple .expanded
+.animate-fade-slide-in-right.done .item, .animate-ripple .expanded .animate-fade-slide-in-right.item .item, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .item,
+.animate-fade-slide-in-right.done
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded
+.animate-fade-slide-in-right.done .card.card-comment,
+.animate-fade-slide-in
+.animate-ripple .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .animate-fade-slide-in-right.expanded.item .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment,
+.animate-ripple .animate-fade-slide-in-right.expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.expanded.item .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .animate-fade-slide-in-right.item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .card.card-comment, .animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .card.card-comment {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -11810,8 +12491,18 @@ a.button {
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out; }
 
-.animate-fade-slide-in-right.done .has-mask-reverse:after,
-.animate-fade-slide-in-right.done .has-mask-reverse:after {
+.animate-fade-slide-in-right.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-fade-slide-in-right.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .has-mask-reverse:after,
+.animate-fade-slide-in-right.done .has-mask-reverse:after, .animate-fade-slide-in .expanded .animate-fade-slide-in-right.item .has-mask-reverse:after,
+.animate-fade-slide-in .animate-fade-slide-in-right.expanded.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .expanded .animate-fade-slide-in-right.item .has-mask-reverse:after,
+.animate-fade-slide-in-right .animate-fade-slide-in-right.expanded.item .has-mask-reverse:after,
+.animate-ripple .expanded .animate-fade-slide-in-right.item .has-mask-reverse:after,
+.animate-ripple .expanded.item .card-avatar-small.expanded .item .card-avatar-small .expanded .item .card-avatar-small.expanded .card.card-comment .card-avatar-small .expanded .animate-fade-slide-in-right.card.card-comment .has-mask-reverse:after {
   opacity: 1;
   filter: alpha(opacity=100); }
 
@@ -13623,14 +14314,24 @@ a {
   opacity: 0.8;
   filter: alpha(opacity=80); }
 
-.item.stable-bg,
-.item .stable-bg,
-.item-complex .item-content .stable-bg,
-.item-radio .item-content .stable-bg {
+.card.stable-900-bg,
+.card .stable-900-bg,
+.item.stable-900-bg,
+.item .stable-900-bg,
+.item-complex .item-content .stable-900-bg,
+.item-radio .item-content .stable-900-bg {
   background-color: #e0e0e0 !important; }
 
 .card .item {
   background: inherit; }
+
+.card.stable-bg,
+.card .stable-bg,
+.item.stable-bg,
+.item .stable-bg,
+.item-complex .item-content .stable-bg,
+.item-radio .item-content .stable-bg {
+  background-color: #f8f8f8 !important; }
 
 .card .card-header {
   padding-top: 5px !important;
@@ -13640,10 +14341,58 @@ a {
 .card .item .card-footer {
   margin-bottom: 5px; }
 
-.card.card-comment .avatar {
+.card.card-avatar .avatar {
   box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
   top: 7px;
   background-color: #D9D9D9; }
+
+.card.card-avatar .item.item-avatar {
+  padding-top: 10px;
+  padding-bottom: 2px;
+  min-height: 45px !important; }
+
+.card.card-avatar .card-footer {
+  padding-left: 88px; }
+  .card.card-avatar .card-footer .pull-right a, .card.card-avatar .card-footer .popover-helptip .icon.icon-right a, .popover-helptip .card.card-avatar .card-footer .icon.icon-right a, .card.card-avatar .card-footer .popover-helptip .icon-right.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-right.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-right.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-right.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-right.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-right.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon.icon-center a, .popover-helptip .card.card-avatar .card-footer .icon.icon-center a, .card.card-avatar .card-footer .popover-helptip .icon-center.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-center.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-center.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-center.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-center.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-center.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-center.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-center.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon.icon-bottom-right a, .popover-helptip .card.card-avatar .card-footer .icon.icon-bottom-right a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-right.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-right.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-bottom-right.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-right.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-bottom-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon.icon-bottom-center a, .popover-helptip .card.card-avatar .card-footer .icon.icon-bottom-center a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-center.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-center.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-center.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-bottom-center.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-center.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-bottom-center.icon-help a {
+    margin-right: 8px; }
+
+a.underline:focus,
+.underline a:focus,
+.a.underline:active,
+.underline a:active,
+a.underline:hover,
+.underline a:hover {
+  outline: 1px !important;
+  text-decoration: underline !important; }
+
+.card-avatar-small.card,
+.card-avatar-small .card,
+.card-avatar-small .card.card-avatar,
+.card-avatar-small .card .card-avatar {
+  min-height: 45px; }
+  .card-avatar-small.card .avatar, .card-avatar-small.card .item-avatar .avatar,
+  .card-avatar-small .card .avatar,
+  .card-avatar-small .card .item-avatar .avatar,
+  .card-avatar-small .card.card-avatar .avatar,
+  .card-avatar-small .card.card-avatar .item-avatar .avatar,
+  .card-avatar-small .card .card-avatar .avatar,
+  .card-avatar-small .card .card-avatar .item-avatar .avatar {
+    box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.26);
+    height: 30px !important;
+    width: 30px !important;
+    left: 5px !important; }
+  .card-avatar-small.card .item.item-avatar,
+  .card-avatar-small .card .item.item-avatar,
+  .card-avatar-small .card.card-avatar .item.item-avatar,
+  .card-avatar-small .card .card-avatar .item.item-avatar {
+    min-height: 25px !important;
+    padding-left: 42px !important; }
+  .card-avatar-small.card .card-footer,
+  .card-avatar-small .card .card-footer,
+  .card-avatar-small .card.card-avatar .card-footer,
+  .card-avatar-small .card .card-avatar .card-footer {
+    padding-top: 0px;
+    padding-left: 42px !important; }
 
 .gallery .card-gallery,
 .gallery .card.card-gallery {

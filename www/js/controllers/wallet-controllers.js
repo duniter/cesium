@@ -1,4 +1,3 @@
-
 angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider) {
@@ -152,7 +151,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   // Send self identity
-  $scope.self= function() {
+  $scope.self = function() {
     $scope.hideActionsPopover();
 
     return $scope.showUidPopup()
@@ -182,7 +181,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .catch(function(err) {
         if (!retryCount || retryCount <= 2) {
           $timeout(function() {
-            doMembershipIn(retryCount ? retryCount+1 : 1);
+            $scope.doMembershipIn(retryCount ? retryCount+1 : 1);
           }, 1000);
         }
         else {
@@ -196,8 +195,12 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
 
   // Send membership IN
-  $scope.membershipIn= function() {
+  $scope.membershipIn = function() {
     $scope.hideActionsPopover();
+
+    if ($rootScope.walletData.isMember) {
+      return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
+    }
 
     return $scope.showUidPopup()
     .then(function (uid) {
@@ -263,16 +266,64 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   /**
    * Renew membership
    */
-  $scope.renewMembership = function() {
+  $scope.renewMembership = function(confirm) {
+
+    if (!$rootScope.walletData.isMember) {
+      return UIUtils.alert.error("ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION");
+    }
+    if (!confirm && $rootScope.walletData.isMember && !$rootScope.walletData.requirements.needRenew) {
+      return $translate("CONFIRM.NOT_NEED_RENEW_MEMBERSHIP", {membershipExpiresIn: $rootScope.walletData.requirements.membershipExpiresIn})
+        .then(function(message) {
+          return UIUtils.alert.confirm(message);
+        })
+        .then(function(confirm) {
+          if (confirm) $scope.renewMembership(true); // loop with confirm
+        });
+    }
+
     return UIUtils.alert.confirm("CONFIRM.RENEW_MEMBERSHIP")
-      .then(function() {
+      .then(function(confirm) {
+        if (confirm) {
+          UIUtils.loading.show();
+          return $scope.doMembershipIn();
+        }
+      })
+      .catch(function(err){
+        UIUtils.loading.hide();
+        UIUtils.alert.error(err)
+          .then(function(){
+            $scope.renewMembership(); // loop
+          });
+      });
+  };
+
+  /**
+   * Fix identity (e.g. when identity expired)
+   */
+  $scope.fixIdentity = function() {
+    if (!$rootScope.walletData.uid) return;
+
+    return $translate('CONFIRM.FIX_IDENTITY', {uid: $rootScope.walletData.uid})
+      .then(function(message) {
+        return UIUtils.alert.confirm(message)
+      })
+      .then(function(confirm) {
+        if (!confirm) return;
         UIUtils.loading.show();
+        // Reset membership data
+        $rootScope.walletData.blockUid = null;
+        $rootScope.walletData.sigDate = null;
+        return csWallet.self($rootScope.walletData.uid);
+      })
+      .then(function() {
         return $scope.doMembershipIn();
       })
       .catch(function(err){
         UIUtils.loading.hide();
-        UIUtils.alert.info(err);
-        $scope.renewMembership(); // loop
+        UIUtils.alert.error(err)
+          .then(function() {
+            $scope.fixIdentity(); // loop
+          });
       });
   };
 
@@ -309,8 +360,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     if (event == 'renew') {
       $scope.renewMembership();
     }
-    else if (event == 'fixMembership)') {
+    else if (event == 'fixMembership') {
       $scope.fixMembership();
+    }
+    else if (event == 'fixIdentity') {
+      $scope.fixIdentity();
     }
   };
 
@@ -337,6 +391,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     if (show && !$scope.loading) {
       $timeout(function (){
         var pubkeyElement = document.getElementById('wallet-pubkey');
+        pubkeyElement.classList.toggle('done', true);
+        pubkeyElement.classList.toggle('in', true);
+        var pubkeyElement = document.getElementById('wallet-uid');
         pubkeyElement.classList.toggle('done', true);
         pubkeyElement.classList.toggle('in', true);
       }, 500);

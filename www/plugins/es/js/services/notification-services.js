@@ -239,7 +239,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
   var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
   var port = host ? csSettings.data.plugins.es.port : null;
-  var wsPort = host ? csSettings.data.plugins.es.wsPort : port;
+  var wsPort = host && csSettings.data.plugins.es.wsPort ? csSettings.data.plugins.es.wsPort : port;
 
   var service = factory('default', host, port, wsPort);
   service.instance = factory;

@@ -18,9 +18,13 @@ function Notification(json, markAsReadCallback) {
     'EVENT.' + json.code;
   that.params = json.params;
 
+  if (markAsReadCallback && (typeof markAsReadCallback === "function") ) {
+    that.markAsReadCallback = markAsReadCallback;
+  }
+
   that.markAsRead = function() {
-    if (markAsReadCallback) {
-      markAsReadCallback(that);
+    if (that.markAsReadCallback) {
+      that.markAsReadCallback(that);
     }
   };
 

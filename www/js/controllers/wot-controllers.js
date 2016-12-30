@@ -79,13 +79,12 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover) {
   'ngInject';
 
-  var defaultSearchLimit = 20;
+  var defaultSearchLimit = 10;
 
   $scope.search = {
     text: '',
     loading: true,
     type: null,
-    limit: defaultSearchLimit,
     results: []
   };
   $scope.entered = false;
@@ -102,17 +101,18 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
       }
       else { // get new comers
         $timeout(function() {
-          $scope.doGetNewcomers(state.stateParams.newcomers);
+          $scope.doGetNewcomers(0, state.stateParams.newcomers);
         }, 100);
       }
+      // removeIf(device)
+      // Focus on search text (only if NOT device, to avoid keyboard opening)
+      $focus($scope.wotSearchTextId);
+      // endRemoveIf(device)
+
       $scope.entered = true;
 
       $scope.showHelpTip();
     }
-    // removeIf(device)
-    // Focus on search text (only if NOT device, to avoid keyboard opening)
-    $focus($scope.wotSearchTextId);
-    // endRemoveIf(device)
   });
 
   $scope.resetWotSearch = function() {
@@ -120,7 +120,6 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
       text: null,
       loading: false,
       type: 'newcomers',
-      limit: defaultSearchLimit,
       results: []
     };
   };
@@ -151,49 +150,72 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     }
   };
 
-  $scope.doGetNewcomers= function(limit, more) {
+  $scope.doGetNewcomers= function(offset, size) {
+    offset = offset || 0;
+    size = size || defaultSearchLimit;
+    if (size < defaultSearchLimit) size = defaultSearchLimit;
+
     $scope.hideActionsPopover();
-    $scope.search.loading = !more;
+    $scope.search.loading = (offset === 0);
     $scope.search.type = 'newcomers';
-    $scope.search.limit = (limit && limit > 0) ? limit : defaultSearchLimit;
+
     var searchFunction =  csConfig.initPhase ?
       csWot.all :
       csWot.newcomers;
-    return searchFunction($scope.search.limit).then(function(idties){
-      if ($scope.search.type != 'newcomers') return; // could have change
-      $scope.doDisplayResult(idties);
-    });
+    console.debug("get pending [{0}-{1}]".format(offset, offset+size-1));
+    return searchFunction(offset, size)
+      .then(function(idties){
+        if ($scope.search.type != 'newcomers') return false; // could have change
+        $scope.doDisplayResult(idties, offset, size);
+        console.debug("...result size: {0}".format(idties.length));
+        return true;
+      })
+      .catch(function(err) {
+        $scope.search.loading = false;
+        $scope.search.results = (offset > 0) ? $scope.search.results : [];
+        $scope.search.hasMore = false;
+        UIUtils.onError('ERROR.LOAD_NEWCOMERS_FAILED')(err);
+      });
   };
 
-  $scope.doGetPending = function(limit, more) {
+  $scope.doGetPending = function(offset, size) {
+    offset = offset || 0;
+    size = size || defaultSearchLimit;
+    if (size < defaultSearchLimit) size = defaultSearchLimit;
+
     $scope.hideActionsPopover();
-    $scope.search.loading = more ? false : true;
+    $scope.search.loading = (offset === 0);
     $scope.search.type = 'pending';
-    $scope.search.limit = (limit && limit > 0) ? limit : defaultSearchLimit;
-    return csWot.pending($scope.search.limit).then(function(idties){
-      if ($scope.search.type != 'pending') return; // could have change
-      $scope.doDisplayResult(idties);
-    });
+
+    return csWot.pending(offset, size)
+      .then(function(idties){
+        if ($scope.search.type != 'pending') return false; // could have change
+        $scope.doDisplayResult(idties, offset, size);
+        return true;
+      })
+      .catch(function(err) {
+        $scope.search.loading = false;
+        $scope.search.results = (offset > 0) ? $scope.search.results : [];
+        $scope.search.hasMore = false;
+        UIUtils.onError('ERROR.LOAD_PENDING_FAILED')(err);
+      });
   };
 
   $scope.showMore= function() {
-    $scope.search.limit = $scope.search.limit || defaultSearchLimit;
-    $scope.search.limit = $scope.search.limit * 2;
-    if ($scope.search.limit < defaultSearchLimit) {
-      $scope.search.limit = defaultSearchLimit;
-    }
+    var offset = $scope.search.results ? $scope.search.results.length : 0;
+
     $scope.search.loadingMore = true;
     var searchFunction = ($scope.search.type == 'newcomers') ?
       $scope.doGetNewcomers :
       $scope.doGetPending;
 
-    return searchFunction($scope.search.limit, true)
-      .then(function() {
-        $scope.search.loadingMore = false;
+    return searchFunction(offset)
+      .then(function(ok) {
+        if (ok) {
+          $scope.search.loadingMore = false;
+          $scope.$broadcast('scroll.infiniteScrollComplete');
+        }
       })
-      .catch(function(err) {
-        $scope.search.loadingMore = false;
-      });
   };
 
   $scope.select = function(identity) {
@@ -255,26 +277,32 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
       });
   };
 
-  $scope.doDisplayResult = function(res) {
-    $scope.search.results = res || [];
+  $scope.doDisplayResult = function(res, offset, size) {
+    if (!offset) {
+      $scope.search.results = res || [];
+    }
+    else {
+        $scope.search.results = $scope.search.results.concat(res);
+    }
     $scope.search.loading = false;
-    $scope.search.hasMore = $scope.search.results.length >=  $scope.search.limit;
+    $scope.search.hasMore = $scope.search.results.length >= offset + size;
 
     $scope.smallscreen = UIUtils.screen.isSmall();
 
     if (!$scope.search.results.length) return;
 
     // Set Motion
-    $timeout(function() {
-      UIUtils.motion.ripple({
-        startVelocity: 3000
-      });
-      // Set Ink
-      UIUtils.ink({
-        selector: '.item.ink'
-      });
-    }, 10);
-
+    if (res.length > 0) {
+      $timeout(function () {
+        UIUtils.motion.ripple({
+          startVelocity: 3000
+        });
+        // Set Ink
+        UIUtils.ink({
+          selector: '.item.ink'
+        });
+      }, 10);
+    }
   };
 
   /* -- show/hide popup -- */
@@ -347,7 +375,8 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
       state.stateParams.pubkey.trim().length > 0) {
       if ($scope.loading) { // load once
         $scope.load(state.stateParams.pubkey.trim(),
-                    true /*withCache*/);
+                    true /*withCache*/,
+                    state.stateParams.uid);
       }
     }
     else {
@@ -356,8 +385,8 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
     }
   });
 
-  $scope.load = function(pubkey, withCache) {
-    csWot.load(pubkey, withCache)
+  $scope.load = function(pubkey, withCache, uid) {
+    csWot.load(pubkey, withCache, uid)
     .then(function(identity){
       $scope.formData = identity;
       $scope.loading = false;
@@ -429,7 +458,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     // Load from wallet pubkey
     else if (csWallet.isLogin()){
       if ($scope.loading) {
-        $scope.load(csWallet.data.pubkey, true /*withCache*/);
+        $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid);
       }
     }
 
@@ -441,8 +470,8 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     }
   });
 
-  $scope.load = function(pubkey, withCache) {
-    return csWot.load(pubkey, withCache)
+  $scope.load = function(pubkey, withCache, uid) {
+    return csWot.load(pubkey, withCache, uid)
     .then(function(identity){
       $scope.formData = identity;
       $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));

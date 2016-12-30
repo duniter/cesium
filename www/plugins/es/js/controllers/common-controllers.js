@@ -114,75 +114,76 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUtils, esHttp, DataService) {
+function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils, esHttp, DataService) {
   'ngInject';
 
-  $scope.maxCommentSize = 10;
-  $scope.commentData = {};
+  $scope.loadingComments = true;
+  $scope.defaultCommentSize = 5;
+  $scope.formCommentData = {};
 
-  $scope.loadComments = function(id) {
-    return DataService.record.comment.all(id, $scope.maxCommentSize)
-      .then(function(comments) {
-        // sort by time asc
-        comments  = comments.sort(function(cm1, cm2) {
-           return (cm1.time - cm2.time);
-        });
-        $scope.comments = comments;
+  $scope.loadComments = function(id, options) {
+    options = options || {};
+    options.from = options.from || 0;
+    options.size = options.size || $scope.defaultCommentSize;
+    options.loadAvatarAllParent = angular.isDefined(options.loadAvatarAllParent) ? options.loadAvatarAllParent : true;
+    return DataService.record.comment.load(id, options)
+      .then(function(data) {
+        $scope.comments = data;
+        $scope.comments.hasMore = (data.result && data.result.length >= options.size);
+        $scope.loadingComments = false;
+        DataService.record.comment.changes.start(id, data);
       });
   };
 
+  $scope.$on('$ionicView.beforeLeave', function(){
+    if ($scope.comments) {
+      DataService.record.comment.changes.stop($scope.comments);
+    }
+  });
+
+  $scope.$on('$ionicView.enter', function(){
+    if (!$scope.loadingComments) { // second call (when using cached view)
+      $scope.loadComments($scope.id)
+        .then(function() {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.fadeSlideIn({
+              selector: '.card-avatar'
+            });
+          }, 10);
+        });
+    }
+  });
+
   $scope.showMoreComments = function(){
-    $scope.maxCommentSize = $scope.maxCommentSize * $scope.maxCommentSize;
-    $scope.loadComments($scope.id)
+    var from = 0;
+    var size = -1;
+    $scope.loadComments($scope.id, {from: from, size: size, loadAvatarAllParent: false})
     .then(function() {
       // Set Motion
       $timeout(function() {
         UIUtils.motion.fadeSlideIn({
-          selector: '.card-comment'
+          selector: '.card-avatar'
         });
       }, 10);
     });
   };
 
-  $scope.sendComment = function() {
-    if (!$scope.commentData.message || $scope.commentData.message.trim().length === 0) {
-      return;
-    }
-    $scope.loadWallet()
-    .then(function(walletData) {
-      var comment = $scope.commentData;
-      comment.record= $scope.id;
-      comment.issuer = walletData.pubkey;
-      var obj = {};
-      angular.copy(comment, obj);
-      obj.uid = walletData.isMember ? walletData.uid : null;
-      obj.name = walletData.name;
-      obj.avatarStyle = walletData.avatarStyle;
-      obj.isnew = true; // use to  prevent visibility hidden (if animation)
-      // Create
-      if (!comment.id) {
-        comment.time = esHttp.date.now();
-        obj.time = comment.time;
-        DataService.record.comment.add(comment)
-        .then(function (id){
-          obj.id = id;
-        })
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
-      }
-      // Update
-      else {
-        DataService.record.comment.update(comment, {id: comment.id})
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
-      }
+  $scope.saveComment = function() {
+    if (!$scope.formCommentData.message || !$scope.formCommentData.message.length) return;
 
-      $scope.comments.push(obj);
-      $scope.commentData = {}; // reset comment
-      UIUtils.loading.hide();
-    });
+    $scope.loadWallet({loadMinData: true})
+      .then(function() {
+        UIUtils.loading.hide();
+        var comment = $scope.formCommentData;
+        $scope.formCommentData = {};
+        $scope.focusNewComment();
+        return DataService.record.comment.save($scope.id, $scope.comments, comment);
+      })
+      .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
   };
 
-  $scope.shareComment = function(event, index) {
-    var comment = $scope.comments[index];
+  $scope.shareComment = function(event, comment) {
     var params = angular.copy($state.params);
     var stateUrl;
     if (params.anchor) {
@@ -192,13 +193,14 @@ function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUti
     else {
       stateUrl = $state.href($state.current.name, params, {absolute: true}) + '/' + $filter('formatHash')(comment.id);
     }
-    var url = stateUrl + '?u=' + comment.uid;
+    var index = _.findIndex($scope.comments.result, {id: comment.id});
+    var url = stateUrl + '?u=' + (comment.uid||$filter('formatPubkey')(comment.issuer));
     UIUtils.popover.show(event, {
       templateUrl: 'templates/common/popover_share.html',
       scope: $scope,
       bindings: {
         titleKey: 'COMMENTS.POPOVER_SHARE_TITLE',
-        titleValues: {number: index+1},
+        titleValues: {number: index ? index + 1 : 1},
         date: comment.time,
         value: url,
         postUrl: stateUrl,
@@ -208,19 +210,55 @@ function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUti
     });
   };
 
-  $scope.editComment = function(index) {
-    var comment = $scope.comments[index];
-    $scope.comments.splice(index, 1);
-    $scope.commentData = comment;
+  $scope.editComment = function(comment) {
+    var newComment = new Comment();
+    newComment.copy(comment);
+    $scope.formCommentData = newComment;
   };
 
-  $scope.removeComment = function(index) {
-    var comment = $scope.comments[index];
-    if (!comment || !comment.id) {return;}
-    $scope.comments.splice(index, 1);
+  $scope.removeComment = function(comment) {
+    if (!comment) {return;}
+    comment.remove();
+  };
 
-    DataService.record.comment.remove(comment.id, csWallet.data.keypair)
-    .catch(UIUtils.onError('MARKET.ERROR.FAILED_REMOVE_COMMENT'));
+  $scope.replyComment = function(parent) {
+    if (!parent || !parent.id) {return;}
+
+    $scope.formCommentData = {
+      parent: parent
+    };
+
+    $scope.focusNewComment(true);
+  };
+
+  $scope.cancelReplyComment = function() {
+    $scope.formCommentData = {};
+    $scope.focusNewComment();
+  };
+
+  $scope.focusNewComment = function(forceIfSmall) {
+    if (!UIUtils.screen.isSmall()) {
+      $focus('comment-form-textarea');
+    }
+    else {
+      if (forceIfSmall) $focus('comment-form-input');
+    }
+  };
+
+  $scope.cancelCommentReplyTo = function() {
+    delete $scope.formCommentData.parent;
+    delete $scope.formCommentData.reply_to;
+    $scope.focusNewComment();
+  };
+
+  $scope.toggleCommentExpandedReplies = function(comment, index) {
+    comment.expandedReplies = comment.expandedReplies || {};
+    comment.expandedReplies[index] = !comment.expandedReplies[index];
+  };
+
+  $scope.toggleCommentExpandedParent = function(comment, index) {
+    comment.expandedParent = comment.expandedParent || {};
+    comment.expandedParent[index] = !comment.expandedParent[index];
   };
 }
 

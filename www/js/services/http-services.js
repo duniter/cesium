@@ -1,6 +1,6 @@
 angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
-.factory('csHttp', function($http, $q, csSettings, csCache, CacheFactory) {
+.factory('csHttp', function($http, $q, csSettings, csCache, $timeout) {
   'ngInject';
 
   function factory(timeout) {
@@ -139,26 +139,56 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
     function ws(uri) {
       var sock = null;
-      return {
-        on: function(callback, params) {
-          if (!sock) {
-            var self = this;
-            prepare(uri, params, {}, function(uri) {
-              sock = new WebSocket(uri);
-              sockets.push(self);
-            });
-          }
-          sock.onmessage = function(e) {
-            callback(JSON.parse(e.data));
-          };
+      var callbacks = [];
+
+      function _waitOpen() {
+        if (!sock) throw new Error('Websocket not opened');
+        if (sock && sock.readyState === 1) {
+          var deferred = $q.defer();
+          deferred.resolve(sock);
+          return deferred.promise;
+        }
+        return $timeout(_waitOpen, 100);
+      }
+
+      function _open(self, callback, params) {
+        if (!sock) {
+          prepare(uri, params, {}, function(uri) {
+            sock = new WebSocket(uri);
+            sockets.push(self);
+          });
           sock.onerror = function(e) {
             console.error(e);
           };
+          sock.onmessage = function(e) {
+            var obj = JSON.parse(e.data);
+            _.forEach(callbacks, function(callback) {
+              callback(obj);
+            });
+          };
+        }
+        if (callback) callbacks.push(callback);
+        return _waitOpen();
+      }
+
+      return {
+        open: function(params) {
+          return _open(this, null, params);
+        },
+        on: function(callback, params) {
+          return _open(this, callback, params);
+        },
+        send: function(data) {
+          return _waitOpen()
+            .then(function(){
+              sock.send(data);
+            });
         },
         close: function() {
-          if (!!sock) {
+          if (sock) {
             sock.close();
             sock = null;
+            callbacks = [];
           }
         }
       };

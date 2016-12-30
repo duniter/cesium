@@ -294,14 +294,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
 
       var hits;
+      var uidsByPubkey;
       $q.all([
         BMA.wot.member.uids()
-          .then(function(uidsByPubkey){
-            _.forEach(datas, function(data) {
-              if (!data.uid && data[pubkeyAtributeName]) {
-                data.uid = uidsByPubkey[data[pubkeyAtributeName]];
-              }
-            });
+          .then(function(res){
+            uidsByPubkey = res;
           }),
         esHttp.post(host, port, '/user/profile/_search')(request)
           .then(function(res){
@@ -333,6 +330,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             });
           });
         }
+
+        // Set uid (on every data)
+        _.forEach(datas, function(data) {
+          if (!data.uid && data[pubkeyAtributeName]) {
+            data.uid = uidsByPubkey[data[pubkeyAtributeName]];
+          }
+        });
         deferred.resolve(datas);
       })
       .catch(function(err){

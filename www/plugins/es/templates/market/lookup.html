@@ -1,9 +1,9 @@
-<ion-view left-buttons="leftButtons" cache-view="false">
+<ion-view left-buttons="leftButtons">
   <ion-nav-title>
     <span translate>MARKET.SEARCH.TITLE</span>
   </ion-nav-title>
 
-  <ion-content class="lookupForm padding no-padding-xs">
+  <ion-content class="lookupForm padding no-padding-xs" scroll="true">
 
     <form ng-submit="doSearch()">
       <label class="item item-input">
@@ -69,15 +69,14 @@
           </h2>
         </div>
       </a>
-
-      <!-- show more items -->
-      <div class="center" ng-if="search.loadingMore">
-        <ion-spinner icon="android"></ion-spinner>
-      </div>
-      <a class="item text-center button button-stable button-full ink "
-         ng-if="search.hasMore && !search.loadingMore"
-         ng-click="showMore()" translate>MARKET.SEARCH.SHOW_MORE</a>
     </div>
+
+    <ion-infinite-scroll
+      ng-if="!search.loading && search.hasMore"
+      spinner="android"
+      on-infinite="showMore()"
+      distance="1%">
+    </ion-infinite-scroll>
   </ion-content>
 
   <button id="fab-add-market-record bu"

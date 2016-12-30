@@ -11,7 +11,26 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       api = new Api(this, "csWot-" + id),
       identityCache = csCache.get('csWot-idty-', csCache.constants.SHORT),
 
-      _sortAndLimitIdentities = function(idties, size) {
+      // Add id, and remove duplicated id
+      _addUniqueIds = function(idties) {
+        var idtyKeys = {};
+        return idties.reduce(function(res, idty) {
+          idty.id = idty.uid + '-' + idty.pubkey;
+          if (!idtyKeys[idty.id]) {
+            idtyKeys[idty.id] = true;
+            return res.concat(idty);
+          }
+          return res;
+        }, []);
+      },
+
+      _sortAndSliceIdentities = function(idties, offset, size) {
+        offset = offset || 0;
+
+        // Add unique ids
+        idties = _addUniqueIds(idties);
+
+        // Sort by block and
         idties = _.sortBy(idties, function(idty){
           var score = 1;
           score += (1000000 * (idty.block));
@@ -19,8 +38,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return -score;
         });
         if (angular.isDefined(size) && idties.length > size) {
-          idties = idties.slice(0, size); // limit if more than expected size
+          idties = idties.slice(offset, offset+size); // limit if more than expected size
         }
+
+
         return idties;
       },
 
@@ -44,24 +65,42 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               resolve();
               return;
             }
+            // Sort to select the best identity
             if (res.identities.length > 1) {
+              // Select the best identity, by sorting using this order
+              //  - same wallet uid
+              //  - is member
+              //  - has a pending membership
+              //  - is not expired
+              //  - is not outdistanced
+              //  - if has certifications
+              //      max(count(certification)
+              //    else
+              //      max(membershipPendingExpiresIn) = must recent membership
               res.identities = _.sortBy(res.identities, function(idty) {
-                    var score = 1;
-                    score += (100000000000 * ((uid && idty.uid === uid) ? 1 : 0));
-                    score += (1000000      * idty.membershipExpiresIn);
-                    score += (10           * idty.membershipPendingExpiresIn);
-                    return -score;
-                  });
+                var score = 0;
+                score += (10000000000 * ((uid && idty.uid === uid) ? 1 : 0));
+                score += (1000000000  * (idty.membershipExpiresIn > 0 ? 1 : 0));
+                score += (100000000   * (idty.membershipPendingExpiresIn > 0 ? 1 : 0));
+                score += (10000000    * (!idty.expired ? 1 : 0));
+                score += (1000000     * (!idty.outdistanced ? 1 : 0));
+                var certCount = !idty.expired && idty.certifications ? idty.certifications.length : 0;
+                score += (1         * (certCount ? certCount : 0));
+                score += (1         * (!certCount && idty.membershipPendingExpiresIn > 0 ? idty.membershipPendingExpiresIn/1000 : 0));
+                return -score;
+              });
+              console.debug('Found {0} identities. Will selected the best one'.format(res.identities.length));
             }
             var requirements = res.identities[0];
             // Add useful custom fields
             requirements.hasSelf = true;
-            requirements.needMembership = (requirements.membershipExpiresIn === 0 &&
-                                                requirements.membershipPendingExpiresIn <= 0 );
-            requirements.needRenew = !requirements.needMembership && (requirements.membershipExpiresIn <= csSettings.data.timeWarningExpire &&
-                                          requirements.membershipPendingExpiresIn <= 0 );
+            requirements.needMembership = (requirements.membershipExpiresIn <= 0 &&
+                                           requirements.membershipPendingExpiresIn <= 0 );
+            requirements.needRenew = (!requirements.needMembership &&
+                                      requirements.membershipExpiresIn <= csSettings.data.timeWarningExpire &&
+                                      requirements.membershipPendingExpiresIn <= 0 );
             requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
-            requirements.pendingMembership = (requirements.membershipPendingExpiresIn > 0);
+            requirements.pendingMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
             requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
             requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
               if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
@@ -69,7 +108,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }
               return count;
             }, 0) : 0;
-            requirements.isMember = !requirements.needMembership && !requirements.pendingMembership;
+            requirements.isMember = (requirements.membershipExpiresIn > 0);
             resolve(requirements);
           })
           .catch(function(err) {
@@ -95,7 +134,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         });
       },
 
-      loadIdentityByLookup = function(pubkey) {
+      loadIdentityByLookup = function(pubkey, uid) {
         return BMA.wot.lookup({ search: pubkey })
           .then(function(res){
             var identities = res.results.reduce(function(idties, res) {
@@ -113,18 +152,32 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 });
               }, []));
             }, []);
-            // Choose the more updated identity
-            var identity = identities.length == 1 ? identities[0] :
-              _.sortBy(identities, 'number')[identities.length-1];
+
+            // Sort identities if need
+            if (identities.length) {
+              // Select the best identity, by sorting using this order
+              //  - same given uid
+              //  - not revoked
+              //  - max(block_number)
+              identities = _.sortBy(identities, function(idty) {
+                var score = 0;
+                score += (10000000000 * ((uid && idty.uid === uid) ? 1 : 0));
+                score += (1000000000  * (!idty.revoked ? 1 : 0));
+                score += (1           * (idty.number ? idty.number : 0));
+                return -score;
+              });
+            }
+            var identity = identities[0];
 
             identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
             identity.lookup = {};
 
             // Store received certifications
             var certPubkeys = [];
-            identity.lookup.certifications = !res.results ? [] : res.results.reduce(function(certs, res) {
-              return certs.concat(res.uids.reduce(function(certs, idty) {
-                return certs.concat(idty.others.reduce(function(certs, cert) {
+            identity.lookup.certifications = !res.results ? {} : res.results.reduce(function(certsMap, res) {
+              return res.uids.reduce(function(certsMap, idty) {
+                var idtyFullKey = idty.uid + '-' + (idty.meta ? idty.meta.timestamp : '');
+                certsMap[idtyFullKey] = idty.others.reduce(function(certs, cert) {
                   var result = {
                     pubkey: cert.pubkey,
                     uid: cert.uids[0],
@@ -133,7 +186,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                       block_hash: (cert.meta && cert.meta.block_hash)  ? cert.meta.block_hash : null
                     },
                     isMember: cert.isMember,
-                    wasMember: cert.wasMember
+                    wasMember: cert.wasMember,
                   };
                   if (!certPubkeys[cert.pubkey]) {
                     certPubkeys[cert.pubkey] = result;
@@ -148,14 +201,15 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     }
                   }
                   return certs.concat(result);
-                }, certs));
-              }, certs));
-            }, []);
+                }, []);
+                return certsMap;
+              }, certsMap);
+            }, {});
 
             // Store given certifications
             certPubkeys = [];
             identity.lookup.givenCertifications = !res.results ? [] : res.results.reduce(function(certs, res) {
-              return certs.concat(res.signed.reduce(function(certs, cert) {
+              return res.signed.reduce(function(certs, cert) {
                 var result = {
                   pubkey: cert.pubkey,
                   uid: cert.uid,
@@ -180,7 +234,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   }
                 }
                 return certs.concat(result);
-              }, certs));
+              }, certs);
             }, []);
 
             // Retrieve self time
@@ -371,9 +425,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       },
 
       loadSources = function(pubkey) {
-        return $q(function(resolve, reject) {
-          // Get transactions
-          BMA.tx.sources({pubkey: pubkey})
+        return BMA.tx.sources({pubkey: pubkey})
           .then(function(res){
             var sources = [];
             var sourcesIndexByKey = [];
@@ -387,34 +439,32 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 sourcesIndexByKey[srcKey] = sources.length -1 ;
               });
             }
-            resolve({
+            return {
               sources: sources,
               sourcesIndexByKey: sourcesIndexByKey,
               balance: balance
-            });
-          })
-          .catch(function(err) {
-            reject(err);
+            };
           });
-        });
       },
 
       loadData = function(pubkey, withCache, uid) {
-        return $q(function(resolve, reject){
-          // Check cached data
-          var data = withCache ? identityCache.get(pubkey) : null;
-          if (data) {
-            console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
-            resolve(data);
-            return;
-          }
-          console.debug("[wot] Loading identity " + pubkey.substring(0, 8));
-          var now = new Date().getTime();
-          data = {pubkey: pubkey};
+        // Check cached data
+        var data = withCache ? identityCache.get(pubkey) : null;
+        if (data && (!uid || data.uid == uid)) {
+          console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
+          var deferred = $q.defer();
+          deferred.resolve(data);
+          return deferred.promise;
+        }
 
-          var parameters;
-          var medianTime;
-          $q.all([
+        console.debug("[wot] Loading identity " + pubkey.substring(0, 8));
+        var now = new Date().getTime();
+        data = {pubkey: pubkey};
+
+        var parameters;
+        var medianTime;
+
+        return $q.all([
             // Get parameters
             BMA.blockchain.parameters()
               .then(function(res) {
@@ -445,12 +495,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }),
 
             // Get identity using lookup
-            loadIdentityByLookup(pubkey)
+            loadIdentityByLookup(pubkey, uid)
               .then(function (identity) {
                   angular.merge(data, identity);
               })
           ])
           .then(function() {
+            // Add events
             if (data.hasBadSelfBlock) {
               delete data.hasBadSelfBlock;
               if (!data.isMember) {
@@ -458,10 +509,16 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 console.debug("[wot] Invalid membership for {0}: block hash changed".format(data.uid));
               }
             }
+            else if (data.requirements.expired) {
+              addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_EXPIRED'});
+              console.debug("[wot] Identity expired for {0}".format(data.uid));
+            }
+
+            var idtyFullKey = data.requirements.uid + '-' + data.requirements.meta.timestamp;
 
             return $q.all([
               // Get received certifications
-              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications : null, parameters, medianTime, true/*certifiersOf*/)
+              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true/*certifiersOf*/)
                 .then(function (res) {
                   data.received_cert = res.valid;
                   data.received_cert_pending = res.pending;
@@ -485,9 +542,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               // API extension
               api.data.raisePromise.load(data)
                 .catch(function(err) {
-                console.debug('Error while loading identity data, on extension point.');
-                console.error(err);
-              })
+                  console.debug('Error while loading identity data, on extension point.');
+                  console.error(err);
+                })
 
             ]);
           })
@@ -495,61 +552,53 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             delete data.lookup; // not need anymore
             identityCache.put(pubkey, data); // add to cache
             console.debug('[wallet] Identity '+ pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
-            resolve(data);
-          })
-          .catch(function(err) {
-            reject(err);
+            return data;
           });
-        });
       },
 
       search = function(text) {
-        return $q(function(resolve, reject) {
-          if (!text || text.trim() !== text) {
-            resolve();
-          }
-          return BMA.wot.lookup({ search: text })
-            .then(function(res){
-              var idtyKeys = [];
-              var idties = res.results.reduce(function(idties, res) {
-                return idties.concat(res.uids.reduce(function(uids, idty) {
-                  var blocUid = idty.meta.timestamp.split('-', 2);
-                  var idtyKey = idty.uid + '-' + res.pubkey;
-                  if (!idtyKeys[idtyKey] && !idty.revoked) {
-                    idtyKeys[idtyKey] = true;
-                    return uids.concat({
-                      id: idtyKey,
-                      uid: idty.uid,
-                      pubkey: res.pubkey,
-                      number: blocUid[0],
-                      hash: blocUid[1]
-                    });
-                  }
-                  return uids;
-                }, []));
-              }, []);
+        if (!text || text.trim() !== text) {
+          var deferred = $q.defer();
+          deferred.resolve();
+          return deferred.promise;
+        }
 
-              api.data.raisePromise.search(text, idties)
+        return BMA.wot.lookup({ search: text })
+          .then(function(res){
+            return res.results.reduce(function(idties, res) {
+              return idties.concat(res.uids.reduce(function(uids, idty) {
+                var blocUid = idty.meta.timestamp.split('-', 2);
+                if (!idty.revoked) {
+                  return uids.concat({
+                    uid: idty.uid,
+                    pubkey: res.pubkey,
+                    number: blocUid[0],
+                    hash: blocUid[1]
+                  });
+                }
+                return uids;
+              }, []));
+            }, []);
+          })
+          .catch(function(err) {
+            if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
+              return [];
+            }
+            else {
+              throw err;
+            }
+          })
+          .then(function(idties) {
+            return api.data.raisePromise.search(text, idties)
               .then(function() {
-                resolve(idties);
+                idties = _addUniqueIds(idties);
+                return idties;
               });
-            })
-            .catch(function(err) {
-              if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
-                var idties = [];
-                api.data.raisePromise.search(text, idties)
-                .then(function() {
-                  resolve(idties);
-                });
-              }
-              else {
-                reject(err);
-              }
-            });
-        });
+          });
       },
 
-      getNewcomers = function(size) {
+      getNewcomers = function(offset, size) {
+        offset = offset || 0;
         size = size || 20;
         return BMA.blockchain.stats.newcomers()
           .then(function(res) {
@@ -559,13 +608,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             var blocks = _.sortBy(res.result.blocks, function (n) {
               return -n;
             });
-            return getNewcomersRecursive(blocks, 0, 5, size);
+            return getNewcomersRecursive(blocks, 0, 5, offset+size);
           })
           .then(function(idties){
             if (!idties || !idties.length) {
               return null;
             }
-            idties = _sortAndLimitIdentities(idties, size);
+            idties = _sortAndSliceIdentities(idties, offset, size);
 
             // Extension point
             return api.data.raisePromise.search(null, idties)
@@ -592,7 +641,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   if (!block || !block.joiners) return;
                   _.each(block.joiners, function(joiner){
                     var parts = joiner.split(':');
-                    var idtyKey = parts[parts.length-1] + '-' + parts[0];
+                    var idtyKey = parts[parts.length-1]/*uid*/ + '-' + parts[0]/*pubkey*/;
                     result.push({
                       id: idtyKey,
                       uid: parts[parts.length-1],
@@ -633,21 +682,33 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         });
       },
 
-      getPending = function(size) {
+      getPending = function(offset, size) {
+        offset = offset || 0;
         size = size || 20;
-        return BMA.wot.member.pending()
-          .then(function(res) {
-            if (!res.memberships || !res.memberships.length) {
+        var uids;
+        var memberships;
+        return $q.all([
+          BMA.wot.member.uids()
+            .then(function(res) {
+              uids = res;
+            }),
+
+          BMA.wot.member.pending()
+            .then(function(res) {
+              if (res.memberships && res.memberships.length) {
+                memberships = res.memberships;
+              }
+            })
+          ])
+          .then(function() {
+            if (!memberships) {
               return null;
             }
             var idtiesByBlock = {};
             var idtiesByPubkey = {};
-            var idties = [];
-            _.forEach(res.memberships, function(ms){
-              if (ms.membership == 'IN') {
-                var idtyKey = ms.uid + '-' + ms.pubkey;
+            _.forEach(memberships, function(ms){
+              if (ms.membership == 'IN' && !uids[ms.pubkey]) {
                 var idty = {
-                  id: idtyKey,
                   uid: ms.uid,
                   pubkey: ms.pubkey,
                   block: ms.blockNumber,
@@ -674,18 +735,17 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   if (idtiesByBlock[otherIdtySamePubkey.block] === null) {
                     delete idtiesByBlock[otherIdtySamePubkey.block];
                   }
-                  return;
-                }
-                else {
-                  idties.push(idty);
                 }
               }
             });
-            idties = _sortAndLimitIdentities(idtiesByPubkey, size);
+            var idties = _sortAndSliceIdentities(_.values(idtiesByPubkey), offset, size);
+            var blocks = idties.reduce(function(res, aidty) {
+              return res.concat(aidty.block);
+            }, []);
 
             return  $q.all([
               // Get time from blocks
-              BMA.blockchain.blocks(_.keys(idtiesByBlock))
+              BMA.blockchain.blocks(_.uniq(blocks))
               .then(function(blocks) {
 
                 _.forEach(blocks, function(block){

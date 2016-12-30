@@ -188,7 +188,8 @@
       "BTN_PENDING": "Inscriptions en attente",
       "SHOW_MORE": "Afficher plus",
       "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
-      "NO_PENDING": "Aucune inscription en attente n'a été trouvée"
+      "NO_PENDING": "Aucune inscription en attente n'a été trouvée",
+      "NO_NEWCOMERS": "Aucun membre n'a été trouvée"
     },
     "MODAL": {
       "TITLE": "Recherche"
@@ -341,13 +342,17 @@
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
     "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé) : cette personne doit renouveller sa demande d'adhésion <b>avant</b> d'être certifiée.",
+    "IDENTITY_EXPIRED": "La publication d'identité a expirée : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_SANDBOX_FULL": "Le noeud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de noeud (via le menu <b>Paramètres</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
-    "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('renew')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
+    "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('fixMembership')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
+    "WALLET_IDENTITY_EXPIRED": "La publication de <b>votre identité a expirée</b>.<br/>Vous devez <a ng-click=\"doQuickFix('fixIdentity')\">publier à nouveau votre identité</a> pour résoudre ce problème.",
     "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDurationTo}}).",
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
-    "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
+    "LOAD_NEWCOMERS_FAILED": "Echec du chargement des nouveaux membres.",
+    "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
+    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez être membre pour pouvoir effectuer cette action."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -355,7 +360,8 @@
     "NOT_ENOUGH_CREDIT": "Crédit insuffisant",
     "TRANSFER_SENT": "Demande de virement envoyée avec succès",
     "COPY_TO_CLIPBOARD_DONE": "Copie effectuée",
-    "MEMBERSHIP_OUT_SENT": "Résiliation envoyée avec succès"
+    "MEMBERSHIP_OUT_SENT": "Résiliation envoyée avec succès",
+    "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
@@ -365,8 +371,10 @@
     "MEMBERSHIP_OUT": "<b>Avertissement</b> :<br/>Vous allez résilier votre adhésion comme membre. Cette opération est <b>irréversible</b>.<br/></br/><b>Etes-vous sûr de vouloir continuer ?</b>",
     "LOGIN_UNUSED_WALLET_TITLE": "Erreur de saisie ?",
     "LOGIN_UNUSED_WALLET": "Vous êtes connecté sur un compte qui parait <b>inactif</b>.<br/><br/>Si ce compte ne correspond pas au votre, il s'agit probablement d'une <b>erreur de saisie</b> de vos identifiants de connexion.<br/></br/><b>Voulez-vous néanmoins continuer avec ce compte ?</b>",
+    "FIX_IDENTITY": "Le pseudonyme <b>{{uid}}</b> va être publiée à nouveau, en remplacement de l'ancienne publication qui a expirée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
     "FIX_MEMBERSHIP": "Votre demande d'adhésion comme membre va être renvoyée.<br/></br/><b>Etes-vous sûr ?</b>",
-    "RENEW_MEMBERSHIP": "Votre adhésion comme membre va être renouvellée.<br/></br/><b>Etes-vous sûr ?</b>"
+    "RENEW_MEMBERSHIP": "Votre adhésion comme membre va être renouvellée.<br/></br/><b>Etes-vous sûr ?</b>",
+    "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveller votre adhésion ?"
   },
   "HELP": {
     "TITLE": "Aide en ligne",

@@ -1,4 +1,3 @@
-
 angular.module('cesium.app.controllers', ['cesium.services'])
 
   .config(function($httpProvider) {
@@ -180,75 +179,60 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     }
   };
 
+  // Load wallet data (after login)
+  $scope.loadWalletData = function(options) {
+    if (options && options.loadMinData) {
+      return csWallet.loadMinData()
+        .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR'));
+    }
+    return csWallet.loadData()
+      .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR'))
+      .then(function(walletData) {
+        // Warn if wallet has been never used - see #167
+        var showAlert = !csConfig.initPhase && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
+        if (!showAlert) return walletData;
+        return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
+          'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
+            okText: 'COMMON.BTN_CONTINUE'
+          })
+          .then(function(confirm) {
+            if (confirm) return walletData;
+          });
+      })
+      .then(function(walletData) {
+        if (walletData) {
+          $rootScope.walletData = walletData;
+          return walletData;
+        }
+        else { // failed to login
+          throw new Error('CANCELLED');
+        }
+      });
+  };
+
   // Login and load wallet
-  $scope.loadWallet = function(rejectIfError) {
-
-    // Warn if wallet has been never used - see #167
-    var _showConfirmIfUnused = function() {
-      var showAlert = !csConfig.initPhase && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
-      if (!showAlert) return;
-      UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
-        'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
-          okText: 'COMMON.BTN_CONTINUE'
-        })
-        .then(function (confirm) {
-          if (!confirm) {
-            $scope.logout().then($scope.loadWallet);
-          }
-          else {
-            csSettings.data.wallet = csSettings.data.wallet || {};
-            csSettings.data.wallet.alertIfUnusedWallet = false;
-            csSettings.store();
-          }
-        });
-    };
-
-    return $q(function(resolve, reject){
-      if (!csWallet.isLogin()) {
-        return $scope.showLoginModal()
-        .then(function(walletData) {
+  $scope.loadWallet = function(options) {
+    options = options || {};
+    if (!csWallet.isLogin()) {
+      return $scope.showLoginModal()
+        .then(function (walletData) {
           if (walletData) {
             $rootScope.viewFirstEnter = false;
-            csWallet.loadData()
-            .then(function(walletData){
-              _showConfirmIfUnused();
-              $rootScope.walletData = walletData;
-              resolve(walletData);
-            })
-            .catch(function(err) {
-              if (rejectIfError) {
-                UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject)(err);
-              }
-              else {
-                UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
-              }
-            });
+            return $scope.loadWalletData(options);
           }
           else { // failed to login
-            reject('CANCELLED');
+            throw new Error('CANCELLED');
           }
         });
-      }
-      else if (!csWallet.data.loaded) {
-        return csWallet.loadData()
-        .then(function(walletData){
-          _showConfirmIfUnused();
-          $rootScope.walletData = walletData;
-          resolve(walletData);
-        })
-        .catch(function(err) {
-          if (rejectIfError) {
-            UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR', reject)(err);
-          }
-          else {
-            UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR')(err);
-          }
-        });
-      }
-      else {
-        resolve(csWallet.data);
-      }
-    });
+    }
+    else if (!csWallet.data.loaded) {
+      return $scope.loadWalletData(options);
+    }
+    else {
+      var deferred = $q.defer();
+      deferred.resolve(csWallet.data);
+      return deferred.promise;
+    }
   };
 
   // Login and go to wallet

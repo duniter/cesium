@@ -1,7 +1,6 @@
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils',
-  function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
            $ionicPopover, $state, $rootScope, screenmatch) {
   'ngInject';
 
@@ -26,7 +25,7 @@ angular.module('cesium.utils.services', ['ngResource'])
   ;
 
   function alertError(err, subtitle) {
-    return $q(function(resolve, reject) {
+    return $q(function(resolve) {
       if (!err) {
         resolve();
         return;
@@ -53,7 +52,7 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function alertInfo(message, subtitle) {
-    return $q(function(resolve, reject) {
+    return $q(function(resolve) {
       $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
       .then(function (translations) {
         $ionicPopup.show({
@@ -104,12 +103,12 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function hideLoading(timeout){
     if (timeout) {
-      $timeout(function(){
+      return $timeout(function(){
         $ionicLoading.hide();
       }, timeout);
     }
     else {
-      $ionicLoading.hide();
+      return $ionicLoading.hide();
     }
   }
 
@@ -153,6 +152,11 @@ angular.module('cesium.utils.services', ['ngResource'])
       if (!!reject) {
         reject(fullMsg);
       }
+      // If just a user cancellation: silent
+      else if (fullMsg == 'CANCELLED') {
+        return hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
+      }
+
       // Otherwise, log to console and display error
       else {
         console.error(err);

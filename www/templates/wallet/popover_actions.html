@@ -19,16 +19,30 @@
         {{'COMMON.BTN_SHARE' | translate}}
       </a>
 
-      <a class="item item-icon-left ink"
-              ng-if="walletData.requirements.needMembership"
+      <!-- membership in -->
+      <a class="item item-icon-left ink visible-xs visible-sm"
+         ng-if="walletData.requirements.needMembership"
+         ng-click="membershipIn()">
+        <i class="icon ion-person"></i>
+        {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
+      </a>
+      <a class="item item-icon-left ink hidden-xs hidden-sm"
+              ng-class="{'gray':!walletData.requirements.needMembership}"
               ng-click="membershipIn()">
         <i class="icon ion-person"></i>
         {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
       </a>
 
+      <!-- renew membership -->
       <a class="item item-icon-left ink visible-xs visible-sm"
-              ng-if="walletData.requirements.needRenew"
-              ng-click="renewMembership()">
+         ng-if="walletData.requirements.needRenew"
+         ng-click="renewMembership()">
+        <i class="icon ion-loop"></i>
+        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+      </a>
+      <a class="item item-icon-left ink hidden-xs hidden-sm"
+         ng-class="{'gray':!walletData.requirements.needRenew}"
+         ng-click="renewMembership()">
         <i class="icon ion-loop"></i>
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
       </a>

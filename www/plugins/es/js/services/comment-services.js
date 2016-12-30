@@ -1,76 +1,308 @@
-angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services', 'cesium.es.http.services'])
+angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services', 'cesium.wallet.services', 'cesium.es.http.services'])
 
-.factory('esComment', function($q, BMA, esHttp, esUser) {
+.factory('esComment', function($rootScope, $q, UIUtils, BMA, esHttp, esUser, csWallet) {
   'ngInject';
 
-  function factory(host, port, index) {
+  function factory(host, port, wsPort, index) {
 
     var
+      defaultSizeLimit = 20,
       fields = {
-        commons: ["issuer", "time", "message"],
+        commons: ["issuer", "time", "message", "reply_to"],
       },
-      postSearchCommentsRequest = esHttp.post(host, port, '/'+index+'/comment/_search')
-      ;
+      pendings = {};
+      searchRequest = esHttp.post(host, port, '/'+index+'/comment/_search'),
+      deleteRequest = esHttp.record.remove(host, port, index, 'comment'),
+      addRequest = esHttp.record.post(host, port, '/'+index+'/comment'),
+      updateRequest = esHttp.record.post(host, port, '/'+index+'/comment/:id/_update'),
+      wsChanges = esHttp.ws('ws://' + esHttp.getServer(host, wsPort) + '/ws/_changes');
 
-    function getCommentsByRecordRequest() {
-      return function(recordId, size) {
-        if (!size) {
-          size = 10;
+    function refreshTreeLinks(data) {
+      return addTreeLinks(data, true);
+    }
+
+    function addTreeLinks(data, refresh) {
+      data = data || {};
+      data.result = data.result || [];
+      data.mapById = data.mapById || {};
+
+      var incompleteCommentIdByParentIds = {};
+      _.forEach(_.values(data.mapById), function(comment) {
+        if (comment.reply_to && !comment.parent) {
+          var parent = data.mapById[comment.reply_to];
+          if (!parent) {
+            parent = new Comment(comment.reply_to);
+            incompleteCommentIdByParentIds[parent.id] = comment.id;
+            data.mapById[parent.id] = parent;
+          }
+          if (!refresh || !parent.containsReply(comment)) {
+            parent.addReply(comment);
+          }
         }
-        else if (size < 0) {
-          size = 1000;
+      });
+
+      if (!_.size(incompleteCommentIdByParentIds)) {
+        var deferred = $q.defer();
+        deferred.resolve(data);
+        return deferred.promise;
+      }
+
+      var request = {
+        query : {
+          terms: {
+            _id: _.keys(incompleteCommentIdByParentIds)
+          }
+        },
+        sort : [
+          { "time" : {"order" : "desc"}}
+        ],
+        from: 0,
+        size: 1000,
+        _source: fields.commons
+      };
+
+      console.debug("[ES] [comment] Getting missing comments in tree");
+      return searchRequest(request)
+        .then(function(res){
+          if (!res.hits.total) {
+            console.error("[ES] [comment] Comments has invalid [reply_to]: " + _.values(incompleteCommentIdByParentIds).join(','));
+            return data;
+          }
+
+          _.forEach(res.hits.hits, function(hit) {
+            var comment = data.mapById[hit._id];
+            comment.copyFromJson(hit._source);
+            delete incompleteCommentIdByParentIds[comment.id];
+          });
+
+          if (_.size(incompleteCommentIdByParentIds)) {
+            console.error("Comments has invalid [reply_to]: " + _.values(incompleteCommentIdByParentIds).join(','));
+          }
+
+          return addTreeLinks(data); // recursive call
+        });
+    }
+
+    function loadDataByRecordId(recordId, options) {
+      options = options || {};
+      options.from = options.from || 0;
+      options.size = options.size || defaultSizeLimit;
+      options.loadAvatar = angular.isDefined(options.loadAvatar) ? options.loadAvatar : true;
+      options.loadAvatarAllParent = angular.isDefined(options.loadAvatarAllParent) ? (options.loadAvatar && options.loadAvatarAllParent) : false;
+      if (options.size < 0) options.size = defaultSizeLimit;
+
+      var request = {
+        query : {
+          term: { record : recordId}
+        },
+        sort : [
+          { "time" : {"order" : "desc"}}
+        ],
+        from: options.from,
+        size: options.size,
+        _source: fields.commons
+      };
+
+      var data = {
+        mapById: {},
+        result: [],
+        pendings: {}
+      };
+
+      // Search comments
+      return searchRequest(request)
+        .then(function(res){
+          if (!res.hits.total) return data;
+
+          data.result = res.hits.hits.reduce(function (result, hit) {
+            var comment = new Comment(hit._id, hit._source);
+            data.mapById[comment.id] = comment; // fill map by id
+            return result.concat(comment);
+          }, data.result);
+
+          // Add tree (parent/child) link
+          return addTreeLinks(data);
+        })
+
+        // Fill avatars (and uid)
+        .then(function() {
+          if (!options.loadAvatar) return;
+          if (options.loadAvatarAllParent) {
+            return esUser.profile.fillAvatars(_.values(data.mapById), 'issuer');
+          }
+          return esUser.profile.fillAvatars(data.result, 'issuer');
+        })
+
+        // Sort (time asc)
+        .then(function() {
+          data.result = data.result.sort(function(cm1, cm2) {
+            return (cm1.time - cm2.time);
+          });
+          return data;
+        });
+    }
+
+    // Add listener to send deletion
+    function createOnDeleteListener(data) {
+      return function(comment) {
+        var index = _.findIndex(data.result, {id: comment.id});
+        if (index === -1) return;
+        data.result.splice(index, 1);
+        delete data.mapById[comment.id];
+        // Send deletion request
+        if (comment.issuer === csWallet.data.pubkey) {
+          deleteRequest(comment.id, csWallet.data.keypair)
+            .catch(function(err){
+              console.error(err);
+              throw new Error('MARKET.ERROR.FAILED_REMOVE_COMMENT');
+            });
         }
-        return $q(function(resolve, reject) {
-          var errorFct = function(err) {
-            reject(err);
-          };
-          var request = {
-            sort : [
-              { "time" : {"order" : "desc"}}
-            ],
-            query : {
-              constant_score:{
-                filter: {
-                  term: { record : recordId}
-                }
+      };
+    }
+
+    function startListenChanges(recordId, data) {
+      data = data || {};
+      data.result = data.result || [];
+      data.mapById = data.mapById || {};
+      data.pendings = data.pendings || {};
+
+      // Add listener to send deletion
+      var onRemoveListener = createOnDeleteListener(data);
+      _.forEach(data.result, function(comment) {
+        comment.addOnRemoveListener(onRemoveListener);
+      });
+
+      // Open websocket
+      var time = new Date().getTime();
+      console.info("[ES] [comment] Starting websocket to listen comments on [{0}/record/{1}]".format(index, recordId.substr(0,8)));
+      return wsChanges.open()
+
+        // Define source filter
+        .then(function(sock) {
+          return sock.send(index + '/comment');
+        })
+
+        // Listen changes
+        .then(function(){
+          console.debug("[ES] [comment] Websocket opened in {0} ms".format(new Date().getTime() - time));
+          wsChanges.on(function(change) {
+            if (!change) return;
+            if (change._operation === 'DELETE') {
+              var comment = data.mapById[change._id];
+              if (comment) {
+                $rootScope.$apply(function() {
+                  comment.remove();
+                });
               }
-            },
-            from: 0,
-            size: size,
-            _source: fields.commons
-          };
-
-          postSearchCommentsRequest(request)
-          .then(function(res){
-            if (res.hits.total === 0) {
-              resolve([]);
             }
-            else {
-              var result = res.hits.hits.reduce(function(result, hit) {
-                var comment = hit._source;
-                comment.id = hit._id;
-                return result.concat(comment);
-              }, []);
-
-              // fill avatars (and uid)
-              esUser.profile.fillAvatars(result, 'issuer')
-                .then(function() {
-                  resolve(result);
-              })
-              .catch(errorFct);
+            else if (change._source && change._source.record === recordId) {
+              console.debug("Received new: " + change._id);
+              var comment = data.mapById[change._id];
+              if (!comment) { // new comment
+                // Check if not in pending comment
+                if (data.pendings && data.pendings[change._source.time] && change._source.issuer === csWallet.data.pubkey) {
+                  console.debug("Skip comment received by WS (already in pending)");
+                  return;
+                }
+                comment = new Comment(change._id, change._source);
+                comment.addOnRemoveListener(onRemoveListener);
+                comment.isnew = true;
+                data.mapById[change._id] = comment;
+                refreshTreeLinks(data)
+                  // fill avatars (and uid)
+                  .then(function() {
+                    return esUser.profile.fillAvatars([comment], 'issuer');
+                  })
+                  .then(function() {
+                    data.result.push(comment);
+                  })
+              }
+              else {
+                comment.copyFromJson(change._source);
+                refreshTreeLinks(data);
+              }
             }
           })
-          .catch(errorFct);
         });
-    };
+    }
+
+    /**
+     * Save a comment (add or update)
+     * @param recordId
+     * @param data
+     * @param comment
+     * @returns {*}
+     */
+    function save(recordId, data, comment) {
+      data = data || {};
+      data.result = data.result || [];
+      data.mapById = data.mapById || {};
+      data.pendings = data.pendings || {};
+
+      var json = {
+        time: comment.time,
+        message: comment.message,
+        record: recordId,
+        issuer: csWallet.data.pubkey
+      };
+      if (comment.reply_to || comment.parent) {
+        json.reply_to = comment.reply_to || comment.parent.id;
+      }
+      else {
+        json.reply_to = null; // force to null because ES ignore missing field, when updating
+      }
+
+      if (!comment.id) {
+        json.time = esHttp.date.now();
+
+        data.pendings = data.pendings || {};
+        data.pendings[json.time] = json;
+
+        var commentObj = new Comment(null, json);
+        commentObj.addOnRemoveListener(createOnDeleteListener(data));
+        commentObj.uid = csWallet.data.uid;
+        commentObj.name = csWallet.data.name;
+        commentObj.avatarStyle = csWallet.data.avatarStyle;
+        commentObj.isnew = true;
+        if (comment.parent) {
+          comment.parent.addReply(commentObj);
+        }
+        data.result.push(commentObj);
+
+        return addRequest(json)
+          .then(function(id) {
+            commentObj.id = id;
+            data.mapById[id] = commentObj;
+            delete data.pendings[json.time];
+            return commentObj;
+          });
+      }
+      // Update
+      else {
+        var commentObj = data.mapById[comment.id];
+        commentObj.copy(comment);
+        return updateRequest(json, {id: comment.id});
+      }
+    }
+
+    function stopListenChanges(data) {
+      console.debug("[ES] [comment] Stopping websocket on comments");
+      _.forEach(data.result, function(comment) {
+        comment.cleanAllListeners();
+      });
+      // Close previous
+      wsChanges.close();
     }
 
     return {
-      search: postSearchCommentsRequest,
-      all: getCommentsByRecordRequest(),
-      add: esHttp.record.post(host, port, '/'+index+'/comment'),
-      update: esHttp.record.post(host, port, '/'+index+'/comment/:id/_update'),
-      remove: esHttp.record.remove(host, port, index, 'comment'),
+      search: searchRequest,
+      load: loadDataByRecordId,
+      save: save,
+      remove: deleteRequest,
+      changes: {
+        start: startListenChanges,
+        stop: stopListenChanges
+      },
       fields: {
         commons: fields.commons
       }
