@@ -107,7 +107,6 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $state
           $scope.avatar = {src: imageData};
           $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
           UIUtils.loading.hide(10);
-          //$scope.$apply();
           resolve();
         })
         .catch(UIUtils.onError('Failed to resize image'));
@@ -133,6 +132,20 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $state
       };
     };
 
+    var updateWallet = function(formData) {
+      if (formData) {
+        $scope.walletData.name = formData.title;
+        if (formData.avatar) {
+          $scope.walletData.avatar = formData.avatar;
+          $scope.walletData.avatarStyle = $scope.avatarStyle;
+        }
+        else {
+          delete $scope.walletData.avatar;
+          delete $scope.walletData.avatarStyle;
+        }
+      }
+    };
+
     var showSuccessToast = function() {
       if (!silent) {
         $translate('PROFILE.INFO.PROFILE_SAVED')
@@ -149,6 +162,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $state
           console.log("User profile successfully created.");
           $scope.existing = true;
           $scope.saving = false;
+          updateWallet(formData);
           showSuccessToast();
         })
         .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
@@ -158,6 +172,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $state
         .then(function() {
           console.log("User profile successfully updated.");
           $scope.saving = false;
+          updateWallet(formData);
           showSuccessToast();
         })
         .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));

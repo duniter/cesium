@@ -46,6 +46,12 @@
 
           <ion-list class="animate-ripple item-text-wrap" ng-init="setForm(profileForm)">
 
+            <!-- Public info -->
+            <div class="item item-icon-left item-text-wrap">
+              <i class="icon ion-ios-information-outline positive"></i>
+              <h4 class="positive" translate>PROFILE.HELP.WARNING_PUBLIC_DATA</h4>
+            </div>
+
             <div class="item item-divider">
               {{'PROFILE.GENERAL_DIVIDER' | translate}}
             </div>
@@ -121,10 +127,10 @@
             </ion-item>
 
             <div class="item padding hidden-xs hidden-sm text-right">
-              <button class="button button-small button-clear button-dark ink"
+              <button class="button button-clear button-dark ink"
                       ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
               </button>
-              <button class="button button-small button-assertive ink" type="submit">
+              <button class="button button-assertive ink" type="submit">
                 {{'COMMON.BTN_SAVE' | translate}}
               </button>
             </div>

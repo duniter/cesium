@@ -260,6 +260,9 @@
     },
     "INFO": {
       "PROFILE_SAVED": "Profil sauvegardé",
+    },
+    "HELP": {
+      "WARNING_PUBLIC_DATA": "Veuillez noter que les informations publiées ici <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
     }
   },
   "ES_SETTINGS": {
