@@ -1178,7 +1178,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 **********/
 
 .modal.modal-full-height {
-  height: 100% !important;
+  //height: 100% !important;
+  bottom: 0px;
 }
 
 .modal.about .bar.bar-header .button + .title {
