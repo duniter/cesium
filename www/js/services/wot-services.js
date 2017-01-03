@@ -514,6 +514,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               console.debug("[wot] Identity expired for {0}".format(data.uid));
             }
 
+            if (!data.requirements.uid)
+              return api.data.raisePromise.load(data)
+                .catch(function(err) {
+                  console.debug('Error while loading identity data, on extension point.');
+                  console.error(err);
+                });
+
             var idtyFullKey = data.requirements.uid + '-' + data.requirements.meta.timestamp;
 
             return $q.all([
@@ -534,10 +541,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   }),
 
               // Get sources
-              loadSources(pubkey)
+               // NOT NEED for now
+              /*loadSources(pubkey)
                 .then(function (sources) {
                   data.sources = sources;
                 }),
+              */
 
               // API extension
               api.data.raisePromise.load(data)

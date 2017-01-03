@@ -25,19 +25,38 @@
 
         <ion-list class="animate-fade-slide-in item-text-wrap">
 
-          <div class="item" ng-class="{'item-avatar': formData.avatar}">
-            <img ng-if="formData.avatar" class="item-image" ng-src="{{::formData.avatar.src}}">
-            <h1 ng-bind-html="formData.title"></h1>
+          <!-- Buttons bar-->
+          <div class="item large-button-bar hidden-xs hidden-sm">
+            <button class="button button-stable icon-left ink-dark"
+                    ng-click="delete()">
+              <i class="icon ion-trash-a assertive"></i>
+              <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
+            </button>
+            <button class="button button-stable icon ion-reply"
+                    ng-click="showReplyModal()">
+              {{'MESSAGE.BTN_REPLY' | translate}}
+            </button>
+            <!--<button class="button button-small button-stable icon ion-reply"
+                    ng-click="showForwardModal()">
+              {{'MESSAGE.BTN_FORWARD' | translate}}
+            </button>-->
+          </div>
+
+          <div class="item item-avatar" ng-class="{'item-avatar': formData.avatar}">
+
+            <i ng-class="{'item-image ion-person': formData.uid && !formData.avatarStyle, 'item-image ion-email': !formData.uid && !formData.avatarStyle, 'avatar': formData.avatarStyle}"
+               ng-style="formData.avatarStyle"></i>
+            <h1 class="title" ng-bind-html="formData.title"></h1>
             <h4>
               <i class="ion-clock"></i>
-              <span translate>MESSAGE.VIEW.SENDER</span>
-              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid: formData.name||formData.uid})">
+              {{type == 'inbox' ? 'MESSAGE.VIEW.SENDER': 'MESSAGE.VIEW.RECIPIENT'|translate}}
+              <a class="positive" ui-sref="app.wot_view_identity({pubkey: (type == 'inbox') ? formData.issuer : formData.recipient, uid: formData.name||formData.uid})">
                 <span ng-if="formData.uid">
                   <i class="ion-person"></i>
                   {{formData.name||formData.uid}}
                 </span>
-                <span ng-if="!formData.uid">
-                  <i class="ion-key"></i>
+                <span ng-if="!formData.uid" class="gray">
+                  <i class="ion-key gray"></i>
                   {{formData.issuer|formatPubkey}}
                 </span>
               </a>
@@ -61,22 +80,7 @@
             </div>
           </ion-item>
 
-          <!-- Buttons bar-->
-          <div class="item large-button-bar hidden-xs hidden-sm">
-            <button class="button button-small button-stable icon-left ink-dark"
-                    ng-click="delete()">
-              <i class="icon ion-trash-a assertive"></i>
-              <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
-            </button>
-            <button class="button button-small button-stable icon ion-reply"
-                    ng-click="showReplyModal()">
-              {{'MESSAGE.BTN_REPLY' | translate}}
-            </button>
-            <!--<button class="button button-small button-stable icon ion-reply"
-                    ng-click="showForwardModal()">
-              {{'MESSAGE.BTN_FORWARD' | translate}}
-            </button>-->
-          </div>
+
         </ion-list>
       </div>
 

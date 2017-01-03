@@ -1,7 +1,9 @@
 <ng-init ng-init="level = level + 1">
   <a name="{{::comment.id|formatHash}}"></a>
 
-  <ion-item class="card card-avatar stable-900-bg item-text-wrap no-padding"
+  <ion-item
+            id="comment-{{comment.id|formatHash}}"
+            class="card card-avatar stable-900-bg  item-text-wrap no-padding"
             ng-class="{'in done': comment.isnew}">
 
     <!-- Parent comment -->

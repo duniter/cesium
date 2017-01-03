@@ -15,11 +15,15 @@ function Notification(json, markAsReadCallback) {
 
   that.message = json.reference && messagePrefixes[json.reference.index] ?
   messagePrefixes[json.reference.index] + json.code :
-    'EVENT.' + json.code;
+  'EVENT.' + json.code;
   that.params = json.params;
 
   if (markAsReadCallback && (typeof markAsReadCallback === "function") ) {
     that.markAsReadCallback = markAsReadCallback;
+  }
+
+  function _formatHash(input) {
+    return input ? input.substr(0,4) + input.substr(input.length-4) : '';
   }
 
   that.markAsRead = function() {
@@ -28,8 +32,14 @@ function Notification(json, markAsReadCallback) {
     }
   };
 
+  // Membership
+  if (json.code.startsWith('MEMBER_')) {
+    that.avatarIcon = 'ion-person';
+    that.icon = 'ion-information-circled positive';
+  }
+
   // TX
-  if (json.code.startsWith('TX_')) {
+  else if (json.code.startsWith('TX_')) {
     that.avatarIcon = 'ion-card';
     that.icon = (json.code == 'TX_SENT') ? 'ion-paper-airplane dark' : 'ion-archive balanced';
     var pubkeys = json.params.length > 0 ? json.params[0] : null;
@@ -39,10 +49,12 @@ function Notification(json, markAsReadCallback) {
     that.state = 'app.view_wallet';
   }
 
-  // Membership
-  else if (json.code.startsWith('MEMBER_')) {
-    that.avatarIcon = 'ion-person';
-    that.icon = 'ion-information-circled positive';
+  // Certifications
+  else if (json.code.startsWith('CERT_')) {
+    that.avatarIcon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b' : 'ion-ribbon-a';
+    that.icon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b dark' : 'ion-ribbon-a dark';
+    that.pubkey = json.params.length > 0 ? json.params[0] : null;
+    that.state = 'app.wallet_view_cert';
   }
 
   // Message
@@ -69,7 +81,7 @@ function Notification(json, markAsReadCallback) {
       that.stateParams = {
         id: json.reference.id,
         title: json.params[2],
-        anchor: json.reference.anchor.substr(0,8)
+        anchor: _formatHash(json.reference.anchor)
       };
     }
     else {
@@ -90,7 +102,7 @@ function Notification(json, markAsReadCallback) {
       that.stateParams = {
         id: json.reference.id,
         title: json.params[1],
-        anchor: json.reference.anchor.substr(0,8)
+        anchor: _formatHash(json.reference.anchor)
       };
     }
     else {

@@ -49,22 +49,25 @@
     "DELETED_COMMENT": "Commentaire supprimé"
   },
   "MESSAGE": {
-    "REMOVE_CONFIRMATION": "Etes-vous sur de vouloir supprimer ce message ?<br/><br/>Cette opération est irréversible.",
     "REPLY_TITLE_PREFIX": "Rep: ",
     "FORWARD_TITLE_PREFIX": "Tr: ",
     "BTN_REPLY": "Répondre",
     "BTN_COMPOSE": "Nouveau message",
     "BTN_WRITE": "Ecrire",
-    "POPOVER": {
+    "NO_MESSAGE_INBOX": "Aucun message reçu",
+    "NO_MESSAGE_OUTBOX": "Aucun message envoyé",
+    "NOTIFICATIONS": {
       "TITLE": "Messages",
       "MESSAGE_RECEIVED": "Vous avez <b>reçu un message</b><br/>de"
     },
     "LIST": {
-      "NO_MESSAGE_INBOX": "Aucun message reçu",
-      "NO_MESSAGE_OUTBOX": "Aucun message envoyé",
       "INBOX": "Boite de réception",
       "OUTBOX": "Messages envoyés",
-      "TITLE": "Messages privés"
+      "TITLE": "Messages privés",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Options",
+        "DELETE_ALL": "Supprimer tous les messages"
+      }
     },
     "COMPOSE": {
       "TITLE": "Nouveau message",
@@ -81,10 +84,17 @@
     "VIEW": {
       "TITLE": "Message",
       "SENDER": "Envoyé par",
+      "RECIPIENT": "Envoyé à",
       "NO_CONTENT": "Message vide"
+    },
+    "CONFIRM": {
+      "REMOVE": "Etes-vous sur de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
+      "REMOVE_ALL" : "Etes-vous sur de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
+      "MARK_ALL_AS_READ": "Etes-vous sur de vouloir <b>marquer tous les messages comme lu</b> ?."
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message supprimé",
+      "All_MESSAGE_REMOVED": "Tous les messages ont été supprimé",
       "MESSAGE_SENT": "Message envoyé"
     },
     "ERROR": {
@@ -97,7 +107,9 @@
       "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message",
       "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max).",
       "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
-      "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages."
+      "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages.",
+      "REMOVE_All_MESSAGES_FAILED": "Erreur lors de la suppression de tous les messages.",
+      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu."
     }
   },
   "MARKET": {
@@ -285,11 +297,15 @@
     "TX_SENT_MULTI": "Votre <b>paiement</b> à <b>{{params[1]}}</b> a été effectué.",
     "TX_RECEIVED": "Vous avez <b>reçu un paiement</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
     "TX_RECEIVED_MULTI": "Vous avez <b>reçu un paiement</b> de <b>{{params[1]}}</b>.",
+    "CERT_SENT": "Votre <b>certification</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectuée.",
+    "CERT_RECEIVED": "Vous avez <b>reçu une certification</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
     "MARKET": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre annonce: <b>{{params[2]}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre annonce: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre annonce: <b>{{params[2]}}</b>"
     },
     "REGISTRY": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement: <b>{{params[2]}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre référencement: <b>{{params[2]}}</b>"
     }
   }
 }

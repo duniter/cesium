@@ -52,16 +52,16 @@
           <span translate>MENU.HOME</span>
         </ion-item>
 
-        <div menu-close
+        <ion-item menu-close
              id="helptip-menu-btn-currency"
              class="item item-icon-left"
-                  active-link="active"
-                  active-link-path-prefix="#/app/currency"
-                  ng-click="showCurrencyView()"
-                  ng-if="!options.registry || !options.registry.enable">
+             active-link="active"
+             active-link-path-prefix="#/app/currency"
+             href="#/app/currency/view/"
+             ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
-        </div>
+        </ion-item>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>

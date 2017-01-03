@@ -19,15 +19,17 @@ angular.module('cesium.app.controllers', ['cesium.services'])
         url: "/app",
         abstract: true,
         templateUrl: "templates/menu.html",
-        controller: 'AppCtrl'
+        controller: 'AppCtrl',
+        data: {
+          large: false
+        }
       })
 
       .state('app.home', {
         url: "/home",
         views: {
           'menuContent': {
-            templateUrl: "templates/home/home.html",
-            controller: 'AppCtrl'
+            templateUrl: "templates/home/home.html"
           }
         }
       })
@@ -37,8 +39,6 @@ angular.module('cesium.app.controllers', ['cesium.services'])
     $urlRouterProvider.otherwise('/app/home');
 
   })
-
-
 
   .controller('AppCtrl', AppController)
 
@@ -75,22 +75,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   'ngInject';
 
   $scope.search = {};
-  $rootScope.walletData = csWallet.data;
-  $rootScope.settings = csSettings.data;
-  $rootScope.config = csConfig;
-  $rootScope.device = Device;
   $rootScope.login = csWallet.isLogin();
-
-  ////////////////////////////////////////
-  // Show view
-  ////////////////////////////////////////
 
   $scope.showHome = function() {
     $state.go('app.home');
-  };
-
-  $scope.showCurrencyView = function() {
-    $state.go(UIUtils.screen.isSmall() ? 'app.currency_view': 'app.currency_view_lg');
   };
 
   ////////////////////////////////////////
@@ -307,12 +295,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // add listener on wallet event
   csWallet.api.data.on.login($scope, function(walletData, deferred) {
     deferred = deferred || $q.defer();
-    $rootScope.login = true;
+    $scope.login = true;
+    console.debug("IS LOGIN DETECTED");
     deferred.resolve();
     return deferred.promise;
   });
   csWallet.api.data.on.logout($scope, function() {
-    $rootScope.login = false;
+    $scope.login = false;
   });
 
   // If connected and same pubkey

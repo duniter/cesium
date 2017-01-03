@@ -6,7 +6,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
     $stateProvider
 
       .state('app.user_message', {
-        url: "/user/message",
+        url: "/user/message?type",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/message/list.html",
@@ -52,19 +52,20 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.e
 
 ;
 
-function ESMessageListController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, esModals, UIUtils, esMessage) {
+function ESMessageListController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, $ionicPopover,
+                                 esModals, UIUtils, esMessage) {
   'ngInject';
 
   $scope.loading = true;
-  $scope.type = 'inbox';
   $scope.messages = [];
 
-  $scope.$on('$ionicView.enter', function(e) {
+  $scope.$on('$ionicView.enter', function(e, state) {
 
     $scope.loadWallet()
       .then(function() {
         if (!$scope.entered) {
           $scope.entered = true;
+          $scope.type = state.stateParams && state.stateParams.type || 'inbox';
           $scope.load();
         }
 
@@ -102,7 +103,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
             });
             // Set Ink
             UIUtils.ink();
-          }, 10);
+          });
         }
       })
       .catch(function(err) {
@@ -112,11 +113,34 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
       });
   };
 
+  $scope.setType = function(type) {
+    $scope.type = type;
+    $scope.load();
+  };
+
+  $scope.markAllAsRead = function() {
+    $scope.hideActionsPopover();
+    if (!$scope.messages || !$scope.messages.length) return;
+
+    UIUtils.alert.confirm('MESSAGE.CONFIRM.MARK_ALL_AS_READ')
+      .then(function(confirm) {
+        if (confirm) {
+          esMessage.markAllAsRead()
+            .then(function () {
+              _.forEach($scope.messages, function(msg){
+                msg.read = true;
+              });
+            })
+            .catch(UIUtils.onError('MESSAGE.ERROR.MARK_ALL_AS_READ_FAILED'));
+        }
+      });
+  };
+
   $scope.delete = function(index) {
     var message = $scope.messages[index];
     if (!message) return;
 
-    UIUtils.alert.confirm('MESSAGE.REMOVE_CONFIRMATION')
+    UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE')
       .then(function(confirm) {
         if (confirm) {
           esMessage.remove(message.id, $scope.type)
@@ -129,9 +153,21 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
       });
   };
 
-  $scope.setType = function(type) {
-    $scope.type = type;
-    $scope.load();
+  $scope.deleteAll = function() {
+    $scope.hideActionsPopover();
+    if (!$scope.messages || !$scope.messages.length) return;
+
+    UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE_ALL')
+      .then(function(confirm) {
+        if (confirm) {
+          esMessage.removeAll($scope.type)
+            .then(function () {
+              $scope.messages.splice(0,$scope.messages.length); // reset array
+              UIUtils.toast.show('MESSAGE.INFO.All_MESSAGE_REMOVED');
+            })
+            .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_All_MESSAGES_FAILED'));
+        }
+      });
   };
 
   /* -- Modals -- */
@@ -168,6 +204,33 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
         if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
       });
   };
+
+  /* -- Popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
 
   // for DEV only
   /*$timeout(function() {
@@ -370,7 +433,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
           return UIUtils.alert.error(!$scope.isUserPubkey(message.recipient) ? 'MESSAGE.ERROR.USER_NOT_RECIPIENT' : 'MESSAGE.ERROR.NOT_AUTHENTICATED_MESSAGE',
             'MESSAGE.ERROR.MESSAGE_NOT_READABLE')
             .then(function () {
-              $state.go('app.user_message');
+              $state.go('app.user_message', {type: type});
             });
         }
         return message;
@@ -382,7 +445,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
       $scope.actionsPopover.hide();
     }
 
-    UIUtils.alert.confirm('MESSAGE.REMOVE_CONFIRMATION')
+    UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE')
       .then(function(confirm) {
         if (confirm) {
           esMessage.remove($scope.id, $scope.type)
@@ -390,7 +453,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
               $ionicHistory.nextViewOptions({
                 historyRoot: true
               });
-              $state.go('app.user_message_type', {type});
+              $state.go('app.user_message', {type: $scope.type});
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));

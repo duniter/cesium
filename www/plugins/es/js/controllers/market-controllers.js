@@ -12,6 +12,9 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
           templateUrl: "plugins/es/templates/market/lookup.html",
           controller: 'ESMarketLookupCtrl'
         }
+      },
+      data: {
+        large: 'app.market_lookup_lg'
       }
     })
 
@@ -516,7 +519,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
           selector: '.list > .item',
           startVelocity: 3000
         });
-      }, 10);
+      });
       UIUtils.loading.hide();
       $scope.loading = false;
     })
@@ -533,7 +536,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
         $scope.member = null;
         if (err && err.ucode === 404) {
           UIUtils.toast.show('MARKET.ERROR.RECORD_NOT_EXISTS');
-          $state.go(UIUtils.screen.isSmall() ? 'app.market_lookup' : 'app.market_lookup_lg');
+          $state.go('app.market_lookup');
         }
         else {
           UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
@@ -561,16 +564,19 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
         // Set Motion
         $timeout(function() {
           UIUtils.motion.fadeSlideIn({
-            selector: '.card-gallery, .card-comment, .lazy-load .item'
+            selector: '.card-gallery, .card-comment, .lazy-load .item',
+            startVelocity: 3000
           });
-          $anchorScroll(anchor); // scroll (if comment anchor)
-        }, 10);
+          if (anchor) $timeout(function() {
+             $anchorScroll(anchor); // scroll (if comment anchor)
+          }, 1000);
+        });
       })
       .catch(function () {
         $scope.pictures = [];
         $scope.comments = [];
       });
-    }, 100);
+    });
 
   };
 

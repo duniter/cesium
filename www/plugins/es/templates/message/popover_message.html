@@ -1,7 +1,7 @@
 <ion-popover-view class="fit hidden-xs hidden-sm popover-notification"
                   ng-controller="PopoverMessageCtrl">
   <ion-header-bar class="stable-bg block">
-    <div class="title" translate>MESSAGE.POPOVER.TITLE</div>
+    <div class="title" translate>MESSAGE.NOTIFICATIONS.TITLE</div>
 
     <div class="pull-right">
       <a class="positive"
@@ -14,7 +14,7 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
     <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
-      MESSAGE.INBOX.NO_MESSAGE
+      MESSAGE.NO_MESSAGE_INBOX
     </div>
 
     <ion-list>
@@ -31,7 +31,7 @@
         </i>
 
         <h3>
-          <span translate>MESSAGE.POPOVER.MESSAGE_RECEIVED</span>
+          <span translate>MESSAGE.NOTIFICATIONS.MESSAGE_RECEIVED</span>
           <span class="positive" ng-if="notification.uid"><i class="ion-person"></i>&thinsp;{{notification.name||notification.uid}}</span>
           <span class="gray" ng-if="!notification.uid"><i class="ion-key"></i>&thinsp;{{notification.issuer|formatPubkey}}</span>
         </h3>

@@ -263,7 +263,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        return $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg')
+        return $state.go('app.currency_view')
           .then(function () {
             return $scope.showHelpTip('helptip-currency-newcomers', {
               bindings: {

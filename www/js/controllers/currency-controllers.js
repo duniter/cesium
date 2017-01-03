@@ -23,6 +23,9 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
           templateUrl: "templates/currency/view_currency.html",
           controller: 'CurrencyViewCtrl'
         }
+      },
+      data: {
+        large: 'app.currency_view_lg'
       }
     })
 
@@ -82,7 +85,7 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   // Called to navigate to the main app
   $scope.selectCurrency = function(id) {
     $scope.selectedCurrency = id;
-    $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg', {name: id});
+    $state.go('app.currency_view', {name: id});
   };
 }
 

@@ -26,6 +26,7 @@ var useref = require('gulp-useref');
 var filter = require('gulp-filter');
 var uglify = require('gulp-uglify');
 var csso = require('gulp-csso');
+var replace = require('gulp-replace');
 var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
@@ -143,6 +144,7 @@ gulp.task('templatecache', function (done) {
       module:"cesium.templates",
       root: "templates/"
      }))
+    //.pipe(gulp.dest('www/js'))
     .pipe(gulp.dest('./www/dist/dist_js/app'))
     .on('end', done);
 });
@@ -158,6 +160,24 @@ gulp.task('ng_translate', function() {
   return gulp.src('www/i18n/locale-*.json')
     .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/app'));
+    //.pipe(gulp.dest('www/js'));
+});
+
+
+gulp.task('debug_file', function() {
+  gutil.log(gutil.colors.green("Building `www/debug.html`..."));
+
+  return gulp.src(['www/index.html'])
+    .pipe(replace('dist/dist_js/app/', 'js/'))
+    .pipe(replace('dist/dist_js/plugins/', 'plugins/'))
+    // Restore some generate files
+    .pipe(replace('js/templates.js', 'dist/dist_js/app/templates.js'))
+    .pipe(replace('js/translations.js', 'dist/dist_js/app/translations.js'))
+    .pipe(replace('plugins/templates.js', 'dist/dist_js/plugins/templates.js'))
+    .pipe(replace('plugins/translations.js', 'dist/dist_js/plugins/translations.js'))
+    .pipe(replace('ng-strict-di', ''))
+    .pipe(rename('debug.html'))
+    .pipe(gulp.dest('www'));
 });
 
 /* -- Plugins -- */
@@ -170,6 +190,7 @@ gulp.task('templatecache_plugin', function (done) {
       root: "plugins/"
      }))
     .pipe(gulp.dest('./www/dist/dist_js/plugins'))
+    //.pipe(gulp.dest('./www/plugins'))
     .on('end', done);
 });
 
@@ -184,6 +205,7 @@ gulp.task('ng_translate_plugin', function() {
   return gulp.src(paths.ng_translate_plugin)
     .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/plugins'));
+    //.pipe(gulp.dest('www/plugins'));
 });
 
 gulp.task('css_plugin', function (done) {

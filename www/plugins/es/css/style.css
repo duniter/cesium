@@ -144,6 +144,11 @@
   border-bottom: solid 1px #ccc;
 }
 
+.view-message h1.title {
+  font-size: 22px;
+  margin-top: 5px;
+}
+
 .view-messages .list .item h2.unread {
   font-weight: bold !important;
 }

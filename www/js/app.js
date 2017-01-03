@@ -137,7 +137,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   .filter('formatHash', function() {
     return function(input) {
-      return input ? input.substr(0,8) : '';
+      return input ? input.substr(0,4) + input.substr(input.length-4) : '';
     };
   })
 
@@ -225,9 +225,23 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, $translate, Device, UIUtils, $ionicConfig, PluginService, $http
-) {
+.run(function($rootScope, $translate, $state, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
   'ngInject';
+
+  $rootScope.config = csConfig;
+  $rootScope.settings = csSettings.data;
+  $rootScope.walletData = csWallet.data;
+  $rootScope.device = Device;
+
+  // removeIf(device)
+  // Automatic redirection to large state (if exists)
+  $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+    if (!UIUtils.screen.isSmall() && next.data.large) {
+      event.preventDefault();
+      $state.go(next.data.large, nextParams);
+    }
+  });
+  // endRemoveIf(device)
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
   Device.ready()

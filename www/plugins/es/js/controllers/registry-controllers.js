@@ -12,6 +12,9 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
           templateUrl: "plugins/es/templates/registry/lookup.html",
           controller: 'ESRegistryLookupCtrl'
         }
+      },
+      data: {
+        large: 'app.registry_lookup_lg'
       }
     })
 
@@ -516,14 +519,16 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
             selector: '.card-gallery, .card-comment, .lazy-load .item',
             startVelocity: 3000
           });
-          $anchorScroll(anchor); // scroll (if comment anchor)
-        }, 10);
+          if (anchor) $timeout(function() {
+            $anchorScroll(anchor); // scroll (if comment anchor)
+          }, 1000);
+        });
       })
       .catch(function() {
         $scope.pictures = [];
         $scope.comments = [];
       });
-    }, 100);
+    });
   };
 
   // Edit click

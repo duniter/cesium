@@ -50,7 +50,7 @@
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
            ng-if="formData.hasSelf"
-           ng-click="showCertifications()">
+           ui-sref="app.wot_view_cert({pubkey: formData.pubkey, uid: formData.name || formData.uid})">
           <i class="icon ion-ribbon-b"></i>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
           <span id="helptip-wot-view-certifications-count"

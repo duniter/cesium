@@ -31,6 +31,9 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
             templateUrl: "templates/wot/view_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
+        },
+        data: {
+          large: 'app.wallet_view_cert_lg'
         }
       })
 
@@ -51,6 +54,9 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
             templateUrl: "templates/wot/view_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
+        },
+        data: {
+          large: 'app.wot_view_cert_lg'
         }
       })
 
@@ -398,13 +404,6 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
     .catch(function(err) {
       $scope.loading = false;
       UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
-    });
-  };
-
-  $scope.showCertifications = function() {
-    $state.go(UIUtils.screen.isSmall() ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
-      pubkey: $scope.formData.pubkey,
-      uid: $scope.formData.name || $scope.formData.uid
     });
   };
 
