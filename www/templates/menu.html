@@ -18,12 +18,12 @@
            class="button button-icon button-clear hidden-xs hidden-sm"
            ng-click="showProfilePopover($event)">
           <i class="avatar"
-             ng-if="$root.login"
+             ng-if="login"
              ng-style="$root.walletData.avatarStyle"
              ng-class="{'royal-bg avatar-member': !$root.walletData.avatarStyle}">
           </i>
           <i class="avatar avatar-member"
-             ng-if="!$root.login"
+             ng-if="!login"
              style="opacity: 0.7"></i>
         </a>
       </ion-nav-buttons>
@@ -86,7 +86,7 @@
                   class="item item-icon-left" active-link="active"
                   active-link-path-prefix="#/app/wallet"
                   ng-click="loginAndGo('app.view_wallet')"
-                  ng-class="{'item-menu-disable': !$root.login}">
+                  ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
@@ -102,8 +102,8 @@
         <a id="helptip-menu-btn-settings"></a>
 
         <!-- actions -->
-        <div class="item item-divider" ng-if="$root.login"></div>
-        <ion-item menu-close class="item item-button-right" ng-if="$root.login">
+        <div class="item item-divider" ng-if="login"></div>
+        <ion-item menu-close class="item item-button-right" ng-if="login">
           <span translate>MENU.TRANSFER</span>
           <button class="button button-positive ink-dark" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
@@ -117,7 +117,7 @@
           </button>
         </ion-item>
         <!-- log out -->
-        <ion-item menu-close class="item item-button-right visible-xs visible-sm" ng-if="$root.login">
+        <ion-item menu-close class="item item-button-right visible-xs visible-sm" ng-if="login">
           <span translate>COMMON.BTN_LOGOUT</span>
           <button class="button button-stable ink" ng-click="logout()">
           <i class="icon ion-log-out"></i>

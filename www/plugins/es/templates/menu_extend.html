@@ -4,7 +4,7 @@
 
   <!-- messages -->
   <button class="button button-clear  hidden-xs hidden-sm icon ion-email"
-          ng-if="$root.login"
+          ng-if="login"
           active-link="gray"
           active-link-path-prefix="#/app/user/message"
           ng-click="showMessagesPopover($event)">
@@ -15,7 +15,7 @@
 
   <!-- notifications -->
   <button class="button button-clear  hidden-xs hidden-sm icon ion-android-notifications"
-          ng-if="$root.login"
+          ng-if="login"
           active-link="gray"
           active-link-path-prefix="#/app/notifications"
           ng-click="showNotificationsPopover($event)">
@@ -53,7 +53,7 @@
   <!-- user profile -->
   <div menu-close class="item item-icon-left" active-link="active"
             active-link-path-prefix="#/app/user/profile"
-            ng-class="{'item-menu-disable': !$root.login}"
+            ng-class="{'item-menu-disable': !login}"
             ng-click="loginAndGo('app.user_edit_profile')">
     <i class="icon ion-person"></i>
     <span translate>MENU.USER_PROFILE</span>
@@ -61,7 +61,7 @@
 
   <div menu-close class="item item-icon-left" active-link="active"
             active-link-path-prefix="#/app/user/message"
-            ng-class="{'item-menu-disable': !$root.login}"
+            ng-class="{'item-menu-disable': !login}"
             ng-click="loginAndGo('app.user_message')">
     <i class="icon ion-email"></i>
     <span translate>MENU.USER_MESSAGE</span>

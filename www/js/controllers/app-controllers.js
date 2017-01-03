@@ -75,7 +75,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   'ngInject';
 
   $scope.search = {};
-  $rootScope.login = csWallet.isLogin();
+  $scope.login = csWallet.isLogin();
 
   $scope.showHome = function() {
     $state.go('app.home');
@@ -144,7 +144,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.isLogin = function() {
-    return $rootScope.login;
+    return $scope.login;
   };
 
   $scope.showProfilePopover = function(event) {
@@ -223,14 +223,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     }
   };
 
-  // Login and go to wallet
-  $scope.login = function() {
-    return $scope.loginAndGo('app.view_wallet');
-  };
-
-  // Login and go to a state
+  // Login and go to a state (or wallet if not)
   $scope.loginAndGo = function(state) {
     $scope.closeProfilePopover();
+
+    state = state || 'app.view_wallet';
 
     if (!csWallet.isLogin()) {
       return $scope.showLoginModal()
@@ -296,7 +293,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   csWallet.api.data.on.login($scope, function(walletData, deferred) {
     deferred = deferred || $q.defer();
     $scope.login = true;
-    console.debug("IS LOGIN DETECTED");
     deferred.resolve();
     return deferred.promise;
   });

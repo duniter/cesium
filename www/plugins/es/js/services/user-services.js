@@ -425,6 +425,17 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       ;
     }
 
+    function onWalletLoadTx(tx, deferred) {
+      fillAvatars(tx.history, 'pubkey')
+        .then(function() {
+          deferred.resolve();
+        })
+        .catch(function(err) {
+          console.error(err);
+          deferred.resolve(); // silent
+        })
+    }
+
     function removeListeners() {
       console.debug("[ES] [user] Disable");
 
@@ -443,6 +454,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
         csWallet.api.data.on.init($rootScope, onWalletReset, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+        csWallet.api.data.on.loadTx($rootScope, onWalletLoadTx, this),
         csWot.api.data.on.load($rootScope, onWotLoad, this),
         csWot.api.data.on.search($rootScope, onWotSearch, this)
       ];

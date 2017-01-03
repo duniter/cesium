@@ -4,10 +4,10 @@
       <div class="col col-33">
         <i class="avatar"
            ng-style="$root.walletData.avatarStyle"
-           ng-class="{'royal-bg': $root.login, 'stable-bg': !$root.login, 'avatar-member': !$root.walletData.avatarStyle}">
+           ng-class="{'royal-bg': login, 'stable-bg': !login, 'avatar-member': !$root.walletData.avatarStyle}">
         </i>
       </div>
-      <div class="col col-66" ng-if="$root.login">
+      <div class="col col-66" ng-if="login">
         <h4>{{$root.walletData.name||$root.walletData.uid}}</h4>
         <h4 class="gray"
             ng-if="!$root.walletData.name && !$root.walletData.uid"
@@ -21,14 +21,14 @@
       </div>
     </div>
 
-    <div class="row" ng-show="$root.login">
+    <div class="row" ng-show="login">
       <div class="col col-66 col-offset-33">
         <!-- Allow extension here -->
         <cs-extension-point name="profile-popover-user"></cs-extension-point>
       </div>
     </div>
 
-    <div class="row" ng-show="!$root.login">
+    <div class="row" ng-show="!login">
       <div class="col col-66 col-offset-33">
         <div class="text-center no-padding gray">
           {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
@@ -55,12 +55,12 @@
     </div>
     <div class="col">
       <button class="button button-raised button-block button-stable ink ink-dark"
-              ng-show="$root.login"
+              ng-show="login"
               ng-click="logout()"
               translate>COMMON.BTN_LOGOUT</button>
       <button class="button button-raised button-block button-positive ink"
-              ng-show="!$root.login"
-              ng-click="login()"
+              ng-show="!login"
+              ng-click="loginAndGo('app.view_wallet')"
               translate>COMMON.BTN_LOGIN</button>
     </div>
   </ion-footer-bar>

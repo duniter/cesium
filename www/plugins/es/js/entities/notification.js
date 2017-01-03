@@ -52,7 +52,7 @@ function Notification(json, markAsReadCallback) {
   // Certifications
   else if (json.code.startsWith('CERT_')) {
     that.avatarIcon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b' : 'ion-ribbon-a';
-    that.icon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b dark' : 'ion-ribbon-a dark';
+    that.icon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b balanced' : 'ion-ribbon-a gray';
     that.pubkey = json.params.length > 0 ? json.params[0] : null;
     that.state = 'app.wallet_view_cert';
   }

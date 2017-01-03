@@ -14084,10 +14084,7 @@ a {
   background-color: #ecf0f7 !important;
   border-color: #dddfe2 !important; }
 
-#notification .item-thumbnail-left h4 i.icon, #notification .item-thumbnail-left h4 i.icon-help, #notification .item-thumbnail-left h4 i.icon-alert,
-#notification .item-thumbnail-left .item-content h4 i.icon,
-#notification .item-thumbnail-left .item-content h4 i.icon-help,
-#notification .item-thumbnail-left .item-content h4 i.icon-alert {
+#notification ion-item h4 i.icon, #notification ion-item h4 i.icon-help, #notification ion-item h4 i.icon-alert, #notification ion-item h4 #menu .footer i.icon-help, #menu .footer #notification ion-item h4 i.icon-help {
   font-size: 18px !important;
   line-height: 12px !important;
   vertical-align: middle !important; }

@@ -91,23 +91,20 @@
               <!-- price -->
               <div class="item item-input item-floating-label item-button-right"
                    ng-class="{'item-input-error': form.$submitted && form.price.$invalid}"
-                   ng-show="!loading && !useRelative">
-                <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{currency | abbreviate}})</span>
-                <input type="number" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{currency | abbreviate}})"
-                       ng-model="formData.price">
-                <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
-                </span>
-                <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
-                  <i class="icon ion-android-more-vertical"></i>
-                </span>
-              </div>
-              <div class="item item-input item-floating-label item-button-right"
-                   ng-class="{'item-input-error': form.$submitted && form.price.$invalid}"
-                   ng-show="!loading && useRelative">
-                <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</sub>)</span>
-                <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
+                   >
+                <div class="input-label"
+                     ng-class="{'has-input': formData.price != undefined || form.price.$invalid}">{{'MARKET.EDIT.RECORD_PRICE' | translate}}
+                  <ng-if ng-if="useRelative">({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</sub>)</ng-if>
+                  <ng-if ng-if="!useRelative">({{currency | abbreviate}})</ng-if>
+                </div>
+                <input ng-if="!useRelative"
+                       type="number" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{currency | abbreviate}})"
                        ng-model="formData.price"
-                       number>
+                       number-int>
+                <input ng-if="useRelative"
+                       type="number" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
+                       ng-model="formData.price"
+                       number-float>
                 <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
                 </span>
                 <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
@@ -117,8 +114,11 @@
               <div class="form-errors"
                    ng-show="form.$submitted && form.price.$error"
                    ng-messages="form.price.$error">
-                <div class="form-error" ng-message="number">
+                <div class="form-error" ng-message="numberFloat">
                   <span translate="ERROR.FIELD_NOT_NUMBER"></span>
+                </div>
+                <div class="form-error" ng-message="numberInt">
+                  <span translate="ERROR.FIELD_NOT_INT"></span>
                 </div>
               </div>
 

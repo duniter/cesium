@@ -33,14 +33,14 @@
 
       <button type="button"
               class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
-              ng-click="login()" ng-show="!$root.login" translate>COMMON.BTN_LOGIN</button>
+              ng-click="loginAndGo('app.view_wallet')" ng-show="!login" translate>COMMON.BTN_LOGIN</button>
       <button type="button"
               class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
-              ui-sref="app.view_wallet" ng-show="$root.login" translate>HOME.BTN_ACCOUNT</button>
+              ui-sref="app.view_wallet" ng-show="login" translate>HOME.BTN_ACCOUNT</button>
 
       <br class="visible-xs visible-sm"/>
       <div class="text-center no-padding "
-           ng-show="!$root.login">
+           ng-show="!login">
         <br class="visible-xs visible-sm"/>
         {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
         <b>
@@ -53,7 +53,7 @@
 
       <button type="button"
               class="button button-block button-calm button-raised icon icon-left ion-wand ink-dark visible-xs visible-sm"
-              ng-click="showJoinModal()" ng-show="!$root.login" translate>LOGIN.CREATE_ACCOUNT</button>
+              ng-click="showJoinModal()" ng-show="!login" translate>LOGIN.CREATE_ACCOUNT</button>
 
 
       <div class="text-center no-padding visible-xs stable">

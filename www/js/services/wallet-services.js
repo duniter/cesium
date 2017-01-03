@@ -511,8 +511,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.tx.pendings = txPendings;
           data.tx.fromTime = fromTime;
           data.tx.toTime = data.tx.history.length ? data.tx.history[0].time /*=max(tx.time)*/: fromTime;
-          console.debug('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
-          resolve();
+
+          // Call extend api
+          return api.data.raisePromise.loadTx(data.tx)
+            .then(function() {
+              console.debug('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
+              resolve();
+            });
         })
         .catch(function(err) {
           data.tx.history = [];
@@ -1470,6 +1475,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     api.registerEvent('data', 'finishLoad');
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
+    api.registerEvent('data', 'loadTx');
 
     csSettings.api.data.on.changed($rootScope, store);
 

@@ -304,6 +304,7 @@
     "FIELD_TOO_LONG_WITH_LENGTH": "Valeur trop longue ({{maxLength}} caractères max)",
     "FIELD_ACCENT": "Caractères accentués et virgules non autorisés",
     "FIELD_NOT_NUMBER": "Valeur numérique attendue",
+    "FIELD_NOT_INT": "Valeur entière attendue",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SALT_NOT_CONFIRMED": "Ne correspond pas à la phrase de protection.",
     "SEND_IDENTITY_FAILED": "Echec de l'inscription.",

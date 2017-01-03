@@ -113,8 +113,11 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
 
   $scope.onNewNotification = function(notification) {
     if (!$scope.search.loading && !$scope.search.loadingMore && !notification.isMessage) {
-      console.log("[view] detected new notification");
-      $scope.search.results.splice(0,0,notification);
+      var nextIndex = _.findIndex($scope.search.results, function(n) {
+        return notification.time > n.time;
+      });
+      if (nextIndex < 0) nextIndex = 0;
+      $scope.search.results.splice(nextIndex,0,notification);
       $scope.updateView();
     }
   };

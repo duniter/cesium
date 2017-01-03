@@ -552,8 +552,7 @@ $screen-menu:                     845px;
     border-color: rgb(221, 223, 226) !important;
   }
 
-  .item-thumbnail-left,
-  .item-thumbnail-left .item-content {
+  ion-item {
     h4 {
       i.icon {
         font-size: 18px !important;
