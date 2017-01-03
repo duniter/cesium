@@ -44,7 +44,6 @@
     "REPLY_TO": "Réponse à :",
     "REPLY_TO_LINK": "En réponse à ",
     "REPLY_TO_DELETED_COMMENT": "En réponse à un commentaire supprimé",
-    "CANCEL_REPLY_TO": "Annuler",
     "REPLY_COUNT": "{{replyCount}} réponses",
     "DELETED_COMMENT": "Commentaire supprimé"
   },
@@ -90,7 +89,7 @@
     "CONFIRM": {
       "REMOVE": "Etes-vous sur de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
       "REMOVE_ALL" : "Etes-vous sur de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
-      "MARK_ALL_AS_READ": "Etes-vous sur de vouloir <b>marquer tous les messages comme lu</b> ?."
+      "MARK_ALL_AS_READ": "Etes-vous sur de vouloir <b>marquer tous les messages comme lu</b> ?"
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message supprimé",
@@ -303,8 +302,8 @@
     "CERT_SENT": "Votre <b>certification</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectuée.",
     "CERT_RECEIVED": "Vous avez <b>reçu une certification</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
     "MARKET": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre annonce: <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre annonce: <b>{{params[2]}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre annonce : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre annonce : <b>{{params[2]}}</b>"
     },
     "REGISTRY": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement: <b>{{params[2]}}</b>",

@@ -188,7 +188,8 @@
       "BTN_PENDING": "Pending registrations",
       "SHOW_MORE": "Show more",
       "SHOW_MORE_COUNT": "(current limit to {{limit}})",
-      "NO_PENDING": "No pending registration has in found"
+      "NO_PENDING": "No pending registration has been found",
+      "NO_NEWCOMERS": "No new members has been found"
     },
     "MODAL": {
       "TITLE": "Search"
@@ -303,6 +304,7 @@
     "FIELD_TOO_LONG_WITH_LENGTH": "Value is too long (max {{maxLength}} characters).",
     "FIELD_ACCENT": "Commas and accent characters not allowed",
     "FIELD_NOT_NUMBER": "Value is not a number",
+    "FIELD_NOT_INT": "Value is not an integer",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SALT_NOT_CONFIRMED": "Must match previous phrase.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",
@@ -341,12 +343,17 @@
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
     "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network nodes are cancelled): the person must renew its application for membership <b>before</b> being certified.",
+    "IDENTITY_EXPIRED": "This identity has expired: this person must re-apply <b>before</b> being certified.",
     "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
     "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
+    "WALLET_IDENTITY_EXPIRED": "The publication of your identity <b>has expired</b>.<br/>You must <a ng-click=\"doQuickFix('fixIdentity')\">re-issue your identity</a> to resolve this issue.",
     "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "You have <b>already certified</b> that identity.<br/><br/>Your certification is still pending (Deadline for treatment {{expiresIn|formatDuration}}).",
-    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify"
+    "UNABLE_TO_CERTIFY_TITLE": "Unable to certify",
+    "LOAD_NEWCOMERS_FAILED": "Unable to load new members.",
+    "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
+    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must be a member to be able to perform this action."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -354,7 +361,8 @@
     "NOT_ENOUGH_CREDIT": "Not enough credit",
     "TRANSFER_SENT": "Transfer request successfully sent",
     "COPY_TO_CLIPBOARD_DONE": "Copy succeed",
-    "MEMBERSHIP_OUT_SENT": "Membership revocation sent"
+    "MEMBERSHIP_OUT_SENT": "Membership revocation sent",
+    "NOT_NEED_MEMBERSHIP": "Already a member."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
@@ -364,8 +372,10 @@
     "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue ?</b>",
     "LOGIN_UNUSED_WALLET_TITLE": "Typing error ?",
     "LOGIN_UNUSED_WALLET": "You are logged into an account that seems <b>inactive</b>.<br/><br/>If this account does not match yours, it's probably a <b>typing error</b> when sign in.<br/><br/><b>Would you still continue with this account?</b>",
+    "FIX_IDENTITY": "The pseudonym <b>{{uid}}</b> will be published again, replacing the old publication that has expired.<br/></br/><b>Are you sure</b> you want to continue ?",
     "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure ?</b>",
-    "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure ?</b>"
+    "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure ?</b>",
+    "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?"
   },
   "HELP": {
     "TITLE": "Online help",

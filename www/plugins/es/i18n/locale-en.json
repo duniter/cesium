@@ -36,24 +36,37 @@
   "COMMENTS": {
     "DIVIDER": "Comments",
     "SHOW_MORE_COMMENTS": "Show previous comments",
-    "COMMENT_HELP": "Leave a message, a question...",
+    "COMMENT_HELP": "Your comment, question...",
+    "COMMENT_HELP_REPLY_TO": "Your answer...",
     "BTN_SEND": "Send",
-    "POPOVER_SHARE_TITLE": "Message #{{number}}"
+    "POPOVER_SHARE_TITLE": "Message #{{number}}",
+    "REPLY": "Reply",
+    "REPLY_TO": "Respond to:",
+    "REPLY_TO_LINK": "In response to ",
+    "REPLY_TO_DELETED_COMMENT": "In response to a deleted comment",
+    "REPLY_COUNT": "{{replyCount}} réponses",
+    "DELETED_COMMENT": "Commentaire supprimé"
   },
   "MESSAGE": {
-    "REMOVE_CONFIRMATION": "Are you sure you want to delete this message ?<br/><br/> This is irreversible.",
     "REPLY_TITLE_PREFIX": "Re: ",
     "FORWARD_TITLE_PREFIX": "Fw: ",
     "BTN_REPLY": "Reply",
     "BTN_COMPOSE": "New message",
     "BTN_WRITE": "Write",
-    "POPOVER": {
+    "NO_MESSAGE_INBOX": "No message received",
+    "NO_MESSAGE_OUTBOX": "No message sent",
+    "NOTIFICATIONS": {
       "TITLE": "Messages",
       "MESSAGE_RECEIVED": "You <b>received a message</b><br/>from"
     },
-    "INBOX": {
-      "NO_MESSAGE": "No message received",
-      "TITLE": "Messages"
+    "LIST": {
+      "INBOX": "Inbox",
+      "OUTBOX": "Outbox",
+      "TITLE": "Private messages",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Options",
+        "DELETE_ALL": "Delete all messages"
+      }
     },
     "COMPOSE": {
       "TITLE": "New message",
@@ -65,27 +78,36 @@
       "ENCRYPTED_HELP": "Please note this message will by encrypt before sending. Only you and recipient could read it.",
       "MESSAGE": "Message",
       "MESSAGE_HELP": "Message content",
-      "CONTENT_CONFIRMATION": "No message content.<br/><br/>Are your sure you want to send this message ?"
+      "CONTENT_CONFIRMATION": "No message content.<br/><br/>Are your sure you want to send this message?"
     },
     "VIEW": {
       "TITLE": "Message",
       "SENDER": "Sent by",
       "NO_CONTENT": "Empty message"
     },
+    "CONFIRM": {
+      "REMOVE": "Are you sure you want to <b>delete this message</b>?<br/><br/> This operation is irreversible.",
+      "REMOVE_ALL": "Are you sure you want to <b>delete all messages</b>?<br/><br/> This operation is irreversible.",
+      "MARK_ALL_AS_READ": "Are you sure you want to <b>mark all message as read</b>?"
+    },
     "INFO": {
-      "MESSAGE_REMOVED": "Message deleted",
+      "MESSAGE_REMOVED": "Message successfully deleted",
+      "All_MESSAGE_REMOVED": "Messages successfully deleted",
       "MESSAGE_SENT": "Message sent"
     },
     "ERROR": {
       "SEND_MSG_FAILED": "Error while sending message.",
-      "SEARCH_FAILED": "Error while loading messages.",
+      "LOAD_MESSAGES_FAILED": "Error while loading messages.",
       "LOAD_MESSAGE_FAILED": "Error while loading message.",
       "MESSAGE_NOT_READABLE": "Unable to read message.",
       "USER_NOT_RECIPIENT": "You are not the recipient of this message: unable to read it.",
       "NOT_AUTHENTICATED_MESSAGE": "The authenticity of the message is not certain or its content is corrupted.",
       "REMOVE_MESSAGE_FAILED": "Error while deleting message",
       "MESSAGE_CONTENT_TOO_LONG": "Value too long ({{maxLength}} characters max).",
-      "MARK_AS_READ_FAILED": "Unable to mark the message as 'read'."
+      "MARK_AS_READ_FAILED": "Unable to mark the message as 'read'.",
+      "LOAD_NOTIFICATIONS_FAILED": "Error while loading messages notifications.",
+      "REMOVE_All_MESSAGES_FAILED": "Error while removing all messages.",
+      "MARK_ALL_AS_READ_FAILED": "Error while marking messages as read."
     }
   },
   "MARKET": {
@@ -138,6 +160,7 @@
       "FAILED_SAVE_RECORD": "Saving ad failed",
       "FAILED_UPDATE_RECORD": "Updating Ad failed",
       "LOAD_CATEGORY_FAILED": "Loading categories failed",
+      "LOOKUP_RECORDS_FAILED": "Error while loading records.",
       "LOAD_RECORD_FAILED": "Loading ad failed",
       "REMOVE_RECORD_FAILED": "Deleting ad failed",
       "FAILED_SAVE_COMMENT": "Saving comment failed",
@@ -204,6 +227,7 @@
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Loading main activities failed",
       "LOAD_RECORD_FAILED": "Loading failed",
+      "LOOKUP_RECORDS_FAILED": "Error while loading records.",
       "REMOVE_RECORD_FAILED": "Deleting failed",
       "SAVE_RECORD_FAILED": "Saving failed",
       "RECORD_NOT_EXISTS": "Record not found"
@@ -234,6 +258,9 @@
     },
     "INFO": {
       "PROFILE_SAVED": "Profile saved"
+    },
+    "HELP": {
+      "WARNING_PUBLIC_DATA": "Please note that the information published here <b>is public</b>: visible including by <b>not logged in people</b>."
     }
   },
   "ES_SETTINGS": {
@@ -267,15 +294,19 @@
     "MEMBER_JOIN": "You become a <b>member</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_LEAVE": "You are <b>not member anymore</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renew successfully</b>.",
-    "TX_SENT": "TODO translate:Your payment to <b>{{params[1]}}</b> was executed.",
+    "TX_SENT": "Your payment to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
     "TX_SENT_MULTI": "Your payment to <b>{{params[1]}}</b> was executed.",
-    "TX_RECEIVED": "TODO translate: You received a payment from <b>{{params[1]}}</b>.",
+    "TX_RECEIVED": "You received a payment from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
     "TX_RECEIVED_MULTI": "You received a payment from <b>{{params[1]}}</b>.",
+    "CERT_SENT": "Your <b>certification</b> to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
+    "CERT_RECEIVED": "You  have <b>received a certification</b> from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
     "MARKET": {
-      "NEW_COMMENT": "<b>{{params[1]}}</b> commented on your ad: <b>{{params[2]}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> commented on ad: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modified his comment on ad: <b>{{params[2]}}</b>"
     },
     "REGISTRY": {
-      "NEW_COMMENT": "<b>{{params[1]}}</b> commented on your referencing: <b>{{params[2]}}</b>"
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> commented on referencing: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> modified his comment on referencing: <b>{{params[2]}}</b>"
     }
   }
 }
