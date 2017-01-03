@@ -48,6 +48,12 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
         excludesCodes.push('TX_RECEIVED');
       }
+      if (!csSettings.getByPath('plugins.es.notifications.certSent', false)) {
+        excludesCodes.push('CERT_SENT');
+      }
+      if (!csSettings.getByPath('plugins.es.notifications.certReceived', true)) {
+        excludesCodes.push('CERT_RECEIVED');
+      }
       if (options.codes.excludes) {
         _.forEach(options.codes.excludes, function(code) {
           excludesCodes.push(code);
@@ -94,7 +100,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
       return esHttp.post(host, port, '/user/event/_search')(request)
         .then(function(res) {
-          if (!res.hits || !res.hits.total) return;
+          if (!res.hits || !res.hits.total) return [];
           var notifications = res.hits.hits.reduce(function(res, hit) {
             var item = new Notification(hit._source, markNotificationAsRead);
             item.id = hit._id;

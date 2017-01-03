@@ -281,7 +281,9 @@
       "DIVIDER": "Notifications",
       "HELP_TEXT": "Activez les types de notifications que vous souhaitez recevoir :",
       "ENABLE_TX_SENT": "Notifier la validation des <b>paiement émis</b> ?",
-      "ENABLE_TX_RECEIVED": "Notifier la validation des <b>paiement reçus</b> ?"
+      "ENABLE_TX_RECEIVED": "Notifier la validation des <b>paiement reçus</b> ?",
+      "ENABLE_CERT_SENT": "Notifier la validation des <b>certifications émises</b> ?",
+      "ENABLE_CERT_RECEIVED": "Notifier la validation des <b>certifications reçues</b> ?"
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",

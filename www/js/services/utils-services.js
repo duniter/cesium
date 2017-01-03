@@ -346,6 +346,8 @@ angular.module('cesium.utils.services', ['ngResource'])
             }
           }
 
+          popover.scope.$emit('popover.shown');
+
           // Callback 'afterShow'
           if (options.afterShow) options.afterShow(popover);
         });

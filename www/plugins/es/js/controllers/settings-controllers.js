@@ -145,29 +145,21 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     };
 
   $scope.onFormChanged = function() {
-    if ($scope.loading) {
-      return;
-    }
+    if ($scope.loading) return;
 
     $scope.loading = true;
+    csSettings.data.plugins = csSettings.data.plugins || {};
+    csSettings.data.plugins.es = csSettings.data.plugins.es ?
+      angular.merge(csSettings.data.plugins.es, $scope.formData) :
+      $scope.formData;
 
-    if (!csSettings.data.plugins) {
-      csSettings.data.plugins={};
-    }
-    if (!csSettings.data.plugins.es) {
-      csSettings.data.plugins.es=$scope.formData;
-    }
-    else {
-      angular.merge(csSettings.data.plugins.es, $scope.formData);
-    }
-
-    // Fix old settings
+    // Fix old settings (unused)
     delete csSettings.data.plugins.es.newNode;
 
-    csSettings.store();
-
-    $scope.loading = false;
-
+    csSettings.store()
+      .then(function() {
+        $scope.loading = false;
+      });
   };
   $scope.$watch('formData', $scope.onFormChanged, true);
 

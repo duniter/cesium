@@ -27,7 +27,7 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification) {
+function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -55,6 +55,7 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
     var options = angular.copy($scope.search.options);
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
+    $scope.search.loading = true;
     return esNotification.load(csWallet.data.pubkey, options)
       .then(function(res) {
         $scope.search.results = res || [];
@@ -111,6 +112,7 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
       });
   };
 
+  // Listen notifications changes
   $scope.onNewNotification = function(notification) {
     if (!$scope.search.loading && !$scope.search.loadingMore && !notification.isMessage) {
       var nextIndex = _.findIndex($scope.search.results, function(n) {
@@ -121,15 +123,31 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
       $scope.updateView();
     }
   };
-
   esNotification.api.data.on.new($scope, $scope.onNewNotification);
+
+  // Listen settings changes
+  $scope.onSettingsChanged = function() {
+    if ($scope.search.loading) return;
+    console.debug("[ES] [notifications] Force to reload (on next enter) as settings changed...");
+    $scope.search.hasMore = false;
+    $scope.search.results = [];
+    $scope.search.loading = true;
+    delete $scope.search.limit;
+  };
+  csSettings.api.data.on.changed($scope, $scope.onSettingsChanged);
 
 }
 
 function PopoverNotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings) {
   'ngInject';
 
-  NotificationsController.call(this, $scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification);
+  NotificationsController.call(this, $scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings);
+
+  $scope.$on('popover.shown', function() {
+    if ($scope.search.loading) {
+      $scope.load();
+    }
+  });
 
   $scope.updateView = function() {
     // Set Ink
@@ -159,11 +177,4 @@ function PopoverNotificationsController($scope, $rootScope, $timeout, UIUtils, $
     }
     $scope.closePopover(notification);
   };
-
-  if ($scope.search.loading) {
-    $scope.search.hasMore = false;
-    $scope.load();
-  }
-
-
 }

@@ -487,7 +487,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     csSettings.api.data.on.changed($rootScope, function(){
       refreshListeners();
       if (isEnable() && !csWallet.data.messages) {
-        onWalletLoad(csWallet.data);
+        onWalletLogin(csWallet.data);
       }
     });
 

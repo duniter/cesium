@@ -85,6 +85,24 @@
         </div>
       </label>
     </div>
+    <div class="item item-toggle dark" >
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_SENT</div>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.notifications.certSent" ng-disabled="!formData.enable">
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
+    <div class="item item-toggle dark" >
+      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_RECEIVED</div>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.notifications.certReceived" ng-disabled="!formData.enable">
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
 
   </ion-content>
 </ion-view>

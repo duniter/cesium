@@ -1,7 +1,7 @@
 
 angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config', 'cesium.device.services'])
 
-.factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
+.factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device, $rootScope) {
   'ngInject';
 
     CSSettings = function(id) {
@@ -79,7 +79,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         }
 
         // Emit event on store
-        api.data.raisePromise.store(data)
+        return api.data.raisePromise.store(data)
           .then(function() {
             // Emit event on changed
             api.data.raise.changed(data);
