@@ -5,12 +5,13 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
   function factory(host, port, wsPort) {
 
-    const fields = {
-      commons: ["category", "title", "description", "issuer", "time", "address", "city", "thumbnail._content_type", "picturesCount", "type", "socials", "pubkey"],
-      comment: {
-        commons: ["issuer", "time", "message"],
-      }
-    };
+    var
+      fields = {
+        commons: ["category", "title", "description", "issuer", "time", "address", "city", "thumbnail._content_type", "picturesCount", "type", "socials", "pubkey"],
+        comment: {
+          commons: ["issuer", "time", "message"],
+        }
+      };
     var
       exports = {
         _internal: {},

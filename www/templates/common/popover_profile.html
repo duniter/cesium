@@ -2,7 +2,7 @@
   <ion-content scroll="false">
     <div class="row">
       <div class="col col-33">
-        <i class="avatar avatar-member" ng-if="$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}"></i>
+        <i class="avatar avatar-member" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}"></i>
         <i class="avatar" ng-if="$root.walletData.avatar" style="background-image: url({{$root.walletData.avatar.src}})"></i>
       </div>
       <div class="col col-66" ng-if="login">

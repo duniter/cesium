@@ -5,13 +5,11 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
 
   function factory(host, port, wsPort, index) {
 
-    const
-      defaultSizeLimit = 20,
+    var
+      DEFAULT_SIZE = 20,
       fields = {
         commons: ["issuer", "time", "message", "reply_to"],
-      };
-
-    var
+      },
       that,
       pendings = {};
       searchRequest = esHttp.post(host, port, '/'+index+'/comment/_search'),
@@ -89,10 +87,10 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
     function loadDataByRecordId(recordId, options) {
       options = options || {};
       options.from = options.from || 0;
-      options.size = options.size || defaultSizeLimit;
+      options.size = options.size || DEFAULT_SIZE;
       options.loadAvatar = angular.isDefined(options.loadAvatar) ? options.loadAvatar : true;
       options.loadAvatarAllParent = angular.isDefined(options.loadAvatarAllParent) ? (options.loadAvatar && options.loadAvatarAllParent) : false;
-      if (options.size < 0) options.size = defaultSizeLimit;
+      if (options.size < 0) options.size = DEFAULT_SIZE;
 
       var request = {
         query : {

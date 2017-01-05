@@ -343,7 +343,7 @@
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
     "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé) : cette personne doit renouveller sa demande d'adhésion <b>avant</b> d'être certifiée.",
-    "IDENTITY_EXPIRED": "La publication d'identité a expirée : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
+    "IDENTITY_EXPIRED": "La publication de cette identité a expirée : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_SANDBOX_FULL": "Le noeud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de noeud (via le menu <b>Paramètres</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
     "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('fixMembership')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",

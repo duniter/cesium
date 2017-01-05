@@ -251,7 +251,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               })
               .catch(function(err){
                 // Special case for currency init (root block not exists): use now
-                if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && identity.number === '0') {
+                if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && identity.number === 0) {
                   identity.sigDate = Math.trunc(new Date().getTime() / 1000);
                   return identity;
                 }

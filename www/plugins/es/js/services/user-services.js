@@ -250,7 +250,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     function onWotSearch(text, datas, deferred, pubkeyAtributeName) {
       deferred = deferred || $q.defer();
-      if (!datas || !datas.length) {
+      if (!text && (!datas || !datas.length)) {
         deferred.resolve(datas);
         return deferred.promise;
       }

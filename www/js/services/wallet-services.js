@@ -393,7 +393,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             })
             .catch(function(err){
               // Special case for currency init (root block not exists): use now
-              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockParts.number === '0') {
+              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockNumber === 0) {
                 data.sigDate = Math.trunc(new Date().getTime() / 1000);
                 resolve();
               }
@@ -617,6 +617,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(json){
           data.currency = json.currency;
           data.parameters = json;
+          if (data.currentUD == -1) data.currentUD = data.parameters.ud0;
           resolve();
         })
         .catch(function(err) {
@@ -708,10 +709,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         return refreshData(options);
       }
 
-      return $q(function(resolve, reject){
-        data.loaded = false;
+      data.loaded = false;
 
-        $q.all([
+      return $q.all([
 
           // Get currency parameters
           loadParameters(),
@@ -734,32 +734,30 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // API extension
           api.data.raisePromise.load(data, null)
             .catch(function(err) {
-              console.debug('Error while loading wallet data, on extension point.');
+              console.error('Error while loading wallet data, on extension point. Try to continue');
               console.error(err);
             })
         ])
         .then(function() {
           // Process transactions and sources
-          processTransactionsAndSources()
-          .then(function() {
-            finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
-
-            api.data.raisePromise.finishLoad(data)
-              .then(function() {
-                data.loaded = true;
-                resolve(data);
-              });
-          })
-          .catch(function(err) {
-            data.loaded = false;
-            reject(err);
-          });
+          return processTransactionsAndSources();
+        })
+        .then(function() {
+          finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
+          return api.data.raisePromise.finishLoad(data)
+            .catch(function(err) {
+              console.error('Error while finishing wallet data load, on extension point. Try to continue');
+              console.error(err);
+            });
+        })
+        .then(function() {
+          data.loaded = true;
+          return data;
         })
         .catch(function(err) {
           data.loaded = false;
-          reject(err);
+          throw err;
         });
-      });
     },
 
     loadMinData = function() {

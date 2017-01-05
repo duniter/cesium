@@ -5,11 +5,10 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
 
   function factory(host, port, wsPort) {
 
-    const
+    var
       fields = {
         commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail._content_type", "picturesCount", "type"]
-      };
-    var
+      },
       exports = {
         _internal: {},
         node: {

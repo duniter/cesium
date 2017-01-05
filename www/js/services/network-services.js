@@ -119,8 +119,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         peer.blockNumber = peer.block.replace(/-.+$/, '');
         peer.uid = data.uidsByPubkeys[peer.pubkey];
         var node = new BMA.instance(peer.getHost(), peer.getPort(), false);
+
+
+
+        // Get current block
         return node.blockchain.current()
-          .then(function(block){
+          .then(function(block) {
             peer.currentNumber = block.number;
             peer.online = true;
             peer.buid = buid(block);
@@ -128,37 +132,49 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               data.knownBlocks.push(peer.buid);
             }
             console.debug('[network] Peer [' + peer.server + ']    status [UP]   block [' + peer.buid.substring(0, 20) + ']');
-
-            if (csSettings.data.expertMode && !UIUtils.screen.isSmall()) {
-              // Get Version
-              return node.node.summary()
-                .then(function(res){
-                  peer.version = res && res.duniter && res.duniter.version;
-                  // Get hardship (if member peer)
-                  if (peer.uid) {
-                    return node.blockchain.stats.hardship({pubkey: peer.pubkey})
-                      .then(function (res) {
-                        peer.level = res && res.level;
-                        return peer;
-                      });
-                  }
-                }).catch(function() {
-                  peer.version = null; // continue
-                  peer.level = null; // continue
-                  return peer;
-                });
-            }
-            else {
+            return peer;
+          })
+          .catch(function(err) {
+            // Special case for currency init (root block not exists): use fixed values
+            if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+              peer.online = true;
+              peer.buid = buid({number:0, hash: BMA.constants.ROOT_BLOCK_HASH});
+              peer.level  = 0;
               return peer;
             }
-          })
-          .catch(function() {
             // node is DOWN
             peer.online=false;
             peer.currentNumber = null;
             peer.buid = null;
             peer.uid = data.uidsByPubkeys[peer.pubkey];
             console.debug('[network] Peer [' + peer.server + '] status [DOWN]');
+            return peer;
+          })
+          .then(function(peer) {
+            // Exit, if offline, not expert mode, or too small device
+            if (!peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
+            var jobs = [];
+            // Get Version
+            jobs.push(node.node.summary()
+              .then(function(res){
+                peer.version = res && res.duniter && res.duniter.version;
+              })
+              .catch(function() {
+                peer.version = null; // continue
+              }));
+
+            // Get hardship (only for a member peer)
+            if (peer.uid) {
+              jobs.push(node.blockchain.stats.hardship({pubkey: peer.pubkey})
+                .then(function (res) {
+                  peer.level = res && res.level;
+                })
+                .catch(function() {
+                  peer.level = null; // continue
+                }));
+            }
+
+            $q.all(jobs);
             return peer;
           });
       },

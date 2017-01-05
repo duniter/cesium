@@ -95,7 +95,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
   };
   $scope.entered = false;
   $scope.wotSearchTextId = 'wotSearchText';
-  $scope.enableFilter = true;
+  $scope.enableFilter = !csConfig.initPhase; // disable filter on init phase
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered) {
@@ -508,6 +508,12 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         return;
       }
 
+      // Check identity not expired
+      if ($scope.formData.requirements.expired) {
+        UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
+        return;
+      }
+
       // Check not already certified
       var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: csWallet.data.pubkey, valid: true});
       if (previousCert) {
@@ -527,6 +533,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
           });
         return;
       }
+
 
       UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
       .then(function(confirm){
@@ -589,6 +596,12 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         UIUtils.loading.hide();
         if (!identity || !identity.hasSelf) {
           UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
+          return;
+        }
+
+        // Check identity not expired
+        if (identity.requirements.expired) {
+          UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
           return;
         }
 
