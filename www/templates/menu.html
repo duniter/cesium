@@ -17,14 +17,14 @@
         <a id="helptip-header-bar-btn-profile"
            class="button button-icon button-clear hidden-xs hidden-sm"
            ng-click="showProfilePopover($event)">
-          <i class="avatar"
-             ng-if="login"
-             ng-style="$root.walletData.avatarStyle"
-             ng-class="{'royal-bg avatar-member': !$root.walletData.avatarStyle}">
-          </i>
           <i class="avatar avatar-member"
-             ng-if="!login"
-             style="opacity: 0.7"></i>
+             ng-if="!$root.walletData.avatar"
+             ng-class="{'disable': !login, 'royal-bg': login}">
+          </i>
+          <i class="avatar"
+             ng-if="$root.walletData.avatar"
+             style="background-image: url({{$root.walletData.avatar.src}})">
+          </i>
         </a>
       </ion-nav-buttons>
     </ion-nav-bar>

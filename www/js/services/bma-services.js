@@ -7,34 +7,42 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
   function factory(host, port, cacheEnable) {
 
+    const
+      errorCodes = {
+        HTTP_LIMITATION: 1006,
+        IDENTITY_SANDBOX_FULL: 1007,
+        NO_MATCHING_IDENTITY: 2001,
+        UID_ALREADY_USED: 2003,
+        NO_MATCHING_MEMBER: 2004,
+        NO_IDTY_MATCHING_PUB_OR_UID: 2021,
+        MEMBERSHIP_ALREADY_SEND: 2007,
+        NO_CURRENT_BLOCK: 2010,
+        BLOCK_NOT_FOUND: 2011,
+        TX_ALREADY_PROCESSED: 2030
+      },
+      regex = {
+        USER_ID: "[A-Za-z0-9_-]+",
+        CURRENCY: "[A-Za-z0-9_-]+",
+        PUBKEY: "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
+        COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
+        // duniter://[uid]:[pubkey]@[host]:[port]
+        URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
+        URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
+      },
+      constants = {
+        ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
+        LIMIT_REQUEST_COUNT: 5, // simultaneous async call of on rest request
+        LIMIT_REQUEST_DELAY: 1000 // time (in second) to wait between to call of a rest request
+      };
     var
-    errorCodes = {
-      HTTP_LIMITATION: 1006,
-      IDENTITY_SANDBOX_FULL: 1007,
-      NO_MATCHING_IDENTITY: 2001,
-      UID_ALREADY_USED: 2003,
-      NO_MATCHING_MEMBER: 2004,
-      NO_IDTY_MATCHING_PUB_OR_UID: 2021,
-      MEMBERSHIP_ALREADY_SEND: 2007,
-      NO_CURRENT_BLOCK: 2010,
-      BLOCK_NOT_FOUND: 2011,
-      TX_ALREADY_PROCESSED: 2030
-    },
-    regex = {
-      USER_ID: "[A-Za-z0-9_-]+",
-      CURRENCY: "[A-Za-z0-9_-]+",
-      PUBKEY: "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
-      COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
-      // duniter://[uid]:[pubkey]@[host]:[port]
-      URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
-      URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
-    },
-    constants = {
-      ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
-      LIMIT_REQUEST_COUNT: 5, // simultaneous async call of on rest request
-      LIMIT_REQUEST_DELAY: 1000 // time (in second) to wait between to call of a rest request
-    },
-    server = csHttp.getServer(host, port);
+      exports = {
+        _internal: {},
+        node: {
+          server: csHttp.getServer(host, port),
+          host: host,
+          port: port
+        }
+      };
 
     function exact(regexpContent) {
       return new RegExp("^" + regexpContent + "$");
@@ -56,12 +64,12 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       return host2 == host && ((!port && !port2) ||(port == port2));
     }
 
-    var getMembers = cacheEnable ?
-      csHttp.getWithCache(host, port, '/wot/members') :
-      csHttp.get(host, port, '/wot/members');
+    exports._internal.getMembers = cacheEnable ?
+        csHttp.getWithCache(host, port, '/wot/members') :
+        csHttp.get(host, port, '/wot/members');
 
     function getMemberUidsByPubkey() {
-      return getMembers()
+      return exports._internal.getMembers()
         .then(function(res){
           return res.results.reduce(function(res, member){
             res[member.pubkey] = member.uid;
@@ -69,9 +77,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
           }, {});
         });
     }
+    exports._internal.getMemberUidsByPubkey = getMemberUidsByPubkey;
 
     function getMemberByPubkey(pubkey) {
-      return getMemberUidsByPubkey()
+      return exports._internal.getMemberUidsByPubkey()
         .then(function(memberUidsByPubkey){
           var uid = memberUidsByPubkey[pubkey];
           return {
@@ -80,11 +89,9 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
             };
         });
     }
+    exports._internal.getMemberByPubkey = getMemberByPubkey;
 
-    var getBlockchainWithUd = cacheEnable ?
-      csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT) :
-      csHttp.get(host, port, '/blockchain/with/ud');
-    var getBlockchainBlock = cacheEnable ?
+    exports._internal.getBlockchainBlock = cacheEnable ?
       csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT) :
       csHttp.get(host, port, '/blockchain/block/:block');
 
@@ -93,16 +100,17 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
      * @param blockNumbers a rray of block number
     */
     function getBlockchainBlocks(blockNumbers){
-      return _getBlockchainBlocksRecursive(blockNumbers, 0, constants.LIMIT_REQUEST_COUNT);
+      return exports._internal.getBlockchainBlocksRecursive(blockNumbers, 0, constants.LIMIT_REQUEST_COUNT);
     }
+    exports._internal.getBlockchainBlocks = getBlockchainBlocks;
 
-    function _getBlockchainBlocksRecursive(blockNumbers, offset, size) {
+    function getBlockchainBlocksRecursive(blockNumbers, offset, size) {
       return $q(function(resolve, reject) {
         var result = [];
         var jobs = [];
         _.each(blockNumbers.slice(offset, offset+size), function(blockNumber) {
           jobs.push(
-            getBlockchainBlock({block: blockNumber})
+            exports._internal.getBlockchainBlock({block: blockNumber})
               .then(function(block){
                 if (!block) return;
                 result.push(block);
@@ -114,7 +122,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
           .then(function() {
             if (offset < blockNumbers.length - 1) {
               $timeout(function() {
-                _getBlockchainBlocksRecursive(blockNumbers, offset+size, size)
+                exports._internal.getBlockchainBlocksRecursive(blockNumbers, offset+size, size)
                   .then(function(blocks) {
                     if (!blocks || !blocks.length) {
                       resolve(result);
@@ -141,20 +149,26 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
           });
       });
     }
+    exports._internal.getBlockchainBlocksRecursive = getBlockchainBlocksRecursive;
+
+    exports._internal.getBlockchainWithUd = cacheEnable ?
+      csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT) :
+      csHttp.get(host, port, '/blockchain/with/ud');
 
     function getBlockchainLastUd() {
-      return getBlockchainWithUd()
+      return exports._internal.getBlockchainWithUd()
         .then(function(res) {
           if (!res.result.blocks || !res.result.blocks.length) {
             return null;
           }
           var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-          return getBlockchainBlock({block: lastBlockWithUD})
+          return exports._internal.getBlockchainBlock({block: lastBlockWithUD})
             .then(function(block){
               return (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
             });
         });
     }
+    exports._internal.getBlockchainLastUd = getBlockchainLastUd;
 
     function parseUri(uri) {
       return $q(function(resolve, reject) {
@@ -260,91 +274,84 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       });
     }
 
-    return {
-      node: {
-        summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG),
-        server: server,
-        host: host,
-        port: port,
-        same: isSameNode
-      },
-      wot: {
+    exports.node.summary = csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG);
+    exports.node.same = isSameNode;
+    exports.wot = {
         lookup: csHttp.get(host, port, '/wot/lookup/:search'),
         certifiedBy: csHttp.get(host, port, '/wot/certified-by/:pubkey'),
         certifiersOf: csHttp.get(host, port, '/wot/certifiers-of/:pubkey'),
         member: {
-          all: getMembers,
-          uids: getMemberUidsByPubkey,
-          get: getMemberByPubkey,
+          all: exports._internal.getMembers,
+          uids: exports._internal.getMemberUidsByPubkey,
+          get: exports._internal.getMemberByPubkey,
           pending: csHttp.get(host, port, '/wot/pending')
         },
         requirements: csHttp.get(host, port, '/wot/requirements/:pubkey'),
         add: csHttp.post(host, port, '/wot/add'),
         certify: csHttp.post(host, port, '/wot/certify')
-      },
-      network: {
+      };
+    exports.network = {
         peering: {
           peers: csHttp.get(host, port, '/network/peering/peers')
         },
         peers: csHttp.get(host, port, '/network/peers')
-      },
-      blockchain: {
-        parameters: cacheEnable ?
-          csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG) :
-          csHttp.get(host, port, '/blockchain/parameters'),
+      };
+    exports.blockchain = {
+        parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
         current: csHttp.get(host, port, '/blockchain/current'),
-        block: getBlockchainBlock,
-        blocks: getBlockchainBlocks,
+        block: exports._internal.getBlockchainBlock,
+        blocks: exports._internal.getBlockchainBlocks,
         membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
-          ud: getBlockchainWithUd,
+          ud: exports._internal.getBlockchainWithUd,
           tx: csHttp.get(host, port, '/blockchain/with/tx'),
           newcomers: csHttp.get(host, port, '/blockchain/with/newcomers'),
           hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey'),
         },
-        lastUd: getBlockchainLastUd
-      },
-      tx: {
-        sources: csHttp.get(host, port, '/tx/sources/:pubkey'),
-        process: csHttp.post(host, port, '/tx/process'),
-        history: {
-          all: csHttp.get(host, port, '/tx/history/:pubkey'),
-          times: cacheEnable ?
-            csHttp.getWithCache(host, port, '/tx/history/:pubkey/times/:from/:to') :
-            csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
-          timesNoCache: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
-          blocks: cacheEnable ?
-            csHttp.getWithCache(host, port, '/tx/history/:pubkey/blocks/:from/:to') :
-            csHttp.get(host, port, '/tx/history/:pubkey/blocks/:from/:to'),
-          pending: csHttp.get(host, port, '/tx/history/:pubkey/pending')
-        }
-      },
-      ud: {
+        lastUd: exports._internal.getBlockchainLastUd
+      };
+    exports.tx = {
+      sources: csHttp.get(host, port, '/tx/sources/:pubkey'),
+      process: csHttp.post(host, port, '/tx/process'),
+      history: {
+        all: csHttp.get(host, port, '/tx/history/:pubkey'),
+        times: cacheEnable ?
+          csHttp.getWithCache(host, port, '/tx/history/:pubkey/times/:from/:to') :
+          csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
+        timesNoCache: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
+        blocks: cacheEnable ?
+          csHttp.getWithCache(host, port, '/tx/history/:pubkey/blocks/:from/:to') :
+          csHttp.get(host, port, '/tx/history/:pubkey/blocks/:from/:to'),
+        pending: csHttp.get(host, port, '/tx/history/:pubkey/pending')
+      }
+    };
+    exports.ud = {
         history: csHttp.get(host, port, '/ud/history/:pubkey')
-      },
-      websocket: {
+      };
+    exports.websocket = {
         block: function() {
-          return csHttp.ws('ws://' + server + '/ws/block');
+          return csHttp.ws('ws://' + exports.node.server + '/ws/block');
         },
         peer: function() {
-          return csHttp.ws('ws://' + server + '/ws/peer');
+          return csHttp.ws('ws://' + exports.node.server + '/ws/peer');
         },
         close : csHttp.closeAllWs
-      },
-      copy: copy,
-      errorCodes: errorCodes,
-      constants: constants,
-      regex: {
+      };
+
+    exports.copy = copy;
+    exports.errorCodes = errorCodes;
+    exports.constants = constants;
+    exports.regex = {
         USER_ID: exact(regex.USER_ID),
         COMMENT: exact(regex.COMMENT),
         PUBKEY: exact(regex.PUBKEY),
         CURRENCY: exact(regex.CURRENCY),
         URI: exact(regex.URI)
-      },
-      uri: {
+      };
+    exports.uri = {
         parse: parseUri
-      }
-    };
+      };
+    return exports
   }
 
   var service = factory(csSettings.data.node.host, csSettings.data.node.port, true /*cache*/);

@@ -75,10 +75,8 @@
         id="helptip-wot-search-result-{{$index}}"
         class="item item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
 
-        <i class="item-image"
-           ng-style="identity.avatarStyle"
-           ng-class="{'icon ion-person': !identity.avatarStyle, 'avatar': identity.avatarStyle}">
-        </i>
+        <i ng-if="!identity.avatar" class="item-image icon ion-person"></i>
+        <i ng-if="identity.avatar" class="item-image avatar" style="background-image: url({{::identity.avatar.src}})"></i>
 
         <h2>
           <ng-if ng-if="identity.name||identity.uid" ng-bind-html="identity.name||identity.uid"></ng-if>

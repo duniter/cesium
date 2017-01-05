@@ -402,7 +402,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
               $timeout(function() {
                 // Message has NOT changed
                 if ($scope.id === message.id) {
-                  esMessage.markAsRead(message)
+                  esMessage.markAsRead(message, $scope.type)
                     .then(function() {
                       console.debug("[message] marked as read");
                     })

@@ -29,7 +29,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.registry_view_record', {
-      url: "/registry/view/:id/:title",
+      url: "/registry/view/:id/:title?refresh",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/view_record.html",
@@ -88,6 +88,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   $scope.search = {
     text: '',
     results: [],
+    loading: true,
     lastRecords: true,
     type: null,
     category: null,
@@ -155,25 +156,13 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 
   });
 
-  $scope.doSearch = function() {
-    $scope.search.looking = true;
+  $scope.doSearch = function(from) {
+    $scope.search.loading = !from;
     $scope.search.lastRecords = false;
     if (!$scope.search.options) {
       $scope.search.options = false;
     }
 
-    var request = {
-      query: {},
-      highlight: {
-        fields : {
-          title : {},
-          description : {}
-        }
-      },
-      from: 0,
-      size: 20,
-      _source: esRegistry.record.fields.commons
-    };
     var text = $scope.search.text.trim();
     var matches = [];
     var filters = [];
@@ -234,15 +223,15 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
       return;
     }
 
-    request.query.bool = {};
+    var query = {bool: {}};
     if (matches.length > 0) {
-      request.query.bool.should =  matches;
+      query.bool.should =  matches;
     }
     if (filters.length > 0) {
-      request.query.bool.filter =  filters;
+      query.bool.filter =  filters;
     }
 
-    $scope.doRequest(request);
+    $scope.doRequest({query: query, from: from});
   };
 
   $scope.onToggleOptions = function() {
@@ -252,74 +241,44 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   };
   $scope.$watch('search.options', $scope.onToggleOptions, true);
 
-  $scope.doGetLastRecord = function(offset, size) {
-    offset = offset || 0;
-    size = size || defaultSearchLimit;
-    if (size < defaultSearchLimit) size = defaultSearchLimit;
-
+  $scope.doGetLastRecord = function(from) {
     $scope.search.lastRecords = true;
-
-    var request = {
-      sort: {
-        "time" : "desc"
-      },
-      from: offset,
-      size: size,
-      _source: esRegistry.record.fields.commons
-    };
-
-    return $scope.doRequest(request, offset, size);
+    return $scope.doRequest({
+        sort: {
+          "creationTime" : "desc"
+        },
+        from: from
+      });
   };
 
-  $scope.doRequest = function(request, offset, size) {
-    $scope.search.loading = (offset === 0);
+  $scope.doRequest = function(options) {
+    options = options || {};
+    options.from = options.from || 0;
+    options.size = options.size || defaultSearchLimit;
+    if (options.size < defaultSearchLimit) options.size = defaultSearchLimit;
+    $scope.search.loading = (options.from === 0);
 
-    var categories;
-    return esRegistry.category.all()
-      .then(function(res) {
-        categories = res;
-        return esRegistry.record.search(request);
-      })
-      .then(function(res){
-        if (res.hits.total === 0) {
-          $scope.search.results = (offset > 0) ? $scope.search.results : [];
+    return esRegistry.record.search(options)
+      .then(function(records) {
+        if (!records || !records.length) {
+          $scope.search.results = (options.from > 0) ? $scope.search.results : [];
           $scope.search.loading = false;
           $scope.search.hasMore = false;
           return;
         }
         var formatSlug = $filter('formatSlug');
-        var records = res.hits.hits.reduce(function(result, hit) {
-          var record = hit._source;
-          record.id = hit._id;
-          record.urlTitle = formatSlug(hit._source.title);
-          if (record.category && record.category.id) {
-            record.category = categories[record.category.id];
-          }
-          if (record.thumbnail) {
-            record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
-          }
-          if (hit.highlight) {
-            if (hit.highlight.title) {
-                record.title = hit.highlight.title[0];
-            }
-            if (hit.highlight.description) {
-                record.description = hit.highlight.description[0];
-            }
-            if (hit.highlight.location) {
-                record.location = hit.highlight.location[0];
-            }
-          }
-          return result.concat(record);
-        }, []);
+        _.forEach(records, function(record) {
+          record.urlTitle = formatSlug(record.title);
+        });
 
         // Replace results, or append if 'show more' clicked
-        if (offset === 0) {
+        if (!options.from) {
           $scope.search.results = records;
         }
         else {
           $scope.search.results = $scope.search.results.concat(records);
         }
-        $scope.search.hasMore = $scope.search.results.length >= offset + size;
+        $scope.search.hasMore = $scope.search.results.length >= options.from + options.size;
         $scope.search.loading = false;
 
         if (records.length > 0) {
@@ -335,14 +294,14 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
       })
       .catch(function(err) {
         $scope.search.loading = false;
-        $scope.search.results = (offset > 0) ? $scope.search.results : [];
+        $scope.search.results = (options.from > 0) ? $scope.search.results : [];
         $scope.search.hasMore = false;
         UIUtils.onError('REGISTRY.ERROR.LOOKUP_RECORDS_FAILED')(err);
       });
   };
 
   $scope.showMore= function() {
-    var offset = $scope.search.results ? $scope.search.results.length : 0;
+    var from = $scope.search.results ? $scope.search.results.length : 0;
 
     $scope.search.loadingMore = true;
 
@@ -350,13 +309,16 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
       $scope.doGetLastRecord :
       $scope.doSearch;
 
-    return searchFunction(offset)
+    return searchFunction(from)
       .then(function() {
         $scope.search.loadingMore = false;
         $scope.$broadcast('scroll.infiniteScrollComplete');
       })
       .catch(function(err) {
+        console.error(err);
         $scope.search.loadingMore = false;
+        $scope.search.hasMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
       });
   };
 
@@ -410,8 +372,8 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 }
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
-                                        $anchorScroll, $filter, $focus,
-                                        csWallet, esRegistry, esUser, UIUtils, esHttp) {
+                                        $anchorScroll,
+                                        csWallet, esRegistry, UIUtils, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -421,49 +383,32 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.canEdit = false;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope,  $timeout, $filter, $state, $focus, UIUtils, esHttp, esRegistry);
-
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
-      if ($scope.loading) { // prevent reload if same id
+      if ($scope.loading || state.stateParams.refresh) { // prevent reload if same id (if not forced)
         $scope.load(state.stateParams.id, state.stateParams.anchor);
       }
+      $scope.$broadcast('$recordView.enter', state);
     }
     else {
       $state.go('app.registry_lookup');
     }
   });
 
+  $scope.$on('$ionicView.beforeLeave', function(event, args){
+    $scope.$broadcast('$recordView.beforeLeave', args);
+  });
+
   $scope.load = function(id, anchor) {
-    var categories;
-
-    esRegistry.category.all()
-      .then(function(res) {
-        categories = res;
-        return esRegistry.record.getCommons({id: id});
-      })
-      .then(function (hit) {
-        $scope.id= hit._id;
-        $scope.formData = hit._source;
-        if (hit._source.category && hit._source.category.id){
-          $scope.category = categories[hit._source.category.id];
-        }
-        if (hit._source.thumbnail) {
-          $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
-        }
-        else {
-          delete $scope.thumbnail;
-        }
+    $scope.loading = true;
+    esRegistry.record.load(id)
+      .then(function (data) {
+        $scope.id= data.id;
+        $scope.formData = data.record;
         $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
-
-        // Load avatar and name (and uid)
-        return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
-          .then(function(idties) {
-            return idties[0];
-          });
-      })
-      .then(function(member){
-        $scope.issuer = member;
+        $scope.issuer = data.issuer;
+        UIUtils.loading.hide();
+        $scope.loading = false;
         // Set Motion (only direct children, to exclude .lazy-load children)
         $timeout(function() {
           UIUtils.motion.fadeSlideIn({
@@ -473,8 +418,6 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           UIUtils.ink({
             selector: '.list .item.ink'});
         }, 10);
-        UIUtils.loading.hide();
-        $scope.loading = false;
       })
       .catch(function(err) {
         // Retry (ES could have error)
@@ -488,7 +431,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           $scope.loading = false;
           if (err && err.ucode === 404) {
             UIUtils.toast.show('REGISTRY.ERROR.RECORD_NOT_EXISTS');
-            $state.go(UIUtils.screen.isSmall() ? 'app.registry_lookup' : 'app.registry_lookup_lg');
+            $state.go('app.registry_lookup');
           }
           else {
             UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);
@@ -498,36 +441,33 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
 
     // Continue loading other data
     $timeout(function() {
-      $q.all([
-        // Load pictures
-        esRegistry.record.picture.all({id: id})
-          .then(function(hit) {
-            if (hit._source.pictures) {
-              $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-                return res.concat(UIUtils.image.fromAttachment(pic.file));
-              }, []);
-            }
-          }),
-
-        // Load comments
-        $scope.loadComments(id)
-      ])
-      .then(function() {
-        // Set Motion
-        $timeout(function(){
-          UIUtils.motion.fadeSlideIn({
-            selector: '.card-gallery, .card-comment, .lazy-load .item',
-            startVelocity: 3000
+      // Load pictures
+      esRegistry.record.picture.all({id: id})
+        .then(function(hit) {
+          if (hit._source.pictures) {
+            $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
+              return res.concat(esHttp.image.fromAttachment(pic.file));
+            }, []);
+          }
+          // Set Motion
+          $timeout(function(){
+            UIUtils.motion.fadeSlideIn({
+              selector: '.lazy-load .item.card-gallery',
+              startVelocity: 3000
+            });
           });
-          if (anchor) $timeout(function() {
-            $anchorScroll(anchor); // scroll (if comment anchor)
-          }, 1000);
+        })
+        .catch(function() {
+          $scope.pictures = [];
         });
-      })
-      .catch(function() {
-        $scope.pictures = [];
-        $scope.comments = [];
-      });
+
+      // Load other data (from child controller)
+      $scope.$broadcast('$recordView.load', id, esRegistry.record.comment);
+
+      // scroll (if comment anchor)
+      if (anchor) $timeout(function() {
+        $anchorScroll(anchor);
+      }, 1000);
     });
   };
 
@@ -612,7 +552,6 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
   $scope.walletData = {};
   $scope.formData = {};
   $scope.id = null;
-  $scope.category = {};
   $scope.pictures = [];
   $scope.loading = true;
 
@@ -642,26 +581,19 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
   });
 
   $scope.load = function(id) {
-    esRegistry.category.all()
-    .then(function(categories) {
-      esRegistry.record.get({id: id})
-      .then(function (hit) {
-        $scope.formData = hit._source;
-        $scope.id= hit._id;
-        if (hit._source.category && hit._source.category.id){
-          $scope.category = categories[hit._source.category.id];
-        }
-        if (hit._source.pictures && hit._source.pictures.reduce) {
-          $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-            return res.concat(UIUtils.image.fromAttachment(pic.file));
-          }, []);
-          delete $scope.formData.pictures; // duplicated with $scope.pictures
-        }
-        else {
-          $scope.pictures = [];
-        }
+    esRegistry.record.load(id, {
+        fetchPictures: true
+      })
+      .then(function (data) {
+        $scope.formData = data.record;
+        $scope.id= data.id;
+
+        $scope.pictures = data.record.pictures || [];
+        delete data.record.pictures; // remove, as already stored in $scope.pictures
+
         $scope.loading = false;
         UIUtils.loading.hide();
+
         $timeout(function(){
           UIUtils.motion.ripple({
             selector: '.animate-ripple .item, .card-gallery',
@@ -669,11 +601,9 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
           });
           // Set Ink
           UIUtils.ink();
-        },100);
+        }, 100);
       })
       .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED'));
-    })
-    .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_CATEGORY_FAILED'));
   };
 
   $scope.needCategory = function() {
@@ -682,67 +612,69 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
 
   $scope.save = function() {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid ||
-       (!$scope.category.id &&
+    if($scope.saving || // avoid multiple save
+       !$scope.form.$valid ||
+       (!$scope.formData.category.id &&
         ($scope.formData.type === 'shop' || $scope.formData.type === 'company'))) {
       return;
     }
+    $scope.saving = true;
+    return UIUtils.loading.show()
 
-    UIUtils.loading.show();
-    return $q(function(resolve, reject) {
-      var doFinishSave = function(formData) {
+      .then(function(){
+        var json = $scope.formData;
         if (!$scope.needCategory()) {
-          delete formData.category;
+          delete json.category;
         }
-        if (!$scope.id) { // Create
-            formData.creationTime = esHttp.date.now();
-            formData.time = formData.creationTime;
-            esRegistry.record.add(formData)
-            .then(function(id) {
-              UIUtils.loading.hide();
-              $state.go('app.registry_view_record', {id: id});
-              resolve();
-            })
-            .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
-        }
-        else { // Update
-            formData.time = esHttp.date.now();
-            esRegistry.record.update(formData, {id: $scope.id})
-            .then(function() {
-              UIUtils.loading.hide();
-              $state.go('app.registry_view_record', {id: $scope.id});
-              resolve();
-            })
-            .catch(UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED'));
-        }
-      };
+        json.time = esHttp.date.now();
 
-      // Resize pictures
-      $scope.formData.picturesCount = $scope.pictures.length;
-      if ($scope.formData.picturesCount > 0) {
-        $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
-          return res.concat({file: UIUtils.image.toAttachment(pic)});
-        }, []);
-        UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
-        .then(function(imageSrc) {
-          $scope.formData.thumbnail = UIUtils.image.toAttachment({src: imageSrc});
-
-          doFinishSave($scope.formData);
-        });
-      }
-      else {
-        if ($scope.formData.thumbnail) {
-          // FIXME: this is a workaround to allow content deletion
-          // Is it a bug in the ES attachment-mapper ?
-          $scope.formData.thumbnail = {
-            _content: ''
-          };
+        // Resize pictures
+        json.picturesCount = $scope.pictures.length;
+        if (json.picturesCount > 0) {
+          json.pictures = $scope.pictures.reduce(function(res, pic) {
+            return res.concat({file: esHttp.image.toAttachment(pic)});
+          }, []);
+          return UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
+            .then(function(imageSrc) {
+              json.thumbnail = esHttp.image.toAttachment({src: imageSrc});
+              return json;
+            });
         }
-        $scope.formData.pictures = [];
-        doFinishSave($scope.formData);
-      }
+        else {
+          if (json.thumbnail) {
+            // FIXME: this is a workaround to allow content deletion
+            // Is it a bug in the ES attachment-mapper ?
+            json.thumbnail = {
+              _content: '',
+              _content_type: ''
+            };
+          }
+          json.pictures = [];
+          return json;
+        }
+      })
+      .then(function(json){
+        // Create
+        if (!$scope.id) {
+          json.creationTime = esHttp.date.now();
+          return esRegistry.record.add(json);
+        }
+        // Update
+        return esRegistry.record.update(json, {id: $scope.id})
+      })
 
-    });
+      .then(function(id) {
+        $scope.id = $scope.id || id;
+        $scope.saving = false;
+        $ionicHistory.clearCache($ionicHistory.currentView().stateId); // clear current view
+        $ionicHistory.nextViewOptions({historyRoot: true});
+        return $state.go('app.registry_view_record', {id: $scope.id, refresh: true});
+      })
+
+      .catch(function(err) {
+        $scope.saving = false;
+        UIUtils.onError('REGISTRY.ERROR.SAVE_RECORD_FAILED')(err);
+      });
   };
 
   $scope.openPicturePopup = function() {
@@ -762,7 +694,6 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
       .then(function(imageData) {
         $scope.pictures.push({src: imageData});
         UIUtils.loading.hide();
-        //$scope.$apply();
         resolve();
       });
     });
@@ -804,7 +735,6 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
     })
     .then(function(cat){
       if (cat && cat.parent) {
-        $scope.category = cat;
         $scope.formData.category = cat;
       }
     });

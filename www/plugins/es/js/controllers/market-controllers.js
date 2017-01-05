@@ -29,7 +29,7 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
     })
 
     .state('app.market_view_record', {
-      url: "/market/view/:id/:title",
+      url: "/market/view/:id/:title?refresh",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/view_record.html",
@@ -39,7 +39,7 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
     })
 
     .state('app.market_view_record_anchor', {
-      url: "/market/view/:id/:title/:anchor",
+      url: "/market/view/:id/:title/:anchor?refresh",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/market/view_record.html",
@@ -80,7 +80,7 @@ angular.module('cesium.es.market.controllers', ['cesium.es.services', 'cesium.es
 ;
 
 function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q, csSettings,
-                                  UIUtils, ModalUtils, esMarket, BMA) {
+                                  UIUtils, ModalUtils, esHttp, esMarket, BMA) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -168,30 +168,13 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     }
   };
 
-  $scope.doSearch = function(offset, size) {
-    offset = offset || 0;
-    size = size || defaultSearchLimit;
-    if (size < defaultSearchLimit) size = defaultSearchLimit;
-
-    $scope.search.loading = (offset === 0);
+  $scope.doSearch = function(from) {
+    $scope.search.loading = !from;
     $scope.search.lastRecords = false;
     if (!$scope.search.options) {
       $scope.search.options = false;
     }
 
-    var request = {
-      query: {},
-      highlight: {
-        fields : {
-          title : {},
-          description : {},
-          "category.name" : {}
-        }
-      },
-      from: offset,
-      size: size,
-      _source: esMarket.record.fields.commons
-    };
     var text = $scope.search.text.trim();
     var matches = [];
     var filters = [];
@@ -252,44 +235,37 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       filters.push({term: {type: $scope.search.type}});
     }
 
-    request.query = {};
+    var query = {bool: {}};
     if (matches.length > 0) {
-      request.query.bool = request.query.bool || {};
-      request.query.bool.should =  matches;
+      query.bool.should =  matches;
     }
     if (filters.length > 0) {
-      request.query.bool = request.query.bool || {};
-      request.query.bool.filter =  filters;
+      query.bool.filter =  filters;
     }
 
-    return $scope.doRequest(request, offset, size);
+    return $scope.doRequest({query: query, from: from});
   };
 
-  $scope.doGetLastRecord = function(offset, size) {
-    offset = offset || 0;
-    size = size || defaultSearchLimit;
-    if (size < defaultSearchLimit) size = defaultSearchLimit;
+  $scope.doGetLastRecord = function(from) {
 
     $scope.search.lastRecords = true;
 
-    var request = {
+    var options = {
       sort: {
         "creationTime" : "desc"
       },
-      from: offset,
-      size: size,
-      _source: esMarket.record.fields.commons
+      from: from
     };
 
     if ($scope.search.type) {
-      request.query = {bool: {filter: {term: {type: $scope.search.type}}}};
+      options.query = {bool: {filter: {term: {type: $scope.search.type}}}};
     }
 
-    return $scope.doRequest(request, offset, size);
+    return $scope.doRequest(options);
   };
 
-  $scope.showMore= function() {
-    var offset = $scope.search.results ? $scope.search.results.length : 0;
+  $scope.showMore = function() {
+    var from = $scope.search.results ? $scope.search.results.length : 0;
 
     $scope.search.loadingMore = true;
 
@@ -297,95 +273,53 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
       $scope.doGetLastRecord :
       $scope.doSearch;
 
-    return searchFunction(offset)
+    return searchFunction(from)
       .then(function() {
         $scope.search.loadingMore = false;
         $scope.$broadcast('scroll.infiniteScrollComplete');
       })
       .catch(function(err) {
+        console.error(err);
         $scope.search.loadingMore = false;
+        $scope.search.hasMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
       });
   };
 
-  $scope.doRequest = function(request, offset, size) {
-    $scope.search.loading = (offset === 0);
+  $scope.doRequest = function(options) {
+    options = options || {};
+    options.from = options.from || 0;
+    options.size = options.size || defaultSearchLimit;
+    if (options.size < defaultSearchLimit) options.size = defaultSearchLimit;
+    $scope.search.loading = (options.from === 0);
 
-    var categories;
-    var currentUD;
-
-    return $q.all([
-      esMarket.category.all()
-        .then(function (res) {
-          categories = res;
-        }),
-      // Get last UD
-      BMA.blockchain.lastUd()
-        .then(function (res) {
-          currentUD = res;
-        })
-        .catch(function(err) {
-          currentUD = 1;
-          console.error(err);
-        })
-    ])
-    .then(function() {
-      return esMarket.record.search(request);
-    })
-    .then(function(res){
-      if (!res.hits.hits.length) {
-        $scope.search.results = (offset > 0) ? $scope.search.results : [];
+    return  esMarket.record.search(options)
+    .then(function(records){
+      if (!records && !records.length) {
+        $scope.search.results = (options.from > 0) ? $scope.search.results : [];
         $scope.search.hasMore = false;
         $scope.search.loading = false;
         return;
       }
+
+      // Filter on type (workaround if filter on term 'type' not working)
       var formatSlug = $filter('formatSlug');
-      var records = res.hits.hits.reduce(function(res, hit) {
-        // Filter on type (workaround if filter on term 'type' not working)
-        if ($scope.search.type && $scope.search.type != hit._source.type) {
+      records.reduce(function(res, record) {
+        if ($scope.search.type && $scope.search.type != record.type) {
           return res;
         }
-        var record = hit._source;
-        record.id = hit._id;
-        record.urlTitle = formatSlug(hit._source.title);
-        if (record.category && record.category.id) {
-          record.category = categories[record.category.id];
-        }
-        if (record.thumbnail) {
-          record.thumbnail = UIUtils.image.fromAttachment(record.thumbnail);
-        }
-        if (record.price) {
-          if (!csSettings.data.useRelative && (!record.unit || record.unit==='UD')) {
-            record.price = record.price * currentUD;
-          }
-          else if (csSettings.data.useRelative && record.unit==='unit') {
-            record.price = record.price / currentUD;
-          }
-        }
-        if (hit.highlight) {
-          if (hit.highlight.title) {
-              record.title = hit.highlight.title[0];
-          }
-          if (hit.highlight.description) {
-              record.description = hit.highlight.description[0];
-          }
-          if (hit.highlight.location) {
-              record.location = hit.highlight.location[0];
-          }
-          if (record.category && hit.highlight["category.name"]) {
-              record.category.name = hit.highlight["category.name"][0];
-          }
-        }
+        record.urlTitle = formatSlug(record.title);
         return res.concat(record);
       }, []);
 
       // Replace results, or append if 'show more' clicked
-      if (offset === 0) {
+      if (!options.from) {
         $scope.search.results = records;
       }
       else {
         $scope.search.results = $scope.search.results.concat(records);
       }
-      $scope.search.hasMore = $scope.search.results.length >= offset + size;
+      $scope.search.hasMore = $scope.search.results.length >= options.from + options.size;
       $scope.search.loading = false;
 
       if (records.length > 0) {
@@ -403,7 +337,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
     })
     .catch(function(err) {
       $scope.search.loading = false;
-      $scope.search.results = (offset > 0) ? $scope.search.results : [];
+      $scope.search.results = (options.from > 0) ? $scope.search.results : [];
       $scope.search.hasMore = false;
       UIUtils.onError('MARKET.ERROR.LOOKUP_RECORDS_FAILED')(err);
     });
@@ -422,39 +356,39 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
 
   $scope.showCategoryModal = function() {
     // load categories
-    esMarket.category.all()
-    .then(function(categories){
-      return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-        {categories : categories},
-        {focusFirstInput: true}
-      );
-    })
-    .then(function(cat){
-      if (cat && cat.parent) {
-        $scope.search.category = cat;
-        $scope.doSearch();
-      }
-    });
+    return esMarket.category.all()
+      .then(function(categories){
+        return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
+          {categories : categories},
+          {focusFirstInput: true}
+        );
+      })
+      .then(function(cat){
+        if (cat && cat.parent) {
+          $scope.search.category = cat;
+          $scope.doSearch();
+        }
+      });
   };
 
   $scope.showNewRecordModal = function() {
-    $scope.loadWallet()
-      .then(function(walletData) {
-        UIUtils.loading.hide();
-        $scope.walletData = walletData;
-        ModalUtils.show('plugins/es/templates/market/modal_record_type.html')
-        .then(function(type){
-          if (type) {
-            $state.go('app.market_add_record', {type: type});
-          }
-        });
-    });
+    return $scope.loadWallet()
+      .then(function() {
+        return UIUtils.loading.hide();
+      }).then(function() {
+        return ModalUtils.show('plugins/es/templates/market/modal_record_type.html');
+      })
+      .then(function(type){
+        if (type) {
+          $state.go('app.market_add_record', {type: type});
+        }
+      });
   };
 }
 
 function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $state, $ionicHistory, $q,
-                                      $timeout, $filter, $focus,
-                                      csWallet, esMarket, UIUtils,  esHttp, esUser, BMA, csSettings) {
+                                      $timeout, $filter,
+                                      csWallet, esMarket, UIUtils,  esHttp, csSettings) {
   'ngInject';
 
   $scope.formData = {};
@@ -465,117 +399,97 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
   $scope.maxCommentSize = 10;
   $scope.loading = true;
 
-  ESCommentsController.call(this, $scope, $timeout, $filter, $state, $focus, UIUtils, esHttp, esMarket);
+  //ESCommentsController.call(this, $scope, $timeout, $filter, $state, $focus, UIUtils, esMarket);
 
   $scope.$on('$ionicView.enter', function (e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
-      if ($scope.loading) { // prevent reload if same id
+      if ($scope.loading || state.stateParams.refresh) { // prevent reload if same id (if not force)
         $scope.load(state.stateParams.id, state.stateParams.anchor);
       }
+
+      // Notify child controllers
+      $scope.$broadcast('$recordView.enter', state);
     }
     else {
       $state.go('app.market_lookup');
     }
   });
 
-  $scope.load = function (id, anchor) {
+  $scope.$on('$ionicView.beforeLeave', function(event, args){
+    $scope.$broadcast('$recordView.beforeLeave', args);
+  });
 
-    var categories;
-    $q.all([
-      esMarket.category.all()
-        .then(function (result) {
-          categories = result;
-        }),
-      // Get last UD
-      BMA.blockchain.lastUd()
-        .then(function (currentUD) {
-          $scope.currentUD = currentUD;
-        })
-    ])
-    .then(function () {
-      return esMarket.record.getCommons({id: id});
-    })
-    .then(function (hit) {
-      $scope.formData = hit._source;
-      $scope.id = hit._id;
-      if (hit._source.category && hit._source.category.id) {
-        $scope.category = categories[hit._source.category.id];
-      }
-      if (hit._source.thumbnail) {
-        $scope.thumbnail = UIUtils.image.fromAttachment(hit._source.thumbnail);
-      }
-      $scope.canEdit = $scope.formData && csWallet.isUserPubkey($scope.formData.issuer);
-      return esUser.profile.fillAvatars([{pubkey: $scope.formData.issuer}])
-        .then(function(idties) {
-          return idties[0];
-        });
-    })
-    .then(function (member) {
-      $scope.issuer = member;
-      $scope.refreshConvertedPrice();
-      // Set Motion (only direct children, to exclude .lazy-load children)
-      $timeout(function () {
-        UIUtils.motion.fadeSlideIn({
-          selector: '.list > .item',
-          startVelocity: 3000
-        });
-      });
-      UIUtils.loading.hide();
-      $scope.loading = false;
-    })
-    .catch(function (err) {
-      if (!$scope.secondTry) {
-        $scope.secondTry = true;
-        $q(function () {
-          $scope.load(id); // loop once
-        }, 100);
-      }
-      else {
-        $scope.loading = false;
+  $scope.load = function (id, anchor) {
+    $scope.loading = true;
+    esMarket.record.load(id)
+      .then(function (data) {
+        $scope.formData = data.record;
+        $scope.id = data.id;
+        $scope.issuer = data.issuer;
+        $scope.canEdit = $scope.formData && csWallet.isUserPubkey($scope.formData.issuer);
+        $scope.refreshConvertedPrice();
         UIUtils.loading.hide();
-        $scope.member = null;
-        if (err && err.ucode === 404) {
-          UIUtils.toast.show('MARKET.ERROR.RECORD_NOT_EXISTS');
-          $state.go('app.market_lookup');
+        $scope.loading = false;
+        // Set Motion (only direct children, to exclude .lazy-load children)
+        $timeout(function () {
+          UIUtils.motion.fadeSlideIn({
+            selector: '.list > .item',
+            startVelocity: 3000
+          });
+        });
+      })
+      .catch(function (err) {
+        if (!$scope.secondTry) {
+          $scope.secondTry = true;
+          $q(function () {
+            $scope.load(id); // loop once
+          }, 100);
         }
         else {
-          UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+          $scope.loading = false;
+          UIUtils.loading.hide();
+          if (err && err.ucode === 404) {
+            UIUtils.toast.show('MARKET.ERROR.RECORD_NOT_EXISTS');
+            $state.go('app.market_lookup');
+          }
+          else {
+            UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED')(err);
+          }
         }
-      }
-    });
+      });
 
     // Continue loading other data
     $timeout(function() {
-      $q.all([
-        // Load pictures
-        esMarket.record.picture.all({id: id})
-          .then(function (hit) {
-            if (hit._source.pictures) {
-              $scope.pictures = hit._source.pictures.reduce(function (res, pic) {
-                return res.concat(UIUtils.image.fromAttachment(pic.file));
-              }, []);
-            }
-          }),
 
-        // Load comments
-        $scope.loadComments(id)
-      ])
-      .then(function () {
-        // Set Motion
-        $timeout(function() {
-          UIUtils.motion.fadeSlideIn({
-            selector: '.card-gallery, .card-comment, .lazy-load .item',
-            startVelocity: 3000
-          });
-          if (anchor) $timeout(function() {
-             $anchorScroll(anchor); // scroll (if comment anchor)
-          }, 1000);
+      // Load pictures
+      esMarket.record.picture.all({id: id})
+        .then(function (hit) {
+          if (hit._source.pictures) {
+            $scope.pictures = hit._source.pictures.reduce(function (res, pic) {
+              return res.concat(esHttp.image.fromAttachment(pic.file));
+            }, []);
+          }
+        })
+        .then(function () {
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.fadeSlideIn({
+              selector: '.lazy-load .item.card-gallery',
+              startVelocity: 3000
+            });
+          }, 100);
+        })
+        .catch(function () {
+          $scope.pictures = [];
         });
-      })
-      .catch(function () {
-        $scope.pictures = [];
-        $scope.comments = [];
-      });
+
+      // Load other data (from child controller)
+      $scope.$broadcast('$recordView.load', id, esMarket.record.comment);
+
+      // scroll (if comment anchor)
+      if (anchor) $timeout(function() {
+        $anchorScroll(anchor);
+      }, 1000);
     });
 
   };
@@ -680,10 +594,10 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
 
   $scope.walletData = {};
   $scope.formData = {
-    price: null
+    price: null,
+    category: {}
   };
   $scope.id = null;
-  $scope.category = {};
   $scope.pictures = [];
   $scope.loading = true;
 
@@ -738,30 +652,15 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
   };
 
   $scope.load = function(id) {
-    esMarket.category.all()
-    .then(function(categories) {
-      esMarket.record.get({id: id})
-      .then(function (hit) {
-        $scope.formData = hit._source;
-        if (hit._source.category && hit._source.category.id) {
-          $scope.category = categories[hit._source.category.id];
-        }
-        $scope.id= hit._id;
-        if (hit._source.pictures) {
-          $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
-            return res.concat(UIUtils.image.fromAttachment(pic.file));
-          }, []);
-          delete $scope.formData.pictures; // duplicated with $scope.pictures
-        }
-        else {
-          $scope.pictures = [];
-        }
-        if ($scope.formData.price) {
-          $scope.useRelative = (!$scope.formData.unit || $scope.formData.unit == 'UD');
-        }
-        else {
-          $scope.useRelative = csSettings.data.useRelative;
-        }
+    return esMarket.record.load(id, {fetchPictures: true})
+      .then(function (data) {
+        $scope.formData = data.record;
+        $scope.id = data.id;
+        $scope.pictures = data.record.pictures || [];
+        delete $scope.formData.pictures; // duplicated with $scope.pictures
+        $scope.useRelative = $scope.formData.price ?
+          (!$scope.formData.unit || $scope.formData.unit == 'UD') :
+          csSettings.data.useRelative;
         $scope.loading = false;
         UIUtils.loading.hide();
         $timeout(function(){
@@ -771,77 +670,88 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
           });
           // Set Ink
           UIUtils.ink();
-        },100);
+        }, 100);
       })
       .catch(UIUtils.onError('MARKET.ERROR.LOAD_RECORD_FAILED'));
-    })
-    .catch(UIUtils.onError('MARKET.ERROR.LOAD_CATEGORY_FAILED'));
   };
 
   $scope.save = function() {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid || !$scope.category.id) {
+    if($scope.saving || // avoid multiple save
+       !$scope.form.$valid || !$scope.formData.category.id) {
       return;
     }
+    $scope.saving = true;
 
-    UIUtils.loading.show();
-    var doFinishSave = function(formData) {
-      if (!!formData.price && typeof formData.price == "string") {
-        formData.price = parseFloat(formData.price.replace(new RegExp('[.,]'), '.')); // fix #124
-      }
-      if (!!formData.price) {
-        formData.unit = formData.unit || ($scope.useRelative ? 'UD' : 'unit');
-      }
-      else {
-        delete formData.unit;
-      }
-      if (!formData.currency) {
-        formData.currency = $scope.currency;
-      }
-      if (!$scope.id) { // Create
-        formData.creationTime = esHttp.date.now();
-        formData.time = formData.creationTime;
-        esMarket.record.add(formData)
-        .then(function(id) {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.market_view_record', {id: id});
-          UIUtils.loading.hide(10);
-        })
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_RECORD'));
-      }
-      else { // Update
-        formData.time = esHttp.date.now();
-        esMarket.record.update(formData, {id: $scope.id})
-        .then(function() {
-          $ionicHistory.clearCache() // force reloading of the back view
-          .then(function(){
-            $ionicHistory.goBack();
-            UIUtils.loading.hide(10);
-          });
-        })
-        .catch(UIUtils.onError('MARKET.ERROR.FAILED_UPDATE_RECORD'));
-      }
-    };
+    return UIUtils.loading.show()
 
-    $scope.formData.picturesCount = $scope.pictures.length;
-    if ($scope.formData.picturesCount > 0) {
-      $scope.formData.pictures = $scope.pictures.reduce(function(res, pic) {
-        return res.concat({file: UIUtils.image.toAttachment(pic)});
-      }, []);
-      UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
-      .then(function(imageSrc) {
-        $scope.formData.thumbnail = UIUtils.image.toAttachment({src: imageSrc});
+      // Preparing json (pictures + resizing thumbnail)
+      .then(function() {
+        var json = $scope.formData;
 
-        doFinishSave($scope.formData);
+        if (!!json.price && typeof json.price == "string") {
+          json.price = parseFloat(json.price.replace(new RegExp('[.,]'), '.')); // fix #124
+        }
+        if (!!json.price) {
+          json.unit = json.unit || ($scope.useRelative ? 'UD' : 'unit');
+        }
+        else {
+          delete json.unit;
+        }
+        json.time = esHttp.date.now();
+        if (!json.currency) {
+          json.currency = $scope.currency;
+        }
+
+        json.picturesCount = $scope.pictures.length;
+        if (json.picturesCount) {
+          json.pictures = $scope.pictures.reduce(function(res, pic) {
+            return res.concat({file: esHttp.image.toAttachment(pic)});
+          }, []);
+          return UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
+            .then(function(imageSrc) {
+              json.thumbnail = esHttp.image.toAttachment({src: imageSrc});
+              return json;
+            });
+        }
+        else {
+          if ($scope.formData.thumbnail) {
+            // FIXME: this is a workaround to allow content deletion
+            // Is it a bug in the ES attachment-mapper ?
+            $scope.formData.thumbnail = {
+              _content: '',
+              _content_type: ''
+            };
+          }
+          json.pictures = [];
+          return json;
+        }
+      })
+
+      // Send data (create or update)
+      .then(function(json) {
+        if (!$scope.id) {
+          json.creationTime = esHttp.date.now();
+          return esMarket.record.add(json);
+        }
+        else {
+          return esMarket.record.update(json, {id: $scope.id});
+        }
+      })
+
+      // Redirect to record view
+      .then(function(id) {
+        $scope.id= $scope.id || id;
+        $scope.saving = false;
+        $ionicHistory.clearCache($ionicHistory.currentView().stateId); // clear current view
+        $ionicHistory.nextViewOptions({historyRoot: true});
+        $state.go('app.market_view_record', {id: $scope.id, refresh: true});
+      })
+
+      .catch(function(err) {
+        $scope.saving = false;
+        UIUtils.onError('MARKET.ERROR.FAILED_SAVE_RECORD')(err);
       });
-    }
-    else {
-      delete $scope.formData.thumbnail;
-      delete $scope.formData.pictures;
-      doFinishSave($scope.formData);
-    }
   };
 
   $scope.setUseRelative = function(useRelative) {
@@ -879,7 +789,6 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
     })
     .then(function(cat){
       if (cat && cat.parent) {
-        $scope.category = cat;
         $scope.formData.category = cat;
       }
     });

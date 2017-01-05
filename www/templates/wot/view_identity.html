@@ -6,9 +6,11 @@
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
         <i class="avatar"
-           ng-style="formData.avatarStyle"
-           ng-class="{'avatar-wallet': !formData.avatarStyle && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
-        </i>
+           ng-if="!formData.avatar"
+           ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
+        <i class="avatar"
+           ng-if="formData.avatar"
+           style="background-image: url({{::formData.avatar.src}})"></i>
         <ng-if ng-if="formData.name">
           <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
         </ng-if>

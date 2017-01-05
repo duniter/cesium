@@ -46,14 +46,14 @@
 
               <!-- category -->
               <a class="item item-icon-right ink"
-                 ng-class="{'item-input-error': form.$submitted && !category.id}"
+                 ng-class="{'item-input-error': form.$submitted && !formData.category.id}"
                  ng-click="showCategoryModal()">
                 <span class="item-label" translate>COMMON.CATEGORY</span>
-                <span class="badge badge-royal" ng-bind-html="category.name"></span>&nbsp;
+                <span class="badge badge-royal" ng-bind-html="formData.category.name"></span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
               </a>
               <div class="form-errors"
-                   ng-show="form.$submitted && !category.id">
+                   ng-show="form.$submitted && !formData.category.id">
                 <div class="form-error">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
                 </div>

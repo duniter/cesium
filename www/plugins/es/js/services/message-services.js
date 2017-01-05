@@ -394,7 +394,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     // Mark a message as read
-    function markMessageAsRead(message) {
+    function markMessageAsRead(message, type) {
+      type = type || 'inbox';
       if (message.read) {
         var deferred = $q.defer();
         deferred.resolve();

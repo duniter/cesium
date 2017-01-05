@@ -1,8 +1,12 @@
 angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.services'])
 
+  .controller('ESPicturesEditCtrl', ESPicturesEditController)
+
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
  .controller('ESSocialsEditCtrl', ESSocialsEditController)
+
+ .controller('ESCommentsCtrl', ESCommentsController)
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
 
@@ -114,51 +118,69 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils, esHttp, DataService) {
+function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils) {
   'ngInject';
 
-  $scope.loadingComments = true;
+  $scope.loading = true;
   $scope.defaultCommentSize = 5;
   $scope.formCommentData = {};
+  $scope.comments = {};
 
-  $scope.loadComments = function(id, options) {
+  $scope.$on('$recordView.enter', function(e, state) {
+    // second call (when using cached view)
+    if (!$scope.loading && $scope.id) {
+      $scope.load($scope.id, {animate: false});
+    }
+  });
+
+  $scope.$on('$recordView.load', function(event, id, service) {
+    $scope.id = id || $scope.id;
+    $scope.service = service || $scope.service;
+    console.debug("[ES] [comment] Initalized service with: " + service.id);
+    if ($scope.id) {
+      $scope.load($scope.id);
+    }
+  });
+
+  $scope.load = function(id, options) {
     options = options || {};
     options.from = options.from || 0;
     options.size = options.size || $scope.defaultCommentSize;
+    options.animate = angular.isDefined(options.animate) ? options.animate : true;
     options.loadAvatarAllParent = angular.isDefined(options.loadAvatarAllParent) ? options.loadAvatarAllParent : true;
-    return DataService.record.comment.load(id, options)
+    $scope.loading = true;
+    return $scope.service.load(id, options)
       .then(function(data) {
+        if (!options.animate && data.result.length) {
+          _.forEach(data.result, function(cmt) {
+            cmt.isnew = true;
+          });
+        }
         $scope.comments = data;
         $scope.comments.hasMore = (data.result && data.result.length >= options.size);
-        $scope.loadingComments = false;
-        DataService.record.comment.changes.start(id, data);
+        $scope.loading = false;
+        $scope.service.changes.start(id, data);
+
+        // Set Motion
+        $timeout(function() {
+          UIUtils.motion.fadeSlideIn({
+            selector: '.comments .item',
+            startVelocity: 3000
+          });
+        });
       });
   };
 
-  $scope.$on('$ionicView.beforeLeave', function(){
+  $scope.$on('$recordView.beforeLeave', function(){
     if ($scope.comments) {
-      DataService.record.comment.changes.stop($scope.comments);
+      $scope.service.changes.stop($scope.comments);
     }
   });
 
-  $scope.$on('$ionicView.enter', function(){
-    if (!$scope.loadingComments) { // second call (when using cached view)
-      $scope.loadComments($scope.id)
-        .then(function() {
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.fadeSlideIn({
-              selector: '.card-avatar'
-            });
-          }, 10);
-        });
-    }
-  });
-
-  $scope.showMoreComments = function(){
+  $scope.showMore = function(){
     var from = 0;
     var size = -1;
-    $scope.loadComments($scope.id, {from: from, size: size, loadAvatarAllParent: false})
+    $scope.load($scope.id, {from: from, size: size, loadAvatarAllParent: false})
     .then(function() {
       // Set Motion
       $timeout(function() {
@@ -169,21 +191,21 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
     });
   };
 
-  $scope.saveComment = function() {
-    if (!$scope.formCommentData.message || !$scope.formCommentData.message.length) return;
+  $scope.save = function() {
+    if (!$scope.formData.message || !$scope.formData.message.length) return;
 
     $scope.loadWallet({loadMinData: true})
       .then(function() {
         UIUtils.loading.hide();
-        var comment = $scope.formCommentData;
-        $scope.formCommentData = {};
+        var comment = $scope.formData;
+        $scope.formData = {};
         $scope.focusNewComment();
-        return DataService.record.comment.save($scope.id, $scope.comments, comment);
+        return $scope.service.save($scope.id, $scope.comments, comment);
       })
       .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
   };
 
-  $scope.shareComment = function(event, comment) {
+  $scope.share = function(event, comment) {
     var params = angular.copy($state.params);
     var stateUrl;
     if (params.anchor) {
@@ -210,29 +232,29 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
     });
   };
 
-  $scope.editComment = function(comment) {
+  $scope.edit = function(comment) {
     var newComment = new Comment();
     newComment.copy(comment);
-    $scope.formCommentData = newComment;
+    $scope.formData = newComment;
   };
 
-  $scope.removeComment = function(comment) {
+  $scope.remove = function(comment) {
     if (!comment) {return;}
     comment.remove();
   };
 
-  $scope.replyComment = function(parent) {
+  $scope.reply = function(parent) {
     if (!parent || !parent.id) {return;}
 
-    $scope.formCommentData = {
+    $scope.formData = {
       parent: parent
     };
 
     $scope.focusNewComment(true);
   };
 
-  $scope.cancelReplyComment = function() {
-    $scope.formCommentData = {};
+  $scope.cancel = function() {
+    $scope.formData = {};
     $scope.focusNewComment();
   };
 
@@ -245,18 +267,18 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
     }
   };
 
-  $scope.cancelCommentReplyTo = function() {
-    delete $scope.formCommentData.parent;
-    delete $scope.formCommentData.reply_to;
+  $scope.removeParentLink = function() {
+    delete $scope.formData.parent;
+    delete $scope.formData.reply_to;
     $scope.focusNewComment();
   };
 
-  $scope.toggleCommentExpandedReplies = function(comment, index) {
+  $scope.toggleExpandedReplies = function(comment, index) {
     comment.expandedReplies = comment.expandedReplies || {};
     comment.expandedReplies[index] = !comment.expandedReplies[index];
   };
 
-  $scope.toggleCommentExpandedParent = function(comment, index) {
+  $scope.toggleExpandedParent = function(comment, index) {
     comment.expandedParent = comment.expandedParent || {};
     comment.expandedParent[index] = !comment.expandedParent[index];
   };

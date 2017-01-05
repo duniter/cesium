@@ -1,92 +1,39 @@
 
-<div class="item item-divider">
-  <i class="icon ion-chatboxes"></i>
-  <span>{{'COMMENTS.DIVIDER' | translate}}</span>
-</div>
+<div class="comments" ng-controller="ESCommentsCtrl">
 
-<span class="item item-more-comments"
-      ng-if="comments.hasMore">
-  <small><a ng-click="showMoreComments()" translate>COMMENTS.SHOW_MORE_COMMENTS</a></small>
-</span>
-
-<ng-repeat ng-repeat="comment in comments.result track by comment.id"
-
-           ng-include="'plugins/es/templates/common/item_comment.html'">
-</ng-repeat>
-
-<div class="hidden-xs hidden-sm">
-  <div class="card card-comment item item-input item-button-right">
-
-    <!-- reply to comment-->
-    <ng-if ng-if="formCommentData.parent">
-      <div class="padding card-header text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
-      <div class="padding-left">
-        <div class="card card-avatar card-avatar-small stable-900-bg item-text-wrap no-padding in done">
-          <ng-include ng-if="formCommentData.parent.message"
-                      ng-init="comment = formCommentData.parent"
-                      src="'plugins/es/templates/common/item_comment_content.html'">
-          </ng-include>
-          <div class="item dark done in gray" ng-if="!formCommentData.parent.message">
-            {{::'COMMENTS.DELETED_COMMENT'|translate}}
-          </div>
-          <div class="card-footer text-right gray">
-            <div class="pull-right">
-              <a class="ion-close" ng-click="cancelCommentReplyTo()">
-                {{::'COMMON.BTN_CANCEL'|translate}}
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </ng-if>
-    <textarea class="padding"
-              style="background-color: transparent;"
-              id="comment-form-textarea"
-              rows="3"
-              placeholder="{{formCommentData.replyTo ? 'COMMENTS.COMMENT_HELP_REPLY_TO' : 'COMMENTS.COMMENT_HELP'|translate}}"
-              ng-model="formCommentData.message">
-    </textarea>
-    <div class="card-footer text-right">
-      <button class="button button-small button-small-padding"
-              ng-class="{'button-positive': formCommentData.message.length}"
-              ng-if="!formCommentData.id"
-              ng-click="saveComment()" translate>
-        COMMON.BTN_SEND
-      </button>
-      <!-- Edit buttons -->
-      <ng-if ng-if="formCommentData.id">
-        <button class="button button-small button-small-padding"
-                ng-click="cancelReplyComment()" translate>
-          COMMON.BTN_CANCEL
-        </button>
-        <button class="button button-small button-small-padding button-positive"
-                ng-click="saveComment()" translate>
-          COMMON.BTN_SAVE
-        </button>
-      </ng-if>
-    </div>
+  <div class="item item-divider">
+    <i class="icon ion-chatboxes"></i>
+    <span>{{'COMMENTS.DIVIDER' | translate}}</span>
   </div>
-</div>
 
-<div class="visible-xs visible-sm">
-  <div class="block">
-    <div class="item item-input-inset">
+  <span class="item item-more-comments"
+        ng-if="comments.hasMore">
+    <small><a ng-click="showMore()" translate>COMMENTS.SHOW_MORE_COMMENTS</a></small>
+  </span>
+
+  <ng-repeat ng-repeat="comment in comments.result track by comment.id"
+
+             ng-include="'plugins/es/templates/common/item_comment.html'">
+  </ng-repeat>
+
+  <div class="hidden-xs hidden-sm">
+    <div class="card card-comment item item-input item-button-right">
 
       <!-- reply to comment-->
-      <ng-if ng-if="formCommentData.parent">
-        <div class="padding text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
-        <div class="padding-left expanded">
-          <div class="card card-comment stable-900-bg item-text-wrap no-padding in done">
-            <ng-include ng-if="formCommentData.parent.message"
-                        ng-init="comment = formCommentData.parent"
+      <ng-if ng-if="formData.parent">
+        <div class="padding card-header text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
+        <div class="padding-left">
+          <div class="card card-avatar card-avatar-small stable-900-bg item-text-wrap no-padding in done">
+            <ng-include ng-if="formData.parent.message"
+                        ng-init="comment = formData.parent"
                         src="'plugins/es/templates/common/item_comment_content.html'">
             </ng-include>
-            <span ng-if="!formCommentData.parent.message" translate>
-              COMMENTS.DELETED_COMMENT
-            </span>
+            <div class="item dark done in gray" ng-if="!formData.parent.message">
+              {{::'COMMENTS.DELETED_COMMENT'|translate}}
+            </div>
             <div class="card-footer text-right gray">
               <div class="pull-right">
-                <a class="ion-close" ng-click="cancelCommentReplyTo()">
+                <a class="ion-close" ng-click="removeParentLink()">
                   {{::'COMMON.BTN_CANCEL'|translate}}
                 </a>
               </div>
@@ -94,16 +41,72 @@
           </div>
         </div>
       </ng-if>
-
-      <div class="item-input-wrapper">
-        <input type="text"
-               id="comment-form-input"
-               style="width: 100%"
-               placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
-               on-return="saveComment();"
-               ng-model="formCommentData.message"/>
-        <button class="button button-small button-small-padding button-icon button-dark button-icon icon ion-android-send gray" ng-click="saveComment()">
+      <textarea class="padding"
+                style="background-color: transparent;"
+                id="comment-form-textarea"
+                rows="3"
+                placeholder="{{formData.replyTo ? 'COMMENTS.COMMENT_HELP_REPLY_TO' : 'COMMENTS.COMMENT_HELP'|translate}}"
+                ng-model="formData.message">
+      </textarea>
+      <div class="card-footer text-right">
+        <button class="button button-small button-small-padding"
+                ng-class="{'button-positive': formData.message.length}"
+                ng-if="!formData.id"
+                ng-click="save()" translate>
+          COMMON.BTN_SEND
         </button>
+        <!-- Edit buttons -->
+        <ng-if ng-if="formData.id">
+          <button class="button button-small button-small-padding"
+                  ng-click="cancel()" translate>
+            COMMON.BTN_CANCEL
+          </button>
+          <button class="button button-small button-small-padding button-positive"
+                  ng-click="save()" translate>
+            COMMON.BTN_SAVE
+          </button>
+        </ng-if>
+      </div>
+    </div>
+  </div>
+
+  <div class="visible-xs visible-sm">
+    <div class="block">
+      <div class="item item-input-inset">
+
+        <!-- reply to comment-->
+        <ng-if ng-if="formData.parent">
+          <div class="padding text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
+          <div class="padding-left expanded">
+            <div class="card card-comment stable-900-bg item-text-wrap no-padding in done">
+              <ng-include ng-if="formData.parent.message"
+                          ng-init="comment = formData.parent"
+                          src="'plugins/es/templates/common/item_comment_content.html'">
+              </ng-include>
+              <span ng-if="!formData.parent.message" translate>
+                COMMENTS.DELETED_COMMENT
+              </span>
+              <div class="card-footer text-right gray">
+                <div class="pull-right">
+                  <a class="ion-close" ng-click="removeParentLink()">
+                    {{::'COMMON.BTN_CANCEL'|translate}}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-if>
+
+        <div class="item-input-wrapper">
+          <input type="text"
+                 id="comment-form-input"
+                 style="width: 100%"
+                 placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
+                 on-return="save();"
+                 ng-model="formData.message"/>
+          <button class="button button-small button-small-padding button-icon button-dark button-icon icon ion-android-send gray" ng-click="save()">
+          </button>
+        </div>
       </div>
     </div>
   </div>

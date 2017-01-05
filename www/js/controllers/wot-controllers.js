@@ -168,12 +168,10 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     var searchFunction =  csConfig.initPhase ?
       csWot.all :
       csWot.newcomers;
-    console.debug("get pending [{0}-{1}]".format(offset, offset+size-1));
     return searchFunction(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'newcomers') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
-        console.debug("...result size: {0}".format(idties.length));
         return true;
       })
       .catch(function(err) {
@@ -221,6 +219,12 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
           $scope.search.loadingMore = false;
           $scope.$broadcast('scroll.infiniteScrollComplete');
         }
+      })
+      .catch(function(err) {
+        console.error(err);
+        $scope.search.loadingMore = false;
+        $scope.search.hasMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
       })
   };
 

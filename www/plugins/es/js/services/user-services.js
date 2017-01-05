@@ -15,8 +15,14 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   function factory(id, host, port, wsPort) {
 
-    var listeners,
-      settingsSaveSpec = {
+    const
+      CONSTANTS = {
+        contentTypeImagePrefix: "image/"
+      },
+      FIELDS = {
+        avatar: ['title', 'avatar._content_type']
+      },
+      SETTINGS_SAVE_SPEC = {
         includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
         excludes: ['time'],
         plugins: {
@@ -27,10 +33,15 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         helptip: {
           excludes: ['installDocUrl']
         }
-      },
+      };
+
+    var listeners,
       restoringSettings = false,
-      api = new Api(this, 'esUser-' + id)
+      api = new Api(this, 'esUser-' + id),
+      getRequestFields = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
+      getRequest = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content')
     ;
+
     function copy(otherNode) {
       removeListeners();
       if (!!this.instance) {
@@ -70,17 +81,24 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return result;
     }
 
+    function readAvatarFromSource(source) {
+      var extension = source.avatar && source.avatar._content_type && source.avatar._content_type.startsWith(CONSTANTS.contentTypeImagePrefix) ?
+        source.avatar._content_type.substr(CONSTANTS.contentTypeImagePrefix.length) : null;
+      if (extension) {
+        return esHttp.getUrl(host, port, '/user/profile/' + pubkey + '/_image/avatar.' + extension);
+      }
+      return null;
+    }
+
     function loadProfileAvatarAndName(pubkey) {
-      return esHttp.get(host, port, '/user/profile/:id?_source=avatar,title')({id: pubkey})
+      return getRequestFields({id: pubkey, fields: 'title,avatar._content_type'})
         .then(function(res) {
           var profile;
           if (res && res._source) {
+            // name
             profile = {name: res._source.title};
-            var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
-            if (avatar) {
-              profile.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-              profile.avatar=avatar;
-            }
+            // avatar
+            profile.avatar = esHttp.image.fromHit(host, port, res, 'avatar');
           }
           return profile;
         })
@@ -96,18 +114,19 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function loadProfile(pubkey) {
-      return esHttp.get(host, port, '/user/profile/:id')({id: pubkey})
+      return getRequest({id: pubkey})
         .then(function(res) {
           var profile;
           if (res && res._source) {
+            // name
             profile = {name: res._source.title};
-            var avatar = res._source.avatar? UIUtils.image.fromAttachment(res._source.avatar) : null;
-            if (avatar) {
-              profile.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-              profile.avatar=avatar;
-              delete res._source.avatar;
-            }
+
+            // other fields
             profile.source = res._source;
+
+            // avatar
+            profile.avatar = esHttp.image.fromHit(host, port, res, 'avatar');
+            delete profile.source.avatar; // not need anymore
           }
           return profile;
         })
@@ -231,7 +250,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     function onWotSearch(text, datas, deferred, pubkeyAtributeName) {
       deferred = deferred || $q.defer();
-      if (!datas) {
+      if (!datas || !datas.length) {
         deferred.resolve(datas);
         return deferred.promise;
       }
@@ -245,7 +264,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         highlight: {fields : {title : {}}},
         from: 0,
         size: 100,
-        _source: ["title", "avatar"]
+        _source: ["title", "avatar._content_type"]
       };
 
       if (datas.length > 0) {
@@ -315,18 +334,17 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               values=[value];
               datas.push(value);
             }
-            var avatar = hit._source.avatar? UIUtils.image.fromAttachment(hit._source.avatar) : null;
+            var avatar = esHttp.image.fromHit(host, port, hit, 'avatar');
             _.forEach(values, function(data) {
-              if (avatar) {
-                data.avatarStyle={'background-image':'url("'+avatar.src+'")'};
-                data.avatar=avatar;
-              }
+              // name (basic or highlighted)
               data.name=hit._source.title;
               if (hit.highlight) {
                 if (hit.highlight.title) {
                     data.name = hit.highlight.title[0];
                 }
               }
+              // avatar
+              data.avatar=avatar;
             });
           });
         }
@@ -358,20 +376,29 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         return deferred.promise;
       }
 
-      // Load full profile
-      loadProfile(data.pubkey)
-        .then(function(profile) {
-          if (profile) {
-            data.name = profile.name;
-            data.avatarStyle = profile.avatarStyle;
-            data.avatar = profile.avatar;
-            data.profile = profile.source;
-          }
-          deferred.resolve(data);
-        })
-        .catch(function(err){
-          deferred.reject(err);
-        });
+      $q.all([
+        // Load full profile
+        loadProfile(data.pubkey)
+          .then(function(profile) {
+            if (profile) {
+              data.name = profile.name;
+              data.avatar = profile.avatar;
+              data.profile = profile.source;
+            }
+            deferred.resolve(data);
+          }),
+
+        // Load avatar on certifications
+        fillAvatars(
+          (data.received_cert||[])
+          .concat(data.received_cert_pending||[])
+          .concat(data.given_cert||[])
+          .concat(data.given_cert_pending||[])
+        )
+      ])
+      .catch(function(err){
+        deferred.reject(err);
+      });
       return deferred.promise;
     }
 
@@ -398,7 +425,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         time: esHttp.date.now()
       };
 
-      var filteredData = copyUsingSpec(data, settingsSaveSpec);
+      var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
 
       var json = JSON.stringify(filteredData);
 
@@ -426,7 +453,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     function onWalletLoadTx(tx, deferred) {
-      fillAvatars(tx.history, 'pubkey')
+      fillAvatars((tx.history || []).concat(tx.pendings||[]), 'pubkey')
         .then(function() {
           deferred.resolve();
         })
@@ -435,6 +462,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           deferred.resolve(); // silent
         })
     }
+
 
     function removeListeners() {
       console.debug("[ES] [user] Disable");

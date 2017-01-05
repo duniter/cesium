@@ -14105,6 +14105,14 @@ a {
 .bar .buttons.pull-right, .bar .popover-helptip .buttons.icon.icon-right, .popover-helptip .bar .buttons.icon.icon-right, .bar .popover-helptip .buttons.icon-right.icon-help, .popover-helptip .bar .buttons.icon-right.icon-help, .bar .popover-helptip .buttons.icon-right.icon-alert, .popover-helptip .bar .buttons.icon-right.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-right.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-right.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-right.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-right.icon-help, .bar .popover-helptip .buttons.icon.icon-center, .popover-helptip .bar .buttons.icon.icon-center, .bar .popover-helptip .buttons.icon-center.icon-help, .popover-helptip .bar .buttons.icon-center.icon-help, .bar .popover-helptip .buttons.icon-center.icon-alert, .popover-helptip .bar .buttons.icon-center.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-center.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-center.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-center.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-center.icon-help, .bar .popover-helptip .buttons.icon.icon-bottom-right, .popover-helptip .bar .buttons.icon.icon-bottom-right, .bar .popover-helptip .buttons.icon-bottom-right.icon-help, .popover-helptip .bar .buttons.icon-bottom-right.icon-help, .bar .popover-helptip .buttons.icon-bottom-right.icon-alert, .popover-helptip .bar .buttons.icon-bottom-right.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-bottom-right.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-bottom-right.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-bottom-right.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-bottom-right.icon-help, .bar .popover-helptip .buttons.icon.icon-bottom-center, .popover-helptip .bar .buttons.icon.icon-bottom-center, .bar .popover-helptip .buttons.icon-bottom-center.icon-help, .popover-helptip .bar .buttons.icon-bottom-center.icon-help, .bar .popover-helptip .buttons.icon-bottom-center.icon-alert, .popover-helptip .bar .buttons.icon-bottom-center.icon-alert, .bar .popover-helptip #menu .footer .buttons.icon-bottom-center.icon-help, .popover-helptip #menu .footer .bar .buttons.icon-bottom-center.icon-help, .bar #menu .footer .popover-helptip .buttons.icon-bottom-center.icon-help, #menu .footer .popover-helptip .bar .buttons.icon-bottom-center.icon-help, .bar .title + .button:last-child, .bar .title + .buttons, .bar > .button + .button:last-child, .bar > .button.pull-right, .popover-helptip .bar > .button.icon.icon-right, .popover-helptip .bar > .button.icon-right.icon-help, .popover-helptip .bar > .button.icon-right.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-right.icon-help, #menu .footer .popover-helptip .bar > .button.icon-right.icon-help, .popover-helptip .bar > .button.icon.icon-center, .popover-helptip .bar > .button.icon-center.icon-help, .popover-helptip .bar > .button.icon-center.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-center.icon-help, #menu .footer .popover-helptip .bar > .button.icon-center.icon-help, .popover-helptip .bar > .button.icon.icon-bottom-right, .popover-helptip .bar > .button.icon-bottom-right.icon-help, .popover-helptip .bar > .button.icon-bottom-right.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-bottom-right.icon-help, #menu .footer .popover-helptip .bar > .button.icon-bottom-right.icon-help, .popover-helptip .bar > .button.icon.icon-bottom-center, .popover-helptip .bar > .button.icon-bottom-center.icon-help, .popover-helptip .bar > .button.icon-bottom-center.icon-alert, .popover-helptip #menu .footer .bar > .button.icon-bottom-center.icon-help, #menu .footer .popover-helptip .bar > .button.icon-bottom-center.icon-help {
   top: 0px !important; }
 
+.bar.bar-header {
+  padding-right: 5px !important; }
+  .bar.bar-header .buttons-right span {
+    margin-left: 0px !important; }
+
+.bar .title + .buttons.buttons-right {
+  right: 5px; }
+
 .button-icon {
   border-color: transparent;
   box-shadow: none !important; }
@@ -14215,6 +14223,9 @@ a {
 
 .avatar-member {
   background-image: url(data:image/png;base64,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); }
+
+.avatar.disable {
+  opacity: 0.7; }
 
 .avatar-wallet {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAQAAABpN6lAAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfgBA0JMBOJU4OdAAAB2klEQVR42u3au0ocUQCH8e+IxFRKUohrkG0Eu4BiLrCFDxDBNtjoI1gYTJnGQrRInc4HyBuopNHgBVZIwCJFsHBXLURtQiIyKYyFN3B3zJyd3e/X7e7MmXP+e26zOyBJkiRJkiRJkiRJkiRJkppVSF9E0sk0r+jKuOYnrLMQTqMHkHSzQTHS17fLy3CYroi21JWYj9Z8KDIfvwdUKAC7bGfc+CH6gGrojTyJJBemMr/u+4sLpy2njRZnAAZgAK2t/YHKGUzeZlzz5w2yFU6/EKVsQHAIGIABGIABGIABRN4ILbOVcc1fM9IQCfp7gHOAARiAAbgMXpuhH/GJ0brK/sG78OVfKR0cXPnsQ/iYkwAYY6LOM4eZpXR5q3/t77bH+RkCO5HObZQeEL4nQ7ypcwh8boIAIJQpuwoYQMsugwBJ/73L/h1+3vr+OYtXXn/Lzz7gCV8ZqOH4LUrhz4155IzJvA6B0VqaDwzHu7f/PwEsc1zT8RXWmmoOCJWkl9L95wBWbw6AvO8DfrHkMmgABmAABtDw0j8gUaWHeA9K7odC7GVwhXGgGOmB2ZX4PaDAJs8i9d89XoRq5AAgecoMg3Rm3PhTysyFIyRJkiRJkiRJkiRJkiRJku7wFyuiadmIs5Q9AAAAAElFTkSuQmCC); }
@@ -14338,19 +14349,69 @@ a {
 .card .item .card-footer {
   margin-bottom: 5px; }
 
+.card .card-avatar .avatar,
 .card.card-avatar .avatar {
   box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
   top: 7px;
   background-color: #D9D9D9; }
 
+.card .card-avatar img.avatar,
+.card.card-avatar img.avatar {
+  border: 0;
+  min-height: 54px;
+  min-width: 54px; }
+
+.card .card-avatar .item.item-avatar,
 .card.card-avatar .item.item-avatar {
   padding-top: 10px;
   padding-bottom: 2px;
   min-height: 45px !important; }
 
+.card .card-avatar .card-footer,
 .card.card-avatar .card-footer {
   padding-left: 88px; }
-  .card.card-avatar .card-footer .pull-right a, .card.card-avatar .card-footer .popover-helptip .icon.icon-right a, .popover-helptip .card.card-avatar .card-footer .icon.icon-right a, .card.card-avatar .card-footer .popover-helptip .icon-right.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-right.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-right.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-right.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-right.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-right.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon.icon-center a, .popover-helptip .card.card-avatar .card-footer .icon.icon-center a, .card.card-avatar .card-footer .popover-helptip .icon-center.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-center.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-center.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-center.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-center.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-center.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-center.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-center.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon.icon-bottom-right a, .popover-helptip .card.card-avatar .card-footer .icon.icon-bottom-right a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-right.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-right.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-bottom-right.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-right.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-bottom-right.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon.icon-bottom-center a, .popover-helptip .card.card-avatar .card-footer .icon.icon-bottom-center a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-help a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-center.icon-help a, .card.card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-alert a, .popover-helptip .card.card-avatar .card-footer .icon-bottom-center.icon-alert a, .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-center.icon-help a, .popover-helptip #menu .footer .card.card-avatar .card-footer .icon-bottom-center.icon-help a, .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-center.icon-help a, #menu .footer .popover-helptip .card.card-avatar .card-footer .icon-bottom-center.icon-help a {
+  .card .card-avatar .card-footer .pull-right a, .card .card-avatar .card-footer .popover-helptip .icon.icon-right a, .popover-helptip .card .card-avatar .card-footer .icon.icon-right a, .card .card-avatar .card-footer .popover-helptip .icon-right.icon-help a, .popover-helptip .card .card-avatar .card-footer .icon-right.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon-right.icon-alert a, .popover-helptip .card .card-avatar .card-footer .icon-right.icon-alert a, .card .card-avatar .card-footer .popover-helptip #menu .footer .icon-right.icon-help a, .popover-helptip #menu .footer .card .card-avatar .card-footer .icon-right.icon-help a, .card .card-avatar .card-footer #menu .footer .popover-helptip .icon-right.icon-help a, #menu .footer .popover-helptip .card .card-avatar .card-footer .icon-right.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon.icon-center a, .popover-helptip .card .card-avatar .card-footer .icon.icon-center a, .card .card-avatar .card-footer .popover-helptip .icon-center.icon-help a, .popover-helptip .card .card-avatar .card-footer .icon-center.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon-center.icon-alert a, .popover-helptip .card .card-avatar .card-footer .icon-center.icon-alert a, .card .card-avatar .card-footer .popover-helptip #menu .footer .icon-center.icon-help a, .popover-helptip #menu .footer .card .card-avatar .card-footer .icon-center.icon-help a, .card .card-avatar .card-footer #menu .footer .popover-helptip .icon-center.icon-help a, #menu .footer .popover-helptip .card .card-avatar .card-footer .icon-center.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon.icon-bottom-right a, .popover-helptip .card .card-avatar .card-footer .icon.icon-bottom-right a, .card .card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-help a, .popover-helptip .card .card-avatar .card-footer .icon-bottom-right.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-alert a, .popover-helptip .card .card-avatar .card-footer .icon-bottom-right.icon-alert a, .card .card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-right.icon-help a, .popover-helptip #menu .footer .card .card-avatar .card-footer .icon-bottom-right.icon-help a, .card .card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-right.icon-help a, #menu .footer .popover-helptip .card .card-avatar .card-footer .icon-bottom-right.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon.icon-bottom-center a, .popover-helptip .card .card-avatar .card-footer .icon.icon-bottom-center a, .card .card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-help a, .popover-helptip .card .card-avatar .card-footer .icon-bottom-center.icon-help a, .card .card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-alert a, .popover-helptip .card .card-avatar .card-footer .icon-bottom-center.icon-alert a, .card .card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-center.icon-help a, .popover-helptip #menu .footer .card .card-avatar .card-footer .icon-bottom-center.icon-help a, .card .card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-center.icon-help a, #menu .footer .popover-helptip .card .card-avatar .card-footer .icon-bottom-center.icon-help a,
+  .card.card-avatar .card-footer .pull-right a,
+  .card.card-avatar .card-footer .popover-helptip .icon.icon-right a, .popover-helptip
+  .card.card-avatar .card-footer .icon.icon-right a,
+  .card.card-avatar .card-footer .popover-helptip .icon-right.icon-help a, .popover-helptip
+  .card.card-avatar .card-footer .icon-right.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon-right.icon-alert a, .popover-helptip
+  .card.card-avatar .card-footer .icon-right.icon-alert a,
+  .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-right.icon-help a, .popover-helptip #menu .footer
+  .card.card-avatar .card-footer .icon-right.icon-help a,
+  .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-right.icon-help a, #menu .footer .popover-helptip
+  .card.card-avatar .card-footer .icon-right.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon.icon-center a, .popover-helptip
+  .card.card-avatar .card-footer .icon.icon-center a,
+  .card.card-avatar .card-footer .popover-helptip .icon-center.icon-help a, .popover-helptip
+  .card.card-avatar .card-footer .icon-center.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon-center.icon-alert a, .popover-helptip
+  .card.card-avatar .card-footer .icon-center.icon-alert a,
+  .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-center.icon-help a, .popover-helptip #menu .footer
+  .card.card-avatar .card-footer .icon-center.icon-help a,
+  .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-center.icon-help a, #menu .footer .popover-helptip
+  .card.card-avatar .card-footer .icon-center.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon.icon-bottom-right a, .popover-helptip
+  .card.card-avatar .card-footer .icon.icon-bottom-right a,
+  .card.card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-help a, .popover-helptip
+  .card.card-avatar .card-footer .icon-bottom-right.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon-bottom-right.icon-alert a, .popover-helptip
+  .card.card-avatar .card-footer .icon-bottom-right.icon-alert a,
+  .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-right.icon-help a, .popover-helptip #menu .footer
+  .card.card-avatar .card-footer .icon-bottom-right.icon-help a,
+  .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-right.icon-help a, #menu .footer .popover-helptip
+  .card.card-avatar .card-footer .icon-bottom-right.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon.icon-bottom-center a, .popover-helptip
+  .card.card-avatar .card-footer .icon.icon-bottom-center a,
+  .card.card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-help a, .popover-helptip
+  .card.card-avatar .card-footer .icon-bottom-center.icon-help a,
+  .card.card-avatar .card-footer .popover-helptip .icon-bottom-center.icon-alert a, .popover-helptip
+  .card.card-avatar .card-footer .icon-bottom-center.icon-alert a,
+  .card.card-avatar .card-footer .popover-helptip #menu .footer .icon-bottom-center.icon-help a, .popover-helptip #menu .footer
+  .card.card-avatar .card-footer .icon-bottom-center.icon-help a,
+  .card.card-avatar .card-footer #menu .footer .popover-helptip .icon-bottom-center.icon-help a, #menu .footer .popover-helptip
+  .card.card-avatar .card-footer .icon-bottom-center.icon-help a {
     margin-right: 8px; }
 
 a.underline:focus,
@@ -14367,7 +14428,8 @@ a.underline:hover,
 .card-avatar-small .card.card-avatar,
 .card-avatar-small .card .card-avatar {
   min-height: 45px; }
-  .card-avatar-small.card .avatar, .card-avatar-small.card .item-avatar .avatar,
+  .card-avatar-small.card .avatar,
+  .card-avatar-small.card .item-avatar .avatar,
   .card-avatar-small .card .avatar,
   .card-avatar-small .card .item-avatar .avatar,
   .card-avatar-small .card.card-avatar .avatar,
@@ -14683,7 +14745,7 @@ a.underline:hover,
 .certifications .item-divider .badge {
   top: 16px !important; }
 
-.certifications-lg .avatar {
+.certifications-lg .avatar-large {
   left: auto;
   position: relative;
   font-size: 55px !important;
@@ -14799,7 +14861,7 @@ a.underline:hover,
     width: 90px;
     left: 20px;
     top: 20px; }
-  #profile-popover .avatar.avatar-member {
+  #profile-popover .avatar {
     border: solid 1px #D9D9D9; }
   #profile-popover .bar.bar-footer {
     height: 58px; }
@@ -14824,7 +14886,7 @@ a.underline:hover,
 .bar-header .button-icon .avatar.active {
   background-color: #e0e0e0; }
 
-.bar-header .button-icon .avatar.avatar-member {
+.bar-header .button-icon .avatar {
   height: 31px;
   width: 31px;
   position: relative;

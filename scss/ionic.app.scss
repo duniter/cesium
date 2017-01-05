@@ -584,6 +584,21 @@ $screen-menu:                     845px;
   top: 0px !important;
 }
 
+// Avoid different between home view and other view (space between last button and left border)
+.bar.bar-header {
+  padding-right: 5px !important;
+
+  .buttons-right span {
+    margin-left: 0px !important;
+  }
+}
+
+.bar .title + .buttons.buttons-right {
+  right: 5px;
+}
+
+
+
 .button-icon {
   border-color: transparent;
   box-shadow: none !important;
@@ -740,6 +755,10 @@ $screen-menu:                     845px;
 
 .avatar-member {
   background-image: url(../img/person.png);
+}
+
+.avatar.disable {
+  opacity: 0.7;
 }
 
 .avatar-wallet {
@@ -899,16 +918,25 @@ $screen-menu:                     845px;
   margin-bottom: 5px;
 }
 
+.card .card-avatar,
 .card.card-avatar {
   .avatar {
     box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
     top: 7px;
     background-color: #D9D9D9;
   }
+
+  img.avatar {
+    border: 0;
+    min-height: 54px;
+    min-width: 54px;
+  }
+
   .item.item-avatar {
     padding-top: 10px;
     padding-bottom: 2px;
     min-height: 45px !important;
+
   }
   .card-footer {
     padding-left: 88px;
@@ -953,7 +981,8 @@ a.underline:hover,
 
   min-height: 45px;
 
-  .avatar, .item-avatar .avatar {
+  .avatar,
+  .item-avatar .avatar {
     box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.26);
     height: 30px !important;
     width: 30px !important;
@@ -1351,7 +1380,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top:16px !important;
 }
 
-.certifications-lg .avatar {
+.certifications-lg .avatar-large {
   left: auto;
   position: relative;
   font-size: 55px !important;
@@ -1507,7 +1536,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     left: 20px;
     top: 20px;
   }
-  .avatar.avatar-member {
+  .avatar {
     border: solid 1px #D9D9D9;
   }
   .bar.bar-footer {
@@ -1544,7 +1573,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     background-color: $stable-900-bg;
   }
 
-  .avatar.avatar-member {
+  .avatar {
     height: 31px;
     width: 31px;
     position: relative;
@@ -1552,3 +1581,4 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 6px;
   }
 }
+

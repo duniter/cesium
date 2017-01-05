@@ -182,7 +182,7 @@ function ProfileController($scope, $rootScope, UIUtils, $timeout, esUser, $state
     if ($scope.avatar && $scope.avatar.src) {
       UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to thumbnail
       .then(function(imageSrc) {
-        $scope.formData.avatar = UIUtils.image.toAttachment({src: imageSrc});
+        $scope.formData.avatar = esHttp.image.toAttachment({src: imageSrc});
         doFinishSave($scope.formData);
       });
     }

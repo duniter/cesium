@@ -41,7 +41,7 @@
             <div class="badge item-note" style="text-align: right !important;" translate>WOT.NOT_WRITTEN_EXPIRE_IN</div>
           </span>
 
-          <a class="item ink"
+          <a class="item item-avatar ink"
              ng-repeat="cert in formData.given_cert_pending"
              ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
             <ng-include src="'templates/wot/tabs/item_certification.html'"></ng-include>
@@ -57,7 +57,7 @@
             WOT.NO_GIVEN_CERTIFICATION
           </span>
 
-          <a class="item ink"
+          <a class="item item-avatar ink"
                 ng-repeat="cert in formData.given_cert"
                 ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
             <ng-include src="'templates/wot/tabs/item_certification.html'"></ng-include>

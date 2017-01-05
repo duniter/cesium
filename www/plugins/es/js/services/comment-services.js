@@ -5,17 +5,20 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
 
   function factory(host, port, wsPort, index) {
 
-    var
+    const
       defaultSizeLimit = 20,
       fields = {
         commons: ["issuer", "time", "message", "reply_to"],
-      },
+      };
+
+    var
+      that,
       pendings = {};
       searchRequest = esHttp.post(host, port, '/'+index+'/comment/_search'),
       deleteRequest = esHttp.record.remove(host, port, index, 'comment'),
-      addRequest = esHttp.record.post(host, port, '/'+index+'/comment'),
-      updateRequest = esHttp.record.post(host, port, '/'+index+'/comment/:id/_update'),
       wsChanges = esHttp.ws('ws://' + esHttp.getServer(host, wsPort) + '/ws/_changes');
+
+    console.log("Creating JS comment service for index: " + index);
 
     function refreshTreeLinks(data) {
       return addTreeLinks(data, true);
@@ -260,16 +263,18 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
 
         var commentObj = new Comment(null, json);
         commentObj.addOnRemoveListener(createOnDeleteListener(data));
+        // copy additional wallet data
         commentObj.uid = csWallet.data.uid;
         commentObj.name = csWallet.data.name;
-        commentObj.avatarStyle = csWallet.data.avatarStyle;
+        commentObj.avatar = csWallet.data.avatar;
+
         commentObj.isnew = true;
         if (comment.parent) {
           comment.parent.addReply(commentObj);
         }
         data.result.push(commentObj);
 
-        return addRequest(json)
+        return that.raw.add(json)
           .then(function(id) {
             commentObj.id = id;
             data.mapById[id] = commentObj;
@@ -281,7 +286,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       else {
         var commentObj = data.mapById[comment.id];
         commentObj.copy(comment);
-        return updateRequest(json, {id: comment.id});
+        return that.raw.update(json, {id: comment.id});
       }
     }
 
@@ -294,11 +299,16 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       wsChanges.close();
     }
 
-    return {
+    that = {
+      id: index,
       search: searchRequest,
       load: loadDataByRecordId,
       save: save,
       remove: deleteRequest,
+      raw: {
+        add: new esHttp.record.post(host, port, '/'+index+'/comment'),
+        update: new esHttp.record.post(host, port, '/'+index+'/comment/:id/_update')
+      },
       changes: {
         start: startListenChanges,
         stop: stopListenChanges
@@ -307,6 +317,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         commons: fields.commons
       }
     };
+    return that;
   }
 
   return {

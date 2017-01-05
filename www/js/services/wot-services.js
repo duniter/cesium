@@ -538,24 +538,24 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     data.given_cert = res.valid;
                     data.given_cert_pending = res.pending;
                     data.given_cert_error = res.error;
-                  }),
+                  })
 
               // Get sources
                // NOT NEED for now
               /*loadSources(pubkey)
                 .then(function (sources) {
                   data.sources = sources;
-                }),
-              */
-
-              // API extension
-              api.data.raisePromise.load(data)
-                .catch(function(err) {
-                  console.debug('Error while loading identity data, on extension point.');
-                  console.error(err);
                 })
-
+              */
             ]);
+          })
+          .then(function() {
+            // API extension
+            return api.data.raisePromise.load(data)
+              .catch(function(err) {
+                console.debug('Error while loading identity data, on extension point.');
+                console.error(err);
+              })
           })
           .then(function() {
             delete data.lookup; // not need anymore

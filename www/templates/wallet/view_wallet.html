@@ -21,9 +21,11 @@
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
         <i class="avatar"
-           ng-style="walletData.avatarStyle"
-           ng-class="{'avatar-wallet': !walletData.avatarStyle && !walletData.isMember, 'avatar-member': !walletData.avatarStyle && walletData.isMember}">
-        </i>
+           ng-if="!walletData.avatar"
+           ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
+        <i class="avatar"
+           ng-if="walletData.avatar"
+           style="background-image: url({{::walletData.avatar.src}})"></i>
         <h3 class="light" ng-if="walletData.name || walletData.uid">{{walletData.name || walletData.uid}}</h3>
         <h3 class="light" ng-if="!walletData.name && !walletData.uid"><i class="icon ion-key"></i> {{walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
@@ -147,21 +149,26 @@
             </div>
           </span>
 
-          <span class="item item-pending ink item-badge-right" ng-repeat="tx in walletData.tx.pendings">
-            <h2>
+          <span class="item item-pending item-avatar ink item-badge-right" ng-repeat="tx in walletData.tx.pendings">
+            <i class="item-image avatar"
+               ng-if="!tx.avatar"
+               ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
+            <img class="item-image avatar"
+                 ng-if="tx.avatar"
+                 ng-src="{{tx.avatar.src}}">
+            </img>
+            <h2 class="col-80">
               <i class="icon ion-clock"> </i>
-              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
+              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
                 <span ng-if="tx.uid">
-                  <i class="icon ion-person"></i>
-                  {{::tx.uid}}
+                  {{::tx.name||tx.uid}}
                 </span>
-                <span ng-if="!tx.uid && !tx.isUD">
-                  <i class="icon ion-key"></i>
+                <span ng-if="!tx.uid" class="gray">
+                  <i class="icon ion-key gray"></i>
                   {{::tx.pubkey | formatPubkey}}
                 </span>
               </a>
-              <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap" >&nbsp;
-                <i class="icon ion-ios-chatbubble-outline"></i>
+              <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap">
                 <smaller>{{::tx.comment}}</smaller>
               </span>
             </h2>
@@ -202,9 +209,13 @@
           <div ng-if="!loading"
                 class="item item-badge-right item-avatar"
                 ng-repeat="tx in walletData.tx.history">
-            <i class="item-image"
-               ng-style="tx.avatarStyle"
-               ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-card': !tx.avatarStyle && !tx.uid && !tx.isUD, 'ion-person': !tx.avatarStyle && tx.uid, 'avatar': tx.avatarStyle}"></i>
+            <i class="item-image avatar"
+               ng-if="!tx.avatar"
+               ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
+            <img class="item-image avatar"
+                 ng-if="tx.avatar"
+                 ng-src="{{tx.avatar.src}}">
+            </img>
             <h2 class="col-80">
               <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
                 <span ng-if="tx.uid">

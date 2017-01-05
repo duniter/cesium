@@ -4,9 +4,6 @@ angular.module('cesium.utils.services', ['ngResource'])
            $ionicPopover, $state, $rootScope, screenmatch) {
   'ngInject';
 
-  function exact(regexpContent) {
-    return new RegExp("^" + regexpContent + "$");
-  }
 
   var
     loadingTextCache=null,
@@ -15,9 +12,6 @@ angular.module('cesium.utils.services', ['ngResource'])
       MAX_WIDTH: 400,
       THUMB_MAX_HEIGHT: 100,
       THUMB_MAX_WIDTH: 100
-    },
-    regex = {
-      IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
     },
     data = {
       smallscreen: screenmatch.bind('xs, sm', $rootScope)
@@ -104,7 +98,7 @@ angular.module('cesium.utils.services', ['ngResource'])
   function hideLoading(timeout){
     if (timeout) {
       return $timeout(function(){
-        $ionicLoading.hide();
+        return $ionicLoading.hide();
       }, timeout);
     }
     else {
@@ -114,15 +108,15 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function showLoading() {
     if (!loadingTextCache) {
-      $translate(['COMMON.LOADING'])
+      return $translate(['COMMON.LOADING'])
       .then(function(translations){
-        loadingTextCache = translations['COMMON.LOADING'];
-        showLoading();
+        return $ionicLoading.show({
+          template: translations['COMMON.LOADING']
+        })
       });
-      return;
     }
 
-    $ionicLoading.show({
+    return $ionicLoading.show({
       template: loadingTextCache
     });
   }
@@ -267,38 +261,6 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
-  function imageFromAttachment(attachment) {
-    if (!attachment || !attachment._content_type || !attachment._content || attachment._content.length === 0) {
-      return null;
-    }
-    var image = {
-      src: "data:" + attachment._content_type + ";base64," + attachment._content
-    };
-    if (attachment._title) {
-      image.title = attachment._title;
-    }
-    if (attachment._name) {
-      image.name = attachment._name;
-    }
-    return image;
-  }
-
-  function imageToAttachment(image) {
-    if (!image || !image.src) return null;
-    var match = regex.IMAGE_SRC.exec(image.src);
-    if (!match) return null;
-    var attachment = {
-      _content_type: match[1],
-      _content: match[2]
-      };
-    if (image.title) {
-      attachment._title = image.title;
-    }
-    if (image.name) {
-      attachment._name = image.name;
-    }
-    return attachment;
-  }
 
   function showPopover(event, options) {
 
@@ -662,9 +624,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     image: {
       resizeFile: resizeImageFromFile,
-      resizeSrc: resizeImageFromSrc,
-      fromAttachment: imageFromAttachment,
-      toAttachment: imageToAttachment
+      resizeSrc: resizeImageFromSrc
     },
     locales: [
       {id:'fr-FR', label:'Français'},

@@ -65,7 +65,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       _.forEach(txArray, function(tx) {
         if (!excludePending || tx.block_number !== null) {
           var walletIsIssuer = false;
-          var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
+          var otherIssuer = tx.issuers.reduce(function(issuer, res) {
               walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
               return issuer + ((res !== data.pubkey) ? ', ' + res : '');
           }, '');
@@ -74,7 +74,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           }
           var otherReceiver;
           var outputBase;
-          var sources;
+          var sources = [];
           var amount = tx.outputs.reduce(function(sum, output, noffset) {
               var outputArray = output.split(':',3);
               outputBase = parseInt(outputArray[1]);
@@ -87,8 +87,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   return sum + outputAmount;
                 }
                 // If pending: use output as new sources
-                else if (!excludePending && tx.block_number === null){
-                  sources = sources || [];
+                else if (tx.block_number === null){
                   sources.push({
                     amount: parseInt(outputArray[0]),
                     base: outputBase,
@@ -120,18 +119,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var txKey = amount + ':' + tx.hash + ':' + time;
           if (!processedTxMap[txKey] && amount !== 0) {
             processedTxMap[txKey] = true;
-            result.push({
-               time: time,
-               amount: amount,
-               pubkey: pubkey,
-               comment: tx.comment,
-               isUD: false,
-               hash: tx.hash,
-               locktime: tx.locktime,
-               block_number: tx.block_number,
-               inputs: (tx.block_number === null ? tx.inputs.slice(0) : null),
-               sources: sources
-            });
+            var newTx = {
+              time: time,
+              amount: amount,
+              pubkey: pubkey,
+              comment: tx.comment,
+              isUD: false,
+              hash: tx.hash,
+              locktime: tx.locktime,
+              block_number: tx.block_number
+            };
+            // If pending: store sources and inputs for a later use - see method processTransactionsAndSources()
+            if (walletIsIssuer && tx.block_number === null) {
+              newTx.inputs = tx.inputs;
+              newTx.sources = sources;
+            }
+            result.push(newTx);
           }
         }
       });
@@ -565,8 +568,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               });
               if (tx.sources) { // add source output
                 addSources(tx.sources);
-                delete tx.sources;
               }
+              delete tx.sources;
+              delete tx.inputs;
             }
             if (valid) {
               balance += tx.amount; // update balance

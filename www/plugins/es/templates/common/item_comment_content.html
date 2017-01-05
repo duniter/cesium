@@ -1,16 +1,20 @@
 
   <div class="item item-avatar done in">
     <span class="avatar"
-            ng-style="comment.avatarStyle"
-            ng-class="{'avatar-member': !comment.avatarStyle && comment.uid, 'avatar-wallet': !comment.avatarStyle && !comment.uid}"></span>
+          ng-id="!comment.avatar"
+          ng-class="{'avatar-member': comment.uid, 'avatar-wallet': !comment.uid}"></span>
+    <span class="avatar"
+          ng-if="comment.avatar"
+          style="background-image: url({{::comment.avatar.src}})"></span>
+
     <a class="pull-left"
        ng-class="{'positive': comment.uid, 'dark': !comment.uid}"
        ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.name||comment.uid})">
       <ng-if ng-if="comment.uid">
         {{::comment.name||comment.uid}}
       </ng-if>
-      <span ng-if="!comment.uid">
-        <i class="icon ion-key"></i>
+      <span ng-if="!comment.uid" class="gray">
+        <i class="icon ion-key gray"></i>
         {{::comment.issuer|formatPubkey}}
       </span>
     </a>&nbsp;

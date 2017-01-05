@@ -33,10 +33,10 @@
                 <i class="icon ion-location"></i>
                 <span ng-bind-html="formData.location"></span>
               </a>
-              <span ng-if="formData.location && category.name">&nbsp;|&nbsp;</span>
-              <a ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
+              <span ng-if="formData.location && formData.category.name">&nbsp;|&nbsp;</span>
+              <a ng-if="formData.category.name" ui-sref="app.market_lookup({category:formData.category.id})">
                 <i class="icon ion-flag"></i>
-                <span ng-bind-html="category.name"></span>
+                <span ng-bind-html="formData.category.name"></span>
               </a>
             </h2>
             <h4 class="hidden-xs">
@@ -72,9 +72,9 @@
                 <span ng-bind-html="formData.location"></span>
               </a>
               <br/>
-              <a ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
+              <a ng-if="formData.category.name" ui-sref="app.market_lookup({category:formData.category.id})">
                 <i class="icon ion-flag"></i>
-                <span ng-bind-html="category.name"></span>
+                <span ng-bind-html="formData.category.name"></span>
               </a>
             </h2>
             <h4>
