@@ -54,11 +54,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
-        if ('CANCELLED' === err) {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.home');
+        if (err == 'CANCELLED') {
+          $scope.showHome();
         }
       });
   });
@@ -291,9 +288,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .catch(function(err){
         UIUtils.loading.hide();
         UIUtils.alert.error(err)
-          .then(function(){
-            $scope.renewMembership(); // loop
-          });
+          // loop
+          .then($scope.renewMembership);
       });
   };
 
@@ -305,7 +301,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
     return $translate('CONFIRM.FIX_IDENTITY', {uid: $rootScope.walletData.uid})
       .then(function(message) {
-        return UIUtils.alert.confirm(message)
+        return UIUtils.alert.confirm(message);
       })
       .then(function(confirm) {
         if (!confirm) return;
@@ -385,17 +381,23 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
     // Change QRcode visibility
     var qrcode = document.getElementById('qrcode');
-    qrcode.classList.toggle('visible-xs', !show);
-    qrcode.classList.toggle('visible-sm', !show);
+    if (qrcode) {
+      qrcode.classList.toggle('visible-xs', !show);
+      qrcode.classList.toggle('visible-sm', !show);
+    }
 
     if (show && !$scope.loading) {
       $timeout(function (){
         var pubkeyElement = document.getElementById('wallet-pubkey');
-        pubkeyElement.classList.toggle('done', true);
-        pubkeyElement.classList.toggle('in', true);
-        var pubkeyElement = document.getElementById('wallet-uid');
-        pubkeyElement.classList.toggle('done', true);
-        pubkeyElement.classList.toggle('in', true);
+        if (pubkeyElement) {
+          pubkeyElement.classList.toggle('done', true);
+          pubkeyElement.classList.toggle('in', true);
+        }
+        var uidElement = document.getElementById('wallet-uid');
+        if (uidElement) {
+          uidElement.classList.toggle('done', true);
+          uidElement.classList.toggle('in', true);
+        }
       }, 500);
     }
   };
@@ -471,7 +473,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showCertifications = function() {
-    $state.go('app.wallet_view_cert', {
+    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_view_cert' : 'app.wallet_view_cert_lg', {
       pubkey: $rootScope.walletData.pubkey,
       uid: $rootScope.walletData.name || $rootScope.walletData.uid
     });

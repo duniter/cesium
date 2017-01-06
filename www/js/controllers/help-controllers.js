@@ -83,20 +83,13 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
                            UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?
-
-  $scope.emptyPromise = function(result) {
-    var defer = $q.defer();
-    $timeout(function() {
-      defer.resolve(result);
-    });
-    return defer.promise;
-  };
+  $scope.continue = true;
 
   $scope.executeStep = function(partName, steps, index) {
     index = angular.isDefined(index) ? index : 0;
 
     if (index >= steps.length) {
-      return $scope.emptyPromise(true); // end
+      return $q.when(true); // end
     }
 
     var step = steps[index];
@@ -105,11 +98,12 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     }
     var promise = step();
     if (typeof promise === 'boolean') {
-      promise = $scope.emptyPromise(promise);
+      promise = $q.when(promise);
     }
     return promise
       .then(function(next) {
         if (angular.isUndefined(next)) {
+          $scope.continue = false;
           return index; // keep same index (no button press: popover just closed)
         }
         if (!next || index === steps.length - 1) {
@@ -118,7 +112,14 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         return $scope.executeStep(partName, steps, index+1);
       })
       .catch(function(err) {
-        console.error(err);
+        if (err && err.message == 'transition prevented') {
+          console.error('ERROR: in help tour [{0}], in step [{1}] -> use large if exists, to prevent [transition prevented] error'.format(partName, index));
+        }
+        else {
+          console.error('ERROR: in help tour  [{0}], in step [{1}] : {2}'.format(partName, index, err));
+        }
+        $scope.continue = false;
+        return index;
       });
   };
 
@@ -140,14 +141,15 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
   $scope.startHelpTour = function() {
     $scope.tour = true;
+    $scope.continue = true;
 
     // Currency tour
     return $scope.startCurrencyTour(0, true)
       .then(function(endIndex){
-        if (!endIndex) return false;
+        if (!endIndex || $scope.cancelled) return false;
         csSettings.data.helptip.currency=endIndex;
         csSettings.store();
-        return true;
+        return $scope.continue;
       })
 
       // Wot tour
@@ -155,10 +157,10 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if (!next) return false;
         return $scope.startWotTour(0, true)
           .then(function(endIndex){
-            if (!endIndex) return false;
+            if (!endIndex || $scope.cancelled) return false;
             csSettings.data.helptip.wot=endIndex;
             csSettings.store();
-            return true;
+            return $scope.continue;
           });
       })
 
@@ -170,7 +172,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             if (!endIndex) return false;
             csSettings.data.helptip.wotCerts=endIndex;
             csSettings.store();
-            return true;
+            return $scope.continue;
           });
       })
 
@@ -189,7 +191,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             if (!endIndex) return false;
             csSettings.data.helptip.wallet=endIndex;
             csSettings.store();
-            return true;
+            return $scope.continue;
           });
       })
 
@@ -202,7 +204,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             if (!endIndex) return false;
             csSettings.data.helptip.walletCerts=endIndex;
             csSettings.store();
-            return true;
+            return $scope.continue;
           });
       })
 
@@ -263,7 +265,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        return $state.go('app.currency_view')
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg')
           .then(function () {
             return $scope.showHelpTip('helptip-currency-newcomers', {
               bindings: {
@@ -562,7 +564,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletNoLoginTour = function(startIndex, hasNext) {
-    if (csWallet.isLogin()) return $scope.emptyPromise(true); // skip if login
+    if (csWallet.isLogin()) return $q.when(true); // skip if login
 
     var steps = [
       function () {
@@ -587,7 +589,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletTour = function(startIndex, hasNext) {
-    if (!csWallet.isLogin()) return $scope.emptyPromise(true); // skip if not login
+    if (!csWallet.isLogin()) return $q.when(true); // skip if not login
 
     var contentParams;
 
@@ -678,7 +680,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startWalletCertTour = function(startIndex, hasNext) {
-    if (!csWallet.isLogin()) return $scope.emptyPromise(true);
+    if (!csWallet.isLogin()) return $q.when(true);
 
     var contentParams;
     var skipAll = false;
@@ -769,7 +771,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    * @returns {*}
    */
   $scope.startHeaderTour = function(startIndex, hasNext) {
-    if (UIUtils.screen.isSmall()) return $scope.emptyPromise(true);
+    if (UIUtils.screen.isSmall()) return $q.when(true);
 
     function _getProfilBtnElement() {
       var elements = $window.document.querySelectorAll('#helptip-header-bar-btn-profile');
@@ -916,7 +918,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     else {
       var contentParams;
       return $q.all([
-        $state.go('app.home'),
+        $scope.showHome(),
 
         csCurrency.default()
           .then(function(parameters) {

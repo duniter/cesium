@@ -78,7 +78,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.login = csWallet.isLogin();
 
   $scope.showHome = function() {
-    $state.go('app.home');
+    $ionicHistory.nextViewOptions({
+      historyRoot: true
+    });
+    return $state.go('app.home')
+      .then(UIUtils.loading.hide)
   };
 
   ////////////////////////////////////////
@@ -169,38 +173,39 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Load wallet data (after login)
   $scope.loadWalletData = function(options) {
-    if (options && options.loadMinData) {
-      return csWallet.loadMinData()
-        .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR'));
-    }
-    return csWallet.loadData()
-      .catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR'))
+    return csWallet.loadData(options)
+      /*.catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR'))*/
+
       .then(function(walletData) {
         // Warn if wallet has been never used - see #167
         var showAlert = !csConfig.initPhase && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
         if (!showAlert) return walletData;
-        return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET',
-          'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
-            okText: 'COMMON.BTN_CONTINUE'
+        return UIUtils.loading.hide()
+          .then(function(){
+            return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE',
+              {
+                okText: 'COMMON.BTN_CONTINUE'
+              });
           })
           .then(function(confirm) {
             if (confirm) return walletData;
+            return csWallet.logout();
           });
       })
+
       .then(function(walletData) {
         if (walletData) {
           $rootScope.walletData = walletData;
           return walletData;
         }
-        else { // failed to login
-          throw new Error('CANCELLED');
+        else { // cancel login
+          throw 'CANCELLED';
         }
       });
   };
 
   // Login and load wallet
   $scope.loadWallet = function(options) {
-    options = options || {};
     if (!csWallet.isLogin()) {
       return $scope.showLoginModal()
         .then(function (walletData) {
@@ -209,7 +214,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             return $scope.loadWalletData(options);
           }
           else { // failed to login
-            throw new Error('CANCELLED');
+            throw 'CANCELLED';
           }
         });
     }
@@ -217,9 +222,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       return $scope.loadWalletData(options);
     }
     else {
-      var deferred = $q.defer();
-      deferred.resolve(csWallet.data);
-      return deferred.promise;
+      return $q.when(csWallet.data);
     }
   };
 
@@ -231,12 +234,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     if (!csWallet.isLogin()) {
       return $scope.showLoginModal()
-      .then(function(walletData){
-        UIUtils.loading.hide(10);
-        if (walletData) {
-          $state.go(state ? state : 'app.view_wallet');
-        }
-      });
+        .then(function(walletData){
+          if (walletData) {
+            return $state.go(state ? state : 'app.view_wallet')
+              .then(UIUtils.loading.hide);
+          }
+        });
     }
     else {
       return $state.go(state);
@@ -291,10 +294,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // add listener on wallet event
   csWallet.api.data.on.login($scope, function(walletData, deferred) {
-    deferred = deferred || $q.defer();
     $scope.login = true;
-    deferred.resolve();
-    return deferred.promise;
+    return deferred ? deferred.resolve() : $q.when();
   });
   csWallet.api.data.on.logout($scope, function() {
     $scope.login = false;

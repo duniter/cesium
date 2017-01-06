@@ -12,6 +12,7 @@
     "BTN_SEND_MONEY": "Transfer money",
     "BTN_SEND_MONEY_SHORT": "Transfer",
     "BTN_SAVE": "Save",
+    "BTN_YES_SAVE": "Oui, Enregistrer",
     "BTN_SHOW": "Show",
     "BTN_SHOW_PUBKEY": "Show key",
     "BTN_RELATIVE_UNIT": "Use relative unit",
@@ -375,7 +376,9 @@
     "FIX_IDENTITY": "The pseudonym <b>{{uid}}</b> will be published again, replacing the old publication that has expired.<br/></br/><b>Are you sure</b> you want to continue ?",
     "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure ?</b>",
     "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure ?</b>",
-    "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?"
+    "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
+    "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
+    "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved"
   },
   "HELP": {
     "TITLE": "Online help",

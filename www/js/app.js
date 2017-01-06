@@ -236,9 +236,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(device)
   // Automatic redirection to large state (if exists)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if (!UIUtils.screen.isSmall() && next.data.large) {
-      event.preventDefault();
-      $state.go(next.data.large, nextParams);
+    if (next.data.large && !UIUtils.screen.isSmall()) {
+      var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
+      if (redirect) {
+        event.preventDefault();
+        $state.go(next.data.large, nextParams);
+      }
     }
   });
   // endRemoveIf(device)

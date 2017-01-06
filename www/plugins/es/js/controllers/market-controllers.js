@@ -372,7 +372,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
   };
 
   $scope.showNewRecordModal = function() {
-    return $scope.loadWallet()
+    return $scope.loadWallet({minData: true})
       .then(function() {
         return UIUtils.loading.hide();
       }).then(function() {
@@ -588,11 +588,10 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
   };
 }
 
-function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicPopover,
-  $timeout, ModalUtils, esHttp, $ionicHistory, $focus, csSettings, csCurrency) {
+function ESMarketRecordEditController($scope, $q, $timeout, $state, $ionicPopover, esMarket, $ionicHistory, $focus,
+                                      UIUtils, ModalUtils, esHttp, csSettings, csCurrency) {
   'ngInject';
 
-  $scope.walletData = {};
   $scope.formData = {
     price: null,
     category: {}
@@ -606,30 +605,28 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
   };
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    // Load currencies list
-    csCurrency.all()
-    .then(function(currencies){
-      if (currencies.length == 1) {
-         $scope.currency = currencies[0].name;
-      }
-      // Load wallet
-      return $scope.loadWallet();
-    })
-    .then(function(walletData) {
+    // Load wallet
+    $scope.loadWallet({minData: true})
+    .then(function() {
       $scope.useRelative = csSettings.data.useRelative;
-      $scope.walletData = walletData;
       if (state.stateParams && state.stateParams.id) { // Load by id
         $scope.load(state.stateParams.id);
       }
       else {
-        if (state.stateParams && state.stateParams.type) { // New record
+        // New record
+        if (state.stateParams && state.stateParams.type) {
           $scope.formData.type=state.stateParams.type;
         }
-        $scope.loading = false;
-        UIUtils.loading.hide();
-        $timeout(function(){
-          UIUtils.motion.ripple();
-        }, 100);
+        // Set the default currency
+        csCurrency.default()
+          .then(function(currency){
+            $scope.formData.currency = currency.name;
+            $scope.loading = false;
+            UIUtils.loading.hide();
+            $timeout(function(){
+              UIUtils.motion.ripple();
+            }, 100);
+          });
       }
       $focus('market-record-title');
     });
@@ -653,7 +650,7 @@ function ESMarketRecordEditController($scope, esMarket, UIUtils, $state, $ionicP
 
   $scope.load = function(id) {
     return esMarket.record.load(id, {fetchPictures: true})
-      .then(function (data) {
+      .then(function(data) {
         $scope.formData = data.record;
         $scope.id = data.id;
         $scope.pictures = data.record.pictures || [];

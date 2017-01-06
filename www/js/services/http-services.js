@@ -144,9 +144,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
       function _waitOpen() {
         if (!sock) throw new Error('Websocket not opened');
         if (sock && sock.readyState === 1) {
-          var deferred = $q.defer();
-          deferred.resolve(sock);
-          return deferred.promise;
+          return $q.when(sock);
         }
         return $timeout(_waitOpen, 100);
       }

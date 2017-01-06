@@ -104,7 +104,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
           var notifications = res.hits.hits.reduce(function(res, hit) {
             var item = new Notification(hit._source, markNotificationAsRead);
             item.id = hit._id;
-            return res.concat(item)
+            return res.concat(item);
           }, []);
 
           return esUser.profile.fillAvatars(notifications);
@@ -142,7 +142,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       notification.read = true;
       CryptoUtils.sign(notification.hash, csWallet.data.keypair)
         .then(function(signature){
-          return esHttp.post(host, port, '/user/event/:id/_read')(signature, {id:notification.id})
+          return esHttp.post(host, port, '/user/event/:id/_read')(signature, {id:notification.id});
         })
         .catch(function(err) {
           console.error('Error while trying to mark event as read:' + (err.message ? err.message : err));

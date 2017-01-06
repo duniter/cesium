@@ -4,7 +4,7 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="submitAndSave()">
+      <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="submitAndSaveAndClose()">
       </button>
   </ion-nav-buttons>
 
@@ -13,8 +13,8 @@
     <div class="positive-900-bg hero">
       <div class="content">
         <i class="avatar"
-           ng-style="avatarStyle"
-           ng-class="{'avatar-wallet': !loading && !avatarStyle && walletData && !walletData.isMember, 'avatar-member': !loading && !avatarStyle && walletData.isMember}">
+           style="background-image: url('{{avatar.src}}')"
+           ng-class="{'avatar-wallet': !loading && !avatar && walletData && !walletData.isMember, 'avatar-member': !loading && !avatar && walletData.isMember}">
           <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-no-device" ng-click="openPicturePopup()"></button>
           <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-device"
                   onclick="angular.element(document.querySelector('form #avatarFile'))[0].click();"></button>
@@ -39,7 +39,7 @@
       </div>
 
       <div class="col">
-        <form name="profileForm" novalidate="" ng-submit="save()">
+        <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
 
           <input type="file" id="avatarFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
                  style="visibility:hidden; position:absolute;"/>

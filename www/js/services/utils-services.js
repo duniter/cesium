@@ -78,21 +78,16 @@ angular.module('cesium.utils.services', ['ngResource'])
 
     options = options ? angular.merge(defaultOptions, options) : defaultOptions;
 
-    return $q(function(resolve, reject) {
-      $translate([message, title, options.cancelText, options.okText])
+    return $translate([message, title, options.cancelText, options.okText])
       .then(function (translations) {
-        $ionicPopup.confirm({
+        return $ionicPopup.confirm({
           template: translations[message],
           cssClass: options.cssClass,
           title: translations[title],
           cancelText: translations[options.cancelText],
           okText: translations[options.okText]
-        })
-        .then(function(res) {
-          resolve(res);
         });
       });
-    });
   }
 
   function hideLoading(timeout){
@@ -112,7 +107,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       .then(function(translations){
         return $ionicLoading.show({
           template: translations['COMMON.LOADING']
-        })
+        });
       });
     }
 

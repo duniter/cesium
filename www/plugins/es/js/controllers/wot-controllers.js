@@ -46,7 +46,7 @@ function ESWotIdentityViewController($scope, csSettings, PluginService, esModals
   /* -- modals -- */
 
   $scope.showNewMessageModal = function() {
-    return $scope.loadWallet()
+    return $scope.loadWallet({minData: true})
       .then(function() {
         UIUtils.loading.hide();
         return esModals.showMessageCompose({

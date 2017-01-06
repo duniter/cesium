@@ -10,19 +10,25 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       fields = {
         commons: ["issuer", "time", "message", "reply_to"],
       },
-      that,
-      pendings = {};
-      searchRequest = esHttp.post(host, port, '/'+index+'/comment/_search'),
-      deleteRequest = esHttp.record.remove(host, port, index, 'comment'),
-      wsChanges = esHttp.ws('ws://' + esHttp.getServer(host, wsPort) + '/ws/_changes');
+      exports = {
+        index: index,
+        fields: {
+          commons: fields.commons
+        },
+        raw: {
+          search: esHttp.post(host, port, '/'+index+'/comment/_search'),
+          remove: esHttp.record.remove(host, port, index, 'comment'),
+          wsChanges: esHttp.ws('ws://' + esHttp.getServer(host, wsPort) + '/ws/_changes'),
+          add: new esHttp.record.post(host, port, '/'+index+'/comment'),
+          update: new esHttp.record.post(host, port, '/'+index+'/comment/:id/_update')
+        }
+      };
 
-    console.log("Creating JS comment service for index: " + index);
+    exports.raw.refreshTreeLinks = function(data) {
+      return exports.raw.addTreeLinks(data, true);
+    };
 
-    function refreshTreeLinks(data) {
-      return addTreeLinks(data, true);
-    }
-
-    function addTreeLinks(data, refresh) {
+    exports.raw.addTreeLinks = function(data, refresh) {
       data = data || {};
       data.result = data.result || [];
       data.mapById = data.mapById || {};
@@ -63,7 +69,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       };
 
       console.debug("[ES] [comment] Getting missing comments in tree");
-      return searchRequest(request)
+      return exports.raw.search(request)
         .then(function(res){
           if (!res.hits.total) {
             console.error("[ES] [comment] Comments has invalid [reply_to]: " + _.values(incompleteCommentIdByParentIds).join(','));
@@ -80,11 +86,11 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
             console.error("Comments has invalid [reply_to]: " + _.values(incompleteCommentIdByParentIds).join(','));
           }
 
-          return addTreeLinks(data); // recursive call
+          return exports.raw.addTreeLinks(data); // recursive call
         });
-    }
+    };
 
-    function loadDataByRecordId(recordId, options) {
+    exports.raw.loadDataByRecordId = function(recordId, options) {
       options = options || {};
       options.from = options.from || 0;
       options.size = options.size || DEFAULT_SIZE;
@@ -111,7 +117,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       };
 
       // Search comments
-      return searchRequest(request)
+      return exports.raw.search(request)
         .then(function(res){
           if (!res.hits.total) return data;
 
@@ -122,7 +128,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
           }, data.result);
 
           // Add tree (parent/child) link
-          return addTreeLinks(data);
+          return exports.raw.addTreeLinks(data);
         })
 
         // Fill avatars (and uid)
@@ -141,10 +147,10 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
           });
           return data;
         });
-    }
+    };
 
     // Add listener to send deletion
-    function createOnDeleteListener(data) {
+    exports.raw.createOnDeleteListener = function(data) {
       return function(comment) {
         var index = _.findIndex(data.result, {id: comment.id});
         if (index === -1) return;
@@ -152,23 +158,23 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         delete data.mapById[comment.id];
         // Send deletion request
         if (comment.issuer === csWallet.data.pubkey) {
-          deleteRequest(comment.id, csWallet.data.keypair)
+          exports.raw.remove(comment.id, csWallet.data.keypair)
             .catch(function(err){
               console.error(err);
               throw new Error('MARKET.ERROR.FAILED_REMOVE_COMMENT');
             });
         }
       };
-    }
+    };
 
-    function startListenChanges(recordId, data) {
+    exports.raw.startListenChanges = function(recordId, data) {
       data = data || {};
       data.result = data.result || [];
       data.mapById = data.mapById || {};
       data.pendings = data.pendings || {};
 
       // Add listener to send deletion
-      var onRemoveListener = createOnDeleteListener(data);
+      var onRemoveListener = exports.raw.createOnDeleteListener(data);
       _.forEach(data.result, function(comment) {
         comment.addOnRemoveListener(onRemoveListener);
       });
@@ -176,7 +182,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       // Open websocket
       var time = new Date().getTime();
       console.info("[ES] [comment] Starting websocket to listen comments on [{0}/record/{1}]".format(index, recordId.substr(0,8)));
-      return wsChanges.open()
+      return exports.raw.wsChanges.open()
 
         // Define source filter
         .then(function(sock) {
@@ -186,46 +192,40 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         // Listen changes
         .then(function(){
           console.debug("[ES] [comment] Websocket opened in {0} ms".format(new Date().getTime() - time));
-          wsChanges.on(function(change) {
+          exports.raw.wsChanges.on(function(change) {
             if (!change) return;
-            if (change._operation === 'DELETE') {
-              var comment = data.mapById[change._id];
-              if (comment) {
-                $rootScope.$apply(function() {
-                  comment.remove();
-                });
-              }
+            var comment = data.mapById[change._id];
+            if (comment && change._operation === 'DELETE') {
+              $rootScope.$apply(comment.remove);
             }
             else if (change._source && change._source.record === recordId) {
-              console.debug("Received new: " + change._id);
-              var comment = data.mapById[change._id];
-              if (!comment) { // new comment
-                // Check if not in pending comment
-                if (data.pendings && data.pendings[change._source.time] && change._source.issuer === csWallet.data.pubkey) {
-                  console.debug("Skip comment received by WS (already in pending)");
-                  return;
-                }
+              // update
+              if (comment) {
+                comment.copyFromJson(change._source);
+                exports.raw.refreshTreeLinks(data);
+              }
+              // create (if not in pending comment)
+              else if (data.pendings && data.pendings[change._source.time] && change._source.issuer === csWallet.data.pubkey) {
                 comment = new Comment(change._id, change._source);
                 comment.addOnRemoveListener(onRemoveListener);
                 comment.isnew = true;
                 data.mapById[change._id] = comment;
-                refreshTreeLinks(data)
+                exports.raw.refreshTreeLinks(data)
                   // fill avatars (and uid)
                   .then(function() {
                     return esUser.profile.fillAvatars([comment], 'issuer');
                   })
                   .then(function() {
                     data.result.push(comment);
-                  })
+                  });
               }
               else {
-                comment.copyFromJson(change._source);
-                refreshTreeLinks(data);
+                console.debug("Skip comment received by WS (already in pending)");
               }
             }
-          })
+          });
         });
-    }
+    };
 
     /**
      * Save a comment (add or update)
@@ -234,14 +234,16 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
      * @param comment
      * @returns {*}
      */
-    function save(recordId, data, comment) {
+    exports.raw.save = function(recordId, data, comment) {
       data = data || {};
       data.result = data.result || [];
       data.mapById = data.mapById || {};
       data.pendings = data.pendings || {};
 
+      // Preparing JSON to sent
+      var id = comment.id;
       var json = {
-        time: comment.time,
+        time: id ? comment.time : esHttp.date.now(),
         message: comment.message,
         record: recordId,
         issuer: csWallet.data.pubkey
@@ -253,69 +255,63 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         json.reply_to = null; // force to null because ES ignore missing field, when updating
       }
 
-      if (!comment.id) {
-        json.time = esHttp.date.now();
+      // Create or update the entity
+      var entity;
+      if (!id) {
+        entity = new Comment(null, json);
+        entity.addOnRemoveListener(exports.raw.createOnDeleteListener(data));
+        // copy additional wallet data
+        entity.uid = csWallet.data.uid;
+        entity.name = csWallet.data.name;
+        entity.avatar = csWallet.data.avatar;
 
+        entity.isnew = true;
+        if (comment.parent) {
+          comment.parent.addReply(entity);
+        }
+        data.result.push(entity);
+      }
+      else {
+        entity = data.mapById[id];
+        entity.copy(comment);
+      }
+
+      // Send add request
+      if (!id) {
         data.pendings = data.pendings || {};
         data.pendings[json.time] = json;
 
-        var commentObj = new Comment(null, json);
-        commentObj.addOnRemoveListener(createOnDeleteListener(data));
-        // copy additional wallet data
-        commentObj.uid = csWallet.data.uid;
-        commentObj.name = csWallet.data.name;
-        commentObj.avatar = csWallet.data.avatar;
-
-        commentObj.isnew = true;
-        if (comment.parent) {
-          comment.parent.addReply(commentObj);
-        }
-        data.result.push(commentObj);
-
-        return that.raw.add(json)
-          .then(function(id) {
-            commentObj.id = id;
-            data.mapById[id] = commentObj;
+        return exports.raw.add(json)
+          .then(function (id) {
+            entity.id = id;
+            data.mapById[id] = entity;
             delete data.pendings[json.time];
-            return commentObj;
+            return entity;
           });
       }
-      // Update
+      // Send update request
       else {
-        var commentObj = data.mapById[comment.id];
-        commentObj.copy(comment);
-        return that.raw.update(json, {id: comment.id});
+        return exports.raw.update(json, {id: id});
       }
-    }
+    };
 
-    function stopListenChanges(data) {
+    exports.raw.stopListenChanges = function(data) {
       console.debug("[ES] [comment] Stopping websocket on comments");
       _.forEach(data.result, function(comment) {
         comment.cleanAllListeners();
       });
       // Close previous
-      wsChanges.close();
-    }
-
-    that = {
-      id: index,
-      search: searchRequest,
-      load: loadDataByRecordId,
-      save: save,
-      remove: deleteRequest,
-      raw: {
-        add: new esHttp.record.post(host, port, '/'+index+'/comment'),
-        update: new esHttp.record.post(host, port, '/'+index+'/comment/:id/_update')
-      },
-      changes: {
-        start: startListenChanges,
-        stop: stopListenChanges
-      },
-      fields: {
-        commons: fields.commons
-      }
+      exports.raw.wsChanges.close();
     };
-    return that;
+
+    // Expose functions
+    exports.load = exports.raw.loadDataByRecordId;
+    exports.save = exports.raw.save;
+    exports.changes = {
+      start: exports.raw.startListenChanges,
+      stop: exports.raw.stopListenChanges
+    };
+    return exports;
   }
 
   return {

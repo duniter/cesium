@@ -452,9 +452,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         var data = withCache ? identityCache.get(pubkey) : null;
         if (data && (!uid || data.uid == uid)) {
           console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
-          var deferred = $q.defer();
-          deferred.resolve(data);
-          return deferred.promise;
+          return $q.when(data);
         }
 
         console.debug("[wot] Loading identity " + pubkey.substring(0, 8));
@@ -555,7 +553,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               .catch(function(err) {
                 console.debug('Error while loading identity data, on extension point.');
                 console.error(err);
-              })
+              });
           })
           .then(function() {
             delete data.lookup; // not need anymore
@@ -567,9 +565,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
       search = function(text) {
         if (!text || text.trim() !== text) {
-          var deferred = $q.defer();
-          deferred.resolve();
-          return deferred.promise;
+          return $q.when(undefined);
         }
 
         return BMA.wot.lookup({ search: text })

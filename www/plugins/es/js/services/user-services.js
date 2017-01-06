@@ -15,7 +15,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   function factory(id, host, port, wsPort) {
 
-    const
+    var
       CONSTANTS = {
         contentTypeImagePrefix: "image/"
       },
@@ -166,7 +166,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             .then(function(json) {
               var settings = JSON.parse(json || '{}');
               settings.time = record.time;
-              return settings
+              return settings;
             });
         })
         .catch(function(err){
@@ -460,13 +460,12 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         .catch(function(err) {
           console.error(err);
           deferred.resolve(); // silent
-        })
+        });
     }
 
 
     function removeListeners() {
       console.debug("[ES] [user] Disable");
-
       _.forEach(listeners, function(remove){
         remove();
       });

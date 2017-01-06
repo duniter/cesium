@@ -350,7 +350,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   };
 
   $scope.showNewRecordModal = function() {
-    $scope.loadWallet()
+    $scope.loadWallet({minData: true})
       .then(function(walletData) {
         UIUtils.loading.hide();
         $scope.walletData = walletData;
@@ -560,7 +560,7 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
   };
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    $scope.loadWallet()
+    $scope.loadWallet({minData: true})
     .then(function(walletData) {
       $scope.walletData = walletData;
       if (state.stateParams && state.stateParams.id) { // Load by id
@@ -660,7 +660,7 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
           return esRegistry.record.add(json);
         }
         // Update
-        return esRegistry.record.update(json, {id: $scope.id})
+        return esRegistry.record.update(json, {id: $scope.id});
       })
 
       .then(function(id) {

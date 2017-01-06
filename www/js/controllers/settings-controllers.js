@@ -140,20 +140,26 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       });
     };
 
-  $scope.onSettingsChanged = function() {
-    if (!$scope.loading) {
-      $scope.loading = true;
+  $scope.save = function() {
+    if ($scope.loading) return $q.when();
+    if ($scope.saving) {
+      // Retry later
+      return $timeout(function() {
+        return $scope.save();
+      }, 500);
+    }
+    $scope.saving = true;
 
+    // Async - to avoid UI lock
+    $timeout(function() {
       // Make sure to format helptip
       $scope.cleanupHelpTip();
-
       angular.merge(csSettings.data, $scope.formData);
       csSettings.store();
-      $scope.loading = false;
-    }
+      $scope.saving = false;
+    }, 100);
   };
-  $scope.$watch('formData', $scope.onSettingsChanged, true);
-  //$scope.$watch('formData.helptip', $scope.onSettingsChanged, true);
+  $scope.$watch('formData', $scope.save, true);
 
 
   $scope.getServer = function() {

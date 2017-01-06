@@ -255,13 +255,14 @@
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
-      "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>"
+      "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
+      "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
     "INFO": {
       "PROFILE_SAVED": "Profil sauvegardé",
     },
     "HELP": {
-      "WARNING_PUBLIC_DATA": "Veuillez noter que les informations publiées ici <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
+      "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
     }
   },
   "ES_SETTINGS": {

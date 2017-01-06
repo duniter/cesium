@@ -194,7 +194,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
   $scope.save = function() {
     if (!$scope.formData.message || !$scope.formData.message.length) return;
 
-    $scope.loadWallet({loadMinData: true})
+    $scope.loadWallet({minData: true})
       .then(function() {
         UIUtils.loading.hide();
         var comment = $scope.formData;

@@ -195,7 +195,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       });
     };
 
-    exports.blockchain.stats.lastUd = function() {
+    exports.blockchain.lastUd = function() {
       return exports.blockchain.stats.ud()
         .then(function(res) {
           if (!res.result.blocks || !res.result.blocks.length) {

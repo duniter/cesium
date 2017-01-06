@@ -83,6 +83,7 @@
     "VIEW": {
       "TITLE": "Message",
       "SENDER": "Sent by",
+      "RECIPIENT": "Sent to",
       "NO_CONTENT": "Empty message"
     },
     "CONFIRM": {
@@ -135,7 +136,7 @@
       "TITLE": "Ad",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "Ad {{title}}",
-      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad ?<br/><br/> This is irreversible."
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad?<br/><br/> This is irreversible."
     },
     "TYPE": {
       "TITLE": "New ad",
@@ -196,7 +197,7 @@
       "LOCATION": "Address:",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "{{title}}",
-      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record ?<br/><br/>This is irreversible."
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record?<br/><br/>This is irreversible."
     },
     "TYPE": {
       "TITLE": "New",
@@ -254,7 +255,8 @@
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Could not load user profile.",
       "SAVE_PROFILE_FAILED": "Saving profile failed",
-      "INVALID_SOCIAL_NETWORK_FORMAT": "Invalid format: please fill a valid Internet address.<br/><br/>Examples :<ul><li>- A Facebook page (https://www.facebook.com/user)</li><li>- A web page (http://www.domain.com)</li><li>- An email address (joe@dalton.com)</li></ul>"
+      "INVALID_SOCIAL_NETWORK_FORMAT": "Invalid format: please fill a valid Internet address.<br/><br/>Examples :<ul><li>- A Facebook page (https://www.facebook.com/user)</li><li>- A web page (http://www.domain.com)</li><li>- An email address (joe@dalton.com)</li></ul>",
+      "IMAGE_RESIZE_FAILED": "Error while resizing picture"
     },
     "INFO": {
       "PROFILE_SAVED": "Profile saved"
@@ -280,11 +282,13 @@
       "DIVIDER": "Notifications",
       "HELP_TEXT": "Enable the types of notifications you want to receive:",
       "ENABLE_TX_SENT": "Notify the validation of <b>sent payments</b>?",
-      "ENABLE_TX_RECEIVED": "Notify the validation of <b>received payments</b>?"
+      "ENABLE_TX_RECEIVED": "Notify the validation of <b>received payments</b>?",
+      "ENABLE_CERT_SENT": "Notify the validation of <b>sent certifications</b>?",
+      "ENABLE_CERT_RECEIVED": "Notify the validation des <b>received certifications</b>?"
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "New features",
-      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ad</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>There have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> this features (recommended) ?"
+      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ad</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>There have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> this features (recommended)?"
     }
   },
   "EVENT": {

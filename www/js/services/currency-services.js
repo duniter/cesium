@@ -14,15 +14,14 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
       api = new Api(this, "csCurrency-" + id),
 
       loadData = function() {
-        return $q(function (resolve, reject){
-          if (data.loaded) { // load only once
-            resolve(data);
-            return;
-          }
+        if (data.loaded) { // load only once
+          return $q.when(data);
+        }
 
-          data.currencies = [];
-          // Load currency from default node
-          BMA.blockchain.parameters()
+        data.currencies = [];
+
+        // Load currency from default node
+        return BMA.blockchain.parameters()
           .then(function(res){
             data.currencies.push({
                 name: res.currency,
@@ -35,14 +34,13 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
           })
           .then(function() {
             data.loaded = true;
-            resolve(data);
+            return data;
           })
           .catch(function(err) {
             data.loaded = false;
             data.currencies = [];
-            reject(err);
+            throw err;
           });
-        });
       },
 
       getAll = function() {

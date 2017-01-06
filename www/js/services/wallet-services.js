@@ -196,6 +196,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     isNeverUsed = function() {
+      if (!data.loaded) return undefined; // undefined if not full loaded
       return !data.pubkey ||
         (!data.isMember &&
         (!data.requirements || !data.requirements.pendingMembership) &&
@@ -705,10 +706,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     loadData = function(options) {
+
+      if (options && options.minData) {
+        return loadMinData(options);
+      }
+
       if (options || data.loaded) {
         return refreshData(options);
       }
 
+      return loadFullData();
+    },
+
+    loadFullData = function() {
       data.loaded = false;
 
       return $q.all([
@@ -760,15 +770,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
     },
 
-    loadMinData = function() {
-      var options = {
-        parameters: !data.parameters, // do not load if already done
-        requirements: !data.requirements || angular.isUndefined(data.requirements.needSelf)
-      };
+    loadMinData = function(options) {
+      options = options || {};
+      options.parameters = angular.isDefined(options.parameters) ? options.parameters : !data.parameters; // do not load if already done
+      options.requirements = angular.isDefined(options.requirements) ? options.requirements :
+        (!data.requirements || angular.isUndefined(data.requirements.needSelf));
       if (!options.parameters && !options.requirements) {
-        var deferred = $q.defer();
-        deferred.resolve(data);
-        return deferred.promise;
+        return $q.when(data);
       }
       return refreshData(options);
     },
@@ -1495,7 +1503,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       isUserPubkey: isUserPubkey,
       getData: getData,
       loadData: loadData,
-      loadMinData: loadMinData,
       refreshData: refreshData,
       // operations
       transfer: transfer,

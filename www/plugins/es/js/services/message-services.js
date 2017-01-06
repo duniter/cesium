@@ -173,7 +173,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     function loadMessageNotifications(options) {
       if (!csWallet.isLogin()) {
-        return $timeout(function(){return []});
+        return $q.when([]);
       }
       options = options || {};
       options.from = options.from || 0;
@@ -211,7 +211,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     function searchMessages(options) {
       if (!csWallet.isLogin()) {
-        return $timeout(function(){return []});
+        return $q.when([]);
       }
 
       options = options || {};
@@ -256,7 +256,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     function loadMessages(keypair, options) {
       if (!csWallet.isLogin()) {
-        return $timeout(function(){return []});
+        return $q.when([]);
       }
 
       options = options || {};
@@ -268,7 +268,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
         // Encrypt content
         .then(function(messages) {
-          return decryptMessages(messages, keypair, options.type)
+          return decryptMessages(messages, keypair, options.type);
         })
 
         // Add avatar
@@ -407,7 +407,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
         // Send read request
         .then(function(signature){
-          return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id})
+          return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id});
         })
 
         // Update message count
@@ -437,7 +437,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
               CryptoUtils.sign(message.hash, csWallet.data.keypair)
               // then send read request
               .then(function(signature){
-                return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id})
+                return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id});
               }));
           }, []));
         })

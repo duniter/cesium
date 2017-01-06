@@ -12,6 +12,7 @@
     "BTN_SEND_MONEY": "Faire un virement",
     "BTN_SEND_MONEY_SHORT": "Virement",
     "BTN_SAVE": "Enregistrer",
+    "BTN_YES_SAVE": "Oui, Enregistrer",
     "BTN_SHOW": "Voir",
     "BTN_SHOW_PUBKEY": "Voir la clé",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
@@ -375,7 +376,9 @@
     "FIX_IDENTITY": "Le pseudonyme <b>{{uid}}</b> va être publiée à nouveau, en remplacement de l'ancienne publication qui a expirée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
     "FIX_MEMBERSHIP": "Votre demande d'adhésion comme membre va être renvoyée.<br/></br/><b>Etes-vous sûr ?</b>",
     "RENEW_MEMBERSHIP": "Votre adhésion comme membre va être renouvellée.<br/></br/><b>Etes-vous sûr ?</b>",
-    "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveller votre adhésion ?"
+    "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveller votre adhésion ?",
+    "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
+    "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées"
   },
   "HELP": {
     "TITLE": "Aide en ligne",

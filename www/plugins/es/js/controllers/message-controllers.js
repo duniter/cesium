@@ -61,7 +61,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
-    $scope.loadWallet()
+    $scope.loadWallet({minData: true})
       .then(function() {
         if (!$scope.entered) {
           $scope.entered = true;
@@ -173,7 +173,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
   /* -- Modals -- */
 
   $scope.showNewMessageModal = function(parameters) {
-    return $scope.loadWallet()
+    return $scope.loadWallet({minData: true})
       .then(function() {
         UIUtils.loading.hide();
         return esModals.showMessageCompose(parameters)
@@ -258,7 +258,7 @@ function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, Cry
       }
     }
 
-    $scope.loadWallet()
+    $scope.loadWallet({minData: true})
       .then(function() {
         UIUtils.loading.hide();
       })
@@ -423,7 +423,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   $scope.load = function(id, type) {
     type = type || 'inbox';
 
-    return $scope.loadWallet()
+    return $scope.loadWallet({minData: true})
       .then(function() {
         return esMessage.get({type: type, id: id});
       })

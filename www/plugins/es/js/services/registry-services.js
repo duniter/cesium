@@ -129,7 +129,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         ])
         .then(function(res) {
           var categories = res[0];
-          var res = res[1];
+          res = res[1];
 
           if (!res || !res.hits || !res.hits.total) {
             return [];
@@ -170,7 +170,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
               record: record
             };
             return data;
-          })
+          });
       });
     }
 

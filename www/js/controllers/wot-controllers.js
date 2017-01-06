@@ -205,7 +205,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
       });
   };
 
-  $scope.showMore= function() {
+  $scope.showMore = function() {
     var offset = $scope.search.results ? $scope.search.results.length : 0;
 
     $scope.search.loadingMore = true;
@@ -225,7 +225,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
         $scope.search.loadingMore = false;
         $scope.search.hasMore = false;
         $scope.$broadcast('scroll.infiniteScrollComplete');
-      })
+      });
   };
 
   $scope.select = function(identity) {
@@ -408,6 +408,14 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
     .catch(function(err) {
       $scope.loading = false;
       UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+    });
+  };
+
+  $scope.showCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is need for help tour)
+    $state.go(UIUtils.screen.isSmall() ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
+      pubkey: $scope.formData.pubkey,
+      uid: $scope.formData.name || $scope.formData.uid
     });
   };
 

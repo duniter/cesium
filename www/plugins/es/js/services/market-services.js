@@ -154,7 +154,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
         .then(function(res) {
           var categories = res[0];
           var currentUD = res[1];
-          var res = res[2];
+          res = res[2];
 
           if (!res || !res.hits || !res.hits.total) {
             return [];
@@ -204,8 +204,18 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
                 issuer: idties[0],
                 record: record
               };
+
+              // Make sure currency if present (fix old data)
+              if (!record.currency) {
+                return csCurrency.default()
+                  .then(function (currency) {
+                    record.currency = currency.name;
+                    return data;
+                  });
+              }
+
               return data;
-            })
+            });
         });
     }
 
