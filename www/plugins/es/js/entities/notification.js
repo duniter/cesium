@@ -58,7 +58,7 @@ function Notification(json, markAsReadCallback) {
   }
 
   // Message
-  else if (json.code.startsWith('MESSAGE_RECEIVED')) {
+  else if (json.code.startsWith('MESSAGE_')) {
     that.avatarIcon = 'ion-email';
     that.icon = 'ion-email dark';
     var pubkeys = json.params.length > 0 ? json.params[0] : null;
