@@ -82,7 +82,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       historyRoot: true
     });
     return $state.go('app.home')
-      .then(UIUtils.loading.hide)
+      .then(UIUtils.loading.hide);
   };
 
   ////////////////////////////////////////
