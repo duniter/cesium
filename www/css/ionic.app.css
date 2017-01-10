@@ -14080,11 +14080,11 @@ a {
   top: 12px;
   left: 10px; }
 
-#notification .item.unread {
+.view-notification .item.unread {
   background-color: #ecf0f7 !important;
   border-color: #dddfe2 !important; }
 
-#notification ion-item h4 i.icon, #notification ion-item h4 i.icon-help, #notification ion-item h4 i.icon-alert, #notification ion-item h4 #menu .footer i.icon-help, #menu .footer #notification ion-item h4 i.icon-help {
+.view-notification ion-item h4 i.icon, .view-notification ion-item h4 i.icon-help, .view-notification ion-item h4 i.icon-alert, .view-notification ion-item h4 #menu .footer i.icon-help, #menu .footer .view-notification ion-item h4 i.icon-help {
   font-size: 18px !important;
   line-height: 12px !important;
   vertical-align: middle !important; }

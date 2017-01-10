@@ -195,8 +195,8 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
           exports.raw.wsChanges.on(function(change) {
             if (!change) return;
             var comment = data.mapById[change._id];
-            if (comment && change._operation === 'DELETE') {
-              $rootScope.$apply(comment.remove);
+            if (change._operation === 'DELETE') {
+              if (comment) $rootScope.$apply(comment.remove);
             }
             else if (change._source && change._source.record === recordId) {
               // update
@@ -205,7 +205,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
                 exports.raw.refreshTreeLinks(data);
               }
               // create (if not in pending comment)
-              else if (data.pendings && data.pendings[change._source.time] && change._source.issuer === csWallet.data.pubkey) {
+              else if ((!data.pendings || !data.pendings[change._source.time]) && change._source.issuer != csWallet.data.pubkey) {
                 comment = new Comment(change._id, change._source);
                 comment.addOnRemoveListener(onRemoveListener);
                 comment.isnew = true;

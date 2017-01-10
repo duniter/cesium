@@ -44,6 +44,7 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
       }
     }
   };
+  $scope.ionListClass = !UIUtils.screen.isSmall() ? 'animate-ripple' : null;
 
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
@@ -58,14 +59,21 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
     $scope.search.loading = true;
     return esNotification.load(csWallet.data.pubkey, options)
       .then(function(res) {
-        $scope.search.results = res || [];
+        if (!from) {
+          $scope.search.results = res || [];
+        }
+        else if (res){
+          $scope.search.results = $scope.search.results.concat(res);
+        }
         $scope.search.loading = false;
         $scope.search.hasMore = $scope.search.results.length >= $scope.search.limit;
         $scope.updateView();
       })
       .catch(function(err) {
         $scope.search.loading = false;
-        $scope.search.results = [];
+        if (!from) {
+          $scope.search.results = [];
+        }
         $scope.search.hasMore = false;
         UIUtils.onError('COMMON.NOTIFICATIONS.LOAD_NOTIFICATIONS_FAILED')(err);
       });
@@ -74,10 +82,12 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
   $scope.updateView = function() {
 
     // Set Motion and Ink
-    $timeout(function() {
-      UIUtils.motion.fadeSlideInRight();
-      UIUtils.ink({selector: '#notification .item.ink'});
-    }, 100);
+    if ($scope.ionListClass) {
+      $timeout(function() {
+        UIUtils.motion.ripple({selector: '.view-notification .item'});
+        UIUtils.ink({selector: '.view-notification .item.ink'});
+      }, 100);
+    }
   };
 
   $scope.markAllAsRead = function() {
@@ -141,7 +151,10 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
 function PopoverNotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings) {
   'ngInject';
 
-  NotificationsController.call(this, $scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings);
+  NotificationsController.call(this, $scope, $rootScope, $timeout, UIUtils,  $state, csWallet, esNotification, csSettings);
+
+  // Disable list effects
+  $scope.ionListClass = null;
 
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {

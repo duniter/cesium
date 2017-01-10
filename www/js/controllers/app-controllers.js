@@ -211,6 +211,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         .then(function (walletData) {
           if (walletData) {
             $rootScope.viewFirstEnter = false;
+            // Force full load, even if min data asked
+            // Because user can wait when just filled login (by modal)
+            if (options && options.minData) options.minData = false;
             return $scope.loadWalletData(options);
           }
           else { // failed to login

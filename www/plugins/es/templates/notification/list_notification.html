@@ -1,4 +1,4 @@
-<ion-list>
+<ion-list class="{{::ionListClass}}">
 
   <ion-item
     ng-repeat="notification in search.results"
@@ -6,10 +6,8 @@
     ng-class="{'unread': !notification.read}"
     ng-click="select(notification)">
 
-    <i class="item-image"
-       ng-style="notification.avatarStyle"
-       ng-class="{'icon {{::notification.avatarIcon}}': !notification.avatarStyle, 'avatar': notification.avatarStyle}">
-    </i>
+    <i ng-if="!notification.avatar" class="item-image icon {{::notification.avatarIcon}}"></i>
+    <i ng-if="notification.avatar" class="item-image avatar" style="background-image: url({{::notification.avatar.src}})"></i>
 
     <h3 trust-as-html="notification.message | translate:notification"></h3>
     <h4>

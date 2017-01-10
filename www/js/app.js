@@ -271,7 +271,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     // Ionic Platform Grade is not A, disabling views transitions
     if (ionic.Platform.grade.toLowerCase()!='a') {
-      console.log('Disable visual effects because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
+      console.log('Disable UI effects - plateform\'s grade is not [a] but [' + ionic.Platform.grade + ']');
       $ionicConfig.views.transition('none');
       UIUtils.disableEffects();
     }

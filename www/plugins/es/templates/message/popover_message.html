@@ -25,10 +25,8 @@
         ng-class="{'unread': !notification.read}"
         ng-click="select(notification)">
 
-        <i class="item-image"
-           ng-style="notification.avatarStyle"
-           ng-class="{'icon ion-email': !notification.avatarStyle, 'avatar': notification.avatarStyle}">
-        </i>
+        <i ng-if="!notification.avatar" class="item-image icon" ng-class="{'ion-person': notification.uid, 'ion-email': !notification.uid}"></i>
+        <i ng-if="notification.avatar" class="item-image avatar" style="background-image: url({{::notification.avatar.src}})"></i>
 
         <h3>
           <span translate>MESSAGE.NOTIFICATIONS.MESSAGE_RECEIVED</span>

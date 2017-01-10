@@ -36,9 +36,9 @@ angular.module("cesium.config", [])
 		"es": {
 			"enable": true,
 			"askEnable": false,
-			"host": "localhost",
-			"port": 9200,
-			"wsPort": 9400,
+			"host": "data.duniter.fr",
+			"port": 80,
+			"wsPort": 80,
 			"notifications": {
 				"tx": {
 					"enable": false

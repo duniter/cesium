@@ -509,14 +509,21 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotificat
     options.size = size || defaultSearchLimit;
     return esMessage.notifications.load(options)
       .then(function(notifications) {
-        $scope.search.results = notifications;
+        if (!from) {
+          $scope.search.results = notifications;
+        }
+        else {
+          $scope.search.results = $scope.search.results.concat(notifications);
+        }
         $scope.search.loading = false;
         $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
         $scope.updateView();
       })
       .catch(function(err) {
         $scope.search.loading = false;
-        $scope.search.results = [];
+        if (!from) {
+          $scope.search.results = [];
+        }
         $scope.search.hasMore = false;
         UIUtils.onError('MESSAGE.ERROR.LOAD_NOTIFICATIONS_FAILED')(err);
       });
@@ -548,7 +555,11 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotificat
 
   $scope.onNewNotification = function(notification) {
     if (!$scope.search.loading && !$scope.search.loadingMore &&  notification.isMessage) {
-      console.log("[popover] detected new message (from notification)");
+      console.debug("[popover] detected new message (from notification service)");
+
+      if (notification.reference) {
+        console.log("[popover] new message has a reference !");
+      }
       $scope.search.results.splice(0,0,notification);
       $scope.updateView();
     }
