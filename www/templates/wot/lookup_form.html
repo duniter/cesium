@@ -102,9 +102,11 @@
           </span>
           <b class="ion-key"></b>
           {{::identity.pubkey | formatPubkey}}
-          <span ng-if="identity.events"
-                ng-repeat="event in identity.events"
-                class="assertive">
+          <span ng-if="!identity.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+        </h4>
+        <h4 ng-if="identity.events">
+          <span ng-repeat="event in identity.events"
+              class="assertive">
             <i class="ion-alert-circled " ng-if="!identity.valid"></i>
             <span ng-bind-html="event.message|translate:event.messageParams"></span>
           </span>
