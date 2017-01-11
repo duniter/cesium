@@ -268,7 +268,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     if (!$rootScope.walletData.isMember) {
       return UIUtils.alert.error("ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION");
     }
-    if (!confirm && $rootScope.walletData.isMember && !$rootScope.walletData.requirements.needRenew) {
+    if (!confirm && !$rootScope.walletData.requirements.needRenew) {
       return $translate("CONFIRM.NOT_NEED_RENEW_MEMBERSHIP", {membershipExpiresIn: $rootScope.walletData.requirements.membershipExpiresIn})
         .then(function(message) {
           return UIUtils.alert.confirm(message);
@@ -290,6 +290,44 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         UIUtils.alert.error(err)
           // loop
           .then($scope.renewMembership);
+      });
+  };
+
+  /**
+   * Revoke identity
+   */
+  $scope.revokeIdentity = function(confirm, confirmAgain) {
+
+    if ($rootScope.walletData.requirements.needSelf) {
+      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
+    }
+    if (!confirm) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_CONTINUE',
+        okType: 'button-assertive'
+      })
+      .then(function(confirm) {
+        if (confirm) $scope.revokeIdentity(true); // loop with confirm
+      });
+    }
+    if (!confirmAgain) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_YES_CONTINUE',
+        okType: 'button-assertive'
+      })
+      .then(function(confirm) {
+        if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
+      });
+    }
+
+    UIUtils.loading.show();
+    return csWallet.revoke()
+      .catch(function(err){
+        UIUtils.loading.hide();
+        return UIUtils.alert.error(err)
+          .then($scope.revokeIdentity);
       });
   };
 

@@ -14726,7 +14726,12 @@ a.underline:hover,
   #menu ion-content.has-footer {
     bottom: 0px !important;
     /*ignore footer*/ }
-  body.platform-android #menu .item-icon-left .icon, body.platform-android #menu .item-icon-left .icon-help, body.platform-android #menu .item-icon-left .icon-alert, .item-icon-right .icon:last-child, .item-icon-right .icon-help:last-child, .item-icon-right .icon-alert:last-child, .item-icon-right #menu .footer .icon-help:last-child, #menu .footer .item-icon-right .icon-help:last-child {
+  body.platform-android #menu .item-icon-left .icon, body.platform-android #menu .item-icon-left .icon-help, body.platform-android #menu .item-icon-left .icon-alert,
+  .item-icon-right .icon:last-child,
+  .item-icon-right .icon-help:last-child,
+  .item-icon-right .icon-alert:last-child,
+  .item-icon-right #menu .footer .icon-help:last-child, #menu .footer
+  .item-icon-right .icon-help:last-child {
     top: 5px; } }
 
 @media screen and (min-width: 401px) {

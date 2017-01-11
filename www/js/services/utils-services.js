@@ -19,11 +19,11 @@ angular.module('cesium.utils.services', ['ngResource'])
   ;
 
   function alertError(err, subtitle) {
+    if (!err) {
+      return $q.when();
+    }
+
     return $q(function(resolve) {
-      if (!err) {
-        resolve();
-        return;
-      }
       $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
       .then(function (translations) {
         var message = err.message || translations[err];
@@ -70,13 +70,10 @@ angular.module('cesium.utils.services', ['ngResource'])
   function askConfirm(message, title, options) {
     title = title || 'CONFIRM.POPUP_TITLE';
 
-    var defaultOptions = {
-      cssClass: 'confirm',
-      cancelText: 'COMMON.BTN_CANCEL',
-      okText: 'COMMON.BTN_OK'
-    };
-
-    options = options ? angular.merge(defaultOptions, options) : defaultOptions;
+    options = options || {};
+    options.cssClass = options.cssClass || 'confirm';
+    options.okText = options.okText || 'COMMON.BTN_OK';
+    options.cancelText = options.cancelText || 'COMMON.BTN_CANCEL';
 
     return $translate([message, title, options.cancelText, options.okText])
       .then(function (translations) {
@@ -85,7 +82,9 @@ angular.module('cesium.utils.services', ['ngResource'])
           cssClass: options.cssClass,
           title: translations[title],
           cancelText: translations[options.cancelText],
-          okText: translations[options.okText]
+          cancelType: options.cancelType,
+          okText: translations[options.okText],
+          okType: options.okType,
         });
       });
   }

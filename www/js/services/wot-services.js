@@ -599,15 +599,16 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           })
           .then(function(idties) {
             if (!options.allowExtension) {
+              // Add unique id (if enable)
               return options.addUniqueId ? _addUniqueIds(idties) : idties;
             }
             // call extension point
             return api.data.raisePromise.search(text, idties)
-              .then(function(idties) {
+              .then(function() {
+                // Add unique id (if enable)
                 return options.addUniqueId ? _addUniqueIds(idties) : idties;
               });
-          })
-          ;
+          });
       },
 
       getNewcomers = function(offset, size) {

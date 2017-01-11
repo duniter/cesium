@@ -13,6 +13,7 @@
     "BTN_SEND_MONEY_SHORT": "Virement",
     "BTN_SAVE": "Enregistrer",
     "BTN_YES_SAVE": "Oui, Enregistrer",
+    "BTN_YES_CONTINUE": "Oui, Continuer",
     "BTN_SHOW": "Voir",
     "BTN_SHOW_PUBKEY": "Voir la clé",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
@@ -248,8 +249,9 @@
     "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_MEMBERSHIP_IN": "Devenir membre...",
     "BTN_MEMBERSHIP_RENEW": "Renouveller l'adhésion",
-    "BTN_MEMBERSHIP_OUT": "Arrêter l'adhésion",
+    "BTN_MEMBERSHIP_OUT": "Arrêter l'adhésion...",
     "BTN_SEND_IDENTITY": "Publier son identitié...",
+    "BTN_REVOKE": "Revoquer<span class='hidden-xs hidden-sm'> définitivement</span> cette identité...",
     "BTN_SHOW_DETAILS": "Afficher la clé publique",
     "NEW": {
       "TITLE": "Inscription",
@@ -357,7 +359,8 @@
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
     "LOAD_NEWCOMERS_FAILED": "Echec du chargement des nouveaux membres.",
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
-    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez être membre pour pouvoir effectuer cette action."
+    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
+    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -370,6 +373,7 @@
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
+    "POPUP_WARNING_TITLE": "<b>Avertissement</b>",
     "CERTIFY_RULES_TITLE_UID": "Certifier {{uid}}",
     "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>",
     "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>",
@@ -377,8 +381,10 @@
     "LOGIN_UNUSED_WALLET_TITLE": "Erreur de saisie ?",
     "LOGIN_UNUSED_WALLET": "Vous êtes connecté sur un compte qui parait <b>inactif</b>.<br/><br/>Si ce compte ne correspond pas au votre, il s'agit probablement d'une <b>erreur de saisie</b> de vos identifiants de connexion.<br/></br/><b>Voulez-vous néanmoins continuer avec ce compte ?</b>",
     "FIX_IDENTITY": "Le pseudonyme <b>{{uid}}</b> va être publiée à nouveau, en remplacement de l'ancienne publication qui a expirée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
-    "FIX_MEMBERSHIP": "Votre demande d'adhésion comme membre va être renvoyée.<br/></br/><b>Etes-vous sûr ?</b>",
-    "RENEW_MEMBERSHIP": "Votre adhésion comme membre va être renouvellée.<br/></br/><b>Etes-vous sûr ?</b>",
+    "FIX_MEMBERSHIP": "Votre demande d'adhésion comme membre va être renvoyée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
+    "RENEW_MEMBERSHIP": "Votre adhésion comme membre va être renouvellée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
+    "REVOKE_IDENTITY": "<b>Avertissement de sécurité</b> :<br/>Vous allez <b>revoquer définitivement cette identité</b>.<br/><br/>La clé publique et le pseudonyme associés <b>ne pourront plus jamais être utilisés</b> (pour un compte membre). <br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
+    "REVOKE_IDENTITY_2": "Cette opération est <b>irreversible</b> !<br/><br/><b>Etes-vous vraiment sûr</b> de vouloir continuer ?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveller votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées"

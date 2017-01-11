@@ -61,6 +61,15 @@
         {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
       </a>
 
+      <!-- revocation -->
+      <a class="item item-icon-left assertive ink"
+         ng-if="!walletData.requirements.needSelf"
+         ng-click="revokeIdentity()">
+        <i class="icon ion-minus-circled"></i>
+        <span ng-bind-html="'ACCOUNT.BTN_REVOKE' | translate"></span>
+
+      </a>
+
       <div class="item-divider hidden-sm hidden-xs"></div>
 
       <!-- help tour -->

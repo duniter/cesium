@@ -1348,7 +1348,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     }
   }
 
-  body.platform-android #menu .item-icon-left .icon, .item-icon-right .icon:last-child {
+  body.platform-android #menu .item-icon-left .icon,
+  .item-icon-right .icon:last-child {
     top: 5px;
   }
 
