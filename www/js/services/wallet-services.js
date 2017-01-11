@@ -662,7 +662,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           (data.parameters.sigQty - data.requirements.certificationCount) : 0;
       data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
           data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
-          (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+          (data.parameters.sigQty - data.requirements.certificationCount - data.requirements.willExpireCertificationCount) : 0;
 
       // Add user events
       data.events = data.events.reduce(function(res, event) {
