@@ -135,17 +135,16 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
   };
   esNotification.api.data.on.new($scope, $scope.onNewNotification);
 
-  // Listen settings changes
-  $scope.onSettingsChanged = function() {
+  $scope.resetData = function() {
     if ($scope.search.loading) return;
-    console.debug("[ES] [notifications] Force to reload (on next enter) as settings changed...");
+    console.debug("[ES] [notifications] Resetting data (settings or account may have changed)");
     $scope.search.hasMore = false;
     $scope.search.results = [];
     $scope.search.loading = true;
     delete $scope.search.limit;
   };
-  csSettings.api.data.on.changed($scope, $scope.onSettingsChanged);
-
+  // When logout: force reload
+  csWallet.api.data.on.logout($scope, $scope.resetData);
 }
 
 function PopoverNotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings) {
