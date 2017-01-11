@@ -352,6 +352,7 @@
     "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
     "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
     "WALLET_IDENTITY_EXPIRED": "The publication of your identity <b>has expired</b>.<br/>You must <a ng-click=\"doQuickFix('fixIdentity')\">re-issue your identity</a> to resolve this issue.",
+    "WALLET_HAS_NO_SELF": "Your identity must first have been published, and not expired.",
     "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "You have <b>already certified</b> that identity.<br/><br/>Your certification is still pending (Deadline for treatment {{expiresIn|formatDuration}}).",
     "UNABLE_TO_CERTIFY_TITLE": "Unable to certify",
@@ -403,7 +404,7 @@
       "UNIVERSAL_DIVIDEND_DEF": "(TODO translate)<br/>Le Dividende Universel (DU) est la quantité de monnaie co-créé par chaque membre, suivant la période et le calcul définie dans les <span class=\"text-italic\">règles de la monnaie</span>.<br/>A chaque échéance, les membres recoivent sur leur compte la meme quantité de nouvelle monnaie.<br/><br/>Le DU subit une croissance régulière, pour rester juste entre les membres (actuels et à venir), calculée en fonction de l'espérance de vie moyenne, telle que démontré dans la Thérorie Relative de la Monnaie (TRM).<br/><a href=\"http://trm.creationmonetaire.info\">En savoir plus sur la TRM</a> et les monnaies libres."
     },
     "TIP": {
-      "MENU_BTN_CURRENCY": "(TODO translate)<br/>Le menu <b>{{'MENU.CURRENCY'|translate}}</b> permet la consultation des <b>règles de la monnaie</b> et de son état.",
+      "MENU_BTN_CURRENCY": "Menu <b>{{'MENU.CURRENCY'|translate}}</b> allow to discover <b>currency rules</b> and state.",
       "CURRENCY_WOT": "(TODO translate)<br/>Le <b>nombre de membres</b> montre l'importance de la communauté et permet de <b>suivre son évolution</b>.",
       "CURRENCY_MASS": "(TODO translate)<br/>Suivez ici la <b>quantité totale de monnaie</b> existante et sa <b>répartition moyenne</b> par membre.<br/><br/>Ceci permet de juger de l'<b>importance d'un montant</b>, vis à vis de ce que <b>possède les autres</b> sur leur compte (en moyenne).",
       "CURRENCY_UNIT_RELATIVE": "(TODO translate)<br/>L'unité utilisée (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifie que les montants en {{currency|capitalize}} ont été divisés par le <b>Dividende Universel</b> (DU).<br/><br/><small>Cette unité relative est <b>pertinente</b>, car stable malgré la quantitié de monnaie qui augmente en permanence.</small>",

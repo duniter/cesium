@@ -5,7 +5,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
     $stateProvider
 
       .state('app.wot_lookup', {
-        url: "/wot?q&newcomers",
+        url: "/wot?q&newcomers&pendings",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup.html",
@@ -95,7 +95,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
   };
   $scope.entered = false;
   $scope.wotSearchTextId = 'wotSearchText';
-  $scope.enableFilter = !csConfig.initPhase; // disable filter on init phase
+  $scope.enableFilter = true;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered) {
@@ -105,9 +105,15 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
           $scope.doSearch();
         }, 100);
       }
-      else { // get new comers
+      else {
         $timeout(function() {
-          $scope.doGetNewcomers(0, state.stateParams.newcomers);
+          // get new comers
+          if (!csConfig.initPhase || state.stateParams.newcomers) {
+            $scope.doGetNewcomers(0, state.stateParams.newcomers);
+          }
+          else {
+            $scope.doGetPending(0, state.stateParams.pendings);
+          }
         }, 100);
       }
       // removeIf(device)
@@ -156,7 +162,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     }
   };
 
-  $scope.doGetNewcomers= function(offset, size) {
+  $scope.doGetNewcomers = function(offset, size) {
     offset = offset || 0;
     size = size || defaultSearchLimit;
     if (size < defaultSearchLimit) size = defaultSearchLimit;
@@ -165,10 +171,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     $scope.search.loading = (offset === 0);
     $scope.search.type = 'newcomers';
 
-    var searchFunction =  csConfig.initPhase ?
-      csWot.all :
-      csWot.newcomers;
-    return searchFunction(offset, size)
+    return csWot.newcomers(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'newcomers') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
@@ -191,7 +194,11 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     $scope.search.loading = (offset === 0);
     $scope.search.type = 'pending';
 
-    return csWot.pending(offset, size)
+    var searchFunction =  csConfig.initPhase ?
+      csWot.all :
+      csWot.pending;
+
+    return searchFunction(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'pending') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);

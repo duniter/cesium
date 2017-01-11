@@ -352,6 +352,7 @@
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
     "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('fixMembership')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
     "WALLET_IDENTITY_EXPIRED": "La publication de <b>votre identité a expirée</b>.<br/>Vous devez <a ng-click=\"doQuickFix('fixIdentity')\">publier à nouveau votre identité</a> pour résoudre ce problème.",
+    "WALLET_HAS_NO_SELF": "Votre identité doit d'abord avoir été publiée, et ne pas être expirée.",
     "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDurationTo}}).",
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",

@@ -34,8 +34,9 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         TX_ALREADY_PROCESSED: 2030
       },
       constants = {
+        PROTOCOL_VERSION: 10,
         ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
-        LIMIT_REQUEST_COUNT: 5, // simultaneous async call of on rest request
+        LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000 // time (in second) to wait between to call of a rest request
       };
 
@@ -74,7 +75,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         },
         requirements: csHttp.get(host, port, '/wot/requirements/:pubkey'),
         add: csHttp.post(host, port, '/wot/add'),
-        certify: csHttp.post(host, port, '/wot/certify')
+        certify: csHttp.post(host, port, '/wot/certify'),
+        revoke: csHttp.post(host, port, '/wot/revoke')
       },
       blockchain: {
         parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),

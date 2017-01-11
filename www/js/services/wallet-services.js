@@ -10,7 +10,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     var
     constants = {
-      STORAGE_KEY: "CESIUM_DATA"
+      STORAGE_KEY: 'CESIUM_DATA'
     },
     data = {},
 
@@ -1085,7 +1085,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           });
       }
 
-      var tx = 'Version: 3\n' +
+      var tx = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
         'Type: Transaction\n' +
         'Currency: ' + data.currency + '\n' +
         'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
@@ -1228,86 +1228,91 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
+    getIdentityDocument = function(uid, blockUid) {
+      uid = uid || data.uid;
+      blockUid = blockUid || data.blockUid;
+      if (!uid || !blockUid) {
+        throw {message: 'ERROR.WALLET_HAS_NO_SELF'};
+      }
+      if (data.requirements && data.requirements.expired) {
+        throw {message: 'ERROR.WALLET_IDENTITY_EXPIRED'};
+      }
+
+      var identity = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+        'Type: Identity\n' +
+        'Currency: ' + data.currency + '\n' +
+        'Issuer: ' + data.pubkey + '\n' +
+        'UniqueID: ' + uid + '\n' +
+        'Timestamp: ' + blockUid + '\n';
+      return CryptoUtils.sign(identity, data.keypair)
+        .then(function(signature) {
+          identity += signature + '\n';
+          console.debug('Has generate an identity document:\n----\n' + identity + '----');
+          return identity;
+        });
+    },
+
     /**
     * Send self identity
     */
     self = function(uid, needToLoadRequirements) {
+      if (!BMA.regex.USER_ID.test(uid)){
+        throw new Error('ERROR.INVALID_USER_ID');
+      }
+      var block;
+      return $q.all([
+        // check uid used by another pubkey
+        checkUidNotExists(uid, data.pubkey),
 
-      return $q(function(resolve, reject) {
-        if (!BMA.regex.USER_ID.test(uid)){
-          reject({message:'ERROR.INVALID_USER_ID'}); return;
-        }
-        var block;
-        var identity;
-        $q.all([
-          // check uid used by another pubkey
-          checkUidNotExists(uid, data.pubkey),
+        // Load parameters (need to known the currency)
+        loadParameters(),
 
-          // Load parameters (need to known the currency)
-          loadParameters(),
-
-          // Get th current block
-          BMA.blockchain.current()
-            .then(function(current) {
-              block = current;
-            })
-            .catch(function(err) {
-              // Special case for currency init (root block not exists): use fixed values
-              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
-              }
-              else {
-                throw err;
-              }
-            })
-        ])
-        // Create identity document to sign
-        .then(function() {
-          identity = 'Version: 2\n' +
-            'Type: Identity\n' +
-            'Currency: ' + data.currency + '\n' +
-            'Issuer: ' + data.pubkey + '\n' +
-            'UniqueID: ' + uid + '\n' +
-            'Timestamp: ' + block.number + '-' + block.hash + '\n';
-
-          return CryptoUtils.sign(identity, data.keypair);
-        })
-        // Add signature
-        .then(function (signature) {
-          var signedIdentity = identity + signature + '\n';
-          // Send to node
-          return BMA.wot.add({identity: signedIdentity})
-          .then(function (result) {
-            if (!!needToLoadRequirements) {
-              // Refresh membership data (if need)
-              loadRequirements()
-                .then(function () {
-                  resolve();
-                }).catch(function (err) {
-                reject(err);
-              });
+        // Get th current block
+        BMA.blockchain.current()
+          .then(function(current) {
+            block = current;
+          })
+          .catch(function(err) {
+            // Special case for currency init (root block not exists): use fixed values
+            if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+              block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
             }
             else {
-              data.uid = uid;
-              data.blockUid = block.number + '-' + block.hash;
-              resolve();
+              throw err;
             }
           })
-          .catch(function (err) {
-            if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
-              reject({ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'});
-              return;
-            }
-            reject(err);
-          });
-        }).catch(function (err) {
-          reject(err);
-        });
+      ])
+
+      // Create identity document
+      .then(function() {
+        return getIdentityDocument(uid, block.number + '-' + block.hash);
+      })
+
+      // Send to node
+      .then(function (identity) {
+        return BMA.wot.add({identity: identity});
+      })
+
+      .then(function () {
+        if (!!needToLoadRequirements) {
+          // Refresh membership data (if need)
+          return loadRequirements();
+        }
+        else {
+          data.uid = uid;
+          data.blockUid = block.number + '-' + block.hash;
+        }
+      })
+      .catch(function (err) {
+        if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
+          throw {ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'};
+        }
+        throw err;
       });
     },
 
    /**
-    * Send membership (in)
+    * Send membership (in or out)
     */
     membership = function(sideIn) {
       return function() {
@@ -1322,7 +1327,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             })
           .then(function(block) {
             // Create membership to sign
-            membership = 'Version: 2\n' +
+            membership = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
               'Type: Membership\n' +
               'Currency: ' + data.currency + '\n' +
               'Issuer: ' + data.pubkey + '\n' +
@@ -1367,7 +1372,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(block) {
           current = block;
           // Create the self part to sign
-          cert = 'Version: 2\n' +
+          cert = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
             'Type: Certification\n' +
             'Currency: ' + data.currency + '\n' +
             'Issuer: ' + data.pubkey + '\n' +
@@ -1410,6 +1415,60 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       else {
         console.debug('Event without message. Skipping this event');
       }
+    },
+
+    getRevocationDocument = function() {
+
+      // Get current identity document
+      return getIdentityDocument()
+
+        // Create membership document (unsigned)
+        .then(function(identity){
+          var identityLines = identity.trim().split('\n');
+          var idtySignature = identityLines[identityLines.length-1];
+
+          var revocation = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+            'Type: Revocation\n' +
+            'Currency: ' + data.currency + '\n' +
+            'Issuer: ' + data.pubkey + '\n' +
+            'IdtyUniqueID: ' + data.uid + '\n' +
+            'IdtyTimestamp: ' + data.blockUid + '\n' +
+            'IdtySignature: ' + idtySignature + '\n';
+
+
+          // Sign revocation document
+          return CryptoUtils.sign(revocation, data.keypair)
+
+            // Add revocation to document
+            .then(function(signature) {
+              revocation += signature + '\n';
+              console.debug('Has generate an revocation document:\n----\n' + revocation + '----');
+              return revocation;
+            });
+        });
+    },
+
+    /**
+     * Send a revocation
+     */
+    revocation = function() {
+      // Get revocation document
+      return getRevocationDocument()
+
+        // Send revocation document
+        .then(function(revocation) {
+          return BMA.wot.revoke({revocation: revocation});
+        })
+
+        // Reload requirements
+        .then(function() {
+          return $timeout(function() {
+            return loadRequirements();
+          }, 1000); // waiting for node to process membership doc
+        })
+        .then(function() {
+          finishLoadRequirements();
+        });
     },
 
     cleanEventsByContext = function(context){

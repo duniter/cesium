@@ -65,10 +65,7 @@ function Notification(json, markAsReadCallback) {
     if (pubkeys && pubkeys.indexOf(',') == -1) {
       that.pubkey = pubkeys;
     }
-    that.state = 'app.user_view_message';
-    that.stateParams = {
-      id: json.reference.id
-    };
+    that.id = json.reference.id; // Do not care about notification ID, because notification screen use message _id
   }
 
   // market record

@@ -123,7 +123,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
 
   $scope.loading = true;
   $scope.defaultCommentSize = 5;
-  $scope.formCommentData = {};
+  $scope.formData = {};
   $scope.comments = {};
 
   $scope.$on('$recordView.enter', function(e, state) {

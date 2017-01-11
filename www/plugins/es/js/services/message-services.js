@@ -17,6 +17,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     var
     listeners,
+    defaultLoadSize = 10,
     fields = {
       commons: ["issuer", "recipient", "title", "content", "time", "nonce", "read_signature"],
       notifications: ["issuer", "time", "hash", "read_signature"]
@@ -117,11 +118,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           .then(function(res){
             resolve(res);
 
-            var useOutbox = csSettings.data.plugins.es.message && csSettings.data.plugins.es.message.useOutbox;
-            // TODO
-            useOutbox = true;
+            var outbox = (csSettings.data.plugins.es.message &&
+              angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
+              csSettings.data.plugins.es.message.outbox : true;
             // Send to outbox (in a async way)
-            if (useOutbox) {
+            if (outbox) {
               return doSendMessage(message, keypair, '/message/outbox', 'issuer')
                 .catch(function(err) {
                   console.error("Failed to store message to outbox: " + err);
@@ -177,7 +178,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       }
       options = options || {};
       options.from = options.from || 0;
-      options.size = options.size || 10;
+      options.size = options.size || defaultLoadSize;
       var request = {
         sort: {
           "time" : "desc"
@@ -194,11 +195,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             return [];
           }
           else {
-            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
             var notifications = res.hits.hits.reduce(function(result, hit) {
               var msg = hit._source;
               msg.id = hit._id;
-              msg.issuer = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
               msg.read = !!msg.read_signature;
               delete msg.read_signature; // not need anymore
               return result.concat(msg);

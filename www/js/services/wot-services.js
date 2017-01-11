@@ -563,10 +563,14 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           });
       },
 
-      search = function(text) {
+      search = function(text, options) {
         if (!text || text.trim() !== text) {
           return $q.when(undefined);
         }
+
+        options = options || {};
+        options.addUniqueId = angular.isDefined(options.addUniqueId) ? options.addUniqueId : true;
+        options.allowExtension = angular.isDefined(options.allowExtension) ? options.allowExtension : true;
 
         return BMA.wot.lookup({ search: text })
           .then(function(res){
@@ -594,12 +598,16 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             }
           })
           .then(function(idties) {
+            if (!options.allowExtension) {
+              return options.addUniqueId ? _addUniqueIds(idties) : idties;
+            }
+            // call extension point
             return api.data.raisePromise.search(text, idties)
-              .then(function() {
-                idties = _addUniqueIds(idties);
-                return idties;
+              .then(function(idties) {
+                return options.addUniqueId ? _addUniqueIds(idties) : idties;
               });
-          });
+          })
+          ;
       },
 
       getNewcomers = function(offset, size) {
@@ -779,7 +787,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
       getAll = function() {
         var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
-        return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT);
+        return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT)
+          .then(function(idties) {
+            return api.data.raisePromise.search(null, idties)
+              .then(function() {
+                return _addUniqueIds(idties);
+              });
+          });
       },
 
       getAllRecursive = function(letters, offset, size) {
@@ -789,17 +803,20 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           var jobs = [];
           _.each(letters.slice(offset, offset+size), function(letter) {
             jobs.push(
-              search(letter)
-                .then(function(idties){
-                  if (!idties || !idties.length) return;
-                  result = idties.reduce(function(res, idty) {
-                    if (!pubkeys[idty.pubkey]) {
-                      pubkeys[idty.pubkey] = true;
-                      return res.concat(idty);
-                    }
-                    return res;
-                  }, result);
-                })
+              search(letter, {
+                addUniqueId: false, // will be done in parent method
+                allowExtension: false // extension point will be called in parent method
+              })
+            .then(function(idties){
+                if (!idties || !idties.length) return;
+                result = idties.reduce(function(res, idty) {
+                  if (!pubkeys[idty.pubkey]) {
+                    pubkeys[idty.pubkey] = true;
+                    return res.concat(idty);
+                  }
+                  return res;
+                }, result);
+              })
             );
           });
 

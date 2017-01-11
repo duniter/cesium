@@ -16,8 +16,12 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
   function factory(id, host, port, wsPort) {
 
     var listeners,
+      defaultLoadSize = 20,
       constants = {
         MESSAGE_CODES: ['MESSAGE_RECEIVED']
+      },
+      fields = {
+        commons: ["type", "code", "params", "reference", "recipient", "time", "hash", "read_signature"]
       },
       api = new Api(this, 'esNotification-' + id)
     ;
@@ -87,7 +91,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     function loadNotifications(pubkey, options) {
       options = options || {};
       options.from = options.from || 0;
-      options.size = options.size || 40;
+      options.size = options.size || defaultLoadSize;
       var request = {
         query: createFilterQuery(pubkey, options),
         sort : [
@@ -95,7 +99,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
         ],
         from: options.from,
         size: options.size,
-        _source: ["type", "code", "params", "reference", "recipient", "time", "hash", "read_signature"]
+        _source: fields.commons
       };
 
       return esHttp.post(host, port, '/user/event/_search')(request)
