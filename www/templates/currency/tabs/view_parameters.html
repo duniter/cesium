@@ -97,15 +97,22 @@
           <span class="badge badge-stable">{{sigStock}}</span>
         </ion-item>
 
-      <ion-item class="item-icon-left">
-        <i class="icon ion-clock"></i>
-        <span translate>CURRENCY.VIEW.SIG_PERIOD</span>
-        <span class="badge badge-stable">{{sigPeriod | formatDuration}}</span>
-      </ion-item>
+        <ion-item class="item-icon-left">
+          <i class="icon ion-clock"></i>
+          <span translate>CURRENCY.VIEW.SIG_PERIOD</span>
+          <span class="badge badge-stable">{{sigPeriod | formatDuration}}</span>
+        </ion-item>
 
         <ion-item class="item-icon-left">
           <i class="icon ion-clock"></i>
           <span translate>CURRENCY.VIEW.SIG_WINDOW</span>
           <span class="badge badge-stable">{{sigWindow | formatDuration}}</span>
         </ion-item>
+
+        <ion-item class="item-icon-left">
+          <i class="icon ion-steam"></i>
+          <span translate>CURRENCY.VIEW.STEP_MAX</span>
+          <span class="badge badge-stable">{{stepMax}}</span>
+        </ion-item>
+
     </ion-list>

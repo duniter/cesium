@@ -113,6 +113,8 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.difficulty  = 0;
   $scope.Nprev = 0;
   $scope.screen = UIUtils.screen;
+  $scope.stepMax = 0;
+  $scope.xpercent = 0;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     $translate(['COMMON.DATE_PATTERN'])
@@ -195,6 +197,8 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
           $scope.sigStock = json.sigStock;
           $scope.sigWindow = json.sigWindow;
           $scope.sigPeriod = json.sigPeriod;
+          $scope.stepMax = json.stepMax;
+          $scope.xpercent = json.xpercent;
         }),
 
       // Get the current block informations
