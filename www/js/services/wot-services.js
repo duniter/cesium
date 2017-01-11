@@ -2,7 +2,7 @@
 angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csSettings, csCache) {
+.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csConfig, csSettings, csCache) {
   'ngInject';
 
   factory = function(id) {
@@ -341,10 +341,28 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             var pendingCertifications = _.values(lookupCerticationsByCertId);
             if (!pendingCertifications.length) return certifications; // No more pending continue
 
+            // Special case for initPhase - issue #
+            if (csConfig.initPhase) {
+              return pendingCertifications.reduce(function(res, cert) {
+                return res.concat({
+                  pubkey: cert.pubkey,
+                  uid: cert.uid,
+                  isMember: cert.isMember,
+                  wasMember: cert.wasMember,
+                  time: null,
+                  expiresIn: parameters.sigWindow,
+                  willExpire: false,
+                  pending: true,
+                  block: 0,
+                  valid: true
+                });
+              }, certifications);
+            }
+
             var pendingCertByBlocks = pendingCertifications.reduce(function(res, cert){
               var block = lookupHasCertTime && cert.cert_time ? cert.cert_time.block :
                 (cert.sigDate ? cert.sigDate.split('-')[0] : null);
-              if (block) {
+              if (angular.isDefined(block)) {
                 if (!res[block]) {
                   res[block] = [cert];
                 }
@@ -523,7 +541,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
             return $q.all([
               // Get received certifications
-              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true/*certifiersOf*/)
+              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true /*certifiersOf*/)
                 .then(function (res) {
                   data.received_cert = res.valid;
                   data.received_cert_pending = res.pending;
@@ -532,11 +550,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
               // Get given certifications
               loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime, false/*certifiersOf*/)
-                  .then(function (res) {
-                    data.given_cert = res.valid;
-                    data.given_cert_pending = res.pending;
-                    data.given_cert_error = res.error;
-                  })
+                .then(function (res) {
+                  data.given_cert = res.valid;
+                  data.given_cert_pending = res.pending;
+                  data.given_cert_error = res.error;
+                })
 
               // Get sources
                // NOT NEED for now
