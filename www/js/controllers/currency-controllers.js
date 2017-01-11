@@ -112,7 +112,6 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.medianTime  = 0;
   $scope.difficulty  = 0;
   $scope.Nprev = 0;
-  $scope.stepMax = 0;
   $scope.screen = UIUtils.screen;
   $scope.stepMax = 0;
   $scope.xpercent = 0;
