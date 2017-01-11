@@ -185,7 +185,7 @@
     },
     "plugins":{
       "es": {
-        "enable": true,
+        "enable": false,
         "askEnable": false,
         "host": "localhost",
         "port": 9200,
