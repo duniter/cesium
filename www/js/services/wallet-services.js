@@ -1446,43 +1446,21 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               return revocation;
             });
         });
+    },
 
-
-    }
     /**
      * Send a revocation
      */
     revocation = function() {
-      if (!data.uid || !data.blockUid) {
-        throw {message: 'ERROR.WALLET_TO_REVOKE_HAS_NO_SELF'};
-      }
-      var revocation;
+      // Get revocation document
+      return getRevocationDocument()
 
-      // Get identity signature
-      return getIdentityDocument(data.uid, data.blockUid)
-
-        // Create membership document (unsigned)
-        .then(function(identity){
-          var identityLines = identity.trim().split('\n');
-          var idtySignature = identityLines[identityLines.length-1];
-
-          revocation = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
-            'Type: Revocation\n' +
-            'Currency: ' + data.currency + '\n' +
-            'Issuer: ' + data.pubkey + '\n' +
-            'IdtyUniqueID: ' + data.uid + '\n' +
-            'IdtyTimestamp: ' + data.blockUid + '\n' +
-            'IdtySignature: ' + idtySignature + '\n';
-
-          // Sign revocation document
-          return CryptoUtils.sign(revocation, data.keypair);
+        // Send revocation document
+        .then(function(revocation) {
+          return BMA.wot.revoke({revocation: revocation});
         })
 
-        // Send signed revocation
-        .then(function(signature) {
-          var signedRevocation = revocation + signature + '\n';
-          return BMA.blockchain.membership({membership: signedRevocation});
-        })
+        // Reload requirements
         .then(function() {
           return $timeout(function() {
             return loadRequirements();

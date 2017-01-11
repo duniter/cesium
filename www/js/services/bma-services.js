@@ -75,7 +75,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         },
         requirements: csHttp.get(host, port, '/wot/requirements/:pubkey'),
         add: csHttp.post(host, port, '/wot/add'),
-        certify: csHttp.post(host, port, '/wot/certify')
+        certify: csHttp.post(host, port, '/wot/certify'),
+        revoke: csHttp.post(host, port, '/wot/revoke')
       },
       blockchain: {
         parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
