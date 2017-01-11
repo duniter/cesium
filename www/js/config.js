@@ -20,9 +20,10 @@ angular.module("cesium.config", [])
 	"useLocalStorage": true,
 	"useRelative": true,
 	"initPhase": false,
-	"expertMode": true,
+	"expertMode": false,
+	"decimalCount": 2,
 	"helptip": {
-		"enable": false,
+		"enable": true,
 		"installDocUrl": {
 			"fr-FR": "http://www.le-sou.org/devenir-noeud/",
 			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -34,20 +35,14 @@ angular.module("cesium.config", [])
 	},
 	"plugins": {
 		"es": {
-			"enable": true,
-			"askEnable": false,
-			"host": "localhost",
-			"port": 9200,
-			"wsPort": 9400,
-			"notifications": {
-				"tx": {
-					"enable": false
-				}
-			}
+			"enable": false,
+			"askEnable": true,
+			"host": "data.le-sou.org",
+			"port": "80"
 		}
 	},
 	"version": "0.5.2",
-	"build": "2017-01-05T18:56:38.746Z",
+	"build": "2017-01-09T14:35:34.003Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
