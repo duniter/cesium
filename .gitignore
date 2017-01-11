@@ -25,3 +25,4 @@
 /hooks/playstore-config.json
 
 .directory
+www/js/config.js
