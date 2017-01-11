@@ -490,7 +490,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   };
 }
 
-function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotification, esMessage, esModals) {
+function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, esNotification, esMessage, esModals) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -571,9 +571,16 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotificat
     $scope.closePopover(notification);
   };
 
-  if ($scope.search.loading) {
-    $scope.load();
-  }
+  $scope.resetData = function() {
+    if ($scope.search.loading) return;
+    console.debug("[ES] [messages] Resetting data (settings or account may have changed)");
+    $scope.search.hasMore = false;
+    $scope.search.results = [];
+    $scope.search.loading = true;
+    delete $scope.search.limit;
+  };
+
+  csWallet.api.data.on.logout($scope, $scope.resetData);
 
   /* -- Modals -- */
 
@@ -586,4 +593,10 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, esNotificat
   };
 
   esNotification.api.data.on.new($scope, $scope.onNewNotification);
+
+  /* -- default popover action -- */
+  if ($scope.search.loading) {
+    $scope.load();
+  }
+
 }
