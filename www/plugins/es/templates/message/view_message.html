@@ -47,11 +47,6 @@
             <i ng-if="!formData.avatar" class="item-image" ng-class="{'ion-person': formData.uid, 'ion-email': !formData.uid}"></i>
             <i ng-if="formData.avatar" class="item-image avatar" style="background-image: url({{::formData.avatar.src}})"></i>
 
-
-            <i
-               ng-style="formData.avatarStyle"></i>
-            <i ng-class="{'item-image ion-person': formData.uid && !formData.avatarStyle, 'item-image ion-email': !formData.uid && !formData.avatarStyle, 'avatar': formData.avatarStyle}"
-               ng-style="formData.avatarStyle"></i>
             <h1 class="title" ng-bind-html="formData.title"></h1>
             <h4>
               <i class="ion-clock"></i>
