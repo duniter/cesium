@@ -14,6 +14,20 @@ angular.module('cesium.network.controllers', ['cesium.services'])
           controller: 'NetworkViewCtrl'
         }
       },
+    })
+
+    .state('app.view_peer', {
+      url: "/network/peer/:server",
+      nativeTransitions: {
+          "type": "flip",
+          "direction": "right"
+      },
+      views: {
+        'menuContent': {
+          templateUrl: "templates/network/view_peer.html",
+          controller: 'PeerCtrl'
+        }
+      }
     });
 })
 
@@ -24,38 +38,25 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 ;
 
 function NetworkViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
-
- $scope.loadingPeers = true;
+  $scope.loadingPeers = true;
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
   
   $scope.screen = UIUtils.screen;
 
-  $scope.$on('$ionicView.enter', function(e, state) {
-    $translate(['COMMON.DATE_PATTERN'])
-    .then(function($translations) {
-      $scope.datePattern = $translations['COMMON.DATE_PATTERN'];
-      if (state.stateParams && state.stateParams.name) { // Load by name
-        csCurrency.searchByName(state.stateParams.name)
-        .then(function(currency){
-          $scope.load(currency);
-        });
+  $scope.$on('$ionicParentView.enter', function(e, state) {
+    csCurrency.all()
+    .then(function (currencies) {
+      if (currencies && currencies.length > 0) {
+        $scope.load(currencies[0]);
       }
-      else {
-        csCurrency.all()
-        .then(function (currencies) {
-          if (currencies && currencies.length > 0) {
-            $scope.load(currencies[0]);
-          }
 
-        })
-        .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-      }      
-    });
+    })
+    .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));          
   });
 
-  $scope.$on('$ionicView.beforeLeave', function(){
+  $scope.$on('$ionicParentView.beforeLeave', function(){
     csNetwork.close();
   });
 

@@ -37,29 +37,13 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
           controller: 'CurrencyViewCtrl'
         }
       }
-    })
-
-    .state('app.view_peer', {
-      url: "/currency/peer/:server",
-      nativeTransitions: {
-          "type": "flip",
-          "direction": "right"
-      },
-      views: {
-        'menuContent': {
-          templateUrl: "templates/currency/view_peer.html",
-          controller: 'PeerCtrl'
-        }
-      }
     });
+
 })
 
 .controller('CurrencyLookupCtrl', CurrencyLookupController)
 
 .controller('CurrencyViewCtrl', CurrencyViewController)
-
-.controller('PeerCtrl', PeerController)
-
 ;
 
 function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
@@ -90,8 +74,6 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
 }
 
 function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
-
-  $scope.loadingPeers = true;
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
@@ -117,9 +99,9 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.xpercent = 0;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    $translate(['COMMON.DATE_PATTERN'])
-    .then(function($translations) {
-      $scope.datePattern = $translations['COMMON.DATE_PATTERN'];
+    $translate('COMMON.DATE_PATTERN')
+    .then(function(datePattern) {
+      $scope.datePattern = datePattern;
       if (state.stateParams && state.stateParams.name) { // Load by name
         csCurrency.searchByName(state.stateParams.name)
         .then(function(currency){
@@ -147,30 +129,6 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
       BMA.instance(currency.peer.host, currency.peer.port) : BMA;
     UIUtils.loading.show();
-
-    if ($scope.loadingPeers){
-      csNetwork.start($scope.node);
-
-      // Catch event on new peers
-      var refreshing = false;
-      csNetwork.api.data.on.changed($scope, function(data){
-        if (!refreshing) {
-          refreshing = true;
-          $timeout(function() { // Timeout avoid to quick updates
-            console.debug("Updating UI Peers");
-            $scope.peers = data.peers;
-            // Update currency params
-
-            $scope.loadingPeers = csNetwork.isBusy();
-            refreshing = false;
-            $scope.loadParameter();
-          }, 1100);
-        }
-      });
-      $scope.$on('$destroy', function(){
-        csNetwork.close();
-      });
-    }
 
     // Load currency parameters
     $scope.loadParameter();
@@ -263,17 +221,6 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
     .catch(function(err) {
       $scope.loading = false;
       UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
-    });
-  };
-
-  $scope.refresh = function() {
-    UIUtils.loading.show();
-
-    $scope.loadParameter()
-    .then(function(){
-      // Network
-      $scope.loadingPeers = true;
-      csNetwork.loadPeers();
     });
   };
 
