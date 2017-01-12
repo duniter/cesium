@@ -1,0 +1,22 @@
+<ion-view
+    left-buttons="leftButtons" class="pane"
+    cache-view="false"
+    >
+  <ion-nav-title>
+  </ion-nav-title>
+
+    <ion-nav-buttons side="secondary">
+        <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+        </button>
+    </ion-nav-buttons>
+
+    <ion-content>
+      <div class="row">
+        <div class="row responsive-sm">
+            <div class="col col-100">
+              <ng-include src="'templates/network/tabs/view_nodes.html'"></ng-include>
+            </div>
+        </div>
+    </ion-content>
+
+</ion-view>

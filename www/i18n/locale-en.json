@@ -77,7 +77,8 @@
     "ACCOUNT": "My Account",
     "TRANSFER": "Transfer",
     "SCAN": "Scan",
-    "SETTINGS": "Settings"
+    "SETTINGS": "Settings",
+    "NETWORK": "Network"
   },
   "ABOUT": {
     "TITLE": "About",
