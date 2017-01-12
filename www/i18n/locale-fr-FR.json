@@ -77,7 +77,8 @@
     "ACCOUNT": "Mon compte",
     "TRANSFER": "Virement",
     "SCAN": "Scanner",
-    "SETTINGS": "Paramètres"
+    "SETTINGS": "Paramètres",
+    "NETWORK" : "Réseau"
   },
   "ABOUT": {
     "TITLE": "A propos",
