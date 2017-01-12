@@ -1,4 +1,4 @@
-<span id="{{$ctrl.id}}"
+<span ng-attr-id="{{$ctrl.csId}}"
     class="badge badge-balanced"
     ng-class="{'badge-energized': $ctrl.requirements.willNeedCertificationCount || ($ctrl.requirements.needCertificationCount + $ctrl.requirements.pendingCertificationCount >= $ctrl.parameters.sigQty),
                'badge-assertive': ($ctrl.requirements.needCertificationCount + $ctrl.requirements.pendingCertificationCount < $ctrl.parameters.sigQty)}">
