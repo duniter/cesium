@@ -369,7 +369,8 @@
     "TRANSFER_SENT": "Transfer request successfully sent",
     "COPY_TO_CLIPBOARD_DONE": "Copy succeed",
     "MEMBERSHIP_OUT_SENT": "Membership revocation sent",
-    "NOT_NEED_MEMBERSHIP": "Already a member."
+    "NOT_NEED_MEMBERSHIP": "Already a member.",
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

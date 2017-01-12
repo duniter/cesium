@@ -43,7 +43,9 @@
                 <span class="gray" ng-if="$root.settings.expertMode"> | {{::cert.pending ? 'WOT.SIGNED_ON_BLOCK' : 'WOT.WRITTEN_ON_BLOCK' | translate:cert}}</span>
               </h4>
             </span>
-            <div class="badge badge-stable" ng-if="cert.expiresIn">
+            <div class="badge badge-stable"
+                 ng-class="{'badge-energized': cert.willExpire}"
+                 ng-if="cert.expiresIn">
               {{::cert.expiresIn | formatDurationTo}}
             </div>
             <div class="badge badge-assertive" ng-if="!cert.expiresIn">

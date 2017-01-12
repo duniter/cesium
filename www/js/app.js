@@ -14,7 +14,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(no-plugin)
   'cesium.plugins',
   // endRemoveIf(no-plugin)
-  'cesium.directives', 'cesium.controllers', 'cesium.templates', 'cesium.translations'
+  'cesium.controllers', 'cesium.templates', 'cesium.translations'
   ])
 
   .filter('formatInteger', function() {

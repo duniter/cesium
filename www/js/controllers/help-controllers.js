@@ -144,7 +144,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     $scope.continue = true;
 
     // Currency tour
-    return $scope.startCurrencyTour(0, true)
+    return $scope.startWotTour(0, true)
       .then(function(endIndex){
         if (!endIndex || $scope.cancelled) return false;
         csSettings.data.helptip.currency=endIndex;

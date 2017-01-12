@@ -55,21 +55,12 @@
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
-          <span id="helptip-wot-view-certifications-count"
-                class="badge"
-                ng-class="{'badge-balanced': formData.received_cert.length >= formData.sigQty,
-                 'badge-energized': formData.received_cert.length < formData.sigQty && formData.received_cert.length + formData.received_cert_pending.length >= formData.sigQty,
-                 'badge-assertive': formData.received_cert.length < formData.sigQty}">
-            <span ng-if="formData.received_cert.length || !formData.received_cert_pending.length">
-              <i ng-if="formData.received_cert.length >= formData.sigQty" class="ion-android-done"></i>
-              {{formData.received_cert.length}}
-            </span>
-            <span ng-if="formData.received_cert_pending.length">
-              <ng-if ng-if="formData.certificationCount">+ </ng-if>
-              <i class="ion-clock"></i>
-              {{formData.received_cert_pending.length}}
-            </span>
-          </span>
+
+          <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
+                                  requirements="formData.requirements"
+                                  parameters="{sigQty: formData.sigQty}">
+          </cs-badge-certification>
+
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 

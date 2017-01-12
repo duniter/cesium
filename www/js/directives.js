@@ -1,4 +1,4 @@
-angular.module('cesium.directives', ['cesium.services'])
+angular.module('cesium')
 
   // Add new compare-to directive (need for form validation)
   .directive("compareTo", function() {
@@ -250,16 +250,4 @@ angular.module('cesium.directives', ['cesium.services'])
   };
 })
 
-  // FIXME use Angular1.5 component
-  // see doc: https://medium.com/google-developer-experts/angular-new-features-in-angularjs-1-5-24f9b503af15#.wiklfv58s)
-  /*.component('csAvatar', {
-    bindings: {
-      avatar: '@',
-      icon: '@'
-    },
-    transclude: true,
-    template:
-    '<i ng-if="!$ctrl.avatar" class="item-image icon {{$ctrl.icon}}"></i>' +
-    '<i ng-if="$ctrl.avatar" class="item-image avatar" style="background-image: url(\'{{::$ctrl.avatar.src}}\')"></i>'
-  })*/
 ;

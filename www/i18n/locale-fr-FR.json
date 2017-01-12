@@ -242,8 +242,8 @@
     "EVENTS": "Evénements",
     "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
-    "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt manquer de certifications",
-    "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre va expirer {{membershipExpiresIn|formatDurationTo}}. Pensez <a ng-click=\"doQuickFix('renew')\">renouveller votre adhésion</a> d'ici là.",
+    "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt <b>manquer de certification</b> (au moins {{willNeedCertificationCount}} est nécessaire)",
+    "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre <b>va expirer {{membershipExpiresIn|formatDurationTo}}</b>. Pensez <a ng-click=\"doQuickFix('renew')\">renouveller votre adhésion</a> d'ici là.",
     "CERTIFICATION_COUNT": "Certifications reçues",
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
@@ -369,7 +369,8 @@
     "TRANSFER_SENT": "Demande de virement envoyée avec succès",
     "COPY_TO_CLIPBOARD_DONE": "Copie effectuée",
     "MEMBERSHIP_OUT_SENT": "Résiliation envoyée avec succès",
-    "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre."
+    "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre.",
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
