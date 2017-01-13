@@ -244,7 +244,7 @@
     "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt <b>manquer de certification</b> (au moins {{willNeedCertificationCount}} est nécessaire)",
-    "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre <b>va expirer {{membershipExpiresIn|formatDurationTo}}</b>. Pensez <a ng-click=\"doQuickFix('renew')\">renouveller votre adhésion</a> d'ici là.",
+    "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre <b>va expirer {{membershipExpiresIn|formatDurationTo}}</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renouveller votre adhésion</a> d'ici là.",
     "CERTIFICATION_COUNT": "Certifications reçues",
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
@@ -253,7 +253,7 @@
     "BTN_MEMBERSHIP_OUT": "Arrêter l'adhésion...",
     "BTN_SEND_IDENTITY": "Publier son identitié...",
     "BTN_REVOKE": "Revoquer<span class='hidden-xs hidden-sm'> définitivement</span> cette identité...",
-    "BTN_SHOW_DETAILS": "Afficher la clé publique",
+    "BTN_SHOW_DETAILS": "Afficher les infos techniques",
     "NEW": {
       "TITLE": "Inscription",
       "SLIDE_1_TITLE": "Choix de la monnaie :",

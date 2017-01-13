@@ -102,12 +102,11 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function showLoading() {
     if (!loadingTextCache) {
-      return $translate(['COMMON.LOADING'])
-      .then(function(translations){
-        return $ionicLoading.show({
-          template: translations['COMMON.LOADING']
+      return $translate('COMMON.LOADING')
+        .then(function(translation){
+          loadingTextCache = translation;
+          return showLoading();
         });
-      });
     }
 
     return $ionicLoading.show({
@@ -302,7 +301,7 @@ angular.module('cesium.utils.services', ['ngResource'])
             }
           }
 
-          popover.scope.$emit('popover.shown');
+          popover.scope.$parent.$emit('popover.shown');
 
           // Callback 'afterShow'
           if (options.afterShow) options.afterShow(popover);
@@ -314,23 +313,28 @@ angular.module('cesium.utils.services', ['ngResource'])
       popover = popover || options.scope.popovers[options.templateUrl];
       if (popover) {
         delete options.scope.popovers[options.templateUrl];
-        return popover.remove();
+        // Remove the popover
+        popover.remove()
+          // Workaround for issue #244
+          // See also https://github.com/driftyco/ionic/issues/9069
+          .then(function() {
+            var bodyEl = angular.element($window.document.querySelectorAll('body')[0]);
+            bodyEl.removeClass('popover-open');
+          });
       }
     };
 
     var popover = options.scope.popovers[options.templateUrl];
     if (!popover) {
-      var childScope = options.scope.$new();
 
       $ionicPopover.fromTemplateUrl(options.templateUrl, {
-        scope: childScope,
+        scope: options.scope,
         backdropClickToClose: options.backdropClickToClose
       })
         .then(function (popover) {
-          popover.scope = childScope;
           popover.isResolved = false;
 
-          childScope.closePopover = function(result) {
+          popover.scope.closePopover = function(result) {
             var autoremove = popover.options.autoremove;
             delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
             popover.hide()
@@ -347,7 +351,7 @@ angular.module('cesium.utils.services', ['ngResource'])
           };
 
           // Execute action on hidden popover
-          options.scope.$on('popover.hidden', function() {
+          popover.scope.$on('popover.hidden', function() {
             if (popover.options && popover.options.afterHidden) {
               popover.options.afterHidden();
             }

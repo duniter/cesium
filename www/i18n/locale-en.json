@@ -244,7 +244,7 @@
     "WAITING_MEMBERSHIP": "Membership sent. Waiting validation.",
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
     "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
-    "WILL_NEED_RENEW_MEMBERSHIP": "Your membership will expire {{membershipExpiresIn|formatDuration}}",
+    "WILL_NEED_RENEW_MEMBERSHIP": "Your membership will expire {{membershipExpiresIn|formatDurationTo}}. Consider <a ng-click=\"doQuickFix('renew')\">renewing your membership</a> by then.",
     "CERTIFICATION_COUNT": "Certifications count",
     "SIG_STOCK": "Stock of certifications to give",
     "BTN_RECEIVE_MONEY": "Receive",

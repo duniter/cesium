@@ -860,6 +860,10 @@ $screen-menu:                     845px;
   }
 }
 
+.popover-wallet-actions {
+  height: 400px;
+}
+
 @media screen and (max-width: $screen-sm-max) {
   #wallet {
     .qrcode {

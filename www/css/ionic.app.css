@@ -14306,6 +14306,9 @@ a {
 #wallet .item.item-icon-left.item-wallet-event .icon, #wallet .item.item-icon-left.item-wallet-event .icon-help, #wallet .item.item-icon-left.item-wallet-event .icon-alert {
   font-size: 15px; }
 
+.popover-wallet-actions {
+  height: 400px; }
+
 @media screen and (max-width: 991px) {
   #wallet .qrcode {
     top: 8px;

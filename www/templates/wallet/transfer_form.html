@@ -39,9 +39,9 @@
           <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}})</span>
           <input type="number" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}})"
                  ng-model="formData.amount" required>
-        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
+        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
         </span>
-        <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
+        <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="showUnitPopover($event)">
           <i class="icon ion-android-more-vertical"></i>
         </span>
       </div>
@@ -53,9 +53,9 @@
                keyboard-attach=""
                name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{'COMMON.UD' | translate}} {{unit | abbreviate}})" ng-model="formData.amount"
                required number>
-        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
+        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
         </span>
-        <span class="gray button button-block button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
+        <span class="gray button button-block button-icon visible-xs visible-sm" ng-click="showUnitPopover($event)">
           <i class="icon ion-android-more-vertical"></i>
         </span>
       </ion-item>

@@ -3,13 +3,13 @@
     <div class="list">
     <a class="item item-icon-left"
        ng-class="{ 'selected': !formData.useRelative}"
-            ng-click="setUseRelative(false)">
+            ng-click="closePopover(false)">
       <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': !formData.useRelative}"></i>
       {{$root.walletData.currency| abbreviate}}
     </a>
     <a class="item item-icon-left"
          ng-class="{ 'selected': formData.useRelative}"
-          ng-click="setUseRelative(true)">
+          ng-click="closePopover(true)">
       <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': formData.useRelative}"></i>
       {{'COMMON.UD' | translate}}<sub>{{$root.walletData.currency | abbreviate}}</sub></a>
     </div>
