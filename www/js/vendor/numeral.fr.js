@@ -8,22 +8,38 @@
    factory(global.numeral)
 }(this, function (numeral) { 'use strict';
 
+  var abbreviations = {
+    "thousand": "<small>x10<sup>3</sup></small>",
+    "million":  "<small>x10<sup>6</sup></small>",
+    "billion":  "<small>x10<sup>9</sup></small>",
+    "trillion": "<small>x10<sup>12</sup></small>"
+  };
+
     numeral.language('fr', {
       "delimiters": {
         "thousands": " ",
-        "decimal": "."
+        "decimal": ","
       },
-      "abbreviations": {
-        "thousand": "k",
-        "million": "M",
-        "billion": "Md",
-        "trillion": "T"
-      },
+      "abbreviations": abbreviations,
       "ordinal": function (number) {
         return (number === 1) ? 'er' : 'ième';
       },
       "currency": {
-        "symbol": "€"
+        "symbol": "X"
       }
     });
+
+  numeral.language('en', {
+    "delimiters": {
+      "thousands": ",",
+      "decimal": "."
+    },
+    "abbreviations": abbreviations,
+    "ordinal": function (number) {
+      return (number === 1) ? 'er' : 'ième';
+    },
+    "currency": {
+      "symbol": "X"
+    }
+  });
 }));

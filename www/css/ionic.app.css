@@ -14900,3 +14900,11 @@ a.underline:hover,
   position: relative;
   left: 0px;
   top: 6px; }
+
+.badge.badge-secondary,
+.badge .badge-secondary {
+  font-size: 12px;
+  font-style: italic;
+  top: 37px !important;
+  right: 25px !important;
+  font-weight: normal !important; }

@@ -122,7 +122,7 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
 
   // When changing use relative UD
   $scope.onUseRelativeChanged = function() {
-    $scope.unit = $rootScope.walletData.currency;
+    $scope.currency = $rootScope.walletData.currency;
     if ($scope.formData.useRelative) {
       $scope.convertedBalance = $rootScope.walletData.balance / $rootScope.walletData.currentUD;
       $scope.udAmount = $scope.amount * $rootScope.walletData.currentUD;
@@ -169,6 +169,9 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
             }
             if ($scope.formData.useRelative) {
               amount = $rootScope.walletData.currentUD * amount;
+            }
+            else {
+              amount = amount * 100; // remove 2 decimals of quantitative mode
             }
 
             return csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative);

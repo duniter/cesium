@@ -31,14 +31,14 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $ionicHistory,
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $filter,
                           UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
   'ngInject';
 
-  $scope.convertedBalance = null;
   $scope.hasCredit = false;
   $scope.showDetails = false;
   $scope.loading = true;
+  $scope.settings = csSettings.data;
 
   $scope.$on('$ionicView.enter', function() {
     $scope.loadWallet()
@@ -46,8 +46,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.walletData = walletData;
         $scope.setShowDetails(angular.isDefined(csSettings.data.wallet, csSettings.data.wallet.showPubkey) ?
           csSettings.data.wallet.showPubkey: true);
-        $scope.updateView();
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+        $scope.updateView();
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', $rootScope.walletData.pubkey, 1100);
         $scope.showHelpTip();
@@ -71,27 +71,22 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     $scope.actionsPopover.remove();
   });
 
-  $scope.refreshConvertedBalance = function() {
-    if (!$rootScope.walletData) {
-      return;
-    }
-    if (csSettings.data.useRelative) {
-      $scope.convertedBalance = $rootScope.walletData.balance ? ($rootScope.walletData.balance / $rootScope.walletData.currentUD) : 0;
-    } else {
-      var balance = $rootScope.walletData.balance;
-      if (!balance) {
-        balance = 0;
-      }
-      $scope.convertedBalance = balance;
-    }
+  $scope.onSettingsChanged = function() {
+    if (!$scope.walletData || $scope.loading) return;
+    $scope.unit = $filter('currencySymbol')($scope.walletData.currency, csSettings.data.useRelative);
+    $scope.secondaryUnit = $filter('currencySymbol')($scope.walletData.currency, !csSettings.data.useRelative);
   };
-  csSettings.api.data.on.changed($scope, $scope.refreshConvertedBalance);
-  $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
+  $scope.$watch('settings.useRelative', $scope.onSettingsChanged);
+
+  // Reload if show UD changed
+  $scope.$watch('settings.showUDHistory', function() {
+    if (!$scope.walletData || $scope.loading) return;
+    $scope.doUpdate();
+  }, true);
 
   // Update view
   $scope.updateView = function() {
-    $scope.hasCredit = (!!$rootScope.walletData.balance && $rootScope.walletData.balance > 0);
-    $scope.refreshConvertedBalance();
+    $scope.onSettingsChanged();
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight({selector: '#wallet .animate-fade-slide-in-right .item'});
@@ -251,13 +246,18 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Updating wallet data
   $scope.doUpdate = function() {
-    UIUtils.loading.show();
-    return csWallet.refreshData()
-    .then(function() {
-      $scope.updateView();
-      UIUtils.loading.hide();
-    })
-    .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+    console.debug('[wallet] TX history reloading...');
+    return UIUtils.loading.show()
+      .then(function() {
+        return csWallet.refreshData();
+      })
+      .then(function() {
+        return UIUtils.loading.hide();
+      })
+      .then(function() {
+        $scope.updateView();
+      })
+      .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
   /**
@@ -442,18 +442,22 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Transfer
   $scope.showTransferModal = function() {
-    if (!$scope.hasCredit) {
+    var hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
+    if (!hasCredit) {
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
     Modals.showTransfer()
       .then(function(done){
         if (done) {
-          UIUtils.alert.info('INFO.TRANSFER_SENT');
+          UIUtils.toast.show('INFO.TRANSFER_SENT');
+          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+
           // Set Motion
           $timeout(function() {
             UIUtils.motion.ripple({
-              selector: '.item-pending'
+              selector: '.item-pending',
+              startVelocity: 3000
             });
             // Set Ink
             UIUtils.ink({selector: '.item-pending'});

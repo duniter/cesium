@@ -1587,3 +1587,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+.badge.badge-secondary,
+.badge .badge-secondary {
+  font-size: 12px;
+  font-style: italic;
+  top: 37px !important;
+  right: 25px !important;
+  font-weight: normal !important;
+}
