@@ -477,7 +477,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
               selector: '.lazy-load .item.card-gallery',
               startVelocity: 3000
             });
-          }, 100);
+          }, 200);
         })
         .catch(function () {
           $scope.pictures = [];
