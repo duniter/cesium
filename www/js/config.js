@@ -10,35 +10,31 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 60000,
-	"fallbackLanguage": "fr-FR",
-	"defaultLanguage": "fr-FR",
-	"rememberMe": true,
+	"fallbackLanguage": "en",
+	"rememberMe": false,
 	"showUDHistory": false,
-	"timeout": 6000,
+	"timeout": 10000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"useLocalStorage": true,
 	"useRelative": true,
-	"initPhase": true,
-	"expertMode": true,
+	"initPhase": false,
+	"expertMode": false,
+	"decimalCount": 4,
 	"helptip": {
-		"enable": false,
-		"installDocUrl": {
-			"fr-FR": "http://www.le-sou.org/devenir-noeud/",
-			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-		}
+		"enable": true,
+		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 	},
 	"node": {
-		"host": "fakenet.cgeek.fr",
-		"port": "10900"
+		"host": "cgeek.fr",
+		"port": "9330"
 	},
 	"plugins": {
 		"es": {
-			"enable": false,
+			"enable": true,
 			"askEnable": false,
-			"host": "localhost",
-			"port": 9200,
-			"wsPort": 9400,
+			"host": "data.duniter.fr",
+			"port": "80",
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,
@@ -47,8 +43,8 @@ angular.module("cesium.config", [])
 			}
 		}
 	},
-	"version": "0.9.3",
-	"build": "2017-01-13T15:39:38.811Z",
+	"version": "0.9.4",
+	"build": "2017-01-13T18:05:19.807Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
