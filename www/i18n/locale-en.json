@@ -405,7 +405,7 @@
       "MEMBER": "Member",
       "MEMBER_DEF": "A member is a real and living human, wishing to participate freely to the monitary community. The member will receive universal dividend, according to the period and amount as defined in the <span class=\"text-italic\">currency parameters</span>.",
       "CURRENCY_RULES": "Currency rules",
-      "CURRENCY_RULES_DEF": "The currency parameters are defined once and for all. They set the rules under which the money will perform: universal dividend calculation, the amount of certifications needed to become a member, the maximum amount of certifications a member can send, etc. <a href=\"#/app/currency/view/\">See current parameters</a>.<br/>The parameters cannot be modified because of the use of a <span class=\"text-italic\">Blockchain</span> which carries and executes these rules, and constantly verifies their correct application.",
+      "CURRENCY_RULES_DEF": "The currency parameters are defined once and for all. They set the rules under which the currency will perform: universal dividend calculation, the amount of certifications needed to become a member, the maximum amount of certifications a member can send, etc. <a href=\"#/app/currency/view/\">See current parameters</a>.<br/>The parameters cannot be modified because of the use of a <span class=\"text-italic\">Blockchain</span> which carries and executes these rules, and constantly verifies their correct application.",
       "BLOCKCHAIN": "Blockchain",
       "BLOCKCHAIN_DEF": "The Blockchain is a decentralised system which, in case of Duniter, serves to carry and execute the <span class=\"text-italic\">currency rules</span>.<br/><a href=\"http://fr.duniter.org/presentation/\">Read more about Duniter</a> and the working of its blockchain.",
       "UNIVERSAL_DIVIDEND_DEF": "The Universal Dividend (UD) is the quantity of money co-created by each member, according to the period and the calculation defined in the <span class=\"text-italic\">currency rules</span>.<br/>Every term, the members receive an equal amount of new money on their account.<br/><br/>The UD undergoes a steady growth, to remain fair under its members (current and future), calculated by an average life expectancy, as demonstrated in the Relative Theory of Money (RTM).<br/><a href=\"http://trm.creationmonetaire.info\">Learn more about RTM</a> and open money."
@@ -417,9 +417,9 @@
       "CURRENCY_UNIT_RELATIVE": "The unit used here (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifies that the amounts in {{currency|capitalize}} have been devided by the <b>Universal Dividend</b> (UD).<br/><br/><small>This relative unit is <b>relevant</b> because it is stable in contrast to the permanently growing monitary mass.</small>",
       "CURRENCY_CHANGE_UNIT": "This button allows to <b>switch the unit</b> to show amounts in <b>{{currency|capitalize}}</b>, undevided by the Universal Dividend (instead of in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "This button allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
-      "CURRENCY_RULES": "The <b>parameters</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the money these rules make the monetary code <b>transparent and understandable</b>.",
+      "CURRENCY_RULES": "The <b>parameters</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the currency these rules make the monetary code <b>transparent and understandable</b>.",
       "CURRENCY_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
-      "CURRENCY_PEERS": "The <b>nodes</b> shown here corrrespond to <b>computers that update and check</b> the blokchain.<br/><br/>The more active nodes there are, the more <b>decentralised</b> and therefore trustworhty the money becomes.",
+      "CURRENCY_PEERS": "The <b>nodes</b> shown here corrrespond to <b>computers that update and check</b> the blokchain.<br/><br/>The more active nodes there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
       "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the node's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other nodes</b>.",
       "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a node</b> simply by <b>installing the Duniter software</b> (open and free). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
@@ -434,7 +434,7 @@
       "WALLET_RECEIVED_CERTS": "This shows the list of persons that certified you.",
       "WALLET_CERTIFY": "The button <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> allows selecting an identity and certifying it.<br/><br/>Only users that are <b>already member</b> may certify others.",
       "WALLET_CERT_STOCK": "Your supply of certifications (to send) is limited to <b>{{sigStock}} certifications</b>.<br/><br/>This supply will replete itself over time, as and when earlier certifications expire.",
-      "MENU_BTN_WOT": "The menu <b>{{'MENU.WOT'|translate}}</b> allows searching <b>users</b> of the money (member or not).",
+      "MENU_BTN_WOT": "The menu <b>{{'MENU.WOT'|translate}}</b> allows searching <b>users</b> of the currency (member or not).",
       "WOT_SEARCH_TEXT_XS": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>The search will start automatically.",
       "WOT_SEARCH_TEXT": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>Then hit <b>Enter</b> to start the search.",
       "WOT_SEARCH_RESULT": "Simply click a user row to view the details sheet.",
@@ -442,12 +442,12 @@
       "WOT_VIEW_CERTIFICATIONS_COUNT": "There are at least <b>{{sigQty}} certifications</b> needed to become a member and receive the <b>Universal Dividend</b>.",
       "WOT_VIEW_CERTIFICATIONS_CLICK": "Click here to open <b>a list of all certifications</b> given to and by this identity.",
       "WOT_VIEW_CERTIFY": "The button <b>{{'WOT.BTN_CERTIFY'|translate}}</b> allows to add your certification to this identity.",
-      "CERTIFY_RULES": "<b>Attention:</b> Only certify <b>real and living persons</b> that do not own any other certified account.<br/><br/>The trust carried by the money depends on each member's vigilance!",
-      "MENU_BTN_SETTINGS": "The <b>{{'MENU.SETTINGS'|translate}}</b> allow you to configure the Cesium application.<br/><br/>For example, you can <b>change the unit</b> in which the money will be shown.",
+      "CERTIFY_RULES": "<b>Attention:</b> Only certify <b>real and living persons</b> that do not own any other certified account.<br/><br/>The trust carried by the currency depends on each member's vigilance!",
+      "MENU_BTN_SETTINGS": "The <b>{{'MENU.SETTINGS'|translate}}</b> allow you to configure the Cesium application.<br/><br/>For example, you can <b>change the unit</b> in which the currency will be shown.",
       "HEADER_BAR_BTN_PROFILE": "Click here to access your <b>user profile</b>",
       "SETTINGS_CHANGE_UNIT": "You can <b>change the display unit</b> of amounts by clicking below.<br/><br/>- Deactivate the option to show amounts in {{currency|capitalize}}.<br/>- Activate the option for relative amounts in {{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub> (<b>divided</b> by the current Universal Dividend).",
       "END_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>Welcome to the <b>free economy</b>!",
-      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the money {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> below."
+      "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> below."
     }
   }
 }
