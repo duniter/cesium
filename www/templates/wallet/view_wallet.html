@@ -15,7 +15,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative }">
+  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, balance:walletData.balance }">
     <div class="positive-900-bg hero"
          id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
