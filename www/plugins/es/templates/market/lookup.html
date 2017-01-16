@@ -3,7 +3,8 @@
     <span translate>MARKET.SEARCH.TITLE</span>
   </ion-nav-title>
 
-  <ion-content class="lookupForm padding no-padding-xs" scroll="true">
+  <ion-content class="lookupForm padding no-padding-xs" scroll="true"
+               bind-notifier="{ rebind:$root.settings.useRelative }">
 
     <form ng-submit="doSearch()">
       <label class="item item-input">
@@ -62,10 +63,10 @@
               </span>
           </h4>
           <span  ng-if="rec.picturesCount > 1"
-                 class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
-          <h2 class="badge badge-price badge-calm" ng-if="rec.price">
-            <ng-if ng-if="settings.useRelative">{{::rec.price|formatDecimal}} {{'COMMON.UD'|translate}}<sub>{{::rec.currency|abbreviate}}</sub></ng-if>
-            <ng-if ng-if="!settings.useRelative">{{::rec.price|formatInteger}} {{::rec.currency|abbreviate}}</ng-if>
+                 class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i>
+          </span>
+          <h2 class="badge badge-price badge-calm"
+            ng-bind-html=":rebind:rec.price|formatAmount:{currency: rec.currency}">
           </h2>
         </div>
       </a>

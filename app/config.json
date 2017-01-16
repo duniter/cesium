@@ -173,7 +173,7 @@
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": true,
-    "initPhase": true,
+    "initPhase": false,
     "expertMode": true,
     "helptip": {
       "enable": false,

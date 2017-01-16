@@ -1,17 +1,18 @@
-<ion-popover-view id="unitPopover">
-  <ion-content>
+<ion-popover-view class="popover-unit">
+  <ion-content scroll="false">
     <div class="list">
-    <a class="item item-icon-left"
-       ng-class="{ 'selected': !formData.useRelative}"
-            ng-click="closePopover(false)">
-      <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': !formData.useRelative}"></i>
-      {{$root.walletData.currency| abbreviate}}
-    </a>
-    <a class="item item-icon-left"
-         ng-class="{ 'selected': formData.useRelative}"
-          ng-click="closePopover(true)">
-      <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': formData.useRelative}"></i>
-      {{'COMMON.UD' | translate}}<sub>{{$root.walletData.currency | abbreviate}}</sub></a>
+      <a class="item item-icon-left"
+         ng-class="{ 'selected': !formData.useRelative}"
+              ng-click="closePopover(false)">
+        <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': !formData.useRelative}"></i>
+        <i ng-bind-html="$root.walletData.currency | currencySymbol:false"></i>
+      </a>
+      <a class="item item-icon-left"
+           ng-class="{ 'selected': formData.useRelative}"
+            ng-click="closePopover(true)">
+        <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': formData.useRelative}"></i>
+        <i ng-bind-html="$root.walletData.currency | currencySymbol:true"></i>
+      </a>
     </div>
   </ion-content>
 </ion-popover-view>

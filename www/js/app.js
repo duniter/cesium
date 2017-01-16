@@ -34,8 +34,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         return;
       }
       var amount = input / currentUD;
-      if (Math.abs(amount) < minValue) return '~ 0';
-      amount = numeral(amount).format(format);
+      if (Math.abs(amount) < minValue) {
+        amount = '~ 0';
+      }
+      else {
+        amount = numeral(amount).format(format);
+      }
       if (options && options.currency) {
         return amount + ' ' + $filter('currencySymbol')(options.currency, true);
       }
@@ -66,6 +70,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         $filter('abbreviate')(input);
     };
   })
+
+  .filter('currencySymbolNoHtml', function($rootScope, $filter, csSettings) {
+    return function(input, useRelative) {
+      if (!input) return '';
+      return (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) ?
+        ($rootScope.translations.UD + ' ' + $filter('abbreviate')(input)) :
+        $filter('abbreviate')(input);
+    };
+  })
+
 
   .filter('formatDecimal', function(csConfig, $rootScope) {
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
