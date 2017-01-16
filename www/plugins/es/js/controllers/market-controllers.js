@@ -387,7 +387,7 @@ function ESMarketLookupController($scope, $state, $focus, $timeout, $filter, $q,
 }
 
 function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $state, $ionicHistory, $q,
-                                      $timeout, $filter,
+                                      $timeout, $filter, Modals,
                                       csWallet, esMarket, UIUtils,  esHttp, csSettings) {
   'ngInject';
 
@@ -398,8 +398,6 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
   $scope.canEdit = false;
   $scope.maxCommentSize = 10;
   $scope.loading = true;
-
-  //ESCommentsController.call(this, $scope, $timeout, $filter, $state, $focus, UIUtils, esMarket);
 
   $scope.$on('$ionicView.enter', function (e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -415,19 +413,21 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
     }
   });
 
-  $scope.$on('$ionicView.beforeLeave', function(event, args){
+  $scope.$on('$ionicView.beforeLeave', function (event, args) {
     $scope.$broadcast('$recordView.beforeLeave', args);
   });
 
   $scope.load = function (id, anchor) {
     $scope.loading = true;
-    esMarket.record.load(id)
+    esMarket.record.load(id, {
+      fetchPictures: false,// lazy load for pictures
+      convertPrice: true // convert to user unit
+    })
       .then(function (data) {
         $scope.formData = data.record;
         $scope.id = data.id;
         $scope.issuer = data.issuer;
         $scope.canEdit = $scope.formData && csWallet.isUserPubkey($scope.formData.issuer);
-        $scope.refreshConvertedPrice();
         UIUtils.loading.hide();
         $scope.loading = false;
         // Set Motion (only direct children, to exclude .lazy-load children)
@@ -459,7 +459,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
       });
 
     // Continue loading other data
-    $timeout(function() {
+    $timeout(function () {
 
       // Load pictures
       esMarket.record.picture.all({id: id})
@@ -472,7 +472,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
         })
         .then(function () {
           // Set Motion
-          $timeout(function() {
+          $timeout(function () {
             UIUtils.motion.fadeSlideIn({
               selector: '.lazy-load .item.card-gallery',
               startVelocity: 3000
@@ -487,73 +487,51 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
       $scope.$broadcast('$recordView.load', id, esMarket.record.comment);
 
       // scroll (if comment anchor)
-      if (anchor) $timeout(function() {
+      if (anchor) $timeout(function () {
         $anchorScroll(anchor);
       }, 1000);
     });
 
   };
 
-  $scope.refreshConvertedPrice = function() {
-    if (!$scope.formData.price) {
-      $scope.convertedPrice = null;
-      return;
-    }
-
-    // Price in UD
-    if (!$scope.formData.unit || $scope.formData.unit == 'UD') {
-      if (!csSettings.data.useRelative) {
-        $scope.convertedPrice = $scope.formData.price * $scope.currentUD;
-      }
-      else {
-        $scope.convertedPrice = $scope.formData.price;
-      }
-    }
-    // price in qte
-    else {
-      if (!csSettings.data.useRelative) {
-        $scope.convertedPrice = $scope.formData.price;
-      }
-      else {
-        $scope.convertedPrice =  $scope.formData.price / $scope.currentUD;
-      }
-    }
+  $scope.refreshConvertedPrice = function () {
+    $scope.loading = true; // force reloading if settings changed (e.g. unit price)
   };
   $scope.$watch('$root.settings.useRelative', $scope.refreshConvertedPrice, true);
 
-  $scope.edit = function() {
+  $scope.edit = function () {
     $state.go('app.market_edit_record', {id: $scope.id, title: $filter('formatSlug')($scope.formData.title)});
   };
 
-  $scope.delete = function() {
+  $scope.delete = function () {
     $scope.hideActionsPopover();
 
     UIUtils.alert.confirm('MARKET.VIEW.REMOVE_CONFIRMATION')
-    .then(function(confirm) {
-      if (confirm) {
-        esMarket.record.remove($scope.id)
-          .then(function () {
-            $ionicHistory.nextViewOptions({
-              historyRoot: true
-            });
-            $state.go('app.market_lookup');
-            UIUtils.toast.show('MARKET.INFO.RECORD_REMOVED');
-          })
-          .catch(UIUtils.onError('MARKET.ERROR.REMOVE_RECORD_FAILED'));
-      }
-    });
+      .then(function (confirm) {
+        if (confirm) {
+          esMarket.record.remove($scope.id)
+            .then(function () {
+              $ionicHistory.nextViewOptions({
+                historyRoot: true
+              });
+              $state.go('app.market_lookup');
+              UIUtils.toast.show('MARKET.INFO.RECORD_REMOVED');
+            })
+            .catch(UIUtils.onError('MARKET.ERROR.REMOVE_RECORD_FAILED'));
+        }
+      });
   };
 
   /* -- modals & popover -- */
 
-  $scope.showActionsPopover = function(event) {
+  $scope.showActionsPopover = function (event) {
     if (!$scope.actionsPopover) {
       $ionicPopover.fromTemplateUrl('plugins/es/templates/market/view_popover_actions.html', {
         scope: $scope
-      }).then(function(popover) {
+      }).then(function (popover) {
         $scope.actionsPopover = popover;
         //Cleanup the popover when we're done with it!
-        $scope.$on('$destroy', function() {
+        $scope.$on('$destroy', function () {
           $scope.actionsPopover.remove();
         });
         $scope.actionsPopover.show(event);
@@ -564,13 +542,13 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
     }
   };
 
-  $scope.hideActionsPopover = function() {
+  $scope.hideActionsPopover = function () {
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
   };
 
-  $scope.showSharePopover = function(event) {
+  $scope.showSharePopover = function (event) {
     $scope.hideActionsPopover();
 
     var title = $scope.formData.title;
@@ -585,6 +563,28 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
         postImage: $scope.pictures.length > 0 ? $scope.pictures[0] : null
       }
     });
+  };
+
+  $scope.buy = function () {
+    $scope.hideActionsPopover();
+
+    return $scope.loadWallet()
+      .then(function (walletData) {
+        UIUtils.loading.hide();
+        if (walletData) {
+          return Modals.showTransfer({
+              pubkey: $scope.issuer.pubkey,
+              uid: $scope.issuer.name || $scope.issuer.uid,
+              amount: $scope.formData.price
+            }
+          )
+            .then(function (result) {
+              if (result) {
+                return UIUtils.toast.show('INFO.TRANSFER_SENT');
+              }
+            });
+        }
+      });
   };
 }
 
@@ -649,9 +649,15 @@ function ESMarketRecordEditController($scope, $q, $timeout, $state, $ionicPopove
   };
 
   $scope.load = function(id) {
-    return esMarket.record.load(id, {fetchPictures: true})
+    return esMarket.record.load(id, {
+        fetchPictures: true,
+        convertPrice: false // keep original price
+      })
       .then(function(data) {
         $scope.formData = data.record;
+        if (data.record.unit === 'unit') {
+          $scope.formData.price = $scope.formData.price / 100; // add 2 decimals in quantitative mode
+        }
         $scope.id = data.id;
         $scope.pictures = data.record.pictures || [];
         delete $scope.formData.pictures; // duplicated with $scope.pictures
@@ -684,13 +690,16 @@ function ESMarketRecordEditController($scope, $q, $timeout, $state, $ionicPopove
 
       // Preparing json (pictures + resizing thumbnail)
       .then(function() {
-        var json = $scope.formData;
+        var json = angular.copy($scope.formData);
 
         if (!!json.price && typeof json.price == "string") {
           json.price = parseFloat(json.price.replace(new RegExp('[.,]'), '.')); // fix #124
         }
         if (!!json.price) {
           json.unit = json.unit || ($scope.useRelative ? 'UD' : 'unit');
+          if (json.unit === 'unit') {
+            json.price = json.price * 100; // remove 2 decimals in quantitative mode
+          }
         }
         else {
           delete json.unit;

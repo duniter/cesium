@@ -73,18 +73,18 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
     }
 
 
-    function readRecordFromHit(hit, categories, currentUD) {
+    function readRecordFromHit(hit, categories, currentUD, expectedPriceUnit) {
 
       var record = hit._source;
       if (record.category && record.category.id) {
         record.category = categories[record.category.id];
       }
 
-      if (record.price) {
-        if (!csSettings.data.useRelative && (!record.unit || record.unit==='UD')) {
+      if (record.price && expectedPriceUnit) {
+        if (expectedPriceUnit === 'unit' && (!record.unit || record.unit==='UD')) {
           record.price = record.price * currentUD;
         }
-        else if (csSettings.data.useRelative && record.unit==='unit') {
+        else if (expectedPriceUnit === 'UD' && record.unit==='unit') {
           record.price = record.price / currentUD;
         }
       }
@@ -159,8 +159,9 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
           if (!res || !res.hits || !res.hits.total) {
             return [];
           }
+          var expectedPriceUnit = csSettings.data.useRelative ? 'UD' : 'unit';
           return res.hits.hits.reduce(function(result, hit) {
-            var record = readRecordFromHit(hit, categories, currentUD);
+            var record = readRecordFromHit(hit, categories, currentUD, expectedPriceUnit);
             record.id = hit._id;
             return result.concat(record);
           }, []);
@@ -169,7 +170,12 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
 
     function loadData(id, options) {
       options = options || {};
-      options.fecthPictures = options.fetchPictures || false;
+      options.fetchPictures = angular.isDefined(options.fetchPictures) ? options.fetchPictures : true;
+      options.convertPrice = angular.isDefined(options.convertPrice) ? options.convertPrice : false;
+
+      var expectedPriceUnit = options.convertPrice ?
+        (csSettings.data.useRelative ? 'UD' : 'unit') :
+        undefined;
 
       return $q.all([
           // load categories
@@ -186,7 +192,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
             }),
 
           // Do get source
-          options.fecthPictures ?
+          options.fetchPictures ?
             exports._internal.get({id: id}) :
             exports._internal.getCommons({id: id})
         ])
@@ -194,7 +200,9 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
           var categories = res[0];
           var currentUD = res[1];
           var hit = res[2];
-          var record = readRecordFromHit(hit, categories, currentUD);
+
+
+          var record = readRecordFromHit(hit, categories, currentUD, expectedPriceUnit);
 
           // Load issuer (avatar, name, uid, etc.)
           return esUser.profile.fillAvatars([{pubkey: record.issuer}])

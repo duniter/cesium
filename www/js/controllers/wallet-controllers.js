@@ -86,6 +86,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Update view
   $scope.updateView = function() {
+    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+
     $scope.onSettingsChanged();
     // Set Motion
     $timeout(function() {

@@ -14080,6 +14080,16 @@ a {
   top: 12px;
   left: 10px; }
 
+/**********
+   Unit popover
+**********/
+.popover-unit {
+  height: 108px;
+  max-width: 115px; }
+
+/**********
+   Notifications view
+**********/
 .view-notification .item.unread {
   background-color: #ecf0f7 !important;
   border-color: #dddfe2 !important; }
@@ -14906,5 +14916,6 @@ a.underline:hover,
   font-size: 12px;
   font-style: italic;
   top: 37px !important;
-  right: 25px !important;
-  font-weight: normal !important; }
+  font-weight: normal !important;
+  margin-right: 0px;
+  padding-right: 0px; }

@@ -115,6 +115,7 @@
     "COMMON": {
       "PRICE": "Price",
       "BTN_BUY": "Buy",
+      "BTN_BUY_DOTS": "Buy...",
       "BTN_NEW_AD": "New ad"
     },
     "SEARCH": {

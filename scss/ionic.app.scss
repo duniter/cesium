@@ -545,6 +545,19 @@ $screen-menu:                     845px;
 
 }
 
+/**********
+   Unit popover
+**********/
+
+.popover-unit {
+  height: 108px;
+  max-width: 115px;
+}
+
+/**********
+   Notifications view
+**********/
+
 .view-notification {
 
   .item.unread {
@@ -562,6 +575,8 @@ $screen-menu:                     845px;
     }
   }
 }
+
+
 
 /* ============
  Buttons
@@ -1592,6 +1607,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-size: 12px;
   font-style: italic;
   top: 37px !important;
-  right: 25px !important;
   font-weight: normal !important;
+  margin-right: 0px;
+  padding-right: 0px;
 }

@@ -21,6 +21,7 @@ angular.module("cesium.config", [])
 	"initPhase": false,
 	"expertMode": false,
 	"decimalCount": 4,
+	"compatProtocol_0_80": true,
 	"helptip": {
 		"enable": true,
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -43,8 +44,8 @@ angular.module("cesium.config", [])
 			}
 		}
 	},
-	"version": "0.9.4",
-	"build": "2017-01-13T18:05:19.807Z",
+	"version": "0.9.6",
+	"build": "2017-01-16T19:38:18.137Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
