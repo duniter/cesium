@@ -45,7 +45,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "0.9.5",
-	"build": "2017-01-16T10:53:44.147Z",
+	"build": "2017-01-16T11:25:54.878Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
