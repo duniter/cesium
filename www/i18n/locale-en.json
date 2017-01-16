@@ -82,7 +82,7 @@
   },
   "ABOUT": {
     "TITLE": "About",
-    "LICENSE": "<b>Open source</b> software (License GNU GPLv3).",
+    "LICENSE": "<b>Libre software</b> (License GNU GPLv3).",
     "CODE": "Source code:",
     "DEVELOPERS": "Developers:",
     "FORUM": "Forum:",
@@ -397,7 +397,7 @@
       "SECTION": "Join",
       "SALT": "The protection phrase is very important. It is used to hash you password, which in turn is used to calculate your <span class=\"text-italic\">public account key</span> (its number) and the private key to access it.<br/><b>Please remeber this phrase well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good protection phrase must be sufficiently long (8 characters at the very least) and as original as possible.",
       "PASSWORD": "The password is very important. Together with the protection phrase, it is use to calculate your account number (pblic key) and the private key to access it.<br/><b>Please remember it well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good password is made (ideally) of at least 8 characters, with at least one capital and one number.",
-      "PSEUDO": "A pseudonym is used only when joining as <span class=\"text-italic\">member</span>. IT is always associated with a wallet (by its <span class=\"text-italic\">public key</span>).<br/>It is published on the network so that other users may identify it, certify or send money to the account.<br/>A pseudonym must be unique among all <u>active</u> members."
+      "PSEUDO": "A pseudonym is used only when joining as <span class=\"text-italic\">member</span>. It is always associated with a wallet (by its <span class=\"text-italic\">public key</span>).<br/>It is published on the network so that other users may identify it, certify or send money to the account.<br/>A pseudonym must be unique among all members (current and past)."
     },
     "GLOSSARY": {
       "SECTION": "Glossary",
