@@ -12,6 +12,7 @@
     "initPhase": false,
     "expertMode": false,
     "decimalCount": 4,
+    "compatProtocol_0_80": true,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -50,6 +51,7 @@
     "initPhase": false,
     "expertMode": false,
     "decimalCount": 2,
+    "compatProtocol_0_80": true,
     "helptip": {
       "enable": false,
       "installDocUrl": {
@@ -63,7 +65,7 @@
     },
     "plugins":{
       "es": {
-        "enable": false,
+        "enable": true,
         "askEnable": true,
         "host": "data.le-sou.org",
         "port": "80",
@@ -91,6 +93,7 @@
     "initPhase": false,
     "expertMode": false,
     "decimalCount": 2,
+    "compatProtocol_0_80": true,
     "helptip": {
       "enable": true,
       "installDocUrl": {

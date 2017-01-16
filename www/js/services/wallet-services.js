@@ -3,14 +3,20 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings) {
+.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csConfig, csSettings) {
   'ngInject';
 
   factory = function(id) {
 
     var
     constants = {
-      STORAGE_KEY: 'CESIUM_DATA'
+      STORAGE_KEY: 'CESIUM_DATA',
+      /* Need for compat with old currencies (test_net and sou) */
+      TX_VERSION:   csConfig.compatProtocol_0_80 ? 3 : BMA.constants.PROTOCOL_VERSION,
+      IDTY_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      MS_VERSION:   csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      CERT_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      REVOKE_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION
     },
     data = {},
 
@@ -1086,7 +1092,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           });
       }
 
-      var tx = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+      var tx = 'Version: '+ constants.TX_VERSION +'\n' +
         'Type: Transaction\n' +
         'Currency: ' + data.currency + '\n' +
         'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
@@ -1239,7 +1245,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         throw {message: 'ERROR.WALLET_IDENTITY_EXPIRED'};
       }
 
-      var identity = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+      var identity = 'Version: '+ constants.IDTY_VERSION +'\n' +
         'Type: Identity\n' +
         'Currency: ' + data.currency + '\n' +
         'Issuer: ' + data.pubkey + '\n' +
@@ -1328,7 +1334,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             })
           .then(function(block) {
             // Create membership to sign
-            membership = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+            membership = 'Version: '+ constants.MS_VERSION +'\n' +
               'Type: Membership\n' +
               'Currency: ' + data.currency + '\n' +
               'Issuer: ' + data.pubkey + '\n' +
@@ -1373,7 +1379,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(block) {
           current = block;
           // Create the self part to sign
-          cert = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+          cert = 'Version: '+ constants.CERT_VERSION +'\n' +
             'Type: Certification\n' +
             'Currency: ' + data.currency + '\n' +
             'Issuer: ' + data.pubkey + '\n' +
@@ -1428,7 +1434,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var identityLines = identity.trim().split('\n');
           var idtySignature = identityLines[identityLines.length-1];
 
-          var revocation = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+          var revocation = 'Version: '+ constants.REVOKE_VERSION +'\n' +
             'Type: Revocation\n' +
             'Currency: ' + data.currency + '\n' +
             'Issuer: ' + data.pubkey + '\n' +
