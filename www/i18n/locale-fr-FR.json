@@ -81,7 +81,7 @@
     "NETWORK" : "Réseau"
   },
   "ABOUT": {
-    "TITLE": "A propos",
+    "TITLE": "À propos",
     "LICENSE": "Application <b>libre</b> (licence GNU GPLv3).",
     "CODE": "Code source :",
     "DEVELOPERS": "Développé par :",
@@ -288,7 +288,7 @@
     "TITLE": "Virement",
     "SUB_TITLE": "Faire un virement",
     "FROM": "De",
-    "TO": "A",
+    "TO": "À",
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
     "COMMENT": "Commentaire",
