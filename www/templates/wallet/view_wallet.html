@@ -150,9 +150,7 @@
           <!-- Pending transactions -->
           <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
             <span translate>ACCOUNT.PENDING_TX</span>
-            <div class="badge item-note">
-              <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
-              <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
+            <div class="badge item-note" ng-bind-html=":rebind:walletData.parameters.currency | currencySymbol">
             </div>
           </span>
 
@@ -221,10 +219,7 @@
             <i class="item-image avatar"
                ng-if="!tx.avatar"
                ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <img class="item-image avatar"
-                 ng-if="tx.avatar"
-                 ng-src="{{tx.avatar.src}}">
-            </img>
+            <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
             <h2 class="col-80">
               <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
                 <span ng-if="tx.uid">
