@@ -73,19 +73,16 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
     }
 
 
-    function readRecordFromHit(hit, categories, currentUD, expectedPriceUnit) {
+    function readRecordFromHit(hit, categories, currentUD, convertPriceToUnit) {
 
       var record = hit._source;
       if (record.category && record.category.id) {
         record.category = categories[record.category.id];
       }
 
-      if (record.price && expectedPriceUnit) {
-        if (expectedPriceUnit === 'unit' && (!record.unit || record.unit==='UD')) {
+      if (record.price && convertPriceToUnit) {
+        if (!record.unit || record.unit==='UD') {
           record.price = record.price * currentUD;
-        }
-        else if (expectedPriceUnit === 'UD' && record.unit==='unit') {
-          record.price = record.price / currentUD;
         }
       }
       if (hit.highlight) {
@@ -159,9 +156,8 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
           if (!res || !res.hits || !res.hits.total) {
             return [];
           }
-          var expectedPriceUnit = csSettings.data.useRelative ? 'UD' : 'unit';
           return res.hits.hits.reduce(function(result, hit) {
-            var record = readRecordFromHit(hit, categories, currentUD, expectedPriceUnit);
+            var record = readRecordFromHit(hit, categories, currentUD, true);
             record.id = hit._id;
             return result.concat(record);
           }, []);
@@ -172,10 +168,6 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
       options = options || {};
       options.fetchPictures = angular.isDefined(options.fetchPictures) ? options.fetchPictures : true;
       options.convertPrice = angular.isDefined(options.convertPrice) ? options.convertPrice : false;
-
-      var expectedPriceUnit = options.convertPrice ?
-        (csSettings.data.useRelative ? 'UD' : 'unit') :
-        undefined;
 
       return $q.all([
           // load categories
@@ -202,7 +194,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
           var hit = res[2];
 
 
-          var record = readRecordFromHit(hit, categories, currentUD, expectedPriceUnit);
+          var record = readRecordFromHit(hit, categories, currentUD, options.convertPrice);
 
           // Load issuer (avatar, name, uid, etc.)
           return esUser.profile.fillAvatars([{pubkey: record.issuer}])
