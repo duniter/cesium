@@ -321,17 +321,20 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     }
 
-    // Status bar
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-
     // Ionic Platform Grade is not A, disabling views transitions
     if (ionic.Platform.grade.toLowerCase()!='a') {
       console.log('Disable UI effects - plateform\'s grade is not [a] but [' + ionic.Platform.grade + ']');
       $ionicConfig.views.transition('none');
-      UIUtils.disableEffects();
+      // FIXME: some effect appears anyway...
+      // UIUtils.disableEffects();
+    }
+  })
+  // Status bar
+  .then(function() {
+    ionic.Platform.fullScreen();
+    if (window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      StatusBar.styleDefault();
     }
   });
 
