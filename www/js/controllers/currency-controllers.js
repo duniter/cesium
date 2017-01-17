@@ -73,7 +73,8 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   };
 }
 
-function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
+  BMA, UIUtils, csSettings, csCurrency, csNetwork) {
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
@@ -99,29 +100,21 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.xpercent = 0;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    $translate('COMMON.DATE_PATTERN')
-    .then(function(datePattern) {
-      $scope.datePattern = datePattern;
-      if (state.stateParams && state.stateParams.name) { // Load by name
-        csCurrency.searchByName(state.stateParams.name)
-        .then(function(currency){
-          $scope.load(currency);
-        });
-      }
-      else {
-        csCurrency.all()
-        .then(function (currencies) {
-          if (currencies && currencies.length > 0) {
-            $scope.load(currencies[0]);
-          }
-        })
-        .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-      }
-    });
-  });
-
-  $scope.$on('$ionicView.beforeLeave', function(){
-    csNetwork.close();
+    if (state.stateParams && state.stateParams.name) { // Load by name
+      csCurrency.searchByName(state.stateParams.name)
+      .then(function(currency){
+        $scope.load(currency);
+      });
+    }
+    else {
+      csCurrency.all()
+      .then(function (currencies) {
+        if (currencies && currencies.length > 0) {
+          $scope.load(currencies[0]);
+        }
+      })
+      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+    }
   });
 
   $scope.load = function(currency) {
