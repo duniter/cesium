@@ -121,7 +121,8 @@
     "POPUP_NODE": {
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
-    }
+    },
+    "SHOW_NODE_LIST" : "Choisir un noeud"
   },
   "CURRENCY": {
     "SELECT": {
@@ -160,7 +161,10 @@
     "PEERS": "Noeuds",
     "KNOWN_PEERS": "Noeuds connus",
     "SIGNED_ON_BLOCK": "Signé sur le bloc",
-    "MIRROR": "mirroir"
+    "MIRROR": "mirroir",
+    "NODE_LIST" : "Liste des noeuds",
+    "MEMBERS" : "Noeuds membres",
+    "ALL_NODES" : "Tous les noeuds"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",

@@ -1,12 +1,17 @@
 <form name="popupForm" ng-submit="">
   <div class="list" ng-init="setPopupForm(popupForm)">
-    <label class="item item-input"
-           ng-class="{'item-input-error': popupForm.$submitted && popupForm.newNode.$invalid}">
-      <input name="newNode" type="text" placeholder="{{'SETTINGS.NODE_HELP' | translate}}"
-             ng-model="popupData.newNode"
-             ng-minlength="3"
-             required>
-    </label>
+      <label class="item item-input"
+             ng-class="{'item-input-error': popupForm.$submitted && popupForm.newNode.$invalid}">
+        <input name="newNode" type="text" placeholder="{{'SETTINGS.NODE_HELP' | translate}}"
+               ng-model="popupData.newNode"
+               ng-minlength="3"
+               required>
+      </label>
+      <button class="button-clear button-small gray pull-right"
+              ng-mousedown="showNodeList()">{{'SETTINGS.SHOW_NODE_LIST' | translate}}
+              <i class="icon-right ion-chevron-right gray"></i>
+      </button>
+
     <div class="form-errors"
          ng-if="popupForm.$submitted && popupForm.newNode.$error"
          ng-messages="popupForm.newNode.$error">
@@ -19,3 +24,5 @@
     </div>
   </div>
 </form>
+
+

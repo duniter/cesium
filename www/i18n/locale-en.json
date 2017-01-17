@@ -121,7 +121,9 @@
     "POPUP_NODE": {
       "TITLE" : "Duniter Node",
       "HELP" : "Set the address of the node to use:"
-    }
+    },
+    "SHOW_NODE_LIST" : "Choose a node"
+
   },
   "CURRENCY": {
     "SELECT": {
@@ -160,7 +162,10 @@
     "PEERS": "Peers",
     "KNOWN_PEERS": "Known peers",
     "SIGNED_ON_BLOCK": "Signed on block",
-    "MIRROR": "mirror"
+    "MIRROR": "mirror",
+    "NODE_LIST" : "Node's list",
+    "MEMBERS" : "Member Nodes",
+    "ALL_NODES" : "All nodes"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",

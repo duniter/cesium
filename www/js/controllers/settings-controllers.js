@@ -20,12 +20,14 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp, UIUtils, BMA, csSettings, $ionicPopover) {
+function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp,
+  UIUtils, BMA, csSettings, $ionicPopover, ModalUtils) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
+  $scope.nodePopup = {};
 
   $scope.$on('$ionicView.enter', function() {
     $scope.load();
@@ -93,6 +95,30 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     });
   };
 
+  $scope.showNodeList = function(){
+    $ionicPopup._popupStack[0].responseDeferred.resolve();
+    return ModalUtils.show('/templates/network/modal_network.html', 'NetworkModalCtrl')
+    .then(function(result){
+      if (result){
+        var parts = result.server.split(':');
+        var newNode;
+        if(result.dns){
+          newNode = {
+            host: result.dns,
+            port: parts[1]
+          };
+        }
+        else{
+          newNode = {
+            host: parts[0],
+            port: parts[1]
+          }
+        };
+        $scope.changeNode(newNode);
+      }
+    });
+  };
+
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
@@ -100,7 +126,8 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
-      $translate(['SETTINGS.POPUP_NODE.TITLE', 'SETTINGS.POPUP_NODE.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+      $translate(['SETTINGS.POPUP_NODE.TITLE', 'SETTINGS.POPUP_NODE.HELP',
+        'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
           // Choose UID popup
           $ionicPopup.show({
