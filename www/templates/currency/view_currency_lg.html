@@ -10,14 +10,29 @@
     </ion-nav-buttons>
 
     <ion-content>
-      <div class="row">
-        <div class="row responsive-sm">
-            <div class="col col-50 ">
-              <ng-include src="'templates/currency/tabs/view_parameters.html'"></ng-include>
-            </div>
-            <div class="col col-50">
-                <ng-include src="'templates/currency/tabs/view_network.html'"></ng-include>
-            </div>
+      <div class="row responsive-sm">
+        <div class="col list">
+          <div class="item item-divider">
+            <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
+          </div>
+
+          <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
+
+          <div class="item item-divider">
+            <span translate>CURRENCY.VIEW.TAB_WOT</span>
+          </div>
+
+          <ng-include src="'templates/currency/items_wot.html'"></ng-include>
         </div>
+
+        <div class="col list">
+
+          <div class="item item-divider">
+            <span translate>CURRENCY.VIEW.TAB_NETWORK</span>
+          </div>
+
+          <ng-include src="'templates/currency/items_network.html'"></ng-include>
+        </div>
+      </div>
     </ion-content>
 </ion-view>

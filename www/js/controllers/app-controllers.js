@@ -33,6 +33,17 @@ angular.module('cesium.app.controllers', ['cesium.services'])
           }
         }
       })
+
+      .state('app.lock', {
+        cache: false,
+        url: "/lock",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/common/view_passcode.html",
+            controller: 'PassCodeCtrl'
+          }
+        }
+      })
     ;
 
     // if none of the above states are matched, use this as the fallback
@@ -47,6 +58,8 @@ angular.module('cesium.app.controllers', ['cesium.services'])
   .controller('EmptyModalCtrl', EmptyModalController)
 
   .controller('AboutCtrl', AboutController)
+
+  .controller('PassCodeCtrl', PassCodeController)
 
 ;
 
@@ -286,10 +299,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     .then(function() {
       $ionicSideMenuDelegate.toggleLeft();
       $ionicHistory.clearHistory();
+
       return $ionicHistory.clearCache()
       .then(function() {
-        UIUtils.loading.hide();
-        $state.go('app.home');
+        $scope.showHome();
       });
     })
     .catch(UIUtils.onError());
@@ -390,4 +403,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 function AboutController($scope, csConfig) {
   'ngInject';
   $scope.config = csConfig;
+}
+
+function PassCodeController($scope) {
+  'ngInject';
+
+
 }

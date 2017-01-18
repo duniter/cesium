@@ -15,7 +15,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" >
+  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, balance:walletData.balance }">
     <div class="positive-900-bg hero"
          id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
@@ -29,8 +29,13 @@
         <h3 class="light" ng-if="walletData.name || walletData.uid">{{walletData.name || walletData.uid}}</h3>
         <h3 class="light" ng-if="!walletData.name && !walletData.uid"><i class="icon ion-key"></i> {{walletData.pubkey | formatPubkey}}</h3>
         <h4 class="light">
-            <span ng-if="!$root.settings.useRelative">{{convertedBalance | formatInteger}} {{walletData.parameters.currency | abbreviate}}</span>
-            <span ng-if="$root.settings.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub></span>
+          <span ng-bind-html=":balance:rebind:walletData.balance | formatAmount"></span>
+          <span ng-bind-html=":rebind:unit"></span>
+          <small ng-if="$root.settings.expertMode"
+                 style="font-style: italic;">
+            (<span ng-bind-html=":balance:rebind:walletData.balance | formatAmount:{useRelative:!$root.settings.useRelative}"></span>
+             <span ng-bind-html=":rebind:secondaryUnit"></span>)
+          </small>
         </h4>
         <div class="helptip-anchor-center">
           <a id="helptip-wallet-balance">&nbsp;</a>
@@ -57,14 +62,13 @@
       </button>
 
       <button class="button button-calm ink"
-              ng-if="convertedBalance"
               ng-click="showTransferModal()">
         {{'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
 
       <button class="button button-raised icon-left ion-loop ink"
               ng-if="walletData.requirements.needRenew"
-              ng-click="membershipRenew()">
+              ng-click="renewMembership()">
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
       </button>
 
@@ -90,8 +94,11 @@
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
             <span clas="input-label">{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
-            <span class="badge"
-                  ng-class="{'badge-balanced': walletData.requirements.needCertificationCount==0 && walletData.requirements.willNeedCertificationCount==0, 'badge-assertive': walletData.requirements.needCertificationCount>0 || walletData.requirements.willNeedCertificationCount>0}">{{walletData.requirements.certificationCount}}</span>
+
+            <cs-badge-certification requirements="walletData.requirements"
+                                    parameters="{sigQty: walletData.parameters.sigQty}">
+            </cs-badge-certification>
+
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>
 
@@ -143,9 +150,7 @@
           <!-- Pending transactions -->
           <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
             <span translate>ACCOUNT.PENDING_TX</span>
-            <div class="badge item-note">
-              <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
-              <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
+            <div class="badge item-note" ng-bind-html=":rebind:walletData.parameters.currency | currencySymbol">
             </div>
           </span>
 
@@ -153,10 +158,8 @@
             <i class="item-image avatar"
                ng-if="!tx.avatar"
                ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <img class="item-image avatar"
-                 ng-if="tx.avatar"
-                 ng-src="{{tx.avatar.src}}">
-            </img>
+            <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
+
             <h2 class="col-80">
               <i class="icon ion-clock"> </i>
               <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
@@ -182,10 +185,14 @@
                 {{::tx.time | formatDate}}
               </span>
             </h3>
-            <div class="badge badge-pending item-note"
-                 ng-class="{'badge-balanced': tx.amount > 0}">
-              <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-              <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span class="badge badge-pending item-note"
+                  ng-class="{'badge-balanced': tx.amount > 0}">
+              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
+              <span ng-bind-html=":rebind:unit"></span>
+            </span>
+            <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
+              (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}"></ng-bind-html>
+              <span ng-bind-html=":rebind:secondaryUnit"></span>)
             </div>
           </span>
 
@@ -212,10 +219,7 @@
             <i class="item-image avatar"
                ng-if="!tx.avatar"
                ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <img class="item-image avatar"
-                 ng-if="tx.avatar"
-                 ng-src="{{tx.avatar.src}}">
-            </img>
+            <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
             <h2 class="col-80">
               <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
                 <span ng-if="tx.uid">
@@ -243,10 +247,14 @@
                 {{::tx.time | formatDate}}
               </span>
             </h3>
-            <div class="badge item-note"
-                 ng-class="{'badge-balanced': tx.amount > 0}">
-              <span ng-if="!$root.settings.useRelative">{{::tx.amount | formatInteger}}</span>
-              <span ng-if="$root.settings.useRelative">{{::tx.amount/walletData.currentUD | formatDecimal}}</span>
+            <span class="badge item-note"
+                  ng-class="{'badge-balanced': tx.amount > 0}">
+              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
+              <span ng-bind-html=":rebind:unit"></span>
+            </span>
+            <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
+              (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}"></ng-bind-html>
+              <span ng-bind-html=":rebind:secondaryUnit"></span>)
             </div>
           </div>
 

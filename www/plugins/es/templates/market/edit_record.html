@@ -92,17 +92,9 @@
               <div class="item item-input item-floating-label item-button-right"
                    ng-class="{'item-input-error': form.$submitted && form.price.$invalid}"
                    >
-                <div class="input-label"
-                     ng-class="{'has-input': formData.price != undefined || form.price.$invalid}">{{'MARKET.EDIT.RECORD_PRICE' | translate}}
-                  <ng-if ng-if="useRelative">({{'COMMON.UD' | translate}}<sub>{{formData.currency | abbreviate}}</sub>)</ng-if>
-                  <ng-if ng-if="!useRelative">({{formData.currency | abbreviate}})</ng-if>
-                </div>
-                <input ng-if="!useRelative"
-                       type="number" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{formData.currency | abbreviate}})"
-                       ng-model="formData.price"
-                       number-int>
-                <input ng-if="useRelative"
-                       type="number" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{formData.currency | abbreviate}})"
+                <div class="input-label">{{::'MARKET.EDIT.RECORD_PRICE' | translate}} (<span ng-bind-html="formData.currency| currencySymbol:useRelative"></span>)</div>
+
+                <input type="number" name="price" placeholder="{{::'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{formData.currency | currencySymbolNoHtml:useRelative}})"
                        ng-model="formData.price"
                        number-float>
                 <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">

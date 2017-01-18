@@ -39,7 +39,7 @@
   padding-bottom: 0px;
 }
 
-.item-record .badge-picture-count,
+.card-record .badge-picture-count,
 .row-record .badge-picture-count {
   position: absolute !important;
   left: 67px !important;
@@ -48,16 +48,30 @@
   top: inherit !important;
 }
 
-.item-record .badge-price {
+.card-record .badge-price {
+  font-size: 12px;
   position: absolute !important;
-  bottom: 15px !important;
+  bottom: 10px !important;
   right: 10px;
   top: inherit !important;
 }
 
+.card-record .item-thumbnail-left {
+  padding-left: 150px;
+}
+
+.card-record .item-thumbnail-left .item-image {
+  border-radius: 0;
+  box-shadow: none;
+  max-width: 130px;
+  max-height: 130px;
+  top: inherit;
+  background-repeat: no-repeat;
+}
+
+
 .row-record .badge-price {
   position: absolute !important;
-  /*left: 80px !important;*/
   bottom: 15px !important;
   right: inherit !important;
   top: inherit !important;

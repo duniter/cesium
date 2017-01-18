@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
-  'ngApi', 'angular-cache', 'angular.screenmatch',
+  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier',
   // removeIf(device)
   // endRemoveIf(device)
   // removeIf(no-device)
@@ -14,7 +14,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(no-plugin)
   'cesium.plugins',
   // endRemoveIf(no-plugin)
-  'cesium.directives', 'cesium.controllers', 'cesium.templates', 'cesium.translations'
+  'cesium.controllers', 'cesium.templates', 'cesium.translations'
   ])
 
   .filter('formatInteger', function() {
@@ -22,6 +22,64 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       return !input ? '0' : (input < 10000000 ? numeral(input).format('0,0') : numeral(input).format('0,0.000 a'));
     };
   })
+
+  .filter('formatAmount', function(csConfig, csSettings, csWallet, $filter) {
+    var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
+    var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+
+    function formatRelative(input, options) {
+      var currentUD = options && options.currentUD ? options.currentUD : csWallet.data.currentUD;
+      if (!currentUD) {
+        console.warn("formatAmount: currentUD not defined, and user not logged in");
+        return;
+      }
+      var amount = input / currentUD;
+      if (Math.abs(amount) < minValue) {
+        amount = '~ 0';
+      }
+      else {
+        amount = numeral(amount).format(format);
+      }
+      if (options && options.currency) {
+        return amount + ' ' + $filter('currencySymbol')(options.currency, true);
+      }
+      return amount;
+    }
+
+    function formatQuantitative(input, options) {
+      var amount = numeral(input/100).format((input > -1000000000 && input < 1000000000) ? '0,0.00' : '0,0.000 a');
+      if (options && options.currency) {
+        return amount + ' ' + $filter('currencySymbol')(options.currency, false);
+      }
+      return amount;
+    }
+
+    return function(input, options) {
+      if (input === undefined) return;
+      return (options && angular.isDefined(options.useRelative) ? options.useRelative : csSettings.data.useRelative) ?
+        formatRelative(input, options) :
+        formatQuantitative(input, options);
+    };
+  })
+
+  .filter('currencySymbol', function($rootScope, $filter, csSettings) {
+    return function(input, useRelative) {
+      if (!input) return '';
+      return (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) ?
+        ($rootScope.translations.UD + '<sub>' + $filter('abbreviate')(input) + '</sub>') :
+        $filter('abbreviate')(input);
+    };
+  })
+
+  .filter('currencySymbolNoHtml', function($rootScope, $filter, csSettings) {
+    return function(input, useRelative) {
+      if (!input) return '';
+      return (angular.isDefined(useRelative) ? useRelative : csSettings.data.useRelative) ?
+        ($rootScope.translations.UD + ' ' + $filter('abbreviate')(input)) :
+        $filter('abbreviate')(input);
+    };
+  })
+
 
   .filter('formatDecimal', function(csConfig, $rootScope) {
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
@@ -52,13 +110,13 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   .filter('formatDate', function($rootScope) {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).local().format($rootScope.datePattern || 'YYYY-MM-DD HH:mm') : '';
+      return input ? moment(parseInt(input)*1000).local().format($rootScope.translations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
   .filter('formatDateShort', function($rootScope) {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).local().format($rootScope.dateShortPattern || 'YYYY-MM-DD') : '';
+      return input ? moment(parseInt(input)*1000).local().format($rootScope.translations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
     };
   })
 
@@ -95,6 +153,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  .filter('capitalize', function() {
+    return function(input) {
+      if (!input) return '';
+      input = input.toLowerCase();
+      return input.substring(0,1).toUpperCase()+input.substring(1);
+    };
+  })
+
   .filter('abbreviate', function() {
     return function(input) {
       var currency = input || '';
@@ -114,15 +180,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
-  .filter('capitalize', function() {
-    return function(input) {
-      if (!input) return '';
-      input = input.toLowerCase();
-      return input.substring(0,1).toUpperCase()+input.substring(1);
-    };
-  })
-
-  .filter('upper', function() {
+.filter('upper', function() {
     return function(input) {
       if (!input) return '';
       return input.toUpperCase();
@@ -209,10 +267,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $animateProvider.classNameFilter( /\banimate-/ );
   })
 
+  // Configure cache (used by HTTP requests) default max age
   .config(function (CacheFactoryProvider) {
     angular.extend(CacheFactoryProvider.defaults, { maxAge: 60 * 1000 /*1min*/});
   })
 
+  // Configure screen size detection
   .config(function(screenmatchConfigProvider) {
     screenmatchConfigProvider.config.rules = 'bootstrap';
   })
@@ -222,6 +282,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     // JS scrolling need for iOs (see http://blog.ionic.io/native-scrolling-in-ionic-a-tale-in-rhyme/)
     var enableJsScrolling = ionic.Platform.isIOS();
     $ionicConfigProvider.scrolling.jsScrolling(enableJsScrolling);
+
+    // Configure the view cache
     $ionicConfigProvider.views.maxCache(5);
   })
 
@@ -234,7 +296,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   $rootScope.device = Device;
 
   // removeIf(device)
-  // Automatic redirection to large state (if exists)
+  // Automatic redirection to large state (if define)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
     if (next.data.large && !UIUtils.screen.isSmall()) {
       var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
@@ -246,7 +308,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   });
   // endRemoveIf(device)
 
-  // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
+  // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because this one is callable many times
   Device.ready()
   .then(function() {
 
@@ -263,17 +325,19 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     }
 
-    // Status bar
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-
     // Ionic Platform Grade is not A, disabling views transitions
     if (ionic.Platform.grade.toLowerCase()!='a') {
       console.log('Disable UI effects - plateform\'s grade is not [a] but [' + ionic.Platform.grade + ']');
       $ionicConfig.views.transition('none');
-      UIUtils.disableEffects();
+      // FIXME: some effect appears anyway...
+      // UIUtils.disableEffects();
+    }
+  })
+  // Status bar style
+  .then(function() {
+    if (window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      StatusBar.styleDefault();
     }
   });
 
@@ -287,7 +351,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     }
     catch(err) {
       moment.locale('en');
-      console.warn('[app] Unknown local for moment lib. Using default');
+      console.warn('[app] Unknown local for moment lib. Using default [en]');
     }
 
     // config numeral lib
@@ -296,19 +360,24 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     }
     catch(err) {
       numeral.language('en');
-      console.warn('[app] Unknown local for numeral lib. Using default');
+      console.warn('[app] Unknown local for numeral lib. Using default [en]');
     }
 
-    // Set date pattern (see 'formatDate' filter)
-    $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN'])
+    // Set some translation need by filters
+    $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD'])
       .then(function(translations) {
-        $rootScope.datePattern = translations['COMMON.DATE_PATTERN'];
-        if ($rootScope.datePattern == 'COMMON.DATE_PATTERN') {
-          $rootScope.datePattern = 'YYYY-MM-DD HH:mm';
+        $rootScope.translations = $rootScope.translations || {};
+        $rootScope.translations.DATE_PATTERN = translations['COMMON.DATE_PATTERN'];
+        if ($rootScope.translations.DATE_PATTERN === 'COMMON.DATE_PATTERN') {
+          $rootScope.translations.DATE_PATTERN = 'YYYY-MM-DD HH:mm';
         }
-        $rootScope.dateShortPattern = translations['COMMON.DATE_SHORT_PATTERN'];
-        if ($rootScope.dateShortPattern == 'COMMON.DATE_SHORT_PATTERN') {
-          $rootScope.dateShortPattern = 'YYYY-MM-DD';
+        $rootScope.translations.DATE_SHORT_PATTERN = translations['COMMON.DATE_SHORT_PATTERN'];
+        if ($rootScope.translations.DATE_SHORT_PATTERN === 'COMMON.DATE_SHORT_PATTERN') {
+          $rootScope.translations.DATE_SHORT_PATTERN = 'YYYY-MM-DD';
+        }
+        $rootScope.translations.UD = translations['COMMON.UD'];
+        if ($rootScope.translations.UD === 'COMMON.UD') {
+          $rootScope.translations.UD = 'UD';
         }
       });
 

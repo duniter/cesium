@@ -2,7 +2,7 @@
 angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csSettings, csCache) {
+.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csConfig, csSettings, csCache) {
   'ngInject';
 
   factory = function(id) {
@@ -104,11 +104,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
             requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
               if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
+                cert.willExpire = true;
                 return count + 1;
               }
               return count;
             }, 0) : 0;
             requirements.isMember = (requirements.membershipExpiresIn > 0);
+
             resolve(requirements);
           })
           .catch(function(err) {
@@ -341,10 +343,28 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             var pendingCertifications = _.values(lookupCerticationsByCertId);
             if (!pendingCertifications.length) return certifications; // No more pending continue
 
+            // Special case for initPhase - issue #
+            if (csConfig.initPhase) {
+              return pendingCertifications.reduce(function(res, cert) {
+                return res.concat({
+                  pubkey: cert.pubkey,
+                  uid: cert.uid,
+                  isMember: cert.isMember,
+                  wasMember: cert.wasMember,
+                  time: null,
+                  expiresIn: parameters.sigWindow,
+                  willExpire: false,
+                  pending: true,
+                  block: 0,
+                  valid: true
+                });
+              }, certifications);
+            }
+
             var pendingCertByBlocks = pendingCertifications.reduce(function(res, cert){
               var block = lookupHasCertTime && cert.cert_time ? cert.cert_time.block :
                 (cert.sigDate ? cert.sigDate.split('-')[0] : null);
-              if (block) {
+              if (angular.isDefined(block)) {
                 if (!res[block]) {
                   res[block] = [cert];
                 }
@@ -424,6 +444,32 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           ;
       },
 
+      finishLoadRequirements = function(data) {
+        data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.sigQty)) ?
+          (data.sigQty - data.requirements.certificationCount) : 0;
+        data.requirements.willNeedCertificationCount = (!data.requirements.needMembership && !data.requirements.needCertificationCount &&
+          (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.sigQty) ?
+          (data.sigQty - data.requirements.certificationCount + data.requirements.willExpireCertificationCount) : 0;
+        data.requirements.pendingCertificationCount = data.received_cert_pending ? data.received_cert_pending.length : 0;
+
+        // Add events
+        if (data.hasBadSelfBlock) {
+          delete data.hasBadSelfBlock;
+          if (!data.isMember) {
+            addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
+            console.debug("[wot] Invalid membership for {0}: block hash changed".format(data.uid));
+          }
+        }
+        else if (data.requirements.expired) {
+          addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_EXPIRED'});
+          console.debug("[wot] Identity {0} expired".format(data.uid));
+        }
+        else if (data.requirements.willNeedCertificationCount > 0) {
+          addEvent(data, {type: 'error', message: 'INFO.IDENTITY_WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements});
+          console.debug("[wot] Identity {0} will need {1} certification(s)".format(data.uid, data.requirements.willNeedCertificationCount));
+        }
+      },
+
       loadSources = function(pubkey) {
         return BMA.tx.sources({pubkey: pubkey})
           .then(function(res){
@@ -499,19 +545,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               })
           ])
           .then(function() {
-            // Add events
-            if (data.hasBadSelfBlock) {
-              delete data.hasBadSelfBlock;
-              if (!data.isMember) {
-                addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});
-                console.debug("[wot] Invalid membership for {0}: block hash changed".format(data.uid));
-              }
-            }
-            else if (data.requirements.expired) {
-              addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_EXPIRED'});
-              console.debug("[wot] Identity expired for {0}".format(data.uid));
-            }
-
             if (!data.requirements.uid)
               return api.data.raisePromise.load(data)
                 .catch(function(err) {
@@ -523,7 +556,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
             return $q.all([
               // Get received certifications
-              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true/*certifiersOf*/)
+              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true /*certifiersOf*/)
                 .then(function (res) {
                   data.received_cert = res.valid;
                   data.received_cert_pending = res.pending;
@@ -532,11 +565,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
               // Get given certifications
               loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime, false/*certifiersOf*/)
-                  .then(function (res) {
-                    data.given_cert = res.valid;
-                    data.given_cert_pending = res.pending;
-                    data.given_cert_error = res.error;
-                  })
+                .then(function (res) {
+                  data.given_cert = res.valid;
+                  data.given_cert_pending = res.pending;
+                  data.given_cert_error = res.error;
+                })
 
               // Get sources
                // NOT NEED for now
@@ -548,6 +581,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             ]);
           })
           .then(function() {
+            // Add compute some additional requirements (that required all data like certifications)
+            finishLoadRequirements(data);
+
             // API extension
             return api.data.raisePromise.load(data)
               .catch(function(err) {
@@ -599,15 +635,16 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           })
           .then(function(idties) {
             if (!options.allowExtension) {
+              // Add unique id (if enable)
               return options.addUniqueId ? _addUniqueIds(idties) : idties;
             }
             // call extension point
             return api.data.raisePromise.search(text, idties)
-              .then(function(idties) {
+              .then(function() {
+                // Add unique id (if enable)
                 return options.addUniqueId ? _addUniqueIds(idties) : idties;
               });
-          })
-          ;
+          });
       },
 
       getNewcomers = function(offset, size) {

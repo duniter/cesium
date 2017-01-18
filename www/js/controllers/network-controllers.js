@@ -6,17 +6,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
-    .state('app.network_view', {
-      url: "/network/view",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/network/view_network.html",
-          controller: 'NetworkViewCtrl'
-        }
-      },
-    })
-
-    .state('app.view_peer', {
+     .state('app.view_peer', {
       url: "/network/peer/:server",
       nativeTransitions: {
           "type": "flip",
@@ -39,11 +29,12 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkViewController($scope, $q, $translate, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function NetworkViewController($scope, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
   $scope.loadingPeers = true;
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
+
   $scope.screen = UIUtils.screen;
 
   $scope.$on('$ionicParentView.enter', function(e, state) {

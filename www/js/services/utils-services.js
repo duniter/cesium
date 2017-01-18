@@ -19,11 +19,11 @@ angular.module('cesium.utils.services', ['ngResource'])
   ;
 
   function alertError(err, subtitle) {
+    if (!err) {
+      return $q.when();
+    }
+
     return $q(function(resolve) {
-      if (!err) {
-        resolve();
-        return;
-      }
       $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
       .then(function (translations) {
         var message = err.message || translations[err];
@@ -70,13 +70,10 @@ angular.module('cesium.utils.services', ['ngResource'])
   function askConfirm(message, title, options) {
     title = title || 'CONFIRM.POPUP_TITLE';
 
-    var defaultOptions = {
-      cssClass: 'confirm',
-      cancelText: 'COMMON.BTN_CANCEL',
-      okText: 'COMMON.BTN_OK'
-    };
-
-    options = options ? angular.merge(defaultOptions, options) : defaultOptions;
+    options = options || {};
+    options.cssClass = options.cssClass || 'confirm';
+    options.okText = options.okText || 'COMMON.BTN_OK';
+    options.cancelText = options.cancelText || 'COMMON.BTN_CANCEL';
 
     return $translate([message, title, options.cancelText, options.okText])
       .then(function (translations) {
@@ -85,7 +82,9 @@ angular.module('cesium.utils.services', ['ngResource'])
           cssClass: options.cssClass,
           title: translations[title],
           cancelText: translations[options.cancelText],
-          okText: translations[options.okText]
+          cancelType: options.cancelType,
+          okText: translations[options.okText],
+          okType: options.okType,
         });
       });
   }
@@ -103,12 +102,11 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function showLoading() {
     if (!loadingTextCache) {
-      return $translate(['COMMON.LOADING'])
-      .then(function(translations){
-        return $ionicLoading.show({
-          template: translations['COMMON.LOADING']
+      return $translate('COMMON.LOADING')
+        .then(function(translation){
+          loadingTextCache = translation;
+          return showLoading();
         });
-      });
     }
 
     return $ionicLoading.show({
@@ -303,7 +301,7 @@ angular.module('cesium.utils.services', ['ngResource'])
             }
           }
 
-          popover.scope.$emit('popover.shown');
+          popover.scope.$parent.$emit('popover.shown');
 
           // Callback 'afterShow'
           if (options.afterShow) options.afterShow(popover);
@@ -315,23 +313,29 @@ angular.module('cesium.utils.services', ['ngResource'])
       popover = popover || options.scope.popovers[options.templateUrl];
       if (popover) {
         delete options.scope.popovers[options.templateUrl];
-        return popover.remove();
+        // Remove the popover
+        popover.remove()
+          // Workaround for issue #244
+          // See also https://github.com/driftyco/ionic-v1/issues/71
+          // and https://github.com/driftyco/ionic/issues/9069
+          .then(function() {
+            var bodyEl = angular.element($window.document.querySelectorAll('body')[0]);
+            bodyEl.removeClass('popover-open');
+          });
       }
     };
 
     var popover = options.scope.popovers[options.templateUrl];
     if (!popover) {
-      var childScope = options.scope.$new();
 
       $ionicPopover.fromTemplateUrl(options.templateUrl, {
-        scope: childScope,
+        scope: options.scope,
         backdropClickToClose: options.backdropClickToClose
       })
         .then(function (popover) {
-          popover.scope = childScope;
           popover.isResolved = false;
 
-          childScope.closePopover = function(result) {
+          popover.scope.closePopover = function(result) {
             var autoremove = popover.options.autoremove;
             delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
             popover.hide()
@@ -348,7 +352,7 @@ angular.module('cesium.utils.services', ['ngResource'])
           };
 
           // Execute action on hidden popover
-          options.scope.$on('popover.hidden', function() {
+          popover.scope.$on('popover.hidden', function() {
             if (popover.options && popover.options.afterHidden) {
               popover.options.afterHidden();
             }
@@ -620,11 +624,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     image: {
       resizeFile: resizeImageFromFile,
       resizeSrc: resizeImageFromSrc
-    },
-    locales: [
-      {id:'fr-FR', label:'Français'},
-      {id:'en', label:'English'}
-    ]
+    }
   };
 })
 

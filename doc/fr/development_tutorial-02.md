@@ -24,13 +24,11 @@ __Objectif :__ Dans ce niveau, l'objectif est d'afficher dans la page [`Monnaie`
 
 ### Modifier le template HTML
 
-Ouvrez le fichier de template `/www/templates/currency/tabs/view_parameters.html`.
+Ouvrez le fichier de template `/www/templates/currency/tabs/items_parameters.html`.
 
 Ajouter un nouvel élément dans la liste des paramètres, c'est à dire un nouveau tag `<ion-item>`, sous le tag `<ion-list>` : 
 
 ```html
- <ion-list>
-
    (...)
 
    <ion-item class="item-icon-left">
@@ -38,8 +36,6 @@ Ajouter un nouvel élément dans la liste des paramètres, c'est à dire un nouv
      <span translate>CURRENCY.VIEW.STEP_MAX</span>
      <span class="badge badge-stable">{{stepMax}}</span>
    </ion-item>
-
- </ion-list>
 ```
 
 Si vous rafraichissez la page `Monnaie` de votre navigateur, vous devriez observer la modification :

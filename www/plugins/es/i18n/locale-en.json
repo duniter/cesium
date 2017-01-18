@@ -4,7 +4,7 @@
     "CATEGORIES": "Categories",
     "CATEGORY_SEARCH_HELP": "Search",
     "LAST_MODIFICATION_DATE": "Updated on ",
-    "SUBMIT_BY": "Submit by",
+    "SUBMIT_BY": "Submitted by",
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
@@ -44,8 +44,8 @@
     "REPLY_TO": "Respond to:",
     "REPLY_TO_LINK": "In response to ",
     "REPLY_TO_DELETED_COMMENT": "In response to a deleted comment",
-    "REPLY_COUNT": "{{replyCount}} réponses",
-    "DELETED_COMMENT": "Commentaire supprimé"
+    "REPLY_COUNT": "{{replyCount}} responses",
+    "DELETED_COMMENT": "Comment deleted"
   },
   "MESSAGE": {
     "REPLY_TITLE_PREFIX": "Re: ",
@@ -75,7 +75,7 @@
       "TO": "To",
       "OBJECT": "Object",
       "OBJECT_HELP": "Object",
-      "ENCRYPTED_HELP": "Please note this message will by encrypt before sending. Only you and recipient could read it.",
+      "ENCRYPTED_HELP": "Please note this message will be encrypted before sending so that only the recipient can read it and be sure you are the author.",
       "MESSAGE": "Message",
       "MESSAGE_HELP": "Message content",
       "CONTENT_CONFIRMATION": "No message content.<br/><br/>Are your sure you want to send this message?"
@@ -115,6 +115,7 @@
     "COMMON": {
       "PRICE": "Price",
       "BTN_BUY": "Buy",
+      "BTN_BUY_DOTS": "Buy...",
       "BTN_NEW_AD": "New ad"
     },
     "SEARCH": {
@@ -184,11 +185,11 @@
       "TITLE_SMALL_DEVICE": "Pro Directory",
       "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
-      "BTN_OPTIONS": "Search tool",
-      "TYPE": "Kind of referencing",
+      "BTN_OPTIONS": "Advanced search",
+      "TYPE": "Kind of organization",
       "LOCATION": "Location",
       "LOCATION_HELP": "City",
-      "LAST_RECORDS": "Last records:",
+      "LAST_RECORDS": "Latest references:",
       "RESULTS": "Results:"
     },
     "VIEW": {
@@ -197,11 +198,11 @@
       "LOCATION": "Address:",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "{{title}}",
-      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this record?<br/><br/>This is irreversible."
+      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this reference?<br/><br/>This is irreversible."
     },
     "TYPE": {
-      "TITLE": "New",
-      "SELECT_TYPE": "Kind of referencing:",
+      "TITLE": "New reference",
+      "SELECT_TYPE": "Kind of organization:",
       "ENUM": {
         "SHOP": "local shops",
         "COMPANY": "Company",
@@ -211,8 +212,8 @@
     },
     "EDIT": {
       "TITLE": "Edit",
-      "TITLE_NEW": "New referencing",
-      "RECORD_TYPE":"Record type",
+      "TITLE_NEW": "New reference",
+      "RECORD_TYPE":"Kind of organization",
       "RECORD_TITLE": "Name",
       "RECORD_TITLE_HELP": "Name",
       "RECORD_DESCRIPTION": "Description",
@@ -234,7 +235,7 @@
       "RECORD_NOT_EXISTS": "Record not found"
     },
     "INFO": {
-      "RECORD_REMOVED" : "Record successfully deleted"
+      "RECORD_REMOVED" : "Reference successfully deleted"
     }
   },
   "PROFILE": {
@@ -288,16 +289,16 @@
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "New features",
-      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ad</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>There have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> this features (recommended)?"
+      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ads</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>They have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> these features (recommended)?"
     }
   },
   "EVENT": {
     "NODE_STARTED": "Your node ES API <b>{{params[0]}}</b> is UP",
-    "NODE_BMA_DOWN": "Node <b>{{params[0]}}:{{params[1]}}</b> unreacheable (used by your ES API <b>{{params[2]}}</b>).<br/>Date of last connexion: {{p3|formatDate}}.",
+    "NODE_BMA_DOWN": "Node <b>{{params[0]}}:{{params[1]}}</b> (used by your ES API) is <b>unreacheable</b>.",
     "NODE_BMA_UP": "Node <b>{{p0}}:{{params[1]}}</b> is reacheable again.",
-    "MEMBER_JOIN": "You become a <b>member</b> of currency <b>{{params[0]}}</b>!",
-    "MEMBER_LEAVE": "You are <b>not member anymore</b> of currency <b>{{params[0]}}</b>!",
-    "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renew successfully</b>.",
+    "MEMBER_JOIN": "You are now a <b>member</b> of currency <b>{{params[0]}}</b>!",
+    "MEMBER_LEAVE": "You are <b>not a member anymore</b> of currency <b>{{params[0]}}</b>!",
+    "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renewed successfully</b>.",
     "TX_SENT": "Your payment to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
     "TX_SENT_MULTI": "Your payment to <b>{{params[1]}}</b> was executed.",
     "TX_RECEIVED": "You received a payment from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
@@ -306,9 +307,9 @@
     "CERT_RECEIVED": "You  have <b>received a certification</b> from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
     "MARKET": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on your ad: <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on your ad: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his/her comment on your ad: <b>{{params[2]}}</b>",
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has replied to your comment on the ad: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his answer to your comment on the ad: <b>{{params[2]}}</b>"
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his/her answer to your comment on the ad: <b>{{params[2]}}</b>"
     },
     "REGISTRY": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on your referencing: <b>{{params[2]}}</b>",

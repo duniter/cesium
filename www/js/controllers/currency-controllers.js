@@ -16,16 +16,43 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency_view', {
+    .state('app.currency', {
       url: "/currency/view/:name",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",
-          controller: 'CurrencyViewCtrl'
+          controller: 'CurrencyViewCtrl',
         }
       },
       data: {
         large: 'app.currency_view_lg'
+      }
+    })
+
+    .state('app.currency.tab_parameters', {
+      url: "/parameters",
+      views: {
+        'tab-parameters': {
+          templateUrl: "templates/currency/tabs/tab_parameters.html"
+        }
+      }
+    })
+
+    .state('app.currency.tab_network', {
+      url: "/network",
+      views: {
+        'tab-network': {
+          templateUrl: "templates/currency/tabs/tab_network.html"
+        }
+      }
+    })
+
+    .state('app.currency.tab_wot', {
+      url: "/community",
+      views: {
+        'tab-wot': {
+          templateUrl: "templates/currency/tabs/tab_wot.html"
+        }
       }
     })
 
@@ -179,6 +206,8 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
             return $scope.node.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
                 $scope.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
+                console.log("Get block last UD: " + $scope.currentUD);
+                $scope.formData.currentUD = $scope.currentUD;
                 $scope.Nprev = block.membersCount;
               });
           }
@@ -188,6 +217,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
             return $scope.node.blockchain.parameters()
               .then(function(json){
                 $scope.currentUD = json.ud0;
+                $scope.formData.currentUD = $scope.currentUD;
               });
           }
         })
@@ -198,17 +228,11 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
       var Mprev = M - $scope.currentUD * $scope.Nprev; // remove fresh money
       var MoverN = Mprev / $scope.Nprev;
       $scope.cactual = MoverN ? 100 * $scope.currentUD / MoverN : 0;
-
-      if ($scope.formData.useRelative) {
-        $scope.M = Mprev ? Mprev / $scope.currentUD : 0;
-        $scope.MoverN = MoverN ? MoverN / $scope.currentUD : 0;
-        $scope.UD = 1;
-      } else {
-        $scope.M = Mprev;
-        $scope.MoverN = MoverN;
-        $scope.UD = $scope.currentUD;
-      }
+      $scope.M = Mprev;
+      $scope.MoverN = MoverN;
+      $scope.UD = $scope.currentUD;
       $scope.loading = false;
+      $scope.$broadcast('$$rebind::' + 'rebind'); // force bind of currency name
       UIUtils.loading.hide();
     })
     .catch(function(err) {
@@ -216,20 +240,6 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
       UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
     });
   };
-
-  $scope.onUseRelativeChanged = function() {
-    if ($scope.loading) return;
-    if ($scope.formData.useRelative) {
-      $scope.M = $scope.M / $scope.currentUD;
-      $scope.MoverN = $scope.MoverN / $scope.currentUD;
-      $scope.UD = $scope.UD / $scope.currentUD;
-    } else {
-      $scope.M = $scope.M * $scope.currentUD;
-      $scope.MoverN = $scope.MoverN * $scope.currentUD;
-      $scope.UD = $scope.UD * $scope.currentUD;
-    }
-  };
-  $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
 
   // Show help tip
   $scope.showHelpTip = function() {

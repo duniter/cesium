@@ -80,6 +80,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 
+
 ;
 
 function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover) {

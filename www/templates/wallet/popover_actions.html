@@ -1,4 +1,4 @@
-<ion-popover-view class="fit has-header">
+<ion-popover-view class="fit has-header popover-wallet-actions">
   <ion-header-bar>
     <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
   </ion-header-bar>
@@ -59,6 +59,15 @@
             ng-click="self()">
         <i class="icon ion-flag"></i>
         {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+      </a>
+
+      <!-- revocation -->
+      <a class="item item-icon-left assertive ink"
+         ng-if="!walletData.requirements.needSelf"
+         ng-click="revokeIdentity()">
+        <i class="icon ion-minus-circled"></i>
+        <span ng-bind-html="'ACCOUNT.BTN_REVOKE' | translate"></span>
+
       </a>
 
       <div class="item-divider hidden-sm hidden-xs"></div>

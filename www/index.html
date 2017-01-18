@@ -2,7 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Cesium</title>
     <link rel="icon" href="./img/favicon.ico">
     <link rel="manifest" href="/manifest.json">
@@ -24,6 +25,7 @@
       <script src="js/vendor/moment.fr.js"></script>
       <script src="js/vendor/numeral.js"></script>
       <script src="js/vendor/numeral.fr.js"></script>
+      <script src="js/vendor/numeral.en.js"></script>
       <script src="js/vendor/socket-io.js"></script>
       <script src="js/vendor/underscore.js"></script>
       <script src="js/vendor/qrcode.min.js"></script>
@@ -38,6 +40,7 @@
       <script src="lib/ionic/js/angular/angular-api.js"></script>
       <script src="lib/ionic/js/angular/angular-cache.js"></script>
       <script src="lib/ionic/js/angular/angular-screenmatch.min.js"></script>
+      <script src="lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
 
       <!-- crypto libs -->
       <script src="js/vendor/scrypt-em.js" async></script>
@@ -124,8 +127,9 @@
     <!--endRemoveIf(no-plugin)-->
 
       <!-- App -->
-      <script src="dist/dist_js/app/directives.js"></script>
       <script src="dist/dist_js/app/app.js"></script>
+      <script src="dist/dist_js/app/components.js"></script>
+      <script src="dist/dist_js/app/directives.js"></script>
     <!-- endbuild -->
     <!-- build:js config.js -->
       <!-- config  -->

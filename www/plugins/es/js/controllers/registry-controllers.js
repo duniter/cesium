@@ -452,10 +452,10 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
           // Set Motion
           $timeout(function(){
             UIUtils.motion.fadeSlideIn({
-              selector: '.lazy-load .item.card-gallery',
+              selector: '.lazy-load .item.card-gallery, .lazy-load .item',
               startVelocity: 3000
             });
-          });
+          }, 200);
         })
         .catch(function() {
           $scope.pictures = [];

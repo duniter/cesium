@@ -1,0 +1,70 @@
+
+    <div bind-notifier="{ rebind:formData.useRelative }">
+
+        <ion-item class="item-icon-left">
+            <i class="icon ion-android-bookmark"></i>
+            <span translate>CURRENCY.VIEW.CURRENCY_NAME</span>
+            <div class="item-note dark">
+              {{currency}} (<span ng-bind-html=":rebind:currency | currencySymbol:formData.useRelative"></span>)
+            </div>
+        </ion-item>
+
+        <ion-item class="item-icon-left">
+            <i class="icon ion-record"></i>
+            <span translate>CURRENCY.VIEW.MASS</span>
+            <span class="badge badge-stable"
+                ng-bind-html=":rebind:M | formatAmount:{currency: currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
+        </ion-item>
+
+        <ion-item id="helptip-currency-mass-member" class="item-icon-left">
+            <i class="icon ion-pie-graph"></i>
+            {{'CURRENCY.VIEW.SHARE'|translate}}
+          <span id="helptip-currency-mass-member-unit"
+                class="badge badge-energized"
+                ng-bind-html=":rebind:MoverN | formatAmount:{currency: currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
+          </span>
+        </ion-item>
+
+        <ion-item class="item-icon-left" ui-sref="app.currency_ud">
+            <i class="icon ion-load-c"></i>
+            <span translate>CURRENCY.VIEW.UD</span>
+            <div class="badge badge-royal">
+              <span ng-bind-html=":rebind:currentUD | formatAmount:{currency: currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
+              &nbsp;/&nbsp;{{dt | formatPeriod}}
+            </div>
+        </ion-item>
+
+        <ion-item class="item-icon-left">
+            <i class="icon ion-arrow-graph-up-right"></i>
+            <span translate>CURRENCY.VIEW.C_ACTUAL</span>
+          <span class="badge badge-stable">{{cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
+        </ion-item>
+
+        <div class="item item-toggle dark">
+            <span translate>COMMON.BTN_RELATIVE_UNIT</span>
+            <label class="toggle toggle-royal" id="helptip-currency-change-unit">
+                <input type="checkbox" ng-model="formData.useRelative">
+                <div class="track">
+                    <div class="handle"></div>
+                </div>
+            </label>
+        </div>
+
+        <div id="helptip-currency-rules"
+             class="item item-divider">
+            <span translate>CURRENCY.VIEW.MONEY_RULES_DIVIDER</span>
+        </div>
+
+        <ion-item class="item-icon-left">
+            <i class="icon ion-arrow-graph-up-right"></i>
+            <span translate>CURRENCY.VIEW.C_RULE</span>
+            <span class="badge badge-stable">{{c*100 | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
+        </ion-item>
+
+        <ion-item  class="item-icon-left">
+            <i class="icon ion-load-c"></i>
+            <span translate>CURRENCY.VIEW.UD_RULE</span>
+            <span class="item-note dark">{{'COMMON.UD'|translate}}<sub>t-1</sub> + c<sup>2</sup> * M(t-1)/N(t-1)</span>
+        </ion-item>
+
+    </div>

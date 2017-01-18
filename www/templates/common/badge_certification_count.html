@@ -1,0 +1,15 @@
+<span ng-attr-id="{{$ctrl.csId}}"
+    class="badge badge-balanced"
+    ng-class="{'badge-energized': $ctrl.requirements.willNeedCertificationCount || ($ctrl.requirements.needCertificationCount + $ctrl.requirements.pendingCertificationCount >= $ctrl.parameters.sigQty),
+               'badge-assertive': ($ctrl.requirements.needCertificationCount + $ctrl.requirements.pendingCertificationCount < $ctrl.parameters.sigQty)}">
+  <span ng-if="$ctrl.requirements.certificationCount || !$ctrl.requirements.pendingCertificationCount">
+    <i ng-if="!$ctrl.requirements.needCertificationCount" class="ion-android-done"></i>
+    {{$ctrl.requirements.certificationCount}}
+    <i ng-if="$ctrl.requirements.willNeedCertificationCount" class="ion-android-warning"></i>
+  </span>
+  <span ng-if="$ctrl.requirements.pendingCertificationCount">
+    <ng-if ng-if="$ctrl.requirements.certificationCount">+ </ng-if>
+    <i class="ion-clock"></i>
+    {{$ctrl.requirements.pendingCertificationCount}}
+  </span>
+</span>

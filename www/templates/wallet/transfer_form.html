@@ -1,4 +1,5 @@
-  <form name="transferForm" novalidate="" ng-submit="doTransfer()">
+  <form name="transferForm" novalidate=""
+        ng-submit="doTransfer()">
 
     <div class="list" ng-init="setForm(transferForm)">
 
@@ -27,35 +28,24 @@
               <span ng-if="$root.walletData.isMember">
                 {{$root.walletData.name||$root.walletData.uid}}&nbsp;&nbsp;
               </span>
-              <span ng-if="$root.walletData.pubkey && !formData.useRelative">{{convertedBalance | formatInteger}} {{unit | abbreviate}}</span>
-              <span ng-if="$root.walletData.pubkey && formData.useRelative">{{convertedBalance | formatDecimal}} {{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub></span>
+              <span ng-bind-html="$root.walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
           </span>
       </span>
 
       <!-- Amount -->
-      <div class="item item-input item-floating-label item-button-right"
-           ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}"
-           ng-if="!formData.useRelative">
-          <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{unit | abbreviate}})</span>
-          <input type="number" name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{unit | abbreviate}})"
-                 ng-model="formData.amount" required>
-        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
-        </span>
-        <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
-          <i class="icon ion-android-more-vertical"></i>
-        </span>
-      </div>
       <ion-item class="item-input item-floating-label item-button-right"
-                ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}"
-                ng-if="formData.useRelative">
-        <span class="input-label">{{'TRANSFER.AMOUNT' | translate}} ({{'COMMON.UD' | translate}}<sub>{{unit | abbreviate}}</sub>)</span>
+                ng-class="{'item-input-error': form.$submitted && form.amount.$invalid}">
+        <div class="input-label">
+          <span translate>TRANSFER.AMOUNT</span>
+          (<span ng-bind-html="currency | currencySymbol:formData.useRelative"></span>)
+        </div>
         <input type="text"
                keyboard-attach=""
-               name="amount" placeholder="{{'TRANSFER.AMOUNT_HELP' | translate}} ({{'COMMON.UD' | translate}} {{unit | abbreviate}})" ng-model="formData.amount"
-               required number>
-        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
+               name="amount" placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{currency | currencySymbolNoHtml:formData.useRelative}})" ng-model="formData.amount"
+               required number-float>
+        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
         </span>
-        <span class="gray button button-block button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
+        <span class="gray button button-block button-icon visible-xs visible-sm" ng-click="showUnitPopover($event)">
           <i class="icon ion-android-more-vertical"></i>
         </span>
       </ion-item>
@@ -65,8 +55,11 @@
         <div class="form-error" ng-message="required">
           <span translate="ERROR.FIELD_REQUIRED"></span>
         </div>
-        <div class="form-error" ng-message="number">
+        <div class="form-error" ng-message="numberFloat">
           <span translate="ERROR.FIELD_NOT_NUMBER"></span>
+        </div>
+        <div class="form-error" ng-message="numberInt">
+          <span translate="ERROR.FIELD_NOT_INT"></span>
         </div>
       </div>
 

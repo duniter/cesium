@@ -23,7 +23,7 @@
           </i>
           <i class="avatar"
              ng-if="$root.walletData.avatar"
-             style="background-image: url({{$root.walletData.avatar.src}})">
+             style="background-image: url('{{$root.walletData.avatar.src}}')">
           </i>
         </a>
       </ion-nav-buttons>
@@ -38,11 +38,37 @@
                  expose-aside-when="large"
                  enable-menu-with-back-views="false"
                  width="225">
-    <ion-header-bar class="bar bar-header" ng-click="showHome()" menu-close>
-      <h1 class="title dark" translate>
+    <ion-header-bar>
+      <h1 class="title dark hidden-sm hidden-xs" translate>
         MENU.TITLE
       </h1>
+
+      <div class="visible-sm visible-xs hero">
+        <div class="content">
+          <i class="avatar avatar-member hero-icon" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="loginAndGo('app.view_wallet')" menu-close></i>
+          <i class="avatar hero-icon" ng-if="$root.walletData.avatar" style="background-image: url('{{$root.walletData.avatar.src}}')" ng-click="loginAndGo('app.view_wallet')" menu-close></i>
+          <h4 ng-if="login">
+            <a class="light" ng-click="loginAndGo('app.view_wallet')" menu-close>
+              {{$root.walletData.name||$root.walletData.uid}}
+              <span ng-if="!$root.walletData.name && !$root.walletData.uid"><i class="icon ion-key"></i>&nbsp;{{$root.walletData.pubkey|formatPubkey}}</span>
+            </a>
+          </h4>
+          <h4 ng-if="!login">
+            <a class="light" ng-click="loginAndGo('app.view_wallet')"
+               menu-close>
+              {{'COMMON.BTN_LOGIN'|translate}}
+              <i class="ion-arrow-right-b"></i>
+            </a>
+          </h4>
+          <cs-extension-point name="menu-profile-user"></cs-extension-point>
+        </div>
+        <!-- logout -->
+        <a ng-if="login" class="button-icon" ng-click="logout()" style="position: absolute; top: 5px; left: 5px;" menu-close>
+          <i class="icon assertive ion-log-out"></i>
+        </a>
+      </div>
     </ion-header-bar>
+
     <ion-content scroll="false">
       <ion-list class="list">
 
@@ -61,16 +87,6 @@
              ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
-        </ion-item>
-
-        <ion-item menu-close
-             id="helptip-menu-btn-network"
-             class="item item-icon-left"
-             active-link="active"
-             active-link-path-prefix="#/app/network"
-             href="#/app/network/view">
-          <i class="icon ion-android-globe"></i>
-          <span translate>MENU.NETWORK</span>
         </ion-item>
 
         <!-- Allow extension here -->
@@ -93,7 +109,8 @@
         <div class="item item-divider"></div>
 
         <ion-item menu-close
-                  class="item item-icon-left" active-link="active"
+                  class="item item-icon-left"
+                  active-link="active"
                   active-link-path-prefix="#/app/wallet"
                   ng-click="loginAndGo('app.view_wallet')"
                   ng-class="{'item-menu-disable': !login}">
@@ -111,26 +128,22 @@
         </ion-item>
         <a id="helptip-menu-btn-settings"></a>
 
-        <!-- actions -->
+        <!-- actions divider -->
         <div class="item item-divider" ng-if="login"></div>
-        <ion-item menu-close class="item item-button-right" ng-if="login">
+
+        <!-- transfer -->
+        <ion-item menu-close class="item item-button-right hidden-xs hidden-sm" ng-if="login">
           <span translate>MENU.TRANSFER</span>
           <button class="button button-positive ink-dark" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
           </button>
         </ion-item>
+
         <!-- scan QR code -->
         <ion-item menu-close class="item item-button-right" ng-if="$root.device.enable">
           <span translate>Scan</span>
           <button class="button button-stable ink" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
-          </button>
-        </ion-item>
-        <!-- log out -->
-        <ion-item menu-close class="item item-button-right visible-xs visible-sm" ng-if="login">
-          <span translate>COMMON.BTN_LOGOUT</span>
-          <button class="button button-stable ink" ng-click="logout()">
-          <i class="icon ion-log-out"></i>
           </button>
         </ion-item>
 
