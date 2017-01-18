@@ -25,6 +25,7 @@ $dark:                            #444 !default;
 
 $active: #b2e0ff !default;
 $stable-900-bg: #e0e0e0 !default;
+$positive-900-bg: #1A237E !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -323,7 +324,7 @@ $screen-lg:                       1200px;
     }
 }
 
-@media screen and (ma-width: $screen-sm) {
+@media screen and (max-width: $screen-sm) {
     .no-padding-xs {
         padding: inherit;
     }
@@ -663,7 +664,7 @@ $screen-menu:                     845px;
 @media screen and (max-width: $screen-xs-max) {
   #home .logo {
     height: 96px;
-    background-image: url(../img/logo_96px.png);
+    background-image: url('../img/logo_96px.png');
     background-size: 96px 96px;
   }
   #home .footer {
@@ -673,7 +674,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
   #home .logo {
     height: 144px;
-    background-image: url(../img/logo_144px.png);
+    background-image: url('../img/logo_144px.png');
     background-size: 144px 144px;
   }
   #home .button {
@@ -684,7 +685,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   #home .logo {
     height: 200px;
-    background-image: url(../../resources/logo/svg/colors/logo.large.cesium.dune.svg);
+    background-image: url('../../resources/logo/svg/colors/logo.large.cesium.dune.svg');
     background-size: 200px 200px;
   }
 
@@ -699,7 +700,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   .circle-bg-dark {
     ion-content.scroll-content {
-      background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
+      background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
       background-repeat: no-repeat;
       background-position: -725px -145px;
       background-size: 1024px 1024px;
@@ -707,7 +708,7 @@ $screen-menu:                     845px;
   }
 
   .menu.menu-left {
-    background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
     background-repeat: no-repeat;
     background-position: -500px -100px;
     background-size: 1024px 1024px;
@@ -769,7 +770,7 @@ $screen-menu:                     845px;
 }
 
 .avatar-member {
-  background-image: url(../img/person.png);
+  background-image: url('../img/person.png');
 }
 
 .avatar.disable {
@@ -777,7 +778,7 @@ $screen-menu:                     845px;
 }
 
 .avatar-wallet {
-  background-image: url(../img/card.png);
+  background-image: url('../img/card.png');
 }
 
 /* ----
@@ -873,6 +874,7 @@ $screen-menu:                     845px;
   .item.item-icon-left.item-wallet-event .icon {
     font-size: 15px;
   }
+
 }
 
 .popover-wallet-actions {
@@ -1196,7 +1198,7 @@ a.underline:hover,
 */
 
 .item.item-icon-right .badge,
-.item.item-button-right .badge,
+.item.item-button-right .badge
 {
   right: 43px;
 }
@@ -1281,6 +1283,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-size: 50px !important;
   line-height: 80px;
   padding: 0 15px;
+  background-position: center;
+  background-size: cover;
+  display: inline-block;
 }
 
 
@@ -1391,6 +1396,26 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+@media screen and (max-width: $screen-sm-max) {
+
+  #menu .bar-header {
+    background-color: $positive-900-bg;
+    color: #fff;
+    height: 175px;
+
+    .hero {
+      height: 175px;
+
+      .content {
+        bottom: 5px;
+      }
+    }
+  }
+
+  #menu .has-header {
+    top: 175px;
+  }
+}
 
 /**********
    Screen - identity Certifications

@@ -1,5 +1,5 @@
 
-    <ion-list bind-notifier="{ rebind:formData.useRelative }">
+    <div bind-notifier="{ rebind:formData.useRelative }">
 
         <ion-item class="item-icon-left">
             <i class="icon ion-android-bookmark"></i>
@@ -8,26 +8,6 @@
               {{currency}} (<span ng-bind-html=":rebind:currency | currencySymbol:formData.useRelative"></span>)
             </div>
         </ion-item>
-
-        <ion-item class="item-icon-left">
-            <i class="icon ion-person-stalker"></i>
-            <span translate>CURRENCY.VIEW.MEMBERS</span>
-            <span class="badge badge-assertive">{{Nprev | formatInteger}}</span>
-        </ion-item>
-
-        <ion-item id="helptip-currency-newcomers"
-                  class="item-icon-left"
-                  ui-sref="app.wot_lookup({newcomers: N-Nprev})">
-            <i class="icon ion-person-add"></i>
-            <span translate>CURRENCY.VIEW.INCOMING_MEMBERS</span>
-            <span ng-if="N > Nprev" class="badge badge-balanced">+{{N-Nprev | formatInteger}}</span>
-            <span ng-if="N < Nprev" class="badge badge-calm">-{{N-Nprev | formatInteger}}</span>
-            <span ng-if="N == Nprev" class="badge badge-stable">{{0}}</span>
-        </ion-item>
-
-        <div class="item item-divider">
-            <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
-        </div>
 
         <ion-item class="item-icon-left">
             <i class="icon ion-record"></i>
@@ -72,7 +52,7 @@
 
         <div id="helptip-currency-rules"
              class="item item-divider">
-            <span translate>CURRENCY.VIEW.RULES_DIVIDER</span>
+            <span translate>CURRENCY.VIEW.MONEY_RULES_DIVIDER</span>
         </div>
 
         <ion-item class="item-icon-left">
@@ -84,43 +64,7 @@
         <ion-item  class="item-icon-left">
             <i class="icon ion-load-c"></i>
             <span translate>CURRENCY.VIEW.UD_RULE</span>
-            <span class="item-note dark">(1+c) * {{'COMMON.UD'|translate}}<sub>t-1</sub></span>
+            <span class="item-note dark">{{'COMMON.UD'|translate}}<sub>t-1</sub> + c<sup>2</sup> * M(t-1)/N(t-1)</span>
         </ion-item>
 
-        <ion-item class="item-icon-left">
-          <i class="icon ion-ribbon-b"></i>
-          <span translate>CURRENCY.VIEW.SIG_QTY_RULE</span>
-          <span class="badge badge-assertive">{{sigQty}}</span>
-        </ion-item>
-
-        <ion-item class="item-icon-left">
-          <i class="icon ion-ribbon-a"></i>
-          <span translate>CURRENCY.VIEW.SIG_STOCK</span>
-          <span class="badge badge-energized">{{sigStock}}</span>
-        </ion-item>
-
-        <ion-item class="item-icon-left">
-          <i class="icon ion-clock"></i>
-          <span translate>CURRENCY.VIEW.SIG_PERIOD</span>
-          <span class="badge badge-stable">{{sigPeriod | formatDuration}}</span>
-        </ion-item>
-
-        <ion-item class="item-icon-left">
-          <i class="icon ion-clock"></i>
-          <span translate>CURRENCY.VIEW.SIG_WINDOW</span>
-          <span class="badge badge-stable">{{sigWindow | formatDuration}}</span>
-        </ion-item>
-
-        <ion-item class="item-icon-left">
-          <i class="icon ion-steam"></i>
-          <span translate>CURRENCY.VIEW.STEP_MAX</span>
-          <span class="badge badge-stable">{{stepMax}}</span>
-        </ion-item>
-
-        <ion-item class="item-icon-left">
-          <i class="icon ion-pull-request"></i>
-          <span translate>CURRENCY.VIEW.XPERCENT</span>
-          <span class="badge badge-stable">{{xpercent}}</span>
-        </ion-item>
-
-    </ion-list>
+    </div>

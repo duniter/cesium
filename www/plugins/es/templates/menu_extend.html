@@ -1,9 +1,18 @@
+<!-- Menu user profile -->
+<ng-if ng-if="enable && extensionPoint === 'menu-profile-user'">
+  <h5>
+    <a ng-if="login" class="light"
+     ng-click="showUserProfile()" menu-close>
+    {{'MENU.USER_PROFILE' | translate}}&nbsp;<i class="ion-arrow-right-b"></i>
+    </a>
+  </h5>
+</ng-if>
 
 <!-- Main section -->
 <ng-if ng-if="enable && extensionPoint === 'nav-buttons-right'">
 
   <!-- messages -->
-  <button class="button button-clear  hidden-xs hidden-sm icon ion-email"
+  <button class="button button-clear hidden-xs hidden-sm icon ion-email"
           ng-if="login"
           active-link="gray"
           active-link-path-prefix="#/app/user/message"

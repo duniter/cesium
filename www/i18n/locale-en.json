@@ -135,17 +135,16 @@
       "TAB_WOT": "Community",
       "TAB_NETWORK": "Network",
       "CURRENCY_NAME": "Currency name",
-      "MEMBERS": "Members",
-      "INCOMING_MEMBERS": "Incoming members",
+      "MEMBERS": "Members count",
+      "MEMBERS_VARIATION": "Variation (depuis {{dt | formatDuration}})",
       "MONEY_DIVIDER": "Money",
       "MASS": "Monetary mass",
       "SHARE": "Money share",
       "UD": "Universal Dividend",
       "C_ACTUAL": "c<sub>actual</sub>",
-      "BLOCKCHAIN_DIVIDER": "Blockchain",
       "TIME": "Current time",
       "POW_MIN": "Common difficulty",
-      "RULES_DIVIDER": "Rules",
+      "MONEY_RULES_DIVIDER": "Rules of currency",
       "C_RULE": "c",
       "UD_RULE": "Universal dividend (formula)",
       "SIG_QTY_RULE": "Required certifications<br/>to become a member",
@@ -153,6 +152,7 @@
       "SIG_PERIOD": "Minimum delay between 2 certifications<br/>of a same issuer.",
       "SIG_WINDOW": "Maximum delay a certification can wait<br/>before being expired for non-writing.",
       "STEP_MAX": "Maximum distance between<br/>each WoT member and a newcomer.",
+      "WOT_RULES_DIVIDER": "Rules for Membership",
       "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule"
     }
   },
@@ -371,7 +371,7 @@
     "COPY_TO_CLIPBOARD_DONE": "Copy succeed",
     "MEMBERSHIP_OUT_SENT": "Membership revocation sent",
     "NOT_NEED_MEMBERSHIP": "Already a member.",
-    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}})."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
@@ -395,7 +395,7 @@
     "TITLE": "Online help",
     "JOIN": {
       "SECTION": "Join",
-      "SALT": "The protection phrase is very important. It is used to hash you password, which in turn is used to calculate your <span class=\"text-italic\">public account key</span> (its number) and the private key to access it.<br/><b>Please remeber this phrase well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good protection phrase must be sufficiently long (8 characters at the very least) and as original as possible.",
+      "SALT": "The protection phrase is very important. It is used to hash you password, which in turn is used to calculate your <span class=\"text-italic\">public account key</span> (its number) and the private key to access it.<br/><b>Please remember this phrase well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good protection phrase must be sufficiently long (8 characters at the very least) and as original as possible.",
       "PASSWORD": "The password is very important. Together with the protection phrase, it is use to calculate your account number (pblic key) and the private key to access it.<br/><b>Please remember it well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good password is made (ideally) of at least 8 characters, with at least one capital and one number.",
       "PSEUDO": "A pseudonym is used only when joining as <span class=\"text-italic\">member</span>. It is always associated with a wallet (by its <span class=\"text-italic\">public key</span>).<br/>It is published on the network so that other users may identify it, certify or send money to the account.<br/>A pseudonym must be unique among all members (current and past)."
     },

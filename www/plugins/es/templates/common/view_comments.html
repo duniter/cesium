@@ -11,12 +11,13 @@
     <small><a ng-click="showMore()" translate>COMMENTS.SHOW_MORE_COMMENTS</a></small>
   </span>
 
-  <ng-repeat ng-repeat="comment in comments.result track by comment.id"
+  <div class="padding-right">
+    <ng-repeat ng-repeat="comment in comments.result track by comment.id"
+               ng-include="'plugins/es/templates/common/item_comment.html'">
+    </ng-repeat>
+  </div>
 
-             ng-include="'plugins/es/templates/common/item_comment.html'">
-  </ng-repeat>
-
-  <div class="hidden-xs hidden-sm">
+  <div class="hidden-xs hidden-sm padding-right">
     <div class="card card-comment item item-input item-button-right">
 
       <!-- reply to comment-->

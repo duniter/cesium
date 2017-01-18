@@ -45,30 +45,45 @@
          ng-if="!search.loading && search.results.length">
 
       <a ng-repeat="rec in search.results"
-         class="item item-record ink padding-xs"
+         class="item no-padding-bottom no-padding-top"
          ui-sref="app.market_view_record({id: rec.id, title: rec.urlTitle})">
 
-        <div class="item-text-wrap item-thumbnail-left">
-          <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
-          <i class="item-image ion-speakerphone" ng-if="!rec.thumbnail"></i>
-          <h2 ng-bind-html="rec.title"></h2>
-          <h4 class="gray">
-              <span ng-if="rec.location">
-                <i class="icon ion-location"></i>
-                <span ng-bind-html="rec.location"></span>
-              </span>
-            <span ng-show="rec.time">
-                <span ng-show="rec.location">|</span>
-                {{::rec.time | formatFromNow}}
-              </span>
-          </h4>
-          <span  ng-if="rec.picturesCount > 1"
-                 class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i>
-          </span>
-          <h2 class="badge badge-price badge-calm"
-            ng-bind-html=":rebind:rec.price|formatAmount:{currency: rec.currency}">
-          </h2>
+        <div class="card card-record stable-bg ink padding-top">
+
+          <div class="card-item item-thumbnail-left item-text-wrap padding-right">
+            <i class="item-image" ng-if="rec.thumbnail" style="background-image: url('{{::rec.thumbnail.src}}')"></i>
+            <i class="item-image ion-speakerphone" ng-if="!rec.thumbnail"></i>
+            <h2 ng-bind-html="rec.title"></h2>
+            <h4 class="gray">
+                <span ng-if="rec.location">
+                  <i class="icon ion-location"></i>
+                  <span ng-bind-html="rec.location"></span>
+                </span>
+              <span ng-show="rec.time">
+                  <span ng-show="rec.location">|</span>
+                  {{::rec.time | formatFromNow}}
+                </span>
+            </h4>
+            <h3 class="gray text-wrap" ng-bind-html="rec.description | truncText:200" ng-if="rec.description"></h3>
+            <div  ng-if="rec.picturesCount > 1"
+                   class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i>
+            </div>
+
+          </div>
+          <div class="card-footer" style="height: 45px">
+            &nbsp;
+            <div class="badge badge-price badge-calm" ng-if="rec.type=='offer'">
+              <i class="cion-market-offer"></i>
+              <span ng-if="rec.price"  ng-bind-html=":rebind:rec.price|formatAmount:{currency: rec.currency}"></span>
+              <span ng-if="!rec.price" translate>MARKET.TYPE.OFFER</span>
+            </div>
+            <div class="badge badge-energized badge-price" ng-if="rec.type=='need'">
+              <i class="cion-market-need"></i>
+              {{'MARKET.TYPE.NEED'|translate}}
+            </div>
+          </div>
         </div>
+
       </a>
     </div>
 

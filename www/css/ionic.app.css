@@ -13930,7 +13930,7 @@ a {
     display: none;
     visibility: hidden; } }
 
-@media screen and (ma-width: 768px) {
+@media screen and (max-width: 768px) {
   .no-padding-xs {
     padding: inherit; } }
 
@@ -14476,8 +14476,7 @@ a.underline:hover,
     max-height: 150px; }
 
 .gallery .card-gallery-new {
-  max-height: 199px;
-  /*img=150px + tabs=49px*/ }
+  max-height: 199px; }
 
 .list .item.text-left {
   text-align: left !important; }
@@ -14680,7 +14679,10 @@ a.underline:hover,
   overflow: hidden !important;
   font-size: 50px !important;
   line-height: 80px;
-  padding: 0 15px; }
+  padding: 0 15px;
+  background-position: center;
+  background-size: cover;
+  display: inline-block; }
 
 @media screen and (max-width: 400px) {
   .card > .item.item-thumbnail-left,
@@ -14756,6 +14758,18 @@ a.underline:hover,
   #menu .footer a {
     font-size: 14px !important;
     color: grey !important; } }
+
+@media screen and (max-width: 991px) {
+  #menu .bar-header {
+    background-color: #1A237E;
+    color: #fff;
+    height: 175px; }
+    #menu .bar-header .hero {
+      height: 175px; }
+      #menu .bar-header .hero .content {
+        bottom: 5px; }
+  #menu .has-header {
+    top: 175px; } }
 
 /**********
    Screen - identity Certifications
