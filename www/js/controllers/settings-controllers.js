@@ -39,7 +39,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     $scope.loading = true; // to avoid the call of csWallet.store()
 
     // Fill locales
-    $scope.locales = angular.copy(UIUtils.locales);
+    $scope.locales = angular.copy(csSettings.locales);
     var locale = _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
     angular.merge($scope.formData, csSettings.data);
     $scope.formData.locale = locale;

@@ -267,10 +267,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $animateProvider.classNameFilter( /\banimate-/ );
   })
 
+  // Configure cache (used by HTTP requests) default max age
   .config(function (CacheFactoryProvider) {
     angular.extend(CacheFactoryProvider.defaults, { maxAge: 60 * 1000 /*1min*/});
   })
 
+  // Configure screen size detection
   .config(function(screenmatchConfigProvider) {
     screenmatchConfigProvider.config.rules = 'bootstrap';
   })
@@ -280,6 +282,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     // JS scrolling need for iOs (see http://blog.ionic.io/native-scrolling-in-ionic-a-tale-in-rhyme/)
     var enableJsScrolling = ionic.Platform.isIOS();
     $ionicConfigProvider.scrolling.jsScrolling(enableJsScrolling);
+
+    // Configure the view cache
     $ionicConfigProvider.views.maxCache(5);
   })
 
@@ -292,7 +296,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   $rootScope.device = Device;
 
   // removeIf(device)
-  // Automatic redirection to large state (if exists)
+  // Automatic redirection to large state (if define)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
     if (next.data.large && !UIUtils.screen.isSmall()) {
       var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
@@ -304,7 +308,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   });
   // endRemoveIf(device)
 
-  // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because it could be call many times
+  // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because this one is callable many times
   Device.ready()
   .then(function() {
 
@@ -329,9 +333,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // UIUtils.disableEffects();
     }
   })
-  // Status bar
+  // Status bar style
   .then(function() {
-    ionic.Platform.fullScreen();
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
@@ -348,7 +351,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     }
     catch(err) {
       moment.locale('en');
-      console.warn('[app] Unknown local for moment lib. Using default');
+      console.warn('[app] Unknown local for moment lib. Using default [en]');
     }
 
     // config numeral lib
@@ -357,7 +360,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     }
     catch(err) {
       numeral.language('en');
-      console.warn('[app] Unknown local for numeral lib. Using default');
+      console.warn('[app] Unknown local for numeral lib. Using default [en]');
     }
 
     // Set some translation need by filters
