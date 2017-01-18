@@ -2,7 +2,7 @@
  * Copyright 2015 Drifty Co.
  * http://drifty.com/
  *
- * Ionic, v1.3.2
+ * Ionic, v1.3.1
  * A powerful HTML5 mobile app framework.
  * http://ionicframework.com/
  *
@@ -2204,8 +2204,7 @@ var LOADING_TPL =
  * .controller('LoadingCtrl', function($scope, $ionicLoading) {
  *   $scope.show = function() {
  *     $ionicLoading.show({
- *       template: 'Loading...',
- *       duration: 3000
+ *       template: 'Loading...'
  *     }).then(function(){
  *        console.log("The loading indicator is now displayed");
  *     });
@@ -2660,9 +2659,7 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
       }
 
       return $timeout(function() {
-        if (!modalStack.length) {
-          $ionicBody.removeClass(self.viewType + '-open');
-        }
+        $ionicBody.removeClass(self.viewType + '-open');
         self.el.classList.add('hide');
       }, self.hideDelay || 320);
     },
@@ -3017,8 +3014,8 @@ IonicModule
          * @description
          * Add Cordova event listeners, such as `pause`, `resume`, `volumedownbutton`, `batterylow`,
          * `offline`, etc. More information about available event types can be found in
-         * [Cordova's event documentation](https://cordova.apache.org/docs/en/latest/cordova/events/events.html).
-         * @param {string} type Cordova [event type](https://cordova.apache.org/docs/en/latest/cordova/events/events.html).
+         * [Cordova's event documentation](https://cordova.apache.org/docs/en/edge/cordova_events_events.md.html#Events).
+         * @param {string} type Cordova [event type](https://cordova.apache.org/docs/en/edge/cordova_events_events.md.html#Events).
          * @param {function} callback Called when the Cordova event is fired.
          * @returns {function} Returns a deregistration function to remove the event listener.
          */
@@ -3129,7 +3126,7 @@ IonicModule
  *   $scope.$on('$destroy', function() {
  *     $scope.popover.remove();
  *   });
- *   // Execute action on hidden popover
+ *   // Execute action on hide popover
  *   $scope.$on('popover.hidden', function() {
  *     // Execute action
  *   });
@@ -7772,15 +7769,20 @@ function($scope, $attrs, $ionicSideMenuDelegate, $ionicPlatform, $ionicBody, $io
 
     self.content.setTranslateX(amount);
 
-    leftShowing = amount > 0;
-    rightShowing = amount < 0;
+    if (amount >= 0) {
+      leftShowing = true;
+      rightShowing = false;
 
-    if (amount > 0) {
-      // Push the z-index of the right menu down
-      self.right && self.right.pushDown && self.right.pushDown();
-      // Bring the z-index of the left menu up
-      self.left && self.left.bringUp && self.left.bringUp();
+      if (amount > 0) {
+        // Push the z-index of the right menu down
+        self.right && self.right.pushDown && self.right.pushDown();
+        // Bring the z-index of the left menu up
+        self.left && self.left.bringUp && self.left.bringUp();
+      }
     } else {
+      rightShowing = true;
+      leftShowing = false;
+
       // Bring the z-index of the right menu up
       self.right && self.right.bringUp && self.right.bringUp();
       // Push the z-index of the left menu down
@@ -11066,9 +11068,9 @@ IonicModule.directive('ionOptionButton', [function() {
       return function($scope, $element, $attr, itemCtrl) {
         if (!itemCtrl.optionsContainer) {
           itemCtrl.optionsContainer = jqLite(ITEM_TPL_OPTION_BUTTONS);
-          itemCtrl.$element.prepend(itemCtrl.optionsContainer);
+          itemCtrl.$element.append(itemCtrl.optionsContainer);
         }
-        itemCtrl.optionsContainer.prepend($element);
+        itemCtrl.optionsContainer.append($element);
 
         itemCtrl.$element.addClass('item-right-editable');
 
@@ -11778,6 +11780,7 @@ IonicModule
  * @param {boolean=} no-tap-scroll By default, the navbar will scroll the content
  * to the top when tapped.  Set no-tap-scroll to true to disable this behavior.
  *
+ * </table><br/>
  */
 IonicModule
 .directive('ionNavBar', function() {
@@ -12496,9 +12499,7 @@ IonicModule
 
         $scope.$on('scroll.refreshComplete', function() {
           $scope.$evalAsync(function() {
-            if(scrollCtrl.scrollView){
-              scrollCtrl.scrollView.finishPullToRefresh();
-            }
+            scrollCtrl.scrollView.finishPullToRefresh();
           });
         });
       }
@@ -12540,7 +12541,6 @@ IonicModule
  * @param {boolean=} paging Whether to scroll with paging.
  * @param {expression=} on-refresh Called on pull-to-refresh, triggered by an {@link ionic.directive:ionRefresher}.
  * @param {expression=} on-scroll Called whenever the user scrolls.
- * @param {expression=} on-scroll-complete Called whenever the scrolling paging is completed.
  * @param {boolean=} scrollbar-x Whether to show the horizontal scrollbar. Default true.
  * @param {boolean=} scrollbar-y Whether to show the vertical scrollbar. Default true.
  * @param {boolean=} zooming Whether to support pinch-to-zoom
@@ -12576,7 +12576,6 @@ function($timeout, $controller, $ionicBind, $ionicConfig) {
           direction: '@',
           paging: '@',
           $onScroll: '&onScroll',
-          $onScrollComplete: '&onScrollComplete',
           scroll: '@',
           scrollbarX: '@',
           scrollbarY: '@',
@@ -12618,8 +12617,7 @@ function($timeout, $controller, $ionicBind, $ionicConfig) {
           maxZoom: $scope.$eval($scope.maxZoom) || 3,
           minZoom: $scope.$eval($scope.minZoom) || 0.5,
           preventDefault: true,
-          nativeScrolling: nativeScrolling,
-          scrollingComplete: onScrollComplete
+          nativeScrolling: nativeScrolling
         };
 
         if (isPaging) {
@@ -12627,17 +12625,10 @@ function($timeout, $controller, $ionicBind, $ionicConfig) {
           scrollViewOptions.bouncing = false;
         }
 
-        var scrollCtrl = $controller('$ionicScroll', {
+        $controller('$ionicScroll', {
           $scope: $scope,
           scrollViewOptions: scrollViewOptions
         });
-
-        function onScrollComplete() {
-          $scope.$onScrollComplete && $scope.$onScrollComplete({
-            scrollTop: scrollCtrl.scrollView.__scrollTop,
-            scrollLeft: scrollCtrl.scrollView.__scrollLeft
-          });
-        }
       }
     }
   };
@@ -13341,8 +13332,8 @@ function($animate, $timeout, $compile, $ionicSlideBoxDelegate, $ionicHistory, $i
  *
  * $scope.$on("$ionicSlides.slideChangeEnd", function(event, data){
  *   // note: the indexes are 0-based
- *   $scope.activeIndex = data.slider.activeIndex;
- *   $scope.previousIndex = data.slider.previousIndex;
+ *   $scope.activeIndex = data.activeIndex;
+ *   $scope.previousIndex = data.previousIndex;
  * });
  *
  * ```
