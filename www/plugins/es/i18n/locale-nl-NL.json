@@ -1,0 +1,320 @@
+{
+  "COMMON": {
+    "CATEGORY": "Categorie",
+    "CATEGORIES": "Categorieën",
+    "CATEGORY_SEARCH_HELP": "Zoeken",
+    "LAST_MODIFICATION_DATE": "Vernieuws op ",
+    "SUBMIT_BY": "Ingediend door",
+    "BTN_PUBLISH": "Publiceren",
+    "BTN_PICTURE_DELETE": "Wissen",
+    "BTN_PICTURE_FAVORISE": "Default",
+    "BTN_ADD_PICTURE": "Afbeelding toevoegen",
+    "NOTIFICATIONS": {
+      "TITLE": "Notificaties",
+      "MARK_ALL_AS_READ": "Markeer alles als gelezen",
+      "NO_RESULT": "Geen berichten",
+      "SETTINGS": "Instellingen",
+      "SHOW_ALL": "Toon alles",
+      "LOAD_NOTIFICATIONS_FAILED": "Kan berichten niet laden"
+    }
+  },
+  "MENU": {
+    "MARKET": "Advertenties",
+    "REGISTRY": "Ondernemingen",
+    "USER_PROFILE": "Mijn profiel",
+    "USER_MESSAGE": "Berichten"
+  },
+  "ACCOUNT": {
+    "NEW": {
+      "ORGANIZATION_ACCOUNT": "Ondernemingsrekening",
+      "ORGANIZATION_ACCOUNT_HELP": "Als je een onderneming, vereniging etc. vertegenwoordigd.<br/>Deze rekening zal geen dividend créeren."
+    },
+    "EVENT": {
+      "MEMBER_WITHOUT_PROFILE": "Vul <a href=\"#/app/user/profile/edit\">je gebruikersprofiel</a> in om sneller een certificering te verkrijgen. Leden zullen een verfifieerbare identiteit eerder vertrouwen."
+    }
+  },
+  "COMMENTS": {
+    "DIVIDER": "Commentaren",
+    "SHOW_MORE_COMMENTS": "Toon eerder commentaren",
+    "COMMENT_HELP": "Jouw commentaar, vraag...",
+    "COMMENT_HELP_REPLY_TO": "Jouw antwoord...",
+    "BTN_SEND": "Verzenden",
+    "POPOVER_SHARE_TITLE": "Bericht #{{number}}",
+    "REPLY": "Antwoord",
+    "REPLY_TO": "Antwoorden op:",
+    "REPLY_TO_LINK": "In antwoord op ",
+    "REPLY_TO_DELETED_COMMENT": "In antwoord op een gewist bericht",
+    "REPLY_COUNT": "{{replyCount}} antwoorden",
+    "DELETED_COMMENT": "Bericht gewist"
+  },
+  "MESSAGE": {
+    "REPLY_TITLE_PREFIX": "Re: ",
+    "FORWARD_TITLE_PREFIX": "Fw: ",
+    "BTN_REPLY": "Antwoord",
+    "BTN_COMPOSE": "Nieuw bericht",
+    "BTN_WRITE": "Schrijven",
+    "NO_MESSAGE_INBOX": "Geen bericht ontvangen",
+    "NO_MESSAGE_OUTBOX": "Geen bericht verzonden",
+    "NOTIFICATIONS": {
+      "TITLE": "Berichten",
+      "MESSAGE_RECEIVED": "Je hebt een <b>bericht ontvangen</b><br/>van"
+    },
+    "LIST": {
+      "INBOX": "Inbox",
+      "OUTBOX": "Verzonden",
+      "TITLE": "Privé",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Opties",
+        "DELETE_ALL": "Alle berichten wissen"
+      }
+    },
+    "COMPOSE": {
+      "TITLE": "Nieuw bericht",
+      "TITLE_REPLY": "Antwoord",
+      "SUB_TITLE": "Nieuw bericht",
+      "TO": "Aan",
+      "OBJECT": "Onderwerp",
+      "OBJECT_HELP": "Onderwerp",
+      "ENCRYPTED_HELP": "Please note this message will by encrypt before sending zodat alleen de ontvanger het kan lezen en zeker kan zijn dat jij de auteur bent.",
+      "MESSAGE": "Bericht",
+      "MESSAGE_HELP": "Berichtinhoud",
+      "CONTENT_CONFIRMATION": "Geen berichtinhoud.<br/><br/>Weet je zeker dat je dit bericht wil verzenden?"
+    },
+    "VIEW": {
+      "TITLE": "Bericht",
+      "SENDER": "Verzonden door",
+      "RECIPIENT": "Verzonden aan",
+      "NO_CONTENT": "Leeg bericht"
+    },
+    "CONFIRM": {
+      "REMOVE": "Weet je zeker dat je <b>dit bericht wil wissen</b>?<br/><br/>Dit kan niet ongedaan gemaakt worden.",
+      "REMOVE_ALL": "Weet je zeker dat je <b>alle berichten wil wissen</b>?<br/><br/>Dit kan niet ongedaan gemaakt worden.",
+      "MARK_ALL_AS_READ": "Weet je zeker dat je <b>alle berichten als gelezen wil markeren</b>?"
+    },
+    "INFO": {
+      "MESSAGE_REMOVED": "Bericht succesvol gewist",
+      "All_MESSAGE_REMOVED": "Berichten succesvol gewist",
+      "MESSAGE_SENT": "Bericht verzonden"
+    },
+    "ERROR": {
+      "SEND_MSG_FAILED": "Fout tijdens verzending.",
+      "LOAD_MESSAGES_FAILED": "Kan berichten niet laden.",
+      "LOAD_MESSAGE_FAILED": "Kan bericht niet laden.",
+      "MESSAGE_NOT_READABLE": "Kan bericht niet lezen.",
+      "USER_NOT_RECIPIENT": "Je bent niet de geadresseerde van dit bericht: het kan niet gelezen worden.",
+      "NOT_AUTHENTICATED_MESSAGE": "De authenticiteit van het bericht is onduidelijk of de inhoud is gecorrumpeerd.",
+      "REMOVE_MESSAGE_FAILED": "Kan bericht niet wissen.",
+      "MESSAGE_CONTENT_TOO_LONG": "Waarde te land (max {{maxLength}} characters).",
+      "MARK_AS_READ_FAILED": "Kan bericht niet als gelezen markeren.",
+      "LOAD_NOTIFICATIONS_FAILED": "Kan niet alle berichtnotificaties laden.",
+      "REMOVE_All_MESSAGES_FAILED": "Kan niet alle berichten wissen.",
+      "MARK_ALL_AS_READ_FAILED": "Kan berichten niet als gelezen markeren."
+    }
+  },
+  "MARKET": {
+    "COMMON": {
+      "PRICE": "Prijs",
+      "BTN_BUY": "Koop",
+      "BTN_NEW_AD": "Nieuwe advertentie"
+    },
+    "SEARCH": {
+      "TITLE": "Markt",
+      "SEARCH_HELP": "Wat, waar: auto, Utrecht, ...",
+      "BTN_ADD": "Nieuw",
+      "BTN_OPTIONS": "Geavanceerd zoeken",
+      "BTN_AROUND_ME": "In mijn omgeving",
+      "SHOW_MORE": "Toon meer",
+      "SHOW_MORE_COUNT": "(huidige limiet op {{limit}})",
+      "LOCATION": "Locatie",
+      "LOCATION_HELP": "Plaats",
+      "LAST_RECORDS": "Nieuwste advertenties:",
+      "RESULTS": "Resultaat:",
+      "BTN_OFFERS": "Aangeboden",
+      "BTN_NEEDS": "Gezocht"
+    },
+    "VIEW": {
+      "TITLE": "Advertentie",
+      "MENU_TITLE": "Opties",
+      "POPOVER_SHARE_TITLE": "Advertentie {{title}}",
+      "REMOVE_CONFIRMATION" : "Weet je zeker dat je deze advertentie wil wissen?<br/><br/>Dit kan niet ongedaan worden gemaakt."
+    },
+    "TYPE": {
+      "TITLE": "Nieuwe advertentie",
+      "SELECT_TYPE": "Soort advertentie:",
+      "OFFER": "Aanbod",
+      "NEED": "Vraag"
+    },
+    "EDIT": {
+      "TITLE": "Bewerk",
+      "TITLE_NEW": "Nieuwe advertentie",
+      "RECORD_TITLE": "Titel",
+      "RECORD_TITLE_HELP": "Titel",
+      "RECORD_DESCRIPTION": "Beschrijving",
+      "RECORD_DESCRIPTION_HELP": "Beschrijving",
+      "RECORD_LOCATION": "Adres",
+      "RECORD_LOCATION_HELP": "Straat, Plaats",
+      "RECORD_PRICE": "Prijs",
+      "RECORD_PRICE_HELP": "Prijs (optioneel)",
+      "RECORD_CURRENCY": "Valuta"
+    },
+    "ERROR": {
+      "FAILED_SAVE_RECORD": "Advertentie opslaan mislukt",
+      "FAILED_UPDATE_RECORD": "Advertentie aanpassen mislukt",
+      "LOAD_CATEGORY_FAILED": "Categorieên laden mislukt",
+      "LOOKUP_RECORDS_FAILED": "Fout tijdens laden van advertenties.",
+      "LOAD_RECORD_FAILED": "Advertentie laden mislukt",
+      "REMOVE_RECORD_FAILED": "Advertentie wissen mislukt",
+      "FAILED_SAVE_COMMENT": "Commentaar opslaan mislukt",
+      "FAILED_REMOVE_COMMENT": "Commentaar wissen mislukt",
+      "RECORD_NOT_EXISTS": "Advertentie niet gevonden"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Advertentie succesvol verwijderd"
+    }
+  },
+  "REGISTRY": {
+    "CATEGORY": "Hoofdactiviteit",
+    "GENERAL_DIVIDER": "Basisinformatie",
+    "LOCATION_DIVIDER": "Adres",
+    "SOCIAL_NETWORKS_DIVIDER": "Sociale media en website",
+    "TECHNICAL_DIVIDER": "Technische informatie",
+    "BTN_NEW": "Toevoegen",
+    "SEARCH": {
+      "TITLE": "Bedrijfsregister",
+      "TITLE_SMALL_DEVICE": "Bedrijfsregister",
+      "SEARCH_HELP": "Wie, Wat: kapper, Lili's restaurant, ...",
+      "BTN_ADD": "Nieuw",
+      "BTN_OPTIONS": "Geavanceerd zoeken",
+      "TYPE": "Soort organisatie",
+      "LOCATION": "Locatie",
+      "LOCATION_HELP": "Plaats",
+      "LAST_RECORDS": "Nieuwste referenties:",
+      "RESULTS": "Resultaten:"
+    },
+    "VIEW": {
+      "TITLE": "Register",
+      "CATEGORY": "Hoofdactiviteit:",
+      "LOCATION": "Adres:",
+      "MENU_TITLE": "Opties",
+      "POPOVER_SHARE_TITLE": "{{title}}",
+      "REMOVE_CONFIRMATION" : "Weet je zeker dat je deze referentie wil verwijderen?<br/><br/>Dit kan niet ongedaan worden gemaakt."
+    },
+    "TYPE": {
+      "TITLE": "Nieuwe referentie",
+      "SELECT_TYPE": "Soort organizatie:",
+      "ENUM": {
+        "SHOP": "Locale winkel",
+        "COMPANY": "Onderneming",
+        "ASSOCIATION": "Stichting",
+        "INSTITUTION": "Instituut"
+      }
+    },
+    "EDIT": {
+      "TITLE": "Bewerk",
+      "TITLE_NEW": "Nieuwe referentie",
+      "RECORD_TYPE":"Soort organizatie",
+      "RECORD_TITLE": "Naam",
+      "RECORD_TITLE_HELP": "Naam",
+      "RECORD_DESCRIPTION": "Beschrijving",
+      "RECORD_DESCRIPTION_HELP": "Omschrijf activiteit",
+      "RECORD_ADDRESS": "Adres",
+      "RECORD_ADDRESS_HELP": "Adres: straat, gebouw...",
+      "RECORD_CITY": "Plaats",
+      "RECORD_CITY_HELP": "Plaats",
+      "RECORD_SOCIAL_NETWORKS": "Sociale media en website",
+      "RECORD_PUBKEY": "Publieke sleutel",
+      "RECORD_PUBKEY_HELP": "Publieke sleutel om betalingen te ontvangen"
+    },
+    "ERROR": {
+      "LOAD_CATEGORY_FAILED": "Laden hoofdactiveiten mislukt",
+      "LOAD_RECORD_FAILED": "Laden datasheet mislukt",
+      "LOOKUP_RECORDS_FAILED": "Opzoeken datasheets is mislukt.",
+      "REMOVE_RECORD_FAILED": "Verwijderen datasheet mislukt",
+      "SAVE_RECORD_FAILED": "Opslaan datasheet mislukt",
+      "RECORD_NOT_EXISTS": "Datasheet niet gevonden"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Datasheet succesvol verwijderd"
+    }
+  },
+  "PROFILE": {
+    "UID": "Pseudoniem",
+    "TITLE": "Naam",
+    "TITLE_HELP": "Naam",
+    "DESCRIPTION": "Over mij",
+    "DESCRIPTION_HELP": "Over mij...",
+    "ADDRESS": "Adres",
+    "ADDRESS_HELP": "Adres (optioneel)",
+    "CITY": "Plaats",
+    "CITY_HELP": "Plaats (optioneel)",
+    "SOCIAL_HELP": "http://...",
+    "GENERAL_DIVIDER": "Algemene informatie",
+    "LOCATION_DIVIDER": "Localisatie",
+    "SOCIAL_NETWORKS_DIVIDER": "Sociale media en website",
+    "TECHNICAL_DIVIDER": "Technische informatie",
+    "ERROR": {
+      "LOAD_PROFILE_FAILED": "Kon gebruikersprofiel niet laden.",
+      "SAVE_PROFILE_FAILED": "Opslaan profiel mislukt",
+      "INVALID_SOCIAL_NETWORK_FORMAT": "Ongeldig formaat: vul een geldig internetadres in.<br/><br/>Voorbeelden:<ul><li>- Een Facebookpagina (https://www.facebook.com/user)</li><li>- Een webpagina (http://www.domain.com)</li><li>- Een emailadres (joe@dalton.com)</li></ul>",
+      "IMAGE_RESIZE_FAILED": "Fout tijdens afbeelding schalen"
+    },
+    "INFO": {
+      "PROFILE_SAVED": "Profiel opgeslagen"
+    },
+    "HELP": {
+      "WARNING_PUBLIC_DATA": "Let op, de informatie die hier is vastgelegd <b>is publiek</b>: zichtbaar ook voor <b>niet ingelogde gebruikers</b>."
+    }
+  },
+  "ES_SETTINGS": {
+    "PLUGIN_NAME": "Register en marktplaats",
+    "ENABLE_TOGGLE": "Uitbreiding inschakelen?",
+    "ENABLE_MARKET_TOGGLE": "Marktplaats inschakelen?",
+    "ENABLE_REGISTRY_TOGGLE": "Bedrijfsregister inschakelen?",
+    "ENABLE_MESSAGE_TOGGLE": "Berichten inschakelen?",
+    "ENABLE_SETTINGS_TOGGLE": "Globale opslag voor instellingen inschakelen?",
+    "NODE": "Adres dataknooppunt",
+    "NODE_HELP": "server.domein.com:poort",
+    "POPUP_NODE": {
+      "TITLE" : "Dataknoop",
+      "HELP" : "Stel het te gebruiken adres in:"
+    },
+    "NOTIFICATIONS": {
+      "DIVIDER": "Notificaties",
+      "HELP_TEXT": "Schakel het type notificatie dat je wil ontvangen in:",
+      "ENABLE_TX_SENT": "Bericht bij validatie van <b>verzonden betalingen</b>?",
+      "ENABLE_TX_RECEIVED": "Bericht bij validatie van <b>ontvangen betalingen</b>?",
+      "ENABLE_CERT_SENT": "Bericht bij validatie van <b>verzonden certificaties</b>?",
+      "ENABLE_CERT_RECEIVED": "Bericht bij validatie van <b>ontvangen certificaties</b>?"
+    },
+    "CONFIRM": {
+      "ASK_ENABLE_TITLE": "Nieuwe functies",
+      "ASK_ENABLE": "Er zijn nieuwe functies beschikbaar: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Advertenties</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Bedrijfsregister</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Privé berichten</b>.</ul><br/>Deze zijn <b>uitgeschakeld</b> in je instellingen.<br/><br/>Wil je deze functies <b>inschakelen</b> (recommended)?"
+    }
+  },
+  "EVENT": {
+    "NODE_STARTED": "Je knoop ES API <b>{{params[0]}}</b> is UP",
+    "NODE_BMA_DOWN": "Knooppunt <b>{{params[0]}}:{{params[1]}}</b> (gebruikt door je ES API) is <b>onbereikbaar</b>.",
+    "NODE_BMA_UP": "Knooppunt <b>{{p0}}:{{params[1]}}</b> is weer onbereikbaar.",
+    "MEMBER_JOIN": "Je bent nu <b>lid</b> van valuta <b>{{params[0]}}</b>!",
+    "MEMBER_LEAVE": "Je bent <b>geen lid meer</b> van valuta <b>{{params[0]}}</b>!",
+    "MEMBER_ACTIVE": "Je lidmaatschap bij <b>{{params[0]}}</b> is met <b>succes verlengd</b>.",
+    "TX_SENT": "Je <b>betaling</b> aan <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> is uitgevoerd.",
+    "TX_SENT_MULTI": "Je <b>betaling</b> aan <b>{{params[1]}}</b> is uitgevoerd.",
+    "TX_RECEIVED": "Je hebt een <b>betaling ontvangen</b> van <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "TX_RECEIVED_MULTI": "Je hebt een <b>betaling ontvangen</b> van <b>{{params[1]}}</b>.",
+    "CERT_SENT": "Je <b>certificatie</b> van <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> is uitgevoerd.",
+    "CERT_RECEIVED": "Je hebt een <b>certificatie ontvangen</b> van <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "MARKET": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft gereageerd op jouw advertentie: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/aar reactie op jouw advertentie bewerkt: <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft gereageerd op jouw commentaar op advertentie: <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/haar reactie op jouw commentaar bewerkt, op advertentie: <b>{{params[2]}}</b>"
+    },
+    "REGISTRY": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft gereageerd op jouw referentie: <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/aar reactie op jouw referentie bewerkt: <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> hheeft gereageerd op jouw commentaar op referentie: <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/haar reactie op jouw commentaar bewerkt, op referentie: <b>{{params[2]}}</b>"
+    }
+  }
+}
