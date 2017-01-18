@@ -316,7 +316,8 @@ angular.module('cesium.utils.services', ['ngResource'])
         // Remove the popover
         popover.remove()
           // Workaround for issue #244
-          // See also https://github.com/driftyco/ionic/issues/9069
+          // See also https://github.com/driftyco/ionic-v1/issues/71
+          // and https://github.com/driftyco/ionic/issues/9069
           .then(function() {
             var bodyEl = angular.element($window.document.querySelectorAll('body')[0]);
             bodyEl.removeClass('popover-open');
