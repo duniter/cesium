@@ -2,51 +2,50 @@
   <ion-header-bar class="bar-positive">
     <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
     <h1 class="title" translate>PEER.NODE_LIST</h1>
+    <ion-spinner class="pull-right button button-icon hidden-xs hidden-sm" icon="android" ng-if="loadingPeers"></ion-spinner>
+    <button class="pull-right button button-icon ion-loop button-clear hidden-xs hidden-sm" ng-if="!loadingPeers" ng-click="refresh()">
+    </button>
     <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
             ng-click="showActionsPopover($event)">
     </button>
-  </ion-header-bar>
+    </ion-header-bar>
 
   <ion-content scroll="true">
     <div class="list">
-  	  <div id="helptip-currency-peers"
-  	       class="item item-divider item-icon-right visible-xs visible-sm"
-          ng-if="display=='allNodes'||!enableFilter">
-          {{'PEER.ALL_NODES' | translate}}
-        <ion-spinner class="icon" icon="android" ng-if="loadingPeers"></ion-spinner>
-      </div>
-
-      <div id="helptip-currency-peers"
-           class="item item-divider item-icon-right visible-xs visible-sm"
-           ng-if="display=='members'">
-        {{'PEER.MEMBERS' | translate}}
-        <ion-spinner class="icon" icon="android" ng-if="loadingPeers"></ion-spinner>
-        <a class="icon ion-loop gray hidden-xs hidden-sm" ng-if="!loadingPeers" ng-click="refresh()">
-        </a>
-      </div>
-
-      <div id="helptip-currency-peers"
-           class="item item-divider item-icon-right hidden-xs hidden-sm">
-        {{'PEER.PEERS' | translate}}
-        <ion-spinner class="icon" icon="android" ng-if="loadingPeers"></ion-spinner>
-        <a class="icon ion-loop gray " ng-if="!loadingPeers" ng-click="refresh()">
-        </a>
-      </div>
-
-      <div class="text-center hidden-xs hidden-sm" ng-if="enableFilter">
-        <a class="button button-text button-small ink icon ion-android-people"
-           ng-class="{'button-text-positive': display=='members'}"
-           ng-click="changeDisplay('members')">
-          {{'PEER.MEMBERS' | translate}}
-        </a>
-        &nbsp;
-        <a class="button button-text button-small ink icon ion-ios-infinite"
-           ng-class="{'button-text-positive': display=='allNodes'}"
-           ng-click="changeDisplay('allNodes')">
-          {{'PEER.ALL_NODES' | translate}}
-        </a>
-        &nbsp;
-      </div>
+      <div class="padding padding-xs" style="display: block; height: 60px;">
+        <div id="helptip-currency-peers" class="pull-left">
+            <h4 class="visible-xs visible-sm"
+              ng-if="display=='allNodes'||!enableFilter">
+              {{'PEER.ALL_NODES' | translate}} ({{peers.length}}) :
+            </h4>
+            <h4 class="visible-xs visible-sm"
+              ng-if="display=='members'">
+              {{'PEER.MEMBERS' | translate}} ({{nbMembersPeers}}) :
+            </h4>
+            <h4 class="hidden-xs hidden-sm"
+                ng-if="display=='allNodes'||!enableFilter">
+              {{'PEER.PEERS' | translate}} ({{peers.length}}) :
+            </h4>
+            <h4 class="hidden-xs hidden-sm"
+                ng-if="display=='members'">
+              {{'PEER.PEERS' | translate}} ({{nbMembersPeers}}) :
+            </h4>
+          </div>
+          <div class="pull-right hidden-xs hidden-sm" ng-if="enableFilter">
+            <a class="button button-text button-small ink icon ion-android-people"
+               ng-class="{'button-text-positive': display=='members'}"
+               ng-click="changeDisplay('members')">
+              {{'PEER.MEMBERS' | translate}}
+            </a>
+            &nbsp;
+            <a class="button button-text button-small ink icon ion-ios-infinite"
+               ng-class="{'button-text-positive': display=='allNodes'}"
+               ng-click="changeDisplay('allNodes')">
+              {{'PEER.ALL_NODES' | translate}}
+            </a>
+            &nbsp;
+          </div>
+        </div>
       <ng-click class="peer-item item item-icon-left"
          ng-repeat="peer in peers track by peer.server"
          id="helptip-currency-peer-{{$index}}"

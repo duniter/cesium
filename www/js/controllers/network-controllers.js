@@ -118,7 +118,7 @@ function NetworkViewController($scope, $q, $translate, $timeout, BMA, UIUtils, c
 }
 
 function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover, BMA,
-  UIUtils, csSettings, csCurrency, csNetwork) {
+  UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
   $scope.loadingPeers = true;
   $scope.formData = {
     useRelative: csSettings.data.useRelative
@@ -126,6 +126,7 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
   $scope.enableFilter = true;
   $scope.display='members';
   $scope.screen = UIUtils.screen;
+  $scope.nbMembersPeers = 0;
 
   csCurrency.all()
     .then(function (currencies) {
@@ -154,9 +155,11 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
             // Update currency params
 
             $scope.loadingPeers = csNetwork.isBusy();
+            $scope.countMembersNodes();
             refreshing = false;
-            }, 1100);
+            }, 1100)
         }
+
       });
       $scope.$on('$destroy', function(){
         csNetwork.close();
@@ -170,10 +173,18 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
     csNetwork.loadPeers();
   };
 
+  $scope.countMembersNodes = function(){
+    for(var i=0; i<$scope.peers.length; i++){
+      if ($scope.peers[i].level){
+        $scope.nbMembersPeers++;
+      }
+    }
+  };
+
   $scope.changeDisplay = function(type){
     $scope.hideActionsPopover();
     $scope.display = type;
-  }
+  };
 
   /* -- show/hide popup -- */
 

@@ -95,28 +95,30 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     });
   };
 
-  $scope.showNodeList = function(){
-    $ionicPopup._popupStack[0].responseDeferred.resolve();
+  $scope.showNodeList = function() {
+    $ionicPopup._popupStack[0].responseDeferred.promise.close();
     return ModalUtils.show('/templates/network/modal_network.html', 'NetworkModalCtrl')
-    .then(function(result){
-      if (result){
-        var parts = result.server.split(':');
-        var newNode;
-        if(result.dns){
-          newNode = {
-            host: result.dns,
-            port: parts[1]
-          };
-        }
-        else{
-          newNode = {
-            host: parts[0],
-            port: parts[1]
+      .then(function (result) {
+        if (result) {
+          var parts = result.server.split(':');
+          var newNode;
+          if (result.dns) {
+            return newNode = {
+              host: result.dns,
+              port: parts[1]
+            };
           }
-        };
-        $scope.changeNode(newNode);
-      }
-    });
+          else {
+            return newNode = {
+              host: parts[0],
+              port: parts[1]
+            };
+          }
+        }
+      })
+      .then(function(newNode) {
+      $scope.changeNode(newNode);
+      });
   };
 
   // Show node popup

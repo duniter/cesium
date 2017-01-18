@@ -1,17 +1,17 @@
 <form name="popupForm" ng-submit="">
   <div class="list" ng-init="setPopupForm(popupForm)">
-      <label class="item item-input"
-             ng-class="{'item-input-error': popupForm.$submitted && popupForm.newNode.$invalid}">
-        <input name="newNode" type="text" placeholder="{{'SETTINGS.NODE_HELP' | translate}}"
-               ng-model="popupData.newNode"
-               ng-minlength="3"
-               required>
-      </label>
-      <button class="button-clear button-small gray pull-right"
-              ng-mousedown="showNodeList()">{{'SETTINGS.SHOW_NODE_LIST' | translate}}
-              <i class="icon-right ion-chevron-right gray"></i>
-      </button>
-
+    <label class="item item-input"
+           ng-class="{'item-input-error': popupForm.$submitted && popupForm.newNode.$invalid}">
+      <input name="newNode" type="text" placeholder="{{'SETTINGS.NODE_HELP' | translate}}"
+             ng-model="popupData.newNode"
+             ng-minlength="3"
+             required>
+    </label>
+      <ion-item class="item item-icon-right item-text-wrap ink in in done done" ng-click="showNodeList()">
+        <h5 class="popup-sub-title">{{'SETTINGS.SHOW_NODE_LIST' | translate}}</h5>
+        <i class="icon ion-ios-arrow-right"></i>
+      </ion-item>
+    </div>
     <div class="form-errors"
          ng-if="popupForm.$submitted && popupForm.newNode.$error"
          ng-messages="popupForm.newNode.$error">

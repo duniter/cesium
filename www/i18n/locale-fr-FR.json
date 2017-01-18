@@ -122,7 +122,7 @@
       "TITLE" : "Noeud Duniter",
       "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
     },
-    "SHOW_NODE_LIST" : "Choisir un noeud"
+    "SHOW_NODE_LIST" : "ou choisissez dans la liste"
   },
   "CURRENCY": {
     "SELECT": {
