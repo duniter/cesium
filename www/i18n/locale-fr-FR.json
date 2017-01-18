@@ -38,7 +38,7 @@
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
     "FROM": "De",
-    "TO": "A",
+    "TO": "À",
     "COPY": "Copier",
     "LANGUAGE": "Langue",
     "UNIVERSAL_DIVIDEND": "Dividende universel",
@@ -64,7 +64,7 @@
   },
   "SYSTEM": {
     "PICTURE_CHOOSE_TYPE": "Choisir la source :",
-    "BTN_PICTURE_GALLERY": "Gallerie",
+    "BTN_PICTURE_GALLERY": "Galerie",
     "BTN_PICTURE_CAMERA": "<b>Caméra</b>"
   },
   "MENU": {
@@ -81,7 +81,7 @@
     "NETWORK" : "Réseau"
   },
   "ABOUT": {
-    "TITLE": "A propos",
+    "TITLE": "À propos",
     "LICENSE": "Application <b>libre</b> (licence GNU GPLv3).",
     "CODE": "Code source :",
     "DEVELOPERS": "Développé par :",
@@ -108,7 +108,7 @@
   "SETTINGS": {
     "TITLE": "Paramètres",
     "NETWORK_SETTINGS": "Réseau",
-    "NODE": "Adresse du noeud Duniter",
+    "NODE": "Adresse du nœud Duniter",
     "NODE_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "ENABLE_HELPTIP": "Activer les bulles d'aide<span class=\"hidden-xs\"> contextuelles</span>",
@@ -120,8 +120,8 @@
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\">(affichage plus détaillé)</span>",
     "POPUP_NODE": {
-      "TITLE" : "Noeud Duniter",
-      "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
+      "TITLE" : "Nœud Duniter",
+      "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :"
     }
   },
   "CURRENCY": {
@@ -158,9 +158,9 @@
     }
   },
   "PEER": {
-    "TITLE": "Noeud",
-    "PEERS": "Noeuds",
-    "KNOWN_PEERS": "Noeuds connus",
+    "TITLE": "Nœud",
+    "PEERS": "Nœuds",
+    "KNOWN_PEERS": "Nœuds connus",
     "SIGNED_ON_BLOCK": "Signé sur le bloc",
     "MIRROR": "mirroir"
   },
@@ -289,7 +289,7 @@
     "TITLE": "Virement",
     "SUB_TITLE": "Faire un virement",
     "FROM": "De",
-    "TO": "A",
+    "TO": "À",
     "AMOUNT": "Montant",
     "AMOUNT_HELP": "Montant",
     "COMMENT": "Commentaire",
@@ -340,20 +340,20 @@
     "SCAN_FAILED": "Echec du scan de QR Code",
     "SCAN_UNKNOWN_FORMAT": "Code non reconnu.",
     "WOT_LOOKUP_FAILED": "Echec de la recherche",
-    "LOAD_NODE_DATA_FAILED": "Lecture du noeud Duniter impossible. Veuillez réessayer ultérieurement.",
+    "LOAD_NODE_DATA_FAILED": "Lecture du nœud Duniter impossible. Veuillez réessayer ultérieurement.",
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
     "NOT_ENOUGH_CREDIT": "Crédit insufisant.",
-    "INVALID_NODE_SUMMARY": "Noeud injoignable ou adresse invalide.",
+    "INVALID_NODE_SUMMARY": "Nœud injoignable ou adresse invalide.",
     "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
-    "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé) : cette personne doit renouveler sa demande d'adhésion <b>avant</b> d'être certifiée.",
+    "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les nœuds du réseau ont annulé) : cette personne doit renouveler sa demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_EXPIRED": "La publication de cette identité a expirée : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
-    "IDENTITY_SANDBOX_FULL": "Le noeud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de noeud (via le menu <b>Paramètres</b>).",
+    "IDENTITY_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (via le menu <b>Paramètres</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Adhésion non valide.",
-    "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les noeuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('fixMembership')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
+    "WALLET_INVALID_BLOCK_HASH": "Votre demande d'adhésion n'est plus valide (car elle référence un bloc que les nœuds du réseau ont annulé).<br/>Vous devez <a ng-click=\"doQuickFix('fixMembership')\">envoyer une nouvelle demande</a> pour résoudre ce problème.",
     "WALLET_IDENTITY_EXPIRED": "La publication de <b>votre identité a expirée</b>.<br/>Vous devez <a ng-click=\"doQuickFix('fixIdentity')\">publier à nouveau votre identité</a> pour résoudre ce problème.",
     "WALLET_HAS_NO_SELF": "Votre identité doit d'abord avoir été publiée, et ne pas être expirée.",
     "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
@@ -420,9 +420,9 @@
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, c'est à dire relativement au Dividende Universel (le montant co-produit par chaque membre).",
       "CURRENCY_RULES": "Les <b>règles</b> de la monnaie fixent son fonctionnement <b>exact et prévisible</b>.<br/><br/>Véritable ADN de la monnaie, elles rendent son code monétaire <b>lisible et transparent</b>.",
       "CURRENCY_BLOCKCHAIN": "Toutes les opérations de la monnaie sont enregistrées dans un grand livre de compte <b>public et infalsifiable</b>, appellé aussi <b>chaine de blocs</b> (<em>BlockChain</em> en anglais).",
-      "CURRENCY_PEERS": "Les <b>noeuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de noeuds, plus la monnaie à une gestion <b>décentralisée</b> et digne de confiance.",
-      "CURRENCY_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> indique le <b>dernier bloc validé</b> pour ce noeud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres noeuds</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un noeud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
+      "CURRENCY_PEERS": "Les <b>nœuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de nœuds, plus la monnaie à une gestion <b>décentralisée</b> et digne de confiance.",
+      "CURRENCY_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> indique le <b>dernier bloc validé</b> pour ce nœud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres nœuds</b>.",
+      "CURRENCY_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> permet l'accès au solde de votre compte et à l'historique de vos transactions.",
       "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte, l'historique de vos transactions et vos certifications.",
       "WALLET_CERTIFICATIONS": "En cliquant ici, consultez le détail de vos certifications (reçues et émises).",

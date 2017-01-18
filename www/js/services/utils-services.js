@@ -625,8 +625,10 @@ angular.module('cesium.utils.services', ['ngResource'])
       resizeSrc: resizeImageFromSrc
     },
     locales: [
+      {id:'en', label:'English'},
+      {id:'en-GB', label:'English (UK)'},
       {id:'fr-FR', label:'Français'},
-      {id:'en', label:'English'}
+      {id:'nl-NL', label:'Nederlands'}
     ]
   };
 })
