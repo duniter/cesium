@@ -109,7 +109,6 @@
     "TITLE": "Paramètres",
     "NETWORK_SETTINGS": "Réseau",
     "PEER": "Adresse du nœud Duniter",
-    "PEER_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "ENABLE_HELPTIP": "Activer les bulles d'aide<span class=\"hidden-xs\"> contextuelles</span>",
     "HISTORY_SETTINGS": "Mon compte",
@@ -121,8 +120,10 @@
     "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\">(affichage plus détaillé)</span>",
     "POPUP_PEER": {
       "TITLE" : "Nœud Duniter",
-      "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",
-      "BTN_SHOW_LIST" : "Voir la liste des nœuds"
+      "HELP" : "Adresse du nœud :",
+      "PEER_HELP": "serveur.domaine.com:port",
+      "BTN_SHOW_LIST_HELP" : "Saisissez ci-dessus au format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> ou bien cliquez sur le bouton ci-dessous :",
+      "BTN_SHOW_LIST" : "Liste des noeuds"
     },
   },
   "CURRENCY": {

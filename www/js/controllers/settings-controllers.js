@@ -128,14 +128,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
-      $translate(['SETTINGS.POPUP_NODE.TITLE', 'SETTINGS.POPUP_NODE.HELP',
-        'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+      $translate(['SETTINGS.POPUP_PEER.TITLE', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
           // Choose UID popup
           $ionicPopup.show({
             templateUrl: 'templates/settings/popup_node.html',
-            title: translations['SETTINGS.POPUP_NODE.TITLE'],
-            subTitle: translations['SETTINGS.POPUP_NODE.HELP'],
+            title: translations['SETTINGS.POPUP_PEER.TITLE'],
             scope: $scope,
             buttons: [
               { text: translations['COMMON.BTN_CANCEL'] },

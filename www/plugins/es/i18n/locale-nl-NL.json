@@ -274,11 +274,11 @@
     "ENABLE_REGISTRY_TOGGLE": "Bedrijfsregister inschakelen?",
     "ENABLE_MESSAGE_TOGGLE": "Berichten inschakelen?",
     "ENABLE_SETTINGS_TOGGLE": "Globale opslag voor instellingen inschakelen?",
-    "NODE": "Adres dataknooppunt",
-    "NODE_HELP": "server.domein.com:poort",
-    "POPUP_NODE": {
+    "PEER": "Adres dataknooppunt",
+    "POPUP_PEER": {
       "TITLE" : "Dataknoop",
-      "HELP" : "Stel het te gebruiken adres in:"
+      "HELP" : "Stel het te gebruiken adres in:",
+      "PEER_HELP": "server.domein.com:poort"
     },
     "NOTIFICATIONS": {
       "DIVIDER": "Notificaties",

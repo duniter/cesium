@@ -274,11 +274,11 @@
     "ENABLE_REGISTRY_TOGGLE": "Enable companies registry?",
     "ENABLE_MESSAGE_TOGGLE": "Enable messages?",
     "ENABLE_SETTINGS_TOGGLE": "Enable remote storage for settings?",
-    "NODE": "Data node address",
-    "NODE_HELP": "server.domain.com:port",
-    "POPUP_NODE": {
-      "TITLE" : "Data Node",
-      "HELP" : "Set the address of the node to use:"
+    "PEER": "Data peer address",
+    "POPUP_PEER": {
+      "TITLE" : "Data peer",
+      "HELP" : "Set the address of the peer to use:",
+      "PEER_HELP": "server.domain.com:port"
     },
     "NOTIFICATIONS": {
       "DIVIDER": "Notifications",

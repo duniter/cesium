@@ -109,7 +109,6 @@
     "TITLE": "Settings",
     "NETWORK_SETTINGS": "Network",
     "PEER": "Duniter peer address",
-    "PEER_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "ENABLE_HELPTIP": "Enable contextual help tips",
     "HISTORY_SETTINGS": "My Account",
@@ -120,9 +119,11 @@
     "BTN_RESET": "Restore default values",
     "EXPERT_MODE": "Enable expert mode<span class=\"hidden-xs\">(display more details)</span>",
     "POPUP_PEER": {
-      "TITLE" : "Duniter Node",
-      "HELP" : "Set the address of the peer to use:",
-      "BTN_SHOW_LIST" : "Show peer's list"
+      "TITLE" : "Duniter peer",
+      "HELP" : "Peer address:",
+      "PEER_HELP": "server.domain.com:port",
+      "BTN_SHOW_LIST_HELP" : "Enter above in the format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> or click on the button below:",
+      "BTN_SHOW_LIST" : "Peer's list"
     },
   },
   "CURRENCY": {

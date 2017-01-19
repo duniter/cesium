@@ -1,7 +1,7 @@
 <ion-modal-view id="nodes" class="modal-full-height" cache-view="false">
   <ion-header-bar class="bar-positive">
     <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
-    <h1 class="title" translate>PEER.NODE_LIST</h1>
+    <h1 class="title" translate>PEER.PEER_LIST</h1>
     <div class="buttons buttons-right header-item">
       <span class="secondary">
         <button class="button button-clear icon ion-loop button-clear" ng-click="refresh()">
@@ -26,7 +26,7 @@
             {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
           </h4>
           <h4 ng-if="!enableFilter || !search.type">
-            {{'PEER.ALL_NODES' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+            {{'PEER.ALL_PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
           </h4>
         </div>
 

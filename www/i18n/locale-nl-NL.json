@@ -109,7 +109,6 @@
     "TITLE": "Instellingen",
     "NETWORK_SETTINGS": "Netwerk",
     "PEER": "Duniter knooppunt adres",
-    "PEER_HELP": "server.domein.com:poort",
     "USE_LOCAL_STORAGE": "Lokale opslag inschakelen",
     "ENABLE_HELPTIP": "Contextgebonden hulp inschakelen",
     "HISTORY_SETTINGS": "Mijn rekening",
@@ -121,7 +120,8 @@
     "EXPERT_MODE": "Geavanceerde modus inschakelen <span class=\"hidden-xs\">(toon meer details)</span>",
     "POPUP_PEER": {
       "TITLE" : "Duniter Knooppunt",
-      "HELP" : "Stel het adres van het knooppunt in:"
+      "HELP" : "Stel het adres van het knooppunt in:",
+      "PEER_HELP": "server.domein.com:poort"
     }
   },
   "CURRENCY": {
@@ -339,7 +339,7 @@
     "SCAN_FAILED": "Could not scan QR code.",
     "SCAN_UNKNOWN_FORMAT": "Code not recognized.",
     "WOT_LOOKUP_FAILED": "Search failed.",
-    "LOAD_PEER_DATA_FAILED": "Duniter Node not accessible. Please retry later.",
+    "LOAD_PEER_DATA_FAILED": "Duniter peer not accessible. Please retry later.",
     "NEED_LOGIN_FIRST": "Please sign in first.",
     "AMOUNT_REQUIRED": "Amount is required.",
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",

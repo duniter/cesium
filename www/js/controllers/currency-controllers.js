@@ -237,7 +237,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
     })
     .catch(function(err) {
       $scope.loading = false;
-      UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
+      UIUtils.onError('ERROR.LOAD_PEER_DATA_FAILED')(err);
     });
   };
 
