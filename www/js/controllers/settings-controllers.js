@@ -21,7 +21,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp,
-  UIUtils, BMA, csSettings, $ionicPopover, ModalUtils) {
+  UIUtils, BMA, csSettings, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -97,7 +97,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
   $scope.showNodeList = function() {
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
-    return ModalUtils.show('/templates/network/modal_network.html', 'NetworkModalCtrl')
+    return Modals.showNetworkLookup({enableFilter: true, type: 'member'})
       .then(function (result) {
         if (result) {
           var parts = result.server.split(':');

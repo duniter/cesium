@@ -21,43 +21,49 @@ angular.module('cesium.network.controllers', ['cesium.services'])
     });
 })
 
-.controller('NetworkViewCtrl', NetworkViewController)
+.controller('NetworkLookupCtrl', NetworkLookupController)
 
 .controller('PeerCtrl', PeerController)
 
-.controller('NetworkModalCtrl', NetworkModalController)
+.controller('NetworkLookupModalCtrl', NetworkLookupModalController)
 
 ;
 
-function NetworkViewController($scope, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
-  $scope.loadingPeers = true;
-  $scope.formData = {
-    useRelative: csSettings.data.useRelative
+function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+  'ngInject';
+
+  $scope.itemClass = '';
+  $scope.search = {
+    text: '',
+    loading: true,
+    type: 'member',
+    results: []
   };
 
-  $scope.screen = UIUtils.screen;
+  $scope.init = function() {
+    csCurrency.default()
+      .then(function (currency) {
+        if (currency) {
+          $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
+            BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+          $scope.load();
+        }
+      })
+      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+  };
 
   $scope.$on('$ionicParentView.enter', function(e, state) {
-    csCurrency.all()
-    .then(function (currencies) {
-      if (currencies && currencies.length > 0) {
-        $scope.load(currencies[0]);
-      }
-
-    })
-    .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+    $scope.init();
   });
 
   $scope.$on('$ionicParentView.beforeLeave', function(){
     csNetwork.close();
   });
 
-  $scope.load = function(currency) {
-    $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
-      BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+  $scope.load = function() {
 
-    if ($scope.loadingPeers){
-      csNetwork.start($scope.node);
+    if ($scope.search.loading){
+      csNetwork.start($scope.node, {filter: $scope.search.type});
 
       // Catch event on new peers
       var refreshing = false;
@@ -66,16 +72,12 @@ function NetworkViewController($scope, $timeout, BMA, UIUtils, csSettings, csCur
           refreshing = true;
           $timeout(function() { // Timeout avoid to quick updates
             console.debug("Updating UI Peers");
-            $scope.peers = data.peers;
-            // Update currency params
-
-            $scope.loadingPeers = csNetwork.isBusy();
+            $scope.search.results = data.peers;
+            $scope.search.memberPeersCount = data.memberPeersCount;
+            $scope.search.loading = csNetwork.isBusy();
             refreshing = false;
            }, 1100);
         }
-      });
-      $scope.$on('$destroy', function(){
-        csNetwork.close();
       });
     }
 
@@ -85,100 +87,35 @@ function NetworkViewController($scope, $timeout, BMA, UIUtils, csSettings, csCur
 
   $scope.refresh = function() {
     // Network
-    $scope.loadingPeers = true;
+    $scope.search.loading = true;
     csNetwork.loadPeers();
   };
 
-  // Show help tip
-  $scope.showHelpTip = function() {
-    if (!$scope.isLogin()) return;
-    index = csSettings.data.helptip.currency;
-    if (index < 0) return;
-
-    // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope();
-    if (!helptipScope) return; // could be undefined, if a global tour already is already started
-
-    return helptipScope.startCurrencyTour(index, false)
-      .then(function(endIndex) {
-        helptipScope.$destroy();
-        csSettings.data.helptip.currency = endIndex;
-        csSettings.store();
-      });
-  };
-}
-
-function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover, BMA,
-  UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
-  $scope.loadingPeers = true;
-  $scope.formData = {
-    useRelative: csSettings.data.useRelative
-  };
-
-  $scope.enableFilter = true;
-  $scope.display='members';
-  $scope.screen = UIUtils.screen;
-  $scope.nbMembersPeers = 0;
-
-  csCurrency.all()
-    .then(function (currencies) {
-      if (currencies && currencies.length > 0) {
-        $scope.load(currencies[0]);
-      }
-
-    })
-    .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-
-  $scope.load = function(currency) {
-    $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
-      BMA.instance(currency.peer.host, currency.peer.port) : BMA;
-
-    if ($scope.loadingPeers){
-      csNetwork.start($scope.node);
-
-      // Catch event on new peers
-      var refreshing = false;
-      csNetwork.api.data.on.changed($scope, function(data){
-        if (!refreshing) {
-          refreshing = true;
-          $timeout(function() { // Timeout avoid to quick updates
-            console.debug("Updating UI Peers");
-            $scope.peers = data.peers;
-            // Update currency params
-
-            $scope.loadingPeers = csNetwork.isBusy();
-            $scope.countMembersNodes();
-            refreshing = false;
-            }, 1100)
-        }
-
-      });
-      $scope.$on('modal.hidden', function(){
-        csNetwork.close();
-      });
-    }
-  };
-
-  $scope.refresh = function() {
-    $scope.loadingPeers = true;
-    csNetwork.loadPeers();
-  };
-
-  $scope.countMembersNodes = function(){
-    $scope.nbMembersPeers = 0;
-    for(var i=0; i<$scope.peers.length; i++){
-      if ($scope.peers[i].level){
-        $scope.nbMembersPeers++;
-      }
-    }
-  };
-
-  $scope.changeDisplay = function(type){
+  $scope.toggleSearchType = function(type){
     $scope.hideActionsPopover();
-    $scope.display = type;
+    if ($scope.search.type === type || type === 'none') {
+      $scope.search.type = false;
+    }
+    else {
+      $scope.search.type = type;
+    }
+    csNetwork.close();
+    $scope.search.loading = true;
+    $scope.load();
+
   };
 
-  /* -- show/hide popup -- */
+  $scope.selectPeer = function(peer) {
+    $state.go('app.view_peer', {server: peer.server});
+  };
+
+  $scope.$on('NetworkLookupCtrl.action', function(event, action) {
+    if (action === 'refresh') {
+      $scope.refresh();
+    }
+  });
+
+  /* -- popover -- */
 
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
@@ -204,4 +141,51 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
     }
   };
 
+  /* -- help tip -- */
+
+  // Show help tip
+  $scope.showHelpTip = function() {
+    if (!$scope.isLogin()) return;
+    index = csSettings.data.helptip.currency;
+    if (index < 0) return;
+
+    // Create a new scope for the tour controller
+    var helptipScope = $scope.createHelptipScope();
+    if (!helptipScope) return; // could be undefined, if a global tour already is already started
+
+    return helptipScope.startCurrencyTour(index, false)
+      .then(function(endIndex) {
+        helptipScope.$destroy();
+        csSettings.data.helptip.currency = endIndex;
+        csSettings.store();
+      });
+  };
+}
+
+
+function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
+  'ngInject';
+
+  NetworkLookupController.call(this, $scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
+
+  // Read parameters
+  parameters = parameters || {};
+  $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
+  $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
+
+  $scope.itemClass = parameters.itemClass || 'item-border-large';
+
+  $scope.selectPeer = function(peer) {
+    $scope.closeModal(peer);
+  };
+
+  $scope.$on('modal.hidden', function(){
+    csNetwork.close();
+  });
+
+  // Disable this unsed method - called by load()
+  $scope.showHelpTip = function() {};
+
+  // Init
+  $scope.init();
 }

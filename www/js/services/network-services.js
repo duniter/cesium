@@ -13,6 +13,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       data = {
         bma: null,
         peers: [],
+        filter: null,
         knownBlocks: [],
         knownPeers: {},
         mainBuid: null,
@@ -24,6 +25,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       resetData = function() {
         data.bma = null;
         data.peers = [];
+        data.filter = null;
+        data.memberPeersCount = 0;
         data.knownBlocks = [];
         data.knownPeers = {};
         data.mainBuid = null;
@@ -118,9 +121,15 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         peer.dns = peer.getDns();
         peer.blockNumber = peer.block.replace(/-.+$/, '');
         peer.uid = data.uidsByPubkeys[peer.pubkey];
+
+        // filter
+        if (data.filter &&
+            ((data.filter === 'member' && !peer.uid) ||
+             (data.filter === 'mirror' && peer.uid))) {
+          return $q.when(peer);
+        }
+
         var node = new BMA.instance(peer.getHost(), peer.getPort(), false);
-
-
 
         // Get current block
         return node.blockchain.current()
@@ -151,8 +160,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             return peer;
           })
           .then(function(peer) {
-            // Exit if offline
-            if (!peer.online) return peer;
+            // Exit if offline, or not expert mode or too small device
+            if (!peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
             var jobs = [];
             // Get hardship (only for a member peer)
             if (peer.uid) {
@@ -164,8 +173,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                   peer.level = null; // continue
                 }));
             }
-            // Exit if not expert mode or too small device
-            if (!csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
 
             // Get Version
             jobs.push(node.node.summary()
@@ -183,11 +190,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       flushNewPeersAndSort = function(newPeers) {
         newPeers = newPeers || data.newPeers;
-        if (newPeers.length) {
-          data.peers = data.peers.concat(newPeers.splice(0));
-          console.debug('[network] New peers found: add them to result and sort...');
-          sortPeers();
-        }
+        if (!newPeers.length) return;
+        data.peers = data.peers.concat(newPeers.splice(0));
+        console.debug('[network] New peers found: add them to result and sort...');
+        sortPeers();
       },
 
       sortPeers = function(updateMainBuid) {
@@ -205,9 +211,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         var mainBlock = _.max(buids, function(obj) {
           return obj.count;
         });
+        data.memberPeersCount = 0;
         _.forEach(data.peers, function(peer){
           peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
           peer.hasConsensusBlock = !peer.hasMainConsensusBlock && currents[peer.buid] > 1;
+          data.memberPeersCount += peer.uid ? 1 : 0;
         });
         data.peers = _.uniq(data.peers, false, function(peer) {
           return peer.pubkey;
@@ -227,8 +235,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
         api.data.raise.changed(data); // raise event
       },
-
-
 
       startListeningOnSocket = function() {
         // Listen for new block
@@ -276,11 +282,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
       },
 
-      start = function(bma) {
+      start = function(bma, options) {
+        options = options || {};
         return $q(function(resolve, reject) {
           close();
           data.bma = bma ? bma : BMA;
-          console.info('[network] Starting network [' + bma.node.server + ']');
+          data.filter = options.filter;
+          console.info('[network] Starting network [{0}] filetered on [{1}]'.format(bma.node.server,
+            data.filter ? data.filter : 'none'));
           var now = new Date();
           startListeningOnSocket(resolve, reject);
           loadPeers()

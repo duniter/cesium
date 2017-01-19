@@ -108,8 +108,8 @@
   "SETTINGS": {
     "TITLE": "Paramètres",
     "NETWORK_SETTINGS": "Réseau",
-    "NODE": "Adresse du nœud Duniter",
-    "NODE_HELP": "server.domain.com:port",
+    "PEER": "Adresse du nœud Duniter",
+    "PEER_HELP": "server.domain.com:port",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "ENABLE_HELPTIP": "Activer les bulles d'aide<span class=\"hidden-xs\"> contextuelles</span>",
     "HISTORY_SETTINGS": "Mon compte",
@@ -119,11 +119,11 @@
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\">(affichage plus détaillé)</span>",
-    "POPUP_NODE": {
+    "POPUP_PEER": {
       "TITLE" : "Nœud Duniter",
-      "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :"
+      "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",
+      "BTN_SHOW_LIST" : "Voir la liste des nœuds"
     },
-    "SHOW_NODE_LIST" : "ou choisissez dans la liste"
   },
   "CURRENCY": {
     "SELECT": {
@@ -143,7 +143,6 @@
       "SHARE": "Masse par membre",
       "UD": "Dividende universel",
       "C_ACTUAL": "Croissance actuelle",
-      "BLOCKCHAIN_DIVIDER": "Blockchain",
       "TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau de difficulté",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
@@ -164,9 +163,10 @@
     "KNOWN_PEERS": "Nœuds connus",
     "SIGNED_ON_BLOCK": "Signé sur le bloc",
     "MIRROR": "mirroir",
-    "NODE_LIST" : "Liste des noeuds",
-    "MEMBERS" : "Noeuds membres",
-    "ALL_NODES" : "Tous les noeuds"
+    "MIRRORS": "Nœuds mirroirs",
+    "PEER_LIST" : "Liste des nœuds",
+    "MEMBERS" : "Nœuds membres",
+    "ALL_PEERS" : "Tous les nœuds"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
@@ -344,7 +344,7 @@
     "SCAN_FAILED": "Echec du scan de QR Code",
     "SCAN_UNKNOWN_FORMAT": "Code non reconnu.",
     "WOT_LOOKUP_FAILED": "Echec de la recherche",
-    "LOAD_NODE_DATA_FAILED": "Lecture du nœud Duniter impossible. Veuillez réessayer ultérieurement.",
+    "LOAD_PEER_DATA_FAILED": "Lecture du nœud Duniter impossible. Veuillez réessayer ultérieurement.",
     "NEED_LOGIN_FIRST": "Veuillez d'abord vous connecter.",
     "AMOUNT_REQUIRED": "Le montant est obligatoire.",
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",

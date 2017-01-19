@@ -9,8 +9,7 @@
          ng-click="toggleShowDetails()">
         <i class="icon ion-key"></i>
         {{'ACCOUNT.BTN_SHOW_DETAILS' | translate}}
-        <i class="icon"
-           ng-class="{'ion-ios-checkmark-empty': showDetails}"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="showDetails"></i>
       </a>
 
       <a class="item item-icon-left ink visible-xs visible-sm"

@@ -1,4 +1,9 @@
 <ion-view>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+    </button>
+  </ion-nav-buttons>
+
   <ion-content>
     <div class="list">
       <ng-include src="'templates/currency/items_network.html'"></ng-include>

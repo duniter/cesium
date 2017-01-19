@@ -241,7 +241,12 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
     });
   };
 
-  // Show help tip
+  $scope.refreshPeers = function() {
+    $scope.$broadcast('NetworkLookupCtrl.action', 'refresh');
+  };
+
+  /* -- help tip -- */
+
   $scope.showHelpTip = function() {
     if (!$scope.isLogin()) return;
     index = csSettings.data.helptip.currency;
