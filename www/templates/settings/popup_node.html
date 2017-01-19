@@ -7,6 +7,11 @@
              ng-minlength="3"
              required>
     </label>
+      <ion-item class="item item-icon-right item-text-wrap ink in in done done" ng-click="showNodeList()">
+        <h5 class="popup-sub-title">{{'SETTINGS.SHOW_NODE_LIST' | translate}}</h5>
+        <i class="icon ion-ios-arrow-right"></i>
+      </ion-item>
+    </div>
     <div class="form-errors"
          ng-if="popupForm.$submitted && popupForm.newNode.$error"
          ng-messages="popupForm.newNode.$error">
@@ -19,3 +24,5 @@
     </div>
   </div>
 </form>
+
+
