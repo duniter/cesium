@@ -23,13 +23,13 @@
          ng-if="walletData.requirements.needMembership"
          ng-click="membershipIn()">
         <i class="icon ion-person"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
+        {{'ACCOUNT.BTN_MEMBERSHIP_IN_DOTS' | translate}}
       </a>
       <a class="item item-icon-left ink hidden-xs hidden-sm"
               ng-class="{'gray':!walletData.requirements.needMembership}"
               ng-click="membershipIn()">
         <i class="icon ion-person"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_IN' | translate}}
+        {{'ACCOUNT.BTN_MEMBERSHIP_IN_DOTS' | translate}}
       </a>
 
       <!-- renew membership -->
@@ -37,27 +37,27 @@
          ng-if="walletData.requirements.needRenew"
          ng-click="renewMembership()">
         <i class="icon ion-loop"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW_DOTS' | translate}}
       </a>
       <a class="item item-icon-left ink hidden-xs hidden-sm"
          ng-class="{'gray':!walletData.requirements.needRenew}"
          ng-click="renewMembership()">
         <i class="icon ion-loop"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW_DOTS' | translate}}
       </a>
 
       <a class="item item-icon-left assertive ink"
               ng-if="walletData.requirements.canMembershipOut"
               ng-click="membershipOut()">
         <i class="icon ion-log-out"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_OUT' | translate}}
+        {{'ACCOUNT.BTN_MEMBERSHIP_OUT_DOTS' | translate}}
       </a>
 
       <a class="item item-icon-left ink"
             ng-if="walletData.requirements.needSelf"
             ng-click="self()">
         <i class="icon ion-flag"></i>
-        {{'ACCOUNT.BTN_SEND_IDENTITY' | translate}}
+        {{'ACCOUNT.BTN_SEND_IDENTITY_DOTS' | translate}}
       </a>
 
       <!-- revocation -->
