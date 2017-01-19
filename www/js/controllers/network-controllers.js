@@ -114,6 +114,7 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };
+
   $scope.enableFilter = true;
   $scope.display='members';
   $scope.screen = UIUtils.screen;
@@ -152,19 +153,19 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
         }
 
       });
-      $scope.$on('$destroy', function(){
+      $scope.$on('modal.hidden', function(){
         csNetwork.close();
       });
     }
   };
 
   $scope.refresh = function() {
-    // Network
     $scope.loadingPeers = true;
     csNetwork.loadPeers();
   };
 
   $scope.countMembersNodes = function(){
+    $scope.nbMembersPeers = 0;
     for(var i=0; i<$scope.peers.length; i++){
       if ($scope.peers[i].level){
         $scope.nbMembersPeers++;
