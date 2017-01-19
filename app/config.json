@@ -169,7 +169,7 @@
     "rememberMe": true,
     "showUDHistory": false,
     "timeout": 6000,
-    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpireMembership": 514000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": true,

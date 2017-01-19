@@ -35,6 +35,7 @@
   },
   "COMMENTS": {
     "DIVIDER": "Commentaires",
+    "DIVIDER_WITH_TOTAL": "Commentaires ({{total}})",
     "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents",
     "COMMENT_HELP": "Votre commentaire, question, etc.",
     "COMMENT_HELP_REPLY_TO": "Votre réponse...",

@@ -22,6 +22,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?"
       },
       errorCodes = {
+        REVOCATION_ALREADY_REGISTERED: 1002,
         HTTP_LIMITATION: 1006,
         IDENTITY_SANDBOX_FULL: 1007,
         NO_MATCHING_IDENTITY: 2001,

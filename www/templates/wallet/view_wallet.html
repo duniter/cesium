@@ -53,11 +53,12 @@
 
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
-      <button class="button button-stable icon ion-android-share ink"
+
+      <button class="button button-stable button-small-padding icon ion-android-share ink"
               ng-click="showSharePopover($event)">
       </button>
 
-      <button class="button button-raised icon ion-loop ink"
+      <button class="button button-stable button-small-padding icon ion-loop ink"
               ng-click="doUpdate()">
       </button>
 
@@ -66,16 +67,17 @@
         {{'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
 
-      <button class="button button-raised icon-left ion-loop ink"
+      <button class="button button-raised button-balanced ink"
               ng-if="walletData.requirements.needRenew"
               ng-click="renewMembership()">
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
       </button>
 
       <button id="helptip-wallet-options"
-              class="button button-icon ink"
+              class="button button-stable icon-right"
               ng-click="showActionsPopover($event)">
         <i class="icon ion-android-more-vertical"></i>
+        &nbsp;&nbsp;Autres
       </button>
 
     </div>

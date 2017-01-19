@@ -193,8 +193,8 @@
       "BTN_PENDING": "Inscriptions en attente",
       "SHOW_MORE": "Afficher plus",
       "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
-      "NO_PENDING": "Aucune inscription en attente n'a été trouvée",
-      "NO_NEWCOMERS": "Aucun membre n'a été trouvée"
+      "NO_PENDING": "Aucune inscription en attente.",
+      "NO_NEWCOMERS": "Aucun membre."
     },
     "MODAL": {
       "TITLE": "Recherche"
@@ -249,7 +249,7 @@
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_MEMBERSHIP_IN": "Devenir membre...",
-    "BTN_MEMBERSHIP_RENEW": "renouveler l'adhésion",
+    "BTN_MEMBERSHIP_RENEW": "Renouveler l'adhésion",
     "BTN_MEMBERSHIP_OUT": "Arrêter l'adhésion...",
     "BTN_SEND_IDENTITY": "Publier son identitié...",
     "BTN_REVOKE": "Revoquer<span class='hidden-xs hidden-sm'> définitivement</span> cette identité...",
@@ -348,6 +348,7 @@
     "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
+    "IDENTITY_REVOKED": "Cette identité <b>a été révoquée {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). Elle ne peut plus devenir membre.",
     "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les nœuds du réseau ont annulé) : cette personne doit renouveler sa demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_EXPIRED": "La publication de cette identité a expirée : cette personne doit effectuer une nouvelle demande d'adhésion <b>avant</b> d'être certifiée.",
     "IDENTITY_SANDBOX_FULL": "Le nœud Duniter utilisé par Cesium ne peut plus recevoir de nouvelles identités, car sa file d'attente est pleine.<br/><br/>Veuillez réessayer ultérieurement ou changer de nœud (via le menu <b>Paramètres</b>).",
@@ -361,7 +362,8 @@
     "LOAD_NEWCOMERS_FAILED": "Echec du chargement des nouveaux membres.",
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
-    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action."
+    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
+    "REVOCATION_FAILED": "Echec de la révocation."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -372,6 +374,8 @@
     "MEMBERSHIP_OUT_SENT": "Résiliation envoyée avec succès",
     "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
+    "REVOCATION_SENT": "Revocation envoyée avec succès",
+    "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été envoyée avec succès. Elle est en attente de traitement."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

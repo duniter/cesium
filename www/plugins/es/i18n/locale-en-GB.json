@@ -35,6 +35,7 @@
   },
   "COMMENTS": {
     "DIVIDER": "Comments",
+    "DIVIDER_WITH_TOTAL": "Comments ({{total}})",
     "SHOW_MORE_COMMENTS": "Show previous comments",
     "COMMENT_HELP": "Your comment, question...",
     "COMMENT_HELP_REPLY_TO": "Your answer...",
@@ -115,6 +116,7 @@
     "COMMON": {
       "PRICE": "Price",
       "BTN_BUY": "Buy",
+      "BTN_BUY_DOTS": "Buy...",
       "BTN_NEW_AD": "New ad"
     },
     "SEARCH": {

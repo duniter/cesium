@@ -69,7 +69,7 @@ function NetworkViewController($scope, $timeout, BMA, UIUtils, csSettings, csCur
 
             $scope.loadingPeers = csNetwork.isBusy();
             refreshing = false;
-            }, 1100);
+           }, 1100);
         }
       });
       $scope.$on('$destroy', function(){

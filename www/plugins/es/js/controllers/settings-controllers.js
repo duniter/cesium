@@ -141,8 +141,8 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
             });
           });
         });
-      });
-    };
+    });
+  };
 
   $scope.onFormChanged = function() {
     if ($scope.loading) return;

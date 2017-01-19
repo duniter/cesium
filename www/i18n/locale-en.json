@@ -193,8 +193,8 @@
       "BTN_PENDING": "Pending registrations",
       "SHOW_MORE": "Show more",
       "SHOW_MORE_COUNT": "(current limit to {{limit}})",
-      "NO_PENDING": "No pending registrations have been found",
-      "NO_NEWCOMERS": "No new members have been found"
+      "NO_PENDING": "No pending registrations.",
+      "NO_NEWCOMERS": "No members."
     },
     "MODAL": {
       "TITLE": "Search"
@@ -348,6 +348,7 @@
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special characters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
+    "IDENTITY_REVOKED": "This identity <b>has been revoked {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). It can no longer become a member.",
     "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network nodes are cancelled): the person must renew its application for membership <b>before</b> being certified.",
     "IDENTITY_EXPIRED": "This identity has expired: this person must re-apply <b>before</b> being certified.",
     "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>).",
@@ -361,7 +362,8 @@
     "LOAD_NEWCOMERS_FAILED": "Unable to load new members.",
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
-    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action."
+    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
+    "REVOCATION_FAILED": "Error while trying to revoke the identity."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -371,7 +373,9 @@
     "COPY_TO_CLIPBOARD_DONE": "Copy succeeded",
     "MEMBERSHIP_OUT_SENT": "Membership revocation sent",
     "NOT_NEED_MEMBERSHIP": "Already a member.",
-    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}})."
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
+    "REVOCATION_SENT": "Revocation sent successfully",
+    "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

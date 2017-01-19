@@ -193,8 +193,8 @@
       "BTN_PENDING": "Registraties in afwachting",
       "SHOW_MORE": "Toon meer",
       "SHOW_MORE_COUNT": "(huidige limiet op {{limit}})",
-      "NO_PENDING": "Er zijn geen registraties in afwachting gevonden",
-      "NO_NEWCOMERS": "Er zijn geen nieuwe leden gevonden"
+      "NO_PENDING": "Er zijn geen registraties in afwachting gevonden.",
+      "NO_NEWCOMERS": "Er zijn geen nieuwe leden gevonden."
     },
     "MODAL": {
       "TITLE": "Zoeken"

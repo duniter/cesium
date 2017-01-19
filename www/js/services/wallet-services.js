@@ -311,10 +311,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.blockUid = null;
       data.isMember = false;
       data.sigDate = null;
-      data.events = data.events.reduce(function(res, event) {
-        if (event.context.startsWith('requirements')) return res;
-        return res.concat(event);
-      },[]);
+      cleanEventsByContext('requirements');
     },
 
     loadRequirements = function() {
@@ -384,7 +381,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // Retrieve registration date
           return BMA.blockchain.block({block: blockNumber})
             .then(function(block) {
-              data.sigDate = block.time;
+              data.sigDate = block.medianTime;
 
               // Check if self has been done on a valid block
               if (!data.isMember && blockNumber !== 0 && blockHash !== block.hash) {
@@ -672,21 +669,17 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.requirements.pendingCertificationCount = 0 ; // init to 0, because not loaded here (see wot-service.js)
 
       // Add user events
-      data.events = data.events.reduce(function(res, event) {
-        if (event.message.startsWith('ACCOUNT.')) return res;
-        return res.concat(event);
-      },[]);
       if (data.requirements.pendingMembership) {
-        data.events.push({type:'pending',message: 'ACCOUNT.WAITING_MEMBERSHIP'});
+        addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
       }
       if (data.requirements.needCertificationCount > 0) {
-        data.events.push({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements});
+        addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
       }
       if (data.requirements.willNeedCertificationCount > 0) {
-        data.events.push({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements});
+        addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
       }
       if (data.requirements.needRenew) {
-        data.events.push({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements});
+        addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
       }
     },
 
@@ -809,7 +802,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var jobs = [];
 
       // Reset events
-      data.events = [];
+      cleanEventsByContext('requirements');
 
       // Get parameters
       if (options.parameters) jobs.push(loadParameters());
@@ -1410,14 +1403,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
     },
 
-    addEvent = function(event) {
+    addEvent = function(event, insertAtFirst) {
       event = event || {};
       event.type = event.type || 'info';
       event.message = event.message || '';
       event.messageParams = event.messageParams || {};
       event.context = event.context || 'undefined';
       if (event.message.trim().length) {
-        data.events.push(event);
+        if (!insertAtFirst) {
+          data.events.push(event);
+        }
+        else {
+          data.events.splice(0, 0, event);
+        }
       }
       else {
         console.debug('Event without message. Skipping this event');
@@ -1458,7 +1456,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     /**
      * Send a revocation
      */
-    revocation = function() {
+    revoke = function() {
+
+      // Clear old events
+      cleanEventsByContext('revocation');
+
       // Get revocation document
       return getRevocationDocument()
 
@@ -1469,13 +1471,28 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
         // Reload requirements
         .then(function() {
+
           return $timeout(function() {
             return loadRequirements();
           }, 1000); // waiting for node to process membership doc
         })
+
         .then(function() {
           finishLoadRequirements();
-        });
+
+          // Add user event
+          addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+        })
+        .catch(function(err) {
+          if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
+            // Already registered by node: just add an event
+            addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+          }
+          else {
+            throw err;
+          }
+        })
+        ;
     },
 
     cleanEventsByContext = function(context){
@@ -1573,6 +1590,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // operations
       transfer: transfer,
       self: self,
+      revoke: revoke,
       membership: {
         inside: membership(true),
         out: membership(false)

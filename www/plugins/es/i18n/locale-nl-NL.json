@@ -35,6 +35,7 @@
   },
   "COMMENTS": {
     "DIVIDER": "Commentaren",
+    "DIVIDER_WITH_TOTAL": "Commentaren ({{total}})",
     "SHOW_MORE_COMMENTS": "Toon eerder commentaren",
     "COMMENT_HELP": "Jouw commentaar, vraag...",
     "COMMENT_HELP_REPLY_TO": "Jouw antwoord...",
@@ -115,6 +116,7 @@
     "COMMON": {
       "PRICE": "Prijs",
       "BTN_BUY": "Koop",
+      "BTN_BUY_DOTS": "Koop...",
       "BTN_NEW_AD": "Nieuwe advertentie"
     },
     "SEARCH": {
