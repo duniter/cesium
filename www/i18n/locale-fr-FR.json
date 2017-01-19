@@ -122,7 +122,8 @@
     "POPUP_NODE": {
       "TITLE" : "Nœud Duniter",
       "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :"
-    }
+    },
+    "SHOW_NODE_LIST" : "ou choisissez dans la liste"
   },
   "CURRENCY": {
     "SELECT": {
@@ -142,6 +143,7 @@
       "SHARE": "Masse par membre",
       "UD": "Dividende universel",
       "C_ACTUAL": "Croissance actuelle",
+      "BLOCKCHAIN_DIVIDER": "Blockchain",
       "TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau de difficulté",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
@@ -161,7 +163,10 @@
     "PEERS": "Nœuds",
     "KNOWN_PEERS": "Nœuds connus",
     "SIGNED_ON_BLOCK": "Signé sur le bloc",
-    "MIRROR": "mirroir"
+    "MIRROR": "mirroir",
+    "NODE_LIST" : "Liste des noeuds",
+    "MEMBERS" : "Noeuds membres",
+    "ALL_NODES" : "Tous les noeuds"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",

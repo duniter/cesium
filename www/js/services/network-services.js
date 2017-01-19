@@ -151,18 +151,9 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             return peer;
           })
           .then(function(peer) {
-            // Exit, if offline, not expert mode, or too small device
-            if (!peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
+            // Exit if offline
+            if (!peer.online) return peer;
             var jobs = [];
-            // Get Version
-            jobs.push(node.node.summary()
-              .then(function(res){
-                peer.version = res && res.duniter && res.duniter.version;
-              })
-              .catch(function() {
-                peer.version = null; // continue
-              }));
-
             // Get hardship (only for a member peer)
             if (peer.uid) {
               jobs.push(node.blockchain.stats.hardship({pubkey: peer.pubkey})
@@ -173,6 +164,17 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                   peer.level = null; // continue
                 }));
             }
+            // Exit if not expert mode or too small device
+            if (!csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
+
+            // Get Version
+            jobs.push(node.node.summary()
+              .then(function(res){
+                peer.version = res && res.duniter && res.duniter.version;
+              })
+              .catch(function() {
+                peer.version = null; // continue
+              }));
 
             $q.all(jobs);
             return peer;

@@ -14,7 +14,7 @@
       <i class="icon ion-android-globe"></i>
       <div class="row no-padding">
         <div class="col no-padding">
-          <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> {{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</h3>
+          <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> <span>{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
           <h4>{{peer.server}}</h4>
         </div>
         <div class="col col-10 no-padding" ng-if="settings.expertMode">
