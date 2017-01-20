@@ -101,23 +101,22 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       .then(function (result) {
         if (result) {
           var parts = result.server.split(':');
-          var newNode;
           if (result.dns) {
-            return newNode = {
+            return {
               host: result.dns,
-              port: parts[1]
+              port: parts[1] || 80
             };
           }
           else {
-            return newNode = {
+            return {
               host: parts[0],
-              port: parts[1]
+              port: parts[1] || 80
             };
           }
         }
       })
       .then(function(newNode) {
-      $scope.changeNode(newNode);
+        $scope.changeNode(newNode);
       });
   };
 

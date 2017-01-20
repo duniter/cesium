@@ -32,7 +32,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
   'ngInject';
 
-  $scope.itemClass = '';
+  $scope.ionItemClass = '';
   $scope.search = {
     text: '',
     loading: true,
@@ -173,7 +173,7 @@ function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, B
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
   $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
 
-  $scope.itemClass = parameters.itemClass || 'item-border-large';
+  $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
 
   $scope.selectPeer = function(peer) {
     $scope.closeModal(peer);
