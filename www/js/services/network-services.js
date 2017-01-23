@@ -268,10 +268,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         // Listen for new block
         data.bma.websocket.block().on(function(block) {
           if (data.loading) return;
-          var uid = buid(block);
-          if (data.knownBlocks.indexOf(uid) === -1) {
-            console.debug('[network] Receiving block: ' + uid.substring(0, 20));
-            data.knownBlocks.push(uid);
+          var buid = buid(block);
+          if (data.knownBlocks.indexOf(buid) === -1) {
+            console.debug('[network] Receiving block: ' + buid.substring(0, 20));
+            data.knownBlocks.push(buid);
             // If first block: do NOT refresh peers (will be done in start() method)
             var skipRefreshPeers = data.knownBlocks.length === 1;
             if (!skipRefreshPeers) {
