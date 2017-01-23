@@ -14763,9 +14763,11 @@ a.underline:hover,
   #menu .bar-header {
     background-color: #1A237E;
     color: #fff;
-    height: 175px; }
+    height: 175px;
+    padding-right: 0px !important; }
     #menu .bar-header .hero {
-      height: 175px; }
+      height: 175px;
+      box-shadow: none; }
       #menu .bar-header .hero .content {
         bottom: 5px; }
   #menu .has-header {

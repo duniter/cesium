@@ -111,6 +111,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       };
 
       var data = {
+        total: 0,
         mapById: {},
         result: [],
         pendings: {}
@@ -120,7 +121,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       return exports.raw.search(request)
         .then(function(res){
           if (!res.hits.total) return data;
-
+          data.total = res.hits.total;
           data.result = res.hits.hits.reduce(function (result, hit) {
             var comment = new Comment(hit._id, hit._source);
             data.mapById[comment.id] = comment; // fill map by id

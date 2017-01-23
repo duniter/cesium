@@ -1,7 +1,7 @@
 <ion-modal-view id="nodes" class="modal-full-height" cache-view="false">
   <ion-header-bar class="bar-positive">
     <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
-    <h1 class="title" translate>PEER.NODE_LIST</h1>
+    <h1 class="title" translate>PEER.PEER_LIST</h1>
     <div class="buttons buttons-right header-item">
       <span class="secondary">
         <button class="button button-clear icon ion-loop button-clear" ng-click="refresh()">
@@ -17,69 +17,43 @@
   <ion-content>
     <div class="list">
       <div class="padding padding-xs" style="display: block; height: 60px;">
-        <div id="helptip-currency-peers" class="pull-left">
-            <h4 class="visible-xs visible-sm"
-              ng-if="display=='allNodes'||!enableFilter">
-              {{'PEER.ALL_NODES' | translate}} <span ng-if="peers.length != 0">({{peers.length}})</span> :
-            </h4>
-            <h4 class="visible-xs visible-sm"
-              ng-if="display=='members'">
-              {{'PEER.MEMBERS' | translate}} <span ng-if="nbMembersPeers != 0">({{nbMembersPeers}})</span> :
-            </h4>
-            <h4 class="hidden-xs hidden-sm">
-              {{'PEER.PEERS' | translate}}
-              <span ng-if="peers.length != 0 && (display=='allNodes'||!enableFilter)">({{peers.length}})</span>
-              <span ng-if="nbMembersPeers != 0 && display=='members'">({{nbMembersPeers}})</span> :
-            </h4>
-          </div>
 
-          <div class="pull-right">
-            <ion-spinner class="icon" icon="android" ng-if="loadingPeers"></ion-spinner>
-            &nbsp;
-            <div class="pull-right">
-              <a class="button button-text button-small ink icon ion-android-people hidden-xs hidden-sm"
-                 ng-class="{'button-text-positive': display=='members'}"
-                 ng-click="changeDisplay('members')"
-                 ng-if="enableFilter">
-                {{'PEER.MEMBERS' | translate}}
-              </a>
-              &nbsp;
-              <a class="button button-text button-small ink icon ion-ios-infinite hidden-xs hidden-sm"
-                 ng-class="{'button-text-positive': display=='allNodes'}"
-                 ng-click="changeDisplay('allNodes')"
-                 ng-if="enableFilter">
-                {{'PEER.ALL_NODES' | translate}}
-              </a>
-              &nbsp;
-            </div>
-          </div>
+        <div class="pull-left">
+          <h4 ng-if="enableFilter && search.type=='member'">
+            {{'PEER.MEMBERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          </h4>
+          <h4 ng-if="enableFilter && search.type=='mirror'">
+            {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          </h4>
+          <h4 ng-if="!enableFilter || !search.type">
+            {{'PEER.ALL_PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          </h4>
         </div>
 
-      <ng-click class="peer-item item item-icon-left"
-         ng-repeat="peer in peers track by peer.server"
-         id="helptip-currency-peer-{{$index}}"
-         ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
-         ng-click="closeModal(peer)" ng-if="(!peer.level && display=='allNodes') || peer.level || !enableFilter">
+        <div class="pull-right">
+          <ion-spinner class="icon" icon="android" ng-if="search.loading"></ion-spinner>&nbsp;
 
-      	<i class="icon ion-android-globe"></i>
-      	<div class="row no-padding">
-        	<div class="col no-padding">
-	          <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> <span>{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
-	          <h4>{{peer.server}}</h4>
-        	</div>
-        	<div class="col col-10 no-padding" ng-if="settings.expertMode">
-          		<h3 class="hidden-sm hidden-xs hidden-md">
-		            <span ng-if="peer.level"><i class="ion-lock-combination"></i> {{peer.level}}</span>
-		            <span ng-if="!peer.level" translate>PEER.MIRROR</span>
-		        </h3>
-          		<h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
-        	</div>
-      		<div class="col col-20 no-padding">
-	        	<span id="helptip-currency-peer-{{$index}}-block"
-	              class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
-      		</div>
-    	  </div>
-  	  </ng-click>
+          <div class="pull-right">
+            <a class="button button-text button-small hidden-xs hidden-sm ink"
+               ng-if="enableFilter"
+               ng-class="{'button-text-positive': search.type=='member'}"
+               ng-click="toggleSearchType('member')">
+              <i class="icon ion-android-people"></i>
+              {{'PEER.MEMBERS'|translate}}
+            </a>
+            &nbsp;
+            <a class="button button-text button-small hidden-xs hidden-sm ink"
+               ng-if="enableFilter"
+               ng-class="{'button-text-positive': search.type=='mirror'}"
+               ng-click="toggleSearchType('mirror')" >
+              <i class="icon ion-ios-infinite"></i>
+              {{'PEER.MIRRORS'|translate}}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <ng-include src="'templates/network/items_peers.html'"></ng-include>
 
 	  </div>
   </ion-content>

@@ -136,7 +136,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
   $scope.$on('$recordView.load', function(event, id, service) {
     $scope.id = id || $scope.id;
     $scope.service = service || $scope.service;
-    console.debug("[ES] [comment] Initalized service with: " + service.id);
+    console.debug("[ES] [comment] Initialized service with: " + service.id);
     if ($scope.id) {
       $scope.load($scope.id);
     }
@@ -157,7 +157,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
           });
         }
         $scope.comments = data;
-        $scope.comments.hasMore = (data.result && data.result.length >= options.size);
+        $scope.comments.hasMore = (data.total > data.result.length);
         $scope.loading = false;
         $scope.service.changes.start(id, data);
 

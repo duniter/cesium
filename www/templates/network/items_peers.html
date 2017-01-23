@@ -1,0 +1,30 @@
+
+
+  <div ng-repeat="peer in search.results track by peer.server"
+       class="item peer-item item-icon-left {{::ionItemClass}}"
+       ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
+       id="helptip-currency-peer-{{$index}}"
+       ng-click="selectPeer(peer)">
+
+    <i class="icon ion-android-globe"></i>
+
+    <div class="row no-padding">
+      <div class="col no-padding">
+        <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> <span>{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
+        <h4>{{peer.server}}</h4>
+      </div>
+      <div class="col col-10 no-padding" ng-if="settings.expertMode">
+        <h3 class="hidden-sm hidden-xs hidden-md">
+          <span ng-if="peer.uid"><i class="ion-lock-combination"></i> {{peer.level}}</span>
+          <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
+        </h3>
+        <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
+      </div>
+      <div class="col col-20 no-padding">
+        <span id="helptip-currency-peer-{{$index}}-block"
+          class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
+      </div>
+    </div>
+  </div>
+
+</div>

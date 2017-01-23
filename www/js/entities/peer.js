@@ -57,6 +57,14 @@ function Peer(json) {
     return bma || {};
   };
 
+  that.getEndpoints = function(regex) {
+    if (!regex) return that.endpoints;
+    return that.endpoints.reduce(function(res, ep){
+      if (ep.match(regex)) return res.concat(ep);
+      return res;
+    }, []);
+  };
+
   that.getDns = function() {
     var bma = that.getBMA();
     return bma.dns ? bma.dns : null;

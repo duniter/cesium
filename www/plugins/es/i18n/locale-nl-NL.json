@@ -35,6 +35,7 @@
   },
   "COMMENTS": {
     "DIVIDER": "Commentaren",
+    "DIVIDER_WITH_TOTAL": "Commentaren ({{total}})",
     "SHOW_MORE_COMMENTS": "Toon eerder commentaren",
     "COMMENT_HELP": "Jouw commentaar, vraag...",
     "COMMENT_HELP_REPLY_TO": "Jouw antwoord...",
@@ -115,6 +116,7 @@
     "COMMON": {
       "PRICE": "Prijs",
       "BTN_BUY": "Koop",
+      "BTN_BUY_DOTS": "Koop...",
       "BTN_NEW_AD": "Nieuwe advertentie"
     },
     "SEARCH": {
@@ -272,11 +274,11 @@
     "ENABLE_REGISTRY_TOGGLE": "Bedrijfsregister inschakelen?",
     "ENABLE_MESSAGE_TOGGLE": "Berichten inschakelen?",
     "ENABLE_SETTINGS_TOGGLE": "Globale opslag voor instellingen inschakelen?",
-    "NODE": "Adres dataknooppunt",
-    "NODE_HELP": "server.domein.com:poort",
-    "POPUP_NODE": {
+    "PEER": "Adres dataknooppunt",
+    "POPUP_PEER": {
       "TITLE" : "Dataknoop",
-      "HELP" : "Stel het te gebruiken adres in:"
+      "HELP" : "Stel het te gebruiken adres in:",
+      "PEER_HELP": "server.domein.com:poort"
     },
     "NOTIFICATIONS": {
       "DIVIDER": "Notificaties",

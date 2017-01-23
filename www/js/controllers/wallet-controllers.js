@@ -299,6 +299,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    * Revoke identity
    */
   $scope.revokeIdentity = function(confirm, confirmAgain) {
+    $scope.hideActionsPopover();
 
     if ($rootScope.walletData.requirements.needSelf) {
       return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
@@ -324,12 +325,17 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
     }
 
-    UIUtils.loading.show();
-    return csWallet.revoke()
-      .catch(function(err){
-        UIUtils.loading.hide();
-        return UIUtils.alert.error(err)
-          .then($scope.revokeIdentity);
+    return UIUtils.loading.show()
+      .then(function() {
+        return csWallet.revoke();
+      })
+      .then(function(){
+        UIUtils.toast.show("INFO.REVOCATION_SENT");
+        $scope.updateView();
+        return UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
       });
   };
 

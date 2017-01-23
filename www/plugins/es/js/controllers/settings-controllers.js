@@ -104,13 +104,13 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
-      $translate(['ES_SETTINGS.POPUP_NODE.TITLE', 'ES_SETTINGS.POPUP_NODE.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+      $translate(['ES_SETTINGS.POPUP_PEER.TITLE', 'ES_SETTINGS.POPUP_PEER.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
           // Choose UID popup
           $ionicPopup.show({
             templateUrl: 'templates/settings/popup_node.html',
-            title: translations['ES_SETTINGS.POPUP_NODE.TITLE'],
-            subTitle: translations['ES_SETTINGS.POPUP_NODE.HELP'],
+            title: translations['ES_SETTINGS.POPUP_PEER.TITLE'],
+            subTitle: translations['ES_SETTINGS.POPUP_PEER.HELP'],
             scope: $scope,
             buttons: [
               { text: translations['COMMON.BTN_CANCEL'] },
@@ -142,8 +142,8 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
             });
           });
         });
-      });
-    };
+    });
+  };
 
   $scope.onFormChanged = function() {
     if ($scope.loading) return;

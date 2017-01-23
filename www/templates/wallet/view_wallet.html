@@ -15,7 +15,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, balance:walletData.balance }">
+  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, balance:walletData.balance, locale:settings.locale.id}">
     <div class="positive-900-bg hero"
          id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
@@ -53,31 +53,35 @@
 
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
-      <button class="button button-stable icon ion-android-share ink"
-              ng-click="showSharePopover($event)">
-      </button>
 
-      <button class="button button-raised icon ion-loop ink"
-              ng-click="doUpdate()">
+      <button class="button button-stable button-small-padding icon ion-android-share ink"
+              ng-click="showSharePopover($event)">
       </button>
 
       <button class="button button-calm ink"
               ng-click="showTransferModal()">
-        {{'COMMON.BTN_SEND_MONEY' | translate}}
+        {{:locale:'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
 
-      <button class="button button-raised icon-left ion-loop ink"
-              ng-if="walletData.requirements.needRenew"
-              ng-click="renewMembership()">
-        {{'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}
+
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="doUpdate()">
       </button>
 
       <button id="helptip-wallet-options"
-              class="button button-icon ink"
+              class="button button-stable icon-right ink"
               ng-click="showActionsPopover($event)">
-        <i class="icon ion-android-more-vertical"></i>
+        &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
+        {{:locale:'COMMON.BTN_OPTIONS' | translate}}
       </button>
 
+      <div ng-if="walletData.requirements.needRenew">
+        <br/>
+        <button class="button button-raised button-stable  ink"
+                ng-click="renewMembership()">
+          <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
+        </button>
+      </div>
     </div>
 
     <div class="row no-padding">
@@ -120,14 +124,14 @@
                 on-hold="copy(walletData.pubkey)"
                 copy-on-click="{{walletData.pubkey}}">
             <i class="icon ion-key"></i>
-            <span translate>COMMON.PUBKEY</span>
+            {{:locale:'COMMON.PUBKEY'|translate}}
             <h4 id="pubkey" class="dark">{{walletData.pubkey}}</h4>
           </span>
 
           <!-- Errors transactions-->
           <a class="item item-icon-left item-icon-right ink" ng-if="walletData.tx.errors && walletData.tx.errors.length" ui-sref="app.view_wallet_tx_errors">
             <i class="icon ion-alert-circled"></i>
-            <span translate>ACCOUNT.ERROR_TX</span>
+            {{:locale:'ACCOUNT.ERROR_TX'|translate}}
             <div class="badge badge-assertive">
               {{walletData.tx.errors.length}}
             </div>
@@ -136,7 +140,7 @@
 
           <!-- Events -->
           <span class="item item-divider" ng-if="walletData.events.length">
-            {{'ACCOUNT.EVENTS' | translate}}
+            {{:locale:'ACCOUNT.EVENTS' | translate}}
           </span>
 
           <div
@@ -149,7 +153,7 @@
 
           <!-- Pending transactions -->
           <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
-            <span translate>ACCOUNT.PENDING_TX</span>
+            {{:locale:'ACCOUNT.PENDING_TX'}}
             <div class="badge item-note" ng-bind-html=":rebind:walletData.parameters.currency | currencySymbol">
             </div>
           </span>
@@ -198,7 +202,7 @@
 
           <!-- Last Transactions -->
           <span class="item item-divider" ng-if="!loading">
-            <span translate>ACCOUNT.LAST_TX</span>
+            {{:locale:'ACCOUNT.LAST_TX'|translate}}
             <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
             <div class="badge item-note">
               <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
@@ -208,7 +212,7 @@
 
 
           <span class="item" ng-if="!loading && !walletData.tx.history.length">
-            <h3 translate>ACCOUNT.NO_TX</h3>
+            <h3>{{:locale:'ACCOUNT.NO_TX'}}</h3>
           </span>
 
           <!-- TX history -->
@@ -231,7 +235,7 @@
                 </span>
               </a>
               <span class="dark" ng-if="tx.isUD">
-                {{::'COMMON.UNIVERSAL_DIVIDEND' | translate}}
+                {{:locale:'COMMON.UNIVERSAL_DIVIDEND' | translate}}
               </span>
               <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap">
                 <smaller>{{::tx.comment}}</smaller>
@@ -260,7 +264,7 @@
 
           <div class="item" ng-if="walletData.tx.fromTime > 0">
             <p>
-              <a ng-click="showMoreTx()" translate>ACCOUNT.SHOW_MORE_TX</a>
+              <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
               <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: walletData.tx.fromTime}"></span>
               <span class="gray">|</span>
               <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>

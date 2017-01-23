@@ -149,7 +149,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   number: parseInt(blockUid[0]),
                   hash: blockUid[1],
                   revoked: idty.revoked,
-                  revokedSig: idty.revocation_sig,
+                  revocationNumber: idty.revoked_on,
                   sig: idty.self
                 });
               }, []));
@@ -239,14 +239,23 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }, certs);
             }, []);
 
-            // Retrieve self time
-            return BMA.blockchain.block({block: identity.number})
-              .then(function(block){
-                identity.sigDate = block.time;
+            // Retrieve time (self and revocation)
+            var blocks = [identity.number];
+            if (identity.revocationNumber) {
+              blocks.push(identity.revocationNumber);
+            }
+            return BMA.blockchain.blocks(blocks)
+              .then(function(blocks){
+                identity.sigDate = blocks[0].medianTime;
 
                 // Check if self has been done on a valid block
-                if (identity.number !== 0 && identity.hash !== block.hash) {
+                if (identity.number !== 0 && identity.hash !== blocks[0].hash) {
                   identity.hasBadSelfBlock = true;
+                }
+
+                // Set revocation time
+                if (identity.revocationNumber) {
+                  identity.revocationTime = blocks[1].medianTime;
                 }
 
                 return identity;
@@ -453,7 +462,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         data.requirements.pendingCertificationCount = data.received_cert_pending ? data.received_cert_pending.length : 0;
 
         // Add events
-        if (data.hasBadSelfBlock) {
+        if (data.revoked) {
+          delete data.hasBadSelfBlock;
+          addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_REVOKED', messageParams: {revocationTime: data.revocationTime}});
+          console.debug("[wot] Identity {0} has been revoked".format(data.uid));
+        }
+        else if (data.hasBadSelfBlock) {
           delete data.hasBadSelfBlock;
           if (!data.isMember) {
             addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_INVALID_BLOCK_HASH'});

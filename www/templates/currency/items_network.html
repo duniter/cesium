@@ -1,4 +1,9 @@
 
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+    </button>
+  </ion-nav-buttons>
+
   <ion-item id="helptip-currency-blockchain"
             class="item-icon-left">
     <i class="icon ion-clock"></i>
@@ -12,4 +17,33 @@
     <span class="badge badge-stable">{{difficulty | formatInteger}}</span>
   </ion-item>
 
-  <ng-include ng-controller="NetworkViewCtrl" src="'templates/network/tabs/view_nodes.html'" ></ng-include>
+  <ng-controller ng-controller="NetworkLookupCtrl" ng-init="search.type='member';">
+
+    <div id="helptip-currency-peers"
+         class="item item-divider">
+      <div class="pull-left">
+        <span ng-if="search.type=='member'">
+          {{'PEER.MEMBERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+        </span>
+        <span ng-if="search.type=='mirror'">
+          {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+        </span>
+        <span ng-if="!search.type">
+          {{'PEER.PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+        </span>
+      </div>
+
+      <div class="buttons pull-right">
+        <ion-spinner class="icon" icon="android" ng-if="search.loading"></ion-spinner>
+        <a class="button button-icon button-small-padding icon ion-loop gray hidden-xs hidden-sm ink" ng-if="!search.loading" ng-click="refresh()">
+        </a>
+        <a class="button button-icon button-small-padding icon ion-android-more-vertical gray hidden-xs hidden-sm ink"
+           ng-if="!search.loading"
+           ng-click="showActionsPopover($event)">
+        </a>
+      </div>
+    </div>
+
+    <ng-include src="'templates/network/items_peers.html'" ></ng-include>
+
+  </ng-controller>

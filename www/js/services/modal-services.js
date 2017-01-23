@@ -140,6 +140,11 @@ angular.module('cesium.modal.services', [])
       parameters, {focusFirstInput: true});
   }
 
+  function showNetworkLookup(parameters) {
+    return ModalUtils.show('templates/network/modal_network.html', 'NetworkLookupModalCtrl',
+      parameters, {focusFirstInput: true});
+  }
+
   function showAbout(parameters) {
     return ModalUtils.show('templates/modal_about.html','AboutCtrl',
       parameters);
@@ -159,6 +164,7 @@ angular.module('cesium.modal.services', [])
     showTransfer: showTransfer,
     showLogin: showLogin,
     showWotLookup: showWotLookup,
+    showNetworkLookup: showNetworkLookup,
     showAbout: showAbout,
     showJoin: showJoin,
     showHelp: showHelp

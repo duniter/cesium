@@ -35,6 +35,7 @@
   },
   "COMMENTS": {
     "DIVIDER": "Comments",
+    "DIVIDER_WITH_TOTAL": "Comments ({{total}})",
     "SHOW_MORE_COMMENTS": "Show previous comments",
     "COMMENT_HELP": "Your comment, question...",
     "COMMENT_HELP_REPLY_TO": "Your answer...",
@@ -115,6 +116,7 @@
     "COMMON": {
       "PRICE": "Price",
       "BTN_BUY": "Buy",
+      "BTN_BUY_DOTS": "Buy...",
       "BTN_NEW_AD": "New ad"
     },
     "SEARCH": {
@@ -272,11 +274,11 @@
     "ENABLE_REGISTRY_TOGGLE": "Enable companies registry?",
     "ENABLE_MESSAGE_TOGGLE": "Enable messages?",
     "ENABLE_SETTINGS_TOGGLE": "Enable remote storage for settings?",
-    "NODE": "Data node address",
-    "NODE_HELP": "server.domain.com:port",
-    "POPUP_NODE": {
-      "TITLE" : "Data Node",
-      "HELP" : "Set the address of the node to use:"
+    "PEER": "Data peer address",
+    "POPUP_PEER": {
+      "TITLE" : "Data peer",
+      "HELP" : "Set the address of the peer to use:",
+      "PEER_HELP": "server.domain.com:port"
     },
     "NOTIFICATIONS": {
       "DIVIDER": "Notifications",
@@ -294,7 +296,7 @@
   "EVENT": {
     "NODE_STARTED": "Your node ES API <b>{{params[0]}}</b> is UP",
     "NODE_BMA_DOWN": "Node <b>{{params[0]}}:{{params[1]}}</b> (used by your ES API) is <b>unreacheable</b>.",
-    "NODE_BMA_UP": "Node <b>{{p0}}:{{params[1]}}</b> is reacheable again.",
+    "NODE_BMA_UP": "Node <b>{{params[0]}}:{{params[1]}}</b> is reacheable again.",
     "MEMBER_JOIN": "You are now a <b>member</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_LEAVE": "You are <b>not a member anymore</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renewed successfully</b>.",

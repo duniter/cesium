@@ -108,8 +108,7 @@
   "SETTINGS": {
     "TITLE": "Instellingen",
     "NETWORK_SETTINGS": "Netwerk",
-    "NODE": "Duniter knooppunt adres",
-    "NODE_HELP": "server.domein.com:poort",
+    "PEER": "Duniter knooppunt adres",
     "USE_LOCAL_STORAGE": "Lokale opslag inschakelen",
     "ENABLE_HELPTIP": "Contextgebonden hulp inschakelen",
     "HISTORY_SETTINGS": "Mijn rekening",
@@ -119,9 +118,10 @@
     "PLUGINS_SETTINGS": "Uitbreidingen",
     "BTN_RESET": "Herstel standaardinstellingen",
     "EXPERT_MODE": "Geavanceerde modus inschakelen <span class=\"hidden-xs\">(toon meer details)</span>",
-    "POPUP_NODE": {
+    "POPUP_PEER": {
       "TITLE" : "Duniter Knooppunt",
-      "HELP" : "Stel het adres van het knooppunt in:"
+      "HELP" : "Stel het adres van het knooppunt in:",
+      "PEER_HELP": "server.domein.com:poort"
     }
   },
   "CURRENCY": {
@@ -193,8 +193,8 @@
       "BTN_PENDING": "Registraties in afwachting",
       "SHOW_MORE": "Toon meer",
       "SHOW_MORE_COUNT": "(huidige limiet op {{limit}})",
-      "NO_PENDING": "Er zijn geen registraties in afwachting gevonden",
-      "NO_NEWCOMERS": "Er zijn geen nieuwe leden gevonden"
+      "NO_PENDING": "Er zijn geen registraties in afwachting gevonden.",
+      "NO_NEWCOMERS": "Er zijn geen nieuwe leden gevonden."
     },
     "MODAL": {
       "TITLE": "Zoeken"
@@ -248,12 +248,12 @@
     "CERTIFICATION_COUNT": "Aantal certificaties",
     "SIG_STOCK": "Voorraad uit te geven certificaties",
     "BTN_RECEIVE_MONEY": "Ontvangen",
-    "BTN_MEMBERSHIP_IN": "Lidmaatschap aanvragen...",
+    "BTN_MEMBERSHIP_IN_DOTS": "Lidmaatschap aanvragen...",
     "BTN_MEMBERSHIP_RENEW": "Lidmaatschap verlengen",
-    "BTN_MEMBERSHIP_OUT": "Lidmaatschap opzeggen",
-    "BTN_SEND_IDENTITY": "Identiteit publiceren...",
+    "BTN_MEMBERSHIP_RENEW_DOTS": "Lidmaatschap verlengen...",
+    "BTN_MEMBERSHIP_OUT_DOTS": "Lidmaatschap opzeggen...",
+    "BTN_SEND_IDENTITY_DOTS": "Identiteit publiceren...",
     "BTN_REVOKE": "Deze identiteit<span class='hidden-xs hidden-sm'> definitief</span> opzeggen...",
-    "BTN_SHOW_DETAILS": "Toon poblieke sleutel",
     "NEW": {
       "TITLE": "Registratie",
       "SLIDE_1_TITLE": "Selecteer een valuta:",
@@ -339,20 +339,20 @@
     "SCAN_FAILED": "Could not scan QR code.",
     "SCAN_UNKNOWN_FORMAT": "Code not recognized.",
     "WOT_LOOKUP_FAILED": "Search failed.",
-    "LOAD_NODE_DATA_FAILED": "Duniter Node not accessible. Please retry later.",
+    "LOAD_PEER_DATA_FAILED": "Duniter peer not accessible. Please retry later.",
     "NEED_LOGIN_FIRST": "Please sign in first.",
     "AMOUNT_REQUIRED": "Amount is required.",
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "INVALID_NODE_SUMMARY": "Unreachable node or invalid address",
+    "INVALID_NODE_SUMMARY": "Unreachable peer or invalid address",
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special characters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
-    "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network nodes are cancelled): the person must renew its application for membership <b>before</b> being certified.",
+    "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network peers are cancelled): the person must renew its application for membership <b>before</b> being certified.",
     "IDENTITY_EXPIRED": "This identity has expired: this person must re-apply <b>before</b> being certified.",
-    "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>).",
+    "IDENTITY_SANDBOX_FULL": "Could not register, because peer's sandbox is full.<br/><br/>Please retry later or choose another Duniter peer (in <b>Settings</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
-    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
+    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network peers are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
     "WALLET_IDENTITY_EXPIRED": "The publication of your identity <b>has expired</b>.<br/>You must <a ng-click=\"doQuickFix('fixIdentity')\">re-issue your identity</a> to resolve this issue.",
     "WALLET_HAS_NO_SELF": "Your identity must first have been published, and not expired.",
     "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
@@ -419,9 +419,9 @@
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "This button allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
       "CURRENCY_RULES": "The <b>rules</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the currency these rules make the monetary code <b>transparent and understandable</b>.",
       "CURRENCY_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
-      "CURRENCY_PEERS": "The <b>nodes</b> shown here corrrespond to <b>computers that update and check</b> the blokchain.<br/><br/>The more active nodes there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
-      "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the node's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other nodes</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a node</b> simply by <b>installing the Duniter software</b> (free/libre and open source). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
+      "CURRENCY_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
+      "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
+      "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre and open source). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",
       "WALLET_CERTIFICATIONS": "Click here to reveiw the details of your certifications (given and received).",

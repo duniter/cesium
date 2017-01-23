@@ -30,7 +30,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
         // If another locale exists with the same root: use it
         var similarLocale = _.find(locales, function(l) {
-          return l.startsWith(locale);
+          return String.prototype.startsWith.call(l, locale);
         });
         if (similarLocale) return similarLocale;
 

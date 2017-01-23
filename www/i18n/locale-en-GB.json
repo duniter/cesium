@@ -82,7 +82,7 @@
   },
   "ABOUT": {
     "TITLE": "About",
-    "LICENSE": "<b>Free/libre</b> software (GNU GPLv3 license).",
+    "LICENSE": "<b>Free/libre software</b> (License GNU GPLv3).",
     "CODE": "Source code:",
     "DEVELOPERS": "Developers:",
     "FORUM": "Forum:",
@@ -108,8 +108,7 @@
   "SETTINGS": {
     "TITLE": "Settings",
     "NETWORK_SETTINGS": "Network",
-    "NODE": "Duniter node address",
-    "NODE_HELP": "server.domain.com:port",
+    "PEER": "Duniter peer address",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "ENABLE_HELPTIP": "Enable contextual help tips",
     "HISTORY_SETTINGS": "My Account",
@@ -119,10 +118,13 @@
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restore default values",
     "EXPERT_MODE": "Enable expert mode<span class=\"hidden-xs\">(display more details)</span>",
-    "POPUP_NODE": {
-      "TITLE" : "Duniter Node",
-      "HELP" : "Set the address of the node to use:"
-    }
+    "POPUP_PEER": {
+      "TITLE" : "Duniter peer",
+      "HELP" : "Peer address:",
+      "PEER_HELP": "server.domain.com:port",
+      "BTN_SHOW_LIST_HELP" : "Enter above in the format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> or click on the button below:",
+      "BTN_SHOW_LIST" : "Peer's list"
+    },
   },
   "CURRENCY": {
     "SELECT": {
@@ -161,7 +163,11 @@
     "PEERS": "Peers",
     "KNOWN_PEERS": "Known peers",
     "SIGNED_ON_BLOCK": "Signed on block",
-    "MIRROR": "mirror"
+    "MIRROR": "mirror",
+    "MIRRORS": "Mirror peers",
+    "PEER_LIST" : "Peer's list",
+    "MEMBERS" : "Member peers",
+    "ALL_PEERS" : "All peers"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
@@ -193,8 +199,8 @@
       "BTN_PENDING": "Pending registrations",
       "SHOW_MORE": "Show more",
       "SHOW_MORE_COUNT": "(current limit to {{limit}})",
-      "NO_PENDING": "No pending registrations have been found",
-      "NO_NEWCOMERS": "No new members have been found"
+      "NO_PENDING": "No pending registrations.",
+      "NO_NEWCOMERS": "No members."
     },
     "MODAL": {
       "TITLE": "Search"
@@ -225,13 +231,13 @@
     "SHOW_SALT": "See Protection phrase",
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password",
-    "NO_ACCOUNT_QUESTION": "Do not have an account yet?",
+    "NO_ACCOUNT_QUESTION": "Don't have an account yet?",
     "CREATE_ACCOUNT": "Create an account"
   },
   "ACCOUNT": {
     "TITLE": "My Account",
     "BALANCE": "Balance",
-    "LAST_TX": "Last transactions",
+    "LAST_TX": "Latest transactions",
     "NO_TX": "No transaction",
     "SHOW_MORE_TX": "Show more",
     "SHOW_ALL_TX": "Show all",
@@ -241,47 +247,48 @@
     "ERROR_TX_SENT": "Sent transactions",
     "ERROR_TX_RECEIVED": "Received transactions",
     "EVENTS": "Events",
-    "WAITING_MEMBERSHIP": "Membership sent. Waiting validation.",
+    "WAITING_MEMBERSHIP": "Membership request sent. Waiting validation.",
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
-    "WILL_MISSING_CERTIFICATIONS": "You will missing certifications soon",
-    "WILL_NEED_RENEW_MEMBERSHIP": "Your membership will expire {{membershipExpiresIn|formatDurationTo}}. Consider <a ng-click=\"doQuickFix('renew')\">renewing your membership</a> by then.",
+    "WILL_MISSING_CERTIFICATIONS": "You will <b>lack certifications</b> soon (at least {{willNeedCertificationCount}} more are needed)",
+    "WILL_NEED_RENEW_MEMBERSHIP": "Your membership <b>will expire {{membershipExpiresIn|formatDurationTo}}</b>. Remember to <a ng-click=\"doQuickFix('renew')\">renewing your membership</a> before then.",
     "CERTIFICATION_COUNT": "Certifications count",
     "SIG_STOCK": "Stock of certifications to give",
     "BTN_RECEIVE_MONEY": "Receive",
-    "BTN_MEMBERSHIP_IN": "Register as member...",
+    "BTN_MEMBERSHIP_IN_DOTS": "Register as member...",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
-    "BTN_MEMBERSHIP_OUT": "Revoke membership",
-    "BTN_SEND_IDENTITY": "Publish identity...",
+    "BTN_MEMBERSHIP_RENEW_DOTS": "Renew membership...",
+    "BTN_MEMBERSHIP_OUT_DOTS": "Revoke membership...",
+    "BTN_SEND_IDENTITY_DOTS": "Publish identity...",
     "BTN_REVOKE": "Revoke<span class='hidden-xs hidden-sm'> definitely</span> this identity...",
-    "BTN_SHOW_DETAILS": "Display public key",
+    "BTN_SHOW_DETAILS": "Display technical data",
     "NEW": {
-      "TITLE": "New Account",
-      "SLIDE_1_TITLE": "Select a money:",
+      "TITLE": "Registration",
+      "SLIDE_1_TITLE": "Select a currency:",
       "SLIDE_2_TITLE": "Kind of account:",
       "MEMBER_ACCOUNT": "Member account",
-      "MEMBER_ACCOUNT_HELP": "If you are not yet registered as an individual (One account possible by individual).",
+      "MEMBER_ACCOUNT_HELP": "If you are not yet registered as an individual (one account possible per individual).",
       "WALLET_ACCOUNT": "Simple wallet",
       "WALLET_ACCOUNT_HELP": "If you represent a company, association, etc. or simply need an additional wallet. No universal dividend will be created by this account.",
-      "SALT_WARNING": "Choose a protection phrase.<br/>You need it for each connection on this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there is no mean to retrieve it !",
-      "PASSWORD_WARNING": "Choose a password.<br/>You need it for each connection on this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there is no mean to retrieve it !",
-      "PSEUDO_WARNING": "Choose a pseudonym.<br/>It will be used by other people, to find you easily.<br/><br/>.Commas and accent characters are not allowed.<br/><div class='hidden-xs'><br/>Example : <span class='gray'>JohnDalton, JackieChan, etc.</span>",
+      "SALT_WARNING": "Choose a protection phrase.<br/>You need it for each connection to this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there are no means to retrieve it!",
+      "PASSWORD_WARNING": "Choose a password.<br/>You need it for each connection to this account.<br/><br/><b>Make sure to remember this phrase</b>.<br/>If lost, there are no means to retrieve it!",
+      "PSEUDO_WARNING": "Choose a pseudonym.<br/>It may be used by other people to find you more easily.<br/><br/>.Use of <b>commas, spaces and accents</b> is not allowed.<br/><div class='hidden-xs'><br/>Example: <span class='gray'>JohnDalton, JackieChan, etc.</span>",
       "PSEUDO": "Pseudonym",
       "PSEUDO_HELP": "joe123",
-      "SALT_CONFIRM": "Confirm phrase",
-      "SALT_CONFIRM_HELP": "Confirm phrase",
-      "PASSWORD_CONFIRM": "Confirm Password",
-      "PASSWORD_CONFIRM_HELP": "Confirm Password",
+      "SALT_CONFIRM": "Confirm",
+      "SALT_CONFIRM_HELP": "Confirm the protection phrase",
+      "PASSWORD_CONFIRM": "Confirm",
+      "PASSWORD_CONFIRM_HELP": "Confirm the password",
       "SLIDE_6_TITLE": "Confirmation:",
       "COMPUTING_PUBKEY": "Computing...",
-      "LAST_SLIDE_CONGRATULATION": "You completed all required fields.<br/><b>You can send the account creation request</b>.<br/><br/>For information, the public key below identifies your future account.<br/>It can be communicated to third parties to receive their payment.",
+      "LAST_SLIDE_CONGRATULATION": "You completed all required fields.<br/><b>You can send the account creation request</b>.<br/><br/>For information, the public key below identifies your future account.<br/>It can be communicated to third parties to receive their payment.<br/>Once your account has been approved, you can find this key under <b>{{'ACCOUNT.TITLE'|translate}}</b>.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Warning:</b> your protection phrase, password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Warning:</b> your password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
       "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one.",
-      "MSG_PUBKEY_ALREADY_USED": "Public key already used by an existing member.<br/>Please choose another connection parameters."
+      "MSG_PUBKEY_ALREADY_USED": "Public key already used by an existing member.<br/>Please choose other connection parameters."
     },
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
-      "HELP": "A pseudonym is need to let other members find you."
+      "HELP": "A pseudonym is needed to let other members find you."
     }
   },
   "TRANSFER": {
@@ -339,20 +346,21 @@
     "SCAN_FAILED": "Could not scan QR code.",
     "SCAN_UNKNOWN_FORMAT": "Code not recognized.",
     "WOT_LOOKUP_FAILED": "Search failed.",
-    "LOAD_NODE_DATA_FAILED": "Duniter Node not accessible. Please retry later.",
+    "LOAD_PEER_DATA_FAILED": "Duniter peer not accessible. Please retry later.",
     "NEED_LOGIN_FIRST": "Please sign in first.",
     "AMOUNT_REQUIRED": "Amount is required.",
     "AMOUNT_NEGATIVE": "Negative amount not allowed.",
     "NOT_ENOUGH_CREDIT": "Not enough credit.",
-    "INVALID_NODE_SUMMARY": "Unreachable node or invalid address",
+    "INVALID_NODE_SUMMARY": "Unreachable peer or invalid address",
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special characters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
-    "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network nodes are cancelled): the person must renew its application for membership <b>before</b> being certified.",
+    "IDENTITY_REVOKED": "This identity <b>has been revoked {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). It can no longer become a member.",
+    "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network peers are cancelled): the person must renew its application for membership <b>before</b> being certified.",
     "IDENTITY_EXPIRED": "This identity has expired: this person must re-apply <b>before</b> being certified.",
-    "IDENTITY_SANDBOX_FULL": "Could not register, because node's sandbox is full.<br/><br/>Please retry later or choose another Duniter node (in <b>Settings</b>).",
+    "IDENTITY_SANDBOX_FULL": "Could not register, because peer's sandbox is full.<br/><br/>Please retry later or choose another Duniter peer (in <b>Settings</b>).",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
-    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network nodes are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
+    "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network peers are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
     "WALLET_IDENTITY_EXPIRED": "The publication of your identity <b>has expired</b>.<br/>You must <a ng-click=\"doQuickFix('fixIdentity')\">re-issue your identity</a> to resolve this issue.",
     "WALLET_HAS_NO_SELF": "Your identity must first have been published, and not expired.",
     "IDENTITY_ALREADY_CERTIFY": "You have <b>already certified</b> that identity.<br/><br/>Your certificate is still valid (expires {{expiresIn|formatDuration}}).",
@@ -361,17 +369,20 @@
     "LOAD_NEWCOMERS_FAILED": "Unable to load new members.",
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
-    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action."
+    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
+    "REVOCATION_FAILED": "Error while trying to revoke the identity."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
     "CERTIFICATION_DONE": "Identity successfully signed",
     "NOT_ENOUGH_CREDIT": "Not enough credit",
     "TRANSFER_SENT": "Transfer request successfully sent",
-    "COPY_TO_CLIPBOARD_DONE": "Copy succeed",
+    "COPY_TO_CLIPBOARD_DONE": "Copy succeeded",
     "MEMBERSHIP_OUT_SENT": "Membership revocation sent",
     "NOT_NEED_MEMBERSHIP": "Already a member.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
+    "REVOCATION_SENT": "Revocation sent successfully",
+    "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
@@ -379,12 +390,12 @@
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
-    "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is irreversible<br/></br/><b>Are you sure you want to continue?</b>",
-    "LOGIN_UNUSED_WALLET_TITLE": "Typing error ?",
+    "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is <b>irreversible</b>.<br/></br/><b>Are you sure you want to continue?</b>",
+    "LOGIN_UNUSED_WALLET_TITLE": "Typing error?",
     "LOGIN_UNUSED_WALLET": "You are logged into an account that seems <b>inactive</b>.<br/><br/>If this account does not match yours, it's probably a <b>typing error</b> when sign in.<br/><br/><b>Would you still continue with this account?</b>",
     "FIX_IDENTITY": "The pseudonym <b>{{uid}}</b> will be published again, replacing the old publication that has expired.<br/></br/><b>Are you sure</b> you want to continue?",
-    "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure ?</b>",
-    "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure ?</b>",
+    "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure?</b>",
+    "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure?</b>",
     "REVOKE_IDENTITY": "<b>Security warning </b> :<br/>You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated nickname <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to continue?",
     "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/><b>Are you sure</b> you want to continue?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
@@ -395,9 +406,9 @@
     "TITLE": "Online help",
     "JOIN": {
       "SECTION": "Join",
-      "SALT": "The protection phrase is very important. It is used to hash you password, which in turn is used to calculate your <span class=\"text-italic\">public account key</span> (its number) and the private key to access it. <b>Please remeber this phrase well</b>, because there is no way to recover it when lost. What's more, it cannot be changed without having to create a new account.<br/><br/>A good protection phrase must be sufficiently long (8 characters at the very least) and as original as possible.",
-      "PASSWORD": "The password is very important. Together with the protection phrase, it is use to calculate your account number (public key) and the private key to access it. <b>Please remember it well</b>, because there is no way to recover it when lost. What's more, it cannot be changed without having to create a new account.<br/><br/>A good password is made (ideally) of at least 8 characters, with at least one capital and one number.",
-      "PSEUDO": "A pseudonym is used only when joining as <span class=\"text-italic\">member</span>. It is always associated with a wallet (by its <span class=\"text-italic\">public key</span>). It is published on the network so that other users may identify it, certify or send money to the account. A pseudonym must be unique among all members (current and past)."
+      "SALT": "The protection phrase is very important. It is used to hash you password, which in turn is used to calculate your <span class=\"text-italic\">public account key</span> (its number) and the private key to access it.<br/><b>Please remeber this phrase well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good protection phrase must be sufficiently long (8 characters at the very least) and as original as possible.",
+      "PASSWORD": "The password is very important. Together with the protection phrase, it is use to calculate your account number (pblic key) and the private key to access it.<br/><b>Please remember it well</b>, because there is no way to recover it when lost.<br/>Furthermore, it cannot be changed without having to create a new account.<br/><br/>A good password is made (ideally) of at least 8 characters, with at least one capital and one number.",
+      "PSEUDO": "A pseudonym is used only when joining as <span class=\"text-italic\">member</span>. It is always associated with a wallet (by its <span class=\"text-italic\">public key</span>).<br/>It is published on the network so that other users may identify it, certify or send money to the account.<br/>A pseudonym must be unique among all members (current and past)."
     },
     "GLOSSARY": {
       "SECTION": "Glossary",
@@ -419,9 +430,9 @@
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "This button allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
       "CURRENCY_RULES": "The <b>rules</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the currency these rules make the monetary code <b>transparent and understandable</b>.",
       "CURRENCY_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
-      "CURRENCY_PEERS": "The <b>nodes</b> shown here corrrespond to <b>computers that update and check</b> the blokchain.<br/><br/>The more active nodes there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
-      "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the node's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other nodes</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a node</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
+      "CURRENCY_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
+      "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
+      "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",
       "WALLET_CERTIFICATIONS": "Click here to reveiw the details of your certifications (given and received).",

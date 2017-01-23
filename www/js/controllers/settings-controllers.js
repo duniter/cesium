@@ -21,7 +21,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp,
-  UIUtils, BMA, csSettings, $ionicPopover, ModalUtils) {
+  UIUtils, BMA, csSettings, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -97,27 +97,26 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
   $scope.showNodeList = function() {
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
-    return ModalUtils.show('/templates/network/modal_network.html', 'NetworkModalCtrl')
+    return Modals.showNetworkLookup({enableFilter: true, type: 'member'})
       .then(function (result) {
         if (result) {
           var parts = result.server.split(':');
-          var newNode;
           if (result.dns) {
-            return newNode = {
+            return {
               host: result.dns,
-              port: parts[1]
+              port: parts[1] || 80
             };
           }
           else {
-            return newNode = {
+            return {
               host: parts[0],
-              port: parts[1]
+              port: parts[1] || 80
             };
           }
         }
       })
       .then(function(newNode) {
-      $scope.changeNode(newNode);
+        $scope.changeNode(newNode);
       });
   };
 
@@ -128,14 +127,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
-      $translate(['SETTINGS.POPUP_NODE.TITLE', 'SETTINGS.POPUP_NODE.HELP',
-        'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+      $translate(['SETTINGS.POPUP_PEER.TITLE', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
           // Choose UID popup
           $ionicPopup.show({
             templateUrl: 'templates/settings/popup_node.html',
-            title: translations['SETTINGS.POPUP_NODE.TITLE'],
-            subTitle: translations['SETTINGS.POPUP_NODE.HELP'],
+            title: translations['SETTINGS.POPUP_PEER.TITLE'],
             scope: $scope,
             buttons: [
               { text: translations['COMMON.BTN_CANCEL'] },

@@ -237,11 +237,16 @@ function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
     })
     .catch(function(err) {
       $scope.loading = false;
-      UIUtils.onError('ERROR.LOAD_NODE_DATA_FAILED')(err);
+      UIUtils.onError('ERROR.LOAD_PEER_DATA_FAILED')(err);
     });
   };
 
-  // Show help tip
+  $scope.refreshPeers = function() {
+    $scope.$broadcast('NetworkLookupCtrl.action', 'refresh');
+  };
+
+  /* -- help tip -- */
+
   $scope.showHelpTip = function() {
     if (!$scope.isLogin()) return;
     index = csSettings.data.helptip.currency;
