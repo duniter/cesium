@@ -22,7 +22,7 @@
     },
     "plugins":{
       "es": {
-        "enable": false,
+        "enable": true,
         "askEnable": false,
         "host": "data.gtest.duniter.fr",
         "port": "80",

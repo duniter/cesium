@@ -31,7 +31,7 @@ angular.module("cesium.config", [])
 	},
 	"plugins": {
 		"es": {
-			"enable": false,
+			"enable": true,
 			"askEnable": false,
 			"host": "data.gtest.duniter.fr",
 			"port": "80",
@@ -44,7 +44,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "0.9.7",
-	"build": "2017-01-23T10:01:35.811Z",
+	"build": "2017-01-23T16:34:15.455Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
