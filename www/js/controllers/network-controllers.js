@@ -6,7 +6,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
-     .state('app.view_peer', {
+    .state('app.view_peer', {
       url: "/network/peer/:server",
       nativeTransitions: {
           "type": "flip",
@@ -36,7 +36,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   $scope.search = {
     text: '',
     loading: true,
-    type: 'member',
+    type: undefined,
     results: []
   };
 
@@ -65,8 +65,8 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     if ($scope.search.loading){
       csNetwork.start($scope.node, {
         filter: {
-          member: ($scope.search.type === 'member'),
-          mirror: ($scope.search.type === 'mirror')
+          member: (!$scope.search.type || $scope.search.type === 'member'),
+          mirror: (!$scope.search.type || $scope.search.type === 'mirror')
         }
       });
 

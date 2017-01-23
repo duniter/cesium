@@ -120,8 +120,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         if (!data.filter) return true;
 
         // Filter member and mirror
-        if ((data.filter.member && !peer.uid) ||
-            (data.filter.mirror && peer.uid)) {
+        if ((data.filter.member && !data.filter.mirror && !peer.uid) ||
+            (data.filter.mirror && !data.filter.member && peer.uid)) {
           return false;
         }
 

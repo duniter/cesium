@@ -100,8 +100,7 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   };
 }
 
-function CurrencyViewController($scope, $q, $translate, $timeout, $filter,
-  BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function CurrencyViewController($scope, $q, BMA, UIUtils, csSettings, csCurrency) {
   $scope.formData = {
     useRelative: csSettings.data.useRelative
   };

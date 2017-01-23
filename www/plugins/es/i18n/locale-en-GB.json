@@ -268,7 +268,7 @@
     }
   },
   "ES_SETTINGS": {
-    "PLUGIN_NAME": "Registry and market place",
+    "PLUGIN_NAME": "Cesium+: user profiles, notifications, private messages...",
     "ENABLE_TOGGLE": "Enable extension?",
     "ENABLE_MARKET_TOGGLE": "Enable market place?",
     "ENABLE_REGISTRY_TOGGLE": "Enable companies registry?",

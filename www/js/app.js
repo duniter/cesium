@@ -29,8 +29,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     function formatRelative(input, options) {
       var currentUD = options && options.currentUD ? options.currentUD : csWallet.data.currentUD;
-      if (!currentUD) {
-        console.warn("formatAmount: currentUD not defined, and user not logged in");
+      if (!amount || !currentUD) {
+        console.warn("formatAmount: amount or currentUD not defined");
         return;
       }
       var amount = input / currentUD;

@@ -137,7 +137,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
             var parts = node.split(':');
             resolve({
               host: parts[0],
-              port: parts[1]
+              port: parts[1] || 80
             });
           });
         });
