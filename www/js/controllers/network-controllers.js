@@ -63,7 +63,12 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   $scope.load = function() {
 
     if ($scope.search.loading){
-      csNetwork.start($scope.node, {filter: $scope.search.type});
+      csNetwork.start($scope.node, {
+        filter: {
+          member: ($scope.search.type === 'member'),
+          mirror: ($scope.search.type === 'mirror')
+        }
+      });
 
       // Catch event on new peers
       var refreshing = false;

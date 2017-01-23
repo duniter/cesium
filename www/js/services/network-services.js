@@ -12,26 +12,34 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       data = {
         bma: null,
+        loading: true,
         peers: [],
-        filter: null,
+        filter: {
+          member: true,
+          mirror: true,
+          endpointRegex: null
+        },
         knownBlocks: [],
         knownPeers: {},
         mainBuid: null,
         uidsByPubkeys: null,
-        updatingPeers: true,
         searchingPeersOnNetwork: false
       },
 
       resetData = function() {
         data.bma = null;
         data.peers = [];
-        data.filter = null;
+        data.filter = {
+          member: true,
+          mirror: true,
+          endpointRegex: null
+        };
         data.memberPeersCount = 0;
         data.knownBlocks = [];
         data.knownPeers = {};
         data.mainBuid = null;
         data.uidsByPubkeys = {};
-        data.updatingPeers = true;
+        data.loading = true;
         data.searchingPeersOnNetwork = false;
       },
 
@@ -49,7 +57,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       },
 
       isBusy = function() {
-        return data.updatingPeers;
+        return data.loading;
       },
 
       getKnownBlocks = function() {
@@ -60,7 +68,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.knownPeers = {};
         data.peers = [];
         data.searchingPeersOnNetwork = true;
-        data.updatingPeers = true;
+        data.loading = true;
 
         var newPeers = [];
 
@@ -73,8 +81,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           if (newPeers.length) {
             flushNewPeersAndSort(newPeers);
           }
-          else if (data.updatingPeers && !data.searchingPeersOnNetwork) {
-            data.updatingPeers = false;
+          else if (data.loading && !data.searchingPeersOnNetwork) {
+            data.loading = false;
             $interval.cancel(interval);
             console.debug('[network] Finish : all peers found. Stopping new peers check.');
             // The peer lookup end, we can make a clean final report
@@ -104,15 +112,39 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           });
       },
 
+      /**
+       * Apply filter on a peer. (peer uid should have been filled BEFORE)
+       */
+      applyPeerFilter = function(peer) {
+        // no filter
+        if (!data.filter) return true;
+
+        // Filter member and mirror
+        if ((data.filter.member && !peer.uid) ||
+            (data.filter.mirror && peer.uid)) {
+          return false;
+        }
+
+        // Filter on endpoints
+        if (data.filter.endpointRegex) {
+          var endpoints = peer.getEndpoints(data.filter.endpointRegex);
+          if (!endpoints.length) return false;
+        }
+
+        return true;
+      };
+
       addIfNewAndOnlinePeer = function(peer, list) {
         list = list || data.newPeers;
         if (!peer) return;
         peer = new Peer(peer);
         var server = peer.getServer();
+
         if (data.knownPeers[server]) return; // already processed: exit
+
         refreshPeer(peer)
-          .then(function() {
-            if (peer.online) list.push(peer);
+          .then(function(peer) {
+            if (peer && peer.online) list.push(peer);
           });
       },
 
@@ -122,12 +154,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         peer.blockNumber = peer.block.replace(/-.+$/, '');
         peer.uid = data.uidsByPubkeys[peer.pubkey];
 
-        // filter
-        if (data.filter &&
-            ((data.filter === 'member' && !peer.uid) ||
-             (data.filter === 'mirror' && peer.uid))) {
-          return $q.when(peer);
-        }
+        // Apply filter
+        if (!applyPeerFilter(peer)) return $q.when();
 
         var node = new BMA.instance(peer.getHost(), peer.getPort(), false);
 
@@ -163,6 +191,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             // Exit if offline, or not expert mode or too small device
             if (!peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
             var jobs = [];
+
             // Get hardship (only for a member peer)
             if (peer.uid) {
               jobs.push(node.blockchain.stats.hardship({pubkey: peer.pubkey})
@@ -170,7 +199,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                   peer.level = res && res.level;
                 })
                 .catch(function() {
-                  peer.level = null; // continue
+                  peer.level = '?'; // continue
                 }));
             }
 
@@ -180,7 +209,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 peer.version = res && res.duniter && res.duniter.version;
               })
               .catch(function() {
-                peer.version = null; // continue
+                peer.version = 'v?'; // continue
               }));
 
             $q.all(jobs);
@@ -229,9 +258,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           return -score;
         });
         if (updateMainBuid) {
-          // TODO: raise a special event if changed ?
           data.mainBuid = mainBlock.buid;
-          //api.data.raise.changed(data); // raise event
+          api.data.raise.mainBlockChanged(data); // raise event
         }
         api.data.raise.changed(data); // raise event
       },
@@ -239,7 +267,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       startListeningOnSocket = function() {
         // Listen for new block
         data.bma.websocket.block().on(function(block) {
-          if (data.updatingPeers) return;
+          if (data.loading) return;
           var uid = buid(block);
           if (data.knownBlocks.indexOf(uid) === -1) {
             console.debug('[network] Receiving block: ' + uid.substring(0, 20));
@@ -247,7 +275,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             // If first block: do NOT refresh peers (will be done in start() method)
             var skipRefreshPeers = data.knownBlocks.length === 1;
             if (!skipRefreshPeers) {
-              data.updatingPeers = true;
+              data.loading = true;
               // We wait 2s when a new block is received, just to wait for network propagation
               $timeout(function() {
                 console.debug('[network] new block received by WS: will refresh peers');
@@ -258,27 +286,30 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
         // Listen for new peer
         data.bma.websocket.peer().on(function(peer) {
-          if (!peer || data.updatingPeers) return;
+          if (!peer || data.loading) return;
           peer = new Peer(peer);
           var existingPeer = _.where(data.peers, {server: peer.getServer()});
           if (existingPeer && existingPeer.length == 1) {
             peer = existingPeer[0];
             existingPeer = true;
           }
-          refreshPeer(peer).then(function() {
-            if (data.updatingPeers) return; // skip if load has been started
 
-            if (existingPeer) {
-              if (!peer.online) {
-                data.peers.splice(data.peers.indexOf(peer), 1); // remove existing peers
+          refreshPeer(peer)
+            .then(function(peer) {
+              if (data.loading) return; // skip if full load is running
+
+              if (existingPeer) {
+                // remove existing peers, when reject or offline
+                if (!peer || !peer.online) {
+                  data.peers.splice(data.peers.indexOf(peer), 1);
+                }
+                sortPeers();
               }
-              sortPeers();
-            }
-            else if(peer.online) {
-              data.peers.push(peer);
-              sortPeers();
-            }
-          });
+              else if(peer.online) {
+                data.peers.push(peer);
+                sortPeers();
+              }
+            });
         });
       },
 
@@ -342,6 +373,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
     // Register extension points
     api.registerEvent('data', 'changed');
+    api.registerEvent('data', 'mainBlockChanged');
     api.registerEvent('data', 'rollback');
 
     return {

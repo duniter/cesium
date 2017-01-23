@@ -15,8 +15,8 @@
       </div>
       <div class="col col-10 no-padding" ng-if="settings.expertMode">
         <h3 class="hidden-sm hidden-xs hidden-md">
-          <span ng-if="peer.level"><i class="ion-lock-combination"></i> {{peer.level}}</span>
-          <span ng-if="!peer.level" translate>PEER.MIRROR</span>
+          <span ng-if="peer.uid"><i class="ion-lock-combination"></i> {{peer.level}}</span>
+          <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
         </h3>
         <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
       </div>
