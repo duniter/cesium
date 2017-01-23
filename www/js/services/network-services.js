@@ -18,7 +18,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         mainBuid: null,
         uidsByPubkeys: null,
         updatingPeers: true,
-        searchingPeersOnNetwork: false
+        searchingPeersOnNetwork: false,
+        esPeersOnly: false
       },
 
       resetData = function() {
@@ -205,6 +206,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         var mainBlock = _.max(buids, function(obj) {
           return obj.count;
         });
+
         _.forEach(data.peers, function(peer){
           peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
           peer.hasConsensusBlock = !peer.hasMainConsensusBlock && currents[peer.buid] > 1;
@@ -212,6 +214,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.peers = _.uniq(data.peers, false, function(peer) {
           return peer.pubkey;
         });
+        if(data.esPeersOnly) {
+          var regex = /^BASIC_MERKLED_API/;
+          data.peers = _.filter(data.peers, function(peer){return regex.test(peer.endpoints);})
+        };
         data.peers = _.sortBy(data.peers, function(peer) {
           var score = 1;
           score += (100000000 * (peer.online ? 1 : 0));
@@ -276,7 +282,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
       },
 
-      start = function(bma) {
+      start = function(bma, filterOn) {
+      data.esPeersOnly = filterOn;
         return $q(function(resolve, reject) {
           close();
           data.bma = bma ? bma : BMA;

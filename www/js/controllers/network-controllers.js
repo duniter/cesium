@@ -119,6 +119,8 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
   $scope.display='members';
   $scope.screen = UIUtils.screen;
   $scope.nbMembersPeers = 0;
+  $scope.esPeersOnly = false;
+
 
   csCurrency.all()
     .then(function (currencies) {
@@ -134,7 +136,7 @@ function NetworkModalController($scope, $q, $translate, $timeout, $ionicPopover,
       BMA.instance(currency.peer.host, currency.peer.port) : BMA;
 
     if ($scope.loadingPeers){
-      csNetwork.start($scope.node);
+      csNetwork.start($scope.node, $scope.esPeersOnly);
 
       // Catch event on new peers
       var refreshing = false;

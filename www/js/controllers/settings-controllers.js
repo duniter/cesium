@@ -160,6 +160,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
               return;
             }
             var parts = node.split(':');
+            parts[1] = parts[1] ? parts[1] : 80;
             resolve({
               host: parts[0],
               port: parts[1]
