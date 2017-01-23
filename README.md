@@ -63,7 +63,7 @@ To change default configuration:
 
   - Edit the file `config.js`, and set default properties:
   
-```
+```js
 angular.module("cesium.config", [])
 .constant("csConfig", {
   "cacheTimeMs": 60000,
