@@ -12,21 +12,61 @@
     "initPhase": false,
     "expertMode": false,
     "decimalCount": 4,
-    "compatProtocol_0_80": true,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
     "node": {
-      "host": "cgeek.fr",
-      "port": "9330"
+      "host": "gtest.duniter.org",
+      "port": "10900"
+    },
+    "plugins":{
+      "es": {
+        "enable": false,
+        "askEnable": false,
+        "host": "data.gtest.duniter.fr",
+        "port": "80",
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
+      }
+    }
+  },
+
+  "dev": {
+    "cacheTimeMs": 60000,
+    "fallbackLanguage": "fr-FR",
+    "defaultLanguage": "fr-FR",
+    "rememberMe": true,
+    "showUDHistory": false,
+    "timeout": 6000,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": true,
+    "useRelative": true,
+    "initPhase": false,
+    "expertMode": true,
+    "helptip": {
+      "enable": false,
+      "installDocUrl": {
+        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
+        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      }
+    },
+    "node": {
+      "host": "gtest.duniter.org",
+      "port": "10900"
     },
     "plugins":{
       "es": {
         "enable": true,
         "askEnable": false,
-        "host": "data.duniter.fr",
-        "port": "80",
+        "host": "localhost",
+        "port": 9200,
+        "wsPort": 9400,
         "notifications": {
           "txSent": true,
           "txReceived": true,
@@ -79,7 +119,7 @@
     }
   },
 
-  "dev": {
+  "dev_sou": {
     "cacheTimeMs": 60000,
     "fallbackLanguage": "fr-FR",
     "defaultLanguage": "fr-FR",
@@ -111,88 +151,6 @@
         "askEnable": true,
         "host": "data.le-sou.org",
         "port": "80",
-        "notifications": {
-          "txSent": true,
-          "txReceived": true,
-          "certSent": true,
-          "certReceived": true
-        }
-      }
-    }
-  },
-
-  "dev2": {
-    "cacheTimeMs": 60000,
-    "fallbackLanguage": "fr-FR",
-    "defaultLanguage": "fr-FR",
-    "rememberMe": true,
-    "showUDHistory": false,
-    "timeout": 6000,
-    "timeWarningExpireMembership": 5184000,
-    "timeWarningExpire": 7776000,
-    "useLocalStorage": true,
-    "useRelative": true,
-    "initPhase": false,
-    "expertMode": true,
-    "helptip": {
-      "enable": false,
-      "installDocUrl": {
-        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-      }
-    },
-    "node": {
-      "host": "test-net.duniter.fr",
-      "port": "9201"
-    },
-    "plugins":{
-      "es": {
-        "enable": true,
-        "askEnable": false,
-        "host": "localhost",
-        "port": 9200,
-        "wsPort": 9400,
-        "notifications": {
-          "txSent": true,
-          "txReceived": true,
-          "certSent": true,
-          "certReceived": true
-        }
-      }
-    }
-  },
-
-  "fake": {
-    "cacheTimeMs": 60000,
-    "fallbackLanguage": "fr-FR",
-    "defaultLanguage": "fr-FR",
-    "rememberMe": true,
-    "showUDHistory": false,
-    "timeout": 6000,
-    "timeWarningExpireMembership": 514000,
-    "timeWarningExpire": 7776000,
-    "useLocalStorage": true,
-    "useRelative": true,
-    "initPhase": false,
-    "expertMode": true,
-    "helptip": {
-      "enable": false,
-      "installDocUrl": {
-        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-      }
-    },
-    "node": {
-      "host": "fakenet.cgeek.fr",
-      "port": "10900"
-    },
-    "plugins":{
-      "es": {
-        "enable": false,
-        "askEnable": false,
-        "host": "localhost",
-        "port": 9200,
-        "wsPort": 9400,
         "notifications": {
           "txSent": true,
           "txReceived": true,
