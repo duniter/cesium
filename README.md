@@ -173,11 +173,13 @@ To build Cesium, you will have to:
 ### Compile and launch
 
   - Compiling and running Cesium:
-     
+```
+  npm start
+```
+or 
 ```
   ionic serve
 ```
-
 
 ### Best pratices
 
