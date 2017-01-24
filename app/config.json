@@ -57,7 +57,7 @@
       }
     },
     "node": {
-      "host": "gtest.duniter.org",
+      "host": "gtest.duniter.fr",
       "port": "10900"
     },
     "plugins":{

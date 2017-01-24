@@ -132,7 +132,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
 
         return true;
-      };
+      },
 
       addIfNewAndOnlinePeer = function(peer, list) {
         list = list || data.newPeers;
