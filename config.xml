@@ -22,6 +22,7 @@
   <preference name="android-minSdkVersion" value="16" />
   <preference name="SplashScreen" value="screen" />
   <preference name="SplashScreenDelay" value="4000" />
+  <preference name="xwalkVersion" value="19" />
   <allow-navigation href="*" />
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar" />

@@ -16,5 +16,12 @@
     "css_plugin",
     "watch"
   ],
-  "defaultBrowser": "chrome"
+  "defaultBrowser": "chrome",
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk-lite",
+      "version": "12.41.296.5"
+    }
+  ]
 }
