@@ -134,7 +134,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.createHelptipScope = function(isTour) {
-    if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable)) {
+    if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable || UIUtils.screen.isSmall())) {
       return; // avoid other helptip to be launched (e.g. csWallet)
     }
     // Create a new scope for the tour controller
