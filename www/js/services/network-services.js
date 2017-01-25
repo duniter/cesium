@@ -1,7 +1,7 @@
 
-angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services'])
+angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, Api, csSettings, UIUtils) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, csHttp, Api, csSettings, UIUtils) {
   'ngInject';
 
   factory = function(id) {
@@ -62,6 +62,20 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       getKnownBlocks = function() {
         return data.knownBlocks;
+      },
+
+      newLightBMA = function(peer) {
+        return {
+          node: {
+            summary: csHttp.getWithCache(peer.getHost(), peer.getPort(), '/node/summary', csHttp.cache.LONG)
+          },
+          blockchain: {
+            current: csHttp.get(peer.getHost(), peer.getPort(), '/blockchain/current'),
+            stats: {
+              hardship: csHttp.get(peer.getHost(), peer.getPort(), '/blockchain/hardship/:pubkey')
+            }
+          }
+        };
       },
 
       loadPeers = function() {
@@ -157,7 +171,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        var node = new BMA.instance(peer.getHost(), peer.getPort(), false);
+        var node = newLightBMA(peer);
 
         // Get current block
         return node.blockchain.current()
@@ -257,8 +271,9 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
           return -score;
         });
-        if (updateMainBuid) {
+        if (updateMainBuid && mainBlock.buid) {
           data.mainBuid = mainBlock.buid;
+          console.log(data.mainBuid);
           api.data.raise.mainBlockChanged(data); // raise event
         }
         api.data.raise.changed(data); // raise event

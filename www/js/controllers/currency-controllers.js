@@ -100,7 +100,7 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   };
 }
 
-function CurrencyViewController($scope, $q, BMA, UIUtils, csSettings, csCurrency) {
+function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
   $scope.formData = {
     useRelative: csSettings.data.useRelative,
     currency: '',
@@ -120,49 +120,59 @@ function CurrencyViewController($scope, $q, BMA, UIUtils, csSettings, csCurrency
     stepMax: 0,
     xpercent: 0,
     durationFromLastUD: 0,
+    blockUid: null
   };
   $scope.node = null;
   $scope.loading = true;
   $scope.screen = UIUtils.screen;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    if (state.stateParams && state.stateParams.name) { // Load by name
-      csCurrency.searchByName(state.stateParams.name)
-      .then(function(currency){
-        $scope.load(currency);
-      });
-    }
-    else {
-      csCurrency.all()
-      .then(function (currencies) {
-        if (currencies && currencies.length > 0) {
-          $scope.load(currencies[0]);
+    if ($scope.loading) { // run only once (first enter)
+      if (state.stateParams && state.stateParams.name) { // Load by name
+        csCurrency.searchByName(state.stateParams.name)
+        .then(function(currency){
+          $scope.init(currency);
+        });
+      }
+      else {
+        csCurrency.default()
+        .then(function (currency) {
+          $scope.init(currency);
+        })
+        .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+      }
+
+      csNetwork.api.data.on.mainBlockChanged($scope, function(data) {
+        if ($scope.loading) return;
+        if ($scope.formData.blockUid !== data.mainBuid) {
+          console.debug("[currency] Updating parameters UI (new main block detected)");
+          $timeout($scope.load, 1000 /*waiting propagation to requested node*/);
         }
-      })
-      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+      });
     }
   });
 
-  $scope.load = function(currency) {
+  $scope.init = function(currency) {
     $scope.formData.currency = currency.name;
     $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
       BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+
     UIUtils.loading.show();
 
-    // Load currency parameters
-    $scope.loadParameter();
+    // Load data
+    $scope.load()
 
-    // Show help tip
-    $scope.showHelpTip();
+      // Show help tip
+      .then($scope.showHelpTip);
   };
 
-  $scope.loadParameter = function() {
+  $scope.load = function() {
     if (!$scope.node) {
       return;
     }
+
     // Load data from node
-    var data = {};
-    var M, lastUDTime;
+    var data = {}, M, lastUDTime, now = new Date().getTime();
     return $q.all([
 
       // Get the currency parameters
@@ -186,6 +196,7 @@ function CurrencyViewController($scope, $q, BMA, UIUtils, csSettings, csCurrency
           data.N = block.membersCount;
           data.medianTime  = block.medianTime;
           data.difficulty  = block.powMin;
+          data.blockUid = [block.number, block.hash].join('-');
         })
         .catch(function(err){
           // Special case for currency init (root block not exists): use fixed values
@@ -231,13 +242,15 @@ function CurrencyViewController($scope, $q, BMA, UIUtils, csSettings, csCurrency
       data.MoverN = (Mprev ? Mprev : M/*need at currency start only*/) / data.Nprev;
       data.UD = data.currentUD;
       data.durationFromLastUD = lastUDTime ? data.medianTime - lastUDTime : 0;
+      data.useRelative = $scope.formData.useRelative;
 
       // Apply to formData
       angular.copy(data, $scope.formData);
 
+      console.debug("[currency] Parameters loaded in " + (new Date().getTime() - now) + 'ms' );
       $scope.loading = false;
       $scope.$broadcast('$$rebind::' + 'rebind'); // force bind of currency name
-      UIUtils.loading.hide();
+      return UIUtils.loading.hide();
     })
     .catch(function(err) {
       $scope.loading = false;
