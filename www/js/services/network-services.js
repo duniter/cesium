@@ -271,11 +271,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
           return -score;
         });
-        if (updateMainBuid && mainBlock.buid) {
+
+        // Raise event on new main block
+        if (updateMainBuid && mainBlock.buid && data.mainBuid !== mainBlock.buid) {
           data.mainBuid = mainBlock.buid;
-          console.log(data.mainBuid);
-          api.data.raise.mainBlockChanged(data); // raise event
+          api.data.raise.mainBlockChanged(data);
         }
+
+        // Raise event when changed
         api.data.raise.changed(data); // raise event
       },
 
