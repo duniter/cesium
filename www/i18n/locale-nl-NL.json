@@ -136,7 +136,7 @@
       "TAB_NETWORK": "Netwerk",
       "CURRENCY_NAME": "Valuta naam",
       "MEMBERS": "Ledental",
-      "MEMBERS_VARIATION": "Variatie (since {{dt | formatDuration}})",
+      "MEMBERS_VARIATION": "Variatie since {{duration | formatDuration}}",
       "MONEY_DIVIDER": "Geld",
       "MASS": "Monetaire massa",
       "SHARE": "Aandeel per lid",

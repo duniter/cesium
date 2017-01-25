@@ -138,7 +138,7 @@
       "TAB_NETWORK": "Network",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
-      "MEMBERS_VARIATION": "Variation (since {{dt | formatDuration}})",
+      "MEMBERS_VARIATION": "Variation since {{duration|formatDuration}} (since last UD)",
       "MONEY_DIVIDER": "Money",
       "MASS": "Monetary mass",
       "SHARE": "Money share",

@@ -26,6 +26,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         searchingPeersOnNetwork: false
       },
 
+      // Return the block uid
+      buid = function(block) {
+        return block && [block.number, block.hash].join('-');
+      },
+
       resetData = function() {
         data.bma = null;
         data.peers = [];
@@ -41,11 +46,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.uidsByPubkeys = {};
         data.loading = true;
         data.searchingPeersOnNetwork = false;
-      },
-
-      // Return the block uid
-      buid = function(block) {
-        return block && [block.number, block.hash].join('-');
       },
 
       hasPeers = function() {
@@ -267,8 +267,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       startListeningOnSocket = function() {
         // Listen for new block
         data.bma.websocket.block().on(function(block) {
-          if (data.loading) return;
-          var buid = buid(block);
+          if (!block || data.loading) return;
+          var buid = [block.number, block.hash].join('-');
           if (data.knownBlocks.indexOf(buid) === -1) {
             console.debug('[network] Receiving block: ' + buid.substring(0, 20));
             data.knownBlocks.push(buid);
@@ -295,18 +295,18 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           }
 
           refreshPeer(peer)
-            .then(function(peer) {
+            .then(function(refreshedPeer) {
               if (data.loading) return; // skip if full load is running
 
               if (existingPeer) {
                 // remove existing peers, when reject or offline
-                if (!peer || !peer.online) {
+                if (!refreshedPeer || !refreshedPeer.online) {
                   data.peers.splice(data.peers.indexOf(peer), 1);
                 }
                 sortPeers();
               }
-              else if(peer.online) {
-                data.peers.push(peer);
+              else if(refreshedPeer.online) {
+                data.peers.push(refreshedPeer);
                 sortPeers();
               }
             });

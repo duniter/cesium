@@ -153,7 +153,7 @@
 
           <!-- Pending transactions -->
           <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
-            {{:locale:'ACCOUNT.PENDING_TX'}}
+            {{:locale:'ACCOUNT.PENDING_TX'|translate}}
             <div class="badge item-note" ng-bind-html=":rebind:walletData.parameters.currency | currencySymbol">
             </div>
           </span>
