@@ -3,8 +3,8 @@
   xmlns="http://www.w3.org/ns/widgets"
   xmlns:cdv="http://cordova.apache.org/ns/1.0"
   id="fr.duniter.cesium"
-  version="0.9.8"
-  android-versionCode="908"
+  version="0.9.9"
+  android-versionCode="909"
   >
   <name>Cesium</name>
   <description>
