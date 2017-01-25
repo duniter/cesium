@@ -138,7 +138,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
             parts[1] = parts[1] ? parts[1] : 80;
             resolve({
               host: parts[0],
-              port: parts[1]
+              port: parts[1] || 80
             });
           });
         });

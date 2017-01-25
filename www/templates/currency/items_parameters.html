@@ -4,8 +4,8 @@
         <ion-item class="item-icon-left">
             <i class="icon ion-android-bookmark"></i>
             <span translate>CURRENCY.VIEW.CURRENCY_NAME</span>
-            <div class="item-note dark">
-              {{currency}} (<span ng-bind-html=":rebind:currency | currencySymbol:formData.useRelative"></span>)
+            <div class="item-note dark" ng-if="!loading">
+              {{formData.currency}} (<span ng-bind-html=":rebind:formData.currency | currencySymbol:formData.useRelative"></span>)
             </div>
         </ion-item>
 
@@ -13,31 +13,33 @@
             <i class="icon ion-record"></i>
             <span translate>CURRENCY.VIEW.MASS</span>
             <span class="badge badge-stable"
-                ng-bind-html=":rebind:M | formatAmount:{currency: currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
+                  ng-if="!loading"
+                  ng-bind-html=":rebind:formData.M | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
         </ion-item>
 
         <ion-item id="helptip-currency-mass-member" class="item-icon-left">
             <i class="icon ion-pie-graph"></i>
             {{'CURRENCY.VIEW.SHARE'|translate}}
           <span id="helptip-currency-mass-member-unit"
+                ng-if="!loading"
                 class="badge badge-energized"
-                ng-bind-html=":rebind:MoverN | formatAmount:{currency: currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
+                ng-bind-html=":rebind:formData.MoverN | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
           </span>
         </ion-item>
 
         <ion-item class="item-icon-left" ui-sref="app.currency_ud">
             <i class="icon ion-load-c"></i>
             <span translate>CURRENCY.VIEW.UD</span>
-            <div class="badge badge-royal">
-              <span ng-bind-html=":rebind:currentUD | formatAmount:{currency: currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
-              &nbsp;/&nbsp;{{dt | formatPeriod}}
+            <div class="badge badge-royal" ng-if="!loading">
+              <span ng-bind-html=":rebind:formData.currentUD | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
+              &nbsp;/&nbsp;{{formData.dt | formatPeriod}}
             </div>
         </ion-item>
 
         <ion-item class="item-icon-left">
             <i class="icon ion-arrow-graph-up-right"></i>
             <span translate>CURRENCY.VIEW.C_ACTUAL</span>
-          <span class="badge badge-stable">{{cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
+          <span class="badge badge-stable">{{formData.cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
         </ion-item>
 
         <div class="item item-toggle dark">
@@ -58,13 +60,13 @@
         <ion-item class="item-icon-left">
             <i class="icon ion-arrow-graph-up-right"></i>
             <span translate>CURRENCY.VIEW.C_RULE</span>
-            <span class="badge badge-stable">{{c*100 | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{dt | formatPeriod}}</span>
+            <span class="badge badge-stable" ng-if="!loading">{{formData.c*100 | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
         </ion-item>
 
         <ion-item  class="item-icon-left">
             <i class="icon ion-load-c"></i>
             <span translate>CURRENCY.VIEW.UD_RULE</span>
-            <span class="item-note dark">{{'COMMON.UD'|translate}}<sub>t-1</sub> + c<sup>2</sup> * M(t-1)/N(t-1)</span>
+            <span class="item-note dark" ng-if="!loading">{{'COMMON.UD'|translate}}<sub>t-1</sub> + c<sup>2</sup> * M(t-1)/N(t-1)</span>
         </ion-item>
 
     </div>

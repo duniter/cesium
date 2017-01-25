@@ -4,18 +4,18 @@
     <ion-item class="item-icon-left">
         <i class="icon ion-person-stalker"></i>
         <span translate>CURRENCY.VIEW.MEMBERS</span>
-        <span class="badge badge-assertive">{{Nprev | formatInteger}}</span>
+        <span class="badge badge-assertive" ng-if="!loading">{{formData.N | formatInteger}}</span>
     </ion-item>
 
-    <ion-item id="helptip-currency-newcomers"
-              class="item-icon-left"
-              ui-sref="app.wot_lookup({newcomers: N-Nprev})">
-        <i class="icon ion-person-add"></i>
-        <span translate="CURRENCY.VIEW.MEMBERS_VARIATION" translate-values="{dt: dt}"></span>
-        <span ng-if="N > Nprev" class="badge badge-balanced">+{{N-Nprev | formatInteger}}</span>
-        <span ng-if="N < Nprev" class="badge badge-calm">-{{N-Nprev | formatInteger}}</span>
-        <span ng-if="N == Nprev" class="badge badge-stable">0</span>
+    <ion-item class="item-icon-left item-text-wrap">
+      <i class="icon ion-arrow-graph-up-right"></i>
+      <span translate="CURRENCY.VIEW.MEMBERS_VARIATION" translate-values="{duration: formData.durationFromLastUD}"></span>
+      <div class="badge badge-balanced" ng-if="!loading"
+           ng-class="{'badge-calm': formData.N < formData.Nprev}">
+        {{formData.N > formData.Nprev ? '+' : '-'}}{{formData.N - formData.Nprev}}
+      </div>
     </ion-item>
+
 
     <div id="helptip-currency-rules"
          class="item item-divider">
@@ -25,37 +25,41 @@
     <ion-item class="item-icon-left item item-text-wrap">
       <i class="icon ion-ribbon-b"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_QTY_RULE</span>
-      <span class="badge badge-assertive">{{sigQty}}</span>
+      <span class="badge badge-assertive" ng-if="!loading">{{formData.sigQty}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item item-text-wrap">
       <i class="icon ion-ribbon-a"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_STOCK</span>
-      <span class="badge badge-energized">{{sigStock}}</span>
+      <span class="badge badge-energized" ng-if="!loading">{{formData.sigStock}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item item-text-wrap">
-      <i class="icon ion-clock"></i>
+      <i class="icon ion-clock" style="position: absolute; font-size: 20px; left: 16px;"></i>
+      <b class="ion-ribbon-a" style="position: absolute; font-size: 18px; left: 14px; "></b>
+      <b class="ion-arrow-right-c" style="position: absolute; font-size: 14px; left: 28px; "></b>
+      <b class="ion-ribbon-a" style="position: absolute; font-size: 18px; left: 38px;"></b>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_PERIOD</span>
-      <span class="badge badge-stable">{{sigPeriod | formatDuration}}</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.sigPeriod | formatDuration}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item item-text-wrap">
-      <i class="icon ion-clock"></i>
+      <i class="icon ion-ribbon-a"></i>
+      <b class="ion-clock" style="position: absolute; font-size: 22px; left: 33px;"></b>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_WINDOW</span>
-      <span class="badge badge-stable">{{sigWindow | formatDuration}}</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.sigWindow | formatDuration}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item item-text-wrap">
       <i class="icon ion-steam"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.STEP_MAX</span>
-      <span class="badge badge-stable">{{stepMax}}</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.stepMax}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item item-text-wrap">
       <i class="icon ion-pull-request"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.XPERCENT</span>
-      <span class="badge badge-stable">{{xpercent}}</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.xpercent*100| formatNumeral: '0,0'}} %</span>
     </ion-item>
 
   </ion-list>

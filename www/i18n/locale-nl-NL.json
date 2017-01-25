@@ -136,7 +136,7 @@
       "TAB_NETWORK": "Netwerk",
       "CURRENCY_NAME": "Valuta naam",
       "MEMBERS": "Ledental",
-      "MEMBERS_VARIATION": "Variatie (since {{dt | formatDuration}})",
+      "MEMBERS_VARIATION": "Variatie since {{duration | formatDuration}}",
       "MONEY_DIVIDER": "Geld",
       "MASS": "Monetaire massa",
       "SHARE": "Aandeel per lid",
@@ -371,7 +371,7 @@
     "COPY_TO_CLIPBOARD_DONE": "Kopie geslaagd",
     "MEMBERSHIP_OUT_SENT": "Opzegging lidmaatschap succesvol verzonden",
     "NOT_NEED_MEMBERSHIP": "Je bent al lid.",
-    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Deze identiteit heeft binnenkort onvoldoende certificaties (ten minste {{willNeedCertificationCount}} nodig).",
+    "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Deze identiteit heeft binnenkort onvoldoende certificaties (ten minste {{willNeedCertificationCount}} nodig)."
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Bevestiging</b>",

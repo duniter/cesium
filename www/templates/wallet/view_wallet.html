@@ -153,7 +153,7 @@
 
           <!-- Pending transactions -->
           <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
-            {{:locale:'ACCOUNT.PENDING_TX'}}
+            {{:locale:'ACCOUNT.PENDING_TX'|translate}}
             <div class="badge item-note" ng-bind-html=":rebind:walletData.parameters.currency | currencySymbol">
             </div>
           </span>
@@ -205,14 +205,13 @@
             {{:locale:'ACCOUNT.LAST_TX'|translate}}
             <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
             <div class="badge item-note">
-              <span ng-if="!$root.settings.useRelative">({{walletData.parameters.currency | abbreviate}})</span>
-              <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{walletData.parameters.currency | abbreviate}}</sub>)</span>
+              <span ng-bind-html="walletData.parameters.currency|currencySymbol"></span>
             </div>
           </span>
 
 
-          <span class="item" ng-if="!loading && !walletData.tx.history.length">
-            <h3>{{:locale:'ACCOUNT.NO_TX'}}</h3>
+          <span class="item padding" ng-if="!loading && !walletData.tx.history.length">
+            <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
           </span>
 
           <!-- TX history -->
@@ -262,7 +261,7 @@
             </div>
           </div>
 
-          <div class="item" ng-if="walletData.tx.fromTime > 0">
+          <div class="item item-text-wrap" ng-if="walletData.tx.fromTime > 0">
             <p>
               <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
               <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: walletData.tx.fromTime}"></span>

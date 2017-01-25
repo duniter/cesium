@@ -191,7 +191,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
       return esHttp.post(host, port, '/message/inbox/_search')(request)
         .then(function(res) {
-          if (res.hits.total === 0) {
+          if (!res || !res.hits || !res.hits.total) {
             return [];
           }
           else {
@@ -236,7 +236,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
       return esHttp.post(host, port, '/message/:type/_search')(request, {type: options.type})
         .then(function(res) {
-          if (res.hits.total === 0) {
+          if (!res || !res.hits || !res.hits.total) {
             return [];
           }
           var messages = res.hits.hits.reduce(function(res, hit) {

@@ -124,7 +124,7 @@
       "PEER_HELP": "serveur.domaine.com:port",
       "BTN_SHOW_LIST_HELP" : "Saisissez ci-dessus au format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> ou bien cliquez sur le bouton ci-dessous :",
       "BTN_SHOW_LIST" : "Liste des noeuds"
-    },
+    }
   },
   "CURRENCY": {
     "SELECT": {
@@ -138,7 +138,7 @@
       "TAB_NETWORK": "Réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Nombre de membres",
-      "MEMBERS_VARIATION": "Variation (depuis {{dt | formatDuration}})",
+      "MEMBERS_VARIATION": "Variation depuis {{duration|formatDuration}} (depuis le dernier DU)",
       "MONEY_DIVIDER": "Monnaie",
       "MASS": "Masse monétaire",
       "SHARE": "Masse par membre",

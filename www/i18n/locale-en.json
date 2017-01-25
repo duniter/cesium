@@ -124,7 +124,7 @@
       "PEER_HELP": "server.domain.com:port",
       "BTN_SHOW_LIST_HELP" : "Enter above in the format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> or click on the button below:",
       "BTN_SHOW_LIST" : "Peer's list"
-    },
+    }
   },
   "CURRENCY": {
     "SELECT": {
@@ -138,7 +138,7 @@
       "TAB_NETWORK": "Network",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
-      "MEMBERS_VARIATION": "Variation (since {{dt | formatDuration}})",
+      "MEMBERS_VARIATION": "Variation since {{duration|formatDuration}} (since last UD)",
       "MONEY_DIVIDER": "Money",
       "MASS": "Monetary mass",
       "SHARE": "Money share",

@@ -22,7 +22,7 @@ Try it at: http://cesium.duniter.fr
 Cesium can be easily installed on most web server.
 
 #### Minimal install from source
-if you don't allready use nodejs, see [Prerequisite](https://github.com/duniter/cesium#prerequisite)
+If you don't already use nodejs (v5), please follow [prerequisite steps](https://github.com/duniter/cesium#prerequisite).
 ```bash
 git clone https://github.com/duniter/cesium.git
 cd cesium
@@ -63,30 +63,38 @@ To change default configuration:
 
   - Edit the file `config.js`, and set default properties:
   
-```
+```js
 angular.module("cesium.config", [])
 .constant("csConfig", {
-	"timeout": 4000,
-	"cacheTimeMs": 60000,
-	"useRelative": true,
-	"timeWarningExpireMembership": 5184000,
-	"timeWarningExpire": 7776000,
-	"useLocalStorage": false,
-	"rememberMe": false,
-	"showUDHistory": false,
-	"node": {
-		"host": "test-net.duniter.fr",
-		"port": "9201"
-	},
+  "cacheTimeMs": 60000,
+  "fallbackLanguage": "en",
+  "rememberMe": false,
+  "showUDHistory": false,
+  "timeout": 10000,
+  "timeWarningExpireMembership": 5184000,
+  "timeWarningExpire": 7776000,
+  "useLocalStorage": true,
+  "useRelative": true,
+  "initPhase": false,
+  "expertMode": false,
+  "decimalCount": 4,
+  "helptip": {
+    "enable": true,
+    "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+  },
+  "node": {
+    "host": "gtest.duniter.org",
+    "port": "10900"
+  },
 	"plugins": {
 		"es": {
 			"enable": "false",
-			"host": "test-net.duniter.fr",
+			"host": "data.gtest.duniter.fr",
 			"port": "9203"
 		}
 	},
-	"version": "0.2.6",
-	"build": "2016-08-25T07:16:49.361Z",
+	"version": "0.9.7",
+	"build": "2017-01-17T08:27:57.915Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 });
 ```
@@ -165,11 +173,13 @@ To build Cesium, you will have to:
 ### Compile and launch
 
   - Compiling and running Cesium:
-     
+```
+  npm start
+```
+or 
 ```
   ionic serve
 ```
-
 
 ### Best pratices
 

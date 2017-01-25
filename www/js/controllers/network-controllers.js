@@ -6,7 +6,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
-     .state('app.view_peer', {
+    .state('app.view_peer', {
       url: "/network/peer/:server",
       nativeTransitions: {
           "type": "flip",
@@ -36,7 +36,8 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   $scope.search = {
     text: '',
     loading: true,
-    type: 'member',
+    type: undefined,
+    results: [],
     results: [],
     endpoint: null,
     sort : 'uid',
@@ -68,8 +69,8 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     if ($scope.search.loading){
       csNetwork.start($scope.node, {
         filter: {
-          member: ($scope.search.type === 'member'),
-          mirror: ($scope.search.type === 'mirror'),
+          member: (!$scope.search.type || $scope.search.type === 'member'),
+          mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
           endpoint : (angular.isDefined($scope.search.endpoint) ? $scope.search.endpoint : null)
         },
         sort: {
@@ -84,7 +85,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
         if (!refreshing) {
           refreshing = true;
           $timeout(function() { // Timeout avoid to quick updates
-            console.debug("Updating UI Peers");
+            console.debug("[peers] Updating UI");
             $scope.search.results = data.peers;
             $scope.search.memberPeersCount = data.memberPeersCount;
             $scope.search.loading = csNetwork.isBusy();
