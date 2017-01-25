@@ -124,7 +124,7 @@
       "PEER_HELP": "serveur.domaine.com:port",
       "BTN_SHOW_LIST_HELP" : "Saisissez ci-dessus au format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> ou bien cliquez sur le bouton ci-dessous :",
       "BTN_SHOW_LIST" : "Liste des noeuds"
-    },
+    }
   },
   "CURRENCY": {
     "SELECT": {
