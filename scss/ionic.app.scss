@@ -163,7 +163,7 @@ $screen-lg:                       1200px;
 }
 // Small devices: Tablets (≥768px)
 @media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
-    .hidden-sm {
+    .hidden-sm, .grid-header.hidden-sm {
         display: none !important;
         visibility: hidden !important;
     }
@@ -177,7 +177,7 @@ $screen-lg:                       1200px;
     .badge:empty {
       display: none !important;
     }
-}
+  }
 @media screen and (min-width: $screen-md) {
     .hidden-sm {
         display: inherit;
@@ -1637,4 +1637,44 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-weight: normal !important;
   margin-right: 0px;
   padding-right: 0px;
+}
+
+/**********
+  Item peer
+**********/
+
+.list .logo {
+  background-image: url('../../resources/logo/svg/colors/logo.large.cs.dune.svg');
+  background-size: 30px 30px;
+  width: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  text-align : center;
+}
+
+.grid-header .button-icon i:before{
+  font-size : 12px;
+}
+.grid-header{
+  text-align: center;
+}
+
+.col-25 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 25%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 25%;
+  -ms-flex: 0 0 25%;
+  flex: 0 0 25%;
+  max-width: 25%;
+}
+
+.col-15 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 15%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 15%;
+  -ms-flex: 0 0 15%;
+  flex: 0 0 15%;
+  max-width: 15%;
 }

@@ -29,7 +29,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"node": {
-		"host": "fakenet.cgeek.fr",
+		"host": "gtest.duniter.fr",
 		"port": "10900"
 	},
 	"plugins": {

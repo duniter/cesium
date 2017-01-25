@@ -167,7 +167,10 @@
     "MIRRORS": "Mirror peers",
     "PEER_LIST" : "Peer's list",
     "MEMBERS" : "Member peers",
-    "ALL_PEERS" : "All peers"
+    "ALL_PEERS" : "All peers",
+    "DIFFICULTY" : "Difficulty",
+    "API" : "API",
+    "CURRENT_BLOCK" : "Current block"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",

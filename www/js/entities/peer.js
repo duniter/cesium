@@ -65,6 +65,15 @@ function Peer(json) {
     }, []);
   };
 
+  that.hasEndpoint = function(endpoint){
+    endpoint = '^' + endpoint;
+    var regExp = new RegExp(endpoint);
+    var endpoints = that.getEndpoints(regExp);
+    if (!endpoints.length) return false;
+    else return true;
+
+  };
+
   that.getDns = function() {
     var bma = that.getBMA();
     return bma.dns ? bma.dns : null;

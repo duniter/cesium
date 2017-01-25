@@ -37,7 +37,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     text: '',
     loading: true,
     type: 'member',
-    results: []
+    results: [],
+    endpoint: null,
+    sort : 'uid',
+    asc: true
   };
 
   $scope.init = function() {
@@ -66,7 +69,12 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
       csNetwork.start($scope.node, {
         filter: {
           member: ($scope.search.type === 'member'),
-          mirror: ($scope.search.type === 'mirror')
+          mirror: ($scope.search.type === 'mirror'),
+          endpoint : (angular.isDefined($scope.search.endpoint) ? $scope.search.endpoint : null)
+        },
+        sort: {
+          type : $scope.search.sort,
+          asc : $scope.search.asc
         }
       });
 
@@ -108,6 +116,28 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     $scope.search.loading = true;
     $scope.load();
 
+  };
+
+  $scope.toggleSearchEndpoint = function(endpoint){
+    $scope.hideActionsPopover();
+    if ($scope.search.endpoint === endpoint || endpoint === null) {
+      $scope.search.endpoint = null;
+    }
+    else {
+      $scope.search.endpoint = endpoint;
+    }
+    csNetwork.close();
+    $scope.search.loading = true;
+    $scope.load();
+  };
+
+  $scope.toggleSort = function(sort){
+    $scope.search.asc = ($scope.search.sort === sort) ? !$scope.search.asc : true;
+    $scope.search.sort = sort;
+
+    csNetwork.close();
+    $scope.search.loading = true;
+    $scope.load();
   };
 
   $scope.selectPeer = function(peer) {
