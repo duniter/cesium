@@ -17,7 +17,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         filter: {
           member: true,
           mirror: true,
-          endpoint: null
+          endpointFilter: null
         },
         sort:{
           type: null,
@@ -41,7 +41,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.filter = {
           member: true,
           mirror: true,
-          endpoint: null
+          endpointFilter: null
         };
         data.sort = {
           type: null,
@@ -148,8 +148,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
 
         // Filter on endpoints
-        if (data.filter.endpoint) {
-          return peer.hasEndpoint(data.filter.endpoint);
+        if (data.filter.endpointFilter) {
+          return peer.hasEndpoint(data.filter.endpointFilter);
         }
 
         return true;

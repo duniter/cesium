@@ -38,8 +38,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     loading: true,
     type: undefined,
     results: [],
-    results: [],
-    endpoint: null,
+    endpointFilter: null,
     sort : 'uid',
     asc: true
   };
@@ -71,7 +70,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
         filter: {
           member: (!$scope.search.type || $scope.search.type === 'member'),
           mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
-          endpoint : (angular.isDefined($scope.search.endpoint) ? $scope.search.endpoint : null)
+          endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null)
         },
         sort: {
           type : $scope.search.sort,
@@ -121,11 +120,11 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
 
   $scope.toggleSearchEndpoint = function(endpoint){
     $scope.hideActionsPopover();
-    if ($scope.search.endpoint === endpoint || endpoint === null) {
-      $scope.search.endpoint = null;
+    if ($scope.search.endpointFilter === endpoint || endpoint === null) {
+      $scope.search.endpointFilter = null;
     }
     else {
-      $scope.search.endpoint = endpoint;
+      $scope.search.endpointFilter = endpoint;
     }
     csNetwork.close();
     $scope.search.loading = true;
@@ -208,6 +207,7 @@ function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, B
   parameters = parameters || {};
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
   $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
+  $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
 
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
 

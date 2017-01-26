@@ -145,6 +145,7 @@
 
 .peer-item .badge {
     top: 14px;
+    right: 6%;
 }
 
 .peer-item:hover .badge.badge-energized,
