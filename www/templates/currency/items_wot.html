@@ -3,13 +3,14 @@
 
     <ion-item class="item-icon-left">
         <i class="icon ion-person-stalker"></i>
-        <span translate>CURRENCY.VIEW.MEMBERS</span>
+        <span translate>CURRENCY.VIEW.MEMBERS</span> (N<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)
         <span class="badge badge-assertive" ng-if="!loading">{{formData.N | formatInteger}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-arrow-graph-up-right"></i>
       <span translate="CURRENCY.VIEW.MEMBERS_VARIATION" translate-values="{duration: formData.durationFromLastUD}"></span>
+      (&#916;N)
       <div class="badge badge-balanced" ng-if="!loading"
            ng-class="{'badge-calm': formData.N < formData.Nprev}">
         {{formData.N > formData.Nprev ? '+' : '-'}}{{formData.N - formData.Nprev}}

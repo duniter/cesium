@@ -139,7 +139,7 @@
       "NETWORK_RULES_DIVIDER": "Règles du réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Nombre de membres",
-      "MEMBERS_VARIATION": "Variation depuis {{duration|formatDuration}} (depuis le dernier DU)",
+      "MEMBERS_VARIATION": "Variation depuis le dernier DU",
       "MONEY_DIVIDER": "Monnaie",
       "MASS": "Masse monétaire",
       "SHARE": "Masse par membre",
@@ -148,7 +148,7 @@
       "TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau minimal de difficulté de calcul",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
-      "C_RULE": "Croissance théorique (c)",
+      "C_RULE": "Croissance théorique",
       "UD_RULE": "Dividende universel (formule)",
       "SIG_QTY_RULE": "Nombre de certifications requises<br/>pour devenir membre",
       "SIG_STOCK": "Nombre maximal de certifications émises<br/>par membre",
@@ -157,7 +157,8 @@
       "STEP_MAX": "Distance maximale dans la toile de confiance <br /> entre chaque membre et un nouvel entrant.",
       "WOT_RULES_DIVIDER": "Règles de la toile de confiance",
       "XPERCENT":"Pourcentage minimum de sentinelle<br/>à atteindre pour respecter la règle de distance.",
-      "AVG_GEN_TIME": "Temps moyen entre deux blocs"
+      "AVG_GEN_TIME": "Temps moyen entre deux blocs",
+      "CURRENT": "actuel"
     }
   },
   "PEER": {

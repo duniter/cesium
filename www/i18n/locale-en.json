@@ -136,6 +136,7 @@
       "TAB_CURRENCY": "Currency",
       "TAB_WOT": "Web of trust",
       "TAB_NETWORK": "Network",
+      "NETWORK_RULES_DIVIDER": "Network rules",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
       "MEMBERS_VARIATION": "Variation since {{duration|formatDuration}} (since last UD)",
@@ -147,7 +148,7 @@
       "TIME": "Current blockchain time",
       "POW_MIN": "Common difficulty",
       "MONEY_RULES_DIVIDER": "Rules of currency",
-      "C_RULE": "Growth (c)",
+      "C_RULE": "Growth",
       "UD_RULE": "Universal dividend (formula)",
       "SIG_QTY_RULE": "Required number of certifications<br/>to become a member",
       "SIG_STOCK": "Maximum number of certifications<br/>sent by a member",
@@ -156,7 +157,8 @@
       "STEP_MAX": "Maximum distance between<br/>each WoT member and a newcomer.",
       "WOT_RULES_DIVIDER": "Rules for web of trust",
       "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule",
-      "AVG_GEN_TIME": "The average time between 2 blocks"
+      "AVG_GEN_TIME": "The average time between 2 blocks",
+      "CURRENT": "current"
     }
   },
   "PEER": {
