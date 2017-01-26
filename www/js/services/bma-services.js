@@ -65,6 +65,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       },
       network: {
         peering: {
+          self: csHttp.get(host, port, '/network/peering'),
           peers: csHttp.get(host, port, '/network/peering/peers')
         },
         peers: csHttp.get(host, port, '/network/peers')
@@ -112,6 +113,25 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       raw: {
 
       }
+    };
+
+    exports.lightInstance = function(host, port) {
+      return {
+        node: {
+          summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG)
+        },
+        network: {
+          peering: {
+            self: csHttp.get(host, port, '/network/peering')
+          }
+        },
+        blockchain: {
+          current: csHttp.get(host, port, '/blockchain/current'),
+          stats: {
+            hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
+          }
+        }
+      };
     };
 
     exports.node.parseEndPoint = function(endpoint) {

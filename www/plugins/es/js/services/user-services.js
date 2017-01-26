@@ -17,7 +17,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     var
       CONSTANTS = {
-        contentTypeImagePrefix: "image/"
+        contentTypeImagePrefix: "image/",
+        ES_USER_API_ENDPOINT: "ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
+      },
+      REGEX = {
+        ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT)
       },
       FIELDS = {
         avatar: ['title', 'avatar._content_type']
@@ -42,6 +46,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       getRequest = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content')
     ;
 
+    function exact(regexpContent) {
+      return new RegExp("^" + regexpContent + "$");
+    }
+
     function copy(otherNode) {
       removeListeners();
       if (!!this.instance) {
@@ -52,6 +60,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       else {
         angular.copy(otherNode, this);
       }
+      addListeners();
     }
 
     function copyUsingSpec(data, copySpec) {
@@ -503,6 +512,17 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
     }
 
+    function parseEndPoint(endpoint) {
+      var matches = REGEX.ES_USER_API_ENDPOINT.exec(endpoint);
+      if (!matches) return;
+      return {
+        "dns": matches[2] || '',
+        "ipv4": matches[4] || '',
+        "ipv6": matches[6] || '',
+        "port": matches[8] || 80
+      };
+    }
+
     // Listen for settings changed
     csSettings.api.data.on.changed($rootScope, function(data){
       if (restoringSettings) {
@@ -549,7 +569,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     return {
       copy: copy,
       node: {
-        server: esHttp.getServer(host, port)
+        server: esHttp.getServer(host, port),
+        summary: esHttp.get(host, port, '/node/summary'),
+        parseEndPoint: parseEndPoint
       },
       profile: {
         get: esHttp.get(host, port, '/user/profile/:id'),
@@ -570,7 +592,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         change: function() {
           return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
         }
-      }
+      },
+      constants: CONSTANTS
     };
   }
 

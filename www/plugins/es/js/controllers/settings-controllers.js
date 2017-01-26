@@ -48,8 +48,7 @@ function ESExtendSettingsController ($scope, PluginService, csSettings) {
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, csSettings, csHttp, esMarket,
-  esRegistry, esUser) {
+function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, esHttp, csSettings, csHttp, esUser) {
   'ngInject';
 
   $scope.formData = {};
@@ -74,26 +73,32 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   // Change ESnode
   $scope.changeEsNode= function(node) {
     $scope.showNodePopup(node || $scope.formData)
-    .then(function(node) {
-      if (node.host === $scope.formData.host &&
-        node.port === $scope.formData.port) {
+    .then(function(newNode) {
+      if (newNode.host === $scope.formData.host &&
+        newNode.port === $scope.formData.port) {
+        UIUtils.loading.hide();
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
 
-      var newInstance = esMarket.instance(node.host, node.port);
-      esMarket.copy(newInstance);
+      return esHttp.get(newNode.host, newNode.port, '/node/summary')() // ping the node
+        .then(function(json) {
+          var valid = json && json.duniter && json.duniter.software === 'duniter4j-elasticsearch';
+          if (!valid) throw 'stop';
 
-      newInstance = esRegistry.instance(node.host, node.port);
-      esRegistry.copy(newInstance);
+          UIUtils.loading.hide();
+          $scope.formData.host = newNode.host;
+          $scope.formData.port = newNode.port;
+          esUser.copy(esUser.instance('default', newNode.host, newNode.port));
 
-      newInstance = esUser.instance(node.host, node.port);
-      esUser.copy(newInstance);
-
-      $scope.formData.host = node.host;
-      $scope.formData.port = node.port;
-
-      UIUtils.loading.hide(10);
+        })
+        .catch(function(err) {
+          UIUtils.loading.hide();
+          UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+            .then(function(){
+              $scope.changeEsNode(newNode); // loop
+            });
+        });
     });
   };
 
@@ -138,11 +143,40 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
             parts[1] = parts[1] ? parts[1] : 80;
             resolve({
               host: parts[0],
-              port: parts[1] || 80
+              port: parts[1]
             });
           });
         });
     });
+  };
+
+  $scope.showNodeList = function() {
+    $ionicPopup._popupStack[0].responseDeferred.promise.close();
+    return Modals.showNetworkLookup({
+      enableFilter: true,
+      endpointFilter: esUser.constants.ES_USER_API_ENDPOINT
+    })
+      .then(function (peer) {
+        if (!peer) return;
+          var esEps = peer.getEndpoints().reduce(function(res, ep){
+            var esEp = esUser.node.parseEndPoint(ep);
+            return esEp ? res.concat(esEp) : res;
+          }, []);
+          if (!esEps.length) return;
+          var ep = esEps[0];
+          return {
+            host: (ep.dns ? ep.dns :
+                   (peer.hasValid4(ep) ? ep.ipv4 : ep.ipv6)),
+            port: ep.port || 80
+          };
+      })
+      .then(function(newEsNode) {
+        if (!newEsNode) {
+          UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY');
+          return;
+        }
+        $scope.changeEsNode(newEsNode);
+      });
   };
 
   $scope.onFormChanged = function() {

@@ -70,20 +70,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         return data.knownBlocks;
       },
 
-      newLightBMA = function(host, port) {
-        return {
-          node: {
-            summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG)
-          },
-          blockchain: {
-            current: csHttp.get(host, port, '/blockchain/current'),
-            stats: {
-              hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
-            }
-          }
-        };
-      },
-
       loadPeers = function() {
         data.peers = [];
         data.searchingPeersOnNetwork = true;
@@ -239,7 +225,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        peer.api = peer.api || newLightBMA(peer.getHost(), peer.getPort());
+        peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort());
 
         // Get current block
         return peer.api.blockchain.current()
@@ -266,7 +252,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               if (bma.dns && peer.server.indexOf(bma.dns) == -1) {
                 // try again, using DNS instead of IPv4 / IPV6
                 peer.secondTry = true;
-                peer.api = newLightBMA(bma.dns, bma.port);
+                peer.api = BMA.lightInstance(bma.dns, bma.port);
                 return refreshPeer(peer); // recursive call
               }
             }
