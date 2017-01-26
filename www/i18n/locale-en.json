@@ -152,7 +152,7 @@
       "SIG_QTY_RULE": "Required number of certifications<br/>to become a member",
       "SIG_STOCK": "Maximum number of certifications<br/>sent by a member",
       "SIG_PERIOD": "Minimum delay between 2 certifications<br/>sent by one and the same issuer.",
-      "SIG_WINDOW": "Maximum delay before a certifacation<br/>will be treated",
+      "SIG_WINDOW": "Maximum delay before a certification<br/>will be treated",
       "STEP_MAX": "Maximum distance between<br/>each WoT member and a newcomer.",
       "WOT_RULES_DIVIDER": "Rules for Membership",
       "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule"
