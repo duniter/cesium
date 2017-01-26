@@ -9,7 +9,7 @@ Avant de faire ce tutoriel, vous devez :
  - Avoir suivi les tutoriels sur Cesium [jusqu'au niveau VII](./development_tutorial-02.md)
  - Avoir suivi le tutoriel sur Duniter4j [jusqu'au niveau V](https://github.com/duniter/duniter4j/blob/master/doc/fr/development_tutorial.md).
 
-## Niveau IX
+## Niveau XII
 
 ### Objectif
 
