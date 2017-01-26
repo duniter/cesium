@@ -163,7 +163,7 @@ $screen-lg:                       1200px;
 }
 // Small devices: Tablets (≥768px)
 @media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
-    .hidden-sm {
+    .hidden-sm, .row-header.hidden-sm {
         display: none !important;
         visibility: hidden !important;
     }
@@ -177,7 +177,7 @@ $screen-lg:                       1200px;
     .badge:empty {
       display: none !important;
     }
-}
+  }
 @media screen and (min-width: $screen-md) {
     .hidden-sm {
         display: inherit;
@@ -1638,3 +1638,35 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   margin-right: 0px;
   padding-right: 0px;
 }
+
+/**********
+  Item peer
+**********/
+
+.ion-es-user-api:before {
+  content: url('../img/logo.small.cs.dune.svg');
+}
+
+.row-header{
+  border-bottom: solid 1px #ccc !important;
+  margin: 0px;
+  min-height: 28px !important;
+}
+
+.col-header{
+  text-align: center;
+  display: block !important;
+}
+
+.col-15 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 15%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 15%;
+  -ms-flex: 0 0 15%;
+  flex: 0 0 15%;
+  max-width: 15%;
+}
+
+
+

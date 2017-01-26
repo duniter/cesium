@@ -37,7 +37,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     text: '',
     loading: true,
     type: undefined,
-    results: []
+    results: [],
+    endpointFilter: null,
+    sort : 'uid',
+    asc: true
   };
 
   $scope.init = function() {
@@ -66,7 +69,12 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
       csNetwork.start($scope.node, {
         filter: {
           member: (!$scope.search.type || $scope.search.type === 'member'),
-          mirror: (!$scope.search.type || $scope.search.type === 'mirror')
+          mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
+          endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null)
+        },
+        sort: {
+          type : $scope.search.sort,
+          asc : $scope.search.asc
         }
       });
 
@@ -108,6 +116,28 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     $scope.search.loading = true;
     $scope.load();
 
+  };
+
+  $scope.toggleSearchEndpoint = function(endpoint){
+    $scope.hideActionsPopover();
+    if ($scope.search.endpointFilter === endpoint || endpoint === null) {
+      $scope.search.endpointFilter = null;
+    }
+    else {
+      $scope.search.endpointFilter = endpoint;
+    }
+    csNetwork.close();
+    $scope.search.loading = true;
+    $scope.load();
+  };
+
+  $scope.toggleSort = function(sort){
+    $scope.search.asc = ($scope.search.sort === sort) ? !$scope.search.asc : true;
+    $scope.search.sort = sort;
+
+    csNetwork.close();
+    $scope.search.loading = true;
+    $scope.load();
   };
 
   $scope.selectPeer = function(peer) {
@@ -177,6 +207,7 @@ function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, B
   parameters = parameters || {};
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
   $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
+  $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
 
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
 

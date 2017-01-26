@@ -166,11 +166,14 @@
     "PEERS": "Nœuds",
     "KNOWN_PEERS": "Nœuds connus",
     "SIGNED_ON_BLOCK": "Signé sur le bloc",
-    "MIRROR": "mirroir",
-    "MIRRORS": "Nœuds mirroirs",
+    "MIRROR": "miroir",
+    "MIRRORS": "Nœuds miroirs",
     "PEER_LIST" : "Liste des nœuds",
     "MEMBERS" : "Nœuds membres",
-    "ALL_PEERS" : "Tous les nœuds"
+    "ALL_PEERS" : "Tous les nœuds",
+    "DIFFICULTY" : "Difficulté",
+    "API" : "API",
+    "CURRENT_BLOCK" : "Bloc courant"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",

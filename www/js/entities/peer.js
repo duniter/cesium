@@ -59,16 +59,18 @@ function Peer(json) {
 
   that.getEndpoints = function(regex) {
     if (!regex) return that.endpoints;
-    // Use string regex
-    if (typeof regex === "string") {
       return that.endpoints.reduce(function(res, ep){
         return ep.match(regex) ?  res.concat(ep) : res;
       }, []);
-    }
-    // use Regex object
-    return that.endpoints.reduce(function(res, ep){
-      return regex.test(regex) ? res.concat(ep) : res;
-    }, []);
+  };
+
+  that.hasEndpoint = function(endpoint){
+    endpoint = '^' + endpoint;
+    var regExp = new RegExp(endpoint);
+    var endpoints = that.getEndpoints(regExp);
+    if (!endpoints.length) return false;
+    else return true;
+
   };
 
   that.getDns = function() {

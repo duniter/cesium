@@ -1,4 +1,22 @@
-
+  <div class="item row row-header hidden-xs hidden-sm">
+    <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
+      {{'COMMON.UID' | translate}}
+    </a>
+     <a class="col col-15 col-header no-padding dark" ng-click="toggleSort('api')">
+     <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'api'"></cs-sort-icon>
+      {{'PEER.API' | translate}}
+    </a>
+    <a class="no-padding dark hidden-xs hidden-sm hidden-md col col-20 col-header"
+       ng-click="toggleSort('difficulty')" ng-if="settings.expertMode">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'difficulty'"></cs-sort-icon>
+      {{'PEER.DIFFICULTY' | translate}}
+    </a>
+    <a class="col col-20 col-header no-padding dark" ng-click="toggleSort('current_block')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'current_block'"></cs-sort-icon>
+      {{'PEER.CURRENT_BLOCK' | translate}}
+    </a>
+  </div>
 
   <div ng-repeat="peer in search.results track by peer.id"
        class="item peer-item item-icon-left {{::ionItemClass}}"
@@ -13,14 +31,18 @@
         <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> <span>{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
         <h4>{{peer.server}}</h4>
       </div>
-      <div class="col col-10 no-padding" ng-if="settings.expertMode">
+      <div class="col col-15 no-padding text-center" ng-if="peer.hasEndpoint('ES_USER_API')">
+        <i class="ion-es-user-api"></i>
+        <b class="ion-plus gray" style="position: relative; left: -14px; top:-17px; font-size : 14px;"></b>
+      </div>
+      <div class="col col-20 no-padding text-center" ng-if="settings.expertMode">
         <h3 class="hidden-sm hidden-xs hidden-md">
           <span ng-if="peer.uid"><i class="ion-lock-combination"></i> {{peer.difficulty}}</span>
           <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
         </h3>
         <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
       </div>
-      <div class="col col-20 no-padding">
+      <div class="col col-20 no-padding text-center">
         <span id="helptip-currency-peer-{{$index}}-block"
           class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
       </div>
