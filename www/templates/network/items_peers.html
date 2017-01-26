@@ -1,6 +1,6 @@
 
 
-  <div ng-repeat="peer in search.results track by peer.server"
+  <div ng-repeat="peer in search.results track by peer.id"
        class="item peer-item item-icon-left {{::ionItemClass}}"
        ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
        id="helptip-currency-peer-{{$index}}"

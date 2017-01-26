@@ -13,7 +13,7 @@
       (&#916;N)
       <div class="badge badge-balanced" ng-if="!loading"
            ng-class="{'badge-calm': formData.N < formData.Nprev}">
-        {{formData.N > formData.Nprev ? '+' : '-'}}{{formData.N - formData.Nprev}}
+        {{formData.N > formData.Nprev ? '+' : (formData.N == formData.Nprev ? '' : '-')}}{{formData.N - formData.Nprev}}
       </div>
     </ion-item>
 

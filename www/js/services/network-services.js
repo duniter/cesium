@@ -64,15 +64,15 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         return data.knownBlocks;
       },
 
-      newLightBMA = function(peer) {
+      newLightBMA = function(host, port) {
         return {
           node: {
-            summary: csHttp.getWithCache(peer.getHost(), peer.getPort(), '/node/summary', csHttp.cache.LONG)
+            summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG)
           },
           blockchain: {
-            current: csHttp.get(peer.getHost(), peer.getPort(), '/blockchain/current'),
+            current: csHttp.get(host, port, '/blockchain/current'),
             stats: {
-              hardship: csHttp.get(peer.getHost(), peer.getPort(), '/blockchain/hardship/:pubkey')
+              hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
             }
           }
         };
@@ -113,8 +113,15 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             return $q.all(res.leaves.map(function(leaf) {
               return data.bma.network.peering.peers({ leaf: leaf })
                 .then(function(subres){
-                  var peer = subres.leaf.value;
-                  addIfNewAndOnlinePeer(peer, newPeers);
+                  var json = subres.leaf.value;
+                  addOrRefreshPeerFromJson(json, newPeers)
+                    .then(function() {
+                      // If load has already finiseh (because of response time of some nodes)
+                      // Flush new peers here
+                      if (!data.loading) {
+                        flushNewPeersAndSort(newPeers, true);
+                      }
+                    });
                 });
             }))
               .then(function(){
@@ -148,33 +155,87 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         return true;
       },
 
-      addIfNewAndOnlinePeer = function(peer, list) {
+      addOrRefreshPeerFromJson = function(json, list) {
         list = list || data.newPeers;
-        if (!peer) return;
-        peer = new Peer(peer);
-        var server = peer.getServer();
 
-        if (data.knownPeers[server]) return; // already processed: exit
+        var peers = createPeerEntities(json);
+        var hasUpdates = false;
 
-        refreshPeer(peer)
-          .then(function(peer) {
-            if (peer && peer.online) list.push(peer);
-          });
+        return $q.all(
+          peers.reduce(function(jobs, peer) {
+            var existingPeer = data.knownPeers[peer.id];
+            var existingMainBuid = existingPeer ? existingPeer.buid : null;
+            var existingOnline = existingPeer ? existingPeer.online : false;
+
+            return jobs.concat(
+              refreshPeer(peer)
+                .then(function (refreshedPeer) {
+                  if (existingPeer) {
+                    // remove existing peers, when reject or offline
+                    if (!refreshedPeer || !refreshedPeer.online) {
+                      data.peers.splice(data.peers.indexOf(existingPeer), 1);
+                      delete data.knownPeers[existingPeer.id];
+                      hasUpdates = true;
+                    }
+                    else if (refreshedPeer.buid !== existingMainBuid ||
+                      existingOnline !== refreshedPeer.online){
+                      hasUpdates = true;
+                    }
+                    else {
+                      console.debug("Ce noeud n'a pas changé:" + refreshedPeer.id);
+                    }
+                  }
+                  else if (refreshedPeer && refreshedPeer.online) {
+                    list.push(refreshedPeer);
+                    hasUpdates = true;
+                  }
+                })
+           );
+        }, []))
+        .then(function() {
+          return hasUpdates;
+        });
       },
 
-      refreshPeer = function(peer) {
+      createPeerEntities = function(json, bma) {
+        if (!json) return [];
+        var peer = new Peer(json);
+
+        // Read bma endpoints
+        if (!bma) {
+          var endpoints = peer.getEndpoints();
+          if (!endpoints) return []; // no BMA
+
+          var bmas = endpoints.reduce(function (res, ep) {
+            var bma = BMA.node.parseEndPoint(ep);
+            return bma ? res.concat(bma) : res;
+          }, []);
+
+          if (bmas.length > 1) {
+            return bmas.reduce(function (res, bma) {
+              return res.concat(createPeerEntities(json, bma));
+            }, []);
+          }
+          bma = bmas[0];
+        }
+        peer.bma = bma;
         peer.server = peer.getServer();
         peer.dns = peer.getDns();
         peer.blockNumber = peer.block.replace(/-.+$/, '');
         peer.uid = data.uidsByPubkeys[peer.pubkey];
+        peer.id = [peer.pubkey, bma.dns, bma.ipv6, bma.ipv4, bma.port].join('-');
+        return [peer];
+      },
+
+      refreshPeer = function(peer) {
 
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        peer.bma = peer.bma || newLightBMA(peer);
+        peer.api = peer.api || newLightBMA(peer.getHost(), peer.getPort());
 
         // Get current block
-        return peer.bma.blockchain.current()
+        return peer.api.blockchain.current()
           .then(function(block) {
             peer.currentNumber = block.number;
             peer.online = true;
@@ -193,6 +254,15 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               peer.difficulty  = 0;
               return peer;
             }
+            if (!peer.secondTry) {
+              var bma = peer.getBMA();
+              if (bma.dns && peer.server.indexOf(bma.dns) == -1) {
+                // try again, using DNS instead of IPv4 / IPV6
+                peer.secondTry = true;
+                peer.api = newLightBMA(bma.dns, bma.port);
+                return refreshPeer(peer); // recursive call
+              }
+            }
             // node is DOWN
             peer.online=false;
             peer.currentNumber = null;
@@ -208,7 +278,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
             // Get hardship (only for a member peer)
             if (peer.uid) {
-              jobs.push(peer.bma.blockchain.stats.hardship({pubkey: peer.pubkey})
+              jobs.push(peer.api.blockchain.stats.hardship({pubkey: peer.pubkey})
                 .then(function (res) {
                   peer.difficulty = res && res.level;
                 })
@@ -218,7 +288,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             }
 
             // Get Version
-            jobs.push(peer.bma.node.summary()
+            jobs.push(peer.api.node.summary()
               .then(function(res){
                 peer.version = res && res.duniter && res.duniter.version;
               })
@@ -231,12 +301,16 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           });
       },
 
-      flushNewPeersAndSort = function(newPeers) {
+      flushNewPeersAndSort = function(newPeers, updateMainBuid) {
         newPeers = newPeers || data.newPeers;
         if (!newPeers.length) return;
-        data.peers = data.peers.concat(newPeers.splice(0));
+        var peerstoAdd = newPeers.splice(0);
+        _.forEach(peerstoAdd, function(peer) {
+          data.knownPeers[peer.id] = peer;
+        });
+        data.peers = data.peers.concat(peerstoAdd);
         console.debug('[network] New peers found: add them to result and sort...');
-        sortPeers();
+        sortPeers(updateMainBuid);
       },
 
       sortPeers = function(updateMainBuid) {
@@ -261,7 +335,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           data.memberPeersCount += peer.uid ? 1 : 0;
         });
         data.peers = _.uniq(data.peers, false, function(peer) {
-          return peer.pubkey;
+          return peer.id;
         });
         data.peers = _.sortBy(data.peers, function(peer) {
           var score = 1;
@@ -303,38 +377,17 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           }
         });
         // Listen for new peer
-        data.bma.websocket.peer().on(function(peer) {
-          if (!peer || data.loading) return;
-          peer = new Peer(peer);
-          var existingPeer = _.where(data.peers, {server: peer.getServer()});
-          if (existingPeer && existingPeer.length == 1) {
-            peer = existingPeer[0];
-            existingPeer = true;
-          }
-          else {
-            existingPeer = false;
-          }
-          var existingMainBuid = existingPeer ? existingPeer.buid : null;
-          var existingOnline = existingPeer ? existingPeer.online : false;
-
-          refreshPeer(peer)
-            .then(function(refreshedPeer) {
-              if (data.loading) return; // skip if full load is running
-
-              if (existingPeer) {
-                // remove existing peers, when reject or offline
-                if (!refreshedPeer || !refreshedPeer.online) {
-                  data.peers.splice(data.peers.indexOf(peer), 1);
-                  sortPeers();
-                }
-                else if (refreshedPeer.buid !== existingMainBuid ||
-                         existingOnline !== refreshedPeer.online){
-                  sortPeers();
-                }
+        data.bma.websocket.peer().on(function(json) {
+          if (data.loading) return;
+          var newPeers = [];
+          addOrRefreshPeerFromJson(json, newPeers)
+            .then(function(hasUpdates) {
+              if (!hasUpdates) return;
+              if (newPeers.length>0) {
+                flushNewPeersAndSort(newPeers, true);
               }
-              else if(refreshedPeer.online) {
-                data.peers.push(refreshedPeer);
-                sortPeers();
+              else {
+                sortPeers(true);
               }
             });
         });
