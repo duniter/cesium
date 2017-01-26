@@ -91,7 +91,7 @@ function Peer(json) {
     return bma.port ? bma.port : null;
   };
 
-  that.getHost = function(bma) {
+  that.getHost = function() {
     var bma = that.bma || that.getBMA();
     var host =
       (that.hasValid4(bma) ? bma.ipv4 :
