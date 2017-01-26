@@ -1,78 +1,171 @@
 ## Introduction
 
-Cet article est un tutoriel pour développer sur Cesium+, en utilisant les capacités de l'ES API portée par Duniter4j.
+Cet article est un tutoriel pour développer sur Cesium, pour compiler et tester l'application sous Android.
 
 ## Prérequis
 
 Avant de faire ce tutoriel, vous devez : 
  
  - Avoir suivi les tutoriels sur Cesium [jusqu'au niveau VII](./development_tutorial-02.md)
- - Avoir suivi le tutoriel sur Duniter4j [jusqu'au niveau V](https://github.com/duniter/duniter4j/blob/master/doc/fr/development_tutorial.md).
 
 ## Niveau IX
 
 ### Objectif
 
-L'objectif ici est de réaliser un graphique représentant l'évolution de montant du dividende universel.
+L'objectif ici est d'installer les outils de base pour compiler et vérifier son bon fonctionnement sous Android. Vous y réaliserez : </p>
 
-Quand l'utilisateur cliquera sur le champ "dividende universel" de la page suivante : http://cesium.duniter.fr/#/app/currency/view/lg/  
+- l'installation du `JDK`
+- l'installation du logiciel `Android Studio`
+- l'installation de l'émulateur `KVM`
+- l'installation du `NDK Android` (optionnel - sera nécessaire plus tard)
 
-### Récupérer le code (tag rml8)
+### Installation des logiciels
 
-Passez sur la branche du code #rml8  : https://github.com/duniter/cesium/tree/rml8
+#### Installer JDK
 
-### Démarrer Cesium
+Le JDK ou _Java Development Kit_ 
 
-Lancer Cesium : 
+Vous pouvez la télécharger sur le site [d'Oracle](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
+<img src="https://forum.duniter.org/uploads/default/original/1X/fef4f4dfe7c2168cb27c9e7f5e399fd547ce774a.png" width="400">
+
+En fonction de votre système d'exploitation, téléchargez correspondant.
+
+Installez ensuite le fichier normalement, en suivant les étapes guidées.
+
+#### Installer Android Studio
+
+Vous trouverez tous les fichiers à l'adresse [AndroidStudio-Downloads](https://developer.android.com/studio/index.html#downloads)
+
+Pour Windows télécharger le fichier sans SDK Android:
+
+<img src="https://forum.duniter.org/uploads/default/original/1X/3b8fa2f5c0465b13ae5ce74d49702e0c9f027866.png" width="690" height="237">
+
+##### Sous Linux
+
+Il vous suffit de décompresser le fichier ZIP, d'ouvrir un terminal dans ce dossier et de taper la commande:
+```bash
+./bin/studio.sh
+```
+
+##### Sous Windows et Mac OS
+
+Installez l'exécutable que vous avez précédemment téléchargé.
+
+##### Toutes machines confondues
+
+A la fin de l'installation ou au premier lancement, Android Studio vous indiquera que vous ne possédez pas de SDK et vous proposera de l'installer :
+
+- Si vous l'avez déjà installé vous pouvez indiqué où il se trouve.
+- Sinon installez la version qu'il vous propose.
+
+
+#### Installer NDK (optionnel)
+
+> Le NDK est utilisé pour l'exécution de code sous C++, notamment la librairie de cryptographie NaCL.
+> Cette étape est pour le moment optionnelle (pour les experts seulement).
+
+Vous pouvez le télécharger à l'adresse : [ce site](https://developer.android.com/ndk/downloads/index.html)
+
+Attention : n'installez pas la version 12 du NDK. Elle n'est pas encore stable.
+
+Encore une fois téléchargé la bonne version, décompressez le fichier à coté de votre SDK.
+
+Sous Android Studio allez dans le menu `File > Project Structure...`
+
+<img src="https://forum.duniter.org/uploads/default/original/1X/04e64b769cbd45b9d275cd5f81002a399a1a7684.png" width="300">
+
+Une fenêtre comme celle-ci devrait s'ouvrir : 
+
+<img src="https://forum.duniter.org/uploads/default/original/1X/ceb75301172038e75f5c43b328dd7febd7bedc7e.png" width="450">
+
+Renseignez le chemin d'installation du NDK.
+
+#### Installer l'émulateur KVM (optionnel)
+
+Pour Linux / Debian uniquement :
 
 ```bash
-cd cesium
-ionic serve
+sudo apt-get install kvm qemu-kvm libvirt-bin bridge-utils virt-manager
+sudo groupadd libvirtd
+sudo adduser `id -un` libvirtd
 ```
-### Démarrer le noeud ElasticSearch 
 
-Démarrer votre noeud ES :  
+##### En cas de problème...
 
+If you get this error :
+```
+Cannot run program "/home/eis/android-sdks/build-tools/21.1.2/aapt": error=2, Aucun fichier ou dossier de ce type
+```
+
+Installez deux librairies de compatibilité supplémentaires (solution provenant de [ce post](http://stackoverflow.com/questions/22701405/aapt-ioexception-error-2-no-such-file-or-directory-why-cant-i-build-my-grad)) :                            
 ```bash
-cd duniter4j
-mvn install -DskipTests
-mvn install -Prun -pl duniter4j-elasticsearch 
+sudo apt-get install lib32stdc++6 lib32z1
 ```
 
-### Ajout de la librairie D3.js
 
-D3.js est une puissante librairie JS qui permet de faire de magnifiques graphiques.
+## Niveau X: Lancement de l'application sous Android Studio
 
-Vous pouvez utiliser `bower` pour installer la dépendance.
-Puis ajouter la librairie dans la page principale de l'application : `www/index.html` 
+### Configuration du projet
 
-### Gestion du controlleur 
+Dans la ligne de commande (utilisée précédemment pour lancer `ionic serve`) lancer l'instalaltion du projet Cesium pour android :
 
-Editer le fichier `www/js/controllers.js`, et décommenter la ligne : 
-```json
-   (...)
-   'cesium.currency-charts.controllers',
-   (...)
+```
+ionic state restore
 ```
 
-Editez le fichier `www/js/controllers/currency-charts-controllers.js`.
+Normalement, cette commande devrait initialiser (entre autre) un répertoire `platforms/android`.
 
-A vous de jouer ! Il faut : 
+> Pour rappel: vérifier que votre ligne de commande est bien configurée :
+> - Vous devez vous placer dans le répertoire de l'application : `cd cesium`
+> - et fonctionner sous nodeJs v5 : `nvm use 5` (vérifier à l'aide de `node --version`)
 
-- Remplir la requete POST vers le noeud ES sur l'index `/test_net/block/_search`; cf méthode `$scope.loadUds()';
-- Traiter le retour de la requête, pour la transformer dans le format attendu par D3.js.
+Lancez maintenant la compilation pour Android :
 
-### Template
+```
+ionic build android
+```
 
-Editez le template HTML, dans le fichier `www/templates/currency/charts/ud.html`
+Lancez maintenant Android Studio. Vous devriez arriver sur cette fenêtre:
 
-Regardez la documentation D3.js pour savoir comment faire la suite !
+<img src="https://forum.duniter.org/uploads/default/original/1X/33266d44fdbfd6c8b44e46a3664edafacaf0a316.png" width="500">
 
-## La suite ?
+Sélectionnez "Open an existing Android Studio project" et indiquez le dossier vers `cesium/platforms/android`.
 
-Si vous avez réussi ce niveau, vous êtes vraiment un contributeur expert de Cesium !
+### Lancer l'application
 
-Il ne vous reste qu'à publier le résultat ! ;) 
+Pour pouvoir lancer un émulateur, on va devoir en créer un.
 
-- sur le forum duniter,
-- ou mieux via un `pull request` sur github.
+Pour cela cliqué sur l'icone suivante :
+
+<img src="https://forum.duniter.org/uploads/default/original/1X/46e959d1e616e34972a41f4d120a1d4f5beb0955.png" width="690" height="42">
+
+Une fenêtre va s'ouvrir et vous proposer de créer un "Virtual Device" suivez le logiciel.
+
+Si vous avez un téléphone Android vous pouvez le mettre en mode développeur et le brancher si vous souhaitez vois l'application sur votre téléphone.
+
+Puis une fois l'émulateur de créer vous pouvez le bouton "Play" (<img src="https://forum.duniter.org/uploads/default/original/1X/70b2ce88a5e7aa5754f6a771cf5efed3c639a27b.png" width="46" height="44">) pour lancer l'application.
+Vous pouvez aussi utiliser l'icone (<img src="https://forum.duniter.org/uploads/default/original/1X/b7c419b33a43f6a43c5b756074ee0c199072f7d1.png" width="40" height="44">) pour lancer l'application en mode debug.
+
+Android Studio vous demandera sur quel appareil vous souhaitez lancer l'application, sélectionner l'émulateur ou le téléphone et laissez faire. 
+
+
+## Niveau XI: Lancement de l'application par `ionic`
+
+Vous pouvez maintenant utiliser directement l'outil `ionic` : 
+
+ - Soit pour lancer votre application sur une téléphone connecté :
+  ```bash
+  ionic run android
+  ```
+
+ - Soit pour la lancer sur une émulateur :
+  ```bash
+  ionic emulate android
+  ```
+
+## La Suite ?!
+
+Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment ajouter des graphiques dynamiques à Cesium.
+
+[Voir la suite ici >>](./development_tutorial-04.md)

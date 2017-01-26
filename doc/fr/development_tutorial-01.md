@@ -386,7 +386,9 @@ Découvrez le code en déroulant l'action pas à pas.
 
 > Utiliser les touches de `F9` à `F11`, pour rentrer dans une méthode (F11), avancer pas à pas (F10) ou jusqu'au prochain point d'arrêt (F9), etc.
 
-Vous pouvez maintenant poursuivre avec les niveaux qui suivent.
-Nous y verrons comment modifier un écran de Cesium.
+
+## La Suite ?!
+
+Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment modifier un écran de Cesium.
 
 [Voir la suite ici >>](./development_tutorial-02.md)
