@@ -20,7 +20,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           endpointRegex: null
         },
         knownBlocks: [],
-        knownPeers: {},
         mainBuid: null,
         uidsByPubkeys: null,
         searchingPeersOnNetwork: false
@@ -41,7 +40,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         };
         data.memberPeersCount = 0;
         data.knownBlocks = [];
-        data.knownPeers = {};
         data.mainBuid = null;
         data.uidsByPubkeys = {};
         data.loading = true;
@@ -79,7 +77,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       },
 
       loadPeers = function() {
-        data.knownPeers = {};
         data.peers = [];
         data.searchingPeersOnNetwork = true;
         data.loading = true;
@@ -98,9 +95,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           else if (data.loading && !data.searchingPeersOnNetwork) {
             data.loading = false;
             $interval.cancel(interval);
-            console.debug('[network] Finish : all peers found. Stopping new peers check.');
             // The peer lookup end, we can make a clean final report
             sortPeers(true/*update main buid*/);
+
+            console.debug('[network] Finish: {0} peers found.'.format(data.peers.length));
           }
         }, 1000);
 
@@ -114,7 +112,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               return data.bma.network.peering.peers({ leaf: leaf })
                 .then(function(subres){
                   var json = subres.leaf.value;
-                  addOrRefreshPeerFromJson(json, newPeers)
+                  return addOrRefreshPeerFromJson(json, newPeers)
                     .then(function() {
                       // If load has already finiseh (because of response time of some nodes)
                       // Flush new peers here
@@ -161,9 +159,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         var peers = createPeerEntities(json);
         var hasUpdates = false;
 
-        return $q.all(
-          peers.reduce(function(jobs, peer) {
-            var existingPeer = data.knownPeers[peer.id];
+        var jobs = peers.reduce(function(jobs, peer) {
+            var existingPeer = _.findWhere(data.peers, {id: peer.id});
             var existingMainBuid = existingPeer ? existingPeer.buid : null;
             var existingOnline = existingPeer ? existingPeer.online : false;
 
@@ -174,7 +171,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                     // remove existing peers, when reject or offline
                     if (!refreshedPeer || !refreshedPeer.online) {
                       data.peers.splice(data.peers.indexOf(existingPeer), 1);
-                      delete data.knownPeers[existingPeer.id];
                       hasUpdates = true;
                     }
                     else if (refreshedPeer.buid !== existingMainBuid ||
@@ -182,7 +178,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                       hasUpdates = true;
                     }
                     else {
-                      console.debug("Ce noeud n'a pas changé:" + refreshedPeer.id);
+                      console.debug("[network] peer not changed: " + refreshedPeer.server);
                     }
                   }
                   else if (refreshedPeer && refreshedPeer.online) {
@@ -191,10 +187,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                   }
                 })
            );
-        }, []))
-        .then(function() {
-          return hasUpdates;
-        });
+        }, []);
+        return (jobs.length === 1 ? jobs[0] : $q.all(jobs))
+          .then(function() {
+            return hasUpdates;
+          });
       },
 
       createPeerEntities = function(json, bma) {
@@ -211,11 +208,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             return bma ? res.concat(bma) : res;
           }, []);
 
+          // if many bma endpoint: recursive call
           if (bmas.length > 1) {
             return bmas.reduce(function (res, bma) {
               return res.concat(createPeerEntities(json, bma));
             }, []);
           }
+
+          // if only one bma endpoint: use it and continue
           bma = bmas[0];
         }
         peer.bma = bma;
@@ -255,7 +255,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               return peer;
             }
             if (!peer.secondTry) {
-              var bma = peer.getBMA();
+              var bma = peer.bma || peer.getBMA();
               if (bma.dns && peer.server.indexOf(bma.dns) == -1) {
                 // try again, using DNS instead of IPv4 / IPV6
                 peer.secondTry = true;
@@ -304,13 +304,21 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       flushNewPeersAndSort = function(newPeers, updateMainBuid) {
         newPeers = newPeers || data.newPeers;
         if (!newPeers.length) return;
-        var peerstoAdd = newPeers.splice(0);
-        _.forEach(peerstoAdd, function(peer) {
-          data.knownPeers[peer.id] = peer;
+        var ids = _.map(data.peers, function(peer){
+          return peer.id;
         });
-        data.peers = data.peers.concat(peerstoAdd);
-        console.debug('[network] New peers found: add them to result and sort...');
-        sortPeers(updateMainBuid);
+        var hasUpdates = false;
+        _.forEach(newPeers.splice(0), function(peer) {
+          if (!ids[peer.id]) {
+            data.peers.push(peer);
+            ids[peer.id] = peer;
+            hasUpdates = true;
+          }
+        });
+        if (hasUpdates) {
+          console.debug('[network] New peers flushed. Will sort...');
+          sortPeers(updateMainBuid);
+        }
       },
 
       sortPeers = function(updateMainBuid) {
@@ -378,11 +386,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
         // Listen for new peer
         data.bma.websocket.peer().on(function(json) {
-          if (data.loading) return;
+          if (!json || data.loading) return;
           var newPeers = [];
           addOrRefreshPeerFromJson(json, newPeers)
             .then(function(hasUpdates) {
               if (!hasUpdates) return;
+              console.debug('[network] peers updated after websocket event.');
               if (newPeers.length>0) {
                 flushNewPeersAndSort(newPeers, true);
               }

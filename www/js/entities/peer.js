@@ -42,6 +42,7 @@ function Peer(json) {
   };
 
   that.getBMA = function() {
+    if (that.bma) return that.bma;
     var bma = null;
     that.endpoints.forEach(function(ep){
       var matches = !bma && ep.match(BMA_REGEXP);
@@ -93,36 +94,28 @@ function Peer(json) {
 
   that.getHost = function() {
     var bma = that.bma || that.getBMA();
-    var host =
-      (that.hasValid4(bma) ? bma.ipv4 :
-        (bma.dns ? bma.dns :
-          (bma.ipv6 ? '[' + bma.ipv6 + ']' : '')));
-    return host;
+    return (that.hasValid4(bma) ? bma.ipv4 :
+          (bma.dns ? bma.dns :
+            (bma.ipv6 ? '[' + bma.ipv6 + ']' :'')));
   };
 
   that.getURL = function() {
     var bma = that.bma || that.getBMA();
-    var host =
-      (that.hasValid4(bma) ? bma.ipv4 :
-        (bma.dns ? bma.dns :
-          (bma.ipv6 ? '[' + bma.ipv6 + ']' : '')));
+    var host = that.getHost();
     var protocol = (bma.port === 443) ? 'https' : 'http';
     return protocol + '://' + host + (bma.port ? (':' + bma.port) : '');
   };
 
   that.getServer = function() {
     var bma = that.bma || that.getBMA();
-    var host =
-      (that.hasValid4(bma) ? bma.ipv4 :
-        (bma.dns ? bma.dns :
-          (bma.ipv6 ? '[' + bma.ipv6 + ']' : null)));
+    var host = that.getHost();
     return host + (host && bma.port ? (':' + bma.port) : '');
   };
 
   that.hasValid4 = function(bma) {
     return bma.ipv4 &&
       /* private address - see https://fr.wikipedia.org/wiki/Adresse_IP */
-      !bma.ipv4.match(/^(127.0.0.)|(192.168)|(10.0.0.)|(172.16.)/) ?
+      !bma.ipv4.match(/^127\\.0\\.0\\.|192\\.168\\.|10\\.0\\.0\\.|172\\.16\\./) ?
       true : false;
   };
 

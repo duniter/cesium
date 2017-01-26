@@ -104,10 +104,10 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
           prepare(url, params, config, function(url, config) {
             $http.get(url, config)
-              .success(function(data, status, headers, config) {
+              .success(function(data) {
                 resolve(data);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status) {
                 processError(reject, data, url, status);
               });
           });
@@ -126,10 +126,10 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
           prepare(url, params, config, function(url, config) {
               $http.post(url, data, config)
-              .success(function(data, status, headers, config) {
+              .success(function(data) {
                 resolve(data);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status) {
                 processError(reject, data, status);
               });
           });
