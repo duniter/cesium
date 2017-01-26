@@ -17,7 +17,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         filter: {
           member: true,
           mirror: true,
-          endpointRegex: null
+          endpointFilter: null
+        },
+        sort:{
+          type: null,
+          asc: true
         },
         knownBlocks: [],
         mainBuid: null,
@@ -36,8 +40,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.filter = {
           member: true,
           mirror: true,
-          endpointRegex: null
+          endpointFilter: null
         };
+        data.sort = {
+          type: null,
+          asc: true
+        },
         data.memberPeersCount = 0;
         data.knownBlocks = [];
         data.mainBuid = null;
@@ -145,9 +153,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
 
         // Filter on endpoints
-        if (data.filter.endpointRegex) {
-          var endpoints = peer.getEndpoints(data.filter.endpointRegex);
-          if (!endpoints.length) return false;
+        if (data.filter.endpointFilter) {
+          return peer.hasEndpoint(data.filter.endpointFilter);
         }
 
         return true;
@@ -347,11 +354,27 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
         data.peers = _.sortBy(data.peers, function(peer) {
           var score = 1;
+          if (data.sort.type === 'api'){
+            score += (1000000000 * (peer.hasEndpoint('ES_USER_API')? 1 : 0));
+          }
+          else if (data.sort.type === 'difficulty'){
+            score += (1000000000 * (peer.level ? peer.level : 0));
+          }
+          else if (data.sort.type === 'current_block'){
+            score += (1000000000 * (peer.currentNumber ? peer.currentNumber : 0));
+          }
+
           score += (100000000 * (peer.online ? 1 : 0));
           score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
           score += (1000     * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
           score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
-          return -score;
+
+          if (!data.sort.asc) {
+            return score;
+          }
+          else {
+            return -score;
+          }
         });
 
         // Raise event on new main block
@@ -408,6 +431,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           close();
           data.bma = bma ? bma : BMA;
           data.filter = options.filter;
+          data.sort = options.sort;
           console.info('[network] Starting network [{0}] filetered on [{1}]'.format(bma.node.server,
             data.filter ? data.filter : 'none'));
           var now = new Date();
