@@ -134,8 +134,9 @@
     "VIEW": {
       "TITLE": "Monnaie",
       "TAB_CURRENCY": "Monnaie",
-      "TAB_WOT": "Communauté",
+      "TAB_WOT": "Toile de confiance",
       "TAB_NETWORK": "Réseau",
+      "NETWORK_RULES_DIVIDER": "Règles du réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Nombre de membres",
       "MEMBERS_VARIATION": "Variation depuis {{duration|formatDuration}} (depuis le dernier DU)",
@@ -145,7 +146,7 @@
       "UD": "Dividende universel",
       "C_ACTUAL": "Croissance actuelle",
       "TIME": "Heure de la blockchain",
-      "POW_MIN": "Niveau de difficulté",
+      "POW_MIN": "Niveau minimal de difficulté de calcul",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
       "C_RULE": "Croissance théorique (c)",
       "UD_RULE": "Dividende universel (formule)",
@@ -154,8 +155,9 @@
       "SIG_PERIOD": "Délai minimal d'attente entre 2 certifications<br/>successives émises par une même personne.",
       "SIG_WINDOW": "Délai maximal d'attente avant<br/>prise en compte d'une certification",
       "STEP_MAX": "Distance maximale dans la toile de confiance <br /> entre chaque membre et un nouvel entrant.",
-      "WOT_RULES_DIVIDER": "Règles pour devenir membre",
-      "XPERCENT":"Pourcentage minimum de sentinelle<br />à atteindre pour respecter la règle de distance."
+      "WOT_RULES_DIVIDER": "Règles de la toile de confiance",
+      "XPERCENT":"Pourcentage minimum de sentinelle<br/>à atteindre pour respecter la règle de distance.",
+      "AVG_GEN_TIME": "Temps moyen entre deux blocs"
     }
   },
   "PEER": {

@@ -134,7 +134,7 @@
     "VIEW": {
       "TITLE": "Currency",
       "TAB_CURRENCY": "Currency",
-      "TAB_WOT": "Community",
+      "TAB_WOT": "Web of trust",
       "TAB_NETWORK": "Network",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
@@ -154,8 +154,9 @@
       "SIG_PERIOD": "Minimum delay between 2 certifications<br/>sent by one and the same issuer.",
       "SIG_WINDOW": "Maximum delay before a certification<br/>will be treated",
       "STEP_MAX": "Maximum distance between<br/>each WoT member and a newcomer.",
-      "WOT_RULES_DIVIDER": "Rules for Membership",
-      "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule"
+      "WOT_RULES_DIVIDER": "Rules for web of trust",
+      "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule",
+      "AVG_GEN_TIME": "The average time between 2 blocks"
     }
   },
   "PEER": {

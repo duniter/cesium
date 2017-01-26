@@ -187,6 +187,7 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
           data.sigPeriod = json.sigPeriod;
           data.stepMax = json.stepMax;
           data.xpercent = json.xpercent;
+          data.avgGenTime = json.avgGenTime;
         }),
 
       // Get the current block informations

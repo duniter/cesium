@@ -22,41 +22,42 @@
         <span translate>CURRENCY.VIEW.WOT_RULES_DIVIDER</span>
     </div>
 
-    <ion-item class="item-icon-left item item-text-wrap">
+    <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-ribbon-b"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_QTY_RULE</span>
-      <span class="badge badge-assertive" ng-if="!loading">{{formData.sigQty}}</span>
+      <span class="badge badge-positive" ng-if="!loading">{{formData.sigQty}}</span>
     </ion-item>
 
-    <ion-item class="item-icon-left item item-text-wrap">
-      <i class="icon ion-ribbon-a"></i>
-      <span class="col col-75" translate>CURRENCY.VIEW.SIG_STOCK</span>
-      <span class="badge badge-energized" ng-if="!loading">{{formData.sigStock}}</span>
-    </ion-item>
-
-    <ion-item class="item-icon-left item item-text-wrap">
-      <i class="icon ion-clock" style="position: absolute; font-size: 20px; left: 16px;"></i>
-      <b class="ion-ribbon-a" style="position: absolute; font-size: 18px; left: 14px; "></b>
-      <b class="ion-arrow-right-c" style="position: absolute; font-size: 14px; left: 28px; "></b>
-      <b class="ion-ribbon-a" style="position: absolute; font-size: 18px; left: 38px;"></b>
-      <span class="col col-75" translate>CURRENCY.VIEW.SIG_PERIOD</span>
-      <span class="badge badge-stable" ng-if="!loading">{{formData.sigPeriod | formatDuration}}</span>
-    </ion-item>
-
-    <ion-item class="item-icon-left item item-text-wrap">
-      <i class="icon ion-ribbon-a"></i>
+    <ion-item class="item-icon-left item-text-wrap">
+      <i class="icon ion-ribbon-b"></i>
       <b class="ion-clock" style="position: absolute; font-size: 22px; left: 33px;"></b>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_WINDOW</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.sigWindow | formatDuration}}</span>
     </ion-item>
 
-    <ion-item class="item-icon-left item item-text-wrap">
+    <ion-item class="item-icon-left item-text-wrap">
+      <i class="icon ion-ribbon-a"></i>
+      <span class="col col-75" translate>CURRENCY.VIEW.SIG_STOCK</span>
+      <span class="badge badge-energized" ng-if="!loading">{{formData.sigStock}}</span>
+    </ion-item>
+
+    <ion-item class="item-icon-left item-text-wrap">
+      <i class="icon ion-clock" style="position: absolute; font-size: 20px; left: 16px;"></i>
+      <b class="ion-ribbon-a" style="position: absolute; font-size: 16px; left: 16px; "></b>
+      <b class="ion-arrow-right-c" style="position: absolute; font-size: 12px; left: 28px; "></b>
+      <b class="ion-ribbon-a" style="position: absolute; font-size: 16px; left: 38px;"></b>
+      <span class="col col-75" translate>CURRENCY.VIEW.SIG_PERIOD</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.sigPeriod | formatDuration}}</span>
+    </ion-item>
+
+
+    <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-steam"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.STEP_MAX</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.stepMax}}</span>
     </ion-item>
 
-    <ion-item class="item-icon-left item item-text-wrap">
+    <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-pull-request"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.XPERCENT</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.xpercent*100| formatNumeral: '0,0'}} %</span>
