@@ -83,7 +83,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
       csNetwork.api.data.on.changed($scope, function(data){
         if (!refreshing) {
           refreshing = true;
-          $timeout(function() { // Timeout avoid to quick updates
+          $timeout(function() { // Timeout
             console.debug("[peers] Updating UI");
             $scope.search.results = data.peers;
             $scope.search.memberPeersCount = data.memberPeersCount;

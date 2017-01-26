@@ -162,6 +162,6 @@ Autre modification que vous pouvez faire : la correction de la formule du DU (cf
 
 ## La Suite ?!
 
-Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment déployer et tester Cesium sur un téléphone Android.
+Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment compiler et déployer Cesium sur Android, puis comment ajouter des graphiques dynamiques.
 
 [Voir la suite ici >>](./development_tutorial-03.md)

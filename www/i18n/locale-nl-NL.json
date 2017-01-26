@@ -145,7 +145,7 @@
       "TIME": "Blockchain tijd",
       "POW_MIN": "Algemene moeilijkheidsgraad",
       "MONEY_RULES_DIVIDER": "Monetaire regels",
-      "C_RULE": "Toename (c)",
+      "C_RULE": "Toename",
       "UD_RULE": "Universeel dividend (formule)",
       "SIG_QTY_RULE": "Benodigd aantal certificaties<br/>om lid te worden",
       "SIG_STOCK": "Maximum aantal certificaties<br/>te versturen per lid",
@@ -153,7 +153,7 @@
       "SIG_WINDOW": "Maximum vertraging voor een certificatie<br/>in behandeling wordt genomen",
       "STEP_MAX": "Maximum afstand tussen<br/>elk WoT lid en een nieuw lid.",
       "WOT_RULES_DIVIDER": "Lidmaatschapseisen",
-      "XPERCENT":"Minimum percentage schildwachten<br />te bereiken om de afstandsregel te respecteren"
+      "XPERCENT":"Minimum percentage schildwachten<br/>te bereiken om de afstandsregel te respecteren"
     }
   },
   "PEER": {

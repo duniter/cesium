@@ -18,7 +18,7 @@
     </a>
   </div>
 
-    <div ng-repeat="peer in search.results track by peer.server"
+  <div ng-repeat="peer in search.results track by peer.id"
        class="item peer-item item-icon-left {{::ionItemClass}}"
        ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
        id="helptip-currency-peer-{{$index}}"
@@ -37,7 +37,7 @@
       </div>
       <div class="col col-20 no-padding text-center" ng-if="settings.expertMode">
         <h3 class="hidden-sm hidden-xs hidden-md">
-          <span ng-if="peer.uid"><i class="ion-lock-combination"></i> {{peer.level}}</span>
+          <span ng-if="peer.uid"><i class="ion-lock-combination"></i> {{peer.difficulty}}</span>
           <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
         </h3>
         <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
@@ -48,5 +48,5 @@
       </div>
     </div>
   </div>
-</div>
 
+</div>
