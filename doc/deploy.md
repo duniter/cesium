@@ -1,9 +1,9 @@
 
-# Deployment
+# Deploy Cesium
 
-## Deploy script
+## Bash script
  
-This is a script example, that you can use to deploy the latest release.
+This is a bash script example, that you can use to deploy the latest release.
   
 This script will create or replace a directory name `cesium`, where application will be unpack.
  
