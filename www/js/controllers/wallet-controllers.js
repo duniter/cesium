@@ -29,10 +29,12 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletCtrl', WalletController)
 
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
+
+  .controller('WalletSecurityModalCtrl', WalletSecurityModalController)
 ;
 
 function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $filter,
-                          UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
+                          UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings, BMA, ModalUtils) {
   'ngInject';
 
   $scope.hasCredit = false;
@@ -295,49 +297,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   };
 
-  /**
-   * Revoke identity
-   */
-  $scope.revokeIdentity = function(confirm, confirmAgain) {
-    $scope.hideActionsPopover();
-
-    if ($rootScope.walletData.requirements.needSelf) {
-      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
-    }
-    if (!confirm) {
-      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
-        cssClass: 'warning',
-        okText: 'COMMON.BTN_CONTINUE',
-        okType: 'button-assertive'
-      })
-      .then(function(confirm) {
-        if (confirm) $scope.revokeIdentity(true); // loop with confirm
-      });
-    }
-    if (!confirmAgain) {
-      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
-        cssClass: 'warning',
-        okText: 'COMMON.BTN_YES_CONTINUE',
-        okType: 'button-assertive'
-      })
-      .then(function(confirm) {
-        if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
-      });
-    }
-
-    return UIUtils.loading.show()
-      .then(function() {
-        return csWallet.revoke();
-      })
-      .then(function(){
-        UIUtils.toast.show("INFO.REVOCATION_SENT");
-        $scope.updateView();
-        return UIUtils.loading.hide();
-      })
-      .catch(function(err) {
-        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
-      });
-  };
 
   /**
    * Fix identity (e.g. when identity expired)
@@ -593,15 +552,97 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   };
 
+  $scope.showSecurityModal = function(){
+    $scope.hideActionsPopover();
+    return ModalUtils.show('templates/wallet/modal_security.html', 'WalletSecurityModalCtrl');
+  };
 }
 
+function WalletSecurityModalController($scope, $state,  UIUtils, Modals, csWallet){
+  $scope.slides = {
+    slider: null,
+    options: {
+      loop: false,
+      effect: 'slide',
+      speed: 500
+    }
+  };
+  $scope.isLastSlide = false;
+  $scope.smallscreen = UIUtils.screen.isSmall();
+
+  $scope.slidePrev = function() {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slidePrev();
+    $scope.slides.slider.lockSwipes();
+    $scope.isLastSlide = false;
+  };
+
+  $scope.slideNext = function() {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slideNext();
+    $scope.slides.slider.lockSwipes();
+    $scope.isLastSlide = $scope.slides.slider.activeIndex === 5;
+  };
+
+
+  /**
+   * Download revocation file
+   */
+  $scope.downloadRevokeFile = function(){
+    csWallet.downloadRevocation();
+  };
+
+  /**
+   * Revoke identity
+   */
+  $scope.revokeIdentity = function(confirm, confirmAgain) {
+    if ($rootScope.walletData.requirements.needSelf) {
+      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
+    }
+    if (!confirm) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_CONTINUE',
+        okType: 'button-assertive'
+      })
+        .then(function(confirm) {
+          if (confirm) $scope.revokeIdentity(true); // loop with confirm
+        });
+    }
+    if (!confirmAgain) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_YES_CONTINUE',
+        okType: 'button-assertive'
+      })
+        .then(function(confirm) {
+          if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
+        });
+    }
+
+    return UIUtils.loading.show()
+      .then(function() {
+        return csWallet.revoke();
+      })
+      .then(function(){
+        UIUtils.toast.show("INFO.REVOCATION_SENT");
+        $scope.updateView();
+        return UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
+      });
+  };
+
+
+}
 
 function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
   'ngInject';
 
-  $scope.$on('$ionicView.enter', function(e) {
+  $scope.$on('$ionicView.enter', function (e) {
     $scope.loadWallet()
-      .then(function() {
+      .then(function () {
         $scope.updateView();
         $scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
@@ -609,9 +650,9 @@ function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
   });
 
   // Update view
-  $scope.updateView = function() {
+  $scope.updateView = function () {
     // Set Motion
-    $timeout(function() {
+    $timeout(function () {
       UIUtils.motion.fadeSlideInRight();
       // Set Ink
       UIUtils.ink({selector: '.item'});
@@ -619,25 +660,26 @@ function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
   };
 
   // Updating wallet data
-  $scope.doUpdate = function() {
+  $scope.doUpdate = function () {
     UIUtils.loading.show();
     csWallet.refreshData()
-    .then(function() {
-      $scope.updateView();
-      UIUtils.loading.hide();
-    })
-    .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+      .then(function () {
+        $scope.updateView();
+        UIUtils.loading.hide();
+      })
+      .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
-  $scope.filterPositive = function(prop){
-    return function(item){
+  $scope.filterPositive = function (prop) {
+    return function (item) {
       return item[prop] > 0;
     };
   };
 
-  $scope.filterNegative = function(prop){
-    return function(item){
+  $scope.filterNegative = function (prop) {
+    return function (item) {
       return item[prop] < 0;
     };
   };
+
 }

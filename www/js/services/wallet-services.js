@@ -3,7 +3,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csConfig, csSettings) {
+.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage,
+                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob) {
   'ngInject';
 
   factory = function(id) {
@@ -1495,6 +1496,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         ;
     },
 
+    downloadRevocation = function(){
+      return getRevocationDocument()
+        .then(function(revocation) {
+          var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
+          FileSaver.saveAs(revocationFile, 'revocation.txt');
+        });
+    },
+
     cleanEventsByContext = function(context){
       data.events = data.events.reduce(function(res, event) {
         if (event.context && event.context == context) return res;
@@ -1591,6 +1600,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       transfer: transfer,
       self: self,
       revoke: revoke,
+      downloadRevocation: downloadRevocation,
       membership: {
         inside: membership(true),
         out: membership(false)

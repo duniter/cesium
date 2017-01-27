@@ -265,7 +265,6 @@
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renouveler l'adhésion...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Arrêter l'adhésion...",
     "BTN_SEND_IDENTITY_DOTS": "Publier son identitié...",
-    "BTN_REVOKE": "Revoquer<span class='hidden-xs hidden-sm'> définitivement</span> cette identité...",
     "BTN_SHOW_DETAILS": "Afficher les infos techniques",
     "NEW": {
       "TITLE": "Inscription",
@@ -295,6 +294,15 @@
     "POPUP_REGISTER": {
       "TITLE": "Choisissez un pseudonyme",
       "HELP": "Un pseudonyme est obligatoire pour devenir membre."
+    },
+    "SECURITY":{
+      "TITLE": "Compte et sécurité",
+      "SAVE_KEYS": "Sauvegarder vos identifiants",
+      "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
+      "REVOKE" : "Revoquer cette identité",
+      "DEFINITELY_REVOKE" : "Revoquer définitivement cette identité",
+      "REVOCATION": "Révocation"
+
     }
   },
   "TRANSFER": {

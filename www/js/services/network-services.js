@@ -350,12 +350,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             score += (1000000000 * (peer.hasEndpoint('ES_USER_API')? 1 : 0));
           }
           else if (data.sort.type === 'difficulty'){
-            score += (1000000000 * (peer.level ? peer.level : 0));
+            score += (1000000000 * (peer.difficulty ? peer.difficulty : 0));
           }
           else if (data.sort.type === 'current_block'){
             score += (1000000000 * (peer.currentNumber ? peer.currentNumber : 0));
           }
-
           score += (100000000 * (peer.online ? 1 : 0));
           score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
           score += (1000     * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
