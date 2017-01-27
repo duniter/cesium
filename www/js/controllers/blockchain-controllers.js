@@ -158,31 +158,3 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency) {
   };
 }
 
-
-function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
-  'ngInject';
-
-  NetworkLookupController.call(this, $scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
-
-  // Read parameters
-  parameters = parameters || {};
-  $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
-  $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
-  $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
-
-  $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
-
-  $scope.selectPeer = function(peer) {
-    $scope.closeModal(peer);
-  };
-
-  $scope.$on('modal.hidden', function(){
-    csNetwork.close();
-  });
-
-  // Disable this unsed method - called by load()
-  $scope.showHelpTip = function() {};
-
-  // Init
-  $scope.init();
-}
