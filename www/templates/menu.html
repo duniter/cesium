@@ -89,6 +89,16 @@
           <span translate>MENU.CURRENCY</span>
         </ion-item>
 
+        <ion-item menu-close
+                  class="item item-icon-left"
+                  active-link="active"
+                  active-link-path-prefix="#/app/network"
+                  href="#/app/network"
+                  ng-if="$root.settings.expertMode">
+          <i class="icon ion-cloud"></i>
+          <span translate>MENU.NETWORK</span>
+        </ion-item>
+
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
 

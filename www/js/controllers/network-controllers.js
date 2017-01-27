@@ -6,12 +6,18 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
+    .state('app.view_network', {
+      url: "/network",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/network/view_network.html",
+          controller: 'NetworkLookupCtrl'
+        }
+      }
+    })
+
     .state('app.view_peer', {
       url: "/network/peer/:server",
-      nativeTransitions: {
-          "type": "flip",
-          "direction": "right"
-      },
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_peer.html",
@@ -79,16 +85,13 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
       });
 
       // Catch event on new peers
-      var refreshing = false;
+      $scope.refreshing = false;
       csNetwork.api.data.on.changed($scope, function(data){
-        if (!refreshing) {
-          refreshing = true;
+        if (!$scope.refreshing) {
+          $scope.refreshing = true;
           $timeout(function() { // Timeout
-            console.debug("[peers] Updating UI");
-            $scope.search.results = data.peers;
-            $scope.search.memberPeersCount = data.memberPeersCount;
-            $scope.search.loading = csNetwork.isBusy();
-            refreshing = false;
+            $scope.updateView(data);
+            $scope.refreshing = false;
            }, 1100);
         }
       });
@@ -98,10 +101,34 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     $scope.showHelpTip();
   };
 
+  $scope.updateView = function(data) {
+    console.debug("[peers] Updating UI");
+    $scope.search.results = data.peers;
+    $scope.search.memberPeersCount = data.memberPeersCount;
+    $scope.search.loading = csNetwork.isBusy();
+  };
+
   $scope.refresh = function() {
     // Network
     $scope.search.loading = true;
     csNetwork.loadPeers();
+  };
+
+  $scope.sort = function() {
+    $scope.search.loading = true;
+    $scope.refreshing = true;
+    csNetwork.sort({
+      filter: {
+        member: (!$scope.search.type || $scope.search.type === 'member'),
+        mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
+        endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null)
+      },
+      sort: {
+        type : $scope.search.sort,
+        asc : $scope.search.asc
+      }
+    });
+    $scope.updateView(csNetwork.data);
   };
 
   $scope.toggleSearchType = function(type){
@@ -126,18 +153,13 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     else {
       $scope.search.endpointFilter = endpoint;
     }
-    csNetwork.close();
-    $scope.search.loading = true;
-    $scope.load();
+    $scope.sort();
   };
 
   $scope.toggleSort = function(sort){
     $scope.search.asc = ($scope.search.sort === sort) ? !$scope.search.asc : true;
     $scope.search.sort = sort;
-
-    csNetwork.close();
-    $scope.search.loading = true;
-    $scope.load();
+    $scope.sort();
   };
 
   $scope.selectPeer = function(peer) {

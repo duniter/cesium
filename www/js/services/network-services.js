@@ -339,28 +339,20 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           return peer.id;
         });
         data.peers = _.sortBy(data.peers, function(peer) {
-          var score = 1;
-          if (data.sort.type === 'api'){
-            score += (1000000000 * (peer.hasEndpoint('ES_USER_API')? 1 : 0));
+          var score = 0;
+          if (data.sort.type) {
+            var sign = data.sort.asc ? 1 : -1;
+            score += (sign * 1000000000 * (data.sort.type == 'uid' && peer.uid ? peer.uid.toLowerCase().charCodeAt(0) : sign * 999));
+            score += (sign * 1000000000 * (data.sort.type == 'api' && peer.hasEndpoint('ES_USER_API')? 1 : 0));
+            score += (sign * 1000000000 * (data.sort.type == 'difficulty' && peer.difficulty ? peer.difficulty : sign * 99999));
+            score += (sign * 1000000000 * (data.sort.type == 'current_block' && peer.currentNumber ? peer.currentNumber : 0));
           }
-          else if (data.sort.type === 'difficulty'){
-            score += (1000000000 * (peer.level ? peer.level : 0));
-          }
-          else if (data.sort.type === 'current_block'){
-            score += (1000000000 * (peer.currentNumber ? peer.currentNumber : 0));
-          }
-
           score += (100000000 * (peer.online ? 1 : 0));
           score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
-          score += (1000     * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
-          score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
-
-          if (!data.sort.asc) {
-            return score;
-          }
-          else {
-            return -score;
-          }
+          score += (100000    * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
+          score += (100       * (peer.difficulty ? peer.difficulty : 999));
+          score += (1        * (peer.uid ? peer.uid.toLowerCase().charCodeAt(0) : 999)); // alphabetical order
+          return score;
         });
 
         // Raise event on new main block
@@ -409,6 +401,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               }
             });
         });
+      },
+
+      sort = function(options) {
+        data.filter = options.filter;
+        data.sort = options.sort;
+        sortPeers(false);
       },
 
       start = function(bma, options) {
@@ -482,6 +480,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       close: close,
       hasPeers: hasPeers,
       getPeers: getPeers,
+      sort: sort,
       getTrustedPeers: getTrustedPeers,
       getKnownBlocks: getKnownBlocks,
       getMainBlockUid: getMainBlockUid,
