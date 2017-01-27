@@ -29,7 +29,15 @@
 
     <div class="row no-padding">
       <div class="col no-padding">
-        <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> <span>{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
+        <h3>
+          <span ng-if="peer.uid"
+             ui-sref="app.wot_view_identity({pubkey: peer.pubkey, uid: peer.uid})">
+            <i class="ion-person"></i> {{peer.name||peer.uid}}
+          </span>
+          <span ng-if="!peer.uid">
+            <i class="ion-key"></i> {{peer.pubkey|formatPubkey}}
+          </span>
+          <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
         <h4>{{peer.server}}</h4>
       </div>
       <div class="col col-15 no-padding text-center" ng-if="settings.expertMode && peer.hasEndpoint('ES_USER_API')">

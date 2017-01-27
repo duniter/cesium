@@ -61,6 +61,13 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
       .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
   };
 
+  $scope.$on('$ionicView.enter', function(e, state) {
+    $scope.init();
+  });
+  $scope.$on('$ionicView.beforeLeave', function(){
+    csNetwork.close();
+  });
+
   $scope.$on('$ionicParentView.enter', function(e, state) {
     $scope.init();
   });
