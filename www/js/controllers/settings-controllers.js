@@ -79,7 +79,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       }
       UIUtils.loading.show();
       var nodeBMA = BMA.instance(newNode.host, newNode.port);
-      api.node.summary() // ping the node
+      nodeBMA.node.summary() // ping the node
       .then(function() {
         UIUtils.loading.hide();
         $scope.formData.node = newNode;

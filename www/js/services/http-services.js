@@ -82,7 +82,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     function getResourceWithCache(host, port, path, maxAge, autoRefresh) {
       var url = getUrl(host, port, path);
       maxAge = maxAge || csCache.constants.LONG;
-      console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
+      //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
 
       return function(params) {
         return $q(function(resolve, reject) {

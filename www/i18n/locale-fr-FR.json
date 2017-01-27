@@ -174,7 +174,8 @@
     "DIFFICULTY" : "Difficulté",
     "API" : "API",
     "CURRENT_BLOCK" : "Bloc #",
-    "POPOVER_FILTER_TITLE": "Filtre"
+    "POPOVER_FILTER_TITLE": "Filtre",
+    "OFFLINE": "Nœuds hors ligne"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
@@ -313,6 +314,12 @@
       "TITLE": "Virement"
     }
   },
+  "BLOCKCHAIN": {
+    "VIEW": {
+      "TITLE": "Bloc #{{number}}-{{hash|formatHash}}",
+      "TITLE_CURRENT": "Bloc courant"
+    }
+  },
   "ERROR": {
     "POPUP_TITLE": "Erreur",
     "UNKNOWN_ERROR": "Erreur inconnue",
@@ -377,7 +384,9 @@
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
-    "REVOCATION_FAILED": "Echec de la révocation."
+    "REVOCATION_FAILED": "Echec de la révocation.",
+    "GET_BLOCK_FAILED": "Echec de la récupération du bloc",
+    "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

@@ -14,6 +14,9 @@
           <h4 ng-if="enableFilter && search.type=='mirror'">
             {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
           </h4>
+          <h4 ng-if="enableFilter && search.type=='offline'">
+            {{'PEER.OFFLINE' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          </h4>
           <h4 ng-if="!enableFilter || !search.type">
             {{'PEER.ALL_PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
           </h4>
@@ -22,9 +25,8 @@
         <div class="pull-right">
           <ion-spinner class="icon" icon="android" ng-if="search.loading"></ion-spinner>&nbsp;
 
-          <div class="pull-right">
+          <div class="pull-right" ng-if="enableFilter">
             <a class="button button-text button-small hidden-xs hidden-sm ink"
-               ng-if="enableFilter"
                ng-class="{'button-text-positive': search.type=='member'}"
                ng-click="toggleSearchType('member')">
               <i class="icon ion-android-people"></i>
@@ -32,11 +34,17 @@
             </a>
             &nbsp;
             <a class="button button-text button-small hidden-xs hidden-sm ink"
-               ng-if="enableFilter"
                ng-class="{'button-text-positive': search.type=='mirror'}"
                ng-click="toggleSearchType('mirror')" >
-              <i class="icon ion-ios-infinite"></i>
+              <i class="icon ion-radio-waves"></i>
               {{'PEER.MIRRORS'|translate}}
+            </a>
+
+            <a class="button button-text button-small hidden-xs hidden-sm ink"
+               ng-class="{'button-text-positive': search.type=='offline', 'button-text-stable': search.type!='offline'}"
+               ng-click="toggleSearchType('offline')" >
+              <i class="icon ion-eye-disabled light-gray"></i>
+              <span>{{'PEER.OFFLINE'|translate}}</span>
             </a>
           </div>
         </div>

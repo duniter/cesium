@@ -313,6 +313,12 @@
       "TITLE": "Transfer"
     }
   },
+  "BLOCKCHAIN": {
+    "VIEW": {
+      "TITLE": "Block #{{number}}-{{hash|formatHash}}",
+      "TITLE_CURRENT": "Current block"
+    }
+  },
   "ERROR": {
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
@@ -377,7 +383,9 @@
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
-    "REVOCATION_FAILED": "Error while trying to revoke the identity."
+    "REVOCATION_FAILED": "Error while trying to revoke the identity.",
+    "GET_BLOCK_FAILED": "Error xhole getting block",
+    "INVALID_BLOCK_HASH": "Block not found (incorrect hash)"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

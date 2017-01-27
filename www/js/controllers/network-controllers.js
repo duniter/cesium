@@ -38,6 +38,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
   'ngInject';
 
+  $scope.networkStarted = false;
   $scope.ionItemClass = '';
   $scope.search = {
     text: '',
@@ -45,11 +46,16 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     type: undefined,
     results: [],
     endpointFilter: null,
-    sort : 'uid',
+    sort : undefined,
     asc: true
   };
 
-  $scope.init = function() {
+  /**
+   * Enter in view
+   */
+  $scope.enter = function() {
+    if ($scope.networkStarted) return;
+    $scope.networkStarted = true;
     csCurrency.default()
       .then(function (currency) {
         if (currency) {
@@ -58,38 +64,45 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
           $scope.load();
         }
       })
-      .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
+      .catch(function(err) {
+        UIUtils.onError('ERROR.GET_CURRENCY_FAILED')(err);
+        $scope.networkStarted = false;
+      });
+
   };
+  $scope.$on('$ionicView.enter', $scope.enter);
+  $scope.$on('$ionicParentView.enter', $scope.enter);
 
-  $scope.$on('$ionicView.enter', function(e, state) {
-    $scope.init();
-  });
-  $scope.$on('$ionicView.beforeLeave', function(){
+  /**
+   * Leave the view
+   */
+  $scope.leave = function() {
+    if (!$scope.networkStarted) return;
     csNetwork.close();
-  });
+    $scope.networkStarted = false;
+  };
+  $scope.$on('$ionicView.beforeLeave', $scope.leave);
+  $scope.$on('$ionicParentView.beforeLeave', $scope.leave);
 
-  $scope.$on('$ionicParentView.enter', function(e, state) {
-    $scope.init();
-  });
-
-  $scope.$on('$ionicParentView.beforeLeave', function(){
-    csNetwork.close();
-  });
+  $scope.computeOptions = function() {
+    return {
+      filter: {
+        member: (!$scope.search.type || $scope.search.type === 'member'),
+        mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
+        endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null),
+        online: !($scope.search.type && $scope.search.type === 'offline')
+      },
+      sort: {
+        type : $scope.search.sort,
+        asc : $scope.search.asc
+      }
+    };
+  };
 
   $scope.load = function() {
 
     if ($scope.search.loading){
-      csNetwork.start($scope.node, {
-        filter: {
-          member: (!$scope.search.type || $scope.search.type === 'member'),
-          mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
-          endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null)
-        },
-        sort: {
-          type : $scope.search.sort,
-          asc : $scope.search.asc
-        }
-      });
+      csNetwork.start($scope.node, $scope.computeOptions());
 
       // Catch event on new peers
       $scope.refreshing = false;
@@ -124,17 +137,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   $scope.sort = function() {
     $scope.search.loading = true;
     $scope.refreshing = true;
-    csNetwork.sort({
-      filter: {
-        member: (!$scope.search.type || $scope.search.type === 'member'),
-        mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
-        endpointFilter : (angular.isDefined($scope.search.endpointFilter) ? $scope.search.endpointFilter : null)
-      },
-      sort: {
-        type : $scope.search.sort,
-        asc : $scope.search.asc
-      }
-    });
+    csNetwork.sort($scope.computeOptions());
     $scope.updateView(csNetwork.data);
   };
 
@@ -164,9 +167,17 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   };
 
   $scope.toggleSort = function(sort){
-    $scope.search.asc = ($scope.search.sort === sort) ? !$scope.search.asc : true;
-    $scope.search.sort = sort;
-    $scope.sort();
+    if ($scope.search.sort === sort && !$scope.search.asc) {
+      $scope.search.asc = undefined;
+      $scope.search.sort = undefined;
+      $scope.sort();
+      return;
+    }
+    else {
+      $scope.search.asc = ($scope.search.sort === sort) ? !$scope.search.asc : true;
+      $scope.search.sort = sort;
+      $scope.sort();
+    }
   };
 
   $scope.selectPeer = function(peer) {
@@ -245,12 +256,12 @@ function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, B
   };
 
   $scope.$on('modal.hidden', function(){
-    csNetwork.close();
+    $scope.leave();
   });
 
   // Disable this unsed method - called by load()
   $scope.showHelpTip = function() {};
 
-  // Init
-  $scope.init();
+  // Enter the modal
+  $scope.enter();
 }

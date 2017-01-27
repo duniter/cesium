@@ -1,7 +1,7 @@
   <div class="item row row-header hidden-xs hidden-sm"  ng-if="settings.expertMode">
     <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
-      {{'COMMON.UID' | translate}}
+      {{'COMMON.UID' | translate}} / {{'COMMON.PUBKEY' | translate}}
     </a>
     <a class="no-padding dark hidden-md col col-15 col-header"
        ng-click="toggleSort('api')">
@@ -35,6 +35,7 @@
             <i class="ion-person"></i> {{peer.name||peer.uid}}
           </span>
           <span ng-if="!peer.uid">
+            <i class="ion-radio-waves"></i>
             <i class="ion-key"></i> {{peer.pubkey|formatPubkey}}
           </span>
           <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
@@ -46,9 +47,9 @@
           <b class="ion-plus gray" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
         </h3>
       </div>
-      <div class="col col-20 no-padding text-center" ng-if="settings.expertMode">
+      <div class="col col-20 no-padding text-center" ng-if="settings.expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs hidden-md">
-          <span ng-if="peer.uid"><i class="ion-lock-combination"></i> {{peer.difficulty}}</span>
+          <span ng-if="peer.uid"><i class="ion-lock-combination"></i>{{peer.difficulty}}</span>
           <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
         </h3>
         <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>

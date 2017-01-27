@@ -1,0 +1,21 @@
+<ion-view>
+  <ion-nav-title>
+    <span ng-if="number=='current'">{{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}</span>
+    <span ng-if="!loading && number!='current'">{{'BLOCKCHAIN.VIEW.TITLE'|translate:formData}}</span>
+  </ion-nav-title>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <div class="text-center" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div ng-if="!loading">
+
+      <div class="list">
+      </div>
+
+    </div>
+
+  </ion-content>
+</ion-view>
