@@ -83,7 +83,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover) {
+function WotLookupController($scope, $state, $filter, $timeout, $focus, $ionicPopover,
+                             UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -245,7 +246,7 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     else {
       $state.go('app.wot_view_identity', {
         pubkey: identity.pubkey,
-        uid: identity.name||identity.uid
+        uid: identity.uid
       });
     }
   };
@@ -351,10 +352,12 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
 
 }
 
-function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover){
+function WotLookupModalController($scope, $scope, $state, $filter, $timeout, $focus, $ionicPopover,
+                                  UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot){
   'ngInject';
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover);
+  WotLookupController.call(this, $scope, $state, $filter, $timeout, $focus, $ionicPopover,
+                           UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot);
 
   $scope.search.loading = false;
   $scope.enableFilter = false;
@@ -423,7 +426,7 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
     // Warn: do not use a simple link here (a ng-click is need for help tour)
     $state.go(UIUtils.screen.isSmall() ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
       pubkey: $scope.formData.pubkey,
-      uid: $scope.formData.name || $scope.formData.uid
+      uid: $scope.formData.uid
     });
   };
 

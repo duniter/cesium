@@ -173,7 +173,8 @@
     "ALL_PEERS" : "All peers",
     "DIFFICULTY" : "Difficulty",
     "API" : "API",
-    "CURRENT_BLOCK" : "Current block"
+    "CURRENT_BLOCK" : "Block #",
+    "POPOVER_FILTER_TITLE": "Filter"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",

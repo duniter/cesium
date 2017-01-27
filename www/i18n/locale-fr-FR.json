@@ -173,7 +173,8 @@
     "ALL_PEERS" : "Tous les nœuds",
     "DIFFICULTY" : "Difficulté",
     "API" : "API",
-    "CURRENT_BLOCK" : "Bloc courant"
+    "CURRENT_BLOCK" : "Bloc #",
+    "POPOVER_FILTER_TITLE": "Filtre"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",

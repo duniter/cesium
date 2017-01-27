@@ -145,7 +145,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   };
 
   $scope.$on('NetworkLookupCtrl.action', function(event, action) {
-    if (action === 'refresh') {
+    if (action == 'refresh') {
       $scope.refresh();
     }
   });

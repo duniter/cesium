@@ -1,14 +1,15 @@
-  <div class="item row row-header hidden-xs hidden-sm">
+  <div class="item row row-header hidden-xs hidden-sm"  ng-if="settings.expertMode">
     <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
       {{'COMMON.UID' | translate}}
     </a>
-     <a class="col col-15 col-header no-padding dark" ng-click="toggleSort('api')">
-     <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'api'"></cs-sort-icon>
+    <a class="no-padding dark hidden-md col col-15 col-header"
+       ng-click="toggleSort('api')">
+      <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'api'"></cs-sort-icon>
       {{'PEER.API' | translate}}
     </a>
-    <a class="no-padding dark hidden-xs hidden-sm hidden-md col col-20 col-header"
-       ng-click="toggleSort('difficulty')" ng-if="settings.expertMode">
+    <a class="no-padding dark hidden-md col col-20 col-header"
+       ng-click="toggleSort('difficulty')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'difficulty'"></cs-sort-icon>
       {{'PEER.DIFFICULTY' | translate}}
     </a>
@@ -31,9 +32,11 @@
         <h3><i ng-class="{'ion-person': peer.uid, 'ion-key': !peer.uid}"></i> <span>{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
         <h4>{{peer.server}}</h4>
       </div>
-      <div class="col col-15 no-padding text-center" ng-if="peer.hasEndpoint('ES_USER_API')">
-        <i class="ion-es-user-api"></i>
-        <b class="ion-plus gray" style="position: relative; left: -14px; top:-17px; font-size : 14px;"></b>
+      <div class="col col-15 no-padding text-center" ng-if="settings.expertMode && peer.hasEndpoint('ES_USER_API')">
+        <h3 class="hidden-xs hidden-sm">
+          <i class="ion-es-user-api"></i>
+          <b class="ion-plus gray" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
+        </h3>
       </div>
       <div class="col col-20 no-padding text-center" ng-if="settings.expertMode">
         <h3 class="hidden-sm hidden-xs hidden-md">

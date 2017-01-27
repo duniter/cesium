@@ -74,7 +74,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.peers = [];
         data.searchingPeersOnNetwork = true;
         data.loading = true;
-
+        data.bma = data.bma || BMA;
         var newPeers = [];
 
         if (interval) {

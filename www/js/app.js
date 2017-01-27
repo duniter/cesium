@@ -210,6 +210,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     return function(input) {
       return input ? encodeURIComponent(input
         .toLowerCase()
+        .replace(/<[^>]+>/g,'') // Remove tag (like HTML tag)
         .replace(/[^\w ]+/g,'')
         .replace(/ +/g,'-'))
         : '';

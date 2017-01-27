@@ -31,7 +31,12 @@
             <i class="icon ion-load-c"></i>
             <span translate>CURRENCY.VIEW.UD</span>  ({{'COMMON.UD'|translate}}<sub>t</sub>)
             <div class="badge badge-royal" ng-if="!loading">
-              <span ng-bind-html=":rebind:formData.currentUD | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
+              <span ng-if="formData.useRelative">
+                1 <ng-bind-html ng-bind-html=":rebind:formData.currency| currencySymbol:true"></ng-bind-html>
+              </span>
+              <span ng-if="!formData.useRelative"
+                    ng-bind-html=":rebind:formData.currentUD | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
+              </span>
               &nbsp;/&nbsp;{{formData.dt | formatPeriod}}
             </div>
         </ion-item>
