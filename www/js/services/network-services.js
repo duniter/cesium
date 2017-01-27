@@ -45,7 +45,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.sort = {
           type: null,
           asc: true
-        },
+        };
         data.memberPeersCount = 0;
         data.knownBlocks = [];
         data.mainBuid = null;
