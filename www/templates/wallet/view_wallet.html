@@ -224,7 +224,7 @@
                ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
             <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
             <h2 class="col-80">
-              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
+              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
                 <span ng-if="tx.uid">
                   {{::tx.name||tx.uid}}
                 </span>

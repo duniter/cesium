@@ -83,7 +83,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $state, $filter, $timeout, $focus, $ionicPopover,
+function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
                              UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
@@ -352,11 +352,11 @@ function WotLookupController($scope, $state, $filter, $timeout, $focus, $ionicPo
 
 }
 
-function WotLookupModalController($scope, $scope, $state, $filter, $timeout, $focus, $ionicPopover,
+function WotLookupModalController($scope, $state, $timeout, $focus, $ionicPopover,
                                   UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot){
   'ngInject';
 
-  WotLookupController.call(this, $scope, $state, $filter, $timeout, $focus, $ionicPopover,
+  WotLookupController.call(this, $scope, $state, $timeout, $focus, $ionicPopover,
                            UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot);
 
   $scope.search.loading = false;
