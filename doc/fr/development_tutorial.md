@@ -107,7 +107,7 @@ sudo apt-get install build-essential
 
 #### Sous Windows
 
-Pour Windows, téléchargez la version 5 disponible sur le site officiel de Node.js : ~~https://nodejs.org~~ https://nodejs.org/en/download/
+Pour Windows, téléchargez la version 5 disponible sur le site officiel de Node.js : https://nodejs.org
 
 Puis lancez l'installeur ainsi téléchargé.
 
