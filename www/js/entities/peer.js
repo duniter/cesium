@@ -14,7 +14,7 @@ function Peer(json) {
 
 
 Peer.prototype.regex = {
-  BMA_REGEXP: /^BASIC_MERKLED_API([]+([a-z_][a-z0-9-_.]*))?([]+([0-9.]+))?([]+([0-9a-f:]+))?([]+([0-9]+))$/,
+  BMA_REGEXP: /^BASIC_MERKLED_API([ ]+([a-z_][a-z0-9-_.]*))?([ ]+([0-9.]+))?([ ]+([0-9a-f:]+))?([ ]+([0-9]+))$/,
   LOCAL_IP_ADDRESS: /^127[.]0[.]0.|192[.]168[.]|10[.]0[.]0[.]|172[.]16[.]/
 };
 
@@ -50,8 +50,9 @@ Peer.prototype.json = function() {
 Peer.prototype.getBMA = function() {
   if (this.bma) return this.bma;
   var bma = null;
+  var bmaRegex = this.regex.BMA_REGEXP;
   this.endpoints.forEach(function(ep){
-    var matches = !bma && ep.match(BMA_REGEXP);
+    var matches = !bma && bmaRegex.exec(ep);
     if (matches) {
       bma = {
         "dns": matches[2] || '',
