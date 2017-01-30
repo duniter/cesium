@@ -10,15 +10,17 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
   })
 
-.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, csWallet, BMA) {
+.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, csWallet) {
   'ngInject';
 
   function factory(host, port) {
 
     var
     listeners,
+    defaultLoadSize = 10,
     fields = {
-      commons: ["issuer", "recipient", "title", "content", "time", "nonce"]
+      commons: ["issuer", "recipient", "title", "content", "time", "nonce", "read_signature"],
+      notifications: ["issuer", "time", "hash", "read_signature"]
     };
 
     function copy(otherNode) {
@@ -34,7 +36,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     function onWalletInit(data) {
       data.messages = data.messages || {};
-      data.messages.count = null;
+      data.messages.unreadCount = null;
     }
 
     function onWalletReset(data) {
@@ -47,36 +49,27 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       }
     }
 
-    function onWalletLoad(data, resolve, reject) {
+    function onWalletLogin(data, deferred) {
+      deferred = deferred || $q.defer();
       if (!data || !data.pubkey) {
-        if (resolve) {
-          resolve();
-        }
-        return;
+        deferred.resolve();
+        return deferred.promise;
       }
 
-      var lastMessageTime = csSettings.data && csSettings.data.plugins && csSettings.data.plugins.es ?
-        csSettings.data.plugins.es.lastMessageTime :
-        undefined;
-
-      // Count new messages
-      countNewMessages(data.pubkey, lastMessageTime)
-        .then(function(count){
+      // Count unread messages
+      countUnreadMessages(data.pubkey)
+        .then(function(unreadCount){
           data.messages = data.messages || {};
-          data.messages.count = count;
-          console.debug('[ES] [message] Detecting ' + count + (lastMessageTime ? ' unread' : '') + ' messages');
-          if(resolve) resolve(data);
+          data.messages.unreadCount = unreadCount;
+          console.debug('[ES] [message] Detecting ' + unreadCount + ' unread messages');
+          deferred.resolve(data);
         })
         .catch(function(err){
-          if(resolve) {
-            resolve(data);
-          }
-          else {
-            throw err;
-          }
+          console.error('Error chile counting message: ' + (err.message ? err.message : err));
+          deferred.resolve(data);
         });
+      return deferred.promise;
     }
-
 
     function getBoxKeypair(keypair) {
       keypair = keypair || (csWallet.isLogin() ? csWallet.data.keypair : keypair);
@@ -93,34 +86,60 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       return csWallet.data.keypair;
     }
 
-    function countNewMessages(pubkey, fromTime) {
+    function countUnreadMessages(pubkey) {
       pubkey = pubkey || (csWallet.isLogin() ? csWallet.data.pubkey : pubkey);
       if (!pubkey) {
         throw new Error('no pubkey, and user not connected.');
       }
 
       var request = {
-        size: 0,
-        query: {constant_score: {filter: [{term: {recipient: pubkey}}]}}
+        query: {
+          bool: {
+            must: [
+              {term: {recipient: pubkey}},
+              {missing: { field : "read_signature" }}
+            ]
+          }
+        }
       };
 
-      // Add time filter
-      if (fromTime) {
-        request.query.constant_score.filter.push({range: {time: {gt: fromTime}}});
-      }
-
-      return esHttp.post(host, port, '/message/record/_search')(request)
+      return esHttp.post(host, port, '/message/inbox/_count')(request)
         .then(function(res) {
-          return res.hits ? res.hits.total : 0;
+          return res.count;
         });
     }
 
-
     function sendMessage(message, keypair) {
+      return $q(function(resolve, reject) {
+        doSendMessage(message, keypair)
+          .catch(function(err) {
+            reject(err);
+          })
+          .then(function(res){
+            resolve(res);
+
+            var outbox = (csSettings.data.plugins.es.message &&
+              angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
+              csSettings.data.plugins.es.message.outbox : true;
+            // Send to outbox (in a async way)
+            if (outbox) {
+              return doSendMessage(message, keypair, '/message/outbox', 'issuer')
+                .catch(function(err) {
+                  console.error("Failed to store message to outbox: " + err);
+                });
+            }
+          });
+        });
+    }
+
+    function doSendMessage(message, keypair, boxPath, recipientFieldName) {
+      boxPath = boxPath || '/message/inbox';
+      recipientFieldName = recipientFieldName || 'recipient';
+
       var boxKeypair = getBoxKeypair(keypair);
 
       // Get recipient
-      var recipientPk = CryptoUtils.util.decode_base58(message.recipient);
+      var recipientPk = CryptoUtils.util.decode_base58(message[recipientFieldName]);
       var boxRecipientPk = CryptoUtils.box.keypair.pkFromSignPk(recipientPk);
 
       var cypherTitle;
@@ -141,80 +160,153 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
             cypherContent = cypherText;
           })
       ])
-      .then(function(){
-        // Send message
-        return esHttp.record.post(host, port, '/message/record')({
-          issuer: message.issuer,
-          recipient: message.recipient,
-          title: cypherTitle,
-          content: cypherContent,
-          nonce: CryptoUtils.util.encode_base58(nonce)
+        .then(function(){
+          // Send message
+          return esHttp.record.post(host, port, boxPath)({
+            issuer: message.issuer,
+            recipient: message.recipient,
+            title: cypherTitle,
+            content: cypherContent,
+            nonce: CryptoUtils.util.encode_base58(nonce)
+          });
         });
-      });
     }
 
-    function searchAndDecrypt(request, keypair) {
-      var uids;
-      return BMA.wot.member.uids()
+    function loadMessageNotifications(options) {
+      if (!csWallet.isLogin()) {
+        return $q.when([]);
+      }
+      options = options || {};
+      options.from = options.from || 0;
+      options.size = options.size || defaultLoadSize;
+      var request = {
+        sort: {
+          "time" : "desc"
+        },
+        query: {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}},
+        from: options.from,
+        size: options.size,
+        _source: fields.notifications
+      };
+
+      return esHttp.post(host, port, '/message/inbox/_search')(request)
         .then(function(res) {
-          uids = res;
-          return esHttp.post(host, port, '/message/record/_search')(request);
-        })
-        .then(function(res) {
-          if (res.hits.total === 0) {
+          if (!res || !res.hits || !res.hits.total) {
             return [];
           }
           else {
-            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
-            var messages = res.hits.hits.reduce(function(result, hit) {
+            var notifications = res.hits.hits.reduce(function(result, hit) {
               var msg = hit._source;
               msg.id = hit._id;
-              msg.pubkey = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
-              msg.uid = uids[msg.pubkey];
+              msg.read = !!msg.read_signature;
+              delete msg.read_signature; // not need anymore
               return result.concat(msg);
             }, []);
-
-            console.debug('[ES] [message] Loading ' + messages.length + ' messages');
-
-            // Update message count
-            csWallet.data.messages = csWallet.data.messages || {};
-            csWallet.data.messages.count = messages.length;
-
-            return decryptMessages(messages, keypair)
-              .then(function(){
-                return esUser.profile.fillAvatars(messages, 'pubkey');
-              });
+            return esUser.profile.fillAvatars(notifications, 'issuer');
           }
+        });
+    }
+
+
+    function searchMessages(options) {
+      if (!csWallet.isLogin()) {
+        return $q.when([]);
+      }
+
+      options = options || {};
+      options.type = options.type || 'inbox';
+      options.from = options.from || 0;
+      options.size = options.size || 1000;
+      options._source = options._source || fields.commons;
+      var request = {
+        sort: {
+          "time" : "desc"
+        },
+        from: options.from,
+        size: options.size,
+        _source: options._source
+      };
+
+      if (options.type == 'inbox') {
+        request.query = {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}};
+      }
+      else {
+        request.query = {bool: {filter: {term: {issuer: csWallet.data.pubkey}}}};
+      }
+
+      return esHttp.post(host, port, '/message/:type/_search')(request, {type: options.type})
+        .then(function(res) {
+          if (!res || !res.hits || !res.hits.total) {
+            return [];
+          }
+          var messages = res.hits.hits.reduce(function(res, hit) {
+            var msg = hit._source || {};
+            msg.id = hit._id;
+            msg.read = (options.type == 'outbox') || !!msg.read_signature;
+            delete msg.read_signature; // not need anymore
+            return res.concat(msg);
+          }, []);
+
+          console.debug('[ES] [message] Loading {0} {1} messages'.format(messages.length, options.type));
+
+          return messages;
+        });
+    }
+
+    function loadMessages(keypair, options) {
+      if (!csWallet.isLogin()) {
+        return $q.when([]);
+      }
+
+      options = options || {};
+      options.type = options.type||'inbox';
+      options._source = fields.commons;
+
+      // Get encrypted message (with common fields)
+      return searchMessages(options)
+
+        // Encrypt content
+        .then(function(messages) {
+          return decryptMessages(messages, keypair, options.type);
+        })
+
+        // Add avatar
+        .then(function(messages){
+          var senderPkField = (options.type == 'inbox') ? 'issuer' : 'recipient';
+          return esUser.profile.fillAvatars(messages, senderPkField);
+        })
+
+        // Update message count
+        .then(function(messages){
+          csWallet.data.messages = csWallet.data.messages || {};
+          csWallet.data.messages.count = messages.length;
+
+          return messages;
         });
     }
 
     function getAndDecrypt(params, keypair) {
-      return esHttp.get(host, port, '/message/record/:id')(params)
+      params.type = params.type || 'inbox';
+      var avatarField = (params.type == 'inbox') ? 'issuer' : 'recipient';
+      return esHttp.get(host, port, '/message/:type/:id')(params)
         .then(function(hit) {
           if (!hit.found) {
             return;
           }
-          else {
-            var walletPubkey = csWallet.isLogin() ? csWallet.data.pubkey : null;
-            var msg = hit._source;
-            msg.id = hit._id;
-            msg.pubkey = msg.issuer !== walletPubkey ? msg.issuer : msg.recipient;
+          var msg = hit._source;
+          msg.id = hit._id;
+          msg.read = (params.type == 'outbox') || !!msg.read_signature;
+          delete msg.read_signature; // not need anymore
 
-            // Get uid (if member)
-            return BMA.wot.member.get(msg.pubkey)
-              .then(function(user) {
-                msg.uid = user ? user.uid : user;
-                // Decrypt message
-                return decryptMessages([msg], keypair);
-              })
-              .then(function(){
-                // Fill avatar
-                return esUser.profile.fillAvatars([msg], 'pubkey');
-              })
-              .then(function() {
-                return msg;
-              });
-          }
+          // Decrypt message
+          return decryptMessages([msg], keypair, params.type)
+            .then(function(){
+              // Fill avatar
+              return esUser.profile.fillAvatars([msg], avatarField);
+            })
+            .then(function() {
+              return msg;
+            });
         });
     }
 
@@ -264,13 +356,94 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         });
     }
 
-    function removeMessage(id) {
-      return esHttp.record.remove(host, port, 'message', 'record')(id)
+    function removeMessage(id, type) {
+      type = type || 'inbox';
+      return esHttp.record.remove(host, port, 'message', type)(id)
         .then(function(res) {
           // update message count
-          csWallet.data.messages = csWallet.data.messages || {};
-          csWallet.data.messages.count = csWallet.data.messages.count > 0 ? csWallet.data.messages.count-1 : 0;
+          if (type == 'inbox') {
+            csWallet.data.messages = csWallet.data.messages || {};
+            csWallet.data.messages.count = csWallet.data.messages.count > 0 ? csWallet.data.messages.count-1 : 0;
+          }
           return res;
+        });
+    }
+
+    function removeAllMessages(type) {
+      type = type || 'inbox';
+
+      // Get all message id
+      return searchMessages({type: type, from: 0, size: 1000, _source: false})
+        .then(function(res) {
+          if (!res || !res.length) return;
+
+          // Remove each messages
+          return $q.all(res.reduce(function(res, msg) {
+            return res.concat(esHttp.record.remove(host, port, 'message', type)(msg.id));
+          }, []));
+        })
+        .then(function() {
+          // update message count
+          if (type == 'inbox') {
+            csWallet.data.messages = csWallet.data.messages || {};
+            csWallet.data.messages.count = 0;
+            csWallet.data.messages.unreadCount = 0;
+          }
+        });
+    }
+
+    // Mark a message as read
+    function markMessageAsRead(message, type) {
+      type = type || 'inbox';
+      if (message.read) {
+        var deferred = $q.defer();
+        deferred.resolve();
+        return deferred.promise;
+      }
+      message.read = true;
+
+      return CryptoUtils.sign(message.hash, csWallet.data.keypair)
+
+        // Send read request
+        .then(function(signature){
+          return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id});
+        })
+
+        // Update message count
+        .then(function() {
+          if (type == 'inbox') {
+            csWallet.data.messages = csWallet.data.messages || {};
+            csWallet.data.messages.unreadCount = csWallet.data.messages.unreadCount ? csWallet.data.messages.unreadCount - 1 : 0;
+          }
+        }) ;
+    }
+
+    // Mark all messages as read
+    function markAllMessageAsRead() {
+      // Get all messages hash
+      return searchMessages({type: 'inbox', from: 0, size: 1000, _source: ['hash', 'read_signature']})
+
+        .then(function(messages) {
+          if (!messages || !messages.length) return;
+
+          // Keep only unread message
+          messages = _.filter(messages, {read:false});
+
+          // Remove  messages
+          return $q.all(messages.reduce(function(res, message) {
+            return res.concat(
+              // Sign hash
+              CryptoUtils.sign(message.hash, csWallet.data.keypair)
+              // then send read request
+              .then(function(signature){
+                return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id});
+              }));
+          }, []));
+        })
+        .then(function() {
+          // update message count
+          csWallet.data.messages = csWallet.data.messages || {};
+          csWallet.data.messages.unreadCount = 0;
         });
     }
 
@@ -288,8 +461,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
       // Extend csWallet.loadData()
       listeners = [
-        csWallet.api.data.on.login($rootScope, onWalletLoad, this),
-        //csWallet.api.data.on.load($rootScope, onWalletLoad, this),
+        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.init($rootScope, onWalletInit, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
       ];
@@ -315,7 +487,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     csSettings.api.data.on.changed($rootScope, function(){
       refreshListeners();
       if (isEnable() && !csWallet.data.messages) {
-        onWalletLoad(csWallet.data);
+        onWalletLogin(csWallet.data);
       }
     });
 
@@ -327,11 +499,17 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       node: {
         server: esHttp.getServer(host, port)
       },
-      search: esHttp.post(host, port, '/message/record/_search'),
-      searchAndDecrypt: searchAndDecrypt,
+      search: esHttp.post(host, port, '/message/inbox/_search'),
+      notifications: {
+        load: loadMessageNotifications
+      },
+      load: loadMessages,
       get: getAndDecrypt,
       send: sendMessage,
       remove: removeMessage,
+      removeAll: removeAllMessages,
+      markAsRead: markMessageAsRead,
+      markAllAsRead: markAllMessageAsRead,
       fields: {
         commons: fields.commons
       }

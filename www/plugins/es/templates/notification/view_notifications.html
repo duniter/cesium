@@ -1,0 +1,42 @@
+<ion-view left-buttons="leftButtons"
+          class="view-notification"
+          cache-view="false">
+  <ion-nav-title>
+    {{'COMMON.NOTIFICATIONS.TITLE' | translate}}
+  </ion-nav-title>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <!-- Buttons bar-->
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+
+      <button class="button button-raised icon-left ion-checkmark ink"
+              ng-click="markAllAsRead()">
+        {{'COMMON.NOTIFICATIONS.MARK_ALL_AS_READ' | translate}}
+      </button>
+    </div>
+
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+      <div class="col ">
+
+        <div class="center" ng-if="search.loading">
+          <ion-spinner icon="android"></ion-spinner>
+        </div>
+
+        <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
+          COMMON.NOTIFICATIONS.NO_RESULT
+        </div>
+
+        <ng-include src="'plugins/es/templates/notification/list_notification.html'"></ng-include>
+
+
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+    </div>
+
+  </ion-content>
+</ion-popover-view>

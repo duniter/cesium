@@ -4,81 +4,6 @@ angular.module('cesium.modal.services', [])
   'ngInject';
 
 
-  function show(templateUrl, controller, parameters, options) {
-    // Grab the injector and create a new scope
-    var deferred = $q.defer(),
-        ctrlInstance,
-        modalScope = $rootScope.$new(),
-        thisScopeId = modalScope.$id;
-
-    modalScope.setForm = function (form, propName) {
-      if (propName) {
-        modalScope[propName] = form;
-      }
-      else {
-        modalScope.form = form;
-      }
-    };
-
-    controller = controller ? controller : 'EmptyModalCtrl';
-
-    options = options ? options : {} ;
-    options.scope = options.scope ? options.scope : modalScope;
-    options.animation = options.animation ? options.animation : 'slide-in-up';
-
-    $ionicModal.fromTemplateUrl(templateUrl, options)
-    .then(function (modal) {
-      modalScope.modal = modal;
-
-      modalScope.openModal = function () {
-        return modalScope.modal.show();
-      };
-      modalScope.closeModal = function (result) {
-        deferred.resolve(result);
-        return modalScope.modal.hide();
-      };
-
-      modalScope.getParameters = function () {
-        return parameters;
-      };
-      modalScope.$on('modal.hidden', function (thisModal) {
-        var currentScope = thisModal.currentScope;
-        var modalScopeId = currentScope ? currentScope.$id : null;
-        // Destroy modal's scope when hide animation finished - fix #145
-        $timeout(function() {
-          if (modalScopeId && thisScopeId === modalScopeId) {
-            deferred.resolve(null);
-            _cleanup(currentScope);
-          }
-        }, 900);
-      });
-
-      // Invoke the controller
-      var locals = { '$scope': modalScope, 'parameters': parameters };
-      var ctrlEval = _evalController(controller);
-      ctrlInstance = $controller(controller, locals);
-      if (ctrlEval.isControllerAs) {
-        ctrlInstance.openModal = modalScope.openModal;
-        ctrlInstance.closeModal = modalScope.closeModal;
-      }
-
-      modalScope.modal.show();
-
-    },
-    function (err) {
-      deferred.reject(err);
-    });
-
-    return deferred.promise;
-  }
-
-  function _cleanup(scope) {
-    scope.$destroy();
-    if (scope.modal) {
-      scope.modal.remove();
-    }
-  }
-
   function _evalController(ctrlName) {
     var result = {
         isControllerAs: false,
@@ -95,6 +20,100 @@ angular.module('cesium.modal.services', [])
     }
 
     return result;
+  }
+
+  function DefaultModalController($scope, deferred, parameters) {
+
+    $scope.deferred = deferred || $q.defer();
+    $scope.resolved = false;
+
+    $scope.openModal = function () {
+      return $scope.modal.show();
+    };
+
+    $scope.closeModal = function (result) {
+      $scope.resolved = true;
+      return $scope.modal.remove()
+        .then(function() {
+          $scope.deferred.resolve(result);
+          return result;
+        });
+    };
+
+
+    // Useful method for modal with forms
+    $scope.setForm = function (form, propName) {
+      if (propName) {
+        $scope[propName] = form;
+      }
+      else {
+        $scope.form = form;
+      }
+    };
+
+    // Useful method for modal to get input parameters
+    $scope.getParameters = function () {
+      return parameters;
+    };
+
+    $scope.$on('modal.hidden', function () {
+      // If not resolved yet: send result
+      // (after animation out)
+      if (!$scope.resolved) {
+        $scope.resolved = true;
+
+        $timeout(function() {
+          $scope.deferred.resolve();
+          return $scope.modal.remove();
+        }, ($scope.modal.hideDelay || 320) + 20);
+      }
+    });
+  }
+
+  function show(templateUrl, controller, parameters, options) {
+    var deferred = $q.defer();
+
+    options = options ? options : {} ;
+    options.animation = options.animation || 'slide-in-up';
+
+    // If modal has a controller
+    if (controller) {
+      // If a controller defined, always use a new scope
+      options.scope = options.scope ? options.scope.$new() : $rootScope.$new();
+      DefaultModalController.call({}, options.scope, deferred, parameters);
+
+      // Invoke the controller on this new scope
+      var locals = { '$scope': options.scope, 'parameters': parameters };
+      var ctrlEval = _evalController(controller);
+      var ctrlInstance = $controller(controller, locals);
+      if (ctrlEval.isControllerAs) {
+        ctrlInstance.openModal = options.scope.openModal;
+        ctrlInstance.closeModal = options.scope.closeModal;
+      }
+    }
+
+    $ionicModal.fromTemplateUrl(templateUrl, options)
+      .then(function (modal) {
+          if (controller) {
+            // Set modal into the controller's scope
+            modal.scope.$parent.modal = modal;
+          }
+          else {
+            var scope = modal.scope;
+            // Define default scope functions
+            DefaultModalController.call({}, scope, deferred, parameters);
+            // Set modal
+            scope.modal = modal;
+          }
+
+          // Show the modal
+          return modal.show();
+        },
+        function (err) {
+          deferred.reject(err);
+        });
+
+    return deferred.promise;
   }
 
   return {
@@ -121,6 +140,11 @@ angular.module('cesium.modal.services', [])
       parameters, {focusFirstInput: true});
   }
 
+  function showNetworkLookup(parameters) {
+    return ModalUtils.show('templates/network/modal_network.html', 'NetworkLookupModalCtrl',
+      parameters, {focusFirstInput: true});
+  }
+
   function showAbout(parameters) {
     return ModalUtils.show('templates/modal_about.html','AboutCtrl',
       parameters);
@@ -140,6 +164,7 @@ angular.module('cesium.modal.services', [])
     showTransfer: showTransfer,
     showLogin: showLogin,
     showWotLookup: showWotLookup,
+    showNetworkLookup: showNetworkLookup,
     showAbout: showAbout,
     showJoin: showJoin,
     showHelp: showHelp

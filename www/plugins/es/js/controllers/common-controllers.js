@@ -1,8 +1,12 @@
 angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.services'])
 
+  .controller('ESPicturesEditCtrl', ESPicturesEditController)
+
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
  .controller('ESSocialsEditCtrl', ESSocialsEditController)
+
+ .controller('ESCommentsCtrl', ESCommentsController)
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
 
@@ -114,75 +118,94 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUtils, esHttp, DataService) {
+function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils) {
   'ngInject';
 
-  $scope.maxCommentSize = 10;
-  $scope.commentData = {};
+  $scope.loading = true;
+  $scope.defaultCommentSize = 5;
+  $scope.formData = {};
+  $scope.comments = {};
 
-  $scope.loadComments = function(id) {
-    return DataService.record.comment.all(id, $scope.maxCommentSize)
-      .then(function(comments) {
-        // sort by time asc
-        comments  = comments.sort(function(cm1, cm2) {
-           return (cm1.time - cm2.time);
+  $scope.$on('$recordView.enter', function(e, state) {
+    // second call (when using cached view)
+    if (!$scope.loading && $scope.id) {
+      $scope.load($scope.id, {animate: false});
+    }
+  });
+
+  $scope.$on('$recordView.load', function(event, id, service) {
+    $scope.id = id || $scope.id;
+    $scope.service = service || $scope.service;
+    console.debug("[ES] [comment] Initialized service with: " + service.id);
+    if ($scope.id) {
+      $scope.load($scope.id);
+    }
+  });
+
+  $scope.load = function(id, options) {
+    options = options || {};
+    options.from = options.from || 0;
+    options.size = options.size || $scope.defaultCommentSize;
+    options.animate = angular.isDefined(options.animate) ? options.animate : true;
+    options.loadAvatarAllParent = angular.isDefined(options.loadAvatarAllParent) ? options.loadAvatarAllParent : true;
+    $scope.loading = true;
+    return $scope.service.load(id, options)
+      .then(function(data) {
+        if (!options.animate && data.result.length) {
+          _.forEach(data.result, function(cmt) {
+            cmt.isnew = true;
+          });
+        }
+        $scope.comments = data;
+        $scope.comments.hasMore = (data.total > data.result.length);
+        $scope.loading = false;
+        $scope.service.changes.start(id, data);
+
+        // Set Motion
+        $timeout(function() {
+          UIUtils.motion.fadeSlideIn({
+            selector: '.comments .item',
+            startVelocity: 3000
+          });
         });
-        $scope.comments = comments;
       });
   };
 
-  $scope.showMoreComments = function(){
-    $scope.maxCommentSize = $scope.maxCommentSize * $scope.maxCommentSize;
-    $scope.loadComments($scope.id)
+  $scope.$on('$recordView.beforeLeave', function(){
+    if ($scope.comments) {
+      $scope.service.changes.stop($scope.comments);
+    }
+  });
+
+  $scope.showMore = function(){
+    var from = 0;
+    var size = -1;
+    $scope.load($scope.id, {from: from, size: size, loadAvatarAllParent: false})
     .then(function() {
       // Set Motion
       $timeout(function() {
         UIUtils.motion.fadeSlideIn({
-          selector: '.card-comment'
+          selector: '.card-avatar'
         });
       }, 10);
     });
   };
 
-  $scope.sendComment = function() {
-    if (!$scope.commentData.message || $scope.commentData.message.trim().length === 0) {
-      return;
-    }
-    $scope.loadWallet()
-    .then(function(walletData) {
-      var comment = $scope.commentData;
-      comment.record= $scope.id;
-      comment.issuer = walletData.pubkey;
-      var obj = {};
-      angular.copy(comment, obj);
-      obj.uid = walletData.isMember ? walletData.uid : null;
-      obj.name = walletData.name;
-      obj.avatarStyle = walletData.avatarStyle;
-      obj.isnew = true; // use to  prevent visibility hidden (if animation)
-      // Create
-      if (!comment.id) {
-        comment.time = esHttp.date.now();
-        obj.time = comment.time;
-        DataService.record.comment.add(comment)
-        .then(function (id){
-          obj.id = id;
-        })
-        .catch(UIUtils.onError('esMarket.ERROR.FAILED_SAVE_COMMENT'));
-      }
-      // Update
-      else {
-        DataService.record.comment.update(comment, {id: comment.id})
-        .catch(UIUtils.onError('esMarket.ERROR.FAILED_SAVE_COMMENT'));
-      }
+  $scope.save = function() {
+    if (!$scope.formData.message || !$scope.formData.message.length) return;
 
-      $scope.comments.push(obj);
-      $scope.commentData = {}; // reset comment
-      UIUtils.loading.hide();
-    });
+    $scope.loadWallet({minData: true})
+      .then(function() {
+        UIUtils.loading.hide();
+        var comment = $scope.formData;
+        $scope.formData = {};
+        $scope.focusNewComment();
+        return $scope.service.save($scope.id, $scope.comments, comment);
+      })
+      .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
   };
 
-  $scope.shareComment = function(event, index) {
-    var comment = $scope.comments[index];
+  $scope.share = function(event, comment) {
     var params = angular.copy($state.params);
     var stateUrl;
     if (params.anchor) {
@@ -192,13 +215,14 @@ function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUti
     else {
       stateUrl = $state.href($state.current.name, params, {absolute: true}) + '/' + $filter('formatHash')(comment.id);
     }
-    var url = stateUrl + '?u=' + comment.uid;
+    var index = _.findIndex($scope.comments.result, {id: comment.id});
+    var url = stateUrl + '?u=' + (comment.uid||$filter('formatPubkey')(comment.issuer));
     UIUtils.popover.show(event, {
       templateUrl: 'templates/common/popover_share.html',
       scope: $scope,
       bindings: {
         titleKey: 'COMMENTS.POPOVER_SHARE_TITLE',
-        titleValues: {number: index+1},
+        titleValues: {number: index ? index + 1 : 1},
         date: comment.time,
         value: url,
         postUrl: stateUrl,
@@ -208,19 +232,55 @@ function ESCommentsController($scope, $timeout, $filter, $state, csWallet, UIUti
     });
   };
 
-  $scope.editComment = function(index) {
-    var comment = $scope.comments[index];
-    $scope.comments.splice(index, 1);
-    $scope.commentData = comment;
+  $scope.edit = function(comment) {
+    var newComment = new Comment();
+    newComment.copy(comment);
+    $scope.formData = newComment;
   };
 
-  $scope.removeComment = function(index) {
-    var comment = $scope.comments[index];
-    if (!comment || !comment.id) {return;}
-    $scope.comments.splice(index, 1);
+  $scope.remove = function(comment) {
+    if (!comment) {return;}
+    comment.remove();
+  };
 
-    DataService.record.comment.remove(comment.id, csWallet.data.keypair)
-    .catch(UIUtils.onError('esMarket.ERROR.FAILED_REMOVE_COMMENT'));
+  $scope.reply = function(parent) {
+    if (!parent || !parent.id) {return;}
+
+    $scope.formData = {
+      parent: parent
+    };
+
+    $scope.focusNewComment(true);
+  };
+
+  $scope.cancel = function() {
+    $scope.formData = {};
+    $scope.focusNewComment();
+  };
+
+  $scope.focusNewComment = function(forceIfSmall) {
+    if (!UIUtils.screen.isSmall()) {
+      $focus('comment-form-textarea');
+    }
+    else {
+      if (forceIfSmall) $focus('comment-form-input');
+    }
+  };
+
+  $scope.removeParentLink = function() {
+    delete $scope.formData.parent;
+    delete $scope.formData.reply_to;
+    $scope.focusNewComment();
+  };
+
+  $scope.toggleExpandedReplies = function(comment, index) {
+    comment.expandedReplies = comment.expandedReplies || {};
+    comment.expandedReplies[index] = !comment.expandedReplies[index];
+  };
+
+  $scope.toggleExpandedParent = function(comment, index) {
+    comment.expandedParent = comment.expandedParent || {};
+    comment.expandedParent[index] = !comment.expandedParent[index];
   };
 }
 

@@ -138,7 +138,6 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
   return {
     ready: ready,
     enable: enable,
-    /*isEnable: isEnable,*/
     clipboard: {
       copy: copy
     },

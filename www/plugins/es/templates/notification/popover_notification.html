@@ -1,0 +1,41 @@
+<ion-popover-view class="fit hidden-xs hidden-sm popover-notification"
+                  ng-controller="PopoverNotificationsCtrl">
+  <ion-header-bar class="stable-bg block">
+    <div class="title" translate>COMMON.NOTIFICATIONS.TITLE</div>
+
+    <div class="pull-right">
+      <a class="positive"
+         ng-click="markAllAsRead()"
+         translate>COMMON.NOTIFICATIONS.MARK_ALL_AS_READ</a>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="true">
+    <div class="center" ng-if="search.loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+    <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
+      COMMON.NOTIFICATIONS.NO_RESULT
+    </div>
+
+    <ng-include src="'plugins/es/templates/notification/list_notification.html'"></ng-include>
+
+  </ion-content>
+
+  <ion-footer-bar class="stable-bg block">
+    <!-- settings -->
+    <div class="pull-left">
+      <a class="positive"
+         ui-sref="app.es_settings"
+         ng-click="closePopover()"
+         translate>COMMON.NOTIFICATIONS.SETTINGS</a>
+    </div>
+
+    <!-- show all -->
+    <div class="pull-right">
+      <a class="positive"
+         ui-sref="app.view_notifications"
+         ng-click="closePopover()"
+         translate>COMMON.NOTIFICATIONS.SHOW_ALL</a>
+    </div>
+  </ion-footer-bar>
+</ion-popover-view>

@@ -78,14 +78,14 @@
               <!-- category -->
               <div class="item item-icon-right ink"
                    ng-if="loading || formData.type==='company' || formData.type==='shop'"
-                   ng-class="{'item-input-error': form.$submitted && !category.id, 'done in': !loading}"
+                   ng-class="{'item-input-error': form.$submitted && !formData.category.id, 'done in': !loading}"
                    ng-click="showCategoryModal()">
                 <span translate>REGISTRY.CATEGORY</span>
-                <span class="badge badge-royal">{{category.name | formatCategory}}</span>&nbsp;
+                <span class="badge badge-royal">{{formData.category.name | formatCategory}}</span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
               </div>
               <div class="form-errors"
-                   ng-show="form.$submitted && (formData.type=='company' || formData.type=='shop') && !category.id">
+                   ng-show="form.$submitted && (formData.type=='company' || formData.type=='shop') && !formData.category.id">
                 <div class="form-error">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
                 </div>

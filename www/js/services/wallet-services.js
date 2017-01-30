@@ -3,25 +3,31 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csSettings) {
+.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csConfig, csSettings) {
   'ngInject';
 
   factory = function(id) {
 
     var
     constants = {
-      STORAGE_KEY: "CESIUM_DATA"
+      STORAGE_KEY: 'CESIUM_DATA',
+      /* Need for compat with old currencies (test_net and sou) */
+      TX_VERSION:   csConfig.compatProtocol_0_80 ? 3 : BMA.constants.PROTOCOL_VERSION,
+      IDTY_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      MS_VERSION:   csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      CERT_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      REVOKE_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION
     },
     data = {},
 
-    api = new Api(this, 'WalletService-' + id),
+    api = new Api(this, 'csWallet-' + id),
 
     resetData = function(init) {
       data.pubkey= null;
-      data.keypair ={
-                signSk: null,
-                signPk: null
-            };
+      data.keypair = {
+          signSk: null,
+          signPk: null
+        };
       data.uid = null;
       data.balance = 0;
       data.sources = null;
@@ -30,11 +36,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.parameters = null;
       data.currentUD = null;
       data.medianTime = null;
-      data.tx = {
-         history: [],
-         pendings: [],
-         errors: []
-       };
+      data.tx = data.tx || {};
+      data.tx.history = [];
+      data.tx.pendings = [];
+      data.tx.errors = [];
       data.requirements = {};
       data.blockUid = null;
       data.sigDate = null;
@@ -66,7 +71,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       _.forEach(txArray, function(tx) {
         if (!excludePending || tx.block_number !== null) {
           var walletIsIssuer = false;
-          var otherIssuer = tx.issuers.reduce(function(issuer, res, index) {
+          var otherIssuer = tx.issuers.reduce(function(issuer, res) {
               walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
               return issuer + ((res !== data.pubkey) ? ', ' + res : '');
           }, '');
@@ -75,11 +80,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           }
           var otherReceiver;
           var outputBase;
-          var sources;
+          var sources = [];
           var amount = tx.outputs.reduce(function(sum, output, noffset) {
               var outputArray = output.split(':',3);
               outputBase = parseInt(outputArray[1]);
-              var outputAmount = (outputBase > 0) ? parseInt(outputArray[0]) * Math.pow(10, outputBase) : parseInt(outputArray[0]);
+              var outputAmount = powBase(parseInt(outputArray[0]), outputBase);
               var outputCondArray = outputArray[2].split('(', 3);
               var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
                    outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
@@ -88,8 +93,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   return sum + outputAmount;
                 }
                 // If pending: use output as new sources
-                else if (!excludePending && tx.block_number === null){
-                  sources = sources || [];
+                else if (tx.block_number === null){
                   sources.push({
                     amount: parseInt(outputArray[0]),
                     base: outputBase,
@@ -121,18 +125,22 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var txKey = amount + ':' + tx.hash + ':' + time;
           if (!processedTxMap[txKey] && amount !== 0) {
             processedTxMap[txKey] = true;
-            result.push({
-               time: time,
-               amount: amount,
-               pubkey: pubkey,
-               comment: tx.comment,
-               isUD: false,
-               hash: tx.hash,
-               locktime: tx.locktime,
-               block_number: tx.block_number,
-               inputs: (tx.block_number === null ? tx.inputs.slice(0) : null),
-               sources: sources
-            });
+            var newTx = {
+              time: time,
+              amount: amount,
+              pubkey: pubkey,
+              comment: tx.comment,
+              isUD: false,
+              hash: tx.hash,
+              locktime: tx.locktime,
+              block_number: tx.block_number
+            };
+            // If pending: store sources and inputs for a later use - see method processTransactionsAndSources()
+            if (walletIsIssuer && tx.block_number === null) {
+              newTx.inputs = tx.inputs;
+              newTx.sources = sources;
+            }
+            result.push(newTx);
           }
         }
       });
@@ -194,6 +202,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     isNeverUsed = function() {
+      if (!data.loaded) return undefined; // undefined if not full loaded
       return !data.pubkey ||
         (!data.isMember &&
         (!data.requirements || !data.requirements.pendingMembership) &&
@@ -302,11 +311,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.blockUid = null;
       data.isMember = false;
       data.sigDate = null;
-      data.events = [];
+      cleanEventsByContext('requirements');
     },
 
     loadRequirements = function() {
       return $q(function(resolve, reject) {
+
+        // Clean existing events
+        cleanEventsByContext('requirements');
+
         // Get requirements
         BMA.wot.requirements({pubkey: data.pubkey})
         .then(function(res){
@@ -315,36 +328,52 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             resolve();
             return;
           }
-          if (res.identities.length > 0) {
+          // Sort to select the best identity
+          if (res.identities.length > 1) {
+            // Select the best identity, by sorting using this order
+            //  - same wallet uid
+            //  - is member
+            //  - has a pending membership
+            //  - is not expired
+            //  - is not outdistanced
+            //  - if has certifications
+            //      max(count(certification)
+            //    else
+            //      max(membershipPendingExpiresIn) = must recent membership
             res.identities = _.sortBy(res.identities, function(idty) {
-                  var score = 1;
-                  score += (100000000000 * ((!data.uid && idty.uid === data.uid) ? 1 : 0));
-                  score += (1000000      * idty.membershipExpiresIn);
-                  score += (10           * idty.membershipPendingExpiresIn);
-                  return -score;
-                });
+              var score = 0;
+              score += (10000000000 * ((data.uid && idty.uid === data.uid) ? 1 : 0));
+              score += (1000000000  * (idty.membershipExpiresIn > 0 ? 1 : 0));
+              score += (100000000   * (idty.membershipPendingExpiresIn > 0 ? 1 : 0));
+              score += (10000000    * (!idty.expired ? 1 : 0));
+              score += (1000000     * (!idty.outdistanced ? 1 : 0));
+              var certCount = !idty.expired && idty.certifications ? idty.certifications.length : 0;
+              score += (1         * (certCount ? certCount : 0));
+              score += (1         * (!certCount && idty.membershipPendingExpiresIn > 0 ? idty.membershipPendingExpiresIn/1000 : 0));
+              return -score;
+            });
+            console.debug('Found {0} identities. Will selected the best one'.format(res.identities.length));
           }
+
+          // Select the first identity
           var idty = res.identities[0];
+
+          // Compute useful fields
+          idty.needSelf = false;
+          idty.needMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn <= 0 );
+          idty.needRenew = (!idty.needMembership &&
+          idty.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership && idty.membershipPendingExpiresIn <= 0);
+          idty.canMembershipOut = (idty.membershipExpiresIn > 0);
+          idty.pendingMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn > 0);
+          idty.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
+          idty.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
+            return count + (cert.expiresIn <= csSettings.data.timeWarningExpire ? 1 : 0);
+          }, 0) : 0;
+
           data.requirements = idty;
           data.uid = idty.uid;
           data.blockUid = idty.meta.timestamp;
-          // Add useful custom fields
-          data.requirements.needSelf = false;
-          data.requirements.needMembership = (data.requirements.membershipExpiresIn <= 0 &&
-                                              data.requirements.membershipPendingExpiresIn <= 0 );
-          data.requirements.needRenew = (!data.requirements.needMembership &&
-                                         data.requirements.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
-                                         data.requirements.membershipPendingExpiresIn <= 0);
-          data.requirements.canMembershipOut = (data.requirements.membershipExpiresIn > 0);
-          data.requirements.pendingMembership = (data.requirements.membershipPendingExpiresIn > 0);
-          data.requirements.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
-          data.requirements.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
-            if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
-              return count + 1;
-            }
-            return count;
-          }, 0) : 0;
-          data.isMember = (data.requirements.membershipExpiresIn > 0);
+          data.isMember = (idty.membershipExpiresIn > 0);
 
           var blockParts = idty.meta.timestamp.split('-', 2);
           var blockNumber = parseInt(blockParts[0]);
@@ -352,18 +381,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // Retrieve registration date
           return BMA.blockchain.block({block: blockNumber})
             .then(function(block) {
-              data.sigDate = block.time;
+              data.sigDate = block.medianTime;
 
               // Check if self has been done on a valid block
               if (!data.isMember && blockNumber !== 0 && blockHash !== block.hash) {
-                addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH'});
+                addEvent({type: 'error', message: 'ERROR.WALLET_INVALID_BLOCK_HASH', context: 'requirements'});
                 console.debug("Invalid membership for uid={0}: block hash changed".format(data.uid));
+              }
+              // Check if self expired
+              else if (!data.isMember && data.requirements.expired) {
+                addEvent({type: 'error', message: 'ERROR.WALLET_IDENTITY_EXPIRED', context: 'requirements'});
+                console.debug("Identity expired for uid={0}.".format(data.uid));
               }
               resolve();
             })
             .catch(function(err){
               // Special case for currency init (root block not exists): use now
-              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockParts.number === '0') {
+              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockNumber === 0) {
                 data.sigDate = Math.trunc(new Date().getTime() / 1000);
                 resolve();
               }
@@ -397,7 +431,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           if (res.sources) {
             _.forEach(res.sources, function(src) {
               src.consumed = false;
-              balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
+              balance += powBase(src.amount, src.base);
             });
             addSources(res.sources);
           }
@@ -463,7 +497,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               udHistory = !res.history || !res.history.history ? [] :
                res.history.history.reduce(function(res, ud){
                  if (ud.time < fromTime) return res; // skip to old UD
-                 var amount = (ud.base > 0) ? ud.amount * Math.pow(10, ud.base) : ud.amount;
+                 var amount = powBase(ud.amount, ud.base);
                  return res.concat({
                    time: ud.time,
                    amount: amount,
@@ -484,8 +518,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.tx.pendings = txPendings;
           data.tx.fromTime = fromTime;
           data.tx.toTime = data.tx.history.length ? data.tx.history[0].time /*=max(tx.time)*/: fromTime;
-          console.debug('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
-          resolve();
+
+          // Call extend api
+          return api.data.raisePromise.loadTx(data.tx)
+            .then(function() {
+              console.debug('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
+              resolve();
+            });
         })
         .catch(function(err) {
           data.tx.history = [];
@@ -499,9 +538,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     processTransactionsAndSources = function() {
-      return $q(function(resolve, reject){
-
-        BMA.wot.member.uids()
+      return BMA.wot.member.uids()
         .then(function(uids){
           var txPendings = [];
           var txErrors = [];
@@ -535,8 +572,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               });
               if (tx.sources) { // add source output
                 addSources(tx.sources);
-                delete tx.sources;
               }
+              delete tx.sources;
+              delete tx.inputs;
             }
             if (valid) {
               balance += tx.amount; // update balance
@@ -570,12 +608,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           data.tx.pendings = txPendings;
           data.tx.errors = txErrors;
           data.balance = balance;
-          resolve();
-        })
-        .catch(function(err) {
-          reject(err);
         });
-      });
     },
 
     loadParameters = function() {
@@ -588,6 +621,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(json){
           data.currency = json.currency;
           data.parameters = json;
+          if (data.currentUD == -1) data.currentUD = data.parameters.ud0;
           resolve();
         })
         .catch(function(err) {
@@ -610,7 +644,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
             return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
-                data.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
+                data.currentUD = powBase(block.dividend, block.unitbase);
                 return data.currentUD;
               })
               .catch(function(err) {
@@ -631,21 +665,21 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           (data.parameters.sigQty - data.requirements.certificationCount) : 0;
       data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
           data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.parameters.sigQty) ?
-          (data.parameters.sigQty - data.requirements.certificationCount - willExpireCertificationCount) : 0;
+          (data.parameters.sigQty - data.requirements.certificationCount + data.requirements.willExpireCertificationCount) : 0;
+      data.requirements.pendingCertificationCount = 0 ; // init to 0, because not loaded here (see wot-service.js)
 
-      // Add user message
-      data.events = [];
+      // Add user events
       if (data.requirements.pendingMembership) {
-        data.events.push({type:'pending',message: 'ACCOUNT.WAITING_MEMBERSHIP'});
+        addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
       }
       if (data.requirements.needCertificationCount > 0) {
-        data.events.push({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements});
+        addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
       }
       if (data.requirements.willNeedCertificationCount > 0) {
-        data.events.push({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements});
+        addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
       }
       if (data.requirements.needRenew) {
-        data.events.push({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements});
+        addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
       }
     },
 
@@ -671,15 +705,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    loadData = function() {
-      if (data.loaded) {
-        return refreshData();
+    loadData = function(options) {
+
+      if (options && options.minData) {
+        return loadMinData(options);
       }
 
-      return $q(function(resolve, reject){
-        data.loaded = false;
+      if (options || data.loaded) {
+        return refreshData(options);
+      }
 
-        $q.all([
+      return loadFullData();
+    },
+
+    loadFullData = function() {
+      data.loaded = false;
+
+      return $q.all([
 
           // Get currency parameters
           loadParameters(),
@@ -700,39 +742,48 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           loadSigStock(),
 
           // API extension
-          api.data.raisePromise.load(data)
+          api.data.raisePromise.load(data, null)
             .catch(function(err) {
-              console.debug('Error while loading wallet data, on extension point.');
+              console.error('Error while loading wallet data, on extension point. Try to continue');
               console.error(err);
             })
         ])
         .then(function() {
           // Process transactions and sources
-          processTransactionsAndSources()
-          .then(function() {
-            finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
-
-            api.data.raisePromise.finishLoad(data)
-              .then(function() {
-                data.loaded = true;
-                resolve(data);
-              });
-          })
-          .catch(function(err) {
-            data.loaded = false;
-            reject(err);
-          });
+          return processTransactionsAndSources();
+        })
+        .then(function() {
+          finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
+          return api.data.raisePromise.finishLoad(data)
+            .catch(function(err) {
+              console.error('Error while finishing wallet data load, on extension point. Try to continue');
+              console.error(err);
+            });
+        })
+        .then(function() {
+          data.loaded = true;
+          return data;
         })
         .catch(function(err) {
           data.loaded = false;
-          reject(err);
+          throw err;
         });
-      });
+    },
+
+    loadMinData = function(options) {
+      options = options || {};
+      options.parameters = angular.isDefined(options.parameters) ? options.parameters : !data.parameters; // do not load if already done
+      options.requirements = angular.isDefined(options.requirements) ? options.requirements :
+        (!data.requirements || angular.isUndefined(data.requirements.needSelf));
+      if (!options.parameters && !options.requirements) {
+        return $q.when(data);
+      }
+      return refreshData(options);
     },
 
     refreshData = function(options) {
-      if (!options) {
-        options = {
+        options = options || {
+          parameters: !data.parameters, // do not load if already done
           currentUd: true,
           requirements: true,
           sources: true,
@@ -743,12 +794,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           sigStock: true,
           api: true
         };
-      }
+
+      // Force some load (parameters & requirements) if not already loaded
+      options.parameters = angular.isDefined(options.parameters) ? options.parameters : !data.parameters;
+      options.requirements = angular.isDefined(options.requirements) ? options.requirements : !data.requirements;
 
       var jobs = [];
 
       // Reset events
-      data.events = [];
+      cleanEventsByContext('requirements');
+
+      // Get parameters
+      if (options.parameters) jobs.push(loadParameters());
 
       // Get current UD
       if (options.currentUd) jobs.push(loadCurrentUD());
@@ -772,31 +829,46 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // Load sigStock
       if (options.sigStock) jobs.push(loadSigStock());
 
-      // API extension
-      if (options.api) jobs.push(api.data.raisePromise.load(data, options));
+      // API extension (force if no other jobs)
+      if (!jobs.length || options.api) jobs.push(api.data.raisePromise.load(data, options));
 
       return $q.all(jobs)
       .then(function() {
-        // Process transactions and sources
-        return processTransactionsAndSources();
+        if (options.sources || (options.tx && options.tx.enable)) {
+          // Process transactions and sources
+          return processTransactionsAndSources();
+        }
       })
       .then(function(){
         return api.data.raisePromise.finishLoad(data);
+      })
+      .then(function(){
+        return data;
       });
     },
 
     isBase = function(amount, base) {
-      if (!base) {
-        return true;
-      }
+      if (!base) return true; // no base
+      if (amount < Math.pow(10, base)) return false; // too small
       var rest = '00000000' + amount;
       var lastDigits = parseInt(rest.substring(rest.length-base));
       return lastDigits === 0; // no rest
     },
 
     truncBase = function(amount, base) {
-      var pow = Math.pow(10, base);
+      var pow = Math.pow(10, base); // = min value in this base
+      if (amount < pow) return 0;
       return Math.trunc(amount / pow ) * pow;
+    },
+
+    truncBaseOrMinBase = function(amount, base) {
+      var pow = Math.pow(10, base);
+      if (amount < pow) return pow; //
+      return Math.trunc(amount / pow ) * pow;
+    },
+
+    powBase = function(amount, base) {
+      return base <= 0 ? amount : amount * Math.pow(10, base);
     },
 
     getInputs = function(amount, outputBase, filterBase) {
@@ -807,11 +879,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var sources = [];
       var minBase = filterBase;
       var maxBase = filterBase;
-      var i = 0;
       _.find(data.sources, function(source) {
-        var skip = source.consumed || (source.base !== filterBase);
-        if (!skip){
-          sourcesAmount += (source.base > 0) ? (source.amount * Math.pow(10, source.base)) : source.amount;
+        if (!source.consumed && source.base == filterBase){
+          sourcesAmount += powBase(source.amount, source.base);
           sources.push(source);
         }
         // Stop if enough sources
@@ -920,7 +990,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           }
           // Avoid to get outputs on lower base
           if (amountBase < inputs.minBase && !isBase(amount, inputs.minBase)) {
-            amount = truncBase(amount, inputs.minBase);
+            amount = truncBaseOrMinBase(amount, inputs.minBase);
             console.debug("[wallet] Amount has been truncate to " + amount);
           }
           else if (amountBase > 0) {
@@ -977,6 +1047,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (inputs.sources.length > 40) {
         console.debug("[Wallet] TX has to many sources. Will chain TX...");
 
+        // Compute a slice of sources
         var firstSlice = {
           minBase: block.unitbase,
           maxBase: 0,
@@ -984,9 +1055,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           sources: inputs.sources.slice(0, 39)
         };
         _.forEach(firstSlice.sources, function(source) {
-          if (source.base < minBase) firstSlice.minBase = source.base;
-            if (source.base > maxBase) firstSlice.maxBase = source.base;
-          firstSlice.amount += source.amount;
+          if (source.base < firstSlice.minBase) firstSlice.minBase = source.base;
+          if (source.base > firstSlice.maxBase) firstSlice.maxBase = source.base;
+          firstSlice.amount += powBase(source.amount, source.base);
         });
 
         // Send inputs first slice
@@ -1004,8 +1075,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               sources: inputs.sources.slice(40).concat(res.sources)
             };
             _.forEach(secondSlice.sources, function(source) {
-              if (source.base < minBase) secondSlice.minBase = source.base;
-              if (source.base > maxBase) secondSlice.maxBase = source.base;
+              if (source.base < secondSlice.minBase) secondSlice.minBase = source.base;
+              if (source.base > secondSlice.maxBase) secondSlice.maxBase = source.base;
               secondSlice.amount += source.amount;
             });
 
@@ -1014,7 +1085,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           });
       }
 
-      var tx = 'Version: 3\n' +
+      var tx = 'Version: '+ constants.TX_VERSION +'\n' +
         'Type: Transaction\n' +
         'Currency: ' + data.currency + '\n' +
         'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
@@ -1041,31 +1112,36 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var outputBase = inputs.maxBase;
       var outputAmount;
       var outputOffset = 0;
-      while(rest > 0) {
-        outputAmount = truncBase(rest, outputBase);
-        rest -= outputAmount;
-        if (outputAmount > 0) {
-          outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-          tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
-          outputOffset++;
+      var newSources = [];
+      // Outputs to receiver (if not himself)
+      if (destPub !== data.pubkey) {
+        while(rest > 0) {
+          outputAmount = truncBase(rest, outputBase);
+          rest -= outputAmount;
+          if (outputAmount > 0) {
+            outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
+            tx += outputAmount + ':' + outputBase + ':SIG(' + destPub + ')\n';
+            outputOffset++;
+          }
+          outputBase--;
         }
-        outputBase--;
+        rest = inputs.amount - amount;
+        outputBase = inputs.maxBase;
       }
-      rest = inputs.amount - amount;
-      outputBase = inputs.maxBase;
-      var sources = [];
+      // Outputs to himself
       while(rest > 0) {
         outputAmount = truncBase(rest, outputBase);
         rest -= outputAmount;
         if (outputAmount > 0) {
           outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
           tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n';
-          sources.push({
+          newSources.push({
             type: 'T',
-            noffset: outputOffset++,
+            noffset: outputOffset,
             amount: outputAmount,
             base: outputBase
           });
+          outputOffset++;
         }
         outputBase--;
       }
@@ -1076,18 +1152,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(signature) {
           var signedTx = tx + signature + "\n";
           return BMA.tx.process({transaction: signedTx})
+            .catch(function(err) {
+              if (err && err.ucode === BMA.errorCodes.TX_ALREADY_PROCESSED) {
+                // continue
+                return;
+              }
+              throw err;
+            })
             .then(function() {
               return CryptoUtils.util.hash(signedTx);
             })
             .then(function(txHash) {
-              _.forEach(sources, function(output) {
+              _.forEach(newSources, function(output) {
                 output.identifier= txHash;
                 output.consumed = false;
                 output.pending = true;
               });
               return {
                 hash: txHash,
-                sources: sources
+                sources: newSources
               };
             });
         });
@@ -1102,12 +1185,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               res.results.some(function(pub){
                 return pub.uids && pub.uids.length > 0 &&
                   pub.uids.some(function(idty) {
-                    return ((idty.uid === uid) && // check Uid
-                    (pub.pubkey !== pubkey || !idty.revoked)); // check pubkey
+                    return (idty.uid === uid) && // same Uid
+                      (idty.revoked || pub.pubkey !== pubkey); // but not same pubkey
                   });
               });
             if (found) { // uid is already used : display a message and call failed callback
-              reject({message: 'ACCOUNT.NEW.MSG_UID_ALREADY_USED'});
+              reject('ACCOUNT.NEW.MSG_UID_ALREADY_USED');
             }
             else {
               resolve(uid);
@@ -1145,86 +1228,91 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
+    getIdentityDocument = function(uid, blockUid) {
+      uid = uid || data.uid;
+      blockUid = blockUid || data.blockUid;
+      if (!uid || !blockUid) {
+        throw {message: 'ERROR.WALLET_HAS_NO_SELF'};
+      }
+      if (data.requirements && data.requirements.expired) {
+        throw {message: 'ERROR.WALLET_IDENTITY_EXPIRED'};
+      }
+
+      var identity = 'Version: '+ constants.IDTY_VERSION +'\n' +
+        'Type: Identity\n' +
+        'Currency: ' + data.currency + '\n' +
+        'Issuer: ' + data.pubkey + '\n' +
+        'UniqueID: ' + uid + '\n' +
+        'Timestamp: ' + blockUid + '\n';
+      return CryptoUtils.sign(identity, data.keypair)
+        .then(function(signature) {
+          identity += signature + '\n';
+          console.debug('Has generate an identity document:\n----\n' + identity + '----');
+          return identity;
+        });
+    },
+
     /**
     * Send self identity
     */
     self = function(uid, needToLoadRequirements) {
+      if (!BMA.regex.USER_ID.test(uid)){
+        throw new Error('ERROR.INVALID_USER_ID');
+      }
+      var block;
+      return $q.all([
+        // check uid used by another pubkey
+        checkUidNotExists(uid, data.pubkey),
 
-      return $q(function(resolve, reject) {
-        if (!BMA.regex.USER_ID.test(uid)){
-          reject({message:'ERROR.INVALID_USER_ID'}); return;
-        }
-        var block;
-        var identity;
-        $q.all([
-          // check uid used by another pubkey
-          checkUidNotExists(uid, data.pubkey),
+        // Load parameters (need to known the currency)
+        loadParameters(),
 
-          // Load parameters (need to known the currency)
-          loadParameters(),
-
-          // Get th current block
-          BMA.blockchain.current()
-            .then(function(current) {
-              block = current;
-            })
-            .catch(function(err) {
-              // Special case for currency init (root block not exists): use fixed values
-              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
-              }
-              else {
-                throw err;
-              }
-            })
-        ])
-        // Create identity document to sign
-        .then(function() {
-          identity = 'Version: 2\n' +
-            'Type: Identity\n' +
-            'Currency: ' + data.currency + '\n' +
-            'Issuer: ' + data.pubkey + '\n' +
-            'UniqueID: ' + uid + '\n' +
-            'Timestamp: ' + block.number + '-' + block.hash + '\n';
-
-          return CryptoUtils.sign(identity, data.keypair);
-        })
-        // Add signature
-        .then(function (signature) {
-          var signedIdentity = identity + signature + '\n';
-          // Send to node
-          return BMA.wot.add({identity: signedIdentity})
-          .then(function (result) {
-            if (!!needToLoadRequirements) {
-              // Refresh membership data (if need)
-              loadRequirements()
-                .then(function () {
-                  resolve();
-                }).catch(function (err) {
-                reject(err);
-              });
+        // Get th current block
+        BMA.blockchain.current()
+          .then(function(current) {
+            block = current;
+          })
+          .catch(function(err) {
+            // Special case for currency init (root block not exists): use fixed values
+            if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+              block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
             }
             else {
-              data.uid = uid;
-              data.blockUid = block.number + '-' + block.hash;
-              resolve();
+              throw err;
             }
           })
-          .catch(function (err) {
-            if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
-              reject({ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'});
-              return;
-            }
-            reject(err);
-          });
-        }).catch(function (err) {
-          reject(err);
-        });
+      ])
+
+      // Create identity document
+      .then(function() {
+        return getIdentityDocument(uid, block.number + '-' + block.hash);
+      })
+
+      // Send to node
+      .then(function (identity) {
+        return BMA.wot.add({identity: identity});
+      })
+
+      .then(function () {
+        if (!!needToLoadRequirements) {
+          // Refresh membership data (if need)
+          return loadRequirements();
+        }
+        else {
+          data.uid = uid;
+          data.blockUid = block.number + '-' + block.hash;
+        }
+      })
+      .catch(function (err) {
+        if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
+          throw {ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'};
+        }
+        throw err;
       });
     },
 
    /**
-    * Send membership (in)
+    * Send membership (in or out)
     */
     membership = function(sideIn) {
       return function() {
@@ -1239,7 +1327,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             })
           .then(function(block) {
             // Create membership to sign
-            membership = 'Version: 2\n' +
+            membership = 'Version: '+ constants.MS_VERSION +'\n' +
               'Type: Membership\n' +
               'Currency: ' + data.currency + '\n' +
               'Issuer: ' + data.pubkey + '\n' +
@@ -1284,7 +1372,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(block) {
           current = block;
           // Create the self part to sign
-          cert = 'Version: 2\n' +
+          cert = 'Version: '+ constants.CERT_VERSION +'\n' +
             'Type: Certification\n' +
             'Currency: ' + data.currency + '\n' +
             'Issuer: ' + data.pubkey + '\n' +
@@ -1315,12 +1403,103 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
     },
 
-    addEvent = function(event) {
+    addEvent = function(event, insertAtFirst) {
       event = event || {};
       event.type = event.type || 'info';
       event.message = event.message || '';
       event.messageParams = event.messageParams || {};
-      data.events.push(event);
+      event.context = event.context || 'undefined';
+      if (event.message.trim().length) {
+        if (!insertAtFirst) {
+          data.events.push(event);
+        }
+        else {
+          data.events.splice(0, 0, event);
+        }
+      }
+      else {
+        console.debug('Event without message. Skipping this event');
+      }
+    },
+
+    getRevocationDocument = function() {
+
+      // Get current identity document
+      return getIdentityDocument()
+
+        // Create membership document (unsigned)
+        .then(function(identity){
+          var identityLines = identity.trim().split('\n');
+          var idtySignature = identityLines[identityLines.length-1];
+
+          var revocation = 'Version: '+ constants.REVOKE_VERSION +'\n' +
+            'Type: Revocation\n' +
+            'Currency: ' + data.currency + '\n' +
+            'Issuer: ' + data.pubkey + '\n' +
+            'IdtyUniqueID: ' + data.uid + '\n' +
+            'IdtyTimestamp: ' + data.blockUid + '\n' +
+            'IdtySignature: ' + idtySignature + '\n';
+
+
+          // Sign revocation document
+          return CryptoUtils.sign(revocation, data.keypair)
+
+            // Add revocation to document
+            .then(function(signature) {
+              revocation += signature + '\n';
+              console.debug('Has generate an revocation document:\n----\n' + revocation + '----');
+              return revocation;
+            });
+        });
+    },
+
+    /**
+     * Send a revocation
+     */
+    revoke = function() {
+
+      // Clear old events
+      cleanEventsByContext('revocation');
+
+      // Get revocation document
+      return getRevocationDocument()
+
+        // Send revocation document
+        .then(function(revocation) {
+          return BMA.wot.revoke({revocation: revocation});
+        })
+
+        // Reload requirements
+        .then(function() {
+
+          return $timeout(function() {
+            return loadRequirements();
+          }, 1000); // waiting for node to process membership doc
+        })
+
+        .then(function() {
+          finishLoadRequirements();
+
+          // Add user event
+          addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+        })
+        .catch(function(err) {
+          if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
+            // Already registered by node: just add an event
+            addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+          }
+          else {
+            throw err;
+          }
+        })
+        ;
+    },
+
+    cleanEventsByContext = function(context){
+      data.events = data.events.reduce(function(res, event) {
+        if (event.context && event.context == context) return res;
+        return res.concat(event);
+      },[]);
     },
 
     /**
@@ -1383,12 +1562,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     ;
 
     // Register extension points
-    api.registerEvent('data', 'login');
-    api.registerEvent('data', 'logout');
     api.registerEvent('data', 'init');
+    api.registerEvent('data', 'login');
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'finishLoad');
+    api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
+    api.registerEvent('data', 'loadTx');
 
     csSettings.api.data.on.changed($rootScope, store);
 
@@ -1410,6 +1590,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // operations
       transfer: transfer,
       self: self,
+      revoke: revoke,
       membership: {
         inside: membership(true),
         out: membership(false)

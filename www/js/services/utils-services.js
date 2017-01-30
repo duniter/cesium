@@ -1,24 +1,17 @@
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils',
-  function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
            $ionicPopover, $state, $rootScope, screenmatch) {
   'ngInject';
 
-  function exact(regexpContent) {
-    return new RegExp("^" + regexpContent + "$");
-  }
 
   var
     loadingTextCache=null,
     CONST = {
       MAX_HEIGHT: 400,
       MAX_WIDTH: 400,
-      THUMB_MAX_HEIGHT: 150,
-      THUMB_MAX_WIDTH: 150
-    },
-    regex = {
-      IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
+      THUMB_MAX_HEIGHT: 100,
+      THUMB_MAX_WIDTH: 100
     },
     data = {
       smallscreen: screenmatch.bind('xs, sm', $rootScope)
@@ -26,11 +19,11 @@ angular.module('cesium.utils.services', ['ngResource'])
   ;
 
   function alertError(err, subtitle) {
-    return $q(function(resolve, reject) {
-      if (!err) {
-        resolve();
-        return;
-      }
+    if (!err) {
+      return $q.when();
+    }
+
+    return $q(function(resolve) {
       $translate([err, subtitle, 'ERROR.POPUP_TITLE', 'ERROR.UNKNOWN_ERROR', 'COMMON.BTN_OK'])
       .then(function (translations) {
         var message = err.message || translations[err];
@@ -53,7 +46,7 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function alertInfo(message, subtitle) {
-    return $q(function(resolve, reject) {
+    return $q(function(resolve) {
       $translate([message, subtitle, 'INFO.POPUP_TITLE', 'COMMON.BTN_OK'])
       .then(function (translations) {
         $ionicPopup.show({
@@ -77,53 +70,46 @@ angular.module('cesium.utils.services', ['ngResource'])
   function askConfirm(message, title, options) {
     title = title || 'CONFIRM.POPUP_TITLE';
 
-    var defaultOptions = {
-      cssClass: 'confirm',
-      cancelText: 'COMMON.BTN_CANCEL',
-      okText: 'COMMON.BTN_OK'
-    };
+    options = options || {};
+    options.cssClass = options.cssClass || 'confirm';
+    options.okText = options.okText || 'COMMON.BTN_OK';
+    options.cancelText = options.cancelText || 'COMMON.BTN_CANCEL';
 
-    options = options ? angular.merge(defaultOptions, options) : defaultOptions;
-
-    return $q(function(resolve, reject) {
-      $translate([message, title, options.cancelText, options.okText])
+    return $translate([message, title, options.cancelText, options.okText])
       .then(function (translations) {
-        $ionicPopup.confirm({
+        return $ionicPopup.confirm({
           template: translations[message],
           cssClass: options.cssClass,
           title: translations[title],
           cancelText: translations[options.cancelText],
-          okText: translations[options.okText]
-        })
-        .then(function(res) {
-          resolve(res);
+          cancelType: options.cancelType,
+          okText: translations[options.okText],
+          okType: options.okType,
         });
       });
-    });
   }
 
   function hideLoading(timeout){
     if (timeout) {
-      $timeout(function(){
-        $ionicLoading.hide();
+      return $timeout(function(){
+        return $ionicLoading.hide();
       }, timeout);
     }
     else {
-      $ionicLoading.hide();
+      return $ionicLoading.hide();
     }
   }
 
   function showLoading() {
     if (!loadingTextCache) {
-      $translate(['COMMON.LOADING'])
-      .then(function(translations){
-        loadingTextCache = translations['COMMON.LOADING'];
-        showLoading();
-      });
-      return;
+      return $translate('COMMON.LOADING')
+        .then(function(translation){
+          loadingTextCache = translation;
+          return showLoading();
+        });
     }
 
-    $ionicLoading.show({
+    return $ionicLoading.show({
       template: loadingTextCache
     });
   }
@@ -132,10 +118,10 @@ angular.module('cesium.utils.services', ['ngResource'])
     if (!duration) {
       duration = 2000; // 2s
     }
-    $translate([message])
-    .then(function(translations){
-      $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
-    });
+    return $translate([message])
+      .then(function(translations){
+        $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
+      });
   }
 
   function onError(msg, reject/*optional*/) {
@@ -153,6 +139,11 @@ angular.module('cesium.utils.services', ['ngResource'])
       if (!!reject) {
         reject(fullMsg);
       }
+      // If just a user cancellation: silent
+      else if (fullMsg == 'CANCELLED') {
+        return hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
+      }
+
       // Otherwise, log to console and display error
       else {
         console.error(err);
@@ -263,38 +254,6 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
-  function imageFromAttachment(attachment) {
-    if (!attachment || !attachment._content_type || !attachment._content || attachment._content.length === 0) {
-      return null;
-    }
-    var image = {
-      src: "data:" + attachment._content_type + ";base64," + attachment._content
-    };
-    if (attachment._title) {
-      image.title = attachment._title;
-    }
-    if (attachment._name) {
-      image.name = attachment._name;
-    }
-    return image;
-  }
-
-  function imageToAttachment(image) {
-    if (!image || !image.src) return null;
-    var match = regex.IMAGE_SRC.exec(image.src);
-    if (!match) return null;
-    var attachment = {
-      _content_type: match[1],
-      _content: match[2]
-      };
-    if (image.title) {
-      attachment._title = image.title;
-    }
-    if (image.name) {
-      attachment._name = image.name;
-    }
-    return attachment;
-  }
 
   function showPopover(event, options) {
 
@@ -342,6 +301,8 @@ angular.module('cesium.utils.services', ['ngResource'])
             }
           }
 
+          popover.scope.$parent.$emit('popover.shown');
+
           // Callback 'afterShow'
           if (options.afterShow) options.afterShow(popover);
         });
@@ -352,23 +313,29 @@ angular.module('cesium.utils.services', ['ngResource'])
       popover = popover || options.scope.popovers[options.templateUrl];
       if (popover) {
         delete options.scope.popovers[options.templateUrl];
-        return popover.remove();
+        // Remove the popover
+        popover.remove()
+          // Workaround for issue #244
+          // See also https://github.com/driftyco/ionic-v1/issues/71
+          // and https://github.com/driftyco/ionic/issues/9069
+          .then(function() {
+            var bodyEl = angular.element($window.document.querySelectorAll('body')[0]);
+            bodyEl.removeClass('popover-open');
+          });
       }
     };
 
     var popover = options.scope.popovers[options.templateUrl];
     if (!popover) {
-      var childScope = options.scope.$new();
 
       $ionicPopover.fromTemplateUrl(options.templateUrl, {
-        scope: childScope,
+        scope: options.scope,
         backdropClickToClose: options.backdropClickToClose
       })
         .then(function (popover) {
-          popover.scope = childScope;
           popover.isResolved = false;
 
-          childScope.closePopover = function(result) {
+          popover.scope.closePopover = function(result) {
             var autoremove = popover.options.autoremove;
             delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
             popover.hide()
@@ -385,7 +352,10 @@ angular.module('cesium.utils.services', ['ngResource'])
           };
 
           // Execute action on hidden popover
-          options.scope.$on('popover.hidden', function() {
+          popover.scope.$on('popover.hidden', function() {
+            if (popover.options && popover.options.afterHidden) {
+              popover.options.afterHidden();
+            }
             if (popover.options && popover.options.autoremove) {
               _cleanup(popover);
             }
@@ -653,14 +623,8 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     image: {
       resizeFile: resizeImageFromFile,
-      resizeSrc: resizeImageFromSrc,
-      fromAttachment: imageFromAttachment,
-      toAttachment: imageToAttachment
-    },
-    locales: [
-      {id:'fr-FR', label:'Français'},
-      {id:'en', label:'English'}
-    ]
+      resizeSrc: resizeImageFromSrc
+    }
   };
 })
 

@@ -17,14 +17,14 @@
         <a id="helptip-header-bar-btn-profile"
            class="button button-icon button-clear hidden-xs hidden-sm"
            ng-click="showProfilePopover($event)">
-          <i class="avatar"
-             ng-if="$root.login"
-             ng-style="$root.walletData.avatarStyle"
-             ng-class="{'royal-bg avatar-member': !$root.walletData.avatarStyle}">
-          </i>
           <i class="avatar avatar-member"
-             ng-if="!$root.login"
-             style="opacity: 0.7"></i>
+             ng-if="!$root.walletData.avatar"
+             ng-class="{'disable': !login, 'royal-bg': login}">
+          </i>
+          <i class="avatar"
+             ng-if="$root.walletData.avatar"
+             style="background-image: url('{{$root.walletData.avatar.src}}')">
+          </i>
         </a>
       </ion-nav-buttons>
     </ion-nav-bar>
@@ -38,11 +38,37 @@
                  expose-aside-when="large"
                  enable-menu-with-back-views="false"
                  width="225">
-    <ion-header-bar class="bar bar-header" ng-click="showHome()" menu-close>
-      <h1 class="title dark" translate>
+    <ion-header-bar>
+      <h1 class="title dark hidden-sm hidden-xs" translate>
         MENU.TITLE
       </h1>
+
+      <div class="visible-sm visible-xs hero">
+        <div class="content">
+          <i class="avatar avatar-member hero-icon" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="loginAndGo('app.view_wallet')" menu-close></i>
+          <i class="avatar hero-icon" ng-if="$root.walletData.avatar" style="background-image: url('{{$root.walletData.avatar.src}}')" ng-click="loginAndGo('app.view_wallet')" menu-close></i>
+          <h4 ng-if="login">
+            <a class="light" ng-click="loginAndGo('app.view_wallet')" menu-close>
+              {{$root.walletData.name||$root.walletData.uid}}
+              <span ng-if="!$root.walletData.name && !$root.walletData.uid"><i class="icon ion-key"></i>&nbsp;{{$root.walletData.pubkey|formatPubkey}}</span>
+            </a>
+          </h4>
+          <h4 ng-if="!login">
+            <a class="light" ng-click="loginAndGo('app.view_wallet')"
+               menu-close>
+              {{'COMMON.BTN_LOGIN'|translate}}
+              <i class="ion-arrow-right-b"></i>
+            </a>
+          </h4>
+          <cs-extension-point name="menu-profile-user"></cs-extension-point>
+        </div>
+        <!-- logout -->
+        <a ng-if="login" class="button-icon" ng-click="logout()" style="position: absolute; top: 5px; left: 5px;" menu-close>
+          <i class="icon assertive ion-log-out"></i>
+        </a>
+      </div>
     </ion-header-bar>
+
     <ion-content scroll="false">
       <ion-list class="list">
 
@@ -52,16 +78,25 @@
           <span translate>MENU.HOME</span>
         </ion-item>
 
-        <div menu-close
-             id="helptip-menu-btn-currency"
-             class="item item-icon-left"
+        <ion-item menu-close
+                  id="helptip-menu-btn-currency"
+                  class="item item-icon-left"
                   active-link="active"
                   active-link-path-prefix="#/app/currency"
-                  ng-click="showCurrencyView()"
+                  href="#/app/currency"
                   ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
-        </div>
+        </ion-item>
+
+        <ion-item menu-close
+                  class="item item-icon-left hidden-xs hidden-sm"
+                  active-link="active"
+                  active-link-path-prefix="#/app/network"
+                  href="#/app/network">
+          <i class="icon ion-cloud"></i>
+          <span translate>MENU.NETWORK</span>
+        </ion-item>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
@@ -83,10 +118,11 @@
         <div class="item item-divider"></div>
 
         <ion-item menu-close
-                  class="item item-icon-left" active-link="active"
+                  class="item item-icon-left"
+                  active-link="active"
                   active-link-path-prefix="#/app/wallet"
                   ng-click="loginAndGo('app.view_wallet')"
-                  ng-class="{'item-menu-disable': !$root.login}">
+                  ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-card"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
@@ -101,26 +137,22 @@
         </ion-item>
         <a id="helptip-menu-btn-settings"></a>
 
-        <!-- actions -->
-        <div class="item item-divider" ng-if="$root.login"></div>
-        <ion-item menu-close class="item item-button-right" ng-if="$root.login">
+        <!-- actions divider -->
+        <div class="item item-divider" ng-if="login"></div>
+
+        <!-- transfer -->
+        <ion-item menu-close class="item item-button-right hidden-xs hidden-sm" ng-if="login">
           <span translate>MENU.TRANSFER</span>
           <button class="button button-positive ink-dark" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
           </button>
         </ion-item>
+
         <!-- scan QR code -->
         <ion-item menu-close class="item item-button-right" ng-if="$root.device.enable">
           <span translate>Scan</span>
           <button class="button button-stable ink" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
-          </button>
-        </ion-item>
-        <!-- log out -->
-        <ion-item menu-close class="item item-button-right visible-xs visible-sm" ng-if="$root.login">
-          <span translate>COMMON.BTN_LOGOUT</span>
-          <button class="button button-stable ink" ng-click="logout()">
-          <i class="icon ion-log-out"></i>
           </button>
         </ion-item>
 

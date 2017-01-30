@@ -1,4 +1,3 @@
-
 angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency.controllers'])
 
   .config(function($stateProvider) {
@@ -32,14 +31,14 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $ionicHistory,
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $filter,
                           UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
   'ngInject';
 
-  $scope.convertedBalance = null;
   $scope.hasCredit = false;
   $scope.showDetails = false;
   $scope.loading = true;
+  $scope.settings = csSettings.data;
 
   $scope.$on('$ionicView.enter', function() {
     $scope.loadWallet()
@@ -47,19 +46,16 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.walletData = walletData;
         $scope.setShowDetails(angular.isDefined(csSettings.data.wallet, csSettings.data.wallet.showPubkey) ?
           csSettings.data.wallet.showPubkey: true);
-        $scope.updateView();
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+        $scope.updateView();
         $scope.showFab('fab-transfer');
         $scope.showQRCode('qrcode', $rootScope.walletData.pubkey, 1100);
         $scope.showHelpTip();
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
       .catch(function(err){
-        if ('CANCELLED' === err) {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.home');
+        if (err == 'CANCELLED') {
+          $scope.showHome();
         }
       });
   });
@@ -75,32 +71,29 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     $scope.actionsPopover.remove();
   });
 
-  $scope.refreshConvertedBalance = function() {
-    if (!$rootScope.walletData) {
-      return;
-    }
-    if (csSettings.data.useRelative) {
-      $scope.convertedBalance = $rootScope.walletData.balance ? ($rootScope.walletData.balance / $rootScope.walletData.currentUD) : 0;
-    } else {
-      var balance = $rootScope.walletData.balance;
-      if (!balance) {
-        balance = 0;
-      }
-      $scope.convertedBalance = balance;
-    }
+  $scope.onSettingsChanged = function() {
+    if (!$scope.walletData || $scope.loading) return;
+    $scope.unit = $filter('currencySymbol')($scope.walletData.currency, csSettings.data.useRelative);
+    $scope.secondaryUnit = $filter('currencySymbol')($scope.walletData.currency, !csSettings.data.useRelative);
   };
-  csSettings.api.data.on.changed($scope, $scope.refreshConvertedBalance);
-  $scope.$watch('walletData.balance', $scope.refreshConvertedBalance, true);
+  $scope.$watch('settings.useRelative', $scope.onSettingsChanged);
+
+  // Reload if show UD changed
+  $scope.$watch('settings.showUDHistory', function() {
+    if (!$scope.walletData || $scope.loading) return;
+    $scope.doUpdate();
+  }, true);
 
   // Update view
   $scope.updateView = function() {
-    $scope.hasCredit = (!!$rootScope.walletData.balance && $rootScope.walletData.balance > 0);
-    $scope.refreshConvertedBalance();
+    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+
+    $scope.onSettingsChanged();
     // Set Motion
     $timeout(function() {
-      UIUtils.motion.fadeSlideInRight();
+      UIUtils.motion.fadeSlideInRight({selector: '#wallet .animate-fade-slide-in-right .item'});
       // Set Ink
-      UIUtils.ink({selector: '.item'});
+      UIUtils.ink({selector: '#wallet .animate-fade-slide-in-right .item'});
     }, 10);
   };
 
@@ -152,7 +145,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   // Send self identity
-  $scope.self= function() {
+  $scope.self = function() {
     $scope.hideActionsPopover();
 
     return $scope.showUidPopup()
@@ -182,7 +175,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .catch(function(err) {
         if (!retryCount || retryCount <= 2) {
           $timeout(function() {
-            doMembershipIn(retryCount ? retryCount+1 : 1);
+            $scope.doMembershipIn(retryCount ? retryCount+1 : 1);
           }, 1000);
         }
         else {
@@ -196,8 +189,12 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
 
   // Send membership IN
-  $scope.membershipIn= function() {
+  $scope.membershipIn = function() {
     $scope.hideActionsPopover();
+
+    if ($rootScope.walletData.isMember) {
+      return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
+    }
 
     return $scope.showUidPopup()
     .then(function (uid) {
@@ -251,28 +248,124 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Updating wallet data
   $scope.doUpdate = function() {
-    UIUtils.loading.show();
-    return csWallet.refreshData()
-    .then(function() {
-      $scope.updateView();
-      UIUtils.loading.hide();
-    })
-    .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+    console.debug('[wallet] TX history reloading...');
+    return UIUtils.loading.show()
+      .then(function() {
+        return csWallet.refreshData();
+      })
+      .then(function() {
+        return UIUtils.loading.hide();
+      })
+      .then(function() {
+        $scope.updateView();
+      })
+      .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
   /**
    * Renew membership
    */
-  $scope.renewMembership = function() {
+  $scope.renewMembership = function(confirm) {
+
+    if (!$rootScope.walletData.isMember) {
+      return UIUtils.alert.error("ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION");
+    }
+    if (!confirm && !$rootScope.walletData.requirements.needRenew) {
+      return $translate("CONFIRM.NOT_NEED_RENEW_MEMBERSHIP", {membershipExpiresIn: $rootScope.walletData.requirements.membershipExpiresIn})
+        .then(function(message) {
+          return UIUtils.alert.confirm(message);
+        })
+        .then(function(confirm) {
+          if (confirm) $scope.renewMembership(true); // loop with confirm
+        });
+    }
+
     return UIUtils.alert.confirm("CONFIRM.RENEW_MEMBERSHIP")
+      .then(function(confirm) {
+        if (confirm) {
+          UIUtils.loading.show();
+          return $scope.doMembershipIn();
+        }
+      })
+      .catch(function(err){
+        UIUtils.loading.hide();
+        UIUtils.alert.error(err)
+          // loop
+          .then($scope.renewMembership);
+      });
+  };
+
+  /**
+   * Revoke identity
+   */
+  $scope.revokeIdentity = function(confirm, confirmAgain) {
+    $scope.hideActionsPopover();
+
+    if ($rootScope.walletData.requirements.needSelf) {
+      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
+    }
+    if (!confirm) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_CONTINUE',
+        okType: 'button-assertive'
+      })
+      .then(function(confirm) {
+        if (confirm) $scope.revokeIdentity(true); // loop with confirm
+      });
+    }
+    if (!confirmAgain) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_YES_CONTINUE',
+        okType: 'button-assertive'
+      })
+      .then(function(confirm) {
+        if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
+      });
+    }
+
+    return UIUtils.loading.show()
       .then(function() {
+        return csWallet.revoke();
+      })
+      .then(function(){
+        UIUtils.toast.show("INFO.REVOCATION_SENT");
+        $scope.updateView();
+        return UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
+      });
+  };
+
+  /**
+   * Fix identity (e.g. when identity expired)
+   */
+  $scope.fixIdentity = function() {
+    if (!$rootScope.walletData.uid) return;
+
+    return $translate('CONFIRM.FIX_IDENTITY', {uid: $rootScope.walletData.uid})
+      .then(function(message) {
+        return UIUtils.alert.confirm(message);
+      })
+      .then(function(confirm) {
+        if (!confirm) return;
         UIUtils.loading.show();
+        // Reset membership data
+        $rootScope.walletData.blockUid = null;
+        $rootScope.walletData.sigDate = null;
+        return csWallet.self($rootScope.walletData.uid);
+      })
+      .then(function() {
         return $scope.doMembershipIn();
       })
       .catch(function(err){
         UIUtils.loading.hide();
-        UIUtils.alert.info(err);
-        $scope.renewMembership(); // loop
+        UIUtils.alert.error(err)
+          .then(function() {
+            $scope.fixIdentity(); // loop
+          });
       });
   };
 
@@ -309,8 +402,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     if (event == 'renew') {
       $scope.renewMembership();
     }
-    else if (event == 'fixMembership)') {
+    else if (event == 'fixMembership') {
       $scope.fixMembership();
+    }
+    else if (event == 'fixIdentity') {
+      $scope.fixIdentity();
     }
   };
 
@@ -331,32 +427,45 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
     // Change QRcode visibility
     var qrcode = document.getElementById('qrcode');
-    qrcode.classList.toggle('visible-xs', !show);
-    qrcode.classList.toggle('visible-sm', !show);
+    if (qrcode) {
+      qrcode.classList.toggle('visible-xs', !show);
+      qrcode.classList.toggle('visible-sm', !show);
+    }
 
     if (show && !$scope.loading) {
       $timeout(function (){
         var pubkeyElement = document.getElementById('wallet-pubkey');
-        pubkeyElement.classList.toggle('done', true);
-        pubkeyElement.classList.toggle('in', true);
+        if (pubkeyElement) {
+          pubkeyElement.classList.toggle('done', true);
+          pubkeyElement.classList.toggle('in', true);
+        }
+        var uidElement = document.getElementById('wallet-uid');
+        if (uidElement) {
+          uidElement.classList.toggle('done', true);
+          uidElement.classList.toggle('in', true);
+        }
       }, 500);
     }
   };
 
   // Transfer
   $scope.showTransferModal = function() {
-    if (!$scope.hasCredit) {
+    var hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
+    if (!hasCredit) {
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
     Modals.showTransfer()
       .then(function(done){
         if (done) {
-          UIUtils.alert.info('INFO.TRANSFER_SENT');
+          UIUtils.toast.show('INFO.TRANSFER_SENT');
+          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+
           // Set Motion
           $timeout(function() {
             UIUtils.motion.ripple({
-              selector: '.item-pending'
+              selector: '.item-pending',
+              startVelocity: 3000
             });
             // Set Ink
             UIUtils.ink({selector: '.item-pending'});

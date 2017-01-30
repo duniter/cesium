@@ -8,7 +8,15 @@
     "BTN_PUBLISH": "Publier",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
-    "BTN_ADD_PICTURE": "Ajouter une photo"
+    "BTN_ADD_PICTURE": "Ajouter une photo",
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_AS_READ": "Tout marquer comme lu",
+      "NO_RESULT": "Aucune notification",
+      "SETTINGS": "Paramètres",
+      "SHOW_ALL": "Voir tout",
+      "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
+    }
   },
   "MENU": {
     "MARKET": "Annonces",
@@ -27,21 +35,39 @@
   },
   "COMMENTS": {
     "DIVIDER": "Commentaires",
+    "DIVIDER_WITH_TOTAL": "Commentaires ({{total}})",
     "SHOW_MORE_COMMENTS": "Afficher les commentaires précédents",
-    "COMMENT_HELP": "Nouveau commentaire, question, etc.",
+    "COMMENT_HELP": "Votre commentaire, question, etc.",
+    "COMMENT_HELP_REPLY_TO": "Votre réponse...",
     "BTN_SEND": "Envoyer",
-    "POPOVER_SHARE_TITLE": "Message #{{number}}"
+    "POPOVER_SHARE_TITLE": "Message #{{number}}",
+    "REPLY": "Répondre",
+    "REPLY_TO": "Réponse à :",
+    "REPLY_TO_LINK": "En réponse à ",
+    "REPLY_TO_DELETED_COMMENT": "En réponse à un commentaire supprimé",
+    "REPLY_COUNT": "{{replyCount}} réponses",
+    "DELETED_COMMENT": "Commentaire supprimé"
   },
   "MESSAGE": {
-    "REMOVE_CONFIRMATION": "Etes-vous sur de vouloir supprimer ce message ?<br/><br/>Cette opération est irréversible.",
     "REPLY_TITLE_PREFIX": "Rep: ",
     "FORWARD_TITLE_PREFIX": "Tr: ",
     "BTN_REPLY": "Répondre",
     "BTN_COMPOSE": "Nouveau message",
     "BTN_WRITE": "Ecrire",
-    "INBOX": {
-      "NO_MESSAGE": "Aucun message reçu",
-      "TITLE": "Messages privés"
+    "NO_MESSAGE_INBOX": "Aucun message reçu",
+    "NO_MESSAGE_OUTBOX": "Aucun message envoyé",
+    "NOTIFICATIONS": {
+      "TITLE": "Messages",
+      "MESSAGE_RECEIVED": "Vous avez <b>reçu un message</b><br/>de"
+    },
+    "LIST": {
+      "INBOX": "Boite de réception",
+      "OUTBOX": "Messages envoyés",
+      "TITLE": "Messages privés",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Options",
+        "DELETE_ALL": "Supprimer tous les messages"
+      }
     },
     "COMPOSE": {
       "TITLE": "Nouveau message",
@@ -58,27 +84,39 @@
     "VIEW": {
       "TITLE": "Message",
       "SENDER": "Envoyé par",
+      "RECIPIENT": "Envoyé à",
       "NO_CONTENT": "Message vide"
+    },
+    "CONFIRM": {
+      "REMOVE": "Etes-vous sur de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
+      "REMOVE_ALL" : "Etes-vous sur de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
+      "MARK_ALL_AS_READ": "Etes-vous sur de vouloir <b>marquer tous les messages comme lu</b> ?"
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message supprimé",
+      "All_MESSAGE_REMOVED": "Tous les messages ont été supprimé",
       "MESSAGE_SENT": "Message envoyé"
     },
     "ERROR": {
       "SEND_MSG_FAILED": "Erreur lors de l'envoi du message.",
-      "SEARCH_FAILED": "Erreur lors de la récupération des messages.",
+      "LOAD_MESSAGES_FAILED": "Erreur lors de la récupération des messages.",
       "LOAD_MESSAGE_FAILED": "Erreur lors de la récupération du message.",
       "MESSAGE_NOT_READABLE": "Lecture du message impossible.",
       "USER_NOT_RECIPIENT": "Vous n'etes pas le destinataire de ce message : déchiffrement impossible.",
       "NOT_AUTHENTICATED_MESSAGE": "L'authenticité du message est douteuse ou son contenu est corrompu.",
       "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message",
-      "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max)."
+      "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max).",
+      "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
+      "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages.",
+      "REMOVE_All_MESSAGES_FAILED": "Erreur lors de la suppression de tous les messages.",
+      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu."
     }
   },
   "MARKET": {
     "COMMON": {
       "PRICE": "Prix",
       "BTN_BUY": "Acheter",
+      "BTN_BUY_DOTS": "Acheter...",
       "BTN_NEW_AD": "je dépose une annonce"
     },
     "SEARCH": {
@@ -125,6 +163,7 @@
       "FAILED_SAVE_RECORD": "Erreur lors de l'enregistrement de l'annonce",
       "FAILED_UPDATE_RECORD": "Erreur lors de la mise à jour de l'annonce",
       "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
+      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'annonce.",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de l'annonce",
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
@@ -191,6 +230,7 @@
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la fiche",
+      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de la fiche",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Fiche inexistante"
@@ -217,28 +257,66 @@
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
-      "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>"
+      "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
+      "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
     "INFO": {
       "PROFILE_SAVED": "Profil sauvegardé",
+    },
+    "HELP": {
+      "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
     }
   },
   "ES_SETTINGS": {
-    "PLUGIN_NAME": "Annonces, professionnels et messages privés",
+    "PLUGIN_NAME": "Cesium+ : profils et avatar, notifications, messages privés...",
     "ENABLE_TOGGLE": "Activer l'extension ?",
     "ENABLE_MARKET_TOGGLE": "Activer les annonces ?",
     "ENABLE_REGISTRY_TOGGLE": "Activer l'annuaire des pro ?",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
     "ENABLE_SETTINGS_TOGGLE": "Activer le stockage distant des paramètres ?",
-    "NODE": "Addresse du noeud de données",
-    "NODE_HELP": "server.domain.com:port",
-    "POPUP_NODE": {
-      "TITLE" : "Noeud de données",
-      "HELP" : "Saisissez l'adresse du noeud que vous voulez utiliser :"
+    "PEER": "Addresse du nœud de données",
+    "POPUP_PEER": {
+      "TITLE" : "Nœud de données",
+      "HELP" : "Saisissez l'adresse du nœud que vous voulez utiliser :",
+      "PEER_HELP": "serveur.domaine.com:port"
+    },
+    "NOTIFICATIONS": {
+      "DIVIDER": "Notifications",
+      "HELP_TEXT": "Activez les types de notifications que vous souhaitez recevoir :",
+      "ENABLE_TX_SENT": "Notifier la validation des <b>paiement émis</b> ?",
+      "ENABLE_TX_RECEIVED": "Notifier la validation des <b>paiement reçus</b> ?",
+      "ENABLE_CERT_SENT": "Notifier la validation des <b>certifications émises</b> ?",
+      "ENABLE_CERT_RECEIVED": "Notifier la validation des <b>certifications reçues</b> ?"
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",
       "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Annonces</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Annuaire des professionnels</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> (recommandé) ?"
+    }
+  },
+  "EVENT": {
+    "NODE_STARTED": "Votre noeud ES API <b>{{params[0]}}</b> est démarré",
+    "NODE_BMA_DOWN": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> (utilisé par votre noeud ES API) est <b>injoignable</b>.",
+    "NODE_BMA_UP": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> est à nouveau accessible.",
+    "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{params[0]}}</b> !",
+    "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>!",
+    "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{params[0]}}</b> a été <b>pris en compte</b>.",
+    "TX_SENT": "Votre <b>paiement</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectué.",
+    "TX_SENT_MULTI": "Votre <b>paiement</b> à <b>{{params[1]}}</b> a été effectué.",
+    "TX_RECEIVED": "Vous avez <b>reçu un paiement</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "TX_RECEIVED_MULTI": "Vous avez <b>reçu un paiement</b> de <b>{{params[1]}}</b>.",
+    "CERT_SENT": "Votre <b>certification</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectuée.",
+    "CERT_RECEIVED": "Vous avez <b>reçu une certification</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "MARKET": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre annonce : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre annonce : <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu votre commentaire sur l'annonce : <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié la réponse à votre commentaire, sur l'annonce : <b>{{params[2]}}</b>"
+    },
+    "REGISTRY": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a commenté votre référencement : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié son commentaire sur votre référencement : <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu à votre commentaire sur le référencement : <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié sa réponse à votre commentaire sur le référencement : <b>{{params[2]}}</b>"
     }
   }
 }

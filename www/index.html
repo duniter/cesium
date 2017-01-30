@@ -2,7 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Cesium</title>
     <link rel="icon" href="./img/favicon.ico">
     <link rel="manifest" href="/manifest.json">
@@ -24,6 +25,7 @@
       <script src="js/vendor/moment.fr.js"></script>
       <script src="js/vendor/numeral.js"></script>
       <script src="js/vendor/numeral.fr.js"></script>
+      <script src="js/vendor/numeral.en.js"></script>
       <script src="js/vendor/socket-io.js"></script>
       <script src="js/vendor/underscore.js"></script>
       <script src="js/vendor/qrcode.min.js"></script>
@@ -38,6 +40,7 @@
       <script src="lib/ionic/js/angular/angular-api.js"></script>
       <script src="lib/ionic/js/angular/angular-cache.js"></script>
       <script src="lib/ionic/js/angular/angular-screenmatch.min.js"></script>
+      <script src="lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
 
       <!-- crypto libs -->
       <script src="js/vendor/scrypt-em.js" async></script>
@@ -76,13 +79,15 @@
       <script src="dist/dist_js/app/controllers/join-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/login-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/help-controllers.js"></script>
+      <script src="dist/dist_js/app/controllers/wallet-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/wot-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/peer-controllers.js"></script>
+      <script src="dist/dist_js/app/controllers/network-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/currency-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/currency-charts-controllers.js"></script>
-      <script src="dist/dist_js/app/controllers/wallet-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/transfer-controllers.js"></script>
       <script src="dist/dist_js/app/controllers/settings-controllers.js"></script>
+      <script src="dist/dist_js/app/controllers/blockchain-controllers.js"></script>
       <script src="dist/dist_js/app/controllers.js"></script>
 
       <!-- templates -->
@@ -97,6 +102,8 @@
 
       <!-- ES plugin -->
       <script src="dist/dist_js/plugins/es/js/plugin.js"></script>
+      <script src="dist/dist_js/plugins/es/js/entities/notification.js"></script>
+      <script src="dist/dist_js/plugins/es/js/entities/comment.js"></script>
       <script src="dist/dist_js/plugins/es/js/services.js"></script>
       <script src="dist/dist_js/plugins/es/js/services/comment-services.js"></script>
       <script src="dist/dist_js/plugins/es/js/services/http-services.js"></script>
@@ -104,6 +111,7 @@
       <script src="dist/dist_js/plugins/es/js/services/registry-services.js"></script>
       <script src="dist/dist_js/plugins/es/js/services/social-services.js"></script>
       <script src="dist/dist_js/plugins/es/js/services/user-services.js"></script>
+      <script src="dist/dist_js/plugins/es/js/services/notification-services.js"></script>
       <script src="dist/dist_js/plugins/es/js/services/message-services.js"></script>
       <script src="dist/dist_js/plugins/es/js/services/modal-services.js"></script>
       <script src="dist/dist_js/plugins/es/js/controllers/common-controllers.js"></script>
@@ -114,11 +122,15 @@
       <script src="dist/dist_js/plugins/es/js/controllers/registry-controllers.js"></script>
       <script src="dist/dist_js/plugins/es/js/controllers/user-controllers.js"></script>
       <script src="dist/dist_js/plugins/es/js/controllers/message-controllers.js"></script>
-      <!--endRemoveIf(no-plugin)-->
+      <script src="dist/dist_js/plugins/es/js/controllers/notification-controllers.js"></script>
+
+
+    <!--endRemoveIf(no-plugin)-->
 
       <!-- App -->
-      <script src="dist/dist_js/app/directives.js"></script>
       <script src="dist/dist_js/app/app.js"></script>
+      <script src="dist/dist_js/app/components.js"></script>
+      <script src="dist/dist_js/app/directives.js"></script>
     <!-- endbuild -->
     <!-- build:js config.js -->
       <!-- config  -->

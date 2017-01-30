@@ -46,14 +46,14 @@
 
               <!-- category -->
               <a class="item item-icon-right ink"
-                 ng-class="{'item-input-error': form.$submitted && !category.id}"
+                 ng-class="{'item-input-error': form.$submitted && !formData.category.id}"
                  ng-click="showCategoryModal()">
                 <span class="item-label" translate>COMMON.CATEGORY</span>
-                <span class="badge badge-royal" ng-bind-html="category.name"></span>&nbsp;
+                <span class="badge badge-royal" ng-bind-html="formData.category.name"></span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
               </a>
               <div class="form-errors"
-                   ng-show="form.$submitted && !category.id">
+                   ng-show="form.$submitted && !formData.category.id">
                 <div class="form-error">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
                 </div>
@@ -91,23 +91,12 @@
               <!-- price -->
               <div class="item item-input item-floating-label item-button-right"
                    ng-class="{'item-input-error': form.$submitted && form.price.$invalid}"
-                   ng-show="!loading && !useRelative">
-                <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{currency | abbreviate}})</span>
-                <input type="number" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{currency | abbreviate}})"
-                       ng-model="formData.price">
-                <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
-                </span>
-                <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
-                  <i class="icon ion-android-more-vertical"></i>
-                </span>
-              </div>
-              <div class="item item-input item-floating-label item-button-right"
-                   ng-class="{'item-input-error': form.$submitted && form.price.$invalid}"
-                   ng-show="!loading && useRelative">
-                <span class="input-label">{{'MARKET.EDIT.RECORD_PRICE' | translate}} ({{'COMMON.UD' | translate}}<sub>{{currency | abbreviate}}</sub>)</span>
-                <input type="text" name="price" placeholder="{{'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{'COMMON.UD' | translate}} {{currency | abbreviate}})"
+                   >
+                <div class="input-label">{{::'MARKET.EDIT.RECORD_PRICE' | translate}} (<span ng-bind-html="formData.currency| currencySymbol:useRelative"></span>)</div>
+
+                <input type="number" name="price" placeholder="{{::'MARKET.EDIT.RECORD_PRICE_HELP' | translate}} ({{formData.currency | currencySymbolNoHtml:useRelative}})"
                        ng-model="formData.price"
-                       number>
+                       number-float>
                 <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="unitPopover.show($event)">
                 </span>
                 <span class="gray button button-block button-clear button-icon visible-xs visible-sm" ng-click="unitPopover.show($event)">
@@ -117,8 +106,11 @@
               <div class="form-errors"
                    ng-show="form.$submitted && form.price.$error"
                    ng-messages="form.price.$error">
-                <div class="form-error" ng-message="number">
+                <div class="form-error" ng-message="numberFloat">
                   <span translate="ERROR.FIELD_NOT_NUMBER"></span>
+                </div>
+                <div class="form-error" ng-message="numberInt">
+                  <span translate="ERROR.FIELD_NOT_INT"></span>
                 </div>
               </div>
 
@@ -126,7 +118,7 @@
                    ng-show="formData.price"
                    ng-click="openCurrencyLookup()" >
                 <span class="item-label gray" translate>MARKET.EDIT.RECORD_CURRENCY</span>
-                <span class="badge badge-royal">{{currency}}</span>&nbsp;
+                <span class="badge badge-royal">{{formData.currency}}</span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
               </dev-->
 

@@ -20,12 +20,14 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp, UIUtils, BMA, csSettings, $ionicPopover) {
+function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp,
+  UIUtils, BMA, csSettings, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
+  $scope.nodePopup = {};
 
   $scope.$on('$ionicView.enter', function() {
     $scope.load();
@@ -39,7 +41,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     $scope.loading = true; // to avoid the call of csWallet.store()
 
     // Fill locales
-    $scope.locales = angular.copy(UIUtils.locales);
+    $scope.locales = angular.copy(csSettings.locales);
     var locale = _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
     angular.merge($scope.formData, csSettings.data);
     $scope.formData.locale = locale;
@@ -93,6 +95,24 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     });
   };
 
+  $scope.showNodeList = function() {
+    $ionicPopup._popupStack[0].responseDeferred.promise.close();
+    return Modals.showNetworkLookup({enableFilter: true, type: 'member'})
+      .then(function (peer) {
+        if (peer) {
+          var bma = peer.getBMA();
+          return {
+            host: (bma.dns ? bma.dns :
+                   (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6)),
+            port: bma.port || 80
+          };
+        }
+      })
+      .then(function(newNode) {
+        $scope.changeNode(newNode);
+      });
+  };
+
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
@@ -100,13 +120,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
-      $translate(['SETTINGS.POPUP_NODE.TITLE', 'SETTINGS.POPUP_NODE.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+      $translate(['SETTINGS.POPUP_PEER.TITLE', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
           // Choose UID popup
           $ionicPopup.show({
             templateUrl: 'templates/settings/popup_node.html',
-            title: translations['SETTINGS.POPUP_NODE.TITLE'],
-            subTitle: translations['SETTINGS.POPUP_NODE.HELP'],
+            title: translations['SETTINGS.POPUP_PEER.TITLE'],
             scope: $scope,
             buttons: [
               { text: translations['COMMON.BTN_CANCEL'] },
@@ -131,6 +150,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
               return;
             }
             var parts = node.split(':');
+            parts[1] = parts[1] ? parts[1] : 80;
             resolve({
               host: parts[0],
               port: parts[1]
@@ -140,20 +160,26 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       });
     };
 
-  $scope.onSettingsChanged = function() {
-    if (!$scope.loading) {
-      $scope.loading = true;
+  $scope.save = function() {
+    if ($scope.loading) return $q.when();
+    if ($scope.saving) {
+      // Retry later
+      return $timeout(function() {
+        return $scope.save();
+      }, 500);
+    }
+    $scope.saving = true;
 
+    // Async - to avoid UI lock
+    $timeout(function() {
       // Make sure to format helptip
       $scope.cleanupHelpTip();
-
       angular.merge(csSettings.data, $scope.formData);
       csSettings.store();
-      $scope.loading = false;
-    }
+      $scope.saving = false;
+    }, 100);
   };
-  $scope.$watch('formData', $scope.onSettingsChanged, true);
-  //$scope.$watch('formData.helptip', $scope.onSettingsChanged, true);
+  $scope.$watch('formData', $scope.save, true);
 
 
   $scope.getServer = function() {

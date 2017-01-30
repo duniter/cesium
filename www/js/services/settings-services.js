@@ -6,9 +6,35 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
     CSSettings = function(id) {
 
+      // Define app locales
+      var locales = [
+        {id:'en',    label:'English'},
+        {id:'en-GB', label:'English (UK)'},
+        {id:'fr-FR', label:'Français'},
+        {id:'nl-NL', label:'Nederlands'}
+      ];
+      var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
+
+      // Convert browser locale to app locale (fix #140)
       function fixLocale (locale) {
-        // convert in app locale (fix #140)
-        return locale && locale.startsWith('fr') ? 'fr-FR' : 'en';
+        if (!locale) return fallbackLocale;
+
+        // exists in app locales: use it
+        if (_.findWhere(locales, {id: locale})) return locale;
+
+        // not exists: reiterate with the root(e.g. 'fr-XX' -> 'fr')
+        var localeParts = locale.split('-');
+        if (localeParts.length > 1) {
+          return fixLocale(localeParts[0]);
+        }
+
+        // If another locale exists with the same root: use it
+        var similarLocale = _.find(locales, function(l) {
+          return String.prototype.startsWith.call(l, locale);
+        });
+        if (similarLocale) return similarLocale;
+
+        return fallbackLocale;
       }
 
       var
@@ -41,7 +67,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         },
         wallet: {
           showPubkey: true,
-          alertIfUnusedWallet: true
+          alertIfUnusedWallet: true,
+          notificationReadTime: 0
         },
         locale: {
           id: fixLocale(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
@@ -56,6 +83,19 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         angular.merge(data, defaultSettings);
       },
 
+      getByPath = function(path, defaultValue) {
+        var obj = data;
+        _.each(path.split('.'), function(key) {
+          obj = obj[key];
+          if (angular.isUndefined(obj)) {
+            obj = defaultValue;
+            return; // stop
+          }
+        });
+
+        return obj;
+      },
+
       store = function() {
         if (data.useLocalStorage) {
           localStorage.setObject(constants.STORAGE_KEY, data);
@@ -65,7 +105,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         }
 
         // Emit event on store
-        api.data.raisePromise.store(data)
+        return api.data.raisePromise.store(data)
           .then(function() {
             // Emit event on changed
             api.data.raise.changed(data);
@@ -152,12 +192,14 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     return {
       id: id,
       data: data,
+      getByPath: getByPath,
       reset: reset,
       store: store,
       restore: restore,
       defaultSettings: defaultSettings,
       // api extension
-      api: api
+      api: api,
+      locales: locales
     };
   };
 

@@ -17,90 +17,26 @@
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
     "node": {
-      "host": "cgeek.fr",
-      "port": "9330"
+      "host": "gtest.duniter.org",
+      "port": "10900"
     },
     "plugins":{
       "es": {
         "enable": true,
         "askEnable": false,
-        "host": "data.duniter.fr",
-        "port": "80"
-      }
-    }
-  },
-
-  "sou": {
-    "cacheTimeMs": 60000,
-    "fallbackLanguage": "fr-FR",
-    "defaultLanguage": "fr-FR",
-    "rememberMe": false,
-    "showUDHistory": false,
-    "timeout": 15000,
-    "timeWarningExpireMembership": 5184000,
-    "timeWarningExpire": 7776000,
-    "useLocalStorage": true,
-    "useRelative": true,
-    "initPhase": false,
-    "expertMode": false,
-    "decimalCount": 2,
-    "helptip": {
-      "enable": false,
-      "installDocUrl": {
-        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-      }
-    },
-    "node": {
-      "host": "duniter.le-sou.org",
-      "port": "80"
-    },
-    "plugins":{
-      "es": {
-        "enable": false,
-        "askEnable": true,
-        "host": "data.le-sou.org",
-        "port": "80"
+        "host": "data.gtest.duniter.fr",
+        "port": "80",
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
       }
     }
   },
 
   "dev": {
-    "cacheTimeMs": 60000,
-    "fallbackLanguage": "fr-FR",
-    "defaultLanguage": "fr-FR",
-    "rememberMe": true,
-    "showUDHistory": false,
-    "timeout": 6000,
-    "timeWarningExpireMembership": 5184000,
-    "timeWarningExpire": 7776000,
-    "useLocalStorage": true,
-    "useRelative": true,
-    "initPhase": false,
-    "expertMode": false,
-    "decimalCount": 2,
-    "helptip": {
-      "enable": true,
-      "installDocUrl": {
-        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-      }
-    },
-    "node": {
-      "host": "duniter.le-sou.org",
-      "port": "9600"
-    },
-    "plugins":{
-      "es": {
-        "enable": true,
-        "askEnable": true,
-        "host": "data.le-sou.org",
-        "port": "80"
-      }
-    }
-  },
-
-  "dev2": {
     "cacheTimeMs": 60000,
     "fallbackLanguage": "fr-FR",
     "defaultLanguage": "fr-FR",
@@ -121,15 +57,106 @@
       }
     },
     "node": {
-      "host": "cgeek.fr",
-      "port": "9330"
+      "host": "gtest.duniter.fr",
+      "port": "10900"
     },
     "plugins":{
       "es": {
-        "enable": false,
+        "enable": true,
         "askEnable": false,
-        "host": "data.duniter.fr",
-        "port": "80"
+        "host": "localhost",
+        "port": 9200,
+        "wsPort": 9400,
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
+      }
+    }
+  },
+
+  "sou": {
+    "cacheTimeMs": 60000,
+    "fallbackLanguage": "fr-FR",
+    "defaultLanguage": "fr-FR",
+    "rememberMe": false,
+    "showUDHistory": false,
+    "timeout": 15000,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": true,
+    "useRelative": true,
+    "initPhase": false,
+    "expertMode": false,
+    "decimalCount": 2,
+    "compatProtocol_0_80": true,
+    "helptip": {
+      "enable": false,
+      "installDocUrl": {
+        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
+        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      }
+    },
+    "node": {
+      "host": "duniter.le-sou.org",
+      "port": "80"
+    },
+    "plugins":{
+      "es": {
+        "enable": true,
+        "askEnable": true,
+        "host": "data.le-sou.org",
+        "port": "80",
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
+      }
+    }
+  },
+
+  "dev_sou": {
+    "cacheTimeMs": 60000,
+    "fallbackLanguage": "fr-FR",
+    "defaultLanguage": "fr-FR",
+    "rememberMe": true,
+    "showUDHistory": false,
+    "timeout": 6000,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": true,
+    "useRelative": true,
+    "initPhase": false,
+    "expertMode": false,
+    "decimalCount": 2,
+    "compatProtocol_0_80": true,
+    "helptip": {
+      "enable": true,
+      "installDocUrl": {
+        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
+        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      }
+    },
+    "node": {
+      "host": "duniter.le-sou.org",
+      "port": "9600"
+    },
+    "plugins":{
+      "es": {
+        "enable": true,
+        "askEnable": true,
+        "host": "data.le-sou.org",
+        "port": "80",
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
       }
     }
   }

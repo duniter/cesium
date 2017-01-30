@@ -33,10 +33,10 @@
                 <i class="icon ion-location"></i>
                 <span ng-bind-html="formData.location"></span>
               </a>
-              <span ng-if="formData.location && category.name">&nbsp;|&nbsp;</span>
-              <a ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
+              <span ng-if="formData.location && formData.category.name">&nbsp;|&nbsp;</span>
+              <a ng-if="formData.category.name" ui-sref="app.market_lookup({category:formData.category.id})">
                 <i class="icon ion-flag"></i>
-                <span ng-bind-html="category.name"></span>
+                <span ng-bind-html="formData.category.name"></span>
               </a>
             </h2>
             <h4 class="hidden-xs">
@@ -72,9 +72,9 @@
                 <span ng-bind-html="formData.location"></span>
               </a>
               <br/>
-              <a ng-if="category.name" ui-sref="app.market_lookup({category:category.id})">
+              <a ng-if="formData.category.name" ui-sref="app.market_lookup({category:formData.category.id})">
                 <i class="icon ion-flag"></i>
-                <span ng-bind-html="category.name"></span>
+                <span ng-bind-html="formData.category.name"></span>
               </a>
             </h2>
             <h4>
@@ -102,12 +102,12 @@
 
           <!-- Buttons bar-->
           <div class="item large-button-bar hidden-xs hidden-sm">
-            <button class="button button-stable icon ion-android-share"
+            <button class="button button-stable button-small-padding icon ion-android-share-alt"
                     ng-click="showSharePopover($event)">
             </button>
             <button class="button button-calm ink-dark"
-                    ng-click="showTransferModal({pubkey: issuer.pubkey, uid: issuer.uid, amount: formData.price})"
-                    ng-if="!canEdit && formData.price">
+                    ng-click="buy()"
+                    ng-if="!canEdit && formData.price && formData.type == 'offer'">
               {{'MARKET.COMMON.BTN_BUY' | translate}}
             </button>
             <button class="button button-stable icon-left ink-dark"
@@ -131,8 +131,7 @@
 
           <span class="item item-icon-left item-button-right" ng-if="formData.price">
               <i class="icon ion-pricetag"></i>
-              <span class="dark" ng-if="!$root.settings.useRelative">{{convertedPrice|formatInteger}} {{formData.currency|abbreviate}}</span>
-              <span class="dark" ng-if="$root.settings.useRelative">{{convertedPrice|formatDecimal}} {{'COMMON.UD'|translate}} <sub>{{formData.currency|abbreviate}}</sub></span>
+              <span class="dark" ng-bind-html="formData.price | formatAmount:{currency:formData.currency}"></span>
           </span>
 
           <div class="lazy-load">

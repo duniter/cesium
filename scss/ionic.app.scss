@@ -24,7 +24,8 @@ $dark:                            #444 !default;
 //$balanced:                        #94c11f !default;
 
 $active: #b2e0ff !default;
-$stable-bg: #e0e0e0 !default;
+$stable-900-bg: #e0e0e0 !default;
+$positive-900-bg: #1A237E !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -162,7 +163,7 @@ $screen-lg:                       1200px;
 }
 // Small devices: Tablets (≥768px)
 @media screen and (max-width: $screen-sm-max) and (min-width: $screen-sm){
-    .hidden-sm {
+    .hidden-sm, .row-header.hidden-sm {
         display: none !important;
         visibility: hidden !important;
     }
@@ -176,7 +177,7 @@ $screen-lg:                       1200px;
     .badge:empty {
       display: none !important;
     }
-}
+  }
 @media screen and (min-width: $screen-md) {
     .hidden-sm {
         display: inherit;
@@ -323,7 +324,7 @@ $screen-lg:                       1200px;
     }
 }
 
-@media screen and (ma-width: $screen-sm) {
+@media screen and (max-width: $screen-sm) {
     .no-padding-xs {
         padding: inherit;
     }
@@ -476,6 +477,108 @@ $screen-menu:                     845px;
 }
 
 
+/**********
+   Notifications popover
+**********/
+
+
+.popover-notification {
+
+  .bar-header, .bar-footer {
+    height: 30px;
+
+    .title {
+      color: black;
+      text-align: left;
+      left: 0px !important;
+      font-size: 14px;
+      line-height: 30px;
+    }
+    .pull-right {
+      margin-right: 10px;
+    }
+    .pull-left {
+      margin-left: 10px;
+    }
+    a {
+      font-size: 14px;
+      text-decoration: none;
+      line-height: 30px;
+    }
+  }
+
+  .has-footer {
+    bottom: 28px;
+  }
+
+  .has-header {
+    top: 30px;
+  }
+
+  .item.unread {
+    background-color: rgb(236, 240, 247) !important;
+    border-color: rgb(221, 223, 226) !important;
+  }
+
+  .item-avatar {
+    padding-top: 12px;
+    padding-bottom: 8px;
+    padding-left: 76px;
+    padding-right: 10px;
+    min-height: 80px !important;
+
+    h4 {
+      i.icon {
+        font-size: 18px !important;
+        line-height: 12px !important;
+        vertical-align: middle !important;
+      }
+    }
+  }
+
+  .item-avatar > img:first-child,
+  .item-avatar .item-image,
+  .item-avatar .item-content > img:first-child,
+  .item-avatar .item-content .item-image {
+    top: 12px;
+    left: 10px;
+  }
+
+}
+
+/**********
+   Unit popover
+**********/
+
+.popover-unit {
+  height: 108px;
+  max-width: 115px;
+}
+
+/**********
+   Notifications view
+**********/
+
+.view-notification {
+
+  .item.unread {
+    background-color: rgb(236, 240, 247) !important;
+    border-color: rgb(221, 223, 226) !important;
+  }
+
+  ion-item {
+    h4 {
+      i.icon {
+        font-size: 18px !important;
+        line-height: 12px !important;
+        vertical-align: middle !important;
+      }
+    }
+  }
+}
+
+
+
 /* ============
  Buttons
 =============== */
@@ -496,6 +599,21 @@ $screen-menu:                     845px;
 .bar .buttons.pull-right, .bar .title+.button:last-child, .bar .title+.buttons, .bar>.button+.button:last-child, .bar>.button.pull-right {
   top: 0px !important;
 }
+
+// Avoid different between home view and other view (space between last button and left border)
+.bar.bar-header {
+  padding-right: 5px !important;
+
+  .buttons-right span {
+    margin-left: 0px !important;
+  }
+}
+
+.bar .title + .buttons.buttons-right {
+  right: 5px;
+}
+
+
 
 .button-icon {
   border-color: transparent;
@@ -522,6 +640,9 @@ $screen-menu:                     845px;
 .button-text-positive {
   color: $positive !important;
 }
+.button-text-stable {
+  color: #b2b2b2 !important;
+}
 
 /* ============
  Home page
@@ -546,7 +667,7 @@ $screen-menu:                     845px;
 @media screen and (max-width: $screen-xs-max) {
   #home .logo {
     height: 96px;
-    background-image: url(../img/logo_96px.png);
+    background-image: url('../img/logo_96px.png');
     background-size: 96px 96px;
   }
   #home .footer {
@@ -556,7 +677,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-sm) and (max-width: $screen-sm-max) {
   #home .logo {
     height: 144px;
-    background-image: url(../img/logo_144px.png);
+    background-image: url('../img/logo_144px.png');
     background-size: 144px 144px;
   }
   #home .button {
@@ -567,7 +688,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   #home .logo {
     height: 200px;
-    background-image: url(../../resources/logo/svg/colors/logo.large.cesium.dune.svg);
+    background-image: url('../../resources/logo/svg/colors/logo.large.cesium.dune.svg');
     background-size: 200px 200px;
   }
 
@@ -582,7 +703,7 @@ $screen-menu:                     845px;
 @media screen and (min-width: $screen-md) {
   .circle-bg-dark {
     ion-content.scroll-content {
-      background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
+      background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
       background-repeat: no-repeat;
       background-position: -725px -145px;
       background-size: 1024px 1024px;
@@ -590,7 +711,7 @@ $screen-menu:                     845px;
   }
 
   .menu.menu-left {
-    background-image: url(../../resources/logo/svg/white/logo.large.empty.transparent.svg);
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
     background-repeat: no-repeat;
     background-position: -500px -100px;
     background-size: 1024px 1024px;
@@ -625,6 +746,10 @@ $screen-menu:                     845px;
 
 .gray {
   color: grey !important;
+
+  b {
+    color: grey !important;
+  }
 }
 
 .gray, .positive{
@@ -648,11 +773,15 @@ $screen-menu:                     845px;
 }
 
 .avatar-member {
-  background-image: url(../img/person.png);
+  background-image: url('../img/person.png');
+}
+
+.avatar.disable {
+  opacity: 0.7;
 }
 
 .avatar-wallet {
-  background-image: url(../img/card.png);
+  background-image: url('../img/card.png');
 }
 
 /* ----
@@ -748,6 +877,11 @@ $screen-menu:                     845px;
   .item.item-icon-left.item-wallet-event .icon {
     font-size: 15px;
   }
+
+}
+
+.popover-wallet-actions {
+  height: 400px;
 }
 
 @media screen and (max-width: $screen-sm-max) {
@@ -777,14 +911,25 @@ $screen-menu:                     845px;
   filter: alpha(opacity=80);
 }
 
+.card.stable-900-bg,
+.card .stable-900-bg,
+.item.stable-900-bg,
+.item .stable-900-bg,
+.item-complex .item-content .stable-900-bg,
+.item-radio .item-content .stable-900-bg{
+  background-color: $stable-900-bg !important;
+}
+.card .item {
+  background: inherit;
+}
+
+.card.stable-bg,
+.card .stable-bg,
 .item.stable-bg,
 .item .stable-bg,
 .item-complex .item-content .stable-bg,
 .item-radio .item-content .stable-bg{
-  background-color: $stable-bg !important;
-}
-.card .item {
-  background: inherit;
+  background-color: $stable !important;
 }
 
 .card .card-header {
@@ -793,16 +938,91 @@ $screen-menu:                     845px;
   min-height: 25px;
 }
 
-
 .card .item .card-footer {
   margin-bottom: 5px;
 }
 
-.card.card-comment .avatar{
-  box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
-  top: 7px;
-  background-color: #D9D9D9;
+.card .card-avatar,
+.card.card-avatar {
+  .avatar {
+    box-shadow: 0px 3px 4px 0 rgba(0, 0, 0, 0.26);
+    top: 7px;
+    background-color: #D9D9D9;
+  }
+
+  img.avatar {
+    border: 0;
+    min-height: 54px;
+    min-width: 54px;
+  }
+
+  .item.item-avatar {
+    padding-top: 10px;
+    padding-bottom: 2px;
+    min-height: 45px !important;
+
+  }
+  .card-footer {
+    padding-left: 88px;
+
+    .pull-right {
+      a {
+        margin-right: 8px;
+      }
+    }
+  }
 }
+
+a.underline:focus,
+.underline a:focus,
+.a.underline:active,
+.underline a:active,
+a.underline:hover,
+.underline a:hover {
+  outline: 1px !important;
+  text-decoration: underline !important;
+}
+
+.animate-fade-slide-in .expanded .item,
+.animate-fade-slide-in .expanded.item,
+.animate-fade-slide-in-right .expanded .item,
+.animate-fade-slide-in-right .expanded.item,
+.animate-ripple .expanded .item,
+.animate-ripple .expanded.item
+.card-avatar-small.expanded .item
+.card-avatar-small .expanded .item
+.card-avatar-small.expanded .card.card-comment
+.card-avatar-small .expanded .card.card-comment
+{
+  @extend .done;
+  @extend .in;
+}
+
+.card-avatar-small.card,
+.card-avatar-small .card,
+.card-avatar-small .card.card-avatar,
+.card-avatar-small .card .card-avatar {
+
+  min-height: 45px;
+
+  .avatar,
+  .item-avatar .avatar {
+    box-shadow: 0px 2px 2px 0 rgba(0, 0, 0, 0.26);
+    height: 30px !important;
+    width: 30px !important;
+    left: 5px !important;
+  }
+
+  .item.item-avatar {
+    min-height: 25px !important;
+    padding-left: 42px !important;
+  }
+  .card-footer {
+    padding-top: 0px;
+    padding-left: 42px !important;
+  }
+}
+
 
 .gallery .card-gallery,
 .gallery .card.card-gallery{
@@ -816,7 +1036,7 @@ $screen-menu:                     845px;
 }
 
 .gallery .card-gallery-new {
-  max-height: 199px; /*img=150px + tabs=49px*/
+  max-height: 199px;
 }
 
 .list .item.text-left {
@@ -866,37 +1086,62 @@ $screen-menu:                     845px;
 }
 
 .item-avatar > i:first-child ,
-.item-avatar i.item-image,
+.item-avatar > img:first-child,
+.item-avatar i.item-image:first-child,
+.item-avatar img.item-image:first-child,
 .item-avatar .item-content > i:first-child,
-.item-avatar .item-content i.item-image,
+.item-avatar .item-content > img:first-child,
+.item-avatar .item-content i.item-image:first-child,
+.item-avatar .item-content img.item-image:first-child,
 .item-avatar-left > i:first-child,
-.item-avatar-left i.item-image,
+.item-avatar-left > img:first-child,
+.item-avatar-left i.item-image:first-child,
+.item-avatar-left img.item-image:first-child,
 .item-avatar-left .item-content > i:first-child,
-.item-avatar-left .item-content i.item-image {
+.item-avatar-left .item-content > img:first-child,
+.item-avatar-left .item-content i.item-image:first-child,
+.item-avatar-left .item-content img.item-image:first-child  {
   color: #D9D9D9;
   background-color: #f8f8f8;
   border: solid 1px #D9D9D9;
   overflow: hidden !important;
-  font-size: 65px !important;
-  padding-left: 3px;
-  padding-top: 6px;
-}
-
-.item-avatar > i:first-child,
-.item-avatar > img:first-child,
-.item-avatar .item-image,
-.item-avatar .item-content > img:first-child,
-.item-avatar .item-content .item-image,
-.item-avatar-left > img:first-child,
-.item-avatar-left > i:first-child,
-.item-avatar-left .item-image,
-.item-avatar-left .item-content > img:first-child,
-.item-avatar-left .item-content > i:first-child,
-.item-avatar-left .item-content .item-image {
+  font-size: 45px !important;
+  /*padding-left: 0px;
+  padding-top: 0px;
+  text-align: center;
+  vertical-align: middle;*/
+  line-height: 56px;
+  width: 100% !important;
+  /*display: block !important;*/
   max-height: 56px !important;
   max-width: 56px !important;
   top: 12px !important;
-  left: 12px !important;
+  //left: 12px !important;
+}
+
+.item-avatar > .icon:first-child:before ,
+.item-avatar .icon.item-image:first-child:before,
+.item-avatar .item-content > .icon:first-child:before,
+//.item-avatar .item-content .icon.item-image:first-child:before
+//.item-avatar-left > .icon:first-child:before,
+//.item-avatar-left .icon.item-image:first-child:before,
+//.item-avatar-left .item-content > .icon:first-child:before,
+//.item-avatar-left .item-content .icon.item-image:first-child:before,
+.item-avatar.item-icon-right .icon:first-child:before,
+.item-avatar.item-icon-right .icon-help:first-child:before,
+.item-avatar.item-icon-right .icon-alert:first-child:before,
+.item-avatar.item-icon-right #menu .footer .icon-help:first-child:before,
+#menu .footer .item-avatar.item-icon-right .icon-help:first-child:before {
+  width: 56px !important;
+}
+
+
+.item-avatar.item-icon-right .icon:last-child,
+.item-avatar.item-icon-right .icon-help:last-child,
+.item-avatar.item-icon-right .icon-alert:last-child,
+.item-avatar.item-icon-right #menu .footer .icon-help:last-child,
+#menu .footer .item-avatar.item-icon-right .icon-help:last-child {
+  left: auto;
 }
 
 /**********
@@ -956,7 +1201,7 @@ $screen-menu:                     845px;
 */
 
 .item.item-icon-right .badge,
-.item.item-button-right .badge,
+.item.item-button-right .badge
 {
   right: 43px;
 }
@@ -986,7 +1231,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 **********/
 
 .modal.modal-full-height {
-  height: 100% !important;
+  //height: 100% !important;
+  bottom: 0px;
 }
 
 .modal.about .bar.bar-header .button + .title {
@@ -1040,7 +1286,11 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   font-size: 50px !important;
   line-height: 80px;
   padding: 0 15px;
+  background-position: center;
+  background-size: cover;
+  display: inline-block;
 }
+
 
 @media screen and (max-width: $screen-xxs-max) {
   .card > .item.item-thumbnail-left,
@@ -1125,7 +1375,8 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     }
   }
 
-  body.platform-android #menu .item-icon-left .icon, .item-icon-right .icon {
+  body.platform-android #menu .item-icon-left .icon,
+  .item-icon-right .icon:last-child {
     top: 5px;
   }
 
@@ -1148,6 +1399,28 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+@media screen and (max-width: $screen-sm-max) {
+
+  #menu .bar-header {
+    background-color: $positive-900-bg;
+    color: #fff;
+    height: 175px;
+    padding-right: 0px !important;
+
+    .hero {
+      height: 175px;
+      box-shadow: none; // not need (define in bar-header)
+
+      .content {
+        bottom: 5px;
+      }
+    }
+  }
+
+  #menu .has-header {
+    top: 175px;
+  }
+}
 
 /**********
    Screen - identity Certifications
@@ -1157,14 +1430,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   top:16px !important;
 }
 
-.certifications-lg .avatar {
+.certifications-lg .avatar-large {
   left: auto;
   position: relative;
   font-size: 55px !important;
   height: 88px;
   width: 88px;
   color: #D9D9D9;
-  background-color: $stable-bg;
+  background-color: $stable-900-bg;
   border: solid 1px #D9D9D9;
 }
 
@@ -1313,7 +1586,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     left: 20px;
     top: 20px;
   }
-  .avatar.avatar-member {
+  .avatar {
     border: solid 1px #D9D9D9;
   }
   .bar.bar-footer {
@@ -1347,14 +1620,66 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 
   .avatar.active {
-    background-color: $stable-bg;
+    background-color: $stable-900-bg;
   }
 
-  .avatar.avatar-member {
+  .avatar {
     height: 31px;
     width: 31px;
     position: relative;
     left: 0px;
     top: 6px;
+  }
+}
+
+.badge.badge-secondary,
+.badge .badge-secondary {
+  font-size: 12px;
+  font-style: italic;
+  top: 37px !important;
+  font-weight: normal !important;
+  margin-right: 0px;
+  padding-right: 0px;
+}
+
+/**********
+  Item peer
+**********/
+
+.ion-es-user-api:before {
+  content: url('../img/logo.small.cs.dune.svg');
+}
+
+.row-header{
+  border-bottom: solid 1px #ccc !important;
+  margin: 0px;
+  min-height: 28px !important;
+}
+
+.col-header{
+  text-align: center;
+  display: block !important;
+}
+
+.col-15 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 15%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 15%;
+  -ms-flex: 0 0 15%;
+  flex: 0 0 15%;
+  max-width: 15%;
+}
+
+
+.ion-spinner-small {
+  height: 14px;
+  width: 14px;
+  line-height: 14px;
+  margin: 0;
+  padding: 0;
+  svg {
+    height: 14px;
+    width: 14px;
   }
 }

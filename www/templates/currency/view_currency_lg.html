@@ -5,19 +5,27 @@
     </ion-nav-title>
 
     <ion-nav-buttons side="secondary">
-        <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+        <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refreshPeers()">
         </button>
     </ion-nav-buttons>
 
     <ion-content>
-      <div class="row">
-        <div class="row responsive-sm">
-            <div class="col col-50 ">
-              <ng-include src="'templates/currency/tabs/view_parameters.html'"></ng-include>
-            </div>
-            <div class="col col-50">
-                <ng-include src="'templates/currency/tabs/view_network.html'"></ng-include>
-            </div>
+      <div class="row responsive-sm">
+        <!-- currency -->
+        <div class="col list">
+          <div class="item item-divider">
+            <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
+          </div>
+          <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
         </div>
+
+        <!-- wot -->
+        <div class="col list">
+          <div class="item item-divider">
+            <span translate>CURRENCY.VIEW.TAB_WOT</span>
+          </div>
+          <ng-include src="'templates/currency/items_wot.html'"></ng-include>
+        </div>
+      </div>
     </ion-content>
 </ion-view>

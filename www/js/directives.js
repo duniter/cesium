@@ -1,4 +1,4 @@
-angular.module('cesium.directives', ['cesium.services'])
+angular.module('cesium')
 
   // Add new compare-to directive (need for form validation)
   .directive("compareTo", function() {
@@ -18,15 +18,29 @@ angular.module('cesium.directives', ['cesium.services'])
       };
   })
 
-  .directive('number', function() {
+  .directive('numberFloat', function() {
     var NUMBER_REGEXP = new RegExp('^[0-9]+([.,][0-9]+)?$');
 
     return {
       require: '?ngModel',
       link: function(scope, element, attributes, ngModel) {
         if (ngModel) {
-          ngModel.$validators.number = function(modelValue) {
+          ngModel.$validators.numberFloat = function(modelValue) {
             return ngModel.$isEmpty(modelValue) || NUMBER_REGEXP.test(modelValue);
+          };
+        }
+      }
+    };
+  })
+
+  .directive('numberInt', function() {
+    var INT_REGEXP = new RegExp('^[0-9]+$');
+    return {
+      require: 'ngModel',
+      link: function(scope, element, attrs, ngModel) {
+        if (ngModel) {
+          ngModel.$validators.numberInt = function (value) {
+            return ngModel.$isEmpty(value) || INT_REGEXP.test(value);
           };
         }
       }
@@ -235,4 +249,5 @@ angular.module('cesium.directives', ['cesium.services'])
     }
   };
 })
+
 ;

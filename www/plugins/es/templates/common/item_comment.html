@@ -1,0 +1,71 @@
+<ng-init ng-init="level = level + 1">
+  <a name="{{::comment.id|formatHash}}"></a>
+
+  <ion-item
+            id="comment-{{comment.id|formatHash}}"
+            class="card card-comment card-avatar stable-900-bg item-text-wrap no-padding"
+            ng-class="{'in done': comment.isnew}">
+
+    <!-- Parent comment -->
+    <div class="card-header padding-left" ng-if="comment.parent && !hideParent">
+      <h5 class="gray underline">
+        <ng-if ng-if="!comment.parent.issuer">
+          {{'COMMENTS.REPLY_TO_DELETED_COMMENT'|translate}}
+        </ng-if>
+        <ng-if ng-if="comment.parent.issuer">
+          <a ng-click="toggleExpandedParent(comment, $index)">
+            {{'COMMENTS.REPLY_TO_LINK'|translate}}
+            <ng-if ng-if="comment.parent.uid">
+              {{comment.parent.name||comment.parent.uid}}
+            </ng-if>
+            <ng-if ng-if="!comment.parent.uid">
+              <i class="ion-key"></i>
+              {{comment.parent.issuer|formatPubkey}}
+            </ng-if>
+          </a>
+          <i ng-class="{'ion-arrow-down-b': !comment.expandedParent[$index], 'ion-arrow-up-b': comment.expandedParent[$index]}"></i>
+        </ng-if>
+      </h5>
+      <div class="padding-left" ng-if="comment.expandedParent[$index]">
+        <div class="card card-avatar card-avatar-small stable-bg item-text-wrap no-padding in done">
+          <ng-include ng-init="comment = comment.parent"
+                      src="'plugins/es/templates/common/item_comment_content.html'">
+          </ng-include>
+        </div>
+      </div>
+    </div>
+
+    <ng-include src="'plugins/es/templates/common/item_comment_content.html'"></ng-include>
+
+    <div class="card-footer gray">
+      <small class="underline">
+        <a ng-click="share($event, comment, $index)">{{comment.time | formatFromNow}}</a>
+
+        <ng-if ng-if="comment.replyCount">
+          | <a class="dark" ng-click="toggleExpandedReplies(comment, $index)">{{'COMMENTS.REPLY_COUNT'|translate:comment}}</a>
+          <i ng-class="{'ion-arrow-down-b': !comment.showReplies, 'ion-arrow-up-b': comment.showReplies}"></i>
+        </ng-if>
+      </small>
+
+      <div class="pull-right">
+        <a class="ion-android-share-alt" ng-click="share($event, comment)">
+        </a>
+        <a class="ion-edit" ng-if="isUserPubkey(comment.issuer)" ng-click="edit(comment)">
+        </a>
+        <a class="ion-trash-a" ng-if="isUserPubkey(comment.issuer)" ng-click="remove(comment, $index)">
+        </a>
+        <a class="ion-reply" ng-click="reply(comment)">
+          {{::'COMMENTS.REPLY'|translate}}
+        </a>
+      </div>
+    </div>
+  </ion-item>
+
+  <!-- replies   -->
+  <div ng-if="comment.expandedReplies[$index]" class="padding-left card-avatar-small expanded" ng-init="hideParent=true">
+    <ng-include ng-repeat="comment in comment.replies track by comment.id"
+         src="'plugins/es/templates/common/item_comment.html'">
+    </ng-include>
+  </div>
+
+</ng-init>

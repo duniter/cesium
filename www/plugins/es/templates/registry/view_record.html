@@ -15,8 +15,8 @@
   <ion-content scroll="true">
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
-        <img class="avatar" ng-src="{{thumbnail.src}}" ng-if="thumbnail">
-        <i class="avatar cion-registry-{{formData.type}}" ng-if="!thumbnail"></i>
+        <i class="avatar cion-registry-{{formData.type}}" ng-if="!formData.thumbnail"></i>
+        <i class="avatar" style="background-image: url({{::formData.thumbnail.src}})" ng-if="formData.thumbnail"></i>
         <h3 ng-bind-html="formData.title"></h3>
         <h4>&nbsp;</h4>
       </div>
@@ -68,7 +68,7 @@
 
         <!-- Buttons bar-->
         <div class="item large-button-bar hidden-xs hidden-sm">
-          <button class="button button-stable icon ion-android-share"
+          <button class="button button-stable button-small-padding icon ion-android-share-alt"
                   ng-click="showSharePopover($event)">
           </button>
           <button class="button button-calm ink-dark"

@@ -1,0 +1,61 @@
+<ion-popover-view class="fit hidden-xs hidden-sm popover-notification"
+                  ng-controller="PopoverMessageCtrl">
+  <ion-header-bar class="stable-bg block">
+    <div class="title" translate>MESSAGE.NOTIFICATIONS.TITLE</div>
+
+    <div class="pull-right">
+      <a class="positive"
+         ng-click="showNewMessageModal()"
+         translate>MESSAGE.BTN_COMPOSE</a>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="true">
+    <div class="center" ng-if="search.loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+    <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
+      MESSAGE.NO_MESSAGE_INBOX
+    </div>
+
+    <ion-list>
+
+      <ion-item
+        ng-repeat="notification in search.results"
+        class="item-border-large item-text-wrap ink item-avatar"
+        ng-class="{'unread': !notification.read}"
+        ng-click="select(notification)">
+
+        <i ng-if="!notification.avatar" class="item-image icon" ng-class="{'ion-person': notification.uid, 'ion-email': !notification.uid}"></i>
+        <i ng-if="notification.avatar" class="item-image avatar" style="background-image: url({{::notification.avatar.src}})"></i>
+
+        <h3>
+          <span translate>MESSAGE.NOTIFICATIONS.MESSAGE_RECEIVED</span>
+          <span class="positive" ng-if="notification.uid"><i class="ion-person"></i>&thinsp;{{notification.name||notification.uid}}</span>
+          <span class="gray" ng-if="!notification.uid"><i class="ion-key"></i>&thinsp;{{notification.issuer|formatPubkey}}</span>
+        </h3>
+        <h4>
+          <i class="icon ion-archive balanced"></i>&thinsp;<span class="dark">{{notification.time|formatFromNow}}</span>
+          <span class="gray">| {{notification.time|formatDate}}</span>
+        </h4>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll
+      ng-if="!search.loading && search.hasMore"
+      spinner="android"
+      on-infinite="showMore()"
+      distance="1%">
+    </ion-infinite-scroll>
+  </ion-content>
+
+  <ion-footer-bar class="stable-bg block">
+
+    <!-- show all -->
+    <div class="pull-right">
+      <a class="positive"
+         ui-sref="app.user_message"
+         ng-click="closePopover()"
+         translate>COMMON.NOTIFICATIONS.SHOW_ALL</a>
+    </div>
+  </ion-footer-bar>
+</ion-popover-view>

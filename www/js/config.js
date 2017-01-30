@@ -26,19 +26,25 @@ angular.module("cesium.config", [])
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 	},
 	"node": {
-		"host": "cgeek.fr",
-		"port": "9330"
+		"host": "gtest.duniter.org",
+		"port": "10900"
 	},
 	"plugins": {
 		"es": {
 			"enable": true,
 			"askEnable": false,
-			"host": "data.duniter.fr",
-			"port": "80"
+			"host": "data.gtest.duniter.fr",
+			"port": "80",
+			"notifications": {
+				"txSent": true,
+				"txReceived": true,
+				"certSent": true,
+				"certReceived": true
+			}
 		}
 	},
-	"version": "0.5.2",
-	"build": "2016-11-19T12:56:03.326Z",
+	"version": "0.9.17",
+	"build": "2017-01-30T16:17:01.554Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

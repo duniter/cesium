@@ -3,8 +3,8 @@
   xmlns="http://www.w3.org/ns/widgets"
   xmlns:cdv="http://cordova.apache.org/ns/1.0"
   id="fr.duniter.cesium"
-  version="0.5.2"
-  android-versionCode="502"
+  version="0.9.17"
+  android-versionCode="9170"
   >
   <name>Cesium</name>
   <description>
@@ -22,6 +22,8 @@
   <preference name="android-minSdkVersion" value="16" />
   <preference name="SplashScreen" value="screen" />
   <preference name="SplashScreenDelay" value="4000" />
+  <preference name="xwalkVersion" value="19" />
+  <preference name="xwalkMultipleApk" value="false"/>
   <allow-navigation href="*" />
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar" />

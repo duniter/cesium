@@ -1,6 +1,6 @@
 angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
-.factory('csHttp', function($http, $q, csSettings, csCache, CacheFactory) {
+.factory('csHttp', function($http, $q, csSettings, csCache, $timeout) {
   'ngInject';
 
   function factory(timeout) {
@@ -82,7 +82,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     function getResourceWithCache(host, port, path, maxAge, autoRefresh) {
       var url = getUrl(host, port, path);
       maxAge = maxAge || csCache.constants.LONG;
-      console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
+      //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
 
       return function(params) {
         return $q(function(resolve, reject) {
@@ -104,10 +104,10 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
           prepare(url, params, config, function(url, config) {
             $http.get(url, config)
-              .success(function(data, status, headers, config) {
+              .success(function(data) {
                 resolve(data);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status) {
                 processError(reject, data, url, status);
               });
           });
@@ -126,10 +126,10 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
           prepare(url, params, config, function(url, config) {
               $http.post(url, data, config)
-              .success(function(data, status, headers, config) {
+              .success(function(data) {
                 resolve(data);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status) {
                 processError(reject, data, status);
               });
           });
@@ -139,20 +139,54 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
     function ws(uri) {
       var sock = null;
-      return {
-        on: function(type, callback) {
-          if (!sock) {
+      var callbacks = [];
+
+      function _waitOpen() {
+        if (!sock) throw new Error('Websocket not opened');
+        if (sock && sock.readyState === 1) {
+          return $q.when(sock);
+        }
+        return $timeout(_waitOpen, 100);
+      }
+
+      function _open(self, callback, params) {
+        if (!sock) {
+          prepare(uri, params, {}, function(uri) {
             sock = new WebSocket(uri);
-            sockets.push(this);
-          }
-          sock.onmessage = function(e) {
-            callback(JSON.parse(e.data));
+            sockets.push(self);
+          });
+          sock.onerror = function(e) {
+            console.error(e);
           };
+          sock.onmessage = function(e) {
+            var obj = JSON.parse(e.data);
+            _.forEach(callbacks, function(callback) {
+              callback(obj);
+            });
+          };
+        }
+        if (callback) callbacks.push(callback);
+        return _waitOpen();
+      }
+
+      return {
+        open: function(params) {
+          return _open(this, null, params);
         },
-        close: function(type, callback) {
-          if (!!sock) {
+        on: function(callback, params) {
+          return _open(this, callback, params);
+        },
+        send: function(data) {
+          return _waitOpen()
+            .then(function(){
+              sock.send(data);
+            });
+        },
+        close: function() {
+          if (sock) {
             sock.close();
             sock = null;
+            callbacks = [];
           }
         }
       };

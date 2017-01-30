@@ -1,0 +1,14 @@
+<ion-view>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refreshPeers()">
+    </button>
+    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showActionsPopover($event)">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content>
+    <div class="list">
+      <ng-include src="'templates/currency/items_network.html'"></ng-include>
+    </div>
+  </ion-content>
+</ion-view>

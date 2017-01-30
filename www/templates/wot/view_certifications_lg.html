@@ -55,13 +55,14 @@
               <i class="icon ion-arrow-right-a" style="font-size:30px"></i>
             </div>
             <div class="col text-center no-padding">
-              <a
-                style="text-decoration: none;"
+              <a style="text-decoration: none;"
                 ui-sref="app.wot_view_identity({pubkey: formData.pubkey, uid: formData.name||formData.uid})">
-                <i class="avatar"
-                   ng-style="formData.avatarStyle"
-                   ng-class="{'avatar-wallet': !formData.avatarStyle && !formData.isMember, 'avatar-member': !formData.avatarStyle && formData.isMember}">
-                </i>
+                <i class="avatar avatar-large"
+                   ng-if="!formData.avatar"
+                   ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
+                <i class="avatar avatar-large"
+                     ng-if="formData.avatar"
+                     style="background-image: url({{::formData.avatar.src}})"></i>
                 <h4 class="text-center"
                   ng-class="{'positive': formData.isMember, 'gray': !formData.isMember}">
                   {{::formData.name||formData.uid}}

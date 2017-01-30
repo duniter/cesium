@@ -106,7 +106,7 @@
               }
               else {
                 // Add promise reject/resolve has last arguments
-                var eventArgs = [eventId].concat(Array.prototype.slice.call(arguments)).concat([deferred.resolve, deferred.reject]);
+                var eventArgs = [eventId].concat(Array.prototype.slice.call(arguments)).concat([deferred]);
                 $rootScope.$emit.apply($rootScope, eventArgs);
               }
               return deferred.promise;

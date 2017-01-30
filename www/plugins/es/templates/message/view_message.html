@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="view-message">
   <ion-nav-title>
     <span translate>MESSAGE.VIEW.TITLE</span>
   </ion-nav-title>
@@ -25,21 +25,40 @@
 
         <ion-list class="animate-fade-slide-in item-text-wrap">
 
+          <!-- Buttons bar-->
+          <div class="item large-button-bar hidden-xs hidden-sm">
+            <button class="button button-stable icon-left ink-dark"
+                    ng-click="delete()">
+              <i class="icon ion-trash-a assertive"></i>
+              <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
+            </button>
+            <button class="button button-stable icon ion-reply"
+                    ng-click="showReplyModal()">
+              {{'MESSAGE.BTN_REPLY' | translate}}
+            </button>
+            <!--<button class="button button-small button-stable icon ion-reply"
+                    ng-click="showForwardModal()">
+              {{'MESSAGE.BTN_FORWARD' | translate}}
+            </button>-->
+          </div>
 
-          <div class="item" ng-class="{'item-avatar': issuer.avatar}">
-            <img ng-if="issuer.avatar" class="item-image" ng-src="{{::issuer.avatar.src}}">
-            <h1 ng-bind-html="formData.title"></h1>
+          <div class="item item-avatar" ng-class="{'item-avatar': formData.avatar}">
+
+            <i ng-if="!formData.avatar" class="item-image" ng-class="{'ion-person': formData.uid, 'ion-email': !formData.uid}"></i>
+            <i ng-if="formData.avatar" class="item-image avatar" style="background-image: url({{::formData.avatar.src}})"></i>
+
+            <h1 class="title" ng-bind-html="formData.title"></h1>
             <h4>
               <i class="ion-clock"></i>
-              <span translate>MESSAGE.VIEW.SENDER</span>
-              <a class="positive" ui-sref="app.wot_view_identity({pubkey:formData.issuer, uid: issuer.name||issuer.uid})">
-                <span ng-if="issuer.uid">
+              {{type == 'inbox' ? 'MESSAGE.VIEW.SENDER': 'MESSAGE.VIEW.RECIPIENT'|translate}}
+              <a class="positive" ui-sref="app.wot_view_identity({pubkey: (type == 'inbox') ? formData.issuer : formData.recipient, uid: formData.name||formData.uid})">
+                <span ng-if="formData.uid">
                   <i class="ion-person"></i>
-                  {{issuer.name||issuer.uid}}
+                  {{formData.name||formData.uid}}
                 </span>
-                <span ng-if="!issuer.uid">
-                  <i class="ion-key"></i>
-                  {{formData.pubkey|formatPubkey}}
+                <span ng-if="!formData.uid" class="gray">
+                  <i class="ion-key gray"></i>
+                  {{formData.issuer|formatPubkey}}
                 </span>
               </a>
               <span>
@@ -62,22 +81,7 @@
             </div>
           </ion-item>
 
-          <!-- Buttons bar-->
-          <div class="item large-button-bar hidden-xs hidden-sm">
-            <button class="button button-small button-stable icon-left ink-dark"
-                    ng-click="delete()">
-              <i class="icon ion-trash-a assertive"></i>
-              <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
-            </button>
-            <button class="button button-small button-stable icon ion-reply"
-                    ng-click="showReplyModal()">
-              {{'MESSAGE.BTN_REPLY' | translate}}
-            </button>
-            <!--<button class="button button-small button-stable icon ion-reply"
-                    ng-click="showForwardModal()">
-              {{'MESSAGE.BTN_FORWARD' | translate}}
-            </button>-->
-          </div>
+
         </ion-list>
       </div>
 

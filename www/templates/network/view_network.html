@@ -1,0 +1,70 @@
+<ion-view>
+  <ion-nav-title>
+    <span translate>MENU.NETWORK</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+    </button>
+  </ion-nav-buttons>
+
+
+  <ion-content scroll="true" ng-init="enableFilter=true; ionItemClass='item-border-large';">
+
+    <div class="list">
+      <div class="padding padding-xs" style="display: block; height: 60px;">
+        <div class="pull-left">
+          <h4>
+            <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBERS</span>
+            <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
+            <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
+            <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
+            <span ng-if="!search.loading">({{search.results.length}})</span>
+
+          </h4>
+          <h5 class="dark" ng-if="!search.loading">
+            <i class="icon ion-clock"></i>
+            {{mainBlock.medianTime | formatDate}}
+            <span class="gray">
+              ({{'NETWORK.VIEW.MEDIAN_TIME'|translate}})
+            </span>
+          </h5>
+          <h5 class="gray" ng-if="search.loading" >
+            <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
+            <span translate>NETWORK.VIEW.LOADING_PEERS</span>
+          </h5>
+        </div>
+
+        <div class="pull-right">
+
+
+          <div class="pull-right" ng-if="enableFilter">
+            <a class="button button-text button-small hidden-xs hidden-sm ink"
+               ng-class="{'button-text-positive': search.type=='member'}"
+               ng-click="toggleSearchType('member')">
+              <i class="icon ion-android-people"></i>
+              {{'PEER.MEMBERS'|translate}}
+            </a>
+            &nbsp;
+            <a class="button button-text button-small hidden-xs hidden-sm ink"
+               ng-class="{'button-text-positive': search.type=='mirror'}"
+               ng-click="toggleSearchType('mirror')" >
+              <i class="icon ion-radio-waves"></i>
+              {{'PEER.MIRRORS'|translate}}
+            </a>
+
+            <a class="button button-text button-small hidden-xs hidden-sm ink"
+               ng-class="{'button-text-positive': search.type=='offline', 'button-text-stable': search.type!='offline'}"
+               ng-click="toggleSearchType('offline')" >
+              <i class="icon ion-eye-disabled light-gray"></i>
+              <span>{{'PEER.OFFLINE'|translate}}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <ng-include src="'templates/network/items_peers.html'"></ng-include>
+
+    </div>
+  </ion-content>
+</ion-view>

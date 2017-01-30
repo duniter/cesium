@@ -44,10 +44,10 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $rootScope, $state, BMA, csWallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, $ionicHistory) {
+function TransferController($scope, $rootScope, BMA, csWallet, UIUtils, $translate, $filter, Modals, csSettings) {
   'ngInject';
 
-  TransferModalController.call(this, $scope, $rootScope, $state, BMA, csWallet, UIUtils, $timeout, Device, $ionicPopover, $translate, $filter, $q, Modals, csSettings);
+  TransferModalController.call(this, $scope, $rootScope, $translate, $filter, BMA, csWallet, UIUtils, Modals, csSettings);
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!!state.stateParams && !!state.stateParams.pubkey) {
@@ -76,11 +76,11 @@ function TransferController($scope, $rootScope, $state, BMA, csWallet, UIUtils, 
 
   // ovveride modal close
   $scope.closeModal = function() {
-    $ionicHistory.goBack();
+    return $scope.showHome();
   };
 }
 
-function TransferModalController($scope, $rootScope, $ionicPopover, $translate, $filter, $q, BMA, csWallet, UIUtils, Modals,
+function TransferModalController($scope, $rootScope, $translate, $filter, BMA, csWallet, UIUtils, Modals,
                                  csSettings, parameters) {
   'ngInject';
 
@@ -116,26 +116,13 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
     }
   }
 
-  $ionicPopover.fromTemplateUrl('templates/wallet/popover_unit.html', {
-    scope: $scope
-  }).then(function(popover) {
-    $scope.unitPopover = popover;
-  });
-
-  //Cleanup the modal when we're done with it!
-  $scope.$on('$destroy', function() {
-    if (!!$scope.unitPopover) {
-      $scope.unitPopover.remove();
-    }
-  });
-
   $scope.cancel = function() {
     $scope.closeModal();
   };
 
   // When changing use relative UD
   $scope.onUseRelativeChanged = function() {
-    $scope.unit = $rootScope.walletData.currency;
+    $scope.currency = $rootScope.walletData.currency;
     if ($scope.formData.useRelative) {
       $scope.convertedBalance = $rootScope.walletData.balance / $rootScope.walletData.currentUD;
       $scope.udAmount = $scope.amount * $rootScope.walletData.currentUD;
@@ -170,53 +157,45 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
       return;
     }
 
-    $scope.askTransferConfirm()
-    .then(function(){
-      UIUtils.loading.show();
+    return $scope.askTransferConfirm()
+      .then(function(confirm){
+        if (!confirm) return;
 
-      var amount = $scope.formData.amount;
-      if (typeof amount == "string") {
-        amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
-      }
-      if ($scope.formData.useRelative) {
-        amount = $rootScope.walletData.currentUD * amount;
-      }
+        return UIUtils.loading.show()
+          .then(function(){
+            var amount = $scope.formData.amount;
+            if (typeof amount === "string") {
+              amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
+            }
+            if ($scope.formData.useRelative) {
+              amount = $rootScope.walletData.currentUD * amount;
+            }
+            else {
+              amount = amount * 100; // remove 2 decimals of quantitative mode
+            }
 
-      csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative)
-      .then(function() {
-        UIUtils.loading.hide();
-        $scope.closeModal(true);
-      })
-      .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
+            return csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative);
+          })
+          .then(function() {
+            return $scope.closeModal(true);
+          })
+          .then(UIUtils.loading.hide)
+          .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
     });
   };
 
   $scope.askTransferConfirm = function() {
-    return $q(function(resolve, reject) {
-      $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
-      .then(function(translations){
-        $translate('CONFIRM.TRANSFER', {
+    return $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
+      .then(function(translations) {
+        return $translate('CONFIRM.TRANSFER', {
           from: $rootScope.walletData.isMember ? $rootScope.walletData.uid : $filter('formatPubkey')($rootScope.walletData.pubkey),
           to: $scope.destUid ? $scope.destUid : $scope.destPub,
           amount: $scope.formData.amount,
           unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($rootScope.walletData.parameters.currency),
           comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
-        })
-        .then(function(confirmMsg) {
-          UIUtils.alert.confirm(confirmMsg)
-          .then(function(confirm){
-            if (confirm) {
-              resolve();
-            }
-          });
         });
-      });
-    });
-  };
-
-  $scope.setUseRelative = function(useRelative) {
-    $scope.formData.useRelative = useRelative;
-    $scope.unitPopover.hide();
+      })
+      .then(UIUtils.alert.confirm);
   };
 
   /* -- modals -- */
@@ -236,6 +215,19 @@ function TransferModalController($scope, $rootScope, $ionicPopover, $translate, 
         }
       });
   };
+
+  /* -- popover -- */
+
+  $scope.showUnitPopover = function($event) {
+    UIUtils.popover.show($event, {
+      templateUrl: 'templates/wallet/popover_unit.html',
+      scope: $scope
+    })
+    .then(function(useRelative) {
+      $scope.formData.useRelative = useRelative;
+    });
+  };
+
 
 }
 

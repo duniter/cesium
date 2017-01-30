@@ -145,6 +145,7 @@
 
 .peer-item .badge {
     top: 14px;
+    right: 6%;
 }
 
 .peer-item:hover .badge.badge-energized,
@@ -153,18 +154,10 @@
     color: #fff !important;
 }
 
-#login {
-  height: 100%;
-}
-
-
 .settings .item-divider {
     background-color: #f5f5f5;
 }
 
-#unitPopover {
-  height: 108px;
-}
 
 .no-margin {
   margin: 0 !important;

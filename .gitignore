@@ -20,5 +20,9 @@
 /www/lib/angular-moment
 /www/lib/moment
 /www/lib/waves
+/www/js/config.js
 /www/dist
 /hooks/playstore-config.json
+
+.directory
+www/js/config.js

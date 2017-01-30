@@ -1,38 +1,30 @@
 <ion-view
-    left-buttons="leftButtons" class="pane"
+    left-buttons="leftButtons"
     cache-view="false"
     >
   <ion-nav-title>
     {{currency}}
   </ion-nav-title>
 
-    <ion-nav-buttons side="secondary">
-        <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
-        </button>
-    </ion-nav-buttons>
+  <ion-content  class="no-header">
+      <ion-tabs class="tabs-icon-top tabs-positive">
 
-    <ion-content scroll="false">
-        <ion-tabs class="tabs-icon-top tabs-positive">
+        <ion-tab title="{{'CURRENCY.VIEW.TAB_CURRENCY'|translate}}" icon="ion-stats-bars"
+          ui-sref="app.currency.tab_parameters">
+          <ion-nav-view name="tab-parameters"></ion-nav-view>
+        </ion-tab>
 
-            <ion-tab title="{{'CURRENCY.VIEW.TAB_CURRENCY'|translate}}" icon="ion-stats-bars">
-                <ion-nav-view name="currency-tab">
-                  <ion-content>
-                    <ng-include src="'templates/currency/tabs/view_parameters.html'"/>
-                  </ion-content>
-                </ion-nav-view>
-            </ion-tab>
+        <ion-tab title="{{'CURRENCY.VIEW.TAB_WOT'|translate}}" icon="ion-person-stalker"
+                 ui-sref="app.currency.tab_wot">
+          <ion-nav-view name="tab-wot"></ion-nav-view>
+        </ion-tab>
 
-            <ion-tab id="helptip-currency-tab-peers"
-                     title="{{'CURRENCY.VIEW.TAB_NETWORK'|translate}}" icon="ion-network" >
-                <ion-nav-view name="network-tab">
-                  <ion-content>
-                      <ng-include src="'templates/currency/tabs/view_network.html'"/>
-                  </ion-content>
-                </ion-nav-view>
-            </ion-tab>
+        <ion-tab id="helptip-currency-tab-peers"
+                 title="{{'CURRENCY.VIEW.TAB_NETWORK'|translate}}" icon="ion-cloud"
+                 ui-sref="app.currency.tab_network">
+          <ion-nav-view name="tab-network"></ion-nav-view>
+        </ion-tab>
 
-            </ion-tab>
-        </ion-tabs>
-    </ion-content>
-
+      </ion-tabs>
+  </ion-content>
 </ion-view>

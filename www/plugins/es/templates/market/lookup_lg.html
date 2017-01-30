@@ -1,11 +1,12 @@
-<ion-view left-buttons="leftButtons" cache-view="false">
+<ion-view left-buttons="leftButtons">
   <ion-nav-title>
     <span translate>MARKET.SEARCH.TITLE</span>
   </ion-nav-title>
 
-  <ion-content class="lookupForm padding no-padding-xs">
+  <ion-content class="lookupForm padding no-padding-xs"
+               bind-notifier="{ rebind:$root.settings.useRelative }">
 
-    <button class="button button-small button-positive button-clear ink pull-right padding-right"
+    <button class="button button-small button-positive button-clear ink pull-right padding-right hidden-sm hidden-xs"
             ng-click="showNewRecordModal()">
       <i class="icon ion-compose"></i>
       {{'MARKET.COMMON.BTN_NEW_AD' | translate}}
@@ -79,31 +80,7 @@
          class="item item-record item-border-large ink padding-xs"
          ui-sref="app.market_view_record({id: rec.id, title: rec.urlTitle})">
 
-        <div class="visible-xs visible-sm">
-          <div class="item-text-wrap item-thumbnail-left">
-            <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail"></img>
-            <i class="item-image ion-speakerphone" ng-if="!rec.thumbnail"></i>
-            <h2 ng-bind-html="rec.title"></h2>
-            <h4 class="gray">
-              <span ng-if="rec.location">
-                <i class="icon ion-location"></i>
-                <span ng-bind-html="rec.location"></span>
-              </span>
-                    <span ng-show="rec.time">
-                <span ng-show="rec.location">|</span>
-                {{::rec.time | formatFromNow}}
-              </span>
-            </h4>
-            <span  ng-if="rec.picturesCount > 1"
-                   class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
-            <h2 class="badge badge-price badge-calm" ng-if="rec.price">
-              <ng-if ng-if="settings.useRelative">{{::rec.price|formatDecimal}} {{'COMMON.UD'|translate}}<sub>{{::rec.currency|abbreviate}}</sub></ng-if>
-              <ng-if ng-if="!settings.useRelative">{{::rec.price|formatInteger}} {{::rec.currency|abbreviate}}</ng-if>
-            </h2>
-          </div>
-        </div>
-
-        <div class="row row-record hidden-xs hidden-sm">
+        <div class="row row-record">
           <div class="col item-text-wrap item-thumbnail-left">
             <img ng-src="{{::rec.thumbnail.src}}" ng-if="rec.thumbnail">
             <i class="item-image ion-speakerphone" ng-if="!rec.thumbnail"></i>
@@ -121,29 +98,28 @@
           </div>
           <div class="col col-20">
             <h3 class="gray" ng-if="rec.category" ng-bind-html="rec.category.name"></h3>
-            <h2 class="badge badge-price badge-calm" ng-if="rec.price">
-              <ng-if ng-if="settings.useRelative">{{::rec.price|formatDecimal}} {{'COMMON.UD'|translate}}<sub>{{::rec.currency|abbreviate}}</sub></ng-if>
-              <ng-if ng-if="!settings.useRelative">{{::rec.price|formatInteger}} {{::rec.currency|abbreviate}}</ng-if>
-            </h2>
+            <div class="badge badge-price badge-calm" ng-if="rec.price">
+              <i class="cion-market-offer"></i>
+              <span ng-bind-html=":rebind:rec.price|formatAmount:{currency: rec.currency}"></span>
+            </div>
+            <div class="badge badge-energized badge-price" ng-if="!search.type && !rec.price && rec.type=='need'">
+              <i class="cion-market-need"></i>
+              {{'MARKET.TYPE.'+rec.type|upper|translate}}
+            </div>
           </div>
-          <div class="col">
+          <div class="col hidden-sm hidden-xs">
               <h3 class="gray text-wrap" ng-bind-html="rec.description | truncText:500" ng-if="rec.description"></h3>
           </div>
         </div>
       </a>
-
-      <!-- show more items -->
-      <div class="item padding done in" ng-if="search.loadingMore">
-        <ion-spinner icon="android"></ion-spinner>
-      </div>
-      <div class="item" ng-if="!search.loadingMore && search.hasMore">
-        <p>
-          <a ng-click="showMore()" translate>MARKET.SEARCH.SHOW_MORE</a>
-          <span class="gray" translate="MARKET.SEARCH.SHOW_MORE_COUNT" translate-values="{limit: search.limit}"></span>
-        </p>
-      </div>
-
     </div>
+
+    <ion-infinite-scroll
+      ng-if="!search.loading && search.hasMore"
+      spinner="android"
+      on-infinite="showMore()"
+      distance="10%">
+    </ion-infinite-scroll>
   </ion-content>
 
   <button id="fab-add-market-record"
