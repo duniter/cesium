@@ -357,14 +357,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
       },
 
-      computeScoreAlphaValue = function(value, nbChars) {
+      computeScoreAlphaValue = function(value, nbChars, asc) {
         if (!value) return 0;
         var score = 0;
         value = value.toLowerCase();
         for (var i=0; i < nbChars; i++) {
           score += Math.pow(0.001, i) * value.charCodeAt(i);
         }
-        return score;
+        return asc ? (1000 - score) : score;
       },
 
       sortPeers = function(updateMainBuid) {
@@ -403,25 +403,25 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.peers = _.sortBy(data.peers, function(peer) {
           var score = 0;
           if (data.sort.type) {
-            var sign = data.sort.asc ? 1 : -1;
             var sortScore = 0;
-            sortScore += (data.sort.type == 'uid' ? computeScoreAlphaValue(peer.uid||peer.pubkey, 3) : 0);
-            sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') ? 0 : 1) : 0);
-            sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? peer.difficulty : sign * 99999) : 0);
-            sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? peer.currentNumber : 0) : 0);
+            sortScore += (data.sort.type == 'uid' ? computeScoreAlphaValue(peer.uid||peer.pubkey, 3, data.sort.asc) : 0);
+            sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') && data.sort.asc ? 1 : 0) : 0);
+            sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? (data.sort.asc ? (1000-peer.difficulty) : peer.difficulty): 0) : 0);
+            sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? (data.sort.asc ? (1000000000 - peer.currentNumber) : peer.currentNumber) : 0) : 0);
             score += (1000000000 * sortScore);
           }
           score += (100000000 * (peer.online ? 1 : 0));
-          score += (10000000  * (peer.hasMainConsensusBlock ? 0 : 1));
+          score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
           score += (100000    * (peer.hasConsensusBlock ? buids[peer.buid].pct : 0));
           if (data.expertMode) {
-            score += (100       * (peer.difficulty ? peer.difficulty : 999));
+            score += (100     * (peer.difficulty ? (1000-peer.difficulty) : 0));
+            score += (1       * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
           }
           else {
-            score += (100       * (peer.uid ? 0 : computeScoreAlphaValue(peer.pubkey, 2)));
+            score += (100     * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
+            score += (1       * (!peer.uid ? computeScoreAlphaValue(peer.pubkey, 2, true) : 0));
           }
-          score += (1         * (peer.uid ? computeScoreAlphaValue(peer.uid, 2) : 0));
-          return score;
+          return -score;
         });
 
         // Raise event on new main block
