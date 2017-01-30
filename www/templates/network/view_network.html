@@ -13,8 +13,8 @@
 
     <div class="list">
       <div class="padding padding-xs" style="display: block; height: 60px;">
-        <div class="pull-left">
-          <h4>
+        <div class="pull-left" >
+          <h4 >
             <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBERS</span>
             <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
             <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
@@ -62,6 +62,9 @@
           </div>
         </div>
       </div>
+
+      <div id="helptip-network-blockchain" style="display: block"></div>
+      <div id="helptip-network-peers" style="display: block"></div>
 
       <ng-include src="'templates/network/items_peers.html'"></ng-include>
 

@@ -6,8 +6,9 @@ angular.module('cesium.help.controllers', ['cesium.services'])
 
     $stateProvider
 
+
       .state('app.help_tour', {
-        url: "/help/tour",
+        url: "/tour",
         views: {
           'menuContent': {
             templateUrl: "templates/home/home.html",
@@ -46,6 +47,9 @@ angular.module('cesium.help.controllers', ['cesium.services'])
   .controller('HelpModalCtrl', HelpModalController)
 
   .controller('HelpTipCtrl', HelpTipController)
+
+  .controller('HelpTourCtrl', HelpTourController)
+
 
 ;
 
@@ -152,6 +156,18 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         return $scope.continue;
       })
 
+      // Network tour
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startNetworkTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.network=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
       // Wot tour
       .then(function(next){
         if (!next) return false;
@@ -233,15 +249,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    */
   $scope.startCurrencyTour = function(startIndex, hasNext) {
 
-    var showNetworkViewIsNeed  = function() {
-      if ($state.is('app.currency_view')) {
-        // Select the second tabs
-        $timeout(function () {
-          var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
-          if (tabs && tabs.length == 2) {
-            angular.element(tabs[1]).triggerHandler('click');
-          }
-        }, 100);
+    var showWotTabIfNeed  = function() {
+      if ($state.is('app.currency.tab_parameters')) {
+        $state.go('app.currency.tab_wot');
       }
     };
 
@@ -265,29 +275,17 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        return $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg')
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency' : 'app.currency_view_lg')
           .then(function () {
-            return $scope.showHelpTip('helptip-currency-newcomers', {
+            return $scope.showHelpTip('helptip-currency-mass-member', {
               bindings: {
-                content: 'HELP.TIP.CURRENCY_WOT',
+                content: 'HELP.TIP.CURRENCY_MASS',
                 icon: {
                   position: 'center'
                 }
-              },
-              timeout: 1200 // need for Firefox
+              }
             });
           });
-      },
-
-      function () {
-        return $scope.showHelpTip('helptip-currency-mass-member', {
-          bindings: {
-            content: 'HELP.TIP.CURRENCY_MASS',
-            icon: {
-              position: 'center'
-            }
-          }
-        });
       },
 
       function () {
@@ -341,24 +339,88 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         });
       },
 
-      function() {
-        showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-blockchain', {
+      function () {
+        showWotTabIfNeed();
+        return $scope.showHelpTip('helptip-currency-newcomers', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_BLOCKCHAIN',
+            content: 'HELP.TIP.CURRENCY_WOT',
             icon: {
-              position: 'center',
-              glyph: 'ion-information-circled'
+              position: 'center'
+            }
+          },
+          timeout: 1200 // need for Firefox
+        });
+      }
+    ];
+
+    // Get currency parameters, with currentUD
+    return csCurrency.default().then(function(currency) {
+      contentParams = currency.parameters;
+      // Launch steps
+      return $scope.executeStep('currency', steps, startIndex);
+    });
+  };
+
+  /**
+   * Features tour on network
+   * @returns {*}
+   */
+  $scope.startNetworkTour = function(startIndex, hasNext) {
+
+    var showNetworkTabIfNeed  = function() {
+      if ($state.is('app.currency')) {
+        // Select the second tabs
+        $timeout(function () {
+          var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
+          if (tabs && tabs.length == 3) {
+            angular.element(tabs[2]).triggerHandler('click');
+          }
+        }, 100);
+      }
+    };
+
+    var contentParams;
+
+    var steps = [
+
+      function(){
+        if (UIUtils.screen.isSmall()) return true; // skip but continue
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-network', {
+          bindings: {
+            content: 'HELP.TIP.MENU_BTN_NETWORK',
+            icon: {
+              position: 'left'
             }
           }
         });
       },
 
+      function () {
+        if ($ionicSideMenuDelegate.isOpen()) {
+          $ionicSideMenuDelegate.toggleLeft(false);
+        }
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency.tab_network' : 'app.network')
+          .then(function () {
+            showNetworkTabIfNeed();
+            return $scope.showHelpTip('helptip-network-peers', {
+              bindings: {
+                content: 'HELP.TIP.NETWORK_BLOCKCHAIN',
+                icon: {
+                  position: 'center',
+                  glyph: 'ion-information-circled'
+                }
+              },
+              timeout: 1200 // need for Firefox
+            });
+          });
+      },
+
       function() {
-        showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-peer-0', {
+        showNetworkTabIfNeed();
+        return $scope.showHelpTip('helptip-network-peer-0', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_PEERS',
+            content: 'HELP.TIP.NETWORK_PEERS',
             icon: {
               position: 'center'
             }
@@ -370,23 +432,24 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
 
       function() {
-        showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-peer-0-block', {
+        showNetworkTabIfNeed();
+        return $scope.showHelpTip('helptip-network-peer-0-block', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_PEERS_BLOCK_NUMBER',
+            content: 'HELP.TIP.NETWORK_PEERS_BLOCK_NUMBER',
             icon: {
-              position: 'right'
+              position: 'right',
+              style: 'margin-right: 75px;'
             }
           }
         });
       },
 
       function() {
-        showNetworkViewIsNeed();
+        showNetworkTabIfNeed();
         var locale = csSettings.data.locale.id;
-        return $scope.showHelpTip('helptip-currency-peers', {
+        return $scope.showHelpTip('helptip-network-peers', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_PEERS_PARTICIPATE',
+            content: 'HELP.TIP.NETWORK_PEERS_PARTICIPATE',
             contentParams: {
               installDocUrl: (csConfig.helptip && csConfig.helptip.installDocUrl) ?
                 (csConfig.helptip.installDocUrl[locale] ? csConfig.helptip.installDocUrl[locale] : csConfig.helptip.installDocUrl) :
@@ -406,7 +469,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     return csCurrency.default().then(function(currency) {
       contentParams = currency.parameters;
       // Launch steps
-      return $scope.executeStep('currency', steps, startIndex);
+      return $scope.executeStep('network', steps, startIndex);
     });
   };
 
@@ -874,7 +937,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
                 content: 'HELP.TIP.SETTINGS_CHANGE_UNIT',
                 contentParams: contentParams,
                 icon: {
-                  position: 'right'
+                  position: 'right',
+                  style: 'margin-right: 60px'
                 },
                 hasNext: hasNext
               },
@@ -936,4 +1000,19 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         });
     }
   };
+}
+
+/* ----------------------------
+ *  Help Tip
+ * ---------------------------- */
+function HelpTourController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+                           UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
+
+  HelpTipController.call(this, $scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+                         UIUtils, csConfig, csSettings, csCurrency, Device, csWallet)
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    $scope.startHelpTour();
+  });
+
 }

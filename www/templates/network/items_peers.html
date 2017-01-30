@@ -22,7 +22,7 @@
   <div ng-repeat="peer in search.results track by peer.id"
        class="item peer-item item-icon-left {{::ionItemClass}}"
        ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
-       id="helptip-currency-peer-{{$index}}"
+       id="helptip-network-peer-{{$index}}"
        ng-click="selectPeer(peer)">
 
     <i class="icon ion-android-globe"></i>
@@ -55,7 +55,7 @@
         <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>
       </div>
       <div class="col col-20 no-padding text-center">
-        <span id="helptip-currency-peer-{{$index}}-block"
+        <span id="helptip-network-peer-{{$index}}-block"
           class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber}}</span>
       </div>
     </div>

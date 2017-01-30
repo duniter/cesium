@@ -82,6 +82,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
     .state('app.currency_view_name_lg', {
       url: "/currency/lg/:name",
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency_lg.html",
@@ -92,6 +93,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
     .state('app.currency_view_lg', {
       url: "/currency/lg",
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency_lg.html",
@@ -130,7 +132,7 @@ function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
   // Called to navigate to the main app
   $scope.selectCurrency = function(id) {
     $scope.selectedCurrency = id;
-    $state.go('app.currency_view', {name: id});
+    $state.go('app.currency_name', {name: id});
   };
 }
 
