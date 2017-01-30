@@ -109,7 +109,8 @@
       "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages.",
       "REMOVE_All_MESSAGES_FAILED": "Erreur lors de la suppression de tous les messages.",
-      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu."
+      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu.",
+      "RECIPIENT_IS_MANDATORY": "Le destinataire est obligatoire."
     }
   },
   "MARKET": {

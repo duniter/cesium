@@ -264,20 +264,21 @@ function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, Cry
       })
       .catch(function(err){
         if (err === 'CANCELLED') {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.home');
+          $scope.showHome();
         }
       });
   });
 
   $scope.cancel = function() {
-    $ionicHistory.goBack();
+    $scope.showHome();
   };
 
   $scope.setForm = function(form) {
     $scope.form = form;
+  };
+
+  $scope.clodeModal = function() {
+    $scope.showHome();
   };
 
 }
@@ -296,7 +297,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, c
 
   $scope.doSend = function(forceNoContent) {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid) {
+    if(!$scope.form.$valid /*|| !$scope.formData.destPub*/) {
       return;
     }
 

@@ -110,31 +110,31 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function sendMessage(message, keypair) {
-      return $q(function(resolve, reject) {
-        doSendMessage(message, keypair)
-          .catch(function(err) {
-            reject(err);
-          })
-          .then(function(res){
-            resolve(res);
+      return doSendMessage(message, keypair)
+        .then(function(sendResult){
+          var outbox = (csSettings.data.plugins.es.message &&
+            angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
+            csSettings.data.plugins.es.message.outbox : true;
 
-            var outbox = (csSettings.data.plugins.es.message &&
-              angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
-              csSettings.data.plugins.es.message.outbox : true;
-            // Send to outbox (in a async way)
-            if (outbox) {
-              return doSendMessage(message, keypair, '/message/outbox', 'issuer')
-                .catch(function(err) {
-                  console.error("Failed to store message to outbox: " + err);
-                });
-            }
-          });
+          if (!outbox) return sendResult;
+
+          // Send to outbox
+          return doSendMessage(message, keypair, '/message/outbox', 'issuer')
+            .catch(function(err) {
+              console.error("Failed to store message to outbox: " + err);
+            })
+            .then(function() {
+              return sendResult;
+            });
         });
     }
 
     function doSendMessage(message, keypair, boxPath, recipientFieldName) {
       boxPath = boxPath || '/message/inbox';
       recipientFieldName = recipientFieldName || 'recipient';
+      if (!message[recipientFieldName]) {
+        return $q.reject({message:'MESSAGE.ERROR.RECIPIENT_IS_MANDATORY'});
+      }
 
       var boxKeypair = getBoxKeypair(keypair);
 

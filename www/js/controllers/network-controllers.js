@@ -6,8 +6,8 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
-     .state('app.network', {
-      url: "/network?type",
+    .state('app.network', {
+      url: "/network?type&expert",
       cache: false,
       views: {
         'menuContent': {
@@ -65,8 +65,13 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
         if (currency) {
           $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
             BMA.instance(currency.peer.host, currency.peer.port) : BMA;
-          if (state && state.stateParams && state.stateParams.type) {
-            $scope.search.type = state.stateParams.type;
+          if (state && state.stateParams) {
+            if (state.stateParams.type) {
+              $scope.search.type = state.stateParams.type;
+            }
+            if (state.stateParams.expert) {
+              $scope.expertMode = state.stateParams.expert;
+            }
           }
           $scope.load();
         }

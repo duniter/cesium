@@ -109,7 +109,8 @@
       "MARK_AS_READ_FAILED": "Unable to mark the message as 'read'.",
       "LOAD_NOTIFICATIONS_FAILED": "Error while loading messages notifications.",
       "REMOVE_All_MESSAGES_FAILED": "Error while removing all messages.",
-      "MARK_ALL_AS_READ_FAILED": "Error while marking messages as read."
+      "MARK_ALL_AS_READ_FAILED": "Error while marking messages as read.",
+      "RECIPIENT_IS_MANDATORY": "Recipient is mandatory."
     }
   },
   "MARKET": {
