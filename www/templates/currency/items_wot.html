@@ -1,7 +1,7 @@
 
   <ion-list bind-notifier="{ rebind:formData.useRelative }">
 
-    <ion-item class="item-icon-left">
+    <ion-item class="item-icon-left item-text-wrap">
         <i class="icon ion-person-stalker"></i>
         <span translate>CURRENCY.VIEW.MEMBERS</span> (N<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)
         <span class="badge badge-assertive" ng-if="!loading">{{formData.N | formatInteger}}</span>
@@ -17,6 +17,12 @@
       </div>
     </ion-item>
 
+    <ion-item  class="item-icon-left item-text-wrap">
+      <i class="icon ion-ribbon-b"></i>
+      <b class="ion-star " style="color: yellow; position: absolute; font-size: 16px; left: 25px; bottom: 32px"></b>
+      <span translate>CURRENCY.VIEW.SENTRIES</span>
+      <span class="badge badge-royal" ng-if="!loading">{{formData.sentries}}</span>
+    </ion-item>
 
     <div id="helptip-currency-rules"
          class="item item-divider">
@@ -54,8 +60,16 @@
 
     <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-steam"></i>
-      <span class="col col-75" translate>CURRENCY.VIEW.STEP_MAX</span>
+      <b class="ion-person" style="position: absolute; font-size: 16px; left: 38px; top: 17px"></b>
+      <span class="col col-75"><span ng-bind-html="'CURRENCY.VIEW.STEP_MAX'|translate"></span> (stepMax)</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.stepMax}}</span>
+    </ion-item>
+
+    <ion-item  class="item-icon-left item-text-wrap">
+      <i class="icon ion-ribbon-b"></i>
+      <b class="ion-star " style="color: yellow; position: absolute; font-size: 16px; left: 25px; bottom: 32px"></b>
+      <span ng-bind-html="'CURRENCY.VIEW.SENTRIES_FORMULA'|translate"></span>
+      <span class="item-note dark" ng-if="!loading">CEIL( N<sub>t</sub><sup>^ (1 / stepMax)</sup>)</span>
     </ion-item>
 
     <ion-item class="item-icon-left item-text-wrap">

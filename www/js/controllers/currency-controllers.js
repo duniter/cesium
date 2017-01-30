@@ -154,6 +154,7 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     difficulty : 0,
     Nprev: 0,
     stepMax: 0,
+    sentries: 0,
     xpercent: 0,
     durationFromLastUD: 0,
     blockUid: null,
@@ -281,6 +282,7 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
       data.UD = data.currentUD;
       data.durationFromLastUD = lastUDTime ? data.medianTime - lastUDTime : 0;
       data.useRelative = $scope.formData.useRelative;
+      data.sentries = Math.ceil(Math.pow(data.N, 1/ data.stepMax));
 
       // Apply to formData
       angular.copy(data, $scope.formData);

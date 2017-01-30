@@ -156,6 +156,8 @@
       "SIG_WINDOW": "Maximum delay before a certification<br/>will be treated",
       "STEP_MAX": "Maximum distance between<br/>each WoT member and a newcomer.",
       "WOT_RULES_DIVIDER": "Rules for web of trust",
+      "SENTRIES": "Required number of certifications<br/>to become a sentries",
+      "SENTRIES_FORMULA": "Required number of certifications<br/>to become a sentries (formula)",
       "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule",
       "AVG_GEN_TIME": "The average time between 2 blocks",
       "CURRENT": "current"
