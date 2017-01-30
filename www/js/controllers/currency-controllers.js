@@ -17,7 +17,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
     })
 
     .state('app.currency_name', {
-      url: "/currency/:name",
+      url: "/currencies/:name",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",

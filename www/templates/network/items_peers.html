@@ -1,4 +1,4 @@
-  <div class="item row row-header hidden-xs hidden-sm"  ng-if="settings.expertMode">
+  <div class="item row row-header hidden-xs hidden-sm" ng-if="expertMode">
     <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
       {{'COMMON.UID' | translate}} / {{'COMMON.PUBKEY' | translate}}
@@ -41,13 +41,13 @@
           <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
         <h4>{{peer.server}}</h4>
       </div>
-      <div class="col col-15 no-padding text-center" ng-if="settings.expertMode && peer.hasEndpoint('ES_USER_API')">
+      <div class="col col-15 no-padding text-center" ng-if="expertMode && peer.hasEndpoint('ES_USER_API')">
         <h3 class="hidden-xs hidden-sm">
           <i class="ion-es-user-api"></i>
           <b class="ion-plus gray" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
         </h3>
       </div>
-      <div class="col col-20 no-padding text-center" ng-if="settings.expertMode && search.type != 'offline'">
+      <div class="col col-20 no-padding text-center" ng-if="expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs hidden-md">
           <span ng-if="peer.uid"><i class="ion-lock-combination"></i>{{peer.difficulty||'?'}}</span>
           <span ng-if="!peer.uid" translate>PEER.MIRROR</span>

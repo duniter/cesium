@@ -42,6 +42,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
 
   $scope.networkStarted = false;
   $scope.ionItemClass = '';
+  $scope.expertMode = csSettings.expertMode && !UIUtils.screen.isSmall();
   $scope.search = {
     text: '',
     loading: true,
@@ -273,7 +274,7 @@ function NetworkLookupModalController($scope, $timeout, $state, $location, $ioni
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
   $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
   $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
-
+  $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
 
   $scope.selectPeer = function(peer) {
