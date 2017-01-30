@@ -21,7 +21,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",
-          controller: 'CurrencyViewCtrl',
+          controller: 'CurrencyViewCtrl'
         }
       },
       data: {
@@ -38,8 +38,18 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
+    .state('app.currency.tab_wot', {
+      url: "/community",
+      views: {
+        'tab-wot': {
+          templateUrl: "templates/currency/tabs/tab_wot.html"
+        }
+      }
+    })
+
     .state('app.currency.tab_network', {
       url: "/network",
+      cache: false,
       views: {
         'tab-network': {
           templateUrl: "templates/currency/tabs/tab_network.html"
@@ -47,11 +57,12 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency.tab_wot', {
-      url: "/community",
+    .state('app.currency.tab_peers', {
+      url: "/peers",
       views: {
-        'tab-wot': {
-          templateUrl: "templates/currency/tabs/tab_wot.html"
+        'tab-peers': {
+          templateUrl: "templates/currency/tabs/tab_peers.html",
+          controller: 'NetworkLookupCtrl'
         }
       }
     })
@@ -120,7 +131,8 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     stepMax: 0,
     xpercent: 0,
     durationFromLastUD: 0,
-    blockUid: null
+    blockUid: null,
+    peerCount: 0
   };
   $scope.node = null;
   $scope.loading = true;
@@ -142,9 +154,9 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
         .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
       }
 
-      csNetwork.api.data.on.mainBlockChanged($scope, function(data) {
+      csNetwork.api.data.on.mainBlockChanged($scope, function(mainBlock) {
         if ($scope.loading) return;
-        if ($scope.formData.blockUid !== data.mainBuid) {
+        if ($scope.formData.blockUid !== mainBlock.buid) {
           console.debug("[currency] Updating parameters UI (new main block detected)");
           $timeout($scope.load, 1000 /*waiting propagation to requested node*/);
         }
@@ -260,7 +272,11 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
   };
 
   $scope.refreshPeers = function() {
-    $scope.$broadcast('NetworkLookupCtrl.action', 'refresh');
+    $scope.$broadcast('csView.action.refresh', 'peers');
+  };
+
+  $scope.showActionsPopover = function(event) {
+    $scope.$broadcast('csView.action.showActionsPopover', event);
   };
 
   /* -- help tip -- */

@@ -1,13 +1,8 @@
 
-  <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
-    </button>
-  </ion-nav-buttons>
-
   <ion-item id="helptip-currency-blockchain"
             class="item-icon-left item-text-wrap">
     <i class="icon ion-clock"></i>
-    <span translate>CURRENCY.VIEW.TIME</span>
+    <span translate>CURRENCY.VIEW.MEDIAN_TIME</span>
     <span class="item-note dark">{{formData.medianTime | formatDate}}</span>
   </ion-item>
 
@@ -32,20 +27,16 @@
     <span class="badge badge-stable">{{formData.avgGenTime | formatDuration}}</span>
   </ion-item>
 
-  <ng-controller ng-controller="NetworkLookupCtrl">
+  <ng-controller ng-controller="NetworkLookupCtrl as ctrl">
 
     <div id="helptip-currency-peers"
          class="item item-divider">
       <div class="pull-left">
-        <span ng-if="search.type=='member'">
-          {{'PEER.MEMBERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-        </span>
-        <span ng-if="search.type=='mirror'">
-          {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-        </span>
-        <span ng-if="!search.type">
-          {{'PEER.PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-        </span>
+        <span ng-if="search.type=='member'" translate>PEER.MEMBERS</span>
+        <span ng-if="search.type=='mirror'" translate>PEER.MIRRORS</span>
+        <span ng-if="search.type=='offline'" translate>PEER.OFFLINE</span>
+        <span ng-if="!search.type" translate>PEER.PEERS</span>
+        <span ng-if="!search.loading">({{search.results.length}})</span>
       </div>
 
       <div class="buttons pull-right">

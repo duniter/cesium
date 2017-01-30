@@ -3,27 +3,40 @@
     <span translate>MENU.NETWORK</span>
   </ion-nav-title>
 
-  <ion-content scroll="true" ng-init="enableFilter=true; ionItemClass='item-border-large'">
-    <div class="list ">
-      <div class="padding padding-xs" style="display: block; height: 60px;">
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+    </button>
+  </ion-nav-buttons>
 
+
+  <ion-content scroll="true" ng-init="enableFilter=true; ionItemClass='item-border-large'">
+
+    <div class="list">
+      <div class="padding padding-xs" style="display: block; height: 60px;">
         <div class="pull-left">
-          <h4 ng-if="enableFilter && search.type=='member'">
-            {{'PEER.MEMBERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
+          <h4>
+            <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBERS</span>
+            <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
+            <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
+            <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
+            <span ng-if="!search.loading">({{search.results.length}})</span>
+
           </h4>
-          <h4 ng-if="enableFilter && search.type=='mirror'">
-            {{'PEER.MIRRORS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-          </h4>
-          <h4 ng-if="enableFilter && search.type=='offline'">
-            {{'PEER.OFFLINE' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-          </h4>
-          <h4 ng-if="!enableFilter || !search.type">
-            {{'PEER.ALL_PEERS' | translate}} <span ng-if="!search.loading">({{search.results.length}})</span>
-          </h4>
+          <h5 class="dark" ng-if="!search.loading">
+            <i class="icon ion-clock"></i>
+            {{mainBlock.medianTime | formatDate}}
+            <span class="gray">
+              ({{'NETWORK.VIEW.MEDIAN_TIME'|translate}})
+            </span>
+          </h5>
+          <h5 class="gray" ng-if="search.loading" >
+            <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
+            <span translate>NETWORK.VIEW.LOADING_PEERS</span>
+          </h5>
         </div>
 
         <div class="pull-right">
-          <ion-spinner class="icon" icon="android" ng-if="search.loading"></ion-spinner>&nbsp;
+
 
           <div class="pull-right" ng-if="enableFilter">
             <a class="button button-text button-small hidden-xs hidden-sm ink"

@@ -49,7 +49,7 @@
       </div>
       <div class="col col-20 no-padding text-center" ng-if="settings.expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs hidden-md">
-          <span ng-if="peer.uid"><i class="ion-lock-combination"></i>{{peer.difficulty}}</span>
+          <span ng-if="peer.uid"><i class="ion-lock-combination"></i>{{peer.difficulty||'?'}}</span>
           <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
         </h3>
         <h4 class="hidden-sm hidden-xs hidden-md gray">v{{peer.version}}</h4>

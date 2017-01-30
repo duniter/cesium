@@ -183,34 +183,47 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
      * @param blockNumbers a rray of block number
     */
     exports.blockchain.blocks = function(blockNumbers){
-      return exports.raw.blocksRecursive(blockNumbers, 0, exports.constants.LIMIT_REQUEST_COUNT);
+      return exports.raw.getHttpRecursive(exports.blockchain.block, 'block', blockNumbers);
     };
 
-    exports.raw.blocksRecursive = function(blockNumbers, offset, size) {
+    /**
+     * Return all expected blocks
+     * @param blockNumbers a rray of block number
+     */
+    exports.network.peering.peersByLeaves = function(leaves){
+      return exports.raw.getHttpRecursive(exports.network.peering.peers, 'leaf', leaves, 0, 10, callbackFlush);
+    };
+
+    exports.raw.getHttpRecursive = function(httpGetRequest, paramName, paramValues, offset, size, callbackFlush) {
+      offset = angular.isDefined(offset) ? offset : 0;
+      size = size || exports.constants.LIMIT_REQUEST_COUNT;
       return $q(function(resolve, reject) {
         var result = [];
         var jobs = [];
-        _.each(blockNumbers.slice(offset, offset+size), function(blockNumber) {
+        _.each(paramValues.slice(offset, offset+size), function(paramValue) {
+          var requestParams = {};
+          requestParams[paramName] = paramValue;
           jobs.push(
-            exports.blockchain.block({block: blockNumber})
-              .then(function(block){
-                if (!block) return;
-                result.push(block);
+            httpGetRequest(requestParams)
+              .then(function(res){
+                if (!res) return;
+                result.push(res);
               })
           );
         });
 
         $q.all(jobs)
           .then(function() {
-            if (offset < blockNumbers.length - 1) {
+            if (offset < paramValues.length - 1) {
               $timeout(function() {
-                exports.raw.blocksRecursive(blockNumbers, offset+size, size)
-                  .then(function(blocks) {
-                    if (!blocks || !blocks.length) {
+                exports.raw.getHttpRecursive(httpGetRequest, paramName, paramValues, offset+size, size)
+                  .then(function(res) {
+                    if (!res || !res.length) {
                       resolve(result);
                       return;
                     }
-                    resolve(result.concat(blocks));
+
+                    resolve(result.concat(res));
                   })
                   .catch(function(err) {
                     reject(err);

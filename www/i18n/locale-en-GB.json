@@ -145,7 +145,7 @@
       "SHARE": "Money share",
       "UD": "Universal Dividend",
       "C_ACTUAL": "Current growth",
-      "TIME": "Current blockchain time",
+      "MEDIAN_TIME": "Current blockchain time",
       "POW_MIN": "Common difficulty",
       "MONEY_RULES_DIVIDER": "Rules of currency",
       "C_RULE": "Growth",
@@ -161,6 +161,12 @@
       "CURRENT": "current"
     }
   },
+  "NETWORK": {
+    "VIEW": {
+      "MEDIAN_TIME": "Blockchain time",
+      "LOADING_PEERS": "Loading peers..."
+    }
+  },
   "PEER": {
     "TITLE": "Peer",
     "PEERS": "Peers",
@@ -174,7 +180,8 @@
     "DIFFICULTY" : "Difficulty",
     "API" : "API",
     "CURRENT_BLOCK" : "Block #",
-    "POPOVER_FILTER_TITLE": "Filter"
+    "POPOVER_FILTER_TITLE": "Filter",
+    "OFFLINE": "Offline peers"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",

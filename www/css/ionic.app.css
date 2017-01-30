@@ -14962,3 +14962,13 @@ a.underline:hover,
   -ms-flex: 0 0 15%;
   flex: 0 0 15%;
   max-width: 15%; }
+
+.ion-spinner-small {
+  height: 14px;
+  width: 14px;
+  line-height: 14px;
+  margin: 0;
+  padding: 0; }
+  .ion-spinner-small svg {
+    height: 14px;
+    width: 14px; }

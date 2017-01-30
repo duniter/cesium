@@ -11,27 +11,20 @@
 
     <ion-content>
       <div class="row responsive-sm">
+        <!-- currency -->
         <div class="col list">
           <div class="item item-divider">
             <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
           </div>
-
           <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
+        </div>
 
+        <!-- wot -->
+        <div class="col list">
           <div class="item item-divider">
             <span translate>CURRENCY.VIEW.TAB_WOT</span>
           </div>
-
           <ng-include src="'templates/currency/items_wot.html'"></ng-include>
-        </div>
-
-        <div class="col list">
-
-          <div class="item item-divider">
-            <span translate>CURRENCY.VIEW.TAB_NETWORK</span>
-          </div>
-
-          <ng-include src="'templates/currency/items_network.html'"></ng-include>
         </div>
       </div>
     </ion-content>

@@ -1672,4 +1672,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 
-
+.ion-spinner-small {
+  height: 14px;
+  width: 14px;
+  line-height: 14px;
+  margin: 0;
+  padding: 0;
+  svg {
+    height: 14px;
+    width: 14px;
+  }
+}

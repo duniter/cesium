@@ -25,7 +25,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           asc: true
         },
         knownBlocks: [],
-        mainBuid: null,
+        mainBlock: null,
         uidsByPubkeys: null,
         searchingPeersOnNetwork: false
       },
@@ -50,7 +50,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         };
         data.memberPeersCount = 0;
         data.knownBlocks = [];
-        data.mainBuid = null;
+        data.mainBlock = null;
         data.uidsByPubkeys = {};
         data.loading = true;
         data.searchingPeersOnNetwork = false;
@@ -104,7 +104,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
             // online nodes
             if (data.filter.online) {
-              return data.bma.network.peering.peers({leaves: true})
+              /*return data.bma.network.peering.peers({leaves: true})
                 .then(function(res){
                   return $q.all(res.leaves.map(function(leaf) {
                     return data.bma.network.peering.peers({ leaf: leaf })
@@ -112,6 +112,16 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                         return addOrRefreshPeerFromJson(subres.leaf.value, newPeers);
                       });
                   }));
+                });*/
+              return data.bma.network.peers()
+                .then(function(res){
+                  var jobs = [];
+                  _.forEach(res.peers, function(json) {
+                    if (json.status == 'UP') {
+                      jobs.push(addOrRefreshPeerFromJson(json, newPeers));
+                    }
+                  });
+                  if (jobs.length) return $q.all(jobs);
                 });
             }
 
@@ -129,6 +139,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           })
 
           .then(function(){
+            data.searchingPeersOnNetwork = false;
+          })
+          .catch(function(err){
+            console.error(err);
             data.searchingPeersOnNetwork = false;
           });
       },
@@ -257,6 +271,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             peer.currentNumber = block.number;
             peer.online = true;
             peer.buid = buid(block);
+            peer.medianTime = block.medianTime;
             if (data.knownBlocks.indexOf(peer.buid) === -1) {
               data.knownBlocks.push(peer.buid);
             }
@@ -288,17 +303,17 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           })
           .then(function(peer) {
             // Exit if offline, or not expert mode or too small device
-            if (!data.filter.online || !peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
+            if (!data.filter.online || !peer || !peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
             var jobs = [];
 
             // Get hardship (only for a member peer)
             if (peer.uid) {
               jobs.push(peer.api.blockchain.stats.hardship({pubkey: peer.pubkey})
                 .then(function (res) {
-                  peer.difficulty = res && res.level;
+                  peer.difficulty = res ? res.level : null;
                 })
                 .catch(function() {
-                  peer.difficulty = '?'; // continue
+                  peer.difficulty = null; // continue
                 }));
             }
 
@@ -340,26 +355,45 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
       },
 
+      getAlphanumeralValueScore = function(value, nbChars) {
+        if (!value) return 0;
+        var score = 0;
+        value = value.toLowerCase();
+        for (var i=0; i < nbChars; i++) {
+          score += Math.pow(0.001, i) * value.charCodeAt(i);
+        }
+        return score;
+      },
+
       sortPeers = function(updateMainBuid) {
-        // Count peer by current block uid
-        var currents = {};
+        // Construct a map of buid, with peer count and medianTime
+        var buids = {};
+        data.memberPeersCount = 0;
         _.forEach(data.peers, function(peer){
           if (peer.buid) {
-            currents[peer.buid] = currents[peer.buid] || 0;
-            currents[peer.buid]++;
+            var buid = buids[peer.buid];
+            if (!buid) {
+              buid = {
+                buid: peer.buid,
+                count: 0,
+                medianTime: peer.medianTime
+              };
+              buids[peer.buid] = buid;
+            }
+            buid.count++;
           }
+          data.memberPeersCount += peer.uid ? 1 : 0;
         });
-        var buids = _.keys(currents).map(function(key) {
-          return { buid: key, count: currents[key] };
+        // Compute pct of use, per buid
+        _.forEach(_.values(buids), function(buid) {
+          buid.pct = buid.count * 100 / data.peers.length;
         });
         var mainBlock = _.max(buids, function(obj) {
           return obj.count;
         });
-        data.memberPeersCount = 0;
         _.forEach(data.peers, function(peer){
           peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
-          peer.hasConsensusBlock = !peer.hasMainConsensusBlock && currents[peer.buid] > 1;
-          data.memberPeersCount += peer.uid ? 1 : 0;
+          peer.hasConsensusBlock = !peer.hasMainConsensusBlock && buids[peer.buid].count > 1;
         });
         data.peers = _.uniq(data.peers, false, function(peer) {
           return peer.id;
@@ -368,25 +402,25 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           var score = 0;
           if (data.sort.type) {
             var sign = data.sort.asc ? 1 : -1;
-            score += (data.sort.type == 'uid' ? (peer.uid ? peer.uid.toLowerCase().charCodeAt(0) : peer.pubkey.toLowerCase().charCodeAt(0)) : 0);
-            score += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') ? 0 : 1) : 0);
-            score += (data.sort.type == 'difficulty' ? (peer.difficulty ? peer.difficulty : sign * 99999) : 0);
-            score += (data.sort.type == 'current_block' ? (peer.currentNumber ? peer.currentNumber : 0) : 0);
-            score = sign * score;
+            var sortScore = 0;
+            sortScore += (data.sort.type == 'uid' ? getAlphanumeralValueScore(peer.uid||peer.pubkey, 3) : 0);
+            sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') ? 0 : 1) : 0);
+            sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? peer.difficulty : sign * 99999) : 0);
+            sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? peer.currentNumber : 0) : 0);
+            score += (1000000000 * sortScore);
           }
-          score += (1000000000 * score);
           score += (100000000 * (peer.online ? 1 : 0));
-          score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
-          score += (100000    * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
+          score += (10000000  * (peer.hasMainConsensusBlock ? 0 : 1));
+          score += (100000    * (peer.hasConsensusBlock ? buids[peer.buid].pct : 0));
           score += (100       * (peer.difficulty ? peer.difficulty : 999));
-          score += (1        * (peer.uid ? peer.uid.toLowerCase().charCodeAt(0) : 999)); // alphabetical order
+          score += (1         * (peer.uid ? getAlphanumeralValueScore(peer.uid, 2) : 0));
           return score;
         });
 
         // Raise event on new main block
-        if (updateMainBuid && mainBlock.buid && data.mainBuid !== mainBlock.buid) {
-          data.mainBuid = mainBlock.buid;
-          api.data.raise.mainBlockChanged(data);
+        if (updateMainBuid && mainBlock.buid && (!data.mainBlock || data.mainBlock.buid !== mainBlock.buid)) {
+          data.mainBlock = mainBlock;
+          api.data.raise.mainBlockChanged(mainBlock);
         }
 
         // Raise event when changed

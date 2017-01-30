@@ -14,9 +14,16 @@
 
       <a class="item item-icon-left item-icon-right ink"
          ng-click="toggleSearchType('mirror')">
-        <i class="icon ion-ios-infinite"></i>
+        <i class="icon ion-radio-waves"></i>
         {{'PEER.MIRRORS' | translate}}
         <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='mirror'"></i>
+      </a>
+
+      <a class="item item-icon-left item-icon-right ink"
+         ng-click="toggleSearchType('offline')">
+        <i class="icon ion-eye-disabled"></i>
+        {{'PEER.OFFLINE' | translate}}
+        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='offline'"></i>
       </a>
 
     </div>

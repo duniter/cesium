@@ -145,7 +145,7 @@
       "SHARE": "Masse par membre",
       "UD": "Dividende universel",
       "C_ACTUAL": "Croissance actuelle",
-      "TIME": "Heure de la blockchain",
+      "MEDIAN_TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau minimal de difficulté de calcul",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
       "C_RULE": "Croissance théorique",
@@ -159,6 +159,12 @@
       "XPERCENT":"Pourcentage minimum de sentinelle<br/>à atteindre pour respecter la règle de distance.",
       "AVG_GEN_TIME": "Temps moyen entre deux blocs",
       "CURRENT": "actuel"
+    }
+  },
+  "NETWORK": {
+    "VIEW": {
+      "MEDIAN_TIME": "Heure de la blockchain",
+      "LOADING_PEERS": "Chargement des noeuds..."
     }
   },
   "PEER": {

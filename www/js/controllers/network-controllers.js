@@ -6,7 +6,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
-    .state('app.view_network', {
+    .state('app.network', {
       url: "/network",
       views: {
         'menuContent': {
@@ -49,6 +49,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     sort : undefined,
     asc: true
   };
+  $scope.mainBlock = {};
 
   /**
    * Enter in view
@@ -80,6 +81,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     if (!$scope.networkStarted) return;
     csNetwork.close();
     $scope.networkStarted = false;
+    $scope.search.loading = true;
   };
   $scope.$on('$ionicView.beforeLeave', $scope.leave);
   $scope.$on('$ionicParentView.beforeLeave', $scope.leave);
@@ -114,6 +116,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
             $scope.refreshing = false;
            }, 1100);
         }
+      });
+
+      csNetwork.api.data.on.mainBlockChanged($scope, function(mainBlock){
+        $scope.mainBlock = mainBlock;
       });
     }
 
@@ -184,10 +190,14 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     $state.go('app.view_peer', {server: peer.server});
   };
 
-  $scope.$on('NetworkLookupCtrl.action', function(event, action) {
-    if (action == 'refresh') {
+  $scope.$on('csView.action.refresh', function(event, context) {
+    if (context == 'peers') {
       $scope.refresh();
     }
+  });
+
+  $scope.$on('csView.action.showActionsPopover', function(event, clickEvent) {
+    $scope.showActionsPopover(clickEvent);
   });
 
   /* -- popover -- */
