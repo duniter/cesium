@@ -361,7 +361,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         if (!value) return 0;
         var score = 0;
         value = value.toLowerCase();
-        for (var i=0; i < nbChars; i++) {
+        if (nbChars > value.length) {
+          nbChars = value.length;
+        }
+        score += value.charCodeAt(0);
+        for (var i=1; i < nbChars; i++) {
           score += Math.pow(0.001, i) * value.charCodeAt(i);
         }
         return asc ? (1000 - score) : score;
