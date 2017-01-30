@@ -42,7 +42,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
 
   $scope.networkStarted = false;
   $scope.ionItemClass = '';
-  $scope.expertMode = csSettings.expertMode && !UIUtils.screen.isSmall();
+  $scope.expertMode = csSettings.data.expertMode && !UIUtils.screen.isSmall();
   $scope.search = {
     text: '',
     loading: true,
@@ -93,7 +93,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
   $scope.$on('$ionicParentView.beforeLeave', $scope.leave);
 
   $scope.computeOptions = function() {
-    return {
+    var options = {
       filter: {
         member: (!$scope.search.type || $scope.search.type === 'member'),
         mirror: (!$scope.search.type || $scope.search.type === 'mirror'),
@@ -103,8 +103,11 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
       sort: {
         type : $scope.search.sort,
         asc : $scope.search.asc
-      }
+      },
+      expertMode: $scope.expertMode
     };
+    console.log(options);
+    return options;
   };
 
   $scope.load = function() {
@@ -264,10 +267,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
 }
 
 
-function NetworkLookupModalController($scope, $timeout, $state, $location, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
+function NetworkLookupModalController($scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
   'ngInject';
 
-  NetworkLookupController.call(this, $scope, $timeout, $state, $location, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
+  NetworkLookupController.call(this, $scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
 
   // Read parameters
   parameters = parameters || {};

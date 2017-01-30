@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, csHttp, Api, csSettings, UIUtils) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, csHttp, Api) {
   'ngInject';
 
   factory = function(id) {
@@ -24,6 +24,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           type: null,
           asc: true
         },
+        expertMode: false,
         knownBlocks: [],
         mainBlock: null,
         uidsByPubkeys: null,
@@ -48,6 +49,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           type: null,
           asc: true
         };
+        data.expertMode = false;
         data.memberPeersCount = 0;
         data.knownBlocks = [];
         data.mainBlock = null;
@@ -303,7 +305,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           })
           .then(function(peer) {
             // Exit if offline, or not expert mode or too small device
-            if (!data.filter.online || !peer || !peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
+            if (!data.filter.online || !peer || !peer.online || !data.expertMode) return peer;
             var jobs = [];
 
             // Get hardship (only for a member peer)
@@ -355,7 +357,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
       },
 
-      getAlphanumeralValueScore = function(value, nbChars) {
+      computeScoreAlphaValue = function(value, nbChars) {
         if (!value) return 0;
         var score = 0;
         value = value.toLowerCase();
@@ -403,7 +405,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           if (data.sort.type) {
             var sign = data.sort.asc ? 1 : -1;
             var sortScore = 0;
-            sortScore += (data.sort.type == 'uid' ? getAlphanumeralValueScore(peer.uid||peer.pubkey, 3) : 0);
+            sortScore += (data.sort.type == 'uid' ? computeScoreAlphaValue(peer.uid||peer.pubkey, 3) : 0);
             sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') ? 0 : 1) : 0);
             sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? peer.difficulty : sign * 99999) : 0);
             sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? peer.currentNumber : 0) : 0);
@@ -412,8 +414,13 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           score += (100000000 * (peer.online ? 1 : 0));
           score += (10000000  * (peer.hasMainConsensusBlock ? 0 : 1));
           score += (100000    * (peer.hasConsensusBlock ? buids[peer.buid].pct : 0));
-          score += (100       * (peer.difficulty ? peer.difficulty : 999));
-          score += (1         * (peer.uid ? getAlphanumeralValueScore(peer.uid, 2) : 0));
+          if (data.expertMode) {
+            score += (100       * (peer.difficulty ? peer.difficulty : 999));
+          }
+          else {
+            score += (100       * (peer.uid ? 0 : computeScoreAlphaValue(peer.pubkey, 2)));
+          }
+          score += (1         * (peer.uid ? computeScoreAlphaValue(peer.uid, 2) : 0));
           return score;
         });
 
@@ -479,6 +486,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           data.bma = bma ? bma : BMA;
           data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
           data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
+          data.expertMode = angular.isDefined(options.expertMode) ?options.expertMode : data.expertMode;
           console.info('[network] Starting network from [{0}]'.format(bma.node.server));
           var now = new Date();
           startListeningOnSocket(resolve, reject);
