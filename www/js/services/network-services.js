@@ -73,7 +73,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       },
 
       loadPeers = function() {
-        data.peers.splice(0);
+        data.peers = [];
         data.searchingPeersOnNetwork = true;
         data.loading = true;
         data.bma = data.bma || BMA;

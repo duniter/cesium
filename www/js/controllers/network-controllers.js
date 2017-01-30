@@ -8,6 +8,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
      .state('app.network', {
       url: "/network?type",
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_network.html",
@@ -18,6 +19,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
     .state('app.view_peer', {
       url: "/network/peer/:server",
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_peer.html",
@@ -35,7 +37,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
   'ngInject';
 
   $scope.networkStarted = false;
@@ -162,6 +164,16 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
     $scope.search.loading = true;
     $scope.load();
 
+    $ionicHistory.nextViewOptions({
+      disableAnimate: true,
+      disableBack: true,
+      historyRoot: true
+    });
+    $state.go('app.network', {type: $scope.search.type}, {
+      reload: false,
+      inherit: true,
+      notify: false});
+
   };
 
   $scope.toggleSearchEndpoint = function(endpoint){
@@ -251,10 +263,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
 }
 
 
-function NetworkLookupModalController($scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
+function NetworkLookupModalController($scope, $timeout, $state, $location, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
   'ngInject';
 
-  NetworkLookupController.call(this, $scope, $timeout, $state, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
+  NetworkLookupController.call(this, $scope, $timeout, $state, $location, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
 
   // Read parameters
   parameters = parameters || {};
