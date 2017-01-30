@@ -6,8 +6,8 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
   $stateProvider
 
-    .state('app.network', {
-      url: "/network",
+     .state('app.network', {
+      url: "/network?type",
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_network.html",
@@ -54,7 +54,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
   /**
    * Enter in view
    */
-  $scope.enter = function() {
+  $scope.enter = function(e, state) {
     if ($scope.networkStarted) return;
     $scope.networkStarted = true;
     csCurrency.default()
@@ -62,6 +62,9 @@ function NetworkLookupController($scope, $timeout, $state, $ionicPopover, BMA, U
         if (currency) {
           $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
             BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+          if (state && state.stateParams && state.stateParams.type) {
+            $scope.search.type = state.stateParams.type;
+          }
           $scope.load();
         }
       })

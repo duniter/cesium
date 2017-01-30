@@ -16,8 +16,21 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
+    .state('app.currency_name', {
+      url: "/currency/:name",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/currency/view_currency.html",
+          controller: 'CurrencyViewCtrl'
+        }
+      },
+      data: {
+        large: 'app.currency_view_lg'
+      }
+    })
+
     .state('app.currency', {
-      url: "/currency/view/:name",
+      url: "/currency",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",
@@ -67,8 +80,18 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
+    .state('app.currency_view_name_lg', {
+      url: "/currency/lg/:name",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/currency/view_currency_lg.html",
+          controller: 'CurrencyViewCtrl'
+        }
+      }
+    })
+
     .state('app.currency_view_lg', {
-      url: "/currency/view/lg/:name",
+      url: "/currency/lg",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency_lg.html",
