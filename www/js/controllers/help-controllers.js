@@ -1003,13 +1003,13 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 }
 
 /* ----------------------------
- *  Help Tip
+ *  Help tour (auto start from home page)
  * ---------------------------- */
 function HelpTourController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
                            UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
   HelpTipController.call(this, $scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
-                         UIUtils, csConfig, csSettings, csCurrency, Device, csWallet)
+                         UIUtils, csConfig, csSettings, csCurrency, Device, csWallet);
 
   $scope.$on('$ionicView.enter', function(e, state) {
     $scope.startHelpTour();

@@ -93,7 +93,6 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "WELCOME": "",
     "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en temps réel.",
     "MESSAGE_SHORT": "Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a><br/>en temps réel !",
     "BTN_REGISTRY": "Annuaire",
