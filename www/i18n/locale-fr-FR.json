@@ -235,7 +235,7 @@
     "ACCOUNT.BTN_REVOKE": "Revoquer<span class='hidden-xs hidden-sm'> définitivement</span> cette identité...",
     "ACCOUNT.BTN_SHOW_DETAILS": "Afficher les infos techniques",
     "ACCOUNT.NEW.TITLE": "Inscription",
-    "ACCOUNT.NEW.SLIDE_1_TITLE": "Choix de la monnaie :",
+    "ACCOUNT.NEW.SLIDE_1_TITLE": "Choisir la monnaie :",
     "ACCOUNT.NEW.SLIDE_2_TITLE": "Type de compte :",
     "ACCOUNT.NEW.MEMBER_ACCOUNT": "Compte membre",
     "ACCOUNT.NEW.MEMBER_ACCOUNT_HELP": "Si vous n'etes pas encore inscrit en tant qu'individu (Un seul compte possible par individu).",
