@@ -45,54 +45,107 @@ angular.module("cesium.config", [])
 });
 ```
 
-- Change options value, sucha as: 
+## Minimal configuration file
 
-    * Default Duniter node: set `node.host` and `node.port` to the default node address. 
-   
-    * Default ES node ([ElasticSearch Duniter4j node](https://github.com/duniter/duniter4j)), used for Cesium+ extension 
- 
-         * set `plugins.es.enable` with [true|false] to change the default extension state.
-      
-         * set `plugins.es.host` and `plugins.es.port` to the default ES node address.
-      
-         > To **remove** the extension (and not only disable by default): remove all content inside the `plugins` tag.
-         > Users will NOT be able to enable the extension.
+Because of default options values (see details below), the minimal configuration file should be:
 
-       
-## Basic configuration options
+- without any extension:
+  ```js
+  angular.module("cesium.config", [])
+  .constant("csConfig", {
+  	"node": {
+  		"host": "gtest.duniter.fr",
+  		"port": "10900"
+  	},
+  	"version": "0.9.18",
+  	"build": "2017-01-31T14:19:31.296Z"
+  });
+  ```
 
+- with ES (Cesium+) extension:
+  ```js
+    angular.module("cesium.config", [])
+    .constant("csConfig", {
+    	"node": {
+    		"host": "gtest.duniter.fr",
+    		"port": "10900"
+    	},
+    	"plugins": {
+    	   "es": {
+           "host": "data.gtest.duniter.fr",
+           "port": "80"
+         }
+      },
+    	"version": "0.9.18",
+    	"build": "2017-01-31T14:19:31.296Z"
+    });
+    ```
+  
+## Core options
 
-Options                     | Description
---------------------------- | ------------------------------------------------------------------------------------------------------------------------------
-cacheTimeMs                 | Default network request cache time, in millisecond.
-fallbackLanguage            | Default locale, if browser default language not exists in Cesium (Optional, default to 'en')
-defaultLanguage             | Used to force the default language (ignore browser's language), on user first connection (Optional) 
-rememberMe                  | Default value of the 'Remember me' button, in the login popup (*)
-timeout                     | Default network request timeout, in millisecond
-timeWarningExpireMembership | Delay (in second) before membership expiration, use to warns user that he should renew his membership. 
-timeWarningExpire           | Delay (in second) before expiration of certifications, use to warn the user that there will soon be a lack of certifications 
-useLocalStorage             | Enable data storage (settings, credentials, cache) in the browser local storage ? (*)
-useRelative                 | Should user relative unit by default ? (*)
-helptip.enable              | Should enable help tip be default ? (*)
-helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node' 
-node.host                   | Duniter peer host to use by default (DNS name or IP) (*)
-node.port                   | Duniter peer port to use by default (*)
+### Technical and mandatory options 
+
+This technical options are mandatory in the configuration file. User can NOT changed them.
+
+Option                      | Description
+--------------------------- | -------------------------------------------
 version                     | Build version. Filled at compilation time.
 build                       | Build date. Filled at compilation time.
-newIssueUrl                 | Used for link in the About screen, to submit new issue
 
 
-(*) User is able to change this value (generally using the Settings screen).
+### Technical and optional options 
+
+This technical options are optional (default values will be applied if not set). User can NOT changed them.
+
+Option                      | Description                                                                                    | Default value
+--------------------------- | ---------------------------------------------------------------------------------------------- | -----------------
+cacheTimeMs                 | Default network request cache time, in millisecond.                                            | `60000` (1 min).
+fallbackLanguage            | Default locale, if browser default language not exists in Cesium                               | `en`
+defaultLanguage             | Used to force the default language (ignore browser's language), on user first connection.      | =`fallbackLanguage`
+helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node'.                              | URL of [Duniter installation node](https://github.com/duniter/duniter/blob/master/doc/install-a-node.md)
+initPhase                   | Enable a special mode, used when currency is NOT initialized (block #0 not written)            | `false`
+newIssueUrl                 | Used for link in the About screen, to submit new issue                                         | URL of [Cesium issues on GitHub](https://github.com/duniter/cesium/issues/new?labels=bug)
+timeout                     | Default network request timeout, in millisecond.                                               | `4000`
+timeWarningExpire           | Delay (in second) before expiration of certifications, use to warn the user that there will soon be a lack of certifications | `5184000` (2 mois)
+timeWarningExpireMembership | Delay (in second) before membership expiration, use to warns user that he should renew his membership.  | `7776000` (3 mois)
+walletHistoryTimeSecond     | Default transaction history to load (in second), in 'My account' screen.                       | `86400` (30 days) 
+walletHistorySliceSecond    | Slice size (in second) for downloading transaction history (need for cache optimization)       | `432000` (5 days)
+wallet.alertIfUnusedWallet  | Should warn user if account seems to be used ?                                                 | `true`
+
+### User options
+
+This options can be changed by user action (generally using Settings screen, or action buttons).
 
 
-## Extension configuration options
+Options                     | Description                                                                        | Default value
+--------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------
+expertMode                  | Enable the expert mode (display more technical details)                            | `false`
+helptip.enable              | Should open help tips (contextual tips) ?                                          | `true`
+node.host                   | Duniter peer host to use by default (DNS name or IP)                               | defined in `config.js` file
+node.port                   | Duniter peer port to use by default                                                | defined in `config.js` file
+rememberMe                  | Default value of the 'Remember me' button, in the login popup                      | `true` if Android  build, `false` if not
+showUDHistory               | Should display UD history in the transaction history ?                             | `false`
+showLoginSalt               | Should display salt value (pass phrase) in the login screen. If `false`, masked.   | `false`
+useLocalStorage             | Enable data storage (settings, credentials, cache) in the browser local storage ?  | `true`
+useRelative                 | Should user relative unit by default ?                                             | `true`
+wallet.showPubkey           | Should display pubkey and uid in 'My account' screen ?                             | `true`
+wallet.notificationReadTime | Time (in second) since the last notification read.                                 | `0` (never read)
 
+
+## Plugin options
+
+### ES API (for Cesium +)
+
+This options should be defined in `config.js` (mandatory options), to enable Cesium+ extension.
+ 
+But user can still change this values (generally using the Settings screen).
 
 Options                     | Description
---------------------------- | -------------------------------------------------
-plugins.es.enable           | Should enable Cesium+ extension by default ? (*)
-plugins.es.host             | Default ES node host (DNS name or IP) (*)
-plugins.es.port             | Default ES node port (*)
+--------------------------- | --------------------------------------------------------- 
+plugins.es.enable           | Should enable Cesium+ extension by default ? [true|false] 
+plugins.es.host             | Default ES node host (DNS name or IP)
+plugins.es.port             | Default ES node port
 
 
-(*) User is able to change this value (generally using the Settings screen).
+> To **remove** the extension (and not only disable by default): remove all content inside the `plugins` attribute.
+> Users will NOT be able to enable the extension.
