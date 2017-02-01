@@ -70,7 +70,7 @@ defaultLanguage             | Used to force the default language (ignore browser
 rememberMe                  | Default value of the 'Remember me' button, in the login popup (*)
 timeout                     | Default network request timeout, in millisecond
 timeWarningExpireMembership | Delay (in second) before membership expiration, use to warns user that he should renew his membership. 
-timeWarningExpire           | Delay (in seconds) before expiration of certifications, use to warn the user that there will soon be a lack of certifications 
+timeWarningExpire           | Delay (in second) before expiration of certifications, use to warn the user that there will soon be a lack of certifications 
 useLocalStorage             | Enable data storage (settings, credentials, cache) in the browser local storage ?
 useRelative                 | Should user relative unit by default ? (*)
 helptip.enable              | Should enable help tip be default ? (*)
