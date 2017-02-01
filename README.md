@@ -4,7 +4,7 @@
 
 [Unhosted webapp](https://unhosted.org) client for [Duniter](https://duniter.org) network.
 
-Try it at: http://cesium.duniter.fr
+Demo: http://gtest.duniter.fr
 
 
 ## Installation
