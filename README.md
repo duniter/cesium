@@ -85,7 +85,7 @@ angular.module("cesium.config", [])
 		"es": {
 			"enable": "false",
 			"host": "data.gtest.duniter.fr",
-			"port": "9203"
+			"port": "80"
 		}
 	},
 	"version": "0.9.7",
