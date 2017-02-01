@@ -1,5 +1,3 @@
-![Cesium logo](https://github.com/duniter/cesium/raw/master/www/img/logo_144px.png)
-
 # Configuration
 
 On a web server or local installation, Cesium use a configuration to set default settings, like default peer, timeout, ...
@@ -102,6 +100,7 @@ Option                      | Description                                       
 cacheTimeMs                 | Default network request cache time, in millisecond.                                            | `60000` (1 min).
 fallbackLanguage            | Default locale, if browser default language not exists in Cesium                               | `en`
 defaultLanguage             | Used to force the default language (ignore browser's language), on user first connection.      | =`fallbackLanguage`
+decimalCount                | Number of decimal to display, on float value (when using relative unit)                        | `4`
 helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node'.                              | URL of [Duniter installation node](https://github.com/duniter/duniter/blob/master/doc/install-a-node.md)
 initPhase                   | Enable a special mode, used when currency is NOT initialized (block #0 not written)            | `false`
 newIssueUrl                 | Used for link in the About screen, to submit new issue                                         | URL of [Cesium issues on GitHub](https://github.com/duniter/cesium/issues/new?labels=bug)
@@ -111,6 +110,9 @@ timeWarningExpireMembership | Delay (in second) before membership expiration, us
 walletHistoryTimeSecond     | Default transaction history to load (in second), in 'My account' screen.                       | `86400` (30 days) 
 walletHistorySliceSecond    | Slice size (in second) for downloading transaction history (need for cache optimization)       | `432000` (5 days)
 wallet.alertIfUnusedWallet  | Should warn user if account seems to be used ?                                                 | `true`
+
+> This default values are defined in [this code](../www/js/services/settings-services.js#L44)
+
 
 ### User options
 
