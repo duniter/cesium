@@ -136,13 +136,12 @@ wallet.notificationReadTime | Time (in second) since the last notification read.
 
 ### ES API (for Cesium +)
 
-This options should be defined in `config.js` (mandatory options), to enable Cesium+ extension.
- 
-But user can still change this values (generally using the Settings screen).
+This options should be defined in `config.js`, to enable Cesium+ extension.
+Then user can change this default values (generally using the Settings screen).
 
 Options                     | Description
---------------------------- | --------------------------------------------------------- 
-plugins.es.enable           | Should enable Cesium+ extension by default ? [true|false] 
+--------------------------- | -------------------------------------------- 
+plugins.es.enable           | Enable or not Cesium+ extension, by default.
 plugins.es.host             | Default ES node host (DNS name or IP)
 plugins.es.port             | Default ES node port
 
