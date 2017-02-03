@@ -14665,6 +14665,12 @@ a.underline:hover,
   margin-bottom: 10px; }
 
 /**********
+   Item avatar
+**********/
+.item-avatar-left-padding {
+  padding-left: 95px; }
+
+/**********
    Item thumbnail
 **********/
 .item-thumbnail-left-padding {

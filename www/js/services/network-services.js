@@ -192,7 +192,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                   if (existingPeer) {
                     // remove existing peers, when reject or offline
                     if (!refreshedPeer || (refreshedPeer.online !== data.filter.online)) {
-                      console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
+                      console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
                       data.peers.splice(data.peers.indexOf(existingPeer), 1);
                       hasUpdates = true;
                     }

@@ -56,6 +56,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       },
       node: {
         server: csHttp.getServer(host, port),
+        url: csHttp.getUrl(host, port),
         host: host,
         port: port,
         summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG),
@@ -86,6 +87,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       blockchain: {
         parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
         block: cacheEnable ? csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT) : csHttp.get(host, port, '/blockchain/block/:block'),
+        blocksSlice: csHttp.get(host, port, '/blockchain/blocks/:count/:from'),
         current: csHttp.get(host, port, '/blockchain/current'),
         membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
@@ -123,7 +125,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         network: {
           peering: {
             self: csHttp.get(host, port, '/network/peering')
-          }
+          },
+          peers: csHttp.get(host, port, '/network/peers')
         },
         blockchain: {
           current: csHttp.get(host, port, '/blockchain/current'),

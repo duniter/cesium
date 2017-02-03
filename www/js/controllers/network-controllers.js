@@ -23,7 +23,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_peer.html",
-          controller: 'PeerCtrl'
+          controller: 'PeerViewCtrl'
         }
       }
     });
@@ -31,7 +31,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 .controller('NetworkLookupCtrl', NetworkLookupController)
 
-.controller('PeerCtrl', PeerController)
+.controller('PeerViewCtrl', PeerViewController)
 
 .controller('NetworkLookupModalCtrl', NetworkLookupModalController)
 
@@ -125,10 +125,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
       csNetwork.api.data.on.changed($scope, function(data){
         if (!$scope.refreshing) {
           $scope.refreshing = true;
-          $timeout(function() { // Timeout
+          $timeout(function() { // Timeout - TODO: see if necessary
             $scope.updateView(data);
             $scope.refreshing = false;
-           }, 1100);
+           }, 100);
         }
       });
 
@@ -200,18 +200,16 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
     if ($scope.search.sort === sort && !$scope.search.asc) {
       $scope.search.asc = undefined;
       $scope.search.sort = undefined;
-      $scope.sort();
-      return;
     }
     else {
       $scope.search.asc = ($scope.search.sort === sort) ? !$scope.search.asc : true;
       $scope.search.sort = sort;
-      $scope.sort();
     }
+    $scope.sort();
   };
 
   $scope.selectPeer = function(peer) {
-    $state.go('app.view_peer', {server: peer.server});
+    $state.go('app.view_peer', {server: peer.getServer()});
   };
 
   $scope.$on('csView.action.refresh', function(event, context) {
@@ -298,4 +296,46 @@ function NetworkLookupModalController($scope, $timeout, $state, $ionicHistory, $
 
   // Enter the modal
   $scope.enter();
+}
+
+
+function PeerViewController($scope, BMA) {
+  'ngInject';
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (!$scope.memberUidsByPubkeys) {
+      BMA.wot.member.uids()
+        .then(function(uids){
+          $scope.memberUidsByPubkeys = uids;
+          $scope.showPeer(state.stateParams.server);
+        });
+    }
+    else {
+      $scope.showPeer(state.stateParams.server);
+    }
+  });
+
+  $scope.showPeer = function(server) {
+    $scope.node = BMA.lightInstance(server);
+    // Get the peers
+    $scope.node.network.peers()
+      .then(function(json){
+        $scope.loaded = true;
+        var peers = json.peers.map(function(p) {
+          var peer = new Peer(p);
+          peer.online = p.status == 'UP';
+          peer.blockNumber = peer.block.replace(/-.+$/, '');
+          peer.dns = peer.getDns();
+          peer.uid = $scope.memberUidsByPubkeys[peer.pubkey];
+          return peer;
+        });
+        $scope.peers = _.sortBy(peers, function(p) {
+          var score = 1;
+          score += 10000 * (p.online ? 1 : 0);
+          score += 1000  * (p.hasMainConsensusBlock ? 1 : 0);
+          score += 100   * (p.uid ? 1 : 0);
+          return -score;
+        });
+      });
+  };
 }

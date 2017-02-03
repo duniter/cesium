@@ -7,7 +7,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
   $stateProvider
 
     .state('app.currency_lookup', {
-      url: "/currencies",
+      url: "/currencies?q",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/lookup.html",
@@ -17,7 +17,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
     })
 
     .state('app.currency_name', {
-      url: "/currencies/:name",
+      url: "/currencies/:currency",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",
@@ -25,7 +25,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
         }
       },
       data: {
-        large: 'app.currency_view_lg'
+        large: 'app.currency_name_lg'
       }
     })
 
@@ -65,17 +65,19 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       cache: false,
       views: {
         'tab-network': {
-          templateUrl: "templates/currency/tabs/tab_network.html"
+          templateUrl: "templates/currency/tabs/tab_network.html",
+          controller: 'NetworkLookupCtrl'
         }
       }
     })
 
-    .state('app.currency.tab_peers', {
-      url: "/peers",
+    .state('app.currency.tab_blocks', {
+      url: "/blocks",
+      cache: false,
       views: {
-        'tab-peers': {
-          templateUrl: "templates/currency/tabs/tab_peers.html",
-          controller: 'NetworkLookupCtrl'
+        'tab-blocks': {
+          templateUrl: "templates/currency/tabs/tab_blocks.html",
+          controller: 'BlockLookupCtrl'
         }
       }
     })
@@ -100,6 +102,17 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
           controller: 'CurrencyViewCtrl'
         }
       }
+    })
+
+    .state('app.currency_name_lg', {
+      url: "/currencies/:currency/lg",
+      cache: false,
+      views: {
+        'menuContent': {
+          templateUrl: "templates/currency/view_currency_lg.html",
+          controller: 'CurrencyViewCtrl'
+        }
+      }
     });
 
 })
@@ -109,30 +122,52 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 .controller('CurrencyViewCtrl', CurrencyViewController)
 ;
 
-function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
+function CurrencyLookupController($scope, $state, $q, UIUtils, BMA, csCurrency) {
   'ngInject';
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
-  $scope.search.looking = true;
+  $scope.search = {
+    loading: true,
+    results: []
+  };
+  $scope.entered = false;
 
-  $scope.$on('$ionicView.enter', function() {
-    csCurrency.all()
-    .then(function (currencies) {
-      $scope.knownCurrencies = currencies;
-      $scope.search.looking = false;
-      if (!!res && res.length == 1) {
-        $scope.selectedCurrency = currencies[0].id;
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (!$scope.entered) {
+      if (state && state.stateParams && state.stateParams.q) {
+        $scope.search.text = state.stateParams.q;
       }
-      // Set Ink
-      UIUtils.ink({selector: 'a.item'});
-    });
+
+      csCurrency.all()
+        .then(function (currencies) {
+
+          $q.all(currencies.map(function(currency) {
+            var bma = BMA.lightInstance(currency.peer.host,currency.peer.port);
+            return bma.blockchain.current()
+              .then(function(block) {
+                currency.membersCount = block.membersCount;
+              });
+          }))
+          .then(function() {
+            $scope.search.results = currencies;
+            $scope.search.loading = false;
+            if (!!currencies && currencies.length == 1) {
+              $scope.selectedCurrency = currencies[0].id;
+            }
+            // Set Ink
+            UIUtils.ink({selector: 'a.item'});
+          });
+
+
+        });
+    }
   });
 
   // Called to navigate to the main app
-  $scope.selectCurrency = function(id) {
-    $scope.selectedCurrency = id;
-    $state.go('app.currency_name', {name: id});
+  $scope.selectCurrency = function(currency) {
+    $scope.selectedCurrency = currency;
+    $state.go('app.currency_name', {currency: currency.name});
   };
 }
 
@@ -166,8 +201,8 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if ($scope.loading) { // run only once (first enter)
-      if (state.stateParams && state.stateParams.name) { // Load by name
-        csCurrency.searchByName(state.stateParams.name)
+      if (state.stateParams && state.stateParams.currency) { // Load by name
+        csCurrency.searchByName(state.stateParams.currency)
         .then(function(currency){
           $scope.init(currency);
         });

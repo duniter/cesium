@@ -1,0 +1,64 @@
+<div class="lookupForm">
+
+  <!-- search text-->
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="text"
+           class="visible-xs visible-sm"
+           placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           ng-model-options="{ debounce: 650 }"
+           ng-change="doSearchText()">
+    <input type="text"
+           class="hidden-xs hidden-sm"
+           id="{{searchTextId}}" placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           on-return="doSearchText()">
+    <div class="helptip-anchor-center">
+      <a id="helptip-wot-search-text"></a>
+    </div>
+  </label>
+
+  <div class="padding-top padding-xs" style="display: block; height: 60px;">
+    <div class="pull-left">
+      <h4
+        ng-if="search.type=='last'" translate>
+        BLOCKCHAIN.LOOKUP.LAST_BLOCKS
+      </h4>
+      <h4 ng-if="search.type=='text'" translate>
+        COMMON.RESULTS_LIST
+      </h4>
+    </div>
+
+    <div class=" pull-right hidden-xs hidden-sm">
+      <a ng-if="enableFilter"
+         class="button button-text button-small ink icon ion-clock"
+         ng-class="{'button-text-positive': search.type=='last'}"
+         ng-click="doSearchLast()">
+        {{'BLOCKCHAIN.LOOKUP.BTN_LAST' | translate}}
+      </a>
+      &nbsp;
+      <button class="button button-small button-stable ink"
+              ng-click="doSearchText()">
+        {{'COMMON.BTN_SEARCH' | translate:search}}
+      </button>
+    </div>
+  </div>
+
+  <div class="text-center" ng-if="search.loading && search.type!='last'">
+    <ion-spinner icon="android"></ion-spinner>
+  </div>
+
+  <ion-list class="list animate-ripple">
+
+    <ng-include src="'plugins/es/templates/blockchain/items_blocks.html'"></ng-include>
+
+  </ion-list>
+
+  <ion-infinite-scroll
+    ng-if="search.hasMore"
+    spinner="android"
+    on-infinite="showMore()"
+    distance="1%">
+  </ion-infinite-scroll>
+

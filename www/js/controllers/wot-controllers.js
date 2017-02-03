@@ -28,7 +28,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         url: "/wallet/cert",
         views: {
           'menuContent': {
-            templateUrl: "templates/wot/view_certifications.html",
+            templateUrl: "templates/wot/items_received_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
         },
@@ -47,8 +47,9 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wot_view_cert', {
+      .state('app.wot_cert', {
         url: "/wot/cert/:pubkey/:uid",
+        abstract: true,
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -56,11 +57,29 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
           }
         },
         data: {
-          large: 'app.wot_view_cert_lg'
+          large: 'app.wot_cert_lg'
         }
       })
 
-      .state('app.wot_view_cert_lg', {
+      .state('app.wot_cert.tab_received_cert', {
+        url: "/received",
+        views: {
+          'tab-received-cert': {
+            templateUrl: "templates/wot/tabs/tab_received_certifications.html"
+          }
+        }
+      })
+
+      .state('app.wot_cert.tab_given_cert', {
+        url: "/given",
+        views: {
+          'tab-given-cert': {
+            templateUrl: "templates/wot/tabs/tab_given_certifications.html"
+          }
+        }
+      })
+
+      .state('app.wot_cert_lg', {
         url: "/wot/cert/lg/:pubkey/:uid",
         views: {
           'menuContent': {
@@ -424,7 +443,7 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
 
   $scope.showCertifications = function() {
     // Warn: do not use a simple link here (a ng-click is need for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
+    $state.go(UIUtils.screen.isSmall() ? 'app.wot_cert.tab_received_cert' : 'app.wot_cert_lg', {
       pubkey: $scope.formData.pubkey,
       uid: $scope.formData.uid
     });

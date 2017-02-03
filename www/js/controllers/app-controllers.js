@@ -408,5 +408,4 @@ function AboutController($scope, csConfig) {
 function PassCodeController($scope) {
   'ngInject';
 
-
 }

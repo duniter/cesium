@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" >
   <ion-nav-title>
     <span class="visible-xs visible-sm">{{::formData.uid}}</span>
     <span class="hidden-xs hidden-sm" translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.uid}"></span>
@@ -14,33 +14,15 @@
     <ion-tabs class="tabs-icon-top tabs-positive">
 
       <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
-               on-select="setShowCertifications(true)"
-               on-deselect="setShowCertifications(false)">
-        <ion-nav-view name="currency-tab">
-          <ion-content>
-            <div class="center padding" ng-if="loading">
-              <ion-spinner icon="android"></ion-spinner>
-            </div>
-            <ng-include src="'templates/wot/tabs/view_certifications.html'"/>
-          </ion-content>
-        </ion-nav-view>
+               ui-sref="app.wot_cert.tab_received_cert({pubkey:formData.pubkey, uid:formData.uid})">
+        <ion-nav-view name="tab-received-cert"></ion-nav-view>
       </ion-tab>
 
-      <ion-tab id="helptip-tab-given-certs"
-               title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
-               on-select="setShowGivenCertifications(true)"
-               on-deselect="setShowGivenCertifications(false)">
-        <ion-nav-view name="network-tab">
-          <ion-content>
-            <div class="center padding" ng-if="loading">
-              <ion-spinner icon="android"></ion-spinner>
-            </div>
-            <ng-include src="'templates/wot/tabs/view_given_certifications.html'"/>
-          </ion-content>
-        </ion-nav-view>
+      <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
+               ui-sref="app.wot_cert.tab_given_cert({pubkey:formData.pubkey, uid:formData.uid})">
+        <ion-nav-view name="tab-given-cert"></ion-nav-view>
       </ion-tab>
 
-      </ion-tab>
     </ion-tabs>
 
   </ion-content>

@@ -1,20 +1,122 @@
 <ion-view>
-  <ion-nav-title>
+  <ion-nav-title class="visible-xs visible-sm">
     <span ng-if="number=='current'">{{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}</span>
-    <span ng-if="!loading && number!='current'">{{'BLOCKCHAIN.VIEW.TITLE'|translate:formData}}</span>
+    <span ng-if="!loading && number!='current'">{{'BLOCKCHAIN.VIEW.HEADER_TITLE'|translate:formData}}</span>
   </ion-nav-title>
 
-  <ion-content class="padding no-padding-xs" scroll="true">
+  <ion-content scroll="true">
 
-    <div class="text-center" ng-if="loading">
-      <ion-spinner icon="android"></ion-spinner>
-    </div>
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-    <div ng-if="!loading">
+      <div class="col no-padding">
 
-      <div class="list">
+        <div class="center padding" ng-if="loading">
+          <ion-spinner icon="android"></ion-spinner>
+        </div>
+
+        <!-- animate-fade-slide-in -->
+        <ion-list class=" item-text-wrap no-padding-xs" ng-if="!loading">
+
+          <!-- header -->
+          <div class="item item-text-wrap" ng-class="{'item-thumbnail-left': formData.avatar}">
+            <img ng-src="{{formData.avatar.src}}" ng-if="formData.avatar">
+
+            <h1 class="padding-top hidden-xs hidden-sm">{{'BLOCKCHAIN.VIEW.TITLE'|translate:formData}}</h1>
+
+            <h3>
+              <i class="icon ion-clock"></i>
+              <span ng-bind-html="'BLOCKCHAIN.VIEW.COMPUTED_BY'|translate:formData"></span>
+              <a class="positive"
+                 ui-sref="app.wot_view_identity({pubkey:issuer.pubkey, uid: issuer.uid})">
+                <i class="icon ion-person"></i>
+                {{issuer.name||issuer.uid}}
+              </a>
+              {{formData.medianTime|formatFromNow}}
+              <span class="gray">| {{formData.medianTime | formatDate}}</span>
+            </h3>
+
+            <h3>
+              <a target="_blank"
+                 ng-href="{{node.node.url}}/blockchain/block/{{formData.number}}">
+                <i class="icon ion-share"></i> {{'BLOCKCHAIN.VIEW.SHOW_RAW'|translate}}
+              </a>
+            </h3>
+
+          </div>
+
+          <!-- button bar-->
+          <div class="item hidden-xs hidden-sm padding text-center">
+
+            <!-- Allow extension here -->
+            <cs-extension-point name="buttons"></cs-extension-point>
+          </div>
+
+          <!-- hash -->
+          <ion-item class="item-icon-left" copy-on-click="{{formData.hash}}">
+            <i class="icon ion-lock-combination"></i>
+            {{'BLOCKCHAIN.VIEW.HASH'|translate}}
+            <span class="item-note">
+            {{formData.hash}}
+            </span>
+          </ion-item>
+
+          <!-- joiners -->
+          <ion-item class="item-icon-left" ng-if="!compactMode || formData.joinersCount">
+            <i class="icon ion-person"></i>
+            <b class="ion-plus" style="position: absolute; top: 11px; left: 39px;"></b>
+            {{'BLOCKCHAIN.VIEW.JOINERS_COUNT'|translate}}
+            <span class="badge badge-balanced" ng-if="formData.joinersCount">+{{formData.joinersCount}}</span>
+            <span class="badge badge-stable" ng-if="!formData.joinersCount">0</span>
+          </ion-item>
+
+          <!-- excluded -->
+          <ion-item class="item-icon-left" ng-if="!compactMode || (formData.leaversCount-formData.revokedCount)">
+            <i class="icon ion-person"></i>
+            <b class="ion-minus-circled assertive" style="position: absolute; top: 11px; left: 39px;"></b>
+            {{'BLOCKCHAIN.VIEW.EXCLUDED_COUNT'|translate}}
+            <h4 class="gray">{{'BLOCKCHAIN.VIEW.EXCLUDED_COUNT_HELP'|translate}}</h4>
+            <span class="badge badge-assertive" ng-if="formData.excludedCount-formData.revokedCount">-{{formData.excludedCount-formData.revokedCount}}</span>
+            <span class="badge badge-stable" ng-if="!(formData.excludedCount-formData.revokedCount)">0</span>
+          </ion-item>
+
+          <!-- leavers -->
+          <ion-item class="item-icon-left" ng-if="!compactMode || formData.leaversCount">
+            <i class="icon ion-person"></i>
+            <b class="ion-minus" style="position: absolute; top: 11px; left: 39px;"></b>
+            {{'BLOCKCHAIN.VIEW.LEAVERS_COUNT'|translate}}
+            <h4 class="gray">{{'BLOCKCHAIN.VIEW.LEAVERS_COUNT_HELP'|translate}}</h4>
+            <span class="badge badge-assertive" ng-if="formData.leaversCount">-{{formData.leaversCount}}</span>
+            <span class="badge badge-stable" ng-if="!formData.leaversCount">0</span>
+          </ion-item>
+
+          <!-- revoked -->
+          <ion-item class="item-icon-left" ng-if="!compactMode || formData.revokedCount">
+            <i class="icon ion-person"></i>
+            <b class="ion-minus-circled assertive" style="position: absolute; top: 11px; left: 39px;"></b>
+            {{'BLOCKCHAIN.VIEW.REVOKED_COUNT'|translate}}
+            <span class="badge badge-balanced" ng-if="formData.revokedCount">-{{formData.revokedCount}}</span>
+            <span class="badge badge-stable" ng-if="!formData.revokedCount">0</span>
+          </ion-item>
+
+          <!-- cert -->
+          <ion-item class="item-icon-left" ng-if="!compactMode || formData.certificationsCount">
+            <i class="icon ion-ribbon-a"></i>
+            {{'BLOCKCHAIN.VIEW.CERT_COUNT'|translate}}
+            <span class="badge badge-stable" ng-class="{'badge-positive':formData.certificationsCount}">{{formData.certificationsCount}}</span>
+          </ion-item>
+
+          <!-- TX -->
+          <ion-item class="item-icon-left" ng-if="!compactMode || formData.transactionsCount">
+            <i class="icon ion-card"></i>
+            {{'BLOCKCHAIN.VIEW.TX_COUNT'|translate}}
+            <span class="badge badge-stable" ng-class="{'badge-positive':formData.transactionsCount}">{{formData.transactionsCount}}</span>
+          </ion-item>
+
+        </ion-list>
       </div>
 
+      <div class="col col-20 hidden-xs"></div>
     </div>
 
   </ion-content>

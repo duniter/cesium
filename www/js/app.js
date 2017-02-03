@@ -120,6 +120,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  .filter('formatTime', function() {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).local().format('HH:mm') : '';
+    };
+  })
+
   .filter('formatFromNow', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).startOf('minute').fromNow() : '';

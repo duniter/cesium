@@ -1,0 +1,27 @@
+<ion-view>
+  <ion-nav-title>
+    <span translate>BLOCKCHAIN.LOOKUP.TITLE</span>
+  </ion-nav-title>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <div class="padding-xs">
+      <h4 translate>BLOCKCHAIN.LOOKUP.LAST_BLOCKS</h4>
+    </div>
+
+    <div class="text-center" ng-if="search.loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <ion-list class="list animate-ripple">
+       <ng-include src="'templates/blockchain/items_blocks.html'"></ng-include>
+    </ion-list>
+
+    <ion-infinite-scroll
+      ng-if="search.hasMore"
+      spinner="android"
+      on-infinite="showMore()"
+      distance="1%">
+    </ion-infinite-scroll>
+  </ion-content>
+</ion-view>

@@ -1,0 +1,23 @@
+
+
+<div class="item row row-header hidden-xs hidden-sm">
+
+  <!-- compact -->
+  <a class="pull-left gray button button-text button-small no-margin no-padding"
+     ng-class="{'positive': compactMode}"
+     ng-click="toggleCompactMode()">
+    <i class="icon ion-navicon"></i>
+    <b class="ion-arrow-down-b" style="position: absolute; top: -8px; left: 2px; font-size: 8px;"></b>
+    <b class="ion-arrow-up-b" style="position: absolute; top: 6px; left: 2px; font-size: 8px;"></b>
+    <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+  </a>
+</div>
+
+<div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
+  BLOCKCHAIN.LOOKUP.NO_BLOCK
+</div>
+
+<!-- blocks -->
+<ng-repeat ng-repeat="block in search.results"
+           ng-include="!block.empty ? 'templates/blockchain/item_block.html' : 'templates/blockchain/item_block_empty.html'">
+</ng-repeat>

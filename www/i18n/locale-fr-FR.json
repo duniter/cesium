@@ -125,16 +125,40 @@
       "BTN_SHOW_LIST" : "Liste des noeuds"
     }
   },
+  "BLOCKCHAIN": {
+    "HASH": "Hash : {{hash}}",
+    "VIEW": {
+      "HEADER_TITLE": "Bloc #{{number}}-{{hash|formatHash}}",
+      "TITLE_CURRENT": "Bloc courant",
+      "TITLE": "Bloc #{{number}}",
+      "COMPUTED_BY": "Calculé par",
+      "SHOW_RAW": "Voir le fichier brut",
+      "HASH": "Hash calculé",
+      "JOINERS_COUNT": "Nouveaux membres",
+      "LEAVERS_COUNT": "Membres sortants",
+      "LEAVERS_COUNT_HELP": "Membres ne souhaitant plus de certification",
+      "EXCLUDED_COUNT": "Membres exclus",
+      "EXCLUDED_COUNT_HELP": "Anciens membres exclus par non renouvellement ou manque de certifications",
+      "REVOKED_COUNT": "Identités revoquées",
+      "TX_COUNT": "Transactions",
+      "CERT_COUNT": "Certifications"
+    },
+    "LOOKUP": {
+      "NO_BLOCK": "Aucun bloc"
+    }
+  },
   "CURRENCY": {
     "SELECT": {
       "TITLE": "Monnaies",
-      "CURRENCIES": "Monnaies connues"
+      "CURRENCIES": "Monnaies connues",
+      "MEMBERS_COUNT": "{{membersCount}} membres"
     },
     "VIEW": {
       "TITLE": "Monnaie",
       "TAB_CURRENCY": "Monnaie",
       "TAB_WOT": "Toile de confiance",
       "TAB_NETWORK": "Réseau",
+      "TAB_BLOCKS": "Blocs",
       "NETWORK_RULES_DIVIDER": "Règles du réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Nombre de membres",
@@ -319,12 +343,6 @@
     "BTN_ADD_COMMENT": "Saisir un commentaire ?",
     "MODAL": {
       "TITLE": "Virement"
-    }
-  },
-  "BLOCKCHAIN": {
-    "VIEW": {
-      "TITLE": "Bloc #{{number}}-{{hash|formatHash}}",
-      "TITLE_CURRENT": "Bloc courant"
     }
   },
   "ERROR": {

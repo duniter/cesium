@@ -113,6 +113,19 @@
       "RECIPIENT_IS_MANDATORY": "Le destinataire est obligatoire."
     }
   },
+  "BLOCKCHAIN": {
+    "LOOKUP": {
+      "TITLE": "Blocs",
+      "SEARCH_HELP": "Numéro de bloc, hash, etc.",
+      "POPOVER_FILTER_TITLE": "Filtres",
+      "LAST_BLOCKS": "Derniers blocs :",
+      "HEADER_MEDIAN_TIME": "Date / Heure",
+      "HEADER_BLOCK": "Bloc #",
+      "HEADER_ISSUER": "Propriétaire du noeud",
+      "BTN_LAST": "Derniers blocs",
+      "BTN_COMPACT": "Compacter"
+    }
+  },
   "MARKET": {
     "COMMON": {
       "PRICE": "Prix",
@@ -262,7 +275,7 @@
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
     "INFO": {
-      "PROFILE_SAVED": "Profil sauvegardé",
+      "PROFILE_SAVED": "Profil sauvegardé"
     },
     "HELP": {
       "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."

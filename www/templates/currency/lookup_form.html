@@ -1,15 +1,16 @@
 <ion-list>
 
-  <div class="item center" ng-if="search.looking">
+  <div class="item center" ng-if="search.loading">
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <div ng-repeat="currency in knownCurrencies"
+  <div ng-repeat="currency in search.results"
        ng-class="{ selected: selectedCurrency == currency }">
-    <a class="item card card-item stable-bg padding ink" ng-click="selectCurrency(currency.name)"
-       ng-class="{ selected: selectedCurrency == currency }">
+    <a class="item card card-item stable-bg padding ink" ng-click="selectCurrency(currency)"
+       ng-class="{ selected: selectedCurrency && selectedCurrency.name == currency.name }">
       <h2>{{currency.name}}</h2>
       <h4 class="gray">{{currency.peer.server}}</h4>
+      <span class="badge badge-royal">{{'CURRENCY.SELECT.MEMBERS_COUNT'|translate:currency}}</span>
     </a>
   </div>
 </ion-list>

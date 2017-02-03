@@ -23,9 +23,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       REGEX = {
         ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT)
       },
-      FIELDS = {
-        avatar: ['title', 'avatar._content_type']
-      },
       SETTINGS_SAVE_SPEC = {
         includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
         excludes: ['time'],
@@ -41,7 +38,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     var listeners,
       restoringSettings = false,
-      api = new Api(this, 'esUser-' + id),
       getRequestFields = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
       getRequest = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content')
     ;
@@ -152,7 +148,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
 
     function fillAvatars(datas, pubkeyAtributeName) {
-      return onWotSearch(null, datas, null, pubkeyAtributeName);
+      return onWotSearch(null, datas, pubkeyAtributeName);
     }
 
     // Load settings
@@ -257,7 +253,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return deferred.promise;
     }
 
-    function onWotSearch(text, datas, deferred, pubkeyAtributeName) {
+    function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
       deferred = deferred || $q.defer();
       if (!text && (!datas || !datas.length)) {
         deferred.resolve(datas);

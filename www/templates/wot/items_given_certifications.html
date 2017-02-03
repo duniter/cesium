@@ -43,8 +43,8 @@
 
           <a class="item item-avatar ink"
              ng-repeat="cert in formData.given_cert_pending"
-             ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
-            <ng-include src="'templates/wot/tabs/item_certification.html'"></ng-include>
+             ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})"
+             ng-include="'templates/wot/item_certification.html'">
           </a>
 
           <!-- validated given certifications -->
@@ -59,7 +59,7 @@
 
           <a class="item item-avatar ink"
                 ng-repeat="cert in formData.given_cert"
-                ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
-            <ng-include src="'templates/wot/tabs/item_certification.html'"></ng-include>
+                ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})"
+                ng-include="'templates/wot/item_certification.html'">
           </a>
         </div>

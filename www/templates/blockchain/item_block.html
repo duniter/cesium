@@ -1,0 +1,39 @@
+<ion-item id="block-{{::block.number}}"
+          class="item item-avatar-left {{ionItemClass}}"
+          ng-click="selectBlock(block)">
+
+  <i class="item-image ion-document-text"></i>
+  <i class=""
+     ng-if="block.avatar"
+     style="background-image: url({{block.avatar.src}})"></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h3><i class="ion-clock"></i> {{block.medianTime|formatDate}}</h3>
+      <h4>{{'BLOCKCHAIN.HASH'|translate}} {{block.hash|formatHash}}</h4>
+    </div>
+
+    <div class="col col-20 positive">
+      <i class="ion-person"></i> {{block.name||block.uid}}
+    </div>
+
+    <small class="col col-20">
+      <!-- joiners/leavers -->
+      <ng-if ng-if="block.joinersCount||(block.excludedCount-block.revokedCount)">
+        <i class="ion-person"></i>
+        <span ng-if="block.joinersCount">+{{block.joinersCount}}</span>
+        <span ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
+        &nbsp;&nbsp;
+      </ng-if>
+      <span ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{block.revokedCount}}&nbsp;&nbsp;</span>
+
+      <span ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> +{{block.certificationsCount}}&nbsp;&nbsp;</span>
+      <span ng-if="block.transactionsCount"><i class="ion-card"> +{{block.transactionsCount}}</i>&nbsp;&nbsp;</span>
+    </small>
+
+    <div class="col col-20">
+      <span class="badge badge-balanced">{{block.number}}</span>
+    </div>
+
+  </div>
+</ion-item>
