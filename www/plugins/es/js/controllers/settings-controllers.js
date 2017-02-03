@@ -49,7 +49,7 @@ function ESExtendSettingsController ($scope, PluginService, csSettings) {
  * Settings extend controller
  */
 function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, csSettings, csHttp, esMarket,
-  esRegistry, esUser) {
+  esRegistry, esUser, Modals) {
   'ngInject';
 
   $scope.formData = {};
@@ -71,7 +71,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     $scope.popupForm = popupForm;
   };
 
-  // Change ESnode
+   // Change ESnode
   $scope.changeEsNode= function(node) {
     $scope.showNodePopup(node || $scope.formData)
     .then(function(node) {
@@ -95,6 +95,31 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
       UIUtils.loading.hide(10);
     });
+  };
+
+  $scope.showNodeList = function() {
+    $ionicPopup._popupStack[0].responseDeferred.promise.close();
+    return Modals.showNetworkLookup({enableFilter: true, type: 'member', endpointFilter: 'ES_USER_API'})
+      .then(function (result) {
+        if (result) {
+          var parts = result.server.split(':');
+          if (result.dns) {
+            return {
+              host: result.dns,
+              port: parts[1] || 80
+            };
+          }
+          else {
+            return {
+              host: parts[0],
+              port: parts[1] || 80
+            };
+          }
+        }
+      })
+      .then(function(newNode) {
+        $scope.changeEsNode(newNode);
+      });
   };
 
   // Show node popup

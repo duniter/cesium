@@ -301,10 +301,36 @@
       "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
       "REVOKE" : "Revoquer cette identité",
       "DEFINITELY_REVOKE" : "Revoquer définitivement cette identité",
-      "REVOCATION": "Révocation"
-
-    }
-  },
+      "REVOCATION": "Révocation ...",
+      "LEVEL": "Niveau de sécurité",
+      "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
+      "LOW_LEVEL": "Faible <span class=\"hidden-xs\">(2 questions minimum)</span>",
+      "MEDIUM_LEVEL": "Moyen <span class=\"hidden-xs\">(4 questions minimum)</span>",
+      "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
+      "ADD_QUESTION" : "Ajouter une question personnalisée ",
+      "BTN_RESET" : "Réinitialiser",
+      "BTN_CLEAN" : "vider",
+      "QUESTION_1": "Comment s'appelait votre meilleur ami lorsque vous étiez adolescent ?",
+      "QUESTION_2": "Comment s'appelait votre premier animal de compagnie ?",
+      "QUESTION_3": "Quel est le premier plat que vous avez appris à cuisiner ?",
+      "QUESTION_4": "Quel est le premier film que vous avez vu au cinéma ?",
+      "QUESTION_5": "Où êtes-vous allé la première fois que vous avez pris l'avion ?",
+      "QUESTION_6": "Comment s'appelait votre instituteur préféré à l'école primaire ?",
+      "QUESTION_7": "Quel serait selon vous le métier idéal ?",
+      "QUESTION_8": "Quel est le livre pour enfants que vous préférez ?",
+      "QUESTION_9": "Quel était le modèle de votre premier véhicule ?",
+      "QUESTION_10": "Quel était votre surnom lorsque vous étiez enfant ?",
+      "QUESTION_11": "Quel était votre personnage ou acteur de cinéma préféré lorsque vous étiez étudiant ?",
+      "QUESTION_12": "Quel était votre chanteur ou groupe préféré lorsque vous étiez étudiant ?",
+      "QUESTION_13": "Dans quelle ville vos parents se sont-ils rencontrés ?",
+      "QUESTION_14": "Comment s'appelait votre premier patron ?",
+      "QUESTION_15": "Quel est le nom de la rue où vous avez grandi ?",
+      "QUESTION_16": "Quel est le nom de la première plage où vous vous êtes baigné ?",
+      "QUESTION_17": "Quel est le premier album que vous avez acheté ?",
+      "QUESTION_18": "Quel est le nom de votre équipe de sport préférée ?",
+      "QUESTION_19": "Quel était le métier de votre grand-père ?"
+       }
+    },
   "TRANSFER": {
     "TITLE": "Virement",
     "SUB_TITLE": "Faire un virement",
@@ -384,7 +410,8 @@
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
-    "REVOCATION_FAILED": "Echec de la révocation."
+    "REVOCATION_FAILED": "Echec de la révocation.",
+    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Phrase de protection ou mot de passe incorrects"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

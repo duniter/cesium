@@ -558,7 +558,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 }
 
-function WalletSecurityModalController($scope, $state,  UIUtils, Modals, csWallet){
+function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $translate, CryptoUtils, $timeout){
   $scope.slides = {
     slider: null,
     options: {
@@ -569,19 +569,154 @@ function WalletSecurityModalController($scope, $state,  UIUtils, Modals, csWalle
   };
   $scope.isLastSlide = false;
   $scope.smallscreen = UIUtils.screen.isSmall();
+  $scope.formData = {
+    addQuestion: '',
+    level: '4',
+    questions : []
+  };
+
+  for (var i = 1; i<20; i++){
+    $translate('ACCOUNT.SECURITY.QUESTION_' + i.toString())
+      .then(function(translation){
+        $scope.formData.questions.push({value: translation , checked: false});
+        })
+    };
+
+  $scope.restore = function(){
+    if ($scope.slides.slider.activeIndex === 2) {
+      $scope.formData = {
+        addQuestion: '',
+        level: '4',
+        questions: []
+      };
+      for (var i = 1; i < 20; i++) {
+        $translate('ACCOUNT.SECURITY.QUESTION_' + i.toString())
+          .then(function (translation) {
+            $scope.formData.questions.push({value: translation, checked: false});
+          })
+      }
+    }
+    if($scope.slides.slider.activeIndex === 3) {
+      _.each($scope.formData.questions, function(question){
+        question.answer = undefined;
+      })
+    }
+  };
+
+  $scope.addQuestion = function(){
+    if ($scope.formData.addQuestion != '') {
+      $scope.formData.questions.push({value: $scope.formData.addQuestion, checked: true});
+      $scope.formData.addQuestion = '';
+    }
+  };
+
+  $scope.submit = function(){
+    if (!$scope.isUserPubkey($scope.pubkey)){
+      if ($scope.computing = false){
+        UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
+        return;
+      }
+    }
+    if(!$scope['loginForm'].$valid){
+      return;
+    }
+
+    var file = {file : _.filter($scope.formData.questions, function(question){
+      return question.checked;
+    })};
+    var record = {
+      salt: $scope.formData.username,
+      pwd: $scope.formData.password,
+      questions: ''
+    };
+    _.each(file.file, function(question){
+      record.questions += question.value + '\n';
+      record.answer += question.answer;
+    })
+
+    return csWallet.getkeypairSaveId(record)
+      .then(function(record){
+        csWallet.downloadSaveId(record);
+      })
+
+  };
+
+  $scope.isUserPubkey = function(pubkey) {
+    return csWallet.isUserPubkey(pubkey);
+  };
+
+  $scope.isRequired = function(){
+    var questionChecked = _.filter($scope.formData.questions, function(question) {
+      return question.checked;
+    })
+    return questionChecked.length < $scope.formData.level;
+  };
+
+  $scope.formDataChanged = function() {
+    $scope.computing = true;
+    $scope.pubkey = '';
+    $timeout(function() {
+      var salt = $scope.formData.username;
+      var pwd = $scope.formData.password;
+      CryptoUtils.connect(salt, pwd).then(
+        function (keypair) {
+            $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            $scope.computing = false;
+        }
+      )
+        .catch(function (err) {
+          $scope.pubkey = '';
+          UIUtils.loading.hide();
+          console.error('>>>>>>>', err);
+          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+          $scope.computing = false;
+        });
+    }, 500);
+
+
+  };
+  $scope.$watch('formData.username', $scope.formDataChanged, true);
+  $scope.$watch('formData.password', $scope.formDataChanged, true);
 
   $scope.slidePrev = function() {
+    if ($scope.slides.slider.activeIndex === 2){
+      $scope.slideTo(0);
+      $scope.isLastSlide = false;
+      return;
+    }
     $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slidePrev();
     $scope.slides.slider.lockSwipes();
     $scope.isLastSlide = false;
+
   };
 
   $scope.slideNext = function() {
     $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slideNext();
     $scope.slides.slider.lockSwipes();
-    $scope.isLastSlide = $scope.slides.slider.activeIndex === 5;
+    $scope.isLastSlide = $scope.slides.slider.activeIndex === 4;
+  };
+
+  $scope.slideTo = function(index) {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slideTo(index);
+    $scope.slides.slider.lockSwipes();
+    $scope.isLastSlide = $scope.slides.slider.activeIndex === 4;
+  };
+
+  $scope.doNext = function(formName) {
+    if (!formName) {
+      formName = $scope.slides.slider.activeIndex === 2 ? 'questionsForm' :
+        ($scope.slides.slider.activeIndex === 3 ? 'answersForm' : formName);
+    }
+    if (formName) {
+      $scope[formName].$submitted = true;
+      if (!$scope[formName].$valid) {
+        return;
+      }
+      $scope.slideNext();
+    }
   };
 
 

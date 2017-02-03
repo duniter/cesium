@@ -29,6 +29,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.loading = true;
   $scope.nodePopup = {};
 
+
   $scope.$on('$ionicView.enter', function() {
     $scope.load();
   });

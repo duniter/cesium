@@ -265,7 +265,6 @@
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renew membership...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Revoke membership...",
     "BTN_SEND_IDENTITY_DOTS": "Publish identity...",
-    "BTN_REVOKE": "Revoke<span class='hidden-xs hidden-sm'> definitely</span> this identity...",
     "BTN_SHOW_DETAILS": "Display technical data",
     "NEW": {
       "TITLE": "Registration",
@@ -295,6 +294,40 @@
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
       "HELP": "A pseudonym is needed to let other members find you."
+    },
+    "SECURITY":{
+      "TITLE": "Sign-in and security",
+      "SAVE_KEYS": "Save your login",
+      "DOWNLOAD_REVOKE": "Save a recocation file",
+      "REVOKE" : "Revoke this identity",
+      "DEFINITELY_REVOKE" : "Revoke definitely this identity.",
+      "REVOCATION": "Revocation ...",
+      "LEVEL": "Security level",
+      "HELP_LEVEL": "Choose <strong> at least {{nb}} questions </strong> :",
+      "LOW_LEVEL": "Low <span class=\"hidden-xs\">(2 questions minimum)</span>",
+      "MEDIUM_LEVEL": "Medium <span class=\"hidden-xs\">(4 questions minimum)</span>",
+      "STRONG_LEVEL": "Strong <span class=\"hidden-xs \">(6 questions minimum)</span>",
+      "ADD_QUESTION" : "Add custom question",
+      "BTN_RESET" : "Reset",
+      "QUESTION_1": "Comment s'appelait votre meilleur ami lorsque vous étiez adolescent ?",
+      "QUESTION_2": "What was the name of your first pet ?",
+      "QUESTION_3": "Quel est le premier plat que vous avez appris à cuisiner ?",
+      "QUESTION_4": "Quel est le premier film que vous avez vu au cinéma ?",
+      "QUESTION_5": "Où êtes-vous allé la première fois que vous avez pris l'avion ?",
+      "QUESTION_6": "Comment s'appelait votre instituteur préféré à l'école primaire ?",
+      "QUESTION_7": "Quel serait selon vous le métier idéal ?",
+      "QUESTION_8": "Quel est le livre pour enfants que vous préférez ?",
+      "QUESTION_9": "Quel était le modèle de votre premier véhicule ?",
+      "QUESTION_10": "What was your nickname when you were a child ?",
+      "QUESTION_11": "Quel était votre personnage ou acteur de cinéma préféré lorsque vous étiez étudiant ?",
+      "QUESTION_12": "Quel était votre chanteur ou groupe préféré lorsque vous étiez étudiant ?",
+      "QUESTION_13": "Dans quelle ville vos parents se sont-ils rencontrés ?",
+      "QUESTION_14": "Comment s'appelait votre premier patron ?",
+      "QUESTION_15": "Quel est le nom de la rue où vous avez grandi ?",
+      "QUESTION_16": "Quel est le nom de la première plage où vous vous êtes baigné ?",
+      "QUESTION_17": "Quel est le premier album que vous avez acheté ?",
+      "QUESTION_18": "What is the name of your favorite sport team ?",
+      "QUESTION_19": "What was your grand-father's job ?"
     }
   },
   "TRANSFER": {
