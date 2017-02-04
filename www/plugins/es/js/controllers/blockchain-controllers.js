@@ -17,20 +17,10 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
       })
 
       .state('app.blockchain_search', {
-        url: "/blockchain-search?q",
+        url: "/blockchain/search?q&type",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/blockchain/lookup.html",
-            controller: 'ESBlockLookupCtrl'
-          }
-        }
-      })
-
-      .state('app.network.blocks', {
-        url: "/blocks?q",
-        views: {
-          'rightContent': {
-            templateUrl: "plugins/blockchain/lookup.html",
             controller: 'ESBlockLookupCtrl'
           }
         }
@@ -44,7 +34,7 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
 ;
 
 
-function ESBlockLookupController($scope, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings, esBlockchain) {
+function ESBlockLookupController($scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings, esBlockchain, $ionicHistory) {
   'ngInject';
 
   BlockLookupController.call(this, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings);
@@ -63,7 +53,32 @@ function ESBlockLookupController($scope, $scope, $timeout, $focus, $filter, $sta
     }
 
     $scope.search.type = 'text';
-    return $scope.doSearch();
+    $scope.doSearch();
+
+    $ionicHistory.nextViewOptions({
+      disableAnimate: true,
+      disableBack: true,
+      historyRoot: true
+    });
+    $state.go('app.blockchain_search', {q: $scope.search.text}, {
+      reload: false,
+      inherit: true,
+      notify: false});
+  };
+
+  $scope.doSearchLast = function() {
+    $scope.search.type = 'last';
+    $scope.doSearch();
+
+    $ionicHistory.nextViewOptions({
+      disableAnimate: true,
+      disableBack: true,
+      historyRoot: true
+    });
+    $state.go('app.blockchain_search', {q: undefined}, {
+      reload: false,
+      inherit: true,
+      notify: false});
   };
 
   $scope.doSearch = function(from) {
