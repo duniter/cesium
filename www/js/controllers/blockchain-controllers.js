@@ -368,7 +368,17 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.toggleCompactMode = function() {
     $scope.compactMode = !$scope.compactMode;
-    $scope.doDisplayResult($scope.search.results);
+    $scope.doDisplayResult($scope.search.results, 0, $scope.search.results.length);
+
+    // Workaround to re-initialized the <ion-infinite-loop>
+    if (!$scope.search.hasMore && $scope.search.results.length && $scope.search.type == 'last') {
+      var lastBlock = $scope.search.results[$scope.search.results.length-1];
+      if (lastBlock && lastBlock.number > 0) {
+        $timeout(function() {
+          $scope.search.hasMore = true;
+        }, 500);
+      }
+    }
   };
 
   $scope.toggleSort = function(sort){
