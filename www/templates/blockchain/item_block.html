@@ -8,10 +8,10 @@
 
   <div class="row no-padding" ng-if="!block.compacted || !compactMode">
     <div class="col">
-      <h3 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
+      <h4 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
         <i class="ion-clock"></i>
         {{block.medianTime|formatDate}}
-      </h3>
+      </h4>
       <h4 ng-if="!block.empty">
         <!-- joiners/leavers -->
         <ng-if ng-if="block.joinersCount||(block.excludedCount-block.revokedCount)">
@@ -26,7 +26,7 @@
       </h4>
     </div>
 
-    <div class="col col-33 positive">
+    <div class="col col-33 positive hidden-md">
       <h4><i class="ion-person"></i> {{block.name||block.uid}}</h4>
     </div>
 
