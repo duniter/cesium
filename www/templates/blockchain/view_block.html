@@ -53,12 +53,15 @@
           </div>
 
           <!-- hash -->
-          <ion-item class="item-icon-left" copy-on-click="{{formData.hash}}">
+          <ion-item class="item-icon-left item-text-wrap" copy-on-click="{{::formData.hash}}">
             <i class="icon ion-lock-combination"></i>
             {{'BLOCKCHAIN.VIEW.HASH'|translate}}
-            <span class="item-note">
-            {{formData.hash}}
+            <span class="item-note hidden-xs hidden-sm">
+              {{formData.hash}}
             </span>
+            <h5 class="visible-xs visible-sm">
+              {{::formData.hash}}
+            </h5>
           </ion-item>
 
           <!-- joiners -->

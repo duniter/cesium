@@ -144,7 +144,10 @@
       "CERT_COUNT": "Certifications"
     },
     "LOOKUP": {
-      "NO_BLOCK": "Aucun bloc"
+      "TITLE": "Blocs",
+      "NO_BLOCK": "Aucun bloc",
+      "LAST_BLOCKS": "Derniers blocs :",
+      "BTN_COMPACT": "Compacter"
     }
   },
   "CURRENCY": {
@@ -183,7 +186,8 @@
       "SENTRIES_FORMULA": "Nombre de certification<br/>pour être sentinelle (formule)",
       "XPERCENT":"Pourcentage minimum de sentinelle<br/>à atteindre pour respecter la règle de distance",
       "AVG_GEN_TIME": "Temps moyen entre deux blocs",
-      "CURRENT": "actuel"
+      "CURRENT": "actuel",
+      "MATH_CEILING": "PLAFOND"
     }
   },
   "NETWORK": {

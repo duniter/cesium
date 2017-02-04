@@ -24,29 +24,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wallet_view_cert', {
-        url: "/wallet/cert",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wot/items_received_certifications.html",
-            controller: 'WotCertificationsViewCtrl'
-          }
-        },
-        data: {
-          large: 'app.wallet_view_cert_lg'
-        }
-      })
-
-      .state('app.wallet_view_cert_lg', {
-        url: "/wallet/cert/lg",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wot/view_certifications_lg.html",
-            controller: 'WotCertificationsViewCtrl'
-          }
-        }
-      })
-
       .state('app.wot_cert', {
         url: "/wot/cert/:pubkey/:uid",
         abstract: true,
@@ -55,13 +32,10 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
             templateUrl: "templates/wot/view_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
-        },
-        data: {
-          large: 'app.wot_cert_lg'
         }
       })
 
-      .state('app.wot_cert.tab_received_cert', {
+      .state('app.wot_cert.tab_received', {
         url: "/received",
         views: {
           'tab-received-cert': {
@@ -70,7 +44,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wot_cert.tab_given_cert', {
+      .state('app.wot_cert.tab_given', {
         url: "/given",
         views: {
           'tab-given-cert': {
@@ -81,6 +55,52 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.wot_cert_lg', {
         url: "/wot/cert/lg/:pubkey/:uid",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications_lg.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
+      // wallet cert
+      .state('app.wallet_cert', {
+        url: "/wallet/cert",
+        abstract: true,
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
+      .state('app.wallet_cert.tab_received', {
+        url: "/received",
+        views: {
+          'tab-received-cert': {
+            templateUrl: "templates/wot/tabs/tab_received_certifications.html"
+          }
+        },
+        data: {
+          large: 'app.wallet_cert_lg'
+        }
+      })
+
+      .state('app.wallet_cert.tab_given', {
+        url: "/given",
+        views: {
+          'tab-given-cert': {
+            templateUrl: "templates/wot/tabs/tab_given_certifications.html"
+          }
+        },
+        data: {
+          large: 'app.wallet_cert_lg'
+        }
+      })
+
+      .state('app.wallet_cert_lg', {
+        url: "/wallet/cert/lg",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications_lg.html",
@@ -443,7 +463,7 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
 
   $scope.showCertifications = function() {
     // Warn: do not use a simple link here (a ng-click is need for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wot_cert.tab_received_cert' : 'app.wot_cert_lg', {
+    $state.go(UIUtils.screen.isSmall() ? 'app.wot_cert.tab_received' : 'app.wot_cert_lg', {
       pubkey: $scope.formData.pubkey,
       uid: $scope.formData.uid
     });
@@ -491,8 +511,12 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length >  0) {
+
       if ($scope.loading) {
-        $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/);
+        $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid);
+      }
+      else {
+        $scope.doMotion();
       }
     }
 
@@ -500,6 +524,9 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     else if (csWallet.isLogin()){
       if ($scope.loading) {
         $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid);
+      }
+      else {
+        $scope.doMotion();
       }
     }
 
@@ -524,9 +551,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       $scope.loading = false;
 
       // Effects
-      $scope.motionCertifications(100);
-      $scope.motionAvatar(300);
-      $scope.motionGivenCertifications(900);
+      $scope.doMotion();
 
       // Show help tip
       var isWallet = csWallet.isUserPubkey(pubkey);
@@ -701,22 +726,42 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     $scope.load($scope.formData.pubkey, false /*no cache*/);
   };
 
+
+  $scope.doMotion = function() {
+    $scope.motionCertifications(100);
+
+    if ($scope.showAvatar) {
+      // Effects
+      $timeout(function () {
+        UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
+      }, 300);
+    }
+
+    $scope.motionGivenCertifications($scope.showCertifications ? 900 : 100);
+  };
+
   // Show received certifcations
-  $scope.setShowCertifications = function(show) {
-    $scope.showCertifications = show;
-    $scope.motionCertifications();
+  $scope.showCertificationsTab = function() {
+    $scope.showCertifications = true;
+    $scope.showGivenCertifications = false;
+    if (csWallet.isUserPubkey($scope.formData.pubkey)) {
+      $state.go('app.wallet_cert.tab_received');
+    }
+    else {
+      $state.go('app.wot_cert.tab_received', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid});
+    }
   };
 
   // Show given certifcations
-  $scope.setShowGivenCertifications = function(show) {
-    $scope.showGivenCertifications = show;
-    $scope.motionGivenCertifications();
-  };
-
-  // Show avatar
-  $scope.setShowAvatar = function(show) {
-    $scope.showAvatar = show;
-    $scope.motionCertifications();
+  $scope.showGivenCertificationsTab = function() {
+    $scope.showGivenCertifications = true;
+    $scope.showCertifications = false;
+    if (csWallet.isUserPubkey($scope.formData.pubkey)) {
+      $state.go('app.wallet_cert.tab_given');
+    }
+    else {
+      $state.go('app.wot_cert.tab_given', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid});
+    }
   };
 
   // Show help tip
@@ -782,15 +827,6 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       if ($scope.canSelectAndCertify) {
         $scope.hideFab('fab-select-certify', 0);
       }
-    }
-  };
-
-  $scope.motionAvatar = function(timeout) {
-    if ($scope.showAvatar) {
-      // Effects
-      $timeout(function () {
-        UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
-      }, timeout || 900);
     }
   };
 

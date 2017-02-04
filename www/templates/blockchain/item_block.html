@@ -1,38 +1,37 @@
+<a name="block-{{::block.number}}"></a>
 <ion-item id="block-{{::block.number}}"
-          class="item item-avatar-left {{ionItemClass}}"
+          class="item item-icon-left item-block {{ionItemClass}}"
+          ng-class="{'item-block-empty': block.empty, 'compacted': block.compacted && compactMode}"
           ng-click="selectBlock(block)">
 
-  <i class="item-image ion-document-text"></i>
-  <i class=""
-     ng-if="block.avatar"
-     style="background-image: url({{block.avatar.src}})"></i>
+  <i class="icon ion-document-text stable" ng-if="!block.empty"></i>
 
-  <div class="row no-padding">
+  <div class="row no-padding" ng-if="!block.compacted || !compactMode">
     <div class="col">
-      <h3><i class="ion-clock"></i> {{block.medianTime|formatDate}}</h3>
-      <h4>{{'BLOCKCHAIN.HASH'|translate}} {{block.hash|formatHash}}</h4>
+      <h3 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
+        <i class="ion-clock"></i>
+        {{block.medianTime|formatDate}}
+      </h3>
+      <h4 ng-if="!block.empty">
+        <!-- joiners/leavers -->
+        <ng-if ng-if="block.joinersCount||(block.excludedCount-block.revokedCount)">
+          <i class="gray ion-person"></i>
+          <span class="gray" ng-if="block.joinersCount">+{{block.joinersCount}}</span>
+          <span class="gray" ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
+        </ng-if>
+
+        <span class="gray" ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{block.revokedCount}}&nbsp;&nbsp;</span>
+        <span class="gray" ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> +{{block.certificationsCount}}&nbsp;&nbsp;</span>
+        <span class="gray" ng-if="block.transactionsCount"><i class="ion-card"> +{{block.transactionsCount}}</i>&nbsp;&nbsp;</span>
+      </h4>
     </div>
 
-    <div class="col col-20 positive">
-      <i class="ion-person"></i> {{block.name||block.uid}}
+    <div class="col col-33 positive">
+      <h4><i class="ion-person"></i> {{block.name||block.uid}}</h4>
     </div>
-
-    <small class="col col-20">
-      <!-- joiners/leavers -->
-      <ng-if ng-if="block.joinersCount||(block.excludedCount-block.revokedCount)">
-        <i class="ion-person"></i>
-        <span ng-if="block.joinersCount">+{{block.joinersCount}}</span>
-        <span ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
-        &nbsp;&nbsp;
-      </ng-if>
-      <span ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{block.revokedCount}}&nbsp;&nbsp;</span>
-
-      <span ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> +{{block.certificationsCount}}&nbsp;&nbsp;</span>
-      <span ng-if="block.transactionsCount"><i class="ion-card"> +{{block.transactionsCount}}</i>&nbsp;&nbsp;</span>
-    </small>
 
     <div class="col col-20">
-      <span class="badge badge-balanced">{{block.number}}</span>
+      <span class="badge " ng-class="{'badge-balanced': !$index , 'badge-calm': $index && !block.compacted && !block.empty}">{{block.number}}</span>
     </div>
 
   </div>

@@ -772,7 +772,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function() {
         if (skipAll) return true;
-        if ($state.is('app.wallet_view_cert')) {
+        if ($state.is('app.wallet_cert')) {
           // Select the second tabs
           $timeout(function() {
             var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');

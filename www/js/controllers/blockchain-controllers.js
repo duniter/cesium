@@ -13,6 +13,19 @@ angular.module('cesium.blockchain.controllers', ['cesium.services'])
             templateUrl: "templates/blockchain/lookup.html",
             controller: 'BlockLookupCtrl'
           }
+        },
+        data: {
+          large: 'app.blockchain_lg'
+        }
+      })
+
+      .state('app.blockchain_lg', {
+        url: "/blockchain/lg",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/blockchain/lookup_lg.html",
+            controller: 'BlockLookupCtrl'
+          }
         }
       })
 
@@ -53,30 +66,29 @@ angular.module('cesium.blockchain.controllers', ['cesium.services'])
 
 ;
 
-function BlockLookupController($scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot) {
+function BlockLookupController($scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings) {
   'ngInject';
 
   $scope.search = {
     result: [],
     total: 0,
-    text: null,
     loading: true,
     loadingMore: false,
-    type: 'last',
-    sort : undefined,
-    asc: true,
-    hasMore: false
+    hasMore: false,
+    type: 'last'
   };
-  $scope.temp = {};
   $scope.currency = false;
   $scope.entered = false;
-  $scope.enableFilter = true;
   $scope.searchTextId = null;
   $scope.ionItemClass = 'item-border-large';
-  $scope.expertMode = true;
   $scope.defaultSizeLimit = 50;
 
-  $scope.init = function(e, state) {
+  /**
+   * Enter into the view
+   * @param e
+   * @param state
+   */
+  $scope.enter = function(e, state) {
     if (!$scope.entered) {
       if (state && state.stateParams && state.stateParams.q) { // Query parameter
         $scope.search.text = state.stateParams.q;
@@ -99,13 +111,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
               UIUtils.alert.error('ERROR.GET_CURRENCY_FAILED');
               return;
             }
-            $scope.init(); // back to init()
+            $scope.enter(); // back to enter()
           })
           .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
         return;
       }
 
-      $scope.compactMode = !UIUtils.screen.isSmall();
+      $scope.compactMode = angular.isDefined($scope.compactMode) ? $scope.compactMode : !UIUtils.screen.isSmall();
+      $scope.expertMode = angular.isDefined($scope.expertMode) ? $scope.expertMode : !UIUtils.screen.isSmall() && csSettings.data.expertMode;
 
       $scope.doSearch();
 
@@ -128,7 +141,22 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       $scope.startListenBlock();
     }
   };
-  $scope.$on('$ionicView.enter', $scope.init);
+  $scope.$on('$ionicView.enter', $scope.enter);
+  $scope.$on('$ionicParentView.enter', $scope.enter);
+
+  /**
+   * Leave the view
+   * @param e
+   * @param state
+   */
+  $scope.leave = function() {
+    if ($scope.wsBlock) {
+      $scope.wsBlock.close();
+      delete $scope.wsBlock;
+    }
+  };
+  $scope.$on('îoncView.leave', $scope.leave);
+  $scope.$on('$ionicParentView.leave', $scope.leave);
 
   $scope.doSearchLast = function() {
     $scope.search.type = 'last';
@@ -139,16 +167,20 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     from = angular.isDefined(from) ? from : 0;
 
     $scope.search.loading = (from === 0);
-    //$scope.search.hasMore = false;
+    $scope.search.hasMore = false;
 
     var promise;
 
     // get blocks
-    if (from == 0) {
+    if (from === 0) {
       promise = $scope.node.blockchain.current()
         .then(function(current) {
-          $scope.search.results = [new Block(current)];
-          return $scope.search.results;
+          var size = current.number < $scope.defaultSizeLimit ? current.number : $scope.defaultSizeLimit;
+          return $scope.node.blockchain.blocksSlice({count: size, from: current.number-size})
+            .then(function(blocks) {
+              blocks.splice(0,0,current);
+              return blocks;
+            });
         })
         .catch(function(err) {
           // Special case when block #0 not written yet
@@ -159,9 +191,9 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         });
     }
     else {
-      var olderNumber = $scope.search.results[$scope.search.results.length-1].number;
-      var size = olderNumber < $scope.defaultSizeLimit ? olderNumber : $scope.defaultSizeLimit;
-      promise = $scope.node.blockchain.blocksSlice({count: size, from: olderNumber-size});
+      var oldestNumber = $scope.search.results[$scope.search.results.length-1].number;
+      var size = oldestNumber < $scope.defaultSizeLimit ? oldestNumber : $scope.defaultSizeLimit;
+      promise = $scope.node.blockchain.blocksSlice({count: size, from: oldestNumber-size});
     }
 
     // process blocks
@@ -322,14 +354,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     });
   };
 
-  $scope.stopListenBlock = function() {
-    if ($scope.wsBlock) {
-      $scope.wsBlock.close();
-      delete $scope.wsBlock;
-    }
-  };
-  $scope.$on('îoncView.leave', $scope.stopListenBlock);
-
   $scope.selectBlock = function(block) {
     if (block.compacted && $scope.compactMode) {
       $scope.toggleCompactMode();
@@ -344,7 +368,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.toggleCompactMode = function() {
     $scope.compactMode = !$scope.compactMode;
-    //$scope.doPrepareResult($scope.search.results);
     $scope.doDisplayResult($scope.search.results);
   };
 
@@ -373,7 +396,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 }
 
 
-function BlockViewController($scope, UIUtils, BMA, csCurrency) {
+function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot) {
   'ngInject';
 
   $scope.loading = true;
@@ -427,8 +450,6 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency) {
     return  promise
       .then(function(json) {
         var block = new Block(json);
-        console.log(block.transactionsCount);
-        console.log(block.isEmpty());
         if (!block || !angular.isDefined(block.number) || !block.hash) {
           $scope.loading = false;
           UIUtils.alert.error('ERROR.GET_BLOCK_FAILED');
@@ -440,8 +461,9 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency) {
           return;
         }
 
-        return $scope.node.wot.member.get(block.issuer)
-          .then(function(issuer) {
+        var issuer = {pubkey: block.issuer};
+        return csWot.extendAll([issuer])
+          .then(function() {
             $scope.updateView({block: block, issuer: issuer});
           });
       })

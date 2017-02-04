@@ -1,0 +1,35 @@
+  <div class="padding padding-xs" style="display: block; height: 100px;">
+    <h4 translate>BLOCKCHAIN.LOOKUP.LAST_BLOCKS</h4>
+
+    <div class="pull-right">
+      <a class="button button-text button-small ink"
+         ng-class="{'button-text-positive': compactMode, 'button-text-stable': !compactMode}"
+         ng-click="toggleCompactMode()" >
+        <i class="icon ion-navicon"></i>
+        <b class="ion-arrow-down-b" style="position: absolute; top: -2px; left: 4px; font-size: 8px;"></b>
+        <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
+        <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="text-center" ng-if="search.loading">
+    <ion-spinner icon="android"></ion-spinner>
+  </div>
+
+  <ion-list class="animate-ripple padding padding-xs">
+    <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
+      BLOCKCHAIN.LOOKUP.NO_BLOCK
+    </div>
+    <!-- blocks -->
+    <ng-repeat ng-repeat="block in search.results"
+               ng-include="!block.empty ? 'templates/blockchain/item_block_lg.html' : 'templates/blockchain/item_block_empty_lg.html'">
+    </ng-repeat>
+  </ion-list>
+
+  <ion-infinite-scroll
+    ng-if="search.hasMore"
+    spinner="android"
+    on-infinite="showMore()"
+    distance="1%">
+  </ion-infinite-scroll>

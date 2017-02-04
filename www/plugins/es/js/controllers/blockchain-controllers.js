@@ -16,15 +16,26 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
         }
       })
 
-      .state('app.lookup_blocks', {
-        url: "/blocks?q",
+      .state('app.blockchain_search', {
+        url: "/blockchain-search?q",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/blockchain/lookup.html",
             controller: 'ESBlockLookupCtrl'
           }
         }
-      });
+      })
+
+      .state('app.network.blocks', {
+        url: "/blocks?q",
+        views: {
+          'rightContent': {
+            templateUrl: "plugins/blockchain/lookup.html",
+            controller: 'ESBlockLookupCtrl'
+          }
+        }
+      })
+    ;
   })
 
 
@@ -33,13 +44,18 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
 ;
 
 
-function ESBlockLookupController($scope, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, esBlockchain) {
+function ESBlockLookupController($scope, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings, esBlockchain) {
   'ngInject';
 
-  BlockLookupController.call(this, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot);
+  BlockLookupController.call(this, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings);
 
+  $scope.search.text = null;
+  $scope.search.type = 'last';
+  $scope.search.sort = undefined;
+  $scope.search.asc = true;
   $scope.searchTextId = 'blockchainSearchText';
   $scope.compactMode = true;
+  $scope.enableFilter = true;
 
   $scope.doSearchText = function() {
     if (!$scope.search.text || $scope.search.text.trim().length === 0) {

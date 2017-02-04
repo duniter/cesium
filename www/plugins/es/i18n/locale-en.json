@@ -113,6 +113,16 @@
       "RECIPIENT_IS_MANDATORY": "Recipient is mandatory."
     }
   },
+  "BLOCKCHAIN": {
+    "LOOKUP": {
+      "SEARCH_HELP": "Block number, hash...",
+      "POPOVER_FILTER_TITLE": "Filter",
+      "HEADER_MEDIAN_TIME": "Date / Time",
+      "HEADER_BLOCK": "Block #",
+      "HEADER_ISSUER": "Peer owner",
+      "BTN_LAST": "Last blocks"
+    }
+  },
   "MARKET": {
     "COMMON": {
       "PRICE": "Price",

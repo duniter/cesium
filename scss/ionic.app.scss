@@ -1679,6 +1679,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   max-width: 15%;
 }
 
+.col-border-left {
+  border-left: solid 1px #ccc !important;
+}
+
+.col-border-right {
+  border-right: solid 1px #ccc !important;
+}
 
 .ion-spinner-small {
   height: 14px;

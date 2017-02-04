@@ -115,15 +115,12 @@
   },
   "BLOCKCHAIN": {
     "LOOKUP": {
-      "TITLE": "Blocs",
       "SEARCH_HELP": "Numéro de bloc, hash, etc.",
       "POPOVER_FILTER_TITLE": "Filtres",
-      "LAST_BLOCKS": "Derniers blocs :",
       "HEADER_MEDIAN_TIME": "Date / Heure",
       "HEADER_BLOCK": "Bloc #",
       "HEADER_ISSUER": "Propriétaire du noeud",
-      "BTN_LAST": "Derniers blocs",
-      "BTN_COMPACT": "Compacter"
+      "BTN_LAST": "Derniers blocs"
     }
   },
   "MARKET": {

@@ -163,4 +163,45 @@
   margin: 0 !important;
 }
 
+/**********
+   Block items
+**********/
 
+.item-block {
+  padding-top: 4px;
+  padding-bottom: 3px;
+  max-height: 48px;
+}
+
+.item-block .badge {
+  top: 12px;
+  right: 6%;
+}
+
+.item-block.item-block-empty {
+  min-height: 24px !important;
+  max-height: 24px !important;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.item-block.item-block-empty .badge {
+  padding-top: 0px !important;
+  top: inherit;
+}
+
+.item-block.item-block-empty .badge.badge-balanced {
+  top: 0px !important;
+  padding-top: 3px !important;
+  padding-bottom: 2px !important;
+}
+
+.item-block-empty.compacted {
+  min-height: 3px !important;
+  max-height: 3px !important;
+  border-bottom: 0px !important;
+}
+
+.item-block.item-block-empty.compacted {
+  border-bottom: double 1px #eee !important;
+}

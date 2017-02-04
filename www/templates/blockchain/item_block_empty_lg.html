@@ -1,27 +1,26 @@
 <a name="block-{{::block.number}}"></a>
 <ion-item id="block-{{::block.number}}"
           ng-if="!block.hide"
-          class="item {{ionItemClass}} item-block-empty"
-          ng-class="{'compacted': block.compacted && compactMode, 'item-avatar-left-padding': !smallscreen}"
+          class="item item-block item-icon-left {{ionItemClass}} item-block-empty"
+          ng-class="{'compacted': block.compacted && compactMode}"
           ng-click="selectBlock(block)"
           >
   <div class="row no-padding" ng-if="!block.compacted || !compactMode">
     <div class="col">
-      <h3 ng-class="{'gray': block.compacted}">
+      <h3 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
         <i class="ion-clock"></i>
         {{block.medianTime|formatDate}}
       </h3>
     </div>
 
-    <div class="col col-20 positive">
-      <i class="ion-person"></i> {{block.name||block.uid}}
+    <div class="col col-20">
+      <h3 class="positive"><i class="ion-person"></i> {{block.name||block.uid}}</h3>
     </div>
 
-    <div class="col col-20">
-    </div>
+    <div class="col col-20"></div>
 
     <div class="col col-20">
-      <span class="badge">{{block.number}}</span>
+      <span class="badge" ng-class="{'badge-balanced': !$index && search.type=='last'}">{{block.number}}</span>
     </div>
 
   </div>

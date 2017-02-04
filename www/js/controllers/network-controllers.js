@@ -111,7 +111,6 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
       },
       expertMode: $scope.expertMode
     };
-    console.log(options);
     return options;
   };
 

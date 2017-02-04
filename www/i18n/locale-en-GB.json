@@ -125,16 +125,43 @@
       "BTN_SHOW_LIST" : "Peer's list"
     }
   },
+  "BLOCKCHAIN": {
+    "HASH": "Hash: {{hash}}",
+    "VIEW": {
+      "HEADER_TITLE": "Block #{{number}}-{{hash|formatHash}}",
+      "TITLE_CURRENT": "Current block",
+      "TITLE": "Block #{{number}}",
+      "COMPUTED_BY": "COmputed by",
+      "SHOW_RAW": "Show raw data",
+      "HASH": "Computed hash",
+      "JOINERS_COUNT": "Joiners",
+      "LEAVERS_COUNT": "Leavers",
+      "LEAVERS_COUNT_HELP": "Members that now refused certification",
+      "EXCLUDED_COUNT": "Excluded members",
+      "EXCLUDED_COUNT_HELP": "Old members, excluded because missing membreship renewal or certifications",
+      "REVOKED_COUNT": "Revoked identities",
+      "TX_COUNT": "Transactions",
+      "CERT_COUNT": "Certifications"
+    },
+    "LOOKUP": {
+      "TITLE": "Blocks",
+      "NO_BLOCK": "No bloc",
+      "LAST_BLOCKS": "Last blocks:",
+      "BTN_COMPACT": "Compact"
+    }
+  },
   "CURRENCY": {
     "SELECT": {
       "TITLE": "Currencies",
-      "CURRENCIES": "Known currencies"
+      "CURRENCIES": "Known currencies",
+      "MEMBERS_COUNT": "{{membersCount}} members"
     },
     "VIEW": {
       "TITLE": "Currency",
       "TAB_CURRENCY": "Currency",
       "TAB_WOT": "Web of trust",
       "TAB_NETWORK": "Network",
+      "TAB_BLOCKS": "Blocks",
       "NETWORK_RULES_DIVIDER": "Network rules",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
@@ -159,7 +186,8 @@
       "SENTRIES_FORMULA": "Required number of certifications<br/>to become a sentries (formula)",
       "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule",
       "AVG_GEN_TIME": "The average time between 2 blocks",
-      "CURRENT": "current"
+      "CURRENT": "current",
+      "MATH_CEILING": "CEILING"
     }
   },
   "NETWORK": {
@@ -319,12 +347,6 @@
     "BTN_ADD_COMMENT": "Add comment?",
     "MODAL": {
       "TITLE": "Transfer"
-    }
-  },
-  "BLOCKCHAIN": {
-    "VIEW": {
-      "TITLE": "Block #{{number}}-{{hash|formatHash}}",
-      "TITLE_CURRENT": "Current block"
     }
   },
   "ERROR": {

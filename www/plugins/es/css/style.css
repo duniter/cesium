@@ -124,34 +124,6 @@
 }
 
 /**********
-   Block items
-**********/
-
-.item-block-empty {
-  /*height: 8px !important;*/
-  min-height: 24px !important;
-  max-height: 24px !important;
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-
-.item-block-empty .badge {
-  padding-top: 0px !important;
-  top: inherit;
-}
-
-.item-block-empty.compacted {
-  min-height: 5px !important;
-  max-height: 5px !important;
-  border-bottom: 0px !important;
-}
-
-.item-border-large.item-block-empty.compacted {
-  border-bottom: solid 1px #eee !important;
-}
-
-
-/**********
    Record view
 **********/
 

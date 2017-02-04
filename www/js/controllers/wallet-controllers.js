@@ -523,7 +523,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showCertifications = function() {
-    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_view_cert' : 'app.wallet_view_cert_lg', {
+    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert.tab_received' : 'app.wallet_cert_lg', {
       pubkey: $rootScope.walletData.pubkey,
       uid: $rootScope.walletData.name || $rootScope.walletData.uid
     });
