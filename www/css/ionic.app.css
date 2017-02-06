@@ -14594,6 +14594,24 @@ a.underline:hover,
 .list .item.item-border {
   border-bottom: solid 1px #ccc !important; }
 
+.list .item.item-small-height {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-height: 24px; }
+  .list .item.item-small-height .badge {
+    padding-top: 0px !important;
+    top: inherit; }
+  .list .item.item-small-height .badge.badge-balanced,
+  .list .item.item-small-height .badge.badge-positive,
+  .list .item.item-small-height .badge.badge-assertive,
+  .list .item.item-small-height .badge.badge-editable:hover,
+  .list .item.item-small-height .badge.badge-royal,
+  .list .item.item-small-height .badge.badge-calm,
+  .list .item.item-small-height .badge.badge-energized {
+    top: 0px !important;
+    padding-top: 3px !important;
+    padding-bottom: 2px !important; }
+
 /**********
    Form validation
 **********/
@@ -14712,6 +14730,9 @@ a.underline:hover,
 **********/
 .item-icon-left-padding {
   padding-left: 40px; }
+
+.item-icon-right-padding {
+  padding-right: 40px; }
 
 .text-keep-lines {
   white-space: pre-line !important; }

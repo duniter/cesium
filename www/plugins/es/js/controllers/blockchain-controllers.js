@@ -82,26 +82,35 @@ function ESBlockLookupController($scope, $timeout, $focus, $filter, $state, $anc
   };
 
   $scope.doSearch = function(from) {
+    from = angular.isDefined(from) ? from : 0;
     var promise;
     var request = {
       _source: '*' // TODO : faire mieux ?
     };
-    request.from= from || 0;
-    request.size= $scope.defaultSizeLimit;
 
     $scope.search.loading = (from === 0);
+    request.from = from;
+    request.size = $scope.defaultSizeLimit;
+
+    if ($scope.search.sort) {
+      request.sort = {};
+      request.sort[$scope.search.sort] = !$scope.search.asc ? "desc" : "asc";
+    }
+    else { // default sort
+      request.sort = {
+        "number": "desc"
+      };
+    }
 
     // last block
     if ($scope.search.type == 'last') {
-      request.sort = {
-          "number" : !$scope.search.sort ? "desc" : "asc"
-        };
-      //request._source = ['number', 'hash', 'medianTime', 'issuer'];
+      request.excludeCurrent = true;
       promise = esBlockchain.block.search($scope.currency, request);
     }
 
     // Full text search
     else if ($scope.search.type == 'text') {
+
       promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
     }
 

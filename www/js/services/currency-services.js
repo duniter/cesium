@@ -25,7 +25,11 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
           .then(function(res){
             data.currencies.push({
                 name: res.currency,
-                peer: BMA.node,
+                peer: {
+                  host: BMA.node.host,
+                  port: BMA.node.port,
+                  server: BMA.node.server
+                },
                 parameters: res
               });
 

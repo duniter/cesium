@@ -117,7 +117,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         return;
       }
 
-      $scope.compactMode = angular.isDefined($scope.compactMode) ? $scope.compactMode : !UIUtils.screen.isSmall();
+      $scope.compactMode = angular.isDefined($scope.compactMode) ? $scope.compactMode : true;
       $scope.expertMode = angular.isDefined($scope.expertMode) ? $scope.expertMode : !UIUtils.screen.isSmall() && csSettings.data.expertMode;
 
       $scope.doSearch();
@@ -264,8 +264,9 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     else {
       $scope.search.results = $scope.search.results.concat(res);
     }
-    $scope.search.loading = false;
+    //$scope.search.loading = false;
     $scope.search.hasMore = total && $scope.search.results.length < total;
+    $scope.search.total = total;
 
     $scope.smallscreen = UIUtils.screen.isSmall();
 
@@ -309,7 +310,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     }
 
     $scope.wsBlock.on(function(json) {
-      if ($scope.search.loading || !json || $scope.search.type != 'last') return;
+      if ($scope.search.loading || !json || $scope.search.type != 'last') return; // skip
 
       var block = new Block(json);
       csWot.extendAll([block], 'issuer')
@@ -330,8 +331,10 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
             // replace existing block (fork could have replaced previous block)
             if (existingBlock) {
-              console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
-              angular.copy(block, existingBlock);
+              if (existingBlock.hash != block.hash) {
+                console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
+                angular.copy(block, existingBlock);
+              }
             }
             else {
               console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));

@@ -25,9 +25,15 @@
         ng-if="search.type=='last'" translate>
         BLOCKCHAIN.LOOKUP.LAST_BLOCKS
       </h4>
-      <h4 ng-if="search.type=='text'" translate>
-        COMMON.RESULTS_LIST
+      <h4 ng-if="search.type=='text'">
+        {{'COMMON.RESULTS_LIST'|translate}}
       </h4>
+      <h5 class="dark" ng-if="!search.loading && search.total" translate="COMMON.RESULTS_COUNT" translate-values="{count: search.total}">
+      </h5>
+      <h5 class="gray" ng-if="search.loading" >
+        <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
+        <span translate>NETWORK.VIEW.LOADING_PEERS</span>
+      </h5>
     </div>
 
     <div class=" pull-right hidden-xs hidden-sm">
@@ -43,10 +49,6 @@
         {{'COMMON.BTN_SEARCH' | translate:search}}
       </button>
     </div>
-  </div>
-
-  <div class="text-center" ng-if="search.loading && search.type!='last'">
-    <ion-spinner icon="android"></ion-spinner>
   </div>
 
   <ion-list class="list animate-ripple">

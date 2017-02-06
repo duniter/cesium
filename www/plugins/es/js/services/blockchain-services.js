@@ -68,11 +68,15 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     };
 
 
-    exports.raw.block.processSearchResult = function(res) {
-      var hasCurrent = false;
+    exports.raw.block.processSearchResult = function(res, options) {
+      options = options || {};
+      options.excludeCurrent = angular.isDefined(options.excludeCurrent) ? options.excludeCurrent : false;
+      options.fillAvatar = angular.isDefined(options.fillAvatar) ? options.fillAvatar : true;
+
+      var hasExcludedCurrent = false;
       var hits = res && res.hits ? res.hits.hits.reduce(function(res, hit) {
-        if (hit._id == 'current') {
-          hasCurrent = true;
+        if (hit._id == 'current' && options.excludeCurrent) {
+          hasExcludedCurrent = true;
           return res;
         }
         return hit._source ? res.concat(new Block(hit._source)) : res;
@@ -80,11 +84,11 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       var result = {
         hits: hits,
         total: res && res.hits && res.hits.total ? (
-          hasCurrent ? res.hits.total-1 : res.hits.total) : 0
+          options.excludeCurrent ? res.hits.total-1 : res.hits.total) : 0
       };
 
       // Fill avatar
-      if (result.hits.length) {
+      if (result.hits.length && options.fillAvatar) {
         return esUser.profile.fillAvatars(result.hits, 'issuer')
           .then(function() {
             return result;
@@ -95,7 +99,9 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     };
 
     exports.block.search = function(currency, options) {
-      var request = options || {};
+      var request = options ? angular.copy(options) : {};
+      delete request.excludeCurrent;
+      delete request.fillAvatar;
       request.from = request.from || 0;
       request.size = request.size || CONSTANTS.DEFAULT_SEARCH_SIZE;
       request._source = request._source || FIELDS.COMMONS;
@@ -104,7 +110,9 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       }
 
       return exports.raw.block.search(request, {currency: currency})
-        .then(exports.raw.block.processSearchResult);
+        .then(function(res) {
+          return exports.raw.block.processSearchResult(res, options);
+        });
     };
 
     exports.block.searchText = function(currency, text, options) {

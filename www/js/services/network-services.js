@@ -197,7 +197,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                       hasUpdates = true;
                     }
                     else if (refreshedPeer.buid !== existingMainBuid){
-                      console.debug('[network] Peer [{0}] changed current block'.format(refreshedPeer.server));
+                      console.debug('[network] Peer [{0}] new current block'.format(refreshedPeer.server));
                       hasUpdates = true;
                     }
                     else if (existingOnline !== refreshedPeer.online){
@@ -205,7 +205,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                       hasUpdates = true;
                     }
                     else {
-                      console.debug("[network] Peer [{0}] not changed".format(refreshedPeer.server));
+                      console.debug("[network] Peer [{0}] unchanged".format(refreshedPeer.server));
                     }
                   }
                   else if (refreshedPeer && (refreshedPeer.online === data.filter.online)) {

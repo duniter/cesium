@@ -1170,6 +1170,31 @@ a.underline:hover,
   border-bottom: solid 1px #ccc !important;
 }
 
+.list .item.item-small-height {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-height: 24px;
+
+  .badge {
+    padding-top: 0px !important;
+    top: inherit;
+  }
+
+  .badge.badge-balanced,
+  .badge.badge-positive,
+  .badge.badge-assertive,
+  .badge.badge-royal,
+  .badge.badge-calm,
+  .badge.badge-energized
+  {
+    top: 0px !important;
+    padding-top: 3px !important;
+    padding-bottom: 2px !important;
+  }
+}
+
+
+
 /**********
    Form validation
 **********/
@@ -1326,6 +1351,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 .item-icon-left-padding {
   padding-left: 40px;
+}
+
+.item-icon-right-padding {
+  padding-right: 40px;
 }
 
 .text-keep-lines {

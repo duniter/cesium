@@ -65,56 +65,164 @@
           </ion-item>
 
           <!-- joiners -->
-          <ion-item class="item-icon-left" ng-if="!compactMode || formData.joinersCount">
-            <i class="icon ion-person"></i>
-            <b class="ion-plus" style="position: absolute; top: 11px; left: 39px;"></b>
-            {{'BLOCKCHAIN.VIEW.JOINERS_COUNT'|translate}}
-            <span class="badge badge-balanced" ng-if="formData.joinersCount">+{{formData.joinersCount}}</span>
-            <span class="badge badge-stable" ng-if="!formData.joinersCount">0</span>
-          </ion-item>
+          <ng-if ng-if="!compactMode || formData.joinersCount">
+            <ion-item class="item-icon-left">
+              <i class="icon ion-person"></i>
+              <b class="ion-plus" style="position: absolute; top: 11px; left: 39px;"></b>
+              {{'BLOCKCHAIN.VIEW.JOINERS_COUNT'|translate}}
+              <span class="badge badge-balanced" ng-if="formData.joinersCount">+{{formData.joinersCount}}</span>
+              <span class="badge badge-stable" ng-if="!formData.joinersCount">0</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.joinersCount">
+              <a ng-repeat="item in ::formData.joiners"
+                        class="item item-icon-left-padding item-small-height no-margin item-border-large"
+                        ui-sref="app.wot_view_identity({pubkey: item.pubkey, uid: item.uid})">
+                <div class="row no-padding">
+                  <div class="col positive" ><i class="icon ion-person"></i> {{item.uid}}</div>
+                  <div class="col gray"><i class="icon ion-key"></i> {{item.pubkey|formatPubkey}}</div>
+                </div>
+              </a>
+            </div>
+          </ng-if>
+
+          <!-- actives -->
+          <ng-if ng-if="!compactMode || formData.activesCount">
+            <ion-item class="item-icon-left">
+              <i class="icon ion-person"></i>
+              <b class="ion-loop" style="position: absolute; top: 11px; left: 39px;"></b>
+              {{'BLOCKCHAIN.VIEW.ACTIVES_COUNT'|translate}}
+              <h4 class="gray">{{'BLOCKCHAIN.VIEW.ACTIVES_COUNT_HELP'|translate}}</h4>
+              <span class="badge badge-balanced" ng-if="formData.activesCount">{{formData.activesCount}}</span>
+              <span class="badge badge-stable" ng-if="!formData.activesCount">0</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.activesCount">
+              <a ng-repeat="item in formData.actives"
+                 class="item item-icon-left-padding item-small-height no-margin item-border-large"
+                 ui-sref="app.wot_view_identity({pubkey: item.pubkey, uid: item.uid})">
+                <div class="row no-padding">
+                  <div class="col positive" ><i class="icon ion-person"></i> {{item.uid}}</div>
+                  <div class="col gray"><i class="icon ion-key"></i> {{item.pubkey|formatPubkey}}</div>
+                </div>
+              </a>
+            </div>
+
+          </ng-if>
 
           <!-- excluded -->
-          <ion-item class="item-icon-left" ng-if="!compactMode || (formData.leaversCount-formData.revokedCount)">
-            <i class="icon ion-person"></i>
-            <b class="ion-minus-circled assertive" style="position: absolute; top: 11px; left: 39px;"></b>
-            {{'BLOCKCHAIN.VIEW.EXCLUDED_COUNT'|translate}}
-            <h4 class="gray">{{'BLOCKCHAIN.VIEW.EXCLUDED_COUNT_HELP'|translate}}</h4>
-            <span class="badge badge-assertive" ng-if="formData.excludedCount-formData.revokedCount">-{{formData.excludedCount-formData.revokedCount}}</span>
-            <span class="badge badge-stable" ng-if="!(formData.excludedCount-formData.revokedCount)">0</span>
-          </ion-item>
+          <ng-if ng-if="!compactMode || (formData.leaversCount-formData.revokedCount)">
+            <ion-item class="item-icon-left" >
+              <i class="icon ion-person"></i>
+              <b class="ion-minus-circled assertive" style="position: absolute; top: 11px; left: 39px;"></b>
+              {{'BLOCKCHAIN.VIEW.EXCLUDED_COUNT'|translate}}
+              <h4 class="gray">{{'BLOCKCHAIN.VIEW.EXCLUDED_COUNT_HELP'|translate}}</h4>
+              <span class="badge badge-assertive" ng-if="formData.excludedCount-formData.revokedCount">-{{formData.excludedCount-formData.revokedCount}}</span>
+              <span class="badge badge-stable" ng-if="!(formData.excludedCount-formData.revokedCount)">0</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.revokedCount">
+              <a ng-repeat="item in formData.revoked"
+                 class="item item-icon-left-padding item-small-height no-margin item-border-large"
+                 ui-sref="app.wot_view_identity({pubkey: item.pubkey})">
+                <div class="row no-padding">
+                  <div class="col"></div>
+                  <div class="col gray"><i class="icon ion-key"></i> {{item.pubkey|formatPubkey}}</div>
+                </div>
+              </a>
+            </div>
+          </ng-if>
 
           <!-- leavers -->
-          <ion-item class="item-icon-left" ng-if="!compactMode || formData.leaversCount">
-            <i class="icon ion-person"></i>
-            <b class="ion-minus" style="position: absolute; top: 11px; left: 39px;"></b>
-            {{'BLOCKCHAIN.VIEW.LEAVERS_COUNT'|translate}}
-            <h4 class="gray">{{'BLOCKCHAIN.VIEW.LEAVERS_COUNT_HELP'|translate}}</h4>
-            <span class="badge badge-assertive" ng-if="formData.leaversCount">-{{formData.leaversCount}}</span>
-            <span class="badge badge-stable" ng-if="!formData.leaversCount">0</span>
-          </ion-item>
+          <ng-if ng-if="!compactMode || formData.leaversCount">
+            <ion-item class="item-icon-left" ng-if="!compactMode || formData.leaversCount">
+              <i class="icon ion-person"></i>
+              <b class="ion-minus" style="position: absolute; top: 11px; left: 39px;"></b>
+              {{'BLOCKCHAIN.VIEW.LEAVERS_COUNT'|translate}}
+              <h4 class="gray">{{'BLOCKCHAIN.VIEW.LEAVERS_COUNT_HELP'|translate}}</h4>
+              <span class="badge badge-assertive" ng-if="formData.leaversCount">-{{formData.leaversCount}}</span>
+              <span class="badge badge-stable" ng-if="!formData.leaversCount">0</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.leaversCount">
+              <a ng-repeat="item in formData.leavers"
+                 class="item item-icon-left-padding item-small-height no-margin item-border-large"
+                 ui-sref="app.wot_view_identity({pubkey: item.pubkey, uid: item.uid})">
+                <div class="row no-padding">
+                  <div class="col positive" ><i class="icon ion-person"></i> {{item.uid}}</div>
+                  <div class="col gray"><i class="icon ion-key"></i> {{item.pubkey|formatPubkey}}</div>
+                </div>
+              </a>
+            </div>
+          </ng-if>
 
           <!-- revoked -->
-          <ion-item class="item-icon-left" ng-if="!compactMode || formData.revokedCount">
-            <i class="icon ion-person"></i>
-            <b class="ion-minus-circled assertive" style="position: absolute; top: 11px; left: 39px;"></b>
-            {{'BLOCKCHAIN.VIEW.REVOKED_COUNT'|translate}}
-            <span class="badge badge-balanced" ng-if="formData.revokedCount">-{{formData.revokedCount}}</span>
-            <span class="badge badge-stable" ng-if="!formData.revokedCount">0</span>
-          </ion-item>
+          <ng-if ng-if="!compactMode || formData.revokedCount">
+            <ion-item class="item-icon-left" >
+              <i class="icon ion-person"></i>
+              <b class="ion-minus-circled assertive" style="position: absolute; top: 11px; left: 39px;"></b>
+              {{'BLOCKCHAIN.VIEW.REVOKED_COUNT'|translate}}
+              <span class="badge badge-balanced" ng-if="formData.revokedCount">-{{formData.revokedCount}}</span>
+              <span class="badge badge-stable" ng-if="!formData.revokedCount">0</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.revokedCount">
+              <a ng-repeat="item in formData.revoked"
+                 class="item item-icon-left-padding item-small-height no-margin item-border-large"
+                 ui-sref="app.wot_view_identity({pubkey: item.pubkey})">
+                <div class="row no-padding">
+                  <div class="col"></div>
+                  <div class="col gray"><i class="icon ion-key"></i> {{item.pubkey|formatPubkey}}</div>
+                </div>
+              </a>
+            </div>
+          </ng-if>
 
           <!-- cert -->
-          <ion-item class="item-icon-left" ng-if="!compactMode || formData.certificationsCount">
-            <i class="icon ion-ribbon-a"></i>
-            {{'BLOCKCHAIN.VIEW.CERT_COUNT'|translate}}
-            <span class="badge badge-stable" ng-class="{'badge-positive':formData.certificationsCount}">{{formData.certificationsCount}}</span>
-          </ion-item>
+          <ng-if ng-if="!compactMode || formData.certificationsCount">
+            <ion-item class="item-icon-left">
+              <i class="icon ion-ribbon-a"></i>
+              {{'BLOCKCHAIN.VIEW.CERT_COUNT'|translate}}
+              <span class="badge badge-stable" ng-class="{'badge-positive':formData.certificationsCount}">{{formData.certificationsCount}}</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.certificationsCount">
+              <div ng-repeat="item in formData.certifications"
+                 class="item item-icon-left-padding item-small-height no-margin item-border-large"
+                 >
+                <div class="row no-padding">
+                  <a class="col positive " ui-sref="app.wot_view_identity({pubkey: item.from})"><i class="icon ion-person"></i> {{item.from|formatPubkey}}</a>
+                  <div class="col col-10 gray"><i class="icon ion-arrow-right-a"></i></div>
+                  <a class="col gray text-center" ui-sref="app.wot_view_identity({pubkey: item.toPubkey})"><i class="icon ion-key"></i> {{item.toPubkey|formatPubkey}}</a>
+                </div>
+              </div>
+            </div>
+          </ng-if>
 
           <!-- TX -->
-          <ion-item class="item-icon-left" ng-if="!compactMode || formData.transactionsCount">
-            <i class="icon ion-card"></i>
-            {{'BLOCKCHAIN.VIEW.TX_COUNT'|translate}}
-            <span class="badge badge-stable" ng-class="{'badge-positive':formData.transactionsCount}">{{formData.transactionsCount}}</span>
-          </ion-item>
+          <ng-if ng-if="!compactMode || formData.transactionsCount">
+            <ion-item class="item-icon-left">
+              <i class="icon ion-card"></i>
+              {{'BLOCKCHAIN.VIEW.TX_COUNT'|translate}}
+              <span class="badge badge-stable" ng-class="{'badge-positive':formData.transactionsCount}">{{formData.transactionsCount}}</span>
+            </ion-item>
+
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.transactionsCount">
+              <div ng-repeat="item in ::formData.transactions"
+                   class="item item-icon-left-padding item-small-height no-margin item-border-large"
+              >
+                <div class="row no-padding">
+                  <div class="col">
+                    <a ng-repeat="issuer in ::item.issuers"
+                      class="positive" ui-sref="app.wot_view_identity({pubkey: issuer})"><i class="icon ion-person"></i> {{issuer|formatPubkey}}</a>
+                  </div>
+                  <div class="col col-10 gray"><i class="icon ion-arrow-right-a"></i></div>
+                  <div class="col"> ? </div>
+                  <div class="col col-50 dark"><small><i class="icon ion-clock dark"></i> {{item.time|formatDate}} <span class="gray"> ({{item.time|formatFromNow}})</span></small></div>
+                </div>
+              </div>
+            </div>
+          </ng-if>
 
         </ion-list>
       </div>

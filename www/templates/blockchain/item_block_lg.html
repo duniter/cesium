@@ -24,6 +24,7 @@
           <span ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
           &nbsp;&nbsp;
         </ng-if>
+        <span ng-if="block.activesCount"><i class="ion-loop"></i> {{block.activesCount}}&nbsp;&nbsp;</span>
         <span ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{block.revokedCount}}&nbsp;&nbsp;</span>
 
         <span ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> +{{block.certificationsCount}}&nbsp;&nbsp;</span>
