@@ -1,30 +1,24 @@
-<ion-view left-buttons="leftButtons" >
+<ion-view left-buttons="leftButtons"
+          cache-view="false">
   <ion-nav-title>
     <span class="visible-xs visible-sm">{{::formData.uid}}</span>
     <span class="hidden-xs hidden-sm" translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.uid}"></span>
   </ion-nav-title>
 
-  <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
-    </button>
-  </ion-nav-buttons>
-
   <ion-content class="certifications no-header">
-
-    <ion-tabs class="tabs-icon-top tabs-positive">
+    <ion-tabs class="tabs-positive tabs-icon-top">
 
       <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
-               ng-click="showCertificationsTab()">
+               on-select="showCertificationsTab()">
         <ion-nav-view name="tab-received-cert"></ion-nav-view>
       </ion-tab>
 
       <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
-               ng-click="showGivenCertificationsTab()">
+               on-select="showGivenCertificationsTab()">
         <ion-nav-view name="tab-given-cert"></ion-nav-view>
       </ion-tab>
 
     </ion-tabs>
-
   </ion-content>
 
   <!-- fab button -->
