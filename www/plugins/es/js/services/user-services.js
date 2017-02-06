@@ -389,6 +389,14 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               data.name = profile.name;
               data.avatar = profile.avatar;
               data.profile = profile.source;
+
+              // Social url must be unique in socials links - Workaround for issue #306:
+              if (data.profile && data.profile.socials && data.profile.socials.length) {
+                data.profile.socials = _.uniq(data.profile.socials, false, function(social) {
+                  return social.url;
+                });
+              }
+
             }
             deferred.resolve(data);
           }),

@@ -186,6 +186,12 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
     };
 
     var doFinishSave = function(formData) {
+      // Social url must be unique in socials links - Fix #306:
+      if (formData.socials && formData.socials.length) {
+        formData.socials = _.uniq(formData.socials, false, function(social) {
+          return social.url;
+        });
+      }
       if (!$scope.existing) {
         return esUser.profile.add(formData)
           .then(function() {
