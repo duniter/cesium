@@ -15,15 +15,15 @@
       <h4 ng-if="!block.empty">
         <!-- joiners/leavers -->
         <ng-if ng-if="block.joinersCount||(block.excludedCount-block.revokedCount)">
-          <i class="gray ion-person"></i>
-          <span class="gray" ng-if="block.joinersCount">+{{block.joinersCount}}</span>
-          <span class="gray" ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
+          <i class="dark ion-person"></i>
+          <span class="dark" ng-if="block.joinersCount">+{{block.joinersCount}}</span>
+          <span class="dark" ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
         </ng-if>
-        <span class="gray" ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> {{block.revokedCount}}&nbsp;&nbsp;</span>
-        <span class="gray" ng-if="block.activesCount" class="gray"><i class="gray ion-refresh"></i> {{block.activesCount}}&nbsp;&nbsp;</span>
-        <span class="gray" ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> {{block.certificationsCount}}&nbsp;&nbsp;</span>
-        <span class="gray" ng-if="block.dividend" class="gray"><i class="gray ion-arrow-up-c"></i> {{'COMMON.UD'|translate}}&nbsp;&nbsp;</span>
-        <span class="gray" ng-if="block.transactionsCount"><i class="ion-card"> {{block.transactionsCount}}</i></span>
+        <span class="dark" ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> {{block.revokedCount}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if="block.activesCount" class="gray"><i class="gray ion-refresh"></i> {{block.activesCount}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> {{block.certificationsCount}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if="block.dividend" class="gray"><i class="gray ion-arrow-up-c"></i> {{'COMMON.UD'|translate}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if="block.transactionsCount"><i class="ion-card"> {{block.transactionsCount}}</i></span>
       </h4>
     </div>
 
