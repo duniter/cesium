@@ -26,7 +26,7 @@
        ng-click="selectPeer(peer)">
 
     <i class="icon ion-android-desktop"></i>
-    <b class="positive" ng-class="{'ion-android-person': peer.uid}" style="position: absolute; top: 11px; left: 27px;"></b>
+    <b class="ion-android-person" ng-if="peer.uid" style="position: absolute; top: 11px; left: 27px;"></b>
 
     <div class="row no-padding">
       <div class="col no-padding">

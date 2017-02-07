@@ -51,6 +51,8 @@ Block.prototype.parseData = function() {
 
   // TX
   this.transactions = this.parseTransactions(this.transactions);
+
+  delete this.raw; // not need
 };
 
 Block.prototype.cleanData = function() {
@@ -62,6 +64,8 @@ Block.prototype.cleanData = function() {
   delete this.excluded;
   delete this.certifications;
   delete this.transactions;
+
+  delete this.raw; // not need
 };
 
 Block.prototype.parseArrayValues = function(array, itemObjProperties){
