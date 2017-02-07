@@ -205,7 +205,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           return;
         }
         blocks = blocks.reduce(function(res, json){
-          var block = new Block(json)
+          var block = new Block(json);
           block.cleanData(); // release arrays content
           return res.concat(block);
         }, []);

@@ -11,14 +11,14 @@ function Block(json) {
   });
 
 
-  this.identitiesCount = this.identities ? this.identities.length : 0;;
-  this.joinersCount = this.joiners ? this.joiners.length : 0;
-  this.activesCount = this.actives ? this.actives.length : 0;
-  this.leaversCount = this.leavers ? this.leavers.length : 0;
-  this.revokedCount = this.revoked ? this.revoked.length : 0;
-  this.excludedCount = this.excluded ? this.excluded.length : 0;
-  this.certificationsCount = this.certifications ? this.certifications.length : 0;
-  this.transactionsCount = this.transactions ? this.transactions.length : 0;
+  that.identitiesCount = that.identities ? that.identities.length : 0;
+  that.joinersCount = that.joiners ? that.joiners.length : 0;
+  that.activesCount = that.actives ? that.actives.length : 0;
+  that.leaversCount = that.leavers ? that.leavers.length : 0;
+  that.revokedCount = that.revoked ? that.revoked.length : 0;
+  that.excludedCount = that.excluded ? that.excluded.length : 0;
+  that.certificationsCount = that.certifications ? that.certifications.length : 0;
+  that.transactionsCount = that.transactions ? that.transactions.length : 0;
 
   that.empty = that.isEmpty();
 }
