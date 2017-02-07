@@ -10,33 +10,18 @@ function Block(json) {
     that[key] = json[key];
   });
 
+
+  this.identitiesCount = this.identities ? this.identities.length : 0;;
+  this.joinersCount = this.joiners ? this.joiners.length : 0;
+  this.activesCount = this.actives ? this.actives.length : 0;
+  this.leaversCount = this.leavers ? this.leavers.length : 0;
+  this.revokedCount = this.revoked ? this.revoked.length : 0;
+  this.excludedCount = this.excluded ? this.excluded.length : 0;
+  this.certificationsCount = this.certifications ? this.certifications.length : 0;
+  this.transactionsCount = this.transactions ? this.transactions.length : 0;
+
   that.empty = that.isEmpty();
-
-  this.transformArrayValue('identities', ['pubkey', 'signature', 'buid', 'uid']);
-  this.transformArrayValue('joiners', ['pubkey', 'signature', 'mBuid', 'iBuid', 'uid']);
-  this.transformArrayValue('actives', ['pubkey', 'signature', 'mBuid', 'iBuid', 'uid']);
-  this.transformArrayValue('leavers', ['pubkey', 'signature', 'mBuid', 'iBuid', 'uid']);
-  this.transformArrayValue('revoked', ['pubkey', 'signature']);
-  this.transformArrayValue('excluded', ['pubkey']);
-  this.transformArrayValue('certifications', ['from', 'toPubkey', 'block', 'signature']);
-
-  if (this.transactions && this.transactions.length) {
-    this.transactions = this.transactions.reduce(function(res, tx) {
-      var result = {
-        issuers: tx.issuers,
-        time: tx.time
-      };
-      // TODO compute amount
-      // TODO compute dest
-
-      return res.concat(result);
-    }, []);
-  }
 }
-
-Block.prototype.regex = {
-
-};
 
 Block.prototype.isEmpty = function(){
   "use strict";
@@ -47,13 +32,41 @@ Block.prototype.isEmpty = function(){
     !this.identitiesCount &&
     !this.leaversCount &&
     !this.excludedCount &&
-    !this.revokedCount
+    !this.revokedCount &&
+    !this.dividend
     ;
 };
 
-Block.prototype.transformArrayValue = function(arrayProperty, itemObjProperties){
-  if (!this[arrayProperty] || !this[arrayProperty].length) return;
-  var result = this[arrayProperty].reduce(function(res, raw) {
+Block.prototype.parseData = function() {
+  this.identities = this.parseArrayValues(this.identities, ['pubkey', 'signature', 'buid', 'uid']);
+  this.joiners = this.parseArrayValues(this.joiners, ['pubkey', 'signature', 'mBuid', 'iBuid', 'uid']);
+  this.actives = this.parseArrayValues(this.actives, ['pubkey', 'signature', 'mBuid', 'iBuid', 'uid']);
+  this.leavers = this.parseArrayValues(this.leavers, ['pubkey', 'signature', 'mBuid', 'iBuid', 'uid']);
+  this.revoked = this.parseArrayValues(this.revoked, ['pubkey', 'signature']);
+  this.excluded = this.parseArrayValues(this.excluded, ['pubkey']);
+
+  // certifications
+  this.certifications = this.parseArrayValues(this.certifications, ['from', 'to', 'block', 'signature']);
+  //this.certifications = _.groupBy(this.certifications, 'to');
+
+  // TX
+  this.transactions = this.parseTransactions(this.transactions);
+};
+
+Block.prototype.cleanData = function() {
+  delete this.identities;
+  delete this.joiners;
+  delete this.actives;
+  delete this.leavers;
+  delete this.revoked;
+  delete this.excluded;
+  delete this.certifications;
+  delete this.transactions;
+};
+
+Block.prototype.parseArrayValues = function(array, itemObjProperties){
+  if (!array || !array.length) return [];
+  return array.reduce(function(res, raw) {
     var parts = raw.split(':');
     if (parts.length != itemObjProperties.length) {
       console.debug('[block] Bad format for \'{0}\': [{1}]. Expected {1} parts. Skipping'.format(arrayProperty, raw, itemObjProperties.length));
@@ -65,61 +78,43 @@ Block.prototype.transformArrayValue = function(arrayProperty, itemObjProperties)
     }
     return res.concat(obj);
   }, []);
-
-  // TODO apply a sort ?
-
-  // Replace current array
-  this[arrayProperty] = result;
 };
 
-// Identities
-Object.defineProperties(Block.prototype, {"identitiesCount": {
-  get: function() {
-    return this.identities ? this.identities.length : 0;
-  }
-}});
-
-// Joiners
-Object.defineProperties(Block.prototype, {"joinersCount": {
-  get: function() {
-    return this.joiners ? this.joiners.length : 0;
-  }
-}});
-
-// Actives
-Object.defineProperties(Block.prototype, {"activesCount": {
-  get: function() {
-    return this.actives ? this.actives.length : 0;
-  }
-}});
+Block.prototype.regex = {
+  TX_OUTPUT_SIG: /^SIG[(]([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})[)]$/
+};
 
 
-Object.defineProperties(Block.prototype, {"leaversCount": {
-  get: function() {
-    return this.leavers ? this.leavers.length : 0;
-  }
-}});
+Block.prototype.parseTransactions = function(transactions) {
+  if (!transactions || !transactions.length) return [];
+  return transactions.reduce(function (res, tx) {
+    var obj = {
+      issuers: tx.issuers,
+      time: tx.time
+    };
 
-Object.defineProperties(Block.prototype, {"certificationsCount": {
-  get: function() {
-    return this.certifications ? this.certifications.length : 0;
-  }
-}});
+    obj.outputs = tx.outputs.reduce(function(res, output) {
+      var parts = output.split(':');
+      var matches = parts.length == 3 && Block.prototype.regex.TX_OUTPUT_SIG.exec(parts[2]);
+      if (!matches) {
+        console.debug('[block] Bad format a \'transactions\': [{1}]. Expected 3 parts. Skipping'.format(output));
+        return res;
+      }
+      var pubkey = matches[1];
+      if (!tx.issuers || tx.issuers.indexOf(pubkey) != -1) return res;
+      var unitbase = parts[1];
+      var amount = parts[0];
+      return res.concat({
+        amount: unitbase <= 0 ? amount : amount * Math.pow(10, unitbase),
+        unitbase: unitbase,
+        pubkey: pubkey
+      });
+    }, []);
 
-Object.defineProperties(Block.prototype, {"excludedCount": {
-  get: function() {
-    return this.excluded ? this.excluded.length : 0;
-  }
-}});
+    // TODO compute amount
+    // TODO compute dest
+    // TODO : group by pubkey ? using _.groupBy(list, iteratee, [context])
 
-Object.defineProperties(Block.prototype, {"revokedCount": {
-  get: function() {
-    return this.revoked ? this.revoked.length : 0;
-  }
-}});
-
-Object.defineProperties(Block.prototype, {"transactionsCount": {
-  get: function() {
-    return this.transactions ? this.transactions.length : 0;
-  }
-}});
+    return res.concat(obj);
+  }, []);
+};

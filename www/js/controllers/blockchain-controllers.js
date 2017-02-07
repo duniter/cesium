@@ -204,13 +204,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           $scope.search.loading = false;
           return;
         }
-
+        blocks = blocks.reduce(function(res, json){
+          var block = new Block(json)
+          block.cleanData(); // release arrays content
+          return res.concat(block);
+        }, []);
         blocks = _.sortBy(blocks, function(b) {
           return -1 * b.number;
         });
-        blocks = blocks.reduce(function(res, block){
-          return res.concat(new Block(block));
-        }, []);
         var total = ((from===0) ? blocks[0].number: $scope.search.results[0].number) + 1;
         return csWot.extendAll(blocks, 'issuer')
           .then(function() {
@@ -238,9 +239,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       }
 
       _.forEach(blocks, function(block, index){
-        // Store is empty value
-        block.empty = angular.isDefined(block.empty) ? block.empty : block.isEmpty();
-
         // If empty
         if (block.empty) {
           // compute the day
@@ -313,6 +311,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       if ($scope.search.loading || !json || $scope.search.type != 'last') return; // skip
 
       var block = new Block(json);
+      block.cleanData(); // release arrays content
       csWot.extendAll([block], 'issuer')
         .then(function() {
           $scope.search.results = $scope.search.results || [];
@@ -409,12 +408,12 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 }
 
 
-function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot) {
+function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot, csSettings) {
   'ngInject';
 
   $scope.loading = true;
   $scope.formData = {};
-  $scope.compactMode = false;
+  $scope.compactMode = true; // TODO change to true
 
   /**
    * Enter on view
@@ -463,6 +462,7 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot) {
     return  promise
       .then(function(json) {
         var block = new Block(json);
+        block.parseData();
         if (!block || !angular.isDefined(block.number) || !block.hash) {
           $scope.loading = false;
           UIUtils.alert.error('ERROR.GET_BLOCK_FAILED');
@@ -474,8 +474,36 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot) {
           return;
         }
 
+        var users = [];
+        if (block.joiners.length) {
+          users = users.concat(block.joiners);
+        }
+        if (block.certifications.length) {
+          users = block.certifications.reduce(function(res, cert) {
+            cert.to = {
+              pubkey: cert.to
+            };
+            cert.from = {
+              pubkey: cert.from
+            };
+            return res.concat(cert.to , cert.from);
+          }, users);
+          block.certifications = _.groupBy(block.certifications, function(cert) {
+            return cert.to.pubkey;
+          });
+        }
+        if (block.transactions.length) {
+          users = block.transactions.reduce(function(res, tx) {
+            tx.issuers = tx.issuers.reduce(function(res, issuer) {
+              return res.concat({pubkey: issuer});
+            }, []);
+            return res.concat(tx.issuers.concat(tx.outputs));
+          }, users);
+        }
+
         var issuer = {pubkey: block.issuer};
-        return csWot.extendAll([issuer])
+        users.push(issuer);
+        return csWot.extendAll(users)
           .then(function() {
             $scope.updateView({block: block, issuer: issuer});
           });
@@ -491,6 +519,10 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot) {
     //angular.copy(data.block, $scope.formData);
     $scope.issuer = data.issuer;
     $scope.loading = false;
+  };
+
+  $scope.toggleCompactMode = function() {
+    $scope.compactMode = !$scope.compactMode;
   };
 
   /* -- popover -- */

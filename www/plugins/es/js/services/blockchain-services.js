@@ -72,6 +72,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       options = options || {};
       options.excludeCurrent = angular.isDefined(options.excludeCurrent) ? options.excludeCurrent : false;
       options.fillAvatar = angular.isDefined(options.fillAvatar) ? options.fillAvatar : true;
+      options.cleanData = angular.isDefined(options.cleanData) ? options.cleanData : true;
 
       var hasExcludedCurrent = false;
       var hits = res && res.hits ? res.hits.hits.reduce(function(res, hit) {
@@ -79,7 +80,12 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
           hasExcludedCurrent = true;
           return res;
         }
-        return hit._source ? res.concat(new Block(hit._source)) : res;
+        if (!hit._source) return res;
+        var block = new Block(hit._source);
+        if (options.cleanData) {
+          block.cleanData(); // release data's arrays
+        }
+        return res.concat(block);
       }, []) : [];
       var result = {
         hits: hits,
@@ -102,6 +108,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       var request = options ? angular.copy(options) : {};
       delete request.excludeCurrent;
       delete request.fillAvatar;
+      delete request.skipData;
       request.from = request.from || 0;
       request.size = request.size || CONSTANTS.DEFAULT_SEARCH_SIZE;
       request._source = request._source || FIELDS.COMMONS;

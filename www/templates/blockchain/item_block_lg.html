@@ -24,11 +24,12 @@
           <span ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
           &nbsp;&nbsp;
         </ng-if>
-        <span ng-if="block.activesCount"><i class="ion-loop"></i> {{block.activesCount}}&nbsp;&nbsp;</span>
         <span ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{block.revokedCount}}&nbsp;&nbsp;</span>
+        <span ng-if="block.activesCount"><i class="ion-refresh"></i> {{block.activesCount}}&nbsp;&nbsp;</span>
+        <span ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> {{block.certificationsCount}}&nbsp;&nbsp;</span>
+        <span ng-if="block.dividend"><i class="gray ion-arrow-up-c"></i> {{'COMMON.UD'|translate}}&nbsp;&nbsp;</span>
+        <span ng-if="block.transactionsCount"><i class="ion-card"> {{block.transactionsCount}}</i>&nbsp;&nbsp;</span>
 
-        <span ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> +{{block.certificationsCount}}&nbsp;&nbsp;</span>
-        <span ng-if="block.transactionsCount"><i class="ion-card"> +{{block.transactionsCount}}</i>&nbsp;&nbsp;</span>
       </small>
     </div>
 
