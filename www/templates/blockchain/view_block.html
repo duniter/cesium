@@ -278,19 +278,22 @@
               <div ng-repeat="tx in ::formData.transactions"
                    class="item item-small-height item-border-large">
                 <div class="row no-padding" style="padding-top: 3px;">
-                  <div class="col col-40 no-padding">
-                    <ng-include ng-repeat="identity in ::tx.issuers" src="'templates/blockchain/link_identity.html'"></ng-include>
+                  <div class="col col-40 col-center no-padding list">
+                    <div ng-repeat="identity in ::tx.issuers" class="item no-padding item-small-height">
+                      <ng-include  src="'templates/blockchain/link_identity.html'"></ng-include>
+                    </div>
                   </div>
-                  <div class="col col-10 gray text-center no-padding">
+                  <div class="col col-10 col-center gray text-center no-padding">
                     <h2><i class="icon ion-arrow-right-a"></i></h2>
                   </div>
                   <!-- recipients -->
-                  <div class="col no-padding padding-right no-padding-xs col-text-wrap">
-                    <ng-repeat ng-repeat="output in ::tx.outputs">
+                  <div class="col no-padding padding-right no-padding-xs col-text-wrap list">
+                    <div ng-repeat="output in ::tx.outputs" class="item no-padding item-small-height">
                       <ng-include src="'templates/blockchain/link_identity.html'" onload="identity=output"></ng-include>
+                      <br/>
                       <span class="badge badge-balanced"
                             ng-bind-html="::output.amount | formatAmount:{currency: formData.currency, useRelative: false} "></span>
-                    </ng-repeat>
+                    </div>
                   </div>
                 </div>
               </div>
