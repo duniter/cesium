@@ -25,17 +25,18 @@
        id="helptip-network-peer-{{$index}}"
        ng-click="selectPeer(peer)">
 
-    <i class="icon ion-android-globe"></i>
+    <i class="icon ion-android-desktop"></i>
+    <b class="positive" ng-class="{'ion-android-person': peer.uid}" style="position: absolute; top: 11px; left: 27px;"></b>
 
     <div class="row no-padding">
       <div class="col no-padding">
         <h3>
           <span ng-if="peer.uid"
              ui-sref="app.wot_view_identity({pubkey: peer.pubkey, uid: peer.uid})">
-            <i class="ion-person"></i> {{peer.name||peer.uid}}
+           <!-- <i class="ion-person"></i>-->
+            {{peer.name||peer.uid}}
           </span>
           <span ng-if="!peer.uid">
-            <i class="ion-radio-waves"></i>
             <i class="ion-key"></i> {{peer.pubkey|formatPubkey}}
           </span>
           <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
