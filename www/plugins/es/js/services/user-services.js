@@ -342,7 +342,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             var avatar = esHttp.image.fromHit(host, port, hit, 'avatar');
             _.forEach(values, function(data) {
               // name (basic or highlighted)
-              data.name=hit._source.title;
+              data.name = hit._source.title;
+              // Avoid too long name (workaround for #308)
+              if (data.name && data.name.length > 30) {
+                data.name = data.name.substr(0, 27) + '...';
+              }
               if (hit.highlight) {
                 if (hit.highlight.title) {
                     data.name = hit.highlight.title[0];
@@ -387,6 +391,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           .then(function(profile) {
             if (profile) {
               data.name = profile.name;
+              // Avoid too long name (workaround for #308)
+              if (data.name && data.name.length > 30) {
+                data.name = data.name.substr(0, 27) + '...';
+              }
               data.avatar = profile.avatar;
               data.profile = profile.source;
 
