@@ -66,7 +66,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
           $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
             BMA.instance(currency.peer.host, currency.peer.port) : BMA;
           if (state && state.stateParams) {
-            if (state.stateParams.type) {
+            if (state.stateParams.type && (
+                state.stateParams.type === 'mirror' ||
+                state.stateParams.type === 'member' ||
+                state.stateParams.type === 'offline')) {
               $scope.search.type = state.stateParams.type;
             }
             if (state.stateParams.expert) {
@@ -163,7 +166,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
   $scope.toggleSearchType = function(type){
     $scope.hideActionsPopover();
     if ($scope.search.type === type || type === 'none') {
-      $scope.search.type = false;
+      $scope.search.type = undefined;
     }
     else {
       $scope.search.type = type;

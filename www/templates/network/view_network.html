@@ -21,23 +21,11 @@
               <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
               <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
               <span ng-if="!search.loading">({{search.results.length}})</span>
-
+              <ion-spinner ng-if="search.loading" class="icon ion-spinner-small" icon="android"></ion-spinner>
             </h4>
-            <h5 class="dark" ng-if="!search.loading">
-              <i class="icon ion-clock"></i>
-              {{mainBlock.medianTime | formatDate}}
-              <span class="gray">
-                ({{'NETWORK.VIEW.MEDIAN_TIME'|translate}})
-              </span>
-            </h5>
-            <h5 class="gray" ng-if="search.loading" >
-              <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
-              <span translate>NETWORK.VIEW.LOADING_PEERS</span>
-            </h5>
           </div>
 
           <div class="pull-right">
-
 
             <div class="pull-right" ng-if="enableFilter">
               <a class="button button-text button-small hidden-xs hidden-sm ink"
