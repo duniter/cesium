@@ -9,7 +9,7 @@ function Block(json) {
   /*Object.keys(json).forEach(function (key) {
     that[key] = json[key];
   });*/
-  ["currency", "issuer", "medianTime", "number", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions"].forEach(function (key) {
+  ["currency", "issuer", "medianTime", "number", "version", "powMin", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions"].forEach(function (key) {
     that[key] = json[key];
   });
 

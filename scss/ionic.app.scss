@@ -635,6 +635,7 @@ $screen-menu:                     845px;
 .button-text.button-small {
   @extend .button-small;
   padding: 5px 2px;
+  font-size: 12px !important;
 }
 
 .button-text-positive {

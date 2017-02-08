@@ -10,7 +10,13 @@
         <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
         <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
       </a>
+
+      <!-- Allow extension here -->
+      <cs-extension-point name="buttons"></cs-extension-point>
+
     </div>
+
+
   </div>
 
   <div class="text-center" ng-if="search.loading">

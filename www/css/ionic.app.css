@@ -14135,7 +14135,8 @@ a {
   font-size: 12px; }
 
 .button-text.button-small {
-  padding: 5px 2px; }
+  padding: 5px 2px;
+  font-size: 12px !important; }
 
 .button-text-positive {
   color: #387ef5 !important; }
