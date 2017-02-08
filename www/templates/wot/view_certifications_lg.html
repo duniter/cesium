@@ -1,6 +1,4 @@
-<ion-view left-buttons="leftButtons"
-          cache-view="false"
-          >
+<ion-view left-buttons="leftButtons">
     <ion-nav-title>
       <span class="visible-xs visible-sm">{{::formData.name||formData.uid}}</span>
       <span class="hidden-xs hidden-sm"
@@ -13,8 +11,7 @@
         </button>
     </ion-nav-buttons>
 
-    <ion-content class="certifications certifications-lg"
-      ng-init="initLargeView()">
+    <ion-content class="certifications certifications-lg">
 
       <div class="center padding" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
@@ -23,8 +20,9 @@
       <!-- Buttons bar -->
       <div class="hidden-xs hidden-sm text-center padding"
            ng-if="canCertify || canSelectAndCertify">
-        <button class="button button-raised icon ion-loop ink"
-                ng-click="doUpdate()">
+        <button class="button button-stable button-small-padding icon ion-loop ink"
+                ng-click="doUpdate()"
+                title="{{'COMMON.BTN_REFRESH' | translate}}">
         </button>
         <button id="helptip-certs-certify"
                 class="button button-raised button-calm icon-left ion-ribbon-b"
@@ -56,7 +54,7 @@
             </div>
             <div class="col text-center no-padding">
               <a style="text-decoration: none;"
-                ui-sref="app.wot_view_identity({pubkey: formData.pubkey, uid: formData.name||formData.uid})">
+                ui-sref="app.wot_identity({pubkey: formData.pubkey, uid: formData.name||formData.uid})">
                 <i class="avatar avatar-large"
                    ng-if="!formData.avatar"
                    ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>

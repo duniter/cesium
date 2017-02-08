@@ -588,7 +588,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function() {
         // If on identity: click on certifications
-        if ($state.is('app.wot_view_identity')) {
+        if ($state.is('app.wot_identity')) {
           var element = $window.document.getElementById('helptip-wot-view-certifications');
           if (!element) return true;
           $timeout(function() {

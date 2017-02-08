@@ -558,7 +558,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     $scope.hideActionsPopover();
 
     var title = $rootScope.walletData.name || $rootScope.walletData.uid || $rootScope.walletData.pubkey;
-    var url = $state.href('app.wot_view_identity', {pubkey: $rootScope.walletData.pubkey, uid: $rootScope.walletData.name || $rootScope.walletData.uid}, {absolute: true});
+    var url = $state.href('app.wot_identity', {pubkey: $rootScope.walletData.pubkey, uid: $rootScope.walletData.name || $rootScope.walletData.uid}, {absolute: true});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,

@@ -34,7 +34,7 @@
       <div class="col no-padding">
         <h3>
           <span ng-if="peer.uid"
-             ui-sref="app.wot_view_identity({pubkey: peer.pubkey, uid: peer.uid})">
+             ui-sref="app.wot_identity({pubkey: peer.pubkey, uid: peer.uid})">
             {{peer.name||peer.uid}}
           </span>
           <span ng-if="!peer.uid">

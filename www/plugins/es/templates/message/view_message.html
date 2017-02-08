@@ -51,7 +51,7 @@
             <h4>
               <i class="ion-clock"></i>
               {{type == 'inbox' ? 'MESSAGE.VIEW.SENDER': 'MESSAGE.VIEW.RECIPIENT'|translate}}
-              <a class="positive" ui-sref="app.wot_view_identity({pubkey: (type == 'inbox') ? formData.issuer : formData.recipient, uid: formData.name||formData.uid})">
+              <a class="positive" ui-sref="app.wot_identity({pubkey: (type == 'inbox') ? formData.issuer : formData.recipient, uid: formData.name||formData.uid})">
                 <span ng-if="formData.uid">
                   <i class="ion-person"></i>
                   {{formData.name||formData.uid}}

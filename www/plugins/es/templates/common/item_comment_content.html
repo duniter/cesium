@@ -9,7 +9,7 @@
 
     <a class="pull-left"
        ng-class="{'positive': comment.uid, 'dark': !comment.uid}"
-       ui-sref="app.wot_view_identity({pubkey:comment.issuer, uid: comment.name||comment.uid})">
+       ui-sref="app.wot_identity({pubkey:comment.issuer, uid: comment.name||comment.uid})">
       <ng-if ng-if="comment.uid">
         {{::comment.name||comment.uid}}
       </ng-if>

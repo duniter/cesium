@@ -115,7 +115,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .then(function(result){
         // If pubkey
         if (result && result.pubkey) {
-          $state.go('app.wot_view_identity', {
+          $state.go('app.wot_identity', {
             pubkey: result.pubkey,
             node: result.host ? result.host: null}
           );

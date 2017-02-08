@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons" >
+<ion-view left-buttons="leftButtons">
   <ion-nav-title>
   </ion-nav-title>
 
@@ -6,19 +6,19 @@
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
         <i class="avatar"
-           ng-if="!formData.avatar"
+           ng-if="::!formData.avatar"
            ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
         <i class="avatar"
-           ng-if="formData.avatar"
+           ng-if="::formData.avatar"
            style="background-image: url({{::formData.avatar.src}})"></i>
-        <ng-if ng-if="formData.name">
-          <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
+        <ng-if ng-if="::formData.name">
+          <h3 class="light">{{::formData.name}}</h3>
         </ng-if>
-        <ng-if ng-if="!formData.name">
-          <h3 class="light" ng-if="formData.uid">{{formData.uid}}</h3>
-          <h3 class="light" ng-if="!formData.uid"><i class="ion-key"></i> {{formData.pubkey | formatPubkey}}</h3>
+        <ng-if ng-if="::!formData.name">
+          <h3 class="light" ng-if="::formData.uid">{{::formData.uid}}</h3>
+          <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
         </ng-if>
-        <h4 class="assertive"><ng-if ng-if="(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
+        <h4 class="assertive"><ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
@@ -27,12 +27,22 @@
 
     <!-- button bar-->
     <div class="hidden-xs hidden-sm padding text-center">
-      <button class="button button-stable icon ion-android-share-alt ink"
-              ng-click="showSharePopover($event)">
+      <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
+              ng-click="showSharePopover($event)"
+              title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>
 
       <!-- Allow extension here -->
       <cs-extension-point name="buttons"></cs-extension-point>
+
+      <button id="helptip-certs-certify"
+              class="button button-stable button-small-padding icon ion-ribbon-b ink"
+              ng-click="certify()"
+              title="{{'WOT.BTN_CERTIFY' | translate}}"
+              ng-disabled="alreadyCertified">
+      </button>
+
+      &nbsp;&nbsp;
 
       <button class="button button-calm ink"
               ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.name||formData.uid})">
@@ -41,8 +51,7 @@
     </div>
 
     <div class="row no-padding">
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
       <div class="col list animate-fade-slide-in-right">
 
@@ -100,8 +109,7 @@
         <cs-extension-point name="technical"></cs-extension-point>
       </div>
 
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
     </div>
   </ion-content>
 

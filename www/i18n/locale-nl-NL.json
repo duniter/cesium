@@ -245,6 +245,7 @@
     "WILL_MISSING_CERTIFICATIONS": "Je heeft binnenkort <b>onvoldoende certificaties</b> (ten minste {{willNeedCertificationCount}} benodigd)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Je lidmaatschap <b>gaat verlopen op {{membershipExpiresIn|formatDurationTo}}</b>. Vergeet niet <a ng-click=\"doQuickFix('renew')\">je lidmaatschap te vernieuwen</a> voor die tijd.",
     "CERTIFICATION_COUNT": "Aantal certificaties",
+    "CERTIFICATION_COUNT_SHORT": "Certificaties",
     "SIG_STOCK": "Voorraad uit te geven certificaties",
     "BTN_RECEIVE_MONEY": "Ontvangen",
     "BTN_MEMBERSHIP_IN_DOTS": "Lidmaatschap aanvragen...",

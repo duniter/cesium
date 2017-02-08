@@ -75,12 +75,12 @@
         <h3>
           <a class="positive"
              ng-if="msg.name||msg.uid"
-             ui-sref="app.wot_view_identity({pubkey:msg.issuer, uid:msg.name||msg.uid})">
+             ui-sref="app.wot_identity({pubkey:msg.issuer, uid:msg.name||msg.uid})">
             <i class="ion-person"></i>
             {{::msg.name||msg.uid}}
           </a>
           <a class="gray" ng-if="!msg.name && !msg.uid"
-             ui-sref="app.wot_view_identity({pubkey:msg.issuer})">
+             ui-sref="app.wot_identity({pubkey:msg.issuer})">
             <i class="ion-key"></i>
             {{::msg.issuer|formatPubkey}}
           </a>

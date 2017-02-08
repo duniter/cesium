@@ -55,18 +55,23 @@
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
       <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
-              ng-click="showSharePopover($event)">
+              ng-click="showSharePopover($event)"
+              title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>
+
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="doUpdate()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
+      </button>
+
+      &nbsp;&nbsp;
 
       <button class="button button-calm ink"
               ng-click="showTransferModal()">
         {{:locale:'COMMON.BTN_SEND_MONEY' | translate}}
       </button>
 
-
-      <button class="button button-stable button-small-padding icon ion-loop ink"
-              ng-click="doUpdate()">
-      </button>
+      &nbsp;&nbsp;
 
       <button id="helptip-wallet-options"
               class="button button-stable icon-right ink"
@@ -97,7 +102,8 @@
              ng-if="walletData.isMember||walletData.requirements.pendingMembership"
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
-            <span clas="input-label" ng-bind-html="'ACCOUNT.CERTIFICATION_COUNT'|translate"></span>
+            <span class="input-label hidden-xs" translate>ACCOUNT.CERTIFICATION_COUNT</span>
+            <span class="input-label visible-xs" translate>ACCOUNT.CERTIFICATION_COUNT_SHORT</span>
             <cs-badge-certification requirements="walletData.requirements"
                                     parameters="{sigQty: walletData.parameters.sigQty}">
             </cs-badge-certification>
@@ -164,7 +170,7 @@
 
             <h2 class="col-80">
               <i class="icon ion-clock"> </i>
-              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
+              <a ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
                 <span ng-if="tx.uid">
                   {{::tx.name||tx.uid}}
                 </span>
@@ -222,7 +228,7 @@
                ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
             <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
             <h2 class="col-80">
-              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
+              <a ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
                 <span ng-if="tx.uid">
                   {{::tx.name||tx.uid}}
                 </span>

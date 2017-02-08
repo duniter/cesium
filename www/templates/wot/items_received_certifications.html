@@ -33,7 +33,7 @@
 
           <a class="item item-avatar ink"
              ng-repeat="cert in formData.received_cert_pending"
-             ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})"
+             ui-sref="app.wot_identity({pubkey:cert.pubkey, uid:cert.uid})"
              ng-include="'templates/wot/item_certification.html'">
           </a>
 
@@ -48,7 +48,7 @@
 
           <a class="item item-avatar ink"
                 ng-repeat="cert in formData.received_cert"
-                ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})"
+                ui-sref="app.wot_identity({pubkey:cert.pubkey, uid:cert.uid})"
                 ng-include="'templates/wot/item_certification.html'">
           </a>
         </div>
