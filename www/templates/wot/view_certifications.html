@@ -9,12 +9,12 @@
     <ion-tabs class="tabs-positive tabs-icon-top">
 
       <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
-               on-select="showCertificationsTab()">
+               ui-sref="app.wot_cert.received({pubkey: formData.pubkey, uid: formData.uid})">
         <ion-nav-view name="tab-received-cert"></ion-nav-view>
       </ion-tab>
 
       <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
-               on-select="showGivenCertificationsTab()">
+               ui-sref="app.wot_cert.given({pubkey: formData.pubkey, uid: formData.uid})">
         <ion-nav-view name="tab-given-cert"></ion-nav-view>
       </ion-tab>
 
@@ -22,14 +22,14 @@
   </ion-content>
 
   <!-- fab button -->
-  <div class="visible-xs visible-sm">
+  <div class="visible-xs visible-sm">{{$root.tour}}
     <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
             ng-click="certify()"
-            ng-if="formData.hasSelf && canCertify && !alreadyCertified">
+            ng-if="(formData.hasSelf && canCertify && !alreadyCertified) || $root.tour">
       <i class="icon ion-ribbon-b"></i>
     </button>
     <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
-            ng-if="canSelectAndCertify"
+            ng-if="canSelectAndCertify || $root.tour"
             ng-click="selectAndCertify()">
       <i class="icon ion-plus"></i>
     </button>

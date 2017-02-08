@@ -25,31 +25,39 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert', {
-        url: "/wot/cert",
+        url: "/wot/cert/:pubkey/:uid",
         abstract: true,
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotCertificationsViewCtrl'
+            controller: 'WotCertificationsTabCtrl'
           }
         }
       })
 
-      .state('app.wot_cert.tab_received', {
-        url: "/:pubkey/:uid/received",
+      .state('app.wot_cert.received', {
+        url: "/received",
         views: {
           'tab-received-cert': {
-            templateUrl: "templates/wot/tabs/tab_received_certifications.html"
+            templateUrl: "templates/wot/tabs/tab_received_certifications.html",
+            controller: 'WotReceivedCertificationsTabCtrl'
           }
+        },
+        data: {
+          large: 'app.wot_cert_lg'
         }
       })
 
-      .state('app.wot_cert.tab_given', {
-        url: "/:pubkey/:uid/given",
+      .state('app.wot_cert.given', {
+        url: "/given",
         views: {
           'tab-given-cert': {
-            templateUrl: "templates/wot/tabs/tab_given_certifications.html"
+            templateUrl: "templates/wot/tabs/tab_given_certifications.html",
+            controller: 'WotGivenCertificationsTabCtrl'
           }
+        },
+        data: {
+          large: 'app.wot_cert_lg'
         }
       })
 
@@ -70,16 +78,17 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotCertificationsViewCtrl'
+            controller: 'WotCertificationsTabCtrl'
           }
         }
       })
 
-      .state('app.wallet_cert.tab_received', {
+      .state('app.wallet_cert.received', {
         url: "/received",
         views: {
           'tab-received-cert': {
-            templateUrl: "templates/wot/tabs/tab_received_certifications.html"
+            templateUrl: "templates/wot/tabs/tab_received_certifications.html",
+            controller: 'WotReceivedCertificationsTabCtrl'
           }
         },
         data: {
@@ -87,11 +96,12 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wallet_cert.tab_given', {
+      .state('app.wallet_cert.given', {
         url: "/given",
         views: {
           'tab-given-cert': {
-            templateUrl: "templates/wot/tabs/tab_given_certifications.html"
+            templateUrl: "templates/wot/tabs/tab_given_certifications.html",
+            controller: 'WotGivenCertificationsTabCtrl'
           }
         },
         data: {
@@ -118,6 +128,12 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
+
+  .controller('WotCertificationsTabCtrl', WotCertificationsTabController)
+
+  .controller('WotReceivedCertificationsTabCtrl', WotReceivedCertificationsTabController)
+
+  .controller('WotGivenCertificationsTabCtrl', WotGivenCertificationsTabController)
 
 
 ;
@@ -462,8 +478,8 @@ function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
   };
 
   $scope.showCertifications = function() {
-    // Warn: do not use a simple link here (a ng-click is need for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wot_cert.tab_received' : 'app.wot_cert_lg', {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    $state.go(UIUtils.screen.isSmall() ? 'app.wot_cert.received' : 'app.wot_cert_lg', {
       pubkey: $scope.formData.pubkey,
       uid: $scope.formData.uid
     });
@@ -504,9 +520,11 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
 
   $scope.loading = true;
   $scope.formData = {};
-  $scope.showCertifications = true; // default value (overwrite when tab switch, on small view)
-  $scope.showGivenCertifications = false; // default value (overwrite on 'large' view)
-  $scope.showAvatar = false; // default value (overwrite on 'large' view)
+
+  // Values overwritten in tab controller (for small screen)
+  $scope.showCertifications = true;
+  $scope.showGivenCertifications = true;
+  $scope.showAvatar = true;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.pubkey &&
@@ -740,30 +758,6 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     $scope.motionGivenCertifications($scope.showCertifications ? 900 : 100);
   };
 
-  // Show received certifcations
-  $scope.showCertificationsTab = function() {
-    $scope.showCertifications = true;
-    $scope.showGivenCertifications = false;
-    if (csWallet.isUserPubkey($scope.formData.pubkey)) {
-      $state.go('app.wallet_cert.tab_received');
-    }
-    else {
-      $state.go('app.wot_cert.tab_received', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid});
-    }
-  };
-
-  // Show given certifcations
-  $scope.showGivenCertificationsTab = function() {
-    $scope.showGivenCertifications = true;
-    $scope.showCertifications = false;
-    if (csWallet.isUserPubkey($scope.formData.pubkey)) {
-      $state.go('app.wallet_cert.tab_given');
-    }
-    else {
-      $state.go('app.wot_cert.tab_given', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid});
-    }
-  };
-
   // Show help tip
   $scope.showHelpTip = function(isWallet) {
     if (!$scope.isLogin()) return;
@@ -800,12 +794,12 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
         UIUtils.ink({selector: '.list.certifications .ink'});
       }, timeout || 10);
-      if ($scope.canCertify) {
+      if ($scope.canCertify || $rootScope.tour) {
         $scope.showFab('fab-certify');
       }
     }
     else {
-      if ($scope.canCertify) {
+      if ($scope.canCertify || $rootScope.tour) {
         $scope.hideFab('fab-certify', 0);
       }
     }
@@ -819,23 +813,45 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
         UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
         UIUtils.ink({selector: '.list.given-certifications .ink'});
       }, timeout || 10);
-      if ($scope.canSelectAndCertify) {
+      if ($scope.canSelectAndCertify || $rootScope.tour) {
         $scope.showFab('fab-select-certify');
       }
     }
     else {
-      if ($scope.canSelectAndCertify) {
+      if ($scope.canSelectAndCertify || $rootScope.tour) {
         $scope.hideFab('fab-select-certify', 0);
       }
     }
   };
 
-  $scope.initLargeView = function() {
-    $scope.showCertifications = true;
-    $scope.showGivenCertifications = true;
-    $scope.showAvatar = true;
-  };
 }
 
+function WotCertificationsTabController($scope, $stateParams) {
+
+  $scope.formData = $scope.formData || {};
+
+  if ($stateParams.pubkey) {
+    $scope.formData.pubkey = $stateParams.pubkey;
+  }
+  if ($stateParams.uid) {
+    $scope.formData.uid = $stateParams.uid;
+  }
+}
+
+function WotReceivedCertificationsTabController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals) {
+  WotCertificationsViewController.call(this, $scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals);
+
+  $scope.showCertifications = true;
+  $scope.showGivenCertifications = false;
+  $scope.showAvatar = false;
+}
+
+function WotGivenCertificationsTabController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals) {
+  WotCertificationsViewController.call(this, $scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals);
+
+  $scope.showCertifications = false;
+  $scope.showGivenCertifications = true;
+  $scope.showAvatar = false;
+}
 
 

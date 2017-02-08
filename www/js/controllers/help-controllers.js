@@ -157,7 +157,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       })
 
       // Network tour
-      .then(function(next){
+      /*.then(function(next){
         if (!next) return false;
         return $scope.startNetworkTour(0, true)
           .then(function(endIndex){
@@ -166,7 +166,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             csSettings.store();
             return $scope.continue;
           });
-      })
+      })*/
 
       // Wot tour
       .then(function(next){
@@ -1007,11 +1007,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 /* ----------------------------
  *  Help tour (auto start from home page)
  * ---------------------------- */
-function HelpTourController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
-                           UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
-
-  HelpTipController.call(this, $scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
-                         UIUtils, csConfig, csSettings, csCurrency, Device, csWallet);
+function HelpTourController($scope) {
 
   $scope.$on('$ionicView.enter', function(e, state) {
     $scope.startHelpTour();
