@@ -6,10 +6,12 @@ function Block(json) {
 
   var that = this;
 
-  Object.keys(json).forEach(function (key) {
+  /*Object.keys(json).forEach(function (key) {
+    that[key] = json[key];
+  });*/
+  ["currency", "issuer", "medianTime", "number", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions"].forEach(function (key) {
     that[key] = json[key];
   });
-
 
   that.identitiesCount = that.identities ? that.identities.length : 0;
   that.joinersCount = that.joiners ? that.joiners.length : 0;

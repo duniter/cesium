@@ -81,7 +81,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
   $scope.entered = false;
   $scope.searchTextId = null;
   $scope.ionItemClass = 'item-border-large';
-  $scope.defaultSizeLimit = 50;
+  $scope.defaultSizeLimit = UIUtils.screen.isSmall() ? 50 : 100;
 
   /**
    * Enter into the view
@@ -316,15 +316,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         .then(function() {
           $scope.search.results = $scope.search.results || [];
 
-          // Prepare the new block (and previous last block)
           if (!$scope.search.results.length) {
+            // Prepare the new block, then add it to result
             $scope.doPrepareResult([block]);
             console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
             $scope.search.total++;
             $scope.search.results.push(block);
           }
           else {
-            $scope.doPrepareResult([block, $scope.search.results[0]]);
             // Find existing block, by number
             var existingBlock = _.findWhere($scope.search.results, {number: block.number});
 
@@ -332,11 +331,17 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
             if (existingBlock) {
               if (existingBlock.hash != block.hash) {
                 console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
+                // Prepare the new block, and refresh the previous latest block (could be compacted)
+                $scope.doPrepareResult([block, $scope.search.results[0]]);
                 angular.copy(block, existingBlock);
+                $scope.$broadcast('$$rebind::rebind'); // notify binder
               }
             }
             else {
               console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+              // Prepare the new block, and refresh the previous latest block (could be compacted)
+              $scope.doPrepareResult([block, $scope.search.results[0]]);
+              // Insert at index 0
               $scope.search.total++;
               $scope.search.results.splice(0, 0, block);
             }

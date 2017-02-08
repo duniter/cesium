@@ -20,7 +20,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         // duniter://[uid]:[pubkey]@[host]:[port]
         URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?",
-        BMA_ENDPOINT: "BASIC_MERKLED_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
+        BMA_ENDPOINT: "BASIC_MERKLED_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))",
+        BMAS_ENDPOINT: "BMAS( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
       },
       errorCodes = {
         REVOCATION_ALREADY_REGISTERED: 1002,
@@ -52,7 +53,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         PUBKEY: exact(regex.PUBKEY),
         CURRENCY: exact(regex.CURRENCY),
         URI: exact(regex.URI),
-        BMA_ENDPOINT: exact(regex.BMA_ENDPOINT)
+        BMA_ENDPOINT: exact(regex.BMA_ENDPOINT),
+        BMAS_ENDPOINT: exact(regex.BMAS_ENDPOINT)
       },
       node: {
         server: csHttp.getServer(host, port),

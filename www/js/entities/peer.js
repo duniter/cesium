@@ -14,7 +14,10 @@ function Peer(json) {
 
 
 Peer.prototype.regex = {
+  BMA: /^BASIC_MERKLED_API[ ]?/,
+  BMAS: /^BMAS[ ]?/,
   BMA_REGEXP: /^BASIC_MERKLED_API([ ]+([a-z_][a-z0-9-_.]*))?([ ]+([0-9.]+))?([ ]+([0-9a-f:]+))?([ ]+([0-9]+))$/,
+  BMAS_REGEXP: /^BMAS([ ]+([a-z_][a-z0-9-_.]*))?([ ]+([0-9.]+))?([ ]+([0-9a-f:]+))?([ ]+([0-9]+))$/,
   LOCAL_IP_ADDRESS: /^127[.]0[.]0.|192[.]168[.]|10[.]0[.]0[.]|172[.]16[.]/
 };
 
@@ -73,8 +76,8 @@ Peer.prototype.getEndpoints = function(regex) {
 };
 
 Peer.prototype.hasEndpoint = function(endpoint){
-  endpoint = '^' + endpoint;
-  var regExp = new RegExp(endpoint);
+  //console.debug('testing if hasEndpoint:' + endpoint);
+  var regExp = this.regex[endpoint] || new RegExp('^' + endpoint);
   var endpoints = this.getEndpoints(regExp);
   if (!endpoints.length) return false;
   else return true;

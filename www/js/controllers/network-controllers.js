@@ -52,7 +52,6 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
     sort : undefined,
     asc: true
   };
-  $scope.mainBlock = {};
 
   /**
    * Enter in view
@@ -66,14 +65,11 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
           $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
             BMA.instance(currency.peer.host, currency.peer.port) : BMA;
           if (state && state.stateParams) {
-            if (state.stateParams.type && (
-                state.stateParams.type === 'mirror' ||
-                state.stateParams.type === 'member' ||
-                state.stateParams.type === 'offline')) {
+            if (state.stateParams.type && ['mirror', 'member', 'offline'].indexOf(state.stateParams.type) != -1) {
               $scope.search.type = state.stateParams.type;
             }
             if (state.stateParams.expert) {
-              $scope.expertMode = state.stateParams.expert;
+              $scope.expertMode = (state.stateParams.expert == 'true');
             }
           }
           $scope.load();
@@ -132,10 +128,6 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
             $scope.refreshing = false;
            }, 100);
         }
-      });
-
-      csNetwork.api.data.on.mainBlockChanged($scope, function(mainBlock){
-        $scope.mainBlock = mainBlock;
       });
     }
 
