@@ -121,6 +121,9 @@
       "HEADER_BLOCK": "Bloc #",
       "HEADER_ISSUER": "Propriétaire du noeud",
       "BTN_LAST": "Derniers blocs"
+    },
+    "ERROR": {
+      "SEARCH_BLOCKS_FAILED": "Erreur de la recherche des blocs."
     }
   },
   "MARKET": {
