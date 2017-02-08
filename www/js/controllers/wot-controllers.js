@@ -30,7 +30,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotCertificationsTabCtrl'
+            controller: 'WotCertificationsViewCtrl'
           }
         }
       })
@@ -78,7 +78,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotCertificationsTabCtrl'
+            controller: 'WotCertificationsViewCtrl'
           }
         }
       })
@@ -128,8 +128,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
-
-  .controller('WotCertificationsTabCtrl', WotCertificationsTabController)
 
   .controller('WotReceivedCertificationsTabCtrl', WotReceivedCertificationsTabController)
 
@@ -823,31 +821,17 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       }
     }
   };
-
 }
 
-function WotCertificationsTabController($scope, $stateParams) {
 
-  $scope.formData = $scope.formData || {};
-
-  if ($stateParams.pubkey) {
-    $scope.formData.pubkey = $stateParams.pubkey;
-  }
-  if ($stateParams.uid) {
-    $scope.formData.uid = $stateParams.uid;
-  }
-}
-
-function WotReceivedCertificationsTabController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals) {
-  WotCertificationsViewController.call(this, $scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals);
+function WotReceivedCertificationsTabController($scope) {
 
   $scope.showCertifications = true;
   $scope.showGivenCertifications = false;
   $scope.showAvatar = false;
 }
 
-function WotGivenCertificationsTabController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals) {
-  WotCertificationsViewController.call(this, $scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals);
+function WotGivenCertificationsTabController($scope) {
 
   $scope.showCertifications = false;
   $scope.showGivenCertifications = true;
