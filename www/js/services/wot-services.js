@@ -515,7 +515,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return $q.when(data);
         }
 
-        console.debug("[wot] Loading identity " + pubkey.substring(0, 8));
+        console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
         var now = new Date().getTime();
         data = {pubkey: pubkey};
 

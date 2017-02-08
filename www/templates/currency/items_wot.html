@@ -24,7 +24,7 @@
 
     <ion-item  class="item-icon-left item-text-wrap">
       <i class="icon ion-ribbon-b"></i>
-      <b class="ion-star " style="color: yellow; position: absolute; font-size: 16px; left: 25px; bottom: 32px"></b>
+      <b class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
       <span class="col col-75" translate>CURRENCY.VIEW.SENTRIES</span>
       <span class="badge badge-royal" ng-if="!loading">{{formData.sentries}}</span>
     </ion-item>
@@ -42,7 +42,7 @@
 
     <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-ribbon-b"></i>
-      <b class="ion-clock" style="position: absolute; font-size: 22px; left: 33px;"></b>
+      <b class="ion-clock icon-secondary" style="font-size: 18px; left: 33px; top: -12px;"></b>
       <span class="col col-60" translate>CURRENCY.VIEW.SIG_WINDOW</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.sigWindow | formatDuration}}</span>
     </ion-item>
@@ -55,16 +55,16 @@
 
     <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-clock" style="position: absolute; font-size: 20px; left: 16px;"></i>
-      <b class="ion-ribbon-a" style="position: absolute; font-size: 16px; left: 16px; "></b>
-      <b class="ion-arrow-right-c" style="position: absolute; font-size: 12px; left: 28px; "></b>
-      <b class="ion-ribbon-a" style="position: absolute; font-size: 16px; left: 38px;"></b>
+      <b class="ion-ribbon-a icon-secondary" style="left: 16px; top: -15px;"></b>
+      <b class="ion-arrow-right-c icon-secondary" style="left: 28px; top: -15px;"></b>
+      <b class="ion-ribbon-a icon-secondary" style="left: 40px; top: -15px;"></b>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_PERIOD</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.sigPeriod | formatDuration}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-steam"></i>
-      <b class="ion-person" style="position: absolute; font-size: 16px; left: 38px; top: 17px"></b>
+      <b class="ion-person icon-secondary" style="left: 38px; top: -17px"></b>
       <div class="col col-75">
         <span ng-bind-html="'CURRENCY.VIEW.STEP_MAX'|translate"></span>
         <span class="gray">(stepMax)</span>
@@ -80,7 +80,7 @@
 
     <ion-item  class="item-icon-left item-text-wrap">
       <i class="icon ion-ribbon-b"></i>
-      <b class="ion-star " style="color: yellow; position: absolute; font-size: 16px; left: 25px; bottom: 32px"></b>
+      <b class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
       <span ng-bind-html="'CURRENCY.VIEW.SENTRIES_FORMULA'|translate"></span>
       <span class="item-note dark" ng-if="!loading">{{'CURRENCY.VIEW.MATH_CEILING'| translate}}( N<sub>t</sub><sup>^ (1 / stepMax)</sup>)</span>
     </ion-item>

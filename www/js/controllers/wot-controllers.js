@@ -662,8 +662,6 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, UIU
       }
     });
   };
-
-
 }
 
 /**

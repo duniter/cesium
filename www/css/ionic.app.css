@@ -15006,3 +15006,12 @@ a.underline:hover,
   .ion-spinner-small svg {
     height: 14px;
     width: 14px; }
+
+.icon-secondary {
+  position: absolute;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  left: 25px;
+  top: -7px; }

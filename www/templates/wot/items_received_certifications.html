@@ -7,7 +7,11 @@
           <div id="helptip-received-certs"
                class="item item-icon-left item-text-wrap ink">
             <i class="icon ion-ribbon-b"></i>
+            <b ng-if="formData.requirements.isSentry"
+               class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
+
             <span translate>WOT.CERTIFICATIONS.RECEIVED</span>
+            <h4 class="gray" ng-if="formData.requirements.isSentry" translate>WOT.CERTIFICATIONS.SENTRY_MEMBER</h4>
 
             <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
                                     requirements="formData.requirements"

@@ -28,7 +28,7 @@
     "BTN_EDIT": "Modifier",
     "BTN_DELETE": "Supprimer",
     "BTN_ADD": "Ajouter",
-    "BTN_SEARCH": "Recherche",
+    "BTN_SEARCH": "Rechercher",
     "BTN_REFRESH": "Actualiser",
     "BTN_CONTINUE": "Continuer",
     "BTN_UNDERSTOOD": "J'ai compris",
@@ -268,7 +268,8 @@
       "PENDING_LIST": "Certifications en attente de traitement",
       "RECEIVED": "Certifications reçues",
       "RECEIVED_BY": "Certifications reçues par {{uid}}",
-      "ERROR": "Certifications reçues en erreur"
+      "ERROR": "Certifications reçues en erreur",
+      "SENTRY_MEMBER": "Membre référent"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications émises",
