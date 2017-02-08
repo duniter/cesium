@@ -412,13 +412,13 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') && data.sort.asc ? 1 : 0) : 0);
             sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? (data.sort.asc ? (1000-peer.difficulty) : peer.difficulty): 0) : 0);
             sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? (data.sort.asc ? (1000000000 - peer.currentNumber) : peer.currentNumber) : 0) : 0);
-            score += (1000000000 * sortScore);
+            score += (10000000000 * sortScore);
           }
-          score += (100000000 * (peer.online ? 1 : 0));
-          score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
-          score += (100000    * (peer.hasConsensusBlock ? buids[peer.buid].pct : 0));
+          score += (1000000000 * (peer.online ? 1 : 0));
+          score += (100000000  * (peer.hasMainConsensusBlock ? 1 : 0));
+          score += (1000000    * (peer.hasConsensusBlock ? buids[peer.buid].pct : 0));
           if (data.expertMode) {
-            score += (100     * (peer.difficulty ? (1000-peer.difficulty) : 0));
+            score += (100     * (peer.difficulty ? (10000-peer.difficulty) : 0));
             score += (1       * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
           }
           else {
