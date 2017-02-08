@@ -489,7 +489,7 @@
       "MENU_BTN_NETWORK": "Menu <b>{{'MENU.NETWORK'|translate}}</b> allows discovery of <b>network's state<b>.",
       "NETWORK_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
       "NETWORK_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
-      "NETWORK_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
+      "NETWORK_PEERS_BLOCK_NUMBER": "This <b>number</b> (in green) indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
       "NETWORK_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",

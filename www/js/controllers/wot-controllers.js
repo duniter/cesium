@@ -25,7 +25,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert', {
-        url: "/wot/cert/:pubkey/:uid",
+        url: "/wot/cert",
         abstract: true,
         views: {
           'menuContent': {
@@ -36,7 +36,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert.tab_received', {
-        url: "/received",
+        url: "/:pubkey/:uid/received",
         views: {
           'tab-received-cert': {
             templateUrl: "templates/wot/tabs/tab_received_certifications.html"
@@ -45,7 +45,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert.tab_given', {
-        url: "/given",
+        url: "/:pubkey/:uid/given",
         views: {
           'tab-given-cert': {
             templateUrl: "templates/wot/tabs/tab_given_certifications.html"

@@ -83,7 +83,7 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 /* ----------------------------
 *  Help Tip
 * ---------------------------- */
-function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
                            UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?
@@ -328,6 +328,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function () {
+        if (UIUtils.screen.isSmall()) {
+          $anchorScroll('helptip-currency-rules-anchor');
+        }
         return $scope.showHelpTip('helptip-currency-rules', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_RULES',
@@ -422,7 +425,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
           bindings: {
             content: 'HELP.TIP.NETWORK_PEERS',
             icon: {
-              position: 'center'
+              position: UIUtils.screen.isSmall() ? undefined : 'center'
             }
           },
           timeout: 1000,
@@ -437,8 +440,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
           bindings: {
             content: 'HELP.TIP.NETWORK_PEERS_BLOCK_NUMBER',
             icon: {
-              position: 'right',
-              style: 'margin-right: 75px;'
+              position: UIUtils.screen.isSmall() ? undefined : 'center'
             }
           }
         });
@@ -1005,10 +1007,10 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 /* ----------------------------
  *  Help tour (auto start from home page)
  * ---------------------------- */
-function HelpTourController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+function HelpTourController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
                            UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
-  HelpTipController.call(this, $scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+  HelpTipController.call(this, $scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
                          UIUtils, csConfig, csSettings, csCurrency, Device, csWallet);
 
   $scope.$on('$ionicView.enter', function(e, state) {
