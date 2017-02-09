@@ -23,12 +23,12 @@
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <ion-list class="animate-ripple padding padding-xs" bind-notifier="{rebind: search.results.length}">
+  <ion-list class="animate-ripple padding padding-xs">
     <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
       BLOCKCHAIN.LOOKUP.NO_BLOCK
     </div>
     <!-- blocks -->
-    <ng-repeat ng-repeat="block in :rebind:search.results"
+    <ng-repeat ng-repeat="block in :rebind:search.results track by block.number"
                ng-include="'templates/blockchain/item_block.html'">
     </ng-repeat>
   </ion-list>

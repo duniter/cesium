@@ -44,10 +44,11 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $rootScope, BMA, csWallet, UIUtils, $translate, $filter, Modals, csSettings) {
+function TransferController($scope, $controller, UIUtils, csSettings) {
   'ngInject';
 
-  TransferModalController.call(this, $scope, $rootScope, $translate, $filter, BMA, csWallet, UIUtils, Modals, csSettings);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('TransferModalLookupCtrl', {$scope: $scope}));
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!!state.stateParams && !!state.stateParams.pubkey) {
@@ -74,7 +75,7 @@ function TransferController($scope, $rootScope, BMA, csWallet, UIUtils, $transla
     $scope.form = form;
   };
 
-  // ovveride modal close
+  // override modal close
   $scope.closeModal = function() {
     return $scope.showHome();
   };

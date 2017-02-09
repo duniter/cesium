@@ -262,7 +262,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     else {
       $scope.search.results = $scope.search.results.concat(res);
     }
-    //$scope.search.loading = false;
     $scope.search.hasMore = total && $scope.search.results.length < total;
     $scope.search.total = total;
 
@@ -282,6 +281,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         });
       }, 10);
     }
+
+    $scope.$broadcast('$$rebind::rebind'); // notify binder
   };
 
   $scope.showMore = function() {
@@ -316,12 +317,15 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         .then(function() {
           $scope.search.results = $scope.search.results || [];
 
+          var needRefresh = false;
+
           if (!$scope.search.results.length) {
             // Prepare the new block, then add it to result
             $scope.doPrepareResult([block]);
             console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
             $scope.search.total++;
             $scope.search.results.push(block);
+            needRefresh = true;
           }
           else {
             // Find existing block, by number
@@ -334,7 +338,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
                 // Prepare the new block, and refresh the previous latest block (could be compacted)
                 $scope.doPrepareResult([block, $scope.search.results[0]]);
                 angular.copy(block, existingBlock);
-                $scope.$broadcast('$$rebind::rebind'); // notify binder
+                needRefresh = true;
+
               }
             }
             else {
@@ -344,19 +349,25 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
               // Insert at index 0
               $scope.search.total++;
               $scope.search.results.splice(0, 0, block);
+              needRefresh = true;
             }
           }
 
-          $timeout(function () {
-            UIUtils.motion.ripple({
-              startVelocity: 3000,
-              selector: '#block-'+block.number
-            });
-            // Set Ink
-            UIUtils.ink({
-              selector: '#block-'+block.number
-            });
-          }, 100);
+          if (needRefresh) {
+            // Force rebind
+            $scope.$broadcast('$$rebind::rebind');
+
+            $timeout(function () {
+              UIUtils.motion.ripple({
+                startVelocity: 3000,
+                selector: '#block-'+block.number
+              });
+              // Set Ink
+              UIUtils.ink({
+                selector: '#block-'+block.number
+              });
+            }, 100);
+          }
         });
     });
   };

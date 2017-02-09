@@ -1,9 +1,14 @@
 <ion-view>
   <ion-nav-buttons side="secondary">
-    <!--<button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refreshPeers()">
+
+    <button class="button button-icon button-clear visible-xs visible-sm" ng-click="toggleCompactMode()">
+      <i class="icon ion-navicon"></i>
+      <b class="ion-arrow-down-b" style="position: absolute; top: -2px; left: 4px; font-size: 8px;"></b>
+      <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
     </button>
-    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showActionsPopover($event)">
-    </button>-->
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
   </ion-nav-buttons>
 
   <ion-content>

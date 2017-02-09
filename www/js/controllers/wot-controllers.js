@@ -709,7 +709,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils) {
     }, 10);
 
     $scope.showFab('fab-transfer');
-  }
+  };
 }
 
 /**

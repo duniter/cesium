@@ -21,39 +21,50 @@
     </a>
   </div>
 
-  <div ng-repeat="peer in :rebind:search.results track by $index"
+  <div ng-repeat="peer in :rebind:search.results track by peer.id"
        class="item peer-item item-icon-left {{::ionItemClass}}"
-       ng-class="{ assertive: !peer.online, balanced: (peer.online && peer.hasMainConsensusBlock), energized: (peer.online && !peer.hasMainConsensusBlock)}"
        id="helptip-network-peer-{{$index}}"
        ng-click="selectPeer(peer)">
 
-    <i class="icon ion-android-desktop"></i>
-    <b class="ion-person" ng-if="peer.uid" style="position: absolute; top: 11px; left: 27px;"></b>
+    <i class="icon ion-android-desktop"
+       ng-class="{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       ng-if=":rebind:!peer.uid || !peer.avatar"></i>
+    <b class="icon-secondary ion-person" ng-if=":rebind:!peer.avatar && peer.uid"
+       ng-class="{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       style="left: 26px; top: -3px;"></b>
+    <i class="avatar" ng-if=":rebind:peer.uid && peer.avatar" style="background-image: url('{{:rebind:peer.avatar.src}}')"></i>
+    <b class="icon-secondary assertive ion-close-circled" ng-if=":rebind:!peer.online" style="left: 37px; top: -10px;"></b>
 
     <div class="row no-padding">
       <div class="col no-padding">
         <h3>
-          <span ng-if="peer.uid"
+          <span class="dark" ng-if="peer.uid"
              ui-sref="app.wot_identity({pubkey: peer.pubkey, uid: peer.uid})">
             {{peer.name||peer.uid}}
           </span>
-          <span ng-if="!peer.uid">
+          <span class="gray" ng-if="!peer.uid">
             <i class="ion-key"></i> {{peer.pubkey|formatPubkey}}
           </span>
           <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
-        <h4>{{peer.server}}</h4>
+        <h4 class="positive">
+          <span ng-if="peer.uid && peer.name">
+            <i class="ion-person"></i> {{peer.uid}}
+            <span class="gray"> | </span>
+          </span>
+          <span class="gray">{{peer.server}}</span>
+        </h4>
       </div>
       <div class="col col-15 no-padding text-center" ng-if="::expertMode">
         <div class="hidden-xs hidden-sm" ng-if=":rebind:peer.hasEndpoint('ES_USER_API')">
           <i class="ion-es-user-api"></i>
-          <b class="ion-plus gray" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
+          <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
         </div>
-        <div class="hidden-xs hidden-sm" ng-if=":rebind:peer.hasEndpoint('BMAS')">
+        <div class="hidden-xs hidden-sm dark" ng-if=":rebind:peer.hasEndpoint('BMAS')">
           <i class="ion-locked"></i> <small>SSL</small>
         </div>
       </div>
       <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
-        <h3 class="hidden-sm hidden-xs">
+        <h3 class="hidden-sm hidden-xs gray">
           <span ng-if="peer.uid"><i class="ion-lock-combination"></i>{{peer.difficulty||'?'}}</span>
           <span ng-if="!peer.uid" translate>PEER.MIRROR</span>
         </h3>

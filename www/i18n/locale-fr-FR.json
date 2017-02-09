@@ -154,7 +154,8 @@
       "REVOKED_COUNT": "Identités revoquées",
       "REVOKED_COUNT_HELP": "Ces comptes ne pourront plus être membres",
       "TX_COUNT": "Transactions",
-      "CERT_COUNT": "Certifications"
+      "CERT_COUNT": "Certifications",
+      "TX_TO_HIMSELF": "Opération de change"
     },
     "LOOKUP": {
       "TITLE": "Blocs",

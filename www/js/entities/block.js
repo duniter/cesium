@@ -103,6 +103,7 @@ Block.prototype.parseTransactions = function(transactions) {
       var parts = output.split(':');
       var matches = parts.length == 3 && Block.prototype.regex.TX_OUTPUT_SIG.exec(parts[2]);
       if (!matches) {
+        obj.error = true;
         console.debug('[block] Bad format a \'transactions\': [{1}]. Expected 3 parts. Skipping'.format(output));
         return res;
       }
@@ -117,9 +118,11 @@ Block.prototype.parseTransactions = function(transactions) {
       });
     }, []);
 
-    // TODO compute amount
-    // TODO compute dest
-    // TODO : group by pubkey ? using _.groupBy(list, iteratee, [context])
+    // Special cas for TX to himself
+    if (!obj.error && obj.outputs.length == 0) {
+      console.log('OKOKOK');
+      obj.toHimself = true;
+    }
 
     return res.concat(obj);
   }, []);

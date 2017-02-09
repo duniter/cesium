@@ -37,7 +37,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
   'ngInject';
 
   $scope.networkStarted = false;
@@ -123,10 +123,11 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
       csNetwork.api.data.on.changed($scope, function(data){
         if (!$scope.refreshing) {
           $scope.refreshing = true;
-          $timeout(function() { // Timeout - TODO: see if necessary
-            $scope.updateView(data);
-            $scope.refreshing = false;
-           }, 100);
+          csWot.extendAll(data.peers)
+            .then(function() {
+              $scope.updateView(data);
+              $scope.refreshing = false;
+            });
         }
       });
     }
@@ -264,10 +265,11 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
 }
 
 
-function NetworkLookupModalController($scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, parameters) {
+function NetworkLookupModalController($scope, $controller, parameters) {
   'ngInject';
 
-  NetworkLookupController.call(this, $scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('NetworkLookupCtrl', {$scope: $scope}));
 
   // Read parameters
   parameters = parameters || {};

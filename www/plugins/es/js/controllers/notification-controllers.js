@@ -147,10 +147,11 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
   csWallet.api.data.on.logout($scope, $scope.resetData);
 }
 
-function PopoverNotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings) {
+function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, $state, csWallet, csSettings) {
   'ngInject';
 
-  NotificationsController.call(this, $scope, $rootScope, $timeout, UIUtils,  $state, csWallet, esNotification, csSettings);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('NotificationsCtrl', {$scope: $scope}));
 
   // Disable list effects
   $scope.ionListClass = null;

@@ -51,10 +51,11 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
 ;
 
 
-function ESBlockLookupController($scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings, esBlockchain, $ionicHistory) {
+function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockchain, $ionicHistory) {
   'ngInject';
 
-  BlockLookupController.call(this, $scope, $timeout, $focus, $filter, $state, $anchorScroll, UIUtils, BMA, csCurrency, csWot, csSettings);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('BlockLookupCtrl', {$scope: $scope}));
 
   $scope.search.text = null;
   $scope.search.type = 'last';

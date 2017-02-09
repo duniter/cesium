@@ -102,8 +102,7 @@
              ng-if="walletData.isMember||walletData.requirements.pendingMembership"
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
-            <span class="input-label hidden-xs" translate>ACCOUNT.CERTIFICATION_COUNT</span>
-            <span class="input-label visible-xs" translate>ACCOUNT.CERTIFICATION_COUNT_SHORT</span>
+            {{:locale:'ACCOUNT.CERTIFICATION_COUNT'|translate}}
             <cs-badge-certification requirements="walletData.requirements"
                                     parameters="{sigQty: walletData.parameters.sigQty}">
             </cs-badge-certification>

@@ -14244,6 +14244,18 @@ a {
 .avatar-wallet {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAQAAABpN6lAAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfgBA0JMBOJU4OdAAAB2klEQVR42u3au0ocUQCH8e+IxFRKUohrkG0Eu4BiLrCFDxDBNtjoI1gYTJnGQrRInc4HyBuopNHgBVZIwCJFsHBXLURtQiIyKYyFN3B3zJyd3e/X7e7MmXP+e26zOyBJkiRJkiRJkiRJkiRJkppVSF9E0sk0r+jKuOYnrLMQTqMHkHSzQTHS17fLy3CYroi21JWYj9Z8KDIfvwdUKAC7bGfc+CH6gGrojTyJJBemMr/u+4sLpy2njRZnAAZgAK2t/YHKGUzeZlzz5w2yFU6/EKVsQHAIGIABGIABGIABRN4ILbOVcc1fM9IQCfp7gHOAARiAAbgMXpuhH/GJ0brK/sG78OVfKR0cXPnsQ/iYkwAYY6LOM4eZpXR5q3/t77bH+RkCO5HObZQeEL4nQ7ypcwh8boIAIJQpuwoYQMsugwBJ/73L/h1+3vr+OYtXXn/Lzz7gCV8ZqOH4LUrhz4155IzJvA6B0VqaDwzHu7f/PwEsc1zT8RXWmmoOCJWkl9L95wBWbw6AvO8DfrHkMmgABmAABtDw0j8gUaWHeA9K7odC7GVwhXGgGOmB2ZX4PaDAJs8i9d89XoRq5AAgecoMg3Rm3PhTysyFIyRJkiRJkiRJkiRJkiRJku7wFyuiadmIs5Q9AAAAAElFTkSuQmCC); }
 
+.item.item-icon-left > i.avatar:first-child {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  /*width: 20px;*/
+  align-items: center;
+  font-size: 16px;
+  left: 17px;
+  top: 9px;
+  max-height: 30px;
+  max-width: 30px; }
+
 /* ----
     Popup alert
    ---- */

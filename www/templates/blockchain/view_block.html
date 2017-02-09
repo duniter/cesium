@@ -288,6 +288,7 @@
                   </div>
                   <!-- recipients -->
                   <div class="col no-padding padding-right no-padding-xs col-text-wrap list no-margin">
+                    <span class="gray" class="gray" ng-if="tx.toHimself" translate>BLOCKCHAIN.VIEW.TX_TO_HIMSELF</span>
                     <div ng-repeat="output in ::tx.outputs" class="item no-padding item-small-height">
                       <ng-include src="'templates/blockchain/link_identity.html'" onload="identity=output"></ng-include>
                       <span class="badge badge-balanced"

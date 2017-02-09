@@ -785,6 +785,19 @@ $screen-menu:                     845px;
   background-image: url('../img/card.png');
 }
 
+.item.item-icon-left > i.avatar:first-child {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  /*width: 20px;*/
+  align-items: center;
+  font-size: 16px;
+  left: 17px;
+  top: 9px;
+  max-height: 30px;
+  max-width: 30px;
+}
+
 /* ----
     Popup alert
    ---- */

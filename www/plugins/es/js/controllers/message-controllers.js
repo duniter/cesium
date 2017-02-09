@@ -240,10 +240,11 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
 }
 
 
-function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage) {
+function ESMessageComposeController($scope, $controller, UIUtils) {
   'ngInject';
 
-  ESMessageComposeModalController.call(this, $scope, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESMessageComposeModalCtrl', {$scope: $scope}));
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!!state.stateParams && !!state.stateParams.pubkey) {
