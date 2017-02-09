@@ -1,40 +1,46 @@
 <ion-item id="block-{{::block.number}}"
-          class="item item-block item-icon-left {{ionItemClass}}"
+          class="item item-block item-icon-left {{::ionItemClass}}"
           ng-click="selectBlock(block)">
 
-  <i class="icon ion-cube stable"></i>
+  <i class="icon ion-cube stable" ng-if=":rebind:!block.avatar"></i>
+  <i class="avatar" ng-if=":rebind:!block.empty && block.avatar" style="background-image: url('{{:rebind:block.avatar.src}}')"></i>
 
   <div class="row no-padding">
     <div class="col">
-      <h3 class="dark"><i class="ion-clock"></i> {{block.medianTime|formatDate}}</h3>
-      <h4 class="gray">{{'BLOCKCHAIN.HASH'|translate}} {{block.hash|formatHash}}</h4>
+      <h3 class="dark"><i class="ion-clock"></i> {{:rebind:block.medianTime|formatDate}}</h3>
+      <h4 class="gray">{{:rebind:'BLOCKCHAIN.HASH'|translate}} {{:rebind:block.hash|formatHash}}</h4>
     </div>
 
-    <div class="col col-20">
-      <h3 class="positive">
-        <i class="ion-person"></i> {{block.name||block.uid}}
+    <div class="col">
+      <h3>
+        <span class="gray" ng-if=":rebind:expertMode">
+          <i class="ion-key"></i> {{:rebind:block.issuer|formatPubkey}}
+        </span>
+        <span class="positive">
+          <i class="ion-person"></i> {{:rebind:block.name||block.uid}}
+        </span>
       </h3>
     </div>
 
     <div class="col col-20">
       <small>
-        <ng-if ng-if="block.joinersCount||(block.excludedCount-block.revokedCount)">
+        <ng-if ng-if=":rebind:block.joinersCount||(block.excludedCount-block.revokedCount)">
           <i class="ion-person"></i>
-          <span ng-if="block.joinersCount">+{{block.joinersCount}}</span>
-          <span ng-if="block.excludedCount">-{{block.excludedCount-block.revokedCount}}</span>
+          <span ng-if=":rebind:block.joinersCount">+{{:rebind:block.joinersCount}}</span>
+          <span ng-if=":rebind:block.excludedCount">-{{:rebind:block.excludedCount-block.revokedCount}}</span>
           &nbsp;&nbsp;
         </ng-if>
-        <span ng-if="block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{block.revokedCount}}&nbsp;&nbsp;</span>
-        <span ng-if="block.activesCount"><i class="ion-refresh"></i> {{block.activesCount}}&nbsp;&nbsp;</span>
-        <span ng-if="block.certificationsCount"><i class="ion-ribbon-a"></i> {{block.certificationsCount}}&nbsp;&nbsp;</span>
-        <span ng-if="block.dividend"><i class="gray ion-arrow-up-c"></i> {{'COMMON.UD'|translate}}&nbsp;&nbsp;</span>
-        <span ng-if="block.transactionsCount"><i class="ion-card"> {{block.transactionsCount}}</i>&nbsp;&nbsp;</span>
+        <span ng-if=":rebind:block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> -{{:rebind:block.revokedCount}}&nbsp;&nbsp;</span>
+        <span ng-if=":rebind:block.activesCount"><i class="ion-refresh"></i> {{:rebind:block.activesCount}}&nbsp;&nbsp;</span>
+        <span ng-if=":rebind:block.certificationsCount"><i class="ion-ribbon-a"></i> {{:rebind:block.certificationsCount}}&nbsp;&nbsp;</span>
+        <span ng-if=":rebind:block.dividend"><i class="gray ion-arrow-up-c"></i> {{:rebind:'COMMON.UD'|translate}}&nbsp;&nbsp;</span>
+        <span ng-if=":rebind:block.transactionsCount"><i class="ion-card"> {{:rebind:block.transactionsCount}}</i>&nbsp;&nbsp;</span>
 
       </small>
     </div>
 
     <div class="col col-20">
-      <span class="badge " ng-class="{'badge-balanced': !$index && search.type=='last', 'badge-calm': ($index  || search.type!='last')&& !block.compacted && !block.empty}">{{block.number}}</span>
+      <span class="badge " ng-class="{'badge-balanced': !$index && search.type=='last', 'badge-calm': ($index  || search.type!='last')&& !block.compacted && !block.empty}">{{:rebind:block.number}}</span>
     </div>
 
   </div>

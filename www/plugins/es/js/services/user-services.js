@@ -362,6 +362,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         _.forEach(datas, function(data) {
           if (!data.uid && data[pubkeyAtributeName]) {
             data.uid = uidsByPubkey[data[pubkeyAtributeName]];
+            // Remove name if redundant with uid
+            if (data.uid && data.uid == data.name) {
+              return data.name;
+            }
           }
         });
         deferred.resolve(datas);

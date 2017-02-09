@@ -13,8 +13,15 @@
       </h3>
     </div>
 
-    <div class="col col-20">
-      <h3 class="positive"><i class="ion-person"></i> {{block.name||block.uid}}</h3>
+    <div class="col">
+      <h3>
+        <span class="gray" ng-if=":rebind:expertMode">
+          <i class="ion-key"></i> {{:rebind:block.issuer|formatPubkey}}
+        </span>
+        <span class="positive">
+          <i class="ion-person"></i> {{:rebind:block.name||block.uid}}
+        </span>
+      </h3>
     </div>
 
     <div class="col col-20"></div>

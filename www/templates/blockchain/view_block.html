@@ -36,6 +36,9 @@
                  ui-sref="app.wot_identity({pubkey:issuer.pubkey, uid: issuer.uid})">
                 <i class="icon ion-person positive"></i>
                 {{issuer.name||issuer.uid}}
+                <span class="gray" ng-if="issuer.name">
+                  ({{issuer.uid}})
+                </span>
               </a>
             </h3>
 

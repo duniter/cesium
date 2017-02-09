@@ -115,11 +115,11 @@
   },
   "BLOCKCHAIN": {
     "LOOKUP": {
-      "SEARCH_HELP": "Numéro de bloc, hash, etc.",
+      "SEARCH_HELP": "Numéro de bloc, hash, clé publique, etc.",
       "POPOVER_FILTER_TITLE": "Filtres",
       "HEADER_MEDIAN_TIME": "Date / Heure",
       "HEADER_BLOCK": "Bloc #",
-      "HEADER_ISSUER": "Propriétaire du noeud",
+      "HEADER_ISSUER": "Noeud émetteur",
       "BTN_LAST": "Derniers blocs"
     },
     "ERROR": {

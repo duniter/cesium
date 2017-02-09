@@ -38,6 +38,7 @@
     "NO_ACCOUNT_QUESTION": "Not a member yet? Register now!",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
+    "SEARCHING": "Searching...",
     "FROM": "From",
     "TO": "To",
     "COPY": "Copy",
@@ -52,6 +53,7 @@
     "DISABLE": "Disabled",
     "RESULTS_LIST": "Results:",
     "RESULTS_COUNT": "{{count}} results",
+    "EXECUTION_TIME": "executed in {{duration|formatDurationMs}}",
     "SHOW_VALUES": "Display values openly?",
     "POPOVER_ACTIONS_TITLE": "Options",
     "SHOW_MORE": "Show more",
@@ -269,7 +271,8 @@
       "PENDING_LIST": "Pending certifications",
       "RECEIVED": "Received certifications",
       "RECEIVED_BY": "Certifications received by {{uid}}",
-      "ERROR": "Received certifications in error"
+      "ERROR": "Received certifications in error",
+      "SENTRY_MEMBER": "Referring member"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications sent",

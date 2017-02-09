@@ -121,6 +121,9 @@
       "HEADER_BLOCK": "Block #",
       "HEADER_ISSUER": "Peer owner",
       "BTN_LAST": "Last blocks"
+    },
+    "ERROR": {
+      "SEARCH_BLOCKS_FAILED": "Error while searching blocks."
     }
   },
   "MARKET": {

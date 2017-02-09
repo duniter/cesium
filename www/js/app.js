@@ -145,6 +145,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  .filter('formatDurationMs', function() {
+    return function(input) {
+      return input ? (
+        (input < 1000) ?
+          (input + 'ms') :
+          (input/1000 + 's')
+      ) : '';
+    };
+  })
+
   .filter('formatPeriod', function() {
     return function(input) {
       if (!input) {return null;}

@@ -89,6 +89,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       }, []) : [];
       var result = {
         hits: hits,
+        took: res.took,
         total: res && res.hits && res.hits.total ? (
           options.excludeCurrent ? res.hits.total-1 : res.hits.total) : 0
       };

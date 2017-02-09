@@ -99,6 +99,7 @@ function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockch
       notify: false});
   };
 
+  // This method override the base class method
   $scope.doSearch = function(from) {
     from = angular.isDefined(from) ? from : 0;
     var promise;
@@ -110,18 +111,18 @@ function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockch
     request.from = from;
     request.size = $scope.defaultSizeLimit;
 
-    if ($scope.search.sort) {
-      request.sort = {};
-      request.sort[$scope.search.sort] = !$scope.search.asc ? "desc" : "asc";
-    }
-    else { // default sort
-      request.sort = {
-        "number": "desc"
-      };
-    }
-
     // last block
     if ($scope.search.type == 'last') {
+      // add sort
+      if ($scope.search.sort) {
+        request.sort = {};
+        request.sort[$scope.search.sort] = !$scope.search.asc ? "desc" : "asc";
+      }
+      else { // default sort
+        request.sort = {
+          "number": "desc"
+        };
+      }
       request.excludeCurrent = true;
       promise = esBlockchain.block.search($scope.currency, request);
     }
@@ -129,12 +130,29 @@ function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockch
     // Full text search
     else if ($scope.search.type == 'text') {
 
+      // add sort
+      if ($scope.search.sort) {
+        request.sort = $scope.search.sort + ':' + (!$scope.search.asc ? "desc" : "asc");
+      }
+      else { // default sort
+        request.sort = "number:desc";
+      }
+
       promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
     }
 
+    var time = new Date().getTime();
     return promise
       .then(function(result) {
-        $scope.doPrepareResult(result.hits);
+        return $scope.doPrepareResult(result.hits)
+          .then(function() {
+            // remove 'name' if
+            return result;
+          });
+      })
+      .then(function(result) {
+        $scope.showPubkey = ($scope.search.sort == 'issuer');
+        $scope.search.took = (new Date().getTime() - time);
         $scope.doDisplayResult(result.hits, from, result.total);
         $scope.search.loading = false;
       })

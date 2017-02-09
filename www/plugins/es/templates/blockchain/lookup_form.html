@@ -15,8 +15,9 @@
            ng-model="search.text"
            on-return="doSearchText()">
     <div class="helptip-anchor-center">
-      <a id="helptip-wot-search-text"></a>
+      <a id="helptip-blockchain-search-text"></a>
     </div>
+
   </label>
 
   <div class="padding-top padding-xs" style="display: block; height: 60px;">
@@ -28,11 +29,16 @@
       <h4 ng-if="search.type=='text'">
         {{'COMMON.RESULTS_LIST'|translate}}
       </h4>
-      <h5 class="dark" ng-if="!search.loading && search.total" translate="COMMON.RESULTS_COUNT" translate-values="{count: search.total}">
+      <h5 class="dark" ng-if="!search.loading && search.total">
+        <span translate="COMMON.RESULTS_COUNT" translate-values="{count: search.total}"></span>
+        <small class="gray" ng-if=":rebind:search.took && expertMode">
+          - {{:rebind:'COMMON.EXECUTION_TIME'|translate: {duration: search.took} }}
+        </small>
       </h5>
       <h5 class="gray" ng-if="search.loading" >
         <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
-        <span translate>NETWORK.VIEW.LOADING_PEERS</span>
+        <span translate>COMMON.SEARCHING</span>
+        <br/>
       </h5>
     </div>
 
@@ -43,6 +49,10 @@
          ng-click="doSearchLast()">
         {{'BLOCKCHAIN.LOOKUP.BTN_LAST' | translate}}
       </a>
+
+      <!--<a class="button button-text button-small ink icon icon-help" ng-click="showHelpModal('join-salt')">
+        {{'BLOCKCHAIN.LOOKUP.HELP' | translate}}
+      </a>-->
       &nbsp;
       <button class="button button-small button-stable ink"
               ng-click="doSearchText()">

@@ -213,9 +213,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           return -1 * b.number;
         });
         var total = ((from===0) ? blocks[0].number: $scope.search.results[0].number) + 1;
-        return csWot.extendAll(blocks, 'issuer')
+        return $scope.doPrepareResult(blocks, from)
           .then(function() {
-            $scope.doPrepareResult(blocks, from);
             $scope.doDisplayResult(blocks, from, total);
             $scope.search.loading = false;
           });
@@ -253,6 +252,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         }
       });
     }
+
+    return csWot.extendAll(blocks, 'issuer');
   };
 
   $scope.doDisplayResult = function(res, offset, total) {
@@ -309,7 +310,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     }
 
     $scope.wsBlock.on(function(json) {
-      if ($scope.search.loading || !json || $scope.search.type != 'last') return; // skip
+      // TODO : skip if sort on some field
+      if ($scope.search.loading || !json || $scope.search.type != 'last' || !$scope.search.sort) return; // skip
 
       var block = new Block(json);
       block.cleanData(); // release arrays content
