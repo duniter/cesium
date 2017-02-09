@@ -1044,6 +1044,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     createAndSendTx = function(block, destPub, amount, inputs, comments) {
 
       // Make sure a TX in compact mode has no more than 100 lines (fix #118)
+      // (If more than 100 lines, send to TX to himself first, then its result as sources for the final TX)
       if (inputs.sources.length > 40) {
         console.debug("[Wallet] TX has to many sources. Will chain TX...");
 
@@ -1061,7 +1062,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
 
         // Send inputs first slice
-        return createAndSendTx(block, data.pubkey/*to himself*/, firstSlice.amount, firstSlice) // comment ot need
+        return createAndSendTx(block, data.pubkey/*to himself*/, firstSlice.amount, firstSlice) // comment not need
           .then(function(res) {
             _.forEach(firstSlice.sources, function(source) {
               source.consumed=true;
