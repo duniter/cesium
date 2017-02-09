@@ -119,8 +119,7 @@ Block.prototype.parseTransactions = function(transactions) {
     }, []);
 
     // Special cas for TX to himself
-    if (!obj.error && obj.outputs.length == 0) {
-      console.log('OKOKOK');
+    if (!obj.error && !obj.outputs.length) {
       obj.toHimself = true;
     }
 
