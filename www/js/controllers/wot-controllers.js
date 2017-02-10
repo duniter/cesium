@@ -525,12 +525,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, UIU
               .then(function(cert) {
                 UIUtils.loading.hide();
                 if (cert) {
-                  cert.uid = csWallet.data.uid;
-                  cert.pubkey = csWallet.data.pubkey;
-                  cert.isMember = csWallet.data.isMember;
+                  $scope.prepareNewCert(cert);
+                  $scope.alreadyCertified = true;
                   UIUtils.alert.info('INFO.CERTIFICATION_DONE');
                   $scope.formData.received_cert_pending.unshift(cert);
-                  $scope.motionCertifications();
+                  $scope.doMotion();
                 }
               })
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
@@ -621,9 +620,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, UIU
               .then(function(cert) {
                 UIUtils.loading.hide();
                 if (cert) {
+                  $scope.prepareNewCert(cert);
                   UIUtils.alert.info('INFO.CERTIFICATION_DONE');
                   $scope.formData.given_cert_pending.unshift(cert);
-                  $scope.motionGivenCertifications();
+                  $scope.doMotion();
                 }
               })
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
@@ -633,6 +633,16 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, UIU
 
   };
 
+  // Add wallet's data to a new cert
+  $scope.prepareNewCert = function(cert) {
+    cert.uid = csWallet.data.uid;
+    cert.pubkey = csWallet.data.pubkey;
+    cert.isMember = csWallet.data.isMember;
+    cert.avatar = csWallet.data.avatar;
+    cert.name = csWallet.data.name;
+  };
+
+  // Could be override by subclass
   $scope.doMotion = function() {
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight();
