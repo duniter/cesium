@@ -179,8 +179,20 @@ function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockch
   };
 }
 
-function ESNetworkViewExtendController($scope, PluginService) {
+function ESNetworkViewExtendController($scope, PluginService, csSettings) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
+
+  $scope.updateView = function() {
+    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
+      csSettings.data.plugins.es.enable :
+      !!csSettings.data.plugins.host;
+  };
+
+  csSettings.api.data.on.changed($scope, function() {
+    $scope.updateView();
+  });
+
+  $scope.updateView();
 }

@@ -6,6 +6,7 @@ angular.module('cesium.es.plugin', [
     'cesium.es.app.controllers',
     'cesium.es.common.controllers',
     'cesium.es.settings.controllers',
+    'cesium.es.currency.controllers',
     'cesium.es.wot.controllers',
     'cesium.es.user.controllers',
     'cesium.es.message.controllers',

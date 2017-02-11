@@ -353,7 +353,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
             console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
             $scope.search.total++;
             $scope.search.results.push(block);
-            return showBlock(existingBlock);
+            return showBlock(block);
           });
       }
       else {
@@ -380,7 +380,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
               // Insert at index 0
               $scope.search.total++;
               $scope.search.results.splice(0, 0, block);
-              return showBlock(existingBlock);
+              return showBlock(block);
             });
         }
       }
