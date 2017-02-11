@@ -59,6 +59,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
   $scope.enter = function(e, state) {
     if ($scope.networkStarted) return;
     $scope.networkStarted = true;
+    $scope.search.loading = true;
     csCurrency.default()
       .then(function (currency) {
         if (currency) {
@@ -81,7 +82,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
       });
 
   };
-  $scope.$on('$ionicView.enter', $scope.enter);
+  //$scope.$on('$ionicView.enter', $scope.enter);
   $scope.$on('$ionicParentView.enter', $scope.enter);
 
   /**
@@ -95,6 +96,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
   };
   $scope.$on('$ionicView.beforeLeave', $scope.leave);
   $scope.$on('$ionicParentView.beforeLeave', $scope.leave);
+  $scope.$on('$destroy', $scope.leave);
 
   $scope.computeOptions = function() {
     var options = {
@@ -125,7 +127,10 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
           $scope.refreshing = true;
           csWot.extendAll(data.peers)
             .then(function() {
-              $scope.updateView(data);
+              // Avoid to refresh if view has been leaving
+              if ($scope.search.loading) {
+                $scope.updateView(data);
+              }
               $scope.refreshing = false;
             });
         }
@@ -140,7 +145,8 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
     console.debug("[peers] Updating UI");
     $scope.search.results = data.peers;
     $scope.search.memberPeersCount = data.memberPeersCount;
-    $scope.search.loading = csNetwork.isBusy();
+    // Always tru if network not started (e.g. after leave+renter the view)
+    $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
   };
 
   $scope.refresh = function() {

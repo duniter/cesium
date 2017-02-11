@@ -365,37 +365,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Layout Methods
   ////////////////////////////////////////
   $scope.showFab = function(id, timeout) {
-    if (!timeout) {
-      timeout = 900;
-    }
-    $timeout(function () {
-      // Could not use 'getElementById', because it return only once element,
-      // but many fabs can have the same id (many view could be loaded at the same time)
-      var fabs = document.getElementsByClassName('button-fab');
-      _.forEach(fabs, function(fab){
-        if (fab.id == id) {
-          fab.classList.toggle('on', true);
-        }
-      });
-    }, timeout);
+    UIUtils.motion.toggleOn({selector: '#'+id + '.button-fab'}, timeout);
   };
 
   $scope.hideFab = function(id, timeout) {
-    if (!timeout) {
-      timeout = 10;
-    }
-    $timeout(function () {
-      // Could not use 'getElementById', because it return only once element,
-      // but many fabs can have the same id (many view could be loaded at the same time)
-      var fabs = document.getElementsByClassName('button-fab');
-      _.forEach(fabs, function(fab){
-        if (fab.id == id) {
-          fab.classList.toggle('on', false);
-        }
-      });
-    }, timeout);
+    UIUtils.motion.toggleOff({selector: '#'+id + '.button-fab'}, timeout);
   };
-
 
 }
 

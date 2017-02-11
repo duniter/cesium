@@ -677,7 +677,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $tr
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $controller, $timeout, UIUtils) {
+function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWallet) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -723,7 +723,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils) {
 }
 
 /**
- * Certifications controller - should extend WotIdentityAbstractCtrl
+ * Certifications controller - extend WotIdentityAbstractCtrl
  */
 function WotCertificationsViewController($scope, $rootScope, $controller, $timeout, csSettings, csWallet, UIUtils) {
   'ngInject';
@@ -749,6 +749,9 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
             $scope.showHelpTip();
           });
       }
+      else {
+        $scope.doMotion();
+      }
     }
 
     // Load from wallet pubkey
@@ -759,6 +762,9 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
             $scope.doMotion();
             $scope.showHelpTip();
           });
+      }
+      else {
+        $scope.doMotion();
       }
     }
 
@@ -777,32 +783,43 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
       });
   };
 
-  $scope.doMotion = function() {
-    // Effects
-    $scope.doMotionReceivedCertifications(100);
+  $scope.doMotion = function(skipItems) {
+    // Motions received certifications part
+    $scope.doMotionReceivedCertifications(0, skipItems);
+
+    // Motion on avatar part
     if ($scope.motions.avatar) {
       // Effects
       $timeout(function () {
-        UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
+        UIUtils.motion.toggleOn({
+          selector: '.col-avatar .motion'
+        });
       }, 300);
     }
-    $scope.doMotionGivenCertifications($scope.motions.receivedCertifications ? 900 : 100);
+
+    // Motion on given certification part
+    $scope.doMotionGivenCertifications($scope.motions.receivedCertifications ? 800 : 10, skipItems);
   };
 
   // Effects on received certifcations
-  $scope.doMotionReceivedCertifications = function(timeout) {
+  $scope.doMotionReceivedCertifications = function(timeout, skipItems) {
     if ($scope.motions.receivedCertifications) {
-      // Effects
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
-        UIUtils.ink({selector: '.list.certifications .ink'});
-      }, timeout || 10);
+      if (!skipItems) {
+        // List items
+        $timeout(function () {
+          UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
+          UIUtils.ink({selector: '.list.certifications .ink'});
+        }, timeout || 10);
+      }
+
+      // Fab button
       if ($scope.canCertify || $rootScope.tour) {
-        $scope.showFab('fab-certify');
+        $scope.showFab('fab-certify', timeout);
       }
     }
     // If not enable, make sure to hide fab button
     else {
+      // Hide fab button
       if ($scope.canCertify || $rootScope.tour) {
         $scope.hideFab('fab-certify', 0);
       }
@@ -810,13 +827,17 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
   };
 
   // Effects on given certifcations
-  $scope.doMotionGivenCertifications = function(timeout) {
+  $scope.doMotionGivenCertifications = function(timeout, skipItems) {
 
     if ($scope.motions.givenCertifications) {
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
-        UIUtils.ink({selector: '.list.given-certifications .ink'});
-      }, timeout || 10);
+      if (!skipItems) {
+        // List items
+        $timeout(function() {
+          UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
+          UIUtils.ink({selector: '.list.given-certifications .ink'});
+        }, timeout || 10);
+      }
+      // Fab button
       if ($scope.canSelectAndCertify || $rootScope.tour) {
         $scope.showFab('fab-select-certify');
       }
@@ -824,6 +845,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
 
     // If not enable, make sure to hide fab button
     else {
+      // Hide fab button
       if ($scope.canSelectAndCertify || $rootScope.tour) {
         $scope.hideFab('fab-select-certify', 0);
       }

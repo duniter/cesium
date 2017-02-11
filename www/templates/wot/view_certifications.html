@@ -1,38 +1,21 @@
-<ion-view left-buttons="leftButtons"
-          cache-view="false">
+<ion-view left-buttons="leftButtons">
   <ion-nav-title>
     <span class="visible-xs visible-sm">{{::formData.uid}}</span>
     <span class="hidden-xs hidden-sm" translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.uid}"></span>
   </ion-nav-title>
 
-  <ion-content class="certifications no-header">
-    <ion-tabs class="tabs-positive tabs-icon-top">
+  <ion-tabs class="tabs-positive tabs-icon-top certifications">
 
-      <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
-               ui-sref="app.wot_cert.received({pubkey: formData.pubkey, uid: formData.uid})">
-        <ion-nav-view name="tab-received-cert"></ion-nav-view>
-      </ion-tab>
+    <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
+             ui-sref="app.wot_cert.received({pubkey: formData.pubkey, uid: formData.uid})">
+      <ion-nav-view name="tab-received-cert"></ion-nav-view>
+    </ion-tab>
 
-      <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
-               ui-sref="app.wot_cert.given({pubkey: formData.pubkey, uid: formData.uid})">
-        <ion-nav-view name="tab-given-cert"></ion-nav-view>
-      </ion-tab>
+    <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
+             ui-sref="app.wot_cert.given({pubkey: formData.pubkey, uid: formData.uid})">
+      <ion-nav-view name="tab-given-cert"></ion-nav-view>
+    </ion-tab>
 
-    </ion-tabs>
-  </ion-content>
-
-  <!-- fab button -->
-  <div class="visible-xs visible-sm">{{$root.tour}}
-    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
-            ng-click="certify()"
-            ng-if="(formData.hasSelf && canCertify && !alreadyCertified) || $root.tour">
-      <i class="icon ion-ribbon-b"></i>
-    </button>
-    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
-            ng-if="canSelectAndCertify || $root.tour"
-            ng-click="selectAndCertify()">
-      <i class="icon ion-plus"></i>
-    </button>
-  </div>
+  </ion-tabs>
 
 </ion-view>

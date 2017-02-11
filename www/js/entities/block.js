@@ -30,13 +30,12 @@ Block.prototype.isEmpty = function(){
   return !this.transactionsCount &&
     !this.certificationsCount &&
     !this.joinersCount &&
+    !this.dividend &&
     !this.activesCount &&
     !this.identitiesCount &&
     !this.leaversCount &&
     !this.excludedCount &&
-    !this.revokedCount &&
-    !this.dividend
-    ;
+    !this.revokedCount;
 };
 
 Block.prototype.parseData = function() {

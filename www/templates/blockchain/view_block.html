@@ -119,8 +119,10 @@
           <ion-item ng-if="!compactMode || formData.dividend"
                     class="item-icon-left item-text-wrap" copy-on-click="{{::formData.dividend/100}}">
             <i class="icon ion-arrow-up-c"></i>
-            {{'COMMON.UNIVERSAL_DIVIDEND'|translate}}
-            <h4 class="gray">{{'BLOCKCHAIN.VIEW.UNIVERSAL_DIVIDEND_HELP'|translate: {membersCount: formData.membersCount} }}</h4>
+            <div class="col col-60">
+              {{'COMMON.UNIVERSAL_DIVIDEND'|translate}}
+              <h4 class="gray">{{'BLOCKCHAIN.VIEW.UNIVERSAL_DIVIDEND_HELP'|translate: {membersCount: formData.membersCount} }}</h4>
+            </div>
             <span class="badge badge-balanced" ng-if="formData.dividend">
               +1 <span ng-bind-html="formData.currency|currencySymbol: {useRelative: true} "></span> / {{'COMMON.MEMBER'|translate|lowercase}}
             </span>

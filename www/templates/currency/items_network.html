@@ -2,14 +2,14 @@
   <ion-item id="helptip-network-blockchain"
             class="item-icon-left item-text-wrap">
     <i class="icon ion-clock"></i>
-    <span translate>CURRENCY.VIEW.MEDIAN_TIME</span>
-    <span class="item-note dark">{{formData.medianTime | formatDate}}</span>
+    <span class="col col-60" translate>CURRENCY.VIEW.MEDIAN_TIME</span>
+    <span class="badge badge-stable">{{formData.medianTime | formatDate}}</span>
   </ion-item>
 
 
   <ion-item class="item-icon-left item-text-wrap">
     <i class="icon ion-lock-combination"></i>
-    <span translate>CURRENCY.VIEW.POW_MIN</span>
+    <span class="col col-75" translate>CURRENCY.VIEW.POW_MIN</span>
     <span class="badge badge-stable">{{formData.difficulty | formatInteger}}</span>
   </ion-item>
 
@@ -19,11 +19,11 @@
 
   <ion-item class="item-icon-left item-text-wrap">
     <i class="icon ion-clock" style="position: absolute; font-size: 20px; left: 16px; margin-top: 11px"></i>
-    <b class="ion-lock-combination" style="position: absolute; font-size: 16px; left: 14px; margin-top: -4px;"></b>
-    <b class="ion-arrow-right-c" style="position: absolute; font-size: 12px; left: 28px; margin-top: -4px;"></b>
-    <b class="ion-lock-combination" style="position: absolute; font-size: 16px; left: 38px; margin-top: -4px;"></b>
+    <b class="icon-secondary ion-lock-combination" style="left: 14px; margin-top: -4px;"></b>
+    <b class="icon-secondary ion-arrow-right-c" style="font-size: 12px; left: 28px; margin-top: -4px;"></b>
+    <b class="icon-secondary ion-lock-combination" style="left: 38px; margin-top: -4px;"></b>
 
-    <span translate>CURRENCY.VIEW.AVG_GEN_TIME</span>
+    <span class="col col-75" translate>CURRENCY.VIEW.AVG_GEN_TIME</span>
     <span class="badge badge-stable">{{formData.avgGenTime | formatDuration}}</span>
   </ion-item>
 

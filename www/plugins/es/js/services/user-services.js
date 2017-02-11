@@ -262,8 +262,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       pubkeyAtributeName = pubkeyAtributeName || 'pubkey';
       text = text ? text.toLowerCase().trim() : text;
-      var dataByPubkey = {};
-
+      var dataByPubkey;
       var request = {
         query: {},
         highlight: {fields : {title : {}}},
@@ -273,34 +272,44 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       };
 
       if (datas.length > 0) {
-        // collect pubkeys
+        // collect pubkeys and fill values map
+        dataByPubkey = {};
         _.forEach(datas, function(data) {
           var pubkey = data[pubkeyAtributeName];
           if (pubkey) {
             var values = dataByPubkey[pubkey];
             if (!values) {
-              values = [];
+              values = [data];
               dataByPubkey[pubkey] = values;
             }
-            values.push(data);
+            else {
+              values.push(data);
+            }
           }
         });
         var pubkeys = _.keys(dataByPubkey);
-        request.query.constant_score = {
-           filter: {
-             bool: {should: [{terms : {_id : pubkeys}}]}
-           }
-        };
-        request.size = request.length;
+        // Make sure all results will be return
+        request.size = (pubkeys.length <= request.size) ? request.size : pubkeys.length;
         if (!text) {
           delete request.highlight; // highlight not need
+          request.query.constant_score = {
+            filter: {
+              terms : {_id : pubkeys}
+            }
+          };
         }
         else {
-          request.query.constant_score.filter.bool.should.push(
-            {bool: {must: [
-                {match: {title: text}},
-                {prefix: {title: text}}
-              ]}});
+          request.query.constant_score = {
+            filter: {bool: {should: [
+                {terms : {_id : pubkeys}},
+                {bool: {
+                    must: [
+                      {match: {title: text}},
+                      {prefix: {title: text}}
+                    ]}
+                }
+            ]}}
+          };
         }
       }
       else if (text){
@@ -332,7 +341,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       .then(function() {
         if (hits.total > 0) {
           _.forEach(hits.hits, function(hit) {
-            var values = dataByPubkey[hit._id];
+            var values = dataByPubkey && dataByPubkey[hit._id];
             if (!values) {
               var value = {};
               value[pubkeyAtributeName] = hit._id;

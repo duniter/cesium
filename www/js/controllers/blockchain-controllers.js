@@ -151,12 +151,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
    */
   $scope.leave = function() {
     if ($scope.wsBlock) {
+      console.info('[block] Stopping websocket on block');
       $scope.wsBlock.close();
       delete $scope.wsBlock;
     }
   };
   $scope.$on('îoncView.leave', $scope.leave);
   $scope.$on('$ionicParentView.leave', $scope.leave);
+  $scope.$on('$destroy', $scope.leave);
 
   $scope.doSearchLast = function() {
     $scope.search.type = 'last';
@@ -199,19 +201,26 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     // process blocks
     return promise
       .then(function(blocks) {
+        // If no result
         if (!blocks || !blocks.length) {
           $scope.doDisplayResult([], from, 0);
           $scope.search.loading = false;
           return;
         }
+
+        // Transform to entities
         blocks = blocks.reduce(function(res, json){
           var block = new Block(json);
           block.cleanData(); // release arrays content
           return res.concat(block);
         }, []);
+
+        // Order by number (desc)
         blocks = _.sortBy(blocks, function(b) {
           return -1 * b.number;
         });
+
+        // Prepare then display results
         var total = ((from===0) ? blocks[0].number: $scope.search.results[0].number) + 1;
         return $scope.doPrepareResult(blocks, from)
           .then(function() {
@@ -306,71 +315,75 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.startListenBlock = function() {
     if (!$scope.wsBlock) {
+      console.info('[block] Starting websocket on block');
       $scope.wsBlock = $scope.node.websocket.block();
     }
 
+    var showBlock = function(block){
+      // Force rebind
+      $scope.$broadcast('$$rebind::rebind');
+
+      return $timeout(function () {
+        UIUtils.motion.ripple({
+          startVelocity: 3000,
+          selector: '#block-'+block.number
+        });
+        // Set Ink
+        UIUtils.ink({
+          selector: '#block-'+block.number
+        });
+      }, 100);
+    };
+
     $scope.wsBlock.on(function(json) {
-      // TODO : skip if sort on some field
-      if ($scope.search.loading || !json || $scope.search.type != 'last' || !$scope.search.sort) return; // skip
+      // Skip if still loading or if filter/sort is not the default (not last blocks)
+      if ($scope.search.loading || !json || $scope.search.type != 'last' ||
+        ($scope.search.sort && $scope.search.sort != 'desc')) return; // skip
 
       var block = new Block(json);
       block.cleanData(); // release arrays content
-      csWot.extendAll([block], 'issuer')
-        .then(function() {
-          $scope.search.results = $scope.search.results || [];
 
-          var needRefresh = false;
+      // Make sure results is init
+      $scope.search.results = $scope.search.results || [];
 
-          if (!$scope.search.results.length) {
-            // Prepare the new block, then add it to result
-            $scope.doPrepareResult([block]);
+      if (!$scope.search.results.length) {
+        // Prepare the new block, then add it to result
+        $scope.doPrepareResult([block])
+          .then(function() {
             console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
             $scope.search.total++;
             $scope.search.results.push(block);
-            needRefresh = true;
-          }
-          else {
-            // Find existing block, by number
-            var existingBlock = _.findWhere($scope.search.results, {number: block.number});
+            return showBlock(existingBlock);
+          });
+      }
+      else {
+        // Find existing block, by number
+        var existingBlock = _.findWhere($scope.search.results, {number: block.number});
 
-            // replace existing block (fork could have replaced previous block)
-            if (existingBlock) {
-              if (existingBlock.hash != block.hash) {
-                console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
-                // Prepare the new block, and refresh the previous latest block (could be compacted)
-                $scope.doPrepareResult([block, $scope.search.results[0]]);
+        // replace existing block (fork could have replaced previous block)
+        if (existingBlock) {
+          if (existingBlock.hash != block.hash) {
+            console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
+            // Prepare the new block, and refresh the previous latest block (could be compacted)
+            $scope.doPrepareResult([block, $scope.search.results[0]])
+              .then(function() {
                 angular.copy(block, existingBlock);
-                needRefresh = true;
-
-              }
-            }
-            else {
-              console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
-              // Prepare the new block, and refresh the previous latest block (could be compacted)
-              $scope.doPrepareResult([block, $scope.search.results[0]]);
+                return showBlock(existingBlock);
+              });
+          }
+        }
+        else {
+          console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+          // Prepare the new block, and refresh the previous latest block (could be compacted)
+          $scope.doPrepareResult([block, $scope.search.results[0]])
+            .then(function() {
               // Insert at index 0
               $scope.search.total++;
               $scope.search.results.splice(0, 0, block);
-              needRefresh = true;
-            }
-          }
-
-          if (needRefresh) {
-            // Force rebind
-            $scope.$broadcast('$$rebind::rebind');
-
-            $timeout(function () {
-              UIUtils.motion.ripple({
-                startVelocity: 3000,
-                selector: '#block-'+block.number
-              });
-              // Set Ink
-              UIUtils.ink({
-                selector: '#block-'+block.number
-              });
-            }, 100);
-          }
-        });
+              return showBlock(existingBlock);
+            });
+        }
+      }
     });
   };
 

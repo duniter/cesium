@@ -62,7 +62,6 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
     .state('app.currency.tab_network', {
       url: "/network",
-      cache: false,
       views: {
         'tab-network': {
           templateUrl: "templates/currency/tabs/tab_network.html",
@@ -73,7 +72,6 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
     .state('app.currency.tab_blocks', {
       url: "/blocks",
-      cache: false,
       views: {
         'tab-blocks': {
           templateUrl: "templates/currency/tabs/tab_blocks.html",
