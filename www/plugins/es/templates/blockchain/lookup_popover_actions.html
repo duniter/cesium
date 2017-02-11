@@ -5,13 +5,14 @@
   <ion-content scroll="false">
     <div class="list item-text-wrap">
 
-      <a class="item item-icon-left item-icon-right ink"
-         ng-click="toggleSearchType('XXX')">
-        <i class="icon ion-android-people"></i>
-        {{'BLOCKCHAIN.LOOKUP.XXX' | translate}}
-        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='XXX'"></i>
+      <!-- last blocks -->
+      <a ng-if="enableFilter"
+         class="item item-icon-left item-icon-right ink"
+         ng-click="doSearchLast()">
+        <i class="icon ion-clock"></i>
+        {{'BLOCKCHAIN.LOOKUP.BTN_LAST' | translate}}
+        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='last'"></i>
       </a>
-
 
     </div>
   </ion-content>

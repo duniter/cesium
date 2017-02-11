@@ -209,7 +209,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
 
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/popover_actions.html', {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/lookup_popover_actions.html', {
         scope: $scope
       }).then(function(popover) {
         $scope.actionsPopover = popover;

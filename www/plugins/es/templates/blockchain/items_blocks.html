@@ -30,11 +30,19 @@
   </a>
 </div>
 
-<div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
+<div class="padding gray" ng-if=":rebind:!search.loading && !search.results.length" translate>
   COMMON.SEARCH_NO_RESULT
 </div>
 
-<!-- blocks -->
-<ng-repeat ng-repeat="block in search.results"
-           ng-include="!block.empty ? 'templates/blockchain/item_block_lg.html' : 'templates/blockchain/item_block_empty_lg.html'">
-</ng-repeat>
+<!-- blocks (large view) -->
+<ng-if ng-if=":rebind:!smallscreen">
+  <ng-repeat ng-repeat="block in :rebind:search.results track by block.number"
+             ng-include="!block.empty ? 'templates/blockchain/item_block_lg.html' : 'templates/blockchain/item_block_empty_lg.html'">
+  </ng-repeat>
+</ng-if>
+<!-- blocks (small screens) -->
+<ng-if ng-if=":rebind:smallscreen">
+  <ng-repeat ng-repeat="block in :rebind:search.results track by block.number"
+             ng-include="'templates/blockchain/item_block.html'">
+  </ng-repeat>
+</ng-if>

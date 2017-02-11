@@ -332,7 +332,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         UIUtils.ink({
           selector: '#block-'+block.number
         });
-      }, 100);
+      });
     };
 
     $scope.wsBlock.on(function(json) {
@@ -347,12 +347,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       $scope.search.results = $scope.search.results || [];
 
       if (!$scope.search.results.length) {
-        // Prepare the new block, then add it to result
+        console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+        // add it to result
+        $scope.search.total++;
+        $scope.search.results.push(block);
+
+        // Prepare the new block, then show it
         $scope.doPrepareResult([block])
           .then(function() {
-            console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
-            $scope.search.total++;
-            $scope.search.results.push(block);
             return showBlock(block);
           });
       }
@@ -364,22 +366,24 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         if (existingBlock) {
           if (existingBlock.hash != block.hash) {
             console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
-            // Prepare the new block, and refresh the previous latest block (could be compacted)
-            $scope.doPrepareResult([block, $scope.search.results[0]])
+            // Replace existing content
+            angular.copy(block, existingBlock);
+            // Prepare the new block, then show it
+            $scope.doPrepareResult([block, $scope.search.results[1]])
               .then(function() {
-                angular.copy(block, existingBlock);
                 return showBlock(existingBlock);
               });
           }
         }
         else {
           console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
-          // Prepare the new block, and refresh the previous latest block (could be compacted)
-          $scope.doPrepareResult([block, $scope.search.results[0]])
+          // Insert at index 0
+          $scope.search.total++;
+          $scope.search.results.splice(0, 0, block);
+
+          // Prepare the new block, then show it
+          $scope.doPrepareResult([block, $scope.search.results[1]])
             .then(function() {
-              // Insert at index 0
-              $scope.search.total++;
-              $scope.search.results.splice(0, 0, block);
               return showBlock(block);
             });
         }

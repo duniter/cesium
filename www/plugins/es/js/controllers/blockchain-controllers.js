@@ -51,7 +51,7 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
 ;
 
 
-function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockchain, $ionicHistory) {
+function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIUtils, esBlockchain, $ionicHistory) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -85,7 +85,10 @@ function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockch
   };
 
   $scope.doSearchLast = function() {
+    $scope.hideActionsPopover();
+
     $scope.search.type = 'last';
+    $scope.search.sort = undefined;
     $scope.doSearch();
 
     $ionicHistory.nextViewOptions({
@@ -176,6 +179,32 @@ function ESBlockLookupController($scope, $state, $controller, UIUtils, esBlockch
 
   $scope.showHelpTip = function() {
 
+  };
+
+  /* -- popups -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/blockchain/lookup_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
   };
 }
 

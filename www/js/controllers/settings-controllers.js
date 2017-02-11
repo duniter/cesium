@@ -201,7 +201,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/settings/popover_actions.html', {
+      $ionicPopover.fromTemplateUrl('templates/settings/lookup_popover_actions.html', {
         scope: $scope
       }).then(function(popover) {
         $scope.actionsPopover = popover;

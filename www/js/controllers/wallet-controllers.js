@@ -60,7 +60,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   });
 
-  $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
+  $ionicPopover.fromTemplateUrl('templates/wallet/lookup_popover_actions.html', {
     scope: $scope
   }).then(function(popover) {
     $scope.actionsPopover = popover;
@@ -532,7 +532,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
+      $ionicPopover.fromTemplateUrl('templates/wallet/lookup_popover_actions.html', {
         scope: $scope
       }).then(function(popover) {
         $scope.actionsPopover = popover;
