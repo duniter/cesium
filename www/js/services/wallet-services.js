@@ -1258,7 +1258,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     */
     self = function(uid, needToLoadRequirements) {
       if (!BMA.regex.USER_ID.test(uid)){
-        throw new Error('ERROR.INVALID_USER_ID');
+        return $q.reject({message: 'ERROR.INVALID_USER_ID'});
       }
       var block;
       return $q.all([

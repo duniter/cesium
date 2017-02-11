@@ -60,17 +60,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   });
 
-  $ionicPopover.fromTemplateUrl('templates/wallet/lookup_popover_actions.html', {
-    scope: $scope
-  }).then(function(popover) {
-    $scope.actionsPopover = popover;
-  });
-
-  //Cleanup the popover when we're done with it!
-  $scope.$on('$destroy', function() {
-    $scope.actionsPopover.remove();
-  });
-
   $scope.onSettingsChanged = function() {
     if (!$scope.walletData || $scope.loading) return;
     $scope.unit = $filter('currencySymbol')($scope.walletData.currency, csSettings.data.useRelative);
@@ -532,7 +521,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/wallet/lookup_popover_actions.html', {
+      $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {
         scope: $scope
       }).then(function(popover) {
         $scope.actionsPopover = popover;
