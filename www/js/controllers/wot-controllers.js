@@ -129,7 +129,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
 
-
   .controller('WotCertificationsTabsCtrl', WotCertificationsTabsController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
@@ -406,7 +405,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
 
 }
 
-function WotLookupModalController($scope, $focus){
+function WotLookupModalController($scope, $controller, $focus){
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -443,12 +442,13 @@ function WotLookupModalController($scope, $focus){
  * @param $state
  * @param $timeout
  * @param UIUtils
+ * @param Modals
  * @param csConfig
  * @param csWot
  * @param csWallet
  * @constructor
  */
-function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, UIUtils, csConfig, csWot, csWallet) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $translate, UIUtils, Modals, csConfig, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {};
@@ -862,6 +862,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
 
 
 function WotCertificationsTabsController($scope, $stateParams) {
+  'ngInject';
 
   $scope.formData = {
     pubkey: $stateParams.pubkey,
