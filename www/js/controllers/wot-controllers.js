@@ -37,6 +37,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.wot_cert.received', {
         url: "/received",
+        cache: false,
         views: {
           'tab-received-cert': {
             templateUrl: "templates/wot/tabs/tab_received_certifications.html",
@@ -50,6 +51,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       .state('app.wot_cert.given', {
         url: "/given",
+        cache: false,
         views: {
           'tab-given-cert': {
             templateUrl: "templates/wot/tabs/tab_given_certifications.html",
