@@ -65,6 +65,9 @@
                   ng-class="{'positive': formData.isMember, 'gray': !formData.isMember}">
                   {{::formData.name||formData.uid}}
                 </h4>
+                <h5 class="text-center gray">
+                  <i class="icon ion-key"></i> {{formData.pubkey|formatPubkey}}
+                </h5>
                 <h5 class="assertive" ng-if="(formData.name||formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</h5>
               </a>
             </div>

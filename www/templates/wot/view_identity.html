@@ -63,8 +63,8 @@
            ng-if="formData.hasSelf"
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
+          <b ng-if="formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
-
           <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
                                   requirements="formData.requirements"
                                   parameters="{sigQty: formData.sigQty}">

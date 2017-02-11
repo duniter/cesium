@@ -102,6 +102,7 @@
              ng-if="walletData.isMember||walletData.requirements.pendingMembership"
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
+            <b ng-if="walletData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
             {{:locale:'ACCOUNT.CERTIFICATION_COUNT'|translate}}
             <cs-badge-certification requirements="walletData.requirements"
                                     parameters="{sigQty: walletData.parameters.sigQty}">
