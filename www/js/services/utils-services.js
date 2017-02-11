@@ -548,7 +548,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
     $timeout(function () {
       var elements = document.querySelectorAll(options.selector);
-      elements && _.forEach(elements, function(element){
+      if (elements) _.forEach(elements, function(element){
         element.classList.toggle('on', true);
       });
     }, timeout || 100);
@@ -572,7 +572,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
     $timeout(function () {
       var elements = document.querySelectorAll(options.selector);
-      elements && _.forEach(elements, function(element){
+      if (elements) _.forEach(elements, function(element){
         element.classList.toggle('on', false);
       });
     }, timeout || 900);
