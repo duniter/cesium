@@ -36,7 +36,7 @@ function JoinController($timeout, Modals) {
 }
 
 
-function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWallet, csCurrency) {
+function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWallet, csCurrency, BMA) {
   'ngInject';
 
   $scope.formData = {
@@ -57,6 +57,7 @@ function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWa
   $scope.showUsername = false;
   $scope.showPassword = false;
   $scope.smallscreen = UIUtils.screen.isSmall();
+  $scope.userIdPattern = BMA.constants.regex.USER_ID;
 
   csCurrency.load()
   .then(function (data) {

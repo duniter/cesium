@@ -413,7 +413,7 @@
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
     "NOT_ENOUGH_CREDIT": "Crédit insufisant.",
     "INVALID_NODE_SUMMARY": "Nœud injoignable ou adresse invalide.",
-    "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
+    "INVALID_USER_ID": "Le pseudonyme ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
     "IDENTITY_REVOKED": "Cette identité <b>a été révoquée {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). Elle ne peut plus devenir membre.",
