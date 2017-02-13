@@ -143,8 +143,18 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return helptipScope;
   };
 
-  $scope.startHelpTour = function() {
+  $scope.startHelpTour = function(skipClearCache) {
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. csWallet)
+
+    //
+    if (!skipClearCache) {
+      $ionicHistory.clearHistory();
+      return $ionicHistory.clearCache()
+        .then(function() {
+          $scope.startHelpTour(true/*continue*/);
+        });
+    }
+
     var helptipScope = $scope.createHelptipScope(true);
     return helptipScope.startHelpTour()
     .then(function() {

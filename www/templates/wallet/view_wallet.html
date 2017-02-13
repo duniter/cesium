@@ -87,8 +87,8 @@
         <div class="list animate-fade-slide-in-right">
 
           <!-- Certifications -->
-          <a class="item item-icon-left item-icon-right item-text-wrap ink"
-             id="helptip-wallet-certifications"
+          <a id="helptip-wallet-certifications"
+             class="item item-icon-left item-icon-right item-text-wrap ink"
              ng-if="formData.isMember||formData.requirements.pendingMembership"
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
@@ -101,9 +101,10 @@
           </a>
 
           <!-- Signature stock -->
-          <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
-               ng-if="formData.isMember"
-               ng-click="showGivenCertifications()">
+          <a id="helptip-wallet-given-certifications"
+             class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
+             ng-if="formData.isMember"
+             ng-click="showGivenCertifications()">
             <i class="icon ion-ribbon-a"></i>
             <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
             <i class="gray icon ion-ios-arrow-right"></i>
@@ -144,7 +145,8 @@
           </span>
 
           <!-- Public key -->
-          <span class="item item-icon-left item-text-wrap ink"
+          <span id="helptip-wallet-pubkey"
+                class="item item-icon-left item-text-wrap ink"
                 on-hold="copy(formData.pubkey)"
                 copy-on-click="{{formData.pubkey}}">
             <i class="icon ion-key"></i>
