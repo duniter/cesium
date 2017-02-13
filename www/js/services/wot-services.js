@@ -101,7 +101,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                                       requirements.membershipPendingExpiresIn <= 0 );
             requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
             requirements.pendingMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
-            requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
+            requirements.isMember = (requirements.membershipExpiresIn > 0);
+            // Force certification count to 0, is not a member yet - fix #269
+            requirements.certificationCount = (requirements.isMember && requirements.certifications) ? requirements.certifications.length : 0;
             requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
               if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
                 cert.willExpire = true;
@@ -109,7 +111,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }
               return count;
             }, 0) : 0;
-            requirements.isMember = (requirements.membershipExpiresIn > 0);
 
             resolve(requirements);
           })
