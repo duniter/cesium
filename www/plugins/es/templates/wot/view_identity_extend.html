@@ -9,50 +9,10 @@
 <!-- General section -->
 <ng-if ng-if="enable && extensionPoint === 'general'">
 
-  <!-- About me -->
-  <ng-if ng-if="::formData.profile.description">
-    <div class="item item-divider" translate>PROFILE.DESCRIPTION</div>
+  <span class="item item-divider item-divider-top-border" translate>PROFILE.PROFILE_DIVIDER</span>
 
-    <ion-item class="item-icon-left item-text-wrap">
-      <span class="text-keep-lines">{{formData.profile.description}}
-      </span>
-    </ion-item>
-  </ng-if>
-
-
-  <!-- Localisation -->
-  <ng-if ng-if="::formData.profile.address || formData.profile.city">
-    <div class="item item-divider" translate>PROFILE.LOCATION_DIVIDER</div>
-
-    <ion-item class="item-icon-left ink" copy-on-click="{{::formData.profile.address ? formData.profile.address + '&#10;' : ''}}{{::formData.profile.city}}">
-      <span class="text-keep-lines" ng-if="::formData.profile.address">{{formData.profile.address}}
-      </span>
-      <span>{{::formData.profile.city}}</span>
-    </ion-item>
-  </ng-if>
-
-  <!-- Socials networks -->
-  <ng-if ng-if="::formData.profile.socials && formData.profile.socials.length>0">
-    <span class="item item-divider" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</span>
-
-    <ion-item class="item-icon-left item-text-wrap"
-              type="no-padding item-text-wrap"
-              ng-repeat="social in ::formData.profile.socials track by social.url"
-              id="social-{{::social.url|formatSlug}}">
-      <i class="icon ion-social-{{::social.type}}"
-         ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
-      <p ng-if="::social.type && social.type != 'web'">{{::social.type}}</p>
-      <h2>
-        <a href="{{social.url}}" ng-if="::social.type != 'email'" target="_blank">{{::social.url}}</a>
-        <a href="mailto:{{social.url}}" ng-if="::social.type == 'email'">{{::social.url}}</a>
-      </h2>
-    </ion-item>
-  </ng-if>
-
-</ng-if>
-
-<!-- Technical section-->
-<ng-if ng-if="enable && formData.profile && extensionPoint == 'technical'">
-
+  <div class="double-padding-x padding-bottom">
+    <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=false;"></ng-include>
+  </div>
 
 </ng-if>

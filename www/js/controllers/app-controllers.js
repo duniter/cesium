@@ -285,27 +285,38 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // Logout
-  $scope.logout = function(force) {
-    if (!force && $scope.profilePopover) {
+  $scope.logout = function(options) {
+    options = options || {};
+    if (!options.force && $scope.profilePopover) {
       // Make the popover if really closed, to avoid UI refresh on popover buttons
-      $scope.profilePopover.hide()
+      return $scope.profilePopover.hide()
         .then(function(){
-          $scope.logout(true);
+          options.force = true;
+          return $scope.logout(options);
         });
-      return;
     }
+    if (options.askConfirm) {
+      return UIUtils.alert.confirm('CONFIRM.LOGOUT')
+        .then(function(confirm) {
+          if (confirm) {
+            options.askConfirm=false;
+            return $scope.logout(options);
+          }
+        });
+    }
+
     UIUtils.loading.show();
     return csWallet.logout()
-    .then(function() {
-      $ionicSideMenuDelegate.toggleLeft();
-      $ionicHistory.clearHistory();
-
-      return $ionicHistory.clearCache()
       .then(function() {
-        $scope.showHome();
-      });
-    })
-    .catch(UIUtils.onError());
+        $ionicSideMenuDelegate.toggleLeft();
+        $ionicHistory.clearHistory();
+
+        return $ionicHistory.clearCache()
+          .then(function() {
+            return $scope.showHome();
+          });
+      })
+      .catch(UIUtils.onError());
   };
 
   // add listener on wallet event

@@ -19,6 +19,15 @@ angular.module('cesium')
     templateUrl: 'templates/common/badge_certification_count.html'
   })
 
+  .component('csBadgeGivenCertification', {
+    bindings: {
+      identity: '=',
+      parameters: '<',
+      csId: '@'
+    },
+    templateUrl: 'templates/common/badge_given_certification_count.html'
+  })
+
   .component('csSortIcon', {
     bindings: {
       asc: '=',

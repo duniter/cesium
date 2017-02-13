@@ -82,7 +82,8 @@
     "TRANSFER": "Transfer",
     "SCAN": "Scan",
     "SETTINGS": "Settings",
-    "NETWORK": "Network"
+    "NETWORK": "Network",
+    "TRANSACTIONS": "My transactions"
   },
   "ABOUT": {
     "TITLE": "About",

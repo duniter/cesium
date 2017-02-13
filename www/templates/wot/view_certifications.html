@@ -1,21 +1,101 @@
 <ion-view left-buttons="leftButtons">
-  <ion-nav-title>
-    <span class="visible-xs visible-sm">{{::formData.uid}}</span>
-    <span class="hidden-xs hidden-sm" translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.uid}"></span>
-  </ion-nav-title>
+    <ion-nav-title>
+      <span class="visible-xs visible-sm">{{::formData.name||formData.uid}}</span>
+      <span class="hidden-xs hidden-sm"
+            ng-if="!loading"
+            translate="WOT.CERTIFICATIONS.TITLE" translate-values="{uid: formData.name || formData.uid}"></span>
+    </ion-nav-title>
 
-  <ion-tabs class="tabs-positive tabs-icon-top certifications">
+    <ion-nav-buttons side="secondary">
+        <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
+        </button>
+    </ion-nav-buttons>
 
-    <ion-tab title="{{'WOT.CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-b"
-             ui-sref="app.wot_cert.received({pubkey: formData.pubkey, uid: formData.uid})">
-      <ion-nav-view name="tab-received-cert"></ion-nav-view>
-    </ion-tab>
+    <ion-content class="certifications certifications-lg">
 
-    <ion-tab title="{{'WOT.GIVEN_CERTIFICATIONS.SUMMARY'|translate}}" icon="ion-ribbon-a"
-             ui-sref="app.wot_cert.given({pubkey: formData.pubkey, uid: formData.uid})">
-      <ion-nav-view name="tab-given-cert"></ion-nav-view>
-    </ion-tab>
+      <div class="center padding" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
 
-  </ion-tabs>
+      <!-- Buttons bar -->
+      <div class="hidden-xs hidden-sm text-center padding"
+           ng-if="canCertify || canSelectAndCertify">
+        <button class="button button-stable button-small-padding icon ion-loop ink"
+                ng-click="doUpdate()"
+                title="{{'COMMON.BTN_REFRESH' | translate}}">
+        </button>
+        <button id="helptip-certs-certify"
+                class="button button-raised button-calm icon-left ion-ribbon-b"
+                ng-if="canCertify"
+                ng-click="certify()"
+                ng-disabled="alreadyCertified">
+          {{'WOT.BTN_CERTIFY' | translate}}
+        </button>
+        <button id="helptip-certs-select-certify"
+                class="button button-raised button-calm icon-left"
+                ng-if="canSelectAndCertify"
+                ng-click="selectAndCertify()">
+          {{'WOT.BTN_SELECT_AND_CERTIFY' | translate}}
+        </button>
+      </div>
 
+      <!-- certifications tables -->
+      <div class="row responsive-sm responsive-md responsive-lg">
+        <!-- Received certifications -->
+        <div class="col no-padding" ng-if="motions.receivedCertifications">
+          <ng-include src="'templates/wot/items_received_certifications.html'"></ng-include>
+        </div>
+
+        <!-- Avatar -->
+        <div class="col col-20 col-avatar hidden-xs hidden-sm hidden-md no-padding" style="margin-top: 100px;"
+             ng-if="motions.avatar">
+          <div class="row no-padding motion fade-in">
+            <div class="col text-center no-padding gray" style="margin-top: 30px;">
+              <i class="icon ion-arrow-right-a" style="font-size:30px"></i>
+            </div>
+            <div class="col text-center no-padding">
+              <a style="text-decoration: none;"
+                ui-sref="app.wot_identity({pubkey: formData.pubkey, uid: formData.name||formData.uid})">
+                <i class="avatar avatar-large"
+                   ng-if="!formData.avatar"
+                   ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
+                <i class="avatar avatar-large"
+                     ng-if="formData.avatar"
+                     style="background-image: url({{::formData.avatar.src}})"></i>
+                <h4 class="text-center"
+                  ng-class="{'positive': formData.isMember, 'gray': !formData.isMember}">
+                  {{::formData.name||formData.uid}}
+                </h4>
+                <h5 class="text-center gray">
+                  <i class="icon ion-key"></i> {{formData.pubkey|formatPubkey}}
+                </h5>
+                <h5 class="assertive" ng-if="(formData.name||formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</h5>
+              </a>
+            </div>
+            <div class="col text-center no-padding gray" style="margin-top: 30px;">
+              <i class="icon ion-arrow-right-a" style="font-size:30px"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Given certifications -->
+        <div class="col no-padding" ng-if="motions.givenCertifications">
+          <ng-include src="'templates/wot/items_given_certifications.html'"></ng-include>
+        </div>
+      </div>
+    </ion-content>
+
+    <!-- fab button -->
+  <div class="visible-xs visible-sm">
+    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-if="canCertify && !alreadyCertified"
+            ng-click="certify()">
+      <i class="icon ion-ribbon-b"></i>
+    </button>
+    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-if="canSelectAndCertify"
+            ng-click="selectAndCertify()">
+      <i class="icon ion-plus"></i>
+    </button>
+  </div>
 </ion-view>

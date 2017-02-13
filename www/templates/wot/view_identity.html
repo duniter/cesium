@@ -42,8 +42,6 @@
               ng-disabled="alreadyCertified">
       </button>
 
-      &nbsp;&nbsp;
-
       <button class="button button-calm ink"
               ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.name||formData.uid})">
         {{'COMMON.BTN_SEND_MONEY' | translate}}
@@ -57,7 +55,7 @@
 
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
-        <!-- Certifications count -->
+        <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
            ng-if="formData.hasSelf"
@@ -70,6 +68,18 @@
                                   parameters="{sigQty: formData.sigQty}">
           </cs-badge-certification>
 
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </a>
+
+        <!-- Signature stock -->
+        <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
+             ng-if="formData.hasSelf && formData.isMember"
+             ng-click="showGivenCertifications()">
+          <i class="icon ion-ribbon-a"></i>
+          <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
+          <cs-badge-given-certification identity="formData"
+                                  parameters="{sigStock: formData.sigStock}">
+          </cs-badge-given-certification>
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 
@@ -105,12 +115,11 @@
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark text-left">{{::formData.pubkey}}</h4>
         </ion-item>
-
-        <cs-extension-point name="technical"></cs-extension-point>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
     </div>
+
   </ion-content>
 
   <!-- fab button -->

@@ -25,36 +25,10 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_cert', {
-        url: "/wot/:pubkey/:uid/cert",
-        abstract: true,
+        url: "/wot/:pubkey/:uid/:type",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotCertificationsTabsCtrl'
-          }
-        }
-      })
-
-      .state('app.wot_cert.received', {
-        url: "/received",
-        cache: false,
-        views: {
-          'tab-received-cert': {
-            templateUrl: "templates/wot/tabs/tab_received_certifications.html",
-            controller: 'WotCertificationsViewCtrl'
-          }
-        },
-        data: {
-          large: 'app.wot_cert_lg'
-        }
-      })
-
-      .state('app.wot_cert.given', {
-        url: "/given",
-        cache: false,
-        views: {
-          'tab-given-cert': {
-            templateUrl: "templates/wot/tabs/tab_given_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
         },
@@ -67,7 +41,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         url: "/wot/cert/lg/:pubkey/:uid",
         views: {
           'menuContent': {
-            templateUrl: "templates/wot/view_certifications_lg.html",
+            templateUrl: "templates/wot/view_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
         }
@@ -75,34 +49,10 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
       // wallet cert
       .state('app.wallet_cert', {
-        url: "/wallet/cert",
-        abstract: true,
+        url: "/wallet/cert/:type",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotIdentityViewCtrl'
-          }
-        }
-      })
-
-      .state('app.wallet_cert.received', {
-        url: "/received",
-        views: {
-          'tab-received-cert': {
-            templateUrl: "templates/wot/tabs/tab_received_certifications.html",
-            controller: 'WotCertificationsViewCtrl'
-          }
-        },
-        data: {
-          large: 'app.wallet_cert_lg'
-        }
-      })
-
-      .state('app.wallet_cert.given', {
-        url: "/given",
-        views: {
-          'tab-given-cert': {
-            templateUrl: "templates/wot/tabs/tab_given_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
         },
@@ -115,7 +65,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         url: "/wallet/cert/lg",
         views: {
           'menuContent': {
-            templateUrl: "templates/wot/view_certifications_lg.html",
+            templateUrl: "templates/wot/view_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
         }
@@ -130,8 +80,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotIdentityAbstractCtrl', WotIdentityAbstractController)
 
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
-
-  .controller('WotCertificationsTabsCtrl', WotCertificationsTabsController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 
@@ -656,10 +604,36 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $tr
 
   $scope.showCertifications = function() {
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wot_cert.received' : 'app.wot_cert_lg', {
-      pubkey: $scope.formData.pubkey,
-      uid: $scope.formData.uid
-    });
+    if (UIUtils.screen.isSmall() ) {
+      $state.go('app.wot_cert', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid,
+        type: 'received'
+      });
+    }
+    else {
+      $state.go('app.wot_cert_lg', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid
+      });
+    }
+  };
+
+  $scope.showGivenCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    if (UIUtils.screen.isSmall() ) {
+      $state.go('app.wot_cert', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid,
+        type: 'given'
+      });
+    }
+    else {
+      $state.go('app.wot_cert_lg', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid
+      });
+    }
   };
 
   $scope.showSharePopover = function(event) {
@@ -699,6 +673,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
 
     // Load from wallet pubkey
     else if (csWallet.isLogin()){
+
       if ($scope.loading) {
         return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
           .then(function() {
@@ -740,10 +715,16 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
   };
 
   $scope.$on('$ionicView.enter', function(e, state) {
+    if (state.stateParams && state.stateParams.type) {
+      $scope.motions.receivedCertifications = (state.stateParams.type != 'given');
+      $scope.motions.givenCertifications = (state.stateParams.type == 'given');
+      $scope.motions.avatar= false;
+    }
 
     if (state.stateParams &&
       state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length > 0) {
+
       if ($scope.loading) { // load once
         return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
           .then(function() {
@@ -774,6 +755,10 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
     else {
       $scope.showHome();
     }
+  });
+
+  $scope.$on('$ionicView.leave', function() {
+    $scope.loading = true;
   });
 
   // Updating data
@@ -885,11 +870,3 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
 }
 
 
-function WotCertificationsTabsController($scope, $stateParams) {
-  'ngInject';
-
-  $scope.formData = {
-    pubkey: $stateParams.pubkey,
-    uid: $stateParams.uid
-  };
-}

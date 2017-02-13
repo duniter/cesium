@@ -10,19 +10,9 @@
     <i class="icon ion-ribbon-a"></i>
     <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
 
-    <span class="badge"
-          ng-class="{'badge-calm': formData.given_cert.length < formData.sigStock, 'badge-assertive': formData.given_cert.length >= formData.sigStock}">
-      <span>
-        <i ng-if="formData.given_cert.length" class="ion-android-done"></i>
-        {{formData.given_cert.length}}
-      </span>
-      <span ng-if="formData.given_cert_pending.length">
-        (<ng-if ng-if="formData.given_cert.length">+ </ng-if>
-        <i class="ion-clock"></i>
-        {{formData.given_cert_pending.length}})
-      </span>
-      <small>/ {{formData.sigStock}}</small>
-    </span>
+    <cs-badge-given-certification identity="formData"
+                                  parameters="{sigStock: formData.sigStock}">
+    </cs-badge-given-certification>
   </div>
 
   <!-- Error certifications count -->

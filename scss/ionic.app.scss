@@ -825,6 +825,9 @@ $screen-menu:                     845px;
   }
 }
 
+/******
+* Wallet view
+*******/
 #wallet {
   .qrcode {
     position: absolute;
@@ -915,6 +918,35 @@ $screen-menu:                     845px;
         margin-right:200px;
       }
     }
+  }
+}
+
+/******
+* Wallet TX view
+*******/
+#wallet-tx {
+  .hero {
+    height: 100px;
+  }
+
+  .item-text-wrap {
+    white-space: normal !important;
+  }
+
+  .item .comment{
+    font-style: italic !important;
+  }
+
+  .item h3 .gray{
+    font-size: 11px ! important;
+  }
+
+  .list .item span {
+    display: inline;
+  }
+
+  .item-divider .badge {
+    top:16px !important;
   }
 }
 
@@ -1064,6 +1096,11 @@ a.underline:hover,
 .list .item.text-right {
   text-align: right !important;
 }
+
+.list .item-divider.item-divider-top-border {
+  border-top: solid 1px rgba(0, 0, 0, 0.12);
+}
+
 
 .lookupForm .list .item-avatar {
   min-height: 80px !important;

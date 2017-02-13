@@ -4,12 +4,24 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
     'ngInject';
     $stateProvider
 
+
       .state('app.view_wallet', {
         url: "/wallet",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet.html",
             controller: 'WalletCtrl'
+          }
+        }
+      })
+
+
+      .state('app.view_wallet_tx', {
+        url: "/history?refresh",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wallet/view_wallet_tx.html",
+            controller: 'WalletTxCtrl'
           }
         }
       })
@@ -26,30 +38,29 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
     ;
   })
 
+
   .controller('WalletCtrl', WalletController)
+
+  .controller('WalletTxCtrl', WalletTxController)
 
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 ;
 
-function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $filter,
-                          UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings, BMA) {
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
+                          UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings) {
   'ngInject';
 
   $scope.hasCredit = false;
-  $scope.showDetails = false;
   $scope.loading = true;
   $scope.settings = csSettings.data;
 
   $scope.$on('$ionicView.enter', function() {
     $scope.loadWallet()
       .then(function(walletData) {
-        $scope.walletData = walletData;
-        $scope.setShowDetails(angular.isDefined(csSettings.data.wallet, csSettings.data.wallet.showPubkey) ?
-          csSettings.data.wallet.showPubkey: true);
+        $scope.formData = walletData;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
-        $scope.showFab('fab-transfer');
-        $scope.showQRCode('qrcode', $rootScope.walletData.pubkey, 1100);
+        $scope.showQRCode('qrcode', $scope.formData.pubkey, 1100);
         $scope.showHelpTip();
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
@@ -60,24 +71,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   });
 
-  $scope.onSettingsChanged = function() {
-    if (!$scope.walletData || $scope.loading) return;
-    $scope.unit = $filter('currencySymbol')($scope.walletData.currency, csSettings.data.useRelative);
-    $scope.secondaryUnit = $filter('currencySymbol')($scope.walletData.currency, !csSettings.data.useRelative);
-  };
-  $scope.$watch('settings.useRelative', $scope.onSettingsChanged);
-
-  // Reload if show UD changed
-  $scope.$watch('settings.showUDHistory', function() {
-    if (!$scope.walletData || $scope.loading) return;
-    $scope.doUpdate();
-  }, true);
-
   // Update view
   $scope.updateView = function() {
-    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-
-    $scope.onSettingsChanged();
     // Set Motion
     $timeout(function() {
       UIUtils.motion.fadeSlideInRight({selector: '#wallet .animate-fade-slide-in-right .item'});
@@ -85,7 +80,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       UIUtils.ink({selector: '#wallet .animate-fade-slide-in-right .item'});
     }, 10);
   };
-
 
   $scope.setRegisterForm = function(registerForm) {
     $scope.registerForm = registerForm;
@@ -96,7 +90,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     return $q(function(resolve, reject) {
       $translate(['ACCOUNT.NEW.TITLE', 'ACCOUNT.POPUP_REGISTER.TITLE', 'ACCOUNT.POPUP_REGISTER.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
         .then(function (translations) {
-          $rootScope.walletData.newUid = (!!$rootScope.walletData.uid ? ''+$rootScope.walletData.uid : '');
+          $scope.formData.newUid = (!!$scope.formData.uid ? ''+$scope.formData.uid : '');
 
           // Choose UID popup
           $ionicPopup.show({
@@ -111,11 +105,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
                 type: 'button-positive',
                 onTap: function(e) {
                   $scope.registerForm.$submitted=true;
-                  if(!$scope.registerForm.$valid || !$rootScope.walletData.newUid) {
+                  if(!$scope.registerForm.$valid || !$scope.formData.newUid) {
                     //don't allow the user to close unless he enters a uid
                     e.preventDefault();
                   } else {
-                    return $rootScope.walletData.newUid;
+                    return $scope.formData.newUid;
                   }
                 }
               }
@@ -123,7 +117,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
           })
           .then(function(uid) {
             if (!uid) { // user cancel
-              $rootScope.walletData.uid = null;
+              $scope.formData.uid = null;
               UIUtils.loading.hide();
               return;
             }
@@ -181,7 +175,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.membershipIn = function() {
     $scope.hideActionsPopover();
 
-    if ($rootScope.walletData.isMember) {
+    if ($scope.formData.isMember) {
       return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
     }
 
@@ -189,9 +183,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     .then(function (uid) {
       UIUtils.loading.show();
       // If uid changed, or self blockUid not retrieve : do self() first
-      if (!$rootScope.walletData.blockUid || uid != $rootScope.walletData.uid) {
-        $rootScope.walletData.blockUid = null;
-        $rootScope.walletData.uid = uid;
+      if (!$scope.formData.blockUid || uid != $scope.formData.uid) {
+        $scope.formData.blockUid = null;
+        $scope.formData.uid = uid;
         csWallet.self(uid, false/*do NOT load membership here*/)
         .then(function() {
           $scope.doMembershipIn();
@@ -256,11 +250,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    */
   $scope.renewMembership = function(confirm) {
 
-    if (!$rootScope.walletData.isMember) {
+    if (!$scope.formData.isMember) {
       return UIUtils.alert.error("ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION");
     }
-    if (!confirm && !$rootScope.walletData.requirements.needRenew) {
-      return $translate("CONFIRM.NOT_NEED_RENEW_MEMBERSHIP", {membershipExpiresIn: $rootScope.walletData.requirements.membershipExpiresIn})
+    if (!confirm && !$scope.formData.requirements.needRenew) {
+      return $translate("CONFIRM.NOT_NEED_RENEW_MEMBERSHIP", {membershipExpiresIn: $scope.formData.requirements.membershipExpiresIn})
         .then(function(message) {
           return UIUtils.alert.confirm(message);
         })
@@ -290,7 +284,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.revokeIdentity = function(confirm, confirmAgain) {
     $scope.hideActionsPopover();
 
-    if ($rootScope.walletData.requirements.needSelf) {
+    if ($scope.formData.requirements.needSelf) {
       return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
     }
     if (!confirm) {
@@ -332,9 +326,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    * Fix identity (e.g. when identity expired)
    */
   $scope.fixIdentity = function() {
-    if (!$rootScope.walletData.uid) return;
+    if (!$scope.formData.uid) return;
 
-    return $translate('CONFIRM.FIX_IDENTITY', {uid: $rootScope.walletData.uid})
+    return $translate('CONFIRM.FIX_IDENTITY', {uid: $scope.formData.uid})
       .then(function(message) {
         return UIUtils.alert.confirm(message);
       })
@@ -342,9 +336,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         if (!confirm) return;
         UIUtils.loading.show();
         // Reset membership data
-        $rootScope.walletData.blockUid = null;
-        $rootScope.walletData.sigDate = null;
-        return csWallet.self($rootScope.walletData.uid);
+        $scope.formData.blockUid = null;
+        $scope.formData.sigDate = null;
+        return csWallet.self($scope.formData.uid);
       })
       .then(function() {
         return $scope.doMembershipIn();
@@ -362,16 +356,16 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    * Fix membership, when existing MS reference an invalid block
    */
   $scope.fixMembership = function() {
-    if (!$rootScope.walletData.uid) return;
+    if (!$scope.formData.uid) return;
 
     return UIUtils.alert.confirm("CONFIRM.FIX_MEMBERSHIP")
       .then(function(confirm) {
         if (!confirm) return;
         UIUtils.loading.show();
         // Reset membership data
-        $rootScope.walletData.blockUid = null;
-        $rootScope.walletData.sigDate = null;
-        return Wallet.self($rootScope.walletData.uid, false/*do NOT load membership here*/);
+        $scope.formData.blockUid = null;
+        $scope.formData.sigDate = null;
+        return Wallet.self($scope.formData.uid, false/*do NOT load membership here*/);
       })
       .then(function() {
         return $scope.doMembershipIn();
@@ -400,42 +394,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   /* -- popup / UI -- */
-
-  $scope.toggleShowDetails = function() {
-    // Update user settings
-    csSettings.data.wallet = csSettings.data.wallet || {};
-    csSettings.data.wallet.showPubkey = !$scope.showDetails;
-    csSettings.store();
-
-    $scope.setShowDetails(csSettings.data.wallet.showPubkey);
-  };
-
-  $scope.setShowDetails = function(show) {
-    $scope.showDetails = show;
-    $scope.hideActionsPopover();
-
-    // Change QRcode visibility
-    var qrcode = document.getElementById('qrcode');
-    if (qrcode) {
-      qrcode.classList.toggle('visible-xs', !show);
-      qrcode.classList.toggle('visible-sm', !show);
-    }
-
-    if (show && !$scope.loading) {
-      $timeout(function (){
-        var pubkeyElement = document.getElementById('wallet-pubkey');
-        if (pubkeyElement) {
-          pubkeyElement.classList.toggle('done', true);
-          pubkeyElement.classList.toggle('in', true);
-        }
-        var uidElement = document.getElementById('wallet-uid');
-        if (uidElement) {
-          uidElement.classList.toggle('done', true);
-          uidElement.classList.toggle('in', true);
-        }
-      }, 500);
-    }
-  };
 
   // Transfer
   $scope.showTransferModal = function() {
@@ -492,30 +450,30 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     if (!!$scope.qrcode) {
       return;
     }
-    if (!timeout) {
-      timeout = 1100;
-    }
     $scope.qrcode = new QRCode(id, {
       text: text,
       width: 200,
       height: 200,
       correctLevel: QRCode.CorrectLevel.L
     });
-    $timeout(function () {
-      var qrcodes = document.getElementsByClassName('qrcode');
-      _.forEach(qrcodes, function(qrcode){
-        if (qrcode.id == id) {
-          qrcode.classList.toggle('on', true);
-        }
-      });
-    }, timeout);
+    UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
   };
 
   $scope.showCertifications = function() {
     // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert.received' : 'app.wallet_cert_lg', {
-      pubkey: $rootScope.walletData.pubkey,
-      uid: $rootScope.walletData.name || $rootScope.walletData.uid
+    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
+      pubkey: $scope.formData.pubkey,
+      uid: $scope.formData.name || $scope.formData.uid,
+      type: 'received'
+    });
+  };
+
+  $scope.showGivenCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
+      pubkey: $scope.formData.pubkey,
+      uid: $scope.formData.name || $scope.formData.uid,
+      type: 'given'
     });
   };
 
@@ -546,8 +504,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.showSharePopover = function(event) {
     $scope.hideActionsPopover();
 
-    var title = $rootScope.walletData.name || $rootScope.walletData.uid || $rootScope.walletData.pubkey;
-    var url = $state.href('app.wot_identity', {pubkey: $rootScope.walletData.pubkey, uid: $rootScope.walletData.name || $rootScope.walletData.uid}, {absolute: true});
+    var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
+    var url = $state.href('app.wot_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.name || $scope.formData.uid}, {absolute: true});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,
@@ -558,10 +516,113 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     });
   };
 
+}
+
+
+function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWallet, Modals, csSettings, BMA) {
+  'ngInject';
+
+  $scope.loading = true;
+  $scope.settings = csSettings.data;
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (!$scope.loading && (!state.stateParams || state.stateParams.refresh != 'true')) {
+      return; // skip loading
+    }
+    $scope.loadWallet()
+      .then(function(walletData) {
+        $scope.formData = walletData;
+        $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+        $scope.updateView();
+        $scope.showFab('fab-transfer');
+        $scope.showHelpTip();
+        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+      })
+      .catch(function(err){
+        if (err == 'CANCELLED') {
+          $scope.showHome();
+        }
+      });
+  });
+
+  $scope.onSettingsChanged = function() {
+    if (!$scope.formData || $scope.loading) return;
+    $scope.unit = $filter('currencySymbol')($scope.formData.currency, csSettings.data.useRelative);
+    $scope.secondaryUnit = $filter('currencySymbol')($scope.formData.currency, !csSettings.data.useRelative);
+  };
+  $scope.$watch('settings.useRelative', $scope.onSettingsChanged);
+
+  // Reload if show UD changed
+  $scope.$watch('settings.showUDHistory', function() {
+    if (!$scope.formData || $scope.loading) return;
+    $scope.doUpdate();
+  }, true);
+
+  // Update view
+  $scope.updateView = function() {
+    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+
+    $scope.onSettingsChanged();
+    // Set Motion
+    $timeout(function() {
+      UIUtils.motion.fadeSlideInRight({selector: '#wallet-tx .animate-fade-slide-in-right .item'});
+      // Set Ink
+      UIUtils.ink({selector: '#wallet-tx .animate-fade-slide-in-right .item'});
+    }, 10);
+  };
+
+  // Updating wallet data
+  $scope.doUpdate = function() {
+    console.debug('[wallet] TX history reloading...');
+    return UIUtils.loading.show()
+      .then(function() {
+        return csWallet.refreshData();
+      })
+      .then(function() {
+        return UIUtils.loading.hide();
+      })
+      .then(function() {
+        $scope.updateView();
+      })
+      .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+  };
+
+  /* -- popup / UI -- */
+
+  // Transfer
+  $scope.showTransferModal = function() {
+    var hasCredit = (!!$scope.formData.balance && $scope.formData.balance > 0);
+    if (!hasCredit) {
+      UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
+      return;
+    }
+    Modals.showTransfer()
+      .then(function(done){
+        if (done) {
+          UIUtils.toast.show('INFO.TRANSFER_SENT');
+          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+
+          // Set Motion
+          $timeout(function() {
+            UIUtils.motion.ripple({
+              selector: '.item-pending',
+              startVelocity: 3000
+            });
+            // Set Ink
+            UIUtils.ink({selector: '.item-pending'});
+          }, 10);
+        }
+      });
+  };
+
+  $scope.showHelpTip = function(index, isTour) {
+    // TODO
+  };
+
   $scope.showMoreTx = function(fromTime) {
 
     fromTime = fromTime ||
-      ($rootScope.walletData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
+      ($rootScope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
       (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
@@ -584,7 +645,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
 }
-
 
 function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
   'ngInject';

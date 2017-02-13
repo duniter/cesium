@@ -4,7 +4,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
     $stateProvider.state('app.user_edit_profile', {
       cache: false,
-      url: "/user/profile/edit",
+      url: "/wallet/profile/edit",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/user/edit_profile.html",

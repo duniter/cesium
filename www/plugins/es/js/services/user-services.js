@@ -249,7 +249,30 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
         data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
       }
-      deferred.resolve();
+
+      // Load full profile
+      loadProfile(data.pubkey)
+        .then(function(profile) {
+          if (profile) {
+            data.name = profile.name;
+            // Avoid too long name (workaround for #308)
+            if (data.name && data.name.length > 30) {
+              data.name = data.name.substr(0, 27) + '...';
+            }
+            data.avatar = profile.avatar;
+            data.profile = profile.source;
+
+            // Social url must be unique in socials links - Workaround for issue #306:
+            if (data.profile && data.profile.socials && data.profile.socials.length) {
+              data.profile.socials = _.uniq(data.profile.socials, false, function (social) {
+                return social.url;
+              });
+            }
+
+          }
+          deferred.resolve();
+        });
+
       return deferred.promise;
     }
 

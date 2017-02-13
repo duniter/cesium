@@ -1,0 +1,14 @@
+<div ng-attr-id="{{$ctrl.csId}}"
+     class="badge badge-calm"
+     ng-class="{'badge-assertive': $ctrl.identity.given_cert.length >= $ctrl.parameters.sigStock}">
+        <span>
+          <i ng-if="$ctrl.identity.given_cert.length" class="ion-android-done"></i>
+          {{$ctrl.identity.given_cert.length}}
+        </span>
+  <span ng-if="$ctrl.identity.given_cert_pending.length">
+          (<ng-if ng-if="$ctrl.identity.given_cert.length">+ </ng-if>
+          <i class="ion-clock"></i>
+          {{$ctrl.identity.given_cert_pending.length}})
+        </span>
+  <small>/ {{$ctrl.parameters.sigStock}}</small>
+</div>

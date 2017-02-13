@@ -14279,6 +14279,9 @@ a {
 .popup-container.confirm .popup-head {
   background-color: #387ef5; }
 
+/******
+* Wallet view
+*******/
 #wallet .qrcode {
   position: absolute;
   top: 30px;
@@ -14344,6 +14347,27 @@ a {
     right: 8px; }
   #wallet .hero.hero-qrcode-active h1, #wallet .hero.hero-qrcode-active h2, #wallet .hero.hero-qrcode-active h3, #wallet .hero.hero-qrcode-active h4, #wallet .hero.hero-qrcode-active h5, #wallet .hero.hero-qrcode-active i {
     margin-right: 200px; } }
+
+/******
+* Wallet TX view
+*******/
+#wallet-tx .hero {
+  height: 100px; }
+
+#wallet-tx .item-text-wrap {
+  white-space: normal !important; }
+
+#wallet-tx .item .comment {
+  font-style: italic !important; }
+
+#wallet-tx .item h3 .gray, #wallet-tx .item h3 .popover-share .bar-header span, .popover-share .bar-header #wallet-tx .item h3 span, #wallet-tx .item h3 .popover-share .bar-footer .button-close, .popover-share .bar-footer #wallet-tx .item h3 .button-close, #wallet-tx .item h3 .popover-helptip .button-close, .popover-helptip #wallet-tx .item h3 .button-close {
+  font-size: 11px !important; }
+
+#wallet-tx .list .item span {
+  display: inline; }
+
+#wallet-tx .item-divider .badge {
+  top: 16px !important; }
 
 .card .card-header,
 .card .card-header {
@@ -14502,6 +14526,9 @@ a.underline:hover,
 
 .list .item.text-right {
   text-align: right !important; }
+
+.list .item-divider.item-divider-top-border {
+  border-top: solid 1px rgba(0, 0, 0, 0.12); }
 
 .lookupForm .list .item-avatar {
   min-height: 80px !important; }

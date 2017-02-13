@@ -82,7 +82,8 @@
     "TRANSFER": "Virement",
     "SCAN": "Scanner",
     "SETTINGS": "Paramètres",
-    "NETWORK" : "Réseau"
+    "NETWORK": "Réseau",
+    "TRANSACTIONS": "Mes opérations"
   },
   "ABOUT": {
     "TITLE": "À propos",
@@ -463,7 +464,8 @@
     "REVOKE_IDENTITY_2": "Cette opération est <b>irreversible</b> !<br/><br/><b>Etes-vous vraiment sûr</b> de vouloir continuer ?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveler votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
-    "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées"
+    "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
+    "LOGOUT": "Voulez-vous vous déconnecter ?"
   },
   "HELP": {
     "TITLE": "Aide en ligne",

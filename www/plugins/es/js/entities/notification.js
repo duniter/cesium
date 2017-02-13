@@ -46,7 +46,8 @@ function Notification(json, markAsReadCallback) {
     if (pubkeys && pubkeys.indexOf(',') == -1) {
       that.pubkey = pubkeys;
     }
-    that.state = 'app.view_wallet';
+    that.state = 'app.view_wallet_tx';
+    that.stateParams = {refresh: true};
   }
 
   // Certifications

@@ -62,8 +62,8 @@
           <cs-extension-point name="menu-profile-user"></cs-extension-point>
         </div>
         <!-- logout -->
-        <a ng-if="login" class="button-icon" ng-click="logout()" style="position: absolute; top: 5px; left: 5px;" menu-close>
-          <i class="icon assertive ion-log-out"></i>
+        <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px;">
+          <i class="icon stable ion-android-exit"></i>
         </a>
       </div>
     </ion-header-bar>
@@ -117,16 +117,29 @@
         <!-- USER Section -->
         <div class="item item-divider"></div>
 
+
         <ion-item menu-close
                   class="item item-icon-left"
                   active-link="active"
                   active-link-path-prefix="#/app/wallet"
                   ng-click="loginAndGo('app.view_wallet')"
                   ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card"></i>
+          <i class="icon ion-person"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
+        <a id="helptip-menu-btn-profile"></a>
+
+        <ion-item menu-close
+                  class="item item-icon-left"
+                  active-link="active"
+                  active-link-path-prefix="#/app/history"
+                  ng-click="loginAndGo('app.view_wallet_tx')"
+                  ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-card"></i>
+          <span translate>MENU.TRANSACTIONS</span>
+        </ion-item>
         <a id="helptip-menu-btn-account"></a>
+
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>

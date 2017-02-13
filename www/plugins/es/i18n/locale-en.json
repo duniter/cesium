@@ -254,8 +254,12 @@
     }
   },
   "PROFILE": {
+    "PROFILE_DIVIDER": "Cesium+ profile",
+    "NO_PROFILE_DEFINED": "No Cesium+ profile",
+    "BTN_ADD": "Create my profile",
+    "BTN_EDIT": "Edit my profile",
     "UID": "Pseudonym",
-    "TITLE": "Name",
+    "TITLE": "Lastname, FirstName",
     "TITLE_HELP": "Name",
     "DESCRIPTION": "About me",
     "DESCRIPTION_HELP": "About me...",
