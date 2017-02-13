@@ -464,7 +464,8 @@
     "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/><b>Are you sure</b> you want to continue?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
-    "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved"
+    "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
+    "LOGOUT": "Are you sure you want to logout?"
   },
   "HELP": {
     "TITLE": "Online help",
