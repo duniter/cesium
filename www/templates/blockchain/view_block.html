@@ -28,8 +28,15 @@
                 <i class="icon ion-clock"></i>
                 {{formData.medianTime | formatDate}}
               </span>
+              <span class="gray">
+                |
+                {{formData.medianTime | formatFromNow}}
+              </span>
+            </h3>
+
+            <h3>
               <span class="dark">
-                | <i class="icon ion-lock-combination"></i>
+                <i class="icon ion-lock-combination"></i>
                 {{'BLOCKCHAIN.VIEW.COMPUTED_BY'|translate}}
               </span>
               <a class="positive"
