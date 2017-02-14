@@ -19,7 +19,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     }
 
     function getUrl(host, port, path) {
-      var protocol = (port === 443 ? 'https' : 'http');
+      var protocol = (port == 443 ? 'https' : 'http');
       return  protocol + '://' + getServer(host, port) + (path ? path : '');
     }
 
