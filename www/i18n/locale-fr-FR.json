@@ -238,7 +238,8 @@
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe",
     "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
-    "CREATE_ACCOUNT": "Créer un compte"
+    "CREATE_ACCOUNT": "Créer un compte",
+    "FORGOTTEN_ID": "Mot de passe oublié ?"
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",
@@ -296,20 +297,16 @@
       "HELP": "Un pseudonyme est obligatoire pour devenir membre."
     },
     "SECURITY":{
-      "TITLE": "Compte et sécurité",
-      "SAVE_KEYS": "Sauvegarder vos identifiants",
-      "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
-      "REVOKE" : "Revoquer cette identité",
+      "ADD_QUESTION" : "Ajouter une question personnalisée ",
+      "BTN_CLEAN" : "Vider",
+      "BTN_RESET" : "Réinitialiser",
+      "CHOOSE_FILE" : "Déposez votre fichier de sauvegarde <br/>ou cliquez pour le sélectionner",
       "DEFINITELY_REVOKE" : "Revoquer définitivement cette identité",
-      "REVOCATION": "Révocation ...",
-      "LEVEL": "Niveau de sécurité",
+      "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
       "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
+      "LEVEL": "Niveau de sécurité",
       "LOW_LEVEL": "Faible <span class=\"hidden-xs\">(2 questions minimum)</span>",
       "MEDIUM_LEVEL": "Moyen <span class=\"hidden-xs\">(4 questions minimum)</span>",
-      "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
-      "ADD_QUESTION" : "Ajouter une question personnalisée ",
-      "BTN_RESET" : "Réinitialiser",
-      "BTN_CLEAN" : "vider",
       "QUESTION_1": "Comment s'appelait votre meilleur ami lorsque vous étiez adolescent ?",
       "QUESTION_2": "Comment s'appelait votre premier animal de compagnie ?",
       "QUESTION_3": "Quel est le premier plat que vous avez appris à cuisiner ?",
@@ -328,7 +325,13 @@
       "QUESTION_16": "Quel est le nom de la première plage où vous vous êtes baigné ?",
       "QUESTION_17": "Quel est le premier album que vous avez acheté ?",
       "QUESTION_18": "Quel est le nom de votre équipe de sport préférée ?",
-      "QUESTION_19": "Quel était le métier de votre grand-père ?"
+      "QUESTION_19": "Quel était le métier de votre grand-père ?",
+      "RECOVER_ID": "Recupérer vos identifiants",
+      "REVOCATION": "Révocation ...",
+      "REVOKE" : "Revoquer cette identité",
+      "SAVE_ID": "Sauvegarder vos identifiants",
+      "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
+      "TITLE": "Compte et sécurité"
        }
     },
   "TRANSFER": {

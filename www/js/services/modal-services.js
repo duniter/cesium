@@ -150,6 +150,11 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+  function showAccountSecurity(parameters) {
+    return ModalUtils.show('templates/wallet/modal_security.html', 'WalletSecurityModalCtrl',
+      parameters);
+  }
+
   function showJoin(parameters) {
     return ModalUtils.show('templates/join/modal_join.html','JoinModalCtrl',
       parameters);
@@ -167,7 +172,8 @@ angular.module('cesium.modal.services', [])
     showNetworkLookup: showNetworkLookup,
     showAbout: showAbout,
     showJoin: showJoin,
-    showHelp: showHelp
+    showHelp: showHelp,
+    showAccountSecurity: showAccountSecurity
   };
 
 });

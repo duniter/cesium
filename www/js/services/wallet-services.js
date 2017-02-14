@@ -1423,36 +1423,64 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         }
       },
 
-      getkeypairSaveId = function(record){
-        var nbCharSalt = Math.round(record.answer.length/2);
+      getkeypairSaveId = function(record) {
+        var nbCharSalt = Math.round(record.answer.length / 2);
         var salt = record.answer.substr(0, nbCharSalt);
         var pwd = record.answer.substr(nbCharSalt);
         return CryptoUtils.connect(salt, pwd)
-          .then(function(keypair){
-            console.debug(keypair);
+          .then(function (keypair) {
+            record.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            record.keypair = keypair;
+            return record;
+          });
+      },
+
+      getCryptedId = function(record){
+        return getkeypairSaveId(record)
+          .then(function(record) {
             var nonce = CryptoUtils.util.random_nonce();
             record.nonce = CryptoUtils.util.encode_base58(nonce);
-            record.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-
-            return CryptoUtils.box.pack(record.salt, nonce, keypair.boxPk, keypair.boxSk)
+            return CryptoUtils.box.pack(record.salt, nonce, record.keypair.boxPk, record.keypair.boxSk)
               .then(function (cypherSalt) {
                 record.salt = cypherSalt;
 
-                return CryptoUtils.box.pack(record.pwd, nonce, keypair.boxPk, keypair.boxSk)
+                return CryptoUtils.box.pack(record.pwd, nonce, record.keypair.boxPk, record.keypair.boxSk)
                   .then(function (cypherPwd) {
                     record.pwd = cypherPwd;
-
                     return record;
                   });
               });
           });
       },
 
+      recoverId = function(recover) {
+        return getkeypairSaveId(recover)
+          .then(function (recover) {
+            var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
+            return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+              .then(function (salt) {
+                recover.salt = salt;
+                return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+                  .then(function (pwd) {
+                    recover.pwd = pwd;
+                    return recover;
+                  });
+              })
+              .catch(function(err){
+                console.warn('Try again');
+              });
+
+          });
+      },
+
+
+
       getSaveIDDocument = function(record) {
          var saveId = 'Version: 10 \n' +
           'Type: SaveID\n' +
           'Questions: ' + '\n' + record.questions +
           'Issuer: ' + data.pubkey + '\n' +
+          'Crypted-Nonce: '+ record.nonce + '\n'+
           'Crypted-Pubkey: '+ record.pubkey +'\n' +
           'Crypted-Salt: '+ record.salt  + '\n' +
           'Crypted-Pwd: '+ record.pwd + '\n';
@@ -1655,7 +1683,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       self: self,
       revoke: revoke,
       downloadSaveId: downloadSaveId,
-      getkeypairSaveId: getkeypairSaveId,
+      getCryptedId: getCryptedId,
+      recoverId: recoverId,
       downloadRevocation: downloadRevocation,
       membership: {
         inside: membership(true),

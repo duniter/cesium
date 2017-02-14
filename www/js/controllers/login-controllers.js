@@ -85,6 +85,14 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
     }, 300);
   };
 
+  $scope.showAccountSecurityModal = function() {
+    $scope.closeModal();
+    $timeout(function() {
+      Modals.showAccountSecurity();
+    }, 300);
+  };
+
+
   // TODO : for DEV only
   /*$timeout(function() {
     $scope.formData = {

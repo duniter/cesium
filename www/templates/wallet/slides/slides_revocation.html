@@ -1,0 +1,22 @@
+<ion-slide-page>
+  <ion-content class="has-header padding">
+    <h3 translate>ACCOUNT.SECURITY.REVOCATION</h3>
+    <div class="list">
+      <div class="item card item-icon-right stable-bg padding ink dark"
+           ng-click="downloadRevokeFile()">
+        <i class="icon ion-android-archive"></i>
+        <span ng-bind-html="'ACCOUNT.SECURITY.DOWNLOAD_REVOKE' | translate"></span>
+      </div>
+      <div class="item card item-icon-right stable-bg padding ink dark"
+           ng-click="revokeIdentity()">
+        <i class="icon ion-minus-circled assertive"></i>
+        <span ng-bind-html="'ACCOUNT.SECURITY.DEFINITELY_REVOKE' | translate"></span>
+      </div>
+    </div>
+    <div class="padding hidden-xs text-right">
+      <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+      </button>
+    </div>
+  </ion-content>
+</ion-slide-page>
+

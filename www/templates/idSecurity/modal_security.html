@@ -14,14 +14,10 @@
     <h1 class="title" translate>ACCOUNT.SECURITY.TITLE</h1>
 
     <button class="button button-clear icon-right visible-xs"
-            ng-if="!isLastSlide && slides.slider.activeIndex > 0"
+            ng-if="!isLastSlide && slides.slider.activeIndex > 1"
             ng-click="doNext()">
       <span translate>COMMON.BTN_NEXT</span>
       <i class="icon ion-ios-arrow-right"></i>
-    </button>
-    <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs"
-            ng-click="doNext()"
-            ng-if="isLastSlide && option === 'saveID'">
     </button>
   </ion-header-bar>
 
@@ -33,7 +29,7 @@
         <ion-content class="has-header padding">
           <div class="list">
             <div class="item card item-icon-right stable-bg padding ink dark"
-               ng-click="selectOption('saveID')" ng-if="isLogin" >
+               ng-click="selectOption('saveID')">
               <i class="icon ion-ios-arrow-right"></i>
               <span ng-bind-html="'ACCOUNT.SECURITY.SAVE_ID' | translate"></span>
             </div>
@@ -43,7 +39,7 @@
               <i class="icon ion-ios-arrow-right"></i>
             </div>
             <div class="item card item-icon-right stable-bg padding ink dark"
-                 ng-click="selectOption('revocation')" ng-if="isLogin">
+                 ng-click="selectOption('revocation')">
               <span ng-bind-html="'ACCOUNT.SECURITY.REVOCATION' | translate"></span>
               <i class="icon ion-ios-arrow-right"></i>
             </div>
@@ -58,34 +54,31 @@
       </ion-slide-page>
 
       <ion-slide-page ng-if="isLogin && option == 'revocation'">
-        <ng-include src="'templates/wallet/slides/slides_revocation.html'"></ng-include>
+        <ng-include src="'templates/wallet/slides/slides_revocation.html'" ng-controller="IdSecurityRevocationCtrl"></ng-include>
       </ion-slide-page>
 
       <ion-slide-page ng-if="isLogin && option == 'saveID'">
-        <ng-include src="'templates/wallet/slides/slides_saveID_1.html'"></ng-include>
+        <ng-include src="'templates/wallet/slides/slides_saveID_1.html'" ng-controller="IdSecuritySaveCtrl"></ng-include>
       </ion-slide-page>
       <ion-slide-page ng-if="isLogin && option == 'saveID'">
-        <ng-include src="'templates/wallet/slides/slides_saveID_2.html'"></ng-include>
+        <ng-include src="'templates/wallet/slides/slides_saveID_2.html'" ng-controller="IdSecuritySaveCtrl"></ng-include>
       </ion-slide-page>
       <ion-slide-page ng-if="isLogin && option == 'saveID'">
-        <ng-include src="'templates/wallet/slides/slides_saveID_3.html'"></ng-include>
+        <ng-include src="'templates/wallet/slides/slides_saveID_3.html'" ng-controller="IdSecuritySaveCtrl"></ng-include>
       </ion-slide-page>
 
       <ion-slide-page ng-if="option == 'recoverID'">
-        <ng-include src="'templates/wallet/slides/slides_recoverID_1.html'"></ng-include>
+        <ng-include src="'templates/wallet/slides/slides_recoverID_1.html'" ng-controller="IdSecurityRecoverCtrl"></ng-include>
       </ion-slide-page>
       <ion-slide-page ng-if="option == 'recoverID'">
-        <ng-include src="'templates/wallet/slides/slides_recoverID_2.html'"></ng-include>
-      </ion-slide-page>
-      <ion-slide-page ng-if="option == 'recoverID'">
-        <ng-include src="'templates/wallet/slides/slides_recoverID_3.html'"></ng-include>
+        <ng-include src="'templates/wallet/slides/slides_recoverID_2.html'" ng-controller="IdSecurityRecoverCtrl"></ng-include>
       </ion-slide-page>
 
 
 
 
 
-<!--      <!--&lt;!&ndash; STEP 2: revocation &ndash;&gt;
+<!--      &lt;!&ndash; STEP 2: revocation &ndash;&gt;
       <ion-slide-page>
         <ion-content class="has-header padding">
           <h3 translate>ACCOUNT.SECURITY.REVOCATION</h3>
@@ -106,9 +99,9 @@
             </button>
           </div>
         </ion-content>
-      </ion-slide-page>&ndash;&gt;
+      </ion-slide-page>-->
 
-&lt;!&ndash;      &lt;!&ndash; STEP 3: choose questions &ndash;&gt;
+<!--      &lt;!&ndash; STEP 3: choose questions &ndash;&gt;
       <ion-slide-page>
         <ion-content class="has-header padding" >
           <h3 translate>ACCOUNT.SECURITY.SAVE_ID</h3>
@@ -273,9 +266,9 @@
             </div>
           </form>
         </ion-content>
-      </ion-slide-page>&ndash;&gt;
+      </ion-slide-page>-->
 
-      &lt;!&ndash; STEP 5: Read file &ndash;&gt;
+<!--      &lt;!&ndash; STEP 5: Read file &ndash;&gt;
       <ion-slide-page>
         <ion-content class="has-header padding" >
           <h3 translate>ACCOUNT.SECURITY.RECOVER_ID</h3>

@@ -1668,5 +1668,13 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   max-width: 15%;
 }
 
-
+div[dropzone] {
+  border: 2px dashed #bbb;
+  border-radius: 5px;
+  padding: 15px;
+  text-align: center;
+  font: 20pt bold;
+  color: #bbb;
+  margin-bottom: 20px;
+}
 
