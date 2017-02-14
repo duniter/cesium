@@ -50,7 +50,7 @@
         </select>
       </label>
 
-      <div class="item item-toggle dark">
+      <div class="item item-text-wrap item-toggle dark">
         <div class="input-label">
          {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
         </div>
@@ -62,7 +62,7 @@
         </label>
       </div>
 
-      <div class="item item-toggle dark">
+      <div class="item item-toggle dark item-text-wrap">
         <div class="input-label" ng-bind-html="'SETTINGS.ENABLE_HELPTIP' | translate">
         </div>
         <label class="toggle toggle-royal">
@@ -92,31 +92,33 @@
         </label>
       </div>
 
-      <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
+      <!-- FIXME see issue on UD history -->
+      <!--span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
 
       <div class="item item-toggle dark">
-        <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
+        <div class="col col-75 input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.showUDHistory" >
           <div class="track">
             <div class="handle"></div>
           </div>
         </label>
-      </div>
+      </div-->
 
       <!-- Allow extension here -->
       <cs-extension-point name="history"></cs-extension-point>
 
       <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
-      <div class="item ink" ng-click="changeNode()">
+      <div class="item ink item-text-wrap" ng-click="changeNode()">
         <div class="input-label">
         {{'SETTINGS.PEER' | translate}}
         </div>
         <span class="item-note dark">{{getServer()}}</ng-if></span>
       </div>
-      <div class="item item-toggle dark hidden-xs hidden-sm">
+      <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">
         <div class="input-label" ng-bind-html="'SETTINGS.EXPERT_MODE' | translate"></div>
+        <h4 class="gray" ng-bind-html="'SETTINGS.EXPERT_MODE_HELP' | translate"></h4>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.expertMode" >
           <div class="track">

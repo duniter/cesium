@@ -270,8 +270,6 @@
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Cesium+",
     "ENABLE_TOGGLE": "Uitbreiding inschakelen?",
-    "ENABLE_MARKET_TOGGLE": "Marktplaats inschakelen?",
-    "ENABLE_REGISTRY_TOGGLE": "Bedrijfsregister inschakelen?",
     "ENABLE_MESSAGE_TOGGLE": "Berichten inschakelen?",
     "ENABLE_SETTINGS_TOGGLE": "Globale opslag voor instellingen inschakelen?",
     "PEER": "Adres dataknooppunt",

@@ -286,10 +286,9 @@
     }
   },
   "ES_SETTINGS": {
-    "PLUGIN_NAME": "Cesium+ : profils et avatar, notifications, messages privés...",
+    "PLUGIN_NAME": "Cesium+",
+    "PLUGIN_NAME_HELP": "Profils, notifications, messages privés",
     "ENABLE_TOGGLE": "Activer l'extension ?",
-    "ENABLE_MARKET_TOGGLE": "Activer les annonces ?",
-    "ENABLE_REGISTRY_TOGGLE": "Activer l'annuaire des pro ?",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
     "ENABLE_SETTINGS_TOGGLE": "Activer le stockage distant des paramètres ?",
     "PEER": "Addresse du nœud de données",
