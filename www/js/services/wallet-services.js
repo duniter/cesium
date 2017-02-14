@@ -20,6 +20,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
     data = {},
 
+
     api = new Api(this, 'csWallet-' + id),
 
     resetData = function(init) {
@@ -217,6 +218,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
     store = function() {
       if (csSettings.data.useLocalStorage) {
+
 
         if (isLogin() && csSettings.data.rememberMe) {
           var dataToStore = {

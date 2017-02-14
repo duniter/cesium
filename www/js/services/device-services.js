@@ -25,7 +25,9 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
   // Replace the '$ionicPlatform.ready()', to enable multiple calls
   ready = function () {
     if (!readyPromise) {
-      readyPromise = $ionicPlatform.ready();
+      readyPromise = $ionicPlatform.ready().then(function(){
+        console.debug('[ionic] Platform is ready');
+      });
     }
     return readyPromise;
   };
@@ -130,8 +132,17 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
   // On platform ready: check if device could be used
   ready().then(function() {
     enable = !!navigator.camera;
+
+    if (enable){
+      var enableBarcodeScanner = cordova && cordova.plugins && cordova.plugins.barcodeScanner;
+      console.debug(' barcodescanner: {0}'.format(enableBarcodeScanner));
+      console.debug(' camera: {0}'.format(enable));
+    }
     if (!enable) {
-      console.log('Device service disable (no camera)');
+      console.debug('[device] No device detected');
+    }
+    else {
+      console.debug('[device] Ready');
     }
   });
 

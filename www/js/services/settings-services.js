@@ -210,9 +210,12 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
   service.instance = CSSettings;
 
+
   service.restore()
     .then(function() {
-      service.api.data.raise.ready();
+      Device.ready().then(function() {
+        service.api.data.raise.ready();
+      });
     });
 
   return service;

@@ -153,8 +153,20 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     // Load settings
     function loadSettings(pubkey, keypair) {
-      return esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
+      return $q.all([
+          CryptoUtils.box.keypair.fromSignKeypair(keypair),
+          esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
+            .catch(function(err){
+              if (err && err.ucode && err.ucode == 404) {
+                return null; // not found
+              }
+              else {
+                throw err;
+              }
+            })])
         .then(function(res) {
+          boxKeypair = res[0];
+          res = res[1];
           if (!res || !res._source) {
             return;
           }
@@ -164,7 +176,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             console.debug('[ES] [user] Local settings already up to date');
             return;
           }
-          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
           var nonce = CryptoUtils.util.decode_base58(record.nonce);
           // Decrypt settings content
           return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
@@ -173,14 +184,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               settings.time = record.time;
               return settings;
             });
-        })
-        .catch(function(err){
-          if (err && err.ucode && err.ucode == 404) {
-            return null; // not found
-          }
-          else {
-            throw err;
-          }
         });
     }
 
@@ -203,7 +206,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         console.debug('[ES] [user] Waiting crypto lib loading...');
         $timeout(function() {
           onWalletLogin(data, deferred);
-        }, 200);
+        }, 50);
         return;
       }
 
@@ -473,34 +476,39 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       console.debug('[ES] [user] Saving user settings to ES...');
 
-      var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair);
-      var nonce = CryptoUtils.util.random_nonce();
+      return $q.all([
+          CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair),
+          CryptoUtils.util.random_nonce()
+        ])
+        .then(function(res) {
+          var boxKeypair = res[0];
+          var nonce = res[1];
+          var record = {
+            issuer: csWallet.data.pubkey,
+            nonce: CryptoUtils.util.encode_base58(nonce),
+            time: esHttp.date.now()
+          };
 
-      var record = {
-        issuer: csWallet.data.pubkey,
-        nonce: CryptoUtils.util.encode_base58(nonce),
-        time: esHttp.date.now()
-      };
+          var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
 
-      var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
+          var json = JSON.stringify(filteredData);
 
-      var json = JSON.stringify(filteredData);
-
-      return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
-        .then(function(cypherText) {
-          record.content = cypherText;
-          return !data.time ?
-            // create
-            esHttp.record.post(host, port, '/user/settings')(record) :
-            // or update
-            esHttp.record.post(host, port, '/user/settings/:pubkey/_update')(record, {pubkey: record.issuer});
-        })
-        .then(function() {
-          // Change settings version
-          csSettings.data.time = record.time;
-          restoringSettings = true;
-          csSettings.store();
-          console.debug('[ES] [user] User settings saved in ES');
+          return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
+            .then(function(cypherText) {
+              record.content = cypherText;
+              return !data.time ?
+                // create
+                esHttp.record.post(host, port, '/user/settings')(record) :
+                // or update
+                esHttp.record.post(host, port, '/user/settings/:pubkey/_update')(record, {pubkey: record.issuer});
+            })
+            .then(function() {
+              // Change settings version
+              csSettings.data.time = record.time;
+              restoringSettings = true;
+              csSettings.store();
+              console.debug('[ES] [user] User settings saved in ES');
+            });
         })
         .catch(function(err) {
           console.error(err);

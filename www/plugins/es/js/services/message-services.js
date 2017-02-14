@@ -77,13 +77,15 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         throw new Error('no keypair, and user not connected.');
       }
       if (keypair.boxPk && keypair.boxSk) {
-        return keypair;
+        return $q.when(keypair);
       }
-      var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
-      csWallet.data.keypair.boxSk = boxKeypair.boxSk;
-      csWallet.data.keypair.boxPk = boxKeypair.boxPk;
-      console.debug("[ES] Secret box keypair successfully computed");
-      return csWallet.data.keypair;
+      return CryptoUtils.box.keypair.fromSignKeypair(keypair)
+        .then(function(boxKeypair) {
+          csWallet.data.keypair.boxSk = boxKeypair.boxSk;
+          csWallet.data.keypair.boxPk = boxKeypair.boxPk;
+          console.debug("[ES] Secret box keypair successfully computed");
+          return csWallet.data.keypair;
+        });
     }
 
     function countUnreadMessages(pubkey) {
@@ -136,38 +138,34 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         return $q.reject({message:'MESSAGE.ERROR.RECIPIENT_IS_MANDATORY'});
       }
 
-      var boxKeypair = getBoxKeypair(keypair);
-
       // Get recipient
       var recipientPk = CryptoUtils.util.decode_base58(message[recipientFieldName]);
-      var boxRecipientPk = CryptoUtils.box.keypair.pkFromSignPk(recipientPk);
-
-      var cypherTitle;
-      var cypherContent;
-      var nonce = CryptoUtils.util.random_nonce();
-
-      var senderSk = boxKeypair.boxSk;
 
       return $q.all([
-        // Encrypt title
-        CryptoUtils.box.pack(message.title, nonce, boxRecipientPk, senderSk)
-          .then(function(cypherText) {
-            cypherTitle = cypherText;
-          }),
-        // Encrypt content
-        CryptoUtils.box.pack(message.content, nonce, boxRecipientPk, senderSk)
-          .then(function(cypherText) {
-            cypherContent = cypherText;
-          })
-      ])
-        .then(function(){
-          // Send message
-          return esHttp.record.post(host, port, boxPath)({
-            issuer: message.issuer,
-            recipient: message.recipient,
-            title: cypherTitle,
-            content: cypherContent,
-            nonce: CryptoUtils.util.encode_base58(nonce)
+          getBoxKeypair(keypair),
+          CryptoUtils.box.keypair.pkFromSignPk(recipientPk),
+          CryptoUtils.util.random_nonce()
+        ])
+        .then(function(res) {
+          var boxKeypair = res[0];
+          var boxRecipientPk = res[1];
+          var nonce = res[2];
+          var senderSk = boxKeypair.boxSk;
+          return $q.all([
+            // Encrypt title
+            CryptoUtils.box.pack(message.title, nonce, boxRecipientPk, senderSk),
+            // Encrypt content
+            CryptoUtils.box.pack(message.content, nonce, boxRecipientPk, senderSk)
+          ])
+          .then(function(cypherTexts){
+            // Send message
+            return esHttp.record.post(host, port, boxPath)({
+              issuer: message.issuer,
+              recipient: message.recipient,
+              title: cypherTexts[0],
+              content: cypherTexts[1],
+              nonce: CryptoUtils.util.encode_base58(nonce)
+            });
           });
         });
     }
@@ -311,49 +309,54 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function decryptMessages(messages, keypair) {
-      var jobs = [];
+
       var now = new Date().getTime();
-      var boxKeypair = getBoxKeypair(keypair);
       var issuerBoxPks = {}; // a map used as cache
 
-      messages = messages.reduce(function(result, message) {
-        var issuerBoxPk = issuerBoxPks[message.issuer];
-        if (!issuerBoxPk) {
-          issuerBoxPk = CryptoUtils.box.keypair.pkFromSignPk(CryptoUtils.util.decode_base58(message.issuer));
-          issuerBoxPks[message.issuer] = issuerBoxPk; // fill box pk cache
-        }
+      var jobs = [getBoxKeypair(keypair)];
+      return $q.all(messages.reduce(function(jobs, message) {
+          if (issuerBoxPks[message.issuer]) return res;
+          return jobs.concat(
+            CryptoUtils.box.keypair.pkFromSignPk(CryptoUtils.util.decode_base58(message.issuer))
+              .then(function(issuerBoxPk) {
+                issuerBoxPks[message.issuer] = issuerBoxPk; // fill box pk cache
+              }));
+        }, jobs))
+        .then(function(res){
+          var boxKeypair = res[0];
+          return $q.all(messages.reduce(function(jobs, message) {
+            var issuerBoxPk = issuerBoxPks[message.issuer];
+            var nonce = CryptoUtils.util.decode_base58(message.nonce);
+            message.valid = true;
 
-        var nonce = CryptoUtils.util.decode_base58(message.nonce);
+            return jobs.concat(
+              // title
+              CryptoUtils.box.open(message.title, nonce, issuerBoxPk, boxKeypair.boxSk)
+              .then(function(title) {
+                message.title = title;
+              })
+              .catch(function(err){
+                console.warn('[ES] [message] invalid cypher title');
+                message.valid = false;
+              }),
 
-        message.valid = true;
-
-        // title
-        jobs.push(CryptoUtils.box.open(message.title, nonce, issuerBoxPk, boxKeypair.boxSk)
-          .then(function(title) {
-            message.title = title;
-          })
-          .catch(function(err){
-            console.warn('[ES] [message] invalid cypher title');
-            message.valid = false;
-          }));
-
-        // content
-        jobs.push(CryptoUtils.box.open(message.content, nonce, issuerBoxPk, boxKeypair.boxSk)
-          .then(function(content) {
-            message.content = content;
-          })
-          .catch(function(err){
-            console.warn('[ES] [message] invalid cypher content');
-            message.valid = false;
-          }));
-        return result.concat(message);
-      }, []);
-
-      return $q.all(jobs)
+              // content
+              CryptoUtils.box.open(message.content, nonce, issuerBoxPk, boxKeypair.boxSk)
+                .then(function(content) {
+                  message.content = content;
+                })
+                .catch(function(err){
+                  console.warn('[ES] [message] invalid cypher content');
+                  message.valid = false;
+                })
+              );
+            }, []));
+        })
         .then(function() {
           console.debug('[ES] [message] All messages decrypted in ' + (new Date().getTime() - now) + 'ms');
           return messages;
         });
+
     }
 
     function removeMessage(id, type) {
@@ -457,7 +460,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function addListeners() {
-      console.debug("[ES] Enable message extension");
+      console.debug("[ES] [message] Enable");
 
       // Extend csWallet.loadData()
       listeners = [

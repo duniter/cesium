@@ -43,10 +43,15 @@
   <script src="lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
 
   <!-- crypto libs -->
-  <script src="js/vendor/scrypt-em.js" async></script>
-  <script src="js/vendor/nacl_factory.js" async></script>
   <script src="js/vendor/base58.js" async></script>
+  <script src="js/vendor/nacl_factory.js" async></script>
+  <!--removeIf(device)-->
+  <script src="js/vendor/scrypt-em.js" async></script>
   <script src="js/vendor/base64.js" async></script>
+  <!--endRemoveIf(device)-->
+  <!--removeIf(no-device)-->
+  <script src="js/vendor/sha256.min.js" async></script>
+  <!--endRemoveIf(no-device)-->
 
   <!--removeIf(no-device)-->
   <script src="js/vendor/ng-cordova.min.js"></script>

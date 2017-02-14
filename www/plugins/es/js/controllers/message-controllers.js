@@ -240,7 +240,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
 }
 
 
-function ESMessageComposeController($scope, $controller, UIUtils) {
+function ESMessageComposeController($scope, $controller, UIUtils, parameters) {
   'ngInject';
 
   // Initialize the super class and extend it.

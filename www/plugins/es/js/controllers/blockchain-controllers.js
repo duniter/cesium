@@ -32,8 +32,8 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
       PluginServiceProvider.extendState('app.network', {
         points: {
           'buttons': {
-            templateUrl: "plugins/es/templates/blockchain/view_network_extend.html",
-            controller: 'ESNetworkViewCtrl'
+            templateUrl: "plugins/es/templates/network/view_network_extend.html",
+            controller: 'ESNetworkViewExtendCtrl'
           }
         }
       })

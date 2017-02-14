@@ -14,10 +14,6 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
             'buttons': {
               templateUrl: "plugins/es/templates/wallet/view_wallet_extend.html",
               controller: 'ESWotIdentityViewCtrl'
-            },
-            'nav-buttons': {
-              templateUrl: "plugins/es/templates/wallet/view_wallet_extend.html",
-              controller: 'ESWotIdentityViewCtrl'
             }
           }
         })
