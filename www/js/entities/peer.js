@@ -114,7 +114,7 @@ Peer.prototype.getHost = function() {
 Peer.prototype.getURL = function() {
   var bma = this.bma || this.getBMA();
   var host = this.getHost();
-  var protocol = (bma.port === 443) ? 'https' : 'http';
+  var protocol = (bma.port == 443) ? 'https' : 'http';
   return protocol + '://' + host + (bma.port ? (':' + bma.port) : '');
 };
 
