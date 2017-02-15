@@ -332,37 +332,38 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // Switch between HTTPS or HTTP intelligently
   if (csConfig.httpsMode === 'clever') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+      var href, hashIndex, rootPath ;
       // Redirect to HTTP if view has preferHttp=true
       if (next.data && next.data.preferHttp && $window.location.protocol == 'https:') {
-        var href = $window.location.href;
-        var hashIndex = href.indexOf('#');
-        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        href = $window.location.href;
+        hashIndex = href.indexOf('#');
+        rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
         rootPath = 'http' + rootPath.substr(5);
-        var path = rootPath + $state.href(next, nextParams);
+        href = rootPath + $state.href(next, nextParams);
         if (csConfig.httpsModeDebug) {
-          console.debug('[httpsMode] --- Should redirect to: ' + path);
+          console.debug('[httpsMode] --- Should redirect to: ' + href);
         }
         else {
-          $window.location.href = path;
+          $window.location.href = href;
         }
       }
       // Redirect to HTTPS
       else if((!next.data || !next.data.preferHttp) && $window.location.protocol != 'https:') {
-        var href = $window.location.href;
-        var hashIndex = href.indexOf('#');
-        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
-        var path = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
+        href = $window.location.href;
+        hashIndex = href.indexOf('#');
+        rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        href = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
         if (csConfig.httpsModeDebug) {
-          console.debug('[httpsMode] --- Should redirect to: ' + path);
+          console.debug('[httpsMode] --- Should redirect to: ' + href);
         }
         else {
-          $window.location.href = path;
+          $window.location.href = href;
         }
       }
     });
   }
   // Always redirect to HTTPS
-  else if (csConfig.httpsMode == true || csConfig.httpsMode == 'force') {
+  else if (csConfig.httpsMode === true || csConfig.httpsMode === "true" || csConfig.httpsMode === 'force') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
       if($window.location.protocol != 'https:') {
         var href = $window.location.href;
