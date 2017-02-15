@@ -109,7 +109,21 @@
       "MARK_AS_READ_FAILED": "Impossible de marquer le message comme 'lu'.",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur lors de la récupération des notifications de messages.",
       "REMOVE_All_MESSAGES_FAILED": "Erreur lors de la suppression de tous les messages.",
-      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu."
+      "MARK_ALL_AS_READ_FAILED": "Erreur lors du marquage des message comme lu.",
+      "RECIPIENT_IS_MANDATORY": "Le destinataire est obligatoire."
+    }
+  },
+  "BLOCKCHAIN": {
+    "LOOKUP": {
+      "SEARCH_HELP": "Numéro de bloc, hash, clé publique, etc.",
+      "POPOVER_FILTER_TITLE": "Filtres",
+      "HEADER_MEDIAN_TIME": "Date / Heure",
+      "HEADER_BLOCK": "Bloc #",
+      "HEADER_ISSUER": "Noeud émetteur",
+      "BTN_LAST": "Derniers blocs"
+    },
+    "ERROR": {
+      "SEARCH_BLOCKS_FAILED": "Erreur de la recherche des blocs."
     }
   },
   "MARKET": {
@@ -240,6 +254,10 @@
     }
   },
   "PROFILE": {
+    "PROFILE_DIVIDER": "Profil Cesium+",
+    "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
+    "BTN_ADD": "Saisir mon profil",
+    "BTN_EDIT": "Editer mon profil",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",
     "TITLE_HELP": "Nom, Prénom",
@@ -252,7 +270,7 @@
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "Informations générales",
     "LOCATION_DIVIDER": "Adresse",
-    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
+    "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux, sites web",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
@@ -261,17 +279,16 @@
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
     "INFO": {
-      "PROFILE_SAVED": "Profil sauvegardé",
+      "PROFILE_SAVED": "Profil sauvegardé"
     },
     "HELP": {
       "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
     }
   },
   "ES_SETTINGS": {
-    "PLUGIN_NAME": "Cesium+ : profils et avatar, notifications, messages privés...",
+    "PLUGIN_NAME": "Cesium+",
+    "PLUGIN_NAME_HELP": "Profils, notifications, messages privés",
     "ENABLE_TOGGLE": "Activer l'extension ?",
-    "ENABLE_MARKET_TOGGLE": "Activer les annonces ?",
-    "ENABLE_REGISTRY_TOGGLE": "Activer l'annuaire des pro ?",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
     "ENABLE_SETTINGS_TOGGLE": "Activer le stockage distant des paramètres ?",
     "PEER": "Addresse du nœud de données",

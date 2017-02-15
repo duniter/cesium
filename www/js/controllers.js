@@ -10,6 +10,7 @@ angular.module('cesium.controllers', [
     'cesium.wot.controllers',
     'cesium.transfer.controllers',
     'cesium.settings.controllers',
-    'cesium.network.controllers'
+    'cesium.network.controllers',
+    'cesium.blockchain.controllers'
   ])
 ;

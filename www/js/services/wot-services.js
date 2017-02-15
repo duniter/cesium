@@ -101,7 +101,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                                       requirements.membershipPendingExpiresIn <= 0 );
             requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
             requirements.pendingMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
-            requirements.certificationCount = (requirements.certifications) ? requirements.certifications.length : 0;
+            requirements.isMember = (requirements.membershipExpiresIn > 0);
+            // Force certification count to 0, is not a member yet - fix #269
+            requirements.certificationCount = (requirements.isMember && requirements.certifications) ? requirements.certifications.length : 0;
             requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
               if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
                 cert.willExpire = true;
@@ -109,7 +111,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }
               return count;
             }, 0) : 0;
-            requirements.isMember = (requirements.membershipExpiresIn > 0);
 
             resolve(requirements);
           })
@@ -515,7 +516,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return $q.when(data);
         }
 
-        console.debug("[wot] Loading identity " + pubkey.substring(0, 8));
+        console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
         var now = new Date().getTime();
         data = {pubkey: pubkey};
 
@@ -653,7 +654,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               return options.addUniqueId ? _addUniqueIds(idties) : idties;
             }
             // call extension point
-            return api.data.raisePromise.search(text, idties)
+            return api.data.raisePromise.search(text, idties, 'pubkey')
               .then(function() {
                 // Add unique id (if enable)
                 return options.addUniqueId ? _addUniqueIds(idties) : idties;
@@ -681,7 +682,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             idties = _sortAndSliceIdentities(idties, offset, size);
 
             // Extension point
-            return api.data.raisePromise.search(null, idties)
+            return api.data.raisePromise.search(null, idties, 'pubkey')
                 .then(function () {
                   return idties;
                 })
@@ -824,7 +825,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }),
 
               // Extension point
-              api.data.raisePromise.search(null, idties)
+              api.data.raisePromise.search(null, idties, 'pubkey')
                 .catch(function(err) {
                   console.debug('Error while search identities, on extension point.');
                   console.error(err);
@@ -840,7 +841,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
         return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT)
           .then(function(idties) {
-            return api.data.raisePromise.search(null, idties)
+            return api.data.raisePromise.search(null, idties, 'pubkey')
               .then(function() {
                 return _addUniqueIds(idties);
               });
@@ -909,6 +910,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         });
       },
 
+      extendAll = function(idties, pubkeyAttributeName) {
+        return api.data.raisePromise.search(null, idties, pubkeyAttributeName);
+      },
+
       addEvent = function(data, event) {
         event = event || {};
         event.type = event.type || 'info';
@@ -930,6 +935,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       newcomers: getNewcomers,
       pending: getPending,
       all: getAll,
+      extendAll: extendAll,
       // api extension
       api: api
     };

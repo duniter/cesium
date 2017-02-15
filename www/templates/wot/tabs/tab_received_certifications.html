@@ -1,0 +1,23 @@
+<ion-view>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content ng-init="motions.givenCertifications=false; motions.avatar=false;" class="has-header">
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <ng-include src="'templates/wot/items_received_certifications.html'"></ng-include>
+  </ion-content>
+
+  <!-- fab button -->
+  <div class="visible-xs visible-sm">
+    <button id="fab-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-click="certify()"
+            ng-if="(formData.hasSelf && canCertify && !alreadyCertified) || $root.tour">
+      <i class="icon ion-ribbon-b"></i>
+    </button>
+  </div>
+</ion-view>

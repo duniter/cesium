@@ -28,7 +28,8 @@
     "BTN_EDIT": "Modifier",
     "BTN_DELETE": "Supprimer",
     "BTN_ADD": "Ajouter",
-    "BTN_SEARCH": "Recherche",
+    "BTN_SEARCH": "Rechercher",
+    "BTN_REFRESH": "Actualiser",
     "BTN_CONTINUE": "Continuer",
     "BTN_UNDERSTOOD": "J'ai compris",
     "BTN_OPTIONS": "Options",
@@ -37,6 +38,7 @@
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
+    "SEARCHING": "Recherche en cours...",
     "FROM": "De",
     "TO": "À",
     "COPY": "Copier",
@@ -50,6 +52,8 @@
     "ENABLE": "Activé",
     "DISABLE": "Désactivé",
     "RESULTS_LIST": "Résultats :",
+    "RESULTS_COUNT": "{{count}} résultats",
+    "EXECUTION_TIME": "executé en {{duration|formatDurationMs}}",
     "SHOW_VALUES": "Afficher les valeurs en clair ?",
     "POPOVER_ACTIONS_TITLE": "Options",
     "SHOW_MORE": "Afficher plus",
@@ -78,7 +82,8 @@
     "TRANSFER": "Virement",
     "SCAN": "Scanner",
     "SETTINGS": "Paramètres",
-    "NETWORK" : "Réseau"
+    "NETWORK": "Réseau",
+    "TRANSACTIONS": "Mes opérations"
   },
   "ABOUT": {
     "TITLE": "À propos",
@@ -93,7 +98,6 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "WELCOME": "",
     "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en temps réel.",
     "MESSAGE_SHORT": "Suivez vos comptes <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a><br/>en temps réel !",
     "BTN_REGISTRY": "Annuaire",
@@ -110,14 +114,15 @@
     "NETWORK_SETTINGS": "Réseau",
     "PEER": "Adresse du nœud Duniter",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
-    "ENABLE_HELPTIP": "Activer les bulles d'aide<span class=\"hidden-xs\"> contextuelles</span>",
+    "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
     "HISTORY_SETTINGS": "Mon compte",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "REMEMBER_ME": "Se souvenir de moi",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
-    "EXPERT_MODE": "Activer le mode expert<span class=\"hidden-xs\">(affichage plus détaillé)</span>",
+    "EXPERT_MODE": "Activer le mode expert",
+    "EXPERT_MODE_HELP": "Permet un affichage plus détaillé",
     "POPUP_PEER": {
       "TITLE" : "Nœud Duniter",
       "HELP" : "Adresse du nœud :",
@@ -126,16 +131,55 @@
       "BTN_SHOW_LIST" : "Liste des noeuds"
     }
   },
+  "BLOCKCHAIN": {
+    "HASH": "Hash : {{hash}}",
+    "VIEW": {
+      "HEADER_TITLE": "Bloc #{{number}}-{{hash|formatHash}}",
+      "TITLE_CURRENT": "Bloc courant",
+      "TITLE": "Bloc #{{number}}",
+      "COMPUTED_BY": "Calculé par le noeud de",
+      "SHOW_RAW": "Voir le fichier brut",
+      "TECHNICAL_DIVIDER": "Informations techniques",
+      "VERSION": "Version du format",
+      "HASH": "Hash calculé",
+      "UNIVERSAL_DIVIDEND_HELP": "Monnaie co-produite par chacun des {{membersCount}} membres",
+      "EMPTY": "Aucune donnée dans ce bloc",
+      "POW_MIN": "Difficulté minimale",
+      "POW_MIN_HELP": "Difficulté imposée pour le calcul du hash",
+      "DATA_DIVIDER": "Données",
+      "IDENTITIES_COUNT": "Nouvelles identités",
+      "JOINERS_COUNT": "Nouveaux membres",
+      "ACTIVES_COUNT": "Renouvellements",
+      "ACTIVES_COUNT_HELP": "Membres ayant renouvellés leur adhésion",
+      "LEAVERS_COUNT": "Membres sortants",
+      "LEAVERS_COUNT_HELP": "Membres ne souhaitant plus de certification",
+      "EXCLUDED_COUNT": "Membres exclus",
+      "EXCLUDED_COUNT_HELP": "Anciens membres exclus par non renouvellement ou manque de certifications",
+      "REVOKED_COUNT": "Identités revoquées",
+      "REVOKED_COUNT_HELP": "Ces comptes ne pourront plus être membres",
+      "TX_COUNT": "Transactions",
+      "CERT_COUNT": "Certifications",
+      "TX_TO_HIMSELF": "Opération de change"
+    },
+    "LOOKUP": {
+      "TITLE": "Blocs",
+      "NO_BLOCK": "Aucun bloc",
+      "LAST_BLOCKS": "Derniers blocs :",
+      "BTN_COMPACT": "Compacter"
+    }
+  },
   "CURRENCY": {
     "SELECT": {
       "TITLE": "Monnaies",
-      "CURRENCIES": "Monnaies connues"
+      "CURRENCIES": "Monnaies connues",
+      "MEMBERS_COUNT": "{{membersCount}} membres"
     },
     "VIEW": {
       "TITLE": "Monnaie",
       "TAB_CURRENCY": "Monnaie",
       "TAB_WOT": "Toile de confiance",
       "TAB_NETWORK": "Réseau",
+      "TAB_BLOCKS": "Blocs",
       "NETWORK_RULES_DIVIDER": "Règles du réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Nombre de membres",
@@ -145,20 +189,29 @@
       "SHARE": "Masse par membre",
       "UD": "Dividende universel",
       "C_ACTUAL": "Croissance actuelle",
-      "TIME": "Heure de la blockchain",
+      "MEDIAN_TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau minimal de difficulté de calcul",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
       "C_RULE": "Croissance théorique",
       "UD_RULE": "Dividende universel (formule)",
-      "SIG_QTY_RULE": "Nombre de certifications requises<br/>pour devenir membre",
-      "SIG_STOCK": "Nombre maximal de certifications émises<br/>par membre",
-      "SIG_PERIOD": "Délai minimal d'attente entre 2 certifications<br/>successives émises par une même personne.",
-      "SIG_WINDOW": "Délai maximal d'attente avant<br/>prise en compte d'une certification",
-      "STEP_MAX": "Distance maximale dans la toile de confiance <br /> entre chaque membre et un nouvel entrant.",
+      "SIG_QTY_RULE": "Nombre de certifications requises pour devenir membre",
+      "SIG_STOCK": "Nombre maximal de certifications émises par membre",
+      "SIG_PERIOD": "Délai minimal d'attente entre 2 certifications successives émises par une même personne",
+      "SIG_WINDOW": "Délai limite de prise en compte d'une certification",
+      "STEP_MAX": "Distance maximale entre un nouvel entrant et les membres référents",
       "WOT_RULES_DIVIDER": "Règles de la toile de confiance",
-      "XPERCENT":"Pourcentage minimum de sentinelle<br/>à atteindre pour respecter la règle de distance.",
+      "SENTRIES": "Nombre de certifications requises pour être membre référent",
+      "SENTRIES_FORMULA": "Nombre de certification requises pour être un membre référent (formule)",
+      "XPERCENT":"Pourcentage minimum de membres référents à atteindre pour la distance maximale",
       "AVG_GEN_TIME": "Temps moyen entre deux blocs",
-      "CURRENT": "actuel"
+      "CURRENT": "actuel",
+      "MATH_CEILING": "PLAFOND"
+    }
+  },
+  "NETWORK": {
+    "VIEW": {
+      "MEDIAN_TIME": "Heure de la blockchain",
+      "LOADING_PEERS": "Chargement des noeuds..."
     }
   },
   "PEER": {
@@ -173,7 +226,9 @@
     "ALL_PEERS" : "Tous les nœuds",
     "DIFFICULTY" : "Difficulté",
     "API" : "API",
-    "CURRENT_BLOCK" : "Bloc courant"
+    "CURRENT_BLOCK" : "Bloc #",
+    "POPOVER_FILTER_TITLE": "Filtre",
+    "OFFLINE": "Nœuds hors ligne"
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
@@ -218,7 +273,8 @@
       "PENDING_LIST": "Certifications en attente de traitement",
       "RECEIVED": "Certifications reçues",
       "RECEIVED_BY": "Certifications reçues par {{uid}}",
-      "ERROR": "Certifications reçues en erreur"
+      "ERROR": "Certifications reçues en erreur",
+      "SENTRY_MEMBER": "Membre référent"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications émises",
@@ -259,6 +315,7 @@
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt <b>manquer de certification</b> (au moins {{willNeedCertificationCount}} est nécessaire)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre <b>va expirer {{membershipExpiresIn|formatDurationTo}}</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renouveler votre adhésion</a> d'ici là.",
     "CERTIFICATION_COUNT": "Certifications reçues",
+    "CERTIFICATION_COUNT_SHORT": "Certifications",
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
     "BTN_MEMBERSHIP_IN_DOTS": "Devenir membre...",
@@ -395,7 +452,7 @@
     "AMOUNT_NEGATIVE": "Montant négatif non autorisé.",
     "NOT_ENOUGH_CREDIT": "Crédit insufisant.",
     "INVALID_NODE_SUMMARY": "Nœud injoignable ou adresse invalide.",
-    "INVALID_USER_ID": "Le champ 'pseudonyme' ne doit contenir ni espace ni caractère spécial ou accentué.",
+    "INVALID_USER_ID": "Le pseudonyme ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
     "IDENTITY_REVOKED": "Cette identité <b>a été révoquée {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). Elle ne peut plus devenir membre.",
@@ -413,6 +470,9 @@
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
+    "REVOCATION_FAILED": "Echec de la révocation.",
+    "GET_BLOCK_FAILED": "Echec de la récupération du bloc",
+    "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)",
     "REVOCATION_FAILED": "Echec de la révocation.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Phrase de protection ou mot de passe incorrects",
     "RECOVER_ID_FAILED": "Echec de la récupération des identifiants"
@@ -445,7 +505,8 @@
     "REVOKE_IDENTITY_2": "Cette opération est <b>irreversible</b> !<br/><br/><b>Etes-vous vraiment sûr</b> de vouloir continuer ?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveler votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
-    "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées"
+    "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
+    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?"
   },
   "HELP": {
     "TITLE": "Aide en ligne",
@@ -474,22 +535,28 @@
       "CURRENCY_CHANGE_UNIT": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants <b>directement en {{currency|capitalize}}</b> (plutôt qu'en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, c'est à dire relativement au Dividende Universel (le montant co-produit par chaque membre).",
       "CURRENCY_RULES": "Les <b>règles</b> de la monnaie fixent son fonctionnement <b>exact et prévisible</b>.<br/><br/>Véritable ADN de la monnaie, elles rendent son code monétaire <b>lisible et transparent</b>.",
-      "CURRENCY_BLOCKCHAIN": "Toutes les opérations de la monnaie sont enregistrées dans un grand livre de compte <b>public et infalsifiable</b>, appellé aussi <b>chaine de blocs</b> (<em>BlockChain</em> en anglais).",
-      "CURRENCY_PEERS": "Les <b>nœuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de nœuds, plus la monnaie à une gestion <b>décentralisée</b> et digne de confiance.",
-      "CURRENCY_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> indique le <b>dernier bloc validé</b> pour ce nœud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres nœuds</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
-      "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> permet l'accès au solde de votre compte et à l'historique de vos transactions.",
-      "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte, l'historique de vos transactions et vos certifications.",
-      "WALLET_CERTIFICATIONS": "En cliquant ici, consultez le détail de vos certifications (reçues et émises).",
+      "MENU_BTN_NETWORK": "Le menu <b>{{'MENU.NETWORK'|translate}}</b> permet la consultation de l'état du réseau.",
+      "NETWORK_BLOCKCHAIN": "Toutes les opérations de la monnaie sont enregistrées dans un grand livre de compte <b>public et infalsifiable</b>, appellé aussi <b>chaine de blocs</b> (<em>BlockChain</em> en anglais).",
+      "NETWORK_PEERS": "Les <b>nœuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de nœuds, plus la monnaie à une gestion <b>décentralisée</b> et digne de confiance.",
+      "NETWORK_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> (en vert) indique le <b>dernier bloc validé</b> pour ce nœud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres nœuds</b>.",
+      "NETWORK_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
+      "MENU_BTN_ACCOUNT": "Le menu <b>{{'ACCOUNT.TITLE'|translate}}</b> permet d'accéder à la gestion de votre compte.",
+      "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte et les informations sur vos certifications.",
+      "WALLET_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos certifications (reçues et émises).",
+      "WALLET_RECEIVED_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos <b>certifications reçues</b>.",
+      "WALLET_GIVEN_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos <b>certifications émises</b>.",
       "WALLET_BALANCE": "Le <b>solde</b> de votre compte s'affiche ici.",
       "WALLET_BALANCE_RELATIVE": "{{'HELP.TIP.WALLET_BALANCE'|translate}}<br/><br/>L'unité utilisée (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifie que le montant en {{currency|capitalize}} a été divisé par le <b>Dividende Universel</b> (DU) co-créé par chaque membre.<br/><br/>Actuellement 1 DU vaut {{currentUD|formatInteger}} {{currency|capitalize}}s.",
       "WALLET_BALANCE_CHANGE_UNIT": "Vous pourrez <b>changer l'unité</b> d'affichage des montants dans les <b><i class=\"icon ion-android-settings\"></i>&nbsp;{{'MENU.SETTINGS'|translate}}</b>.<br/><br/>Par exemple pour visualiser les montants <b>directement en {{currency|capitalize}}</b>, plutôt qu'en unité relative.",
+      "WALLET_PUBKEY": "Voici la clé publique de votre compte. Vous pouvez la communiquer à un tiers afin qu'il identifie plus simplement votre compte.",
       "WALLET_SEND": "Effectuer un paiement en quelques clics",
       "WALLET_SEND_NO_MONEY": "Effectuer un paiement en quelques clics.<br/>(Votre solde ne le permet pas encore)",
-      "WALLET_OPTIONS": "Veuillez noter que ce bouton permet l'accès à <b>d'autres actions</b>, moins usuelles.<br/><br/>N'oubliez pas d'y jeter un oeil, quand vous aurez un moment !",
+      "WALLET_OPTIONS": "Ce bouton permet l'accès aux <b>actions d'adhésion</b> et de sécurité.<br/><br/>N'oubliez pas d'y jeter un oeil !",
       "WALLET_RECEIVED_CERTS": "S'affichera ici la liste des personnes qui vous ont certifié.",
       "WALLET_CERTIFY": "Le bouton <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permet de sélectionner une identitié et de la certifier.<br/><br/>Seuls des utilisateurs <b>déjà membre</b> peuvent en certifier d'autres.",
       "WALLET_CERT_STOCK": "Votre stock de certification (émises) est limité à <b>{{sigStock}} certifications</b>.<br/><br/>Ce stock se renouvelle avec le temps, au fur et à mesure que les certifications s'invalident.",
+      "MENU_BTN_TX_MEMBER": "Le menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> permet de consulter votre solde, l'historique vos transactions et d'envoyer un paiement.",
+      "MENU_BTN_TX": "Consultez ici l'historique vos transactions et envoyez de nouveaux paiements.",
       "MENU_BTN_WOT": "Le menu <b>{{'MENU.WOT'|translate}}</b> permet de rechercher parmi les <b>utilisateurs</b> de la monnaie (membre ou non).",
       "WOT_SEARCH_TEXT_XS": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique).<br/><br/>La recherche se lancera automatiquement.",
       "WOT_SEARCH_TEXT": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique). <br/><br/>Appuyer ensuite sur <b>Entrée</b> pour lancer la recherche.",

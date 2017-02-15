@@ -1,14 +1,14 @@
 <ion-popover-view class="popover-helptip" >
   <ion-content scroll="false" class="list">
-    <p >
-      <ng-if ng-if="icon.position && !icon.position.startsWith('bottom-')">
-        <i class="{{icon.class}} icon-{{icon.position}}"></i>
-      </ng-if>
+    <p>
+      <i ng-if="icon.position && !icon.position.startsWith('bottom-')"
+         class="{{icon.class}} icon-{{icon.position}} hidden-xs"
+         style="{{icon.style}}"></i>
 
       <!-- close button-->
-      <a
-         ng-click="closePopover()" class="pull-right button-close"
-          ng-class="{'pull-left': icon.position === 'right', 'pull-right': icon.position !== 'right'}">
+      <a ng-click="closePopover()"
+         class="pull-right button-close"
+         ng-class="{'pull-left': icon.position === 'right', 'pull-right': icon.position !== 'right'}">
         <i class="ion-close"></i>
       </a>
 
@@ -56,9 +56,8 @@
     </div>
 
     <p>
-      <ng-if ng-if="icon.position && icon.position.startsWith('bottom-')">
-        <i class="{{icon.class}} icon-{{icon.position}}"></i>
-      </ng-if>
+      <i ng-if="icon.position && icon.position.startsWith('bottom-')"
+         class="{{icon.class}} icon-{{icon.position}} hidden-xs"></i>
     </p>
   </ion-content>
 </ion-popover-view>

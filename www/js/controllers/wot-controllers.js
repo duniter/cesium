@@ -14,7 +14,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wot_view_identity', {
+      .state('app.wot_identity', {
         url: "/wot/:pubkey/:uid",
         views: {
           'menuContent': {
@@ -24,8 +24,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.wallet_view_cert', {
-        url: "/wallet/cert",
+      .state('app.wot_cert', {
+        url: "/wot/:pubkey/:uid/:type",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_certifications.html",
@@ -33,38 +33,39 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
           }
         },
         data: {
-          large: 'app.wallet_view_cert_lg'
+          large: 'app.wot_cert_lg'
         }
       })
 
-      .state('app.wallet_view_cert_lg', {
-        url: "/wallet/cert/lg",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wot/view_certifications_lg.html",
-            controller: 'WotCertificationsViewCtrl'
-          }
-        }
-      })
-
-      .state('app.wot_view_cert', {
-        url: "/wot/cert/:pubkey/:uid",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wot/view_certifications.html",
-            controller: 'WotCertificationsViewCtrl'
-          }
-        },
-        data: {
-          large: 'app.wot_view_cert_lg'
-        }
-      })
-
-      .state('app.wot_view_cert_lg', {
+      .state('app.wot_cert_lg', {
         url: "/wot/cert/lg/:pubkey/:uid",
         views: {
           'menuContent': {
-            templateUrl: "templates/wot/view_certifications_lg.html",
+            templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        }
+      })
+
+      // wallet cert
+      .state('app.wallet_cert', {
+        url: "/wallet/cert/:type",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications.html",
+            controller: 'WotCertificationsViewCtrl'
+          }
+        },
+        data: {
+          large: 'app.wallet_cert_lg'
+        }
+      })
+
+      .state('app.wallet_cert_lg', {
+        url: "/wallet/cert/lg",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_certifications.html",
             controller: 'WotCertificationsViewCtrl'
           }
         }
@@ -76,6 +77,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotLookupModalCtrl', WotLookupModalController)
 
+  .controller('WotIdentityAbstractCtrl', WotIdentityAbstractController)
+
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
@@ -83,7 +86,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover) {
+function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
+                             UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -243,9 +247,9 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
     }
     // Open identity view
     else {
-      $state.go('app.wot_view_identity', {
+      $state.go('app.wot_identity', {
         pubkey: identity.pubkey,
-        uid: identity.name||identity.uid
+        uid: identity.uid
       });
     }
   };
@@ -351,10 +355,11 @@ function WotLookupController($scope, BMA, $state, UIUtils, $timeout, csConfig, c
 
 }
 
-function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover){
+function WotLookupModalController($scope, $controller, $focus){
   'ngInject';
 
-  WotLookupController.call(this, $scope, BMA, $state, UIUtils, $timeout, csConfig, csSettings, Device, csWallet, csWot, $focus, $ionicPopover);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('WotLookupCtrl', {$scope: $scope}));
 
   $scope.search.loading = false;
   $scope.enableFilter = false;
@@ -381,203 +386,106 @@ function WotLookupModalController($scope, BMA, $state, UIUtils, $timeout, csConf
   // endRemoveIf(device)
 }
 
-function WotIdentityViewController($scope, $state, $timeout, UIUtils, csWot) {
-  'ngInject';
-
-  $scope.formData = {};
-  $scope.loading = true;
-
-  $scope.$on('$ionicView.enter', function(e, state) {
-    if (state.stateParams &&
-      state.stateParams.pubkey &&
-      state.stateParams.pubkey.trim().length > 0) {
-      if ($scope.loading) { // load once
-        $scope.load(state.stateParams.pubkey.trim(),
-                    true /*withCache*/,
-                    state.stateParams.uid);
-      }
-    }
-    else {
-      // Redirect to app
-      $state.go('app.home');
-    }
-  });
-
-  $scope.load = function(pubkey, withCache, uid) {
-    csWot.load(pubkey, withCache, uid)
-    .then(function(identity){
-      $scope.formData = identity;
-      $scope.loading = false;
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight();
-        UIUtils.ink();
-      }, 10);
-    })
-    .catch(function(err) {
-      $scope.loading = false;
-      UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
-    });
-  };
-
-  $scope.showCertifications = function() {
-    // Warn: do not use a simple link here (a ng-click is need for help tour)
-    $state.go(UIUtils.screen.isSmall() ? 'app.wot_view_cert' : 'app.wot_view_cert_lg', {
-      pubkey: $scope.formData.pubkey,
-      uid: $scope.formData.name || $scope.formData.uid
-    });
-  };
-
-  $scope.showSharePopover = function(event) {
-    var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
-    var url = $state.href('app.wot_view_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid}, {absolute: true});
-    UIUtils.popover.share(event, {
-      bindings: {
-        url: url,
-        titleKey: 'WOT.VIEW.POPOVER_SHARE_TITLE',
-        titleValues: {title: title},
-        postMessage: title
-      }
-    });
-  };
-
-  $scope.showFab('fab-transfer');
-
-}
-
 /**
- * Certifications controller
- *
+ * Abtract controller that load identity, that expose some useful methods in $scope, like 'certify()'
  * @param $scope
+ * @param $state
  * @param $timeout
- * @param $translate
- * @param csSettings
- * @param csWallet
  * @param UIUtils
- * @param csWot
  * @param Modals
+ * @param csConfig
+ * @param csWot
+ * @param csWallet
  * @constructor
  */
-function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $translate, csConfig, csSettings, csWallet, UIUtils, csWot, Modals) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $translate, UIUtils, Modals, csConfig, csWot, csWallet) {
   'ngInject';
 
-  $scope.loading = true;
   $scope.formData = {};
-  $scope.showCertifications = true; // default value (overwrite when tab switch, on small view)
-  $scope.showGivenCertifications = false; // default value (overwrite on 'large' view)
-  $scope.showAvatar = false; // default value (overwrite on 'large' view)
-
-  $scope.$on('$ionicView.enter', function(e, state) {
-    if (state.stateParams && state.stateParams.pubkey &&
-      state.stateParams.pubkey.trim().length >  0) {
-      if ($scope.loading) {
-        $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/);
-      }
-    }
-
-    // Load from wallet pubkey
-    else if (csWallet.isLogin()){
-      if ($scope.loading) {
-        $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid);
-      }
-    }
-
-    // Redirect to home
-    else {
-      $timeout(function() {
-        $state.go('app.home', null);
-      }, 10);
-    }
-  });
+  $scope.loading = true;
 
   $scope.load = function(pubkey, withCache, uid) {
     return csWot.load(pubkey, withCache, uid)
-    .then(function(identity){
-      $scope.formData = identity;
-      $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
-      $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
-      $scope.alreadyCertified = !$scope.canCertify || !csWallet.isLogin() ? false :
-        (!!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
-         !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true }));
-
-      $scope.loading = false;
-
-      // Effects
-      $scope.motionCertifications(100);
-      $scope.motionAvatar(300);
-      $scope.motionGivenCertifications(900);
-
-      // Show help tip
-      var isWallet = csWallet.isUserPubkey(pubkey);
-      $scope.showHelpTip(isWallet);
-    });
+      .then(function(identity){
+        $scope.formData = identity;
+        $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
+        $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
+        $scope.alreadyCertified = !$scope.canCertify || !csWallet.isLogin() ? false :
+          (!!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
+          !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true }));
+        $scope.loading = false;
+      })
+      .catch(function(err) {
+        $scope.loading = false;
+        UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+      });
   };
 
   // Certify the current identity
   $scope.certify = function() {
     $scope.loadWallet()
-    .then(function() {
-      UIUtils.loading.hide();
+      .then(function() {
+        UIUtils.loading.hide();
 
-      if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
-        UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
-          'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
-        return;
-      }
-
-      // Check identity not expired
-      if ($scope.formData.requirements.expired) {
-        UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
-        return;
-      }
-
-      // Check not already certified
-      var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: csWallet.data.pubkey, valid: true});
-      if (previousCert) {
-        $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
-          .then(function(message) {
-            UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
-          });
-        return;
-      }
-
-      // Check not pending certification
-      previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true});
-      if (previousCert) {
-        $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
-          .then(function(message) {
-            UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
-          });
-        return;
-      }
-
-
-      UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
-      .then(function(confirm){
-        if (!confirm) {
+        if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
+          UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
+            'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;
         }
-        UIUtils.loading.show();
-        csWallet.certify($scope.formData.uid,
-                    $scope.formData.pubkey,
-                    $scope.formData.timestamp,
-                    $scope.formData.sig,
-                    $scope.formData.isMember,
-                    $scope.formData.wasMember)
-        .then(function(cert) {
-          UIUtils.loading.hide();
-          if (cert) {
-            cert.uid = csWallet.data.uid;
-            cert.pubkey = csWallet.data.pubkey;
-            cert.isMember = csWallet.data.isMember;
-            UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-            $scope.formData.received_cert_pending.unshift(cert);
-            $scope.motionCertifications();
-          }
-        })
-        .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
-      });
-    })
-    .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
+
+        // Check identity not expired
+        if ($scope.formData.requirements.expired) {
+          UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
+          return;
+        }
+
+        // Check not already certified
+        var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: csWallet.data.pubkey, valid: true});
+        if (previousCert) {
+          $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
+            .then(function(message) {
+              UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+            });
+          return;
+        }
+
+        // Check not pending certification
+        previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true});
+        if (previousCert) {
+          $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
+            .then(function(message) {
+              UIUtils.alert.error(message, 'ERROR.UNABLE_TO_CERTIFY_TITLE');
+            });
+          return;
+        }
+
+
+        UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
+          .then(function(confirm){
+            if (!confirm) {
+              return;
+            }
+            UIUtils.loading.show();
+            csWallet.certify($scope.formData.uid,
+              $scope.formData.pubkey,
+              $scope.formData.timestamp,
+              $scope.formData.sig,
+              $scope.formData.isMember,
+              $scope.formData.wasMember)
+              .then(function(cert) {
+                UIUtils.loading.hide();
+                if (cert) {
+                  $scope.prepareNewCert(cert);
+                  $scope.alreadyCertified = true;
+                  UIUtils.alert.info('INFO.CERTIFICATION_DONE');
+                  $scope.formData.received_cert_pending.unshift(cert);
+                  $scope.doMotion();
+                }
+              })
+              .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
+          });
+      })
+      .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
   };
 
   // Select an identity and certify
@@ -662,9 +570,10 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
               .then(function(cert) {
                 UIUtils.loading.hide();
                 if (cert) {
+                  $scope.prepareNewCert(cert);
                   UIUtils.alert.info('INFO.CERTIFICATION_DONE');
                   $scope.formData.given_cert_pending.unshift(cert);
-                  $scope.motionGivenCertifications();
+                  $scope.doMotion();
                 }
               })
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
@@ -674,31 +583,264 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
 
   };
 
-  // Updating wallet data
+  // Add wallet's data to a new cert
+  $scope.prepareNewCert = function(cert) {
+    cert.uid = csWallet.data.uid;
+    cert.pubkey = csWallet.data.pubkey;
+    cert.isMember = csWallet.data.isMember;
+    cert.avatar = csWallet.data.avatar;
+    cert.name = csWallet.data.name;
+  };
+
+  // Could be override by subclass
+  $scope.doMotion = function() {
+    $timeout(function() {
+      UIUtils.motion.fadeSlideInRight();
+      UIUtils.ink();
+    }, 10);
+  };
+
+  /* -- open screens -- */
+
+  $scope.showCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    if (UIUtils.screen.isSmall() ) {
+      $state.go('app.wot_cert', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid,
+        type: 'received'
+      });
+    }
+    else {
+      $state.go('app.wot_cert_lg', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid
+      });
+    }
+  };
+
+  $scope.showGivenCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    if (UIUtils.screen.isSmall() ) {
+      $state.go('app.wot_cert', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid,
+        type: 'given'
+      });
+    }
+    else {
+      $state.go('app.wot_cert_lg', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.uid
+      });
+    }
+  };
+
+  $scope.showSharePopover = function(event) {
+    var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
+    var url = $state.href('app.wot_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid}, {absolute: true});
+    UIUtils.popover.share(event, {
+      bindings: {
+        url: url,
+        titleKey: 'WOT.VIEW.POPOVER_SHARE_TITLE',
+        titleValues: {title: title},
+        postMessage: title
+      }
+    });
+  };
+}
+
+/**
+ * Identity view controller - should extend WotIdentityAbstractCtrl
+ */
+function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWallet) {
+  'ngInject';
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+
+    if (state.stateParams &&
+      state.stateParams.pubkey &&
+      state.stateParams.pubkey.trim().length > 0) {
+      if ($scope.loading) { // load once
+        return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
+          .then(function() {
+            $scope.doMotion();
+          });
+      }
+    }
+
+    // Load from wallet pubkey
+    else if (csWallet.isLogin()){
+
+      if ($scope.loading) {
+        return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+          .then(function() {
+            $scope.doMotion();
+          });
+      }
+    }
+
+    // Redirect to home
+    else {
+      $scope.showHome();
+    }
+  });
+
+  $scope.doMotion = function() {
+    // Effects
+    $timeout(function () {
+      UIUtils.motion.fadeSlideInRight();
+      UIUtils.ink();
+    }, 10);
+
+    $scope.showFab('fab-transfer');
+  };
+}
+
+/**
+ * Certifications controller - extend WotIdentityAbstractCtrl
+ */
+function WotCertificationsViewController($scope, $rootScope, $controller, $timeout, csSettings, csWallet, UIUtils) {
+  'ngInject';
+// Initialize the super class and extend it.
+  angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
+
+  // Values overwritten in tab controller (for small screen)
+  $scope.motions = {
+    receivedCertifications: true,
+    givenCertifications: true,
+    avatar: true
+  };
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (state.stateParams && state.stateParams.type) {
+      $scope.motions.receivedCertifications = (state.stateParams.type != 'given');
+      $scope.motions.givenCertifications = (state.stateParams.type == 'given');
+      $scope.motions.avatar= false;
+    }
+
+    if (state.stateParams &&
+      state.stateParams.pubkey &&
+      state.stateParams.pubkey.trim().length > 0) {
+
+      if ($scope.loading) { // load once
+        return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
+          .then(function() {
+            $scope.doMotion();
+            $scope.showHelpTip();
+          });
+      }
+      else {
+        $scope.doMotion();
+      }
+    }
+
+    // Load from wallet pubkey
+    else if (csWallet.isLogin()){
+      if ($scope.loading) {
+        return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
+          .then(function() {
+            $scope.doMotion();
+            $scope.showHelpTip();
+          });
+      }
+      else {
+        $scope.doMotion();
+      }
+    }
+
+    // Redirect to home
+    else {
+      $scope.showHome();
+    }
+  });
+
+  $scope.$on('$ionicView.leave', function() {
+    $scope.loading = true;
+  });
+
+  // Updating data
   $scope.doUpdate = function() {
-    $scope.load($scope.formData.pubkey, false /*no cache*/);
+    return $scope.load($scope.formData.pubkey, false /*no cache*/, $scope.formData.uid)
+      .then(function() {
+        $scope.doMotion();
+        $scope.showHelpTip();
+      });
   };
 
-  // Show received certifcations
-  $scope.setShowCertifications = function(show) {
-    $scope.showCertifications = show;
-    $scope.motionCertifications();
+  $scope.doMotion = function(skipItems) {
+    // Motions received certifications part
+    $scope.doMotionReceivedCertifications(0, skipItems);
+
+    // Motion on avatar part
+    if ($scope.motions.avatar) {
+      // Effects
+      $timeout(function () {
+        UIUtils.motion.toggleOn({
+          selector: '.col-avatar .motion'
+        });
+      }, 300);
+    }
+
+    // Motion on given certification part
+    $scope.doMotionGivenCertifications($scope.motions.receivedCertifications ? 800 : 10, skipItems);
   };
 
-  // Show given certifcations
-  $scope.setShowGivenCertifications = function(show) {
-    $scope.showGivenCertifications = show;
-    $scope.motionGivenCertifications();
+  // Effects on received certifcations
+  $scope.doMotionReceivedCertifications = function(timeout, skipItems) {
+    if ($scope.motions.receivedCertifications) {
+      if (!skipItems) {
+        // List items
+        $timeout(function () {
+          UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
+          UIUtils.ink({selector: '.list.certifications .ink'});
+        }, timeout || 10);
+      }
+
+      // Fab button
+      if ($scope.canCertify || $rootScope.tour) {
+        $scope.showFab('fab-certify', timeout);
+      }
+    }
+    // If not enable, make sure to hide fab button
+    else {
+      // Hide fab button
+      if ($scope.canCertify || $rootScope.tour) {
+        $scope.hideFab('fab-certify', 0);
+      }
+    }
   };
 
-  // Show avatar
-  $scope.setShowAvatar = function(show) {
-    $scope.showAvatar = show;
-    $scope.motionCertifications();
+  // Effects on given certifcations
+  $scope.doMotionGivenCertifications = function(timeout, skipItems) {
+
+    if ($scope.motions.givenCertifications) {
+      if (!skipItems) {
+        // List items
+        $timeout(function() {
+          UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
+          UIUtils.ink({selector: '.list.given-certifications .ink'});
+        }, timeout || 10);
+      }
+      // Fab button
+      if ($scope.canSelectAndCertify || $rootScope.tour) {
+        $scope.showFab('fab-select-certify');
+      }
+    }
+
+    // If not enable, make sure to hide fab button
+    else {
+      // Hide fab button
+      if ($scope.canSelectAndCertify || $rootScope.tour) {
+        $scope.hideFab('fab-select-certify', 0);
+      }
+    }
   };
 
   // Show help tip
-  $scope.showHelpTip = function(isWallet) {
+  $scope.showHelpTip = function() {
     if (!$scope.isLogin()) return;
     if (!csSettings.data.helptip.enable) return;
 
@@ -706,6 +848,7 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
     var helptipScope = $scope.createHelptipScope();
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
 
+    var isWallet = csWallet.isUserPubkey($scope.formData.pubkey);
     var index = isWallet ? csSettings.data.helptip.walletCerts : csSettings.data.helptip.wotCerts;
     if (index < 0) return;
 
@@ -714,70 +857,16 @@ function WotCertificationsViewController($scope, $rootScope, $state, $timeout, $
       helptipScope.startWotCertTour(index, false);
 
     return startFunc.then(function(endIndex) {
-        helptipScope.$destroy();
-        if (isWallet) {
-          csSettings.data.helptip.walletCerts = endIndex;
-        }
-        else {
-          csSettings.data.helptip.wotCerts = endIndex;
-        }
-        csSettings.store();
-      });
-  };
-
-  // Show received certifcations (animation need in tabs)
-  $scope.motionCertifications = function(timeout) {
-    if ($scope.showCertifications) {
-      // Effects
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
-        UIUtils.ink({selector: '.list.certifications .ink'});
-      }, timeout || 10);
-      if ($scope.canCertify) {
-        $scope.showFab('fab-certify');
+      helptipScope.$destroy();
+      if (isWallet) {
+        csSettings.data.helptip.walletCerts = endIndex;
       }
-    }
-    else {
-      if ($scope.canCertify) {
-        $scope.hideFab('fab-certify', 0);
+      else {
+        csSettings.data.helptip.wotCerts = endIndex;
       }
-    }
-  };
-
-  // Show given certifcations (animation need in tabs)
-  $scope.motionGivenCertifications = function(timeout) {
-    if ($scope.showGivenCertifications) {
-      // Effects
-      $timeout(function() {
-        UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
-        UIUtils.ink({selector: '.list.given-certifications .ink'});
-      }, timeout || 10);
-      if ($scope.canSelectAndCertify) {
-        $scope.showFab('fab-select-certify');
-      }
-    }
-    else {
-      if ($scope.canSelectAndCertify) {
-        $scope.hideFab('fab-select-certify', 0);
-      }
-    }
-  };
-
-  $scope.motionAvatar = function(timeout) {
-    if ($scope.showAvatar) {
-      // Effects
-      $timeout(function () {
-        UIUtils.motion.toggleOn({selector: '.col-avatar .motion'});
-      }, timeout || 900);
-    }
-  };
-
-  $scope.initLargeView = function() {
-    $scope.showCertifications = true;
-    $scope.showGivenCertifications = true;
-    $scope.showAvatar = true;
+      csSettings.store();
+    });
   };
 }
-
 
 

@@ -120,6 +120,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngFileSaver'
     };
   })
 
+  .filter('formatTime', function() {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).local().format('HH:mm') : '';
+    };
+  })
+
   .filter('formatFromNow', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).startOf('minute').fromNow() : '';
@@ -136,6 +142,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngFileSaver'
   .filter('formatDuration', function() {
     return function(input) {
       return input ? moment(0).startOf('minute').from(moment(parseInt(input)*1000), true) : '';
+    };
+  })
+
+  .filter('formatDurationMs', function() {
+    return function(input) {
+      return input ? (
+        (input < 1000) ?
+          (input + 'ms') :
+          (input/1000 + 's')
+      ) : '';
     };
   })
 
@@ -210,6 +226,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngFileSaver'
     return function(input) {
       return input ? encodeURIComponent(input
         .toLowerCase()
+        .replace(/<[^>]+>/g,'') // Remove tag (like HTML tag)
         .replace(/[^\w ]+/g,'')
         .replace(/ +/g,'-'))
         : '';

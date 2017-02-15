@@ -151,7 +151,7 @@ function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) 
     $scope.updateView();
   });
 
-  $scope.showUserProfile = function() {
+  $scope.showEditUserProfile = function() {
     $scope.closeProfilePopover();
     $state.go('app.user_edit_profile');
   };

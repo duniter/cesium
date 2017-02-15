@@ -1,0 +1,43 @@
+<div ng-if="!formData.profile"
+     class="item gray" translate>PROFILE.NO_PROFILE_DEFINED</div>
+
+<!-- name -->
+<div class="item" ng-if="formData.name && showName">
+  <span class="gray" translate>PROFILE.TITLE</span>
+  <h3>{{formData.name}}</h3>
+</div>
+
+<!-- About me -->
+<div class="item" ng-if="formData.profile.description">
+  <span class="gray" translate>PROFILE.DESCRIPTION</span>
+  <h3 class=" text-keep-lines">{{formData.profile.description}}
+  </h3>
+</div>
+
+<!-- Localisation -->
+<div class="item" ng-if="formData.profile.address || formData.profile.city"
+     copy-on-click="{{formData.profile.address ? formData.profile.address + '&#10;' : ''}}{{formData.profile.city}}">
+  <span class="gray" translate>PROFILE.LOCATION_DIVIDER</span>
+  <h3>
+    <span class="text-keep-lines" ng-if="formData.profile.address">{{formData.profile.address}}<br/></span>
+    {{formData.profile.city}}
+  </h3>
+</div>
+
+<!-- Socials networks -->
+<div class="item" ng-if="formData.profile.socials && formData.profile.socials.length">
+  <span class="gray" translate>PROFILE.SOCIAL_NETWORKS_DIVIDER</span>
+  <div class="list no-padding">
+    <ion-item class="item-icon-left item-text-wrap no-padding-bottom"
+              ng-repeat="social in formData.profile.socials track by social.url"
+              id="social-{{::social.url|formatSlug}}">
+      <i class="icon ion-social-{{social.type}}"
+         ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
+      <p ng-if="social.type && social.type != 'web'">{{social.type}}</p>
+      <h2>
+        <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{::social.url}}</a>
+        <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{::social.url}}</a>
+      </h2>
+    </ion-item>
+  </div>
+</div>

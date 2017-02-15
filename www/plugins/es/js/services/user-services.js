@@ -17,10 +17,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     var
       CONSTANTS = {
-        contentTypeImagePrefix: "image/"
+        contentTypeImagePrefix: "image/",
+        ES_USER_API_ENDPOINT: "ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
       },
-      FIELDS = {
-        avatar: ['title', 'avatar._content_type']
+      REGEX = {
+        ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT)
       },
       SETTINGS_SAVE_SPEC = {
         includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
@@ -37,10 +38,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
     var listeners,
       restoringSettings = false,
-      api = new Api(this, 'esUser-' + id),
       getRequestFields = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
       getRequest = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content')
     ;
+
+    function exact(regexpContent) {
+      return new RegExp("^" + regexpContent + "$");
+    }
 
     function copy(otherNode) {
       removeListeners();
@@ -52,6 +56,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       else {
         angular.copy(otherNode, this);
       }
+      addListeners();
     }
 
     function copyUsingSpec(data, copySpec) {
@@ -143,13 +148,25 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
 
     function fillAvatars(datas, pubkeyAtributeName) {
-      return onWotSearch(null, datas, null, pubkeyAtributeName);
+      return onWotSearch(null, datas, pubkeyAtributeName);
     }
 
     // Load settings
     function loadSettings(pubkey, keypair) {
-      return esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
+      return $q.all([
+          CryptoUtils.box.keypair.fromSignKeypair(keypair),
+          esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
+            .catch(function(err){
+              if (err && err.ucode && err.ucode == 404) {
+                return null; // not found
+              }
+              else {
+                throw err;
+              }
+            })])
         .then(function(res) {
+          boxKeypair = res[0];
+          res = res[1];
           if (!res || !res._source) {
             return;
           }
@@ -159,7 +176,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             console.debug('[ES] [user] Local settings already up to date');
             return;
           }
-          var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(keypair);
           var nonce = CryptoUtils.util.decode_base58(record.nonce);
           // Decrypt settings content
           return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
@@ -168,14 +184,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               settings.time = record.time;
               return settings;
             });
-        })
-        .catch(function(err){
-          if (err && err.ucode && err.ucode == 404) {
-            return null; // not found
-          }
-          else {
-            throw err;
-          }
         });
     }
 
@@ -198,7 +206,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         console.debug('[ES] [user] Waiting crypto lib loading...');
         $timeout(function() {
           onWalletLogin(data, deferred);
-        }, 200);
+        }, 50);
         return;
       }
 
@@ -244,11 +252,34 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
         data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
       }
-      deferred.resolve();
+
+      // Load full profile
+      loadProfile(data.pubkey)
+        .then(function(profile) {
+          if (profile) {
+            data.name = profile.name;
+            // Avoid too long name (workaround for #308)
+            if (data.name && data.name.length > 30) {
+              data.name = data.name.substr(0, 27) + '...';
+            }
+            data.avatar = profile.avatar;
+            data.profile = profile.source;
+
+            // Social url must be unique in socials links - Workaround for issue #306:
+            if (data.profile && data.profile.socials && data.profile.socials.length) {
+              data.profile.socials = _.uniq(data.profile.socials, false, function (social) {
+                return social.url;
+              });
+            }
+
+          }
+          deferred.resolve();
+        });
+
       return deferred.promise;
     }
 
-    function onWotSearch(text, datas, deferred, pubkeyAtributeName) {
+    function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
       deferred = deferred || $q.defer();
       if (!text && (!datas || !datas.length)) {
         deferred.resolve(datas);
@@ -257,8 +288,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       pubkeyAtributeName = pubkeyAtributeName || 'pubkey';
       text = text ? text.toLowerCase().trim() : text;
-      var dataByPubkey = {};
-
+      var dataByPubkey;
       var request = {
         query: {},
         highlight: {fields : {title : {}}},
@@ -268,34 +298,44 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       };
 
       if (datas.length > 0) {
-        // collect pubkeys
+        // collect pubkeys and fill values map
+        dataByPubkey = {};
         _.forEach(datas, function(data) {
           var pubkey = data[pubkeyAtributeName];
           if (pubkey) {
             var values = dataByPubkey[pubkey];
             if (!values) {
-              values = [];
+              values = [data];
               dataByPubkey[pubkey] = values;
             }
-            values.push(data);
+            else {
+              values.push(data);
+            }
           }
         });
         var pubkeys = _.keys(dataByPubkey);
-        request.query.constant_score = {
-           filter: {
-             bool: {should: [{terms : {_id : pubkeys}}]}
-           }
-        };
-        request.size = request.length;
+        // Make sure all results will be return
+        request.size = (pubkeys.length <= request.size) ? request.size : pubkeys.length;
         if (!text) {
           delete request.highlight; // highlight not need
+          request.query.constant_score = {
+            filter: {
+              terms : {_id : pubkeys}
+            }
+          };
         }
         else {
-          request.query.constant_score.filter.bool.should.push(
-            {bool: {must: [
-                {match: {title: text}},
-                {prefix: {title: text}}
-              ]}});
+          request.query.constant_score = {
+            filter: {bool: {should: [
+                {terms : {_id : pubkeys}},
+                {bool: {
+                    must: [
+                      {match: {title: text}},
+                      {prefix: {title: text}}
+                    ]}
+                }
+            ]}}
+          };
         }
       }
       else if (text){
@@ -327,7 +367,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       .then(function() {
         if (hits.total > 0) {
           _.forEach(hits.hits, function(hit) {
-            var values = dataByPubkey[hit._id];
+            var values = dataByPubkey && dataByPubkey[hit._id];
             if (!values) {
               var value = {};
               value[pubkeyAtributeName] = hit._id;
@@ -337,7 +377,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             var avatar = esHttp.image.fromHit(host, port, hit, 'avatar');
             _.forEach(values, function(data) {
               // name (basic or highlighted)
-              data.name=hit._source.title;
+              data.name = hit._source.title;
+              // Avoid too long name (workaround for #308)
+              if (data.name && data.name.length > 30) {
+                data.name = data.name.substr(0, 27) + '...';
+              }
               if (hit.highlight) {
                 if (hit.highlight.title) {
                     data.name = hit.highlight.title[0];
@@ -353,6 +397,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         _.forEach(datas, function(data) {
           if (!data.uid && data[pubkeyAtributeName]) {
             data.uid = uidsByPubkey[data[pubkeyAtributeName]];
+            // Remove name if redundant with uid
+            if (data.uid && data.uid == data.name) {
+              return data.name;
+            }
           }
         });
         deferred.resolve(datas);
@@ -382,8 +430,20 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           .then(function(profile) {
             if (profile) {
               data.name = profile.name;
+              // Avoid too long name (workaround for #308)
+              if (data.name && data.name.length > 30) {
+                data.name = data.name.substr(0, 27) + '...';
+              }
               data.avatar = profile.avatar;
               data.profile = profile.source;
+
+              // Social url must be unique in socials links - Workaround for issue #306:
+              if (data.profile && data.profile.socials && data.profile.socials.length) {
+                data.profile.socials = _.uniq(data.profile.socials, false, function(social) {
+                  return social.url;
+                });
+              }
+
             }
             deferred.resolve(data);
           }),
@@ -416,34 +476,39 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
       console.debug('[ES] [user] Saving user settings to ES...');
 
-      var boxKeypair = CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair);
-      var nonce = CryptoUtils.util.random_nonce();
+      return $q.all([
+          CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair),
+          CryptoUtils.util.random_nonce()
+        ])
+        .then(function(res) {
+          var boxKeypair = res[0];
+          var nonce = res[1];
+          var record = {
+            issuer: csWallet.data.pubkey,
+            nonce: CryptoUtils.util.encode_base58(nonce),
+            time: esHttp.date.now()
+          };
 
-      var record = {
-        issuer: csWallet.data.pubkey,
-        nonce: CryptoUtils.util.encode_base58(nonce),
-        time: esHttp.date.now()
-      };
+          var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
 
-      var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
+          var json = JSON.stringify(filteredData);
 
-      var json = JSON.stringify(filteredData);
-
-      return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
-        .then(function(cypherText) {
-          record.content = cypherText;
-          return !data.time ?
-            // create
-            esHttp.record.post(host, port, '/user/settings')(record) :
-            // or update
-            esHttp.record.post(host, port, '/user/settings/:pubkey/_update')(record, {pubkey: record.issuer});
-        })
-        .then(function() {
-          // Change settings version
-          csSettings.data.time = record.time;
-          restoringSettings = true;
-          csSettings.store();
-          console.debug('[ES] [user] User settings saved in ES');
+          return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
+            .then(function(cypherText) {
+              record.content = cypherText;
+              return !data.time ?
+                // create
+                esHttp.record.post(host, port, '/user/settings')(record) :
+                // or update
+                esHttp.record.post(host, port, '/user/settings/:pubkey/_update')(record, {pubkey: record.issuer});
+            })
+            .then(function() {
+              // Change settings version
+              csSettings.data.time = record.time;
+              restoringSettings = true;
+              csSettings.store();
+              console.debug('[ES] [user] User settings saved in ES');
+            });
         })
         .catch(function(err) {
           console.error(err);
@@ -503,6 +568,17 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       }
     }
 
+    function parseEndPoint(endpoint) {
+      var matches = REGEX.ES_USER_API_ENDPOINT.exec(endpoint);
+      if (!matches) return;
+      return {
+        "dns": matches[2] || '',
+        "ipv4": matches[4] || '',
+        "ipv6": matches[6] || '',
+        "port": matches[8] || 80
+      };
+    }
+
     // Listen for settings changed
     csSettings.api.data.on.changed($rootScope, function(data){
       if (restoringSettings) {
@@ -549,7 +625,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     return {
       copy: copy,
       node: {
-        server: esHttp.getServer(host, port)
+        server: esHttp.getServer(host, port),
+        summary: esHttp.get(host, port, '/node/summary'),
+        parseEndPoint: parseEndPoint
       },
       profile: {
         get: esHttp.get(host, port, '/user/profile/:id'),
@@ -570,7 +648,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         change: function() {
           return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
         }
-      }
+      },
+      constants: CONSTANTS
     };
   }
 

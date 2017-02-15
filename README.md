@@ -4,7 +4,7 @@
 
 [Unhosted webapp](https://unhosted.org) client for [Duniter](https://duniter.org) network.
 
-Try it at: http://cesium.duniter.fr
+Demo: http://gtest.duniter.fr
 
 
 ## Installation
@@ -66,17 +66,12 @@ To change default configuration:
 ```js
 angular.module("cesium.config", [])
 .constant("csConfig", {
-  "cacheTimeMs": 60000,
   "fallbackLanguage": "en",
   "rememberMe": false,
-  "showUDHistory": false,
-  "timeout": 10000,
   "timeWarningExpireMembership": 5184000,
   "timeWarningExpire": 7776000,
   "useLocalStorage": true,
   "useRelative": true,
-  "initPhase": false,
-  "expertMode": false,
   "decimalCount": 4,
   "helptip": {
     "enable": true,
@@ -90,12 +85,11 @@ angular.module("cesium.config", [])
 		"es": {
 			"enable": "false",
 			"host": "data.gtest.duniter.fr",
-			"port": "9203"
+			"port": "80"
 		}
 	},
 	"version": "0.9.7",
-	"build": "2017-01-17T08:27:57.915Z",
-	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
+	"build": "2017-01-17T08:27:57.915Z"
 });
 ```
 
@@ -109,8 +103,7 @@ angular.module("cesium.config", [])
    
      * set `plugins.es.enable` with [true|false] to change the default extension state. 
    
-     * To **remove** the extension (and not only disable by default): remove all content inside the `plugins` tag.
-       Users will NOT be able to enable the extension.
+To learn more about configuration options, see the [detailed documentation](doc/configuration.md).
  
 ## License
 

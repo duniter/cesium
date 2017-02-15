@@ -1,0 +1,4 @@
+<a ui-sref="app.wot_identity({pubkey: identity.pubkey, uid: identity.uid})">
+  <span class="positive" ng-if="identity.uid"><i class="icon ion-person"></i> {{::identity.uid}}&nbsp;</span>
+  <span class="gray" ng-class="{'hidden-xs hidden-sm': identity.uid}"><i class="icon ion-key"></i>&nbsp;{{::identity.pubkey|formatPubkey}}</span>
+</a>

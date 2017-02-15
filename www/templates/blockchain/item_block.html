@@ -1,0 +1,40 @@
+<a name="block-{{:rebind:block.number}}"></a>
+<ion-item id="block-{{:rebind:block.number}}"
+          class="item item-icon-left item-block {{ionItemClass}}"
+          ng-class="{'item-block-empty': block.empty, 'compacted': block.compacted && compactMode}"
+          ng-click="selectBlock(block)">
+
+  <i class="icon ion-cube stable" ng-if=":rebind:(!block.empty && !block.avatar)"></i>
+  <i class="avatar" ng-if=":rebind:!block.empty && block.avatar" style="background-image: url('{{:rebind:block.avatar.src}}')"></i>
+
+  <div class="row no-padding" ng-if=":rebind:!block.compacted || !compactMode">
+    <div class="col">
+      <h4 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
+        <i class="ion-clock"></i>
+        {{:rebind:block.medianTime|formatDate}}
+      </h4>
+      <h4 ng-if="!block.empty">
+        <!-- joiners/leavers -->
+        <ng-if ng-if=":rebind:block.joinersCount||(block.excludedCount-block.revokedCount)">
+          <i class="dark ion-person"></i>
+          <span class="dark" ng-if=":rebind:block.joinersCount">+{{:rebind:block.joinersCount}}</span>
+          <span class="dark" ng-if=":rebind:block.excludedCount">-{{:rebind:block.excludedCount-block.revokedCount}}</span>
+        </ng-if>
+        <span class="dark" ng-if=":rebind:block.revokedCount" class="assertive"><i class="ion-minus-circled"></i> {{:rebind:block.revokedCount}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if=":rebind:block.activesCount" class="gray"><i class="gray ion-refresh"></i> {{:rebind:block.activesCount}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if=":rebind:block.certificationsCount"><i class="ion-ribbon-a"></i> {{:rebind:block.certificationsCount}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if=":rebind:block.dividend" class="gray"><i class="gray ion-arrow-up-c"></i> {{'COMMON.UD'|translate}}&nbsp;&nbsp;</span>
+        <span class="dark" ng-if=":rebind:block.transactionsCount"><i class="ion-card"> {{:rebind:block.transactionsCount}}</i></span>
+      </h4>
+    </div>
+
+    <div class="col col-33 positive hidden-md">
+      <h4><i class="ion-person"></i> {{:rebind:block.name||block.uid}}</h4>
+    </div>
+
+    <div class="col col-20">
+      <span class="badge " ng-class="{'badge-balanced': !$index , 'badge-calm': $index && !block.compacted && !block.empty}">{{:rebind:block.number}}</span>
+    </div>
+
+  </div>
+</ion-item>

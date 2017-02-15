@@ -7,7 +7,11 @@
           <div id="helptip-received-certs"
                class="item item-icon-left item-text-wrap ink">
             <i class="icon ion-ribbon-b"></i>
+            <b ng-if="formData.requirements.isSentry"
+               class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
+
             <span translate>WOT.CERTIFICATIONS.RECEIVED</span>
+            <h4 class="gray" ng-if="formData.requirements.isSentry" translate>WOT.CERTIFICATIONS.SENTRY_MEMBER</h4>
 
             <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
                                     requirements="formData.requirements"
@@ -33,8 +37,8 @@
 
           <a class="item item-avatar ink"
              ng-repeat="cert in formData.received_cert_pending"
-             ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
-            <ng-include src="'templates/wot/tabs/item_certification.html'"></ng-include>
+             ui-sref="app.wot_identity({pubkey:cert.pubkey, uid:cert.uid})"
+             ng-include="'templates/wot/item_certification.html'">
           </a>
 
           <!-- valid certifications -->
@@ -48,7 +52,7 @@
 
           <a class="item item-avatar ink"
                 ng-repeat="cert in formData.received_cert"
-                ui-sref="app.wot_view_identity({pubkey:cert.pubkey, uid:cert.uid})">
-            <ng-include src="'templates/wot/tabs/item_certification.html'"></ng-include>
+                ui-sref="app.wot_identity({pubkey:cert.pubkey, uid:cert.uid})"
+                ng-include="'templates/wot/item_certification.html'">
           </a>
         </div>

@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, csHttp, Api, csSettings, UIUtils) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, csHttp, Api) {
   'ngInject';
 
   factory = function(id) {
@@ -17,15 +17,16 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         filter: {
           member: true,
           mirror: true,
-          endpointFilter: null
+          endpointFilter: null,
+          online: false
         },
         sort:{
           type: null,
           asc: true
         },
+        expertMode: false,
         knownBlocks: [],
-        knownPeers: {},
-        mainBuid: null,
+        mainBlock: null,
         uidsByPubkeys: null,
         searchingPeersOnNetwork: false
       },
@@ -37,20 +38,21 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       resetData = function() {
         data.bma = null;
-        data.peers = [];
+        data.peers.splice(0);
         data.filter = {
           member: true,
           mirror: true,
-          endpointFilter: null
+          endpointFilter: null,
+          online: true
         };
         data.sort = {
           type: null,
           asc: true
-        },
+        };
+        data.expertMode = false;
         data.memberPeersCount = 0;
         data.knownBlocks = [];
-        data.knownPeers = {};
-        data.mainBuid = null;
+        data.mainBlock = null;
         data.uidsByPubkeys = {};
         data.loading = true;
         data.searchingPeersOnNetwork = false;
@@ -72,26 +74,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         return data.knownBlocks;
       },
 
-      newLightBMA = function(host, port) {
-        return {
-          node: {
-            summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG)
-          },
-          blockchain: {
-            current: csHttp.get(host, port, '/blockchain/current'),
-            stats: {
-              hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
-            }
-          }
-        };
-      },
-
       loadPeers = function() {
-        data.knownPeers = {};
         data.peers = [];
         data.searchingPeersOnNetwork = true;
         data.loading = true;
-
+        data.bma = data.bma || BMA;
         var newPeers = [];
 
         if (interval) {
@@ -106,37 +93,58 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           else if (data.loading && !data.searchingPeersOnNetwork) {
             data.loading = false;
             $interval.cancel(interval);
-            console.debug('[network] Finish : all peers found. Stopping new peers check.');
             // The peer lookup end, we can make a clean final report
             sortPeers(true/*update main buid*/);
+
+            console.debug('[network] Finish: {0} peers found.'.format(data.peers.length));
           }
         }, 1000);
 
         return data.bma.wot.member.uids()
           .then(function(uids){
             data.uidsByPubkeys = uids;
-            return data.bma.network.peering.peers({ leaves: true });
-          })
-          .then(function(res){
-            return $q.all(res.leaves.map(function(leaf) {
-              return data.bma.network.peering.peers({ leaf: leaf })
-                .then(function(subres){
-                  var json = subres.leaf.value;
-                  addOrRefreshPeerFromJson(json, newPeers)
-                    .then(function() {
-                      // If load has already finiseh (because of response time of some nodes)
-                      // Flush new peers here
-                      if (!data.loading) {
-                        flushNewPeersAndSort(newPeers, true);
-                      }
-                    });
+
+            // online nodes
+            if (data.filter.online) {
+              /*return data.bma.network.peering.peers({leaves: true})
+                .then(function(res){
+                  return $q.all(res.leaves.map(function(leaf) {
+                    return data.bma.network.peering.peers({ leaf: leaf })
+                      .then(function(subres){
+                        return addOrRefreshPeerFromJson(subres.leaf.value, newPeers);
+                      });
+                  }));
+                });*/
+              return data.bma.network.peers()
+                .then(function(res){
+                  var jobs = [];
+                  _.forEach(res.peers, function(json) {
+                    if (json.status == 'UP') {
+                      jobs.push(addOrRefreshPeerFromJson(json, newPeers));
+                    }
+                  });
+                  if (jobs.length) return $q.all(jobs);
                 });
-            }))
-              .then(function(){
-                data.searchingPeersOnNetwork = false;
+            }
+
+            // offline nodes
+            return data.bma.network.peers()
+              .then(function(res){
+                var jobs = [];
+                _.forEach(res.peers, function(json) {
+                  if (json.status !== 'UP') {
+                    jobs.push(addOrRefreshPeerFromJson(json, newPeers));
+                  }
+                });
+                if (jobs.length) return $q.all(jobs);
               });
           })
-          .catch(function() {
+
+          .then(function(){
+            data.searchingPeersOnNetwork = false;
+          })
+          .catch(function(err){
+            console.error(err);
             data.searchingPeersOnNetwork = false;
           });
       },
@@ -159,6 +167,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           return peer.hasEndpoint(data.filter.endpointFilter);
         }
 
+        // Filter on status
+        if (!data.filter.online && peer.status == 'UP') {
+          return false;
+        }
+
         return true;
       },
 
@@ -168,9 +181,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         var peers = createPeerEntities(json);
         var hasUpdates = false;
 
-        return $q.all(
-          peers.reduce(function(jobs, peer) {
-            var existingPeer = data.knownPeers[peer.id];
+        var jobs = peers.reduce(function(jobs, peer) {
+            var existingPeer = _.findWhere(data.peers, {id: peer.id});
             var existingMainBuid = existingPeer ? existingPeer.buid : null;
             var existingOnline = existingPeer ? existingPeer.online : false;
 
@@ -179,29 +191,35 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 .then(function (refreshedPeer) {
                   if (existingPeer) {
                     // remove existing peers, when reject or offline
-                    if (!refreshedPeer || !refreshedPeer.online) {
+                    if (!refreshedPeer || (refreshedPeer.online !== data.filter.online)) {
+                      console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
                       data.peers.splice(data.peers.indexOf(existingPeer), 1);
-                      delete data.knownPeers[existingPeer.id];
                       hasUpdates = true;
                     }
-                    else if (refreshedPeer.buid !== existingMainBuid ||
-                      existingOnline !== refreshedPeer.online){
+                    else if (refreshedPeer.buid !== existingMainBuid){
+                      console.debug('[network] Peer [{0}] new current block'.format(refreshedPeer.server));
+                      hasUpdates = true;
+                    }
+                    else if (existingOnline !== refreshedPeer.online){
+                      console.debug('[network] Peer [{0}] is now UP'.format(refreshedPeer.server));
                       hasUpdates = true;
                     }
                     else {
-                      console.debug("Ce noeud n'a pas changé:" + refreshedPeer.id);
+                      console.debug("[network] Peer [{0}] unchanged".format(refreshedPeer.server));
                     }
                   }
-                  else if (refreshedPeer && refreshedPeer.online) {
+                  else if (refreshedPeer && (refreshedPeer.online === data.filter.online)) {
+                    console.debug("[network] Peer [{0}] is UP".format(refreshedPeer.server));
                     list.push(refreshedPeer);
                     hasUpdates = true;
                   }
                 })
            );
-        }, []))
-        .then(function() {
-          return hasUpdates;
-        });
+        }, []);
+        return (jobs.length === 1 ? jobs[0] : $q.all(jobs))
+          .then(function() {
+            return hasUpdates;
+          });
       },
 
       createPeerEntities = function(json, bma) {
@@ -218,11 +236,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             return bma ? res.concat(bma) : res;
           }, []);
 
+          // if many bma endpoint: recursive call
           if (bmas.length > 1) {
             return bmas.reduce(function (res, bma) {
               return res.concat(createPeerEntities(json, bma));
             }, []);
           }
+
+          // if only one bma endpoint: use it and continue
           bma = bmas[0];
         }
         peer.bma = bma;
@@ -239,7 +260,12 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        peer.api = peer.api || newLightBMA(peer.getHost(), peer.getPort());
+        if (!data.filter.online) {
+          peer.online = false;
+          return $q.when(peer);
+        }
+
+        peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort());
 
         // Get current block
         return peer.api.blockchain.current()
@@ -247,10 +273,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             peer.currentNumber = block.number;
             peer.online = true;
             peer.buid = buid(block);
+            peer.medianTime = block.medianTime;
             if (data.knownBlocks.indexOf(peer.buid) === -1) {
               data.knownBlocks.push(peer.buid);
             }
-            console.debug('[network] Peer [' + peer.server + ']    status [UP]   block [' + peer.buid.substring(0, 20) + ']');
             return peer;
           })
           .catch(function(err) {
@@ -262,11 +288,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               return peer;
             }
             if (!peer.secondTry) {
-              var bma = peer.getBMA();
+              var bma = peer.bma || peer.getBMA();
               if (bma.dns && peer.server.indexOf(bma.dns) == -1) {
                 // try again, using DNS instead of IPv4 / IPV6
                 peer.secondTry = true;
-                peer.api = newLightBMA(bma.dns, bma.port);
+                peer.api = BMA.lightInstance(bma.dns, bma.port);
                 return refreshPeer(peer); // recursive call
               }
             }
@@ -275,22 +301,21 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             peer.currentNumber = null;
             peer.buid = null;
             peer.uid = data.uidsByPubkeys[peer.pubkey];
-            console.debug('[network] Peer [' + peer.server + '] status [DOWN]');
             return peer;
           })
           .then(function(peer) {
             // Exit if offline, or not expert mode or too small device
-            if (!peer.online || !csSettings.data.expertMode || UIUtils.screen.isSmall()) return peer;
+            if (!data.filter.online || !peer || !peer.online || !data.expertMode) return peer;
             var jobs = [];
 
             // Get hardship (only for a member peer)
             if (peer.uid) {
               jobs.push(peer.api.blockchain.stats.hardship({pubkey: peer.pubkey})
                 .then(function (res) {
-                  peer.difficulty = res && res.level;
+                  peer.difficulty = res ? res.level : null;
                 })
                 .catch(function() {
-                  peer.difficulty = '?'; // continue
+                  peer.difficulty = null; // continue
                 }));
             }
 
@@ -303,75 +328,110 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 peer.version = 'v?'; // continue
               }));
 
-            $q.all(jobs);
-            return peer;
+            return $q.all(jobs)
+              .then(function(){
+                return peer;
+              });
           });
       },
 
       flushNewPeersAndSort = function(newPeers, updateMainBuid) {
         newPeers = newPeers || data.newPeers;
         if (!newPeers.length) return;
-        var peerstoAdd = newPeers.splice(0);
-        _.forEach(peerstoAdd, function(peer) {
-          data.knownPeers[peer.id] = peer;
+        var ids = _.map(data.peers, function(peer){
+          return peer.id;
         });
-        data.peers = data.peers.concat(peerstoAdd);
-        console.debug('[network] New peers found: add them to result and sort...');
-        sortPeers(updateMainBuid);
+        var hasUpdates = false;
+        var newPeersAdded = 0;
+        _.forEach(newPeers.splice(0), function(peer) {
+          if (!ids[peer.id]) {
+            data.peers.push(peer);
+            ids[peer.id] = peer;
+            hasUpdates = true;
+            newPeersAdded++;
+          }
+        });
+        if (hasUpdates) {
+          console.debug('[network] Flushing {0} new peers...'.format(newPeersAdded));
+          sortPeers(updateMainBuid);
+        }
+      },
+
+      computeScoreAlphaValue = function(value, nbChars, asc) {
+        if (!value) return 0;
+        var score = 0;
+        value = value.toLowerCase();
+        if (nbChars > value.length) {
+          nbChars = value.length;
+        }
+        score += value.charCodeAt(0);
+        for (var i=1; i < nbChars; i++) {
+          score += Math.pow(0.001, i) * value.charCodeAt(i);
+        }
+        return asc ? (1000 - score) : score;
       },
 
       sortPeers = function(updateMainBuid) {
-        // Count peer by current block uid
-        var currents = {};
+        // Construct a map of buid, with peer count and medianTime
+        var buids = {};
+        data.memberPeersCount = 0;
         _.forEach(data.peers, function(peer){
           if (peer.buid) {
-            currents[peer.buid] = currents[peer.buid] || 0;
-            currents[peer.buid]++;
+            var buid = buids[peer.buid];
+            if (!buid) {
+              buid = {
+                buid: peer.buid,
+                count: 0,
+                medianTime: peer.medianTime
+              };
+              buids[peer.buid] = buid;
+            }
+            buid.count++;
           }
+          data.memberPeersCount += peer.uid ? 1 : 0;
         });
-        var buids = _.keys(currents).map(function(key) {
-          return { buid: key, count: currents[key] };
+        // Compute pct of use, per buid
+        _.forEach(_.values(buids), function(buid) {
+          buid.pct = buid.count * 100 / data.peers.length;
         });
         var mainBlock = _.max(buids, function(obj) {
           return obj.count;
         });
-        data.memberPeersCount = 0;
         _.forEach(data.peers, function(peer){
           peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
-          peer.hasConsensusBlock = !peer.hasMainConsensusBlock && currents[peer.buid] > 1;
-          data.memberPeersCount += peer.uid ? 1 : 0;
+          peer.hasConsensusBlock = !peer.hasMainConsensusBlock && buids[peer.buid].count > 1;
         });
         data.peers = _.uniq(data.peers, false, function(peer) {
           return peer.id;
         });
         data.peers = _.sortBy(data.peers, function(peer) {
-          var score = 1;
-          if (data.sort.type === 'api'){
-            score += (1000000000 * (peer.hasEndpoint('ES_USER_API')? 1 : 0));
+          var score = 0;
+          if (data.sort.type) {
+            var sortScore = 0;
+            sortScore += (data.sort.type == 'uid' ? computeScoreAlphaValue(peer.uid||peer.pubkey, 3, data.sort.asc) : 0);
+            sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') && data.sort.asc ? 1 : 0) : 0);
+            sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? (data.sort.asc ? (1000-peer.difficulty) : peer.difficulty): 0) : 0);
+            sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? (data.sort.asc ? (1000000000 - peer.currentNumber) : peer.currentNumber) : 0) : 0);
+            score += (10000000000 * sortScore);
           }
-          else if (data.sort.type === 'difficulty'){
-            score += (1000000000 * (peer.difficulty ? peer.difficulty : 0));
-          }
-          else if (data.sort.type === 'current_block'){
-            score += (1000000000 * (peer.currentNumber ? peer.currentNumber : 0));
-          }
-          score += (100000000 * (peer.online ? 1 : 0));
-          score += (10000000  * (peer.hasMainConsensusBlock ? 1 : 0));
-          score += (1000     * (peer.hasConsensusBlock ? currents[peer.buid] : 0));
-          score += (-1       * (peer.uid ? peer.uid.charCodeAt(0) : 999)); // alphabetical order
-
-          if (!data.sort.asc) {
-            return score;
+          score += (1000000000 * (peer.online ? 1 : 0));
+          score += (100000000  * (peer.hasMainConsensusBlock ? 1 : 0));
+          score += (1000000    * (peer.hasConsensusBlock ? buids[peer.buid].pct : 0));
+          if (data.expertMode) {
+            score += (100     * (peer.difficulty ? (10000-peer.difficulty) : 0));
+            score += (1       * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
           }
           else {
-            return -score;
+            score += (100     * (peer.uid ? computeScoreAlphaValue(peer.uid, 2, true) : 0));
+            score += (1       * (!peer.uid ? computeScoreAlphaValue(peer.pubkey, 2, true) : 0));
           }
+          return -score;
         });
 
         // Raise event on new main block
-        if (updateMainBuid && mainBlock.buid && data.mainBuid !== mainBlock.buid) {
-          data.mainBuid = mainBlock.buid;
-          api.data.raise.mainBlockChanged(data);
+        if (updateMainBuid && mainBlock.buid && (!data.mainBlock || data.mainBlock.buid !== mainBlock.buid)) {
+          data.mainBlock = mainBlock;
+          api.data.raise.mainBlockChanged(mainBlock);
         }
 
         // Raise event when changed
@@ -400,7 +460,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         });
         // Listen for new peer
         data.bma.websocket.peer().on(function(json) {
-          if (data.loading) return;
+          if (!json || data.loading) return;
           var newPeers = [];
           addOrRefreshPeerFromJson(json, newPeers)
             .then(function(hasUpdates) {
@@ -409,10 +469,18 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 flushNewPeersAndSort(newPeers, true);
               }
               else {
+                console.debug('[network] [ws] Peers updated received');
                 sortPeers(true);
               }
             });
         });
+      },
+
+      sort = function(options) {
+        options = options || {};
+        data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
+        data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
+        sortPeers(false);
       },
 
       start = function(bma, options) {
@@ -420,10 +488,10 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         return $q(function(resolve, reject) {
           close();
           data.bma = bma ? bma : BMA;
-          data.filter = options.filter;
-          data.sort = options.sort;
-          console.info('[network] Starting network [{0}] filetered on [{1}]'.format(bma.node.server,
-            data.filter ? data.filter : 'none'));
+          data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
+          data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
+          data.expertMode = angular.isDefined(options.expertMode) ?options.expertMode : data.expertMode;
+          console.info('[network] Starting network from [{0}]'.format(bma.node.server));
           var now = new Date();
           startListeningOnSocket(resolve, reject);
           loadPeers()
@@ -486,6 +554,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       close: close,
       hasPeers: hasPeers,
       getPeers: getPeers,
+      sort: sort,
       getTrustedPeers: getTrustedPeers,
       getKnownBlocks: getKnownBlocks,
       getMainBlockUid: getMainBlockUid,

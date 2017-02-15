@@ -47,7 +47,7 @@
             <i class="icon ion-clock" ng-if="formData.time"></i>
             <span translate>COMMON.SUBMIT_BY</span>
             <a ng-class="{'positive': issuer.uid, 'gray': !issuer.uid}"
-               ui-sref="app.wot_view_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
+               ui-sref="app.wot_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
               <ng-if ng-if="issuer.uid">
                 <i class="icon ion-person"></i>
                 {{::issuer.name||issuer.uid}}

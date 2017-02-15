@@ -1,0 +1,19 @@
+<ion-popover-view class="fit has-header">
+  <ion-header-bar>
+    <h1 class="title" translate>BLOCKCHAIN.LOOKUP.POPOVER_FILTER_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <!-- last blocks -->
+      <a ng-if="enableFilter"
+         class="item item-icon-left item-icon-right ink"
+         ng-click="doSearchLast()">
+        <i class="icon ion-clock"></i>
+        {{'BLOCKCHAIN.LOOKUP.BTN_LAST' | translate}}
+        <i class="icon ion-ios-checkmark-empty" ng-show="search.type=='last'"></i>
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

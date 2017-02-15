@@ -115,7 +115,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .then(function(result){
         // If pubkey
         if (result && result.pubkey) {
-          $state.go('app.wot_view_identity', {
+          $state.go('app.wot_identity', {
             pubkey: result.pubkey,
             node: result.host ? result.host: null}
           );
@@ -143,8 +143,18 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return helptipScope;
   };
 
-  $scope.startHelpTour = function() {
+  $scope.startHelpTour = function(skipClearCache) {
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. csWallet)
+
+    //
+    if (!skipClearCache) {
+      $ionicHistory.clearHistory();
+      return $ionicHistory.clearCache()
+        .then(function() {
+          $scope.startHelpTour(true/*continue*/);
+        });
+    }
+
     var helptipScope = $scope.createHelptipScope(true);
     return helptipScope.startHelpTour()
     .then(function() {
@@ -285,27 +295,38 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // Logout
-  $scope.logout = function(force) {
-    if (!force && $scope.profilePopover) {
+  $scope.logout = function(options) {
+    options = options || {};
+    if (!options.force && $scope.profilePopover) {
       // Make the popover if really closed, to avoid UI refresh on popover buttons
-      $scope.profilePopover.hide()
+      return $scope.profilePopover.hide()
         .then(function(){
-          $scope.logout(true);
+          options.force = true;
+          return $scope.logout(options);
         });
-      return;
     }
+    if (options.askConfirm) {
+      return UIUtils.alert.confirm('CONFIRM.LOGOUT')
+        .then(function(confirm) {
+          if (confirm) {
+            options.askConfirm=false;
+            return $scope.logout(options);
+          }
+        });
+    }
+
     UIUtils.loading.show();
     return csWallet.logout()
-    .then(function() {
-      $ionicSideMenuDelegate.toggleLeft();
-      $ionicHistory.clearHistory();
-
-      return $ionicHistory.clearCache()
       .then(function() {
-        $scope.showHome();
-      });
-    })
-    .catch(UIUtils.onError());
+        $ionicSideMenuDelegate.toggleLeft();
+        $ionicHistory.clearHistory();
+
+        return $ionicHistory.clearCache()
+          .then(function() {
+            return $scope.showHome();
+          });
+      })
+      .catch(UIUtils.onError());
   };
 
   // add listener on wallet event
@@ -365,37 +386,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Layout Methods
   ////////////////////////////////////////
   $scope.showFab = function(id, timeout) {
-    if (!timeout) {
-      timeout = 900;
-    }
-    $timeout(function () {
-      // Could not use 'getElementById', because it return only once element,
-      // but many fabs can have the same id (many view could be loaded at the same time)
-      var fabs = document.getElementsByClassName('button-fab');
-      _.forEach(fabs, function(fab){
-        if (fab.id == id) {
-          fab.classList.toggle('on', true);
-        }
-      });
-    }, timeout);
+    UIUtils.motion.toggleOn({selector: '#'+id + '.button-fab'}, timeout);
   };
 
   $scope.hideFab = function(id, timeout) {
-    if (!timeout) {
-      timeout = 10;
-    }
-    $timeout(function () {
-      // Could not use 'getElementById', because it return only once element,
-      // but many fabs can have the same id (many view could be loaded at the same time)
-      var fabs = document.getElementsByClassName('button-fab');
-      _.forEach(fabs, function(fab){
-        if (fab.id == id) {
-          fab.classList.toggle('on', false);
-        }
-      });
-    }, timeout);
+    UIUtils.motion.toggleOff({selector: '#'+id + '.button-fab'}, timeout);
   };
-
 
 }
 
@@ -407,6 +403,5 @@ function AboutController($scope, csConfig) {
 
 function PassCodeController($scope) {
   'ngInject';
-
 
 }

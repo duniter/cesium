@@ -20,7 +20,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         // duniter://[uid]:[pubkey]@[host]:[port]
         URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?",
-        BMA_ENDPOINT: "BASIC_MERKLED_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
+        BMA_ENDPOINT: "BASIC_MERKLED_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))",
+        BMAS_ENDPOINT: "BMAS( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
       },
       errorCodes = {
         REVOCATION_ALREADY_REGISTERED: 1002,
@@ -52,10 +53,12 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         PUBKEY: exact(regex.PUBKEY),
         CURRENCY: exact(regex.CURRENCY),
         URI: exact(regex.URI),
-        BMA_ENDPOINT: exact(regex.BMA_ENDPOINT)
+        BMA_ENDPOINT: exact(regex.BMA_ENDPOINT),
+        BMAS_ENDPOINT: exact(regex.BMAS_ENDPOINT)
       },
       node: {
         server: csHttp.getServer(host, port),
+        url: csHttp.getUrl(host, port),
         host: host,
         port: port,
         summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG),
@@ -65,6 +68,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       },
       network: {
         peering: {
+          self: csHttp.get(host, port, '/network/peering'),
           peers: csHttp.get(host, port, '/network/peering/peers')
         },
         peers: csHttp.get(host, port, '/network/peers')
@@ -85,6 +89,7 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       blockchain: {
         parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
         block: cacheEnable ? csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT) : csHttp.get(host, port, '/blockchain/block/:block'),
+        blocksSlice: csHttp.get(host, port, '/blockchain/blocks/:count/:from'),
         current: csHttp.get(host, port, '/blockchain/current'),
         membership: csHttp.post(host, port, '/blockchain/membership'),
         stats: {
@@ -112,6 +117,26 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
       raw: {
 
       }
+    };
+
+    exports.lightInstance = function(host, port) {
+      return {
+        node: {
+          summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG)
+        },
+        network: {
+          peering: {
+            self: csHttp.get(host, port, '/network/peering')
+          },
+          peers: csHttp.get(host, port, '/network/peers')
+        },
+        blockchain: {
+          current: csHttp.get(host, port, '/blockchain/current'),
+          stats: {
+            hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
+          }
+        }
+      };
     };
 
     exports.node.parseEndPoint = function(endpoint) {
@@ -163,34 +188,47 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
      * @param blockNumbers a rray of block number
     */
     exports.blockchain.blocks = function(blockNumbers){
-      return exports.raw.blocksRecursive(blockNumbers, 0, exports.constants.LIMIT_REQUEST_COUNT);
+      return exports.raw.getHttpRecursive(exports.blockchain.block, 'block', blockNumbers);
     };
 
-    exports.raw.blocksRecursive = function(blockNumbers, offset, size) {
+    /**
+     * Return all expected blocks
+     * @param blockNumbers a rray of block number
+     */
+    exports.network.peering.peersByLeaves = function(leaves){
+      return exports.raw.getHttpRecursive(exports.network.peering.peers, 'leaf', leaves, 0, 10, callbackFlush);
+    };
+
+    exports.raw.getHttpRecursive = function(httpGetRequest, paramName, paramValues, offset, size, callbackFlush) {
+      offset = angular.isDefined(offset) ? offset : 0;
+      size = size || exports.constants.LIMIT_REQUEST_COUNT;
       return $q(function(resolve, reject) {
         var result = [];
         var jobs = [];
-        _.each(blockNumbers.slice(offset, offset+size), function(blockNumber) {
+        _.each(paramValues.slice(offset, offset+size), function(paramValue) {
+          var requestParams = {};
+          requestParams[paramName] = paramValue;
           jobs.push(
-            exports.blockchain.block({block: blockNumber})
-              .then(function(block){
-                if (!block) return;
-                result.push(block);
+            httpGetRequest(requestParams)
+              .then(function(res){
+                if (!res) return;
+                result.push(res);
               })
           );
         });
 
         $q.all(jobs)
           .then(function() {
-            if (offset < blockNumbers.length - 1) {
+            if (offset < paramValues.length - 1) {
               $timeout(function() {
-                exports.raw.blocksRecursive(blockNumbers, offset+size, size)
-                  .then(function(blocks) {
-                    if (!blocks || !blocks.length) {
+                exports.raw.getHttpRecursive(httpGetRequest, paramName, paramValues, offset+size, size)
+                  .then(function(res) {
+                    if (!res || !res.length) {
                       resolve(result);
                       return;
                     }
-                    resolve(result.concat(blocks));
+
+                    resolve(result.concat(res));
                   })
                   .catch(function(err) {
                     reject(err);

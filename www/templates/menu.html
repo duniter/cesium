@@ -28,7 +28,6 @@
         </a>
       </ion-nav-buttons>
     </ion-nav-bar>
-    <ion-nav-view name="fabContent"></ion-nav-view>
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
 
@@ -63,8 +62,8 @@
           <cs-extension-point name="menu-profile-user"></cs-extension-point>
         </div>
         <!-- logout -->
-        <a ng-if="login" class="button-icon" ng-click="logout()" style="position: absolute; top: 5px; left: 5px;" menu-close>
-          <i class="icon assertive ion-log-out"></i>
+        <a ng-if="login" class="button-icon" ng-click="logout({askConfirm: true})" style="position: absolute; top: 5px; left: 5px;">
+          <i class="icon stable ion-android-exit"></i>
         </a>
       </div>
     </ion-header-bar>
@@ -79,14 +78,24 @@
         </ion-item>
 
         <ion-item menu-close
-             id="helptip-menu-btn-currency"
-             class="item item-icon-left"
-             active-link="active"
-             active-link-path-prefix="#/app/currency"
-             href="#/app/currency/view/"
-             ng-if="!options.registry || !options.registry.enable">
+                  id="helptip-menu-btn-currency"
+                  class="item item-icon-left"
+                  active-link="active"
+                  active-link-path-prefix="#/app/currency"
+                  href="#/app/currency"
+                  ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
+        </ion-item>
+
+        <ion-item menu-close
+                  id="helptip-menu-btn-network"
+                  class="item item-icon-left hidden-xs hidden-sm"
+                  active-link="active"
+                  active-link-path-prefix="#/app/network"
+                  href="#/app/network">
+          <i class="icon ion-cloud"></i>
+          <span translate>MENU.NETWORK</span>
         </ion-item>
 
         <!-- Allow extension here -->
@@ -108,16 +117,29 @@
         <!-- USER Section -->
         <div class="item item-divider"></div>
 
+
         <ion-item menu-close
                   class="item item-icon-left"
                   active-link="active"
                   active-link-path-prefix="#/app/wallet"
                   ng-click="loginAndGo('app.view_wallet')"
                   ng-class="{'item-menu-disable': !login}">
-          <i class="icon ion-card"></i>
+          <i class="icon ion-person"></i>
           <span translate>MENU.ACCOUNT</span>
         </ion-item>
         <a id="helptip-menu-btn-account"></a>
+
+        <ion-item menu-close
+                  class="item item-icon-left"
+                  active-link="active"
+                  active-link-path-prefix="#/app/history"
+                  ng-click="loginAndGo('app.view_wallet_tx')"
+                  ng-class="{'item-menu-disable': !login}">
+          <i class="icon ion-card"></i>
+          <span translate>MENU.TRANSACTIONS</span>
+        </ion-item>
+        <a id="helptip-menu-btn-tx"></a>
+
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>

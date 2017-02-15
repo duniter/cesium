@@ -8,6 +8,9 @@
 
     <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
     </button>
+
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
+
     <button class="button button-icon button-clear visible-xs visible-sm"
             id="helptip-wallet-options-xs"
             ng-click="showActionsPopover($event)">
@@ -15,33 +18,25 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, balance:walletData.balance, locale:settings.locale.id}">
-    <div class="positive-900-bg hero"
-         id="wallet-header"
+  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
+    <div class="positive-900-bg hero"  id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
         <i class="avatar"
-           ng-if="!walletData.avatar"
-           ng-class="{'avatar-wallet': !walletData.isMember, 'avatar-member': walletData.isMember}"></i>
+           ng-if="::!formData.avatar"
+           ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
         <i class="avatar"
-           ng-if="walletData.avatar"
-           style="background-image: url({{::walletData.avatar.src}})"></i>
-        <h3 class="light" ng-if="walletData.name || walletData.uid">{{walletData.name || walletData.uid}}</h3>
-        <h3 class="light" ng-if="!walletData.name && !walletData.uid"><i class="icon ion-key"></i> {{walletData.pubkey | formatPubkey}}</h3>
-        <h4 class="light">
-          <span ng-bind-html=":balance:rebind:walletData.balance | formatAmount"></span>
-          <span ng-bind-html=":rebind:unit"></span>
-          <small ng-if="$root.settings.expertMode"
-                 style="font-style: italic;">
-            (<span ng-bind-html=":balance:rebind:walletData.balance | formatAmount:{useRelative:!$root.settings.useRelative}"></span>
-             <span ng-bind-html=":rebind:secondaryUnit"></span>)
-          </small>
-        </h4>
-        <div class="helptip-anchor-center">
-          <a id="helptip-wallet-balance">&nbsp;</a>
-        </div>
+           ng-if="::formData.avatar"
+           style="background-image: url({{::formData.avatar.src}})"></i>
+        <ng-if ng-if="::formData.name">
+          <h3 class="light">{{::formData.name}}</h3>
+        </ng-if>
+        <ng-if ng-if="::!formData.name">
+          <h3 class="light" ng-if="::formData.uid">{{::formData.uid}}</h3>
+          <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
+        </ng-if>
+        <h4 class="assertive"><ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
       </div>
-
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
@@ -55,18 +50,18 @@
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
 
       <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
-              ng-click="showSharePopover($event)">
+              ng-click="showSharePopover($event)"
+              title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>
-
-      <button class="button button-calm ink"
-              ng-click="showTransferModal()">
-        {{:locale:'COMMON.BTN_SEND_MONEY' | translate}}
-      </button>
-
 
       <button class="button button-stable button-small-padding icon ion-loop ink"
-              ng-click="doUpdate()">
+              ng-click="doUpdate()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
       </button>
+
+      <cs-extension-point name="buttons"></cs-extension-point>
+
+      &nbsp;&nbsp;
 
       <button id="helptip-wallet-options"
               class="button button-stable icon-right ink"
@@ -75,7 +70,7 @@
         {{:locale:'COMMON.BTN_OPTIONS' | translate}}
       </button>
 
-      <div ng-if="walletData.requirements.needRenew">
+      <div ng-if="formData.requirements.needRenew">
         <br/>
         <button class="button button-raised button-stable  ink"
                 ng-click="renewMembership()">
@@ -92,184 +87,73 @@
         <div class="list animate-fade-slide-in-right">
 
           <!-- Certifications -->
-          <a class="item item-icon-left item-icon-right item-text-wrap ink"
-             id="helptip-wallet-certifications"
-             ng-if="walletData.isMember||walletData.requirements.pendingMembership"
+          <a id="helptip-wallet-certifications"
+             class="item item-icon-left item-icon-right item-text-wrap ink"
+             ng-if="formData.isMember||formData.requirements.pendingMembership"
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
-            <span clas="input-label">{{'ACCOUNT.CERTIFICATION_COUNT'|translate}}</span>
-
-            <cs-badge-certification requirements="walletData.requirements"
-                                    parameters="{sigQty: walletData.parameters.sigQty}">
+            <b ng-if="formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
+            {{:locale:'ACCOUNT.CERTIFICATION_COUNT'|translate}}
+            <cs-badge-certification requirements="formData.requirements"
+                                    parameters="{sigQty: formData.parameters.sigQty}">
             </cs-badge-certification>
-
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>
 
-          <!-- Uid -->
-          <span id="wallet-uid"
-                class="item item-icon-left item-text-wrap ink"
-                ng-show="showDetails"
-                ng-if="walletData.uid"
-                on-hold="copy(walletData.uid)"
-                copy-on-click="{{walletData.uid}}">
-            <span translate>COMMON.UID</span>
-            <span class="badge badge-stable">{{walletData.uid}}</span>
-          </span>
-
-          <!-- Public key -->
-          <span id="wallet-pubkey"
-                class="item item-icon-left item-text-wrap ink"
-                ng-show="showDetails"
-                on-hold="copy(walletData.pubkey)"
-                copy-on-click="{{walletData.pubkey}}">
-            <i class="icon ion-key"></i>
-            {{:locale:'COMMON.PUBKEY'|translate}}
-            <h4 id="pubkey" class="dark">{{walletData.pubkey}}</h4>
-          </span>
-
-          <!-- Errors transactions-->
-          <a class="item item-icon-left item-icon-right ink" ng-if="walletData.tx.errors && walletData.tx.errors.length" ui-sref="app.view_wallet_tx_errors">
-            <i class="icon ion-alert-circled"></i>
-            {{:locale:'ACCOUNT.ERROR_TX'|translate}}
-            <div class="badge badge-assertive">
-              {{walletData.tx.errors.length}}
-            </div>
+          <!-- Signature stock -->
+          <a id="helptip-wallet-given-certifications"
+             class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
+             ng-if="formData.isMember"
+             ng-click="showGivenCertifications()">
+            <i class="icon ion-ribbon-a"></i>
+            <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>
+
+          <!-- Registration date -->
+          <ion-item class="item-icon-left" ng-if="formData.sigDate">
+            <i class="icon ion-calendar"></i>
+            <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
+            <h5 class="dark">{{::formData.sigDate | formatDate}}</h5>
+            <span class="badge badge-balanced">{{::formData.sigDate | formatFromNow}}</span>
+          </ion-item>
 
           <!-- Events -->
-          <span class="item item-divider" ng-if="walletData.events.length">
+          <span class="item item-divider" ng-if="formData.events.length">
             {{:locale:'ACCOUNT.EVENTS' | translate}}
           </span>
 
           <div
             class="item item-text-wrap item-icon-left item-wallet-event"
-            ng-repeat="event in walletData.events">
-              <i class="icon"
-                 ng-class="{'ion-information-circled royal': event.type=='info','ion-alert-circled': event.type=='warn'||event.type=='error','assertive': event.type=='error','ion-clock': event.type=='pending'}"></i>
-              <span trust-as-html="event.message | translate:event.messageParams"></span>
+            ng-repeat="event in formData.events">
+            <i class="icon"
+               ng-class="{'ion-information-circled royal': event.type=='info','ion-alert-circled': event.type=='warn'||event.type=='error','assertive': event.type=='error','ion-clock': event.type=='pending'}"></i>
+            <span trust-as-html="event.message | translate:event.messageParams"></span>
           </div>
 
-          <!-- Pending transactions -->
-          <span class="item item-pending item-divider" ng-if="walletData.tx.pendings && walletData.tx.pendings.length">
-            {{:locale:'ACCOUNT.PENDING_TX'|translate}}
-            <div class="badge item-note" ng-bind-html=":rebind:walletData.parameters.currency | currencySymbol">
-            </div>
+          <cs-extension-point name="before-technical"></cs-extension-point>
+
+          <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
+
+          <!-- Uid -->
+          <span class="item item-icon-left item-text-wrap ink"
+                ng-if="formData.uid"
+                on-hold="copy(formData.uid)"
+                copy-on-click="{{formData.uid}}">
+            <span translate>COMMON.UID</span>
+            <span class="badge badge-stable">{{formData.uid}}</span>
           </span>
 
-          <span class="item item-pending item-avatar ink item-badge-right" ng-repeat="tx in walletData.tx.pendings">
-            <i class="item-image avatar"
-               ng-if="!tx.avatar"
-               ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
-
-            <h2 class="col-80">
-              <i class="icon ion-clock"> </i>
-              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
-                <span ng-if="tx.uid">
-                  {{::tx.name||tx.uid}}
-                </span>
-                <span ng-if="!tx.uid" class="gray">
-                  <i class="icon ion-key gray"></i>
-                  {{::tx.pubkey | formatPubkey}}
-                </span>
-              </a>
-              <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap">
-                <smaller>{{::tx.comment}}</smaller>
-              </span>
-            </h2>
-            <h3 ng-if="tx.comment" class="dark visible-xs item-text-wrap">
-              <i class="icon ion-ios-chatbubble-outline"></i>
-              {{::tx.comment}}<br/>
-            </h3>
-            <h3 class="dark" ng-if="tx.time">
-              {{::tx.time | formatFromNow}}
-              <span class="gray hidden-xs">|
-                {{::tx.time | formatDate}}
-              </span>
-            </h3>
-            <span class="badge badge-pending item-note"
-                  ng-class="{'badge-balanced': tx.amount > 0}">
-              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-              <span ng-bind-html=":rebind:unit"></span>
-            </span>
-            <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
-              (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}"></ng-bind-html>
-              <span ng-bind-html=":rebind:secondaryUnit"></span>)
-            </div>
+          <!-- Public key -->
+          <span id="helptip-wallet-pubkey"
+                class="item item-icon-left item-text-wrap ink"
+                on-hold="copy(formData.pubkey)"
+                copy-on-click="{{formData.pubkey}}">
+            <i class="icon ion-key"></i>
+            {{:locale:'COMMON.PUBKEY'|translate}}
+            <h4 id="pubkey" class="dark">{{formData.pubkey}}</h4>
           </span>
-
-          <!-- Last Transactions -->
-          <span class="item item-divider" ng-if="!loading">
-            {{:locale:'ACCOUNT.LAST_TX'|translate}}
-            <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
-            <div class="badge item-note">
-              <span ng-bind-html="walletData.parameters.currency|currencySymbol"></span>
-            </div>
-          </span>
-
-
-          <span class="item padding" ng-if="!loading && !walletData.tx.history.length">
-            <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
-          </span>
-
-          <!-- TX history -->
-          <!-- (make sure to keep ng-if=!loading to avoid division by zero on Firefox, because currentUD not loaded -->
-          <div ng-if="!loading"
-                class="item item-badge-right item-avatar"
-                ng-repeat="tx in walletData.tx.history">
-            <i class="item-image avatar"
-               ng-if="!tx.avatar"
-               ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
-            <h2 class="col-80">
-              <a ui-sref="app.wot_view_identity({pubkey:tx.pubkey, uid:tx.name||tx.uid})" class="positive">
-                <span ng-if="tx.uid">
-                  {{::tx.name||tx.uid}}
-                </span>
-                <span ng-if="!tx.uid && !tx.isUD" class="gray">
-                  <i class="icon ion-key gray"></i>
-                  {{::tx.pubkey | formatPubkey}}
-                </span>
-              </a>
-              <span class="dark" ng-if="tx.isUD">
-                {{:locale:'COMMON.UNIVERSAL_DIVIDEND' | translate}}
-              </span>
-              <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap">
-                <smaller>{{::tx.comment}}</smaller>
-              </span>
-            </h2>
-            <h3 ng-if="tx.comment" class="dark visible-xs item-text-wrap">
-              <i class="icon ion-ios-chatbubble-outline"></i>
-              {{::tx.comment}}<br/>
-            </h3>
-            <h3 class="dark">
-              {{::tx.time | formatFromNow}}
-              <span class="gray hidden-xs">|
-                {{::tx.time | formatDate}}
-              </span>
-            </h3>
-            <span class="badge item-note"
-                  ng-class="{'badge-balanced': tx.amount > 0}">
-              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-              <span ng-bind-html=":rebind:unit"></span>
-            </span>
-            <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
-              (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}"></ng-bind-html>
-              <span ng-bind-html=":rebind:secondaryUnit"></span>)
-            </div>
-          </div>
-
-          <div class="item item-text-wrap" ng-if="walletData.tx.fromTime > 0">
-            <p>
-              <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
-              <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: walletData.tx.fromTime}"></span>
-              <span class="gray">|</span>
-              <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>
-            </p>
-          </div>
-        </div>
+       </div>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
@@ -277,10 +161,4 @@
     </div>
   </ion-content>
 
-  <button id="fab-transfer"
-          ng-if="walletData"
-          class="button button-fab button-fab-bottom-right button-energized-900 hidden-md hidden-lg drop"
-          ng-click="showTransferModal()">
-    <i class="icon ion-android-send"></i>
-  </button>
 </ion-view>

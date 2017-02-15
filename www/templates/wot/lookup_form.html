@@ -35,16 +35,18 @@
 
     <div class=" pull-right hidden-xs hidden-sm">
       <a ng-if="enableFilter"
-         class="button button-text button-small ink icon ion-person"
+         class="button button-text button-small ink"
          ng-class="{'button-text-positive': search.type=='newcomers'}"
          ng-click="doGetNewcomers()">
+        <i class="icon ion-person-stalker"></i>
         {{'WOT.LOOKUP.BTN_NEWCOMERS' | translate}}
       </a>
       &nbsp;
       <a ng-if="enableFilter"
-         class="button button-text button-small ink icon ion-clock"
+         class="button button-text button-small"
          ng-class="{'button-text-positive': search.type=='pending'}"
          ng-click="doGetPending()" class="badge-balanced">
+        <i class="icon ion-clock"></i>
         {{'WOT.LOOKUP.BTN_PENDING' | translate}}
       </a>
       &nbsp;

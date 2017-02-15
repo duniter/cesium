@@ -150,15 +150,6 @@
               <div class="form-errors"
                    ng-show="saltForm.$submitted && saltForm.confirmUsername.$error"
                    ng-messages="saltForm.confirmUsername.$error">
-                <div class="form-error" ng-message="minlength">
-                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
-                </div>
-                <div class="form-error" ng-message="maxlength">
-                  <span translate="ERROR.FIELD_TOO_LONG"></span>
-                </div>
-                <div class="form-error" ng-message="required">
-                  <span translate="ERROR.FIELD_REQUIRED"></span>
-                </div>
                 <div class="form-error" ng-message="compareTo">
                   <span translate="ERROR.SALT_NOT_CONFIRMED"></span>
                 </div>
@@ -224,9 +215,6 @@
                 <div class="form-error" ng-message="minlength">
                   <span translate="ERROR.FIELD_TOO_SHORT_WITH_LENGTH" translate-values="{minLength: 8}"></span>
                 </div>
-                <div class="form-error" ng-message="maxlength">
-                  <span translate="ERROR.FIELD_TOO_LONG"></span>
-                </div>
                 <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
                 </div>
@@ -250,15 +238,6 @@
               <div class="form-errors"
                    ng-show="passwordForm.$submitted && passwordForm.confirmPassword.$error"
                    ng-messages="passwordForm.confirmPassword.$error">
-                <div class="form-error" ng-message="minlength">
-                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
-                </div>
-                <div class="form-error" ng-message="maxlength">
-                  <span translate="ERROR.FIELD_TOO_LONG"></span>
-                </div>
-                <div class="form-error" ng-message="required">
-                  <span translate="ERROR.FIELD_REQUIRED"></span>
-                </div>
                 <div class="form-error" ng-message="compareTo">
                   <span translate="ERROR.PASSWORD_NOT_CONFIRMED"></span>
                 </div>
@@ -312,6 +291,7 @@
                        ng-model="formData.pseudo"
                        ng-minlength="3"
                        ng-maxlength="100"
+                       ng-pattern="userIdPattern"
                        required>
               </div>
               <div class="form-errors"
@@ -326,6 +306,9 @@
                 </div>
                 <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
+                </div>
+                <div class="form-error" ng-message="pattern">
+                  <span translate="ERROR.INVALID_USER_ID"></span>
                 </div>
               </div>
 
@@ -377,4 +360,4 @@
       </ion-slide-page>
 
     </ion-slide-box>
-</ion-modal-viewview>
+</ion-modal-view>

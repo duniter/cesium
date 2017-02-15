@@ -209,7 +209,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
 
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/popover_actions.html', {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/lookup_popover_actions.html', {
         scope: $scope
       }).then(function(popover) {
         $scope.actionsPopover = popover;
@@ -240,10 +240,11 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
 }
 
 
-function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage) {
+function ESMessageComposeController($scope, $controller, UIUtils, parameters) {
   'ngInject';
 
-  ESMessageComposeModalController.call(this, $scope, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESMessageComposeModalCtrl', {$scope: $scope}));
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!!state.stateParams && !!state.stateParams.pubkey) {
@@ -264,20 +265,21 @@ function ESMessageComposeController($scope,  $ionicHistory, Modals, UIUtils, Cry
       })
       .catch(function(err){
         if (err === 'CANCELLED') {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true
-          });
-          $state.go('app.home');
+          $scope.showHome();
         }
       });
   });
 
   $scope.cancel = function() {
-    $ionicHistory.goBack();
+    $scope.showHome();
   };
 
   $scope.setForm = function(form) {
     $scope.form = form;
+  };
+
+  $scope.clodeModal = function() {
+    $scope.showHome();
   };
 
 }
@@ -296,7 +298,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, c
 
   $scope.doSend = function(forceNoContent) {
     $scope.form.$submitted=true;
-    if(!$scope.form.$valid) {
+    if(!$scope.form.$valid /*|| !$scope.formData.destPub*/) {
       return;
     }
 

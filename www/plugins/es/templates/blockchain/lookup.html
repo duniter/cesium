@@ -1,0 +1,26 @@
+<ion-view>
+  <ion-nav-title>
+    <span translate>BLOCKCHAIN.LOOKUP.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-navicon visible-xs visible-sm"
+            ng-click="toggleCompactMode()">
+      <b class="icon-secondary"
+         ng-class="{'ion-arrow-down-b': !compactMode, 'ion-arrow-up-b': compactMode}"
+         style="top: -12px; left: 11px; font-size: 10px;"></b>
+      <b class="icon-secondary"
+         ng-class="{'ion-arrow-up-b': !compactMode,'ion-arrow-down-b': compactMode}"
+         style="top: 12px; left: 11px; font-size: 10px;"></b>
+    </button>
+
+    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showActionsPopover($event)">
+    </button>
+
+  </ion-nav-buttons>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+    <ng-include src="'plugins/es/templates/blockchain/lookup_form.html'"></ng-include>
+  </ion-content>
+</ion-view>

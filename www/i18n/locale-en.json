@@ -29,6 +29,7 @@
     "BTN_DELETE": "Delete",
     "BTN_ADD": "Add",
     "BTN_SEARCH": "Search",
+    "BTN_REFRESH": "Refresh",
     "BTN_CONTINUE": "Continue",
     "BTN_UNDERSTOOD": "I understood",
     "BTN_OPTIONS": "Options",
@@ -37,6 +38,7 @@
     "NO_ACCOUNT_QUESTION": "Not a member yet? Register now!",
     "SEARCH_NO_RESULT": "No result found",
     "LOADING": "Loading...",
+    "SEARCHING": "Searching...",
     "FROM": "From",
     "TO": "To",
     "COPY": "Copy",
@@ -50,6 +52,8 @@
     "ENABLE": "Enabled",
     "DISABLE": "Disabled",
     "RESULTS_LIST": "Results:",
+    "RESULTS_COUNT": "{{count}} results",
+    "EXECUTION_TIME": "executed in {{duration|formatDurationMs}}",
     "SHOW_VALUES": "Display values openly?",
     "POPOVER_ACTIONS_TITLE": "Options",
     "SHOW_MORE": "Show more",
@@ -78,7 +82,8 @@
     "TRANSFER": "Transfer",
     "SCAN": "Scan",
     "SETTINGS": "Settings",
-    "NETWORK": "Network"
+    "NETWORK": "Network",
+    "TRANSACTIONS": "My transactions"
   },
   "ABOUT": {
     "TITLE": "About",
@@ -93,7 +98,6 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "WELCOME": "",
     "MESSAGE": "Welcome to the Cesium Application!<br/>Watch your <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> wallets in real time.",
     "MESSAGE_SHORT": "Watch your <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> wallets<br/>in real time!",
     "BTN_REGISTRY": "Registry",
@@ -117,7 +121,8 @@
     "REMEMBER_ME": "Remember me",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restore default values",
-    "EXPERT_MODE": "Enable expert mode<span class=\"hidden-xs\">(display more details)</span>",
+    "EXPERT_MODE": "Enable expert mode",
+    "EXPERT_MODE_HELP": "Allow to see more details",
     "POPUP_PEER": {
       "TITLE" : "Duniter peer",
       "HELP" : "Peer address:",
@@ -126,16 +131,55 @@
       "BTN_SHOW_LIST" : "Peer's list"
     }
   },
+  "BLOCKCHAIN": {
+    "HASH": "Hash: {{hash}}",
+    "VIEW": {
+      "HEADER_TITLE": "Block #{{number}}-{{hash|formatHash}}",
+      "TITLE_CURRENT": "Current block",
+      "TITLE": "Block #{{number}}",
+      "COMPUTED_BY": "COmputed by",
+      "SHOW_RAW": "Show raw data",
+      "TECHNICAL_DIVIDER": "Technical informations",
+      "VERSION": "Format version",
+      "HASH": "Computed hash",
+      "UNIVERSAL_DIVIDEND_HELP": "Money co-produced by each of the {{membersCount}} members",
+      "EMPTY": "Aucune donnée dans ce bloc",
+      "POW_MIN": "Minimal difficulty",
+      "POW_MIN_HELP": "Difficulty imposed in calculating hash",
+      "DATA_DIVIDER": "Data",
+      "IDENTITIES_COUNT": "New identities",
+      "JOINERS_COUNT": "Joiners",
+      "ACTIVES_COUNT": "Renewals",
+      "ACTIVES_COUNT_HELP": "Members having renewed their membership",
+      "LEAVERS_COUNT": "Leavers",
+      "LEAVERS_COUNT_HELP": "Members that now refused certification",
+      "EXCLUDED_COUNT": "Excluded members",
+      "EXCLUDED_COUNT_HELP": "Old members, excluded because missing membreship renewal or certifications",
+      "REVOKED_COUNT": "Revoked identities",
+      "REVOKED_COUNT_HELP": "These accounts may no longer be member",
+      "TX_COUNT": "Transactions",
+      "CERT_COUNT": "Certifications",
+      "TX_TO_HIMSELF": "Change"
+    },
+    "LOOKUP": {
+      "TITLE": "Blocks",
+      "NO_BLOCK": "No bloc",
+      "LAST_BLOCKS": "Last blocks:",
+      "BTN_COMPACT": "Compact"
+    }
+  },
   "CURRENCY": {
     "SELECT": {
       "TITLE": "Currencies",
-      "CURRENCIES": "Known currencies"
+      "CURRENCIES": "Known currencies",
+      "MEMBERS_COUNT": "{{membersCount}} members"
     },
     "VIEW": {
       "TITLE": "Currency",
       "TAB_CURRENCY": "Currency",
       "TAB_WOT": "Web of trust",
       "TAB_NETWORK": "Network",
+      "TAB_BLOCKS": "Blocks",
       "NETWORK_RULES_DIVIDER": "Network rules",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
@@ -145,20 +189,29 @@
       "SHARE": "Money share",
       "UD": "Universal Dividend",
       "C_ACTUAL": "Current growth",
-      "TIME": "Current blockchain time",
+      "MEDIAN_TIME": "Current blockchain time",
       "POW_MIN": "Common difficulty",
       "MONEY_RULES_DIVIDER": "Rules of currency",
       "C_RULE": "Growth",
       "UD_RULE": "Universal dividend (formula)",
-      "SIG_QTY_RULE": "Required number of certifications<br/>to become a member",
-      "SIG_STOCK": "Maximum number of certifications<br/>sent by a member",
-      "SIG_PERIOD": "Minimum delay between 2 certifications<br/>sent by one and the same issuer.",
-      "SIG_WINDOW": "Maximum delay before a certification<br/>will be treated",
-      "STEP_MAX": "Maximum distance between<br/>each WoT member and a newcomer.",
+      "SIG_QTY_RULE": "Required number of certifications to become a member",
+      "SIG_STOCK": "Maximum number of certifications sent by a member",
+      "SIG_PERIOD": "Minimum delay between 2 certifications sent by one and the same issuer.",
+      "SIG_WINDOW": "Maximum delay before a certification will be treated",
+      "STEP_MAX": "Maximum distance between a newcomer and each referring members.",
       "WOT_RULES_DIVIDER": "Rules for web of trust",
-      "XPERCENT":"Minimum percent of sentries<br />to reach to match the distance rule",
+      "SENTRIES": "Required number of certifications to become a referring member",
+      "SENTRIES_FORMULA": "Required number of certifications to become a referring member (formula)",
+      "XPERCENT":"Minimum percent of referring member to reach to match the distance rule",
       "AVG_GEN_TIME": "The average time between 2 blocks",
-      "CURRENT": "current"
+      "CURRENT": "current",
+      "MATH_CEILING": "CEILING"
+    }
+  },
+  "NETWORK": {
+    "VIEW": {
+      "MEDIAN_TIME": "Blockchain time",
+      "LOADING_PEERS": "Loading peers..."
     }
   },
   "PEER": {
@@ -173,7 +226,9 @@
     "ALL_PEERS" : "All peers",
     "DIFFICULTY" : "Difficulty",
     "API" : "API",
-    "CURRENT_BLOCK" : "Current block"
+    "CURRENT_BLOCK" : "Block #",
+    "POPOVER_FILTER_TITLE": "Filter",
+    "OFFLINE": "Offline peers"
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
@@ -218,7 +273,8 @@
       "PENDING_LIST": "Pending certifications",
       "RECEIVED": "Received certifications",
       "RECEIVED_BY": "Certifications received by {{uid}}",
-      "ERROR": "Received certifications in error"
+      "ERROR": "Received certifications in error",
+      "SENTRY_MEMBER": "Referring member"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications sent",
@@ -258,7 +314,8 @@
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
     "WILL_MISSING_CERTIFICATIONS": "You will <b>lack certifications</b> soon (at least {{willNeedCertificationCount}} more are needed)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Your membership <b>will expire {{membershipExpiresIn|formatDurationTo}}</b>. Remember to <a ng-click=\"doQuickFix('renew')\">renewing your membership</a> before then.",
-    "CERTIFICATION_COUNT": "Certifications count",
+    "CERTIFICATION_COUNT": "Received certifications",
+    "CERTIFICATION_COUNT_SHORT": "Certifications",
     "SIG_STOCK": "Stock of certifications to give",
     "BTN_RECEIVE_MONEY": "Receive",
     "BTN_MEMBERSHIP_IN_DOTS": "Register as member...",
@@ -414,6 +471,9 @@
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
     "REVOCATION_FAILED": "Error while trying to revoke the identity.",
+    "GET_BLOCK_FAILED": "Error xhole getting block",
+    "INVALID_BLOCK_HASH": "Block not found (incorrect hash)",
+    "REVOCATION_FAILED": "Error while trying to revoke the identity.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong phrase or password ",
     "RECOVER_ID_FAILED": "Could not recover password"
   },
@@ -445,7 +505,8 @@
     "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/><b>Are you sure</b> you want to continue?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
-    "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved"
+    "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
+    "LOGOUT": "Are you sure you want to logout?"
   },
   "HELP": {
     "TITLE": "Online help",
@@ -474,22 +535,28 @@
       "CURRENCY_CHANGE_UNIT": "This button allows to <b>switch the unit</b> to show amounts in <b>{{currency|capitalize}}</b>, undevided by the Universal Dividend (instead of in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "This button allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
       "CURRENCY_RULES": "The <b>rules</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the currency these rules make the monetary code <b>transparent and understandable</b>.",
-      "CURRENCY_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
-      "CURRENCY_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
-      "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
+      "MENU_BTN_NETWORK": "Menu <b>{{'MENU.NETWORK'|translate}}</b> allows discovery of <b>network's state<b>.",
+      "NETWORK_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
+      "NETWORK_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
+      "NETWORK_PEERS_BLOCK_NUMBER": "This <b>number</b> (in green) indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
+      "NETWORK_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",
       "WALLET_CERTIFICATIONS": "Click here to reveiw the details of your certifications (given and received).",
+      "WALLET_RECEIVED_CERTIFICATIONS": "Click here to reveiw the details of your <b>received certifications</b>.",
+      "WALLET_GIVEN_CERTIFICATIONS": "Click here to reveiw the details of your <b>given certifications</b>.",
       "WALLET_BALANCE": "Your account <b>balance</b> is shown here.",
       "WALLET_BALANCE_RELATIVE": "{{'HELP.TIP.WALLET_BALANCE'|translate}}<br/><br/>The used unit (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifies that the amount in {{currency|capitalize}} has been divided by the <b>Universal Dividend</b> (UD) co-created by each member.<br/>At this moment, 1 UD equals {{currentUD}} {{currency|capitalize}}.",
       "WALLET_BALANCE_CHANGE_UNIT": "You can <b>change the unit</b> in which amounts are shown in <b><i class=\"icon ion-android-settings\"></i>&nbsp;{{'MENU.SETTINGS'|translate}}</b>.<br/><br/>For example, to display amounts <b>directly in {{currency|capitalize}}</b> instead of relative amounts.",
+      "WALLET_PUBKEY": "This is your account public key. You can communicate it to a third party so that it more easily identifies your account.",
       "WALLET_SEND": "Issue a payment in just a few clicks.",
       "WALLET_SEND_NO_MONEY": "Issue a payment in just a few clicks.<br/>(Your balance does not allow this yet)",
       "WALLET_OPTIONS": "Please note that this button allows access to <b>other, less used actions</b>.<br/><br/>Don't forget to take a quick look, when you have a moment!",
       "WALLET_RECEIVED_CERTS": "This shows the list of persons that certified you.",
       "WALLET_CERTIFY": "The button <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> allows selecting an identity and certifying it.<br/><br/>Only users that are <b>already member</b> may certify others.",
       "WALLET_CERT_STOCK": "Your supply of certifications (to send) is limited to <b>{{sigStock}} certifications</b>.<br/><br/>This supply will replete itself over time, as and when earlier certifications expire.",
+      "MENU_BTN_TX_MEMBER": "<b>{{'MENU.TRANSACTIONS'|translate}}</b> allow access to transactions history, and send new payments.",
+      "MENU_BTN_TX": "Consultez ici l'historique vos transactions et envoyez de nouveaux paiements.",
       "MENU_BTN_WOT": "The menu <b>{{'MENU.WOT'|translate}}</b> allows searching <b>users</b> of the currency (member or not).",
       "WOT_SEARCH_TEXT_XS": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>The search will start automatically.",
       "WOT_SEARCH_TEXT": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>Then hit <b>Enter</b> to start the search.",

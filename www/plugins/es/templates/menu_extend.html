@@ -50,14 +50,6 @@
 
 <!-- User section -->
 <ng-if ng-if="enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
-  <!-- user profile -->
-  <div menu-close class="item item-icon-left" active-link="active"
-            active-link-path-prefix="#/app/user/profile"
-            ng-class="{'item-menu-disable': !login}"
-            ng-click="loginAndGo('app.user_edit_profile')">
-    <i class="icon ion-person"></i>
-    <span translate>MENU.USER_PROFILE</span>
-  </div>
 
   <div menu-close class="item item-icon-left" active-link="active"
             active-link-path-prefix="#/app/user/message"

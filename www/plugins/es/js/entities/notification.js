@@ -46,7 +46,8 @@ function Notification(json, markAsReadCallback) {
     if (pubkeys && pubkeys.indexOf(',') == -1) {
       that.pubkey = pubkeys;
     }
-    that.state = 'app.view_wallet';
+    that.state = 'app.view_wallet_tx';
+    that.stateParams = {refresh: true};
   }
 
   // Certifications
@@ -54,7 +55,7 @@ function Notification(json, markAsReadCallback) {
     that.avatarIcon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b' : 'ion-ribbon-a';
     that.icon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b balanced' : 'ion-ribbon-a gray';
     that.pubkey = json.params.length > 0 ? json.params[0] : null;
-    that.state = 'app.wallet_view_cert';
+    that.state = (json.code == 'CERT_RECEIVED') ? 'app.wallet_cert.tab_received' : 'app.wallet_cert.tab_given';
   }
 
   // Message

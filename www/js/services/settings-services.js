@@ -55,8 +55,11 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         showLoginSalt: false,
         initPhase: false, // For currency start (when block #0 not written)
         expertMode: false,
+        decimalCount: 4,
+        newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",
         helptip: {
           enable: true,
+          installDocUrl: "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md",
           currency: 0,
           wot: 0,
           wotCerts: 0,
@@ -207,9 +210,12 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
   service.instance = CSSettings;
 
+
   service.restore()
     .then(function() {
-      service.api.data.raise.ready();
+      Device.ready().then(function() {
+        service.api.data.raise.ready();
+      });
     });
 
   return service;

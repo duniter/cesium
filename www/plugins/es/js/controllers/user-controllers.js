@@ -4,7 +4,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
     $stateProvider.state('app.user_edit_profile', {
       cache: false,
-      url: "/user/profile/edit",
+      url: "/wallet/profile/edit",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/user/edit_profile.html",
@@ -186,6 +186,12 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
     };
 
     var doFinishSave = function(formData) {
+      // Social url must be unique in socials links - Fix #306:
+      if (formData.socials && formData.socials.length) {
+        formData.socials = _.uniq(formData.socials, false, function(social) {
+          return social.url;
+        });
+      }
       if (!$scope.existing) {
         return esUser.profile.add(formData)
           .then(function() {

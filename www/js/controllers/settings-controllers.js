@@ -99,21 +99,14 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.showNodeList = function() {
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
     return Modals.showNetworkLookup({enableFilter: true, type: 'member'})
-      .then(function (result) {
-        if (result) {
-          var parts = result.server.split(':');
-          if (result.dns) {
-            return {
-              host: result.dns,
-              port: parts[1] || 80
-            };
-          }
-          else {
-            return {
-              host: parts[0],
-              port: parts[1] || 80
-            };
-          }
+      .then(function (peer) {
+        if (peer) {
+          var bma = peer.getBMA();
+          return {
+            host: (bma.dns ? bma.dns :
+                   (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6)),
+            port: bma.port || 80
+          };
         }
       })
       .then(function(newNode) {

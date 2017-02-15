@@ -1,0 +1,86 @@
+<ion-view>
+  <ion-nav-title>
+    <span translate>MENU.NETWORK</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refresh()">
+    </button>
+  </ion-nav-buttons>
+
+
+  <ion-content scroll="true" ng-init="enableFilter=true; ionItemClass='item-border-large';">
+
+    <div class="row responsive-sm responsive-md responsive-lg">
+      <div class="col list col-border-right">
+        <div class="padding padding-xs" style="display: block; height: 60px;">
+          <div class="pull-left">
+            <h4>
+              <span ng-if="enableFilter && search.type=='member'" translate>PEER.MEMBERS</span>
+              <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
+              <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
+              <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
+              <span ng-if="!search.loading">({{search.results.length}})</span>
+              <ion-spinner ng-if="search.loading" class="icon ion-spinner-small" icon="android"></ion-spinner>
+            </h4>
+          </div>
+
+          <div class="pull-right">
+
+            <div class="pull-right" ng-if="enableFilter">
+              <a class="button button-text button-small hidden-xs hidden-sm ink"
+                 ng-class="{'button-text-positive': search.type=='member'}"
+                 ng-click="toggleSearchType('member')">
+                <i class="icon ion-person-stalker"></i>
+                {{'PEER.MEMBERS'|translate}}
+              </a>
+              &nbsp;
+              <a class="button button-text button-small hidden-xs hidden-sm ink"
+                 ng-class="{'button-text-positive': search.type=='mirror'}"
+                 ng-click="toggleSearchType('mirror')" >
+                <i class="icon ion-radio-waves"></i>
+                {{'PEER.MIRRORS'|translate}}
+              </a>
+
+              <a class="button button-text button-small hidden-xs hidden-sm ink"
+                 ng-class="{'button-text-positive': search.type=='offline', 'button-text-stable': search.type!='offline'}"
+                 ng-click="toggleSearchType('offline')" >
+                <i class="icon ion-close-circled light-gray"></i>
+                <span>{{'PEER.OFFLINE'|translate}}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div id="helptip-network-blockchain" style="display: block"></div>
+        <div id="helptip-network-peers" style="display: block"></div>
+
+        <ng-include src="'templates/network/items_peers.html'"></ng-include>
+      </div>
+
+      <div class="col col-33" ng-controller="BlockLookupCtrl">
+
+        <div class="padding padding-xs" style="display: block; height: 100px;">
+          <h4 translate>BLOCKCHAIN.LOOKUP.LAST_BLOCKS</h4>
+
+          <div class="pull-right hidden-xs hidden-sm">
+            <a class="button button-text button-small ink"
+               ng-class="{'button-text-positive': compactMode, 'button-text-stable': !compactMode}"
+               ng-click="toggleCompactMode()" >
+              <i class="icon ion-navicon"></i>
+              <b class="icon-secondary ion-arrow-down-b" style="top: -8px; left: 5px; font-size: 8px;"></b>
+              <b class="icon-secondary ion-arrow-up-b" style="top: 4px; left: 5px; font-size: 8px;"></b>
+              <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+            </a>
+
+            <!-- Allow extension here -->
+            <cs-extension-point name="buttons"></cs-extension-point>
+
+          </div>
+        </div>
+
+        <ng-include src="'templates/blockchain/list_blocks.html'"></ng-include>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

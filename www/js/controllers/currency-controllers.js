@@ -7,7 +7,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
   $stateProvider
 
     .state('app.currency_lookup', {
-      url: "/currencies",
+      url: "/currencies?q",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/lookup.html",
@@ -16,12 +16,25 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency', {
-      url: "/currency/view/:name",
+    .state('app.currency_name', {
+      url: "/currencies/:currency",
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency.html",
-          controller: 'CurrencyViewCtrl',
+          controller: 'CurrencyViewCtrl'
+        }
+      },
+      data: {
+        large: 'app.currency_name_lg'
+      }
+    })
+
+    .state('app.currency', {
+      url: "/currency",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/currency/view_currency.html",
+          controller: 'CurrencyViewCtrl'
         }
       },
       data: {
@@ -38,15 +51,6 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency.tab_network', {
-      url: "/network",
-      views: {
-        'tab-network': {
-          templateUrl: "templates/currency/tabs/tab_network.html"
-        }
-      }
-    })
-
     .state('app.currency.tab_wot', {
       url: "/community",
       views: {
@@ -56,8 +60,51 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
+    .state('app.currency.tab_network', {
+      url: "/network",
+      views: {
+        'tab-network': {
+          templateUrl: "templates/currency/tabs/tab_network.html",
+          controller: 'NetworkLookupCtrl'
+        }
+      }
+    })
+
+    .state('app.currency.tab_blocks', {
+      url: "/blocks",
+      views: {
+        'tab-blocks': {
+          templateUrl: "templates/currency/tabs/tab_blocks.html",
+          controller: 'BlockLookupCtrl'
+        }
+      }
+    })
+
+    .state('app.currency_view_name_lg', {
+      url: "/currency/lg/:name",
+      cache: false,
+      views: {
+        'menuContent': {
+          templateUrl: "templates/currency/view_currency_lg.html",
+          controller: 'CurrencyViewCtrl'
+        }
+      }
+    })
+
     .state('app.currency_view_lg', {
-      url: "/currency/view/lg/:name",
+      url: "/currency/lg",
+      cache: false,
+      views: {
+        'menuContent': {
+          templateUrl: "templates/currency/view_currency_lg.html",
+          controller: 'CurrencyViewCtrl'
+        }
+      }
+    })
+
+    .state('app.currency_name_lg', {
+      url: "/currencies/:currency/lg",
+      cache: false,
       views: {
         'menuContent': {
           templateUrl: "templates/currency/view_currency_lg.html",
@@ -73,30 +120,52 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 .controller('CurrencyViewCtrl', CurrencyViewController)
 ;
 
-function CurrencyLookupController($scope, $state, UIUtils, csCurrency) {
+function CurrencyLookupController($scope, $state, $q, UIUtils, BMA, csCurrency) {
   'ngInject';
 
   $scope.selectedCurrency = '';
   $scope.knownCurrencies = [];
-  $scope.search.looking = true;
+  $scope.search = {
+    loading: true,
+    results: []
+  };
+  $scope.entered = false;
 
-  $scope.$on('$ionicView.enter', function() {
-    csCurrency.all()
-    .then(function (currencies) {
-      $scope.knownCurrencies = currencies;
-      $scope.search.looking = false;
-      if (!!res && res.length == 1) {
-        $scope.selectedCurrency = currencies[0].id;
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if (!$scope.entered) {
+      if (state && state.stateParams && state.stateParams.q) {
+        $scope.search.text = state.stateParams.q;
       }
-      // Set Ink
-      UIUtils.ink({selector: 'a.item'});
-    });
+
+      csCurrency.all()
+        .then(function (currencies) {
+
+          $q.all(currencies.map(function(currency) {
+            var bma = BMA.lightInstance(currency.peer.host,currency.peer.port);
+            return bma.blockchain.current()
+              .then(function(block) {
+                currency.membersCount = block.membersCount;
+              });
+          }))
+          .then(function() {
+            $scope.search.results = currencies;
+            $scope.search.loading = false;
+            if (!!currencies && currencies.length == 1) {
+              $scope.selectedCurrency = currencies[0].id;
+            }
+            // Set Ink
+            UIUtils.ink({selector: 'a.item'});
+          });
+
+
+        });
+    }
   });
 
   // Called to navigate to the main app
-  $scope.selectCurrency = function(id) {
-    $scope.selectedCurrency = id;
-    $state.go('app.currency_view', {name: id});
+  $scope.selectCurrency = function(currency) {
+    $scope.selectedCurrency = currency;
+    $state.go('app.currency_name', {currency: currency.name});
   };
 }
 
@@ -118,9 +187,11 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     difficulty : 0,
     Nprev: 0,
     stepMax: 0,
+    sentries: 0,
     xpercent: 0,
     durationFromLastUD: 0,
-    blockUid: null
+    blockUid: null,
+    peerCount: 0
   };
   $scope.node = null;
   $scope.loading = true;
@@ -128,8 +199,8 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if ($scope.loading) { // run only once (first enter)
-      if (state.stateParams && state.stateParams.name) { // Load by name
-        csCurrency.searchByName(state.stateParams.name)
+      if (state.stateParams && state.stateParams.currency) { // Load by name
+        csCurrency.searchByName(state.stateParams.currency)
         .then(function(currency){
           $scope.init(currency);
         });
@@ -142,9 +213,9 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
         .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
       }
 
-      csNetwork.api.data.on.mainBlockChanged($scope, function(data) {
+      csNetwork.api.data.on.mainBlockChanged($scope, function(mainBlock) {
         if ($scope.loading) return;
-        if ($scope.formData.blockUid !== data.mainBuid) {
+        if ($scope.formData.blockUid !== mainBlock.buid) {
           console.debug("[currency] Updating parameters UI (new main block detected)");
           $timeout($scope.load, 1000 /*waiting propagation to requested node*/);
         }
@@ -244,6 +315,7 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
       data.UD = data.currentUD;
       data.durationFromLastUD = lastUDTime ? data.medianTime - lastUDTime : 0;
       data.useRelative = $scope.formData.useRelative;
+      data.sentries = Math.ceil(Math.pow(data.N, 1/ data.stepMax));
 
       // Apply to formData
       angular.copy(data, $scope.formData);
@@ -260,7 +332,11 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
   };
 
   $scope.refreshPeers = function() {
-    $scope.$broadcast('NetworkLookupCtrl.action', 'refresh');
+    $scope.$broadcast('csView.action.refresh', 'peers');
+  };
+
+  $scope.showActionsPopover = function(event) {
+    $scope.$broadcast('csView.action.showActionsPopover', event);
   };
 
   /* -- help tip -- */

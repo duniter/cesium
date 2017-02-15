@@ -109,7 +109,21 @@
       "MARK_AS_READ_FAILED": "Unable to mark the message as 'read'.",
       "LOAD_NOTIFICATIONS_FAILED": "Error while loading messages notifications.",
       "REMOVE_All_MESSAGES_FAILED": "Error while removing all messages.",
-      "MARK_ALL_AS_READ_FAILED": "Error while marking messages as read."
+      "MARK_ALL_AS_READ_FAILED": "Error while marking messages as read.",
+      "RECIPIENT_IS_MANDATORY": "Recipient is mandatory."
+    }
+  },
+  "BLOCKCHAIN": {
+    "LOOKUP": {
+      "SEARCH_HELP": "Block number, hash...",
+      "POPOVER_FILTER_TITLE": "Filter",
+      "HEADER_MEDIAN_TIME": "Date / Time",
+      "HEADER_BLOCK": "Block #",
+      "HEADER_ISSUER": "Peer owner",
+      "BTN_LAST": "Last blocks"
+    },
+    "ERROR": {
+      "SEARCH_BLOCKS_FAILED": "Error while searching blocks."
     }
   },
   "MARKET": {
@@ -178,7 +192,7 @@
     "CATEGORY": "Main activity",
     "GENERAL_DIVIDER": "Basic information",
     "LOCATION_DIVIDER": "Address",
-    "SOCIAL_NETWORKS_DIVIDER": "Social networks and web site",
+    "SOCIAL_NETWORKS_DIVIDER": "Social networks, web sites",
     "TECHNICAL_DIVIDER": "Technical data",
     "BTN_NEW": "Add",
     "SEARCH": {
@@ -240,8 +254,12 @@
     }
   },
   "PROFILE": {
+    "PROFILE_DIVIDER": "Cesium+ profile",
+    "NO_PROFILE_DEFINED": "No Cesium+ profile",
+    "BTN_ADD": "Create my profile",
+    "BTN_EDIT": "Edit my profile",
     "UID": "Pseudonym",
-    "TITLE": "Name",
+    "TITLE": "Lastname, FirstName",
     "TITLE_HELP": "Name",
     "DESCRIPTION": "About me",
     "DESCRIPTION_HELP": "About me...",
@@ -268,10 +286,9 @@
     }
   },
   "ES_SETTINGS": {
-    "PLUGIN_NAME": "Cesium+: user profiles, notifications, private messages...",
+    "PLUGIN_NAME": "Cesium+",
+    "PLUGIN_NAME_HELP": "User profiles, notifications, private messages",
     "ENABLE_TOGGLE": "Enable extension?",
-    "ENABLE_MARKET_TOGGLE": "Enable market place?",
-    "ENABLE_REGISTRY_TOGGLE": "Enable companies registry?",
     "ENABLE_MESSAGE_TOGGLE": "Enable messages?",
     "ENABLE_SETTINGS_TOGGLE": "Enable remote storage for settings?",
     "PEER": "Data peer address",

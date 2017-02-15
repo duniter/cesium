@@ -47,11 +47,10 @@
             <i ng-if="!formData.avatar" class="item-image" ng-class="{'ion-person': formData.uid, 'ion-email': !formData.uid}"></i>
             <i ng-if="formData.avatar" class="item-image avatar" style="background-image: url({{::formData.avatar.src}})"></i>
 
-            <h1 class="title" ng-bind-html="formData.title"></h1>
+            <h1 class="title hidden-xs hidden-sm" ng-bind-html="formData.title"></h1>
             <h4>
-              <i class="ion-clock"></i>
               {{type == 'inbox' ? 'MESSAGE.VIEW.SENDER': 'MESSAGE.VIEW.RECIPIENT'|translate}}
-              <a class="positive" ui-sref="app.wot_view_identity({pubkey: (type == 'inbox') ? formData.issuer : formData.recipient, uid: formData.name||formData.uid})">
+              <a class="positive" ui-sref="app.wot_identity({pubkey: (type == 'inbox') ? formData.issuer : formData.recipient, uid: formData.name||formData.uid})">
                 <span ng-if="formData.uid">
                   <i class="ion-person"></i>
                   {{formData.name||formData.uid}}
@@ -61,20 +60,29 @@
                   {{formData.issuer|formatPubkey}}
                 </span>
               </a>
-              <span>
+              <span class="hidden-xs hidden-sm">
+                <i class="ion-clock"></i>
                 {{formData.time|formatFromNow}}
-                <span class="gray hidden-xs">|
+                <span class="gray">|
                   {{formData.time | formatDate}}
                 </span>
               </span>
             </h4>
+            <h5 class="gray visible-xs visible-sm">
+              <i class="ion-clock"></i> {{formData.time | formatDate}}
+            </h5>
           </div>
 
           <!-- content -->
+          <ion-item class="visible-xs visible-sm">
+            <h1 class="title" ng-bind-html="formData.title"></h1>
+          </ion-item>
+
+          <!-- content -->
           <ion-item>
-            <h2>
+            <p class="dark">
               <span class="text-keep-lines" ng-bind-html="formData.content"></span>
-            </h2>
+            </p>
 
             <div class="padding gray" ng-if="!formData.content" translate>
               MESSAGE.VIEW.NO_CONTENT

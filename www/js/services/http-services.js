@@ -19,7 +19,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     }
 
     function getUrl(host, port, path) {
-      var protocol = (port === 443 ? 'https' : 'http');
+      var protocol = (port == 443 ? 'https' : 'http');
       return  protocol + '://' + getServer(host, port) + (path ? path : '');
     }
 
@@ -82,7 +82,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     function getResourceWithCache(host, port, path, maxAge, autoRefresh) {
       var url = getUrl(host, port, path);
       maxAge = maxAge || csCache.constants.LONG;
-      console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
+      //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
 
       return function(params) {
         return $q(function(resolve, reject) {
@@ -104,10 +104,10 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
           prepare(url, params, config, function(url, config) {
             $http.get(url, config)
-              .success(function(data, status, headers, config) {
+              .success(function(data) {
                 resolve(data);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status) {
                 processError(reject, data, url, status);
               });
           });
@@ -126,10 +126,10 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
           prepare(url, params, config, function(url, config) {
               $http.post(url, data, config)
-              .success(function(data, status, headers, config) {
+              .success(function(data) {
                 resolve(data);
               })
-              .error(function(data, status, headers, config) {
+              .error(function(data, status) {
                 processError(reject, data, status);
               });
           });

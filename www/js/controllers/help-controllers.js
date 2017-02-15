@@ -6,8 +6,9 @@ angular.module('cesium.help.controllers', ['cesium.services'])
 
     $stateProvider
 
+
       .state('app.help_tour', {
-        url: "/help/tour",
+        url: "/tour",
         views: {
           'menuContent': {
             templateUrl: "templates/home/home.html",
@@ -47,6 +48,9 @@ angular.module('cesium.help.controllers', ['cesium.services'])
 
   .controller('HelpTipCtrl', HelpTipController)
 
+  .controller('HelpTourCtrl', HelpTourController)
+
+
 ;
 
 
@@ -79,7 +83,7 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 /* ----------------------------
 *  Help Tip
 * ---------------------------- */
-function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q,
+function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
                            UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?
@@ -152,6 +156,18 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         return $scope.continue;
       })
 
+      // Network tour
+     /* .then(function(next){
+        if (!next) return false;
+        return $scope.startNetworkTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.network=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
       // Wot tour
       .then(function(next){
         if (!next) return false;
@@ -181,7 +197,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if (!next) return false;
         return $scope.startWalletNoLoginTour(0, true);
       })
-
+      */
       // Wallet tour (if login)
       .then(function(next){
         if (!next) return false;
@@ -203,6 +219,19 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
           .then(function(endIndex){
             if (!endIndex) return false;
             csSettings.data.helptip.walletCerts=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
+      // TX tour (if login)
+      .then(function(next){
+        if (!next) return false;
+        if (!csWallet.isLogin()) return true; // not login: continue
+        return $scope.startTxTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex) return false;
+            csSettings.data.helptip.tx=endIndex;
             csSettings.store();
             return $scope.continue;
           });
@@ -233,15 +262,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
    */
   $scope.startCurrencyTour = function(startIndex, hasNext) {
 
-    var showNetworkViewIsNeed  = function() {
-      if ($state.is('app.currency_view')) {
-        // Select the second tabs
-        $timeout(function () {
-          var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
-          if (tabs && tabs.length == 2) {
-            angular.element(tabs[1]).triggerHandler('click');
-          }
-        }, 100);
+    var showWotTabIfNeed  = function() {
+      if ($state.is('app.currency.tab_parameters')) {
+        $state.go('app.currency.tab_wot');
       }
     };
 
@@ -265,29 +288,17 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        return $state.go(UIUtils.screen.isSmall() ? 'app.currency_view' : 'app.currency_view_lg')
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency' : 'app.currency_view_lg')
           .then(function () {
-            return $scope.showHelpTip('helptip-currency-newcomers', {
+            return $scope.showHelpTip('helptip-currency-mass-member', {
               bindings: {
-                content: 'HELP.TIP.CURRENCY_WOT',
+                content: 'HELP.TIP.CURRENCY_MASS',
                 icon: {
                   position: 'center'
                 }
-              },
-              timeout: 1200 // need for Firefox
+              }
             });
           });
-      },
-
-      function () {
-        return $scope.showHelpTip('helptip-currency-mass-member', {
-          bindings: {
-            content: 'HELP.TIP.CURRENCY_MASS',
-            icon: {
-              position: 'center'
-            }
-          }
-        });
       },
 
       function () {
@@ -330,6 +341,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function () {
+        if (UIUtils.screen.isSmall()) {
+          $anchorScroll('helptip-currency-rules-anchor');
+        }
         return $scope.showHelpTip('helptip-currency-rules', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_RULES',
@@ -341,26 +355,90 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         });
       },
 
-      function() {
-        showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-blockchain', {
+      function () {
+        showWotTabIfNeed();
+        return $scope.showHelpTip('helptip-currency-newcomers', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_BLOCKCHAIN',
+            content: 'HELP.TIP.CURRENCY_WOT',
             icon: {
-              position: 'center',
-              glyph: 'ion-information-circled'
+              position: 'center'
+            }
+          },
+          timeout: 1200 // need for Firefox
+        });
+      }
+    ];
+
+    // Get currency parameters, with currentUD
+    return csCurrency.default().then(function(currency) {
+      contentParams = currency.parameters;
+      // Launch steps
+      return $scope.executeStep('currency', steps, startIndex);
+    });
+  };
+
+  /**
+   * Features tour on network
+   * @returns {*}
+   */
+  $scope.startNetworkTour = function(startIndex, hasNext) {
+
+    var showNetworkTabIfNeed  = function() {
+      if ($state.is('app.currency')) {
+        // Select the second tabs
+        $timeout(function () {
+          var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
+          if (tabs && tabs.length == 3) {
+            angular.element(tabs[2]).triggerHandler('click');
+          }
+        }, 100);
+      }
+    };
+
+    var contentParams;
+
+    var steps = [
+
+      function(){
+        if (UIUtils.screen.isSmall()) return true; // skip but continue
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-network', {
+          bindings: {
+            content: 'HELP.TIP.MENU_BTN_NETWORK',
+            icon: {
+              position: 'left'
             }
           }
         });
       },
 
+      function () {
+        if ($ionicSideMenuDelegate.isOpen()) {
+          $ionicSideMenuDelegate.toggleLeft(false);
+        }
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency.tab_network' : 'app.network')
+          .then(function () {
+            showNetworkTabIfNeed();
+            return $scope.showHelpTip('helptip-network-peers', {
+              bindings: {
+                content: 'HELP.TIP.NETWORK_BLOCKCHAIN',
+                icon: {
+                  position: 'center',
+                  glyph: 'ion-information-circled'
+                }
+              },
+              timeout: 1200 // need for Firefox
+            });
+          });
+      },
+
       function() {
-        showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-peer-0', {
+        showNetworkTabIfNeed();
+        return $scope.showHelpTip('helptip-network-peer-0', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_PEERS',
+            content: 'HELP.TIP.NETWORK_PEERS',
             icon: {
-              position: 'center'
+              position: UIUtils.screen.isSmall() ? undefined : 'center'
             }
           },
           timeout: 1000,
@@ -370,23 +448,23 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
 
       function() {
-        showNetworkViewIsNeed();
-        return $scope.showHelpTip('helptip-currency-peer-0-block', {
+        showNetworkTabIfNeed();
+        return $scope.showHelpTip('helptip-network-peer-0-block', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_PEERS_BLOCK_NUMBER',
+            content: 'HELP.TIP.NETWORK_PEERS_BLOCK_NUMBER',
             icon: {
-              position: 'right'
+              position: UIUtils.screen.isSmall() ? undefined : 'center'
             }
           }
         });
       },
 
       function() {
-        showNetworkViewIsNeed();
+        showNetworkTabIfNeed();
         var locale = csSettings.data.locale.id;
-        return $scope.showHelpTip('helptip-currency-peers', {
+        return $scope.showHelpTip('helptip-network-peers', {
           bindings: {
-            content: 'HELP.TIP.CURRENCY_PEERS_PARTICIPATE',
+            content: 'HELP.TIP.NETWORK_PEERS_PARTICIPATE',
             contentParams: {
               installDocUrl: (csConfig.helptip && csConfig.helptip.installDocUrl) ?
                 (csConfig.helptip.installDocUrl[locale] ? csConfig.helptip.installDocUrl[locale] : csConfig.helptip.installDocUrl) :
@@ -406,7 +484,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     return csCurrency.default().then(function(currency) {
       contentParams = currency.parameters;
       // Launch steps
-      return $scope.executeStep('currency', steps, startIndex);
+      return $scope.executeStep('network', steps, startIndex);
     });
   };
 
@@ -523,7 +601,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
 
       function() {
         // If on identity: click on certifications
-        if ($state.is('app.wot_view_identity')) {
+        if ($state.is('app.wot_identity')) {
           var element = $window.document.getElementById('helptip-wot-view-certifications');
           if (!element) return true;
           $timeout(function() {
@@ -614,53 +692,44 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         // Go to wallet
         return $state.go('app.view_wallet')
           .then(function () {
-            return $scope.showHelpTip('helptip-wallet-balance', {
+            return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'helptip-wallet-options-xs' : 'helptip-wallet-options', {
               bindings: {
-                content: csSettings.data.useRelative ? 'HELP.TIP.WALLET_BALANCE_RELATIVE' : 'HELP.TIP.WALLET_BALANCE',
-                contentParams: contentParams,
+                content: 'HELP.TIP.WALLET_OPTIONS',
                 icon: {
-                  position: 'center'
+                  position: UIUtils.screen.isSmall() ? 'right' : 'center'
                 }
-              },
-              retry: 20 // 10 * 500 = 5s max
+              }
             });
           });
       },
 
+      // Wallet pubkey
       function () {
-        return $scope.showHelpTip('helptip-wallet-balance', {
+        $anchorScroll('helptip-wallet-pubkey');
+        return $scope.showHelpTip('helptip-wallet-pubkey', {
           bindings: {
-            content: 'HELP.TIP.WALLET_BALANCE_CHANGE_UNIT',
-            contentParams: contentParams,
+            content: 'HELP.TIP.WALLET_PUBKEY',
             icon: {
-              position: 'center',
-              glyph: 'ion-information-circled'
+              position: 'bottom-center'
             }
-          }
+          },
+          timeout: UIUtils.screen.isSmall() ? 2000 : 500,
+          retry: 10
         });
       },
 
       function () {
+        $anchorScroll('helptip-wallet-certifications');
         return $scope.showHelpTip('helptip-wallet-certifications', {
           bindings: {
-            content: 'HELP.TIP.WALLET_CERTIFICATIONS',
+            content: UIUtils.screen.isSmall() ? 'HELP.TIP.WALLET_RECEIVED_CERTIFICATIONS': 'HELP.TIP.WALLET_CERTIFICATIONS',
             icon: {
               position: 'center'
             }
           },
-          onError: 'continue'
-        });
-      },
-
-      function () {
-        return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'helptip-wallet-options-xs' : 'helptip-wallet-options', {
-          bindings: {
-            content: 'HELP.TIP.WALLET_OPTIONS',
-            icon: {
-              position: UIUtils.screen.isSmall() ? 'right' : 'center'
-            },
-            hasNext: hasNext
-          }
+          timeout: 500,
+          onError: 'continue',
+          hasNext: hasNext
         });
       }
     ];
@@ -708,15 +777,34 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       },
 
       function() {
+        if (skipAll || !UIUtils.screen.isSmall()) return true;
+        return $state.go('app.view_wallet') // go back to wallet (small device only)
+          .then(function() {
+            return $scope.showHelpTip('helptip-wallet-given-certifications', {
+              bindings: {
+                content: 'HELP.TIP.WALLET_GIVEN_CERTIFICATIONS',
+                icon: {
+                  position: 'center'
+                }
+              },
+              timeout: 500
+            });
+        });
+      },
+
+      function() {
         if (skipAll) return true;
-        if ($state.is('app.wallet_view_cert')) {
-          // Select the second tabs
+
+        // Click on given cert link (small device only)
+        if ($state.is('app.view_wallet')) {
+          var element = $window.document.getElementById('helptip-wallet-given-certifications');
+          if (!element) {
+            skipAll = true;
+            return true;
+          }
           $timeout(function() {
-            var tabs = $window.document.querySelectorAll('ion-tabs .tabs a');
-            if (tabs && tabs.length == 2) {
-              angular.element(tabs[1]).triggerHandler('click');
-            }
-          }, 100);
+            angular.element(element).triggerHandler('click');
+          }, 500);
         }
         return $scope.showHelpTip(UIUtils.screen.isSmall() ? 'fab-select-certify': 'helptip-certs-select-certify', {
           bindings: {
@@ -729,7 +817,6 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
           retry: 10
         });
       },
-
 
       function() {
         if ($scope.tour || skipAll) return hasNext; // skip Rules if features tour (already display)
@@ -764,6 +851,73 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       contentParams = currency.parameters;
       return $scope.executeStep('certs', steps, startIndex);
     });
+  };
+
+  /**
+   * Features tour on TX screen
+   * @returns {*}
+   */
+  $scope.startTxTour = function(startIndex, hasNext) {
+    if (!csWallet.isLogin()) return $q.when(true); // skip if not login
+
+    var contentParams;
+
+    var steps = [
+      function () {
+        $ionicSideMenuDelegate.toggleLeft(true);
+        return $scope.showHelpTip('helptip-menu-btn-tx', {
+          bindings: {
+            content: $rootScope.walletData.isMember ? 'HELP.TIP.MENU_BTN_TX_MEMBER' : 'HELP.TIP.MENU_BTN_TX',
+            icon: {
+              position: 'left'
+            }
+          }
+        });
+      },
+
+      function () {
+        if ($ionicSideMenuDelegate.isOpen()) {
+          $ionicSideMenuDelegate.toggleLeft(false);
+        }
+
+        // Go to wallet
+        return $state.go('app.view_wallet_tx')
+          .then(function () {
+            return $scope.showHelpTip('helptip-wallet-balance', {
+              bindings: {
+                content: csSettings.data.useRelative ? 'HELP.TIP.WALLET_BALANCE_RELATIVE' : 'HELP.TIP.WALLET_BALANCE',
+                contentParams: contentParams,
+                icon: {
+                  position: 'center'
+                }
+              },
+              retry: 20 // 10 * 500 = 5s max
+            });
+          });
+      },
+
+      function () {
+        return $scope.showHelpTip('helptip-wallet-balance', {
+          bindings: {
+            content: 'HELP.TIP.WALLET_BALANCE_CHANGE_UNIT',
+            contentParams: contentParams,
+            icon: {
+              position: 'center',
+              glyph: 'ion-information-circled'
+            }
+          }
+        });
+      }
+    ];
+
+    // Get currency parameters, with currentUD
+    return csCurrency.default()
+      .then(function(currency) {
+        contentParams = currency.parameters;
+        contentParams.currentUD = $rootScope.walletData.currentUD;
+        // Launch steps
+        return $scope.executeStep('tx', steps, startIndex);
+      });
   };
 
   /**
@@ -874,7 +1028,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
                 content: 'HELP.TIP.SETTINGS_CHANGE_UNIT',
                 contentParams: contentParams,
                 icon: {
-                  position: 'right'
+                  position: 'right',
+                  style: 'margin-right: 60px'
                 },
                 hasNext: hasNext
               },
@@ -905,7 +1060,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     if (csWallet.isLogin()) {
       return $state.go('app.view_wallet')
         .then(function(){
-          return $scope.showHelpTip('helptip-wallet-balance', {
+          return $scope.showHelpTip('helptip-wallet-certifications', {
             bindings: {
               content: 'HELP.TIP.END_LOGIN',
               hasNext: false
@@ -936,4 +1091,15 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         });
     }
   };
+}
+
+/* ----------------------------
+ *  Help tour (auto start from home page)
+ * ---------------------------- */
+function HelpTourController($scope) {
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    $scope.startHelpTour();
+  });
+
 }

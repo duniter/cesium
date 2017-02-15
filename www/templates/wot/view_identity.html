@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons" >
+<ion-view left-buttons="leftButtons">
   <ion-nav-title>
   </ion-nav-title>
 
@@ -6,19 +6,19 @@
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
         <i class="avatar"
-           ng-if="!formData.avatar"
+           ng-if="::!formData.avatar"
            ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
         <i class="avatar"
-           ng-if="formData.avatar"
+           ng-if="::formData.avatar"
            style="background-image: url({{::formData.avatar.src}})"></i>
-        <ng-if ng-if="formData.name">
-          <h3 class="light" ng-if="formData.name">{{::formData.name}}</h3>
+        <ng-if ng-if="::formData.name">
+          <h3 class="light">{{::formData.name}}</h3>
         </ng-if>
-        <ng-if ng-if="!formData.name">
-          <h3 class="light" ng-if="formData.uid">{{formData.uid}}</h3>
-          <h3 class="light" ng-if="!formData.uid"><i class="ion-key"></i> {{formData.pubkey | formatPubkey}}</h3>
+        <ng-if ng-if="::!formData.name">
+          <h3 class="light" ng-if="::formData.uid">{{::formData.uid}}</h3>
+          <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
         </ng-if>
-        <h4 class="assertive"><ng-if ng-if="(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
+        <h4 class="assertive"><ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
@@ -27,12 +27,19 @@
 
     <!-- button bar-->
     <div class="hidden-xs hidden-sm padding text-center">
-      <button class="button button-stable icon ion-android-share-alt ink"
-              ng-click="showSharePopover($event)">
+      <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
+              ng-click="showSharePopover($event)"
+              title="{{'COMMON.BTN_SHARE' | translate}}">
       </button>
 
       <!-- Allow extension here -->
       <cs-extension-point name="buttons"></cs-extension-point>
+
+      <button class="button button-stable button-small-padding icon ion-ribbon-b ink"
+              ng-click="certify()"
+              title="{{'WOT.BTN_CERTIFY' | translate}}"
+              ng-disabled="alreadyCertified">
+      </button>
 
       <button class="button button-calm ink"
               ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.name||formData.uid})">
@@ -41,26 +48,37 @@
     </div>
 
     <div class="row no-padding">
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
       <div class="col list animate-fade-slide-in-right">
 
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
-        <!-- Certifications count -->
+        <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
            ng-if="formData.hasSelf"
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
+          <b ng-if="formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
-
           <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
                                   requirements="formData.requirements"
                                   parameters="{sigQty: formData.sigQty}">
           </cs-badge-certification>
 
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </a>
+
+        <!-- Signature stock -->
+        <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
+             ng-if="formData.hasSelf && formData.isMember"
+             ng-click="showGivenCertifications()">
+          <i class="icon ion-ribbon-a"></i>
+          <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
+          <cs-badge-given-certification identity="formData"
+                                  parameters="{sigStock: formData.sigStock}">
+          </cs-badge-given-certification>
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 
@@ -96,13 +114,11 @@
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark text-left">{{::formData.pubkey}}</h4>
         </ion-item>
-
-        <cs-extension-point name="technical"></cs-extension-point>
       </div>
 
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
     </div>
+
   </ion-content>
 
   <!-- fab button -->

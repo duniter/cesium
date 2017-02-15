@@ -542,21 +542,16 @@ angular.module('cesium.utils.services', ['ngResource'])
     var isInvalidSelector = typeof options.selector === 'undefined' || options.selector === '';
 
     if (isInvalidSelector) {
-      console.log('invalid toggleOn selector');
+      console.error('invalid toggleOn selector');
       return false;
     }
 
-    if (!timeout) {
-      timeout = 900;
-    }
     $timeout(function () {
-      var items = document.querySelectorAll(options.selector);
-      var itemsCount = items.length;
-      for (var i = 0; i < itemsCount; i++) {
-        var element = items[i];
+      var elements = document.querySelectorAll(options.selector);
+      if (elements) _.forEach(elements, function(element){
         element.classList.toggle('on', true);
-      }
-    }, timeout);
+      });
+    }, timeout || 100);
   };
 
   ionicMaterialMotion.toggleOff = function(options, timeout) {
@@ -571,21 +566,16 @@ angular.module('cesium.utils.services', ['ngResource'])
     var isInvalidSelector = typeof options.selector === 'undefined' || options.selector === '';
 
     if (isInvalidSelector) {
-      console.log('invalid toggleOff selector');
+      console.error('invalid toggleOff selector');
       return false;
     }
 
-    if (!timeout) {
-      timeout = 900;
-    }
     $timeout(function () {
-      var items = document.querySelectorAll(options.selector);
-      var itemsCount = items.length;
-      for (var i = 0; i < itemsCount; i++) {
-        var element = items[i];
+      var elements = document.querySelectorAll(options.selector);
+      if (elements) _.forEach(elements, function(element){
         element.classList.toggle('on', false);
-      }
-    }, timeout);
+      });
+    }, timeout || 900);
   };
 
   return {

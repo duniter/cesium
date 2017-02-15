@@ -1,0 +1,23 @@
+<ion-view>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content ng-init="motions.receivedCertifications=false; motions.avatar=false">
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <ng-include src="'templates/wot/items_given_certifications.html'"></ng-include>
+  </ion-content>
+
+  <!-- fab button -->
+  <div class="visible-xs visible-sm">
+    <button id="fab-select-certify" class="button button-fab button-fab-bottom-right button-energized-900 spin"
+            ng-if="canSelectAndCertify || $root.tour"
+            ng-click="selectAndCertify()">
+      <i class="icon ion-plus"></i>
+    </button>
+  </div>
+</ion-view>
