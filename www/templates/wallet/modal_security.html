@@ -43,7 +43,7 @@
               <i class="icon ion-ios-arrow-right"></i>
             </div>
             <div class="item card item-icon-right stable-bg padding ink dark"
-                 ng-click="selectOption('revocation')" ng-if="isLogin">
+                 ng-click="selectOption('revocation')">
               <span ng-bind-html="'ACCOUNT.SECURITY.REVOCATION' | translate"></span>
               <i class="icon ion-ios-arrow-right"></i>
             </div>
@@ -57,8 +57,11 @@
         </ion-content>
       </ion-slide-page>
 
-      <ion-slide-page ng-if="isLogin && option == 'revocation'">
-        <ng-include src="'templates/wallet/slides/slides_revocation.html'"></ng-include>
+      <ion-slide-page ng-if="option == 'revocation'">
+        <ng-include src="'templates/wallet/slides/slides_revocation_1.html'"></ng-include>
+      </ion-slide-page>
+      <ion-slide-page ng-if="option == 'revocation'">
+        <ng-include src="'templates/wallet/slides/slides_revocation_2.html'"></ng-include>
       </ion-slide-page>
 
       <ion-slide-page ng-if="isLogin && option == 'saveID'">

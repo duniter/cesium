@@ -3,12 +3,17 @@
     <h3 translate>ACCOUNT.SECURITY.REVOCATION</h3>
     <div class="list">
       <div class="item card item-icon-right stable-bg padding ink dark"
-           ng-click="downloadRevokeFile()">
+           ng-click="downloadRevokeFile()" ng-if="isLogin">
         <i class="icon ion-android-archive"></i>
         <span ng-bind-html="'ACCOUNT.SECURITY.DOWNLOAD_REVOKE' | translate"></span>
       </div>
       <div class="item card item-icon-right stable-bg padding ink dark"
-           ng-click="revokeIdentity()">
+           ng-click="slideNext()">
+        <i class="icon ion-ios-arrow-right"></i>
+        <span ng-bind-html="'ACCOUNT.SECURITY.REVOKE_WITH_FILE' | translate"></span>
+      </div>
+      <div class="item card item-icon-right stable-bg padding ink dark"
+           ng-click="revokeIdentity()" ng-if="isLogin">
         <i class="icon ion-minus-circled assertive"></i>
         <span ng-bind-html="'ACCOUNT.SECURITY.DEFINITELY_REVOKE' | translate"></span>
       </div>

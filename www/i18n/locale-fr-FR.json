@@ -357,7 +357,7 @@
       "ADD_QUESTION" : "Ajouter une question personnalisée ",
       "BTN_CLEAN" : "Vider",
       "BTN_RESET" : "Réinitialiser",
-      "CHOOSE_FILE" : "Déposez votre fichier de sauvegarde <br/>ou cliquez pour le sélectionner",
+      "CHOOSE_FILE" : "Déposez votre fichier <br/>ou cliquez pour le sélectionner",
       "DEFINITELY_REVOKE" : "Revoquer définitivement cette identité",
       "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
       "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
@@ -385,7 +385,8 @@
       "QUESTION_19": "Quel était le métier de votre grand-père ?",
       "RECOVER_ID": "Recupérer vos identifiants",
       "REVOCATION": "Révocation ...",
-      "REVOKE" : "Revoquer cette identité",
+      "REVOKE" : "Révoquer cette identité",
+      "REVOKE_WITH_FILE" : "Révoquer une identité à partir d'un fichier",
       "SAVE_ID": "Sauvegarder vos identifiants",
       "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
       "TITLE": "Compte et sécurité"

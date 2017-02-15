@@ -1,0 +1,39 @@
+<ion-content class="has-header padding" >
+  <h3 translate>ACCOUNT.SECURITY.REVOKE_WITH_FILE</h3>
+
+  <div dropzone="recoverContent(file)">
+    <div ng-if="!hasContent" onclick="angular.element(document.querySelector('#revocationFile'))[0].click();">
+      <span translate>ACCOUNT.SECURITY.CHOOSE_FILE</span>
+      <input type="file" id="revocationFile" accept=".txt"
+             style="visibility:hidden; position:absolute;" on-read-file="recoverContent(file)"/>
+    </div>
+
+    <div ng-if="hasContent" class="item row item-icon-left no-padding">
+      <i class="icon ion-document-text gray"></i>
+      <div class="col">
+        <span>{{fileData.name}}</span>
+        <br />
+        <small>{{fileData.size}} Ko</small>
+      </div>
+      <div class="col-10">
+        <b ng-class="{'ion-android-done balanced': isValidFile,'ion-android-close assertive': !isValidFile}"
+           style="font-size: 28px; position: relative; top: 6px;"></b>
+        <button class="button-icon ion-close-round gray pull-right" style="font-size:10px;"
+                ng-click="restore()"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="padding hidden-xs text-right">
+    <button class="button button-clear button-dark ink" ng-click="closeModal()"
+            type="button" translate>COMMON.BTN_CANCEL
+    </button>
+    <button class="button button-calm icon-right ion-chevron-right ink"
+            ng-click="revokeWithFile()" translate>
+      COMMON.BTN_NEXT
+      <i class="icon ion-arrow-right-a"></i>
+    </button>
+  </div>
+</ion-content>
+
+

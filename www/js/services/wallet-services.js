@@ -1438,74 +1438,74 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           });
       },
 
-      getCryptedId = function(record){
-        return getkeypairSaveId(record)
-          .then(function() {
-            return CryptoUtils.util.random_nonce()
-          })
-          .then(function(nonce) {
-            record.nonce = nonce;
-            return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
-          })
-          .then(function (cypherSalt) {
-            record.salt = cypherSalt;
-            return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
-          })
-          .then(function (cypherPwd) {
-            record.pwd = cypherPwd;
-            record.nonce = CryptoUtils.util.encode_base58(record.nonce);
-            return record;
-          });
-      },
+    getCryptedId = function(record){
+      return getkeypairSaveId(record)
+        .then(function() {
+          return CryptoUtils.util.random_nonce()
+        })
+        .then(function(nonce) {
+          record.nonce = nonce;
+          return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+        })
+        .then(function (cypherSalt) {
+          record.salt = cypherSalt;
+          return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+        })
+        .then(function (cypherPwd) {
+          record.pwd = cypherPwd;
+          record.nonce = CryptoUtils.util.encode_base58(record.nonce);
+          return record;
+        });
+    },
 
-      recoverId = function(recover) {
-        var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
-        return getkeypairSaveId(recover)
-          .then(function (recover) {
-            return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
-          })
-          .then(function (salt) {
-            recover.salt = salt;
-            return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
-          })
-          .then(function (pwd) {
-            recover.pwd = pwd;
-            return recover;
-          })
-          .catch(function(err){
-            console.warn('Incorrect answers - Unable to recover passwords');
-          });
-      },
+    recoverId = function(recover) {
+      var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
+      return getkeypairSaveId(recover)
+        .then(function (recover) {
+          return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+        })
+        .then(function (salt) {
+          recover.salt = salt;
+          return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+        })
+        .then(function (pwd) {
+          recover.pwd = pwd;
+          return recover;
+        })
+        .catch(function(err){
+          console.warn('Incorrect answers - Unable to recover passwords');
+        });
+    },
 
-      getSaveIDDocument = function(record) {
-        var saveId = 'Version: 10 \n' +
-          'Type: SaveID\n' +
-          'Questions: ' + '\n' + record.questions +
-          'Issuer: ' + data.pubkey + '\n' +
-          'Crypted-Nonce: '+ record.nonce + '\n'+
-          'Crypted-Pubkey: '+ record.pubkey +'\n' +
-          'Crypted-Salt: '+ record.salt  + '\n' +
-          'Crypted-Pwd: '+ record.pwd + '\n';
+    getSaveIDDocument = function(record) {
+      var saveId = 'Version: 10 \n' +
+        'Type: SaveID\n' +
+        'Questions: ' + '\n' + record.questions +
+        'Issuer: ' + data.pubkey + '\n' +
+        'Crypted-Nonce: '+ record.nonce + '\n'+
+        'Crypted-Pubkey: '+ record.pubkey +'\n' +
+        'Crypted-Salt: '+ record.salt  + '\n' +
+        'Crypted-Pwd: '+ record.pwd + '\n';
 
-        // Sign SaveId document
-        return CryptoUtils.sign(saveId, data.keypair)
+      // Sign SaveId document
+      return CryptoUtils.sign(saveId, data.keypair)
 
-          .then(function(signature) {
-            saveId += signature + '\n';
-            console.debug('Has generate an SaveID document:\n----\n' + saveId + '----');
-            return saveId;
-          });
+        .then(function(signature) {
+          saveId += signature + '\n';
+          console.debug('Has generate an SaveID document:\n----\n' + saveId + '----');
+          return saveId;
+        });
 
-      },
+    },
 
-      downloadSaveId = function(record){
-        return getSaveIDDocument(record)
-          .then(function(saveId) {
-            var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
-            FileSaver.saveAs(saveIdFile, 'saveID.txt');
-          });
+    downloadSaveId = function(record){
+      return getSaveIDDocument(record)
+        .then(function(saveId) {
+          var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
+          FileSaver.saveAs(saveIdFile, 'saveID.txt');
+        });
 
-      },
+    },
 
     getRevocationDocument = function() {
 
@@ -1548,8 +1548,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
       // Get revocation document
       return getRevocationDocument()
+        .then(function(revocation){
+          console.debug(revocation);
+        })
 
-        // Send revocation document
+/*        // Send revocation document
         .then(function(revocation) {
           return BMA.wot.revoke({revocation: revocation});
         })
@@ -1577,7 +1580,35 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             throw err;
           }
         })
-        ;
+        ;*/
+    },
+
+    revokeWithFile = function(revocation){
+      console.debug(revocation);
+      /*return BMA.wot.revoke({revocation: revocation})
+      // Reload requirements
+        .then(function() {
+          return $timeout(function() {
+            return loadRequirements();
+          }, 1000); // waiting for node to process membership doc
+        })
+
+        .then(function() {
+          finishLoadRequirements();
+
+          // Add user event
+          addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+        })
+        .catch(function(err) {
+          if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
+            // Already registered by node: just add an event
+            addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+          }
+          else {
+            throw err;
+          }
+        })*/
+
     },
 
     downloadRevocation = function(){
@@ -1684,6 +1715,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       transfer: transfer,
       self: self,
       revoke: revoke,
+      revokeWithFile: revokeWithFile,
       downloadSaveId: downloadSaveId,
       getCryptedId: getCryptedId,
       recoverId: recoverId,
