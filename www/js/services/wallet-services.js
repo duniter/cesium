@@ -1440,19 +1440,21 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
       getCryptedId = function(record){
         return getkeypairSaveId(record)
-          .then(function(record) {
-            var nonce = CryptoUtils.util.random_nonce();
-            record.nonce = CryptoUtils.util.encode_base58(nonce);
-            return CryptoUtils.box.pack(record.salt, nonce, record.keypair.boxPk, record.keypair.boxSk)
-              .then(function (cypherSalt) {
-                record.salt = cypherSalt;
-
-                return CryptoUtils.box.pack(record.pwd, nonce, record.keypair.boxPk, record.keypair.boxSk)
-                  .then(function (cypherPwd) {
-                    record.pwd = cypherPwd;
-                    return record;
-                  });
-              });
+          .then(function() {
+            return CryptoUtils.util.random_nonce()
+          })
+          .then(function(nonce) {
+            record.nonce = nonce;
+            return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+          })
+          .then(function (cypherSalt) {
+            record.salt = cypherSalt;
+            return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+          })
+          .then(function (cypherPwd) {
+            record.pwd = cypherPwd;
+            record.nonce = CryptoUtils.util.encode_base58(record.nonce);
+            return record;
           });
       },
 

@@ -476,6 +476,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     });
   };
 
+  $scope.showSecurityModal = function(){
+    $scope.hideActionsPopover();
+    Modals.showAccountSecurity();
+  };
+
 }
 
 
@@ -604,10 +609,6 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
       });
   };
 
-  $scope.showSecurityModal = function(){
-    $scope.hideActionsPopover();
-    Modals.showAccountSecurity();
-  };
 }
 
 function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
@@ -845,6 +846,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
   };
 
   $scope.submit = function(){
+
     if(!$scope.loginForm.$valid){
       return;
     }
@@ -856,21 +858,23 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
         $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
     })
 
-      .then(function (){
-        if (!csWallet.isUserPubkey($scope.pubkey)){
+      .then(function () {
+        if (!csWallet.isUserPubkey($scope.pubkey)) {
           UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
           return;
         }
-        var file = {file : _.filter($scope.formData.questions, function(question){
-          return question.checked;
-        })};
+        var file = {
+          file: _.filter($scope.formData.questions, function (question) {
+            return question.checked;
+          })
+        };
         var record = {
           salt: $scope.formData.username,
           pwd: $scope.formData.password,
           questions: '',
           answer: ''
         };
-        _.each(file.file, function(question){
+        _.each(file.file, function (question) {
           record.questions += question.value + '\n';
           record.answer += question.answer;
         });
@@ -880,7 +884,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
             csWallet.downloadSaveId(record);
             $scope.closeModal();
           })
-      })
+      });
   };
 
   $scope.isRequired = function(){
