@@ -336,7 +336,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
                 message.title = title;
               })
               .catch(function(err){
-                console.warn('[ES] [message] invalid cypher title');
+                console.error(err);
+                console.warn('[ES] [message] may have invalid cypher title');
                 message.valid = false;
               }),
 
@@ -346,7 +347,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
                   message.content = content;
                 })
                 .catch(function(err){
-                  console.warn('[ES] [message] invalid cypher content');
+                  console.error(err);
+                  console.warn('[ES] [message] may have invalid cypher content');
                   message.valid = false;
                 })
               );

@@ -17,10 +17,11 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
  .controller('ProfileCtrl', ProfileController)
 
+ .controller('AvatarModalCtrl', AvatarModalController)
 ;
 
 function ProfileController($scope, $rootScope, $timeout, $state, $focus, $translate, $ionicHistory,
-                           esUser, SocialUtils, UIUtils, esHttp) {
+                           esUser, SocialUtils, UIUtils, esHttp, ModalUtils, Device) {
   'ngInject';
 
   $scope.loading = true;
@@ -52,7 +53,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
   });
 
   $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    /*if ($scope.dirty && !$scope.saving) {
+    if ($scope.dirty && !$scope.saving) {
 
       // stop the change state action
       event.preventDefault();
@@ -78,7 +79,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
             $state.go(next.name, nextParams);
           });
       }
-    }*/
+    }
   });
 
   $scope.load = function(walletData) {
@@ -92,8 +93,6 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
           $scope.existing = true;
           $scope.updateView(walletData, profile);
         }
-        UIUtils.loading.hide();
-        $scope.loading = false;
 
         // removeIf(device)
         $focus('profile-name');
@@ -103,7 +102,6 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
         UIUtils.loading.hide(10);
         if (err && err.ucode == 404) {
           $scope.updateView(walletData, {});
-          $scope.loading = false;
           $scope.existing = false;
         }
         else {
@@ -128,6 +126,13 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
       // Set Ink
       UIUtils.ink({selector: 'ion-list > .item.ink'});
     }, 10);
+
+    // Update loading var
+    // Should be done with a delay, to avoid trigger onFormDataChanged()
+    UIUtils.loading.hide();
+    $timeout(function() {
+      $scope.loading = false;
+    }, 1000);
   };
 
   $scope.onFormDataChanged = function() {
@@ -136,21 +141,8 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
   };
   $scope.$watch('formData', $scope.onFormDataChanged, true);
 
-  $scope.fileChanged = function(event) {
-    return UIUtils.loading.show()
-      .then(function() {
-        var file = event.target.files[0];
-        return UIUtils.image.resizeFile(file, true);
-      })
-      .then(function(imageData) {
-        $scope.avatar = {src: imageData};
-        $scope.dirty = true;
-        return UIUtils.loading.hide(10);
-      })
-      .catch(UIUtils.onError('PROFILE.ERROR.IMAGE_RESIZE_FAILED'));
-    };
-
   $scope.save = function(silent) {
+    console.debug('saving');
     if(!$scope.form.$valid || !$rootScope.walletData) {
       return;
     }
@@ -173,6 +165,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
         else {
           delete $scope.walletData.avatar;
         }
+        $scope.walletData.profile = formData;
       }
     };
 
@@ -248,12 +241,78 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
   };
 
   $scope.close = function() {
-    if ($ionicHistory.backView()) {
-      return $ionicHistory.goBack();
+    return $state.go('app.view_wallet');
+  };
+
+  $scope.showAvatarModal = function() {
+    if (Device.enable) {
+      return Device.camera.getPicture()
+        .then(function(imageData) {
+          $scope.avatar = {src: "data:image/png;base64," + imageData};
+          $scope.dirty = true;
+        })
+        .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
     }
     else {
-      return $scope.showHome();
+      return ModalUtils.show('plugins/es/templates/user/modal_edit_avatar.html','AvatarModalCtrl',
+        {})
+        .then(function(imageData) {
+          if (!imageData) return;
+          $scope.avatar = {src: imageData};
+          $scope.dirty = true;
+        });
     }
   };
 }
 
+
+function AvatarModalController($scope) {
+
+  $scope.openFileSelector = function() {
+    var fileInput = angular.element(document.querySelector('.modal-avatar #fileInput'));
+    if (fileInput && fileInput.length > 0) {
+      fileInput[0].click();
+    }
+  };
+
+  $scope.fileChanged = function(e) {
+
+    var files = e.target.files;
+
+    var fileReader = new FileReader();
+    fileReader.readAsDataURL(files[0]);
+
+    fileReader.onload = function(e) {
+      $scope.imgSrc = this.result;
+      $scope.$apply();
+    };
+
+  };
+
+
+  /*$scope.fileChanged = function(event) {
+    return UIUtils.loading.show()
+      .then(function() {
+        var file = event.target.files[0];
+        return UIUtils.image.resizeFile(file, true);
+      })
+      .then(function(imageData) {
+        $scope.avatar = {src: imageData};
+        $scope.dirty = true;
+        return UIUtils.loading.hide(10);
+      })
+      .catch(UIUtils.onError('PROFILE.ERROR.IMAGE_RESIZE_FAILED'));
+  };*/
+
+  $scope.doCrop = function() {
+    $scope.initCrop = true;
+  };
+
+  $scope.clear = function() {
+    $scope.imageCropStep = 1;
+    delete $scope.imgSrc;
+    delete $scope.result;
+    delete $scope.resultBlob;
+  };
+
+}

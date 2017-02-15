@@ -229,7 +229,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
     }
 
     that = {
-      copy: copy,
       get: get,
       post: post,
       getUrl : csHttp.getUrl,

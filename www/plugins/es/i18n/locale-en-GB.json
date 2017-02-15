@@ -272,6 +272,13 @@
     "LOCATION_DIVIDER": "Localisation",
     "SOCIAL_NETWORKS_DIVIDER": "Social networks and web site",
     "TECHNICAL_DIVIDER": "Technical data",
+    "MODAL_AVATAR": {
+      "TITLE": "Avatar",
+      "SELECT_FILE_HELP": "<b>Choose an image file</b>, by clicking on the button below:",
+      "BTN_SELECT_FILE": "Choose an image",
+      "RESIZE_HELP": "<b>Re-crop the image</b> if necessary. A click on the image allows to move it. Click on the area at the bottom left to zoom in.",
+      "RESULT_HELP": "<b>Here is the result</b> as seen on your profile:"
+    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Could not load user profile.",
       "SAVE_PROFILE_FAILED": "Saving profile failed",

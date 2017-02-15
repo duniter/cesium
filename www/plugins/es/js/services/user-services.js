@@ -204,6 +204,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       // Waiting to load crypto libs
       if (!CryptoUtils.isLoaded()) {
         console.debug('[ES] [user] Waiting crypto lib loading...');
+        //throw 'stop';
         $timeout(function() {
           onWalletLogin(data, deferred);
         }, 50);

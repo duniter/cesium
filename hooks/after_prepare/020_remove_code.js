@@ -50,11 +50,16 @@ if (rootdir) {
         .pipe(htmlmin())
         .pipe(gulp.dest(wwwPath)),
 
-      // Remove unused JS code
-      gulp.src([wwwPath +  + '/js/**/*.js', pluginPath +  + '/js/**/*.js'])
+      // Remove unused JS code + add ng annotations
+      gulp.src([wwwPath + '/js/**/*.js'])
         .pipe(removeCode({device: true}))
         .pipe(ngAnnotate({single_quotes: true}))
-        .pipe(gulp.dest("."))
+        .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
+
+      gulp.src([pluginPath + '/js/**/*.js'])
+        .pipe(removeCode({device: true}))
+        .pipe(ngAnnotate({single_quotes: true}))
+        .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
      );
 
   }

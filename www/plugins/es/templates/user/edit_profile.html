@@ -15,9 +15,11 @@
         <i class="avatar"
            style="background-image: url('{{avatar.src}}')"
            ng-class="{'avatar-wallet': !loading && !avatar && walletData && !walletData.isMember, 'avatar-member': !loading && !avatar && walletData.isMember}">
-          <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-no-device" ng-click="openPicturePopup()"></button>
-          <button class="button button-positive button-avatar button-large button-clear flat icon ion-camera hidden-device"
-                  onclick="angular.element(document.querySelector('form #avatarFile'))[0].click();"></button>
+          <button class="button button-positive button-large button-clear flat icon ion-camera visible-xs visible-sm"
+                  style="display: inline-block;"
+                  ng-click="showAvatarModal()"></button>
+          <button class="button button-positive button-large button-clear icon ion-camera hidden-xs hidden-sm"
+                  ng-click="showAvatarModal()"></button>
         </i>
         <div ng-if="!loading">
           <h3 class="light" ng-if="!formData.title && walletData && walletData.isMember">{{walletData.uid}}</h3>
@@ -40,9 +42,6 @@
 
       <div class="col">
         <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
-
-          <input type="file" id="avatarFile" accept=".png,.jpeg,.jpg" onchange="angular.element(this).scope().fileChanged(event)"
-                 style="visibility:hidden; position:absolute;"/>
 
           <ion-list class="animate-ripple item-text-wrap" ng-init="setForm(profileForm)">
 
@@ -134,7 +133,9 @@
               <button class="button button-clear button-dark ink"
                       ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
               </button>
-              <button class="button button-assertive ink" type="submit">
+              <button class="button button-calm ink"
+                      ng-class="{'button-assertive': dirty}"
+                      type="submit">
                 {{'COMMON.BTN_SAVE' | translate}}
               </button>
             </div>

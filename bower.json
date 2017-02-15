@@ -12,7 +12,8 @@
     "angular-animate": "1.4.3",
     "angular-sanitize": "1.5.3",
     "angular": "1.5.3",
-    "angular-bind-notifier": "^1.1.7"
+    "angular-bind-notifier": "^1.1.7",
+    "angular-image-crop": "^2.0.0"
   },
   "resolutions": {
     "angular-sanitize": "1.5.3",
