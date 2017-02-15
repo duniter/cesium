@@ -18,7 +18,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         raw: {
           search: esHttp.post(host, port, '/'+index+'/comment/_search'),
           remove: esHttp.record.remove(host, port, index, 'comment'),
-          wsChanges: esHttp.ws('ws://' + esHttp.getServer(host, wsPort) + '/ws/_changes'),
+          wsChanges: esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://' + esHttp.getServer(host, wsPort) + '/ws/_changes'),
           add: new esHttp.record.post(host, port, '/'+index+'/comment'),
           update: new esHttp.record.post(host, port, '/'+index+'/comment/:id/_update')
         }
