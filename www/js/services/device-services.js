@@ -23,7 +23,6 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
       // removeIf(device)
       // workaround to quickly no is device or not (even before the ready() event)
       exports.enable = false;
-      console.log("TOTOTOTOT - should have been removed on DEVICE !!!");
       // endRemoveIf(device)
 
       // Replace the '$ionicPlatform.ready()', to enable multiple calls

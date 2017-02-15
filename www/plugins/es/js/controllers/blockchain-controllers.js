@@ -28,13 +28,7 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
     ;
   })
 
-
   .controller('ESBlockLookupCtrl', ESBlockLookupController)
-
-  .controller('ESNetworkViewExtendCtrl', ESNetworkViewExtendController)
-
-
-
 ;
 
 

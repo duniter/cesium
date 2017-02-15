@@ -56,6 +56,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         initPhase: false, // For currency start (when block #0 not written)
         expertMode: false,
         decimalCount: 4,
+        forceNetworkViewToHttp: false,
         newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",
         helptip: {
           enable: true,

@@ -305,13 +305,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, $translate, $state, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
+.run(function($rootScope, $translate, $state, $window, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
   'ngInject';
 
   $rootScope.config = csConfig;
   $rootScope.settings = csSettings.data;
   $rootScope.walletData = csWallet.data;
   $rootScope.device = Device;
+
 
   // removeIf(device)
   // Automatic redirection to large state (if define)
@@ -323,8 +324,60 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         $state.go(next.data.large, nextParams);
       }
     }
+
+
   });
   // endRemoveIf(device)
+
+  // Switch between HTTPS or HTTP intelligently
+  if (csConfig.httpsMode === 'clever') {
+    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+      // Redirect to HTTP if view has preferHttp=true
+      if (next.data && next.data.preferHttp && $window.location.protocol == 'https:') {
+        var href = $window.location.href;
+        var hashIndex = href.indexOf('#');
+        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        rootPath = 'http' + rootPath.substr(5);
+        var path = rootPath + $state.href(next, nextParams);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + path);
+        }
+        else {
+          $window.location.href = path;
+        }
+      }
+      // Redirect to HTTPS
+      else if((!next.data || !next.data.preferHttp) && $window.location.protocol != 'https:') {
+        var href = $window.location.href;
+        var hashIndex = href.indexOf('#');
+        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        var path = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + path);
+        }
+        else {
+          $window.location.href = path;
+        }
+      }
+    });
+  }
+  // Always redirect to HTTPS
+  else if (csConfig.httpsMode == true || csConfig.httpsMode == 'force') {
+    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+      if($window.location.protocol != 'https:') {
+        var href = $window.location.href;
+        var hashIndex = href.indexOf('#');
+        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        var path = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + path);
+        }
+        else {
+          $window.location.href = path;
+        }
+      }
+    });
+  }
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because this one is callable many times
   Device.ready()
