@@ -1,6 +1,6 @@
 {
   "name": "cesium",
-  "version": "0.9.30",
+  "version": "0.9.31",
   "description": "Unhosted webapp client for Duniter network",
   "repository": {
     "type": "git",
