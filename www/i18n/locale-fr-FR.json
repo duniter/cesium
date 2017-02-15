@@ -371,7 +371,7 @@
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Compte non certifiable. Aucune demande d'adhésion n'a été faite, ou bien elle n'a pas été renouvellée.",
     "LOGIN_FAILED": "Erreur lors de l'authentification.",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",
-    "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'ientité.",
+    "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'identité.",
     "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté.",
     "SEND_MEMBERSHIP_OUT_FAILED": "Echec de l'arret de l'adhésion.",
     "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille.",
@@ -414,7 +414,8 @@
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
     "REVOCATION_FAILED": "Echec de la révocation.",
-    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Phrase de protection ou mot de passe incorrects"
+    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Phrase de protection ou mot de passe incorrects",
+    "RECOVER_ID_FAILED": "Echec de la récupération des identifiants"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

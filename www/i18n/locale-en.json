@@ -413,7 +413,9 @@
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
-    "REVOCATION_FAILED": "Error while trying to revoke the identity."
+    "REVOCATION_FAILED": "Error while trying to revoke the identity.",
+    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong phrase or password ",
+    "RECOVER_ID_FAILED": "Could not recover password"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
