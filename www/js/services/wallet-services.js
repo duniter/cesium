@@ -1459,26 +1459,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       },
 
       recoverId = function(recover) {
+        var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
         return getkeypairSaveId(recover)
           .then(function (recover) {
-            var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
             return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
-              .then(function (salt) {
-                recover.salt = salt;
-                return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
-                  .then(function (pwd) {
-                    recover.pwd = pwd;
-                    return recover;
-                  });
-              })
-              .catch(function(err){
-                console.warn('Try again');
-              });
-
+          })
+          .then(function (salt) {
+            recover.salt = salt;
+            return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+          })
+          .then(function (pwd) {
+            recover.pwd = pwd;
+            return recover;
+          })
+          .catch(function(err){
+            console.warn('Incorrect answers - Unable to recover passwords');
           });
       },
-
-
 
       getSaveIDDocument = function(record) {
         var saveId = 'Version: 10 \n' +
