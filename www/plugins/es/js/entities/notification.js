@@ -32,6 +32,8 @@ function Notification(json, markAsReadCallback) {
     }
   };
 
+  var pubkeys;
+
   // Membership
   if (json.code.startsWith('MEMBER_')) {
     that.avatarIcon = 'ion-person';
@@ -42,7 +44,7 @@ function Notification(json, markAsReadCallback) {
   else if (json.code.startsWith('TX_')) {
     that.avatarIcon = 'ion-card';
     that.icon = (json.code == 'TX_SENT') ? 'ion-paper-airplane dark' : 'ion-archive balanced';
-    var pubkeys = json.params.length > 0 ? json.params[0] : null;
+    pubkeys = json.params.length > 0 ? json.params[0] : null;
     if (pubkeys && pubkeys.indexOf(',') == -1) {
       that.pubkey = pubkeys;
     }
@@ -62,7 +64,7 @@ function Notification(json, markAsReadCallback) {
   else if (json.code.startsWith('MESSAGE_')) {
     that.avatarIcon = 'ion-email';
     that.icon = 'ion-email dark';
-    var pubkeys = json.params.length > 0 ? json.params[0] : null;
+    pubkeys = json.params.length > 0 ? json.params[0] : null;
     if (pubkeys && pubkeys.indexOf(',') == -1) {
       that.pubkey = pubkeys;
     }

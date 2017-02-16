@@ -44,20 +44,23 @@
   <script src="lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
   <script src="lib/ionic/js/angular/angular-image-crop.js"></script>
   <script src="js/vendor/base58.js" async></script>
-  <!--removeIf(device)-->
+  <!--removeIf(device-android)-->
+  <!--removeIf(device-ios)-->
   <script src="js/vendor/nacl_factory.js" async></script>
   <script src="js/vendor/scrypt-em.js" async></script>
   <script src="js/vendor/base64.js" async></script>
-  <!--endRemoveIf(device)-->
+  <!--endRemoveIf(device-ios)-->
+  <!--endRemoveIf(device-android)-->
   <!--removeIf(no-device)-->
   <script src="js/vendor/sha256.min.js" async></script>
-  <!--endRemoveIf(no-device)-->
-
-  <!--removeIf(no-device)-->
   <script src="js/vendor/ng-cordova.min.js"></script>
-  <script src="cordova.js"></script>
   <!--endRemoveIf(no-device)-->
   <!-- endbuild -->
+
+  <!--removeIf(no-device)-->
+  <script src="cordova.js"></script>
+  <!--endRemoveIf(no-device)-->
+
   <!-- build:js dist_js/cesium.js -->
   <!-- services -->
   <script src="dist/dist_js/app/services/settings-services.js"></script>

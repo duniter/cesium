@@ -47,7 +47,7 @@ if (rootdir && !skip) {
       '!'+path.join(wwwPath, 'lib'),
       '!'+path.join(wwwPath, 'lib', 'ionic'),
       '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts'),
-      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', '*.*')
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', '**', '*')
     ]);
   }
 }

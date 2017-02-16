@@ -14,7 +14,9 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       var that = this;
 
       this.copy = function(source) {
+        console.debug('Copying object:' + (typeof source));
         _.forEach(_.keys(source), function(key) {
+          console.debug('copying key:' + key + ' of type ' + (typeof source[key]));
           that[key] = source[key];
         });
       };
@@ -612,11 +614,13 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
 
       var serviceImpl;
 
-      // Use cordova implementation, when exists
-      if (Device.enable && window.plugins && !window.plugins.MiniSodium) {
+      // Use Cordova plugin implementation, when exists
+      if (Device.enable && window.plugins && window.plugins.MiniSodium && crypto && crypto.getRandomValues) {
+        console.debug('[crypto] Loading Cordova MiniSodium implementation...');
         serviceImpl = new CordovaServiceFactory();
       }
       else {
+        console.debug('[crypto] Loading FullJS implementation...');
         serviceImpl = new FullJSServiceFactory();
       }
 

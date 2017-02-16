@@ -116,6 +116,6 @@ function Comment(id, json) {
 
   // Init from json
   if (json && typeof json === "object") {
-    that.copyFromJson(json)
+    that.copyFromJson(json);
   }
 }

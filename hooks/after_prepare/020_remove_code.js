@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var path = require("path");
 var removeCode = require('gulp-remove-code');
 var removeHtml = require('gulp-html-remove');
@@ -9,9 +8,7 @@ var es = require('event-stream');
 var ngAnnotate = require('gulp-ng-annotate');
 var htmlmin = require('gulp-htmlmin');
 
-var cmd = process.env.CORDOVA_CMDLINE;
 var rootdir = process.argv[2];
-var argv = require('yargs').argv;
 
 if (rootdir) {
 
@@ -31,11 +28,18 @@ if (rootdir) {
 
     var pluginPath = path.join(wwwPath, 'plugins') + '/es';
 
+    process.stdout.write('Removing unused code for device \n');
+
+    // Compute options {device-<platform>: true}
+    var platformDeviceRemoveOptions = {};
+    platformDeviceRemoveOptions['device-' + platform] = true;
+
     // Removing unused code for device...
     es.concat(
       // Remove unused HTML tags
       gulp.src([wwwPath + '/templates/**/*.html', pluginPath + '/templates/**/*.html'])
         .pipe(removeCode({device: true}))
+        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
         .pipe(removeHtml('.hidden-xs.hidden-sm'))
         .pipe(removeHtml('.hidden-device'))
         .pipe(removeHtml('[remove-if][remove-if="device"]'))
@@ -44,6 +48,7 @@ if (rootdir) {
 
       gulp.src(path.join(wwwPath, 'index.html'))
         .pipe(removeCode({device: true}))
+        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
         .pipe(removeHtml('.hidden-xs.hidden-sm'))
         .pipe(removeHtml('.hidden-device'))
         .pipe(removeHtml('[remove-if][remove-if="device"]'))
@@ -53,11 +58,13 @@ if (rootdir) {
       // Remove unused JS code + add ng annotations
       gulp.src([wwwPath + '/js/**/*.js'])
         .pipe(removeCode({device: true}))
+        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
 
       gulp.src([pluginPath + '/js/**/*.js'])
         .pipe(removeCode({device: true}))
+        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
      );

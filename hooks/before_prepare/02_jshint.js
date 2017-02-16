@@ -12,7 +12,7 @@ var foldersToProcess = [
     'js/services',
     'plugins/es/js',
     'plugins/es/js/controllers',
-    //'plugins/es/js/entities',
+    'plugins/es/js/entities',
     'plugins/es/js/services'
 ];
 

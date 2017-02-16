@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 "use strict";
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var path = require("path");
 var templateCache = require('gulp-angular-templatecache');
 var es = require('event-stream');
-var cmd = process.env.CORDOVA_CMDLINE;
 var rootdir = process.argv[2];
-var argv = require('yargs').argv;
 
 if (rootdir) {
 
