@@ -269,11 +269,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         href = rootPath + $state.href(state);
         if (csConfig.httpsModeDebug) {
           console.debug('[httpsMode] --- Should redirect to: ' + href);
+          // continue
         }
         else {
           $window.location.href = href;
+          return;
         }
-        return;
+
       }
 
       return $scope.showLoginModal()
