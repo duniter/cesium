@@ -324,7 +324,13 @@ function PeerViewController($scope, BMA) {
   });
 
   $scope.showPeer = function(server) {
-    $scope.node = BMA.lightInstance(server);
+    var serverParts = server.split(':');
+    if (serverParts.length == 2) {
+      $scope.node = BMA.lightInstance(serverParts[0], serverParts[1]);
+    }
+    else {
+      $scope.node = BMA.lightInstance(server);
+    }
     // Get the peers
     $scope.node.network.peers()
       .then(function(json){
