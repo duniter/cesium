@@ -5,9 +5,8 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
-  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier',
+  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper',
   // removeIf(device)
-  'ImageCropper',
   // endRemoveIf(device)
   // removeIf(no-device)
   'ngCordova',

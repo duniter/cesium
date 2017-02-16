@@ -606,23 +606,28 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
 
 
     // Use cordova implementation, when possible
-    var service;
-    if (Device.enable) {
-      service = new CordovaServiceFactory();
-    }
-    else {
-      service = new FullJSServiceFactory();
-    }
+    var service = new CryptoAbstractService();
+
 
     Device.ready().then(function() {
       var now = new Date().getTime();
+
+      var serviceImpl;
+      if (Device.enable) {
+        serviceImpl = new CordovaServiceFactory();
+      }
+      else {
+        serviceImpl = new FullJSServiceFactory();
+      }
+
       // Load (async lib)
-      service.load()
+      serviceImpl.load()
         .catch(function(err) {
           //console.error(err);
           throw err;
         })
         .then(function() {
+          service.copy(serviceImpl);
           console.debug('[crypto] Loaded  \'{0}\' implementation in {1}ms'.format(service.id, new Date().getTime() - now));
         });
 
