@@ -476,7 +476,9 @@
     "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)",
     "REVOCATION_FAILED": "Echec de la révocation.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Phrase de protection ou mot de passe incorrects",
-    "RECOVER_ID_FAILED": "Echec de la récupération des identifiants"
+    "RECOVER_ID_FAILED": "Echec de la récupération des identifiants",
+    "LOAD_FILE_FAILED" : "Echec du chargement du fichier",
+    "ONLY_TEXT_FILE": "Vous devez selectionner un fichier texte"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

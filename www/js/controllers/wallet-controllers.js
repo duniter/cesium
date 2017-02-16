@@ -712,8 +712,16 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
           ($scope.slides.slider.activeIndex === 2 && $scope.option === "saveID" ? 'answersForm' :
             ($scope.slides.slider.activeIndex === 3 && $scope.option === "saveID" ? 'loginForm' : formName)));
 
-      if ($scope.slides.slider.activeIndex === 1 && $scope.option === "recoverID" && $scope.isValidFile){
-        $scope.slideNext();
+      if ($scope.slides.slider.activeIndex === 1 && $scope.option === "recoverID") {
+        if ($scope.isValidFile) {
+          $scope.slideNext();
+          $scope.hasContent = false;
+          $scope.fileData = '';
+
+        }
+        else {
+          UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
+        }
       }
     }
 
@@ -903,10 +911,12 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
   };
 
   $scope.revokeWithFile = function(){
-    if ($scope.slides.slider.activeIndex === 2 && $scope.option === "revocation" && $scope.isValidFile){
-      console.debug($scope.revocation);
-      $scope.revokeIdentity();
-    }
+    if ($scope.isValidFile) {
+        $scope.revokeIdentity();
+      }
+      else {
+        UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
+      }
   }
 
   /**
@@ -955,8 +965,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
       })
       .then(function () {
         UIUtils.toast.show("INFO.REVOCATION_SENT");
-        $scope.revocation = undefined;
-        $scope.updateView();
+        $scope.closeModal();
         return UIUtils.loading.hide();
       })
       .catch(function (err) {
@@ -964,13 +973,4 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
       });
   };
 
-  // Update view
-  $scope.updateView = function() {
-    // Set Motion
-    $timeout(function() {
-      UIUtils.motion.fadeSlideInRight({selector: '#wallet .animate-fade-slide-in-right .item'});
-      // Set Ink
-      UIUtils.ink({selector: '#wallet .animate-fade-slide-in-right .item'});
-    }, 10);
-  };
 }

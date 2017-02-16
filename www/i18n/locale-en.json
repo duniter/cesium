@@ -476,7 +476,9 @@
     "INVALID_BLOCK_HASH": "Block not found (incorrect hash)",
     "REVOCATION_FAILED": "Error while trying to revoke the identity.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong phrase or password ",
-    "RECOVER_ID_FAILED": "Could not recover password"
+    "RECOVER_ID_FAILED": "Could not recover password",
+    "LOAD_FILE_FAILED" : "Unable to load file",
+    "ONLY_TEXT_FILE": "You have to select a text file"
   },
   "INFO": {
     "POPUP_TITLE": "Information",

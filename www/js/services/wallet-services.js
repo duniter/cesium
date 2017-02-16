@@ -1549,10 +1549,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // Get revocation document
       return getRevocationDocument()
         .then(function(revocation){
-          console.debug(revocation);
+          console.debug(typeof revocation + '\n' + revocation);
         })
 
-/*        // Send revocation document
+        // Send revocation document
         .then(function(revocation) {
           return BMA.wot.revoke({revocation: revocation});
         })
@@ -1580,34 +1580,46 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             throw err;
           }
         })
-        ;*/
+        ;
     },
 
     revokeWithFile = function(revocation){
-      console.debug(revocation);
-      /*return BMA.wot.revoke({revocation: revocation})
+      console.debug(typeof revocation + '\n' + revocation);
+      return BMA.wot.revoke({revocation: revocation})
       // Reload requirements
         .then(function() {
-          return $timeout(function() {
-            return loadRequirements();
-          }, 1000); // waiting for node to process membership doc
-        })
+          if (isLogin()) {
+            return $timeout(function () {
+              return loadRequirements();
+            }, 1000) // waiting for node to process membership doc
 
-        .then(function() {
-          finishLoadRequirements();
-
-          // Add user event
-          addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
-        })
-        .catch(function(err) {
-          if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
-            // Already registered by node: just add an event
-            addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+              .then(function () {
+                finishLoadRequirements();
+                // Add user event
+                addEvent({
+                  type: 'pending',
+                  message: 'INFO.REVOCATION_SENT_WAITING_PROCESS',
+                  context: 'revocation'
+                }, true);
+              })
+              .catch(function (err) {
+                if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
+                  // Already registered by node: just add an event
+                  addEvent({
+                    type: 'pending',
+                    message: 'INFO.REVOCATION_SENT_WAITING_PROCESS',
+                    context: 'revocation'
+                  }, true);
+                }
+                else {
+                  throw err;
+                }
+              })
           }
           else {
-            throw err;
+            addEvent({type: 'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
           }
-        })*/
+        })
 
     },
 
