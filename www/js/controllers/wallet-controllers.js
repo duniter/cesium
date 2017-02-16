@@ -681,13 +681,17 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
     level: '4',
     questions : []
   };
-
-  for (var i = 1; i<20; i++){
-    $translate('ACCOUNT.SECURITY.QUESTION_' + i.toString())
-      .then(function(translation){
+  var questions = [];
+  for (var i = 1; i<20; i++) {
+    questions.push('ACCOUNT.SECURITY.QUESTION_' + i.toString());
+  }
+  $translate(questions)
+    .then(function(translations){
+      _.each(translations, function(translation){
         $scope.formData.questions.push({value: translation , checked: false});
-      })
-  };
+      });
+    });
+
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
@@ -754,18 +758,18 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
         level: '4',
         questions: []
       };
-      for (var i = 1; i < 20; i++) {
-        $translate('ACCOUNT.SECURITY.QUESTION_' + i.toString())
-          .then(function (translation) {
+      $translate(questions)
+        .then(function (translations) {
+          _.each(translations, function (translation) {
             $scope.formData.questions.push({value: translation, checked: false});
-          })
-      }
+          });
+        });
     }
 
     else if ($scope.slides.slider.activeIndex === 2 && $scope.option === 'saveID') {
       _.each($scope.formData.questions, function(question){
         question.answer = undefined;
-      })
+      });
     }
 
     else if ($scope.slides.slider.activeIndex === 1 && $scope.option === 'recoverID'){
@@ -778,7 +782,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
     else if ($scope.slides.slider.activeIndex === 2 && $scope.option === 'recoverID'){
       _.each($scope.recover.questions, function(element){
         element.answer = undefined;
-      })
+      });
     }
 
     else if ($scope.slides.slider.activeIndex === 2 && $scope.option === 'revocation'){
@@ -836,7 +840,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
     $scope.recover.answer = '';
     _.each($scope.recover.questions, function(element){
       $scope.recover.answer += element.answer;
-    })
+    });
 
     return csWallet.recoverId($scope.recover)
       .then(function (recover){
@@ -847,7 +851,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
         else {
           UIUtils.alert.error('ERROR.RECOVER_ID_FAILED');
         }
-      })
+      });
 
   };
 
@@ -855,7 +859,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
    * Save Id
    */
   $scope.addQuestion = function(){
-    if ($scope.formData.addQuestion != '') {
+    if ($scope.formData.addQuestion !== '') {
       $scope.formData.questions.push({value: $scope.formData.addQuestion, checked: true});
       $scope.formData.addQuestion = '';
     }
@@ -899,7 +903,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
           .then(function(record){
             csWallet.downloadSaveId(record);
             $scope.closeModal();
-          })
+          });
       });
   };
 
@@ -917,7 +921,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
       else {
         UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
       }
-  }
+  };
 
   /**
    * Download revocation file
@@ -960,7 +964,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
           return csWallet.revoke();
         }
         else {
-          return csWallet.revokeWithFile($scope.revocation)
+          return csWallet.revokeWithFile($scope.revocation);
         }
       })
       .then(function () {

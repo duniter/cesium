@@ -1441,15 +1441,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     getCryptedId = function(record){
       return getkeypairSaveId(record)
         .then(function() {
-          return CryptoUtils.util.random_nonce()
+          return CryptoUtils.util.random_nonce();
         })
         .then(function(nonce) {
           record.nonce = nonce;
-          return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+          return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk);
         })
         .then(function (cypherSalt) {
           record.salt = cypherSalt;
-          return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+          return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk);
         })
         .then(function (cypherPwd) {
           record.pwd = cypherPwd;
@@ -1462,11 +1462,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
       return getkeypairSaveId(recover)
         .then(function (recover) {
-          return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+          return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk);
         })
         .then(function (salt) {
           recover.salt = salt;
-          return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+          return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk);
         })
         .then(function (pwd) {
           recover.pwd = pwd;
@@ -1609,12 +1609,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                 else {
                   throw err;
                 }
-              })
+              });
           }
           else {
             addEvent({type: 'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
           }
-        })
+        });
 
     },
 
