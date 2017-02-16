@@ -1,0 +1,88 @@
+<ion-modal-view class="modal-full-height">
+
+  <ion-header-bar class="bar-positive">
+
+    <button class="button button-clear visible-xs"
+            ng-if="!slides.slider.activeIndex"
+            ng-click="closeModal()" translate>COMMON.BTN_CANCEL
+    </button>
+    <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
+            ng-click="slidePrev()"
+            ng-if="slides.slider.activeIndex">
+    </button>
+
+    <h1 class="title" translate>ACCOUNT.SECURITY.TITLE</h1>
+
+    <button class="button button-clear icon-right visible-xs"
+            ng-if="!isLastSlide && slides.slider.activeIndex > 0"
+            ng-click="doNext()">
+      <span translate>COMMON.BTN_NEXT</span>
+      <i class="icon ion-ios-arrow-right"></i>
+    </button>
+    <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs"
+            ng-click="doNext()"
+            ng-if="isLastSlide && option === 'saveID'">
+    </button>
+  </ion-header-bar>
+
+
+    <ion-slides options="slides.options" slider="slides.slider">
+
+      <!-- STEP 1 -->
+      <ion-slide-page>
+        <ion-content class="has-header padding">
+          <div class="list">
+            <div class="item card item-icon-right stable-bg padding ink dark"
+               ng-click="selectOption('saveID')" ng-if="isLogin" >
+              <i class="icon ion-ios-arrow-right"></i>
+              <span ng-bind-html="'ACCOUNT.SECURITY.SAVE_ID' | translate"></span>
+            </div>
+            <div class="item card item-icon-right stable-bg padding ink dark"
+                 ng-click="selectOption('recoverID')">
+              <span ng-bind-html="'ACCOUNT.SECURITY.RECOVER_ID' | translate"></span>
+              <i class="icon ion-ios-arrow-right"></i>
+            </div>
+            <div class="item card item-icon-right stable-bg padding ink dark"
+                 ng-click="selectOption('revocation')">
+              <span ng-bind-html="'ACCOUNT.SECURITY.REVOCATION' | translate"></span>
+              <i class="icon ion-ios-arrow-right"></i>
+            </div>
+          </div>
+
+          <div class="padding hidden-xs text-right">
+            <button class="button button-clear button-dark ink" ng-click="closeModal()"
+                    type="button" translate>COMMON.BTN_CANCEL
+            </button>
+          </div>
+        </ion-content>
+      </ion-slide-page>
+
+      <ion-slide-page ng-if="option == 'revocation'">
+        <ng-include src="'templates/wallet/slides/slides_revocation_1.html'"></ng-include>
+      </ion-slide-page>
+      <ion-slide-page ng-if="option == 'revocation'">
+        <ng-include src="'templates/wallet/slides/slides_revocation_2.html'"></ng-include>
+      </ion-slide-page>
+
+      <ion-slide-page ng-if="isLogin && option == 'saveID'">
+        <ng-include src="'templates/wallet/slides/slides_saveID_1.html'"></ng-include>
+      </ion-slide-page>
+      <ion-slide-page ng-if="isLogin && option == 'saveID'">
+        <ng-include src="'templates/wallet/slides/slides_saveID_2.html'"></ng-include>
+      </ion-slide-page>
+      <ion-slide-page ng-if="isLogin && option == 'saveID'">
+        <ng-include src="'templates/wallet/slides/slides_saveID_3.html'"></ng-include>
+      </ion-slide-page>
+
+      <ion-slide-page ng-if="option == 'recoverID'">
+        <ng-include src="'templates/wallet/slides/slides_recoverID_1.html'"></ng-include>
+      </ion-slide-page>
+      <ion-slide-page ng-if="option == 'recoverID'">
+        <ng-include src="'templates/wallet/slides/slides_recoverID_2.html'"></ng-include>
+      </ion-slide-page>
+      <ion-slide-page ng-if="option == 'recoverID'">
+        <ng-include src="'templates/wallet/slides/slides_recoverID_3.html'"></ng-include>
+      </ion-slide-page>
+
+    </ion-slides>
+</ion-modal-view>

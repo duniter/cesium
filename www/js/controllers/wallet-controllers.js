@@ -44,6 +44,9 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxCtrl', WalletTxController)
 
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
+
+  .controller('WalletSecurityModalCtrl', WalletSecurityModalController)
+
 ;
 
 function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
@@ -278,49 +281,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   };
 
-  /**
-   * Revoke identity
-   */
-  $scope.revokeIdentity = function(confirm, confirmAgain) {
-    $scope.hideActionsPopover();
-
-    if ($scope.formData.requirements.needSelf) {
-      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
-    }
-    if (!confirm) {
-      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
-        cssClass: 'warning',
-        okText: 'COMMON.BTN_CONTINUE',
-        okType: 'button-assertive'
-      })
-      .then(function(confirm) {
-        if (confirm) $scope.revokeIdentity(true); // loop with confirm
-      });
-    }
-    if (!confirmAgain) {
-      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
-        cssClass: 'warning',
-        okText: 'COMMON.BTN_YES_CONTINUE',
-        okType: 'button-assertive'
-      })
-      .then(function(confirm) {
-        if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
-      });
-    }
-
-    return UIUtils.loading.show()
-      .then(function() {
-        return csWallet.revoke();
-      })
-      .then(function(){
-        UIUtils.toast.show("INFO.REVOCATION_SENT");
-        $scope.updateView();
-        return UIUtils.loading.hide();
-      })
-      .catch(function(err) {
-        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
-      });
-  };
 
   /**
    * Fix identity (e.g. when identity expired)
@@ -516,6 +476,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     });
   };
 
+  $scope.showSecurityModal = function(){
+    $scope.hideActionsPopover();
+    Modals.showAccountSecurity();
+  };
+
 }
 
 
@@ -690,4 +655,322 @@ function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
       return item[prop] < 0;
     };
   };
+
+}
+
+function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $translate, CryptoUtils, $timeout){
+
+  $scope.slides = {
+    slider: null,
+    options: {
+      loop: false,
+      effect: 'slide',
+      speed: 500
+    }
+  };
+  $scope.isLastSlide = false;
+  $scope.smallscreen = UIUtils.screen.isSmall();
+  $scope.option = 'recoverID';
+
+  $scope.recover = {};
+  $scope.isValidFile = false;
+
+  $scope.isLogin = csWallet.isLogin();
+  $scope.formData = {
+    addQuestion: '',
+    level: '4',
+    questions : []
+  };
+
+  for (var i = 1; i<20; i++){
+    $translate('ACCOUNT.SECURITY.QUESTION_' + i.toString())
+      .then(function(translation){
+        $scope.formData.questions.push({value: translation , checked: false});
+      })
+  };
+
+  $scope.slidePrev = function() {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slidePrev();
+    $scope.slides.slider.lockSwipes();
+    $scope.isLastSlide = false;
+
+  };
+
+  $scope.slideNext = function() {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slideNext();
+    $scope.slides.slider.lockSwipes();
+    $scope.isLastSlide = ($scope.slides.slider.activeIndex === 3 && ($scope.option == "saveID" || $scope.option == "recoverID")) || ($scope.slides.slider.activeIndex === 2 && $scope.option == "revocation");
+  };
+
+
+  $scope.doNext = function(formName) {
+    if (!formName) {
+      formName = $scope.slides.slider.activeIndex === 1 && $scope.option == "saveID" ? 'questionsForm' :
+        ($scope.slides.slider.activeIndex === 2 && $scope.option === "recoverID" ? 'recoverForm' :
+          ($scope.slides.slider.activeIndex === 2 && $scope.option === "saveID" ? 'answersForm' :
+            ($scope.slides.slider.activeIndex === 3 && $scope.option === "saveID" ? 'loginForm' : formName)));
+
+      if ($scope.slides.slider.activeIndex === 1 && $scope.option === "recoverID") {
+        if ($scope.isValidFile) {
+          $scope.slideNext();
+          $scope.hasContent = false;
+          $scope.fileData = '';
+
+        }
+        else {
+          UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
+        }
+      }
+    }
+
+    if (formName) {
+      $scope[formName].$submitted = true;
+      if (!$scope[formName].$valid) {
+        return;
+      }
+      if(formName === 'recoverForm'){
+        $scope.recoverId();
+      }
+      else if(formName === 'loginForm'){
+        $scope.submit();
+      }
+      else {
+        $scope.slideNext();
+      }
+    }
+  };
+
+  $scope.selectOption = function(option){
+    $scope.option = option;
+    $scope.slideNext();
+  };
+
+  $scope.restore = function(){
+    if ($scope.slides.slider.activeIndex === 1 && $scope.option === 'saveID') {
+      $scope.formData = {
+        addQuestion: '',
+        level: '4',
+        questions: []
+      };
+      for (var i = 1; i < 20; i++) {
+        $translate('ACCOUNT.SECURITY.QUESTION_' + i.toString())
+          .then(function (translation) {
+            $scope.formData.questions.push({value: translation, checked: false});
+          })
+      }
+    }
+
+    else if ($scope.slides.slider.activeIndex === 2 && $scope.option === 'saveID') {
+      _.each($scope.formData.questions, function(question){
+        question.answer = undefined;
+      })
+    }
+
+    else if ($scope.slides.slider.activeIndex === 1 && $scope.option === 'recoverID'){
+      $scope.hasContent = false;
+      $scope.recover = {};
+      $scope.fileData =  '';
+      $scope.isValidFile = false;
+    }
+
+    else if ($scope.slides.slider.activeIndex === 2 && $scope.option === 'recoverID'){
+      _.each($scope.recover.questions, function(element){
+        element.answer = undefined;
+      })
+    }
+
+    else if ($scope.slides.slider.activeIndex === 2 && $scope.option === 'revocation'){
+      $scope.isValidFile = false;
+      $scope.hasContent = false;
+      $scope.revocation = undefined;
+    }
+  };
+
+  /**
+   * Recover Id
+   */
+
+  $scope.recoverContent = function(file) {
+    $scope.hasContent = angular.isDefined(file) && file !== '';
+    $scope.fileData = file.fileData ? file.fileData : '';
+    $scope.isValidFile = $scope.fileData !== '' && $scope.fileData.type == 'text/plain';
+
+    if ($scope.isValidFile && $scope.option === 'recoverID') {
+      $scope.content = file.fileContent.split('\n');
+      var indexOfQuestions = _.indexOf($scope.content, 'Questions: ');
+      var LastIndexQuestions = -1;
+      _.each($scope.content, function (element, index) {
+        if (/^Issuer:/.test(element)) {
+          LastIndexQuestions = index;
+        }
+        else if (/^Crypted-Nonce:/.test(element)) {
+          $scope.recover.cypherNonce = element.split(' ')[1];
+        }
+        else if (/^Crypted-Pubkey:/.test(element)) {
+          $scope.recover.cypherPubkey = element.split(' ')[1];
+        }
+        else if (/^Crypted-Salt:/.test(element)) {
+          $scope.recover.cypherSalt = element.split(' ')[1];
+        }
+        else if (/^Crypted-Pwd:/.test(element)) {
+          $scope.recover.cypherPwd = element.split(' ')[1];
+        }
+      });
+      $scope.recover.questions = [];
+      for (var i = indexOfQuestions + 1; i < LastIndexQuestions; i++) {
+        $scope.recover.questions.push({value: $scope.content[i]});
+      }
+    }
+    else if ($scope.isValidFile && $scope.option === "revocation"){
+      $scope.revocation = file.fileContent;
+    }
+  };
+
+  $scope.recoverId = function(){
+    if(!$scope.recoverForm.$valid){
+      return;
+    }
+
+    $scope.recover.answer = '';
+    _.each($scope.recover.questions, function(element){
+      $scope.recover.answer += element.answer;
+    })
+
+    return csWallet.recoverId($scope.recover)
+      .then(function (recover){
+        if (angular.isDefined(recover)) {
+          $scope.recover = recover;
+          $scope.slideNext();
+        }
+        else {
+          UIUtils.alert.error('ERROR.RECOVER_ID_FAILED');
+        }
+      })
+
+  };
+
+  /**
+   * Save Id
+   */
+  $scope.addQuestion = function(){
+    if ($scope.formData.addQuestion != '') {
+      $scope.formData.questions.push({value: $scope.formData.addQuestion, checked: true});
+      $scope.formData.addQuestion = '';
+    }
+  };
+
+  $scope.submit = function(){
+
+    if(!$scope.loginForm.$valid){
+      return;
+    }
+
+    var salt = $scope.formData.username;
+    var pwd = $scope.formData.password;
+    CryptoUtils.connect(salt, pwd)
+      .then(function (keypair) {
+        $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+    })
+
+      .then(function () {
+        if (!csWallet.isUserPubkey($scope.pubkey)) {
+          UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
+          return;
+        }
+        var file = {
+          file: _.filter($scope.formData.questions, function (question) {
+            return question.checked;
+          })
+        };
+        var record = {
+          salt: $scope.formData.username,
+          pwd: $scope.formData.password,
+          questions: '',
+          answer: ''
+        };
+        _.each(file.file, function (question) {
+          record.questions += question.value + '\n';
+          record.answer += question.answer;
+        });
+
+        return csWallet.getCryptedId(record)
+          .then(function(record){
+            csWallet.downloadSaveId(record);
+            $scope.closeModal();
+          })
+      });
+  };
+
+  $scope.isRequired = function(){
+    var questionChecked = _.filter($scope.formData.questions, function(question) {
+      return question.checked;
+    });
+    return questionChecked.length < $scope.formData.level;
+  };
+
+  $scope.revokeWithFile = function(){
+    if ($scope.isValidFile) {
+        $scope.revokeIdentity();
+      }
+      else {
+        UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
+      }
+  }
+
+  /**
+   * Download revocation file
+   */
+  $scope.downloadRevokeFile = function () {
+    csWallet.downloadRevocation();
+  };
+
+  /**
+   * Revoke identity
+   */
+  $scope.revokeIdentity = function (confirm, confirmAgain) {
+    if ($rootScope.walletData.requirements.needSelf) {
+      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
+    }
+    if (!confirm) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_CONTINUE',
+        okType: 'button-assertive'
+      })
+        .then(function (confirm) {
+          if (confirm) $scope.revokeIdentity(true); // loop with confirm
+        });
+    }
+    if (!confirmAgain) {
+      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_YES_CONTINUE',
+        okType: 'button-assertive'
+      })
+        .then(function (confirm) {
+          if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
+        });
+    }
+
+    return UIUtils.loading.show()
+      .then(function () {
+        if (!$scope.revocation){
+          return csWallet.revoke();
+        }
+        else {
+          return csWallet.revokeWithFile($scope.revocation)
+        }
+      })
+      .then(function () {
+        UIUtils.toast.show("INFO.REVOCATION_SENT");
+        $scope.closeModal();
+        return UIUtils.loading.hide();
+      })
+      .catch(function (err) {
+        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
+      });
+  };
+
 }

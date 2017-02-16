@@ -1,0 +1,21 @@
+  <ion-content class="has-header padding" >
+    <h3 translate>ACCOUNT.SECURITY.RECOVER_ID</h3>
+
+
+    <div class="item item-input">
+      <span class="input-label ">{{'LOGIN.SALT' | translate}} :</span>
+      <span>{{recover.salt}}</span>
+    </div>
+
+    <div class="item item-input">
+      <span class="input-label">{{'LOGIN.PASSWORD' | translate}} :</span>
+      <span>{{recover.pwd}}</span>
+    </div>
+
+    <div class="padding hidden-xs text-right">
+          <button class="button button-clear button-dark ink" ng-click="closeModal()"
+                  type="button" translate>COMMON.BTN_CLOSE
+          </button>
+    </div>
+  </ion-content>
+

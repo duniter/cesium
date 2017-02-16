@@ -250,4 +250,78 @@ angular.module('cesium')
   };
 })
 
+.directive('onReadFile', function ($parse) {
+  return {
+    restrict: 'A',
+    scope: false,
+    link: function(scope, element, attrs) {
+      var fn = $parse(attrs.onReadFile);
+
+      element.on('change', function(onChangeEvent) {
+        var reader = new FileReader();
+        var fileData = {
+          name: this.files[0].name,
+          size: this.files[0].size,
+          type: this.files[0].type
+        }
+
+        reader.onload = function(onLoadEvent) {
+          scope.$apply(function() {
+            fn(scope, {
+              file: {
+                fileContent: onLoadEvent.target.result,
+                fileData : fileData}
+            });
+          });
+        };
+        reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+      });
+    }
+  };
+})
+
+.directive("dropzone", function($parse) {
+  return {
+    restrict: 'A',
+    scope: false,
+      link: function(scope, elem, attrs) {
+        var fn = $parse(attrs.dropzone);
+        elem.bind('dragover', function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        elem.bind('dragenter', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        elem.bind('dragleave', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+        });
+        elem.bind('drop', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          var fileData = {
+            name: e.dataTransfer.files[0].name,
+            size: e.dataTransfer.files[0].size,
+            type: e.dataTransfer.files[0].type
+          }
+
+          var reader = new FileReader();
+          reader.onload = function(onLoadEvent) {
+            scope.$apply(function () {
+              fn(scope, {
+                file: {
+                  fileContent: onLoadEvent.target.result,
+                  fileData : fileData}
+              });
+            });
+          }
+          reader.readAsText(e.dataTransfer.files[0]);
+        });
+
+
+    }
+  };
+})
 ;

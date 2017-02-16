@@ -1,0 +1,36 @@
+  <ion-content class="has-header padding" >
+    <h3 translate>ACCOUNT.SECURITY.RECOVER_ID</h3>
+
+    <form name="recoverForm" novalidate ng-submit="recoverId()">
+      <div class="list" ng-init="setForm(recoverForm, 'recoverForm')">
+        <ng-repeat ng-repeat="question in recover.questions ">
+          <label class="item item-input {{smallscreen ? 'item-stacked-label' : 'item-floating-label'}}"
+                 ng-class="{'item-input-error': recoverForm.$submitted && recoverForm['question{{$index}}'].$invalid}">
+            <span class="input-label" style="{{smallscreen ? 'white-space: normal' : ''}}">{{question.value }}</span>
+            <input type="text" name="question{{$index}}" placeholder="{{smallscreen ? '' : question.value }}" ng-model="question.answer" required />
+          </label>
+          <div class="form-errors"
+               ng-show="recoverForm.$submitted && recoverForm['question{{$index}}'].$error"
+               ng-messages="recoverForm['question{{$index}}'].$error">
+            <div class="form-error" ng-message="required">
+              <span translate="ERROR.FIELD_REQUIRED"></span>
+            </div>
+          </div>
+        </ng-repeat>
+        <div class="padding hidden-xs text-right">
+          <button class="button button-clear button-dark ink" ng-click="closeModal()"
+                  type="button" translate>COMMON.BTN_CANCEL
+          </button>
+          <button class="button button-clear button-dark"
+                  ng-click="restore()" type="button" translate>ACCOUNT.SECURITY.BTN_CLEAN
+          </button>
+          <button class="button button-calm icon-right ion-chevron-right ink"
+                  type="submit" translate>
+            COMMON.BTN_NEXT
+            <i class="icon ion-arrow-right-a"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </ion-content>
+

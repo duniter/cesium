@@ -3,7 +3,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   'cesium.settings.services'])
 
 
-.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, CryptoUtils, BMA, csConfig, csSettings) {
+.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage,
+                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob) {
   'ngInject';
 
   factory = function(id) {
@@ -1425,6 +1426,87 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       }
     },
 
+    getkeypairSaveId = function(record) {
+        var nbCharSalt = Math.round(record.answer.length / 2);
+        var salt = record.answer.substr(0, nbCharSalt);
+        var pwd = record.answer.substr(nbCharSalt);
+        return CryptoUtils.connect(salt, pwd)
+          .then(function (keypair) {
+            record.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            record.keypair = keypair;
+            return record;
+          });
+      },
+
+    getCryptedId = function(record){
+      return getkeypairSaveId(record)
+        .then(function() {
+          return CryptoUtils.util.random_nonce()
+        })
+        .then(function(nonce) {
+          record.nonce = nonce;
+          return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+        })
+        .then(function (cypherSalt) {
+          record.salt = cypherSalt;
+          return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk)
+        })
+        .then(function (cypherPwd) {
+          record.pwd = cypherPwd;
+          record.nonce = CryptoUtils.util.encode_base58(record.nonce);
+          return record;
+        });
+    },
+
+    recoverId = function(recover) {
+      var nonce = CryptoUtils.util.decode_base58(recover.cypherNonce);
+      return getkeypairSaveId(recover)
+        .then(function (recover) {
+          return CryptoUtils.box.open(recover.cypherSalt, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+        })
+        .then(function (salt) {
+          recover.salt = salt;
+          return CryptoUtils.box.open(recover.cypherPwd, nonce, recover.keypair.boxPk, recover.keypair.boxSk)
+        })
+        .then(function (pwd) {
+          recover.pwd = pwd;
+          return recover;
+        })
+        .catch(function(err){
+          console.warn('Incorrect answers - Unable to recover passwords');
+        });
+    },
+
+    getSaveIDDocument = function(record) {
+      var saveId = 'Version: 10 \n' +
+        'Type: SaveID\n' +
+        'Questions: ' + '\n' + record.questions +
+        'Issuer: ' + data.pubkey + '\n' +
+        'Crypted-Nonce: '+ record.nonce + '\n'+
+        'Crypted-Pubkey: '+ record.pubkey +'\n' +
+        'Crypted-Salt: '+ record.salt  + '\n' +
+        'Crypted-Pwd: '+ record.pwd + '\n';
+
+      // Sign SaveId document
+      return CryptoUtils.sign(saveId, data.keypair)
+
+        .then(function(signature) {
+          saveId += signature + '\n';
+          console.debug('Has generate an SaveID document:\n----\n' + saveId + '----');
+          return saveId;
+        });
+
+    },
+
+    downloadSaveId = function(record){
+      return getSaveIDDocument(record)
+        .then(function(saveId) {
+          var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
+          FileSaver.saveAs(saveIdFile, 'saveID.txt');
+        });
+
+    },
+
     getRevocationDocument = function() {
 
       // Get current identity document
@@ -1466,7 +1548,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
       // Get revocation document
       return getRevocationDocument()
-
         // Send revocation document
         .then(function(revocation) {
           return BMA.wot.revoke({revocation: revocation});
@@ -1497,6 +1578,53 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         })
         ;
     },
+
+    revokeWithFile = function(revocation){
+      return BMA.wot.revoke({revocation: revocation})
+      // Reload requirements
+        .then(function() {
+          if (isLogin()) {
+            return $timeout(function () {
+              return loadRequirements();
+            }, 1000) // waiting for node to process membership doc
+
+              .then(function () {
+                finishLoadRequirements();
+                // Add user event
+                addEvent({
+                  type: 'pending',
+                  message: 'INFO.REVOCATION_SENT_WAITING_PROCESS',
+                  context: 'revocation'
+                }, true);
+              })
+              .catch(function (err) {
+                if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
+                  // Already registered by node: just add an event
+                  addEvent({
+                    type: 'pending',
+                    message: 'INFO.REVOCATION_SENT_WAITING_PROCESS',
+                    context: 'revocation'
+                  }, true);
+                }
+                else {
+                  throw err;
+                }
+              })
+          }
+          else {
+            addEvent({type: 'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+          }
+        })
+
+    },
+
+    downloadRevocation = function(){
+        return getRevocationDocument()
+          .then(function(revocation) {
+            var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
+            FileSaver.saveAs(revocationFile, 'revocation.txt');
+          });
+      },
 
     cleanEventsByContext = function(context){
       data.events = data.events.reduce(function(res, event) {
@@ -1594,6 +1722,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       transfer: transfer,
       self: self,
       revoke: revoke,
+      revokeWithFile: revokeWithFile,
+      downloadSaveId: downloadSaveId,
+      getCryptedId: getCryptedId,
+      recoverId: recoverId,
+      downloadRevocation: downloadRevocation,
       membership: {
         inside: membership(true),
         out: membership(false)
