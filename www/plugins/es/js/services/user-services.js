@@ -204,6 +204,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       // Waiting to load crypto libs
       if (!CryptoUtils.isLoaded()) {
         console.debug('[ES] [user] Waiting crypto lib loading...');
+        //throw 'stop';
         $timeout(function() {
           onWalletLogin(data, deferred);
         }, 50);
@@ -643,10 +644,10 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       },
       websocket: {
         event: function() {
-          return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale');
+          return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale');
         },
         change: function() {
-          return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
+          return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
         }
       },
       constants: CONSTANTS

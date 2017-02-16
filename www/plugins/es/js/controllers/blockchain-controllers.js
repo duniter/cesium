@@ -1,7 +1,7 @@
 
 angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
 
-  .config(function($stateProvider, PluginServiceProvider, csConfig) {
+  .config(function($stateProvider) {
     'ngInject';
 
     $stateProvider
@@ -26,28 +26,9 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
         }
       })
     ;
-
-    var enable = csConfig.plugins && csConfig.plugins.es;
-    if (enable) {
-      PluginServiceProvider.extendState('app.network', {
-        points: {
-          'buttons': {
-            templateUrl: "plugins/es/templates/network/view_network_extend.html",
-            controller: 'ESNetworkViewExtendCtrl'
-          }
-        }
-      })
-      ;
-    }
   })
 
-
   .controller('ESBlockLookupCtrl', ESBlockLookupController)
-
-  .controller('ESNetworkViewExtendCtrl', ESNetworkViewExtendController)
-
-
-
 ;
 
 
@@ -208,20 +189,3 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
   };
 }
 
-function ESNetworkViewExtendController($scope, PluginService, csSettings) {
-  'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-
-  $scope.updateView = function() {
-    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
-      csSettings.data.plugins.es.enable :
-      !!csSettings.data.plugins.host;
-  };
-
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
-  });
-
-  $scope.updateView();
-}

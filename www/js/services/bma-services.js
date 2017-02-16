@@ -371,10 +371,10 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
 
     exports.websocket = {
         block: function() {
-          return csHttp.ws('ws://' + exports.node.server + '/ws/block');
+          return csHttp.ws((exports.node.port == 443 ? 'wss' : 'ws') + '://' + exports.node.server + '/ws/block');
         },
         peer: function() {
-          return csHttp.ws('ws://' + exports.node.server + '/ws/peer');
+          return csHttp.ws((exports.node.port == 443 ? 'wss' : 'ws') + '://' + exports.node.server + '/ws/peer');
         },
         close : csHttp.closeAllWs
       };

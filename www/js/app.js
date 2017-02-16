@@ -4,8 +4,8 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngFileSaver', 'pascalprecht.translate',
-  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
+  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier','ImageCropper', 'ngFileSaver',
   // removeIf(device)
   // endRemoveIf(device)
   // removeIf(no-device)
@@ -304,13 +304,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngFileSaver'
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, $translate, $state, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
+.run(function($rootScope, $translate, $state, $window, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
   'ngInject';
 
   $rootScope.config = csConfig;
   $rootScope.settings = csSettings.data;
   $rootScope.walletData = csWallet.data;
   $rootScope.device = Device;
+
 
   // removeIf(device)
   // Automatic redirection to large state (if define)
@@ -322,8 +323,61 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'ngFileSaver'
         $state.go(next.data.large, nextParams);
       }
     }
+
+
   });
   // endRemoveIf(device)
+
+  // Switch between HTTPS or HTTP intelligently
+  if (csConfig.httpsMode === 'clever') {
+    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+      var href, hashIndex, rootPath ;
+      // Redirect to HTTP if view has preferHttp=true
+      if (next.data && next.data.preferHttp && $window.location.protocol == 'https:') {
+        href = $window.location.href;
+        hashIndex = href.indexOf('#');
+        rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        rootPath = 'http' + rootPath.substr(5);
+        href = rootPath + $state.href(next, nextParams);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + href);
+        }
+        else {
+          $window.location.href = href;
+        }
+      }
+      // Redirect to HTTPS
+      else if((!next.data || !next.data.preferHttp) && $window.location.protocol != 'https:') {
+        href = $window.location.href;
+        hashIndex = href.indexOf('#');
+        rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        href = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + href);
+        }
+        else {
+          $window.location.href = href;
+        }
+      }
+    });
+  }
+  // Always redirect to HTTPS
+  else if (csConfig.httpsMode === true || csConfig.httpsMode === "true" || csConfig.httpsMode === 'force') {
+    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+      if($window.location.protocol != 'https:') {
+        var href = $window.location.href;
+        var hashIndex = href.indexOf('#');
+        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        var path = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + path);
+        }
+        else {
+          $window.location.href = path;
+        }
+      }
+    });
+  }
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because this one is callable many times
   Device.ready()

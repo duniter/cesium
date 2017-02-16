@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.controllers', ['cesium.services'])
 
-.config(function($stateProvider) {
+.config(function($stateProvider, csConfig) {
   'ngInject';
 
   $stateProvider
@@ -14,6 +14,9 @@ angular.module('cesium.network.controllers', ['cesium.services'])
           templateUrl: "templates/network/view_network.html",
           controller: 'NetworkLookupCtrl'
         }
+      },
+      data: {
+        preferHttp: true // avoid HTTPS if config has httpsMode=clever
       }
     })
 
@@ -25,6 +28,9 @@ angular.module('cesium.network.controllers', ['cesium.services'])
           templateUrl: "templates/network/view_peer.html",
           controller: 'PeerViewCtrl'
         }
+      },
+      data: {
+        preferHttp: true // avoid HTTPS if config has httpsMode=clever
       }
     });
 })

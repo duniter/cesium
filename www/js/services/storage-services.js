@@ -86,8 +86,7 @@ angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services
   });
 
   Device.ready().then(function() {
-    console.log($window.plugins && $window.plugins.SecureStorage);
-    if ($window.plugins) {
+    if (Device.enable) {
       exports.secure.storage = new cordova.plugins.SecureStorage(
         function () {
           console.log('[storage] Secure storage initialized.');

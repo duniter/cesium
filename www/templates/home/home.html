@@ -33,9 +33,14 @@
       <button type="button"
               class="button button-block button-positive button-raised icon icon-left ion-locked ink-dark"
               ng-click="loginAndGo('app.view_wallet')" ng-show="!login" translate>COMMON.BTN_LOGIN</button>
+
       <button type="button"
-              class="button button-block button-positive button-raised icon icon-left ion-card ink-dark"
-              ui-sref="app.view_wallet" ng-show="login" translate>HOME.BTN_ACCOUNT</button>
+              class="button button-block button-positive button-raised icon icon-left ion-person ink-dark"
+              ui-sref="app.view_wallet" ng-show="login" translate>MENU.ACCOUNT</button>
+
+      <button type="button"
+              class="button button-block button-positive button-raised icon icon-left ion-card ink-dark visible-xs"
+              ui-sref="app.view_wallet_tx" ng-show="login" translate>MENU.TRANSACTIONS</button>
 
       <br class="visible-xs visible-sm"/>
       <div class="text-center no-padding "

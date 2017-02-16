@@ -116,7 +116,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     }
 
     function listenNewNotification(data) {
-      esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale')
+      esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale')
         .on(function(event) {
             $rootScope.$apply(function() {
               var notification = new Notification(event, markNotificationAsRead);
@@ -238,10 +238,10 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       api: api,
       websocket: {
         event: function() {
-          return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale');
+          return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale');
         },
         change: function() {
-          return esHttp.ws('ws://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
+          return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
         }
       }
     };

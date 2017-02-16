@@ -12,6 +12,7 @@
     "initPhase": false,
     "expertMode": false,
     "decimalCount": 4,
+    "httpsMode": false,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -49,6 +50,7 @@
     "initPhase": true,
     "expertMode": false,
     "decimalCount": 4,
+    "httpsMode": "clever",
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"

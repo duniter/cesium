@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 "use strict";
 var gulp = require('gulp');
-var gutil = require('gulp-util');
 var path = require("path");
 var es = require('event-stream');
 var useref = require('gulp-useref');
@@ -13,7 +12,6 @@ var revReplace = require('gulp-rev-replace');
 
 var cmd = process.env.CORDOVA_CMDLINE;
 var rootdir = process.argv[2];
-var argv = require('yargs').argv;
 
 var skip = true;
 if (cmd.indexOf("--release") > -1 || cmd.indexOf("--useref") > -1) {

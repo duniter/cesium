@@ -272,6 +272,13 @@
     "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux, sites web",
     "TECHNICAL_DIVIDER": "Informations techniques",
+    "MODAL_AVATAR": {
+      "TITLE": "Photo de profil",
+      "SELECT_FILE_HELP": "Veuillez <b>choisir un fichier image</b>, en cliquant sur le bouton ci-dessous :",
+      "BTN_SELECT_FILE": "Choisir une photo",
+      "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
+      "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
+    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",

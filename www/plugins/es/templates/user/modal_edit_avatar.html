@@ -1,0 +1,87 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear visible-xs visible-sm" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>PROFILE.MODAL_AVATAR.TITLE</h1>
+    <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="closeModal(result)">
+    </button>
+  </ion-header-bar>
+
+  <ion-content class="modal-avatar padding">
+
+
+    <div ng-show="imageCropStep == 1">
+      <p translate>PROFILE.MODAL_AVATAR.SELECT_FILE_HELP</p>
+
+      <!-- Add picture button -->
+      <div class="item card text-center padding ink"
+           ng-click="openFileSelector()">
+        <i class="ion-image stable" style="font-size:150px"></i>
+        <b class="ion-plus gray" style="position:relative; font-size:80px; top:-51px; right: 19px;"></b>
+        <p translate>PROFILE.MODAL_AVATAR.BTN_SELECT_FILE</p>
+      </div>
+
+      <input type="file" name="fileInput" accept=".png,.jpeg,.jpg" id="fileInput" onchange="angular.element(this).scope().fileChanged(event)"
+             accept=".png,.jpeg,.jpg"
+             style="visibility:hidden; position:absolute;"/>
+    </div>
+
+    <div ng-show="imageCropStep == 2">
+      <p translate>PROFILE.MODAL_AVATAR.RESIZE_HELP</p>
+
+      <!-- <image-crop
+             data-height="200" //shape's height
+             data-width="150" //shape's width
+             data-shape="square" //the shape.. square or circle
+             data-step="imageCropStep"//scope variable that will contain the current step of the crop (1. Waiting for source image; 2. Image loaded, waiting for crop; 3. Crop done)
+             src="imgSrc" //scope variable that will be the source image for the crop (may be a Blob or base64 string)
+             data-result-blob="result" //scope variable that will contain the Blob information
+             data-result="resultDataUrl" //scope variable that will contain the image's base64 string representation
+             crop="initCrop" //scope variable that must be set to true when the image is ready to be cropped
+             padding="250" //space, in pixels, rounding the shape
+             max-size="1024" //max of the image, in pixels
+           ></image-crop> -->
+
+      <div class="item card text-center padding ink">
+        <image-crop
+          data-height="150"
+          data-width="150"
+          data-shape="circle"
+          data-step="imageCropStep"
+          src="imgSrc"
+          data-result="result"
+          data-result-blob="resultBlob"
+          crop="initCrop"
+          padding="150"
+          max-size="1024"
+        ></image-crop>
+      </div>
+    </div>
+
+    <div ng-show="imageCropStep == 3">
+      <p translate>PROFILE.MODAL_AVATAR.RESULT_HELP</p>
+
+      <div class="item card padding hero" style="height: 110px;">
+        <div class="content">
+          <img class="avatar" ng-src="{{result}}" style="height: 88px; width: 88px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- buttons bar -->
+    <div class="padding hidden-xs text-right">
+      <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>
+        COMMON.BTN_CANCEL
+      </button>
+      <button class="button button-calm icon-right ion-chevron-right ink" ng-click="doCrop()" translate
+              ng-disabled="imageCropStep == 1"
+              ng-if="imageCropStep <= 2">
+        COMMON.BTN_NEXT
+      </button>
+      <button class="button button-positive ink" ng-click="closeModal(result)" translate
+              ng-if="imageCropStep == 3">
+        COMMON.BTN_CONTINUE
+      </button>
+    </div>
+
+  </ion-content>
+</ion-modal-view>

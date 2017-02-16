@@ -1,6 +1,6 @@
 angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.services'])
 
-  .controller('ESPicturesEditCtrl', ESPicturesEditController)
+ .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
  .controller('ESPicturesEditCtrl', ESPicturesEditController)
 
