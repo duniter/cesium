@@ -263,7 +263,7 @@ angular.module('cesium')
           name: this.files[0].name,
           size: this.files[0].size,
           type: this.files[0].type
-        }
+        };
 
         reader.onload = function(onLoadEvent) {
           scope.$apply(function() {
@@ -305,7 +305,7 @@ angular.module('cesium')
             name: e.dataTransfer.files[0].name,
             size: e.dataTransfer.files[0].size,
             type: e.dataTransfer.files[0].type
-          }
+          };
 
           var reader = new FileReader();
           reader.onload = function(onLoadEvent) {
@@ -316,7 +316,7 @@ angular.module('cesium')
                   fileData : fileData}
               });
             });
-          }
+          };
           reader.readAsText(e.dataTransfer.files[0]);
         });
 
