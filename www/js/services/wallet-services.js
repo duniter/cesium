@@ -1548,10 +1548,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
       // Get revocation document
       return getRevocationDocument()
-        .then(function(revocation){
-          console.debug(typeof revocation + '\n' + revocation);
-        })
-
         // Send revocation document
         .then(function(revocation) {
           return BMA.wot.revoke({revocation: revocation});
@@ -1584,7 +1580,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     revokeWithFile = function(revocation){
-      console.debug(typeof revocation + '\n' + revocation);
       return BMA.wot.revoke({revocation: revocation})
       // Reload requirements
         .then(function() {
