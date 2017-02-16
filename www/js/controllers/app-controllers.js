@@ -82,7 +82,7 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller,
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller, $window,
                        UIUtils, BMA, csWallet, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
@@ -259,6 +259,23 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     state = state || 'app.view_wallet';
 
     if (!csWallet.isLogin()) {
+
+      // Make sure to protect login modal, if HTTPS enable - fix #340
+      if (csConfig.httpsMode && $window.location && $window.location.protocol !== 'https:') {
+        var href = $window.location.href;
+        var hashIndex = href.indexOf('#');
+        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+        rootPath = 'https' + rootPath.substr(4);
+        href = rootPath + $state.href(state);
+        if (csConfig.httpsModeDebug) {
+          console.debug('[httpsMode] --- Should redirect to: ' + href);
+        }
+        else {
+          $window.location.href = href;
+        }
+        return;
+      }
+
       return $scope.showLoginModal()
         .then(function(walletData){
           if (walletData) {
