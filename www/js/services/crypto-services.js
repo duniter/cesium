@@ -14,9 +14,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       var that = this;
 
       this.copy = function(source) {
-        console.debug('Copying object:' + (typeof source));
         _.forEach(_.keys(source), function(key) {
-          console.debug('copying key:' + key + ' of type ' + (typeof source[key]));
           that[key] = source[key];
         });
       };
