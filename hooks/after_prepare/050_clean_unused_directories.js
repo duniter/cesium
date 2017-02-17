@@ -47,7 +47,24 @@ if (rootdir && !skip) {
       '!'+path.join(wwwPath, 'lib'),
       '!'+path.join(wwwPath, 'lib', 'ionic'),
       '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts'),
-      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', '**', '*')
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Black'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Black', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Bold'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Bold', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'BoldItalic'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'BoldItalic', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Italic'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Italic', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Light'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Light', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Medium'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Medium', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Regular'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Regular', '**'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Thin'),
+      '!'+path.join(wwwPath, 'lib', 'ionic', 'fonts', 'robotdraft', 'Thin', '**')
     ]);
   }
 }
