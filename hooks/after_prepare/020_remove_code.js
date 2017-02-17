@@ -31,15 +31,15 @@ if (rootdir) {
     process.stdout.write('Removing unused code for device \n');
 
     // Compute options {device-<platform>: true}
-    var platformDeviceRemoveOptions = {};
-    platformDeviceRemoveOptions['device-' + platform] = true;
+    var platformRemoveCodeOptions = {};
+    platformRemoveCodeOptions[platform] = true; // = {<platform>: true}
 
     // Removing unused code for device...
     es.concat(
       // Remove unused HTML tags
       gulp.src([wwwPath + '/templates/**/*.html', pluginPath + '/templates/**/*.html'])
         .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
+        .pipe(removeCode(platformRemoveCodeOptions))
         .pipe(removeHtml('.hidden-xs.hidden-sm'))
         .pipe(removeHtml('.hidden-device'))
         .pipe(removeHtml('[remove-if][remove-if="device"]'))
@@ -48,7 +48,7 @@ if (rootdir) {
 
       gulp.src(path.join(wwwPath, 'index.html'))
         .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
+        .pipe(removeCode(platformRemoveCodeOptions))
         .pipe(removeHtml('.hidden-xs.hidden-sm'))
         .pipe(removeHtml('.hidden-device'))
         .pipe(removeHtml('[remove-if][remove-if="device"]'))
@@ -58,13 +58,13 @@ if (rootdir) {
       // Remove unused JS code + add ng annotations
       gulp.src([wwwPath + '/js/**/*.js'])
         .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
+        .pipe(removeCode(platformRemoveCodeOptions))
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/app')),
 
       gulp.src([pluginPath + '/js/**/*.js'])
         .pipe(removeCode({device: true}))
-        .pipe(removeCode(platformDeviceRemoveOptions)) // = {device-<platform>: true}
+        .pipe(removeCode(platformRemoveCodeOptions))
         .pipe(ngAnnotate({single_quotes: true}))
         .pipe(gulp.dest(wwwPath + '/dist/dist_js/plugins'))
      );
