@@ -293,7 +293,8 @@
     "PASSWORD": "Password",
     "PASSWORD_HELP": "Password",
     "NO_ACCOUNT_QUESTION": "Don't have an account yet?",
-    "CREATE_ACCOUNT": "Create an account"
+    "CREATE_ACCOUNT": "Create an account",
+    "FORGOTTEN_ID": "Forgot password ?"
   },
   "ACCOUNT": {
     "TITLE": "My Account",
@@ -321,7 +322,7 @@
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renew membership...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Revoke membership...",
     "BTN_SEND_IDENTITY_DOTS": "Publish identity...",
-    "BTN_REVOKE": "Revoke<span class='hidden-xs hidden-sm'> definitely</span> this identity...",
+    "BTN_SECURITY_DOTS": "Sign-in and security...",
     "BTN_SHOW_DETAILS": "Display technical data",
     "NEW": {
       "TITLE": "Registration",
@@ -351,6 +352,44 @@
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
       "HELP": "A pseudonym is needed to let other members find you."
+    },
+    "SECURITY":{
+      "ADD_QUESTION" : "Add custom question",
+      "BTN_CLEAN" : "Clean",
+      "BTN_RESET" : "Reset",
+      "CHOOSE_FILE" : "Drag your file or click to select",
+      "DEFINITELY_REVOKE" : "Revoke definitely this identity.",
+      "DOWNLOAD_REVOKE": "Save a recocation file",
+      "HELP_LEVEL": "Choose <strong> at least {{nb}} questions </strong> :",
+      "LEVEL": "Security level",
+      "LOW_LEVEL": "Low <span class=\"hidden-xs\">(2 questions minimum)</span>",
+      "MEDIUM_LEVEL": "Medium <span class=\"hidden-xs\">(4 questions minimum)</span>",
+      "QUESTION_1": "What was your best friend's name when you were a teen ?",
+      "QUESTION_2": "What was the name of your first pet ?",
+      "QUESTION_3": "What is the first meal you have learned to cook ?",
+      "QUESTION_4": "What is the first movie you saw in the cinema?",
+      "QUESTION_5": "Where did you go the first time you flew ?",
+      "QUESTION_6": "What was your favorite elementary school teacher's name  ?",
+      "QUESTION_7": "What would you consider the ideal job ?",
+      "QUESTION_8": "Which children's book do you prefer?",
+      "QUESTION_9": "What was the model of your first vehicle?",
+      "QUESTION_10": "What was your nickname when you were a child ?",
+      "QUESTION_11": "What was your favorite movie character or actor when you were a student ?",
+      "QUESTION_12": "What was your favorite singer or band when you were a student ?",
+      "QUESTION_13": "In which city did your parents meet ?",
+      "QUESTION_14": "What was the name of your first boss ?",
+      "QUESTION_15": "What is the name of the street where you grew up ?",
+      "QUESTION_16": "What is the name of the first beach where you go swim ?",
+      "QUESTION_17": "QWhat is the first album you bought ?",
+      "QUESTION_18": "What is the name of your favorite sport team ?",
+      "QUESTION_19": "What was your grand-father's job ?",
+      "RECOVER_ID": "Recover your password",
+      "REVOCATION": "Revocation ...",
+      "REVOKE" : "Revoke this identity",
+      "REVOKE_WITH_FILE" : "Rekoke this identity with a file",
+      "SAVE_ID": "Save your login",
+      "STRONG_LEVEL": "Strong <span class=\"hidden-xs \">(6 questions minimum)</span>",
+      "TITLE": "Sign-in and security"
     }
   },
   "TRANSFER": {
@@ -434,7 +473,12 @@
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
     "REVOCATION_FAILED": "Error while trying to revoke the identity.",
     "GET_BLOCK_FAILED": "Error xhole getting block",
-    "INVALID_BLOCK_HASH": "Block not found (incorrect hash)"
+    "INVALID_BLOCK_HASH": "Block not found (incorrect hash)",
+    "REVOCATION_FAILED": "Error while trying to revoke the identity.",
+    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong phrase or password ",
+    "RECOVER_ID_FAILED": "Could not recover password",
+    "LOAD_FILE_FAILED" : "Unable to load file",
+    "ONLY_TEXT_FILE": "You have to select a text file"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -502,8 +546,8 @@
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",
       "WALLET_CERTIFICATIONS": "Click here to reveiw the details of your certifications (given and received).",
-      "WALLET_RECEIVED_CERTIFICATIONS": "Click here to reveiw the details of your <b>received certifications</b>.",
-      "WALLET_GIVEN_CERTIFICATIONS": "Click here to reveiw the details of your <b>given certifications</b>.",
+      "WALLET_RECEIVED_CERTIFICATIONS": "Click here to review the details of your <b>received certifications</b>.",
+      "WALLET_GIVEN_CERTIFICATIONS": "Click here to review the details of your <b>given certifications</b>.",
       "WALLET_BALANCE": "Your account <b>balance</b> is shown here.",
       "WALLET_BALANCE_RELATIVE": "{{'HELP.TIP.WALLET_BALANCE'|translate}}<br/><br/>The used unit (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifies that the amount in {{currency|capitalize}} has been divided by the <b>Universal Dividend</b> (UD) co-created by each member.<br/>At this moment, 1 UD equals {{currentUD}} {{currency|capitalize}}.",
       "WALLET_BALANCE_CHANGE_UNIT": "You can <b>change the unit</b> in which amounts are shown in <b><i class=\"icon ion-android-settings\"></i>&nbsp;{{'MENU.SETTINGS'|translate}}</b>.<br/><br/>For example, to display amounts <b>directly in {{currency|capitalize}}</b> instead of relative amounts.",
@@ -515,7 +559,7 @@
       "WALLET_CERTIFY": "The button <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> allows selecting an identity and certifying it.<br/><br/>Only users that are <b>already member</b> may certify others.",
       "WALLET_CERT_STOCK": "Your supply of certifications (to send) is limited to <b>{{sigStock}} certifications</b>.<br/><br/>This supply will replete itself over time, as and when earlier certifications expire.",
       "MENU_BTN_TX_MEMBER": "<b>{{'MENU.TRANSACTIONS'|translate}}</b> allow access to transactions history, and send new payments.",
-      "MENU_BTN_TX": "Consultez ici l'historique vos transactions et envoyez de nouveaux paiements.",
+      "MENU_BTN_TX": "View the history of <b>your transactions</b> here and send new payments.",
       "MENU_BTN_WOT": "The menu <b>{{'MENU.WOT'|translate}}</b> allows searching <b>users</b> of the currency (member or not).",
       "WOT_SEARCH_TEXT_XS": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>The search will start automatically.",
       "WOT_SEARCH_TEXT": "To search in the registry, type the <b>first letters of a users pseudonym or public key</b>.<br/><br/>Then hit <b>Enter</b> to start the search.",

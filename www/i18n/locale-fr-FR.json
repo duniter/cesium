@@ -322,6 +322,7 @@
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renouveler l'adhésion...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Arrêter l'adhésion...",
     "BTN_SEND_IDENTITY_DOTS": "Publier son identitié...",
+    "BTN_SECURITY_DOTS": "Compte et sécurité...",
     "BTN_SHOW_DETAILS": "Afficher les infos techniques",
     "NEW": {
       "TITLE": "Inscription",
@@ -352,12 +353,12 @@
       "TITLE": "Choisissez un pseudonyme",
       "HELP": "Un pseudonyme est obligatoire pour devenir membre."
     },
-    "SECURITY":{
-      "ADD_QUESTION" : "Ajouter une question personnalisée ",
-      "BTN_CLEAN" : "Vider",
-      "BTN_RESET" : "Réinitialiser",
-      "CHOOSE_FILE" : "Déposez votre fichier <br/>ou cliquez pour le sélectionner",
-      "DEFINITELY_REVOKE" : "Revoquer définitivement cette identité",
+    "SECURITY": {
+      "ADD_QUESTION": "Ajouter une question personnalisée ",
+      "BTN_CLEAN": "Vider",
+      "BTN_RESET": "Réinitialiser",
+      "CHOOSE_FILE": "Déposez votre fichier <br/>ou cliquez pour le sélectionner",
+      "DEFINITELY_REVOKE": "Revoquer définitivement cette identité",
       "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
       "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
       "LEVEL": "Niveau de sécurité",
@@ -384,13 +385,13 @@
       "QUESTION_19": "Quel était le métier de votre grand-père ?",
       "RECOVER_ID": "Recupérer vos identifiants",
       "REVOCATION": "Révocation ...",
-      "REVOKE" : "Révoquer cette identité",
-      "REVOKE_WITH_FILE" : "Révoquer une identité à partir d'un fichier",
+      "REVOKE": "Révoquer cette identité",
+      "REVOKE_WITH_FILE": "Révoquer une identité à partir d'un fichier",
       "SAVE_ID": "Sauvegarder vos identifiants",
       "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
       "TITLE": "Compte et sécurité"
-       }
-    },
+    }
+  },
   "TRANSFER": {
     "TITLE": "Virement",
     "SUB_TITLE": "Faire un virement",
@@ -558,7 +559,7 @@
       "WALLET_CERTIFY": "Le bouton <b>{{'WOT.BTN_SELECT_AND_CERTIFY'|translate}}</b> permet de sélectionner une identitié et de la certifier.<br/><br/>Seuls des utilisateurs <b>déjà membre</b> peuvent en certifier d'autres.",
       "WALLET_CERT_STOCK": "Votre stock de certification (émises) est limité à <b>{{sigStock}} certifications</b>.<br/><br/>Ce stock se renouvelle avec le temps, au fur et à mesure que les certifications s'invalident.",
       "MENU_BTN_TX_MEMBER": "Le menu <b>{{'MENU.TRANSACTIONS'|translate}}</b> permet de consulter votre solde, l'historique vos transactions et d'envoyer un paiement.",
-      "MENU_BTN_TX": "Consultez ici l'historique vos transactions et envoyez de nouveaux paiements.",
+      "MENU_BTN_TX": "Consultez ici <b>l'historique de vos transactions</b> et effectuer de nouvelles opérations.",
       "MENU_BTN_WOT": "Le menu <b>{{'MENU.WOT'|translate}}</b> permet de rechercher parmi les <b>utilisateurs</b> de la monnaie (membre ou non).",
       "WOT_SEARCH_TEXT_XS": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique).<br/><br/>La recherche se lancera automatiquement.",
       "WOT_SEARCH_TEXT": "Pour rechercher dans l'annuaire, tapez les <b>premières lettres d'un pseudonyme</b> (ou d'une clé publique). <br/><br/>Appuyer ensuite sur <b>Entrée</b> pour lancer la recherche.",

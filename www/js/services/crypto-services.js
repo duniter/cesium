@@ -45,6 +45,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
     CryptoAbstractService.prototype.constants = {
       crypto_sign_BYTES: 64,
       crypto_secretbox_NONCEBYTES: 24,
+      crypto_box_MACBYTES: 16,
       SEED_LENGTH: 32, // Length of the key
       SCRYPT_PARAMS:{
         N: 4096,
@@ -124,10 +125,10 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       this.util.encode_utf8 = function (s) {
         return that.nacl.encode_utf8(s);
       };
-      this.util.encode_base58 = function (a) {
+      this.util.encode_base58 = function (a) { // TODO : move to abstract factory
         return that.base58.encode(a);
       };
-      this.util.decode_base58 = function (a) {
+      this.util.decode_base58 = function (a) { // TODO : move to abstract factory
         var i;
         a = that.base58.decode(a);
         var b = new Uint8Array(a.length);
@@ -392,6 +393,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
        * Create key pairs (sign and box), from salt+password, using cordova
        */
       this.connect = function(salt, password) {
+        console.debug('calling connect');
         var deferred = $q.defer();
 
         that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
@@ -403,8 +405,12 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
           that.constants.SEED_LENGTH,
           function (err, seed) {
             if (err) { deferred.reject(err); return;}
+            //console.debug('calling crypto_pwhash_scryptsalsa208sha256_ll [OK]');
+
+
             that.nacl.crypto_sign_seed_keypair(seed, function (err, signKeypair) {
               if (err) { deferred.reject(err); return;}
+              //console.debug('calling crypto_sign_seed_keypair [OK]');
               var result = {
                 signPk: signKeypair.pk,
                 signSk: signKeypair.sk
@@ -413,6 +419,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
                 .then(function(boxKeypair) {
                   result.boxPk = boxKeypair.pk;
                   result.boxSk = boxKeypair.sk;
+                  //console.debug('calling box_keypair_from_sign [OK] from connect');
                   deferred.resolve(result);
                 })
                 .catch(function(err) {
@@ -430,6 +437,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
        * Verify a signature of a message, for a pubkey
        */
       this.verify = function (message, signature, pubkey) {
+        console.debug('calling verify');
         var deferred = $q.defer();
         that.nacl.crypto_sign_verify_detached(
           that.nacl.from_base64(signature),
@@ -446,6 +454,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
        * Sign a message, from a key pair
        */
       this.sign = function(message, keypair) {
+        console.debug('calling sign');
         var deferred = $q.defer();
 
         that.nacl.crypto_sign(
@@ -473,17 +482,20 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
        * Compute the box key pair, from a sign key pair
        */
       this.box_keypair_from_sign = function(signKeyPair) {
+        console.debug('calling box_keypair_from_sign');
         if (signKeyPair.bokSk && signKeyPair.boxPk) return $q.when(signKeyPair);
         var deferred = $q.defer();
         var result = {};
         that.nacl.crypto_sign_ed25519_pk_to_curve25519(signKeyPair.signPk, function(err, boxPk) {
           if (err) { deferred.reject(err); return;}
           result.boxPk = boxPk;
+          console.debug('calling crypto_sign_ed25519_sk_to_curve25519 [OK]');
           if (result.boxSk) deferred.resolve(result);
         });
         that.nacl.crypto_sign_ed25519_sk_to_curve25519(signKeyPair.signSk, function(err, boxSk) {
           if (err) { deferred.reject(err); return;}
           result.boxSk = boxSk;
+          console.debug('calling crypto_sign_ed25519_sk_to_curve25519 [OK]');
           if (result.boxPk) deferred.resolve(result);
         });
 
@@ -494,10 +506,12 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
        * Compute the box public key, from a sign public key
        */
       this.box_pk_from_sign = function(signPk) {
+        console.debug('calling box_pk_from_sign');
         var deferred = $q.defer();
         that.nacl.crypto_sign_ed25519_pk_to_curve25519(signPk, function(err, boxPk) {
           if (err) { deferred.reject(err); return;}
           deferred.resolve(boxPk);
+          console.debug('calling box_pk_from_sign [OK]');
         });
         return deferred.promise;
       };
@@ -510,12 +524,16 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
           return $q.reject('No message');
         }
         var deferred = $q.defer();
+
+        console.debug('Original message: ' + message);
+        console.debug('Original recipientPk: ' + recipientPk);
+
         var messageBin = that.nacl.from_string(message);
         if (typeof recipientPk === "string") {
           recipientPk = that.util.decode_base58(recipientPk);
         }
 
-        //console.debug('Original message: ' + message);
+        console.debug('calling box');
 
         that.nacl.crypto_box_easy(messageBin, nonce, recipientPk, senderSk, function(err, ciphertextBin) {
           if (err) { deferred.reject(err); return;}
@@ -535,15 +553,25 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
         }
         var deferred = $q.defer();
 
+        console.debug('calling box_open - text to decrypt: ' + cypherText);
+        console.debug('senderPk: ' + senderPk);
+        console.debug('recipientSk: ' + recipientSk);
+
         var ciphertextBin = that.nacl.from_base64(cypherText);
         if (typeof senderPk === "string") {
           senderPk = that.util.decode_base58(senderPk);
         }
 
+        // Avoid crash if content has not the minimal length - Fix #346
+        if (ciphertextBin.length < that.constants.crypto_box_MACBYTES) {
+          deferred.reject('Invalid cypher content length');
+          return;
+        }
+
         that.nacl.crypto_box_open_easy(ciphertextBin, nonce, senderPk, recipientSk, function(err, message) {
           if (err) { deferred.reject(err); return;}
           that.util.array_to_string(message, function(result) {
-            //console.debug('Decrypted text: ' + result);
+            console.debug('Decrypted text: ' + result);
             deferred.resolve(result);
           });
         });

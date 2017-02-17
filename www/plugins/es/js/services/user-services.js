@@ -183,6 +183,11 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               var settings = JSON.parse(json || '{}');
               settings.time = record.time;
               return settings;
+            })
+            // if error: skip stored content
+            .catch(function(err){
+              console.error('[ES] [user] Could not read stored settings: ' + (err && err.message || 'decryption error'));
+              return null;
             });
         });
     }
