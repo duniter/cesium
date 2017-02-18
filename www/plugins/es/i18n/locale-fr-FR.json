@@ -314,7 +314,7 @@
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",
-      "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Annonces</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Annuaire des professionnels</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> (recommandé) ?"
+      "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> ?"
     }
   },
   "EVENT": {

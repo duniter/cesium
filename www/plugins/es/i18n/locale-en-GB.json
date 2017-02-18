@@ -314,7 +314,7 @@
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "New features",
-      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Ads</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Companies registry</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>They have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> these features (recommended)?"
+      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> user profiles</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>They have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> these features?"
     }
   },
   "EVENT": {

@@ -288,7 +288,7 @@
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nieuwe functies",
-      "ASK_ENABLE": "Er zijn nieuwe functies beschikbaar: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-speakerphone\"></i> Advertenties</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-ios-book\"></i> Bedrijfsregister</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Privé berichten</b>.</ul><br/>Deze zijn <b>uitgeschakeld</b> in je instellingen.<br/><br/>Wil je deze functies <b>inschakelen</b> (recommended)?"
+      "ASK_ENABLE": "Er zijn nieuwe functies beschikbaar: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profile Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifcaitions\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Privé berichten</b>.</ul><br/>Deze zijn <b>uitgeschakeld</b> in je instellingen.<br/><br/>Wil je deze functies <b>inschakelen</b>?"
     }
   },
   "EVENT": {
