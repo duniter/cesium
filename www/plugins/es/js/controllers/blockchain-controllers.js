@@ -87,16 +87,15 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
   $scope.doSearch = function(from) {
     from = angular.isDefined(from) ? from : 0;
     var promise;
-    var request = {
-      _source: '*' // TODO : faire mieux ?
-    };
+    var request = {};
 
     $scope.search.loading = (from === 0);
-    request.from = from;
     request.size = $scope.defaultSizeLimit;
 
     // last block
     if ($scope.search.type == 'last') {
+      // Add '+1' to skip the indexed block with _id='current'
+      request.from = (from === 0) ? 0 : from+1;
       // add sort
       if ($scope.search.sort) {
         request.sort = {};
@@ -113,6 +112,8 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
 
     // Full text search
     else if ($scope.search.type == 'text') {
+
+      request.from = from;
 
       // add sort
       if ($scope.search.sort) {

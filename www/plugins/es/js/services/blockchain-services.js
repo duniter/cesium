@@ -18,10 +18,11 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     var
       CONSTANTS = {
         DEFAULT_SEARCH_SIZE: 40,
-        ES_CORE_API_ENDPOINT: "ES_CORE_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
+        ES_CORE_API_ENDPOINT: 'ES_CORE_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))'
       },
       FIELDS = {
-        COMMONS: ['number', 'hash', 'medianTime', 'issuer']
+        MINIMAL: ['number', 'hash', 'medianTime', 'issuer'],
+        COMMONS: ['number', 'hash', 'medianTime', 'issuer', 'currency', 'version', 'powMin', 'dividend', 'membersCount', 'identities', 'joiners', 'actives', 'leavers', 'revoked', 'excluded', 'certifications', 'transactions']
       },
       listeners,
       exports = {
@@ -40,7 +41,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       };
 
     function exact(regexpContent) {
-      return new RegExp("^" + regexpContent + "$");
+      return new RegExp('^' + regexpContent + '$');
     }
 
     function copy(otherNode) {
@@ -60,10 +61,10 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       var matches = REGEX.ES_CORE_API_ENDPOINT.exec(endpoint);
       if (!matches) return;
       return {
-        "dns": matches[2] || '',
-        "ipv4": matches[4] || '',
-        "ipv6": matches[6] || '',
-        "port": matches[8] || 80
+        dns: matches[2] || '',
+        ipv4: matches[4] || '',
+        ipv6: matches[6] || '',
+        port: matches[8] || 80
       };
     };
 
@@ -141,7 +142,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
 
 
     function removeListeners() {
-      console.debug("[ES] [blockchain] Disable");
+      console.debug('[ES] [blockchain] Disable');
       _.forEach(listeners, function(remove){
         remove();
       });
@@ -149,7 +150,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     }
 
     function addListeners() {
-      console.debug("[ES] [blockchain] Enable");
+      console.debug('[ES] [blockchain] Enable');
 
       listeners = [
         //csWot.api.data.on.search($rootScope, onWotSearch, this)
