@@ -207,6 +207,8 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
       .then(function(idties){
         if ($scope.search.type != 'pending') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
+        // Always disable "more" on initphase
+        $scope.search.hasMore = !csConfig.initPhase && $scope.search.hasMore;
         return true;
       })
       .catch(function(err) {
