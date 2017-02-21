@@ -5,7 +5,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
     $stateProvider
 
       .state('app.wot_lookup', {
-        url: "/wot?q&newcomers&pendings",
+        url: "/wot?q&type&hash",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup.html",
@@ -86,7 +86,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
+function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $ionicHistory,
                              UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
@@ -105,7 +105,13 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered) {
       if (state.stateParams && state.stateParams.q) { // Query parameter
-        $scope.search.text=state.stateParams.q;
+        $scope.search.text = state.stateParams.q;
+        $timeout(function() {
+          $scope.doSearch();
+        }, 100);
+      }
+      else if (state.stateParams && state.stateParams.hash) { // hash tag parameter
+        $scope.search.text = '#' + state.stateParams.hash;
         $timeout(function() {
           $scope.doSearch();
         }, 100);
@@ -113,10 +119,10 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
       else {
         $timeout(function() {
           // get new comers
-          if (!csConfig.initPhase || state.stateParams.newcomers) {
+          if (!csConfig.initPhase || state.stateParams.type == 'newcomers') {
             $scope.doGetNewcomers(0, state.stateParams.newcomers);
           }
-          else {
+          else if (csConfig.initPhase || state.stateParams.type == 'pending') {
             $scope.doGetPending(0, state.stateParams.pendings);
           }
         }, 100);
@@ -141,6 +147,47 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
     };
   };
 
+  $scope.doRefreshLocationHref = function() {
+
+    var stateParams = {
+      q: undefined,
+      hash: undefined,
+      type: undefined
+    };
+
+    if ($scope.search.type == 'text') {
+      var text = $scope.search.text.trim();
+      if (text.match(/^#\w+$/)) {
+        stateParams.hash = text.substr(1);
+      }
+      else {
+        stateParams.q = text;
+      }
+    }
+    else {
+      stateParams.type = $scope.search.type;
+    }
+
+    // Update location href
+    $ionicHistory.nextViewOptions({
+      disableAnimate: true,
+      disableBack: true,
+      historyRoot: true
+    });
+    $state.go('app.wot_lookup', stateParams,
+      {
+        reload: false,
+        inherit: true,
+        notify: false
+      });
+  };
+
+  $scope.doSearchText = function() {
+
+    $scope.doSearch();
+    $scope.doRefreshLocationHref();
+  };
+
   $scope.doSearch = function() {
     $scope.search.loading = true;
     var text = $scope.search.text.trim();
@@ -152,18 +199,18 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
     else {
       $scope.search.type = 'text';
       csWot.search(text)
-      .then(function(idties){
-        if ($scope.search.type != 'text') return; // could have change
-        if ($scope.search.text.trim() !== text) return; // search text has changed before received response
+        .then(function(idties){
+          if ($scope.search.type != 'text') return; // could have change
+          if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
-        if ((!idties || !idties.length) && BMA.regex.PUBKEY.test(text)) {
-          $scope.doDisplayResult([{pubkey: text}]);
-        }
-        else {
-          $scope.doDisplayResult(idties);
-        }
-      })
-      .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
+          if ((!idties || !idties.length) && BMA.regex.PUBKEY.test(text)) {
+            $scope.doDisplayResult([{pubkey: text}]);
+          }
+          else {
+            $scope.doDisplayResult(idties);
+          }
+        })
+        .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
     }
   };
 
@@ -176,7 +223,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
     $scope.search.loading = (offset === 0);
     $scope.search.type = 'newcomers';
 
-    return csWot.newcomers(offset, size)
+    csWot.newcomers(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'newcomers') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
@@ -188,6 +235,9 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
         $scope.search.hasMore = false;
         UIUtils.onError('ERROR.LOAD_NEWCOMERS_FAILED')(err);
       });
+
+    // Update location href
+    $scope.doRefreshLocationHref();
   };
 
   $scope.doGetPending = function(offset, size) {
@@ -203,7 +253,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
       csWot.all :
       csWot.pending;
 
-    return searchFunction(offset, size)
+    searchFunction(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'pending') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
@@ -217,6 +267,9 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover,
         $scope.search.hasMore = false;
         UIUtils.onError('ERROR.LOAD_PENDING_FAILED')(err);
       });
+
+    // Update location href
+    $scope.doRefreshLocationHref();
   };
 
   $scope.showMore = function() {

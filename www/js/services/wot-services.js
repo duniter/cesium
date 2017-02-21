@@ -560,12 +560,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               })
           ])
           .then(function() {
-            if (!data.requirements.uid)
-              return api.data.raisePromise.load(data)
-                .catch(function(err) {
-                  console.debug('Error while loading identity data, on extension point.');
-                  console.error(err);
-                });
+            if (!data.requirements.uid) return;
 
             var idtyFullKey = data.requirements.uid + '-' + data.requirements.meta.timestamp;
 
@@ -596,8 +591,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             ]);
           })
           .then(function() {
-            // Add compute some additional requirements (that required all data like certifications)
-            finishLoadRequirements(data);
+            if (data.requirements.uid) {
+              // Add compute some additional requirements (that required all data like certifications)
+              finishLoadRequirements(data);
+            }
 
             // API extension
             return api.data.raisePromise.load(data)
@@ -619,35 +616,54 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           return $q.when(undefined);
         }
 
+        // Remove first special characters (to avoid request error)
+        var safeText = text.replace(/(^|\s)#\w+/g, ''); // remove tags
+        safeText = safeText.replace(/[^a-zA-Z0-9_-\s]+/g, '');
+        safeText = safeText.replace(/\s+/g, ' ').trim();
+
         options = options || {};
         options.addUniqueId = angular.isDefined(options.addUniqueId) ? options.addUniqueId : true;
         options.allowExtension = angular.isDefined(options.allowExtension) ? options.allowExtension : true;
 
-        return BMA.wot.lookup({ search: text })
-          .then(function(res){
-            return res.results.reduce(function(idties, res) {
-              return idties.concat(res.uids.reduce(function(uids, idty) {
-                var blocUid = idty.meta.timestamp.split('-', 2);
-                if (!idty.revoked) {
-                  return uids.concat({
-                    uid: idty.uid,
-                    pubkey: res.pubkey,
-                    number: blocUid[0],
-                    hash: blocUid[1]
-                  });
-                }
-                return uids;
-              }, []));
-            }, []);
-          })
-          .catch(function(err) {
-            if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
-              return [];
-            }
-            else {
-              throw err;
-            }
-          })
+        var promise;
+        if (!safeText) {
+          promise = $q.when([]);
+        }
+        else {
+          promise = $q.all(
+            safeText.split(' ').reduce(function(res, text) {
+              console.debug('[wot] Will search on: \'' + text + '\'');
+              return res.concat(BMA.wot.lookup({ search: text }));
+            }, [])
+          ).then(function(res){
+              return res.reduce(function(idties, res) {
+                return idties.concat(res.results.reduce(function(idties, res) {
+                  return idties.concat(res.uids.reduce(function(uids, idty) {
+                    var blocUid = idty.meta.timestamp.split('-', 2);
+                    if (!idty.revoked) {
+                      return uids.concat({
+                        uid: idty.uid,
+                        pubkey: res.pubkey,
+                        number: blocUid[0],
+                        hash: blocUid[1]
+                      });
+                    }
+                    return uids;
+                  }, []));
+                }, []));
+              }, []);
+            })
+            .catch(function(err) {
+              if (err && err.ucode == BMA.errorCodes.NO_MATCHING_IDENTITY) {
+                return [];
+              }
+              else {
+                throw err;
+              }
+            });
+        }
+
+        return promise
           .then(function(idties) {
             if (!options.allowExtension) {
               // Add unique id (if enable)

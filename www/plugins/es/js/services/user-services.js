@@ -10,7 +10,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   })
 
-.factory('esUser', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, Device, Api) {
+.factory('esUser', function($rootScope, $q, $timeout, esHttp, $state, $sce, $sanitize,
+                            csConfig, csSettings, esHttp, CryptoUtils, Device, UIUtils, csWallet, csWot, BMA) {
   'ngInject';
 
   function factory(id, host, port, wsPort) {
@@ -21,7 +22,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         ES_USER_API_ENDPOINT: "ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
       },
       REGEX = {
-        ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT)
+        ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT),
+        HASH_TAG: new RegExp('#(\\w+)')
       },
       SETTINGS_SAVE_SPEC = {
         includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
@@ -132,6 +134,18 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             // avatar
             profile.avatar = esHttp.image.fromHit(host, port, res, 'avatar');
             delete profile.source.avatar; // not need anymore
+
+            // Replace tags in description
+            if (profile.source.description) {
+              var description = $sanitize(profile.source.description.trim().replace(/\n/g,'<br>'));
+              _.forEach(esHttp.util.parseTags(description), function(tag){
+                var href = $state.href('app.wot_lookup', {hash: tag});
+                var link = '<a href=\"{0}">{1}</a>'.format(href, '#'+tag);
+                description = description.replace('#'+tag, link);
+              });
+              $sce.trustAsHtml(description);
+              profile.source.description = description;
+            }
           }
           return profile;
         })
@@ -165,7 +179,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               }
             })])
         .then(function(res) {
-          boxKeypair = res[0];
+          var boxKeypair = res[0];
           res = res[1];
           if (!res || !res._source) {
             return;
@@ -285,6 +299,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return deferred.promise;
     }
 
+
     function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
       deferred = deferred || $q.defer();
       if (!text && (!datas || !datas.length)) {
@@ -297,7 +312,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       var dataByPubkey;
       var request = {
         query: {},
-        highlight: {fields : {title : {}}},
+        highlight: {fields : {title : {}, tags: {}}},
         from: 0,
         size: 100,
         _source: ["title", "avatar._content_type"]
@@ -336,21 +351,35 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
                 {terms : {_id : pubkeys}},
                 {bool: {
                     must: [
-                      {match: {title: text}},
+                      {match: {title: {query: text, boost: 2}}},
                       {prefix: {title: text}}
                     ]}
                 }
             ]}}
           };
+
+          // Add tags
+          var tags = esHttp.util.parseTags(text);
+          if (tags) {
+            request.query.constant_score.filter.bool.should.push({terms: {tags: tags}});
+          }
         }
       }
       else if (text){
         request.query.bool = {
           should: [
-            {match: {title: text}},
+            {match: {title: {
+              query: text,
+              boost: 2
+            }}},
             {prefix: {title: text}}
           ]
         };
+        // Set tags filter
+        var tags = esHttp.util.parseTags(text);
+        if (tags) {
+          request.query.bool.should.push({terms: {tags: tags}});
+        }
       }
       else {
         // nothing to search: stop here
@@ -391,6 +420,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               if (hit.highlight) {
                 if (hit.highlight.title) {
                     data.name = hit.highlight.title[0];
+                }
+                if (hit.highlight.tags) {
+                  data.tags = hit.highlight.tags;
                 }
               }
               // avatar

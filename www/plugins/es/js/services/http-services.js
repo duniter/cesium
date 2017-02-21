@@ -11,12 +11,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
     var
       that,
       regex = {
-        IMAGE_SRC: exact("data:([A-Za-z//]+);base64,(.+)")
+        IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
+        HASH_TAG: new RegExp('#(\\w+)'),
+        USER_TAG: new RegExp('@(\\w+)')
       };
 
 
     function exact(regexpContent) {
-      return new RegExp("^" + regexpContent + "$");
+      return new RegExp('^' + regexpContent + '$');
     }
 
     // Get time (UTC)
@@ -31,6 +33,30 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 
     function post(host, node, path) {
       return csHttp.post(host, node, path);
+    }
+
+    function parseTagsFromText(value) {
+      var matches = value && regex.HASH_TAG.exec(value);
+      var tags;
+      while(matches) {
+        var tag = matches[1];
+        tags = tags || [];
+        if (!_.contains(tags, tag)) {
+          tags.push(tag);
+        }
+        value = value.substr(matches.index + matches[1].length + 1);
+        matches = value && regex.HASH_TAG.exec(value);
+      }
+      return tags;
+    }
+
+    function fillRecordTags(record, fieldNames) {
+      fieldNames = fieldNames || ['title', 'description'];
+
+      _.forEach(fieldNames, function(fieldName) {
+        var value = record[fieldName];
+        record.tags = parseTagsFromText(value);
+      });
     }
 
     function postRecord(host, node, path) {
@@ -55,6 +81,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         delete obj.signature;
         delete obj.hash;
         obj.issuer = $rootScope.walletData.pubkey;
+
+        // Fill tags
+        fillRecordTags(obj);
+
         var str = JSON.stringify(obj);
 
         return CryptoUtils.util.hash(str)
@@ -244,11 +274,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         toAttachment: imageToAttachment
       },
       auth: {
-          login: login,
-          logout: logout
+        login: login,
+        logout: logout
       },
       hit: {
-         empty: emptyHit
+        empty: emptyHit
+      },
+      util: {
+        parseTags: parseTagsFromText
       },
       date: {
         now: getTimeNow

@@ -10,8 +10,8 @@
 <!-- About me -->
 <div class="item" ng-if="formData.profile.description">
   <span class="gray" translate>PROFILE.DESCRIPTION</span>
-  <h3 class=" text-keep-lines">{{formData.profile.description}}
-  </h3>
+  <!--<h3 class=" text-keep-lines" trust-as-html="formData.profile.description"></h3>-->
+  <h3 class=" text-keep-lines" ng-bind-html="formData.profile.description"></h3>
 </div>
 
 <!-- Localisation -->

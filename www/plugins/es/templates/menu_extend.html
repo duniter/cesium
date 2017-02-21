@@ -13,8 +13,19 @@
       class="badge badge-button badge-positive">{{$root.walletData.messages.unreadCount}}</span>
   </button>
 
+  <!-- wot event -->
+  <button class="button button-clear icon ion-person-stalker hidden-xs hidden-sm"
+          ng-if="login"
+          active-link="gray"
+          active-link-path-prefix="#/app/groups"
+          ng-click="showGroupsPopover($event)">
+          <span
+            ng-if="$root.walletData.groups.unreadCount"
+            class="badge badge-button badge-positive">{{$root.walletData.groups.unreadCount}}</span>
+  </button>
+
   <!-- notifications -->
-  <button class="button button-clear  hidden-xs hidden-sm icon ion-android-notifications"
+  <button class="button button-clear icon ion-android-notifications hidden-xs hidden-sm"
           ng-if="login"
           active-link="gray"
           active-link-path-prefix="#/app/notifications"
@@ -23,6 +34,8 @@
             ng-if="$root.walletData.notifications.unreadCount"
             class="badge badge-button badge-positive">{{$root.walletData.notifications.unreadCount}}</span>
   </button>
+
+
 
 </ng-if>
 

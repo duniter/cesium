@@ -11,7 +11,7 @@
            class="hidden-xs hidden-sm"
            id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
            ng-model="search.text"
-           on-return="doSearch()">
+           on-return="doSearchText()">
     <div class="helptip-anchor-center">
       <a id="helptip-wot-search-text"></a>
     </div>
@@ -106,12 +106,15 @@
           {{::identity.pubkey | formatPubkey}}
           <span ng-if="!identity.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
         </h4>
-        <h4 ng-if="identity.events">
+        <h4 ng-if="identity.events||identity.tags">
           <span ng-repeat="event in identity.events"
               class="assertive">
             <i class="ion-alert-circled " ng-if="!identity.valid"></i>
             <span ng-bind-html="event.message|translate:event.messageParams"></span>
           </span>
+          <span ng-repeat="tag in identity.tags" class="dark">
+            #<ng-bind-html ng-bind-html="tag"></ng-bind-html>
+          </ng-repeat>
         </h4>
         <i class="icon ion-ios-arrow-right "></i>
         <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
