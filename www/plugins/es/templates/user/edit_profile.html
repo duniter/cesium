@@ -43,7 +43,8 @@
       <div class="col">
         <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
 
-          <ion-list class="animate-ripple item-text-wrap" ng-init="setForm(profileForm)">
+          <ion-list class="item-text-wrap {{::motion.ionListClass}}"
+                    ng-init="setForm(profileForm)">
 
             <!-- Public info -->
             <div class="item item-icon-left item-text-wrap">

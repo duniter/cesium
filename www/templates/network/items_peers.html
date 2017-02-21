@@ -1,4 +1,4 @@
-<bind-notifier bind-notifier="{ rebind:search.results}">
+<bind-notifier bind-notifier="{ rebind:search.results}" ng-class="::motion.ionListClass">
 
   <div class="item row row-header hidden-xs hidden-sm" ng-if="expertMode">
     <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
@@ -22,7 +22,8 @@
   </div>
 
   <div ng-repeat="peer in :rebind:search.results track by peer.id"
-       class="item peer-item item-icon-left {{::ionItemClass}}"
+       class="item item-peer item-icon-left ink"
+       ng-class="::ionItemClass"
        id="helptip-network-peer-{{$index}}"
        ng-click="selectPeer(peer)">
 

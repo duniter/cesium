@@ -53,7 +53,7 @@
 
       <div class="col">
 
-        <div class="list animate-fade-slide-in-right">
+        <div class="list" ng-class="::motion.ionListClass">
 
           <!-- Errors transactions-->
           <a class="item item-icon-left item-icon-right ink" ng-if="formData.tx.errors && formData.tx.errors.length" ui-sref="app.view_wallet_tx_errors">

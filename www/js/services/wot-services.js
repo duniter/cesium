@@ -166,7 +166,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               });
             }
             var identity = identities[0];
-            console.log(identity);
 
             identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
             identity.lookup = {};

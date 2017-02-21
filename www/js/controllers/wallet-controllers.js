@@ -73,17 +73,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   });
 
-  // Update view
   $scope.updateView = function() {
-    // Set Motion
-    $timeout(function() {
-      UIUtils.motion.fadeSlideInRight({
-        selector: '#wallet .animate-fade-slide-in-right .item',
-        startVelocity: 3000
-      });
-      // Set Ink
-      UIUtils.ink({selector: '#wallet .animate-fade-slide-in-right .item'});
-    });
+    $scope.motion.show({selector: '#wallet .item'});
   };
 
   $scope.setRegisterForm = function(registerForm) {
@@ -369,16 +360,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
           $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.ripple({
-              selector: '.item-pending',
-              startVelocity: 3000
-            });
-            // Set Ink
-            UIUtils.ink({selector: '.item-pending'});
-          }, 10);
+          $scope.motion.show({selector: '.item-pending'});
         }
       });
   };
@@ -512,10 +494,14 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
       });
   });
 
-  $scope.onSettingsChanged = function() {
+  $scope.updateUnit = function() {
     if (!$scope.formData || $scope.loading) return;
     $scope.unit = $filter('currencySymbol')($scope.formData.currency, csSettings.data.useRelative);
     $scope.secondaryUnit = $filter('currencySymbol')($scope.formData.currency, !csSettings.data.useRelative);
+  };
+
+  $scope.onSettingsChanged = function() {
+    $scope.updateUnit();
   };
   $scope.$watch('settings.useRelative', $scope.onSettingsChanged);
 
@@ -528,14 +514,8 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
   // Update view
   $scope.updateView = function() {
     $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-
-    $scope.onSettingsChanged();
-    // Set Motion
-    $timeout(function() {
-      UIUtils.motion.fadeSlideInRight({selector: '#wallet-tx .animate-fade-slide-in-right .item'});
-      // Set Ink
-      UIUtils.ink({selector: '#wallet-tx .animate-fade-slide-in-right .item'});
-    }, 10);
+    $scope.updateUnit();
+    $scope.motion.show({selector: '#wallet-tx .list .item'});
   };
 
   // Updating wallet data
@@ -568,16 +548,7 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
           $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.ripple({
-              selector: '.item-pending',
-              startVelocity: 3000
-            });
-            // Set Ink
-            UIUtils.ink({selector: '.item-pending'});
-          }, 10);
+          $scope.motion.show({selector: '.item-pending'});
         }
       });
   };
@@ -613,27 +584,17 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
 
 }
 
-function WalletTxErrorController($scope, $timeout, UIUtils, csWallet) {
+function WalletTxErrorController($scope, UIUtils, csWallet) {
   'ngInject';
 
   $scope.$on('$ionicView.enter', function(e) {
     $scope.loadWallet()
       .then(function() {
-        $scope.updateView();
+        $scope.doMotion();
         $scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
       });
   });
-
-  // Update view
-  $scope.updateView = function() {
-    // Set Motion
-    $timeout(function() {
-      UIUtils.motion.fadeSlideInRight();
-      // Set Ink
-      UIUtils.ink({selector: '.item'});
-    }, 10);
-  };
 
   // Updating wallet data
   $scope.doUpdate = function() {

@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="view-identity">
   <ion-nav-title>
   </ion-nav-title>
 
@@ -47,10 +47,10 @@
       </button>
     </div>
 
-    <div class="row no-padding">
+    <div class="row no-padding" >
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-      <div class="col list animate-fade-slide-in-right">
+      <div class="col list" ng-class="::motion.ionListClass">
 
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
@@ -122,7 +122,7 @@
   </ion-content>
 
   <!-- fab button -->
-  <div class="visible-xs visible-sm">
+  <div class="visible-xs visible-sm" ng-hide="loading">
     <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive expanded button-energized-900 drop"
             ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.uid})">
       <i class="icon ion-android-send"></i>

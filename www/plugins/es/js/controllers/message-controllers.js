@@ -96,14 +96,7 @@ function ESMessageListController($scope, $rootScope, $state, $timeout, $translat
         $scope.loading = false;
 
         if (messages.length > 0) {
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.ripple({
-              startVelocity: 3000
-            });
-            // Set Ink
-            UIUtils.ink();
-          });
+          $scope.motion.show({selector: '.view-messages .list .item'});
         }
       })
       .catch(function(err) {
@@ -393,12 +386,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
             $scope.id = message.id;
             $scope.formData = message;
             $scope.canDelete = true;
-            $timeout(function () {
-              UIUtils.motion.fadeSlideIn({
-                selector: '.view-message .animate-fade-slide-in .item',
-                startVelocity: 3000
-              });
-            });
+            $scope.motion.show({selector: '.view-message .list .item'});
             // Mark as read
             if (!message.read) {
               $timeout(function() {

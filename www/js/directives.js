@@ -48,16 +48,20 @@ angular.module('cesium')
   })
 
   // Add a copy-on-click directive
-  .directive('copyOnClick', function ($window, $document, Device, UIUtils, $ionicPopover, $timeout) {
+  .directive('copyOnClick', function ($window, $document, Device, UIUtils) {
     'ngInject';
     return {
       restrict: 'A',
       link: function (scope, element, attrs) {
-        //var childScope;
         var showCopyPopover = function (event) {
           var value = attrs.copyOnClick;
           if (value && Device.clipboard.enable) {
-            Device.clipboard.copy(value); // copy to clipboard
+            // copy to clipboard
+            Device.clipboard.copy(value)
+              .then(function(){
+                UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
+              })
+              .catch(UIUtils.onError('ERROR.COPY_CLIPBOARD'));
           }
           else if (value) {
             var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;

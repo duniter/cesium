@@ -89,6 +89,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.search = {};
   $scope.login = csWallet.isLogin();
+  $scope.motion = UIUtils.motion.default;
 
   $scope.showHome = function() {
     $ionicHistory.nextViewOptions({
@@ -411,6 +412,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.hideFab = function(id, timeout) {
     UIUtils.motion.toggleOff({selector: '#'+id + '.button-fab'}, timeout);
+  };
+
+  // Could be override by subclass
+  $scope.doMotion = function(options) {
+    return $scope.motion.show(options);
   };
 
 }

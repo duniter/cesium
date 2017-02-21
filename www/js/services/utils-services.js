@@ -1,7 +1,7 @@
 angular.module('cesium.utils.services', ['ngResource'])
 
-.factory('UIUtils', function($ionicLoading, $ionicPopup, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
-           $ionicPopover, $state, $rootScope, screenmatch) {
+.factory('UIUtils', function($ionicLoading, $ionicPopup, $ionicConfig, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
+           $ionicPopover, $state, $rootScope, screenmatch, csSettings) {
   'ngInject';
 
 
@@ -15,7 +15,9 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     data = {
       smallscreen: screenmatch.bind('xs, sm', $rootScope)
-    }
+    },
+    exports,
+    raw = {}
   ;
 
   function alertError(err, subtitle) {
@@ -465,37 +467,6 @@ angular.module('cesium.utils.services', ['ngResource'])
     return deferred.promise;
   }
 
-  function disableEffects() {
-    this.ink = function(){};
-
-    function disableMotion(baseSelector) {
-      return function(options) {
-        if (!options || !options.selector) {
-          options = {
-              selector: (baseSelector + ' .item')
-            };
-        }
-        var parentsInDom = document.querySelectorAll(baseSelector);
-        for (var i = 0; i < parentsInDom.length; i++) {
-            var parent = parentsInDom[i];
-            parent.className = parent.className.replace(/\banimate-[a-z- ]+\b/,'');
-        }
-
-        var itemsInDom = document.querySelectorAll(options.selector);
-        for (var j = 0; j < itemsInDom.length; j++) {
-            var child = itemsInDom[j];
-            child.style.webkitTransitionDelay = "0s";
-            child.style.transitionDelay = "0s";
-            child.className += ' in done';
-        }
-      };
-    }
-
-    this.motion.fadeSlideIn= disableMotion('.animate-fade-slide-in');
-    this.motion.fadeSlideInRight = disableMotion('.animate-fade-slide-in-right');
-    this.motion.ripple = disableMotion('.animate-ripple');
-  }
-
   function showFab(id, timeout) {
     if (!timeout) {
       timeout = 900;
@@ -528,7 +499,76 @@ angular.module('cesium.utils.services', ['ngResource'])
     }, timeout);
   }
 
-  ionicMaterialMotion.toggleOn = function(options, timeout) {
+  function motionDelegate(callback, ionListClass) {
+    var motionTimeout = isSmallScreen() ? 100 : 10;
+    return {
+      ionListClass: ionListClass,
+      show: function(options) {
+        options = options || {};
+        options.ink = angular.isDefined(options.ink) ? options.ink : true;
+        options.startVelocity = options.startVelocity || (isSmallScreen() ? 1100 : 3000);
+        return $timeout(function(){
+          if (options.ink) {
+            ionicMaterialInk.displayEffect({selector: options.selector});
+          }
+          callback(options);
+        }, options.timeout ||motionTimeout );
+      }
+    };
+  }
+
+  function setEffects(enable) {
+    if (exports.motion.enable === enable) return; // same
+    console.debug('[UI] [effects] ' + (enable ? 'Enable' : 'Disable'));
+
+    if (enable) {
+      $ionicConfig.views.transition('platform');
+      exports.motion = raw.motion;
+    }
+    else {
+      $ionicConfig.views.transition('none');
+      var nothing = {
+        class: undefined,
+        show: function(){}
+      };
+      exports.motion = {
+        enable : false,
+        default: nothing,
+        fadeSlideIn: nothing,
+        fadeSlideInRight: nothing,
+        panInLeft: nothing,
+        pushDown: nothing,
+        ripple: nothing,
+        slideUp: nothing,
+        fadeIn: nothing,
+        toggleOn: toggleOn,
+        toggleOff: toggleOff
+      };
+    }
+  }
+
+  raw.motion = {
+    enable: true,
+    default: motionDelegate(function(options){
+      ionicMaterialMotion.ripple(options);
+      ionicMaterialInk.displayEffect(options);
+    }, 'animate-ripple'),
+    blinds: motionDelegate(ionicMaterialMotion.blinds, 'animate-blinds'),
+    fadeSlideIn: motionDelegate(ionicMaterialMotion.fadeSlideIn, 'animate-fade-slide-in'),
+    fadeSlideInRight: motionDelegate(ionicMaterialMotion.fadeSlideInRight, 'animate-fade-slide-in-right'),
+    panInLeft: motionDelegate(ionicMaterialMotion.panInLeft, 'animate-pan-in-left'),
+    pushDown: motionDelegate(ionicMaterialMotion.pushDown, 'push-down'),
+    ripple: motionDelegate(ionicMaterialMotion.ripple, 'animate-ripple'),
+    slideUp: motionDelegate(ionicMaterialMotion.slideUp, 'slide-up'),
+    fadeIn: motionDelegate(function(options) {
+        toggleOn(options);
+      }, 'fade-in'),
+    toggleOn: toggleOn,
+    toggleOff: toggleOff
+  };
+
+
+  function toggleOn(options, timeout) {
     // We have a single option, so it may be passed as a string or property
     if (typeof options === 'string') {
       options = {
@@ -550,9 +590,9 @@ angular.module('cesium.utils.services', ['ngResource'])
         element.classList.toggle('on', true);
       });
     }, timeout || 100);
-  };
+  }
 
-  ionicMaterialMotion.toggleOff = function(options, timeout) {
+  function toggleOff(options, timeout) {
     // We have a single option, so it may be passed as a string or property
     if (typeof options === 'string') {
       options = {
@@ -574,9 +614,13 @@ angular.module('cesium.utils.services', ['ngResource'])
         element.classList.toggle('on', false);
       });
     }, timeout || 900);
-  };
+  }
 
-  return {
+  csSettings.api.data.on.changed($rootScope, function(data) {
+   setEffects(data.uiEffects);
+  });
+
+  exports = {
     alert: {
       error: alertError,
       info: alertInfo,
@@ -594,7 +638,8 @@ angular.module('cesium.utils.services', ['ngResource'])
       isSmall: isSmallScreen
     },
     ink: ionicMaterialInk.displayEffect,
-    motion: ionicMaterialMotion,
+    motion: raw.motion,
+    setEffects: setEffects,
     fab: {
       show: showFab,
       hide: hideFab
@@ -604,7 +649,6 @@ angular.module('cesium.utils.services', ['ngResource'])
       share: showSharePopover,
       helptip: showHelptip
     },
-    disableEffects: disableEffects,
     selection: {
       select: selectElementText,
       get: getSelectionText
@@ -612,8 +656,11 @@ angular.module('cesium.utils.services', ['ngResource'])
     image: {
       resizeFile: resizeImageFromFile,
       resizeSrc: resizeImageFromSrc
-    }
+    },
+    raw: raw
   };
+
+  return exports;
 })
 
 

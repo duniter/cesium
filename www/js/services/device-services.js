@@ -2,7 +2,7 @@
 angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services'])
 
   .factory('Device',
-    function(UIUtils, $translate, $ionicPopup, $q,
+    function($translate, $ionicPopup, $q,
       // removeIf(no-device)
       $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
       // endRemoveIf(no-device)
@@ -110,8 +110,9 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
 
       function copy(text, callback) {
         if (!exports.enable) {
-          return; // do nothing if not available
+          return $q.reject('Device disabled');
         }
+        var deferred = $q.defer();
         $cordovaClipboard
           .copy(text)
           .then(function () {
@@ -119,13 +120,12 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
             if (callback) {
               callback();
             }
-            else {
-              UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
-            }
+            deferred.resolve();
           }, function () {
             // error
-            UIUtils.alert.error('ERROR.COPY_CLIPBOARD');
+            deferred.reject({message: 'ERROR.COPY_CLIPBOARD'});
           });
+        return deferred.promise;
       }
 
       // On platform ready: check if device could be used

@@ -27,10 +27,12 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification, csSettings) {
+function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification) {
   'ngInject';
 
   var defaultSearchLimit = 40;
+
+  var excludedCodes = esNotification.constants.MESSAGE_CODES.concat(esNotification.constants.GROUP_CODES);
 
   $scope.search = {
     loading : true,
@@ -40,7 +42,7 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
     limit: defaultSearchLimit,
     options: {
       codes: {
-        excludes: ['MESSAGE_RECEIVED']
+        excludes: excludedCodes
       }
     }
   };
@@ -80,13 +82,8 @@ function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, 
   };
 
   $scope.updateView = function() {
-
-    // Set Motion and Ink
-    if ($scope.ionListClass) {
-      $timeout(function() {
-        UIUtils.motion.ripple({selector: '.view-notification .item'});
-        UIUtils.ink({selector: '.view-notification .item.ink'});
-      }, 100);
+    if ($scope.motion && $scope.motion.ionListClass) {
+      $scope.motion.show({selector: '.view-notification .item'});
     }
   };
 
@@ -154,7 +151,7 @@ function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, 
   angular.extend(this, $controller('NotificationsCtrl', {$scope: $scope}));
 
   // Disable list effects
-  $scope.ionListClass = null;
+  $scope.motion = null;
 
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {

@@ -162,10 +162,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     };
 
   $scope.save = function() {
-    if ($scope.loading) return $q.when();
+    if ($scope.loading || $scope.pendingSaving) return $q.when();
     if ($scope.saving) {
+      $scope.pendingSaving = true;
       // Retry later
       return $timeout(function() {
+        $scope.pendingSaving = false;
         return $scope.save();
       }, 500);
     }

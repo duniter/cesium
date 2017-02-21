@@ -43,7 +43,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
+function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
   'ngInject';
 
   $scope.networkStarted = false;
@@ -153,6 +153,7 @@ function NetworkLookupController($scope, $timeout, $state, $ionicHistory, $ionic
     $scope.search.memberPeersCount = data.memberPeersCount;
     // Always tru if network not started (e.g. after leave+renter the view)
     $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
+    $scope.motion.show({selector: '.item-peer'});
   };
 
   $scope.refresh = function() {

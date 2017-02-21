@@ -138,18 +138,18 @@
     display:none;
 }
 
-.peer-item {
+.item-peer {
     padding-top: 9px;
     padding-bottom: 3px;
 }
 
-.peer-item .badge {
+.item-peer .badge {
     top: 14px;
     right: 6%;
 }
 
-.peer-item:hover .badge.badge-energized,
-.peer-item:hover .badge.badge-balanced
+.item-peer:hover .badge.badge-energized,
+.item-peer:hover .badge.badge-balanced
 {
     color: #fff !important;
 }

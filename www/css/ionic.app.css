@@ -14535,9 +14535,9 @@ a.underline:hover,
   .lookupForm .list .item-avatar .img {
     left: 16px !important; }
 
-/**********
-   Motion
-**********/
+/************************
+   Additional motions
+*************************/
 .fade-in {
   opacity: 0;
   filter: alpha(opacity=0);

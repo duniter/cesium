@@ -233,7 +233,12 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     $scope.search.loading = (offset === 0);
     $scope.search.type = 'newcomers';
 
-    csWot.newcomers(offset, size)
+    // Update location href
+    if (!offset) {
+      $scope.doRefreshLocationHref();
+    }
+
+    return csWot.newcomers(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'newcomers') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
@@ -245,9 +250,6 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
         $scope.search.hasMore = false;
         UIUtils.onError('ERROR.LOAD_NEWCOMERS_FAILED')(err);
       });
-
-    // Update location href
-    $scope.doRefreshLocationHref();
   };
 
   $scope.doGetPending = function(offset, size) {
@@ -263,7 +265,12 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
       csWot.all :
       csWot.pending;
 
-    searchFunction(offset, size)
+    // Update location href
+    if (!offset) {
+      $scope.doRefreshLocationHref();
+    }
+
+    return searchFunction(offset, size)
       .then(function(idties){
         if ($scope.search.type != 'pending') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
@@ -277,9 +284,6 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
         $scope.search.hasMore = false;
         UIUtils.onError('ERROR.LOAD_PENDING_FAILED')(err);
       });
-
-    // Update location href
-    $scope.doRefreshLocationHref();
   };
 
   $scope.showMore = function() {
@@ -378,17 +382,9 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
 
     if (!$scope.search.results.length) return;
 
-    // Set Motion
+    // Motion
     if (res.length > 0) {
-      $timeout(function () {
-        UIUtils.motion.ripple({
-          startVelocity: 3000
-        });
-        // Set Ink
-        UIUtils.ink({
-          selector: '.item.ink'
-        });
-      }, 10);
+      $scope.motion.show({selector: '.lookupForm .item.ink'});
     }
   };
 
@@ -525,7 +521,6 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $tr
           return;
         }
 
-
         UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
           .then(function(confirm){
             if (!confirm) {
@@ -658,14 +653,6 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $tr
     cert.name = csWallet.data.name;
   };
 
-  // Could be override by subclass
-  $scope.doMotion = function() {
-    $timeout(function() {
-      UIUtils.motion.fadeSlideInRight();
-      UIUtils.ink();
-    }, 10);
-  };
-
   /* -- open screens -- */
 
   $scope.showCertifications = function() {
@@ -719,10 +706,12 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $tr
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWallet) {
+function WotIdentityViewController($scope, $controller, UIUtils, csWallet) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
+
+  $scope.motion = UIUtils.motion.fadeSlideInRight;
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
@@ -731,9 +720,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
       state.stateParams.pubkey.trim().length > 0) {
       if ($scope.loading) { // load once
         return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
-          .then(function() {
-            $scope.doMotion();
-          });
+          .then($scope.doMotion);
       }
     }
 
@@ -742,9 +729,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
       state.stateParams.uid.trim().length > 0) {
       if ($scope.loading) { // load once
         return $scope.load(null, true /*withCache*/, state.stateParams.uid)
-          .then(function() {
-            $scope.doMotion();
-          });
+          .then($scope.doMotion);
       }
     }
 
@@ -753,9 +738,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
 
       if ($scope.loading) {
         return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
-          .then(function() {
-            $scope.doMotion();
-          });
+          .then($scope.doMotion);
       }
     }
 
@@ -766,12 +749,7 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
   });
 
   $scope.doMotion = function() {
-    // Effects
-    $timeout(function () {
-      UIUtils.motion.fadeSlideInRight({startVelocity: 3000});
-      UIUtils.ink();
-    });
-
+    $scope.motion.show({selector: '.view-identity .list .item'});
     $scope.showFab('fab-transfer');
   };
 }
@@ -786,16 +764,19 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
 
   // Values overwritten in tab controller (for small screen)
   $scope.motions = {
-    receivedCertifications: true,
-    givenCertifications: true,
-    avatar: true
+    receivedCertifications: angular.copy(UIUtils.motion.fadeSlideIn),
+    givenCertifications: angular.copy(UIUtils.motion.fadeSlideInRight),
+    avatar: angular.copy(UIUtils.motion.fadeIn),
   };
+  $scope.motions.receivedCertifications.enable = true;
+  $scope.motions.givenCertifications.enable = true;
+  $scope.motions.avatar.enable = true;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.type) {
-      $scope.motions.receivedCertifications = (state.stateParams.type != 'given');
-      $scope.motions.givenCertifications = (state.stateParams.type == 'given');
-      $scope.motions.avatar= false;
+      $scope.motions.receivedCertifications.enable = (state.stateParams.type != 'given');
+      $scope.motions.givenCertifications.enable = (state.stateParams.type == 'given');
+      $scope.motions.avatar.enable = false;
     }
 
     if (state.stateParams &&
@@ -852,28 +833,19 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
     $scope.doMotionReceivedCertifications(0, skipItems);
 
     // Motion on avatar part
-    if ($scope.motions.avatar) {
-      // Effects
-      $timeout(function () {
-        UIUtils.motion.toggleOn({
-          selector: '.col-avatar .motion'
-        });
-      }, 300);
+    if ($scope.motions.avatar.enable) {
+      $scope.motions.avatar.show({selector: '.col-avatar .' + $scope.motions.avatar.ionListClass});
     }
 
     // Motion on given certification part
-    $scope.doMotionGivenCertifications($scope.motions.receivedCertifications ? 800 : 10, skipItems);
+    $scope.doMotionGivenCertifications($scope.motions.receivedCertifications.enable ? 100 : 10, skipItems);
   };
 
   // Effects on received certifcations
   $scope.doMotionReceivedCertifications = function(timeout, skipItems) {
-    if ($scope.motions.receivedCertifications) {
+    if ($scope.motions.receivedCertifications.enable) {
       if (!skipItems) {
-        // List items
-        $timeout(function () {
-          UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item', startVelocity: 3000});
-          UIUtils.ink({selector: '.list.certifications .ink'});
-        }, timeout || 10);
+        $scope.motions.receivedCertifications.show({selector: '.list.certifications .item', timeout: timeout});
       }
 
       // Fab button
@@ -893,13 +865,9 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
   // Effects on given certifcations
   $scope.doMotionGivenCertifications = function(timeout, skipItems) {
 
-    if ($scope.motions.givenCertifications) {
+    if ($scope.motions.givenCertifications.enable) {
       if (!skipItems) {
-        // List items
-        $timeout(function() {
-          UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item', startVelocity: 3000});
-          UIUtils.ink({selector: '.list.given-certifications .ink'});
-        }, timeout || 10);
+        $scope.motions.givenCertifications.show({selector: '.list.given-certifications .item', timeout: timeout});
       }
       // Fab button
       if ($scope.canSelectAndCertify || $rootScope.tour) {

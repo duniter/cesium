@@ -42,14 +42,14 @@
       <!-- certifications tables -->
       <div class="row responsive-sm responsive-md responsive-lg">
         <!-- Received certifications -->
-        <div class="col no-padding" ng-if="motions.receivedCertifications">
+        <div class="col no-padding" ng-if="motions.receivedCertifications.enable">
           <ng-include src="'templates/wot/items_received_certifications.html'"></ng-include>
         </div>
 
         <!-- Avatar -->
         <div class="col col-20 col-avatar hidden-xs hidden-sm hidden-md no-padding" style="margin-top: 100px;"
-             ng-if="motions.avatar">
-          <div class="row no-padding motion fade-in">
+             ng-if="motions.avatar.enable">
+          <div class="row no-padding " ng-class="::motions.avatar.ionListClass">
             <div class="col text-center no-padding gray" style="margin-top: 30px;">
               <i class="icon ion-arrow-right-a" style="font-size:30px"></i>
             </div>
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Given certifications -->
-        <div class="col no-padding" ng-if="motions.givenCertifications">
+        <div class="col no-padding" ng-if="motions.givenCertifications.enable">
           <ng-include src="'templates/wot/items_given_certifications.html'"></ng-include>
         </div>
       </div>

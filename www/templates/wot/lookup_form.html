@@ -68,8 +68,7 @@
       <span ng-if="search.type=='newcomers'" translate>WOT.LOOKUP.NO_NEWCOMERS</span>
     </div>
 
-    <ion-list
-      class="animate-ripple"
+    <ion-list class="{{::motion.ionListClass}}"
       can-swipe="$root.device.enable">
 
       <ion-item

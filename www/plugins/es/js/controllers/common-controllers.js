@@ -164,9 +164,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
         // Set Motion
         $timeout(function() {
           UIUtils.motion.fadeSlideIn({
-            selector: '.comments .item',
-            startVelocity: 3000
-          });
+            selector: '.comments .item'});
         });
       });
   };

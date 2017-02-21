@@ -3,7 +3,7 @@
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <ion-list class="animate-ripple padding padding-xs">
+  <ion-list class="padding padding-xs list-blocks" ng-class="::motion.ionListClass">
     <div class="padding gray" ng-if="!search.loading && !search.results.length" translate>
       BLOCKCHAIN.LOOKUP.NO_BLOCK
     </div>
@@ -15,7 +15,7 @@
 
   <ion-infinite-scroll
     ng-if="search.hasMore"
-    icon="android"
+    spinner="android"
     on-infinite="showMore()"
     distance="1%">
   </ion-infinite-scroll>

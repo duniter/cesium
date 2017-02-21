@@ -281,15 +281,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
     // Set Motion
     if (res.length > 0) {
-      $timeout(function () {
-        UIUtils.motion.ripple({
-          startVelocity: 3000
-        });
-        // Set Ink
-        UIUtils.ink({
-          selector: '.item.ink'
-        });
-      }, 10);
+      $scope.motion.show({selector: '.list-blocks .item-block'});
     }
 
     $scope.$broadcast('$$rebind::rebind'); // notify binder
@@ -322,17 +314,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     var showBlock = function(block){
       // Force rebind
       $scope.$broadcast('$$rebind::rebind');
-
-      return $timeout(function () {
-        UIUtils.motion.ripple({
-          startVelocity: 3000,
-          selector: '#block-'+block.number
-        });
-        // Set Ink
-        UIUtils.ink({
-          selector: '#block-'+block.number
-        });
-      });
+      $scope.motion.show({selector: '#block-'+block.number});
     };
 
     $scope.wsBlock.on(function(json) {

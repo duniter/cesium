@@ -1,8 +1,8 @@
 <a name="block-{{::block.number}}"></a>
 <ion-item id="block-{{::block.number}}"
           ng-if="!block.hide"
-          class="item item-block item-icon-left {{ionItemClass}} item-block-empty"
-          ng-class="{'compacted': block.compacted && compactMode}"
+          class="item item-block item-icon-left item-block-empty"
+          ng-class="{'compacted': block.compacted && compactMode, ionItemClass: true}"
           ng-click="selectBlock(block)"
           >
   <div class="row no-padding" ng-if="!block.compacted || !compactMode">

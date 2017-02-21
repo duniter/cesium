@@ -312,7 +312,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   $rootScope.walletData = csWallet.data;
   $rootScope.device = Device;
 
-
   // removeIf(device)
   // Automatic redirection to large state (if define)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
@@ -323,8 +322,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         $state.go(next.data.large, nextParams);
       }
     }
-
-
   });
   // endRemoveIf(device)
 
@@ -381,36 +378,34 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because this one is callable many times
   Device.ready()
-  .then(function() {
+    .then(function() {
 
-    // Keyboard
-    if (window.cordova && window.cordova.plugins.Keyboard) {
-      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-      // for form inputs)
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      // Keyboard
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 
-      // iOS: do not push header up when opening keyboard
-      // (see http://ionicframework.com/docs/api/page/keyboard/)
-      if (ionic.Platform.isIOS()) {
-        cordova.plugins.Keyboard.disableScroll(true);
+        // iOS: do not push header up when opening keyboard
+        // (see http://ionicframework.com/docs/api/page/keyboard/)
+        if (ionic.Platform.isIOS()) {
+          cordova.plugins.Keyboard.disableScroll(true);
+        }
       }
-    }
 
-    // Ionic Platform Grade is not A, disabling views transitions
-    if (ionic.Platform.grade.toLowerCase()!='a') {
-      console.log('Disable UI effects - plateform\'s grade is not [a] but [' + ionic.Platform.grade + ']');
-      $ionicConfig.views.transition('none');
-      // FIXME: some effect appears anyway...
-      // UIUtils.disableEffects();
-    }
-  })
-  // Status bar style
-  .then(function() {
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  });
+      // Ionic Platform Grade is not A, disabling views transitions
+      if (ionic.Platform.grade.toLowerCase()!='a') {
+        console.log('Disable UI effects - plateform\'s grade is not [a] but [' + ionic.Platform.grade + ']');
+        UIUtils.setEffects(false);
+      }
+    })
+    // Status bar style
+    .then(function() {
+      if (window.StatusBar) {
+        // org.apache.cordova.statusbar required
+        StatusBar.styleDefault();
+      }
+    });
 
   var onLanguageChange = function() {
     var lang = $translate.use();

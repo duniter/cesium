@@ -120,16 +120,10 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
     if (profile.avatar) {
       $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
     }
-    // Set Motion
-    $timeout(function() {
-      UIUtils.motion.ripple();
-      // Set Ink
-      UIUtils.ink({selector: 'ion-list > .item.ink'});
-    }, 10);
-
-    // Update loading var
-    // Should be done with a delay, to avoid trigger onFormDataChanged()
+    $scope.motion.show();
     UIUtils.loading.hide();
+
+    // Update loading - done with a delay, to avoid trigger onFormDataChanged()
     $timeout(function() {
       $scope.loading = false;
     }, 1000);
