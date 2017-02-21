@@ -57,14 +57,12 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       },
 
       loadRequirements = function(pubkey, uid) {
-        return $q(function(resolve, reject) {
-          // Get requirements
-          BMA.wot.requirements({pubkey: pubkey})
+        if (!pubkey) return $q.when({});
+        // Get requirements
+        return BMA.wot.requirements({pubkey: pubkey})
           .then(function(res){
-            if (!res.identities || res.identities.length === 0) {
-              resolve();
-              return;
-            }
+            if (!res.identities || !res.identities.length)  return;
+
             // Sort to select the best identity
             if (res.identities.length > 1) {
               // Select the best identity, by sorting using this order
@@ -112,14 +110,14 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               return count;
             }, 0) : 0;
 
-            resolve(requirements);
+            return requirements;
           })
           .catch(function(err) {
             // If not a member: continue
             if (!!err &&
                 (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
                  err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
-              resolve({
+              return {
                 hasSelf: false,
                 needMembership: true,
                 canMembershipOut: false,
@@ -128,17 +126,14 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 needCertifications: false,
                 needCertificationCount: 0,
                 willNeedCertificationCount: 0
-              });
+              };
             }
-            else {
-              reject(err);
-            }
+            throw err;
           });
-        });
       },
 
       loadIdentityByLookup = function(pubkey, uid) {
-        return BMA.wot.lookup({ search: pubkey })
+        return BMA.wot.lookup({ search: pubkey||uid })
           .then(function(res){
             var identities = res.results.reduce(function(idties, res) {
               return idties.concat(res.uids.reduce(function(uids, idty) {
@@ -171,6 +166,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               });
             }
             var identity = identities[0];
+            console.log(identity);
 
             identity.hasSelf = !!(identity.uid && identity.timestamp && identity.sig);
             identity.lookup = {};
@@ -508,17 +504,35 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           });
       },
 
-      loadData = function(pubkey, withCache, uid) {
-        // Check cached data
-        var data = withCache ? identityCache.get(pubkey) : null;
-        if (data && (!uid || data.uid == uid)) {
-          console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
-          return $q.when(data);
+      loadData = function(pubkey, withCache, uid, force) {
+
+        var data;
+
+        if (!pubkey && uid && !force) {
+          return BMA.wot.member.getByUid(uid)
+            .then(function(member) {
+              if (member) return loadData(member.pubkey, withCache, member.uid); // recursive call
+              //throw {message: 'NOT_A_MEMBER'};
+              return loadData(pubkey, withCache, uid, true/*force*/);
+            });
         }
 
-        console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
+        // Check cached data
+        if (pubkey) {
+          data = withCache ? identityCache.get(pubkey) : null;
+          if (data && (!uid || data.uid == uid)) {
+            console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
+            return $q.when(data);
+          }
+          console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
+          data = {pubkey: pubkey};
+        }
+        else {
+          console.debug("[wot] Loading identity from uid " + uid);
+          data = {};
+        }
+
         var now = new Date().getTime();
-        data = {pubkey: pubkey};
 
         var parameters;
         var medianTime;
@@ -566,7 +580,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
             return $q.all([
               // Get received certifications
-              loadCertifications(BMA.wot.certifiersOf, pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true /*certifiersOf*/)
+              loadCertifications(BMA.wot.certifiersOf, data.pubkey, data.lookup ? data.lookup.certifications[idtyFullKey] : null, parameters, medianTime, true /*certifiersOf*/)
                 .then(function (res) {
                   data.received_cert = res.valid;
                   data.received_cert_pending = res.pending;
@@ -574,7 +588,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 }),
 
               // Get given certifications
-              loadCertifications(BMA.wot.certifiedBy, pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime, false/*certifiersOf*/)
+              loadCertifications(BMA.wot.certifiedBy, data.pubkey, data.lookup ? data.lookup.givenCertifications : null, parameters, medianTime, false/*certifiersOf*/)
                 .then(function (res) {
                   data.given_cert = res.valid;
                   data.given_cert_pending = res.pending;
@@ -591,10 +605,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             ]);
           })
           .then(function() {
-            if (data.requirements.uid) {
-              // Add compute some additional requirements (that required all data like certifications)
-              finishLoadRequirements(data);
-            }
+            // Add compute some additional requirements (that required all data like certifications)
+            finishLoadRequirements(data);
 
             // API extension
             return api.data.raisePromise.load(data)
@@ -604,9 +616,10 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               });
           })
           .then(function() {
+            if (!data.pubkey) return undefined; // not found
             delete data.lookup; // not need anymore
-            identityCache.put(pubkey, data); // add to cache
-            console.debug('[wallet] Identity '+ pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
+            identityCache.put(data.pubkey, data); // add to cache
+            console.debug('[wallet] Identity '+ data.pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
             return data;
           });
       },

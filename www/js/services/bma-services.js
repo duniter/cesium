@@ -183,6 +183,13 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         });
     };
 
+    exports.wot.member.getByUid = function(uid) {
+      return exports.wot.member.all()
+        .then(function(res){
+          return _.findWhere(res.results, {uid: uid});
+        });
+    };
+
     /**
      * Return all expected blocks
      * @param blockNumbers a rray of block number

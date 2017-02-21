@@ -75,19 +75,19 @@
       <ion-item
         ng-repeat="identity in search.results track by identity.id"
         id="helptip-wot-search-result-{{$index}}"
-        class="item item-border-large item-avatar item-icon-right ink" ng-click="select(identity)">
+        class="item item-border-large item-avatar item-icon-right ink" ng-click="::select(identity)">
 
-        <i ng-if="!identity.avatar" class="item-image icon ion-person"></i>
-        <i ng-if="identity.avatar" class="item-image avatar" style="background-image: url({{::identity.avatar.src}})"></i>
+        <i ng-if="::!identity.avatar" class="item-image icon ion-person"></i>
+        <i ng-if="::identity.avatar" class="item-image avatar" style="background-image: url({{::identity.avatar.src}})"></i>
 
         <h2>
-          <ng-if ng-if="identity.name||identity.uid" ng-bind-html="identity.name||identity.uid"></ng-if>
-          <ng-if ng-if="!identity.name && !identity.uid">{{::identity.pubkey|formatPubkey}}</ng-if>
+          <ng-if ng-if="::identity.name||identity.uid" ng-bind-html="::identity.name||identity.uid"></ng-if>
+          <ng-if ng-if="::!identity.name && !identity.uid">{{::identity.pubkey|formatPubkey}}</ng-if>
         </h2>
 
         <h4 class="gray"
             ng-class="{'pull-right': !smallscreen}"
-            ng-if="identity.sigDate">
+            ng-if="::identity.sigDate">
           <i class="ion-clock"></i>
           {{::'WOT.LOOKUP.REGISTERED' | translate:identity}}
         </h4>
@@ -98,7 +98,7 @@
           {{::'WOT.LOOKUP.MEMBER_FROM' | translate:identity}}
         </h4>
         <h4 class="gray">
-          <span class="positive" ng-if="identity.name && identity.uid">
+          <span class="positive" ng-if="::identity.name && identity.uid">
             <i class="ion-person"></i>
             {{::identity.uid}}&nbsp;
           </span>
@@ -106,15 +106,17 @@
           {{::identity.pubkey | formatPubkey}}
           <span ng-if="!identity.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
         </h4>
-        <h4 ng-if="identity.events||identity.tags">
-          <span ng-repeat="event in identity.events"
+        <h4 ng-if="::identity.events||identity.tags">
+          <span ng-repeat="event in ::identity.events"
               class="assertive">
-            <i class="ion-alert-circled " ng-if="!identity.valid"></i>
-            <span ng-bind-html="event.message|translate:event.messageParams"></span>
+            <i class="ion-alert-circled " ng-if="::!identity.valid"></i>
+            <span ng-bind-html="::event.message|translate:event.messageParams"></span>
           </span>
-          <span ng-repeat="tag in identity.tags" class="dark">
-            #<ng-bind-html ng-bind-html="tag"></ng-bind-html>
-          </ng-repeat>
+          <span ng-if="::identity.tags" class="dark">
+           <ng-repeat ng-repeat="tag in ::identity.tags">
+             #<ng-bind-html ng-bind-html="::tag"></ng-bind-html>
+           </ng-repeat>
+          </span>
         </h4>
         <i class="icon ion-ios-arrow-right "></i>
         <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>

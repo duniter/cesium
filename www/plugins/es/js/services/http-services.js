@@ -3,7 +3,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, CryptoUtils, csHttp, $rootScope, csConfig, csSettings, csWallet) {
+.factory('esHttp', function($q, CryptoUtils, csHttp, $rootScope, $state, $sce, csConfig, csSettings, csWallet) {
   'ngInject';
 
   function factory() {
@@ -12,7 +12,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       that,
       regex = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
-        HASH_TAG: new RegExp('#(\\w+)'),
+        HASH_TAG: new RegExp('#([\\wḡĞğ]+)'),
         USER_TAG: new RegExp('@(\\w+)')
       };
 
@@ -35,8 +35,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       return csHttp.post(host, node, path);
     }
 
-    function parseTagsFromText(value) {
-      var matches = value && regex.HASH_TAG.exec(value);
+    function parseTagsFromText(value, prefix) {
+      prefix = prefix || '#';
+      var reg = prefix === '@' ? regex.USER_TAG : regex.HASH_TAG;
+      var matches = value && reg.exec(value);
       var tags;
       while(matches) {
         var tag = matches[1];
@@ -45,9 +47,39 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
           tags.push(tag);
         }
         value = value.substr(matches.index + matches[1].length + 1);
-        matches = value && regex.HASH_TAG.exec(value);
+        matches = value && reg.exec(value);
       }
       return tags;
+    }
+
+    function escape(text) {
+      if (!text) return text;
+      return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function trustAsHtml(text) {
+      var content = text ? escape(text.trim()).replace(/\n/g,'<br>') : undefined;
+      if (content) {
+
+        // Replace hashtags in description
+        var hashTags = parseTagsFromText(content);
+        _.forEach(hashTags, function(tag){
+          var href = $state.href('app.wot_lookup', {hash: tag});
+          var link = '<a href=\"{0}">{1}</a>'.format(href, '#'+tag);
+          content = content.replace('#'+tag, link);
+        });
+
+        // Replace user tags in description
+        var userTags = parseTagsFromText(content, '@');
+        _.forEach(userTags, function(tag){
+          var href = $state.href('app.wot_identity_uid', {uid: tag});
+          var link = '<a href=\"{0}">{1}</a>'.format(href, '@'+tag);
+          content = content.replace('@'+tag, link);
+        });
+
+        $sce.trustAsHtml(content);
+      }
+      return content;
     }
 
     function fillRecordTags(record, fieldNames) {
@@ -281,10 +313,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         empty: emptyHit
       },
       util: {
-        parseTags: parseTagsFromText
+        parseTags: parseTagsFromText,
+        trustAsHtml: trustAsHtml
       },
       date: {
         now: getTimeNow
+      },
+      constants: {
+        regexp: regex
       }
     };
     return that;

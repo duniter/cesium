@@ -1,17 +1,25 @@
 /**
  * Created by blavenie on 01/02/17.
  */
-function Block(json) {
+function Block(json, attributes) {
   "use strict";
 
   var that = this;
 
-  /*Object.keys(json).forEach(function (key) {
-    that[key] = json[key];
-  });*/
-  ["currency", "issuer", "medianTime", "number", "version", "powMin", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions"].forEach(function (key) {
-    that[key] = json[key];
-  });
+  // Copy default fields
+  if (!attributes || !attributes.length) {
+    ["currency", "issuer", "medianTime", "number", "version", "powMin", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions"]
+      .forEach(function (key) {
+      that[key] = json[key];
+    });
+  }
+  // or just given
+  else {
+    _.forEach(attributes, function (key) {
+      that[key] = json[key];
+    });
+
+  }
 
   that.identitiesCount = that.identities ? that.identities.length : 0;
   that.joinersCount = that.joiners ? that.joiners.length : 0;

@@ -24,6 +24,16 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
+      .state('app.wot_identity_uid', {
+        url: "/lookup/:uid",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_identity.html",
+            controller: 'WotIdentityViewCtrl'
+          }
+        }
+      })
+
       .state('app.wot_cert', {
         url: "/wot/:pubkey/:uid/:type",
         views: {
@@ -462,6 +472,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $tr
   $scope.load = function(pubkey, withCache, uid) {
     return csWot.load(pubkey, withCache, uid)
       .then(function(identity){
+        if (!identity) return UIUtils.onError('ERROR.IDENTITY_NOT_FOUND')().then($scope.showHome);
         $scope.formData = identity;
         $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
         $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
@@ -726,6 +737,17 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
       }
     }
 
+    else if (state.stateParams &&
+      state.stateParams.uid &&
+      state.stateParams.uid.trim().length > 0) {
+      if ($scope.loading) { // load once
+        return $scope.load(null, true /*withCache*/, state.stateParams.uid)
+          .then(function() {
+            $scope.doMotion();
+          });
+      }
+    }
+
     // Load from wallet pubkey
     else if (csWallet.isLogin()){
 
@@ -746,9 +768,9 @@ function WotIdentityViewController($scope, $controller, $timeout, UIUtils, csWal
   $scope.doMotion = function() {
     // Effects
     $timeout(function () {
-      UIUtils.motion.fadeSlideInRight();
+      UIUtils.motion.fadeSlideInRight({startVelocity: 3000});
       UIUtils.ink();
-    }, 10);
+    });
 
     $scope.showFab('fab-transfer');
   };
@@ -849,7 +871,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
       if (!skipItems) {
         // List items
         $timeout(function () {
-          UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item'});
+          UIUtils.motion.fadeSlideInRight({selector: '.list.certifications .item', startVelocity: 3000});
           UIUtils.ink({selector: '.list.certifications .ink'});
         }, timeout || 10);
       }
@@ -875,7 +897,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
       if (!skipItems) {
         // List items
         $timeout(function() {
-          UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item'});
+          UIUtils.motion.fadeSlideInRight({selector: '.list.given-certifications .item', startVelocity: 3000});
           UIUtils.ink({selector: '.list.given-certifications .ink'});
         }, timeout || 10);
       }

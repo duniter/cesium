@@ -18,7 +18,8 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     var listeners,
       defaultLoadSize = 20,
       constants = {
-        MESSAGE_CODES: ['MESSAGE_RECEIVED']
+        MESSAGE_CODES: ['MESSAGE_RECEIVED'],
+        GROUP_CODES: ['GROUP_INVITATION']
       },
       fields = {
         commons: ["type", "code", "params", "reference", "recipient", "time", "hash", "read_signature"]
@@ -30,7 +31,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     function createFilterQuery(pubkey, options) {
       options = options || {};
       options.codes = options.codes || {};
-      options.codes.excludes = options.codes.excludes || constants.MESSAGE_CODES;
+      options.codes.excludes = options.codes.excludes || constants.MESSAGE_CODES.concat(constants.GROUP_CODES);
       var query = {
         bool: {
           must: [
@@ -43,28 +44,29 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       if (options.codes && options.codes.includes) {
         query.bool.must.push({terms: { code: options.codes.includes}});
       }
-
-      // Excludes codes
-      var excludesCodes = [];
-      if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
-        excludesCodes.push('TX_SENT');
-      }
-      if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
-        excludesCodes.push('TX_RECEIVED');
-      }
-      if (!csSettings.getByPath('plugins.es.notifications.certSent', false)) {
-        excludesCodes.push('CERT_SENT');
-      }
-      if (!csSettings.getByPath('plugins.es.notifications.certReceived', true)) {
-        excludesCodes.push('CERT_RECEIVED');
-      }
-      if (options.codes.excludes) {
-        _.forEach(options.codes.excludes, function(code) {
-          excludesCodes.push(code);
-        });
-      }
-      if (excludesCodes.length) {
-        query.bool.must_not = {terms: { code: excludesCodes}};
+      else {
+        // Excludes codes
+        var excludesCodes = [];
+        if (!csSettings.getByPath('plugins.es.notifications.txSent', false)) {
+          excludesCodes.push('TX_SENT');
+        }
+        if (!csSettings.getByPath('plugins.es.notifications.txReceived', true)) {
+          excludesCodes.push('TX_RECEIVED');
+        }
+        if (!csSettings.getByPath('plugins.es.notifications.certSent', false)) {
+          excludesCodes.push('CERT_SENT');
+        }
+        if (!csSettings.getByPath('plugins.es.notifications.certReceived', true)) {
+          excludesCodes.push('CERT_RECEIVED');
+        }
+        if (options.codes.excludes) {
+          _.forEach(options.codes.excludes, function(code) {
+            excludesCodes.push(code);
+          });
+        }
+        if (excludesCodes.length) {
+          query.bool.must_not = {terms: { code: excludesCodes}};
+        }
       }
 
       // Filter on time
@@ -123,14 +125,19 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
               esUser.profile.fillAvatars([notification])
                 .then(function() {
                   var isMessage = _.contains(constants.MESSAGE_CODES, event.code);
+                  var isGroup = _.contains(constants.GROUP_CODES, event.code);
                   notification.isMessage = isMessage;
-                  if (!isMessage) {
-                    data.notifications = data.notifications || {};
-                    data.notifications.unreadCount++;
-                  }
-                  else {
+                  if (isMessage) {
                     data.messages = data.messages || {};
                     data.messages.unreadCount++;
+                  }
+                  else if (isGroup) {
+                    data.groups = data.groups || {};
+                    data.groups.unreadCount++;
+                  }
+                  else {
+                    data.notifications = data.notifications || {};
+                    data.notifications.unreadCount++;
                   }
                   api.data.raise.new(notification);
                 });
@@ -235,6 +242,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
     return {
       load: loadNotifications,
+      unreadCount: loadUnreadNotificationsCount,
       api: api,
       websocket: {
         event: function() {
@@ -243,7 +251,8 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
         change: function() {
           return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
         }
-      }
+      },
+      constants: constants
     };
   }
 

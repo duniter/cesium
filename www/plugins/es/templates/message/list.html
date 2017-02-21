@@ -17,7 +17,7 @@
   <ion-content class="padding no-padding-xs">
 
     <!-- Buttons bar-->
-    <ion-list>
+    <ion-list  >
       <div class="item large-button-bar hidden-xs hidden-sm">
 
         <button class="button button-calm icon ion-compose"
@@ -53,7 +53,9 @@
       </div>
     </ion-list>
 
-    <ion-list class="animate-ripple" ng-if="!loading">
+    <ion-list class="animate-ripple"
+              can-swipe="$root.device.enable"
+              ng-if="!loading">
 
       <div class="padding gray" ng-if="!messages.length">
         <span ng-if="type=='inbox'" translate>MESSAGE.NO_MESSAGE_INBOX</span>

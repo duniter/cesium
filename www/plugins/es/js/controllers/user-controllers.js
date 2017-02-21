@@ -165,7 +165,9 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
         else {
           delete $scope.walletData.avatar;
         }
-        $scope.walletData.profile = formData;
+
+        $scope.walletData.profile = angular.copy(formData);
+        $scope.walletData.profile.description = esHttp.util.trustAsHtml(formData.description);
       }
     };
 

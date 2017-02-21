@@ -11,7 +11,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
   })
 
 .factory('esUser', function($rootScope, $q, $timeout, esHttp, $state, $sce, $sanitize,
-                            csConfig, csSettings, esHttp, CryptoUtils, Device, UIUtils, csWallet, csWot, BMA) {
+                            csConfig, csSettings, CryptoUtils, Device, UIUtils, csWallet, csWot, BMA) {
   'ngInject';
 
   function factory(id, host, port, wsPort) {
@@ -22,8 +22,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
         ES_USER_API_ENDPOINT: "ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
       },
       REGEX = {
-        ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT),
-        HASH_TAG: new RegExp('#(\\w+)')
+        ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT)
       },
       SETTINGS_SAVE_SPEC = {
         includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
@@ -135,17 +134,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             profile.avatar = esHttp.image.fromHit(host, port, res, 'avatar');
             delete profile.source.avatar; // not need anymore
 
-            // Replace tags in description
-            if (profile.source.description) {
-              var description = $sanitize(profile.source.description.trim().replace(/\n/g,'<br>'));
-              _.forEach(esHttp.util.parseTags(description), function(tag){
-                var href = $state.href('app.wot_lookup', {hash: tag});
-                var link = '<a href=\"{0}">{1}</a>'.format(href, '#'+tag);
-                description = description.replace('#'+tag, link);
-              });
-              $sce.trustAsHtml(description);
-              profile.source.description = description;
-            }
+            profile.source.description = esHttp.util.trustAsHtml(profile.source.description);
           }
           return profile;
         })
@@ -310,6 +299,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       pubkeyAtributeName = pubkeyAtributeName || 'pubkey';
       text = text ? text.toLowerCase().trim() : text;
       var dataByPubkey;
+      var tags = text ? esHttp.util.parseTags(text) : undefined;
       var request = {
         query: {},
         highlight: {fields : {title : {}, tags: {}}},
@@ -358,8 +348,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             ]}}
           };
 
-          // Add tags
-          var tags = esHttp.util.parseTags(text);
           if (tags) {
             request.query.constant_score.filter.bool.should.push({terms: {tags: tags}});
           }
@@ -375,8 +363,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             {prefix: {title: text}}
           ]
         };
-        // Set tags filter
-        var tags = esHttp.util.parseTags(text);
         if (tags) {
           request.query.bool.should.push({terms: {tags: tags}});
         }
@@ -422,7 +408,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
                     data.name = hit.highlight.title[0];
                 }
                 if (hit.highlight.tags) {
-                  data.tags = hit.highlight.tags;
+                  data.tags = hit.highlight.tags.reduce(function(res, tag){
+                    return res.concat(tag.replace('<em>', '').replace('</em>', ''));
+                  },[]);
                 }
               }
               // avatar

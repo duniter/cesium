@@ -1,4 +1,4 @@
-angular.module('cesium.es.message.controllers', ['cesium.es.services', 'cesium.es.message.controllers'])
+angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
   .config(function($stateProvider) {
     'ngInject';
@@ -535,7 +535,7 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, e
 
     // Set Motion and Ink
     $timeout(function() {
-      UIUtils.ink({selector: '.popover-popover .item.ink'});
+      UIUtils.ink({selector: '.popover-notification .item.ink'});
     }, 100);
   };
 

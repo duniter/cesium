@@ -377,8 +377,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     })
     .then(function(result){
       if (result){
-        UIUtils.alert.info('INFO.TRANSFER_SENT');
-        $state.go('app.view_wallet');
+        return $timeout(function(){
+          return UIUtils.toast.show('INFO.TRANSFER_SENT');
+        }, 10);
       }
     });
   };

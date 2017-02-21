@@ -15,7 +15,6 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
         }
       })
 
-
       .state('app.view_wallet_tx', {
         url: "/history?refresh",
         views: {
@@ -78,10 +77,13 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.updateView = function() {
     // Set Motion
     $timeout(function() {
-      UIUtils.motion.fadeSlideInRight({selector: '#wallet .animate-fade-slide-in-right .item'});
+      UIUtils.motion.fadeSlideInRight({
+        selector: '#wallet .animate-fade-slide-in-right .item',
+        startVelocity: 3000
+      });
       // Set Ink
       UIUtils.ink({selector: '#wallet .animate-fade-slide-in-right .item'});
-    }, 10);
+    });
   };
 
   $scope.setRegisterForm = function(registerForm) {

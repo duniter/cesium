@@ -24,6 +24,14 @@ angular.module('cesium.plugin.services', [])
     return this;
   };
 
+  this.extendStates = function(stateNames, extension) {
+    var that = this;
+    stateNames.forEach(function(stateName) {
+      that.extendState(stateName, extension);
+    });
+    return this;
+  };
+
   this.$get = ['$injector', '$state', function pluginFactory($injector, $state) {
 
     var currentExtensionPointName;

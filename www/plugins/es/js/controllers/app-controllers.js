@@ -111,6 +111,15 @@ function ESMenuExtendController($scope, $state, PluginService, csSettings, UIUti
     });
   };
 
+  $scope.showGroupsPopover = function(event) {
+    return UIUtils.popover.show(event, {
+      templateUrl :'plugins/es/templates/group/popover_group.html',
+      scope: $scope,
+      autoremove: false // reuse popover
+    });
+  };
+
+
   $scope.updateView = function() {
     $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
                     csSettings.data.plugins.es.enable :

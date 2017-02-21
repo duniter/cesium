@@ -115,12 +115,10 @@ angular.module('cesium.utils.services', ['ngResource'])
   }
 
   function showToast(message, duration) {
-    if (!duration) {
-      duration = 2000; // 2s
-    }
+    duration = duration || 2000; // 2s
     return $translate([message])
       .then(function(translations){
-        $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
+        return $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
       });
   }
 
