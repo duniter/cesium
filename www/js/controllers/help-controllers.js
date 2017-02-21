@@ -157,7 +157,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       })
 
       // Network tour
-     /* .then(function(next){
+      .then(function(next){
         if (!next) return false;
         return $scope.startNetworkTour(0, true)
           .then(function(endIndex){
@@ -197,7 +197,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if (!next) return false;
         return $scope.startWalletNoLoginTour(0, true);
       })
-      */
+
       // Wallet tour (if login)
       .then(function(next){
         if (!next) return false;
