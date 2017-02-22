@@ -44,7 +44,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
       defaultSettings = angular.merge({
         timeout : 4000,
         cacheTimeMs: 60000, /*1 min*/
-        useRelative: true,
+        useRelative: false,
         timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
         timeWarningExpire: 2592000 * 3 /*=3 mois*/,
         useLocalStorage: Device.enable, // on mobile device, use local storage by default
@@ -57,6 +57,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         expertMode: false,
         decimalCount: 4,
         forceNetworkViewToHttp: false,
+        uiEffects: true,
         newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",
         helptip: {
           enable: true,

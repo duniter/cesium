@@ -18,7 +18,7 @@ angular.module("cesium.config", [])
   "timeWarningExpireMembership": 5184000,
   "timeWarningExpire": 7776000,
   "useLocalStorage": true,
-  "useRelative": true,
+  "useRelative": false,
   "initPhase": false,
   "expertMode": false,
   "decimalCount": 4,
@@ -129,7 +129,7 @@ rememberMe                  | Default value of the 'Remember me' button, in the 
 showUDHistory               | Should display UD history in the transaction history ?                             | `false`
 showLoginSalt               | Should display salt value (pass phrase) in the login screen. If `false`, masked.   | `false`
 useLocalStorage             | Enable data storage (settings, credentials, cache) in the browser local storage ?  | `true`
-useRelative                 | Should user relative unit by default ?                                             | `true`
+useRelative                 | Should use relative unit (UD) by default ?                                         | `false`
 wallet.showPubkey           | Should display pubkey and uid in 'My account' screen ?                             | `true`
 wallet.notificationReadTime | Time (in second) since the last notification read.                                 | `0` (never read)
 

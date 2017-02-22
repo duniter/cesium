@@ -46,7 +46,7 @@
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
-    "useRelative": true,
+    "useRelative": false,
     "initPhase": true,
     "expertMode": false,
     "decimalCount": 4,
