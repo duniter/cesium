@@ -192,7 +192,7 @@
           </ng-if>
 
           <!-- excluded -->
-          <ng-if ng-if="!compactMode || (formData.leaversCount-formData.revokedCount)">
+          <ng-if ng-if="!compactMode || (formData.excludedCount-formData.revokedCount)">
             <ion-item class="item-icon-left" >
               <i class="icon ion-person"></i>
               <b class="ion-close dark" style="position: absolute; top: 25px; left: 39px; font-size: 12px;"></b>
@@ -202,8 +202,8 @@
               <span class="badge badge-stable" ng-if="!(formData.excludedCount-formData.revokedCount)">0</span>
             </ion-item>
 
-            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.revokedCount">
-              <ion-item ng-repeat="identity in ::formData.revoked"
+            <div class="padding-bottom item-icon-left-padding item-icon-right-padding" ng-if="formData.excludedCount">
+              <ion-item ng-repeat="identity in ::formData.excluded"
                         class="item-border-large item-small-height"
                         ng-include="'templates/blockchain/link_identity.html'">
               </ion-item>
