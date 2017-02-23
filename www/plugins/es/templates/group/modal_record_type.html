@@ -1,0 +1,35 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+      <h1 class="title" translate>GROUP.TYPE.TITLE</h1>
+  </ion-header-bar>
+
+    <ion-content class="lookupForm padding">
+      <h3 translate>GROUP.TYPE.SELECT_TYPE</h3>
+
+    	<div class="list">
+
+        <!-- open group -->
+        <div class="item item-complex card stable-bg item-icon-left ink"
+             ng-click="closeModal('open')">
+          <div class="item-content item-text-wrap">
+            <i class="item-image icon ion-android-people dark"></i>
+            <h2 translate>GROUP.TYPE.OPEN_GROUP</h2>
+            <h4 class="gray" translate>GROUP.TYPE.OPEN_GROUP_HELP</h4>
+          </div>
+        </div>
+
+        <!-- managed group -->
+        <div class="item item-complex card stable-bg item-icon-left ink"
+             ng-click="closeModal('managed')">
+          <div class="item-content item-text-wrap">
+            <i class="item-image icon ion-android-people dark"></i>
+            <i class="icon-secondary ion-android-lock dark" style="left: 10px; top: -8px;"></i>
+            <h2 translate>GROUP.TYPE.MANAGED_GROUP</h2>
+            <h4 class="gray" translate>GROUP.TYPE.MANAGED_GROUP_HELP</h4>
+          </div>
+        </div>
+
+      </div>
+</ion-content>
+</ion-modal-view>

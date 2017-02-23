@@ -255,6 +255,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
         .then(function(imageData) {
           if (!imageData) return;
           $scope.avatar = {src: imageData};
+          $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
           $scope.dirty = true;
         });
     }

@@ -1,0 +1,25 @@
+<ion-list class="{{::motion.ionListClass}}">
+
+  <ion-item
+    ng-repeat="notification in search.results"
+    class="item-border-large item-text-wrap ink item-avatar"
+    ng-class="{'unread': !notification.read}"
+    ng-click="select(notification)">
+
+    <i ng-if="!notification.avatar" class="item-image icon {{::notification.avatarIcon}}"></i>
+    <i ng-if="notification.avatar" class="item-image avatar" style="background-image: url({{::notification.avatar.src}})"></i>
+
+    <h3 trust-as-html="notification.message | translate:notification"></h3>
+    <h4>
+      <i class="icon {{notification.icon}}"></i>&thinsp;<span class="dark">{{notification.time|formatFromNow}}</span>
+      <span class="gray">| {{notification.time|formatDate}}</span>
+    </h4>
+  </ion-item>
+</ion-list>
+
+<ion-infinite-scroll
+  ng-if="!search.loading && search.hasMore"
+  spinner="android"
+  on-infinite="showMore()"
+  distance="1%">
+</ion-infinite-scroll>

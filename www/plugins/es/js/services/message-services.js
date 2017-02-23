@@ -10,10 +10,10 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
   })
 
-.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, csWallet) {
+.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, csWallet, Device) {
   'ngInject';
 
-  function factory(host, port) {
+  function Factory() {
 
     var
     listeners,
@@ -21,18 +21,12 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     fields = {
       commons: ["issuer", "recipient", "title", "content", "time", "nonce", "read_signature"],
       notifications: ["issuer", "time", "hash", "read_signature"]
+    },
+    raw = {
+      postSearch: esHttp.post('/message/inbox/_search'),
+      getByTypeAndId : esHttp.get('/message/:type/:id'),
+      postReadById: esHttp.post('/message/inbox/:id/_read')
     };
-
-    function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-    }
 
     function onWalletInit(data) {
       data.messages = data.messages || {};
@@ -56,12 +50,15 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         return deferred.promise;
       }
 
+      console.debug('[ES] [message] Loading count...');
+      var now = new Date().getTime();
+
       // Count unread messages
       countUnreadMessages(data.pubkey)
         .then(function(unreadCount){
           data.messages = data.messages || {};
           data.messages.unreadCount = unreadCount;
-          console.debug('[ES] [message] Detecting ' + unreadCount + ' unread messages');
+          console.debug('[ES] [message] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
           deferred.resolve(data);
         })
         .catch(function(err){
@@ -105,7 +102,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         }
       };
 
-      return esHttp.post(host, port, '/message/inbox/_count')(request)
+      return esHttp.post('/message/inbox/_count')(request)
         .then(function(res) {
           return res.count;
         });
@@ -159,7 +156,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           ])
           .then(function(cypherTexts){
             // Send message
-            return esHttp.record.post(host, port, boxPath)({
+            return esHttp.record.post(boxPath)({
               issuer: message.issuer,
               recipient: message.recipient,
               title: cypherTexts[0],
@@ -187,7 +184,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         _source: fields.notifications
       };
 
-      return esHttp.post(host, port, '/message/inbox/_search')(request)
+      return raw.postSearch(request)
         .then(function(res) {
           if (!res || !res.hits || !res.hits.total) {
             return [];
@@ -232,7 +229,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         request.query = {bool: {filter: {term: {issuer: csWallet.data.pubkey}}}};
       }
 
-      return esHttp.post(host, port, '/message/:type/_search')(request, {type: options.type})
+      return esHttp.post('/message/:type/_search')(request, {type: options.type})
         .then(function(res) {
           if (!res || !res.hits || !res.hits.total) {
             return [];
@@ -286,7 +283,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     function getAndDecrypt(params, keypair) {
       params.type = params.type || 'inbox';
       var avatarField = (params.type == 'inbox') ? 'issuer' : 'recipient';
-      return esHttp.get(host, port, '/message/:type/:id')(params)
+      return raw.getByTypeAndId(params)
         .then(function(hit) {
           if (!hit.found) {
             return;
@@ -363,7 +360,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     function removeMessage(id, type) {
       type = type || 'inbox';
-      return esHttp.record.remove(host, port, 'message', type)(id)
+      return esHttp.record.remove('message', type)(id)
         .then(function(res) {
           // update message count
           if (type == 'inbox') {
@@ -384,7 +381,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
           // Remove each messages
           return $q.all(res.reduce(function(res, msg) {
-            return res.concat(esHttp.record.remove(host, port, 'message', type)(msg.id));
+            return res.concat(esHttp.record.remove('message', type)(msg.id));
           }, []));
         })
         .then(function() {
@@ -411,7 +408,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
         // Send read request
         .then(function(signature){
-          return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id});
+          return raw.postReadById(signature, {id:message.id});
         })
 
         // Update message count
@@ -441,7 +438,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
               CryptoUtils.sign(message.hash, csWallet.data.keypair)
               // then send read request
               .then(function(signature){
-                return esHttp.post(host, port, '/message/inbox/:id/_read')(signature, {id:message.id});
+                return raw.postReadById(signature, {id:message.id});
               }));
           }, []));
         })
@@ -453,7 +450,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function removeListeners() {
-      console.debug("[ES] Disable message extension");
+      console.debug("[ES] [message] Disable");
 
       _.forEach(listeners, function(remove){
         remove();
@@ -472,39 +469,28 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       ];
     }
 
-    function isEnable() {
-      return csSettings.data.plugins &&
-        csSettings.data.plugins.es &&
-        host && csSettings.data.plugins.es.enable;
-    }
-
     function refreshListeners() {
-      var enable = isEnable();
+      var enable = esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
         removeListeners();
       }
       else if (enable && (!listeners || listeners.length === 0)) {
         addListeners();
+        if (csWallet.isLogin() && !csWallet.data.messages) {
+          onWalletLogin(csWallet.data);
+        }
       }
     }
 
-    // Listen for settings changed
-    csSettings.api.data.on.changed($rootScope, function(){
+    // Default action
+    Device.ready().then(function() {
       refreshListeners();
-      if (isEnable() && !csWallet.data.messages) {
-        onWalletLogin(csWallet.data);
-      }
+      esHttp.api.node.on.start($rootScope, refreshListeners, this);
+      esHttp.api.node.on.stop($rootScope, refreshListeners, this);
     });
 
-    // Default action
-    refreshListeners();
-
     return {
-      copy: copy,
-      node: {
-        server: esHttp.getServer(host, port)
-      },
-      search: esHttp.post(host, port, '/message/inbox/_search'),
+      search: raw.postSearch,
       notifications: {
         load: loadMessageNotifications
       },
@@ -521,12 +507,6 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     };
   }
 
-  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
-  var port = host ? csSettings.data.plugins.es.port : null;
-
-  var service = factory(host, port);
-
-  service.instance = factory;
-  return service;
+  return Factory();
 })
 ;

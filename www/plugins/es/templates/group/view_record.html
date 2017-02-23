@@ -1,0 +1,160 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-bar button-icon button-clear visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
+      <i class="icon ion-android-create"></i>
+    </button>
+    <button class="button button-bar button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
+            ng-click="showActionsPopover($event)">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true">
+    <div class="positive-900-bg hero">
+      <div class="content" ng-if="!loading">
+        <i class="avatar cion-registry-{{formData.type}}" ng-if="!formData.thumbnail"></i>
+        <i class="avatar" style="background-image: url({{::formData.thumbnail.src}})" ng-if="formData.thumbnail"></i>
+        <h3 ng-bind-html="formData.title"></h3>
+        <h4>&nbsp;</h4>
+      </div>
+      <h4 class="content light" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </h4>
+    </div>
+
+    <div class="row no-padding-xs">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+
+      <div class="col list item-text-wrap no-padding-xs" ng-class="motion.ionListClass">
+
+        <div class="item">
+          <h2 class="gray">
+            <a ng-if="formData.city" ui-sref="app.groups({location:formData.city})">
+              <i class="icon ion-location"></i>
+              <span ng-bind-html="formData.city"></span>
+            </a>
+            <span ng-if="formData.city && formData.type">&nbsp;|&nbsp;</span>
+            <a ng-if="formData.type" ui-sref="app.groups({type:formData.type})">
+              <i class="icon ion-flag"></i>
+              {{'GROUP.TYPE.ENUM.'+formData.type|upper|translate}}
+            </a>
+          </h2>
+          <h4>
+            <i class="icon ion-clock" ng-if="formData.time"></i>
+            <span translate>COMMON.SUBMIT_BY</span>
+            <a ng-class="{'positive': issuer.uid, 'gray': !issuer.uid}"
+               ui-sref="app.wot_identity({pubkey:issuer.pubkey, uid: issuer.name||issuer.uid})">
+              <ng-if ng-if="issuer.uid">
+                <i class="icon ion-person"></i>
+                {{::issuer.name||issuer.uid}}
+              </ng-if>
+              <span ng-if="!issuer.uid">
+                <i class="icon ion-key"></i>
+                {{issuer.pubkey|formatPubkey}}
+              </span>
+            </a>
+            <span >
+                {{formData.time|formatFromNow}}
+                <h4 class="gray hidden-xs">|
+                  {{formData.time | formatDate}}
+                </h4>
+              </span>
+          </h4>
+        </div>
+
+        <!-- Buttons bar-->
+        <div class="item large-button-bar hidden-xs hidden-sm">
+          <button class="button button-stable button-small-padding icon ion-android-share-alt"
+                  ng-click="showSharePopover($event)">
+          </button>
+          <button class="button button-calm ink-dark"
+                  ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
+                  ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.title})">
+            {{'COMMON.BTN_SEND_MONEY' | translate}}
+          </button>
+          <button class="button button-stable icon-left ink-dark"
+                  ng-if="canEdit"
+                  ng-click="delete()">
+            <i class="icon ion-trash-a assertive"></i>
+            <span class="assertive"> {{'COMMON.BTN_DELETE' | translate}}</span>
+          </button>
+          <button class="button button-calm icon-left ion-android-create ink"
+                  ng-if="canEdit"
+                  ng-click="edit()">
+            {{'COMMON.BTN_EDIT' | translate}}
+          </button>
+        </div>
+
+        <ion-item>
+            <h2>
+              <span class="text-keep-lines" ng-bind-html="formData.description"></span>
+            </h2>
+        </ion-item>
+
+        <ion-item>
+          <h4 ng-if="formData.address">
+            <span class="gray" translate>REGISTRY.VIEW.LOCATION</span>
+            <a class="positive" target='_blank' href="https://www.google.fr/maps/?q={{formData.address}},%20{{formData.city}}">
+              <span ng-bind-html="formData.address"></span>
+              <span ng-if="formData.city"> - </span>
+              <span ng-bind-html="formData.city"></span>
+            </a>
+          </h4>
+        </ion-item>
+
+        <!-- Socials networks -->
+        <ng-if ng-if="formData.socials && formData.socials.length>0">
+          <ion-item class="item-icon-left"
+                    type="no-padding item-text-wrap"
+                    ng-repeat="social in formData.socials track by social.url"
+                    id="social-{{social.url|formatSlug}}">
+            <i class="icon ion-social-{{social.type}}"
+               ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email'}"></i>
+            <p ng-if="social.type && social.type != 'web'">{{social.type}}</p>
+            <h2>
+              <a href="{{social.url}}" ng-if="social.type != 'email'" target="_blank">{{social.url}}</a>
+              <a href="mailto:{{social.url}}" ng-if="social.type == 'email'">{{social.url}}</a>
+            </h2>
+          </ion-item>
+        </ng-if>
+
+        <div class="lazy-load">
+
+          <!-- pictures -->
+          <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
+
+
+          <span class="item item-divider" ng-if="formData.pubkey">
+            <span translate>REGISTRY.TECHNICAL_DIVIDER</span>
+          </span>
+
+          <!-- pubkey -->
+          <div class="item item-icon-left item-text-wrap ink"
+                    ng-if="formData.pubkey"
+                    copy-on-click="{{::formData.pubkey}}">
+            <i class="icon ion-key"></i>
+            <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
+            <h4 class="dark">{{::formData.pubkey}}</h4>
+          </div>
+
+          <!-- comments -->
+          <ng-include src="'plugins/es/templates/common/view_comments.html'"></ng-include>
+        </div>
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
+      </div>
+    </div>
+  </ion-content>
+
+  <button class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm"
+          ng-if="formData.pubkey && !isUserPubkey(formData.pubkey)"
+          ng-click="showTransferModal({pubkey: formData.pubkey, uid: formData.title})">
+  </button>
+
+
+</ion-view>

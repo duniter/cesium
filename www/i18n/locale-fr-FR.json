@@ -114,6 +114,7 @@
     "PEER": "Adresse du nœud Duniter",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
+    "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Mon compte",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
     "AUTHENTICATION_SETTINGS": "Authentification",

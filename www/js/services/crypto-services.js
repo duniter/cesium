@@ -629,7 +629,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
         })
         .then(function() {
           service.copy(serviceImpl);
-          console.debug('[crypto] Loaded  \'{0}\' implementation in {1}ms'.format(service.id, new Date().getTime() - now));
+          console.debug('[crypto] Loaded \'{0}\' implementation in {1}ms'.format(service.id, new Date().getTime() - now));
         });
 
     });

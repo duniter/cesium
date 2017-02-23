@@ -6,6 +6,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
   function factory(host, port, wsPort, index) {
 
     var
+      that = this,
       DEFAULT_SIZE = 20,
       fields = {
         commons: ["issuer", "time", "message", "reply_to"],
@@ -16,11 +17,11 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
           commons: fields.commons
         },
         raw: {
-          search: esHttp.post(host, port, '/'+index+'/comment/_search'),
-          remove: esHttp.record.remove(host, port, index, 'comment'),
-          wsChanges: esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://' + esHttp.getServer(host, wsPort) + '/ws/_changes'),
-          add: new esHttp.record.post(host, port, '/'+index+'/comment'),
-          update: new esHttp.record.post(host, port, '/'+index+'/comment/:id/_update')
+          search: esHttp.post('/'+index+'/comment/_search'),
+          remove: esHttp.record.remove(index, 'comment'),
+          wsChanges: esHttp.ws('/ws/_changes'),
+          add: new esHttp.record.post('/'+index+'/comment'),
+          update: new esHttp.record.post('/'+index+'/comment/:id/_update')
         }
       };
 

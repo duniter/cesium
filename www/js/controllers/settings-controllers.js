@@ -62,8 +62,10 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
+    $scope.pendingSaving = true;
     csSettings.reset();
     angular.merge($scope.formData, csSettings.data);
+    $scope.pendingSaving = false;
   };
 
   $scope.changeLanguage = function(langKey) {

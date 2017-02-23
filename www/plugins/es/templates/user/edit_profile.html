@@ -13,7 +13,7 @@
     <div class="positive-900-bg hero">
       <div class="content">
         <i class="avatar"
-           style="background-image: url('{{avatar.src}}')"
+           ng-style="avatarStyle"
            ng-class="{'avatar-wallet': !loading && !avatar && walletData && !walletData.isMember, 'avatar-member': !loading && !avatar && walletData.isMember}">
           <button class="button button-positive button-large button-clear flat icon ion-camera visible-xs visible-sm"
                   style="display: inline-block;"
@@ -21,17 +21,14 @@
           <button class="button button-positive button-large button-clear icon ion-camera hidden-xs hidden-sm"
                   ng-click="showAvatarModal()"></button>
         </i>
-        <div ng-if="!loading">
-          <h3 class="light" ng-if="!formData.title && walletData && walletData.isMember">{{walletData.uid}}</h3>
-          <h3 class="light" ng-if="!formData.title && walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</h3>
-          <h3 class="light">{{formData.title}}</h3>
-          <h4 class="light">&nbsp;</h4>
-        </div>
-        <div ng-if="loading">
-          <h4 class="light">
-            <ion-spinner icon="android"></ion-spinner>
-          </h4>
-        </div>
+        <h3 class="light">
+          <ng-if ng-if="!loading && !formData.title && walletData && walletData.isMember">{{walletData.uid}}</ng-if>
+          <ng-if ng-if="!loading && !formData.title && walletData && !walletData.isMember">{{::walletData.pubkey | formatPubkey}}</ng-if>
+          <ng-if ng-if="!loading && formData.title">{{formData.title}}</ng-if>
+        </h3>
+        <h4 class="light">
+          <ion-spinner ng-if="loading" icon="android"></ion-spinner>
+        </h4>
       </div>
     </div>
 

@@ -13,10 +13,6 @@
 
     <ion-content class="certifications certifications-lg">
 
-      <div class="center padding" ng-if="loading">
-        <ion-spinner icon="android"></ion-spinner>
-      </div>
-
       <!-- Buttons bar -->
       <div class="hidden-xs hidden-sm text-center padding"
            ng-if="canCertify || canSelectAndCertify">
@@ -39,6 +35,10 @@
         </button>
       </div>
 
+      <div class="center padding" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+
       <!-- certifications tables -->
       <div class="row responsive-sm responsive-md responsive-lg">
         <!-- Received certifications -->
@@ -55,7 +55,7 @@
             </div>
             <div class="col text-center no-padding">
               <a style="text-decoration: none;"
-                ui-sref="app.wot_identity({pubkey: formData.pubkey, uid: formData.name||formData.uid})">
+                ui-sref="app.wot_identity({pubkey: formData.pubkey, uid: formData.uid})">
                 <i class="avatar avatar-large"
                    ng-if="!formData.avatar"
                    ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>

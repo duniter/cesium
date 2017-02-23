@@ -383,7 +383,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     if (!$scope.search.results.length) return;
 
     // Motion
-    if (res.length > 0) {
+    if (res.length > 0 && $scope.motion) {
       $scope.motion.show({selector: '.lookupForm .item.ink'});
     }
   };
@@ -425,6 +425,7 @@ function WotLookupModalController($scope, $controller, $focus){
   $scope.search.loading = false;
   $scope.enableFilter = false;
 
+
   $scope.wotSearchTextId = 'wotSearchTextModal';
   $scope.cancel = function(){
     $scope.closeModal();
@@ -435,6 +436,10 @@ function WotLookupModalController($scope, $controller, $focus){
       pubkey: identity.pubkey,
       uid: identity.uid
     });
+  };
+
+  $scope.doRefreshLocationHref = function() {
+    // Do NOT change location href
   };
 
   $scope.showHelpTip = function() {
@@ -459,7 +464,7 @@ function WotLookupModalController($scope, $controller, $focus){
  * @param csWallet
  * @constructor
  */
-function WotIdentityAbstractController($scope, $rootScope, $state, $timeout, $translate, UIUtils, Modals, csConfig, csWot, csWallet) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $translate, UIUtils, Modals, csConfig, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {};

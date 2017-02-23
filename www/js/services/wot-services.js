@@ -520,7 +520,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         if (pubkey) {
           data = withCache ? identityCache.get(pubkey) : null;
           if (data && (!uid || data.uid == uid)) {
-            console.debug("[wot] Found cached identity " + pubkey.substring(0, 8));
+            console.debug("[wot] Identity " + pubkey.substring(0, 8) + " found in cache");
             return $q.when(data);
           }
           console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
@@ -618,7 +618,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             if (!data.pubkey) return undefined; // not found
             delete data.lookup; // not need anymore
             identityCache.put(data.pubkey, data); // add to cache
-            console.debug('[wallet] Identity '+ data.pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
+            console.debug('[wot] Identity '+ data.pubkey.substring(0, 8) +' loaded in '+ (new Date().getTime()-now) +'ms');
             return data;
           });
       },

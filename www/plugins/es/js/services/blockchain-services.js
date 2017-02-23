@@ -1,14 +1,4 @@
 angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.http.services', 'cesium.es.user.services'])
-.config(function(PluginServiceProvider, csConfig) {
-    'ngInject';
-
-    var enable = csConfig.plugins && csConfig.plugins.es;
-    if (enable) {
-      // Will force to load this service
-      PluginServiceProvider.registerEagerLoadingService('esBlockchain');
-    }
-
-  })
 
 .factory('esBlockchain', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, esUser) {
   'ngInject';
@@ -24,7 +14,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         MINIMAL: ['number', 'hash', 'medianTime', 'issuer'],
         COMMONS: ['number', 'hash', 'medianTime', 'issuer', 'currency', 'version', 'powMin', 'dividend', 'membersCount', 'identities', 'joiners', 'actives', 'leavers', 'revoked', 'excluded', 'certifications', 'transactions']
       },
-      listeners,
       exports = {
         node: {},
         block: {},
@@ -45,7 +34,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     }
 
     function copy(otherNode) {
-      removeListeners();
       if (!!this.instance) {
         var instance = this.instance;
         angular.copy(otherNode, this);
@@ -54,7 +42,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       else {
         angular.copy(otherNode, this);
       }
-      addListeners();
     }
 
     exports.node.parseEndPoint = function(endpoint) {
@@ -139,47 +126,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       return exports.raw.block.searchText(request)
         .then(exports.raw.block.processSearchResult);
     };
-
-
-    function removeListeners() {
-      console.debug('[ES] [blockchain] Disable');
-      _.forEach(listeners, function(remove){
-        remove();
-      });
-      listeners = [];
-    }
-
-    function addListeners() {
-      console.debug('[ES] [blockchain] Enable');
-
-      listeners = [
-        //csWot.api.data.on.search($rootScope, onWotSearch, this)
-      ];
-    }
-
-    function isEnable() {
-      return csSettings.data.plugins &&
-         csSettings.data.plugins.es &&
-         host && csSettings.data.plugins.es.enable;
-    }
-
-    function refreshListeners() {
-      var enable = isEnable();
-      if (!enable && listeners && listeners.length > 0) {
-        removeListeners();
-      }
-      else if (enable && (!listeners || listeners.length === 0)) {
-        addListeners();
-      }
-    }
-
-    // Listen for settings changed
-    csSettings.api.data.on.changed($rootScope, function(){
-      refreshListeners();
-    });
-
-    // Default action
-    refreshListeners();
 
     return exports;
   }

@@ -4,7 +4,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 .factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
-    CSSettings = function(id) {
+    function Factory() {
 
       // Define app locales
       var locales = [
@@ -81,11 +81,13 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
       }, csConfig),
 
       data = angular.copy(defaultSettings),
+      previousData,
 
-      api = new Api(this, "csSettings-" + id),
+      api = new Api(this, "csSettings"),
 
       reset = function() {
         angular.merge(data, defaultSettings);
+        store();
       },
 
       getByPath = function(path, defaultValue) {
@@ -101,6 +103,14 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         return obj;
       },
 
+      emitChangedEvent = function() {
+        var hasChanged = previousData && !angular.equals(previousData, data);
+        previousData = angular.copy(data);
+        if (hasChanged) {
+          api.data.raise.changed(data);
+        }
+      },
+
       store = function() {
         if (data.useLocalStorage) {
           localStorage.setObject(constants.STORAGE_KEY, data);
@@ -111,29 +121,26 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
         // Emit event on store
         return api.data.raisePromise.store(data)
-          .then(function() {
-            // Emit event on changed
-            api.data.raise.changed(data);
-          });
+          .then(emitChangedEvent);
       },
 
       restore = function(first) {
+        var now = new Date().getTime();
         return $q(function(resolve, reject){
-          console.debug("[settings] Trying to restore settings...");
+          console.debug("[settings] Loading from local storage...");
           var storedData = localStorage.getObject(constants.STORAGE_KEY);
 
           var finishRestore = function() {
-            console.debug("[settings] Restored");
-
-            // Emit event on changed
-            api.data.raise.changed(data);
+            emitChangedEvent();
             resolve();
           };
 
           // No settings stored
           if (!storedData) {
-            if (defaultSettings.locale.id !== $translate.use()) {
-              $translate.use(defaultSettings.locale.id);
+            console.debug("[settings] No settings in local storage");
+            if (data.locale.id !== $translate.use()) {
+              console.debug("[settings] Changing locale to [{0}]...".format(data.locale.id));
+              $translate.use(data.locale.id);
               finishRestore();
             }
             return;
@@ -186,6 +193,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
             $translate.use(fixLocale(data.locale.id));
           }
 
+          console.debug('[settings] Loaded from local storage in '+(new Date().getTime()-now)+'ms');
           finishRestore();
         });
       };
@@ -195,7 +203,6 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     api.registerEvent('data', 'ready');
 
     return {
-      id: id,
       data: data,
       getByPath: getByPath,
       reset: reset,
@@ -206,11 +213,9 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
       api: api,
       locales: locales
     };
-  };
+  }
 
-  var service = CSSettings('default');
-
-  service.instance = CSSettings;
+  var service = Factory();
 
   service.restore()
     .then(function() {

@@ -17,8 +17,6 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
         }
       })
     ;
-
-
   })
 
   .controller('NotificationsCtrl', NotificationsController)
@@ -27,7 +25,7 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $rootScope, $timeout, UIUtils, $state, csWallet, esNotification) {
+function NotificationsController($scope, $rootScope, UIUtils, $state, csWallet, esNotification) {
   'ngInject';
 
   var defaultSearchLimit = 40;

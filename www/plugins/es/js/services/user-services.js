@@ -11,89 +11,28 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
   })
 
 .factory('esUser', function($rootScope, $q, $timeout, esHttp, $state, $sce, $sanitize,
-                            csConfig, csSettings, CryptoUtils, Device, UIUtils, csWallet, csWot, BMA) {
+                            esSettings, CryptoUtils, UIUtils, csWallet, csWot, BMA, Device) {
   'ngInject';
 
-  function factory(id, host, port, wsPort) {
+  function Factory() {
 
     var
+      that = this,
       CONSTANTS = {
         contentTypeImagePrefix: "image/",
         ES_USER_API_ENDPOINT: "ES_USER_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
       },
       REGEX = {
         ES_USER_API_ENDPOINT: exact(CONSTANTS.ES_USER_API_ENDPOINT)
-      },
-      SETTINGS_SAVE_SPEC = {
-        includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
-        excludes: ['time'],
-        plugins: {
-          es: {
-            excludes: ['enable', 'host', 'port', 'wsPort']
-          }
-        },
-        helptip: {
-          excludes: ['installDocUrl']
-        }
       };
 
     var listeners,
-      restoringSettings = false,
-      getRequestFields = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
-      getRequest = esHttp.get(host, port, '/user/profile/:id?&_source_exclude=avatar._content')
+      getRequestFields = esHttp.get('/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
+      getRequest = esHttp.get('/user/profile/:id?&_source_exclude=avatar._content')
     ;
 
     function exact(regexpContent) {
       return new RegExp("^" + regexpContent + "$");
-    }
-
-    function copy(otherNode) {
-      removeListeners();
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-      addListeners();
-    }
-
-    function copyUsingSpec(data, copySpec) {
-      var result = {};
-
-      // Add implicit includes
-      if (copySpec.includes) {
-        _.forEach(_.keys(copySpec), function(key) {
-          if (key != "includes" && key != "excludes") {
-            copySpec.includes.push(key);
-          }
-        });
-      }
-
-      _.forEach(_.keys(data), function(key) {
-        if ((!copySpec.includes || _.contains(copySpec.includes, key)) &&
-          (!copySpec.excludes || !_.contains(copySpec.excludes, key))) {
-          if (data[key] && (typeof data[key] == 'object') &&
-            copySpec[key] && (typeof copySpec[key] == 'object')) {
-            result[key] = copyUsingSpec(data[key], copySpec[key]);
-          }
-          else {
-            result[key] = data[key];
-          }
-        }
-      });
-      return result;
-    }
-
-    function readAvatarFromSource(source) {
-      var extension = source.avatar && source.avatar._content_type && source.avatar._content_type.startsWith(CONSTANTS.contentTypeImagePrefix) ?
-        source.avatar._content_type.substr(CONSTANTS.contentTypeImagePrefix.length) : null;
-      if (extension) {
-        return esHttp.getUrl(host, port, '/user/profile/' + pubkey + '/_image/avatar.' + extension);
-      }
-      return null;
     }
 
     function loadProfileAvatarAndName(pubkey) {
@@ -104,7 +43,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             // name
             profile = {name: res._source.title};
             // avatar
-            profile.avatar = esHttp.image.fromHit(host, port, res, 'avatar');
+            profile.avatar = esHttp.image.fromHit(res, 'avatar');
           }
           return profile;
         })
@@ -131,7 +70,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
             profile.source = res._source;
 
             // avatar
-            profile.avatar = esHttp.image.fromHit(host, port, res, 'avatar');
+            profile.avatar = esHttp.image.fromHit(res, 'avatar');
             delete profile.source.avatar; // not need anymore
 
             profile.source.description = esHttp.util.trustAsHtml(profile.source.description);
@@ -154,47 +93,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return onWotSearch(null, datas, pubkeyAtributeName);
     }
 
-    // Load settings
-    function loadSettings(pubkey, keypair) {
-      return $q.all([
-          CryptoUtils.box.keypair.fromSignKeypair(keypair),
-          esHttp.get(host, port, '/user/settings/:id')({id: pubkey})
-            .catch(function(err){
-              if (err && err.ucode && err.ucode == 404) {
-                return null; // not found
-              }
-              else {
-                throw err;
-              }
-            })])
-        .then(function(res) {
-          var boxKeypair = res[0];
-          res = res[1];
-          if (!res || !res._source) {
-            return;
-          }
-          var record = res._source;
-          // Do not apply if same version
-          if (record.time === csSettings.data.time) {
-            console.debug('[ES] [user] Local settings already up to date');
-            return;
-          }
-          var nonce = CryptoUtils.util.decode_base58(record.nonce);
-          // Decrypt settings content
-          return CryptoUtils.box.open(record.content, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
-            .then(function(json) {
-              var settings = JSON.parse(json || '{}');
-              settings.time = record.time;
-              return settings;
-            })
-            // if error: skip stored content
-            .catch(function(err){
-              console.error('[ES] [user] Could not read stored settings: ' + (err && err.message || 'decryption error'));
-              return null;
-            });
-        });
-    }
-
     function onWalletReset(data) {
       data.avatar = null;
       data.avatarStyle = null;
@@ -212,45 +110,30 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       // Waiting to load crypto libs
       if (!CryptoUtils.isLoaded()) {
         console.debug('[ES] [user] Waiting crypto lib loading...');
-        //throw 'stop';
-        $timeout(function() {
-          onWalletLogin(data, deferred);
+        return $timeout(function() {
+          return onWalletLogin(data, deferred);
         }, 50);
-        return;
       }
 
-      console.debug('[ES] [user] Loading user data from ES node...');
-      $q.all([
-        // Load settings
-        loadSettings(data.pubkey, data.keypair)
-          .then(function(settings) {
-            if (!settings) { // not found
-              // make sure to remove save timestamp
-              delete csSettings.data.time;
-              return;
-            }
-            angular.merge(csSettings.data, settings);
-            restoringSettings = true;
-            csSettings.store();
-          }),
+      console.debug('[ES] [user] Loading user avatar+name...');
+      var now = new Date().getTime();
 
-        // Load profile avatar and name
-        loadProfileAvatarAndName(data.pubkey)
-          .then(function(profile) {
-            if (profile) {
-              data.name = profile.name;
-              data.avatarStyle = profile.avatarStyle;
-              data.avatar = profile.avatar;
-            }
-          })
-      ])
-      .then(function() {
-        console.debug('[ES] [user] Successfully loaded user data from ES node');
-        deferred.resolve(data);
-      })
-      .catch(function(err){
-        deferred.reject(err);
-      });
+      loadProfileAvatarAndName(data.pubkey)
+        .then(function(profile) {
+          if (profile) {
+            data.name = profile.name;
+            data.avatarStyle = profile.avatarStyle;
+            data.avatar = profile.avatar;
+            console.debug('[ES] [user] Loaded user avatar+name in '+ (new Date().getTime()-now) +'ms');
+          }
+          else {
+            console.debug('[ES] [user] No user avatar+name found');
+          }
+          deferred.resolve(data);
+        })
+        .catch(function(err){
+          deferred.reject(err);
+        });
 
       return deferred.promise;
     }
@@ -261,6 +144,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
         data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
       }
+
+      console.debug('[ES] [user] Loading full user profile...');
+      var now = new Date().getTime();
 
       // Load full profile
       loadProfile(data.pubkey)
@@ -280,7 +166,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
                 return social.url;
               });
             }
-
+            console.debug('[ES] [user] Loaded full user profile in '+ (new Date().getTime()-now) +'ms');
           }
           deferred.resolve();
         });
@@ -288,6 +174,16 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return deferred.promise;
     }
 
+    function onWalletLoadTx(tx, deferred) {
+      fillAvatars((tx.history || []).concat(tx.pendings||[]), 'pubkey')
+        .then(function() {
+          deferred.resolve();
+        })
+        .catch(function(err) {
+          console.error(err);
+          deferred.resolve(); // silent
+        });
+    }
 
     function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
       deferred = deferred || $q.defer();
@@ -380,7 +276,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           .then(function(res){
             uidsByPubkey = res;
           }),
-        esHttp.post(host, port, '/user/profile/_search')(request)
+        esHttp.post('/user/profile/_search')(request)
           .then(function(res){
             hits = res.hits;
           })
@@ -395,7 +291,7 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
               values=[value];
               datas.push(value);
             }
-            var avatar = esHttp.image.fromHit(host, port, hit, 'avatar');
+            var avatar = esHttp.image.fromHit(hit, 'avatar');
             _.forEach(values, function(data) {
               // name (basic or highlighted)
               data.name = hit._source.title;
@@ -488,73 +384,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       return deferred.promise;
     }
 
-    function onSettingsChanged(data) {
-      if (!csWallet.isLogin()) return;
-
-      // Waiting to load crypto libs
-      if (!CryptoUtils.isLoaded()) {
-        console.debug('[ES] [user] Waiting crypto lib loading...');
-        $timeout(function() {
-          onSettingsChanged(data);
-        }, 200);
-        return;
-      }
-
-      console.debug('[ES] [user] Saving user settings to ES...');
-
-      return $q.all([
-          CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair),
-          CryptoUtils.util.random_nonce()
-        ])
-        .then(function(res) {
-          var boxKeypair = res[0];
-          var nonce = res[1];
-          var record = {
-            issuer: csWallet.data.pubkey,
-            nonce: CryptoUtils.util.encode_base58(nonce),
-            time: esHttp.date.now()
-          };
-
-          var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
-
-          var json = JSON.stringify(filteredData);
-
-          return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
-            .then(function(cypherText) {
-              record.content = cypherText;
-              return !data.time ?
-                // create
-                esHttp.record.post(host, port, '/user/settings')(record) :
-                // or update
-                esHttp.record.post(host, port, '/user/settings/:pubkey/_update')(record, {pubkey: record.issuer});
-            })
-            .then(function() {
-              // Change settings version
-              csSettings.data.time = record.time;
-              restoringSettings = true;
-              csSettings.store();
-              console.debug('[ES] [user] User settings saved in ES');
-            });
-        })
-        .catch(function(err) {
-          console.error(err);
-          throw err;
-        })
-      ;
-    }
-
-    function onWalletLoadTx(tx, deferred) {
-      fillAvatars((tx.history || []).concat(tx.pendings||[]), 'pubkey')
-        .then(function() {
-          deferred.resolve();
-        })
-        .catch(function(err) {
-          console.error(err);
-          deferred.resolve(); // silent
-        });
-    }
-
-
     function removeListeners() {
       console.debug("[ES] [user] Disable");
       _.forEach(listeners, function(remove){
@@ -578,19 +407,19 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       ];
     }
 
-    function isEnable() {
-      return csSettings.data.plugins &&
-         csSettings.data.plugins.es &&
-         host && csSettings.data.plugins.es.enable;
-    }
-
     function refreshListeners() {
-      var enable = isEnable();
+      var enable = esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
         removeListeners();
+        if (csWallet.isLogin()) {
+          return onWalletReset(csWallet.data);
+        }
       }
       else if (enable && (!listeners || listeners.length === 0)) {
         addListeners();
+        if (csWallet.isLogin()) {
+          return onWalletLogin(csWallet.data);
+        }
       }
     }
 
@@ -605,86 +434,46 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       };
     }
 
-    // Listen for settings changed
-    csSettings.api.data.on.changed($rootScope, function(data){
-      if (restoringSettings) {
-        restoringSettings = false;
-        return;
-      }
-
-      var wasEnable = listeners && listeners.length > 0;
-
-      refreshListeners();
-
-      if (!wasEnable && isEnable()) {
-        return onWalletLogin(csWallet.data);
-      }
-      else {
-        onSettingsChanged(data);
-      }
-    });
-
-    // Ask (once) user to enable ES plugin
+    // Default actions
     Device.ready().then(function() {
-
-      if (csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.askEnable && // if config ask enable
-        csSettings.data.plugins.es && !csSettings.data.plugins.es.enable && // AND user settings has disable plugin
-        csSettings.data.plugins.es.askEnable // AND user has not yet answer 'NO'
-      ) {
-        UIUtils.alert.confirm('ES_SETTINGS.CONFIRM.ASK_ENABLE', 'ES_SETTINGS.CONFIRM.ASK_ENABLE_TITLE', {
-          cancelText: 'COMMON.BTN_NO',
-          okText: 'COMMON.BTN_YES'
-        })
-          .then(function (confirm) {
-            if (confirm) {
-              csSettings.data.plugins.es.enable = true;
-            }
-            csSettings.data.plugins.es.askEnable = false;
-            csSettings.store();
-          });
-      }
+      esHttp.api.node.on.start($rootScope, refreshListeners, this);
+      esHttp.api.node.on.stop($rootScope, refreshListeners, this);
+      return refreshListeners();
     });
 
-    // Default action
-    refreshListeners();
-
-    return {
-      copy: copy,
+    var exports  = {
       node: {
-        server: esHttp.getServer(host, port),
-        summary: esHttp.get(host, port, '/node/summary'),
+        summary: esHttp.get('/node/summary'),
         parseEndPoint: parseEndPoint
       },
       profile: {
-        get: esHttp.get(host, port, '/user/profile/:id'),
-        add: esHttp.record.post(host, port, '/user/profile'),
-        update: esHttp.record.post(host, port, '/user/profile/:id/_update'),
-        avatar: esHttp.get(host, port, '/user/profile/:id?_source=avatar'),
+        get: esHttp.get('/user/profile/:id'),
+        add: esHttp.record.post('/user/profile'),
+        update: esHttp.record.post('/user/profile/:id/_update'),
+        avatar: esHttp.get('/user/profile/:id?_source=avatar'),
         fillAvatars: fillAvatars
       },
       settings: {
-        get: esHttp.get(host, port, '/user/settings/:id'),
-        add: esHttp.record.post(host, port, '/user/settings'),
-        update: esHttp.record.post(host, port, '/user/settings/:id/_update'),
+        get: esHttp.get('/user/settings/:id'),
+        add: esHttp.record.post('/user/settings'),
+        update: esHttp.record.post('/user/settings/:id/_update'),
       },
       websocket: {
         event: function() {
-          return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/event/user/:pubkey/:locale');
+          return esHttp.ws('/ws/event/user/:pubkey/:locale');
         },
         change: function() {
-          return esHttp.ws((wsPort == 443 ? 'wss' : 'ws') +'://'+esHttp.getServer(host, wsPort)+'/ws/_changes');
+          return esHttp.ws('/ws/_changes');
         }
       },
       constants: CONSTANTS
     };
+
+    _.keys(exports).forEach(function(key) {
+      that[key] = exports[key];
+    });
   }
 
-  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
-  var port = host ? csSettings.data.plugins.es.port : null;
-  var wsPort = host ? csSettings.data.plugins.es.wsPort : port;
-
-  var service = factory('default', host, port, wsPort);
-  service.instance = factory;
-  return service;
+  return new Factory();
 })
 ;

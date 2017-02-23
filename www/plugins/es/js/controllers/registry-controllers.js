@@ -282,14 +282,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
         $scope.search.loading = false;
 
         if (records.length > 0) {
-          // Set Motion
-          $timeout(function() {
-            UIUtils.motion.ripple({
-              startVelocity: 3000
-            });
-            // Set Ink
-            UIUtils.ink();
-          }, 10);
+          $scope.motion.show();
         }
       })
       .catch(function(err) {
@@ -382,6 +375,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.pictures = [];
   $scope.canEdit = false;
   $scope.loading = true;
+  $scope.motion = UIUtils.motion.fadeSlideIn;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -410,14 +404,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
         UIUtils.loading.hide();
         $scope.loading = false;
         // Set Motion (only direct children, to exclude .lazy-load children)
-        $timeout(function() {
-          UIUtils.motion.fadeSlideIn({
-            selector: '.list > .item, .list > ng-if > .item',
-            startVelocity: 3000
-          });
-          UIUtils.ink({
-            selector: '.list .item.ink'});
-        }, 10);
+        $scope.motion.show({selector: '.list > .item, .list > ng-if > .item'});
       })
       .catch(function(err) {
         // Retry (ES could have error)

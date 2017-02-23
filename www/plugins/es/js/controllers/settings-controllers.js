@@ -48,7 +48,7 @@ function ESExtendSettingsController ($scope, PluginService, csSettings) {
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, esHttp, csSettings, csHttp, esUser) {
+function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esUser, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -81,23 +81,22 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
       }
       UIUtils.loading.show();
 
-      return esHttp.get(newNode.host, newNode.port, '/node/summary')() // ping the node
-        .then(function(json) {
-          var valid = json && json.duniter && json.duniter.software === 'duniter4j-elasticsearch';
-          if (!valid) throw 'stop';
+      var newEsNode = esHttp.instance(newNode.host, newNode.port);
+      return newEsNode.isAlive() // ping the node
+        .then(function(alive) {
+          if (!alive) {
+            UIUtils.loading.hide();
+            return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+              .then(function(){
+                $scope.changeEsNode(newNode); // loop
+              });
+          }
 
           UIUtils.loading.hide();
           $scope.formData.host = newNode.host;
           $scope.formData.port = newNode.port;
-          esUser.copy(esUser.instance('default', newNode.host, newNode.port));
 
-        })
-        .catch(function(err) {
-          UIUtils.loading.hide();
-          UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
-            .then(function(){
-              $scope.changeEsNode(newNode); // loop
-            });
+          esHttp.copy(newEsNode);
         });
     });
   };

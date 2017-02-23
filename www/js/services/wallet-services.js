@@ -4,7 +4,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
 
 .factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage,
-                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob) {
+                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot) {
   'ngInject';
 
   factory = function(id) {
@@ -1014,19 +1014,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               }
 
               // Add TX to pendings
-              BMA.wot.member.get(destPub)
-                .then(function(member) {
-                  data.tx.pendings.unshift({
-                    time: (Math.floor(moment().utc().valueOf() / 1000)),
-                    amount: -amount,
-                    pubkey: destPub,
-                    uid: member ? member.uid : null,
-                    comment: comments,
-                    isUD: false,
-                    hash: res.hash,
-                    locktime: 0,
-                    block_number: null
-                  });
+              var pendingTx = {
+                time: (Math.floor(moment().utc().valueOf() / 1000)),
+                amount: -amount,
+                pubkey: destPub,
+                comment: comments,
+                isUD: false,
+                hash: res.hash,
+                locktime: 0,
+                block_number: null
+              };
+              csWot.extendAll([pendingTx], 'pubkey')
+                .then(function() {
+                  data.tx.pendings.unshift(pendingTx);
                   store(); // save pendings in local storage
                   resolve();
                 }).catch(function(err){reject(err);});

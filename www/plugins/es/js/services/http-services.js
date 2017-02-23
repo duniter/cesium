@@ -1,39 +1,148 @@
-angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'cesium.config'])
+angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.services', 'cesium.config'])
 
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, CryptoUtils, csHttp, $rootScope, $state, $sce, csConfig, csSettings, csWallet) {
+.factory('esHttp', function($q, $timeout, CryptoUtils, csHttp, $rootScope, $state, $sce, csConfig, csSettings, csWallet, Api) {
   'ngInject';
 
-  function factory() {
+  function Factory(host, port, wsPort, useSsl) {
 
     var
-      that,
+      that = this,
       regex = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
-        HASH_TAG: new RegExp('#([\\wḡĞğ]+)'),
-        USER_TAG: new RegExp('@(\\w+)')
+        HASH_TAG: match('#([\\wḡĞğ]+)'),
+        USER_TAG: match('@(\\w+)')
       };
 
+    this.cache = _emptyCache();
+    that.alive = false;
+    that.host = host;
+    that.port = port || 80;
+    that.wsPort = wsPort || 80;
+    that.useSsl = angular.isDefined(useSsl) ? useSsl : false;
+    that.server = csHttp.getServer(host, port);
+    that.date = {};
+    that.api = new Api(this, "esHttp");
 
     function exact(regexpContent) {
       return new RegExp('^' + regexpContent + '$');
     }
+    function match(regexpContent) {
+      return new RegExp(regexpContent);
+    }
+
+    function _emptyCache() {
+      return {
+        getByPath: {},
+        postByPath: {},
+        wsByPath: {}
+      };
+    }
+
+    that.cleanCache = function() {
+      _.keys(that.cache.wsByPath).forEach(function(key) {
+        var sock = that.cache.wsByPath[key];
+        sock.close();
+      });
+      console.debug('[ES] [http] Cleaning requests cache');
+      that.cache = _emptyCache();
+    };
+
+    that.copy = function(otherNode) {
+      that.host = otherNode.host;
+      that.port = otherNode.port;
+      that.wsPort = otherNode.wsPort || otherNode.port;
+      that.useSsl = otherNode.useSsl;
+      that.server = csHttp.getServer(host, port);
+      return that.restart();
+    };
 
     // Get time (UTC)
-    function getTimeNow() {
+    that.date.now = function() {
        // TODO : use the block chain time
        return Math.floor(moment().utc().valueOf() / 1000);
-    }
+    };
 
-    function get(host, node, path) {
-      return csHttp.get(host, node, path);
-    }
+    that.getUrl  = function(path) {
+      return csHttp.getUrl(that.host, that.port, path, that.useSsl);
+    };
 
-    function post(host, node, path) {
-      return csHttp.post(host, node, path);
-    }
+    that.get = function (path) {
+      return function(params) {
+        var request = that.cache.getByPath[path];
+        if (!request) {
+          request =  csHttp.get(that.host, that.port, path, that.useSsl);
+          that.cache.getByPath[path] = request;
+        }
+        return request(params);
+      };
+    };
+
+    that.post = function(path) {
+      return function(obj, params) {
+        var request = that.cache.postByPath[path];
+        if (!request) {
+          request =  csHttp.post(that.host, that.port, path, that.useSsl);
+        that.cache.postByPath[path] = request;
+        }
+        return request(obj, params);
+      };
+    };
+
+    that.ws = function(path) {
+      return function() {
+        var sock = that.cache.wsByPath[path];
+        if (!sock) {
+          sock =  csHttp.ws(that.host, that.wsPort, path, that.useSsl);
+          that.cache.wsByPath[path] = sock;
+        }
+        return sock;
+      };
+    };
+
+    that.isAlive = function() {
+      return that.node.summary()
+        .then(function(json) {
+          return json && json.duniter && json.duniter.software == 'duniter4j-elasticsearch';
+        })
+        .catch(function() {
+          return false;
+        });
+    };
+
+    that.start = function() {
+
+      console.debug('[ES] [http] Starting on [{0}]...'.format(that.server));
+      var now = new Date().getTime();
+
+      return that.isAlive()
+        .then(function(alive) {
+          that.alive = alive;
+          if (!alive) {
+            console.error('[ES] [http] Could not start [{0}]: node unreachable'.format(that.server));
+            return false;
+          }
+          console.debug('[ES] [http] Started in '+(new Date().getTime()-now)+'ms');
+          that.api.node.raise.start();
+          return true;
+        });
+    };
+
+    that.stop = function() {
+      console.debug('[ES] [http] Stopped');
+      that.alive = false;
+      that.cleanCache();
+      that.api.node.raise.stop();
+    };
+
+    that.restart = function() {
+      that.stop();
+      return $timeout(function() {
+        that.start();
+      }, 200);
+    };
 
     function parseTagsFromText(value, prefix) {
       prefix = prefix || '#';
@@ -91,12 +200,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       });
     }
 
-    function postRecord(host, node, path) {
-      var that = this;
-      that.raw = that.raw || {};
-      that.raw.post = that.raw.post || {};
-      that.raw.post[path] = csHttp.post(host, node, path);
-
+    function postRecord(path) {
+      var postRequest = that.post(path);
       return function(record, params) {
         if (!csWallet.isLogin()) {
           var deferred = $q.defer();
@@ -105,7 +210,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         }
 
         if (!record.time) {
-          record.time = getTimeNow();
+          record.time = that.date.now();
         }
         var keypair = $rootScope.walletData.keypair;
         var obj = {};
@@ -125,7 +230,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
               .then(function(signature) {
                 obj.hash = hash;
                 obj.signature = signature;
-                return that.raw.post[path](obj, params)
+                return postRequest(obj, params)
                   .then(function (id){
                     return id;
                   });
@@ -134,11 +239,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       };
     }
 
-    function removeRecord(host, node, index, type) {
-      var that = this;
-      that.raw = that.raw || {};
-      that.raw.delete = csHttp.post(host, node, '/history/delete');
-
+    function removeRecord(index, type) {
       return function(id) {
         if (!csWallet.isLogin()) {
           var deferred = $q.defer();
@@ -152,7 +253,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
           type: type,
           id: id,
           issuer: $rootScope.walletData.pubkey,
-          time: getTimeNow()
+          time: that.date.now()
         };
         var str = JSON.stringify(obj);
         return CryptoUtils.util.hash(str)
@@ -161,7 +262,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
               .then(function(signature) {
                 obj.hash = hash;
                 obj.signature = signature;
-                return that.raw.delete(obj)
+                return that.post('/history/delete')(obj)
                   .then(function (id){
                     return id;
                   });
@@ -169,6 +270,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
           });
       };
     }
+
+    that.image = {};
 
     function imageFromAttachment(attachment) {
       if (!attachment || !attachment._content_type || !attachment._content || attachment._content.length === 0) {
@@ -211,7 +314,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
      * @param imageField
      * @returns {{}}
      */
-    function imageFromHit(host, port, hit, imageField) {
+    that.image.fromHit = function(hit, imageField) {
       if (!hit || !hit._source) return;
       var attachment =  hit._source[imageField];
       if (!attachment || !attachment._content_type || !attachment._content_type.startsWith("image/")) return;
@@ -225,7 +328,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         var extension = attachment._content_type.substr(6);
         var path = [hit._index, hit._type, hit._id, '_image', imageField].join('/');
         path = '/' + path + '.' + extension;
-        image.src = csHttp.getUrl(host, port, path);
+        image.src = that.getUrl(path);
       }
       if (attachment._title) {
         image.title = attachment._title;
@@ -234,7 +337,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         image.name = attachment._name;
       }
       return image;
-    }
+    };
 
     function login(host, node, keypair) {
       return $q(function(resolve, reject) {
@@ -290,18 +393,19 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
       };
     }
 
-    that = {
-      get: get,
-      post: post,
-      getUrl : csHttp.getUrl,
+    that.api.registerEvent('node', 'start');
+    that.api.registerEvent('node', 'stop');
+
+    var exports = {
       getServer: csHttp.getServer,
-      ws: csHttp.ws,
+      node: {
+        summary: that.get('/node/summary')
+      },
       record: {
         post: postRecord,
         remove: removeRecord
       },
       image: {
-        fromHit : imageFromHit,
         fromAttachment: imageFromAttachment,
         toAttachment: imageToAttachment
       },
@@ -316,17 +420,23 @@ angular.module('cesium.es.http.services', ['ngResource', 'cesium.services', 'ces
         parseTags: parseTagsFromText,
         trustAsHtml: trustAsHtml
       },
-      date: {
-        now: getTimeNow
-      },
       constants: {
         regexp: regex
       }
     };
-    return that;
+    angular.merge(that, exports);
   }
 
-  var service = factory();
+  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
+  var port = host ? csSettings.data.plugins.es.port : null;
+  var wsPort = host ? csSettings.data.plugins.es.wsPort : port;
+
+  var service = new Factory(host, port, wsPort);
+
+  service.instance = function(host, port, wsPort) {
+    return new Factory(host, port, wsPort);
+  };
+
   return service;
 })
 ;

@@ -1,0 +1,86 @@
+<div class="lookupForm">
+
+  <button class="button button-small button-positive button-clear ink pull-right padding-right hidden-sm hidden-xs"
+          ng-click="showNewRecordModal()">
+    <i class="icon ion-plus"></i>
+    {{'GROUP.LOOKUP.BTN_NEW' | translate}}
+  </button>
+
+  <!-- search text-->
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="text"
+           class="visible-xs visible-sm"
+           placeholder="{{'GROUP.LOOKUP.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           ng-model-options="{ debounce: 650 }"
+           ng-change="doSearchText()">
+    <input type="text"
+           class="hidden-xs hidden-sm"
+           id="{{searchTextId}}" placeholder="{{'GROUP.LOOKUP.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           on-return="doSearchText()">
+    <div class="helptip-anchor-center">
+      <a id="helptip-group-search-text"></a>
+    </div>
+
+  </label>
+
+  <div class="padding-top padding-xs" style="display: block; height: 60px;">
+    <div class="pull-left">
+      <h4
+        ng-if="search.type=='open'" translate>
+        GROUP.LOOKUP.OPEN_RESULTS_LIST
+      </h4>
+      <h4
+        ng-if="search.type=='last'" translate>
+        GROUP.LOOKUP.LAST_RESULTS_LIST
+      </h4>
+      <h4
+        ng-if="search.type=='managed'" translate>
+        GROUP.LOOKUP.MANAGED_RESULTS_LIST
+      </h4>
+      <h4 ng-if="search.type=='text'">
+        {{'COMMON.RESULTS_LIST'|translate}}
+      </h4>
+      <h5 class="dark" ng-if="!search.loading && search.total">
+        <span translate="COMMON.RESULTS_COUNT" translate-values="{count: search.total}"></span>
+        <small class="gray" ng-if=":rebind:search.took && expertMode">
+          - {{:rebind:'COMMON.EXECUTION_TIME'|translate: {duration: search.took} }}
+        </small>
+      </h5>
+      <h5 class="gray" ng-if="search.loading" >
+        <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
+        <span translate>COMMON.SEARCHING</span>
+        <br/>
+      </h5>
+    </div>
+
+    <div class=" pull-right hidden-xs hidden-sm">
+      <a ng-if="enableFilter"
+         class="button button-text button-small ink icon ion-clock"
+         ng-class="{'button-text-positive': search.type=='last'}"
+         ng-click="doSearchLast()">
+        {{'GROUP.LOOKUP.BTN_LAST' | translate}}
+      </a>
+      &nbsp;
+      <button class="button button-small button-stable ink"
+              ng-click="doSearchText()">
+        {{'COMMON.BTN_SEARCH' | translate:search}}
+      </button>
+    </div>
+  </div>
+
+  <ion-list class="list {{ionListClass}}">
+
+    <ng-include src="'plugins/es/templates/group/items_groups.html'"></ng-include>
+
+  </ion-list>
+
+  <ion-infinite-scroll
+    ng-if="search.hasMore"
+    spinner="android"
+    on-infinite="showMore()"
+    distance="1%">
+  </ion-infinite-scroll>
+

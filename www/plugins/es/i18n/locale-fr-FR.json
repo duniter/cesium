@@ -31,6 +31,9 @@
     },
     "EVENT": {
       "MEMBER_WITHOUT_PROFILE": "Pour obtenir vos certifications plus rapidement, completez <a href=\"#/app/user/profile/edit\">votre profil utilisateur</a>. Les membres accorderont plus facilement leur confiance à une identité vérifiable."
+    },
+    "ERROR": {
+      "WS_CONNECTION_FAILED": "Cesium ne peut plus recevoir les nouvelles notifications, à cause d'une erreur technique (connexion au noeud de noeud Cesium+).<br/><br/>Si le problème persiste, veuillez <b>changer de noeud de données</b> dans les paramètres de l'extension Cesium+."
     }
   },
   "COMMENTS": {
@@ -149,7 +152,11 @@
       "OPEN_GROUP": "Groupe ouvert",
       "OPEN_GROUP_HELP": "Un groupe ouvert est accessible par n'importe quel membre de la monnaie.",
       "MANAGED_GROUP": "Groupe administré",
-      "MANAGED_GROUP_HELP": "un groupe administré est gérer par des administrateurs et des modérateurs, qui peuvent accepter, refuser ou exclure un membre en son sein."
+      "MANAGED_GROUP_HELP": "un groupe administré est gérer par des administrateurs et des modérateurs, qui peuvent accepter, refuser ou exclure un membre en son sein.",
+      "ENUM": {
+        "OPEN": "Groupe ouvert",
+        "MANAGED": "Groupe administré"
+      }
     },
     "EDIT": {
       "TITLE": "Groupe",

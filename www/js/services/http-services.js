@@ -18,8 +18,8 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
       return  !host ? null : (host + (port ? ':' + port : ''));
     }
 
-    function getUrl(host, port, path) {
-      var protocol = (port == 443 ? 'https' : 'http');
+    function getUrl(host, port, path, useSsl) {
+      var protocol = (port == 443 || useSsl) ? 'https' : 'http';
       return  protocol + '://' + getServer(host, port) + (path ? path : '');
     }
 
@@ -48,7 +48,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
       _.forEach(pkeys, function(pkey){
         var prevURI = newUri;
-        newUri = newUri.replace(new RegExp(':' + pkey), params[pkey]);
+        newUri = newUri.replace(':' + pkey, params[pkey]);
         if (prevURI == newUri) {
           queryParams[pkey] = params[pkey];
         }
@@ -56,7 +56,6 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
       config.params = queryParams;
       return callback(newUri, config);
     }
-
 
     function getResource(host, port, path) {
       var url = getUrl(host, port, path);
@@ -137,14 +136,18 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
       };
     }
 
-    function ws(uri) {
+    function ws(host, port, path, useSsl) {
+      var uri = ((port == 443 || useSsl) ? 'wss' : 'ws') + '://' + getServer(host, port) + path;
       var sock = null;
       var callbacks = [];
 
       function _waitOpen() {
         if (!sock) throw new Error('Websocket not opened');
-        if (sock && sock.readyState === 1) {
+        if (sock.readyState == 1) {
           return $q.when(sock);
+        }
+        if (sock.readyState == 3) {
+          return $q.reject('Unable to connect to Websocket ['+sock.url+']');
         }
         return $timeout(_waitOpen, 100);
       }
@@ -152,18 +155,19 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
       function _open(self, callback, params) {
         if (!sock) {
           prepare(uri, params, {}, function(uri) {
+            console.debug('[http] Listening on websocket ['+path+']...');
             sock = new WebSocket(uri);
+            sock.onerror = function(e) {
+              sock.readyState=3;
+            };
+            sock.onmessage = function(e) {
+              var obj = JSON.parse(e.data);
+              _.forEach(callbacks, function(callback) {
+                callback(obj);
+              });
+            };
             sockets.push(self);
           });
-          sock.onerror = function(e) {
-            console.error(e);
-          };
-          sock.onmessage = function(e) {
-            var obj = JSON.parse(e.data);
-            _.forEach(callbacks, function(callback) {
-              callback(obj);
-            });
-          };
         }
         if (callback) callbacks.push(callback);
         return _waitOpen();
@@ -184,6 +188,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
         },
         close: function() {
           if (sock) {
+            console.debug('[http] Stopping websocket ['+path+']...');
             sock.close();
             sock = null;
             callbacks = [];
@@ -246,6 +251,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
       cache: csCache.constants
     };
   }
+
 
   return factory(csSettings.data.timeout);
 })

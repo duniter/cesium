@@ -1,0 +1,111 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span class="visible-xs" ng-if="id" ng-bind-html="formData.title"></span>
+    <span class="visible-xs" ng-if="!loading && !id" translate>GROUP.EDIT.TITLE_NEW</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+      <button class="button button-icon button-clear visible-xs visible-sm"
+              ng-class="{'ion-android-send':!id, 'ion-android-done': id}"
+              ng-click="save()">
+      </button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true">
+      <div class="row no-padding">
+
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+        <div class="col">
+          <!-- loading -->
+          <div class="center padding" ng-if="loading">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
+
+          <form name="recordForm" novalidate="" ng-submit="save()">
+
+            <!--  -->
+            <div class="list"
+                 ng-class="motion.ionListClass"
+                 ng-init="setForm(recordForm)">
+
+              <div class="item hidden-xs">
+                <h1 ng-if="id" ng-bind-html="formData.title"></h1>
+                <h1 ng-if="!id" translate>GROUP.EDIT.TITLE_NEW</h1>
+                <h2 class="balanced" ng-if="!id">
+                  <i class="icon ion-android-people"></i>
+                  <i class="icon ion-android-lock" ng-if="formData.type=='managed'"></i>
+                  {{'GROUP.TYPE.ENUM.'+formData.type|upper|translate}}
+                </h2>
+              </div>
+              <div class="item" ng-if="id">
+                <h4 class="gray">
+                  <i class="icon ion-calendar"></i>
+                  {{'COMMON.LAST_MODIFICATION_DATE'|translate}}&nbsp;{{formData.time | formatDate}}
+                </h4>
+                <div class="badge badge-balanced badge-editable" ng-click="showRecordTypeModal()">
+                  {{'GROUP.TYPE.ENUM.'+formData.type|upper|translate}}
+                </div>
+              </div>
+
+              <!-- pictures -->
+              <ng-include src="'plugins/es/templates/common/edit_pictures.html'"></ng-include>
+
+              <div class="item item-divider" translate>GROUP.GENERAL_DIVIDER</div>
+
+              <!-- title -->
+              <div class="item item-input item-floating-label"
+                   ng-class="{'item-input-error': form.$submitted && form.title.$invalid}">
+                <span class="input-label" translate>GROUP.EDIT.RECORD_TITLE</span>
+                <input type="text" placeholder="{{'GROUP.EDIT.RECORD_TITLE_HELP'|translate}}"
+                       name="title"
+                       id="group-record-title"
+                       ng-model="formData.title"
+                       ng-minlength="3"
+                       ng-required="true"/>
+              </div>
+              <div class="form-errors"
+                   ng-if="form.$submitted && form.title.$error"
+                   ng-messages="form.title.$error">
+                <div class="form-error" ng-message="required">
+                  <span translate="ERROR.FIELD_REQUIRED"></span>
+                </div>
+                <div class="form-error" ng-message="minlength">
+                  <span translate="ERROR.FIELD_TOO_SHORT"></span>
+                </div>
+              </div>
+
+              <!-- description -->
+              <div class="item item-input item-floating-label">
+                <span class="input-label" translate>GROUP.EDIT.RECORD_DESCRIPTION</span>
+                <textarea placeholder="{{'GROUP.EDIT.RECORD_DESCRIPTION_HELP'|translate}}"
+                          ng-model="formData.description"
+                          rows="8" cols="10">
+                </textarea>
+              </div>
+
+              <!-- social networks -->
+              <ng-include src="'plugins/es/templates/common/edit_socials.html'"></ng-include>
+
+            </div>
+
+            <div class="padding hidden-xs hidden-sm text-right">
+              <button class="button button-clear button-dark ink" ng-click="cancel()" type="button" translate>
+                COMMON.BTN_CANCEL
+              </button>
+              <button class="button button-positive button-raised ink" type="submit" ng-if="!id" translate>
+                COMMON.BTN_PUBLISH
+              </button>
+              <button class="button button-assertive button-raised ink" type="submit" ng-if="id" translate>
+                COMMON.BTN_SAVE
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

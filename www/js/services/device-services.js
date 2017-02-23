@@ -29,7 +29,17 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
       function ready() {
         if (!readyPromise) {
           readyPromise = $ionicPlatform.ready().then(function(){
-            console.debug('[ionic] Platform is ready');
+
+            var enableCamera = !!navigator.camera;
+            exports.enable = enableCamera;
+
+            if (exports.enable){
+              var enableBarcodeScanner = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
+              console.debug('[device] Ionic platform ready, with [barcodescanner={0}] [camera={1}]'.format(enableBarcodeScanner, enableCamera));
+            }
+            else {
+              console.debug('[device] Ionic platform ready - no device detected.');
+            }
           });
         }
         return readyPromise;
@@ -127,21 +137,6 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
           });
         return deferred.promise;
       }
-
-      // On platform ready: check if device could be used
-      ready().then(function() {
-        var enableCamera = !!navigator.camera;
-
-        exports.enable = enableCamera;
-
-        if (exports.enable){
-          var enableBarcodeScanner = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
-          console.debug('[device] Ready with [barcodescanner={0}] [camera={1}]'.format(enableBarcodeScanner, enableCamera));
-        }
-        else {
-          console.debug('[device] No device detected');
-        }
-      });
 
       exports.ready = ready;
       exports.clipboard = {copy: copy};

@@ -1,0 +1,27 @@
+<a name="group-{{:rebind:group.hash}}"></a>
+<ion-item id="group-{{:rebind:block.hash}}"
+          class="item item-icon-left item-group {{ionItemClass}}"
+          ng-click="select(group)">
+
+  <i class="icon ion-cube stable" ng-if=":rebind:(!group.empty && !group.avatar)"></i>
+  <i class="avatar" ng-if=":rebind:!group.empty && group.avatar" style="background-image: url('{{:rebind:block.avatar.src}}')"></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h4 class="dark">
+        <i class="ion-clock"></i>
+        {{:rebind:group.creationTime|formatDate}}
+      </h4>
+      <h4>
+        <!-- membersCount -->
+        <i class="dark ion-person"></i>
+        <span class="dark" ng-if=":rebind:group.membersCount">+{{:rebind:group.membersCount}}</span>
+      </h4>
+    </div>
+
+    <div class="col col-33 positive hidden-md">
+      <h4><i class="ion-person"></i> <span ng-bind-html=":rebind:group.title"></span></h4>
+    </div>
+
+  </div>
+</ion-item>
