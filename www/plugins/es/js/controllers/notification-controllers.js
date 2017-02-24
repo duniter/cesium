@@ -25,7 +25,7 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $rootScope, UIUtils, $state, csWallet, esNotification) {
+function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, csWallet, esNotification) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -128,7 +128,6 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, csWallet, 
       $scope.updateView();
     }
   };
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
 
   $scope.resetData = function() {
     if ($scope.search.loading) return;
@@ -138,8 +137,14 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, csWallet, 
     $scope.search.loading = true;
     delete $scope.search.limit;
   };
-  // When logout: force reload
+
+  /* -- listeners -- */
+
+  esNotification.api.data.on.new($scope, $scope.onNewNotification);
   csWallet.api.data.on.logout($scope, $scope.resetData);
+  esHttp.api.node.on.stop($scope, $scope.resetData);
+  esHttp.api.node.on.start($scope, $scope.load);
+
 }
 
 function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, $state, csWallet, csSettings) {

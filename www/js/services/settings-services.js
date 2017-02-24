@@ -58,6 +58,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         decimalCount: 4,
         forceNetworkViewToHttp: false,
         uiEffects: true,
+        minVersion: csConfig.compatProtocol_0_80 ? '0.80.0' : '0.90.0', // TODO update this if need
         newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",
         helptip: {
           enable: true,
@@ -86,8 +87,12 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
       api = new Api(this, "csSettings"),
 
       reset = function() {
+        _.keys(data).forEach(function(key){
+          delete data[key];
+        });
         angular.merge(data, defaultSettings);
-        store();
+        api.data.raisePromise.reset(data)
+          .then(store);
       },
 
       getByPath = function(path, defaultValue) {
@@ -198,6 +203,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         });
       };
 
+    api.registerEvent('data', 'reset');
     api.registerEvent('data', 'changed');
     api.registerEvent('data', 'store');
     api.registerEvent('data', 'ready');
@@ -215,7 +221,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     };
   }
 
-  var service = Factory();
+  var service = new Factory();
 
   service.restore()
     .then(function() {

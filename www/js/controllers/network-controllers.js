@@ -153,7 +153,9 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
     $scope.search.memberPeersCount = data.memberPeersCount;
     // Always tru if network not started (e.g. after leave+renter the view)
     $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
-    $scope.motion.show({selector: '.item-peer'});
+    if ($scope.motion && $scope.search.results && $scope.search.results.length > 0) {
+      $scope.motion.show({selector: '.item-peer'});
+    }
   };
 
   $scope.refresh = function() {

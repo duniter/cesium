@@ -76,25 +76,26 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.changeNode= function(node) {
     $scope.showNodePopup(node || $scope.formData.node)
     .then(function(newNode) {
+      console.log(newNode);
       if (newNode.host === $scope.formData.node.host &&
         newNode.port === $scope.formData.node.port) {
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
       var nodeBMA = BMA.instance(newNode.host, newNode.port);
-      nodeBMA.node.summary() // ping the node
-      .then(function() {
-        UIUtils.loading.hide();
-        $scope.formData.node = newNode;
-        BMA.copy(nodeBMA);
-      })
-      .catch(function(err){
-         UIUtils.loading.hide();
-         UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
-         .then(function(){
-           $scope.changeNode(newNode); // loop
-         });
-      });
+      nodeBMA.isAlive()
+        .then(function(alive) {
+          if (!alive) {
+            UIUtils.loading.hide();
+            return UIUtils.alert.error('ERROR.INVALID_NODE_SUMMARY')
+              .then(function(){
+                $scope.changeNode(newNode); // loop
+              });
+          }
+          UIUtils.loading.hide();
+          $scope.formData.node = newNode;
+          BMA.copy(nodeBMA);
+        });
     });
   };
 

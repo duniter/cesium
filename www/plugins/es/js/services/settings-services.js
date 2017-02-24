@@ -29,6 +29,19 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           excludes: ['installDocUrl']
         }
       },
+      defaultSettings = angular.merge({
+          plugins: {
+            es: {
+              askEnable: false,
+              notifications: {
+                txSent: true,
+                txReceived: true,
+                certSent: true,
+                certReceived: true
+              }
+            }
+          }
+      }, {plugins: {es: csConfig.plugins && csConfig.plugins.es || {}}}),
       that = this,
       previousRemoteData,
       listeners,
@@ -118,6 +131,13 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         });
     }
 
+    function onSettingsReset(data, deferred) {
+      deferred = deferred || $q.defer();
+      angular.merge(data, defaultSettings);
+      deferred.resolve(data);
+      return deferred.promise;
+    }
+
     function onWalletLogin(data, deferred) {
       deferred = deferred || $q.defer();
       if (!data || !data.pubkey || !data.keypair) {
@@ -164,7 +184,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
       var wasEnable = listeners && listeners.length > 0;
 
-      refreshListeners();
+      refreshState();
 
       var isEnable = that.isEnable();
       if (csWallet.isLogin()) {
@@ -250,7 +270,6 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     }
 
     function removeListeners() {
-      console.debug("[ES] [settings] Disable");
       _.forEach(listeners, function(remove){
         remove();
       });
@@ -258,29 +277,33 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     }
 
     function addListeners() {
-      console.debug("[ES] [settings] Enable");
-
       // Extend csWallet.login()
       listeners = [
-        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
-
+        csSettings.api.data.on.reset($rootScope, onSettingsReset, this),
+        csWallet.api.data.on.login($rootScope, onWalletLogin, this)
       ];
     }
 
-    function refreshListeners() {
+    function refreshState() {
       var enable = that.isEnable();
+
+      // Disable
       if (!enable && listeners && listeners.length > 0) {
+        console.debug("[ES] [settings] Disable");
         removeListeners();
         return esHttp.stop();
       }
+
+      // Enable
       else if (enable && (!listeners || listeners.length === 0)) {
         return esHttp.start()
           .then(function(started) {
             if (!started) {
               // TODO : alert user ?
-              console.error('ES node could not be started !!');
+              console.error('[ES] node could not be started !!');
             }
             else {
+              console.debug("[ES] [settings] Enable");
               addListeners();
               if (csWallet.isLogin()) {
                 return onWalletLogin(csWallet.data);
@@ -296,7 +319,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       esHttp.api.node.on.stop($rootScope, function() {
         previousRemoteData = null;
       }, this);
-      return refreshListeners();
+      return refreshState();
     })
 
     .then(function() {

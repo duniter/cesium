@@ -459,24 +459,27 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
 
     function addListeners() {
-      console.debug("[ES] [message] Enable");
-
       // Extend csWallet.loadData()
       listeners = [
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.init($rootScope, onWalletInit, this),
-        csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+        csWallet.api.data.on.reset($rootScope, onWalletReset, this)
       ];
     }
 
-    function refreshListeners() {
+    function refreshState() {
       var enable = esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
+        console.debug("[ES] [message] Disable");
         removeListeners();
+        if (csWallet.isLogin()) {
+          onWalletReset(csWallet.data);
+        }
       }
       else if (enable && (!listeners || listeners.length === 0)) {
+        console.debug("[ES] [message] Enable");
         addListeners();
-        if (csWallet.isLogin() && !csWallet.data.messages) {
+        if (csWallet.isLogin()) {
           onWalletLogin(csWallet.data);
         }
       }
@@ -484,9 +487,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     // Default action
     Device.ready().then(function() {
-      refreshListeners();
-      esHttp.api.node.on.start($rootScope, refreshListeners, this);
-      esHttp.api.node.on.stop($rootScope, refreshListeners, this);
+      esHttp.api.node.on.start($rootScope, refreshState, this);
+      esHttp.api.node.on.stop($rootScope, refreshState, this);
+      return refreshState();
     });
 
     return {

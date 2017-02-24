@@ -52,7 +52,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
 ;
 
-function ESMessageListController($scope, $rootScope, $state, $timeout, $translate, $ionicHistory, $ionicPopover,
+function ESMessageListController($scope, $rootScope, $state, $translate, $ionicHistory, $ionicPopover,
                                  esModals, UIUtils, esMessage) {
   'ngInject';
 
@@ -480,7 +480,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   };
 }
 
-function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, esNotification, esMessage, esModals) {
+function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, esHttp, esNotification, esMessage, esModals) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -492,6 +492,12 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, e
     loadingMore : false,
     limit: defaultSearchLimit
   };
+
+  $scope.$on('popover.shown', function() {
+    if ($scope.search.loading) {
+      $scope.load();
+    }
+  });
 
   $scope.load = function(from, size) {
     var options = {};
@@ -570,7 +576,6 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, e
     delete $scope.search.limit;
   };
 
-  csWallet.api.data.on.logout($scope, $scope.resetData);
 
   /* -- Modals -- */
 
@@ -582,11 +587,11 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, e
       });
   };
 
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
+  /* -- listeners -- */
 
-  /* -- default popover action -- */
-  if ($scope.search.loading) {
-    $scope.load();
-  }
+  csWallet.api.data.on.logout($scope, $scope.resetData);
+  esHttp.api.node.on.stop($scope, $scope.resetData);
+  esHttp.api.node.on.start($scope, $scope.load);
+  esNotification.api.data.on.new($scope, $scope.onNewNotification);
 
 }

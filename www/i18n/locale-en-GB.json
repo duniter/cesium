@@ -114,6 +114,7 @@
     "PEER": "Duniter peer address",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "ENABLE_HELPTIP": "Enable contextual help tips",
+    "ENABLE_UI_EFFECTS": "Enable visual effects",
     "HISTORY_SETTINGS": "My Account",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",
     "AUTHENTICATION_SETTINGS": "Authentication",

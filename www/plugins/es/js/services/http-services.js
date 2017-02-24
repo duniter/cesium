@@ -16,14 +16,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         USER_TAG: match('@(\\w+)')
       };
 
-    this.cache = _emptyCache();
+    that.cache = _emptyCache();
     that.alive = false;
     that.host = host;
     that.port = port || 80;
-    that.wsPort = wsPort || 80;
+    that.wsPort = wsPort || port || 80;
     that.useSsl = angular.isDefined(useSsl) ? useSsl : false;
     that.server = csHttp.getServer(host, port);
-    that.date = {};
     that.api = new Api(this, "esHttp");
 
     function exact(regexpContent) {
@@ -42,11 +41,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     }
 
     that.cleanCache = function() {
+      console.debug('[ES] [http] Cleaning requests cache...');
       _.keys(that.cache.wsByPath).forEach(function(key) {
         var sock = that.cache.wsByPath[key];
         sock.close();
       });
-      console.debug('[ES] [http] Cleaning requests cache');
       that.cache = _emptyCache();
     };
 
@@ -60,10 +59,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     // Get time (UTC)
-    that.date.now = function() {
-       // TODO : use the block chain time
-       return Math.floor(moment().utc().valueOf() / 1000);
-    };
+    that.date = { now : csHttp.date.now };
 
     that.getUrl  = function(path) {
       return csHttp.getUrl(that.host, that.port, path, that.useSsl);
@@ -131,7 +127,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.stop = function() {
-      console.debug('[ES] [http] Stopped');
+      console.debug('[ES] [http] Stopping...');
       that.alive = false;
       that.cleanCache();
       that.api.node.raise.stop();
@@ -429,7 +425,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
   var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
   var port = host ? csSettings.data.plugins.es.port : null;
-  var wsPort = host ? csSettings.data.plugins.es.wsPort : port;
+  var wsPort = host ? csSettings.data.plugins.es.wsPort : null;
 
   var service = new Factory(host, port, wsPort);
 

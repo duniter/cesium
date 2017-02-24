@@ -159,7 +159,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       notification.read = true;
       CryptoUtils.sign(notification.hash, csWallet.data.keypair)
         .then(function(signature){
-          return postReadById(signature, {id:notification.id});
+          return that.raw.postReadById(signature, {id:notification.id});
         })
         .catch(function(err) {
           console.error('Error while trying to mark event as read:' + (err.message ? err.message : err));
@@ -242,10 +242,13 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       ];
     }
 
-    function refreshListeners() {
+    function refreshState() {
       var enable = esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
         removeListeners();
+        if (csWallet.isLogin()) {
+          onWalletReset(csWallet.data);
+        }
       }
       else if (enable && (!listeners || listeners.length === 0)) {
         addListeners();
@@ -260,9 +263,9 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
     // Default actions
     Device.ready().then(function() {
-      esHttp.api.node.on.start($rootScope, refreshListeners, this);
-      esHttp.api.node.on.stop($rootScope, refreshListeners, this);
-      return refreshListeners();
+      esHttp.api.node.on.start($rootScope, refreshState, this);
+      esHttp.api.node.on.stop($rootScope, refreshState, this);
+      return refreshState();
     });
 
     return {

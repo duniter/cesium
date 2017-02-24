@@ -61,7 +61,8 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
       angular.copy(csSettings.data.plugins.es) : {
       enable: false,
       host: null,
-      port: null
+      port: null,
+      wsPort: null
     };
     $scope.loading = false;
   });
@@ -74,8 +75,9 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   $scope.changeEsNode= function(node) {
     $scope.showNodePopup(node || $scope.formData)
     .then(function(newNode) {
-      if (newNode.host === $scope.formData.host &&
-        newNode.port === $scope.formData.port) {
+      if (newNode.host == $scope.formData.host &&
+        newNode.port == $scope.formData.port &&
+        newNode.wsPort == $scope.formData.wsPort) {
         UIUtils.loading.hide();
         return; // same node = nothing to do
       }
@@ -95,6 +97,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
           UIUtils.loading.hide();
           $scope.formData.host = newNode.host;
           $scope.formData.port = newNode.port;
+          $scope.formData.wsPort = newNode.wsPort;
 
           esHttp.copy(newEsNode);
         });
@@ -104,7 +107,15 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   // Show node popup
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
-      $scope.popupData.newNode = node.port ? [node.host, node.port].join(':') : node.host;
+      var parts = [node.host];
+      if (node.wsPort && node.wsPort != (node.port||80)) {
+        parts.push(node.port||80);
+        parts.push(node.wsPort);
+      }
+      else if (node.port && node.port != 80) {
+        parts.push(node.port);
+      }
+      $scope.popupData.newNode = parts.join(':');
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
@@ -139,10 +150,10 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
               return;
             }
             var parts = node.split(':');
-            parts[1] = parts[1] ? parts[1] : 80;
             resolve({
               host: parts[0],
-              port: parts[1]
+              port: parts[1] || 80,
+              wsPort: parts[2] || parts[1] || 80
             });
           });
         });
@@ -198,6 +209,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   $scope.$watch('formData', $scope.onFormChanged, true);
 
   $scope.getServer = function() {
-    return csHttp.getServer($scope.formData.host, $scope.formData.port);
+    var server = csHttp.getServer($scope.formData.host, $scope.formData.port != 80 ? $scope.formData.port : undefined);
+    return server + ($scope.formData.wsPort && $scope.formData.wsPort != $scope.formData.port ? ':' + $scope.formData.wsPort : '');
   };
 }

@@ -8,7 +8,7 @@ function Notification(json, markAsReadCallback) {
 
   var that = this;
 
-  that.type = json.type.toLowerCase();
+  that.type = json.type && json.type.toLowerCase();
   that.time = json.time;
   that.hash = json.hash;
   that.read = json.read_signature ? true : false;

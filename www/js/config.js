@@ -38,7 +38,6 @@ angular.module("cesium.config", [])
 			"askEnable": false,
 			"host": "localhost",
 			"port": 9200,
-			"wsPort": 9400,
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,

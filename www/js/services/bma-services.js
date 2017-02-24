@@ -1,15 +1,11 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'cesium.settings.services'])
+angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, csSettings, csHttp, csCache, $rootScope, $timeout) {
+.factory('BMA', function($q, Api, Device, csSettings, csHttp, csCache, $rootScope, $timeout) {
   'ngInject';
 
-  function factory(host, port, cacheEnable) {
-
-    function exact(regexpContent) {
-      return new RegExp("^" + regexpContent + "$");
-    }
+  function BMA(host, port, useSsl, useCache) {
 
     var
       regex = {
@@ -42,7 +38,172 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000, // time (in second) to wait between to call of a rest request
         regex: regex
+      },
+      listeners,
+      that = this;
+
+    that.date = {now: csHttp.date.now};
+    that.api = new Api(this, 'BMA-' + that.server);
+
+    init(host, port, useSsl, useCache);
+
+    function init(host, port, useSsl, useCache) {
+      if (!host) {
+        throw new Error('new BMA() need mandatory argument [host]');
+      }
+      that.alive = false;
+      that.cache = _emptyCache();
+      that.host = host;
+      that.port = port || 80;
+      that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443);
+      that.useCache = angular.isDefined(useCache) ? useCache : false;
+
+      that.server = csHttp.getServer(host, port);
+      that.url = csHttp.getUrl(host, port, useSsl);
+    }
+
+    function exact(regexpContent) {
+      return new RegExp("^" + regexpContent + "$");
+    }
+
+    function _emptyCache() {
+      return {
+        getByPath: {},
+        postByPath: {},
+        wsByPath: {}
       };
+    }
+
+    that.cleanCache = function() {
+      console.debug('[BMA] Cleaning requests cache...');
+      _.keys(that.cache.wsByPath).forEach(function(key) {
+        var sock = that.cache.wsByPath[key];
+        sock.close();
+      });
+      that.cache = _emptyCache();
+    };
+
+    get = function (path, cacheTime) {
+      cacheTime = that.useCache && cacheTime;
+      var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
+      return function(params) {
+        var request = that.cache.getByPath[cacheKey];
+        if (!request) {
+          if (cacheTime) {
+            request = csHttp.getWithCache(that.host, that.port, path, that.useSsl, cacheTime);
+          }
+          else {
+            request = csHttp.get(that.host, that.port, path, that.useSsl);
+          }
+          that.cache.getByPath[cacheKey] = request;
+        }
+        return request(params);
+      };
+    };
+
+    post = function(path) {
+      return function(obj, params) {
+        var request = that.cache.postByPath[path];
+        if (!request) {
+          request =  csHttp.post(that.host, that.port, path, that.useSsl);
+          that.cache.postByPath[path] = request;
+        }
+        return request(obj, params);
+      };
+    };
+
+    ws = function(path) {
+      return function() {
+        var sock = that.cache.wsByPath[path];
+        if (!sock) {
+          sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
+          that.cache.wsByPath[path] = sock;
+        }
+        return sock;
+      };
+    };
+
+    that.isAlive = function() {
+      return that.node.summary()
+        .then(function(json) {
+          var isDuniter = json && json.duniter && json.duniter.software == 'duniter' && json.duniter.version;
+          var isCompatible = isDuniter && csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
+          if (isDuniter && !isCompatible) {
+            console.error('[BMA] Uncompatible version [{0}] - expected at least [{1}]'.format(json.duniter.version, csSettings.data.minVersion));
+          }
+          return isCompatible;
+        })
+        .catch(function() {
+          return false;
+        });
+    };
+
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
+
+    function addListeners() {
+      listeners = [
+        // Listen if node changed
+        csSettings.api.data.on.changed($rootScope, onSettingsChanged, this)
+      ];
+    }
+
+    function onSettingsChanged(settings) {
+
+      var server = csHttp.getUrl(settings.node.host, settings.node.port, '', settings.node.useSsl);
+      var hasChanged = (server != that.url);
+      if (hasChanged) {
+        init(settings.node.host, settings.node.port, settings.node.useSsl, that.useCache);
+        that.restart();
+      }
+    }
+
+    that.start = function() {
+
+      console.debug('[BMA] Starting [{0}]...'.format(that.server));
+      var now = new Date().getTime();
+
+      return that.isAlive()
+        .then(function(alive) {
+          that.alive = alive;
+          if (!alive) {
+            // TODO : alert user ?
+            console.error('[BMA] Could not start [{0}]: node unreachable'.format(that.server));
+            return false;
+          }
+
+          // Add listeners
+          if (!listeners || listeners.length === 0) {
+            addListeners();
+          }
+          console.debug('[BMA] Started in '+(new Date().getTime()-now)+'ms');
+
+          that.api.node.raise.start();
+          return true;
+        });
+    };
+
+    that.stop = function() {
+      console.debug('[BMA] Stopping...');
+      that.alive = false;
+      removeListeners();
+      that.cleanCache();
+      that.api.node.raise.stop();
+    };
+
+    that.restart = function() {
+      that.stop();
+      return $timeout(function() {
+        that.start();
+      }, 200);
+    };
+
+    that.api.registerEvent('node', 'start');
+    that.api.registerEvent('node', 'stop');
 
     var exports = {
       errorCodes: errorCodes,
@@ -57,86 +218,66 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         BMAS_ENDPOINT: exact(regex.BMAS_ENDPOINT)
       },
       node: {
-        server: csHttp.getServer(host, port),
-        url: csHttp.getUrl(host, port),
+        server: that.server,
+        url: that.url,
         host: host,
         port: port,
-        summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG),
+        summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
           return host2 == host && ((!port && !port2) || (port == port2));
         }
       },
       network: {
         peering: {
-          self: csHttp.get(host, port, '/network/peering'),
-          peers: csHttp.get(host, port, '/network/peering/peers')
+          self: get('/network/peering'),
+          peers: get('/network/peering/peers')
         },
-        peers: csHttp.get(host, port, '/network/peers')
+        peers: get('/network/peers')
       },
       wot: {
-        lookup: csHttp.get(host, port, '/wot/lookup/:search'),
-        certifiedBy: csHttp.get(host, port, '/wot/certified-by/:pubkey'),
-        certifiersOf: csHttp.get(host, port, '/wot/certifiers-of/:pubkey'),
+        lookup: get('/wot/lookup/:search'),
+        certifiedBy: get('/wot/certified-by/:pubkey'),
+        certifiersOf: get('/wot/certifiers-of/:pubkey'),
         member: {
-          all: cacheEnable ? csHttp.getWithCache(host, port, '/wot/members') : csHttp.get(host, port, '/wot/members'),
-          pending: csHttp.get(host, port, '/wot/pending')
+          all: get('/wot/members', csHttp.cache.LONG),
+          pending: get('/wot/pending')
         },
-        requirements: csHttp.get(host, port, '/wot/requirements/:pubkey'),
-        add: csHttp.post(host, port, '/wot/add'),
-        certify: csHttp.post(host, port, '/wot/certify'),
-        revoke: csHttp.post(host, port, '/wot/revoke')
+        requirements: get('/wot/requirements/:pubkey'),
+        add: post('/wot/add'),
+        certify: post('/wot/certify'),
+        revoke: post('/wot/revoke')
       },
       blockchain: {
-        parameters: csHttp.getWithCache(host, port, '/blockchain/parameters', csHttp.cache.LONG),
-        block: cacheEnable ? csHttp.getWithCache(host, port, '/blockchain/block/:block', csHttp.cache.SHORT) : csHttp.get(host, port, '/blockchain/block/:block'),
-        blocksSlice: csHttp.get(host, port, '/blockchain/blocks/:count/:from'),
-        current: csHttp.get(host, port, '/blockchain/current'),
-        membership: csHttp.post(host, port, '/blockchain/membership'),
+        parameters: get('/blockchain/parameters', csHttp.cache.LONG),
+        block: get('/blockchain/block/:block', csHttp.cache.SHORT),
+        blocksSlice: get('/blockchain/blocks/:count/:from'),
+        current: get('/blockchain/current'),
+        membership: post('/blockchain/membership'),
         stats: {
-          ud: cacheEnable ? csHttp.getWithCache(host, port, '/blockchain/with/ud', csHttp.cache.SHORT) : csHttp.get(host, port, '/blockchain/with/ud'),
-          tx: csHttp.get(host, port, '/blockchain/with/tx'),
-          newcomers: csHttp.get(host, port, '/blockchain/with/newcomers'),
-          hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
+          ud: get('/blockchain/with/ud', csHttp.cache.SHORT),
+          tx: get('/blockchain/with/tx'),
+          newcomers: get('/blockchain/with/newcomers'),
+          hardship: get('/blockchain/hardship/:pubkey')
         }
       },
       tx: {
-        sources: csHttp.get(host, port, '/tx/sources/:pubkey'),
-        process: csHttp.post(host, port, '/tx/process'),
+        sources: get('/tx/sources/:pubkey'),
+        process: post('/tx/process'),
         history: {
-          all: csHttp.get(host, port, '/tx/history/:pubkey'),
-          times: cacheEnable ? csHttp.getWithCache(host, port, '/tx/history/:pubkey/times/:from/:to') : csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
-          timesNoCache: csHttp.get(host, port, '/tx/history/:pubkey/times/:from/:to'),
-          blocks: cacheEnable ? csHttp.getWithCache(host, port, '/tx/history/:pubkey/blocks/:from/:to') : csHttp.get(host, port, '/tx/history/:pubkey/blocks/:from/:to'),
-          pending: csHttp.get(host, port, '/tx/history/:pubkey/pending')
+          all: get('/tx/history/:pubkey'),
+          times: get('/tx/history/:pubkey/times/:from/:to', csHttp.cache.LONG),
+          timesNoCache: get('/tx/history/:pubkey/times/:from/:to'),
+          blocks: get('/tx/history/:pubkey/blocks/:from/:to', csHttp.cache.LONG),
+          pending: get('/tx/history/:pubkey/pending')
         }
       },
       ud: {
-        history: csHttp.get(host, port, '/ud/history/:pubkey')
+        history: get('/ud/history/:pubkey')
       },
       uri: {},
       raw: {
 
       }
-    };
-
-    exports.lightInstance = function(host, port) {
-      return {
-        node: {
-          summary: csHttp.getWithCache(host, port, '/node/summary', csHttp.cache.LONG)
-        },
-        network: {
-          peering: {
-            self: csHttp.get(host, port, '/network/peering')
-          },
-          peers: csHttp.get(host, port, '/network/peers')
-        },
-        blockchain: {
-          current: csHttp.get(host, port, '/blockchain/current'),
-          stats: {
-            hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey')
-          }
-        }
-      };
     };
 
     exports.node.parseEndPoint = function(endpoint) {
@@ -151,15 +292,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     };
 
     exports.copy = function(otherNode) {
-      if (!!this.instance) { // if main service impl
-        var instance = this.instance; // keep factory
-        csCache.clearAll(); // clean all caches
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
+      init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache);
+      return that.restart();
     };
 
     exports.wot.member.uids = function() {
@@ -277,6 +411,8 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
         if (exact(regex.PUBKEY).test(uri)) {
           resolve({
             pubkey: uri
+
+
           });
         }
         else if(uri.startsWith('duniter://')) {
@@ -377,31 +513,49 @@ angular.module('cesium.bma.services', ['ngResource', 'cesium.http.services', 'ce
     };
 
     exports.websocket = {
-        block: function() {
-          return csHttp.ws((exports.node.port == 443 ? 'wss' : 'ws') + '://' + exports.node.server + '/ws/block');
-        },
-        peer: function() {
-          return csHttp.ws((exports.node.port == 443 ? 'wss' : 'ws') + '://' + exports.node.server + '/ws/peer');
-        },
+        block: ws('/ws/block'),
+        peer: ws('/ws/peer'),
         close : csHttp.closeAllWs
       };
 
-    return exports;
+    angular.merge(that, exports);
   }
 
-  var service = factory(csSettings.data.node.host, csSettings.data.node.port, true /*cache*/);
-  service.instance = factory;
+  var service = new BMA(
+    csSettings.data.node.host,
+    csSettings.data.node.port,
+    csSettings.data.node.port == 443 || csSettings.data.node.useSsl,
+    true /*cache*/);
 
-  // Listen settings changes
-  csSettings.api.data.on.changed($rootScope, function(settings) {
+  service.instance = function(host, port, useSsl, useCache) {
+    return new BMA(host, port, useSsl, useCache);
+  };
 
-    var nodeServer = csHttp.getServer(settings.node.host, settings.node.port);
-    if (nodeServer != service.node.server) {
-      var newService = factory(settings.node.host, settings.node.port, true /*cache*/);
-      service.copy(newService); // reload service
-    }
-
-  });
+  service.lightInstance = function(host, port, useSsl) {
+    port = port || 80;
+    useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
+    return {
+      node: {
+        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG)
+      },
+      network: {
+        peering: {
+          self: csHttp.get(host, port, '/network/peering', useSsl)
+        },
+        peers: csHttp.get(host, port, '/network/peers', useSsl)
+      },
+      blockchain: {
+        current: csHttp.get(host, port, '/blockchain/current', useSsl),
+        stats: {
+          hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey', useSsl)
+        }
+      }
+    };
+  };
+  /*Device.ready().then(function() {
+    return service.start();
+  });*/
+  service.start();
 
   return service;
 })
