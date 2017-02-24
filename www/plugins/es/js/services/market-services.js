@@ -3,35 +3,19 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
 .factory('esMarket', function($q, csSettings, BMA, esHttp, esComment, esUser) {
   'ngInject';
 
-  function factory(host, port, wsPort) {
+  function EsMarket() {
 
     var
       fields = {
         commons: ["category", "title", "description", "issuer", "time", "location", "price", "unit", "currency", "thumbnail._content_type", "picturesCount", "type"]
       },
       exports = {
-        _internal: {},
-        node: {
-          host: host,
-          port: port,
-          server: esHttp.getServer(host, port)
-        }
+        _internal: {}
       };
 
-    function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-    }
-
     exports._internal.category= {
-        get: esHttp.get(host, port, '/market/category/:id'),
-        all: esHttp.get(host, port, '/market/category/_search?sort=order&from=0&size=1000&_source=name,parent')
+        get: esHttp.get('/market/category/:id'),
+        all: esHttp.get('/market/category/_search?sort=order&from=0&size=1000&_source=name,parent')
       };
 
 
@@ -101,7 +85,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
       }
 
       // thumbnail
-      record.thumbnail = esHttp.image.fromHit(host, port, hit, 'thumbnail');
+      record.thumbnail = esHttp.image.fromHit(hit, 'thumbnail');
 
       // pictures
       if (hit._source.pictures && hit._source.pictures.reduce) {
@@ -113,10 +97,10 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
       return record;
     }
 
-    exports._internal.searchText = esHttp.get(host, port, '/market/record/_search?q=:search');
-    exports._internal.search = esHttp.post(host, port, '/market/record/_search');
-    exports._internal.get = esHttp.get(host, port, '/market/record/:id');
-    exports._internal.getCommons = esHttp.get(host, port, '/market/record/:id?_source=' + fields.commons.join(','));
+    exports._internal.searchText = esHttp.get('/market/record/_search?q=:search');
+    exports._internal.search = esHttp.post('/market/record/_search');
+    exports._internal.get = esHttp.get('/market/record/:id');
+    exports._internal.getCommons = esHttp.get('/market/record/:id?_source=' + fields.commons.join(','));
 
     function search(request) {
       request = request || {};
@@ -219,37 +203,29 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
         });
     }
 
-    exports.copy = copy;
     exports.category = {
         all: getCategories,
         get: getCategory,
-        searchText: esHttp.get(host, port, '/market/category/_search?q=:search'),
-        search: esHttp.post(host, port, '/market/category/_search'),
+        searchText: esHttp.get('/market/category/_search?q=:search'),
+        search: esHttp.post('/market/category/_search'),
       };
     exports.record = {
         search: search,
         load: loadData,
-        add: esHttp.record.post(host, port, '/market/record'),
-        update: esHttp.record.post(host, port, '/market/record/:id/_update'),
-        remove: esHttp.record.remove(host, port, 'market', 'record'),
+        add: esHttp.record.post('/market/record'),
+        update: esHttp.record.post('/market/record/:id/_update'),
+        remove: esHttp.record.remove('market', 'record'),
         fields: {
           commons: fields.commons
         },
         picture: {
-          all: esHttp.get(host, port, '/market/record/:id?_source=pictures')
+          all: esHttp.get('/market/record/:id?_source=pictures')
         },
-        comment: new esComment.instance(host, port, wsPort, 'market')
+        comment: esComment.instance('market')
       };
     return exports;
   }
 
-  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
-  var port = host ? csSettings.data.plugins.es.port : null;
-  var wsPort = host && csSettings.data.plugins.es.wsPort ? csSettings.data.plugins.es.wsPort : port;
-
-  var service = factory(host, port, wsPort);
-
-  service.instance = factory;
-  return service;
+  return EsMarket();
 })
 ;

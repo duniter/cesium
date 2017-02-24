@@ -223,8 +223,6 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     }
 
     function removeListeners() {
-      console.debug("[ES] [notification] Disable");
-
       _.forEach(listeners, function(remove){
         remove();
       });
@@ -232,8 +230,6 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     }
 
     function addListeners() {
-      console.debug("[ES] [notification] Enable");
-
       // Listen some events
       listeners = [
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
@@ -245,12 +241,14 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     function refreshState() {
       var enable = esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
+        console.debug("[ES] [notification] Disable");
         removeListeners();
         if (csWallet.isLogin()) {
           onWalletReset(csWallet.data);
         }
       }
       else if (enable && (!listeners || listeners.length === 0)) {
+        console.debug("[ES] [notification] Enable");
         addListeners();
         if (csWallet.isLogin()) {
           return onWalletLogin(csWallet.data);
@@ -280,6 +278,6 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     };
   }
 
-  return new Factory();
+  return Factory();
 })
 ;

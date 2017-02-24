@@ -3,7 +3,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
 .factory('esComment', function($rootScope, $q, UIUtils, BMA, esHttp, esUser, csWallet) {
   'ngInject';
 
-  function factory(host, port, wsPort, index) {
+  function EsComment(index) {
 
     var
       that = this,
@@ -317,7 +317,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
   }
 
   return {
-     instance: factory
+     instance: EsComment
    };
 })
 ;

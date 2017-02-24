@@ -11,10 +11,10 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
 
   })
 
-.factory('esGroup', function($q, $rootScope, csSettings, esHttp, CryptoUtils, esUser, csWallet, esNotification, esComment) {
+.factory('esGroup', function($q, $rootScope, Device, csSettings, esHttp, CryptoUtils, esUser, csWallet, esNotification, esComment) {
   'ngInject';
 
-  function factory(host, port, wsPort) {
+  function EsGroup() {
 
     var
       listeners,
@@ -25,24 +25,8 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
         notifications: ["issuer", "time", "hash", "read_signature"]
       },
       exports = {
-        _internal: {},
-        node: {
-          host: host,
-          port: port,
-          server: esHttp.getServer(host, port)
-        }
+        _internal: {}
       };
-
-    function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-    }
 
     function onWalletInit(data) {
       data.groups = data.groups || {};
@@ -186,8 +170,6 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
     }
 
     function removeListeners() {
-      console.debug("[ES] [group] Disable");
-
       _.forEach(listeners, function(remove){
         remove();
       });
@@ -195,42 +177,38 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
     }
 
     function addListeners() {
-      console.debug("[ES] [group] Enable");
-
       // Extend csWallet.loadData()
       listeners = [
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.init($rootScope, onWalletInit, this),
-        csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+        csWallet.api.data.on.reset($rootScope, onWalletReset, this)
       ];
     }
 
-    function isEnable() {
-      return csSettings.data.plugins &&
-        csSettings.data.plugins.es &&
-        host && csSettings.data.plugins.es.enable;
-    }
-
-    function refreshListeners() {
-      var enable = isEnable();
+    function refreshState() {
+      var enable = esHttp.alive;
       if (!enable && listeners && listeners.length > 0) {
+        console.debug("[ES] [group] Disable");
         removeListeners();
+        if (csWallet.isLogin()) {
+          onWalletReset(csWallet.data);
+        }
       }
       else if (enable && (!listeners || listeners.length === 0)) {
+        console.debug("[ES] [group] Enable");
         addListeners();
+        if (csWallet.isLogin()) {
+          onWalletLogin(csWallet.data);
+        }
       }
     }
 
-    // Listen for settings changed
-    csSettings.api.data.on.changed($rootScope, function(){
-      refreshListeners();
-      if (isEnable() && !csWallet.data.messages) {
-        onWalletLogin(csWallet.data);
-      }
+    // Default actions
+    Device.ready().then(function() {
+      esHttp.api.node.on.start($rootScope, refreshState, this);
+      esHttp.api.node.on.stop($rootScope, refreshState, this);
+      return refreshState();
     });
-
-    // Default action
-    refreshListeners();
 
     return {
       record: {
@@ -245,14 +223,11 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
         picture: {
           all: esHttp.get('/group/record/:id?_source=pictures')
         },
-        comment: new esComment.instance(wsPort, 'group')
+        comment: esComment.instance('group')
       }
     };
   }
 
-  var service = factory();
-
-  service.instance = factory;
-  return service;
+  return EsGroup();
 })
 ;

@@ -3,7 +3,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 .factory('esRegistry', function($q, csSettings, esHttp, esComment, esUser) {
   'ngInject';
 
-  function factory(host, port, wsPort) {
+  function EsRegistry() {
 
     var
       fields = {
@@ -15,25 +15,9 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     var
       exports = {
         _internal: {},
-        node: {
-          host: host,
-          port: port,
-          server: esHttp.getServer(host, port)
-        }
       };
 
-    function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-    }
-
-    exports._internal.getCategories = esHttp.get(host, port, '/registry/category/_search?sort=order&from=0&size=1000&_source=name,parent');
+    exports._internal.getCategories = esHttp.get('/registry/category/_search?sort=order&from=0&size=1000&_source=name,parent');
 
     function getCategories() {
       if (exports._internal.categories && exports._internal.categories.length) {
@@ -62,7 +46,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         });
     }
 
-    exports._internal.getCategory = esHttp.get(host, port, '/registry/category/:id');
+    exports._internal.getCategory = esHttp.get('/registry/category/:id');
 
     function getCategory(params) {
       return exports._internal.getCategory(params)
@@ -92,7 +76,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       }
 
       // thumbnail
-      record.thumbnail = esHttp.image.fromHit(host, port, hit, 'thumbnail');
+      record.thumbnail = esHttp.image.fromHit(hit, 'thumbnail');
 
       // pictures
       if (hit._source.pictures && hit._source.pictures.reduce) {
@@ -104,10 +88,10 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       return record;
     }
 
-    exports._internal.searchText = esHttp.get(host, port, '/registry/record/_search?q=:search');
-    exports._internal.search = esHttp.post(host, port, '/registry/record/_search');
-    exports._internal.get = esHttp.get(host, port, '/registry/record/:id');
-    exports._internal.getCommons = esHttp.get(host, port, '/registry/record/:id?_source=' + fields.commons.join(','));
+    exports._internal.searchText = esHttp.get('/registry/record/_search?q=:search');
+    exports._internal.search = esHttp.post('/registry/record/_search');
+    exports._internal.get = esHttp.get('/registry/record/:id');
+    exports._internal.getCommons = esHttp.get('/registry/record/:id?_source=' + fields.commons.join(','));
 
     function search(request) {
       request = request || {};
@@ -174,7 +158,6 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       });
     }
 
-    exports.copy = copy;
     exports.category = {
         all: getCategories,
         get: getCategory
@@ -182,31 +165,24 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     exports.record = {
         search: search,
         load: loadData,
-        add: esHttp.record.post(host, port, '/registry/record'),
-        update: esHttp.record.post(host, port, '/registry/record/:id/_update'),
-        remove: esHttp.record.remove(host, port, 'registry', 'record'),
+        add: esHttp.record.post('/registry/record'),
+        update: esHttp.record.post('/registry/record/:id/_update'),
+        remove: esHttp.record.remove('registry', 'record'),
         fields: {
           commons: fields.commons
         },
         picture: {
-          all: esHttp.get(host, port, '/registry/record/:id?_source=pictures')
+          all: esHttp.get('/registry/record/:id?_source=pictures')
         },
-        comment: new esComment.instance(host, port, wsPort, 'registry')
+        comment: esComment.instance('registry')
       };
     exports.currency = {
-        all: esHttp.get(host, port, '/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
-        get: esHttp.get(host, port, '/registry/currency/:id/_source')
+        all: esHttp.get('/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
+        get: esHttp.get('/registry/currency/:id/_source')
       };
     return exports;
   }
 
-  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
-  var port = host ? csSettings.data.plugins.es.port : null;
-  var wsPort = host && csSettings.data.plugins.es.wsPort ? csSettings.data.plugins.es.wsPort : port;
-
-  var service = factory(host, port, wsPort);
-  service.instance = factory;
-
-  return service;
+  return EsRegistry();
 })
 ;

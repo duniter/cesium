@@ -74,12 +74,16 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       };
     }
 
-    that.cleanCache = function() {
-      console.debug('[BMA] Cleaning requests cache...');
+    function closeWs() {
       _.keys(that.cache.wsByPath).forEach(function(key) {
         var sock = that.cache.wsByPath[key];
         sock.close();
       });
+    }
+
+    that.cleanCache = function() {
+      console.debug('[BMA] Cleaning requests cache...');
+      closeWs();
       that.cache = _emptyCache();
     };
 
@@ -512,10 +516,12 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       });
     };
 
+
+
     exports.websocket = {
         block: ws('/ws/block'),
         peer: ws('/ws/peer'),
-        close : csHttp.closeAllWs
+        close : closeWs
       };
 
     angular.merge(that, exports);

@@ -3,7 +3,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
 .factory('esBlockchain', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, esUser) {
   'ngInject';
 
-  function factory(host, port) {
+  function EsBlockchain() {
 
     var
       CONSTANTS = {
@@ -19,9 +19,9 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         block: {},
         raw: {
           block: {
-            search: esHttp.post(host, port, '/:currency/block/_search'),
-            searchText: esHttp.get(host, port, '/:currency/block/_search?q=:text'),
-            get: esHttp.get(host, port, '/:currency/block/:number/_source')
+            search: esHttp.post('/:currency/block/_search'),
+            searchText: esHttp.get('/:currency/block/_search?q=:text'),
+            get: esHttp.get('/:currency/block/:number/_source')
           }
         },
         regex: {
@@ -130,11 +130,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     return exports;
   }
 
-  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
-  var port = host ? csSettings.data.plugins.es.port : null;
-
-  var service = factory(host, port);
-  service.instance = factory;
-  return service;
+  return EsBlockchain();
 })
 ;
