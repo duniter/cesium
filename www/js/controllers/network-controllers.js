@@ -134,7 +134,7 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
           csWot.extendAll(data.peers)
             .then(function() {
               // Avoid to refresh if view has been leaving
-              if ($scope.search.loading) {
+              if ($scope.networkStarted) {
                 $scope.updateView(data);
               }
               $scope.refreshing = false;
