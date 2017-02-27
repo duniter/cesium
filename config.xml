@@ -24,6 +24,7 @@
   <preference name="xwalkVersion" value="19" />
   <preference name="xwalkMultipleApk" value="false"/>
   <preference name="android-minSdkVersion" value="16" />
+  <preference name="android-targetSdkVersion" value="23"/>
   <allow-navigation href="*" />
   <feature name="StatusBar">
     <param name="ios-package" onload="true" value="CDVStatusBar" />
