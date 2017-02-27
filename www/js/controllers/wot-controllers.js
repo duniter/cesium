@@ -635,12 +635,13 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, U
               identity.wasMember)
               .then(function(cert) {
                 UIUtils.loading.hide();
-                if (cert) {
-                  $scope.prepareNewCert(cert);
-                  UIUtils.alert.info('INFO.CERTIFICATION_DONE');
-                  $scope.formData.given_cert_pending.unshift(cert);
-                  $scope.doMotion();
-                }
+                if (!cert) return;
+                return csWot.extendAll([cert], 'pubkey')
+                  .then(function(){
+                    UIUtils.toast.show('INFO.CERTIFICATION_DONE');
+                    $scope.formData.given_cert_pending.unshift(cert);
+                    $scope.doMotion();
+                  });
               })
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
           });
@@ -711,7 +712,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, U
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $controller, UIUtils, csWallet) {
+function WotIdentityViewController($scope, $rootScope, $controller, UIUtils, csWallet) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -755,14 +756,21 @@ function WotIdentityViewController($scope, $controller, UIUtils, csWallet) {
 
   $scope.doMotion = function() {
     $scope.motion.show({selector: '.view-identity .list .item'});
+
+    // Transfer button
     $scope.showFab('fab-transfer');
+
+    // Certify button
+    if (($scope.canCertify && !$scope.alreadyCertified) || $rootScope.tour) {
+      $scope.showFab('fab-certify-' + $scope.formData.uid);
+    }
   };
 }
 
 /**
  * Certifications controller - extend WotIdentityAbstractCtrl
  */
-function WotCertificationsViewController($scope, $rootScope, $controller, $timeout, csSettings, csWallet, UIUtils) {
+function WotCertificationsViewController($scope, $rootScope, $controller, csSettings, csWallet, UIUtils) {
   'ngInject';
 // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -854,7 +862,7 @@ function WotCertificationsViewController($scope, $rootScope, $controller, $timeo
       }
 
       // Fab button
-      if ($scope.canCertify || $rootScope.tour) {
+      if (($scope.canCertify && !$scope.alreadyCertified) || $rootScope.tour) {
         $scope.showFab('fab-certify', timeout);
       }
     }
