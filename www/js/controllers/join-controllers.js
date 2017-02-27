@@ -66,7 +66,7 @@ function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWa
     }
     $scope.search.looking = false;
   })
-  .catch(UIUtils.onError('GET_CURRENCIES_FAILED'));
+  .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();

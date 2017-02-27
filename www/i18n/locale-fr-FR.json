@@ -438,7 +438,7 @@
     "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille.",
     "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie.",
     "GET_CURRENCIES_FAILED": "Impossible de charger la liste des monnaies. Veuillez ressayer plus tard.",
-    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible.",
+    "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible. Veuillez ressayer plus tard.",
     "SEND_TX_FAILED": "Echec du virement.",
     "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
     "NOT_ENOUGH_SOURCES": "Pas assez de change pour envoyer ce montant en une seule transaction.<br/>Montant maximum : {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",

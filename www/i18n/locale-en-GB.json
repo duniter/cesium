@@ -438,7 +438,7 @@
     "REFRESH_WALLET_DATA": "Could not refresh wallet.",
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters.",
     "GET_CURRENCIES_FAILED": "Unable to load currencies. Please retry later.",
-    "GET_CURRENCY_FAILED": "Could not load currency.",
+    "GET_CURRENCY_FAILED": "Could not load currency. Please retry later.",
     "SEND_TX_FAILED": "Could not send transaction.",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
     "NOT_ENOUGH_SOURCES": "Not enough changes to send this amount in one time.<br/>Maximum amount: {{amount}} {{unit}}<sub>{{subUnit}}</sub>.",
