@@ -10,10 +10,6 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
             'before-technical': {
               templateUrl: "plugins/es/templates/wallet/view_wallet_extend.html",
               controller: 'ESWotIdentityViewCtrl'
-            },
-            'buttons': {
-              templateUrl: "plugins/es/templates/wallet/view_wallet_extend.html",
-              controller: 'ESWotIdentityViewCtrl'
             }
           }
         })
@@ -26,10 +22,8 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
 
 ;
 
-function ESWalletViewController($scope, csSettings, PluginService) {
+function ESWalletViewController($scope, csSettings) {
   'ngInject';
-
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
 
   $scope.updateView = function() {
     $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?

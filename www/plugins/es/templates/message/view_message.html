@@ -57,7 +57,7 @@
                 </span>
                 <span ng-if="!formData.uid" class="gray">
                   <i class="ion-key gray"></i>
-                  {{formData.issuer|formatPubkey}}
+                  {{formData.name||(formData.issuer|formatPubkey)}}
                 </span>
               </a>
               <span class="hidden-xs hidden-sm">

@@ -20,17 +20,18 @@
     <ion-list>
       <div class="item large-button-bar hidden-xs hidden-sm">
 
+        <button class="button button-stable button-small-padding icon ion-loop" ng-click="load()">
+        </button>
+
         <button class="button button-calm icon ion-compose"
                 ng-click="showNewMessageModal()">
           {{'MESSAGE.BTN_COMPOSE' | translate}}
         </button>
 
-        <button class="button button-stable icon ion-loop" ng-click="load()">
-        </button>
-
-        <button class="button button-icon"
+        <button class="button button-stable icon-right ink"
                 ng-click="showActionsPopover($event)">
-          <i class="icon ion-android-more-vertical"></i>
+          &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
+          {{'COMMON.BTN_OPTIONS' | translate}}
         </button>
       </div>
 
