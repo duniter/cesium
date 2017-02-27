@@ -43,12 +43,14 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
     // Fill locales
     $scope.locales = angular.copy(csSettings.locales);
-    var locale = _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
+
+    // Apply settings
     angular.merge($scope.formData, csSettings.data);
-    $scope.formData.locale = locale;
-    if (csSettings.data.locale && csSettings.data.locale.id) {
-      $scope.formData.locale = _.findWhere($scope.locales, {id: csSettings.data.locale.id});
-    }
+
+    // Make sure to use full locale object (id+name)
+    $scope.formData.locale = (csSettings.data.locale && csSettings.data.locale.id && _.findWhere($scope.locales, {id: csSettings.data.locale.id})) ||
+      _.findWhere($scope.locales, {id: csSettings.defaultSettings.locale.id});
+
     $scope.loading = false;
 
     $timeout(function() {
@@ -63,9 +65,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       $scope.actionsPopover.hide();
     }
     $scope.pendingSaving = true;
-    csSettings.reset();
-    angular.merge($scope.formData, csSettings.data);
-    $scope.pendingSaving = false;
+    csSettings.reset()
+      .then(function() {
+        // reload
+        $scope.load();
+        $scope.pendingSaving = false;
+      });
   };
 
   $scope.changeLanguage = function(langKey) {

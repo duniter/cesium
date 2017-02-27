@@ -407,29 +407,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     });
 
-  var onLanguageChange = function() {
-    var lang = $translate.use();
-    console.debug('[app] Locale ['+lang+']');
-
-    // config moment lib
-    try {
-      moment.locale(lang.substr(0,2));
-    }
-    catch(err) {
-      moment.locale('en');
-      console.warn('[app] Unknown local for moment lib. Using default [en]');
-    }
-
-    // config numeral lib
-    try {
-      numeral.language(lang.substr(0,2));
-    }
-    catch(err) {
-      numeral.language('en');
-      console.warn('[app] Unknown local for numeral lib. Using default [en]');
-    }
-
-    // Set some translation need by filters
+  // Update some translations, when locale changed
+  function onLocaleChange() {
+    console.debug('[app] Loading cached translations for locale [{0}]'.format($translate.use()));
     $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD'])
       .then(function(translations) {
         $rootScope.translations = $rootScope.translations || {};
@@ -446,17 +426,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
           $rootScope.translations.UD = 'UD';
         }
       });
-
-  };
-
-  // Set up moment translation
-  $rootScope.$on('$translateChangeSuccess', onLanguageChange);
+  }
+  csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
 
   // start plugin
   PluginService.start();
 
-  // set locale to vendor lib
-  onLanguageChange();
+  // Force at least on call
+  onLocaleChange();
 })
 ;
 

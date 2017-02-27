@@ -1,7 +1,7 @@
 
 angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config', 'cesium.device.services'])
 
-.factory('csSettings', function($q, Api, localStorage, $translate, csConfig, Device) {
+.factory('csSettings', function($rootScope, $q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
     function Factory() {
@@ -30,11 +30,20 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
         // If another locale exists with the same root: use it
         var similarLocale = _.find(locales, function(l) {
-          return String.prototype.startsWith.call(l, locale);
+          return String.prototype.startsWith.call(l.id, locale);
         });
-        if (similarLocale) return similarLocale;
+        if (similarLocale) return similarLocale.id;
 
         return fallbackLocale;
+      }
+
+      // Convert browser locale to app locale (fix #140)
+      function fixLocaleWithLog (locale) {
+        var fixedLocale = fixLocale(locale);
+        if (locale != fixedLocale) {
+          console.debug('[settings] Fix locale [{0}] -> [{1}]'.format(locale, fixedLocale));
+        }
+        return fixedLocale;
       }
 
       var
@@ -77,11 +86,11 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           notificationReadTime: 0
         },
         locale: {
-          id: fixLocale(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
+          id: fixLocaleWithLog(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
         }
       }, csConfig),
 
-      data = angular.copy(defaultSettings),
+      data = {},
       previousData,
 
       api = new Api(this, "csSettings"),
@@ -90,8 +99,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         _.keys(data).forEach(function(key){
           delete data[key];
         });
-        angular.merge(data, defaultSettings);
-        api.data.raisePromise.reset(data)
+
+        applyData(defaultSettings);
+
+        return api.data.raisePromise.reset(data)
           .then(store);
       },
 
@@ -129,7 +140,32 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
           .then(emitChangedEvent);
       },
 
-      restore = function(first) {
+      applyData = function(newData) {
+        var localeChanged = false;
+        if (newData.locale && newData.locale.id) {
+          // Fix previously stored locale (could use bad format)
+          newData.locale.id = fixLocale(newData.locale.id);
+          localeChanged = !data.locale || newData.locale.id !== data.locale.id || newData.locale.id !== $translate.use();
+        }
+
+        // Apply stored settings
+        angular.merge(data, newData);
+
+        // Always force the usage of deffault settings
+        // This is a workaround for DEV (TODO: implement edition in settings ?)
+        data.timeWarningExpire = defaultSettings.timeWarningExpire;
+        data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
+        data.cacheTimeMs = defaultSettings.cacheTimeMs;
+        data.timeout = defaultSettings.timeout;
+
+        // Apply the new locale (only if need)
+        if (localeChanged) {
+          $translate.use(fixLocale(data.locale.id)); // will produce an event cached by onLocaleChange();
+        }
+
+      },
+
+      restore = function() {
         var now = new Date().getTime();
         return $q(function(resolve, reject){
           console.debug("[settings] Loading from local storage...");
@@ -142,12 +178,9 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
           // No settings stored
           if (!storedData) {
-            console.debug("[settings] No settings in local storage");
-            if (data.locale.id !== $translate.use()) {
-              console.debug("[settings] Changing locale to [{0}]...".format(data.locale.id));
-              $translate.use(data.locale.id);
-              finishRestore();
-            }
+            console.debug("[settings] No settings in local storage. Using defaults.");
+            applyData(defaultSettings);
+            finishRestore();
             return;
           }
 
@@ -176,37 +209,48 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
             delete storedData.DUNITER_NODE_ES;
           }
 
-          var localeChanged = false;
-          if (storedData.locale && storedData.locale.id) {
-            // Fix previously stored bad locale
-            storedData.locale.id = fixLocale(storedData.locale.id);
-            localeChanged = (storedData.locale.id !== data.locale.id || storedData.locale.id !== $translate.use());
-          }
-
-          // Apply stored settings
-          angular.merge(data, storedData);
-
-          // Always force the usage of deffault settings
-          // This is a workaround for DEV (TODO: implement edition in settings ?)
-          data.timeWarningExpire = defaultSettings.timeWarningExpire;
-          data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
-          data.cacheTimeMs = defaultSettings.cacheTimeMs;
-          data.timeout = defaultSettings.timeout;
-
-          // Apply the new locale (only if need)
-          if (localeChanged) {
-            $translate.use(fixLocale(data.locale.id));
-          }
+          // Apply stored data
+          applyData(storedData);
 
           console.debug('[settings] Loaded from local storage in '+(new Date().getTime()-now)+'ms');
           finishRestore();
         });
+      },
+
+        // Detect locale sucessuf changes, then apply to vendor libs
+      onLocaleChange = function() {
+        var locale = $translate.use();
+        console.debug('[settings] Locale ['+locale+']');
+
+        // config moment lib
+        try {
+          moment.locale(locale.substr(0,2));
+        }
+        catch(err) {
+          moment.locale('en');
+          console.warn('[settings] Unknown local for moment lib. Using default [en]');
+        }
+
+        // config numeral lib
+        try {
+          numeral.language(locale.substr(0,2));
+        }
+        catch(err) {
+          numeral.language('en');
+          console.warn('[settings] Unknown local for numeral lib. Using default [en]');
+        }
+
+        // Emit event
+        api.locale.raise.changed(locale);
       };
+      $rootScope.$on('$translateChangeSuccess', onLocaleChange);
+
 
     api.registerEvent('data', 'reset');
     api.registerEvent('data', 'changed');
     api.registerEvent('data', 'store');
     api.registerEvent('data', 'ready');
+    api.registerEvent('locale', 'changed');
 
     return {
       data: data,
