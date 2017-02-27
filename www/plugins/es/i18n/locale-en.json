@@ -93,7 +93,8 @@
     "CONFIRM": {
       "REMOVE": "Are you sure you want to <b>delete this message</b>?<br/><br/> This operation is irreversible.",
       "REMOVE_ALL": "Are you sure you want to <b>delete all messages</b>?<br/><br/> This operation is irreversible.",
-      "MARK_ALL_AS_READ": "Are you sure you want to <b>mark all message as read</b>?"
+      "MARK_ALL_AS_READ": "Are you sure you want to <b>mark all message as read</b>?",
+      "USER_HAS_NO_PROFILE": "This identity has no Cesium + profile. It may not use the Cesium + extension, so it <b>will not read your message</b>.<br/><br/>Are you sure you want <b>to continue</b>?"
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message successfully deleted",

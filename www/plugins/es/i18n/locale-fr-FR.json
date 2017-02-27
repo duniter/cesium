@@ -91,9 +91,10 @@
       "NO_CONTENT": "Message vide"
     },
     "CONFIRM": {
-      "REMOVE": "Etes-vous sur de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
-      "REMOVE_ALL" : "Etes-vous sur de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
-      "MARK_ALL_AS_READ": "Etes-vous sur de vouloir <b>marquer tous les messages comme lu</b> ?"
+      "REMOVE": "Êtes-vous sûr de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
+      "REMOVE_ALL" : "Êtes-vous sûr de vouloir <b>supprimer tous les messages</b> ?<br/><br/>Cette opération est irréversible.",
+      "MARK_ALL_AS_READ": "Êtes-vous sûr de vouloir <b>marquer tous les messages comme lu</b> ?",
+      "USER_HAS_NO_PROFILE": "Cette identité n'a aucun profil Cesium+. Il se peut qu'elle n'utilise pas l'extension Cesium+, et <b>ne consultera donc pas votre message</b>.<br/><br/>Êtes-vous sûr de vouloir <b>continuer</b> malgré tout ?"
     },
     "INFO": {
       "MESSAGE_REMOVED": "Message supprimé",
@@ -196,7 +197,7 @@
       "TITLE": "Annonce",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "Annonce {{title}}",
-      "REMOVE_CONFIRMATION" : "Etes-vous sur de vouloir supprimer cette annonce ?<br/><br/>Cette opération est irréversible."
+      "REMOVE_CONFIRMATION" : "Êtes-vous sûr de vouloir supprimer cette annonce ?<br/><br/>Cette opération est irréversible."
     },
     "TYPE": {
       "TITLE": "Nouvelle annonce",
@@ -257,7 +258,7 @@
       "LOCATION": "Adresse :",
       "MENU_TITLE": "Options",
       "POPOVER_SHARE_TITLE": "{{title}}",
-      "REMOVE_CONFIRMATION" : "Etes-vous sur de vouloir supprimer cette page ?<br/><br/>Cette opération est irréversible."
+      "REMOVE_CONFIRMATION" : "Êtes-vous sûr de vouloir supprimer cette page ?<br/><br/>Cette opération est irréversible."
     },
     "TYPE": {
       "TITLE": "Nouvelle page",

@@ -45,10 +45,26 @@ function ESWotIdentityViewController($scope, csSettings, PluginService, esModals
 
   /* -- modals -- */
 
-  $scope.showNewMessageModal = function() {
+  $scope.showNewMessageModal = function(confirm) {
     return $scope.loadWallet({minData: true})
+
       .then(function() {
         UIUtils.loading.hide();
+
+        // Ask confirmation, if user has no Cesium+ profil
+        if (!confirm && !$scope.formData.profile) {
+          return UIUtils.alert.confirm('MESSAGE.CONFIRM.USER_HAS_NO_PROFILE')
+            .then(function (confirm) {
+              // Recursive call (with confirm flag)
+              if (confirm) return true;
+            });
+        }
+        return true;
+      })
+      // Open modal
+      .then(function(confirm) {
+        if (!confirm) return false;
+
         return esModals.showMessageCompose({
           destPub: $scope.formData.pubkey,
           destUid: $scope.formData.name||$scope.formData.uid
