@@ -23,6 +23,15 @@
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
+
+      <div class="visible-xs visible-sm">
+        <button id="fab-certify-{{:rebind:formData.uid}}"
+                class="button button-fab button-fab-top-left button-fab-hero button-calm spin"
+                ng-if=":rebind:(canCertify && !alreadyCertified)"
+                ng-click="certify()">
+          <i class="icon ion-ribbon-b"></i>
+        </button>
+      </div>
     </div>
 
     <!-- button bar-->
@@ -37,7 +46,7 @@
 
       <button class="button button-stable button-small-padding icon ion-ribbon-b ink"
               ng-click="certify()"
-              ng-if="::formData.hasSelf"
+              ng-if=":rebind:formData.hasSelf"
               title="{{'WOT.BTN_CERTIFY' | translate}}"
               ng-disabled="alreadyCertified">
       </button>
@@ -51,12 +60,12 @@
     <div class="row no-padding" >
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-      <div class="col list" ng-class="::motion.ionListClass">
+      <div class="col list" ng-class="::motion.ionListClass" bind-notifier="{ rebind:loading}">
 
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
         <div class="item item-icon-left item-text-wrap"
-              ng-if="::!formData.hasSelf">
+              ng-if=":rebind:!formData.hasSelf">
           <i class="icon ion-card"></i>
           <span translate>WOT.NOT_MEMBER_ACCOUNT</span>
           <h4 class="gray" translate>WOT.NOT_MEMBER_ACCOUNT_HELP</h4>
@@ -65,10 +74,10 @@
         <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
-           ng-if="::formData.hasSelf"
+           ng-if=":rebind:formData.hasSelf"
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
-          <b ng-if="::formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
+          <b ng-if=":rebind:formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
           <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
                                   requirements="formData.requirements"
@@ -80,7 +89,7 @@
 
         <!-- Signature stock -->
         <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
-             ng-if="::formData.hasSelf && formData.isMember"
+             ng-if=":rebind:formData.hasSelf && formData.isMember"
              ng-click="showGivenCertifications()">
           <i class="icon ion-ribbon-a"></i>
           <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
@@ -91,16 +100,16 @@
         </a>
 
         <!-- Registration date -->
-        <ion-item class="item-icon-left" ng-if="::formData.sigDate">
+        <ion-item class="item-icon-left" ng-if=":rebind:formData.sigDate">
           <i class="icon ion-calendar"></i>
           <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
-          <h5 class="dark">{{::formData.sigDate | formatDate}}</h5>
-          <span class="badge badge-balanced">{{::formData.sigDate | formatFromNow}}</span>
+          <h5 class="dark">{{:rebind:formData.sigDate | formatDate}}</h5>
+          <span class="badge badge-balanced">{{:rebind:formData.sigDate | formatFromNow}}</span>
         </ion-item>
 
         <div
           class="item item-text-wrap item-icon-left item-wallet-event assertive"
-          ng-repeat="event in ::formData.events | filter: {type: 'error'}">
+          ng-repeat="event in :rebind:formData.events | filter: {type: 'error'}">
           <i class="icon ion-alert-circled"></i>
           <span trust-as-html="event.message | translate:event.messageParams"></span>
         </div>
@@ -110,17 +119,17 @@
         <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
 
         <!-- Uid -->
-        <ion-item class="item-icon-left" ng-if="::formData.uid">
+        <ion-item class="item-icon-left" ng-if=":rebind:formData.uid">
           <span translate>COMMON.UID</span>
-          <span class="badge badge-stable">{{::formData.uid}}</span>
+          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
         </ion-item>
 
         <!-- Pubkey -->
         <ion-item class="item-icon-left item-text-wrap ink"
-                  copy-on-click="{{::formData.pubkey}}">
+                  copy-on-click="{{:rebind:formData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
-          <h4 id="pubkey" class="dark text-left">{{::formData.pubkey}}</h4>
+          <h4 id="pubkey" class="dark text-left">{{:rebind:formData.pubkey}}</h4>
         </ion-item>
       </div>
 
@@ -131,7 +140,7 @@
 
   <!-- fab button -->
   <div class="visible-xs visible-sm" ng-hide="loading">
-    <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive expanded button-energized-900 drop"
+    <button id="fab-transfer" class="button button-fab button-fab-bottom-right button-assertive drop"
             ng-click="showTransferModal({pubkey:formData.pubkey, uid: formData.uid})">
       <i class="icon ion-android-send"></i>
     </button>

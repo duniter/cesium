@@ -4,7 +4,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 .factory('csSettings', function($rootScope, $q, Api, localStorage, $translate, csConfig, Device) {
   'ngInject';
 
-    function Factory() {
+    function CsSettings() {
 
       // Define app locales
       var locales = [
@@ -252,6 +252,11 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     api.registerEvent('data', 'ready');
     api.registerEvent('locale', 'changed');
 
+    // removeIf(no-device)
+    // fix #
+    applyData(defaultSettings);
+    // endRemoveIf(no-device)
+
     return {
       data: data,
       getByPath: getByPath,
@@ -265,7 +270,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     };
   }
 
-  var service = new Factory();
+  var service = CsSettings();
 
   service.restore()
     .then(function() {

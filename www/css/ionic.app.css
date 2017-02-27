@@ -15063,3 +15063,7 @@ div[dropzone] {
   font: 20pt bold;
   color: #bbb;
   margin-bottom: 20px; }
+
+.hero .button-fab-top-right,
+.hero .button-fab-top-left {
+  top: 170px !important; }
