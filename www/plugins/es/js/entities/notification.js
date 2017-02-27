@@ -8,6 +8,9 @@ function Notification(json, markAsReadCallback) {
 
   var that = this;
 
+  // Avoid undefined errors
+  json = json || {};
+
   that.type = json.type && json.type.toLowerCase();
   that.time = json.time;
   that.hash = json.hash;
@@ -33,6 +36,8 @@ function Notification(json, markAsReadCallback) {
   };
 
   var pubkeys;
+
+  json.code = json.code || '';
 
   // Membership
   if (json.code.startsWith('MEMBER_')) {

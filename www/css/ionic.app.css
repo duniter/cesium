@@ -14351,22 +14351,22 @@ a {
 /******
 * Wallet TX view
 *******/
-#wallet-tx .hero {
+.view-wallet-tx .hero {
   height: 100px; }
 
-#wallet-tx .item-text-wrap {
+.view-wallet-tx .item-text-wrap {
   white-space: normal !important; }
 
-#wallet-tx .item .comment {
+.view-wallet-tx .item .comment {
   font-style: italic !important; }
 
-#wallet-tx .item h3 .gray, #wallet-tx .item h3 .popover-share .bar-header span, .popover-share .bar-header #wallet-tx .item h3 span, #wallet-tx .item h3 .popover-share .bar-footer .button-close, .popover-share .bar-footer #wallet-tx .item h3 .button-close, #wallet-tx .item h3 .popover-helptip .button-close, .popover-helptip #wallet-tx .item h3 .button-close {
+.view-wallet-tx .item h3 .gray, .view-wallet-tx .item h3 .popover-share .bar-header span, .popover-share .bar-header .view-wallet-tx .item h3 span, .view-wallet-tx .item h3 .popover-share .bar-footer .button-close, .popover-share .bar-footer .view-wallet-tx .item h3 .button-close, .view-wallet-tx .item h3 .popover-helptip .button-close, .popover-helptip .view-wallet-tx .item h3 .button-close {
   font-size: 11px !important; }
 
-#wallet-tx .list .item span {
+.view-wallet-tx .list .item span {
   display: inline; }
 
-#wallet-tx .item-divider .badge {
+.view-wallet-tx .item-divider .badge {
   top: 16px !important; }
 
 .card .card-header,

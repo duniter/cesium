@@ -244,6 +244,8 @@
     "SIGNED_ON_BLOCK": "Emitted on block #{{block}}",
     "WRITTEN_ON_BLOCK": "Written on block #{{block}}",
     "GENERAL_DIVIDER": "General data",
+    "NOT_MEMBER_ACCOUNT": "Non-member account",
+    "NOT_MEMBER_ACCOUNT_HELP": "This is a simple wallet, with no pending membership application.",
     "TECHNICAL_DIVIDER": "Technical data",
     "BTN_CERTIFY": "Certify",
     "BTN_SELECT_AND_CERTIFY": "New certification",

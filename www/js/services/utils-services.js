@@ -501,18 +501,20 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function motionDelegate(callback, ionListClass) {
     var motionTimeout = isSmallScreen() ? 100 : 10;
-    return {
+    var defaultSelector = '.list.{0} .item, .list .{0} .item'.format(ionListClass, ionListClass);
+      return {
       ionListClass: ionListClass,
       show: function(options) {
         options = options || {};
+        options.selector = options.selector || defaultSelector;
         options.ink = angular.isDefined(options.ink) ? options.ink : true;
         options.startVelocity = options.startVelocity || (isSmallScreen() ? 1100 : 3000);
         return $timeout(function(){
-          if (options.ink) {
-            ionicMaterialInk.displayEffect({selector: options.selector});
+          if (options.ink || options.inkSelector) {
+            ionicMaterialInk.displayEffect({selector: (options.inkSelector || (options.selector + '.ink'))});
           }
           callback(options);
-        }, options.timeout ||motionTimeout );
+        }, options.timeout || motionTimeout);
       }
     };
   }
@@ -549,10 +551,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   raw.motion = {
     enable: true,
-    default: motionDelegate(function(options){
-      ionicMaterialMotion.ripple(options);
-      ionicMaterialInk.displayEffect(options);
-    }, 'animate-ripple'),
+    default: motionDelegate(ionicMaterialMotion.ripple, 'animate-ripple'),
     blinds: motionDelegate(ionicMaterialMotion.blinds, 'animate-blinds'),
     fadeSlideIn: motionDelegate(ionicMaterialMotion.fadeSlideIn, 'animate-fade-slide-in'),
     fadeSlideInRight: motionDelegate(ionicMaterialMotion.fadeSlideInRight, 'animate-fade-slide-in-right'),

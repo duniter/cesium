@@ -48,7 +48,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 ;
 
-function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
+function WalletController($scope, $q, $ionicPopup, $timeout, $state,
                           UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings) {
   'ngInject';
 
@@ -515,7 +515,7 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
   $scope.updateView = function() {
     $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
     $scope.updateUnit();
-    $scope.motion.show({selector: '#wallet-tx .list .item'});
+    $scope.motion.show({ink: false});
   };
 
   // Updating wallet data

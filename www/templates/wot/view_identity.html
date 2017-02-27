@@ -37,6 +37,7 @@
 
       <button class="button button-stable button-small-padding icon ion-ribbon-b ink"
               ng-click="certify()"
+              ng-if="::formData.hasSelf"
               title="{{'WOT.BTN_CERTIFY' | translate}}"
               ng-disabled="alreadyCertified">
       </button>
@@ -54,13 +55,20 @@
 
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
+        <div class="item item-icon-left item-text-wrap"
+              ng-if="::!formData.hasSelf">
+          <i class="icon ion-card"></i>
+          <span translate>WOT.NOT_MEMBER_ACCOUNT</span>
+          <h4 class="gray" translate>WOT.NOT_MEMBER_ACCOUNT_HELP</h4>
+        </div>
+
         <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
-           ng-if="formData.hasSelf"
+           ng-if="::formData.hasSelf"
            ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
-          <b ng-if="formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
+          <b ng-if="::formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
           <cs-badge-certification cs-id="helptip-wot-view-certifications-count"
                                   requirements="formData.requirements"
@@ -72,7 +80,7 @@
 
         <!-- Signature stock -->
         <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
-             ng-if="formData.hasSelf && formData.isMember"
+             ng-if="::formData.hasSelf && formData.isMember"
              ng-click="showGivenCertifications()">
           <i class="icon ion-ribbon-a"></i>
           <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
@@ -83,7 +91,7 @@
         </a>
 
         <!-- Registration date -->
-        <ion-item class="item-icon-left" ng-if="formData.sigDate">
+        <ion-item class="item-icon-left" ng-if="::formData.sigDate">
           <i class="icon ion-calendar"></i>
           <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
           <h5 class="dark">{{::formData.sigDate | formatDate}}</h5>
@@ -92,7 +100,7 @@
 
         <div
           class="item item-text-wrap item-icon-left item-wallet-event assertive"
-          ng-repeat="event in formData.events | filter: {type: 'error'}">
+          ng-repeat="event in ::formData.events | filter: {type: 'error'}">
           <i class="icon ion-alert-circled"></i>
           <span trust-as-html="event.message | translate:event.messageParams"></span>
         </div>
@@ -102,14 +110,14 @@
         <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
 
         <!-- Uid -->
-        <ion-item class="item-icon-left" ng-if="formData.uid">
+        <ion-item class="item-icon-left" ng-if="::formData.uid">
           <span translate>COMMON.UID</span>
           <span class="badge badge-stable">{{::formData.uid}}</span>
         </ion-item>
 
         <!-- Pubkey -->
         <ion-item class="item-icon-left item-text-wrap ink"
-                  copy-on-click="{{formData.pubkey}}">
+                  copy-on-click="{{::formData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark text-left">{{::formData.pubkey}}</h4>

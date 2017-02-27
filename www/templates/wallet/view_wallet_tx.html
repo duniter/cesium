@@ -1,5 +1,5 @@
 <ion-view left-buttons="leftButtons"
-          id="wallet-tx">
+          class="view-wallet-tx">
   <ion-nav-title>
     <!-- no title-->
   </ion-nav-title>
@@ -9,7 +9,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, balance:formData.balance, locale:settings.locale.id}">
+  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
         <h1 class="light">
@@ -72,7 +72,7 @@
             </div>
           </span>
 
-          <span class="item item-pending item-avatar ink item-badge-right" ng-repeat="tx in formData.tx.pendings">
+          <span class="item item-pending item-avatar item-badge-right ink" ng-repeat="tx in formData.tx.pendings">
             <i class="item-image avatar"
                ng-if="!tx.avatar"
                ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
@@ -131,7 +131,7 @@
           <!-- TX history -->
           <!-- (make sure to keep ng-if=!loading to avoid division by zero on Firefox, because currentUD not loaded -->
           <div ng-if="!loading"
-                class="item item-badge-right item-avatar"
+                class="item item-badge-right item-avatar ink"
                 ng-repeat="tx in formData.tx.history">
             <i class="item-image avatar"
                ng-if="!tx.avatar"

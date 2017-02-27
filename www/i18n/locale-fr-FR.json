@@ -244,6 +244,8 @@
     "SIGNED_ON_BLOCK": "Emise au bloc #{{block}}",
     "WRITTEN_ON_BLOCK": "Ecrite au bloc #{{block}}",
     "GENERAL_DIVIDER": "Informations générales",
+    "NOT_MEMBER_ACCOUNT": "Compte non membre",
+    "NOT_MEMBER_ACCOUNT_HELP": "Il s'agit d'une simple portefeuille, sans demande d'adhésion en attente.",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_CERTIFY": "Certifier",
     "BTN_SELECT_AND_CERTIFY": "Nouvelle certification",
