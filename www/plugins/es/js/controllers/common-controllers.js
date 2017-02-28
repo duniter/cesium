@@ -314,12 +314,10 @@ function ESSocialsEditController($scope, $focus, $timeout, $filter, UIUtils, Soc
     $scope.socialData.url = '';
 
     // Set Motion
-    $timeout(function() {
-      UIUtils.motion.fadeSlideIn({
-        selector: '#social-' + $filter('formatSlug')(url),
-        startVelocity: 10000
-      });
-    }, 10);
+    $scope.motion.show({
+      selector: '#social-' + $filter('formatSlug')(url),
+      startVelocity: 10000
+    });
   };
 
   $scope.editSocialNetwork = function(index) {
