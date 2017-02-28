@@ -15,6 +15,15 @@
   </author>
   <content src="index.html" />
   <access origin="*" />
+  <allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+  <allow-intent href="tel:*" />
+  <allow-intent href="sms:*" />
+  <allow-intent href="mailto:*" />
+  <allow-intent href="geo:*" />
+  <allow-navigation href="http://*/*" />
+  <allow-navigation href="https://*/*" />
+  <allow-navigation href="data:*" />
   <icon src="www/img/logo_96px.png" />
   <preference name="webviewbounce" value="false" />
   <preference name="UIWebViewBounce" value="false" />
