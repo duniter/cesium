@@ -3,7 +3,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, $timeout, CryptoUtils, csHttp, $rootScope, $state, $sce, csConfig, csSettings, csWallet, Api) {
+.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, CryptoUtils, csHttp, csConfig, csSettings, BMA, csWallet, Api) {
   'ngInject';
 
   function Factory(host, port, wsPort, useSsl) {
@@ -12,8 +12,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       that = this,
       regex = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
-        HASH_TAG: match('#([\\wḡĞğ]+)'),
-        USER_TAG: match('@(\\w+)')
+        HASH_TAG: match('#([\\wḡĞğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
+        USER_TAG: match('@('+BMA.constants.regexp.USER_ID+')')
       };
 
     that.cache = _emptyCache();

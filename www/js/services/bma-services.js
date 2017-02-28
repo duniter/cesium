@@ -8,7 +8,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
   function BMA(host, port, useSsl, useCache) {
 
     var
-      regex = {
+      regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
         PUBKEY: "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
@@ -37,7 +37,8 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         ROOT_BLOCK_HASH: 'E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855',
         LIMIT_REQUEST_COUNT: 5, // simultaneous async request to a Duniter node
         LIMIT_REQUEST_DELAY: 1000, // time (in second) to wait between to call of a rest request
-        regex: regex
+        regex: regexp, // deprecated
+        regexp: regexp
       },
       listeners,
       that = this;
@@ -213,13 +214,13 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       errorCodes: errorCodes,
       constants: constants,
       regex: {
-        USER_ID: exact(regex.USER_ID),
-        COMMENT: exact(regex.COMMENT),
-        PUBKEY: exact(regex.PUBKEY),
-        CURRENCY: exact(regex.CURRENCY),
-        URI: exact(regex.URI),
-        BMA_ENDPOINT: exact(regex.BMA_ENDPOINT),
-        BMAS_ENDPOINT: exact(regex.BMAS_ENDPOINT)
+        USER_ID: exact(regexp.USER_ID),
+        COMMENT: exact(regexp.COMMENT),
+        PUBKEY: exact(regexp.PUBKEY),
+        CURRENCY: exact(regexp.CURRENCY),
+        URI: exact(regexp.URI),
+        BMA_ENDPOINT: exact(regexp.BMA_ENDPOINT),
+        BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT)
       },
       node: {
         server: that.server,
@@ -412,7 +413,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     exports.uri.parse = function(uri) {
       return $q(function(resolve, reject) {
         // If pubkey: not need to parse
-        if (exact(regex.PUBKEY).test(uri)) {
+        if (exact(regexp.PUBKEY).test(uri)) {
           resolve({
             pubkey: uri
 
@@ -503,13 +504,13 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
 
       // Check values against regex
       .then(function(result) {
-        if (result.pubkey && !(exact(regex.PUBKEY).test(result.pubkey))) {
+        if (result.pubkey && !(exact(regexp.PUBKEY).test(result.pubkey))) {
           reject({message: "Invalid pubkey format [" + result.pubkey + "]"}); return;
         }
-        if (result.uid && !(exact(regex.USER_ID).test(result.uid))) {
+        if (result.uid && !(exact(regexp.USER_ID).test(result.uid))) {
           reject({message: "Invalid uid format [" + result.uid + "]"}); return;
         }
-        if (result.currency && !(exact(regex.CURRENCY).test(result.currency))) {
+        if (result.currency && !(exact(regexp.CURRENCY).test(result.currency))) {
           reject({message: "Invalid currency format ["+result.currency+"]"}); return;
         }
         return result;
