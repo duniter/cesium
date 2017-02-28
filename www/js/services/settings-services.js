@@ -252,10 +252,8 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     api.registerEvent('data', 'ready');
     api.registerEvent('locale', 'changed');
 
-    // removeIf(no-device)
-    // fix #
+    // Apply default settings. This is required on some browser (web or mobile - see #361)
     applyData(defaultSettings);
-    // endRemoveIf(no-device)
 
     return {
       data: data,
