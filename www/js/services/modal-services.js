@@ -165,6 +165,7 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,

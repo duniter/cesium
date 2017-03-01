@@ -205,8 +205,10 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
           var userEventWs = that.raw.ws.getUserEvent();
           listeners.push(userEventWs.close);
           return userEventWs.on(
-              function(){
-                $rootScope.$apply(onNewNotification);
+              function(event){
+                $rootScope.$apply(function() {
+                  onNewNotification(event);
+                });
               },
               {pubkey: data.pubkey, locale: csSettings.data.locale.id}
             )

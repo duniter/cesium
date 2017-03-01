@@ -380,6 +380,18 @@ angular.module('cesium.utils.services', ['ngResource'])
     return deferred.promise;
   }
 
+  function showCopyPopover(event, value) {
+    var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
+    showPopover(event, {
+      templateUrl: 'templates/common/popover_copy.html',
+      bindings: {
+        value: value,
+        rows: rows
+      },
+      autoselect: '.popover-copy ' + (rows <= 1 ? 'input' : 'textarea')
+    });
+  }
+
   function showSharePopover(event, options) {
     options = options || {};
     options.templateUrl = options.templateUrl ? options.templateUrl : 'templates/common/popover_share.html';
@@ -645,6 +657,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     },
     popover: {
       show: showPopover,
+      copy: showCopyPopover,
       share: showSharePopover,
       helptip: showHelptip
     },

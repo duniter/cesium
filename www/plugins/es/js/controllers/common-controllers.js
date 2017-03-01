@@ -6,6 +6,8 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 
  .controller('ESSocialsEditCtrl', ESSocialsEditController)
 
+ .controller('ESSocialsViewCtrl', ESSocialsViewController)
+
  .controller('ESCommentsCtrl', ESCommentsController)
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
@@ -282,7 +284,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
   };
 }
 
-function ESSocialsEditController($scope, $focus, $timeout, $filter, UIUtils, SocialUtils)  {
+function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils)  {
   'ngInject';
 
   $scope.socialData = {
@@ -326,4 +328,24 @@ function ESSocialsEditController($scope, $focus, $timeout, $filter, UIUtils, Soc
     $scope.socialData.url = social.url;
     $focus('socialUrl');
   };
+}
+
+function ESSocialsViewController($scope, $window, Device, UIUtils)  {
+  'ngInject';
+
+  $scope.open = function(event, social) {
+    if (!social) return;
+    var url = (social.type == 'email')  ? ('mailto:' + social.url) : social.url;
+
+    // If email, do not try to open, but copy value
+    if (!Device.enable && social.type == 'email') {
+      UIUtils.popover.copy(event, social.url);
+      return;
+    }
+
+    // Open the url
+    // Note: If device is enable, this will use InAppBrowser cordova plugin
+    $window.open(url, '_system', 'location=yes');
+  };
+
 }

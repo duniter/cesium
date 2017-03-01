@@ -25,26 +25,6 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
       exports.enable = false;
       // endRemoveIf(device)
 
-      // Replace the '$ionicPlatform.ready()', to enable multiple calls
-      function ready() {
-        if (!readyPromise) {
-          readyPromise = $ionicPlatform.ready().then(function(){
-
-            var enableCamera = !!navigator.camera;
-            exports.enable = enableCamera;
-
-            if (exports.enable){
-              var enableBarcodeScanner = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
-              console.debug('[device] Ionic platform ready, with [barcodescanner={0}] [camera={1}]'.format(enableBarcodeScanner, enableCamera));
-            }
-            else {
-              console.debug('[device] Ionic platform ready - no device detected.');
-            }
-          });
-        }
-        return readyPromise;
-      }
-
       function getPicture(options) {
         if (!exports.enable) {
           return $q.reject("Camera not enable. Please call 'Device.ready()' once before use (e.g in app.js).");
@@ -138,7 +118,34 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
         return deferred.promise;
       }
 
-      exports.ready = ready;
+      // Replace the '$ionicPlatform.ready()', to enable multiple calls
+      readyPromise = $ionicPlatform.ready();
+      function ready() {
+        return readyPromise;
+      }
+
+      readyPromise.then(function(){
+
+        var enableCamera = !!navigator.camera;
+        exports.enable = enableCamera;
+
+        if (exports.enable){
+          var enableBarcodeScanner = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
+
+          console.debug('[device] Ionic platform ready, with [barcodescanner={0}] [camera={1}]'.format(enableBarcodeScanner, enableCamera));
+
+          if (cordova.InAppBrowser) {
+            console.debug('[device] Enabling InAppBrowser');
+          }
+        }
+        else {
+          console.debug('[device] Ionic platform ready - no device detected.');
+        }
+      });
+
+      exports.ready = function() {
+        return readyPromise;
+      };
       exports.clipboard = {copy: copy};
       exports.camera = {
           getPicture : getPicture,

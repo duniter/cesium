@@ -545,6 +545,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, U
                   $scope.alreadyCertified = true;
                   UIUtils.alert.info('INFO.CERTIFICATION_DONE');
                   $scope.formData.received_cert_pending.unshift(cert);
+                  $scope.formData.requirements.pendingCertificationCount++;
                   $scope.doMotion();
                 }
               })
