@@ -254,7 +254,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       }
 
       options = options || {};
-      options.type = options.type||'inbox';
+      options.type = options.type || 'inbox';
       options._source = fields.commons;
 
       // Get encrypted message (with common fields)
@@ -262,7 +262,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
         // Encrypt content
         .then(function(messages) {
-          return decryptMessages(messages, keypair, options.type);
+          return decryptMessages(messages, keypair, true/*summary not need*/);
         })
 
         // Add avatar
@@ -294,7 +294,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           delete msg.read_signature; // not need anymore
 
           // Decrypt message
-          return decryptMessages([msg], keypair, params.type)
+          return decryptMessages([msg], keypair, false/*summary not need*/)
             .then(function(){
               // Fill avatar
               return esUser.profile.fillAvatars([msg], avatarField);
@@ -305,7 +305,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
         });
     }
 
-    function decryptMessages(messages, keypair) {
+    function decryptMessages(messages, keypair, withSummary) {
 
       var now = new Date().getTime();
       var issuerBoxPks = {}; // a map used as cache
@@ -342,6 +342,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
               CryptoUtils.box.open(message.content, nonce, issuerBoxPk, boxKeypair.boxSk)
                 .then(function(content) {
                   message.content = content;
+                  if (withSummary) fillSummary(message);
                 })
                 .catch(function(err){
                   console.error(err);
@@ -356,6 +357,16 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
           return messages;
         });
 
+    }
+
+    // Compute a summary (truncated to 140 characters), from the message content
+    function fillSummary(message) {
+      if (message.content) {
+        message.summary = content.replace(/(^|[\n\r]+)\s*>[^\n\r]*/g, '').trim();
+        if (message.summary.length > 140) {
+          message.summary = message.summary.substr(0, 137) + '...';
+        }
+      }
     }
 
     function removeMessage(id, type) {

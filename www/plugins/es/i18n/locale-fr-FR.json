@@ -30,10 +30,16 @@
       "ORGANIZATION_ACCOUNT_HELP": "Si vous représentez une entreprise, une association, etc.<br/>Aucun dividende universel ne sera créé par ce compte."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Pour obtenir vos certifications plus rapidement, completez <a href=\"#/app/user/profile/edit\">votre profil utilisateur</a>. Les membres accorderont plus facilement leur confiance à une identité vérifiable."
+      "MEMBER_WITHOUT_PROFILE": "Pour obtenir vos certifications plus rapidement, completez <a ui-sref=\"app.user_edit_profile\">votre profil utilisateur</a>. Les membres accorderont plus facilement leur confiance à une identité vérifiable."
     },
     "ERROR": {
       "WS_CONNECTION_FAILED": "Cesium ne peut pas recevoir les notifications, à cause d'une erreur technique (connexion au noeud de données Cesium+).<br/><br/>Si le problème persiste, veuillez <b>choisir un autre noeud de données</b> dans les paramètres Cesium+."
+    }
+  },
+  "WOT": {
+    "BTN_SUGGEST_CERTIFICATIONS": "Suggérer des certifications",
+    "SUGGEST_CERTIFICATIONS_MODAL": {
+      "TITLE": "Suggérer des certifications"
     }
   },
   "COMMENTS": {

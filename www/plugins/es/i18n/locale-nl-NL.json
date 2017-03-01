@@ -30,7 +30,7 @@
       "ORGANIZATION_ACCOUNT_HELP": "Als je een onderneming, vereniging etc. vertegenwoordigd.<br/>Deze rekening zal geen dividend créeren."
     },
     "EVENT": {
-      "MEMBER_WITHOUT_PROFILE": "Vul <a href=\"#/app/user/profile/edit\">je gebruikersprofiel</a> in om sneller een certificering te verkrijgen. Leden zullen een verfifieerbare identiteit eerder vertrouwen."
+      "MEMBER_WITHOUT_PROFILE": "Vul <a ui-sref=\"app.user_edit_profile\"je gebruikersprofiel</a> in om sneller een certificering te verkrijgen. Leden zullen een verfifieerbare identiteit eerder vertrouwen."
     }
   },
   "COMMENTS": {

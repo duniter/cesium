@@ -90,7 +90,7 @@
           </a>
         </h3>
         <h2 ng-class="{'unread': !msg.read}">{{::msg.title}}</h2>
-        <p>{{::msg.content}}</p>
+        <p>{{::msg.summary||msg.content}}</p>
         <i class="icon ion-ios-arrow-right "></i>
         <ion-option-button class="button-stable"
                            ng-click="showReplyModal($index)"
