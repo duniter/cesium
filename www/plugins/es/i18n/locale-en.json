@@ -329,8 +329,8 @@
   },
   "EVENT": {
     "NODE_STARTED": "Your node ES API <b>{{params[0]}}</b> is UP",
-    "NODE_BMA_DOWN": "Node <b>{{params[0]}}:{{params[1]}}</b> (used by your ES API) is <b>unreacheable</b>.",
-    "NODE_BMA_UP": "Node <b>{{params[0]}}:{{params[1]}}</b> is reacheable again.",
+    "NODE_BMA_DOWN": "Node <b>{{params[0]}}:{{params[1]}}</b> (used by your ES API) is <b>unreachable</b>.",
+    "NODE_BMA_UP": "Node <b>{{params[0]}}:{{params[1]}}</b> is reachable again.",
     "MEMBER_JOIN": "You are now a <b>member</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_LEAVE": "You are <b>not a member anymore</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renewed successfully</b>.",
