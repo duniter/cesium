@@ -4,9 +4,9 @@
     <form name="answersForm" novalidate ng-submit="doNext('answersForm')">
       <div class="list" ng-init="setForm(answersForm, 'answersForm')">
         <ng-repeat ng-repeat="question in formData.questions |filter:true:checked">
-          <label class="item item-input {{smallscreen ? 'item-stacked-label' : 'item-floating-label'}}"
+          <label class="item item-input item-text-wrap {{smallscreen ? 'item-stacked-label' : 'item-floating-label'}}"
                  ng-class="{'item-input-error': answersForm.$submitted && answersForm['question{{$index}}'].$invalid}">
-            <span class="input-label" style="{{smallscreen ? 'white-space: normal' : ''}}">{{question.value | translate}}</span>
+            <span class="input-label" style="width: 100%; max-width: inherit;">{{question.value | translate}}</span>
             <input type="text" name="question{{$index}}" placeholder="{{smallscreen ? '' : question.value | translate}}" ng-model="question.answer" required />
           </label>
           <div class="form-errors"
