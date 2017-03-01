@@ -36,6 +36,12 @@
       "WS_CONNECTION_FAILED": "Cesium can not receive notifications because of a technical error (connection to the Cesium + data node).<br/><br/>If the problem persists, please <b>choose another data node</b> in Cesium+ settings."
     }
   },
+  "WOT": {
+    "BTN_SUGGEST_CERTIFICATIONS": "Suggest certifications",
+    "SUGGEST_CERTIFICATIONS_MODAL": {
+      "TITLE": "Suggest certifications"
+    }
+  },
   "COMMENTS": {
     "DIVIDER": "Comments",
     "DIVIDER_WITH_TOTAL": "Comments ({{total}})",

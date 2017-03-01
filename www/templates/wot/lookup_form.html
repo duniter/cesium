@@ -1,24 +1,42 @@
 <div class="lookupForm">
-  <label class="item item-input">
-    <i class="icon ion-search placeholder-icon"></i>
-    <input type="text"
-           class="visible-xs visible-sm"
-           placeholder="{{'WOT.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           ng-model-options="{ debounce: 650 }"
-           ng-change="doSearch()">
-    <input type="text"
-           class="hidden-xs hidden-sm"
-           id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           on-return="doSearchText()">
-    <div class="helptip-anchor-center">
-      <a id="helptip-wot-search-text"></a>
-    </div>
-  </label>
 
-  <div class="padding-top padding-xs" style="display: block; height: 60px;">
-    <div class="pull-left" ng-if="!search.loading">
+  <div class="item no-padding">
+
+    <div class="double-padding-x padding-top-xs item-text-wrap" ng-if="allowMultiple && selection.length">
+
+      <!-- TODO: test if enable-pointer-events could replace button-icon-event -->
+      <div ng-repeat="identity in selection track by identity.id"
+           class="button  button-small button-text button-stable button-icon-event ink"
+           ng-class="{'button-text-positive': identity.selected}">
+        <span ng-click="toggleSelect(identity)"
+              ng-bind-html="identity.name||identity.uid||(identity.pubkey|formatPubkey)"></span>
+        <i class="icon ion-close" prevent-default ng-click="removeSelection(identity, $event)">&nbsp;&nbsp;</i>
+      </div>
+    </div>
+
+    <div class="item-input ">
+      <i class="icon ion-search placeholder-icon"></i>
+
+      <input type="text"
+             class="visible-xs visible-sm"
+             placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             ng-model-options="{ debounce: 650 }"
+             ng-change="doSearch()">
+      <input type="text"
+             class="hidden-xs hidden-sm"
+             id="{{wotSearchTextId}}" placeholder="{{'WOT.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             on-return="doSearchText()">
+      <div class="helptip-anchor-center">
+        <a id="helptip-wot-search-text"></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="padding-top padding-xs" style="display: block; height: 60px;"
+    ng-class="::{'hidden-xs': !showResultLabel}">
+    <div class="pull-left" ng-if="!search.loading && showResultLabel">
       <h4
         ng-if="search.type=='newcomers'" translate>
         WOT.LOOKUP.NEWCOMERS
@@ -54,6 +72,13 @@
               ng-click="doSearch()">
         {{'COMMON.BTN_SEARCH' | translate}}
       </button>
+
+      <button class="button button-small button-positive {{parameters.okType}} ink"
+              ng-if="::allowMultiple"
+              ng-disabled="!selection.length"
+              ng-click="next()">
+        {{parameters.okText||'COMMON.BTN_NEXT' | translate}}
+      </button>
     </div>
   </div>
 
@@ -69,7 +94,10 @@
       <span ng-if="search.type=='newcomers'" translate>WOT.LOOKUP.NO_NEWCOMERS</span>
     </div>
 
-    <ion-list class="{{::motion.ionListClass}}"
+    <!-- simple selection -->
+    <ion-list
+      ng-if="::!allowMultiple"
+      class="{{::motion.ionListClass}}"
       can-swipe="$root.device.enable">
 
       <ion-item
@@ -77,57 +105,33 @@
         id="helptip-wot-search-result-{{$index}}"
         class="item item-border-large item-avatar item-icon-right ink" ng-click="::select(identity)">
 
-        <i ng-if="::!identity.avatar" class="item-image icon ion-person"></i>
-        <i ng-if="::identity.avatar" class="item-image avatar" style="background-image: url({{::identity.avatar.src}})"></i>
+        <ng-include src="'templates/wot/identity.html'"></ng-include>
 
-        <h2>
-          <ng-if ng-if="::identity.name||identity.uid" ng-bind-html="::identity.name||identity.uid"></ng-if>
-          <ng-if ng-if="::!identity.name && !identity.uid">{{::identity.pubkey|formatPubkey}}</ng-if>
-        </h2>
-
-        <h4 class="gray"
-            ng-class="{'pull-right': !smallscreen}"
-            ng-if="::identity.sigDate">
-          <i class="ion-clock"></i>
-          {{::'WOT.LOOKUP.REGISTERED' | translate:identity}}
-        </h4>
-        <h4 class="gray"
-            ng-class="{'pull-right': !smallscreen}"
-            ng-if="identity.memberDate">
-          <i class="ion-clock"></i>
-          {{::'WOT.LOOKUP.MEMBER_FROM' | translate:identity}}
-        </h4>
-        <h4 class="gray">
-          <span class="positive" ng-if="::identity.name && identity.uid">
-            <i class="ion-person"></i>
-            {{::identity.uid}}&nbsp;
-          </span>
-          <b class="ion-key"></b>
-          {{::identity.pubkey | formatPubkey}}
-          <span ng-if="!identity.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
-        </h4>
-        <h4 ng-if="::identity.events||identity.tags">
-          <span ng-repeat="event in ::identity.events"
-              class="assertive">
-            <i class="ion-alert-circled " ng-if="::!identity.valid"></i>
-            <span ng-bind-html="::event.message|translate:event.messageParams"></span>
-          </span>
-          <span ng-if="::identity.tags" class="dark">
-           <ng-repeat ng-repeat="tag in ::identity.tags">
-             #<ng-bind-html ng-bind-html="::tag"></ng-bind-html>
-           </ng-repeat>
-          </span>
-        </h4>
         <i class="icon ion-ios-arrow-right "></i>
         <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
       </ion-item>
+
+    </ion-list>
+
+    <!-- multi selection -->
+    <ion-list
+      ng-if="::allowMultiple"
+      class="{{::motion.ionListClass}}">
+
+      <ion-checkbox
+        ng-repeat="identity in search.results track by identity.id"
+        ng-model="identity.checked"
+        class="item item-border-large item-avatar ink"
+        ng-click="toggleCheck(identity, $event)">
+        <ng-include src="'templates/wot/identity.html'"></ng-include>
+      </ion-checkbox>
     </ion-list>
 
     <ion-infinite-scroll
       ng-if="search.hasMore"
       spinner="android"
       on-infinite="showMore()"
-      distance="1%">
+      distance="2%">
     </ion-infinite-scroll>
 
   </ng-if>

@@ -1,15 +1,32 @@
 <ion-view id="wotLookup"  class="modal slide-in-up ng-enter active ng-enter-active">
   <ion-header-bar class="bar-positive">
     <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
-    <h1 class="title" translate>WOT.MODAL.TITLE</h1>
 
-    <button class="button button-icon button-clear icon ion-qr-scanner visible-xs hidden-no-device"
-            ng-if="$root.device.enable"
-            ng-click="scanQrCode()">
+    <h1 class="title hidden-xs">
+      {{::parameters.title?parameters.title:'WOT.MODAL.TITLE'|translate}}
+    </h1>
+
+    <button class="button button-clear icon-right visible-xs"
+            ng-if="allowMultiple && selection.length"
+            ng-click="closeModal(selection)">
+      {{parameters.okText||'COMMON.BTN_NEXT' | translate}}
+      <i class="icon ion-ios-arrow-right"></i>
     </button>
   </ion-header-bar>
 
   <ion-content class="padding no-padding-xs">
+    <div class="secondary-buttons pull-right">
+      <button class="button button-clear dark visible-xs hidden-no-device"
+              ng-if="$root.device.enable"
+              ng-click="scanQrCode()">
+        <i class="icon ion-qr-scanner"></i>
+      </button>
+      <button class="button button-clear dark visible-xs visible-sm"
+              ng-click="showActionsPopover($event)">
+        <i class="icon ion-funnel"></i>
+      </button>
+    </div>
+
     <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
   </ion-content>
 </ion-view>

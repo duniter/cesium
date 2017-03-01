@@ -160,160 +160,115 @@ angular.module('cesium')
     };
   })
 
-.directive('trustAsHtml', ['$compile', function($compile){
-  return {
-    restrict: 'AE',
-    link: function(scope, element, attrs)  {
-      var value = attrs.trustAsHtml;
-      if (value) {
-        var html = scope.$eval(value);
-        element.append(html);
-        $compile(element.contents())(scope);
-      }
-    }
-  };
-}])
-
-/**
-* Close the current modal
-*/
-.directive('modalClose', ['$ionicHistory', '$timeout', function($ionicHistory, $timeout) {
-  return {
-    restrict: 'AC',
-    link: function($scope, $element) {
-      $element.bind('click', function() {
-        if ($scope.closeModal) {
-          $ionicHistory.nextViewOptions({
-            historyRoot: true,
-            disableAnimate: true,
-            expire: 300
-          });
-          // if no transition in 300ms, reset nextViewOptions
-          // the expire should take care of it, but will be cancelled in some
-          // cases. This directive is an exception to the rules of history.js
-          $timeout( function() {
-            $ionicHistory.nextViewOptions({
-              historyRoot: false,
-              disableAnimate: false
-            });
-          }, 300);
-          $scope.closeModal();
-        }
-      });
-    }
-  };
-}])
-
-/**
-* Plugin extension point (see services/plugin-services.js)
-*/
-.directive('csExtensionPoint', function ($state, $compile, $controller, $templateCache, PluginService) {
-
-
-  var getTemplate = function(extensionPoint) {
-    var template = extensionPoint.templateUrl ? $templateCache.get(extensionPoint.templateUrl) : extensionPoint.template;
-    if (!template) {
-      console.error('[plugin] Could not found template for extension :' + (extensionPoint.templateUrl ? extensionPoint.templateUrl : extensionPoint.template));
-      return '';
-    }
-    if (extensionPoint.controller) {
-      template = '<ng-controller ng-controller="'+extensionPoint.controller+'">' + template + '</div>';
-    }
-    return template;
-  };
-
-  var compiler = function(tElement, tAttributes) {
-
-    if (angular.isDefined(tAttributes.name)) {
-      var extensionPoints = PluginService.extensions.points.getActivesByName(tAttributes.name);
-      if (extensionPoints.length > 0) {
-        tElement.html("");
-        _.forEach(extensionPoints, function(extensionPoint){
-          tElement.append(getTemplate(extensionPoint));
-        });
-      }
-    }
-
+  .directive('trustAsHtml', ['$compile', function($compile){
     return {
-      pre: function(scope, iElement, iAttrs){
-        PluginService.extensions.points.current.set(iAttrs.name);
-      },
-      post: function(){
-        PluginService.extensions.points.current.set();
+      restrict: 'AE',
+      link: function(scope, element, attrs)  {
+        var value = attrs.trustAsHtml;
+        if (value) {
+          var html = scope.$eval(value);
+          element.append(html);
+          $compile(element.contents())(scope);
+        }
       }
     };
-  };
+  }])
 
-
-  return {
-    restrict: "E",
-    compile: compiler,
-    scope: {
-        content:'='
-    }
-  };
-})
-
-.directive('onReadFile', function ($parse) {
-  return {
-    restrict: 'A',
-    scope: false,
-    link: function(scope, element, attrs) {
-      var fn = $parse(attrs.onReadFile);
-
-      element.on('change', function(onChangeEvent) {
-        var reader = new FileReader();
-        var fileData = {
-          name: this.files[0].name,
-          size: this.files[0].size,
-          type: this.files[0].type
-        };
-
-        reader.onload = function(onLoadEvent) {
-          scope.$apply(function() {
-            fn(scope, {
-              file: {
-                fileContent: onLoadEvent.target.result,
-                fileData : fileData}
+  /**
+  * Close the current modal
+  */
+  .directive('modalClose', ['$ionicHistory', '$timeout', function($ionicHistory, $timeout) {
+    return {
+      restrict: 'AC',
+      link: function($scope, $element) {
+        $element.bind('click', function() {
+          if ($scope.closeModal) {
+            $ionicHistory.nextViewOptions({
+              historyRoot: true,
+              disableAnimate: true,
+              expire: 300
             });
-          });
-        };
-        reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
-      });
-    }
-  };
-})
+            // if no transition in 300ms, reset nextViewOptions
+            // the expire should take care of it, but will be cancelled in some
+            // cases. This directive is an exception to the rules of history.js
+            $timeout( function() {
+              $ionicHistory.nextViewOptions({
+                historyRoot: false,
+                disableAnimate: false
+              });
+            }, 300);
+            $scope.closeModal();
+          }
+        });
+      }
+    };
+  }])
 
-.directive("dropzone", function($parse) {
-  return {
-    restrict: 'A',
-    scope: false,
-      link: function(scope, elem, attrs) {
-        var fn = $parse(attrs.dropzone);
-        elem.bind('dragover', function (e) {
-          e.stopPropagation();
-          e.preventDefault();
-        });
-        elem.bind('dragenter', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-        });
-        elem.bind('dragleave', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-        });
-        elem.bind('drop', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
+  /**
+  * Plugin extension point (see services/plugin-services.js)
+  */
+  .directive('csExtensionPoint', function ($state, $compile, $controller, $templateCache, PluginService) {
+    var getTemplate = function(extensionPoint) {
+      var template = extensionPoint.templateUrl ? $templateCache.get(extensionPoint.templateUrl) : extensionPoint.template;
+      if (!template) {
+        console.error('[plugin] Could not found template for extension :' + (extensionPoint.templateUrl ? extensionPoint.templateUrl : extensionPoint.template));
+        return '';
+      }
+      if (extensionPoint.controller) {
+        template = '<ng-controller ng-controller="'+extensionPoint.controller+'">' + template + '</div>';
+      }
+      return template;
+    };
+
+    var compiler = function(tElement, tAttributes) {
+
+      if (angular.isDefined(tAttributes.name)) {
+        var extensionPoints = PluginService.extensions.points.getActivesByName(tAttributes.name);
+        if (extensionPoints.length > 0) {
+          tElement.html("");
+          _.forEach(extensionPoints, function(extensionPoint){
+            tElement.append(getTemplate(extensionPoint));
+          });
+        }
+      }
+
+      return {
+        pre: function(scope, iElement, iAttrs){
+          PluginService.extensions.points.current.set(iAttrs.name);
+        },
+        post: function(){
+          PluginService.extensions.points.current.set();
+        }
+      };
+    };
+
+
+    return {
+      restrict: "E",
+      compile: compiler,
+      scope: {
+          content:'='
+      }
+    };
+  })
+
+  .directive('onReadFile', function ($parse) {
+    return {
+      restrict: 'A',
+      scope: false,
+      link: function(scope, element, attrs) {
+        var fn = $parse(attrs.onReadFile);
+
+        element.on('change', function(onChangeEvent) {
+          var reader = new FileReader();
           var fileData = {
-            name: e.dataTransfer.files[0].name,
-            size: e.dataTransfer.files[0].size,
-            type: e.dataTransfer.files[0].type
+            name: this.files[0].name,
+            size: this.files[0].size,
+            type: this.files[0].type
           };
 
-          var reader = new FileReader();
           reader.onload = function(onLoadEvent) {
-            scope.$apply(function () {
+            scope.$apply(function() {
               fn(scope, {
                 file: {
                   fileContent: onLoadEvent.target.result,
@@ -321,11 +276,52 @@ angular.module('cesium')
               });
             });
           };
-          reader.readAsText(e.dataTransfer.files[0]);
+          reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
         });
+      }
+    };
+  })
 
+  .directive("dropzone", function($parse) {
+    return {
+      restrict: 'A',
+      scope: false,
+        link: function(scope, elem, attrs) {
+          var fn = $parse(attrs.dropzone);
+          elem.bind('dragover', function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+          });
+          elem.bind('dragenter', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+          });
+          elem.bind('dragleave', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+          });
+          elem.bind('drop', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            var fileData = {
+              name: e.dataTransfer.files[0].name,
+              size: e.dataTransfer.files[0].size,
+              type: e.dataTransfer.files[0].type
+            };
 
-    }
-  };
-})
+            var reader = new FileReader();
+            reader.onload = function(onLoadEvent) {
+              scope.$apply(function () {
+                fn(scope, {
+                  file: {
+                    fileContent: onLoadEvent.target.result,
+                    fileData : fileData}
+                });
+              });
+            };
+            reader.readAsText(e.dataTransfer.files[0]);
+          });
+      }
+    };
+  })
 ;

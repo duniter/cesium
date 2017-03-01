@@ -13755,7 +13755,9 @@ a {
   .badge:empty {
     display: none !important; }
   .item .badge {
-    right: 16px; } }
+    right: 16px; }
+  .padding-top-xs {
+    padding-top: 10px; } }
 
 @media screen and (min-width: 768px) {
   .hidden-xs {
@@ -14248,13 +14250,26 @@ a {
   position: absolute;
   display: flex;
   height: 100%;
-  /*width: 20px;*/
   align-items: center;
   font-size: 16px;
   left: 16px;
   top: 8px;
   max-height: 32px;
   max-width: 32px; }
+
+.item.item-checkbox.item-avatar > i.avatar:first-child,
+.item.item-checkbox.item-avatar > i.item-image:first-child,
+.item.item-checkbox.item-avatar .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar .item-content > i.item-image:first-child,
+.item.item-checkbox.item-avatar * > i.avatar:first-child,
+.item.item-checkbox.item-avatar * > i.item-image:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.item-image:first-child {
+  left: 65px; }
+
+.item.item-checkbox.item-avatar .item-content,
+.item.item-checkbox .item-content .item-avatar {
+  padding-left: 65px; }
 
 /* ----
     Popup alert
@@ -14530,10 +14545,13 @@ a.underline:hover,
 .list .item-divider.item-divider-top-border {
   border-top: solid 1px rgba(0, 0, 0, 0.12); }
 
-.lookupForm .list .item-avatar {
+.lookupForm .list .item.item-avatar {
   min-height: 80px !important; }
-  .lookupForm .list .item-avatar .img {
-    left: 16px !important; }
+  .lookupForm .list .item.item-avatar .item-content {
+    min-height: 46px; }
+
+.lookupForm .list .item.item-avatar.item-checkbox .item-content {
+  padding-left: 47px; }
 
 /************************
    Additional motions
@@ -15067,3 +15085,9 @@ div[dropzone] {
 .hero .button-fab-top-right,
 .hero .button-fab-top-left {
   top: 170px !important; }
+
+.button-icon-event {
+  text-transform: inherit;
+  pointer-events: none !important; }
+  .button-icon-event i.ion-close {
+    pointer-events: all !important; }

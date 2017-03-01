@@ -55,7 +55,8 @@
     "RESULTS_COUNT": "{{count}} results",
     "EXECUTION_TIME": "executed in {{duration|formatDurationMs}}",
     "SHOW_VALUES": "Display values openly?",
-    "POPOVER_ACTIONS_TITLE": "Options",
+    "POPOVER_ACTIONS_TITLE": "Options",,
+    "POPOVER_FILTER_TITLE": "Filters",
     "SHOW_MORE": "Show more",
     "SHOW_MORE_COUNT": "(current limit at {{limit}})",
     "POPOVER_SHARE": {
@@ -494,7 +495,8 @@
     "NOT_NEED_MEMBERSHIP": "Already a member.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
     "REVOCATION_SENT": "Revocation sent successfully",
-    "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing."
+    "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
+    "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

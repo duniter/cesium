@@ -1,0 +1,17 @@
+<!-- nav buttons section -->
+<ng-if ng-if="enable && extensionPoint === 'nav-buttons'">
+
+  <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showCertificationActionsPopover($event)">
+  </button>
+
+</ng-if>
+
+<!-- Buttons section -->
+<ng-if ng-if="enable && extensionPoint === 'buttons'">
+
+  <button class="button button-stable button-small-padding icon ion-android-more-vertical"
+          ng-click="showCertificationActionsPopover($event)"
+          title="{{'COMMON.POPOVER_ACTIONS_TITLE' | translate}}">
+  </button>
+
+</ng-if>

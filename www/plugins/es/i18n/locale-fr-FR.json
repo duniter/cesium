@@ -37,7 +37,7 @@
     }
   },
   "WOT": {
-    "BTN_SUGGEST_CERTIFICATIONS": "Suggérer des certifications",
+    "BTN_SUGGEST_CERTIFICATIONS": "Suggérer des certifications...",
     "SUGGEST_CERTIFICATIONS_MODAL": {
       "TITLE": "Suggérer des certifications"
     }

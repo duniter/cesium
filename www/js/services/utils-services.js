@@ -69,6 +69,10 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
+  function alertNotImplemented() {
+    return alertInfo('INFO.FEATURES_NOT_IMPLEMENTED');
+  }
+
   function askConfirm(message, title, options) {
     title = title || 'CONFIRM.POPUP_TITLE';
 
@@ -635,7 +639,8 @@ angular.module('cesium.utils.services', ['ngResource'])
     alert: {
       error: alertError,
       info: alertInfo,
-      confirm: askConfirm
+      confirm: askConfirm,
+      notImplemented: alertNotImplemented
     },
     loading: {
       show: showLoading,

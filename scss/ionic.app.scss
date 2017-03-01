@@ -86,23 +86,27 @@ $screen-lg:                       1200px;
 
 // Extra small device: Phones (<767px)
 @media screen and (max-width: $screen-xs-max) {
-    .hidden-xs {
-        display: none !important;
-        visibility: hidden !important;
-    }
-    .badge {
-      text-overflow: ellipsis !important;
-      white-space: nowrap;
-      overflow: hidden !important;
-      max-width: 300px !important;
-      display: block !important;
-    }
-    .badge:empty {
+  .hidden-xs {
       display: none !important;
-    }
-    .item .badge {
-      right: 16px;
-    }
+      visibility: hidden !important;
+  }
+  .badge {
+    text-overflow: ellipsis !important;
+    white-space: nowrap;
+    overflow: hidden !important;
+    max-width: 300px !important;
+    display: block !important;
+  }
+  .badge:empty {
+    display: none !important;
+  }
+  .item .badge {
+    right: 16px;
+  }
+
+  .padding-top-xs {
+    padding-top: 10px;
+  }
 }
 @media screen and (min-width: $screen-sm) {
     .hidden-xs {
@@ -789,13 +793,28 @@ $screen-menu:                     845px;
   position: absolute;
   display: flex;
   height: 100%;
-  /*width: 20px;*/
   align-items: center;
   font-size: 16px;
   left: 16px;
   top: 8px;
   max-height: 32px;
   max-width: 32px;
+}
+
+.item.item-checkbox.item-avatar > i.avatar:first-child,
+.item.item-checkbox.item-avatar > i.item-image:first-child,
+.item.item-checkbox.item-avatar .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar .item-content > i.item-image:first-child,
+.item.item-checkbox.item-avatar * > i.avatar:first-child,
+.item.item-checkbox.item-avatar * > i.item-image:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.avatar:first-child,
+.item.item-checkbox.item-avatar * .item-content > i.item-image:first-child {
+  left: 65px;
+}
+
+.item.item-checkbox.item-avatar .item-content,
+.item.item-checkbox .item-content .item-avatar {
+  padding-left: 65px;
 }
 
 /* ----
@@ -1102,13 +1121,20 @@ a.underline:hover,
 }
 
 
-.lookupForm .list .item-avatar {
-  min-height: 80px !important;
+.lookupForm .list {
+  .item.item-avatar {
+    min-height: 80px !important;
 
-  .img {
-    left: 16px !important;
+    .item-content {
+      min-height: 46px;
+    }
+  }
+
+  .item.item-avatar.item-checkbox .item-content {
+    padding-left: 47px;
   }
 }
+
 
 /************************
    Additional motions
@@ -1800,4 +1826,13 @@ div[dropzone] {
 .hero .button-fab-top-right,
 .hero .button-fab-top-left {
   top: 170px !important;
+}
+
+.button-icon-event {
+  text-transform: inherit;
+  pointer-events: none !important;
+
+  i.ion-close {
+    pointer-events: all !important;
+  }
 }

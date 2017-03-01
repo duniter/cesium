@@ -35,7 +35,7 @@
     "BTN_OPTIONS": "Options",
     "BTN_HELP_TOUR": "Visite guidée",
     "BTN_HELP_TOUR_SCREEN": "Découvrir cet écran",
-    "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
+    "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !"
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
     "LOADING": "Veuillez patienter...",
     "SEARCHING": "Recherche en cours...",
@@ -56,6 +56,7 @@
     "EXECUTION_TIME": "executé en {{duration|formatDurationMs}}",
     "SHOW_VALUES": "Afficher les valeurs en clair ?",
     "POPOVER_ACTIONS_TITLE": "Options",
+    "POPOVER_FILTER_TITLE": "Filtres",
     "SHOW_MORE": "Afficher plus",
     "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
     "POPOVER_SHARE": {
@@ -494,7 +495,8 @@
     "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
     "REVOCATION_SENT": "Revocation envoyée avec succès",
-    "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été envoyée avec succès. Elle est en attente de traitement."
+    "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été envoyée avec succès. Elle est en attente de traitement.",
+    "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/><br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

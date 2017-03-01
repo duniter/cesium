@@ -256,13 +256,14 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
       options = options || {};
       options.type = options.type || 'inbox';
       options._source = fields.commons;
+      options.summary = angular.isDefined(options.summary) ? options.summary : true;
 
       // Get encrypted message (with common fields)
       return searchMessages(options)
 
         // Encrypt content
         .then(function(messages) {
-          return decryptMessages(messages, keypair, true/*summary not need*/);
+          return decryptMessages(messages, keypair, options.summary);
         })
 
         // Add avatar
@@ -362,10 +363,11 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     // Compute a summary (truncated to 140 characters), from the message content
     function fillSummary(message) {
       if (message.content) {
-        message.summary = content.replace(/(^|[\n\r]+)\s*>[^\n\r]*/g, '').trim();
+        message.summary = message.content.replace(/(^|[\n\r]+)\s*>[^\n\r]*/g, '').trim();
         if (message.summary.length > 140) {
           message.summary = message.summary.substr(0, 137) + '...';
         }
+        console.log(message);
       }
     }
 

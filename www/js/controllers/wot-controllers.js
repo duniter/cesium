@@ -111,6 +111,10 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
   $scope.entered = false;
   $scope.wotSearchTextId = 'wotSearchText';
   $scope.enableFilter = true;
+  $scope.allowMultiple = false;
+  $scope.selection = [];
+  $scope.showResultLabel = true;
+  $scope.parameters = {}; // override in the modal controller
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.entered) {
@@ -323,6 +327,47 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     }
   };
 
+  $scope.next = function() {
+    console.log('Selected identities:', $scope.selection);
+  };
+
+  $scope.toggleCheck = function(identity, e) {
+    if (identity.checked) {
+      $scope.addToSelection(identity, e);
+    }
+    else {
+      $scope.removeSelection(identity, e);
+    }
+  };
+
+  $scope.toggleSelect = function(identity){
+    identity.selected = !identity.selected;
+  };
+
+  $scope.addToSelection = function(identity, e) {
+
+    var copyIdty = angular.copy(identity);
+    if (copyIdty.name) {
+      copyIdty.name = copyIdty.name.replace('<em>', '').replace('</em>', ''); // remove highlight
+    }
+
+    $scope.selection.push(copyIdty);
+  };
+
+  $scope.removeSelection = function(identity, e) {
+    identity.checked = false;
+    var identityInSelection = _.findWhere($scope.selection, {id: identity.id});
+    if (identityInSelection) {
+      $scope.selection.splice($scope.selection.indexOf(identityInSelection), 1);
+    }
+
+    var existIdtyInResult = _.findWhere($scope.search.results, {id: identity.id});
+    if (existIdtyInResult) {
+      existIdtyInResult.checked = false;
+    }
+    e.preventDefault();
+  };
+
   $scope.scanQrCode = function(){
     if (!Device.enable) {
       return;
@@ -369,6 +414,18 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
   };
 
   $scope.doDisplayResult = function(res, offset, size) {
+    res = res || [];
+
+    // pre-check result if already in selection
+    if ($scope.allowMultiple && res.length && $scope.selection.length) {
+      _.forEach($scope.selection, function(identity) {
+        var identityInRes = _.findWhere(res, {id: identity.id});
+        if (identityInRes) {
+          identityInRes.checked = true;
+        }
+      });
+    }
+
     if (!offset) {
       $scope.search.results = res || [];
     }
@@ -416,15 +473,17 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
 
 }
 
-function WotLookupModalController($scope, $controller, $focus){
+function WotLookupModalController($scope, $controller, $focus, parameters){
   'ngInject';
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotLookupCtrl', {$scope: $scope}));
 
   $scope.search.loading = false;
-  $scope.enableFilter = false;
-
+  $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : false;
+  $scope.allowMultiple = angular.isDefined(parameters.allowMultiple) ? parameters.allowMultiple : false;
+  $scope.parameters = parameters;
+  $scope.showResultLabel = false;
 
   $scope.wotSearchTextId = 'wotSearchTextModal';
   $scope.cancel = function(){
@@ -436,6 +495,10 @@ function WotLookupModalController($scope, $controller, $focus){
       pubkey: identity.pubkey,
       uid: identity.uid
     });
+  };
+
+  $scope.next = function() {
+    $scope.closeModal($scope.selection);
   };
 
   $scope.doRefreshLocationHref = function() {

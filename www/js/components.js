@@ -39,4 +39,21 @@ angular.module('cesium')
     '<i class="ion-chevron-down" ng-class="{gray : $ctrl.asc || $ctrl.sort != $ctrl.toggle}" style="position: relative; left: -2.6px; top: 3px; font-size: 9px;"></i>'
   })
 
+  .component('csRemovableSelectionItem', {
+    transclude: true,
+    controller: function(){
+      this.$onInit = function(){
+        console.log("$onInit called: ", this);
+      };
+      this.remove = function(){
+        console.log("remove called: ", this);
+      };
+    },
+    template:
+    '<div >' +
+    '  <ng-transclude></ng-transclude>' +
+    '  <i class="icon ion-close" ng-click="$ctrl.remove();"></i>' +
+    '</div>'
+  })
+
 ;
