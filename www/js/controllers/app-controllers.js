@@ -90,6 +90,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.search = {};
   $scope.login = csWallet.isLogin();
   $scope.motion = UIUtils.motion.default;
+  $scope.initPhase = csConfig.initPhase;
 
   $scope.showHome = function() {
     $ionicHistory.nextViewOptions({

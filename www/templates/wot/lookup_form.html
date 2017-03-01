@@ -58,6 +58,7 @@
   </div>
 
   <div class="text-center" ng-if="search.loading">
+    <p class="gray" ng-if="::initPhase" translate>WOT.SEARCH_INIT_PHASE_WARNING</p>
     <ion-spinner icon="android"></ion-spinner>
   </div>
 
