@@ -111,9 +111,9 @@ function ESMenuExtendController($scope, $state, PluginService, csSettings, UIUti
     });
   };
 
-  $scope.showGroupsPopover = function(event) {
+  $scope.showInvitationsPopover = function(event) {
     return UIUtils.popover.show(event, {
-      templateUrl :'plugins/es/templates/group/popover_group.html',
+      templateUrl :'plugins/es/templates/invitation/popover_invitation.html',
       scope: $scope,
       autoremove: false // reuse popover
     });

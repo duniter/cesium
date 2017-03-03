@@ -68,8 +68,8 @@
         ng-repeat="msg in messages"
         ui-sref="app.user_view_message({type:type, id:msg.id})">
 
-        <i ng-if="!msg.avatar" class="item-image icon" ng-class="{'ion-person': msg.uid, 'ion-email': !msg.uid}"></i>
-        <i ng-if="msg.avatar" class="item-image avatar" style="background-image: url({{::msg.avatar.src}})"></i>
+        <i ng-if="::!msg.avatar" class="item-image icon" ng-class="{'ion-person': msg.uid, 'ion-email': !msg.uid}"></i>
+        <i ng-if="::msg.avatar" class="item-image avatar" style="background-image: url({{::msg.avatar.src}})"></i>
 
         <h4 class="pull-right hidden-xs hidden-sm">
           <span class="dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</span>
@@ -78,12 +78,12 @@
         <h4 class="pull-right visible-xs visible-sm dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</h4>
         <h3>
           <a class="positive"
-             ng-if="msg.name||msg.uid"
+             ng-if="::msg.name||msg.uid"
              ui-sref="app.wot_identity({pubkey:msg.issuer, uid:msg.name||msg.uid})">
             <i class="ion-person"></i>
             {{::msg.name||msg.uid}}
           </a>
-          <a class="gray" ng-if="!msg.name && !msg.uid"
+          <a class="gray" ng-if="::!msg.name && !msg.uid"
              ui-sref="app.wot_identity({pubkey:msg.issuer})">
             <i class="ion-key"></i>
             {{::msg.issuer|formatPubkey}}

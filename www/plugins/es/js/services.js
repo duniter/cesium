@@ -11,6 +11,8 @@ angular.module('cesium.es.services', [
     'cesium.es.modal.services',
     'cesium.es.blockchain.services',
     'cesium.es.registry.services',
-    'cesium.es.group.services'
+    'cesium.es.group.services',
+    'cesium.es.wallet.services',
+    'cesium.es.invitation.services'
   ])
 ;

@@ -22,7 +22,8 @@
     "MARKET": "Annonces",
     "REGISTRY": "Professionnels",
     "USER_PROFILE": "Mon profil",
-    "USER_MESSAGE": "Messages"
+    "MESSAGES": "Mes messages",
+    "NOTIFICATIONS": "Notifications"
   },
   "ACCOUNT": {
     "NEW": {
@@ -37,9 +38,41 @@
     }
   },
   "WOT": {
-    "BTN_SUGGEST_CERTIFICATIONS": "Suggérer des certifications...",
+    "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Suggérer des identités à certifier...",
+    "BTN_ASK_CERTIFICATIONS_DOTS": "Rechercher des certifications auprès de membres connus...",
+    "BTN_ASK_CERTIFICATION": "Demander une certification",
     "SUGGEST_CERTIFICATIONS_MODAL": {
       "TITLE": "Suggérer des certifications"
+    },
+    "ASK_CERTIFICATIONS_MODAL": {
+      "TITLE": "Demander des certifications"
+    },
+    "CONFIRM": {
+      "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
+      "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
+      "ASK_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
+    },
+    "ERROR": {
+      "SEND_INVITATION_CERTIFICATION_FAILED": "Echec de l'envoi de la demande de certification"
+    }
+  },
+  "INVITATION": {
+    "TITLE": "Invitations",
+    "NO_RESULT": "Aucune invitation",
+    "BTN_DELETE_ALL": "Tout supprimer",
+    "BTN_DELETE": "Supprimer l'invitation",
+    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> demande votre certification",
+    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> vous est suggéré pour certification",
+    "SUGGESTED_BY": "Suggestion envoyée par <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
+    "NOTIFICATIONS": {
+      "TITLE": "Invitations"
+    },
+    "LIST": {
+      "TITLE": "Invitations",
+    },
+    "ERROR": {
+      "LOAD_INVITATIONS_FAILED": "Echec du chargement des invitations",
+      "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation"
     }
   },
   "COMMENTS": {
@@ -112,7 +145,7 @@
       "LOAD_MESSAGES_FAILED": "Erreur lors de la récupération des messages.",
       "LOAD_MESSAGE_FAILED": "Erreur lors de la récupération du message.",
       "MESSAGE_NOT_READABLE": "Lecture du message impossible.",
-      "USER_NOT_RECIPIENT": "Vous n'etes pas le destinataire de ce message : déchiffrement impossible.",
+      "USER_NOT_RECIPIENT": "Vous n'êtes pas le destinataire de ce message : déchiffrement impossible.",
       "NOT_AUTHENTICATED_MESSAGE": "L'authenticité du message est douteuse ou son contenu est corrompu.",
       "REMOVE_MESSAGE_FAILED": "Erreur de suppression du message",
       "MESSAGE_CONTENT_TOO_LONG": "Valeur trop longue ({{maxLength}} caractères max).",
@@ -366,6 +399,11 @@
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",
       "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> ?"
+    }
+  },
+  "ES_WALLET": {
+    "ERROR": {
+      "RECIPIENT_IS_MANDATORY": "Un destinataire est obligatoire pour le chiffrement."
     }
   },
   "EVENT": {

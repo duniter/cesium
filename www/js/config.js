@@ -23,7 +23,7 @@ angular.module("cesium.config", [])
 	"decimalCount": 4,
 	"httpsMode": false,
 	"helptip": {
-		"enable": true,
+		"enable": false,
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 	},
 	"node": {
@@ -34,8 +34,8 @@ angular.module("cesium.config", [])
 		"es": {
 			"enable": true,
 			"askEnable": false,
-			"host": "data.gtest.duniter.fr",
-			"port": "80",
+			"host": "localhost",
+			"port": "9200",
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,

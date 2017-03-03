@@ -30,7 +30,7 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
 
   var defaultSearchLimit = 40;
 
-  var excludedCodes = esNotification.constants.MESSAGE_CODES.concat(esNotification.constants.GROUP_CODES);
+  var excludedCodes = esNotification.constants.EXCLUDED_CODES;
 
   $scope.search = {
     loading : true,
@@ -44,7 +44,6 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
       }
     }
   };
-  $scope.ionListClass = !UIUtils.screen.isSmall() ? 'animate-ripple' : null;
 
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
@@ -119,7 +118,8 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
 
   // Listen notifications changes
   $scope.onNewNotification = function(notification) {
-    if (!$scope.search.loading && !$scope.search.loadingMore && !notification.isMessage) {
+    if (!$scope.search.loading && !$scope.search.loadingMore &&
+      !notification.isMessage && !notification.isInvitation) {
       var nextIndex = _.findIndex($scope.search.results, function(n) {
         return notification.time > n.time;
       });
@@ -153,7 +153,7 @@ function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('NotificationsCtrl', {$scope: $scope}));
 
-  // Disable list effects
+  // Disable list motion
   $scope.motion = null;
 
   $scope.$on('popover.shown', function() {

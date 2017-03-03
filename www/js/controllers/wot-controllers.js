@@ -15,7 +15,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_identity', {
-        url: "/wot/:pubkey/:uid",
+        url: "/wot/:pubkey/:uid?action",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -25,7 +25,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
       })
 
       .state('app.wot_identity_uid', {
-        url: "/lookup/:uid",
+        url: "/lookup/:uid?action",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/view_identity.html",
@@ -589,7 +589,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, U
           return;
         }
 
-        UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES')
+        UIUtils.alert.confirm('CONFIRM.CERTIFY_RULES', 'CONFIRM.POPUP_SECURITY_WARNING_TITLE', {
+          cssClass: 'warning',
+          okText: 'WOT.BTN_YES_CERTIFY',
+          okType: 'button-assertive'
+        })
           .then(function(confirm){
             if (!confirm) {
               return;
@@ -776,7 +780,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, U
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $rootScope, $controller, UIUtils, csWallet) {
+function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UIUtils, csWallet) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -785,12 +789,21 @@ function WotIdentityViewController($scope, $rootScope, $controller, UIUtils, csW
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
+    var onLoadSuccess = function() {
+      $scope.doMotion();
+      if (state.stateParams && state.stateParams.action) {
+        $timeout(function() {
+          $scope.doAction(state.stateParams.action.trim());
+        }, 100);
+      }
+    };
+
     if (state.stateParams &&
       state.stateParams.pubkey &&
       state.stateParams.pubkey.trim().length > 0) {
       if ($scope.loading) { // load once
         return $scope.load(state.stateParams.pubkey.trim(), true /*withCache*/, state.stateParams.uid)
-          .then($scope.doMotion);
+          .then(onLoadSuccess);
       }
     }
 
@@ -799,7 +812,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, UIUtils, csW
       state.stateParams.uid.trim().length > 0) {
       if ($scope.loading) { // load once
         return $scope.load(null, true /*withCache*/, state.stateParams.uid)
-          .then($scope.doMotion);
+          .then(onLoadSuccess);
       }
     }
 
@@ -808,7 +821,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, UIUtils, csW
 
       if ($scope.loading) {
         return $scope.load(csWallet.data.pubkey, true /*withCache*/, csWallet.data.uid)
-          .then($scope.doMotion);
+          .then(onLoadSuccess);
       }
     }
 
@@ -827,6 +840,12 @@ function WotIdentityViewController($scope, $rootScope, $controller, UIUtils, csW
     // Certify button
     if (($scope.canCertify && !$scope.alreadyCertified) || $rootScope.tour) {
       $scope.showFab('fab-certify-' + $scope.formData.uid);
+    }
+  };
+
+  $scope.doAction = function(action) {
+    if (action == 'certify') {
+      return $scope.certify();
     }
   };
 }

@@ -1,0 +1,32 @@
+<ion-list class="{{::motion.ionListClass}}">
+
+  <ion-item
+    ng-repeat="invitation in search.results"
+    class="item-border-large item-text-wrap item-avatar">
+
+    <i ng-if="::!invitation.avatar" class="item-image icon {{::invitation.avatarIcon}}"></i>
+    <i ng-if="::invitation.avatar" class="item-image avatar" style="background-image: url({{::invitation.avatar.src}})"></i>
+    <h3 trust-as-html="invitation.message | translate:invitation"></h3>
+    <div class="block text-right">
+      <button class="button button-positive button-small button-small-padding"
+              ng-click="accept(invitation)"
+              translate>{{(invitation.okText||'COMMON.BTN_SHOW') |translate}}</button>
+      <button class="button button-stable button-small button-small-padding"
+              ng-click="delete($index)"
+              translate>INVITATION.BTN_DELETE</button>
+    </div>
+    <h4>
+      <i class="icon {{invitation.icon}}"></i>
+      <span class="dark" ng-if="invitation.issuer" trust-as-html="'INVITATION.SUGGESTED_BY' | translate:invitation"></span>
+      <span class="dark">{{invitation.time|formatFromNow}}</span>
+    </h4>
+  </ion-item>
+
+</ion-list>
+
+<ion-infinite-scroll
+  ng-if="!search.loading && search.hasMore"
+  spinner="android"
+  on-infinite="showMore()"
+  distance="1%">
+</ion-infinite-scroll>

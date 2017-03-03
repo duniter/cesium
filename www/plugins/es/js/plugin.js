@@ -15,6 +15,7 @@ angular.module('cesium.es.plugin', [
     'cesium.es.blockchain.controllers',
     'cesium.es.network.controllers',
     'cesium.es.registry.controllers',
-    'cesium.es.group.controllers'
+    'cesium.es.group.controllers',
+    'cesium.es.invitation.controllers'
   ])
 ;

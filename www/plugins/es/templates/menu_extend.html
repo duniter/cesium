@@ -13,15 +13,15 @@
       class="badge badge-button badge-positive">{{$root.walletData.messages.unreadCount}}</span>
   </button>
 
-  <!-- wot event -->
+  <!-- invitation event -->
   <button class="button button-clear icon ion-person-stalker hidden-xs hidden-sm"
           ng-if="login"
           active-link="gray"
-          active-link-path-prefix="#/app/groups"
-          ng-click="showGroupsPopover($event)">
+          active-link-path-prefix="#/app/invitations"
+          ng-click="showInvitationsPopover($event)">
           <span
-            ng-if="$root.walletData.groups.unreadCount"
-            class="badge badge-button badge-positive">{{$root.walletData.groups.unreadCount}}</span>
+            ng-if="$root.walletData.invitations.unreadCount"
+            class="badge badge-button badge-positive">{{$root.walletData.invitations.unreadCount}}</span>
   </button>
 
   <!-- notifications -->
@@ -69,9 +69,19 @@
             ng-class="{'item-menu-disable': !login}"
             ng-click="loginAndGo('app.user_message')">
     <i class="icon ion-email"></i>
-    <span translate>MENU.USER_MESSAGE</span>
+    <span translate>MENU.MESSAGES</span>
     <span class="badge badge-positive"
           ng-if="$root.walletData.messages.unreadCount">{{$root.walletData.messages.unreadCount}}</span>
+  </div>
+
+  <div menu-close class="item item-icon-left" active-link="active"
+       active-link-path-prefix="#/app/notifications"
+       ng-class="{'item-menu-disable': !login}"
+       ng-click="loginAndGo('app.view_notifications')">
+    <i class="icon ion-android-notifications"></i>
+    <span translate>MENU.NOTIFICATIONS</span>
+    <span class="badge badge-positive"
+          ng-if="$root.walletData.notifications.unreadCount">{{$root.walletData.notifications.unreadCount}}</span>
   </div>
 
 </ng-if>

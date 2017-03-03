@@ -20,7 +20,7 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
           }
         })
 
-        .extendStates(['app.wot_cert', 'app.wot_cert_lg'], {
+        .extendStates(['app.wot_cert', 'app.wot_cert_lg', 'app.wallet_cert', 'app.wallet_cert_lg'], {
           points: {
             'nav-buttons': {
               templateUrl: "plugins/es/templates/wot/view_certifications_extend.html",
@@ -41,7 +41,8 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
 ;
 
-function ESWotIdentityViewController($scope, $timeout, $ionicPopover, Modals, csSettings, PluginService, esModals, UIUtils) {
+function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, csSettings, PluginService,
+                                     esModals, esHttp, esWallet, esInvitation) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
@@ -91,32 +92,128 @@ function ESWotIdentityViewController($scope, $timeout, $ionicPopover, Modals, cs
 
     $scope.hideCertificationActionsPopover();
 
-    return $scope.loadWallet({minData: true})
+    var walletData;
+    var identities;
 
-      .then(function() {
+    return $scope.loadWallet({minData: true})
+      .then(function(data) {
         UIUtils.loading.hide();
 
-        Modals.showWotLookup({
+        walletData = data;
+        return Modals.showWotLookup({
           allowMultiple: true,
           enableFilter: true,
           title: 'WOT.SUGGEST_CERTIFICATIONS_MODAL.TITLE',
           help: 'WOT.SUGGEST_CERTIFICATIONS_MODAL.HELP',
-          okText: 'COMMON.BTN_SEND',
+          okText: 'COMMON.BTN_NEXT',
           okType: 'button-positive'
-        })
-          .then(function(identities) {
-            if (!identities || !identities.length) return;
-            console.debug('Will send suggestions', identities);
-            return UIUtils.alert.notImplemented();
-            /*esUser.send({
-              destPub: $scope.formData.pubkey,
-              destUid: $scope.formData.name||$scope.formData.uid,
-              identities
-            });*/
-          });
+        });
+      })
 
+      .then(function(res) {
+        if (!res || !res.length) return;
+        identities = res;
 
+        return $q.all([
+          // Get keypair only once (if not done here, certification.send() with compute it many times)
+          esWallet.box.getKeypair(walletData.keypair),
+          // Ask confirmation
+          UIUtils.alert.confirm('WOT.CONFIRM.SUGGEST_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
+        ]);
+      })
+      .then(function(res) {
+        if (!res) return;
+        var keypair = res[0];
+        var confirm = res[1];
+        if (!confirm) return;
+        var time = esHttp.date.now(); // use same date for each invitation
+        return $q.all(
+          identities.reduce(function(res, identity){
+            return res.concat(
+              esInvitation.certification.send({
+                issuer: walletData.pubkey,
+                recipient: $scope.formData.pubkey,
+                time: time,
+                content: [identity.uid, identity.pubkey].join('-')
+              }, keypair)
+            );
+          }, [])
+        );
       });
+  };
+
+  $scope.showAskCertificationModal = function() {
+
+    $scope.hideCertificationActionsPopover();
+
+    var walletData;
+    var identities;
+    return $scope.loadWallet({minData: true})
+      .then(function(data) {
+        UIUtils.loading.hide();
+        walletData = data;
+
+        return Modals.showWotLookup({
+          allowMultiple: true,
+          enableFilter: false,
+          title: 'WOT.ASK_CERTIFICATIONS_MODAL.TITLE',
+          help: 'WOT.ASK_CERTIFICATIONS_MODAL.HELP',
+          okText: 'COMMON.BTN_NEXT',
+          okType: 'button-positive'
+        });
+      })
+      .then(function(res) {
+        if (!res || !res.length) return;
+        identities = res;
+
+        return $q.all([
+          // Get keypair only once (if not done here, certification.send() with compute it many times)
+          esWallet.box.getKeypair(walletData.keypair),
+          // Ask confirmation
+          UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
+        ]);
+      })
+      .then(function(res) {
+        if (!res) return;
+        var keypair = res[0];
+        var confirm = res[1];
+        if (!confirm) return;
+        var time = esHttp.date.now(); // use same date for each invitation
+        return $q.all(
+          identities.reduce(function(res, identity){
+            return res.concat(
+              esInvitation.certification.send({
+                issuer: walletData.pubkey,
+                recipient: identity.pubkey,
+                time: time,
+                content: [walletData.uid, walletData.pubkey].join('-')
+              }, keypair)
+            );
+          }, [])
+        );
+      });
+  };
+
+  $scope.askCertification = function() {
+    $scope.hideCertificationActionsPopover();
+
+    $scope.loadWallet({minData: true})
+      .then(function(walletData) {
+        UIUtils.loading.hide();
+
+        return UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATION', undefined, {
+            okText: 'COMMON.BTN_SEND'
+          })
+          .then(function(confirm) {
+            if (!confirm) return;
+            return esInvitation.certification.send({
+              issuer: walletData.pubkey,
+              recipient: $scope.formData.pubkey,
+              content: [walletData.uid, walletData.pubkey].join('-')
+            });
+          });
+      })
+      .catch(UIUtils.onError('WOT.ERROR.SEND_INVITATION_CERTIFICATION_FAILED'));
   };
 
   /* -- Popover -- */

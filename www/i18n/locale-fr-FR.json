@@ -250,6 +250,7 @@
     "NOT_MEMBER_ACCOUNT_HELP": "Il s'agit d'une simple portefeuille, sans demande d'adhésion en attente.",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_CERTIFY": "Certifier",
+    "BTN_YES_CERTIFY": "Oui, certifier",
     "BTN_SELECT_AND_CERTIFY": "Nouvelle certification",
     "VIEW": {
       "POPOVER_SHARE_TITLE": "Identité {{title}}"
@@ -501,8 +502,9 @@
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
     "POPUP_WARNING_TITLE": "<b>Avertissement</b>",
+    "POPUP_SECURITY_WARNING_TITLE": "<i class=\"icon ion-alert-circled\"></i> <b>Avertissement de sécurité</b>",
     "CERTIFY_RULES_TITLE_UID": "Certifier {{uid}}",
-    "CERTIFY_RULES": "<b>Avertissement de sécurité :</b><br/><br/><b class=\"assertive\">Ne pas certifier</b> un compte si vous pensez que :<ul><li>1.) il ne correspond pas à une personne physique vivante.<li>2.) son propriétaire possède un autre compte déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr de vouloir néanmoins certifier cette identité ?</b>",
+    "CERTIFY_RULES": "<b class=\"assertive\">Ne PAS certifier</b> un compte si vous pensez que :<br/><br/><ul><li>1.) il ne correspond pas à une personne <b>physique et vivante</b>.<li>2.) son propriétaire <b>possède un autre compte</b> déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr</b> de vouloir néanmoins certifier cette identité ?",
     "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>",
     "MEMBERSHIP_OUT": "<b>Avertissement</b> :<br/>Vous allez résilier votre adhésion comme membre. Cette opération est <b>irréversible</b>.<br/></br/><b>Etes-vous sûr de vouloir continuer ?</b>",
     "LOGIN_UNUSED_WALLET_TITLE": "Erreur de saisie ?",

@@ -480,7 +480,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   };
 }
 
-function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, esHttp, esNotification, esMessage, esModals) {
+function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esNotification, esMessage, esModals) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -526,11 +526,9 @@ function PopoverMessageController($scope, $timeout, UIUtils, $state, csWallet, e
   };
 
   $scope.updateView = function() {
-
-    // Set Motion and Ink
-    $timeout(function() {
-      UIUtils.ink({selector: '.popover-notification .item.ink'});
-    }, 100);
+    if ($scope.motion && $scope.search.results && $scope.search.results.length) {
+      $scope.motion.show({selector: '.popover-notification .item'});
+    }
   };
 
   $scope.showMore = function() {

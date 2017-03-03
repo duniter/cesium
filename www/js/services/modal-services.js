@@ -137,7 +137,7 @@ angular.module('cesium.modal.services', [])
 
   function showWotLookup(parameters) {
     return ModalUtils.show('templates/wot/modal_lookup.html','WotLookupModalCtrl',
-      parameters, {focusFirstInput: true});
+      parameters || {}, {focusFirstInput: true});
   }
 
   function showNetworkLookup(parameters) {

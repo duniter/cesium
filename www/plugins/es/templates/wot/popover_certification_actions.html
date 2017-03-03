@@ -4,10 +4,32 @@
   </ion-header-bar>
   <ion-content scroll="false">
     <div class="list item-text-wrap">
+
+      <!-- ask certification to current identities -->
       <a class="item item-icon-left ink"
+         ng-if="!isUserPubkey(formData.pubkey) && formData.isMember"
+         ng-click="askCertification()">
+        <i class="icon-secondary ion-ribbon-b" style="left: 16px; top: 0px; font-size: 25px;"></i>
+        <b class="icon-secondary ion-help" style="left: 35px; top: 0px;"></b>
+        {{'WOT.BTN_ASK_CERTIFICATION' | translate}}
+      </a>
+
+      <!-- ask certifications to many identities -->
+      <a class="item item-icon-left ink"
+         ng-if="isUserPubkey(formData.pubkey)"
+         ng-click="showAskCertificationModal()">
+        <i class="icon-secondary ion-ribbon-b" style="left: 16px; top: 0px; font-size: 25px;"></i>
+        <b class="icon-secondary ion-help" style="left: 35px; top: 0px;"></b>
+        {{'WOT.BTN_ASK_CERTIFICATIONS_DOTS' | translate}}
+      </a>
+
+      <!-- suggest certifications to current identity -->
+      <a class="item item-icon-left ink"
+         ng-if="!isUserPubkey(formData.pubkey)"
          ng-click="showSuggestCertificationModal()">
-        <i class="icon ion-ribbon-a"></i>
-        {{'WOT.BTN_SUGGEST_CERTIFICATIONS' | translate}}
+        <i class="icon-secondary ion-person-stalker" style="left: 16px; top: 0px; font-size: 25px;"></i>
+        <b class="icon-secondary ion-help" style="left: 37px; top: -4px;"></b>
+        {{'WOT.BTN_SUGGEST_CERTIFICATIONS_DOTS' | translate}}
       </a>
     </div>
   </ion-content>

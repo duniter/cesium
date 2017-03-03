@@ -548,6 +548,17 @@ $screen-menu:                     845px;
     left: 10px;
   }
 
+  /* use for invitation buttons */
+  .button.button-small {
+    height: 30px;
+    font-size: 12px;
+    padding: 0px 5px !important;
+    line-height: 30px;
+  }
+}
+
+.popover-invitation {
+  width: 420px;
 }
 
 /**********

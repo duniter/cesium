@@ -34,10 +34,14 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             es: {
               askEnable: false,
               notifications: {
+                readTime: true,
                 txSent: true,
                 txReceived: true,
                 certSent: true,
                 certReceived: true
+              },
+              invitations: {
+                readTime: true
               }
             }
           }
