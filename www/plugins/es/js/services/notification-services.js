@@ -130,9 +130,8 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       });
   }
 
-  function onNewNotification(event, data) {
-    data = data || (csWallet.isLogin() ? csWallet.data : undefined);
-    if (!data) return;
+  function onNewNotification(event) {
+    if (!event || !csWallet.isLogin()) return;
 
     // If notification is an invitation
     if (_.contains(constants.INVITATION_CODES, event.code)) {
@@ -148,8 +147,11 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     var notification = new Notification(event, markNotificationAsRead);
     return esUser.profile.fillAvatars([notification])
       .then(function() {
-        data.notifications = data.notifications || {};
-        data.notifications.unreadCount++;
+        $rootScope.$apply(function() {
+          csWallet.data.notifications = csWallet.data.notifications || {};
+          csWallet.data.notifications.unreadCount++;
+        });
+
         api.data.raise.new(notification);
       });
   }
@@ -205,16 +207,11 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
         console.debug('[ES] [notification] Starting listen user event...');
         var userEventWs = that.raw.ws.getUserEvent();
         listeners.push(userEventWs.close);
-        return userEventWs.on(
-            function(event){
-              $rootScope.$apply(function() {
-                onNewNotification(event);
-              });
-            },
+        return userEventWs.on(onNewNotification,
             {pubkey: data.pubkey, locale: csSettings.data.locale.id}
           )
           .catch(function(err) {
-            console.error('[ES] [notification] Unable to listen user event');
+            console.error('[ES] [notification] Unable to listen user event', err);
 
             // TODO : send a event to csHttp instead ?
             // And display such connectivity errors in UI

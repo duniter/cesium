@@ -91,8 +91,6 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
   // Listen message changes
   function onNewMessageEvent(event) {
-    if (!event || csWallet.isLogin()) return;
-
     console.debug("[ES] [message] detected new message (from notification service)");
 
     var notification = new Notification(event);

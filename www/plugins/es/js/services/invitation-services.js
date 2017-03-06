@@ -1,6 +1,17 @@
 angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesium.device.services',
   'cesium.es.http.services', 'cesium.es.wallet.services', 'cesium.es.notification.services', 'cesium.wot.services'])
 
+  .config(function(PluginServiceProvider, csConfig) {
+    'ngInject';
+
+    var enable = csConfig.plugins && csConfig.plugins.es;
+    if (enable) {
+      // Will force to load this service
+      PluginServiceProvider.registerEagerLoadingService('esInvitation');
+    }
+
+  })
+
 .factory('esInvitation', function($rootScope, $q, CryptoUtils, Device, Api, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
@@ -62,8 +73,6 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
   }
 
   function onNewInvitationEvent(event) {
-    if (!event || !event.reference || csWallet.isLogin()) return;
-
     console.debug("[ES] [invitation] detected new invitation (from notification service)");
 
     getInvitationById(event.reference.id, event.reference.type)

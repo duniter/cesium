@@ -176,8 +176,9 @@ function PopoverInvitationController($scope, $controller, $state, csSettings, cs
   };
 
   $scope.resetUnreadCount = function() {
-    if (!csWallet.data.invitations.unreadCount || !$scope.search.results || !$scope.search.results.length) return;
+    if (!csWallet.data.invitations.unreadCount) return;
     csWallet.data.invitations.unreadCount = 0;
+    if (!$scope.search.results || !$scope.search.results.length) return;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
     if (readTime && (!csSettings.data.plugins.es.invitations || csSettings.data.plugins.es.invitations.readTime != readTime)) {
