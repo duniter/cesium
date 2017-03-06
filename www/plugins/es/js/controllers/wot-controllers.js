@@ -130,12 +130,12 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
         return $q.all(
           identities.reduce(function(res, identity){
             return res.concat(
-              esInvitation.certification.send({
+              esInvitation.send({
                 issuer: walletData.pubkey,
                 recipient: $scope.formData.pubkey,
                 time: time,
                 content: [identity.uid, identity.pubkey].join('-')
-              }, keypair)
+              }, keypair, 'certification')
             );
           }, [])
         );
@@ -182,12 +182,12 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
         return $q.all(
           identities.reduce(function(res, identity){
             return res.concat(
-              esInvitation.certification.send({
+              esInvitation.send({
                 issuer: walletData.pubkey,
                 recipient: identity.pubkey,
                 time: time,
                 content: [walletData.uid, walletData.pubkey].join('-')
-              }, keypair)
+              }, keypair, 'certification')
             );
           }, [])
         );
@@ -206,11 +206,11 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
           })
           .then(function(confirm) {
             if (!confirm) return;
-            return esInvitation.certification.send({
+            return esInvitation.send({
               issuer: walletData.pubkey,
               recipient: $scope.formData.pubkey,
               content: [walletData.uid, walletData.pubkey].join('-')
-            });
+            }, undefined, 'certification');
           });
       })
       .catch(UIUtils.onError('WOT.ERROR.SEND_INVITATION_CERTIFICATION_FAILED'));

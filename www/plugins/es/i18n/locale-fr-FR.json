@@ -68,11 +68,15 @@
       "TITLE": "Invitations"
     },
     "LIST": {
-      "TITLE": "Invitations",
+      "TITLE": "Invitations"
+    },
+    "CONFIRM": {
+      "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Etes-vous sûr</b> de vouloir continuer ?"
     },
     "ERROR": {
       "LOAD_INVITATIONS_FAILED": "Echec du chargement des invitations",
-      "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation"
+      "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation",
+      "REMOVE_ALL_INVITATIONS_FAILED": "Erreur lors de la suppression des invitations"
     }
   },
   "COMMENTS": {

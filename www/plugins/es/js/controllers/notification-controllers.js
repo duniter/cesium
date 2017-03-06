@@ -118,15 +118,17 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
 
   // Listen notifications changes
   $scope.onNewNotification = function(notification) {
-    if (!$scope.search.loading && !$scope.search.loadingMore &&
-      !notification.isMessage && !notification.isInvitation) {
-      var nextIndex = _.findIndex($scope.search.results, function(n) {
-        return notification.time > n.time;
-      });
-      if (nextIndex < 0) nextIndex = 0;
-      $scope.search.results.splice(nextIndex,0,notification);
-      $scope.updateView();
-    }
+    if ($scope.search.loading || $scope.search.loadingMore) return;
+
+    // Retrieve insertion index
+    var nextIndex = _.findIndex($scope.search.results, function(n) {
+      return notification.time > n.time;
+    });
+    if (nextIndex < 0) nextIndex = 0;
+
+    // Update the array
+    $scope.search.results.splice(nextIndex,0,notification);
+    $scope.updateView();
   };
 
   $scope.resetData = function() {
@@ -140,11 +142,10 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
 
   /* -- listeners -- */
 
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
   csWallet.api.data.on.logout($scope, $scope.resetData);
   esHttp.api.node.on.stop($scope, $scope.resetData);
   esHttp.api.node.on.start($scope, $scope.load);
-
+  esNotification.api.data.on.new($scope, $scope.onNewNotification);
 }
 
 function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, $state, csWallet, csSettings) {

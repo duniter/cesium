@@ -1,7 +1,7 @@
 angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesium.device.services',
-  'cesium.es.http.services', 'cesium.es.wallet.services', 'cesium.wot.services'])
+  'cesium.es.http.services', 'cesium.es.wallet.services', 'cesium.es.notification.services', 'cesium.wot.services'])
 
-.factory('esInvitation', function($rootScope, $q, CryptoUtils, Device, esHttp, csWallet, esWallet, csWot) {
+.factory('esInvitation', function($rootScope, $q, CryptoUtils, Device, Api, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
   var
@@ -12,13 +12,16 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
     fields = {
       commons: ["issuer", "time", "hash", "content", "nonce", "read_signature"]
     },
+    api = new Api(this, 'esInvitation'),
     listeners;
 
   that.raw = {
     certification: {
+      get: esHttp.get('/invitation/certification/:id?_source:fields'),
       add: esHttp.record.post('/invitation/certification'),
       postSearch: esHttp.post('/invitation/certification/_search'),
-      remove: esHttp.record.remove('invitation', 'certification')
+      remove: esHttp.record.remove('invitation', 'certification'),
+      getIds: esHttp.get('/invitation/certification/_search?q=recipient::pubkey&_source=false&size=1000')
     }
   };
 
@@ -58,6 +61,21 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
     return deferred.promise;
   }
 
+  function onNewInvitationEvent(event) {
+    if (!event || !event.reference || csWallet.isLogin()) return;
+
+    console.debug("[ES] [invitation] detected new invitation (from notification service)");
+
+    getInvitationById(event.reference.id, event.reference.type)
+      .then(function(invitation){
+        csWallet.data.invitations = csWallet.data.invitations || {};
+        csWallet.data.invitations.unreadCount++;
+
+        // Raise event
+        api.data.raise.new(invitation);
+      });
+  }
+
   function countUnreadInvitations(pubkey) {
     pubkey = pubkey || (csWallet.isLogin() ? csWallet.data.pubkey : pubkey);
     if (!pubkey) {
@@ -83,14 +101,45 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
       });
   }
 
-  function sendInvitationCertification(record, keypair) {
+  function sendInvitation(record, keypair, type) {
+    type = type || 'certification';
     return esWallet.box.record.pack(record, keypair)
       .then(function(record) {
-        return that.raw.certification.add(record);
+        return that.raw[type].add(record);
       });
   }
 
-  function loadInvitationNotifications(options) {
+  function getInvitationById(id, type) {
+    type = type || 'certification';
+    return $q.all([
+        esWallet.box.getKeypair(),
+        that.raw[type].get({id: id, fields: fields.commons.join(',')})
+      ])
+      .then(function(res) {
+        var keypair = res[0];
+        var hit = res[1];
+        console.log(res);
+        var invitation = hit._source;
+        invitation.id = hit._id;
+        invitation.type = hit._type;
+
+        // Encrypt content
+        return esWallet.box.record.open([invitation], keypair);
+      })
+
+      // Extend identity: add name, avatar...
+      .then(function(invitations) {
+
+        var invitation = new Invitation(invitations[0]);
+
+        return csWot.extendAll(invitation.issuer ? [invitation, invitation.issuer] : [invitation], 'pubkey')
+          .then(function() {
+            return invitation;
+          })
+      });
+  }
+
+  function loadInvitations(options) {
     if (!csWallet.isLogin()) {
       return $q.when([]); // Should never happen
     }
@@ -166,6 +215,59 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
     return that.raw[type].remove(invitation.id);
   }
 
+  function deleteInvitationsByIds(ids, type) {
+    if (!ids || !ids.length) return $q.when();
+    type = type || 'certification';
+    return $q.all(
+        ids.reduce(function(res, id) {
+          return res.concat(that.raw[type].remove(id));
+        }, [])
+      );
+  }
+
+  function deleteAllInvitations(pubkey, type) {
+    pubkey = pubkey || csWallet.data.pubkey;
+    type = type || 'certification';
+
+    console.debug('[ES] [invitation] Deleting all invitations...');
+    var now = new Date().getTime();
+    var countBeforeDeletion = (csWallet.data.invitations && csWallet.data.invitations.count) || 0;
+    var unreadCountBeforeDeletion = (csWallet.data.invitations && csWallet.data.invitations.unreadCount) || 0;
+
+    // Get invitation ids
+    return that.raw[type].getIds({pubkey: pubkey})
+      .then(function(res) {
+        if (!res || !res.hits || !res.hits.total) return;
+        var ids = res.hits.hits.reduce(function (res, hit) {
+          return res.concat(hit._id);
+        }, []);
+
+        // Do deletion by ids
+        return deleteInvitationsByIds(ids, type)
+          .then(function() {
+            // Update wallet count
+            csWallet.data.invitations = csWallet.data.invitations || {};
+            // Decrement count (warning: could have received new invitations during deletion execution)
+            if (csWallet.data.invitations.count >= countBeforeDeletion) {
+              csWallet.data.invitations.count -= countBeforeDeletion || 0;
+            }
+            else {
+              csWallet.data.invitations.count = 0;
+            }
+            // Decrement count (warning: could have received new invitations during deletion execution)
+            if (csWallet.data.invitations.unreadCount >= unreadCountBeforeDeletion) {
+              csWallet.data.invitations.unreadCount -= unreadCountBeforeDeletion || 0;
+            }
+            else {
+              csWallet.data.invitations.unreadCount = 0;
+            }
+
+            console.debug('[ES] [invitation] All invitations deleted in {0}ms'.format(new Date().getTime()-now));
+          });
+      });
+  }
+
+
   function removeListeners() {
     _.forEach(listeners, function(remove){
       remove();
@@ -178,7 +280,8 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
     listeners = [
       csWallet.api.data.on.login($rootScope, onWalletLogin, this),
       csWallet.api.data.on.init($rootScope, onWalletInit, this),
-      csWallet.api.data.on.reset($rootScope, onWalletReset, this)
+      csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+      esNotification.api.event.on.newInvitation($rootScope, onNewInvitationEvent, this)
     ];
   }
 
@@ -200,6 +303,9 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
     }
   }
 
+  // Register extension points
+  api.registerEvent('data', 'new');
+
   // Default action
   Device.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
@@ -208,13 +314,13 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
   });
 
   // Exports
-  that.certification = {
-    send: sendInvitationCertification
-  };
-  that.notification = {
-    load: loadInvitationNotifications
-  };
+  that.api = api;
+  that.load = loadInvitations;
+  that.get = getInvitationById;
+  that.send = sendInvitation;
   that.delete = deleteInvitation;
+  that.deleteByIds = deleteInvitationsByIds;
+  that.deleteAll = deleteAllInvitations;
 
   return that;
 })

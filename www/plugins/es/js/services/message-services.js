@@ -1,5 +1,5 @@
 angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', 'cesium.crypto.services', 'cesium.wot.services',
-  'cesium.es.http.services', 'cesium.es.wallet.services'])
+  'cesium.es.http.services', 'cesium.es.wallet.services', 'cesium.es.notification.services'])
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
@@ -11,23 +11,24 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
   })
 
-.factory('esMessage', function($q, $rootScope, csSettings, esHttp, CryptoUtils, csWallet, Device, esWallet, csWot) {
+.factory('esMessage', function($q, $rootScope, Api, CryptoUtils, Device, csSettings, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
   var
-  listeners,
-  constants = {
-    DEFAULT_LOAD_SIZE: 10
-  },
-  fields = {
-    commons: ["issuer", "recipient", "title", "content", "time", "nonce", "read_signature"],
-    notifications: ["issuer", "time", "hash", "read_signature"]
-  },
-  raw = {
-    postSearch: esHttp.post('/message/inbox/_search'),
-    getByTypeAndId : esHttp.get('/message/:type/:id'),
-    postReadById: esHttp.post('/message/inbox/:id/_read')
-  };
+    constants = {
+      DEFAULT_LOAD_SIZE: 10
+    },
+    fields = {
+      commons: ["issuer", "recipient", "title", "content", "time", "nonce", "read_signature"],
+      notifications: ["issuer", "time", "hash", "read_signature"]
+    },
+    raw = {
+      postSearch: esHttp.post('/message/inbox/_search'),
+      getByTypeAndId : esHttp.get('/message/:type/:id'),
+      postReadById: esHttp.post('/message/inbox/:id/_read')
+    },
+    listeners,
+    api = new Api(this, 'esMessage');
 
   function onWalletInit(data) {
     data.messages = data.messages || {};
@@ -85,6 +86,23 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     return esHttp.post('/message/inbox/_count')(request)
       .then(function(res) {
         return res.count;
+      });
+  }
+
+  // Listen message changes
+  function onNewMessageEvent(event) {
+    if (!event || csWallet.isLogin()) return;
+
+    console.debug("[ES] [message] detected new message (from notification service)");
+
+    var notification = new Notification(event);
+
+    esWot.extendAll([notification])
+      .then(function() {
+        csWallet.data.messages = csWallet.data.messages || {};
+        csWallet.data.messages.unreadCount++;
+        // Raise event
+        api.data.raise.new(notification);
       });
   }
 
@@ -421,7 +439,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     listeners = [
       csWallet.api.data.on.login($rootScope, onWalletLogin, this),
       csWallet.api.data.on.init($rootScope, onWalletInit, this),
-      csWallet.api.data.on.reset($rootScope, onWalletReset, this)
+      csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+      esNotification.api.event.on.newMessage($rootScope, onNewMessageEvent, this)
     ];
   }
 
@@ -443,6 +462,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     }
   }
 
+  // Register extension points
+  api.registerEvent('data', 'new');
+
   // Default action
   Device.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
@@ -451,6 +473,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
   });
 
   return {
+    api: api,
     search: raw.postSearch,
     notifications: {
       load: loadMessageNotifications

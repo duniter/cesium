@@ -133,23 +133,23 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
   function onNewNotification(event, data) {
     data = data || (csWallet.isLogin() ? csWallet.data : undefined);
     if (!data) return;
+
+    // If notification is an invitation
+    if (_.contains(constants.INVITATION_CODES, event.code)) {
+      api.event.raise.newInvitation(event);
+      return;
+    }
+
+    // If notification is a message
+    if (_.contains(constants.MESSAGE_CODES, event.code)) {
+      api.event.raise.newMessage(event);
+    }
+
     var notification = new Notification(event, markNotificationAsRead);
     return esUser.profile.fillAvatars([notification])
       .then(function() {
-        notification.isMessage = _.contains(constants.MESSAGE_CODES, event.code);
-        notification.isInvitation = _.contains(constants.INVITATION_CODES, event.code);
-        if (notification.isMessage) {
-          data.messages = data.messages || {};
-          data.messages.unreadCount++;
-        }
-        else if (notification.isInvitation) {
-          data.invitations = data.invitations || {};
-          data.invitations.unreadCount++;
-        }
-        else {
-          data.notifications = data.notifications || {};
-          data.notifications.unreadCount++;
-        }
+        data.notifications = data.notifications || {};
+        data.notifications.unreadCount++;
         api.data.raise.new(notification);
       });
   }
@@ -261,6 +261,8 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
   // Register extension points
   api.registerEvent('data', 'new');
+  api.registerEvent('event', 'newInvitation');
+  api.registerEvent('event', 'newMessage');
 
   // Default actions
   Device.ready().then(function() {

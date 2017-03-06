@@ -480,7 +480,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
   };
 }
 
-function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esNotification, esMessage, esModals) {
+function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esMessage, esModals) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -547,16 +547,11 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esN
       });
   };
 
-  $scope.onNewNotification = function(notification) {
-    if (!$scope.search.loading && !$scope.search.loadingMore &&  notification.isMessage) {
-      console.debug("[popover] detected new message (from notification service)");
-
-      if (notification.reference) {
-        console.log("[popover] new message has a reference !");
-      }
-      $scope.search.results.splice(0,0,notification);
-      $scope.updateView();
-    }
+  // Listen notifications changes
+  $scope.onNewMessageNotification = function(notification) {
+    if ($scope.search.loading || $scope.search.loadingMore) return;
+    $scope.search.results.splice(0,0,notification);
+    $scope.updateView();
   };
 
   $scope.select = function(notification) {
@@ -590,6 +585,6 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esN
   csWallet.api.data.on.logout($scope, $scope.resetData);
   esHttp.api.node.on.stop($scope, $scope.resetData);
   esHttp.api.node.on.start($scope, $scope.load);
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
+  esMessage.api.data.on.new($scope, $scope.onNewMessageNotification);
 
 }

@@ -7,6 +7,12 @@
     <i ng-if="::!invitation.avatar" class="item-image icon {{::invitation.avatarIcon}}"></i>
     <i ng-if="::invitation.avatar" class="item-image avatar" style="background-image: url({{::invitation.avatar.src}})"></i>
     <h3 trust-as-html="invitation.message | translate:invitation"></h3>
+    <h4>
+      <i class="icon {{invitation.icon}}"></i>
+      <span class="dark" ng-if="invitation.issuer" trust-as-html="'INVITATION.SUGGESTED_BY' | translate:invitation"></span>
+      <span class="dark">{{invitation.time|formatFromNow}}</span>
+      <span class="gray">| {{invitation.time|formatDate}}</span>
+    </h4>
     <div class="block text-right">
       <button class="button button-positive button-small button-small-padding"
               ng-click="accept(invitation)"
@@ -15,11 +21,6 @@
               ng-click="delete($index)"
               translate>INVITATION.BTN_DELETE</button>
     </div>
-    <h4>
-      <i class="icon {{invitation.icon}}"></i>
-      <span class="dark" ng-if="invitation.issuer" trust-as-html="'INVITATION.SUGGESTED_BY' | translate:invitation"></span>
-      <span class="dark">{{invitation.time|formatFromNow}}</span>
-    </h4>
   </ion-item>
 
 </ion-list>

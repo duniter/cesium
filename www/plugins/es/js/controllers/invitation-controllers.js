@@ -17,13 +17,13 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
     ;
   })
 
-  .controller('InvitationsCtrl', InvitatiosController)
+  .controller('InvitationsCtrl', InvitationsController)
 
   .controller('PopoverInvitationCtrl', PopoverInvitationController)
 
 ;
 
-function InvitatiosController($scope, UIUtils, $state, csWallet, esNotification, esModals, esInvitation) {
+function InvitationsController($scope, UIUtils, $q, csWallet, esHttp, esNotification, esInvitation) {
   'ngInject';
 
   var defaultSearchLimit = 5;
@@ -52,13 +52,13 @@ function InvitatiosController($scope, UIUtils, $state, csWallet, esNotification,
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
 
-    return esInvitation.notification.load(csWallet.data.pubkey, options)
-      .then(function(notifications) {
+    return esInvitation.load(csWallet.data.pubkey, options)
+      .then(function(invitations) {
         if (!from) {
-          $scope.search.results = notifications;
+          $scope.search.results = invitations;
         }
         else {
-          $scope.search.results = $scope.search.results.concat(notifications);
+          $scope.search.results = $scope.search.results.concat(invitations);
         }
         $scope.search.loading = false;
         $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
@@ -96,18 +96,10 @@ function InvitatiosController($scope, UIUtils, $state, csWallet, esNotification,
       });
   };
 
-  $scope.onNewNotification = function(notification) {
-    if (!$scope.search.loading && !$scope.search.loadingMore &&  notification.isInvitation) {
-      console.debug("[popover] detected new invitation (from notification service)");
-
-      // TODO get by reference, from service
-
-      if (notification.reference) {
-        console.log("[popover] new invitation has a reference !");
-      }
-      $scope.search.results.splice(0,0,notification);
-      $scope.updateView();
-    }
+  $scope.onNewInvitation = function(invitation) {
+    if ($scope.search.loading || $scope.search.loadingMore) return;
+    $scope.search.results.splice(0,0,invitation);
+    $scope.updateView();
   };
 
   $scope.resetData = function() {
@@ -119,9 +111,25 @@ function InvitatiosController($scope, UIUtils, $state, csWallet, esNotification,
     delete $scope.search.limit;
   };
 
-  $scope.deleteAll = function() {
-    // TODO
+  $scope.deleteAll = function(confirm) {
+    if (!$scope.search.results.length) return;
 
+    if (!confirm) {
+      return UIUtils.alert.confirm('INVITATION.CONFIRM.DELETE_ALL_CONFIRMATION')
+        .then(function(confirm) {
+          if (confirm) return $scope.deleteAll(confirm); // recursive call
+        });
+    }
+
+    return $q.all([
+        UIUtils.loading.show(),
+        esInvitation.deleteAll(csWallet.data.pubkey)
+      ])
+      .then(function() {
+        $scope.search.results.splice(0, $scope.search.results.length); // update list
+        return UIUtils.loading.hide();
+      })
+      .catch(UIUtils.onError('INVITATION.ERROR.REMOVE_ALL_INVITATIONS_FAILED'));
   };
 
   $scope.delete = function(index) {
@@ -129,7 +137,7 @@ function InvitatiosController($scope, UIUtils, $state, csWallet, esNotification,
     if (!invitation) return;
 
     return esInvitation.delete(invitation)
-      .then(function () {
+      .then(function() {
         $scope.search.results.splice(index,1); // update list
       })
       .catch(UIUtils.onError('INVITATION.ERROR.REMOVE_INVITATION_FAILED'));
@@ -142,7 +150,9 @@ function InvitatiosController($scope, UIUtils, $state, csWallet, esNotification,
 
   // Listeners
   csWallet.api.data.on.logout($scope, $scope.resetData);
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
+  esHttp.api.node.on.stop($scope, $scope.resetData);
+  esHttp.api.node.on.start($scope, $scope.load);
+  esInvitation.api.data.on.new($scope, $scope.onNewInvitation);
 
 }
 
