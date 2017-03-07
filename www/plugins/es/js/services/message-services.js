@@ -95,7 +95,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
     var notification = new Notification(event);
 
-    esWot.extendAll([notification])
+    csWot.extendAll([notification])
       .then(function() {
         csWallet.data.messages = csWallet.data.messages || {};
         csWallet.data.messages.unreadCount++;

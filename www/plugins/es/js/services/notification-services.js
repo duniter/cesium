@@ -130,7 +130,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       });
   }
 
-  function onNewNotification(event) {
+  function onNewUserEvent(event) {
     if (!event || !csWallet.isLogin()) return;
 
     // If notification is an invitation
@@ -142,18 +142,28 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     // If notification is a message
     if (_.contains(constants.MESSAGE_CODES, event.code)) {
       api.event.raise.newMessage(event);
+      return;
     }
 
     var notification = new Notification(event, markNotificationAsRead);
-    return esUser.profile.fillAvatars([notification])
-      .then(function() {
-        $rootScope.$apply(function() {
-          csWallet.data.notifications = csWallet.data.notifications || {};
-          csWallet.data.notifications.unreadCount++;
-        });
 
-        api.data.raise.new(notification);
+    return csWot.extendAll([notification])
+      .then(function() {
+        if (!$rootScope.$$phase) {
+          $rootScope.$apply(function() {
+            addNewNotification(notification);
+          });
+        }
+        else {
+          addNewNotification(notification);
+        }
       });
+  }
+
+  function addNewNotification(notification) {
+    csWallet.data.notifications = csWallet.data.notifications || {};
+    csWallet.data.notifications.unreadCount++;
+    api.data.raise.new(notification);
   }
 
   // Mark a notification as read
@@ -207,7 +217,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
         console.debug('[ES] [notification] Starting listen user event...');
         var userEventWs = that.raw.ws.getUserEvent();
         listeners.push(userEventWs.close);
-        return userEventWs.on(onNewNotification,
+        return userEventWs.on(onNewUserEvent,
             {pubkey: data.pubkey, locale: csSettings.data.locale.id}
           )
           .catch(function(err) {
