@@ -39,14 +39,16 @@
     }
   },
   "WOT": {
-    "BTN_SUGGEST_CERTIFICATIONS": "Suggest certifications",
+    "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Suggest identities to certify...",
     "BTN_ASK_CERTIFICATIONS_DOTS": "Ask members to certify me...",
     "BTN_ASK_CERTIFICATION": "Ask a certification",
     "SUGGEST_CERTIFICATIONS_MODAL": {
-      "TITLE": "Suggest certifications"
+      "TITLE": "Suggest certifications",
+      "HELP": "Select your suggestions"
     },
     "ASK_CERTIFICATIONS_MODAL": {
-      "TITLE": "Ask certifications"
+      "TITLE": "Ask certifications",
+      "HELP": "Select recipients"
     },
     "CONFIRM": {
       "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",

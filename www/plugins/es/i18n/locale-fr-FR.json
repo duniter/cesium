@@ -43,10 +43,12 @@
     "BTN_ASK_CERTIFICATIONS_DOTS": "Demander à des membres de me certifier...",
     "BTN_ASK_CERTIFICATION": "Demander une certification",
     "SUGGEST_CERTIFICATIONS_MODAL": {
-      "TITLE": "Suggérer des certifications"
+      "TITLE": "Suggérer des certifications",
+      "HELP": "Sélectionner vos suggestions"
     },
     "ASK_CERTIFICATIONS_MODAL": {
-      "TITLE": "Demander des certifications"
+      "TITLE": "Demander des certifications",
+      "HELP": "Sélectionner les destinataires"
     },
     "CONFIRM": {
       "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
