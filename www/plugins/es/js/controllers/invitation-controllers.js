@@ -316,7 +316,6 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
                 content: [identity.uid, identity.pubkey].join('-'),
                 comment: comment
               };
-              console.debug('Will send invitation:', invitation);
               return res.concat(
                 esInvitation.send(invitation, keypair, 'certification'));
             }, []));
