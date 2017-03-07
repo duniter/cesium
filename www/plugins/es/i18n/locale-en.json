@@ -22,7 +22,9 @@
     "MARKET": "Ads",
     "REGISTRY": "Companies",
     "USER_PROFILE": "My Profile",
-    "USER_MESSAGE": "Messages"
+    "USER_MESSAGE": "Messages",
+    "NOTIFICATIONS": "Notifications",
+    "INVITATIONS": "Invitations"
   },
   "ACCOUNT": {
     "NEW": {
@@ -38,8 +40,61 @@
   },
   "WOT": {
     "BTN_SUGGEST_CERTIFICATIONS": "Suggest certifications",
+    "BTN_ASK_CERTIFICATIONS_DOTS": "Ask members to certify me...",
+    "BTN_ASK_CERTIFICATION": "Ask a certification",
     "SUGGEST_CERTIFICATIONS_MODAL": {
       "TITLE": "Suggest certifications"
+    },
+    "ASK_CERTIFICATIONS_MODAL": {
+      "TITLE": "Ask certifications"
+    },
+    "CONFIRM": {
+      "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
+      "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
+      "ASK_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
+    },
+    "ERROR": {
+      "SEND_INVITATION_CERTIFICATION_FAILED": "Echec de l'envoi de la demande de certification"
+    }
+  },
+  "INVITATION": {
+    "TITLE": "Invitations",
+    "NO_RESULT": "No invitation received",
+    "BTN_DELETE_ALL": "Delete all invitations",
+    "BTN_DELETE": "Delete invitation",
+    "BTN_NEW_INVITATION": "New invitation",
+    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> asks for your certification",
+    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> is suggested for certification",
+    "SUGGESTED_BY": "Suggestion sent by <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
+    "NOTIFICATIONS": {
+      "TITLE": "Invitations"
+    },
+    "LIST": {
+      "TITLE": "Invitations"
+    },
+    "NEW": {
+      "TITLE": "New invitation",
+      "RECIPIENTS": "A",
+      "RECIPIENTS_HELP": "Recipients of the invitation",
+      "RECIPIENTS_MODAL_TITLE": "Recipients",
+      "RECIPIENTS_MODAL_HELP": "Please search and select recipients:",
+      "SUGGESTION_IDENTITIES": "Suggestions for certification",
+      "SUGGESTION_IDENTITIES_HELP": "Certifications to suggest",
+      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Suggestions",
+      "SUGGESTION_IDENTITIES_MODAL_HELP": "Please search and select the identities to suggest:"
+    },
+    "CONFIRM": {
+      "DELETE_ALL_CONFIRMATION": "Removing invitations is <b>an irreversible operation</b>.<br/><br/><b>Are you sure</b> you want to continue",
+      "SEND_INVITATIONS_TO_CERTIFY": "<b>Are you sure</b> you want <b>to sent this invitation to certify</b> ?"
+    },
+    "INFO": {
+      "INVITATION_SENT": "Invitation sent"
+    },
+    "ERROR": {
+      "LOAD_INVITATIONS_FAILED": "Error while loading invitations",
+      "REMOVE_INVITATION_FAILED": "Error while deleting the invitation",
+      "REMOVE_ALL_INVITATIONS_FAILED": "Error while deleting invitations",
+      "SUGGEST_CERTIFICATIONS_FAILED": "Error while sending invitation"
     }
   },
   "COMMENTS": {
@@ -325,6 +380,11 @@
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "New features",
       "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> user profiles</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>They have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> these features?"
+    }
+  },
+  "ES_WALLET": {
+    "ERROR": {
+      "RECIPIENT_IS_MANDATORY": "A recipient is required for encryption."
     }
   },
   "EVENT": {

@@ -21,9 +21,11 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
 
   .controller('PopoverInvitationCtrl', PopoverInvitationController)
 
+  .controller('ESNewInvitationModalCtrl', NewInvitationModalController)
 ;
 
-function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUtils, csSettings, csWallet, esHttp, esNotification, esInvitation) {
+function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUtils, csSettings, csWallet,
+                               esHttp, esModals, esNotification, esInvitation) {
   'ngInject';
 
   var defaultSearchLimit = 5;
@@ -181,6 +183,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   $scope.showNewInvitationModal = function() {
     $scope.hideActionsPopover();
 
+    esModals.showNewInvitation({});
   };
 
   /* -- Popover -- */
@@ -241,6 +244,131 @@ function PopoverInvitationController($scope, $controller) {
 
   $scope.hideActionsPopover = function() {
     $scope.closePopover();
+  };
+}
+
+
+function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esHttp, esWallet, esInvitation) {
+  'ngInject';
+
+  $scope.recipients = [];
+  $scope.suggestions = [];
+  $scope.formData = {
+    useComment: false
+  };
+
+  // When changing use comment
+  $scope.onUseCommentChanged = function() {
+    if (!$scope.formData.useComment) {
+      $scope.formData.comment = null; // reset comment only when disable
+    }
+  };
+  $scope.$watch('formData.useComment', $scope.onUseCommentChanged, true);
+
+
+  $scope.removeRecipient= function(index, e) {
+    $scope.recipients.splice(index, 1);
+    e.preventDefault();
+  };
+
+  $scope.removeSuggestion = function(index, e) {
+    $scope.suggestions.splice(index, 1);
+    e.preventDefault();
+  };
+
+  $scope.cancel = function() {
+    $scope.closeModal();
+  };
+
+  $scope.doSend = function() {
+    $scope.form.$submitted=true;
+    if(!$scope.form.$valid || !$scope.recipients.length || !$scope.suggestions.length) {
+      return;
+    }
+
+    if (!csWallet.isLogin()) return $scope.closeModal(); // should never happen
+
+    return $q.all([
+        // Get keypair only once (if not done here, certification.send() with compute it many times)
+        esWallet.box.getKeypair(csWallet.data.keypair),
+        // Ask confirmation
+        UIUtils.alert.confirm('INVITATION.CONFIRM.SEND_INVITATIONS_TO_CERTIFY', undefined, {okText: 'COMMON.BTN_SEND'})
+      ])
+      .then(function(res) {
+        if (!res) return;
+        var keypair = res[0];
+        var confirm = res[1];
+        if (!confirm) return;
+        UIUtils.loading.show();
+        var time = esHttp.date.now(); // use same date for each invitation
+        var comment = $scope.formData.useComment && $scope.formData.comment && $scope.formData.comment.trim();
+        return $q.all(
+          $scope.recipients.reduce(function (res, recipient) {
+            return res.concat($scope.suggestions.reduce(function (res, identity) {
+              if (!identity.uid || !identity.pubkey) {
+                console.error('Unable to send suggestion for this identity (no uid or pubkey)', identity);
+                return res;
+              }
+              var invitation = {
+                issuer: csWallet.data.pubkey,
+                recipient: recipient.pubkey,
+                time: time,
+                content: [identity.uid, identity.pubkey].join('-'),
+                comment: comment
+              };
+              console.debug('Will send invitation:', invitation);
+              return res.concat(
+                esInvitation.send(invitation, keypair, 'certification'));
+            }, []));
+          }, []))
+          .then(function() {
+            $scope.closeModal();
+            return UIUtils.loading.hide();
+          })
+          .then(function() {
+            UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+          })
+          .catch(UIUtils.onError('INVITATION.ERROR.SUGGEST_CERTIFICATIONS_FAILED'));
+      });
+  };
+
+  /* -- Modals -- */
+
+  $scope.showSelectRecipientModal = function(e) {
+    if (e.isDefaultPrevented()) return;
+
+    return Modals.showWotLookup({
+      allowMultiple: true,
+      enableFilter: true,
+      title: 'INVITATION.NEW.RECIPIENTS_MODAL_TITLE',
+      help: 'INVITATION.NEW.RECIPIENTS_MODAL_HELP',
+      okText: 'COMMON.BTN_OK',
+      okType: 'button-positive',
+      selection: angular.copy($scope.recipients)
+    })
+      .then(function(res) {
+        if (!res) return; // user cancel
+        $scope.recipients = res;
+      });
+
+  };
+
+  $scope.showSelectSuggestionModal = function(e) {
+    if (e.isDefaultPrevented()) return;
+
+    return Modals.showWotLookup({
+      allowMultiple: true,
+      enableFilter: true,
+      title: 'INVITATION.NEW.SUGGESTION_IDENTITIES_MODAL_TITLE',
+      help: 'INVITATION.NEW.SUGGESTION_IDENTITIES_MODAL_HELP',
+      okText: 'COMMON.BTN_OK',
+      okType: 'button-positive',
+      selection: angular.copy($scope.suggestions)
+    })
+      .then(function(res) {
+        if (!res) return; // user cancel
+        $scope.suggestions = res;
+      });
   };
 }
 

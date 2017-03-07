@@ -1,0 +1,13 @@
+<ion-modal-view id="transfer" class="modal-full-height">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>INVITATION.NEW.TITLE</h1>
+
+    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doSend()">
+    </button>
+  </ion-header-bar>
+
+  <ion-content scroll="true">
+      <ng-include src="'plugins/es/templates/invitation/new_invitation_form.html'"></ng-include>
+  </ion-content>
+</ion-modal-view>

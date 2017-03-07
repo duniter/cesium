@@ -13,12 +13,15 @@ function Invitation(json) {
   // Invitation to certify
   if (that.type == 'certification') {
 
+    that.comment = json.comment;
     that.icon = 'ion-ribbon-a';
     that.okText= 'WOT.BTN_CERTIFY';
 
     // read the identity to certify
     var parts = json.content.split('-');
-    if (parts.length != 2) throw 'Invalid invitation content. format should be [uid-pubkey]';
+    if (parts.length != 2) {
+      throw 'Invalid invitation content. format should be [uid-pubkey]';
+    }
     var identity = { uid: parts[0], pubkey: parts[1] };
 
     // Prepare the state action

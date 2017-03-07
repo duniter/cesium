@@ -40,7 +40,7 @@
   },
   "WOT": {
     "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Suggérer des identités à certifier...",
-    "BTN_ASK_CERTIFICATIONS_DOTS": "Rechercher des certifications auprès de membres connus...",
+    "BTN_ASK_CERTIFICATIONS_DOTS": "Demander à des membres de me certifier...",
     "BTN_ASK_CERTIFICATION": "Demander une certification",
     "SUGGEST_CERTIFICATIONS_MODAL": {
       "TITLE": "Suggérer des certifications"
@@ -72,13 +72,29 @@
     "LIST": {
       "TITLE": "Invitations"
     },
+    "NEW": {
+      "TITLE": "Nouvelle invitation",
+      "RECIPIENTS": "A",
+      "RECIPIENTS_HELP": "Destinataires de l'invitation",
+      "RECIPIENTS_MODAL_TITLE": "Destinataires",
+      "RECIPIENTS_MODAL_HELP": "Veuillez rechercher puis sélectionner les destinataires :",
+      "SUGGESTION_IDENTITIES": "Suggestions de certification",
+      "SUGGESTION_IDENTITIES_HELP": "Certifications à suggérer",
+      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Suggestions",
+      "SUGGESTION_IDENTITIES_MODAL_HELP": "Veuillez rechercher puis sélectionner les identités à suggérer :"
+    },
     "CONFIRM": {
-      "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Etes-vous sûr</b> de vouloir continuer ?"
+      "DELETE_ALL_CONFIRMATION": "La suppression des invitations est une <b>opération irréversible</b>.<br/><br/><b>Etes-vous sûr</b> de vouloir continuer ?",
+      "SEND_INVITATIONS_TO_CERTIFY": "Etes-vous sûr de vouloir <b>envoyer cette invitation à certfier</b> ?"
+    },
+    "INFO": {
+      "INVITATION_SENT": "Invitation envoyée"
     },
     "ERROR": {
       "LOAD_INVITATIONS_FAILED": "Echec du chargement des invitations",
       "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation",
-      "REMOVE_ALL_INVITATIONS_FAILED": "Erreur lors de la suppression des invitations"
+      "REMOVE_ALL_INVITATIONS_FAILED": "Erreur lors de la suppression des invitations",
+      "SUGGEST_CERTIFICATIONS_FAILED": "Erreur lors de l'envoi de l'invitation"
     }
   },
   "COMMENTS": {

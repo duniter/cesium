@@ -37,16 +37,15 @@ angular.module('cesium.es.modal.services', ['cesium.modal.services', 'cesium.es.
       });
   }
 
-
-  function showSuggestCertification(parameters) {
-    return ModalUtils.show('plugins/es/templates/wot/modal_suggest_certifications.html', 'ESWotSuggestCertificationsModalCtrl',
+  function showNewInvitation(parameters) {
+    return ModalUtils.show('plugins/es/templates/invitation/modal_new_invitation.html', 'ESNewInvitationModalCtrl',
       parameters);
   }
 
   return {
     showMessageCompose: showMessageCompose,
     showNotifications: showNotificationsPopover,
-    showSuggestCertification: showSuggestCertification
+    showNewInvitation: showNewInvitation
   };
 
 });

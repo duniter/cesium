@@ -328,12 +328,14 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
   };
 
   $scope.next = function() {
+    // This method should be override by sub controller (e.g. modal controller)
     console.log('Selected identities:', $scope.selection);
   };
 
-  $scope.toggleCheck = function(identity, e) {
+  $scope.toggleCheck = function(index, e) {
+    var identity = $scope.search.results[index];
     if (identity.checked) {
-      $scope.addToSelection(identity, e);
+      $scope.addToSelection(identity);
     }
     else {
       $scope.removeSelection(identity, e);
@@ -344,7 +346,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     identity.selected = !identity.selected;
   };
 
-  $scope.addToSelection = function(identity, e) {
+  $scope.addToSelection = function(identity) {
 
     var copyIdty = angular.copy(identity);
     if (copyIdty.name) {
@@ -355,17 +357,21 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
   };
 
   $scope.removeSelection = function(identity, e) {
-    identity.checked = false;
+
+    // Remove from selection array
     var identityInSelection = _.findWhere($scope.selection, {id: identity.id});
     if (identityInSelection) {
       $scope.selection.splice($scope.selection.indexOf(identityInSelection), 1);
     }
 
-    var existIdtyInResult = _.findWhere($scope.search.results, {id: identity.id});
-    if (existIdtyInResult) {
-      existIdtyInResult.checked = false;
+    // Uncheck in result array, if exists
+    if (!$scope.search.loading) {
+      var existIdtyInResult = _.findWhere($scope.search.results, {id: identity.id});
+      if (existIdtyInResult && existIdtyInResult.checked) {
+        existIdtyInResult.checked = false;
+      }
     }
-    e.preventDefault();
+    //e.preventDefault();
   };
 
   $scope.scanQrCode = function(){
@@ -479,6 +485,7 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotLookupCtrl', {$scope: $scope}));
 
+  parameters = parameters || {};
   $scope.search.loading = false;
   $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : false;
   $scope.allowMultiple = angular.isDefined(parameters.allowMultiple) ? parameters.allowMultiple : false;
@@ -486,6 +493,12 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
   $scope.showResultLabel = false;
 
   $scope.wotSearchTextId = 'wotSearchTextModal';
+
+  if ($scope.allowMultiple && parameters.selection) {
+    console.log(typeof parameters.selection);
+    $scope.selection = parameters.selection;
+  }
+
   $scope.cancel = function(){
     $scope.closeModal();
   };

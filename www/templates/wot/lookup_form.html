@@ -2,16 +2,19 @@
 
   <div class="item no-padding">
 
-    <div class="double-padding-x padding-top-xs item-text-wrap" ng-if="allowMultiple && selection.length">
+    <div class="double-padding-x padding-top-xs item-text-wrap" ng-if="::allowMultiple"
+        style="height: 36px;">
 
-      <!-- TODO: test if enable-pointer-events could replace button-icon-event -->
+      <div class="gray padding-top"
+           ng-if="!selection.length && parameters.help">{{::parameters.help|translate}}</div>
+
       <div ng-repeat="identity in selection track by identity.id"
-           class="button  button-small button-text button-stable button-icon-event ink"
+           class="button button-small button-text button-stable button-icon-event ink"
            ng-class="{'button-text-positive': identity.selected}">
-        <span ng-click="toggleSelect(identity)"
-              ng-bind-html="identity.name||identity.uid||(identity.pubkey|formatPubkey)"></span>
-        <i class="icon ion-close" prevent-default ng-click="removeSelection(identity, $event)">&nbsp;&nbsp;</i>
+        <span ng-bind-html="identity.name||identity.uid||(identity.pubkey|formatPubkey)"></span>
+        <i class="icon ion-close" ng-click="removeSelection(identity, $event)">&nbsp;&nbsp;</i>
       </div>
+
     </div>
 
     <div class="item-input ">
@@ -122,7 +125,7 @@
         ng-repeat="identity in search.results track by identity.id"
         ng-model="identity.checked"
         class="item item-border-large item-avatar ink"
-        ng-click="toggleCheck(identity, $event)">
+        ng-click="toggleCheck($index, $event)">
         <ng-include src="'templates/wot/identity.html'"></ng-include>
       </ion-checkbox>
     </ion-list>

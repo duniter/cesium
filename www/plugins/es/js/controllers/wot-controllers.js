@@ -139,7 +139,11 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
             );
           }, [])
         );
-      });
+      })
+      .then(function() {
+        UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+      })
+      .catch(UIUtils.onError('INVITATION.ERROR.SUGGEST_CERTIFICATIONS_FAILED'));
   };
 
   $scope.showAskCertificationModal = function() {

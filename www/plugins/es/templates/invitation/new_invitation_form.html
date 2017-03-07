@@ -1,0 +1,105 @@
+  <form name="invitationForm" novalidate=""
+        ng-submit="doSend()">
+
+    <div class="list" ng-init="setForm(invitationForm)">
+
+      <a class="item item-icon-right gray ink"
+         ng-class="{'disable-pointer-events': recipients.length, 'item-input-error': form.$submitted && !recipients.length}"
+         ng-click="showSelectRecipientModal($event)">
+        <span class="gray" translate>INVITATION.NEW.RECIPIENTS</span>
+        <span class="item-note">
+          <span class="hidden-xs" ng-if="!recipients.length" translate>INVITATION.NEW.RECIPIENTS_HELP</span>
+          <ng-repeat ng-repeat="identity in recipients track by identity.id"
+                     class="button button-small button-text button-stable button-icon-event ink"
+                     ng-class="{'button-text-positive': identity.selected}">
+            <ng-bind-html ng-bind-html="identity.name||identity.uid||(identity.pubkey|formatPubkey)"></ng-bind-html>
+            <b class="enable-pointer-events ion-close" ng-click="removeRecipient($index, $event)">&nbsp;&nbsp;</b>
+          </ng-repeat>
+        </span>
+
+        <i class="gray icon enable-pointer-events ion-ios-arrow-right"></i>
+      </a>
+      <div class="form-errors"
+           ng-if="form.$submitted && !recipients.length">
+        <div class="form-error">
+          <span translate="ERROR.FIELD_REQUIRED"></span>
+        </div>
+      </div>
+
+      <a class="item item-icon-right gray ink"
+         ng-class="{'disable-pointer-events': suggestions.length, 'item-input-error': form.$submitted && !suggestions.length}"
+         ng-click="showSelectSuggestionModal($event)">
+        <span class="gray enable-pointer-events" translate>INVITATION.NEW.SUGGESTION_IDENTITIES</span>
+
+        <span class="item-note">
+          <span class="hidden-xs" ng-if="!suggestions.length" translate>INVITATION.NEW.SUGGESTION_IDENTITIES_HELP</span>
+          <ng-repeat ng-repeat="identity in suggestions track by identity.id"
+               class="button button-small button-text button-stable button-icon-event ink"
+               ng-class="{'button-text-positive': identity.selected}">
+            <ng-bind-html ng-bind-html="identity.name||identity.uid||(identity.pubkey|formatPubkey)"></ng-bind-html>
+            <b class="enable-pointer-events ion-close" ng-click="removeSuggestion($index, $event)">&nbsp;&nbsp;</b>
+          </ng-repeat>
+        </span>
+        <i class="gray icon enable-pointer-events ion-ios-arrow-right"></i>
+      </a>
+      <div class="form-errors"
+           ng-if="form.$submitted && !suggestions.length">
+        <div class="form-error">
+          <span translate="ERROR.FIELD_REQUIRED"></span>
+        </div>
+      </div>
+
+      <!-- Enable comment ? -->
+      <div class="item item-content item-toggle dark visible-xs visible-sm">
+        <span class="input-label gray">{{'TRANSFER.BTN_ADD_COMMENT' | translate}}</span>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.useComment">
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Comment -->
+      <label class="item item-input item-floating-label hidden-xs hidden-sm"
+             ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
+        <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
+        <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
+                  name="comment"
+                  ng-model="formData.comment"
+                  ng-maxlength="255">
+        </textarea>
+      </label>
+      <label class="item item-input item-floating-label visible-xs visible-sm"
+             ng-if="formData.useComment"
+             ng-class="{'item-input-error': form.$submitted && form.comment.$invalid}">
+        <span class="input-label">{{'TRANSFER.COMMENT' | translate}}</span>
+        <textarea placeholder="{{'TRANSFER.COMMENT_HELP' | translate}}"
+                  name="comment"
+                  ng-model="formData.comment"
+                  ng-maxlength="255">
+        </textarea>
+      </label>
+      <div class="form-errors"
+           ng-show="form.$submitted && form.comment.$error"
+           ng-messages="form.comment.$error">
+        <div class="form-error" ng-message="maxlength">
+          <span translate="ERROR.FIELD_TOO_LONG"></span>
+        </div>
+        <div class="form-error" ng-message="pattern">
+          <span translate="ERROR.FIELD_ACCENT"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="padding hidden-xs text-right">
+      <button class="button button-small button-clear button-dark ink"
+              ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
+      </button>
+      <button class="button button-small button-positive ink" type="submit">
+        {{'COMMON.BTN_SEND' | translate}}
+      </button>
+    </div>
+  </form>
+

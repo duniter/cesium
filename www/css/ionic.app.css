@@ -15091,8 +15091,19 @@ div[dropzone] {
 .hero .button-fab-top-left {
   top: 170px !important; }
 
+.text-no-transform {
+  text-transform: inherit; }
+
+.item-icon-event,
 .button-icon-event {
   text-transform: inherit;
   pointer-events: none !important; }
-  .button-icon-event i.ion-close {
+  .item-icon-event .icon, .item-icon-event .icon-help, .item-icon-event .icon-alert, .item-icon-event #menu .footer .icon-help, #menu .footer .item-icon-event .icon-help,
+  .item-icon-event .icon-event,
+  .button-icon-event .icon,
+  .button-icon-event .icon-help,
+  .button-icon-event .icon-alert,
+  .button-icon-event #menu .footer .icon-help, #menu .footer
+  .button-icon-event .icon-help,
+  .button-icon-event .icon-event {
     pointer-events: all !important; }

@@ -21,7 +21,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
       DEFAULT_LOAD_SIZE: 10
     },
     fields = {
-      commons: ["issuer", "time", "hash", "content", "nonce", "read_signature"]
+      commons: ["issuer", "time", "hash", "content", "nonce", "comment"]
     },
     api = new Api(this, 'esInvitation'),
     listeners;
@@ -95,8 +95,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
       query: {
         bool: {
           must: [
-            {term: {recipient: pubkey}},
-            {missing: { field : "read_signature" }}
+            {term: {recipient: pubkey}}
           ]
         }
       }
@@ -112,7 +111,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
 
   function sendInvitation(record, keypair, type) {
     type = type || 'certification';
-    return esWallet.box.record.pack(record, keypair)
+    return esWallet.box.record.pack(record, keypair, 'recipient', ['content', 'comment'])
       .then(function(record) {
         return that.raw[type].add(record);
       });
@@ -127,18 +126,19 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
       .then(function(res) {
         var keypair = res[0];
         var hit = res[1];
-        var invitation = hit._source;
-        invitation.id = hit._id;
-        invitation.type = hit._type;
+        var json = hit._source;
+        json.id = hit._id;
+        json.type = hit._type;
 
         // Encrypt content
-        return esWallet.box.record.open([invitation], keypair);
+        return esWallet.box.record.open([json], keypair, 'issuer', ['content', 'comment']);
       })
 
       // Extend identity: add name, avatar...
-      .then(function(invitations) {
-
-        var invitation = new Invitation(invitations[0]);
+      .then(function(jsons) {
+        var json = jsons[0];
+        if (!json || !json.valid) return; // skip invalid cypher content
+        var invitation = new Invitation(json);
 
         return csWot.extendAll(invitation.issuer ? [invitation, invitation.issuer] : [invitation], 'pubkey')
           .then(function() {
@@ -188,7 +188,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
         }, []);
 
         // Encrypt content
-        return esWallet.box.record.open(invitations, keypair);
+        return esWallet.box.record.open(invitations, keypair, 'issuer', ['content', 'comment']);
       })
 
       // Extension identities entity
@@ -196,6 +196,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
 
         var identitiesToExtend = [];
         invitations = invitations.reduce(function (res, json) {
+          if (!json || !json.valid) return res; // skipping invalid cypher
           var invitation = new Invitation(json);
           identitiesToExtend.push(invitation);
           if (invitation.issuer) {

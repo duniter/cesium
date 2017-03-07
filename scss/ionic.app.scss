@@ -1839,11 +1839,17 @@ div[dropzone] {
   top: 170px !important;
 }
 
+.text-no-transform {
+  text-transform: inherit;
+}
+
+.item-icon-event,
 .button-icon-event {
   text-transform: inherit;
   pointer-events: none !important;
 
-  i.ion-close {
+  .icon,
+  .icon-event {
     pointer-events: all !important;
   }
 }
