@@ -6,8 +6,6 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
   'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier','ImageCropper', 'ngFileSaver',
-  // removeIf(device)
-  // endRemoveIf(device)
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)

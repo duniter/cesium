@@ -23,7 +23,7 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
 
 ;
 
-function InvitationsController($scope, UIUtils, $q, csWallet, esHttp, esNotification, esInvitation) {
+function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUtils, csSettings, csWallet, esHttp, esNotification, esInvitation) {
   'ngInject';
 
   var defaultSearchLimit = 5;
@@ -44,6 +44,13 @@ function InvitationsController($scope, UIUtils, $q, csWallet, esHttp, esNotifica
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
       $scope.load();
+
+      // Reset unread counter
+      $timeout(function() {
+        $scope.resetUnreadCount();
+      }, 1000);
+
+      $scope.showFab('fab-new-invitation');
     }
   });
 
@@ -111,7 +118,21 @@ function InvitationsController($scope, UIUtils, $q, csWallet, esHttp, esNotifica
     delete $scope.search.limit;
   };
 
+  $scope.resetUnreadCount = function() {
+    if (!csWallet.data.invitations.unreadCount) return;
+    csWallet.data.invitations.unreadCount = 0;
+    if (!$scope.search.results || !$scope.search.results.length) return;
+    var lastNotification = $scope.search.results[0];
+    var readTime = lastNotification.time ? lastNotification.time : 0;
+    if (readTime && (!csSettings.data.plugins.es.invitations || csSettings.data.plugins.es.invitations.readTime != readTime)) {
+      csSettings.data.plugins.es.invitations = csSettings.data.plugins.es.invitations || {};
+      csSettings.data.plugins.es.invitations.readTime = readTime;
+      csSettings.store();
+    }
+  };
+
   $scope.deleteAll = function(confirm) {
+    $scope.hideActionsPopover();
     if (!$scope.search.results.length) return;
 
     if (!confirm) {
@@ -144,9 +165,50 @@ function InvitationsController($scope, UIUtils, $q, csWallet, esHttp, esNotifica
   };
 
   $scope.accept = function(invitation) {
-    // TODO
+    $scope.hideActionsPopover(); // useful in PopoverInvitationController
+
+    if (invitation.type == 'certification') {
+      $state.go('app.wot_identity', {
+        uid: invitation.uid,
+        pubkey: invitation.pubkey,
+        action: 'certify'
+      });
+    }
+  };
+
+  /* -- Modal -- */
+
+  $scope.showNewInvitationModal = function() {
+    $scope.hideActionsPopover();
 
   };
+
+  /* -- Popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/invitation/popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
 
   // Listeners
   csWallet.api.data.on.logout($scope, $scope.resetData);
@@ -156,7 +218,7 @@ function InvitationsController($scope, UIUtils, $q, csWallet, esHttp, esNotifica
 
 }
 
-function PopoverInvitationController($scope, $controller, $state, csSettings, csWallet) {
+function PopoverInvitationController($scope, $controller) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -175,31 +237,10 @@ function PopoverInvitationController($scope, $controller, $state, csSettings, cs
     // no animation
   };
 
-  $scope.resetUnreadCount = function() {
-    if (!csWallet.data.invitations.unreadCount) return;
-    csWallet.data.invitations.unreadCount = 0;
-    if (!$scope.search.results || !$scope.search.results.length) return;
-    var lastNotification = $scope.search.results[0];
-    var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!csSettings.data.plugins.es.invitations || csSettings.data.plugins.es.invitations.readTime != readTime)) {
-      csSettings.data.plugins.es.invitations = csSettings.data.plugins.es.invitations || {};
-      csSettings.data.plugins.es.invitations.readTime = readTime;
-      csSettings.store();
-    }
-  };
   $scope.$on('popover.hidden', $scope.resetUnreadCount);
 
-  $scope.accept = function(invitation) {
-    if (invitation.type == 'certification') {
-      $state.go('app.wot_identity', {
-        uid: invitation.uid,
-        pubkey: invitation.pubkey,
-        action: 'certify'
-      });
-    }
+  $scope.hideActionsPopover = function() {
     $scope.closePopover();
   };
-
-
 }
 

@@ -1,6 +1,5 @@
 <ion-view left-buttons="leftButtons"
-          class="view-invitation"
-          cache-view="false">
+          class="view-invitation">
   <ion-nav-title>
     {{'INVITATION.LIST.TITLE' | translate}}
   </ion-nav-title>
@@ -14,10 +13,15 @@
               ng-click="load()">
       </button>
 
-      <button class="button button-raised assertive icon-left ion-trash-a ink"
-              ng-disabled="!search.results.length"
-              ng-click="deleteAll()">
-        {{'INVITATION.BTN_DELETE_ALL' | translate}}
+      <button class="button button-raised button-calm ink"
+              ng-click="showNewInvitationModal()">
+        {{'INVITATION.BTN_NEW_INVITATION' | translate}}
+      </button>
+
+      <button class="button button-stable icon-right ink"
+              ng-click="showActionsPopover($event)">
+        &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
+        {{'COMMON.BTN_OPTIONS' | translate}}
       </button>
     </div>
 
@@ -43,4 +47,9 @@
     </div>
 
   </ion-content>
-</ion-popover-view>
+
+  <button id="fab-new-invitation"
+          class="button button-fab button-fab-bottom-right button-assertive icon ion-android-send visible-xs visible-sm spin"
+          ng-click="showNewInvitationModal()">
+  </button>
+</ion-view>

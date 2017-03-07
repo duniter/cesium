@@ -25,12 +25,10 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, csWallet, esNotification) {
+function NotificationsController($scope, $rootScope, $ionicPopover, $state, $timeout, UIUtils, esHttp, csSettings, csWallet, esNotification) {
   'ngInject';
 
   var defaultSearchLimit = 40;
-
-  var excludedCodes = esNotification.constants.EXCLUDED_CODES;
 
   $scope.search = {
     loading : true,
@@ -40,7 +38,7 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
     limit: defaultSearchLimit,
     options: {
       codes: {
-        excludes: excludedCodes
+        excludes: esNotification.constants.EXCLUDED_CODES
       }
     }
   };
@@ -48,6 +46,11 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
       $scope.load();
+
+      // Reset unread counter
+      $timeout(function() {
+        $scope.resetUnreadCount();
+      }, 1000);
     }
   });
 
@@ -79,18 +82,39 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
   };
 
   $scope.updateView = function() {
-    if ($scope.motion && $scope.motion.ionListClass) {
+    if ($scope.motion && $scope.motion.ionListClass && $scope.search.results.length) {
       $scope.motion.show({selector: '.view-notification .item'});
     }
   };
 
   $scope.markAllAsRead = function() {
-    $rootScope.walletData.notifications.unreadCount = 0;
+    $scope.hideActionsPopover();
+
+    if (!$scope.search.results.length) return;
+
+    UIUtils.loading.show()
+      .then(function() {
+        $rootScope.walletData.notifications.unreadCount = 0;
+        var lastNotification = $scope.search.results[0];
+        $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
+        _.forEach($scope.search.results, function (item) {
+          if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
+        });
+
+        return UIUtils.loading.hide();
+      });
+  };
+
+  $scope.resetUnreadCount = function() {
+    if (!csWallet.data.notifications.unreadCount || !$scope.search.results || !$scope.search.results.length) return;
+    csWallet.data.notifications.unreadCount = 0;
     var lastNotification = $scope.search.results[0];
-    $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
-    _.forEach($scope.search.results, function (item) {
-      if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
-    });
+    var readTime = lastNotification.time ? lastNotification.time : 0;
+    if (readTime && (!csSettings.data.wallet || csSettings.data.wallet.notificationReadTime != readTime)) {
+      csSettings.data.wallet = csSettings.data.wallet || {};
+      csSettings.data.wallet.notificationReadTime = readTime;
+      csSettings.store();
+    }
   };
 
   $scope.select = function(item) {
@@ -140,6 +164,32 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
     delete $scope.search.limit;
   };
 
+  /* -- Popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/notification/popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
   /* -- listeners -- */
 
   csWallet.api.data.on.logout($scope, $scope.resetData);
@@ -148,7 +198,7 @@ function NotificationsController($scope, $rootScope, UIUtils, $state, esHttp, cs
   esNotification.api.data.on.new($scope, $scope.onNewNotification);
 }
 
-function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, $state, csWallet, csSettings) {
+function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, $state) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -164,23 +214,14 @@ function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, 
   });
 
   $scope.updateView = function() {
+    if (!$scope.search.results.length) return;
+
     // Set Ink
     $timeout(function() {
       UIUtils.ink({selector: '.popover-notification .item.ink'});
     }, 100);
   };
 
-  $scope.resetUnreadCount = function() {
-    if (!csWallet.data.notifications.unreadCount || !$scope.search.results || !$scope.search.results.length) return;
-    csWallet.data.notifications.unreadCount = 0;
-    var lastNotification = $scope.search.results[0];
-    var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!csSettings.data.wallet || csSettings.data.wallet.notificationReadTime != readTime)) {
-      csSettings.data.wallet = csSettings.data.wallet || {};
-      csSettings.data.wallet.notificationReadTime = readTime;
-      csSettings.store();
-    }
-  };
   $scope.$on('popover.hidden', $scope.resetUnreadCount);
 
   $scope.select = function(notification) {

@@ -147,6 +147,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
     var notification = new Notification(event, markNotificationAsRead);
 
+    // Extend the notification entity
     return csWot.extendAll([notification])
       .then(function() {
         if (!$rootScope.$$phase) {
@@ -175,7 +176,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
         return that.raw.postReadById(signature, {id:notification.id});
       })
       .catch(function(err) {
-        console.error('Error while trying to mark event as read:' + (err.message ? err.message : err));
+        console.error('[ES] [notification] Error while trying to mark event as read.', err);
       });
   }
 

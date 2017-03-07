@@ -1,14 +1,28 @@
 <ion-view left-buttons="leftButtons"
-          class="view-notification"
-          cache-view="false">
+          class="view-notification">
   <ion-nav-title>
     {{'COMMON.NOTIFICATIONS.TITLE' | translate}}
   </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
+    </button>
+
+    <button class="button button-icon button-clear visible-xs visible-sm"
+            ng-click="showActionsPopover($event)">
+      <i class="icon ion-android-more-vertical"></i>
+    </button>
+  </ion-nav-buttons>
 
   <ion-content class="padding no-padding-xs" scroll="true">
 
     <!-- Buttons bar-->
     <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="load()">
+      </button>
 
       <button class="button button-raised icon-left ion-checkmark ink"
               ng-click="markAllAsRead()">
@@ -39,4 +53,5 @@
     </div>
 
   </ion-content>
-</ion-popover-view>
+
+</ion-view>

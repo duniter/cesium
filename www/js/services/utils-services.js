@@ -1,7 +1,10 @@
 angular.module('cesium.utils.services', ['ngResource'])
 
 .factory('UIUtils', function($ionicLoading, $ionicPopup, $ionicConfig, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
-           $ionicPopover, $state, $rootScope, screenmatch, csSettings) {
+                             // removeIf(no-device)
+                             $cordovaToast,
+                             // endRemoveIf(no-device)
+                             $ionicPopover, $state, $rootScope, screenmatch, csSettings) {
   'ngInject';
 
 
@@ -120,11 +123,34 @@ angular.module('cesium.utils.services', ['ngResource'])
     });
   }
 
-  function showToast(message, duration) {
-    duration = duration || 2000; // 2s
+  function showToast(message, duration, position) {
+    duration = duration || 'short';
+    position = position || 'bottom';
+
     return $translate([message])
       .then(function(translations){
+
+        // removeIf(no-device)
+        // Use the Cordova Toast plugin
+        if (!!window.cordova) {
+          $cordovaToast.show(translations[message], duration, position);
+          return;
+        }
+        // endRemoveIf(no-device)
+
+        // removeIf(device)
+        // Use the $ionicLoading toast.
+        // First, make sure to convert duration in number
+        if (typeof duration == 'string') {
+          if (duration == 'short') {
+            duration = 2000;
+          }
+          else {
+            duration = 5000;
+          }
+        }
         return $ionicLoading.show({ template: translations[message], noBackdrop: true, duration: duration });
+        // endRemoveIf(device)
       });
   }
 

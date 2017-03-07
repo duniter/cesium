@@ -22,8 +22,9 @@
     "MARKET": "Annonces",
     "REGISTRY": "Professionnels",
     "USER_PROFILE": "Mon profil",
-    "MESSAGES": "Mes messages",
-    "NOTIFICATIONS": "Notifications"
+    "MESSAGES": "Messages",
+    "NOTIFICATIONS": "Notifications",
+    "INVITATIONS": "Invitations"
   },
   "ACCOUNT": {
     "NEW": {
@@ -58,9 +59,10 @@
   },
   "INVITATION": {
     "TITLE": "Invitations",
-    "NO_RESULT": "Aucune invitation",
-    "BTN_DELETE_ALL": "Tout supprimer",
+    "NO_RESULT": "Aucune invitation reçue",
+    "BTN_DELETE_ALL": "Supprimer toutes les invitations",
     "BTN_DELETE": "Supprimer l'invitation",
+    "BTN_NEW_INVITATION": "Nouvelle invitation",
     "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> demande votre certification",
     "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> vous est suggéré pour certification",
     "SUGGESTED_BY": "Suggestion envoyée par <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
@@ -109,7 +111,7 @@
     "LIST": {
       "INBOX": "Boite de réception",
       "OUTBOX": "Messages envoyés",
-      "TITLE": "Messages privés",
+      "TITLE": "Messages",
       "POPOVER_ACTIONS": {
         "TITLE": "Options",
         "DELETE_ALL": "Supprimer tous les messages"

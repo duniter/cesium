@@ -127,7 +127,6 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
       .then(function(res) {
         var keypair = res[0];
         var hit = res[1];
-        console.log(res);
         var invitation = hit._source;
         invitation.id = hit._id;
         invitation.type = hit._type;
@@ -144,7 +143,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
         return csWot.extendAll(invitation.issuer ? [invitation, invitation.issuer] : [invitation], 'pubkey')
           .then(function() {
             return invitation;
-          })
+          });
       });
   }
 

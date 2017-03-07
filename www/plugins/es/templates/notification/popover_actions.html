@@ -1,0 +1,17 @@
+<ion-popover-view class="fit has-header">
+  <ion-header-bar>
+    <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <a class="item item-icon-left ink"
+         ng-disabled="!search.results.length"
+         ng-click="markAllAsRead()">
+        <i class="icon ion-android-checkmark-circle"></i>
+        {{'COMMON.NOTIFICATIONS.MARK_ALL_AS_READ' | translate}}
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>
