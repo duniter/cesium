@@ -1,6 +1,7 @@
-angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services', 'cesium.config'])
+angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'xdLocalStorage',
+ 'cesium.device.services', 'cesium.config'])
 
-.factory('localStorage', function($window, $q, $rootScope, Device, csConfig) {
+.factory('localStorage', function($window, $q, $rootScope, Device, csConfig, xdLocalStorage) {
   'ngInject';
 
   var
@@ -9,16 +10,13 @@ angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services
     exports = {
       useHttpsFrame: false,
       unsecure: {},
-      https: {
-        frame: null,
-        domain: null
-      },
+      https: {},
       secure: {
         storage: null
       }
     };
 
-    /* -- default implementation (default browser storage) -- */
+  /* -- Use default default browser implementation -- */
 
   exports.unsecure.put = function(key, value) {
     localStorage[key] = value;
@@ -37,14 +35,13 @@ angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services
   };
 
 
-  /* -- HTTPS frame -- */
+  /* -- Use of HTTPS frame -- */
 
   exports.https.put = function(key, value) {
     console.log('TODO: setting [{0}] into https frame'.format(key));
   };
 
   exports.https.get = function(key, defaultValue) {
-    exports.https.frame.postMessage(key, exports.https.domain);
     console.log('TODO: getting [{0}] from https frame'.format(key));
     return localStorage[key] || defaultValue;
   };
@@ -54,13 +51,12 @@ angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services
   };
 
   exports.https.getObject = function(key) {
-    exports.https.frame.postMessage(key, exports.https.domain);
     console.log('TODO: getting object [{0}] from https frame'.format(key));
     return JSON.parse(localStorage[key] || '{}');
   };
 
 
-  /* -- Secure storage (device only, using a cordova plugin) -- */
+  /* -- Use secure storage (using a cordova plugin) -- */
 
   // Set a value to the secure storage (or remove if value is not defined)
   exports.secure.put = function(key, value) {
@@ -111,29 +107,15 @@ angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services
       });
   };
 
-  // Create a HTTPS frame to get local storage from HTTPS domaine
+  // Copy HTTPS functions as default function
   if (csConfig.httpsMode === 'clever' && $window.location.protocol !== 'https:') {
-
-    var href = $window.location.href;
-    var hashIndex = href.indexOf('#');
-    var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
-    var httpsFrame = (csConfig.httpsModeDebug ? 'http' : 'https') + rootPath.substr(4) + 'sync-storage.html';
-
-    console.debug('[storage] Adding HTTPS iframe [{0}]'.format(httpsFrame));
-    angular.element(document.body).append('<iframe name="httpsFrame" style="display:none" src="'+httpsFrame+'"></iframe>');
-
-
-    // Copy httpsFrame function as root exports function
     _.forEach(_.keys(exports.https), function(key) {
       exports[key] = exports.https[key];
     });
-
-    exports.https.domain = 'https' + rootPath.substr(4);
-    exports.https.frame = frames['httpsFrame'];
   }
 
   else {
-    // Copy unsecure function as root exports function
+    // Copy unsecure function as default function
     _.forEach(_.keys(exports.unsecure), function(key) {
       exports[key] = exports.unsecure[key];
     });
@@ -161,8 +143,6 @@ angular.module('cesium.storage.services', ['ngResource', 'cesium.device.services
     else {
       replaceSecureStorage();
     }
-
-
 
   });
 

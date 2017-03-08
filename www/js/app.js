@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'xdLocalStorage',
   'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier','ImageCropper', 'ngFileSaver',
   // removeIf(no-device)
   'ngCordova',
@@ -302,7 +302,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, $translate, $state, $window, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
+.run(function($rootScope, $translate, $state, $window, xdLocalStorage, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
   'ngInject';
 
   $rootScope.config = csConfig;
@@ -376,6 +376,20 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     });
   }
+
+  if (csConfig.httpsMode === 'clever' && $window.location.protocol !== 'https:') {
+    var href = $window.location.href;
+    var hashIndex = href.indexOf('#');
+    var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+    var httpsFrame = (csConfig.httpsModeDebug ? 'http' : 'https') + rootPath.substr(4) + 'sync-storage.html';
+
+    xdLocalStorage.init({iframeUrl: httpsFrame})
+     .then(function () {
+         //an option function to be called once the iframe was loaded and ready for action
+         console.debug('[app] Cross-domain local storage started');
+         csSettings.start();
+     });
+   }
 
   // We use 'Device.ready()' instead of '$ionicPlatform.ready()', because this one is callable many times
   Device.ready()
