@@ -36,6 +36,7 @@ angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'xdLocalS
 
 
   /* -- Use of HTTPS frame -- */
+  // See https://github.com/ofirdagan/cross-domain-local-storage
 
   exports.https.put = function(key, value) {
     console.log('TODO: setting [{0}] into https frame'.format(key));
