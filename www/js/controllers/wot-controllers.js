@@ -148,6 +148,8 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
 
       $scope.entered = true;
 
+      $timeout(UIUtils.ink, 100);
+
       $scope.showHelpTip();
     }
   });
@@ -495,7 +497,6 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
   $scope.wotSearchTextId = 'wotSearchTextModal';
 
   if ($scope.allowMultiple && parameters.selection) {
-    console.log(typeof parameters.selection);
     $scope.selection = parameters.selection;
   }
 
