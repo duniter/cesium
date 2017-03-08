@@ -18,24 +18,24 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
+  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:$root.settings.locale.id}">
     <div class="positive-900-bg hero"  id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
         <i class="avatar"
-           ng-if="::!formData.avatar"
+           ng-if=":rebind:!formData.avatar"
            ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
         <i class="avatar"
-           ng-if="::formData.avatar"
-           style="background-image: url({{::formData.avatar.src}})"></i>
-        <ng-if ng-if="::formData.name">
-          <h3 class="light">{{::formData.name}}</h3>
+           ng-if=":rebind:formData.avatar"
+           style="background-image: url({{:rebind:formData.avatar.src}})"></i>
+        <ng-if ng-if=":rebind:formData.name">
+          <h3 class="light">{{:rebind:formData.name}}</h3>
         </ng-if>
-        <ng-if ng-if="::!formData.name">
-          <h3 class="light" ng-if="::formData.uid">{{::formData.uid}}</h3>
-          <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
+        <ng-if ng-if=":rebind:!formData.name">
+          <h3 class="light" ng-if=":rebind:formData.uid">{{:rebind:formData.uid}}</h3>
+          <h3 class="light" ng-if=":rebind:!formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</h3>
         </ng-if>
-        <h4 class="assertive"><ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
+        <h4 class="assertive"><ng-if ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
@@ -137,21 +137,21 @@
 
           <!-- Uid -->
           <span class="item item-icon-left item-text-wrap ink"
-                ng-if="formData.uid"
+                ng-if=":rebind:formData.uid"
                 on-hold="copy(formData.uid)"
-                copy-on-click="{{formData.uid}}">
+                copy-on-click="{{:rebind:formData.uid}}">
             <span translate>COMMON.UID</span>
-            <span class="badge badge-stable">{{formData.uid}}</span>
+            <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
           </span>
 
           <!-- Public key -->
           <span id="helptip-wallet-pubkey"
                 class="item item-icon-left item-text-wrap ink"
                 on-hold="copy(formData.pubkey)"
-                copy-on-click="{{formData.pubkey}}">
+                copy-on-click="{{:rebind:formData.pubkey}}">
             <i class="icon ion-key"></i>
             {{:locale:'COMMON.PUBKEY'|translate}}
-            <h4 id="pubkey" class="dark">{{formData.pubkey}}</h4>
+            <h4 id="pubkey" class="dark">{{:rebind:formData.pubkey}}</h4>
           </span>
        </div>
       </div>

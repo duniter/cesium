@@ -75,6 +75,7 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state,
 
   $scope.updateView = function() {
     $scope.motion.show({selector: '#wallet .item'});
+    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
   };
 
   $scope.setRegisterForm = function(registerForm) {
