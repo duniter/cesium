@@ -220,12 +220,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     store = function() {
       if (csSettings.data.useLocalStorage) {
 
-
         if (isLogin() && csSettings.data.rememberMe) {
+          var dataToStore = {
+            pubkey: data.pubkey
+          };
+/*
           var dataToStore = {
             keypair: data.keypair,
             pubkey: data.pubkey
-          };
+          };*/
 
           if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
             var pendings = data.tx.pendings.reduce(function(res, tx){

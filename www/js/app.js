@@ -327,8 +327,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   if (csConfig.httpsMode === 'clever') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
       var href, hashIndex, rootPath ;
+
       // Redirect to HTTP if view has preferHttp=true
-      if (next.data && next.data.preferHttp && $window.location.protocol == 'https:') {
+      if (next.data && next.data.preferHttp &&
+        ($window.location.protocol == 'https:' || csConfig.httpsModeDebug)) {
         href = $window.location.href;
         hashIndex = href.indexOf('#');
         rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
@@ -342,7 +344,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         }
       }
       // Redirect to HTTPS
-      else if((!next.data || !next.data.preferHttp) && $window.location.protocol != 'https:') {
+      else if((!next.data || !next.data.preferHttp) &&
+        ($window.location.protocol != 'https:' || csConfig.httpsModeDebug)) {
         href = $window.location.href;
         hashIndex = href.indexOf('#');
         rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;

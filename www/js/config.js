@@ -21,7 +21,8 @@ angular.module("cesium.config", [])
 	"initPhase": false,
 	"expertMode": false,
 	"decimalCount": 4,
-	"httpsMode": false,
+	"httpsMode": "clever",
+  "httpsModeDebug": true,
 	"helptip": {
 		"enable": true,
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
