@@ -260,6 +260,9 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
     var type = invitation.type || 'certification';
     return that.raw[type].remove(invitation.id)
       .then(function() {
+        // Always reset unread count
+        csWallet.data.invitations.unreadCount = 0;
+
         if (!csWallet.data.invitations || !csWallet.data.invitations.list) return;
 
         // Remove form list
