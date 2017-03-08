@@ -540,7 +540,7 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
  * @param csWallet
  * @constructor
  */
-function WotIdentityAbstractController($scope, $rootScope, $state, $translate, UIUtils, Modals, csConfig, csWot, csWallet) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csConfig, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {};
@@ -740,6 +740,34 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, U
     cert.name = csWallet.data.name;
   };
 
+  $scope.removeActionParamInLocationHref = function(state) {
+    if (!state || !state.stateParams || !state.stateParams.action) return;
+
+    var stateParams = angular.copy(state.stateParams);
+
+    // Reset action param
+    stateParams.action = null;
+
+    // Update location href
+    $ionicHistory.nextViewOptions({
+      disableAnimate: true,
+      disableBack: false,
+      historyRoot: false
+    });
+    $state.go(state.stateName, stateParams,
+      {
+        reload: false,
+        inherit: true,
+        notify: false
+      });
+  };
+
+  $scope.doAction = function(action) {
+    if (action == 'certify') {
+      return $scope.certify();
+    }
+  };
+
   /* -- open screens -- */
 
   $scope.showCertifications = function() {
@@ -808,6 +836,8 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
         $timeout(function() {
           $scope.doAction(state.stateParams.action.trim());
         }, 100);
+
+        $scope.removeActionParamInLocationHref(state);
       }
     };
 
@@ -856,11 +886,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
     }
   };
 
-  $scope.doAction = function(action) {
-    if (action == 'certify') {
-      return $scope.certify();
-    }
-  };
+
 }
 
 /**

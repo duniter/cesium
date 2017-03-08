@@ -1393,7 +1393,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           return BMA.wot.certify({cert: signedCert});
         })
         .then(function() {
-          return {
+          var cert = {
             pubkey: pubkey,
             uid: uid,
             time: current.medianTime,
@@ -1404,6 +1404,11 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             block: current.number,
             valid: true
           };
+
+          // Notify extension
+          api.action.raise.certify(cert);
+
+          return cert;
         });
     },
 
@@ -1700,6 +1705,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
     api.registerEvent('data', 'loadTx');
+    api.registerEvent('action', 'certify');
 
     csSettings.api.data.on.changed($rootScope, store);
 

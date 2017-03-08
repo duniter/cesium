@@ -144,6 +144,13 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.servic
     ];
   }
 
+  function removeListeners() {
+    _.forEach(listeners, function(remove){
+      remove();
+    });
+    listeners = [];
+  }
+
   function refreshState() {
     var enable = esHttp.alive;
     if (!enable && listeners && listeners.length > 0) {

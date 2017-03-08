@@ -35,6 +35,7 @@ function Invitation(json) {
     // Ask certification to himself
     if (identity.pubkey == json.issuer) {
       that.pubkey = json.issuer;
+      that.uid = identity.uid;
       that.message = 'INVITATION.ASK_CERTIFICATION';
     }
 

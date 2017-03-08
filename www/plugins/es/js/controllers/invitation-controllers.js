@@ -28,7 +28,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
                                esHttp, esModals, esNotification, esInvitation) {
   'ngInject';
 
-  var defaultSearchLimit = 5;
+  var defaultSearchLimit = esInvitation.constants.DEFAULT_LOAD_SIZE;
 
   $scope.search = {
     loading : true,
@@ -43,14 +43,15 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     }
   };
 
+
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
-      $scope.load();
+      if (esHttp.isAlive()) {
+        $scope.load();
 
-      // Reset unread counter
-      $timeout(function() {
+        // Reset unread counter
         $scope.resetUnreadCount();
-      }, 1000);
+      }
 
       $scope.showFab('fab-new-invitation');
     }
@@ -61,14 +62,9 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
 
-    return esInvitation.load(csWallet.data.pubkey, options)
+    return esInvitation.load(options)
       .then(function(invitations) {
-        if (!from) {
-          $scope.search.results = invitations;
-        }
-        else {
-          $scope.search.results = $scope.search.results.concat(invitations);
-        }
+        $scope.search.results = invitations;
         $scope.search.loading = false;
         $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
         $scope.updateView();
@@ -88,6 +84,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
       $scope.motion.show({selector: '.view-invitation .item'});
     }
   };
+  $scope.$watchCollection('search.results', $scope.updateView);
 
   $scope.showMore = function() {
     $scope.search.limit = $scope.search.limit || defaultSearchLimit;
@@ -107,8 +104,11 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
 
   $scope.onNewInvitation = function(invitation) {
     if ($scope.search.loading || $scope.search.loadingMore) return;
-    $scope.search.results.splice(0,0,invitation);
-    $scope.updateView();
+
+    // Insert the new invitation (ONLY if not already done by service. May occur when using same array instance)
+    if (!$scope.search.results[0] || $scope.search.results[0] !== invitation) {
+      $scope.search.results.splice(0,0,invitation);
+    }
   };
 
   $scope.resetData = function() {
@@ -121,7 +121,11 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   };
 
   $scope.resetUnreadCount = function() {
+    if ($scope.search.loading || !csWallet.data.invitations) {
+      return $timeout($scope.resetUnreadCount, 2000);
+    }
     if (!csWallet.data.invitations.unreadCount) return;
+    console.debug('[ES] [invitation] Resetting unread count');
     csWallet.data.invitations.unreadCount = 0;
     if (!$scope.search.results || !$scope.search.results.length) return;
     var lastNotification = $scope.search.results[0];
@@ -161,7 +165,10 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
 
     return esInvitation.delete(invitation)
       .then(function() {
-        $scope.search.results.splice(index,1); // update list
+        // Remove from list (ONLY if not already done by service. May occur when using same array instance)
+        if ($scope.search.results[index] && $scope.search.results[index] === invitation) {
+          $scope.search.results.splice(index,1);
+        }
       })
       .catch(UIUtils.onError('INVITATION.ERROR.REMOVE_INVITATION_FAILED'));
   };
@@ -169,12 +176,8 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   $scope.accept = function(invitation) {
     $scope.hideActionsPopover(); // useful in PopoverInvitationController
 
-    if (invitation.type == 'certification') {
-      $state.go('app.wot_identity', {
-        uid: invitation.uid,
-        pubkey: invitation.pubkey,
-        action: 'certify'
-      });
+    if (invitation.state) {
+     $state.go(invitation.state, invitation.stateParams || {});
     }
   };
 

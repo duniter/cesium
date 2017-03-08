@@ -233,13 +233,6 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
     return deferred.promise;
   }
 
-  function removeListeners() {
-    _.forEach(listeners, function(remove){
-      remove();
-    });
-    listeners = [];
-  }
-
   function addListeners() {
     // Listen some events
     listeners = [
@@ -247,6 +240,13 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
       csWallet.api.data.on.init($rootScope, onWalletReset, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this)
     ];
+  }
+
+  function removeListeners() {
+    _.forEach(listeners, function(remove){
+      remove();
+    });
+    listeners = [];
   }
 
   function refreshState() {
