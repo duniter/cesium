@@ -79,11 +79,11 @@
       "RECIPIENTS": "A",
       "RECIPIENTS_HELP": "Recipients of the invitation",
       "RECIPIENTS_MODAL_TITLE": "Recipients",
-      "RECIPIENTS_MODAL_HELP": "Please search and select recipients:",
+      "RECIPIENTS_MODAL_HELP": "Please choose recipients:",
       "SUGGESTION_IDENTITIES": "Suggestions for certification",
       "SUGGESTION_IDENTITIES_HELP": "Certifications to suggest",
       "SUGGESTION_IDENTITIES_MODAL_TITLE": "Suggestions",
-      "SUGGESTION_IDENTITIES_MODAL_HELP": "Please search and select the identities to suggest:"
+      "SUGGESTION_IDENTITIES_MODAL_HELP": "Please choose your suggestions:"
     },
     "CONFIRM": {
       "DELETE_ALL_CONFIRMATION": "Removing invitations is <b>an irreversible operation</b>.<br/><br/><b>Are you sure</b> you want to continue",

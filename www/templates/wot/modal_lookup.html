@@ -1,4 +1,6 @@
-<ion-view id="wotLookup"  class="modal slide-in-up ng-enter active ng-enter-active">
+<ion-modal-view id="wotLookup"
+                class="modal-full-height">
+
   <ion-header-bar class="bar-positive">
     <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
 
@@ -14,19 +16,20 @@
     </button>
   </ion-header-bar>
 
-  <ion-content class="padding no-padding-xs">
-    <div class="secondary-buttons pull-right">
-      <button class="button button-clear dark visible-xs hidden-no-device"
-              ng-if="$root.device.enable"
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <div class="visible-xs visible-sm text-right">
+      <button class="button button-icon button-small-padding dark hidden-no-device"
+              ng-if="::$root.device.enable"
               ng-click="scanQrCode()">
         <i class="icon ion-qr-scanner"></i>
       </button>
-      <button class="button button-clear dark visible-xs visible-sm"
+      <button class="button button-icon button-small-padding  dark"
               ng-click="showActionsPopover($event)">
-        <i class="icon ion-funnel"></i>
+        <i class="icon ion-android-funnel"></i>
       </button>
     </div>
 
     <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
   </ion-content>
-</ion-view>
+</ion-modal-view>
