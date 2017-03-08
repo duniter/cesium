@@ -54,14 +54,11 @@
       "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
       "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
       "ASK_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
-    },
-    "ERROR": {
-      "SEND_INVITATION_CERTIFICATION_FAILED": "Echec de l'envoi de la demande de certification"
     }
   },
   "INVITATION": {
     "TITLE": "Invitations",
-    "NO_RESULT": "Aucune invitation reçue",
+    "NO_RESULT": "Aucune invitation en attente",
     "BTN_DELETE_ALL": "Supprimer toutes les invitations",
     "BTN_DELETE": "Supprimer l'invitation",
     "BTN_NEW_INVITATION": "Nouvelle invitation",
@@ -96,7 +93,7 @@
       "LOAD_INVITATIONS_FAILED": "Echec du chargement des invitations",
       "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Erreur lors de la suppression des invitations",
-      "SUGGEST_CERTIFICATIONS_FAILED": "Erreur lors de l'envoi de l'invitation"
+      "SEND_INVITATION_FAILED": "Erreur lors de l'envoi de l'invitation"
     }
   },
   "COMMENTS": {

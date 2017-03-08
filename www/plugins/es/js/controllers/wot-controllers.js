@@ -111,39 +111,40 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
       })
 
       .then(function(res) {
-        if (!res || !res.length) return;
+        if (!res || !res.length) return; // user cancelled
         identities = res;
 
         return $q.all([
-          // Get keypair only once (if not done here, certification.send() with compute it many times)
-          esWallet.box.getKeypair(walletData.keypair),
-          // Ask confirmation
-          UIUtils.alert.confirm('WOT.CONFIRM.SUGGEST_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
-        ]);
-      })
-      .then(function(res) {
-        if (!res) return;
-        var keypair = res[0];
-        var confirm = res[1];
-        if (!confirm) return;
-        var time = esHttp.date.now(); // use same date for each invitation
-        return $q.all(
-          identities.reduce(function(res, identity){
-            return res.concat(
-              esInvitation.send({
-                issuer: walletData.pubkey,
-                recipient: $scope.formData.pubkey,
-                time: time,
-                content: [identity.uid, identity.pubkey].join('-')
-              }, keypair, 'certification')
+            // Get keypair only once (if not done here, certification.send() with compute it many times)
+            esWallet.box.getKeypair(walletData.keypair),
+            // Ask confirmation
+            UIUtils.alert.confirm('WOT.CONFIRM.SUGGEST_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
+          ])
+          .then(function(res) {
+            if (!res) return;
+            var keypair = res[0];
+            var confirm = res[1];
+            if (!confirm) return;
+            var time = esHttp.date.now(); // use same date for each invitation
+            return $q.all(
+              identities.reduce(function(res, identity){
+                return res.concat(
+                  esInvitation.send({
+                    issuer: walletData.pubkey,
+                    recipient: $scope.formData.pubkey,
+                    time: time,
+                    content: [identity.uid, identity.pubkey].join('-')
+                  }, keypair, 'certification')
+                );
+              }, [])
             );
-          }, [])
-        );
+          })
+          .then(function() {
+            UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+          })
+          .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
       })
-      .then(function() {
-        UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
-      })
-      .catch(UIUtils.onError('INVITATION.ERROR.SUGGEST_CERTIFICATIONS_FAILED'));
+      ;
   };
 
   $scope.showAskCertificationModal = function() {
@@ -167,34 +168,36 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
         });
       })
       .then(function(res) {
-        if (!res || !res.length) return;
+        if (!res || !res.length) return; // user cancelled
         identities = res;
 
         return $q.all([
-          // Get keypair only once (if not done here, certification.send() with compute it many times)
-          esWallet.box.getKeypair(walletData.keypair),
-          // Ask confirmation
-          UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
-        ]);
-      })
-      .then(function(res) {
-        if (!res) return;
-        var keypair = res[0];
-        var confirm = res[1];
-        if (!confirm) return;
-        var time = esHttp.date.now(); // use same date for each invitation
-        return $q.all(
-          identities.reduce(function(res, identity){
-            return res.concat(
-              esInvitation.send({
-                issuer: walletData.pubkey,
-                recipient: identity.pubkey,
-                time: time,
-                content: [walletData.uid, walletData.pubkey].join('-')
-              }, keypair, 'certification')
-            );
-          }, [])
-        );
+            // Get keypair only once (if not done here, certification.send() with compute it many times)
+            esWallet.box.getKeypair(walletData.keypair),
+            // Ask confirmation
+            UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
+          ])
+          .then(function(res) {
+            if (!res) return;
+            var keypair = res[0];
+            var confirm = res[1];
+            if (!confirm) return;
+            var time = esHttp.date.now(); // use same date for each invitation
+            return $q.all(identities.reduce(function(res, identity){
+                  return res.concat(
+                    esInvitation.send({
+                      issuer: walletData.pubkey,
+                      recipient: identity.pubkey,
+                      time: time,
+                      content: [walletData.uid, walletData.pubkey].join('-')
+                    }, keypair, 'certification')
+                  );
+                }, []))
+              .then(function() {
+                UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+              })
+              .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));;
+          });
       });
   };
 
@@ -211,13 +214,13 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
           .then(function(confirm) {
             if (!confirm) return;
             return esInvitation.send({
-              issuer: walletData.pubkey,
-              recipient: $scope.formData.pubkey,
-              content: [walletData.uid, walletData.pubkey].join('-')
-            }, undefined, 'certification');
+                issuer: walletData.pubkey,
+                recipient: $scope.formData.pubkey,
+                content: [walletData.uid, walletData.pubkey].join('-')
+              }, undefined, 'certification')
+              .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
           });
-      })
-      .catch(UIUtils.onError('WOT.ERROR.SEND_INVITATION_CERTIFICATION_FAILED'));
+      });
   };
 
   /* -- Popover -- */

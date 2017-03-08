@@ -205,14 +205,29 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state,
   };
 
   // Send membership OUT
-  $scope.membershipOut = function(confirm) {
+  $scope.membershipOut = function(confirm, confirmAgain) {
     $scope.hideActionsPopover();
 
     // Ask user confirmation
     if (!confirm) {
-      return UIUtils.alert.confirm('CONFIRM.MEMBERSHIP_OUT')
+      return UIUtils.alert.confirm('CONFIRM.MEMBERSHIP_OUT', 'CONFIRM.POPUP_WARNING_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_YES',
+        okType: 'button-assertive'
+      })
       .then(function(confirm) {
         if (confirm) $scope.membershipOut(true); // loop with confirmation
+      });
+    }
+
+    if (!confirmAgain) {
+      return UIUtils.alert.confirm("CONFIRM.MEMBERSHIP_OUT_2", 'CONFIRM.POPUP_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_YES',
+        okType: 'button-assertive'
+      })
+      .then(function (confirm) {
+        if (confirm) $scope.membershipOut(true, true); // loop with all confirmations
       });
     }
 
@@ -903,7 +918,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
     if (!confirm) {
       return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
         cssClass: 'warning',
-        okText: 'COMMON.BTN_CONTINUE',
+        okText: 'COMMON.BTN_YES',
         okType: 'button-assertive'
       })
         .then(function (confirm) {
@@ -913,7 +928,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
     if (!confirmAgain) {
       return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
         cssClass: 'warning',
-        okText: 'COMMON.BTN_YES_CONTINUE',
+        okText: 'COMMON.BTN_YES',
         okType: 'button-assertive'
       })
         .then(function (confirm) {
