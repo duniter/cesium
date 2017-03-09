@@ -1,0 +1,19 @@
+{
+      "name": "fr.duniter.cesium",
+      "version": "1.0.0",
+      "description": "Cesium",
+      "main": "index.html",
+      "window": {
+        "title": "Cesium",
+        "toolbar": false,
+        "frame": true,
+        "width": 800,
+        "height": 600,
+        "min_width": 400,
+        "min_height": 200
+      },
+      "webkit": {
+        "plugin": true
+      },
+      "author": "Duniter Team"
+    }
