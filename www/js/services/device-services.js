@@ -1,12 +1,25 @@
 
-angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services'])
+angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services', 'cesium.settings.services'])
+
+  // Replace the '$ionicPlatform.ready()', to enable multiple calls
+  // See http://stealthcode.co/multiple-calls-to-ionicplatform-ready/
+  .factory('ionicReady', function($ionicPlatform) {
+    var readyPromise;
+
+    return function () {
+      if (!readyPromise) {
+        readyPromise = $ionicPlatform.ready();
+      }
+      return readyPromise;
+    };
+  })
 
   .factory('Device',
     function($translate, $ionicPopup, $q,
       // removeIf(no-device)
       $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
       // endRemoveIf(no-device)
-      $ionicPlatform) {
+      ionicReady, csSettings) {
       'ngInject';
 
       var
@@ -14,7 +27,6 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
           MAX_HEIGHT: 400,
           MAX_WIDTH: 400
         },
-        readyPromise,
         exports = {
           // workaround to quickly no is device or not (even before the ready() event)
           enable: true
@@ -118,13 +130,14 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
         return deferred.promise;
       }
 
-      // Replace the '$ionicPlatform.ready()', to enable multiple calls
-      readyPromise = $ionicPlatform.ready();
-      function ready() {
-        return readyPromise;
-      }
+      exports.clipboard = {copy: copy};
+      exports.camera = {
+          getPicture : getPicture,
+          scan: scan
+        };
 
-      readyPromise.then(function(){
+      var started = false;
+      var startPromise = ionicReady().then(function(){
 
         var enableCamera = !!navigator.camera;
         exports.enable = enableCamera;
@@ -141,16 +154,24 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services']
         else {
           console.debug('[device] Ionic platform ready - no device detected.');
         }
+
+        started = true;
+        startPromise = null;
       });
 
-      exports.ready = function() {
+      var readyPromise;
+
+      // backward compat
+      exports.ready = function () {
+        if (!readyPromise) {
+          readyPromise = $q.all([
+            ionicReady(),
+            csSettings.ready()
+          ]);
+        }
         return readyPromise;
       };
-      exports.clipboard = {copy: copy};
-      exports.camera = {
-          getPicture : getPicture,
-          scan: scan
-        };
+
       return exports;
     })
 

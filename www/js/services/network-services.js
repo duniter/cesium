@@ -485,21 +485,24 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
       start = function(bma, options) {
         options = options || {};
-        return $q(function(resolve, reject) {
-          close();
-          data.bma = bma ? bma : BMA;
-          data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
-          data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
-          data.expertMode = angular.isDefined(options.expertMode) ?options.expertMode : data.expertMode;
-          console.info('[network] Starting network from [{0}]'.format(bma.node.server));
-          var now = new Date();
-          startListeningOnSocket(resolve, reject);
-          loadPeers()
-            .then(function(peers){
-              resolve(peers);
-              console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');
-            });
-        });
+        return BMA.ready()
+          .then(function() {
+            close();
+            data.bma = bma ? bma : BMA;
+            data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
+            data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
+            data.expertMode = angular.isDefined(options.expertMode) ?options.expertMode : data.expertMode;
+            console.info('[network] Starting network from [{0}]'.format(bma.server));
+            var now = new Date();
+
+            startListeningOnSocket();
+
+            return loadPeers()
+              .then(function(peers){
+                console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');
+                return peers;
+              });
+          });
       },
 
       close = function() {

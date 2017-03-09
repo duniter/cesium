@@ -2,7 +2,7 @@
 
 angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'])
 
-  .factory('CryptoUtils', function($q, $timeout, Device) {
+  .factory('CryptoUtils', function($q, $timeout, ionicReady) {
     'ngInject';
 
     /**
@@ -606,13 +606,18 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
 
     var service = new CryptoAbstractService();
 
-    Device.ready().then(function() {
+    var isDevice = true;
+    // removeIf(device)
+    isDevice = false;
+    // endRemoveIf(device)
+
+    ionicReady().then(function() {
       var now = new Date().getTime();
 
       var serviceImpl;
 
       // Use Cordova plugin implementation, when exists
-      if (Device.enable && window.plugins && window.plugins.MiniSodium && crypto && crypto.getRandomValues) {
+      if (isDevice && window.plugins && window.plugins.MiniSodium && crypto && crypto.getRandomValues) {
         console.debug('[crypto] Loading Cordova MiniSodium implementation...');
         serviceImpl = new CordovaServiceFactory();
       }

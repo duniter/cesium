@@ -31,7 +31,6 @@ var rev = require('gulp-rev');
 var revReplace = require('gulp-rev-replace');
 var clean = require('gulp-clean');
 var htmlmin = require('gulp-htmlmin');
-var deleteEmpty = require('delete-empty');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
 
@@ -261,6 +260,11 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
       .pipe(rename("debug.html"))
       .pipe(gulp.dest(tmpPath)),
 
+    // Copy https-storage.html
+    gulp.src('./www/https-storage.html')
+      .pipe(htmlmin())
+      .pipe(gulp.dest(tmpPath)),
+
     // Copy fonts
     gulp.src('./www/fonts/**/*.*')
       .pipe(gulp.dest(tmpPath + '/fonts')),
@@ -357,12 +361,23 @@ gulp.task('debug-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], func
     .on('end', done);
 });
 
-gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
+gulp.task('https-storage-files:web', ['debug-files:web'], function(done) {
+  var tmpPath = './platforms/web/www';
+
+  // Process https-storage.html file
+  gulp.src(tmpPath + '/https-storage.html')
+    .pipe(useref())             // Concatenate with gulp-useref
+    .pipe(gulp.dest(tmpPath))
+    .on('end', done);
+});
+
+gulp.task('optimize-files:web', ['https-storage-files:web'], function(done) {
   var tmpPath = './platforms/web/www';
   var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
   var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
 
+  // Process index.html
   gulp.src(tmpPath + '/index.html')
     .pipe(useref())             // Concatenate with gulp-useref
     // Process JS
@@ -380,8 +395,7 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
     .pipe(rev())                // Rename the concatenated files
     .pipe(revFilesFilter.restore)
 
-    // Substitute in new filenames
-    .pipe(revReplace())
+    .pipe(revReplace())         // Substitute in new filenames
     .pipe(gulp.dest(tmpPath))
     .on('end', done);
 });

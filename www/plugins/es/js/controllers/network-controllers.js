@@ -33,9 +33,6 @@ function ESNetworkViewExtendController($scope, PluginService, csSettings) {
       !!csSettings.data.plugins.host;
   };
 
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
-  });
-
-  $scope.updateView();
+  csSettings.api.data.on.changed($scope, $scope.updateView);
+  csSettings.api.data.on.ready($scope, $scope.updateView);
 }

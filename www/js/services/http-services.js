@@ -258,6 +258,12 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     return true;
   }
 
+  var cache = angular.copy(csCache.constants);
+  cache.clear = function() {
+    console.debug('[http] Cleaning cache...');
+    csCache.clear(cachePrefix);
+  };
+
   return {
     get: getResource,
     getWithCache: getResourceWithCache,
@@ -275,7 +281,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     version: {
       isCompatible: isVersionCompatible
     },
-    cache: csCache.constants
+    cache: cache
   };
 })
 ;

@@ -257,45 +257,41 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     restore = function() {
-      return $q(function(resolve, reject){
-        var dataStr = localStorage.get(constants.STORAGE_KEY);
-        if (!dataStr) {
-          resolve();
-          return;
-        }
-        fromJson(dataStr, false)
-        .then(function(storedData){
-          if (storedData && storedData.keypair && storedData.pubkey) {
-            data.keypair = storedData.keypair;
-            data.pubkey = storedData.pubkey;
-            if (storedData.tx && storedData.tx.pendings) {
-              data.tx.pendings = storedData.tx.pendings;
-            }
-            data.loaded = false;
+      return localStorage.get(constants.STORAGE_KEY)
+        .then(function(dataStr) {
+          if (!dataStr) return;
+          return fromJson(dataStr, false)
+            .then(function(storedData){
+              if (storedData && storedData.keypair && storedData.pubkey) {
+                data.keypair = storedData.keypair;
+                data.pubkey = storedData.pubkey;
+                if (storedData.tx && storedData.tx.pendings) {
+                  data.tx.pendings = storedData.tx.pendings;
+                }
+                data.loaded = false;
 
-            return $q.all([
-              // Call extend api
-              api.data.raisePromise.login(data),
+                return $q.all([
+                  // Call extend api
+                  api.data.raisePromise.login(data),
 
-              // Load parameters
-              // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-              loadParameters(),
+                  // Load parameters
+                  // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+                  loadParameters(),
 
-              // Load current UD is need by features tour
-              loadCurrentUD()
-            ]);
-          }
-          else {
-            // Load parameters
-            // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-            return loadParameters();
-          }
-        })
-        .then(function(){
-          resolve(data);
-        })
-        .catch(function(err){reject(err);});
-      });
+                  // Load current UD is need by features tour
+                  loadCurrentUD()
+                ]);
+              }
+              else {
+                // Load parameters
+                // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+                return loadParameters();
+              }
+            })
+            .then(function(){
+              return data;
+            });
+        });
     },
 
     getData = function() {

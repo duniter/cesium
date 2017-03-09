@@ -17,13 +17,26 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
 
     that.cache = _emptyCache();
-    that.alive = false;
-    that.host = host;
-    that.port = port || 80;
-    that.wsPort = wsPort || port || 80;
-    that.useSsl = angular.isDefined(useSsl) ? useSsl : false;
-    that.server = csHttp.getServer(host, port);
     that.api = new Api(this, "esHttp");
+    that.init = init;
+
+    init(host, port, wsPort, useSsl);
+
+    function init(host, port, wsPort, useSsl) {
+      // Use settings as default
+      if (csSettings.data) {
+        host = host || (csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null);
+        port = port || (host ? csSettings.data.plugins.es.port : null);
+        wsPort = wsPort || (host ? csSettings.data.plugins.es.wsPort : null);
+      }
+
+      that.alive = false;
+      that.host = host;
+      that.port = port || 80;
+      that.wsPort = wsPort || port || 80;
+      that.useSsl = angular.isDefined(useSsl) ? useSsl : false;
+      that.server = csHttp.getServer(host, port);
+    }
 
     function exact(regexpContent) {
       return new RegExp('^' + regexpContent + '$');
@@ -50,11 +63,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.copy = function(otherNode) {
-      that.host = otherNode.host;
-      that.port = otherNode.port;
-      that.wsPort = otherNode.wsPort || otherNode.port;
-      that.useSsl = otherNode.useSsl;
-      that.server = csHttp.getServer(host, port);
+      that.init(otherNode.host, otherNode.port, otherNode.wsPort, otherNode.useSsl);
       return that.restart();
     };
 
@@ -110,19 +119,22 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.start = function() {
 
-      console.debug('[ES] [http] Starting on [{0}]...'.format(that.server));
-      var now = new Date().getTime();
-
-      return that.isAlive()
-        .then(function(alive) {
-          that.alive = alive;
-          if (!alive) {
-            console.error('[ES] [http] Could not start [{0}]: node unreachable'.format(that.server));
-            return false;
-          }
-          console.debug('[ES] [http] Started in '+(new Date().getTime()-now)+'ms');
-          that.api.node.raise.start();
-          return true;
+      return csSettings.ready()
+        .then(service.init)
+        .then(function() {
+          console.debug('[ES] [http] Starting on [{0}]...'.format(that.server));
+          var now = new Date().getTime();
+          return that.isAlive()
+            .then(function(alive) {
+              that.alive = alive;
+              if (!alive) {
+                console.error('[ES] [http] Could not start [{0}]: node unreachable'.format(that.server));
+                return false;
+              }
+              console.debug('[ES] [http] Started in '+(new Date().getTime()-now)+'ms');
+              that.api.node.raise.start();
+              return true;
+            });
         });
     };
 
@@ -423,11 +435,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     angular.merge(that, exports);
   }
 
-  var host = csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null;
-  var port = host ? csSettings.data.plugins.es.port : null;
-  var wsPort = host ? csSettings.data.plugins.es.wsPort : null;
 
-  var service = new Factory(host, port, wsPort);
+  var service = new Factory();
 
   service.instance = function(host, port, wsPort) {
     return new Factory(host, port, wsPort);

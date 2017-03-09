@@ -28,10 +28,11 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
   $scope.nodePopup = {};
+  $scope.bma = BMA;
 
 
   $scope.$on('$ionicView.enter', function() {
-    $scope.load();
+    csSettings.ready().then($scope.load);
   });
 
   $scope.setPopupForm = function(popupForm) {
@@ -81,13 +82,12 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.changeNode= function(node) {
     $scope.showNodePopup(node || $scope.formData.node)
     .then(function(newNode) {
-      console.log(newNode);
       if (newNode.host === $scope.formData.node.host &&
         newNode.port === $scope.formData.node.port) {
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
-      var nodeBMA = BMA.instance(newNode.host, newNode.port);
+      var nodeBMA = BMA.instance(newNode.host, newNode.port, undefined, true /*cache*/);
       nodeBMA.isAlive()
         .then(function(alive) {
           if (!alive) {
@@ -190,10 +190,29 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       $scope.saving = false;
     }, 100);
   };
-  $scope.$watch('formData', $scope.save, true);
+
+  $scope.onDataChanged = function(oldValue, newValue, scope) {
+    if ($scope.loading || $scope.pendingSaving) return $q.when();
+    if ($scope.saving) {
+      $scope.pendingSaving = true;
+      // Retry later
+      return $timeout(function() {
+        $scope.pendingSaving = false;
+        return $scope.onDataChanged(oldValue, newValue, scope);
+      }, 500);
+    }
+
+    var updated = !angular.equals(oldValue, newValue);
+    if (updated) {
+      //console.debug('Detected settings update: will save it');
+      $scope.save();
+    }
+  };
+  $scope.$watch('formData', $scope.onDataChanged, true);
 
 
   $scope.getServer = function() {
+    if (!$scope.formData.node || !$scope.formData.node.host) return '';
     return csHttp.getServer($scope.formData.node.host, $scope.formData.node.port);
   };
 

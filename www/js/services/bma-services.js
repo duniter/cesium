@@ -2,7 +2,7 @@
 
 angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, Api, Device, csSettings, csHttp, csCache, $rootScope, $timeout) {
+.factory('BMA', function($q, Api, Device, csSettings, csHttp, $rootScope, $timeout) {
   'ngInject';
 
   function BMA(host, port, useSsl, useCache) {
@@ -41,24 +41,37 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         regexp: regexp
       },
       listeners,
-      that = this;
+      that = this,
+      startPromise,
+      started = false;
 
     that.date = {now: csHttp.date.now};
     that.api = new Api(this, 'BMA-' + that.server);
+    that.init = init;
 
-    init(host, port, useSsl, useCache);
+    if (host) {
+      init(host, port, useSsl, useCache);
+    }
 
     function init(host, port, useSsl, useCache) {
-      if (!host) {
-        throw new Error('new BMA() need mandatory argument [host]');
-      }
       that.alive = false;
       that.cache = _emptyCache();
+
+      // Use settings as default, if exists
+      if (csSettings.data && csSettings.data.node) {
+        host = host || csSettings.data.node.host;
+        port = port || csSettings.data.node.port;
+        useSsl = angular.isDefined(useSsl) ? useSsl : (csSettings.data.node.port == 443 || csSettings.data.node.useSsl);
+        useCache =  angular.isDefined(useCache) ? useCache : true;
+      }
+
+      if (!host) {
+        return; // could not init yet
+      }
       that.host = host;
       that.port = port || 80;
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443);
       that.useCache = angular.isDefined(useCache) ? useCache : false;
-
       that.server = csHttp.getServer(host, port);
       that.url = csHttp.getUrl(host, port, useSsl);
     }
@@ -89,9 +102,19 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     get = function (path, cacheTime) {
+
       cacheTime = that.useCache && cacheTime;
       var cacheKey = path + (cacheTime ? ('#'+cacheTime) : '');
-      return function(params) {
+
+      var getRequest = function(params) {
+
+        if (!started) {
+          console.debug('[BMA] get waiting start finished...');
+          return that.ready().then(function() {
+            return getRequest(params);
+          });
+        }
+
         var request = that.cache.getByPath[cacheKey];
         if (!request) {
           if (cacheTime) {
@@ -104,10 +127,19 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         }
         return request(params);
       };
+
+      return getRequest;
     };
 
     post = function(path) {
-      return function(obj, params) {
+      postRequest = function(obj, params) {
+        if (!started) {
+          console.debug('[BMA] post waiting start finished...');
+          return that.ready().then(function() {
+            return postRequest(obj, params);
+          });
+        }
+
         var request = that.cache.postByPath[path];
         if (!request) {
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
@@ -115,6 +147,8 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         }
         return request(obj, params);
       };
+
+      return postRequest;
     };
 
     ws = function(path) {
@@ -129,7 +163,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     that.isAlive = function() {
-      return that.node.summary()
+      return csHttp.get(that.host, that.port, '/node/summary', that.useSsl)()
         .then(function(json) {
           var isDuniter = json && json.duniter && json.duniter.software == 'duniter' && json.duniter.version;
           var isCompatible = isDuniter && csHttp.version.isCompatible(csSettings.data.minVersion, json.duniter.version);
@@ -167,17 +201,44 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       }
     }
 
+    that.isStarted = function() {
+      return started;
+    };
+
+    that.ready = function() {
+      if (started) return $q.when();
+      return startPromise || that.start();
+    };
+
     that.start = function() {
+      if (startPromise) return startPromise;
+
+      if (!that.host) {
+        return csSettings.ready()
+          .then(function() {
+            that.init();
+
+            // Always enable cache
+            that.useCache = true;
+
+            return that.start(); // recursive call
+          });
+      }
 
       console.debug('[BMA] Starting [{0}]...'.format(that.server));
       var now = new Date().getTime();
 
-      return that.isAlive()
+      startPromise = $q.all([
+          csSettings.ready,
+          that.isAlive()
+        ])
         .then(function(alive) {
           that.alive = alive;
           if (!alive) {
             // TODO : alert user ?
             console.error('[BMA] Could not start [{0}]: node unreachable'.format(that.server));
+            started = true;
+            startPromise = null;
             return false;
           }
 
@@ -188,8 +249,11 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
           console.debug('[BMA] Started in '+(new Date().getTime()-now)+'ms');
 
           that.api.node.raise.start();
+          started = true;
+          startPromise = null;
           return true;
         });
+      return startPromise;
     };
 
     that.stop = function() {
@@ -201,6 +265,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     that.restart = function() {
+      csHttp.cache.clear();
       that.stop();
       return $timeout(function() {
         that.start();
@@ -223,10 +288,6 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT)
       },
       node: {
-        server: that.server,
-        url: that.url,
-        host: host,
-        port: port,
         summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
           return host2 == host && ((!port && !port2) || (port == port2));
@@ -286,13 +347,26 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     exports.node.parseEndPoint = function(endpoint) {
+      // Try BMA
       var matches = exports.regex.BMA_ENDPOINT.exec(endpoint);
+      if (matches) {
+        return {
+          "dns": matches[2] || '',
+          "ipv4": matches[4] || '',
+          "ipv6": matches[6] || '',
+          "port": matches[8] || 80,
+          "useSsl": matches[8] && matches[8] == 443
+        };
+      }
+      // Try BMAS
+      matches = exports.regex.BMAS_ENDPOINT.exec(endpoint);;
       if (!matches) return;
       return {
         "dns": matches[2] || '',
         "ipv4": matches[4] || '',
         "ipv6": matches[6] || '',
-        "port": matches[8] || 80
+        "port": matches[8] || 80,
+        "useSsl": true
       };
     };
 
@@ -528,14 +602,12 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     angular.merge(that, exports);
   }
 
-  var service = new BMA(
-    csSettings.data.node.host,
-    csSettings.data.node.port,
-    csSettings.data.node.port == 443 || csSettings.data.node.useSsl,
-    true /*cache*/);
+  var service = new BMA();
 
   service.instance = function(host, port, useSsl, useCache) {
-    return new BMA(host, port, useSsl, useCache);
+    var bma = new BMA();
+    bma.init(host, port, useSsl, useCache);
+    return bma;
   };
 
   service.lightInstance = function(host, port, useSsl) {
@@ -559,10 +631,11 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       }
     };
   };
-  /*Device.ready().then(function() {
+
+  // default action
+  Device.ready().then(function() {
     return service.start();
-  });*/
-  service.start();
+  });
 
   return service;
 })

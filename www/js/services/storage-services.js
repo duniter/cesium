@@ -1,61 +1,107 @@
-angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'xdLocalStorage',
- 'cesium.device.services', 'cesium.config'])
+angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'xdLocalStorage', 'ngApi', 'cesium.config'])
 
-.factory('localStorage', function($window, $q, $rootScope, Device, csConfig, xdLocalStorage) {
+.factory('localStorage', function($window, $q, $rootScope, $timeout, ionicReady, csConfig, Api, xdLocalStorage) {
   'ngInject';
 
   var
     appName = "Cesium",
-    localStorage = $window.localStorage,
+    api = new Api(this, "localStorage"),
+    started = false,
+    startPromise,
+    tryInitSecureStorage = true, // default for device (override later)
     exports = {
+      api: api,
       useHttpsFrame: false,
-      unsecure: {},
-      https: {},
+      standard: {
+        storage: null
+      },
+      xd: {
+        enable: false
+      },
       secure: {
         storage: null
       }
     };
 
-  /* -- Use default default browser implementation -- */
+  // removeIf(device)
+  // Use this workaround to avoid the use of Device service (could cause a circular reference)
+  tryInitSecureStorage = false;
+  // endRemoveIf(device)
 
-  exports.unsecure.put = function(key, value) {
-    localStorage[key] = value;
+  /* -- Use standard browser implementation -- */
+
+  exports.standard.put = function(key, value) {
+    exports.standard.storage[key] = value;
+    return $q.when();
   };
 
-  exports.unsecure.get = function(key, defaultValue) {
-    return localStorage[key] || defaultValue;
+  exports.standard.get = function(key, defaultValue) {
+    return $q.when(exports.standard.storage[key] || defaultValue);
   };
 
-  exports.unsecure.setObject = function(key, value) {
-    localStorage[key] = JSON.stringify(value);
+  exports.standard.setObject = function(key, value) {
+    exports.standard.storage[key] = JSON.stringify(value);
+    return $q.when();
   };
 
-  exports.unsecure.getObject = function(key) {
-    return JSON.parse(localStorage[key] || '{}');
+  exports.standard.getObject = function(key) {
+    return $q.when(JSON.parse(exports.standard.storage[key] || '{}'));
   };
 
 
-  /* -- Use of HTTPS frame -- */
+  /* -- Use of cross-domain HTTPS iframe -- */
   // See https://github.com/ofirdagan/cross-domain-local-storage
 
-  exports.https.put = function(key, value) {
-    console.log('TODO: setting [{0}] into https frame'.format(key));
+  exports.xd.put = function(key, value) {
+    if (!started) {
+      console.debug('[storage] Waiting start finished...');
+      return startPromise.then(function(){
+        return exports.xd.put(key, value);
+      });
+    }
+
+    xdLocalStorage.setItem(key, value);
   };
 
-  exports.https.get = function(key, defaultValue) {
-    console.log('TODO: getting [{0}] from https frame'.format(key));
-    return localStorage[key] || defaultValue;
+  exports.xd.get = function(key, defaultValue) {
+    if (!started) {
+      console.debug('[storage] Waiting start finished...');
+      return startPromise.then(function(){
+        return exports.xd.get(key, defaultValue);
+      });
+    }
+
+    return xdLocalStorage.getItem(key).then(function(response){
+      return (response && response.value) || defaultValue;
+    });
   };
 
-  exports.https.setObject = function(key, value) {
-    console.log('TODO: setting object [{0}] into https frame'.format(key));
+  exports.xd.setObject = function(key, value) {
+    if (!started) {
+      console.debug('[storage] Waiting start finished...');
+      return startPromise.then(function(){
+        return exports.xd.setObject(key, value);
+      });
+    }
+
+    if (!value) {
+      return xdLocalStorage.removeItem(key);
+    }
+    return xdLocalStorage.setItem(key, JSON.stringify(value));
   };
 
-  exports.https.getObject = function(key) {
-    console.log('TODO: getting object [{0}] from https frame'.format(key));
-    return JSON.parse(localStorage[key] || '{}');
-  };
+  exports.xd.getObject = function(key, defaultObject) {
+    if (!started) {
+      console.debug('[storage] Waiting start finished...');
+      return startPromise.then(function(){
+        return exports.xd.getObject(key, defaultObject);
+      });
+    }
 
+    return xdLocalStorage.getItem(key).then(function(response){
+      return response && response.value && JSON.parse(response.value) || defaultObject;
+    });
+  };
 
   /* -- Use secure storage (using a cordova plugin) -- */
 
@@ -104,48 +150,128 @@ angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'xdLocalS
   exports.secure.getObject = function(key) {
     return exports.secure.get(key)
       .then(function(value) {
-        return JSON.parse(localStorage[key] || '{}');
+        return (value && JSON.parse(value)) || {};
       });
   };
 
-  // Copy HTTPS functions as default function
-  if (csConfig.httpsMode === 'clever' && $window.location.protocol !== 'https:') {
-    _.forEach(_.keys(exports.https), function(key) {
-      exports[key] = exports.https[key];
+  function initStandardStorage() {
+    console.debug('[storage] Starting [standard mode]...');
+   exports.standard.storage = $window.localStorage;
+    // Set standard storage as default
+    _.forEach(_.keys(exports.standard), function(key) {
+      exports[key] = exports.standard[key];
     });
+
+    return $q.when();
   }
 
-  else {
-    // Copy unsecure function as default function
-    _.forEach(_.keys(exports.unsecure), function(key) {
-      exports[key] = exports.unsecure[key];
+  function initXdStorage() {
+    // Compute the HTTPS iframe url
+    var href = $window.location.href;
+    var hashIndex = href.indexOf('#');
+    var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
+    var iframeUrl = 'https' + rootPath.substr(4);
+    if (iframeUrl.charAt(iframeUrl.length-1) != '/') iframeUrl += '/'; // end slash
+    iframeUrl += 'https-storage.html';
+
+    console.debug('[storage] Starting [cross-domain mode] using iframe [{0}]'.format(iframeUrl));
+
+    // Set cross-domain storage as default
+    _.forEach(_.keys(exports.xd), function(key) {
+      exports[key] = exports.xd[key];
     });
+
+    var isOK = false;
+    var deferred = $q.defer();
+
+    // Timeout, in case the frame could not be loaded
+    $timeout(function() {
+      if (!isOK) {
+        // TODO: alert user ?
+        console.error('[storage] https frame not loaded (timeout). Trying standard mode...');
+        deferred.resolve(initStandardStorage());
+      }
+    }, csConfig.timeout);
+
+    xdLocalStorage.init({iframeUrl: iframeUrl})
+      .then(function() {
+        isOK = true;
+        deferred.resolve();
+      })
+      .catch(function(err) {
+        console.error('[storage] Could not init cross-domain storage. Trying standard mode...', err);
+        deferred.resolve(initStandardStorage());
+      });
+    return deferred.promise;
   }
 
+  function initSecureStorage() {
+    console.debug('[storage] Starting [secure mode]...');
+    // Set secure storage as default
+    _.forEach(_.keys(exports.secure), function(key) {
+      exports[key] = exports.secure[key];
+    });
 
-  Device.ready().then(function() {
+    var deferred = $q.defer();
 
-    function replaceSecureStorage() {
-      exports.secure = exports.unsecure;
-      exports.secure.storage = null;
-    }
-
-    if (Device.enable) {
+    ionicReady().then(function() {
+      if (!cordova.plugins || !cordova.plugins.SecureStorage) {
+        deferred.resolve(initStandardStorage());
+        return;
+      }
       exports.secure.storage = new cordova.plugins.SecureStorage(
         function () {
-          console.log('[storage] Secure storage initialized.');
+          deferred.resolve();
         },
-        function (error) {
-          console.error('[storage] Could not use secure storage: ' + error);
-          replaceSecureStorage();
+        function (err) {
+          console.error('[storage] Could not use secure storage. Will use standard.', err);
+          deferred.resolve(initStandardStorage());
         },
         appName);
-    }
-    else {
-      replaceSecureStorage();
+    });
+
+    return deferred.promise;
+  }
+
+  exports.isStarted = function() {
+    return started;
+  };
+
+  exports.ready = function() {
+    if (started) return $q.when();
+    return startPromise || start();
+  };
+
+  function start() {
+    if (startPromise) return startPromise;
+
+    var now = new Date().getTime();
+
+    // Is site on both HTTPS and HTTP: Need to use cross-domain storage
+    if (csConfig.httpsMode === 'clever' && $window.location.protocol !== 'https:') {
+      startPromise = initXdStorage();
     }
 
-  });
+    // Use Cordova secure storage plugin
+    else if (tryInitSecureStorage) {
+      startPromise = initSecureStorage();
+    }
+
+    // Use default browser local storage
+    else {
+      startPromise = initStandardStorage();
+    }
+
+    return startPromise
+      .then(function() {
+        console.debug('[storage] Started in ' + (new Date().getTime() - now) + 'ms');
+        started = true;
+        startPromise = null;
+      });
+  }
+
+  // default action
+  start();
 
   return exports;
 })

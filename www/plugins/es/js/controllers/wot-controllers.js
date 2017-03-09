@@ -53,11 +53,8 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
       !!csSettings.data.plugins.host;
   };
 
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
-  });
-
-  $scope.updateView();
+  csSettings.api.data.on.changed($scope, $scope.updateView);
+  csSettings.api.data.on.ready($scope, $scope.updateView);
 
   /* -- modals -- */
 

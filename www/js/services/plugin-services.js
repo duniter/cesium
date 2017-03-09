@@ -32,7 +32,7 @@ angular.module('cesium.plugin.services', [])
     return this;
   };
 
-  this.$get = ['$injector', '$state', function pluginFactory($injector, $state) {
+  this.$get = ['$injector', '$state', function($injector, $state) {
 
     var currentExtensionPointName;
 

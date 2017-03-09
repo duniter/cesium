@@ -1,7 +1,7 @@
 
-angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config', 'cesium.device.services'])
+angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config'])
 
-.factory('csSettings', function($rootScope, $q, Api, localStorage, $translate, csConfig, Device) {
+.factory('csSettings', function($rootScope, $q, Api, localStorage, $translate, csConfig) {
   'ngInject';
 
   // Define app locales
@@ -54,10 +54,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     useRelative: false,
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
-    useLocalStorage: Device.enable, // on mobile device, use local storage by default
+    useLocalStorage: true, // override to false if no device
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
-    rememberMe: Device.enable, // on mobile device, remember me by default
+    rememberMe: true, // override to false if no device
     showUDHistory: true,
     showLoginSalt: false,
     initPhase: false, // For currency start (when block #0 not written)
@@ -89,11 +89,21 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     }
   }, csConfig),
 
+
+
   data = {},
   previousData,
+  started = false,
+  startPromise,
+  api = new Api(this, "csSettings");
 
-  api = new Api(this, "csSettings"),
+  // Change some defaults, when no device
+  // removeIf(device)
+  defaultSettings.useLocalStorage = false;
+  defaultSettings.rememberMe = false;
+  // endRemoveIf(device)
 
+  var
   reset = function() {
     _.keys(data).forEach(function(key){
       delete data[key];
@@ -127,15 +137,30 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
   },
 
   store = function() {
-    if (data.useLocalStorage) {
-      localStorage.setObject(constants.STORAGE_KEY, data);
-    }
-    else {
-      localStorage.setObject(constants.STORAGE_KEY, null);
+    if (!started) {
+      console.debug('[setting] Waiting start finished...');
+      return startPromise.then(store);
     }
 
-    // Emit event on store
-    return api.data.raisePromise.store(data)
+    var promise;
+    if (data.useLocalStorage) {
+      promise = localStorage.setObject(constants.STORAGE_KEY, data);
+    }
+    else {
+      promise  = localStorage.setObject(constants.STORAGE_KEY, null);
+    }
+
+    return promise
+      .then(function() {
+        if (data.useLocalStorage) {
+          console.debug('[setting] Saved');
+        }
+
+        // Emit event on store
+        return api.data.raisePromise.store(data);
+      })
+
+      // Emit event on store
       .then(emitChangedEvent);
   },
 
@@ -166,54 +191,22 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
   restore = function() {
     var now = new Date().getTime();
-    return $q(function(resolve, reject){
-      console.debug("[settings] Loading from local storage...");
-      var storedData = localStorage.getObject(constants.STORAGE_KEY);
+    return localStorage.getObject(constants.STORAGE_KEY)
+        .then(function(storedData) {
+          // No settings stored
+          if (!storedData) {
+            console.debug("[settings] No settings in local storage. Using defaults.");
+            applyData(defaultSettings);
+            emitChangedEvent();
+            return;
+          }
 
-      var finishRestore = function() {
-        emitChangedEvent();
-        resolve();
-      };
+          // Apply stored data
+          applyData(storedData);
 
-      // No settings stored
-      if (!storedData) {
-        console.debug("[settings] No settings in local storage. Using defaults.");
-        applyData(defaultSettings);
-        finishRestore();
-        return;
-      }
-
-      // Workaround to get node info from Cesium < 0.2.0
-      if (storedData.DUNITER_NODE) {
-        var nodePart = storedData.DUNITER_NODE.split(':');
-        if (nodePart.length == 1 || nodePart.length == 2) {
-          storedData.node = {
-            host: nodePart[0],
-            port: nodePart[1] // could be undefined, but that's fine
-          };
-        }
-        delete storedData.DUNITER_NODE;
-      }
-      if (storedData.DUNITER_NODE_ES) {
-        var esNodePart = storedData.DUNITER_NODE_ES.split(':');
-        if (esNodePart.length == 1 || esNodePart.length == 2) {
-          storedData.plugins = {
-            es: {
-              enable: true,
-              host: esNodePart[0],
-              port: esNodePart[1] // could be undefined, but that's fine
-            }
-          };
-        }
-        delete storedData.DUNITER_NODE_ES;
-      }
-
-      // Apply stored data
-      applyData(storedData);
-
-      console.debug('[settings] Loaded from local storage in '+(new Date().getTime()-now)+'ms');
-      finishRestore();
-    });
+          console.debug('[settings] Loaded from local storage in '+(new Date().getTime()-now)+'ms');
+          emitChangedEvent();
+        });
   },
 
     // Detect locale sucessuf changes, then apply to vendor libs
@@ -243,8 +236,30 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     api.locale.raise.changed(locale);
   },
 
+
+  ready = function() {
+    if (started) return $q.when();
+    return startPromise || start();
+  },
+
   start = function() {
-    restore().then(api.data.raise.ready);
+    console.debug('[settings] Starting...');
+
+    startPromise = localStorage.ready()
+
+      // Restore
+      .then(restore)
+
+      // Emit ready event
+      .then(function() {
+        console.debug('[settings] Started');
+        started = true;
+        startPromise = null;
+        // Emit event
+        api.data.raise.ready(data);
+      });
+
+    return startPromise;
   };
 
   $rootScope.$on('$translateChangeSuccess', onLocaleChange);
@@ -256,10 +271,13 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
   api.registerEvent('locale', 'changed');
 
   // Apply default settings. This is required on some browser (web or mobile - see #361)
-  applyData(defaultSettings);
+  //applyData(defaultSettings);
+
+  // Default action
+  start();
 
   return {
-    start : start,
+    ready: ready,
     data: data,
     getByPath: getByPath,
     reset: reset,
