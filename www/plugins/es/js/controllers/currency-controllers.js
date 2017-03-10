@@ -20,7 +20,7 @@ angular.module('cesium.es.currency.controllers', ['ngResource', 'cesium.es.servi
   .controller('ESCurrencyTabBlocksExtendCtrl', ESCurrencyTabBlocksExtendController)
 ;
 
-function ESCurrencyTabBlocksExtendController($scope, PluginService, csSettings) {
+function ESCurrencyTabBlocksExtendController($scope, PluginService, esSettings) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
@@ -31,10 +31,8 @@ function ESCurrencyTabBlocksExtendController($scope, PluginService, csSettings) 
       !!csSettings.data.plugins.host;
   };
 
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
+  $scope.enable = esSettings.isEnable();
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.enable = enable;
   });
-
-  $scope.updateView();
-
 }

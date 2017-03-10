@@ -323,44 +323,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   });
   // endRemoveIf(device)
 
-  // Switch between HTTPS or HTTP intelligently
-  if (csConfig.httpsMode === 'clever') {
-    $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-      var href, hashIndex, rootPath ;
-
-      // Redirect to HTTP if view has preferHttp=true
-      if (next.data && next.data.preferHttp &&
-        ($window.location.protocol == 'https:' || csConfig.httpsModeDebug)) {
-        href = $window.location.href;
-        hashIndex = href.indexOf('#');
-        rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
-        rootPath = 'http' + rootPath.substr(5);
-        href = rootPath + $state.href(next, nextParams);
-        if (csConfig.httpsModeDebug) {
-          console.debug('[httpsMode] --- Should redirect to: ' + href);
-        }
-        else {
-          $window.location.href = href;
-        }
-      }
-      // Redirect to HTTPS
-      else if((!next.data || !next.data.preferHttp) &&
-        ($window.location.protocol != 'https:' || csConfig.httpsModeDebug)) {
-        href = $window.location.href;
-        hashIndex = href.indexOf('#');
-        rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
-        href = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
-        if (csConfig.httpsModeDebug) {
-          console.debug('[httpsMode] --- Should redirect to: ' + href);
-        }
-        else {
-          $window.location.href = href;
-        }
-      }
-    });
-  }
-  // Always redirect to HTTPS
-  else if (csConfig.httpsMode === true || csConfig.httpsMode === "true" || csConfig.httpsMode === 'force') {
+  // Force redirection to HTTPS
+  if (csConfig.httpsMode === true || csConfig.httpsMode === "true" || csConfig.httpsMode === 'force') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
       if($window.location.protocol != 'https:') {
         var href = $window.location.href;
@@ -376,6 +340,34 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     });
   }
+
+  // Update some translations, when locale changed
+  function onLocaleChange() {
+    console.debug('[app] Loading cached translations for locale [{0}]'.format($translate.use()));
+    $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD'])
+      .then(function(translations) {
+        $rootScope.translations = $rootScope.translations || {};
+        $rootScope.translations.DATE_PATTERN = translations['COMMON.DATE_PATTERN'];
+        if ($rootScope.translations.DATE_PATTERN === 'COMMON.DATE_PATTERN') {
+          $rootScope.translations.DATE_PATTERN = 'YYYY-MM-DD HH:mm';
+        }
+        $rootScope.translations.DATE_SHORT_PATTERN = translations['COMMON.DATE_SHORT_PATTERN'];
+        if ($rootScope.translations.DATE_SHORT_PATTERN === 'COMMON.DATE_SHORT_PATTERN') {
+          $rootScope.translations.DATE_SHORT_PATTERN = 'YYYY-MM-DD';
+        }
+        $rootScope.translations.UD = translations['COMMON.UD'];
+        if ($rootScope.translations.UD === 'COMMON.UD') {
+          $rootScope.translations.UD = 'UD';
+        }
+      });
+  }
+  csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
+
+  // Start plugins eager services
+  PluginService.start();
+
+  // Force at least on call
+  onLocaleChange();
 
   // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
   ionicReady()
@@ -406,36 +398,19 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         StatusBar.styleDefault();
       }
 
+      // Force to start settings
       return csSettings.ready();
+    })
+
+    // Trying to restore default wallet
+    .then(csWallet.restore)
+
+    // Storing wallet to root scope
+    .then(function(walletData){
+      $rootScope.walletData = walletData;
     });
 
-  // Update some translations, when locale changed
-  function onLocaleChange() {
-    console.debug('[app] Loading cached translations for locale [{0}]'.format($translate.use()));
-    $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD'])
-      .then(function(translations) {
-        $rootScope.translations = $rootScope.translations || {};
-        $rootScope.translations.DATE_PATTERN = translations['COMMON.DATE_PATTERN'];
-        if ($rootScope.translations.DATE_PATTERN === 'COMMON.DATE_PATTERN') {
-          $rootScope.translations.DATE_PATTERN = 'YYYY-MM-DD HH:mm';
-        }
-        $rootScope.translations.DATE_SHORT_PATTERN = translations['COMMON.DATE_SHORT_PATTERN'];
-        if ($rootScope.translations.DATE_SHORT_PATTERN === 'COMMON.DATE_SHORT_PATTERN') {
-          $rootScope.translations.DATE_SHORT_PATTERN = 'YYYY-MM-DD';
-        }
-        $rootScope.translations.UD = translations['COMMON.UD'];
-        if ($rootScope.translations.UD === 'COMMON.UD') {
-          $rootScope.translations.UD = 'UD';
-        }
-      });
-  }
-  csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
 
-  // start plugin
-  PluginService.start();
-
-  // Force at least on call
-  onLocaleChange();
 })
 ;
 

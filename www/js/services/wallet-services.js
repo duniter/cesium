@@ -1773,13 +1773,5 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   var service = factory('default');
   service.instance = factory;
 
-  // Default action: restore wallet, then store it to rootscope
-  csSettings.api.data.on.ready($rootScope, function() {
-    service.restore()
-      .then(function(data) {
-        $rootScope.walletData = data;
-      });
-  });
-
   return service;
 });

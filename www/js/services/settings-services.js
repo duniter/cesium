@@ -253,7 +253,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         console.debug('[settings] Started');
         started = true;
         startPromise = null;
-        // Emit event
+        // Emit event (used by plugins)
         api.data.raise.ready(data);
       });
 

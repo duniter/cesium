@@ -22,17 +22,13 @@ angular.module('cesium.es.network.controllers', ['cesium.es.services'])
 ;
 
 
-function ESNetworkViewExtendController($scope, PluginService, csSettings) {
+function ESNetworkViewExtendController($scope, PluginService, esSettings) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
+  $scope.enable = esSettings.isEnable();
 
-  $scope.updateView = function() {
-    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
-      csSettings.data.plugins.es.enable :
-      !!csSettings.data.plugins.host;
-  };
-
-  csSettings.api.data.on.changed($scope, $scope.updateView);
-  csSettings.api.data.on.ready($scope, $scope.updateView);
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.enable = enable;
+  });
 }

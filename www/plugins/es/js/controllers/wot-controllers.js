@@ -41,20 +41,15 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
 ;
 
-function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, csSettings, PluginService,
+function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, esSettings, PluginService,
                                      esModals, esHttp, esWallet, esInvitation) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
-
-  $scope.updateView = function() {
-    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
-      csSettings.data.plugins.es.enable :
-      !!csSettings.data.plugins.host;
-  };
-
-  csSettings.api.data.on.changed($scope, $scope.updateView);
-  csSettings.api.data.on.ready($scope, $scope.updateView);
+  $scope.enable = esSettings.isEnable();
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.enable = enable;
+  });
 
   /* -- modals -- */
 

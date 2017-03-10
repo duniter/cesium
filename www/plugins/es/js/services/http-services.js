@@ -143,6 +143,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       that.alive = false;
       that.cleanCache();
       that.api.node.raise.stop();
+      return $q.when();
     };
 
     that.restart = function() {

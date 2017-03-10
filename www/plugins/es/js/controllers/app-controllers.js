@@ -63,29 +63,22 @@ angular.module('cesium.es.app.controllers', ['ngResource', 'cesium.es.services']
 /**
  * Control new account wizard extend view
  */
-function ESJoinController($scope, $state, csSettings, PluginService) {
+function ESJoinController($scope, esSettings, PluginService) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
-
-  $scope.updateView = function() {
-    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
-      csSettings.data.plugins.es.enable :
-      !!csSettings.data.plugins.host;
-  };
-
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
+  $scope.enable = esSettings.isEnable();
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.enable = enable;
   });
-
-  $scope.updateView();
 }
 
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $state, PluginService, csSettings, UIUtils) {
+function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUtils) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
+  $scope.enable = esSettings.isEnable();
 
   $scope.showMarketLookupView = function() {
     $state.go(UIUtils.screen.isSmall() ? 'app.market_lookup': 'app.market_lookup_lg');
@@ -119,16 +112,9 @@ function ESMenuExtendController($scope, $state, PluginService, csSettings, UIUti
     });
   };
 
-
-  $scope.updateView = function() {
-    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
-                    csSettings.data.plugins.es.enable :
-                    !!csSettings.data.plugins.host;
-  };
-
-  csSettings.api.data.on.changed($scope, $scope.updateView);
-  csSettings.api.data.on.ready($scope, $scope.updateView);
-
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.enable = enable;
+  });
 }
 
 /**
@@ -144,24 +130,18 @@ function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) 
           !!csSettings.data.plugins.host);
   };
 
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
-  });
-
-  csWallet.api.data.on.login($scope, function(walletData, resolve){
-    $scope.updateView();
-    if (resolve) resolve();
-  });
-
-  csWallet.api.data.on.logout($scope, function(){
-    $scope.updateView();
-  });
-
   $scope.showEditUserProfile = function() {
     $scope.closeProfilePopover();
     $state.go('app.user_edit_profile');
   };
 
+  csSettings.api.data.on.changed($scope, $scope.updateView);
+  csSettings.api.data.on.ready($scope, $scope.updateView);
+  csWallet.api.data.on.login($scope, function(walletData, resolve){
+    $scope.updateView();
+    if (resolve) resolve();
+  });
+  csWallet.api.data.on.logout($scope, $scope.updateView);
   $scope.updateView();
 
 }

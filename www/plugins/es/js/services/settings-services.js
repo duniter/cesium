@@ -10,7 +10,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   })
 
-.factory('esSettings', function($rootScope, $q, $timeout, esHttp,
+.factory('esSettings', function($rootScope, $q, $timeout, Api, esHttp,
                             csConfig, csSettings, CryptoUtils, Device, UIUtils, csWallet) {
   'ngInject';
 
@@ -45,11 +45,13 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         }
     }, {plugins: {es: csConfig.plugins && csConfig.plugins.es || {}}}),
     that = this,
+    api = new Api('esSettings'),
     previousRemoteData,
     listeners,
     ignoreSettingsChanged = false
   ;
 
+  that.api = api;
   that.get = esHttp.get('/user/settings/:id');
   that.add = esHttp.record.post('/user/settings');
   that.update = esHttp.record.post('/user/settings/:id/_update');
@@ -293,7 +295,14 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     if (!enable && listeners && listeners.length > 0) {
       console.debug("[ES] [settings] Disable");
       removeListeners();
-      return esHttp.stop();
+
+
+      // Force ES node to stop
+      return esHttp.stop()
+        .then(function() {
+          // Emit event
+          api.state.raise.changed(enable);
+        });
     }
 
     // Enable
@@ -307,13 +316,27 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           else {
             console.debug("[ES] [settings] Enable");
             addListeners();
+
+            // Emit event
+            api.state.raise.changed(enable);
+
             if (csWallet.isLogin()) {
-              return onWalletLogin(csWallet.data);
+              return onWalletLogin(csWallet.data)
+                .then(function() {
+                  // Emit event
+                  api.state.raise.changed(enable);
+                });
+            }
+            else {
+              // Emit event
+              api.state.raise.changed(enable);
             }
           }
         });
     }
   }
+
+  api.registerEvent('state', 'changed');
 
   csSettings.ready().then(function() {
 

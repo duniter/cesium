@@ -22,19 +22,13 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
 
 ;
 
-function ESWalletViewController($scope, csSettings) {
+function ESWalletViewController($scope, esSettings) {
   'ngInject';
 
-  $scope.updateView = function() {
-    $scope.enable = csSettings.data.plugins && csSettings.data.plugins.es ?
-      csSettings.data.plugins.es.enable :
-      !!csSettings.data.plugins.host;
-  };
+  $scope.enable = esSettings.isEnable();
 
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.updateView();
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.enable = enable;
   });
-
-  $scope.updateView();
 
 }
