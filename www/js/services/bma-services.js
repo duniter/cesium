@@ -359,7 +359,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         };
       }
       // Try BMAS
-      matches = exports.regex.BMAS_ENDPOINT.exec(endpoint);;
+      matches = exports.regex.BMAS_ENDPOINT.exec(endpoint);
       if (!matches) return;
       return {
         "dns": matches[2] || '',
