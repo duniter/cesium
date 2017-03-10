@@ -4,7 +4,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
 
 .factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage,
-                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot) {
+                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot, Device) {
   'ngInject';
 
   factory = function(id) {
@@ -221,14 +221,16 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (csSettings.data.useLocalStorage) {
 
         if (isLogin() && csSettings.data.rememberMe) {
-          var dataToStore = {
-            pubkey: data.pubkey
-          };
-/*
+          // FIXME: #372
+          /*var dataToStore = {
+            pubkey: data.pubkey,
+            uid: data.uid
+          };*/
+
           var dataToStore = {
             keypair: data.keypair,
             pubkey: data.pubkey
-          };*/
+          };
 
           if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
             var pendings = data.tx.pendings.reduce(function(res, tx){
@@ -262,7 +264,25 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           if (!dataStr) return;
           return fromJson(dataStr, false)
             .then(function(storedData){
-              if (storedData && storedData.keypair && storedData.pubkey) {
+              // FIXME: #372
+              /*if (storedData && storedData.pubkey) {
+                data.pubkey = storedData.pubkey;
+                data.uid = storedData.uid;
+                data.loaded = false;
+
+                return $q.all([
+                  // Call extend api
+                  api.data.raisePromise.login(data),
+
+                  // Load parameters
+                  // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
+                  loadParameters(),
+
+                  // Load current UD is need by features tour
+                  loadCurrentUD()
+                ]);
+              }
+              else */if (storedData && storedData.keypair && storedData.pubkey) {
                 data.keypair = storedData.keypair;
                 data.pubkey = storedData.pubkey;
                 if (storedData.tx && storedData.tx.pendings) {
@@ -614,24 +634,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     loadParameters = function() {
-      return $q(function(resolve, reject) {
-        if (data.parameters && data.currency) {
-          resolve();
-          return;
-        }
-        BMA.blockchain.parameters()
+      if (data.parameters && data.currency) return $q.when();
+      return BMA.blockchain.parameters()
         .then(function(json){
           data.currency = json.currency;
           data.parameters = json;
           if (data.currentUD == -1) data.currentUD = data.parameters.ud0;
-          resolve();
         })
         .catch(function(err) {
           data.currency = null;
           data.parameters = null;
-          reject(err);
+          throw err;
         });
-      });
     },
 
     loadCurrentUD = function() {
@@ -1654,6 +1668,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       failIfInvalid = angular.isUndefined(failIfInvalid) ? true : failIfInvalid;
       return $q(function(resolve, reject) {
         var obj = JSON.parse(json || '{}');
+        // FIXME #379
+        /*if (obj && obj.pubkey) {
+          resolve({
+            pubkey: obj.pubkey
+          });
+        }
+        else */
         if (obj && obj.keypair && obj.keypair.signPk && obj.keypair.signSk) {
           var keypair = {};
           var i;
@@ -1750,8 +1771,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
   };
 
   var service = factory('default');
+  service.instance = factory;
 
-  // try to restore wallet
+  // Default action: restore wallet, then store it to rootscope
   csSettings.api.data.on.ready($rootScope, function() {
     service.restore()
       .then(function(data) {
@@ -1759,6 +1781,5 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
   });
 
-  service.instance = factory;
   return service;
 });

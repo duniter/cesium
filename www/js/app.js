@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate', 'xdLocalStorage',
+angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
   'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier','ImageCropper', 'ngFileSaver',
   // removeIf(no-device)
   'ngCordova',
@@ -302,7 +302,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $ionicConfigProvider.views.maxCache(5);
   })
 
-.run(function($rootScope, $translate, $state, $window, xdLocalStorage, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
+.run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
   'ngInject';
 
   $rootScope.config = csConfig;

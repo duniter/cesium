@@ -41,12 +41,11 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         regexp: regexp
       },
       listeners,
-      that = this,
-      startPromise,
-      started = false;
+      that = this;
 
     that.date = {now: csHttp.date.now};
     that.api = new Api(this, 'BMA-' + that.server);
+    that.started = false;
     that.init = init;
 
     if (host) {
@@ -54,6 +53,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     }
 
     function init(host, port, useSsl, useCache) {
+      if (that.started) that.stop();
       that.alive = false;
       that.cache = _emptyCache();
 
@@ -108,8 +108,10 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
 
       var getRequest = function(params) {
 
-        if (!started) {
-          console.debug('[BMA] get waiting start finished...');
+        if (!that.started) {
+          if (!that._startPromise) {
+            console.error('[BMA] Trying to get [{0}] before start()...'.format(path));
+          }
           return that.ready().then(function() {
             return getRequest(params);
           });
@@ -133,8 +135,10 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
 
     post = function(path) {
       postRequest = function(obj, params) {
-        if (!started) {
-          console.debug('[BMA] post waiting start finished...');
+        if (!that.started) {
+          if (!that._startPromise) {
+            console.error('[BMA] Trying to post [{0}] before start()...'.format(path));
+          }
           return that.ready().then(function() {
             return postRequest(obj, params);
           });
@@ -202,16 +206,17 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     }
 
     that.isStarted = function() {
-      return started;
+      return that.started;
     };
 
     that.ready = function() {
-      if (started) return $q.when();
-      return startPromise || that.start();
+      if (that.started) return $q.when();
+      return that._startPromise || that.start();
     };
 
     that.start = function() {
-      if (startPromise) return startPromise;
+      if (that._startPromise) return that._startPromise;
+      if (that.started) return $q.when(that.alive);
 
       if (!that.host) {
         return csSettings.ready()
@@ -228,17 +233,17 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       console.debug('[BMA] Starting [{0}]...'.format(that.server));
       var now = new Date().getTime();
 
-      startPromise = $q.all([
+      that._startPromise = $q.all([
           csSettings.ready,
           that.isAlive()
         ])
-        .then(function(alive) {
-          that.alive = alive;
-          if (!alive) {
+        .then(function(res) {
+          that.alive = res[1];
+          if (!that.alive) {
             // TODO : alert user ?
             console.error('[BMA] Could not start [{0}]: node unreachable'.format(that.server));
-            started = true;
-            startPromise = null;
+            that.started = true;
+            delete that._startPromise;
             return false;
           }
 
@@ -249,18 +254,19 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
           console.debug('[BMA] Started in '+(new Date().getTime()-now)+'ms');
 
           that.api.node.raise.start();
-          started = true;
-          startPromise = null;
+          that.started = true;
+          delete that._startPromise;
           return true;
         });
-      return startPromise;
+      return that._startPromise;
     };
 
     that.stop = function() {
       console.debug('[BMA] Stopping...');
-      that.alive = false;
       removeListeners();
       that.cleanCache();
+      that.alive = false;
+      that.started = false;
       that.api.node.raise.stop();
     };
 
@@ -633,9 +639,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
   };
 
   // default action
-  Device.ready().then(function() {
-    return service.start();
-  });
+  service.start();
 
   return service;
 })

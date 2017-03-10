@@ -89,8 +89,6 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     }
   }, csConfig),
 
-
-
   data = {},
   previousData,
   started = false,
@@ -271,7 +269,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
   api.registerEvent('locale', 'changed');
 
   // Apply default settings. This is required on some browser (web or mobile - see #361)
-  //applyData(defaultSettings);
+  applyData(defaultSettings);
 
   // Default action
   start();

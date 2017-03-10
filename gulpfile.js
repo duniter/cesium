@@ -260,11 +260,6 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
       .pipe(rename("debug.html"))
       .pipe(gulp.dest(tmpPath)),
 
-    // Copy https-storage.html
-    gulp.src('./www/https-storage.html')
-      .pipe(htmlmin())
-      .pipe(gulp.dest(tmpPath)),
-
     // Copy fonts
     gulp.src('./www/fonts/**/*.*')
       .pipe(gulp.dest(tmpPath + '/fonts')),
@@ -361,17 +356,7 @@ gulp.task('debug-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], func
     .on('end', done);
 });
 
-gulp.task('https-storage-files:web', ['debug-files:web'], function(done) {
-  var tmpPath = './platforms/web/www';
-
-  // Process https-storage.html file
-  gulp.src(tmpPath + '/https-storage.html')
-    .pipe(useref())             // Concatenate with gulp-useref
-    .pipe(gulp.dest(tmpPath))
-    .on('end', done);
-});
-
-gulp.task('optimize-files:web', ['https-storage-files:web'], function(done) {
+gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
   var tmpPath = './platforms/web/www';
   var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
   var cssFilter = filter("**/*.css", { restore: true });
