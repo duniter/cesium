@@ -1,6 +1,10 @@
 <bind-notifier bind-notifier="{ rebind:search.results}" ng-class="::motion.ionListClass">
 
-  <div class="item row row-header hidden-xs hidden-sm" ng-if="expertMode">
+  <div class="item item-text-wrap no-border done in gray" ng-if="isHttps && expertMode">
+    <i class="icon ion-alert-circled"></i> {{'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}
+  </div>
+
+  <div class="item row row-header hidden-xs hidden-sm done in" ng-if="expertMode">
     <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
       {{'COMMON.UID' | translate}} / {{'COMMON.PUBKEY' | translate}}
@@ -60,7 +64,7 @@
           <i class="ion-es-user-api"></i>
           <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
         </div>
-        <div class="hidden-xs hidden-sm dark" ng-if=":rebind:peer.hasEndpoint('BMAS')">
+        <div class="hidden-xs hidden-sm dark" ng-if=":rebind:peer.isSsl()">
           <i class="ion-locked"></i> <small>SSL</small>
         </div>
       </div>
@@ -69,7 +73,7 @@
           <span ng-if=":rebind:peer.uid"><i class="ion-lock-combination"></i>{{:rebind:peer.difficulty||'?'}}</span>
           <span ng-if=":rebind:!peer.uid" translate>PEER.MIRROR</span>
         </h3>
-        <h4 class="hidden-sm hidden-xs gray">v{{:rebind:peer.version}}</h4>
+        <h4 class="hidden-sm hidden-xs gray">{{:rebind: peer.version ? ('v'+peer.version) : ''}}</h4>
       </div>
       <div class="col col-20 no-padding text-center">
         <span id="helptip-network-peer-{{$index}}-block"

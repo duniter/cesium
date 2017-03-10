@@ -134,3 +134,8 @@ Peer.prototype.hasValid4 = function(bma) {
 Peer.prototype.isReachable = function () {
   return !!this.getServer();
 };
+
+Peer.prototype.isSsl = function() {
+  var bma = this.bma || this.getBMA();
+  return bma.useSsl;
+};

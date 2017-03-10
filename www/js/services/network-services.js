@@ -1,13 +1,17 @@
 
 angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, BMA, csHttp, Api) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api) {
   'ngInject';
 
   factory = function(id) {
 
     var
       interval,
+      constants = {
+        UNKNOWN_BUID: -1
+      },
+      isHttpsMode = ($window.location.protocol === 'https:'),
       api = new Api(this, "csNetwork-" + id),
 
       data = {
@@ -18,7 +22,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           member: true,
           mirror: true,
           endpointFilter: null,
-          online: false
+          online: false,
+          ssl: false
         },
         sort:{
           type: null,
@@ -172,6 +177,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           return false;
         }
 
+        // Filter on ssl
+        if (data.filter.ssl) {
+          return peer.isSsl();
+        }
+
         return true;
       },
 
@@ -236,7 +246,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             return bma ? res.concat(bma) : res;
           }, []);
 
-          // if many bma endpoint: recursive call
+          // recursive call, on each endpoint
           if (bmas.length > 1) {
             return bmas.reduce(function (res, bma) {
               return res.concat(createPeerEntities(json, bma));
@@ -251,7 +261,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         peer.dns = peer.getDns();
         peer.blockNumber = peer.block.replace(/-.+$/, '');
         peer.uid = data.uidsByPubkeys[peer.pubkey];
-        peer.id = [peer.pubkey, bma.dns, bma.ipv6, bma.ipv4, bma.port].join('-');
+        peer.id = [peer.pubkey, bma.dns, bma.ipv6, bma.ipv4, bma.port, bma.useSsl].join('-');
         return [peer];
       },
 
@@ -263,6 +273,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         if (!data.filter.online) {
           peer.online = false;
           return $q.when(peer);
+        }
+
+        // Do not try not SSL node, if Cesium running in SSL
+        if (isHttpsMode && !peer.bma.useSsl) {
+          return refreshPeerWithoutDirectAccess(peer);
         }
 
         peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort());
@@ -296,7 +311,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 return refreshPeer(peer); // recursive call
               }
             }
-            // node is DOWN
+
             peer.online=false;
             peer.currentNumber = null;
             peer.buid = null;
@@ -333,6 +348,38 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 return peer;
               });
           });
+      },
+
+      refreshPeerWithoutDirectAccess = function(peer) {
+
+        peer.online = (peer.status == 'UP');
+        peer.buid = constants.UNKNOWN_BUID;
+        delete peer.version;
+
+        // Try to get hardship (only in expert mode, because we could not sort as buid is fake)
+        if (peer.uid && data.expertMode) {
+          return data.bma.blockchain.stats.hardship({pubkey: peer.pubkey})
+            .then(function (res) {
+              peer.difficulty = res ? res.level : null;
+              return peer;
+            })
+            .catch(function (err) {
+              // When too many request, retry in 3s
+              if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+                $timeout(function() {
+                  data.bma.blockchain.stats.hardship({pubkey: peer.pubkey})
+                    .then(function (res) {
+                      peer.difficulty = res ? res.level : null;
+                    });
+                }, 3000);
+              }
+              peer.difficulty = null; // continue
+              return peer;
+            });
+        }
+        else {
+          return $q.when(peer);
+        }
       },
 
       flushNewPeersAndSort = function(newPeers, updateMainBuid) {
@@ -386,7 +433,9 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
               };
               buids[peer.buid] = buid;
             }
-            buid.count++;
+            if (buid.buid != constants.UNKNOWN_BUID) {
+              buid.count++;
+            }
           }
           data.memberPeersCount += peer.uid ? 1 : 0;
         });

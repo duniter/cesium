@@ -43,12 +43,14 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
+function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, $window,
+                                 BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
   'ngInject';
 
   $scope.networkStarted = false;
   $scope.ionItemClass = '';
   $scope.expertMode = csSettings.data.expertMode && !UIUtils.screen.isSmall();
+  $scope.isHttps = ($window.location.protocol === 'https:');
   $scope.search = {
     text: '',
     loading: true,

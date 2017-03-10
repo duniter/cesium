@@ -213,6 +213,9 @@
     "VIEW": {
       "MEDIAN_TIME": "Blockchain time",
       "LOADING_PEERS": "Loading peers..."
+    },
+    "INFO": {
+      "ONLY_SSL_PEERS": "Non-SSL nodes have a degraded display because Cesium works in HTTPS mode."
     }
   },
   "PEER": {
@@ -250,6 +253,7 @@
     "NOT_MEMBER_ACCOUNT_HELP": "This is a simple wallet, with no pending membership application.",
     "TECHNICAL_DIVIDER": "Technical data",
     "BTN_CERTIFY": "Certify",
+    "BTN_YES_CERTIFY": "Yes, certify",
     "BTN_SELECT_AND_CERTIFY": "New certification",
     "VIEW": {
       "POPOVER_SHARE_TITLE": "Identity {{title}}"
@@ -505,14 +509,15 @@
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b>Security warning:</b><br/><br/><b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
-    "MEMBERSHIP_OUT": "<b>Warning</b>:<br/>You are going to terminate your membership. This operation is <b>irreversible</b>.<br/></br/><b>Are you sure you want to continue?</b>",
+    "MEMBERSHIP_OUT": "This operation is <b>irreversible</b>.<br/></br/><b>Are you sure you want to terminate your membership?</b>",
+    "MEMBERSHIP_OUT_2": "This operation is <b>irreversible</b>!<br/><br/>Are you sure you want to <b>terminate your membership</b>?",
     "LOGIN_UNUSED_WALLET_TITLE": "Typing error?",
     "LOGIN_UNUSED_WALLET": "You are logged into an account that seems <b>inactive</b>.<br/><br/>If this account does not match yours, it's probably a <b>typing error</b> when sign in.<br/><br/><b>Would you still continue with this account?</b>",
     "FIX_IDENTITY": "The pseudonym <b>{{uid}}</b> will be published again, replacing the old publication that has expired.<br/></br/><b>Are you sure</b> you want to continue?",
     "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure?</b>",
     "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure?</b>",
-    "REVOKE_IDENTITY": "<b>Security warning </b> :<br/>You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated nickname <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to continue?",
-    "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/><b>Are you sure</b> you want to continue?",
+    "REVOKE_IDENTITY": "You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated nickname <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to revoke this identity?",
+    "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/>Are you sure you want to <b>revoke this identity</b>?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
     "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
