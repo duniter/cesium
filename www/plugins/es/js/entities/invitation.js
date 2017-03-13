@@ -33,10 +33,6 @@ function Invitation(json) {
       return;
     }
 
-    that.message = 'INVITATION.ERROR.BAD_INVITATION_FORMAT';
-    that.pubkey = json.issuer;
-    return;
-
     var identity = {
       uid: json.content.substr(0, separatorIndex),
       pubkey: json.content.substr(separatorIndex+1)
