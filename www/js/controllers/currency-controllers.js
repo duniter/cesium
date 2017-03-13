@@ -191,7 +191,8 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     xpercent: 0,
     durationFromLastUD: 0,
     blockUid: null,
-    peerCount: 0
+    dtReeval: 0,
+    udReevalTime0: 0
   };
   $scope.node = null;
   $scope.loading = true;
@@ -259,6 +260,14 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
           data.stepMax = json.stepMax;
           data.xpercent = json.xpercent;
           data.avgGenTime = json.avgGenTime;
+          data.dtReeval = json.dtReeval;
+          data.udTime0 = json.udTime0;
+          data.udReevalTime0 = json.udReevalTime0;
+
+          // Compat with Duniter < 1.0
+          if (!data.dtReeval) {
+            data.dtReeval = data.dt;
+          }
         }),
 
       // Get the current block informations
