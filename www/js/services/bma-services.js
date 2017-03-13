@@ -73,7 +73,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443);
       that.useCache = angular.isDefined(useCache) ? useCache : false;
       that.server = csHttp.getServer(host, port);
-      that.url = csHttp.getUrl(host, port, useSsl);
+      that.url = csHttp.getUrl(host, port, ''/*path*/, useSsl);
     }
 
     function exact(regexpContent) {
@@ -197,7 +197,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
 
     function onSettingsChanged(settings) {
 
-      var server = csHttp.getUrl(settings.node.host, settings.node.port, '', settings.node.useSsl);
+      var server = csHttp.getUrl(settings.node.host, settings.node.port, ''/*path*/, settings.node.useSsl);
       var hasChanged = (server != that.url);
       if (hasChanged) {
         init(settings.node.host, settings.node.port, settings.node.useSsl, that.useCache);
