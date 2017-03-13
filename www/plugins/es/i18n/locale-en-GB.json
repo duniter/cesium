@@ -54,9 +54,6 @@
       "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
       "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
       "ASK_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
-    },
-    "ERROR": {
-      "SEND_INVITATION_CERTIFICATION_FAILED": "Echec de l'envoi de la demande de certification"
     }
   },
   "INVITATION": {
@@ -96,7 +93,8 @@
       "LOAD_INVITATIONS_FAILED": "Error while loading invitations",
       "REMOVE_INVITATION_FAILED": "Error while deleting the invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Error while deleting invitations",
-      "SUGGEST_CERTIFICATIONS_FAILED": "Error while sending invitation"
+      "SUGGEST_CERTIFICATIONS_FAILED": "Error while sending invitation",
+      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid||pubkey}}</a>"
     }
   },
   "COMMENTS": {

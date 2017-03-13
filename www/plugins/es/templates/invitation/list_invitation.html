@@ -20,6 +20,7 @@
     <div class="block text-right">
       <button class="button button-positive button-small button-small-padding"
               ng-click="accept(invitation)"
+              ng-if="::invitation.state"
               translate>{{::(invitation.okText||'COMMON.BTN_SHOW') |translate}}</button>
       <button class="button button-stable button-small button-small-padding"
               ng-click="delete($index)"

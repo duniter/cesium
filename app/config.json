@@ -37,7 +37,7 @@
     }
   },
 
-  "g1": {
+  "gtest": {
     "cacheTimeMs": 60000,
     "fallbackLanguage": "en",
     "rememberMe": false,
@@ -47,17 +47,15 @@
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": false,
-    "initPhase": true,
-    "expertMode": false,
+    "expertMode": true,
     "decimalCount": 4,
-    "httpsMode": false,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
     "node": {
-      "host": "g1.duniter.org",
-      "port": 443
+      "host": "gtest.duniter.org",
+      "port": 10900
     },
     "plugins":{
       "es": {
@@ -86,7 +84,6 @@
     "timeWarningExpire": 7776000,
     "useLocalStorage": true,
     "useRelative": true,
-    "initPhase": false,
     "expertMode": true,
     "helptip": {
       "enable": false,
@@ -96,8 +93,8 @@
       }
     },
     "node": {
-      "host": "gtest.duniter.fr",
-      "port": "10900"
+      "host": "gtest.duniter.org",
+      "port": 10900
     },
     "plugins":{
       "es": {

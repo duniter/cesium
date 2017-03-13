@@ -18,11 +18,29 @@ function Invitation(json) {
     that.okText= 'WOT.BTN_CERTIFY';
 
     // read the identity to certify
-    var parts = json.content.split('-');
-    if (parts.length != 2) {
-      throw 'Invalid invitation content. format should be [uid-pubkey]';
+    if (!json.content || json.content.indexOf('-') == -1) {
+      console.error('[invitation] Empty content for invitation [{0}]'.format(that.id));
+      that.message = 'INVITATION.ERROR.BAD_INVITATION_FORMAT';
+      that.pubkey = json.issuer;
+      return;
     }
-    var identity = { uid: parts[0], pubkey: parts[1] };
+
+    var separatorIndex = json.content.lastIndexOf('-');
+    if (separatorIndex == -1) {
+      console.error('[invitation] Bad content format for invitation [{0}]: {1}'.format(that.id, json.content));
+      that.message = 'INVITATION.ERROR.BAD_INVITATION_FORMAT';
+      that.pubkey = json.issuer;
+      return;
+    }
+
+    that.message = 'INVITATION.ERROR.BAD_INVITATION_FORMAT';
+    that.pubkey = json.issuer;
+    return;
+
+    var identity = {
+      uid: json.content.substr(0, separatorIndex),
+      pubkey: json.content.substr(separatorIndex+1)
+    };
 
     // Prepare the state action
     that.state = 'app.wot_identity';

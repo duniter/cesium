@@ -174,7 +174,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   };
 
   $scope.accept = function(invitation) {
-    $scope.hideActionsPopover(); // useful in PopoverInvitationController
+    $scope.hideActionsPopover(); // need when PopoverInvitationController
 
     if (invitation.state) {
      $state.go(invitation.state, invitation.stateParams || {});

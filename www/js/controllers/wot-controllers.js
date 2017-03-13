@@ -577,6 +577,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
           return;
         }
 
+        if (!csConfig.initPhase && !$scope.formData.hasSelf) {
+          UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
+          return;
+        }
+
         // Check identity not expired
         if ($scope.formData.requirements.expired) {
           UIUtils.alert.error('ERROR.IDENTITY_EXPIRED');
