@@ -518,7 +518,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.showSharePopover = function(event) {
     $scope.hideActionsPopover();
     var title = $scope.formData.title;
-    var url = $state.href('app.registry_view_record', {title: title, id: $scope.id}, {absolute: true});
+    var url = $rootScope.rootPath + $state.href('app.registry_view_record', {title: title, id: $scope.id});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,

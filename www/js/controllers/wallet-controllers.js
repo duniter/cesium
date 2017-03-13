@@ -465,7 +465,8 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state,
     $scope.hideActionsPopover();
 
     var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
-    var url = $state.href('app.wot_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.name || $scope.formData.uid}, {absolute: true});
+    // Use rootPath (fix #390)
+    var url = $rootScope.rootPath + $state.href('app.wot_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.name || $scope.formData.uid});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,

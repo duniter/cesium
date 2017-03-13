@@ -552,7 +552,7 @@ function ESMarketRecordViewController($scope, $anchorScroll, $ionicPopover, $sta
     $scope.hideActionsPopover();
 
     var title = $scope.formData.title;
-    var url = $state.href('app.market_view_record', {title: title, id: $scope.id}, {absolute: true});
+    var url = $rootScope.rootPath + $state.href('app.market_view_record', {title: title, id: $scope.id});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,

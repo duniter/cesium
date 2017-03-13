@@ -310,6 +310,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   $rootScope.walletData = csWallet.data;
   $rootScope.device = Device;
 
+  // Compute the root path
+  var hashIndex = $window.location.href.indexOf('#');
+  $rootScope.rootPath = (hashIndex != -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
+  console.debug('[app] Detecting root path: ' + $rootScope.rootPath);
+
   // removeIf(device)
   // Automatic redirection to large state (if define)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
@@ -321,25 +326,16 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     }
   });
-  // endRemoveIf(device)
 
-  // Force redirection to HTTPS
-  if (csConfig.httpsMode === true || csConfig.httpsMode === "true" || csConfig.httpsMode === 'force') {
+  // Automatic redirection to HTTPS
+  if ((csConfig.httpsMode == true || csConfig.httpsMode === 'force') &&
+    $window.location.protocol != 'https:') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-      if($window.location.protocol != 'https:') {
-        var href = $window.location.href;
-        var hashIndex = href.indexOf('#');
-        var rootPath = (hashIndex != -1) ? href.substr(0, hashIndex) : href;
-        var path = 'https' + rootPath.substr(4) + $state.href(next, nextParams);
-        if (csConfig.httpsModeDebug) {
-          console.debug('[httpsMode] --- Should redirect to: ' + path);
-        }
-        else {
-          $window.location.href = path;
-        }
-      }
+      var path = 'https' + $rootScope.rootPath.substr(4) + $state.href(next, nextParams);
+      $window.location.href = path;
     });
   }
+  // endRemoveIf(device)
 
   // Update some translations, when locale changed
   function onLocaleChange() {
