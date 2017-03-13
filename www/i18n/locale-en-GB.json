@@ -359,7 +359,7 @@
       "COMPUTING_PUBKEY": "Computing...",
       "LAST_SLIDE_CONGRATULATION": "You completed all required fields.<br/><b>You can send the account creation request</b>.<br/><br/>For information, the public key below identifies your future account.<br/>It can be communicated to third parties to receive their payment.<br/>Once your account has been approved, you can find this key under <b>{{'ACCOUNT.TITLE'|translate}}</b>.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Warning:</b> your secret identifier, password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
-      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Warning:</b> your password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
+      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Warning:</b> your password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to continue?",
       "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one.",
       "MSG_PUBKEY_ALREADY_USED": "Public key already used by an existing member.<br/>Please choose other connection parameters."
     },

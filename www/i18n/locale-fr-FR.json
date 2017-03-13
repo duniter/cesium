@@ -358,8 +358,8 @@
       "SLIDE_6_TITLE": "Confirmation :",
       "COMPUTING_PUBKEY": "Calcul en cours...",
       "LAST_SLIDE_CONGRATULATION": "<b>Bravo !</b> Vous avez saisi toutes les informations nécessaires.<br/><b>Vous pouvez envoyer la demande</b> de création de compte.</b><br/><br/>Pour information, la clé publique ci-dessous identifiera votre futur compte.<br/>Elle pourra être communiquée à des tiers pour recevoir leur paiement.<br/>Cependant, <b>il n'est pas utile</b> de la noter ici.",
-      "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> vos identifiant secret, mot de passe et pseudonyme ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir envoyer cette demande d'inscription ?",
-      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> vos identifiant secret et mot de passe ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir envoyer cette demande d'inscription ?",
+      "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret, le mot de passe et le pseudonyme ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir envoyer cette demande d'inscription ?",
+      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret et le mot de passe ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir continuer avec ces identifiants ?",
       "MSG_UID_ALREADY_USED": "Pseudonyme déjà utilisé par quelqu'un d'autre.<br/>Veuillez en choisir un autre.",
       "MSG_PUBKEY_ALREADY_USED": "Clé publique déjà utilisée par quelqu'un d'autre.<br/>Veuillez choisir d'autres identifiants de connexion."
     },

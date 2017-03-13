@@ -638,7 +638,7 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
 
 }
 
-function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $translate, CryptoUtils, $timeout){
+function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $translate, CryptoUtils){
 
   $scope.slides = {
     slider: null,
@@ -656,6 +656,8 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
   $scope.isValidFile = false;
 
   $scope.isLogin = csWallet.isLogin();
+  $scope.hasSelf = csWallet.hasSelf();
+
   $scope.formData = {
     addQuestion: '',
     level: '4',

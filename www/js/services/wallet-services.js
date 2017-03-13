@@ -203,6 +203,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return !!data.pubkey;
     },
 
+    hasSelf = function() {
+      return !!data.pubkey && data.requirements && !data.requirements.needSelf;
+    },
+
     isNeverUsed = function() {
       if (!data.loaded) return undefined; // undefined if not full loaded
       return !data.pubkey ||
@@ -1739,6 +1743,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       login: login,
       logout: logout,
       isLogin: isLogin,
+      hasSelf: hasSelf,
       isNeverUsed: isNeverUsed,
       isUserPubkey: isUserPubkey,
       getData: getData,

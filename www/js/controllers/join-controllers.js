@@ -36,7 +36,7 @@ function JoinController($timeout, Modals) {
 }
 
 
-function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWallet, csCurrency, BMA) {
+function JoinModalController($scope, $state,  UIUtils, CryptoUtils, csSettings, Modals, csWallet, csCurrency, BMA) {
   'ngInject';
 
   $scope.formData = {
@@ -133,8 +133,6 @@ function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWa
         }
       }
     }
-
-
   };
 
   $scope.doNewAccount = function(confirm) {
@@ -163,6 +161,9 @@ function JoinModalController($scope, $state,  UIUtils, CryptoUtils, Modals, csWa
     csWallet.login($scope.formData.username, $scope.formData.password)
     .then(function() {
       if (!$scope.formData.isMember) {
+        $scope.closeModal();
+        csSettings.data.wallet = csSettings.data.wallet || {};
+        csSettings.data.wallet.alertIfUnusedWallet = false; // do not alert if empty
         // Redirect to wallet
         $state.go('app.view_wallet');
         return;
