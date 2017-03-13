@@ -97,11 +97,12 @@
       <span ng-if="search.type=='newcomers'" translate>WOT.LOOKUP.NO_NEWCOMERS</span>
     </div>
 
-    <!-- simple selection -->
+    <!-- simple selection + device -->
+    <!--removeIf(no-device)-->
     <ion-list
-      ng-if="::!allowMultiple"
+      ng-if="!allowMultiple && $root.device.enable"
       class="{{::motion.ionListClass}}"
-      can-swipe="$root.device.enable">
+      can-swipe="true">
 
       <ion-item
         ng-repeat="identity in search.results track by identity.id"
@@ -115,11 +116,30 @@
       </ion-item>
 
     </ion-list>
+    <!--endRemoveIf(no-device)-->
+
+    <!-- simple selection + no device -->
+    <!--removeIf(device)-->
+    <div
+      ng-if="!allowMultiple"
+      class="list {{::motion.ionListClass}}">
+
+      <div
+        ng-repeat="identity in search.results track by identity.id"
+        id="helptip-wot-search-result-{{$index}}"
+        class="item item-border-large item-avatar item-icon-right ink" ng-click="::select(identity)">
+
+        <ng-include src="'templates/wot/identity.html'"></ng-include>
+
+        <i class="icon ion-ios-arrow-right "></i>
+      </div>
+    </div>
+    <!--endRemoveIf(device)-->
 
     <!-- multi selection -->
-    <ion-list
+    <div
       ng-if="::allowMultiple"
-      class="{{::motion.ionListClass}}">
+      class="list {{::motion.ionListClass}}">
 
       <ion-checkbox
         ng-repeat="identity in search.results track by identity.id"
@@ -128,7 +148,7 @@
         ng-click="toggleCheck($index, $event)">
         <ng-include src="'templates/wot/identity.html'"></ng-include>
       </ion-checkbox>
-    </ion-list>
+    </div>
 
     <ion-infinite-scroll
       ng-if="search.hasMore"

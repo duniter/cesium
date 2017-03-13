@@ -132,13 +132,18 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
       }
       else {
         $timeout(function() {
+          // Init phase
+          if (csConfig.initPhase && !state.stateParams.type) {
+            $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
+          }
           // get new comers
-          if (!csConfig.initPhase || state.stateParams.type == 'newcomers') {
-            $scope.doGetNewcomers(0, state.stateParams.newcomers);
+          else if (state.stateParams.type == 'newcomers' || (!csConfig.initPhase && !state.stateParams.type)) {
+            $scope.doGetNewcomers(0, undefined, true/*skipLocationUpdate*/);
           }
-          else if (csConfig.initPhase || state.stateParams.type == 'pending') {
-            $scope.doGetPending(0, state.stateParams.pendings);
+          else if (state.stateParams.type == 'pending') {
+            $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
           }
+
         }, 100);
       }
       // removeIf(device)
@@ -230,7 +235,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     }
   };
 
-  $scope.doGetNewcomers = function(offset, size) {
+  $scope.doGetNewcomers = function(offset, size, skipLocationUpdate) {
     offset = offset || 0;
     size = size || defaultSearchLimit;
     if (size < defaultSearchLimit) size = defaultSearchLimit;
@@ -240,7 +245,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     $scope.search.type = 'newcomers';
 
     // Update location href
-    if (!offset) {
+    if (!offset && !skipLocationUpdate) {
       $scope.doRefreshLocationHref();
     }
 
@@ -258,7 +263,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
       });
   };
 
-  $scope.doGetPending = function(offset, size) {
+  $scope.doGetPending = function(offset, size, skipLocationUpdate) {
     offset = offset || 0;
     size = size || defaultSearchLimit;
     if (size < defaultSearchLimit) size = defaultSearchLimit;
@@ -272,7 +277,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
       csWot.pending;
 
     // Update location href
-    if (!offset) {
+    if (!offset && !skipLocationUpdate) {
       $scope.doRefreshLocationHref();
     }
 
@@ -449,7 +454,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
 
     // Motion
     if (res.length > 0 && $scope.motion) {
-      $scope.motion.show({selector: '.lookupForm .item.ink'});
+      $scope.motion.show({selector: '.lookupForm .list .item', ink: true});
     }
   };
 

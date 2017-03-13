@@ -552,8 +552,9 @@ angular.module('cesium.utils.services', ['ngResource'])
         options.ink = angular.isDefined(options.ink) ? options.ink : true;
         options.startVelocity = options.startVelocity || (isSmallScreen() ? 1100 : 3000);
         return $timeout(function(){
+
           if (options.ink || options.inkSelector) {
-            ionicMaterialInk.displayEffect({selector: (options.inkSelector || (options.selector + '.ink'))});
+            exports.ink({selector: (options.inkSelector || (options.selector + '.ink'))});
           }
           callback(options);
         }, options.timeout || motionTimeout);
