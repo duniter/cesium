@@ -77,26 +77,26 @@
           <span translate>MENU.HOME</span>
         </ion-item>
 
-        <ion-item menu-close
-                  id="helptip-menu-btn-currency"
-                  class="item item-icon-left"
-                  active-link="active"
-                  active-link-path-prefix="#/app/currency"
-                  href="#/app/currency"
-                  ng-if="!options.registry || !options.registry.enable">
+        <a menu-close
+           id="helptip-menu-btn-currency"
+           class="item item-icon-left"
+           active-link="active"
+           active-link-path-prefix="#/app/currency"
+           ui-sref="app.currency"
+           ng-if="!options.registry || !options.registry.enable">
           <i class="icon ion-ios-world-outline"></i>
           <span translate>MENU.CURRENCY</span>
-        </ion-item>
+        </a>
 
-        <ion-item menu-close
-                  id="helptip-menu-btn-network"
-                  class="item item-icon-left hidden-xs hidden-sm"
-                  active-link="active"
-                  active-link-path-prefix="#/app/network"
-                  href="#/app/network">
+        <a menu-close
+           id="helptip-menu-btn-network"
+           class="item item-icon-left hidden-xs hidden-sm"
+           active-link="active"
+           active-link-path-prefix="#/app/network"
+           ui-sref="app.network">
           <i class="icon ion-cloud"></i>
           <span translate>MENU.NETWORK</span>
-        </ion-item>
+        </a>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>
@@ -118,26 +118,26 @@
         <div class="item item-divider"></div>
 
 
-        <ion-item menu-close
-                  class="item item-icon-left"
-                  active-link="active"
-                  active-link-path-prefix="#/app/wallet"
-                  ng-click="loginAndGo('app.view_wallet')"
-                  ng-class="{'item-menu-disable': !login}">
+        <a menu-close
+           class="item item-icon-left"
+           active-link="active"
+           active-link-path-prefix="#/app/wallet"
+           ng-click="loginAndGo('app.view_wallet')"
+           ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-person"></i>
           <span translate>MENU.ACCOUNT</span>
-        </ion-item>
+        </a>
         <a id="helptip-menu-btn-account"></a>
 
-        <ion-item menu-close
-                  class="item item-icon-left"
-                  active-link="active"
-                  active-link-path-prefix="#/app/history"
-                  ng-click="loginAndGo('app.view_wallet_tx')"
-                  ng-class="{'item-menu-disable': !login}">
+        <a menu-close
+           class="item item-icon-left"
+           active-link="active"
+           active-link-path-prefix="#/app/history"
+           ng-click="loginAndGo('app.view_wallet_tx')"
+           ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-card"></i>
           <span translate>MENU.TRANSACTIONS</span>
-        </ion-item>
+        </a>
         <a id="helptip-menu-btn-tx"></a>
 
         <div class="item item-divider visible-xs visible-sm"></div>
@@ -145,10 +145,14 @@
         <!-- Allow extension here -->
         <cs-extension-point name="menu-user"></cs-extension-point>
 
-        <ion-item menu-close class="item item-icon-left visible-xs visible-sm" active-link="active" href="#/app/settings">
+        <a menu-close
+           class="item item-icon-left visible-xs visible-sm"
+           active-link="active"
+           active-link-path-prefix="#/app/settings"
+           ui-sref="app.settings">
           <i class="icon ion-android-settings"></i>
           <span translate>MENU.SETTINGS</span>
-        </ion-item>
+        </a>
         <a id="helptip-menu-btn-settings"></a>
 
         <!-- actions divider -->

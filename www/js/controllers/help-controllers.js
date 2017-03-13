@@ -548,10 +548,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         });
         return $scope.showHelpTip('helptip-wot-view-certifications', {
           bindings: {
-            content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS',
-            icon: {
-              position: 'center'
-            }
+            content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS'
           },
           timeout: 2500
         });
