@@ -33,6 +33,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.servic
   }
 
   function packRecordFields(record, keypair, recipientFieldName, cypherFieldNames) {
+
     recipientFieldName = recipientFieldName || 'recipient';
     if (!record[recipientFieldName]) {
       return $q.reject({message:'ES_WALLET.ERROR.RECIPIENT_IS_MANDATORY'});
@@ -42,6 +43,9 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.servic
     if (typeof cypherFieldNames == 'string') {
       cypherFieldNames = [cypherFieldNames];
     }
+
+    // Work on a copy, to keep the original record (as it could be use again - fix #382)
+    record = angular.copy(record);
 
     // Get recipient
     var recipientPk = CryptoUtils.util.decode_base58(record[recipientFieldName]);
