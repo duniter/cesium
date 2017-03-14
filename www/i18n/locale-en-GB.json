@@ -194,7 +194,7 @@
       "MEDIAN_TIME": "Current blockchain time",
       "POW_MIN": "Common difficulty",
       "MONEY_RULES_DIVIDER": "Rules of currency",
-      "C_RULE": "Growth",
+      "C_RULE": "Theoretical growth target",
       "UD_RULE": "Universal dividend (formula)",
       "DT_REEVAL": "Period between two re-evaluation of the UD",
       "REEVAL_SYMBOL": "reeval",

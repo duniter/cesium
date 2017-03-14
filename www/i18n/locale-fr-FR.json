@@ -194,7 +194,7 @@
       "MEDIAN_TIME": "Heure de la blockchain",
       "POW_MIN": "Niveau minimal de difficulté de calcul",
       "MONEY_RULES_DIVIDER": "Règles de la monnaie",
-      "C_RULE": "Croissance théorique",
+      "C_RULE": "Croissance théorique cible",
       "UD_RULE": "Calcul du dividende universel",
       "DT_REEVAL": "Période de revalorisation du DU",
       "REEVAL_SYMBOL": "reval",
