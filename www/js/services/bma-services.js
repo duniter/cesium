@@ -378,7 +378,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     exports.copy = function(otherNode) {
-      init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache);
+      init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
       return that.restart();
     };
 
