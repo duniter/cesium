@@ -778,25 +778,18 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       getPending = function(offset, size) {
         offset = offset || 0;
         size = size || 20;
-        var uids;
-        var memberships;
         return $q.all([
-          BMA.wot.member.uids()
-            .then(function(res) {
-              uids = res;
-            }),
-
+          BMA.wot.member.uids(),
           BMA.wot.member.pending()
             .then(function(res) {
-              if (res.memberships && res.memberships.length) {
-                memberships = res.memberships;
-              }
+              return (res.memberships && res.memberships.length) ? res.memberships : undefined;
             })
           ])
-          .then(function() {
-            if (!memberships) {
-              return null;
-            }
+          .then(function(res) {
+            var uids = res[0];
+            var memberships = res[1];
+            if (!memberships) return;
+
             var idtiesByBlock = {};
             var idtiesByPubkey = {};
             _.forEach(memberships, function(ms){

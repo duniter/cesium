@@ -51,6 +51,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     if (host) {
       init(host, port, useSsl, useCache);
     }
+    that.useCache = useCache; // need here because used in get() function
 
     function init(host, port, useSsl, useCache) {
       if (that.started) that.stop();
@@ -312,7 +313,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         certifiersOf: get('/wot/certifiers-of/:pubkey'),
         member: {
           all: get('/wot/members', csHttp.cache.LONG),
-          pending: get('/wot/pending')
+          pending: get('/wot/pending', csHttp.cache.SHORT)
         },
         requirements: get('/wot/requirements/:pubkey'),
         add: post('/wot/add'),
@@ -608,7 +609,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     angular.merge(that, exports);
   }
 
-  var service = new BMA();
+  var service = new BMA(undefined, undefined, undefined, true);
 
   service.instance = function(host, port, useSsl, useCache) {
     var bma = new BMA();
