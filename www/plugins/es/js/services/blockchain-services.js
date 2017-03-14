@@ -33,17 +33,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       return new RegExp('^' + regexpContent + '$');
     }
 
-    function copy(otherNode) {
-      if (!!this.instance) {
-        var instance = this.instance;
-        angular.copy(otherNode, this);
-        this.instance = instance;
-      }
-      else {
-        angular.copy(otherNode, this);
-      }
-    }
-
     exports.node.parseEndPoint = function(endpoint) {
       var matches = REGEX.ES_CORE_API_ENDPOINT.exec(endpoint);
       if (!matches) return;
@@ -100,7 +89,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       delete request.skipData;
       request.from = request.from || 0;
       request.size = request.size || CONSTANTS.DEFAULT_SEARCH_SIZE;
-      request._source = request._source || FIELDS.COMMONS;
+      request._source = options._source || FIELDS.COMMONS;
       if (options._source && options._source == '*') {
         delete request._source;
       }
@@ -112,10 +101,16 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     };
 
     exports.block.searchText = function(currency, text, options) {
-      var request = options || {};
+      if (options && angular.isUndefined(options.excludeCurrent)) {
+        options.excludeCurrent = true;
+      }
+      var request = options ? angular.copy(options) : {};
+      delete request.excludeCurrent;
+      delete request.fillAvatar;
+      delete request.skipData;
       request.from = request.from || 0;
       request.size = request.size || CONSTANTS.DEFAULT_SEARCH_SIZE;
-      request._source = request._source || FIELDS.COMMONS;
+      request._source = options._source || FIELDS.COMMONS.join(',');
       if (options._source && options._source == '*') {
         delete request._source;
       }
@@ -124,7 +119,9 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       request.text=text||'';
 
       return exports.raw.block.searchText(request)
-        .then(exports.raw.block.processSearchResult);
+        .then(function(res) {
+          return exports.raw.block.processSearchResult(res, options);
+        });
     };
 
     return exports;

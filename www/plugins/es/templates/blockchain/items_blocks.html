@@ -1,6 +1,18 @@
 
 
-<div class="item row row-header hidden-xs hidden-sm" ng-if="expertMode">
+<div class="item row row-header done in hidden-xs hidden-sm" ng-if=":rebind:!expertMode">
+  <!-- compact -->
+  <a class="button button-text button-small ink"
+     ng-class="{'button-text-positive': compactMode, 'button-text-stable': !compactMode}"
+     ng-click="toggleCompactMode()" >
+    <i class="icon ion-navicon"></i>
+    <b class="ion-arrow-down-b" style="position: absolute; top: -2px; left: 4px; font-size: 8px;"></b>
+    <b class="ion-arrow-up-b" style="position: absolute; top: 10px; left: 4px; font-size: 8px;"></b>
+    <span>{{'BLOCKCHAIN.LOOKUP.BTN_COMPACT'|translate}}</span>
+  </a>
+</div>
+
+<div class="item row row-header done in hidden-xs hidden-sm" ng-if=":rebind:expertMode">
 
   <!-- compact -->
   <a class="pull-left gray button button-text button-small no-margin no-padding"

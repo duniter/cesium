@@ -1,15 +1,15 @@
 <a name="block-{{::block.number}}"></a>
-<ion-item id="block-{{::block.number}}"
+<div id="block-{{::block.number}}"
           ng-if="!block.hide"
           class="item item-block item-icon-left item-block-empty"
-          ng-class="{'compacted': block.compacted && compactMode, ionItemClass: true}"
+          ng-class=":rebind:{'compacted': compactMode, ionItemClass: true}"
           ng-click="selectBlock(block)"
           >
-  <div class="row no-padding" ng-if="!block.compacted || !compactMode">
+  <div class="row no-padding" ng-if=":rebind:!compactMode">
     <div class="col">
-      <h3 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
+      <h3 class="gray">
         <i class="ion-clock"></i>
-        {{block.medianTime|formatDate}}
+        {{:rebind:block.medianTime|formatDate}}
       </h3>
     </div>
 
@@ -31,4 +31,4 @@
     </div>
 
   </div>
-</ion-item>
+</div>

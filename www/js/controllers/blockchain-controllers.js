@@ -277,10 +277,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
     $scope.smallscreen = UIUtils.screen.isSmall();
 
-    if (!$scope.search.results.length) return;
-
     // Set Motion
-    if (res.length > 0) {
+    if (res && res.length) {
       $scope.motion.show({selector: '.list-blocks .item-block'});
     }
 
@@ -410,13 +408,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       $scope.search.sort = sort;
     }
     $scope.doSearch();
-  };
-
-  $scope.sameDay = function(block, previousBlock) {
-    if (block.number >= 2438 && block.number <= 2439) {
-
-      console.log("{0} {1} -> {2}".format(block.number, block.medianTime, block.medianTime % (24* 60 * 60)));
-    }
   };
 
   $scope.showHelpTip = function() {
