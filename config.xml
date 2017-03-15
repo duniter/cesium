@@ -89,7 +89,7 @@
   </platform>
   <platform name="firefoxos">
     <icon height="128" src="resources/firefoxos/img/logo_128px.png" width="128" />
-    <icon height="60" src="resources/firefoxos/img/logo_60.png" width="60" />
+    <icon height="60" src="resources/firefoxos/img/logo_60px.png" width="60" />
   </platform>
   <platform name="ubuntu">
     <icon height="57" src="resources/ubuntu/img/logo_57px.png" width="57"/>
