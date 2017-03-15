@@ -382,10 +382,10 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
   };
 
   $scope.scanQrCode = function(){
-    if (!Device.enable) {
+    if (!Device.barcode.enable) {
       return;
     }
-    Device.camera.scan()
+    Device.barcode.scan()
     .then(function(result) {
       if (!result) {
         return;

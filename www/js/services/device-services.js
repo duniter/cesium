@@ -38,7 +38,7 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services',
       // endRemoveIf(device)
 
       function getPicture(options) {
-        if (!exports.enable) {
+        if (!exports.camera.enable) {
           return $q.reject("Camera not enable. Please call 'Device.ready()' once before use (e.g in app.js).");
         }
 
@@ -133,19 +133,41 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services',
       exports.clipboard = {copy: copy};
       exports.camera = {
           getPicture : getPicture,
-          scan: scan
+          scan: function(n){
+            console.log('Deprecated use of Device.camera.scan(). Use Device.barcode.scan() instead');
+            return scan(n);
+          }
         };
+      exports.barcode = {
+        enable : false,
+        scan: scan
+      };
+      exports.keyboard = {
+        enable: false,
+        close: function() {
+          if (!exports.keyboard.enable) return;
+          cordova.plugins.Keyboard.close();
+        }
+      };
 
       var started = false;
       var startPromise = ionicReady().then(function(){
 
-        var enableCamera = !!navigator.camera;
-        exports.enable = enableCamera;
+        exports.enable = cordova && cordova.plugins;
+
+        console.info('TODO');
 
         if (exports.enable){
-          var enableBarcodeScanner = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
+          exports.camera.enable = !!navigator.camera;
+          exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard;
+          exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
 
-          console.debug('[device] Ionic platform ready, with [barcodescanner={0}] [camera={1}]'.format(enableBarcodeScanner, enableCamera));
+          if (exports.keyboard.enable) {
+            angular.extend(exports.keyboard, cordova.plugins.Keyboard);
+          }
+
+          console.debug('[device] Ionic platform ready, with [camera: {0}] [barcode scanner: {1}] [keyboard: {2}]'
+            .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable));
 
           if (cordova.InAppBrowser) {
             console.debug('[device] Enabling InAppBrowser');

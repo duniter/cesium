@@ -360,7 +360,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             //  - same wallet uid
             //  - is member
             //  - has a pending membership
-            //  - is not expired
+            //  - is not expired (in sandbox)
             //  - is not outdistanced
             //  - if has certifications
             //      max(count(certification)
@@ -388,7 +388,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           idty.needSelf = false;
           idty.needMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn <= 0 );
           idty.needRenew = (!idty.needMembership &&
-          idty.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership && idty.membershipPendingExpiresIn <= 0);
+                            idty.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
+                            idty.membershipPendingExpiresIn <= 0);
           idty.canMembershipOut = (idty.membershipExpiresIn > 0);
           idty.pendingMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn > 0);
           idty.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
@@ -700,6 +701,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       }
       if (data.requirements.needRenew) {
         addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+      }
+      else if (data.requirements.wasMember && data.requirements.needMembership) {
+        addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
       }
     },
 

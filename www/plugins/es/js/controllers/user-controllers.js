@@ -241,7 +241,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
   };
 
   $scope.showAvatarModal = function() {
-    if (Device.enable) {
+    if (Device.camera.enable) {
       return Device.camera.getPicture()
         .then(function(imageData) {
           $scope.avatar = {src: "data:image/png;base64," + imageData};

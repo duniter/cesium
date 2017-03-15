@@ -69,7 +69,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               //  - same wallet uid
               //  - is member
               //  - has a pending membership
-              //  - is not expired
+              //  - is not expired (in sandbox)
               //  - is not outdistanced
               //  - if has certifications
               //      max(count(certification)

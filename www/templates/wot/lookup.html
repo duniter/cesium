@@ -5,6 +5,7 @@
 
   <ion-nav-buttons side="secondary">
     <button class="button button-icon button-clear icon ion-qr-scanner hidden-no-device"
+            ng-if="$root.device.barcode.enable"
             ng-click="scanQrCode()">
     </button>
     <button class="button button-icon button-clear visible-xs visible-sm"

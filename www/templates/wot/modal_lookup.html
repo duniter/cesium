@@ -20,7 +20,7 @@
 
     <div class="visible-xs visible-sm text-right stable-bg stable">
       <button class="button button-icon button-small-padding dark hidden-no-device ink"
-              ng-if="::$root.device.enable"
+              ng-if="$root.device.barcode.enable"
               ng-click="scanQrCode()">
         <i class="icon ion-qr-scanner"></i>
       </button>

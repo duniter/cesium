@@ -105,10 +105,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.scanQrCodeAndGo = function() {
-    if (!Device.enable) {
+    if (!Device.barcode.enable) {
       return;
     }
-    Device.camera.scan()
+    Device.barcode.scan()
     .then(function(uri) {
       if (!uri) {
         return;

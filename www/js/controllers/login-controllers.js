@@ -27,9 +27,7 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
       return;
     }
     // removeIf(no-device)
-    if (window.cordova && cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.close();
-    }
+    Device.keyboard.close();
     // endRemoveIf(no-device)
     UIUtils.loading.show();
 

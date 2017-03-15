@@ -315,8 +315,10 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   $rootScope.rootPath = (hashIndex != -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
   console.debug('[app] Detecting root path: ' + $rootScope.rootPath);
 
-  // removeIf(device)
-  // Automatic redirection to large state (if define)
+  // removeIf(android)
+  // removeIf(ios)
+  // removeIf(firefoxos)
+  // Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
     if (next.data.large && !UIUtils.screen.isSmall()) {
       var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
@@ -326,7 +328,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       }
     }
   });
+  // endRemoveIf(firefoxos)
+  // endRemoveIf(ios)
+  // endRemoveIf(android)
 
+  // removeIf(device)
   // Automatic redirection to HTTPS
   if ((csConfig.httpsMode === true || csConfig.httpsMode == 'true' ||csConfig.httpsMode === 'force') &&
     $window.location.protocol != 'https:') {
@@ -370,21 +376,21 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     .then(function() {
 
       // Keyboard
-      if (window.cordova && window.cordova.plugins.Keyboard) {
+      if (Device.keyboard.enable) {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
         // for form inputs)
-        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        Device.keyboard.hideKeyboardAccessoryBar(true);
 
         // iOS: do not push header up when opening keyboard
         // (see http://ionicframework.com/docs/api/page/keyboard/)
         if (ionic.Platform.isIOS()) {
-          cordova.plugins.Keyboard.disableScroll(true);
+          Device.keyboard.disableScroll(true);
         }
       }
 
       // Ionic Platform Grade is not A, disabling views transitions
       if (ionic.Platform.grade.toLowerCase()!='a') {
-        console.log('Disable UI effects - plateform\'s grade is not [a] but [' + ionic.Platform.grade + ']');
+        console.log('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
         UIUtils.setEffects(false);
       }
 

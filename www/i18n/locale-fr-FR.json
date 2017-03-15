@@ -327,6 +327,7 @@
     "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt <b>manquer de certification</b> (au moins {{willNeedCertificationCount}} est nécessaire)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre <b>va expirer {{membershipExpiresIn|formatDurationTo}}</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renouveler votre adhésion</a> d'ici là.",
+    "NEED_RENEW_MEMBERSHIP": "Vous n'êtes plus membre, car votre adhésion <b>a expiré</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renouveler votre adhésion</a>.",
     "CERTIFICATION_COUNT": "Certifications reçues",
     "CERTIFICATION_COUNT_SHORT": "Certifications",
     "SIG_STOCK": "Certifications envoyées",
