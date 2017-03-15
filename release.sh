@@ -8,6 +8,7 @@ then
   exit
 fi
 
+DIRNAME=`pwd`
 
 ### Releasing
 current=`grep -P "version\": \"\d+.\d+.\d+(\w*)" package.json | grep -oP "\d+.\d+.\d+(\w*)"`
@@ -40,6 +41,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   ionic build android --release
   ionic build firefoxos --release
   gulp build:web --release
+  ionic build ubuntu --release
+  cd platforms/ubuntu/native/cesium; debuild
+  cd $DIRNAME
 
   # Commit
   git reset HEAD

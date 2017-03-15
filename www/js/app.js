@@ -313,7 +313,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // Compute the root path
   var hashIndex = $window.location.href.indexOf('#');
   $rootScope.rootPath = (hashIndex != -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
-  console.debug('[app] Detecting root path: ' + $rootScope.rootPath);
+  console.debug('[app] Root path is [' + $rootScope.rootPath + ']');
 
   // removeIf(android)
   // removeIf(ios)

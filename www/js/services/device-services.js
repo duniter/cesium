@@ -153,9 +153,7 @@ angular.module('cesium.device.services', ['ngResource', 'cesium.utils.services',
       var started = false;
       var startPromise = ionicReady().then(function(){
 
-        exports.enable = cordova && cordova.plugins;
-
-        console.info('TODO');
+        exports.enable = window.cordova && cordova && cordova.plugins;
 
         if (exports.enable){
           exports.camera.enable = !!navigator.camera;
