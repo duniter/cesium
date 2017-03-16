@@ -541,7 +541,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     }, timeout);
   }
 
-  function motionDelegate(callback, ionListClass) {
+  function motionDelegate(delegate, ionListClass) {
     var motionTimeout = isSmallScreen() ? 100 : 10;
     var defaultSelector = '.list.{0} .item, .list .{0} .item'.format(ionListClass, ionListClass);
       return {
@@ -553,10 +553,11 @@ angular.module('cesium.utils.services', ['ngResource'])
         options.startVelocity = options.startVelocity || (isSmallScreen() ? 1100 : 3000);
         return $timeout(function(){
 
-          if (options.ink || options.inkSelector) {
-            exports.ink({selector: (options.inkSelector || (options.selector + '.ink'))});
-          }
-          callback(options);
+          // Display ink effect (no selector need)
+          if (options.ink) exports.ink();
+
+          // Display the delegated motion effect
+          delegate(options);
         }, options.timeout || motionTimeout);
       }
     };

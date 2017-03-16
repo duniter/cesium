@@ -3,7 +3,8 @@
   </ion-nav-title>
 
   <ion-content scroll="true">
-    <div class="positive-900-bg hero">
+
+    <div class="hero dark-bg" ng-class="{'positive-900-bg': !loading && formData.isMember}">
       <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-if="::!formData.avatar"

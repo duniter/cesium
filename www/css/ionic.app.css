@@ -15107,3 +15107,9 @@ div[dropzone] {
   .button-icon-event .icon-help,
   .button-icon-event .icon-event {
     pointer-events: all !important; }
+
+.hero.dark-bg {
+  background-color: #555; }
+
+.hero.positive-900-bg {
+  background-color: #1A237E !important; }
