@@ -15108,6 +15108,9 @@ div[dropzone] {
   .button-icon-event .icon-event {
     pointer-events: all !important; }
 
+/**********
+  Wot identity
+**********/
 .hero.dark-bg {
   background-color: #555; }
 

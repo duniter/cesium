@@ -19,7 +19,12 @@
           <h3 class="light" ng-if="::formData.uid">{{::formData.uid}}</h3>
           <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
         </ng-if>
-        <h4 class="assertive"><ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
+        <h4 class="assertive">
+          <ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && !revoked" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if>
+          <ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</ng-if>
+          <ng-if ng-if="::(formData.name || formData.uid) && formData.isMember && revoked" translate>WOT.MEMBER_PENDING_REVOCATION_PARENTHESIS</ng-if>
+        </h4>
+
       </div>
       <h4 class="content light" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
@@ -49,7 +54,7 @@
               ng-click="certify()"
               ng-if=":rebind:formData.hasSelf"
               title="{{'WOT.BTN_CERTIFY' | translate}}"
-              ng-disabled="alreadyCertified">
+              ng-disabled="disableCertifyButton">
       </button>
 
       <button class="button button-calm ink"

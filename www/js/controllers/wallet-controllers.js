@@ -52,35 +52,49 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state,
                           UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings) {
   'ngInject';
 
-  $scope.hasCredit = false;
   $scope.loading = true;
   $scope.settings = csSettings.data;
 
   $scope.$on('$ionicView.enter', function() {
-    $scope.loadWallet()
-      .then(function(walletData) {
-        $scope.formData = walletData;
-        $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
-        $scope.updateView();
-        $scope.showQRCode('qrcode', $scope.formData.pubkey, 1100);
-        $scope.showHelpTip();
-        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
-      })
-      .catch(function(err){
-        if (err == 'CANCELLED') {
-          $scope.showHome();
-        }
-      });
+    if ($scope.loading) { // load once
+      $scope.loadWallet()
+        .then(function(walletData) {
+          $scope.formData = walletData;
+          $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+          $scope.updateView();
+          $scope.showQRCode('qrcode', $scope.formData.pubkey, 1100);
+          $scope.showHelpTip();
+          UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+        })
+        .catch(function(err){
+          if (err == 'CANCELLED') {
+            $scope.showHome();
+          }
+        });
+    }
   });
 
   $scope.updateView = function() {
     $scope.motion.show({selector: '#wallet .item'});
     $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
   };
+  // Listen new events (can appears from security wizard also)
+  $scope.$watchCollection('formData.events', function(newEvents, oldEvents) {
+    if (!oldEvents || $scope.loading || angular.equals(newEvents, oldEvents)) return;
+    $scope.updateView();
+  });
 
   $scope.setRegisterForm = function(registerForm) {
     $scope.registerForm = registerForm;
   };
+
+  // Clean controller data when logout
+  $scope.onWalletLogout = function() {
+    delete $scope.qrcode; // clean QRcode
+    delete $scope.formData;
+    $scope.loading = true;
+  };
+  csWallet.api.data.on.logout($scope, $scope.onWalletLogout);
 
   // Ask uid
   $scope.showUidPopup = function() {
@@ -114,7 +128,7 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state,
           })
           .then(function(uid) {
             if (!uid) { // user cancel
-              $scope.formData.uid = null;
+              delete $scope.formData.uid;
               UIUtils.loading.hide();
               return;
             }

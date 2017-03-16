@@ -25,7 +25,8 @@
   </span>
   <b class="ion-key"></b>
   {{::identity.pubkey | formatPubkey}}
-  <span ng-if="!identity.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+  <span ng-if="::!identity.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+  <span ng-if="::identity.revoked" class="assertive" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</span>
 </h4>
 <h4 ng-if="::identity.events||identity.tags">
   <span ng-repeat="event in ::identity.events"

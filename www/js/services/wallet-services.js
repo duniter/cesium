@@ -396,6 +396,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           idty.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
             return count + (cert.expiresIn <= csSettings.data.timeWarningExpire ? 1 : 0);
           }, 0) : 0;
+          idty.pendingRevocation = !idty.revoked && !!idty.revocation_sig;
 
           data.requirements = idty;
           data.uid = idty.uid;
@@ -690,20 +691,28 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.requirements.pendingCertificationCount = 0 ; // init to 0, because not loaded here (see wot-service.js)
 
       // Add user events
-      if (data.requirements.pendingMembership) {
-        addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
+      if (data.requirements.revoked) {
+        addEvent({type:'warn', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
       }
-      if (data.requirements.needCertificationCount > 0) {
-        addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+      else if (data.requirements.pendingRevocation) {
+        addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'});
       }
-      if (data.requirements.willNeedCertificationCount > 0) {
-        addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
-      }
-      if (data.requirements.needRenew) {
-        addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
-      }
-      else if (data.requirements.wasMember && data.requirements.needMembership) {
-        addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+      else {
+        if (data.requirements.pendingMembership) {
+          addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
+        }
+        if (data.requirements.needCertificationCount > 0) {
+          addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+        }
+        if (data.requirements.willNeedCertificationCount > 0) {
+          addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+        }
+        if (data.requirements.needRenew) {
+          addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+        }
+        else if (data.requirements.wasMember && data.requirements.needMembership) {
+          addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+        }
       }
     },
 
@@ -1591,12 +1600,12 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           finishLoadRequirements();
 
           // Add user event
-          addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+          addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'}, true);
         })
         .catch(function(err) {
           if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
             // Already registered by node: just add an event
-            addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+            addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'}, true);
           }
           else {
             throw err;
@@ -1620,7 +1629,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                 addEvent({
                   type: 'pending',
                   message: 'INFO.REVOCATION_SENT_WAITING_PROCESS',
-                  context: 'revocation'
+                  context: 'requirements'
                 }, true);
               })
               .catch(function (err) {
@@ -1629,7 +1638,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   addEvent({
                     type: 'pending',
                     message: 'INFO.REVOCATION_SENT_WAITING_PROCESS',
-                    context: 'revocation'
+                    context: 'requirements'
                   }, true);
                 }
                 else {
@@ -1638,7 +1647,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               });
           }
           else {
-            addEvent({type: 'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'revocation'}, true);
+            addEvent({type: 'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'}, true);
           }
         });
 

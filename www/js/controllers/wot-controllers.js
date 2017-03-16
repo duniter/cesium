@@ -549,7 +549,10 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
 function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csConfig, csWot, csWallet) {
   'ngInject';
 
-  $scope.formData = {};
+  $scope.formData = {
+    hasSelf: true
+  };
+  $scope.disableCertifyButton = true;
   $scope.loading = true;
 
   $scope.load = function(pubkey, withCache, uid) {
@@ -557,11 +560,13 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       .then(function(identity){
         if (!identity) return UIUtils.onError('ERROR.IDENTITY_NOT_FOUND')().then($scope.showHome);
         $scope.formData = identity;
-        $scope.canCertify = $scope.formData.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey)));
-        $scope.canSelectAndCertify = $scope.formData.hasSelf && csWallet.isUserPubkey(pubkey);
+        $scope.revoked = identity.requirements && (identity.requirements.revoked || identity.requirements.pendingRevocation);
+        $scope.canCertify = identity.hasSelf && (!csWallet.isLogin() || (!csWallet.isUserPubkey(pubkey))) && !$scope.revoked;
+        $scope.canSelectAndCertify = identity.hasSelf && csWallet.isUserPubkey(pubkey);
         $scope.alreadyCertified = !$scope.canCertify || !csWallet.isLogin() ? false :
           (!!_.findWhere(identity.received_cert, { pubkey: csWallet.data.pubkey, valid: true }) ||
           !!_.findWhere(identity.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true }));
+        $scope.disableCertifyButton = $scope.alreadyCertified || $scope.revoked;
         $scope.loading = false;
       })
       .catch(function(err) {

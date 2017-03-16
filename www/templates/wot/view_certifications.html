@@ -17,8 +17,7 @@
   <ion-content class="certifications certifications-lg">
 
     <!-- Buttons bar -->
-    <div class="hidden-xs hidden-sm text-center padding"
-         ng-if="canCertify || canSelectAndCertify">
+    <div class="hidden-xs hidden-sm text-center padding">
       <button class="button button-stable button-small-padding icon ion-loop ink"
               ng-click="doUpdate()"
               title="{{'COMMON.BTN_REFRESH' | translate}}">
@@ -26,9 +25,9 @@
 
       <button id="helptip-certs-certify"
               class="button button-raised button-calm icon-left ion-ribbon-b"
-              ng-if="canCertify"
+              ng-if="formData.hasSelf"
               ng-click="certify()"
-              ng-disabled="alreadyCertified">
+              ng-disabled="disableCertifyButton">
         {{'WOT.BTN_CERTIFY' | translate}}
       </button>
       <button id="helptip-certs-select-certify"
@@ -76,7 +75,11 @@
               <h5 class="text-center gray">
                 <i class="icon ion-key"></i> {{formData.pubkey|formatPubkey}}
               </h5>
-              <h5 class="assertive" ng-if="(formData.name||formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</h5>
+              <h5 class="assertive">
+                <span ng-if="::(formData.name || formData.uid) && !formData.isMember && !revoked" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+                <b ng-if="::(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</b>
+                <b ng-if="::(formData.name || formData.uid) && formData.isMember && revoked" translate>WOT.MEMBER_PENDING_REVOCATION_PARENTHESIS</b>
+              </h5>
             </a>
           </div>
           <div class="col text-center no-padding gray" style="margin-top: 30px;">

@@ -109,6 +109,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }
               return count;
             }, 0) : 0;
+            requirements.pendingRevocation = !requirements.revoked && !!requirements.revocation_sig;
 
             return requirements;
           })
@@ -457,11 +458,18 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
           (data.sigQty - data.requirements.certificationCount + data.requirements.willExpireCertificationCount) : 0;
         data.requirements.pendingCertificationCount = data.received_cert_pending ? data.received_cert_pending.length : 0;
 
+        // Use /wot/lookup.revoked when requirements not filled
+        data.requirements.revoked = angular.isDefined(data.requirements.revoked) ? data.requirements.revoked : data.revoked;
+
         // Add events
-        if (data.revoked) {
+        if (data.requirements.revoked) {
           delete data.hasBadSelfBlock;
           addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_REVOKED', messageParams: {revocationTime: data.revocationTime}});
-          console.debug("[wot] Identity {0} has been revoked".format(data.uid));
+          console.debug("[wot] Identity [{0}] has been revoked".format(data.uid));
+        }
+        else if (data.requirements.pendingRevocation) {
+          addEvent(data, {type:'error', message: 'ERROR.IDENTITY_PENDING_REVOCATION'});
+          console.debug("[wot] Identity [{0}] has pending revocation".format(data.uid));
         }
         else if (data.hasBadSelfBlock) {
           delete data.hasBadSelfBlock;
@@ -472,7 +480,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         }
         else if (data.requirements.expired) {
           addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_EXPIRED'});
-          console.debug("[wot] Identity {0} expired".format(data.uid));
+          console.debug("[wot] Identity {0} expired (in sandbox)".format(data.uid));
         }
         else if (data.requirements.willNeedCertificationCount > 0) {
           addEvent(data, {type: 'error', message: 'INFO.IDENTITY_WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements});
@@ -636,6 +644,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         options = options || {};
         options.addUniqueId = angular.isDefined(options.addUniqueId) ? options.addUniqueId : true;
         options.allowExtension = angular.isDefined(options.allowExtension) ? options.allowExtension : true;
+        options.excludeRevoked = angular.isDefined(options.excludeRevoked) ? options.excludeRevoked : false;
 
         var promise;
         if (!safeText) {
@@ -652,12 +661,14 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                 return idties.concat(res.results.reduce(function(idties, res) {
                   return idties.concat(res.uids.reduce(function(uids, idty) {
                     var blocUid = idty.meta.timestamp.split('-', 2);
-                    if (!idty.revoked) {
+                    var revoked = !idty.revoked && idty.revocation_sig;
+                    if (!options.excludeRevoked || !revoked) {
                       return uids.concat({
                         uid: idty.uid,
                         pubkey: res.pubkey,
                         number: blocUid[0],
-                        hash: blocUid[1]
+                        hash: blocUid[1],
+                        revoked: revoked
                       });
                     }
                     return uids;
