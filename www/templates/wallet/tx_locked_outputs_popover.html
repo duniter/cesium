@@ -1,0 +1,62 @@
+<ion-popover-view class="fit popover-locked-outputs">
+  <ion-header-bar>
+    <h1 class="title" translate>ACCOUNT.LOCKED_OUTPUTS_POPOVER.TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="true">
+
+    <div ng-if="popoverData.lockedOuputs.length == 1"
+         class="item item-text-wrap no-border">
+      <h4 class="positive" translate>ACCOUNT.LOCKED_OUTPUTS_POPOVER.DESCRIPTION</h4>
+    </div>
+    <div ng-if="popoverData.lockedOuputs.length > 1"
+         class="item item-text-wrap no-border">
+      <h4 class="positive" translate>ACCOUNT.LOCKED_OUTPUTS_POPOVER.DESCRIPTION_MANY</h4>
+    </div>
+
+    <!-- outputs -->
+    <div ng-repeat="output in popoverData.lockedOuputs track by $index"
+         class="item">
+
+      <!-- output amount (only visible if more than one outputs -->
+      <h2 class="gray" ng-if="popoverData.lockedOuputs.length > 1" translate>ACCOUNT.LOCKED_OUTPUTS_POPOVER.LOCKED_AMOUNT</h2>
+      <div ng-if="popoverData.lockedOuputs.length > 1" class="badge item-note"
+           ng-class="{'badge-balanced': output.amount > 0}">
+        <i class="icon ion-locked"></i>
+        <span ng-bind-html="::output.amount| formatAmount"></span>
+        <span ng-bind-html="::unit"></span>
+      </div>
+
+      <!-- unlock conditions -->
+      <div ng-repeat="condition in output.unlockConditions track by $index"
+           class="row"
+           ng-class="::{'padding-top': !$index && popoverData.lockedOuputs.length > 1}"
+           ng-style="::condition.style">
+        <span class="gray" ng-if="::condition.operator">{{::'BLOCKCHAIN.VIEW.TX_OUTPUT_OPERATOR.'+condition.operator|translate}}&nbsp;</span>
+        <div ng-if="::condition.type=='SIG'">
+            <i class="icon ion-key dark"></i>
+          <span class="dark" ng-bind-html="::'BLOCKCHAIN.VIEW.TX_OUTPUT_FUNCTION.SIG' | translate"></span>
+          <a ng-click="goState('app.wot_identity', {pubkey:condition.value})" style="text-decoration: none;" class="positive">
+            {{condition.value|formatPubkey}}
+          </a>
+        </div>
+        <div ng-if="::condition.type=='XHX'">
+          <i class="icon ion-lock-combination dark"></i>
+          <span class="dark" ng-bind-html="::'BLOCKCHAIN.VIEW.TX_OUTPUT_FUNCTION.XHX' | translate"></span>
+          <a copy-on-click="{{::condition.value}}" class="positive">
+            {{::condition.value|formatPubkey}}...
+          </a>
+        </div>
+        <div ng-if="condition.type=='CSV'">
+          <i class="icon ion-clock dark"></i>
+          <span class="dark" ng-bind-html="::'BLOCKCHAIN.VIEW.TX_OUTPUT_FUNCTION.CSV' | translate"></span>
+          {{::condition.value|formatDuration}}
+        </div>
+        <div ng-if="condition.type=='CLTV'">
+          <i class="icon ion-clock dark"></i>
+          <span class="dark" ng-bind-html="::'BLOCKCHAIN.VIEW.TX_OUTPUT_FUNCTION.CLTV' | translate"></span>
+          {{::condition.value|formatDate}}
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-popover-view>

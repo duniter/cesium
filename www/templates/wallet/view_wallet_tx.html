@@ -131,18 +131,18 @@
           <!-- TX history -->
           <!-- (make sure to keep ng-if=!loading to avoid division by zero on Firefox, because currentUD not loaded -->
           <div ng-if="!loading"
-                class="item item-badge-right item-avatar ink"
+                class="item item-badge-right item-avatar"
                 ng-repeat="tx in formData.tx.history">
             <i class="item-image avatar"
-               ng-if="!tx.avatar"
-               ng-class="{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <i ng-if="tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
+               ng-if="::!tx.avatar"
+               ng-class="::{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
+            <i ng-if="::tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
             <h2 class="col-80">
               <a ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
-                <span ng-if="tx.uid">
+                <span ng-if="::tx.uid">
                   {{::tx.name||tx.uid}}
                 </span>
-                <span ng-if="!tx.uid && !tx.isUD" class="gray">
+                <span ng-if="::!tx.uid && !tx.isUD && tx.pubkey" class="gray">
                   <i class="icon ion-key gray"></i>
                   {{::tx.pubkey | formatPubkey}}
                 </span>
@@ -150,6 +150,7 @@
               <span class="dark" ng-if="tx.isUD">
                 {{:locale:'COMMON.UNIVERSAL_DIVIDEND' | translate}}
               </span>
+
               <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap">
                 <smaller>{{::tx.comment}}</smaller>
               </span>
@@ -164,11 +165,25 @@
                 {{::tx.time | formatDate}}
               </span>
             </h3>
-            <span class="badge item-note"
+
+            <!-- not locked TX -->
+            <span ng-if="::!tx.lockedOutputs"
+                  class="badge item-note"
                   ng-class="{'badge-balanced': tx.amount > 0}">
               <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
               <span ng-bind-html=":rebind:unit"></span>
             </span>
+
+            <!-- Locked TX -->
+            <a ng-if="::tx.lockedOutputs"
+               class="badge item-note"
+               ng-class="{'badge-balanced': tx.amount > 0}"
+               ng-click="showLockedOutputsPopover(tx, $event)">
+              <i class="icon ion-locked" ></i>
+              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
+              <span ng-bind-html=":rebind:unit"></span>
+            </a>
+
             <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
               (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}"></ng-bind-html>
               <span ng-bind-html=":rebind:secondaryUnit"></span>)

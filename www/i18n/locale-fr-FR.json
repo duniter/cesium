@@ -161,7 +161,18 @@
       "REVOKED_COUNT_HELP": "Ces comptes ne pourront plus être membres",
       "TX_COUNT": "Transactions",
       "CERT_COUNT": "Certifications",
-      "TX_TO_HIMSELF": "Opération de change"
+      "TX_TO_HIMSELF": "Opération de change",
+      "TX_OUTPUT_UNLOCK_CONDITIONS": "Conditions de déblocage",
+      "TX_OUTPUT_OPERATOR": {
+        "AND": "et",
+        "OR": "ou"
+      },
+      "TX_OUTPUT_FUNCTION": {
+        "SIG": "<b>Signature</b> de ",
+        "XHX": "<b>Mot de passe</b>, dont SHA256 =",
+        "CSV": "Bloqué pendant",
+        "CLTV": "Bloqué jusqu'à"
+      }
     },
     "LOOKUP": {
       "TITLE": "Blocs",
@@ -341,6 +352,12 @@
     "BTN_SEND_IDENTITY_DOTS": "Publier son identitié...",
     "BTN_SECURITY_DOTS": "Compte et sécurité...",
     "BTN_SHOW_DETAILS": "Afficher les infos techniques",
+    "LOCKED_OUTPUTS_POPOVER": {
+      "TITLE": "Montant verrouillé",
+      "DESCRIPTION": "Voici les conditions de déverrouillage de ce montant :",
+      "DESCRIPTION_MANY": "Cette transaction est composé de plusieurs parties, dont voici les conditions de déverrouillage :",
+      "LOCKED_AMOUNT": "Conditions pour le montant :"
+    },
     "NEW": {
       "TITLE": "Inscription",
       "SLIDE_1_TITLE": "Choix de la monnaie :",

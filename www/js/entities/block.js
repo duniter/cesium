@@ -93,10 +93,13 @@ Block.prototype.parseArrayValues = function(array, itemObjProperties){
   }, []);
 };
 
-Block.prototype.regex = {
-  TX_OUTPUT_SIG: /^SIG[(]([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})[)]$/
-};
+function exact(regexpContent) {
+  return new RegExp("^" + regexpContent + "$");
+}
 
+Block.prototype.regexp = {
+  TX_OUTPUT_SIG: exact("SIG\\(([0-9a-zA-Z]{43,44})\\)")
+};
 
 Block.prototype.parseTransactions = function(transactions) {
   if (!transactions || !transactions.length) return [];
@@ -108,21 +111,37 @@ Block.prototype.parseTransactions = function(transactions) {
 
     obj.outputs = tx.outputs.reduce(function(res, output) {
       var parts = output.split(':');
-      var matches = parts.length == 3 && Block.prototype.regex.TX_OUTPUT_SIG.exec(parts[2]);
-      if (!matches) {
-        obj.error = true;
-        console.debug('[block] Bad format a \'transactions\': [{1}]. Expected 3 parts. Skipping'.format(output));
+      if (parts.length != 3) {
+        console.debug('[block] Bad format a \'transactions\': [{0}]. Expected 3 parts. Skipping'.format(output));
         return res;
       }
-      var pubkey = matches[1];
-      if (!tx.issuers || tx.issuers.indexOf(pubkey) != -1) return res;
-      var unitbase = parts[1];
+
       var amount = parts[0];
-      return res.concat({
-        amount: unitbase <= 0 ? amount : amount * Math.pow(10, unitbase),
-        unitbase: unitbase,
-        pubkey: pubkey
-      });
+      var unitbase = parts[1];
+      var unlockCondition = parts[2];
+
+      var matches =  Block.prototype.regexp.TX_OUTPUT_SIG.exec(parts[2]);
+
+      // Simple expression SIG(x)
+      if (matches) {
+        var pubkey = matches[1];
+        if (!tx.issuers || tx.issuers.indexOf(pubkey) != -1) return res;
+        return res.concat({
+          amount: unitbase <= 0 ? amount : amount * Math.pow(10, unitbase),
+          unitbase: unitbase,
+          pubkey: pubkey
+        });
+      }
+
+      // Parse complex unlock condition
+      else {
+        //console.debug('[block] [TX] Detecting unlock condition: {0}.'.format(output));
+        return res.concat({
+          amount: unitbase <= 0 ? amount : amount * Math.pow(10, unitbase),
+          unitbase: unitbase,
+          unlockCondition: unlockCondition
+        });
+      }
     }, []);
 
     // Special cas for TX to himself

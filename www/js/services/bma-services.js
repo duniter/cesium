@@ -8,6 +8,16 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
   function BMA(host, port, useSsl, useCache) {
 
     var
+      // TX output conditions
+      SIG = "SIG\\(([0-9a-zA-Z]{43,44})\\)",
+      XHX = 'XHX\\(([A-F0-9]{1,64})\\)',
+      CSV = 'CSV\\(([0-9]{1,8})\\)',
+      CLTV = 'CLTV\\(([0-9]{1,10})\\)',
+      OUTPUT_FUNCTION = SIG+'|'+XHX+'|'+CSV+'|'+CLTV,
+      OUTPUT_OPERATOR = '(&&)|(\\|\\|)',
+      OUTPUT_FUNCTIONS = OUTPUT_FUNCTION+'([ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_FUNCTION +')*',
+      OUTPUT_OBJ = 'OBJ\\(([0-9]+)\\)',
+      OUTPUT_OBJ_OPERATOR = OUTPUT_OBJ + '[ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_OBJ,
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
@@ -79,6 +89,10 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
 
     function exact(regexpContent) {
       return new RegExp("^" + regexpContent + "$");
+    }
+
+    function test(regexpContent) {
+      return new RegExp(regexpContent);
     }
 
     function _emptyCache() {
@@ -285,14 +299,23 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     var exports = {
       errorCodes: errorCodes,
       constants: constants,
-      regex: {
+      regexp: {
         USER_ID: exact(regexp.USER_ID),
         COMMENT: exact(regexp.COMMENT),
         PUBKEY: exact(regexp.PUBKEY),
         CURRENCY: exact(regexp.CURRENCY),
         URI: exact(regexp.URI),
         BMA_ENDPOINT: exact(regexp.BMA_ENDPOINT),
-        BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT)
+        BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT),
+        // TX output conditions
+        TX_OUTPUT_SIG: exact(SIG),
+        TX_OUTPUT_FUNCTION: test(OUTPUT_FUNCTION),
+        TX_OUTPUT_OBJ_OPERATOR_AND: test(OUTPUT_OBJ + '([ ]*&&[ ]*(' + OUTPUT_OBJ + '))+'),
+        TX_OUTPUT_OBJ_OPERATOR_OR: test(OUTPUT_OBJ + '([ ]*\\|\\|[ ]*(' + OUTPUT_OBJ + '))+'),
+        TX_OUTPUT_OBJ: test(OUTPUT_OBJ),
+        TX_OUTPUT_OBJ_OPERATOR: test(OUTPUT_OBJ_OPERATOR),
+        TX_OUTPUT_OBJ_PARENTHESIS: test('\\(('+OUTPUT_OBJ+')\\)'),
+        TX_OUTPUT_FUNCTIONS: test(OUTPUT_FUNCTIONS)
       },
       node: {
         summary: get('/node/summary', csHttp.cache.LONG),
@@ -352,10 +375,106 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
 
       }
     };
+    exports.regex = exports.regexp; // deprecated
+
+    exports.tx.parseUnlockCondition = function(unlockCondition) {
+
+      //console.debug('[BMA] Parsing unlock condition: {0}.'.format(unlockCondition));
+      var convertedOutput = unlockCondition;
+      var treeItems = [];
+      var treeItem;
+      var treeItemId;
+      var childrenContent;
+      var childrenMatches;
+      var functions = {};
+
+      // Parse functions, then replace with an 'OBJ()' generic function, used to build a object tree
+      var matches = exports.regexp.TX_OUTPUT_FUNCTION.exec(convertedOutput);
+      while(matches) {
+        treeItem = {};
+        treeItemId = 'OBJ(' + treeItems.length + ')';
+        treeItem.type = convertedOutput.substr(matches.index, matches[0].indexOf('('));
+        treeItem.value = matches[1] || matches[2] || matches[3] || matches[4]; // get value from regexp OUTPUT_FUNCTION
+        treeItems.push(treeItem);
+
+        functions[treeItem.type] = functions[treeItem.type]++ || 1;
+
+        convertedOutput = convertedOutput.replace(matches[0], treeItemId);
+        matches = exports.regexp.TX_OUTPUT_FUNCTION.exec(convertedOutput);
+      }
+
+      var loop = true;
+      while(loop) {
+        // Parse AND operators
+        matches = exports.regexp.TX_OUTPUT_OBJ_OPERATOR_AND.exec(convertedOutput);
+        loop = !!matches;
+        while (matches) {
+          treeItem = {};
+          treeItemId = 'OBJ(' + treeItems.length + ')';
+          treeItem.type = 'AND';
+          treeItem.children = [];
+          treeItems.push(treeItem);
+
+          childrenContent = matches[0];
+          childrenMatches = exports.regexp.TX_OUTPUT_OBJ.exec(childrenContent);
+          while(childrenMatches) {
+
+            treeItem.children.push(treeItems[childrenMatches[1]]);
+            childrenContent = childrenContent.replace(childrenMatches[0], '');
+            childrenMatches = exports.regexp.TX_OUTPUT_OBJ.exec(childrenContent);
+          }
+
+          convertedOutput = convertedOutput.replace(matches[0], treeItemId);
+          matches = exports.regexp.TX_OUTPUT_OBJ_OPERATOR_AND.exec(childrenContent);
+        }
+
+        // Parse OR operators
+
+        matches = exports.regexp.TX_OUTPUT_OBJ_OPERATOR_OR.exec(convertedOutput);
+        loop = loop || !!matches;
+        while (matches) {
+          treeItem = {};
+          treeItemId = 'OBJ(' + treeItems.length + ')';
+          treeItem.type = 'OR';
+          treeItem.children = [];
+          treeItems.push(treeItem);
+
+          childrenContent = matches[0];
+          childrenMatches = exports.regexp.TX_OUTPUT_OBJ.exec(childrenContent);
+          while(childrenMatches) {
+            treeItem.children.push(treeItems[childrenMatches[1]]);
+            childrenContent = childrenContent.replace(childrenMatches[0], '');
+            childrenMatches = exports.regexp.TX_OUTPUT_OBJ.exec(childrenContent);
+          }
+
+          convertedOutput = convertedOutput.replace(matches[0], treeItemId);
+          matches = exports.regexp.TX_OUTPUT_OBJ_OPERATOR_AND.exec(convertedOutput);
+        }
+
+        // Remove parenthesis
+        matches = exports.regexp.TX_OUTPUT_OBJ_PARENTHESIS.exec(convertedOutput);
+        loop = loop || !!matches;
+        while (matches) {
+          convertedOutput = convertedOutput.replace(matches[0], matches[1]);
+          matches = exports.regexp.TX_OUTPUT_OBJ_PARENTHESIS.exec(convertedOutput);
+        }
+      }
+
+      functions = _.keys(functions);
+      if (functions.length === 0) {
+        console.error('[BMA] Unparseable unlock condition: ', output);
+        return;
+      }
+      console.debug('[BMA] Unlock conditions successfully parsed:', treeItem);
+      return {
+        unlockFunctions: functions,
+        unlockTree: treeItem
+      };
+    };
 
     exports.node.parseEndPoint = function(endpoint) {
       // Try BMA
-      var matches = exports.regex.BMA_ENDPOINT.exec(endpoint);
+      var matches = exports.regexp.BMA_ENDPOINT.exec(endpoint);
       if (matches) {
         return {
           "dns": matches[2] || '',
@@ -366,7 +485,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         };
       }
       // Try BMAS
-      matches = exports.regex.BMAS_ENDPOINT.exec(endpoint);
+      matches = exports.regexp.BMAS_ENDPOINT.exec(endpoint);
       if (!matches) return;
       return {
         "dns": matches[2] || '',

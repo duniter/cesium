@@ -168,7 +168,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     var filters = [];
     if (text.length > 1) {
       // pubkey : use a special 'term', because of 'non indexed' field
-      if (BMA.regex.PUBKEY.test(text /*case sensitive*/)) {
+      if (BMA.regexp.PUBKEY.test(text /*case sensitive*/)) {
         matches = [];
         filters.push({term : { issuer: text}});
         filters.push({term : { pubkey: text}});

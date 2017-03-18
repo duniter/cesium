@@ -94,7 +94,7 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
     useComment: false
   };
   $scope.udAmount = null;
-  $scope.commentPattern = BMA.regex.COMMENT;
+  $scope.commentPattern = BMA.regexp.COMMENT;
 
   if (parameters) {
     if (parameters.pubkey) {

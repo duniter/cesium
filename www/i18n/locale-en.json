@@ -161,7 +161,18 @@
       "REVOKED_COUNT_HELP": "These accounts may no longer be member",
       "TX_COUNT": "Transactions",
       "CERT_COUNT": "Certifications",
-      "TX_TO_HIMSELF": "Change"
+      "TX_TO_HIMSELF": "Change",
+      "TX_OUTPUT_UNLOCK_CONDITIONS": "Unlock conditions",
+      "TX_OUTPUT_OPERATOR": {
+        "AND": "and",
+        "OR": "or"
+      },
+      "TX_OUTPUT_FUNCTION": {
+        "SIG": "<b>Sign</b> of the public key",
+        "XHX": "<b>Password</b>, including SHA256 =",
+        "CSV": "Blocked during",
+        "CLTV": "Bloqué until"
+      }
     },
     "LOOKUP": {
       "TITLE": "Blocks",
@@ -341,6 +352,12 @@
     "BTN_SEND_IDENTITY_DOTS": "Publish identity...",
     "BTN_SECURITY_DOTS": "Sign-in and security...",
     "BTN_SHOW_DETAILS": "Display technical data",
+    "LOCKED_OUTPUTS_POPOVER": {
+      "TITLE": "Locked amount",
+      "DESCRIPTION": "Here are the conditions for unlocking this amount:",
+      "DESCRIPTION_MANY": "This transaction consists of several parts, of which the unlock conditions are:",
+      "LOCKED_AMOUNT": "Conditions for the amount:"
+    },
     "NEW": {
       "TITLE": "Registration",
       "SLIDE_1_TITLE": "Select a currency:",

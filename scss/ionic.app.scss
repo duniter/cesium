@@ -1864,3 +1864,9 @@ div[dropzone] {
 .hero.positive-900-bg {
   background-color: $positive-900-bg !important;
 }
+
+.popover-locked-outputs {
+  .item .badge {
+    right: 16px;
+  }
+}

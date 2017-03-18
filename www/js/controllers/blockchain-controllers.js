@@ -416,7 +416,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 }
 
 
-function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot, csSettings) {
+function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurrency, csWot, csSettings) {
   'ngInject';
 
   $scope.loading = true;
@@ -505,7 +505,15 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot, csSettings
             tx.issuers = tx.issuers.reduce(function(res, issuer) {
               return res.concat({pubkey: issuer});
             }, []);
-            return res.concat(tx.issuers.concat(tx.outputs));
+
+            // Parse unlockConditions
+            _.forEach(tx.outputs||[], function(output) {
+              if (output.unlockCondition) {
+                angular.merge(output, BMA.tx.parseUnlockCondition(output.unlockCondition));
+              }
+            });
+
+            return res.concat(tx.issuers.concat(tx.outputs||[]));
           }, users);
         }
 
@@ -535,28 +543,78 @@ function BlockViewController($scope, UIUtils, BMA, csCurrency, csWot, csSettings
 
   /* -- popover -- */
 
-  $scope.showActionsPopover = function(event) {
-    if (!$scope.actionsPopover) {
-      $ionicPopover.fromTemplateUrl('templates/blockchain/block_popover_actions.html', {
+  var paddingIndent = 10;
+
+  $scope.toUnlockUIArray = function(unlockTreeItem, leftPadding, operator) {
+    leftPadding = leftPadding || paddingIndent;
+
+    // If operator (AND, OR)
+    if (unlockTreeItem.children && (unlockTreeItem.type == 'AND' || unlockTreeItem.type == 'OR')) {
+      return unlockTreeItem.children.reduce(function(res, child, index){
+        if (child.children && index > 0) {
+          // Add space between expression block
+          res = res.concat({
+            style: {
+              'padding-left': leftPadding + 'px',
+              'padding-top': '10px',
+              'padding-bottom': '10px'
+            },
+            operator: unlockTreeItem.type
+          });
+
+          return res.concat($scope.toUnlockUIArray(child, leftPadding + paddingIndent));
+        }
+        return res.concat($scope.toUnlockUIArray(child, leftPadding + paddingIndent, index && unlockTreeItem.type));
+      }, []);
+    }
+
+    return {
+      style: {
+        'padding-left': leftPadding + 'px'
+      },
+      operator: operator,
+      type: unlockTreeItem.type,
+      value: unlockTreeItem.value
+    };
+  };
+
+  $scope.showUnlockConditionPopover = function(output, event) {
+    if (!output.unlockTree) return;
+
+    // Convert condition into UI array
+    $scope.popoverData = $scope.popoverData || {};
+    $scope.popoverData.unlockConditions = $scope.toUnlockUIArray(output.unlockTree);
+
+    // Open popover
+    if (!$scope.unlockConditionPopover) {
+      $ionicPopover.fromTemplateUrl('templates/blockchain/unlock_condition_popover.html', {
         scope: $scope
       }).then(function(popover) {
-        $scope.actionsPopover = popover;
+        $scope.unlockConditionPopover = popover;
         //Cleanup the popover when we're done with it!
         $scope.$on('$destroy', function() {
-          $scope.actionsPopover.remove();
+          $scope.unlockConditionPopover.remove();
         });
-        $scope.actionsPopover.show(event);
+        $scope.unlockConditionPopover.show(event);
       });
     }
     else {
-      $scope.actionsPopover.show(event);
+      $scope.unlockConditionPopover.show(event);
     }
   };
 
-  $scope.hideActionsPopover = function() {
-    if ($scope.actionsPopover) {
-      $scope.actionsPopover.hide();
+  $scope.hideUnlockConditionsPopover = function() {
+    if ($scope.unlockConditionPopover) {
+      $scope.unlockConditionPopover.hide();
+      if ($scope.popoverData) {
+        delete $scope.popoverData.unlockConditions;
+      }
     }
+  };
+
+  $scope.goState = function(stateName, stateParams) {
+    $scope.hideUnlockConditionsPopover();
+    $state.go(stateName, stateParams);
   };
 
   /* -- help tip -- */

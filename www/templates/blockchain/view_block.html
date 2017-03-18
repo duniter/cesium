@@ -302,7 +302,19 @@
                   <div class="col no-padding padding-right no-padding-xs col-text-wrap list no-margin">
                     <span class="gray" class="gray" ng-if="tx.toHimself" translate>BLOCKCHAIN.VIEW.TX_TO_HIMSELF</span>
                     <div ng-repeat="output in ::tx.outputs" class="item no-padding item-small-height">
-                      <ng-include src="'templates/blockchain/link_identity.html'" onload="identity=output"></ng-include>
+
+                      <!-- simple SIG expression -->
+                      <ng-include ng-if="::output.pubkey" src="'templates/blockchain/link_identity.html'" onload="identity=output"></ng-include>
+
+                      <!-- complex unlock condition -->
+                      <span ng-if="::!output.pubkey && output.unlockFunctions">
+                        <i class="icon ion-locked"></i>
+                        (<a ng-click="showUnlockConditionPopover(output, $event)">
+                          <i ng-repeat="unlockFunction in ::output.unlockFunctions"
+                             ng-class="::{'ion-key': (unlockFunction=='SIG'), 'ion-clock': (unlockFunction=='CSV' || unlockFunction=='CLTV'), 'ion-lock-combination': (unlockFunction=='XHX') }"
+                             class="icon"></i>
+                        </a>)
+                      </span>
                       <span class="badge badge-balanced"
                             ng-bind-html="::output.amount | formatAmount:{currency: formData.currency, useRelative: false} "></span>
                     </div>

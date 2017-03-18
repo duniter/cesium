@@ -224,7 +224,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
           if ($scope.search.type != 'text') return; // could have change
           if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
-          if ((!idties || !idties.length) && BMA.regex.PUBKEY.test(text)) {
+          if ((!idties || !idties.length) && BMA.regexp.PUBKEY.test(text)) {
             $scope.doDisplayResult([{pubkey: text}]);
           }
           else {

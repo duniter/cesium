@@ -499,7 +499,7 @@ function WalletController($scope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWallet, Modals, csSettings, BMA) {
+function WalletTxController($scope, $rootScope, $timeout, $filter, $ionicPopover, $state, UIUtils, csWallet, Modals, csSettings, BMA) {
   'ngInject';
 
   $scope.loading = true;
@@ -591,7 +591,7 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
   $scope.showMoreTx = function(fromTime) {
 
     fromTime = fromTime ||
-      ($rootScope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
+      ($rootScope.walletData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
       (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
@@ -613,6 +613,87 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, UIUtils, csWa
       });
   };
 
+  /* -- popover -- */
+
+  var paddingIndent = 10;
+
+  $scope.toUnlockUIArray = function(unlockTreeItem, leftPadding, operator) {
+    leftPadding = leftPadding || 0;
+
+    // If operator (AND, OR)
+    if (unlockTreeItem.children && (unlockTreeItem.type == 'AND' || unlockTreeItem.type == 'OR')) {
+      return unlockTreeItem.children.reduce(function(res, child, index){
+        if (child.children && index > 0) {
+          // Add space between expression block
+          res = res.concat({
+            style: {
+              'padding-left': leftPadding + 'px',
+              'padding-top': '10px',
+              'padding-bottom': '10px'
+            },
+            operator: unlockTreeItem.type
+          });
+
+          return res.concat($scope.toUnlockUIArray(child, leftPadding + paddingIndent));
+        }
+        return res.concat($scope.toUnlockUIArray(child, leftPadding + paddingIndent, index && unlockTreeItem.type));
+      }, []);
+    }
+
+    return {
+      style: {
+        'padding-left': leftPadding + 'px'
+      },
+      operator: operator,
+      type: unlockTreeItem.type,
+      value: unlockTreeItem.value
+    };
+  };
+
+  $scope.showLockedOutputsPopover = function(tx, event) {
+    if (!tx.lockedOutputs) return;
+
+    // Convert condition into UI array
+    $scope.popoverData = $scope.popoverData || {};
+    $scope.popoverData.lockedOuputs = tx.lockedOutputs.reduce(function(res, lockedOutput){
+      return res.concat({
+        amount: lockedOutput.amount,
+        unlockFunctions: lockedOutput.unlockFunctions,
+        unlockConditions: $scope.toUnlockUIArray(lockedOutput.unlockTree)
+      });
+    }, []);
+
+    // Open popover
+    if (!$scope.lockedOutputsPopover) {
+      $ionicPopover.fromTemplateUrl('templates/wallet/tx_locked_outputs_popover.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.lockedOutputsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.lockedOutputsPopover.remove();
+        });
+        $scope.lockedOutputsPopover.show(event);
+      });
+    }
+    else {
+      $scope.lockedOutputsPopover.show(event);
+    }
+  };
+
+  $scope.hideLockedOutputsPopover = function() {
+    if ($scope.lockedOutputsPopover) {
+      $scope.lockedOutputsPopover.hide();
+      if ($scope.popoverData) {
+        delete $scope.popoverData.unlockConditions;
+      }
+    }
+  };
+
+  $scope.goState = function(stateName, stateParams) {
+    $scope.hideLockedOutputsPopover();
+    $state.go(stateName, stateParams);
+  };
 }
 
 function WalletTxErrorController($scope, UIUtils, csWallet) {

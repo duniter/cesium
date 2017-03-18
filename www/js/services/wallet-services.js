@@ -83,35 +83,64 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           var otherReceiver;
           var outputBase;
           var sources = [];
+          var lockedOutputs;
           var amount = tx.outputs.reduce(function(sum, output, noffset) {
               var outputArray = output.split(':',3);
               outputBase = parseInt(outputArray[1]);
               var outputAmount = powBase(parseInt(outputArray[0]), outputBase);
-              var outputCondArray = outputArray[2].split('(', 3);
-              var outputPubkey = (outputCondArray.length == 2 && outputCondArray[0] == 'SIG') ?
-                   outputCondArray[1].substring(0,outputCondArray[1].length-1) : '';
-              if (outputPubkey == data.pubkey) { // output is for the wallet
-                if (!walletIsIssuer) {
-                  return sum + outputAmount;
+              var outputCondition = outputArray[2];
+              var sigMatches =  BMA.regexp.TX_OUTPUT_SIG.exec(outputCondition);
+
+              // Simple unlock condition
+              if (sigMatches) {
+                var outputPubkey = sigMatches[1];
+                if (outputPubkey == data.pubkey) { // output is for the wallet
+                  if (!walletIsIssuer) {
+                    return sum + outputAmount;
+                  }
+                  // If pending: use output as new sources
+                  else if (tx.block_number === null) {
+                    sources.push({
+                      amount: parseInt(outputArray[0]),
+                      base: outputBase,
+                      type: 'T',
+                      identifier: tx.hash,
+                      noffset: noffset,
+                      consumed: false
+                    });
+                  }
                 }
-                // If pending: use output as new sources
-                else if (tx.block_number === null){
-                  sources.push({
+                else { // output is for someone else
+                  if (outputPubkey !== '' && outputPubkey != otherIssuer) {
+                    otherReceiver = outputPubkey;
+                  }
+                  if (walletIsIssuer) {
+                    return sum - outputAmount;
+                  }
+                }
+              }
+
+              // Complex unlock condition, on the issuer pubkey
+              else if (outputCondition.indexOf('SIG('+data.pubkey+')') != -1) {
+                var lockedOutput = BMA.tx.parseUnlockCondition(outputCondition);
+                if (lockedOutput) {
+                  // Add a source
+                  // FIXME: should be uncomment when filtering source on transfer()
+                  /*sources.push(angular.merge({
                     amount: parseInt(outputArray[0]),
                     base: outputBase,
                     type: 'T',
                     identifier: tx.hash,
                     noffset: noffset,
                     consumed: false
-                  });
-                }
-              }
-              else { // output is for someone else
-                if (outputPubkey !== '' && outputPubkey != otherIssuer) {
-                  otherReceiver = outputPubkey;
-                }
-                if (walletIsIssuer) {
-                  return sum - outputAmount;
+                  }, lockedOutput));
+                  */
+                  lockedOutput.amount = outputAmount;
+                  lockedOutputs = lockedOutputs || [];
+                  lockedOutputs.push(lockedOutput);
+                  console.debug('[BMA] [TX] has locked output:', lockedOutput);
+
+                  return sum + outputAmount;
                 }
               }
               return sum;
@@ -141,6 +170,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             if (walletIsIssuer && tx.block_number === null) {
               newTx.inputs = tx.inputs;
               newTx.sources = sources;
+            }
+            if (lockedOutputs) {
+              newTx.lockedOutputs = lockedOutputs;
             }
             result.push(newTx);
           }
@@ -172,6 +204,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         .then(function(keypair) {
           // Copy result to properties
           data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+
+          // FOR DEV ONLY - on crosschain
+          // console.error('TODO REMOVE this code - dev only'); data.pubkey = '36j6pCNzKDPo92m7UXJLFpgDbcLFAZBgThD2TCwTwGrd';
+
           data.keypair = keypair;
 
           // Call extend api
@@ -289,6 +325,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               else */if (storedData && storedData.keypair && storedData.pubkey) {
                 data.keypair = storedData.keypair;
                 data.pubkey = storedData.pubkey;
+
+                // FOR DEV ONLY - on crosschain
+                // console.error('TODO REMOVE this code - dev only'); data.pubkey = '36j6pCNzKDPo92m7UXJLFpgDbcLFAZBgThD2TCwTwGrd';
+
                 if (storedData.tx && storedData.tx.pendings) {
                   data.tx.pendings = storedData.tx.pendings;
                 }
@@ -950,10 +990,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return $q(function(resolve, reject) {
         BMA.blockchain.current(true/*cache*/)
         .then(function(block) {
-          if (!BMA.regex.PUBKEY.test(destPub)){
+          if (!BMA.regexp.PUBKEY.test(destPub)){
             reject({message:'ERROR.INVALID_PUBKEY'}); return;
           }
-          if (!BMA.regex.COMMENT.test(comments)){
+          if (!BMA.regexp.COMMENT.test(comments)){
             reject({message:'ERROR.INVALID_COMMENT'}); return;
           }
           if (!isLogin()){
@@ -1290,7 +1330,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     * Send self identity
     */
     self = function(uid, needToLoadRequirements) {
-      if (!BMA.regex.USER_ID.test(uid)){
+      if (!BMA.regexp.USER_ID.test(uid)){
         return $q.reject({message: 'ERROR.INVALID_USER_ID'});
       }
       var block;
