@@ -59,14 +59,16 @@
           <span class="gray">{{:rebind:peer.server}}</span>
         </h4>
       </div>
-      <div class="col col-15 no-padding text-center" ng-if="::expertMode">
-        <div class="hidden-xs hidden-sm" ng-if=":rebind:peer.hasEndpoint('ES_USER_API')">
+      <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
+        <div style="min-width: 50px; padding-top: 5px;" >
+          <span ng-if=":rebind:peer.isSsl()">
+            <i class="ion-locked"></i> <small>SSL</small>
+          </span>
+        </div>
+        <span class="" ng-if=":rebind:peer.hasEndpoint('ES_USER_API')">
           <i class="ion-es-user-api"></i>
           <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
-        </div>
-        <div class="hidden-xs hidden-sm dark" ng-if=":rebind:peer.isSsl()">
-          <i class="ion-locked"></i> <small>SSL</small>
-        </div>
+        </span>
       </div>
       <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs gray">

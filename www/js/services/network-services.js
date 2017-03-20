@@ -458,7 +458,9 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           if (data.sort.type) {
             var sortScore = 0;
             sortScore += (data.sort.type == 'uid' ? computeScoreAlphaValue(peer.uid||peer.pubkey, 3, data.sort.asc) : 0);
-            sortScore += (data.sort.type == 'api' ? (peer.hasEndpoint('ES_USER_API') && data.sort.asc ? 1 : 0) : 0);
+            sortScore += (data.sort.type == 'api' ?
+              (peer.isSsl() ? (data.sort.asc ? 1 : -1) :
+              (peer.hasEndpoint('ES_USER_API') ? (data.sort.asc ? 0.5 : -0.5) : 0)) : 0);
             sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? (data.sort.asc ? (1000-peer.difficulty) : peer.difficulty): 0) : 0);
             sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? (data.sort.asc ? (1000000000 - peer.currentNumber) : peer.currentNumber) : 0) : 0);
             score += (10000000000 * sortScore);
