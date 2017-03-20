@@ -338,7 +338,13 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     $window.location.protocol != 'https:') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
       var path = 'https' + $rootScope.rootPath.substr(4) + $state.href(next, nextParams);
-      $window.location.href = path;
+      if (csConfig.httpsModeDebug) {
+        console.debug('[app] [httpsMode] --- Should redirect to: ' + path);
+        // continue
+      }
+      else {
+        $window.location.href = path;
+      }
     });
   }
   // endRemoveIf(device)

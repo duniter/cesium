@@ -2,7 +2,7 @@
 
 angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, Api, Device, csSettings, csHttp, $rootScope, $timeout) {
+.factory('BMA', function($q, $window, $rootScope, $timeout, Api, Device, csConfig, csSettings, csHttp) {
   'ngInject';
 
   function BMA(host, port, useSsl, useCache) {
@@ -68,11 +68,18 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       that.alive = false;
       that.cache = _emptyCache();
 
+      // Allow to force SSL connection with port different from 443
+      var forceUseSsl = (csConfig.httpsMode === true || csConfig.httpsMode == 'true' ||csConfig.httpsMode === 'force') ||
+        ($window.location && $window.location.protocol === 'https:') ? true : false;
+      if (forceUseSsl) {
+        console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
+      }
       // Use settings as default, if exists
       if (csSettings.data && csSettings.data.node) {
         host = host || csSettings.data.node.host;
         port = port || csSettings.data.node.port;
-        useSsl = angular.isDefined(useSsl) ? useSsl : (csSettings.data.node.port == 443 || csSettings.data.node.useSsl);
+
+        useSsl = angular.isDefined(useSsl) ? useSsl : (csSettings.data.node.port == 443 || csSettings.data.node.useSsl || forceUseSsl);
         useCache =  angular.isDefined(useCache) ? useCache : true;
       }
 
@@ -81,7 +88,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       }
       that.host = host;
       that.port = port || 80;
-      that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443);
+      that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || forceUseSsl);
       that.useCache = angular.isDefined(useCache) ? useCache : false;
       that.server = csHttp.getServer(host, port);
       that.url = csHttp.getUrl(host, port, ''/*path*/, useSsl);
@@ -245,7 +252,13 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
           });
       }
 
-      console.debug('[BMA] Starting [{0}]...'.format(that.server));
+      if (that.useSsl) {
+        console.debug('[BMA] Starting [{0}] (SSL on)...'.format(that.server));
+      }
+      else {
+        console.debug('[BMA] Starting [{0}]...'.format(that.server));
+      }
+
       var now = new Date().getTime();
 
       that._startPromise = $q.all([

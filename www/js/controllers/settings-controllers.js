@@ -87,7 +87,8 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
-      var nodeBMA = BMA.instance(newNode.host, newNode.port, undefined, true /*cache*/);
+
+      var nodeBMA = BMA.instance(newNode.host, newNode.port, undefined/*auto detect*/, true /*cache*/);
       nodeBMA.isAlive()
         .then(function(alive) {
           if (!alive) {
