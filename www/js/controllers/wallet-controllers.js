@@ -48,7 +48,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 ;
 
-function WalletController($scope, $q, $ionicPopup, $timeout, $state,
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
                           UIUtils, csWallet, $translate, $ionicPopover, Modals, csSettings) {
   'ngInject';
 
