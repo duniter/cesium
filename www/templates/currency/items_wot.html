@@ -16,9 +16,9 @@
         <span translate="CURRENCY.VIEW.MEMBERS_VARIATION" translate-values="{duration: formData.durationFromLastUD}"></span>
         <span class="gray">(&#916;N)</span>
       </div>
-      <div class="badge badge-balanced" ng-if="!loading"
-           ng-class="{'badge-calm': formData.N < formData.Nprev}">
-        {{formData.N > formData.Nprev ? '+' : (formData.N == formData.Nprev ? '' : '-')}}{{formData.N - formData.Nprev}}
+      <div class="badge" ng-if="!loading"
+           ng-class="{'badge-balanced': (formData.N>formData.Nprev), 'badge-calm': (formData.N==formData.Nprev) ,'badge-assertive': (formData.Nprev>formData.N)}">
+        {{formData.N > formData.Nprev ? '+' : ''}}{{formData.N - formData.Nprev}}
       </div>
     </ion-item>
 
