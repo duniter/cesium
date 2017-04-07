@@ -311,8 +311,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, c
       recipient: $scope.formData.destPub,
       title: $scope.formData.title,
       content: $scope.formData.content,
-      time: esHttp.date.now(),
-      nonce: CryptoUtils.util.random_nonce()
+      time: esHttp.date.now()
     };
 
     esMessage.send(data, csWallet.data.keypair)
