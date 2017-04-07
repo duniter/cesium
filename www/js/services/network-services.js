@@ -11,7 +11,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
       constants = {
         UNKNOWN_BUID: -1
       },
-      isHttpsMode = ($window.location.protocol === 'https:'),
+      isHttpsMode = $window.location.protocol === 'https:',
       api = new Api(this, "csNetwork-" + id),
 
       data = {
@@ -33,7 +33,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         knownBlocks: [],
         mainBlock: null,
         uidsByPubkeys: null,
-        searchingPeersOnNetwork: false
+        searchingPeersOnNetwork: false,
+        difficulties: null
       },
 
       // Return the block uid
@@ -61,6 +62,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         data.uidsByPubkeys = {};
         data.loading = true;
         data.searchingPeersOnNetwork = false;
+        data.difficulties = null;
       },
 
       hasPeers = function() {
@@ -105,10 +107,38 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           }
         }, 1000);
 
-        return data.bma.wot.member.uids()
-          .then(function(uids){
+        var initJobs = [data.bma.wot.member.uids()
+          .then(function(uids) {
             data.uidsByPubkeys = uids;
+          })
+        ];
 
+        // When SSL is on, get difficulties from the default node
+        if (isHttpsMode && data.expertMode) {
+          var getDifficulties = function() {
+            return data.bma.blockchain.stats.difficulties()
+              .then(function (res) {
+                data.difficulties = res.levels ? res.levels.reduce(function (res, hit) {
+                  if (hit.uid && hit.level) res[hit.uid] = hit.level;
+                  return res;
+                }, {}) : {};
+              })
+              .catch(function(err) {
+                // When too many request, retry in 3s
+                if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+                  return $timeout(function() {
+                    return getDifficulties();
+                  }, 3000);
+                }
+                console.error(err);
+                data.difficulties = {};
+              });
+            };
+          initJobs.push(getDifficulties());
+        }
+
+        return $q.all(initJobs)
+          .then(function(){
             // online nodes
             if (data.filter.online) {
               /*return data.bma.network.peering.peers({leaves: true})
@@ -261,7 +291,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         peer.dns = peer.getDns();
         peer.blockNumber = peer.block.replace(/-.+$/, '');
         peer.uid = data.uidsByPubkeys[peer.pubkey];
-        peer.id = [peer.pubkey, bma.dns, bma.ipv6, bma.ipv4, bma.port, bma.useSsl].join('-');
+        peer.id = peer.keyID();
         return [peer];
       },
 
@@ -277,7 +307,14 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
 
         // Do not try not SSL node, if Cesium running in SSL
         if (isHttpsMode && !peer.bma.useSsl) {
-          return refreshPeerWithoutDirectAccess(peer);
+          peer.online = (peer.status == 'UP');
+          peer.buid = constants.UNKNOWN_BUID;
+          delete peer.version;
+
+          if (peer.uid && data.expertMode && data.difficulties) {
+            peer.difficulty = data.difficulties[peer.uid];
+          }
+          return $q.when(peer);
         }
 
         peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort());
@@ -348,38 +385,6 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
                 return peer;
               });
           });
-      },
-
-      refreshPeerWithoutDirectAccess = function(peer) {
-
-        peer.online = (peer.status == 'UP');
-        peer.buid = constants.UNKNOWN_BUID;
-        delete peer.version;
-
-        // Try to get hardship (only in expert mode, because we could not sort as buid is fake)
-        if (peer.uid && data.expertMode) {
-          return data.bma.blockchain.stats.hardship({pubkey: peer.pubkey})
-            .then(function (res) {
-              peer.difficulty = res ? res.level : null;
-              return peer;
-            })
-            .catch(function (err) {
-              // When too many request, retry in 3s
-              if (err && err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
-                $timeout(function() {
-                  data.bma.blockchain.stats.hardship({pubkey: peer.pubkey})
-                    .then(function (res) {
-                      peer.difficulty = res ? res.level : null;
-                    });
-                }, 3000);
-              }
-              peer.difficulty = null; // continue
-              return peer;
-            });
-        }
-        else {
-          return $q.when(peer);
-        }
       },
 
       flushNewPeersAndSort = function(newPeers, updateMainBuid) {
@@ -461,7 +466,7 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
             sortScore += (data.sort.type == 'api' ?
               (peer.isSsl() ? (data.sort.asc ? 1 : -1) :
               (peer.hasEndpoint('ES_USER_API') ? (data.sort.asc ? 0.5 : -0.5) : 0)) : 0);
-            sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? (data.sort.asc ? (1000-peer.difficulty) : peer.difficulty): 0) : 0);
+            sortScore += (data.sort.type == 'difficulty' ? (peer.difficulty ? (data.sort.asc ? (10000-peer.difficulty) : peer.difficulty): 0) : 0);
             sortScore += (data.sort.type == 'current_block' ? (peer.currentNumber ? (data.sort.asc ? (1000000000 - peer.currentNumber) : peer.currentNumber) : 0) : 0);
             score += (10000000000 * sortScore);
           }
