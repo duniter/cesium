@@ -47,6 +47,20 @@ angular.module('cesium')
     };
   })
 
+  .directive('email', function() {
+    var EMAIL_REGEXP = new RegExp('^[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$');
+    return {
+      require: 'ngModel',
+      link: function(scope, element, attrs, ngModel) {
+        if (ngModel) {
+          ngModel.$validators.email = function (value) {
+            return ngModel.$isEmpty(value) || EMAIL_REGEXP.test(value);
+          };
+        }
+      }
+    };
+  })
+
   // Add a copy-on-click directive
   .directive('copyOnClick', function ($window, $document, Device, UIUtils) {
     'ngInject';
