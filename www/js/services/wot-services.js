@@ -191,12 +191,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                     certPubkeys[cert.pubkey] = result;
                   }
                   else { // if duplicated cert: keep the most recent
-                    if (result.block > certPubkeys[cert.pubkey].block) {
+                    if (result.cert_time.block > certPubkeys[cert.pubkey].cert_time.block) {
                       certPubkeys[cert.pubkey] = result;
-                      // TODO : to not add, but replace the old one
+                      certs.splice(_.findIndex(certs, {pubkey: cert.pubkey}), 1, result);
+                      return certs;
                     }
                     else {
-                      return certs; // skip this result
+                      return certs; // skip this cert
                     }
                   }
                   return certs.concat(result);
