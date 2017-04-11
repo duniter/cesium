@@ -25,7 +25,7 @@
 
       <button id="helptip-certs-certify"
               class="button button-raised button-calm icon-left ion-ribbon-b"
-              ng-if="formData.hasSelf"
+              ng-if="canCertify"
               ng-click="certify()"
               ng-disabled="disableCertifyButton">
         {{'WOT.BTN_CERTIFY' | translate}}
