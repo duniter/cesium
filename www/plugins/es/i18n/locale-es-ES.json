@@ -1,0 +1,457 @@
+{
+  "COMMON": {
+    "CATEGORY": "Categoría",
+    "CATEGORIES": "Categorías",
+    "CATEGORY_SEARCH_HELP": "Búsqueda",
+    "LAST_MODIFICATION_DATE": "Actualización el",
+    "SUBMIT_BY": "Sometido por",
+    "BTN_PUBLISH": "Publicar",
+    "BTN_PICTURE_DELETE": "Suprimir",
+    "BTN_PICTURE_FAVORISE": "Principal",
+    "BTN_ADD_PICTURE": "Añadir una foto",
+    "NOTIFICATIONS": {
+      "TITLE": "Notificaciónes",
+      "MARK_ALL_AS_READ": "Marcar todo como leído",
+      "NO_RESULT": "Ningúna notificación",
+      "SETTINGS": "configuraciónes",
+      "SHOW_ALL": "Ver todo",
+      "LOAD_NOTIFICATIONS_FAILED": "Fracaso en la carga de las notificaciónes"
+    }
+  },
+  "MENU": {
+    "MARKET": "Anuncios",
+    "REGISTRY": "Profesionales",
+    "USER_PROFILE": "Mi perfil",
+    "MESSAGES": "Mensajes",
+    "NOTIFICATIONS": "Notificaciónes",
+    "INVITATIONS": "Invitaciónes"
+  },
+  "ACCOUNT": {
+    "NEW": {
+      "ORGANIZATION_ACCOUNT": "Cuenta para una organización",
+      "ORGANIZATION_ACCOUNT_HELP": "Si representa una empresa, una asociación, etc.<br/>Ningún dividendo universal será creído por esta cuenta."
+    },
+    "EVENT": {
+      "MEMBER_WITHOUT_PROFILE": "Para obtener sus certificaciónes más rapidamente, completa <a ui-sref=\"app.user_edit_profile\">su perfil usuario</a>. Los miembros concederán más fácilmente su confianza a una identidad verificable."
+    },
+    "ERROR": {
+      "WS_CONNECTION_FAILED": "Cesium no puede recibir las notificaciónes, a causa de un error técnico (conexión al nodo de datos Cesium+).<br/><br/>Si el problema persiste, por favor <b>elige un otro nodo de datos</b> en las configuraciónes Cesium+."
+    }
+  },
+  "WOT": {
+    "BTN_SUGGEST_CERTIFICATIONS_DOTS": "Sugerir identidad a certificar...",
+    "BTN_ASK_CERTIFICATIONS_DOTS": "Solicitar otros miembros a certificarme…",
+    "BTN_ASK_CERTIFICATION": "Solicitar una certificación",
+    "SUGGEST_CERTIFICATIONS_MODAL": {
+      "TITLE": "Sugerir certificaciónes",
+      "HELP": "Selectionar sus sugerencias"
+    },
+    "ASK_CERTIFICATIONS_MODAL": {
+      "TITLE": "Solicitar certificaciónes",
+      "HELP": "Selectionar los destinatarios"
+    },
+    "CONFIRM": {
+      "SUGGEST_CERTIFICATIONS": "Está usted segura/o querer <b>mandar estas sugerencia de certificatión</b> ?",
+      "ASK_CERTIFICATION": "Está usted segura/o querer <b>mandar una solicitud de certificación</b> ?",
+      "ASK_CERTIFICATIONS": "Está usted segura/o querer <b>mandar una solicitud de certificación</b> a estas personas ?"
+    }
+  },
+  "INVITATION": {
+    "TITLE": "Invitaciónes",
+    "NO_RESULT": "Ningúna invitación en espera",
+    "BTN_DELETE_ALL": "Suprimir todas las invitaciónes",
+    "BTN_DELETE": "Suprimir la invitación",
+    "BTN_NEW_INVITATION": "Nueva invitación",
+    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> solicita su certificación",
+    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> él es sugerido por certificación",
+    "SUGGESTED_BY": "Sugerencia mandada por <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
+    "NOTIFICATIONS": {
+      "TITLE": "Invitaciónes"
+    },
+    "LIST": {
+      "TITLE": "Invitaciónes"
+    },
+    "NEW": {
+      "TITLE": "Nueva invitación",
+      "RECIPIENTS": "A",
+      "RECIPIENTS_HELP": "Destinatarios de la invitación",
+      "RECIPIENTS_MODAL_TITLE": "Destinatarios",
+      "RECIPIENTS_MODAL_HELP": "Por favor, elige los destinatarios :",
+      "SUGGESTION_IDENTITIES": "Sugerencia de certificación",
+      "SUGGESTION_IDENTITIES_HELP": "Certificaciónes a sugerir",
+      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Sugerencias",
+      "SUGGESTION_IDENTITIES_MODAL_HELP": "Por favor, elige sus sugerencias :"
+    },
+    "CONFIRM": {
+      "DELETE_ALL_CONFIRMATION": "La supresión de las invitaciónes es una <b>operación ireversible</b>.<br/><br/><b>Está usted segura/o </b> querer continuar ?",
+      "SEND_INVITATIONS_TO_CERTIFY": "Está usted segura/o querer <b>mandar esta invitación a certificar</b> ?"
+    },
+    "INFO": {
+      "INVITATION_SENT": "Invitación mandada"
+    },
+    "ERROR": {
+      "LOAD_INVITATIONS_FAILED": "Fracaso en la carga de las invitaciónes",
+      "REMOVE_INVITATION_FAILED": "Fracaso durante la supresión de la invitación",
+      "REMOVE_ALL_INVITATIONS_FAILED": "Fracaso durante la supresión de las invitaciónes",
+      "SEND_INVITATION_FAILED": "Fracaso durante el envío de la invitación",
+      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitación ilegible (formato desconocido)</span> - mandada por <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a>"
+    }
+  },
+  "COMMENTS": {
+    "DIVIDER": "Comentarios",
+    "DIVIDER_WITH_TOTAL": "Comentarios ({{total}})",
+    "SHOW_MORE_COMMENTS": "Visualizar los comentarios anteriores",
+    "COMMENT_HELP": "Su comentario, preguntas, etc.",
+    "COMMENT_HELP_REPLY_TO": "Su repuesta…",
+    "BTN_SEND": "Mandar",
+    "POPOVER_SHARE_TITLE": "Mensaje #{{number}}",
+    "REPLY": "Responder",
+    "REPLY_TO": "Repuesta a :",
+    "REPLY_TO_LINK": "En repuesta a ",
+    "REPLY_TO_DELETED_COMMENT": "En repuesta a un comentario suprimido",
+    "REPLY_COUNT": "{{replyCount}} repuestas",
+    "DELETED_COMMENT": "Comentario suprimido"
+  },
+  "MESSAGE": {
+    "REPLY_TITLE_PREFIX": "Rep: ",
+    "FORWARD_TITLE_PREFIX": "Tr: ",
+    "BTN_REPLY": "Responder",
+    "BTN_COMPOSE": "Nuevo mensaje",
+    "BTN_WRITE": "Escribir",
+    "NO_MESSAGE_INBOX": "Ningun mensaje recibido",
+    "NO_MESSAGE_OUTBOX": "Ningun mensaje mandado",
+    "NOTIFICATIONS": {
+      "TITLE": "Mensajes",
+      "MESSAGE_RECEIVED": "Ha <b>recibido un mensaje</b><br/>de"
+    },
+    "LIST": {
+      "INBOX": "Bandeja de entrada",
+      "OUTBOX": "Mensajes mandados",
+      "TITLE": "Mensajes",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Opciónes",
+        "DELETE_ALL": "Suprimir todos los mensajes"
+      }
+    },
+    "COMPOSE": {
+      "TITLE": "Nuevo mensaje",
+      "TITLE_REPLY": "Responder",
+      "SUB_TITLE": "Nuevo mensaje",
+      "TO": "A",
+      "OBJECT": "Objeto",
+      "OBJECT_HELP": "Objeto",
+      "ENCRYPTED_HELP": "Por favor, nota que este mensaje será cifrado antes envío, a fin que solo el destinatario pueda leerlo, y que esté asegurado que usted esté bien su autor.",
+      "MESSAGE": "Mensaje",
+      "MESSAGE_HELP": "Contenido del mensaje",
+      "CONTENT_CONFIRMATION": "El contenido del mensaje es vacío.<br/><br/>Sin embargo, quiere mandar el mensaje ?"
+    },
+    "VIEW": {
+      "TITLE": "Mensaje",
+      "SENDER": "Mandado por",
+      "RECIPIENT": "Mandado a",
+      "NO_CONTENT": "Mensaje vacío"
+    },
+    "CONFIRM": {
+      "REMOVE": "Está usted segura/o querer <b>suprimir este mensaje</b> ?<br/><br/>Esta operación es ireversible.",
+      "REMOVE_ALL" : "Está usted segura/o querer <b>suprimir todos los mensajes</b> ?<br/><br/>Esta operación es ireversible.",
+      "MARK_ALL_AS_READ": "Está usted segura/o querer <b>marcar todos los mensajes como leído</b> ?",
+      "USER_HAS_NO_PROFILE": "Esta identidad no tiene ningún perfil Cesium+. Se puede que no utilice la extensión Cesium+, y <b>así no consultará su mensaje</b>.<br/><br/>Está usted segura/o querer <b>continuar</b> a pesar de todo ?"
+    },
+    "INFO": {
+      "MESSAGE_REMOVED": "Mensaje suprimido",
+      "All_MESSAGE_REMOVED": "Todos los mensajes fueron suprimido",
+      "MESSAGE_SENT": "Mensaje mandado"
+    },
+    "ERROR": {
+      "SEND_MSG_FAILED": "Fracaso durante el envío del mensaje.",
+      "LOAD_MESSAGES_FAILED": "Fracaso durante la recuperación de los mensajes.",
+      "LOAD_MESSAGE_FAILED": "Fracaso durante la recuperación del mensaje.",
+      "MESSAGE_NOT_READABLE": "Lectura del mensaje imposible.",
+      "USER_NOT_RECIPIENT": "No esta el destinatario de este mensaje : deciframiento imposible.",
+      "NOT_AUTHENTICATED_MESSAGE": "La autenticidad del mensaje es dudosa o su contenido es corrupto.",
+      "REMOVE_MESSAGE_FAILED": "Fracaso en la supresión del mensaje",
+      "MESSAGE_CONTENT_TOO_LONG": "Valor demasiado largo ({{maxLength}} carácteres max).",
+      "MARK_AS_READ_FAILED": "Imposible marcar el mensaje como 'leído'.",
+      "LOAD_NOTIFICATIONS_FAILED": "Fracaso durante la recuperación de las notificaciónes de mensajes.",
+      "REMOVE_All_MESSAGES_FAILED": "Fracaso durante la supresión de todos los mensajes.",
+      "MARK_ALL_AS_READ_FAILED": "Fracaso durante el marcaje de los mensajes como leído.",
+      "RECIPIENT_IS_MANDATORY": "El destinatario es obligatorio."
+    }
+  },
+  "BLOCKCHAIN": {
+    "LOOKUP": {
+      "SEARCH_HELP": "Número de bloque, hash, llave pública, etc.",
+      "POPOVER_FILTER_TITLE": "Filtros",
+      "HEADER_MEDIAN_TIME": "Fecha / Hora",
+      "HEADER_BLOCK": "Bloque #",
+      "HEADER_ISSUER": "Nodo emisor",
+      "BTN_LAST": "últimos bloques"
+    },
+    "ERROR": {
+      "SEARCH_BLOCKS_FAILED": "Fracaso en la búsqueda de los bloques."
+    }
+  },
+  "GROUP": {
+    "GENERAL_DIVIDER": "Informaciónes generales",
+    "LOCATION_DIVIDER": "Dirección",
+    "SOCIAL_NETWORKS_DIVIDER": "Redes sociales y sitio web",
+    "TECHNICAL_DIVIDER": "Informaciónes técnicas",
+    "NOTIFICATIONS": {
+      "TITLE": "Invitaciónes"
+    },
+    "LOOKUP": {
+      "TITLE": "Grupos",
+      "SEARCH_HELP": "Nombre de grupo, palabras , lugar, etc.",
+      "LAST_RESULTS_LIST": "Nuevos grupos :",
+      "OPEN_RESULTS_LIST": "Grupos abiertos :",
+      "MANAGED_RESULTS_LIST": "Grupos cerrados :",
+      "BTN_LAST": "Nuevos grupos",
+      "BTN_NEW": "Añado un grupo"
+    },
+    "TYPE": {
+      "TITLE": "Nuevo grupo",
+      "SELECT_TYPE": "Tipo de grupo :",
+      "OPEN_GROUP": "Grupo abierto",
+      "OPEN_GROUP_HELP": "Un grupo abierto es accesible por cualquier miembro de la moneda.",
+      "MANAGED_GROUP": "Grupo administrado",
+      "MANAGED_GROUP_HELP": "un grupo administrado es gestionado por administradores y moderadores, que pueden aceptar, rechazar o excluir un miembro en su seno.",
+      "ENUM": {
+        "OPEN": "Grupo abierto",
+        "MANAGED": "Grupo administrado"
+      }
+    },
+    "EDIT": {
+      "TITLE": "Grupo",
+      "TITLE_NEW": "Nuevo grupo",
+      "RECORD_TITLE": "Título",
+      "RECORD_TITLE_HELP": "Título",
+      "RECORD_DESCRIPTION": "Descripción",
+      "RECORD_DESCRIPTION_HELP": "Descripción"
+    },
+    "ERROR": {
+      "SEARCH_GROUPS_FAILED": "Fracaso en la búsqueda de grupos"
+    }
+  },
+  "MARKET": {
+    "COMMON": {
+      "PRICE": "Precio",
+      "BTN_BUY": "Comprar",
+      "BTN_BUY_DOTS": "Comprar…",
+      "BTN_NEW_AD": "Presento un anuncio"
+    },
+    "SEARCH": {
+      "TITLE": "Anuncios",
+      "SEARCH_HELP": "Búsqueda (coche, libro...)",
+      "BTN_ADD": "Nuevo",
+      "BTN_OPTIONS": "Búsqueda avanzada",
+      "BTN_AROUND_ME": "Alrededor de yo",
+      "SHOW_MORE": "Visualizar más",
+      "SHOW_MORE_COUNT": "(límite actual a {{limit}})",
+      "LOCATION": "localización",
+      "LOCATION_HELP": "Ciudad",
+      "LAST_RECORDS": "últimos anuncios :",
+      "RESULTS": "Resultados :",
+      "BTN_OFFERS": "Ofrecimientos",
+      "BTN_NEEDS": "Demandas"
+    },
+    "VIEW": {
+      "TITLE": "Anuncio",
+      "MENU_TITLE": "Opciónes",
+      "POPOVER_SHARE_TITLE": "Anuncio {{title}}",
+      "REMOVE_CONFIRMATION" : "Está usted segura/o querer suprimir este anuncio ?<br/><br/>Esta operación es ireversible."
+    },
+    "TYPE": {
+      "TITLE": "Nuevo anuncio",
+      "SELECT_TYPE": "Tipo de anuncio :",
+      "OFFER": "Ofrecimiento, Venta",
+      "NEED": "Demanda, Búsqueda"
+    },
+    "EDIT": {
+      "TITLE": "Edición",
+      "TITLE_NEW": "Nuevo anuncio",
+      "RECORD_TITLE": "Título",
+      "RECORD_TITLE_HELP": "Título",
+      "RECORD_DESCRIPTION": "Descripción",
+      "RECORD_DESCRIPTION_HELP": "Descripción",
+      "RECORD_LOCATION": "Ciudad",
+      "RECORD_LOCATION_HELP": "Dirección, Ciudad",
+      "RECORD_PRICE": "Precio",
+      "RECORD_PRICE_HELP": "Precio (opcional)",
+      "RECORD_CURRENCY": "Moneda"
+    },
+    "ERROR": {
+      "FAILED_SAVE_RECORD": "Fracaso durante el registro de el anuncio",
+      "FAILED_UPDATE_RECORD": "Fracaso durante la actualización de el anuncio",
+      "LOAD_CATEGORY_FAILED": "Erreur de actualización de las categorías",
+      "LOOKUP_RECORDS_FAILED": "Fracaso durante la ejecución de la búsqueda.",
+      "LOAD_RECORD_FAILED": "Fracaso durante la carga de el anuncio.",
+      "REMOVE_RECORD_FAILED": "Erreur de la supresión de el anuncio",
+      "FAILED_SAVE_COMMENT": "Fracaso durante el respaldo del comentario",
+      "FAILED_REMOVE_COMMENT": "Fracaso durante la supresión del comentario",
+      "RECORD_NOT_EXISTS": "Anuncio inexistente"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Anuncio suprimido"
+    }
+  },
+  "REGISTRY": {
+    "CATEGORY": "Actividad principal",
+    "GENERAL_DIVIDER": "Informaciónes generales",
+    "LOCATION_DIVIDER": "Dirección",
+    "SOCIAL_NETWORKS_DIVIDER": "Redes sociales y sitio web",
+    "TECHNICAL_DIVIDER": "Informaciónes técnicas",
+    "BTN_NEW": "Creer una página",
+    "SEARCH": {
+      "TITLE": "Páginas",
+      "TITLE_SMALL_DEVICE": "Páginas",
+      "SEARCH_HELP": "Qué, Quién : restaurante, Con Marcel, ...",
+      "BTN_ADD": "Nuevo",
+      "BTN_OPTIONS": "Búsqueda avanzada",
+      "TYPE": "Tipo de página",
+      "LOCATION": "Localización",
+      "LOCATION_HELP": "Ciudad",
+      "LAST_RECORDS": "últimos registrados :",
+      "RESULTS": "Resultados :"
+    },
+    "VIEW": {
+      "TITLE": "Anuario",
+      "CATEGORY": "Actividad principal :",
+      "LOCATION": "Dirección :",
+      "MENU_TITLE": "Opciónes",
+      "POPOVER_SHARE_TITLE": "{{title}}",
+      "REMOVE_CONFIRMATION" : "Está usted segura/o querer suprimir esta página ?<br/><br/>Esta operación es ireversible."
+    },
+    "TYPE": {
+      "TITLE": "Nueva página",
+      "SELECT_TYPE": "Tipo de página :",
+      "ENUM": {
+        "SHOP": "Comercio local",
+        "COMPANY": "Empresa",
+        "ASSOCIATION": "Asociación",
+        "INSTITUTION": "Institución"
+      }
+    },
+    "EDIT": {
+      "TITLE": "Edición",
+      "TITLE_NEW": "Nueva página",
+      "RECORD_TYPE":"Tipo de página",
+      "RECORD_TITLE": "Nombre",
+      "RECORD_TITLE_HELP": "Nombre",
+      "RECORD_DESCRIPTION": "Descripción",
+      "RECORD_DESCRIPTION_HELP": "Descripción de la actividad",
+      "RECORD_ADDRESS": "Calle",
+      "RECORD_ADDRESS_HELP": "Dirección : calle, edificio...",
+      "RECORD_CITY": "Ciudad",
+      "RECORD_CITY_HELP": "Ciudad",
+      "RECORD_SOCIAL_NETWORKS": "Redes sociales y sitio web",
+      "RECORD_PUBKEY": "Llave pública" ,
+      "RECORD_PUBKEY_HELP": "Llave pública de recepción de los pagos"
+    },
+    "ERROR": {
+      "LOAD_CATEGORY_FAILED": "Fracaso en la carga de la lista de actividades",
+      "LOAD_RECORD_FAILED": "Fracaso durante la carga de la página",
+      "LOOKUP_RECORDS_FAILED": "Fracaso durante la ejecución de la búsqueda.",
+      "REMOVE_RECORD_FAILED": "Fracaso en la supresión de la página",
+      "SAVE_RECORD_FAILED": "Fracaso durante el respaldo",
+      "RECORD_NOT_EXISTS": "Página inexistente"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Página suprimida"
+    }
+  },
+  "PROFILE": {
+    "PROFILE_DIVIDER": "Perfil Cesium+",
+    "NO_PROFILE_DEFINED": "Ningún perfil Cesium+",
+    "BTN_ADD": "Ingresar mi perfil",
+    "BTN_EDIT": "Editar mi perfil",
+    "UID": "Seudónimo",
+    "TITLE": "Nombre, Apellido",
+    "TITLE_HELP": "Nombre, Apellido",
+    "DESCRIPTION": "A propósito de yo",
+    "DESCRIPTION_HELP": "A propósito de yo...",
+    "ADDRESS": "Calle",
+    "ADDRESS_HELP": "Calle, complemento de dirección...",
+    "CITY": "Ciudad",
+    "CITY_HELP": "Ciudad (opcional)",
+    "SOCIAL_HELP": "http://...",
+    "GENERAL_DIVIDER": "Informaciónes generales",
+    "LOCATION_DIVIDER": "Dirección",
+    "SOCIAL_NETWORKS_DIVIDER": "Redes sociales, sitios web",
+    "TECHNICAL_DIVIDER": "Informaciónes técnicas",
+    "MODAL_AVATAR": {
+      "TITLE": "Foto de perfil",
+      "SELECT_FILE_HELP": "Por favor, <b>elige un fichero imagen</b>, haciendo un clic sobre el botón por debajo :",
+      "BTN_SELECT_FILE": "Eligir una foto",
+      "RESIZE_HELP": "<b>Encuadra la imagen</b>, si es necesario. Un clic mantenido sobre la imagen permite desplazarla. Hace un clic sobre la zona abajo a la izquierda para hacer zoom.",
+      "RESULT_HELP": "<b>Aquí está el resultado</b> tal como está visible sobre su perfil :"
+    },
+    "ERROR": {
+      "LOAD_PROFILE_FAILED": "Fracaso en la carga del perfil usuario.",
+      "SAVE_PROFILE_FAILED": "Fracaso durante el respaldo",
+      "INVALID_SOCIAL_NETWORK_FORMAT": "Formato no tomado en cuenta : por favor, indica una dirección válida.<br/><br/>Ejemplos :<ul><li>- Una página Facebook (https://www.facebook.com/user)</li><li>- Una página web (http://www.misitio.es)</li><li>- Una dirección email (joe@dalton.com)</li></ul>",
+      "IMAGE_RESIZE_FAILED": "Fracaso durante el redimensionamiento de la imagen"
+    },
+    "INFO": {
+      "PROFILE_SAVED": "Perfil respaldado"
+    },
+    "HELP": {
+      "WARNING_PUBLIC_DATA": "Las informaciónes informadas en su perfil <b>están públicas</b> : visibles también por personas <b>no conectadas</b>."
+    }
+  },
+  "ES_SETTINGS": {
+    "PLUGIN_NAME": "Cesium+",
+    "PLUGIN_NAME_HELP": "Perfiles, notificaciónes, mensajes privados",
+    "ENABLE_TOGGLE": "Activar la extensión ?",
+    "ENABLE_MESSAGE_TOGGLE": "Activar los mensajes privados ?",
+    "ENABLE_SETTINGS_TOGGLE": "Activar el almacenamiento a distancia de las configuraciónes ?",
+    "PEER": "Dirección del nodo de datos",
+    "POPUP_PEER": {
+      "TITLE" : "Nodo de datos",
+      "HELP" : "Ingresa la dirección del nodo que quiere utilizar :",
+      "PEER_HELP": "servidor.dominio.com:puerto"
+    },
+    "NOTIFICATIONS": {
+      "DIVIDER": "Notificaciónes",
+      "HELP_TEXT": "Activa los tipos de notificaciónes que usted desea recibir :",
+      "ENABLE_TX_SENT": "Notificar la validación de los <b>pagos emitidos</b> ?",
+      "ENABLE_TX_RECEIVED": "Notificar la validación de los <b>pagos recibidos</b> ?",
+      "ENABLE_CERT_SENT": "Notificar la validación de las <b>certificaciónes emitidas</b> ?",
+      "ENABLE_CERT_RECEIVED": "Notificar la validación de las <b>certificaciónes recibidas</b> ?"
+    },
+    "CONFIRM": {
+      "ASK_ENABLE_TITLE": "Nuevas funcionalidades",
+      "ASK_ENABLE": "Nuevas funcionalidades son disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Perfiles Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notificaciónes</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Mensajes privados</b>.</ul><br/>Fueron <b>desactivadas</b> en sus configuraciones.<br/><br/><b>Quiere usted activarlas</b> ?"
+    }
+  },
+  "ES_WALLET": {
+    "ERROR": {
+      "RECIPIENT_IS_MANDATORY": "Un destinatario es obligatorio para el cifrado."
+    }
+  },
+  "EVENT": {
+    "NODE_STARTED": "Su nodo ES API <b>{{params[0]}}</b> es comenzado",
+    "NODE_BMA_DOWN": "El nodo <b>{{params[0]}}:{{params[1]}}</b> (utilizado por su nodo ES API) <b>no es localizable</b>.",
+    "NODE_BMA_UP": "El nodo <b>{{params[0]}}:{{params[1]}}</b> es de nuevo accesible.",
+    "MEMBER_JOIN": "Ahora usted está <b>miembro</b> de la moneda <b>{{params[0]}}</b> !",
+    "MEMBER_LEAVE": "No está <b>miembro</b> de la moneda <b>{{params[0]}}</b>!",
+    "MEMBER_ACTIVE": "Su renovación de adhesión a la moneda <b>{{params[0]}}</b> fue <b>tomado en cuenta</b>.",
+    "TX_SENT": "Su <b>pago</b> a <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> fue efectuado.",
+    "TX_SENT_MULTI": "Su <b>pago</b> a <b>{{params[1]}}</b> fue efectuado.",
+    "TX_RECEIVED": "Ha <b>recibido un pago</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "TX_RECEIVED_MULTI": "Ha <b>recibido un pago</b> de <b>{{params[1]}}</b>.",
+    "CERT_SENT": "Su <b>certificación</b> a <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> fue efectuada.",
+    "CERT_RECEIVED": "Ha <b>recibido una certificación</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
+    "MARKET": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha comentado su anuncio : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado su comentario sobre su anuncio : <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha contestado a su comentario sobre el anuncio : <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado la repuesta a su comentario sobre el anuncio : <b>{{params[2]}}</b>"
+    },
+    "REGISTRY": {
+      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha comentado su referencia : <b>{{params[2]}}</b>",
+      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado su comentario sobre su referencia : <b>{{params[2]}}</b>",
+      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha contestado a su comentario sobre el referencia : <b>{{params[2]}}</b>",
+      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado la repuesta a su comentario sobre el referencia : <b>{{params[2]}}</b>"
+    }
+  }
+}

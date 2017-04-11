@@ -453,6 +453,7 @@
     "FIELD_ACCENT": "Caractères accentués et virgules non autorisés",
     "FIELD_NOT_NUMBER": "Valeur numérique attendue",
     "FIELD_NOT_INT": "Valeur entière attendue",
+    "FIELD_NOT_EMAIL": "Adresse email non valide",
     "PASSWORD_NOT_CONFIRMED": "Ne correspond pas au mot de passe.",
     "SALT_NOT_CONFIRMED": "Ne correspond pas à l'identifiant secret.",
     "SEND_IDENTITY_FAILED": "Echec de l'inscription.",

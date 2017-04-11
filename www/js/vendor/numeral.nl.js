@@ -1,4 +1,4 @@
-//! moment.js locale configuration
+//! numeral.js locale configuration
 //! locale : dutch (nl)
 //! author : RA van Hagen : https://github.com/RavanH
 

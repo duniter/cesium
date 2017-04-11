@@ -1,6 +1,6 @@
-//! moment.js locale configuration
+//! numeral.js locale configuration
 //! locale : french (fr)
-//! author : Benoit Lavenier : https://github.com/blavenie
+//! author : blavenie: https://github.com/blavenie
 
 (function (global, factory) {
    typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('../numeral')) :

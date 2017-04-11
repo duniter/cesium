@@ -8,7 +8,7 @@
    factory(global.moment)
 }(this, function (moment) { 'use strict';
 
-    var fr = moment.defineLocale('nl', {
+    var nl = moment.defineLocale('nl', {
         months : 'januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december'.split('|'),
         monthsShort : 'jan|feb|mrt|apr|mei|jun|jul|aug|sep|okt|nov|dec'.split('|'),
         weekdays : 'zondag|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag'.split('|'),
