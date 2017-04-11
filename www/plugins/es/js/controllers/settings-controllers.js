@@ -55,7 +55,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function() {
+  $scope.onEnter = function() {
     $scope.loading = true;
     $scope.formData = csSettings.data.plugins && csSettings.data.plugins.es ?
       angular.copy(csSettings.data.plugins.es) : {
@@ -65,7 +65,8 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
       wsPort: null
     };
     $scope.loading = false;
-  });
+  };
+  $scope.$on('$ionicView.enter', $scope.onEnter);
 
   $scope.setPopupForm = function(popupForm) {
     $scope.popupForm = popupForm;

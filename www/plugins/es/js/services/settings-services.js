@@ -123,6 +123,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             var settings = JSON.parse(json || '{}');
             settings.time = record.time;
             console.debug('[ES] [settings] Loaded user settings in '+ (new Date().getTime()-now) +'ms');
+            console.log(settings);
             return settings;
           })
           // if error: skip stored content
@@ -247,6 +248,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           nonce: CryptoUtils.util.encode_base58(nonce),
           time: time
         };
+
+        //console.debug("Will store settings remotely: ", filteredData);
 
         var json = JSON.stringify(filteredData);
 

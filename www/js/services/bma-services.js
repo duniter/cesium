@@ -37,6 +37,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         UID_ALREADY_USED: 2003,
         NO_MATCHING_MEMBER: 2004,
         NO_IDTY_MATCHING_PUB_OR_UID: 2021,
+        WRONG_SIGNATURE_MEMBERSHIP: 2006,
         MEMBERSHIP_ALREADY_SEND: 2007,
         NO_CURRENT_BLOCK: 2010,
         BLOCK_NOT_FOUND: 2011,
@@ -366,7 +367,8 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
           ud: get('/blockchain/with/ud', csHttp.cache.SHORT),
           tx: get('/blockchain/with/tx'),
           newcomers: get('/blockchain/with/newcomers'),
-          hardship: get('/blockchain/hardship/:pubkey')
+          hardship: get('/blockchain/hardship/:pubkey'),
+          difficulties: get('/blockchain/difficulties')
         }
       },
       tx: {

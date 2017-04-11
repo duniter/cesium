@@ -357,6 +357,36 @@
       "WARNING_PUBLIC_DATA": "Please note that the information published here <b>is public</b>: visible including by <b>not logged in people</b>."
     }
   },
+  "SUBSCRIPTION": {
+    "SUBSCRIPTION_DIVIDER": "Online services",
+    "BTN_ADD": "Add a service",
+    "BTN_EDIT": "Manage my services",
+    "NO_SUBSCRIPTION": "No service defined",
+    "EMAIL": "Email",
+    "SUBSCRIPTION_COUNT": "Services / Subscription",
+    "EDIT": {
+      "TITLE": "Online services",
+      "HELP_TEXT": "Manage your subscriptions and other online services here"
+    },
+    "TYPE": {
+      "ENUM": {
+        "EMAIL": "Receive email notifications"
+      }
+    },
+    "ERROR": {
+      "LOAD_SUBSCRIPTIONS_FAILED": "Error loading online services"
+    },
+    "MODAL_EMAIL": {
+      "TITLE" : "Notification by email",
+      "HELP" : "Fill out this form to <b>be notified by email</ b> of your account's events. <br/>Your email address will be encrypted only to be visible to the service provider.",
+      "EMAIL_LABEL" : "Your email:",
+      "EMAIL_HELP": "john@domain.com",
+      "FREQUENCY_LABEL": "Frequency of notifications:",
+      "FREQUENCY_DAILY": "Daily",
+      "FREQUENCY_WEEKLY": "Weekly",
+      "PROVIDER": "Service Provider:"
+    }
+  },
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Cesium+",
     "PLUGIN_NAME_HELP": "User profiles, notifications, private messages",

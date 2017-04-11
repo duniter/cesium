@@ -1,0 +1,18 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+      <h1 class="title" translate>SUBSCRIPTION.TYPE.TITLE</h1>
+  </ion-header-bar>
+
+    <ion-content class="lookupForm">
+    	<div class="list padding">
+        <h3 translate>SUBSCRIPTION.TYPE.SELECT_TYPE</h3>
+        <button class="button button-block button-stable icon icon-left cion-market-offer"
+                ng-click="closeModal('offer')"
+                translate>SUBSCRIPTION.TYPE.OFFER</button>
+        <button class="button button-block button-stable icon icon-left cion-market-need"
+                ng-click="closeModal('need')"
+                translate>MARKET.TYPE.NEED</button>
+      </div>
+</ion-content>
+</ion-modal-view>

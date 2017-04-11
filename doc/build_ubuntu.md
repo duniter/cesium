@@ -44,7 +44,9 @@ ubuntu-sdk-ide
 > `sudo usermod -a -G lxd mon_user`
 
 
-## Build Debian package (.deb)
+## Build Debian package 
+
+Cesium can be built on a `amd64` architecture. 
 
 1. Generate the `click` source code:
 
@@ -66,12 +68,33 @@ This should generate the `.deb` in directory `<cesium>/platforms/ubuntu/native`.
 > The key should match the `author` field of the file `<cesium>/config.xml`.
 > To be able to your own GPG key, change the author. 
 
-### Testing on an Ubuntu phone
+### Build for Ubuntu Phone
+
+Cesium can be built on a `armhf` architecture.
+
+Install `armhf` build platform:
+
+```bash
+sudo click chroot -a armhf -f ubuntu-sdk-15.04 create
+```
+
+Then install some dependencies inside the `armhf` chroot:  
+ 
+```bash
+sudo click chroot -a armhf -f ubuntu-sdk-15.04 install cmake libicu-dev:armhf pkg-config qtbase5-dev:armhf qtchooser qtdeclarative5-dev:armhf qtfeedback5-dev:armhf qtlocation5-dev:armhf qtmultimedia5-dev:armhf qtpim5-dev:armhf libqt5sensors5-dev:armhf qtsystems5-dev:armhf 
+```
+
+Build the phone application  
 
 ```bash
 cd cesium
-ionic run ubuntu --device
+ionic build ubuntu --device
 ```
+
+> To test your application on phone, execute :
+> `ionic run ubuntu --device`
+
+
 
 ## Publishing to Ubuntu App Store
 

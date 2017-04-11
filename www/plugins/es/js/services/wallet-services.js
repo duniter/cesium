@@ -23,16 +23,20 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.servic
     if (keypair.boxPk && keypair.boxSk) {
       return $q.when(keypair);
     }
-    return CryptoUtils.box.keypair.fromSignKeypair(keypair)
-      .then(function(boxKeypair) {
-        csWallet.data.keypair.boxSk = boxKeypair.boxSk;
-        csWallet.data.keypair.boxPk = boxKeypair.boxPk;
+
+    return $q.all([
+        CryptoUtils.box.keypair.skFromSignSk(keypair.signSk),
+        CryptoUtils.box.keypair.pkFromSignPk(keypair.signPk)
+      ])
+      .then(function(res) {
+        csWallet.data.keypair.boxSk = res[0];
+        csWallet.data.keypair.boxPk = res[1];
         console.debug("[ES] [wallet] Secret box keypair successfully computed");
         return csWallet.data.keypair;
       });
   }
 
-  function packRecordFields(record, keypair, recipientFieldName, cypherFieldNames) {
+  function packRecordFields(record, keypair, recipientFieldName, cypherFieldNames, nonce) {
 
     recipientFieldName = recipientFieldName || 'recipient';
     if (!record[recipientFieldName]) {
@@ -53,13 +57,15 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.servic
     return $q.all([
       getBoxKeypair(keypair),
       CryptoUtils.box.keypair.pkFromSignPk(recipientPk),
-      CryptoUtils.util.random_nonce()
+      nonce ? $q.when(nonce) : CryptoUtils.util.random_nonce()
     ])
       .then(function(res) {
+        //var senderSk = res[0];
         var boxKeypair = res[0];
+        var senderSk = boxKeypair.boxSk;
         var boxRecipientPk = res[1];
         var nonce = res[2];
-        var senderSk = boxKeypair.boxSk;
+
         return $q.all(
           cypherFieldNames.reduce(function(res, fieldName) {
             if (!record[fieldName]) return res; // skip undefined fields

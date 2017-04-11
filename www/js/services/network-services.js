@@ -198,8 +198,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
 
         // Filter on endpoints
-        if (data.filter.endpointFilter) {
-          return peer.hasEndpoint(data.filter.endpointFilter);
+        if (data.filter.endpointFilter && !peer.hasEndpoint(data.filter.endpointFilter)) {
+          return false;
         }
 
         // Filter on status
@@ -208,8 +208,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
         }
 
         // Filter on ssl
-        if (data.filter.ssl) {
-          return peer.isSsl();
+        if (angular.isDefined(data.filter.ssl) && peer.isSsl() != data.filter.ssl) {
+          return false;
         }
 
         return true;

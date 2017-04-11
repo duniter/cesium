@@ -175,6 +175,10 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
         return $q.when(that.nacl.crypto_box_pk_from_sign_pk(signPk));
       };
 
+      this.box_sk_from_sign = function (signSk) {
+        return $q.when(that.nacl.crypto_box_sk_from_sign_sk(signSk));
+      };
+
       /**
        * Encrypt a message, from a key pair
        */
@@ -330,6 +334,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       this.box = {
         keypair: {
           fromSignKeypair: that.box_keypair_from_sign,
+          skFromSignSk: that.box_sk_from_sign,
           pkFromSignPk: that.box_pk_from_sign
         },
         pack: that.box,

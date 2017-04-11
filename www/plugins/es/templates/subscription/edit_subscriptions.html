@@ -1,0 +1,71 @@
+<ion-view left-buttons="leftButtons"
+          class="view-notification">
+  <ion-nav-title>
+    {{'SUBSCRIPTION.EDIT.TITLE' | translate}}
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
+    </button>
+
+    <button class="button button-icon button-clear visible-xs visible-sm"
+            ng-click="showActionsPopover($event)">
+      <i class="icon ion-android-more-vertical"></i>
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <!-- Buttons bar -->
+    <div class="hidden-xs hidden-sm padding text-center">
+
+      <button class="button button-raised icon-left ion-plus ink"
+              ng-click="addSubscription()">
+        {{'SUBSCRIPTION.BTN_ADD' | translate}}
+      </button>
+    </div>
+
+    <div class="center padding" ng-if="search.loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="center padding gray" ng-if="!search.loading && !search.results.length" translate>
+      SUBSCRIPTION.NO_SUBSCRIPTION
+    </div>
+
+    <div class="row no-padding">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+      <div class="col list {{::motion.ionListClass}} item-border-large">
+
+        <ng-repeat ng-repeat="subscriptions in search.results">
+
+          <!-- emails -->
+          <div class="item item-thumbnail-left" ng-if="subscriptions.type == 'email'">
+            <i class="item-image icon ion-email"></i>
+            <div class="input-label">
+              {{'SUBSCRIPTION.TYPE.ENUM.' + subscriptions.type.toUpperCase() | translate}}
+            </div>
+            <div class="item-note">
+
+              <span ng-repeat="item in subscriptions.items">
+                {{item.recipient | formatPubkey}} <i class="ion-arrow-right-a"></i>
+                {{item.content.email}}
+                <a class="icon ion-close assertive padding-left" ng-click="deleteSubscription(item)"></a>
+                <a class="icon ion-edit gray padding-left" ng-click="editSubscription(item)"></a>
+                <br/>
+              </span>
+            </div>
+          </div>
+        </ng-repeat>
+
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+
+    </div>
+
+  </ion-content>
+
+</ion-view>

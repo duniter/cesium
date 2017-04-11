@@ -22,7 +22,8 @@ Peer.prototype.regex = {
 };
 
 Peer.prototype.keyID = function () {
-  return this.pubkey && this.pubkey.length > 10 ? this.pubkey.substring(0, 10) : "Unknown";
+  var bma = this.bma || this.getBMA();
+  return [this.pubkey || "Unknown", bma.dns, bma.ipv4, bma.ipv6, bma.port, bma.useSsl].join('-');
 };
 
 Peer.prototype.copyValues = function(to) {
@@ -106,7 +107,8 @@ Peer.prototype.getPort = function() {
 
 Peer.prototype.getHost = function() {
   var bma = this.bma || this.getBMA();
-  return (this.hasValid4(bma) ? bma.ipv4 :
+  return ((bma.port == 443 || bma.useSsl) && bma.dns) ? bma.dns :
+    (this.hasValid4(bma) ? bma.ipv4 :
         (bma.dns ? bma.dns :
           (bma.ipv6 ? '[' + bma.ipv6 + ']' :'')));
 };
@@ -114,7 +116,7 @@ Peer.prototype.getHost = function() {
 Peer.prototype.getURL = function() {
   var bma = this.bma || this.getBMA();
   var host = this.getHost();
-  var protocol = (bma.port == 443) ? 'https' : 'http';
+  var protocol = (bma.port == 443 || bma.useSsl) ? 'https' : 'http';
   return protocol + '://' + host + (bma.port ? (':' + bma.port) : '');
 };
 

@@ -722,16 +722,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             idties = _sortAndSliceIdentities(idties, offset, size);
 
             // Extension point
-            return api.data.raisePromise.search(null, idties, 'pubkey')
-                .then(function () {
-                  return idties;
-                })
-                .catch(function(err) {
-                  console.debug('Error while search identities, on extension point.');
-                  console.error(err);
-                  return idties;
-                });
-            });
+            return extendAll(idties, 'pubkey', true/*skipAddUid*/);
+          });
       },
 
 
@@ -858,15 +850,11 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
               }),
 
               // Extension point
-              api.data.raisePromise.search(null, idties, 'pubkey')
-                .catch(function(err) {
-                  console.debug('Error while search identities, on extension point.');
-                  console.error(err);
-                })
-              ])
-              .then(function() {
-                return idties;
-              });
+              extendAll(idties, 'pubkey', true/*skipAddUid*/)
+            ])
+            .then(function() {
+              return idties;
+            });
           });
       },
 
@@ -874,7 +862,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
         return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT)
           .then(function(idties) {
-            return api.data.raisePromise.search(null, idties, 'pubkey')
+            return extendAll(idties, 'pubkey', true/*skipAddUid*/)
               .then(function() {
                 return _addUniqueIds(idties);
               });
@@ -943,8 +931,35 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         });
       },
 
-      extendAll = function(idties, pubkeyAttributeName) {
-        return api.data.raisePromise.search(null, idties, pubkeyAttributeName);
+      extendAll = function(idties, pubkeyAttributeName, skipAddUid) {
+
+        var jobs = [];
+        if (!skipAddUid) jobs.push(BMA.wot.member.uids());
+
+        jobs.push(api.data.raisePromise.search(null, idties, pubkeyAttributeName)
+          .catch(function(err) {
+            console.debug('Error while search identities, on extension point.');
+            console.error(err);
+          }));
+
+        return $q.all(jobs)
+        .then(function(res) {
+          if (!skipAddUid) {
+            var uidsByPubkey = res[0];
+            // Set uid (on every data)
+            _.forEach(idties, function(data) {
+              if (!data.uid && data[pubkeyAttributeName]) {
+                data.uid = uidsByPubkey[data[pubkeyAttributeName]];
+                // Remove name if redundant with uid
+                if (data.uid && data.uid == data.name) {
+                  delete data.name;
+                }
+              }
+            });
+          }
+
+          return idties;
+        });
       },
 
       addEvent = function(data, event) {

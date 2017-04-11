@@ -269,7 +269,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
           var dataToStore = {
             keypair: data.keypair,
-            pubkey: data.pubkey
+            pubkey: data.pubkey,
+            version: csConfig.version
           };
 
           if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
@@ -1746,13 +1747,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           keypair.signSk = signSk;
 
           // box Pk : Convert to Uint8Array type
-          if (obj.keypair.boxPk) {
+          if (obj.version && obj.keypair.boxPk) {
             var boxPk = new Uint8Array(32);
             for (i = 0; i < 32; i++) boxPk[i] = obj.keypair.boxPk[i];
             keypair.boxPk = boxPk;
           }
 
-          if (obj.keypair.boxSk) {
+          if (obj.version && obj.keypair.boxSk) {
             var boxSk = new Uint8Array(32);
             for (i = 0; i < 64; i++) boxSk[i] = obj.keypair.boxSk[i];
             keypair.boxSk = boxSk;

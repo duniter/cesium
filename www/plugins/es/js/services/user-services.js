@@ -27,7 +27,8 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
   that.raw = {
     profile: {
       getFields: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
-      get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content')
+      get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content'),
+      search: esHttp.post('/user/profile/_search')
     }
   };
 
@@ -270,18 +271,9 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     }
 
     var hits;
-    var uidsByPubkey;
-    $q.all([
-      BMA.wot.member.uids()
-        .then(function(res){
-          uidsByPubkey = res;
-        }),
-      esHttp.post('/user/profile/_search')(request)
-        .then(function(res){
-          hits = res.hits;
-        })
-    ])
-    .then(function() {
+    that.raw.profile.search(request)
+    .then(function(res) {
+      hits = res.hits;
       if (hits.total > 0) {
         _.forEach(hits.hits, function(hit) {
           var values = dataByPubkey && dataByPubkey[hit._id];
@@ -314,17 +306,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
           });
         });
       }
-
-      // Set uid (on every data)
-      _.forEach(datas, function(data) {
-        if (!data.uid && data[pubkeyAtributeName]) {
-          data.uid = uidsByPubkey[data[pubkeyAtributeName]];
-          // Remove name if redundant with uid
-          if (data.uid && data.uid == data.name) {
-            return data.name;
-          }
-        }
-      });
       deferred.resolve(datas);
     })
     .catch(function(err){

@@ -18,6 +18,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
  .controller('ProfileCtrl', ProfileController)
 
  .controller('AvatarModalCtrl', AvatarModalController)
+
 ;
 
 function ProfileController($scope, $rootScope, $timeout, $state, $focus, $translate, $ionicHistory,
@@ -275,7 +276,6 @@ function AvatarModalController($scope) {
   $scope.fileChanged = function(e) {
 
     var files = e.target.files;
-
     var fileReader = new FileReader();
     fileReader.readAsDataURL(files[0]);
 
@@ -283,23 +283,7 @@ function AvatarModalController($scope) {
       $scope.imgSrc = this.result;
       $scope.$apply();
     };
-
   };
-
-
-  /*$scope.fileChanged = function(event) {
-    return UIUtils.loading.show()
-      .then(function() {
-        var file = event.target.files[0];
-        return UIUtils.image.resizeFile(file, true);
-      })
-      .then(function(imageData) {
-        $scope.avatar = {src: imageData};
-        $scope.dirty = true;
-        return UIUtils.loading.hide(10);
-      })
-      .catch(UIUtils.onError('PROFILE.ERROR.IMAGE_RESIZE_FAILED'));
-  };*/
 
   $scope.doCrop = function() {
     $scope.initCrop = true;

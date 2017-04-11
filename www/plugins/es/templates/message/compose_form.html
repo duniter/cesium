@@ -16,7 +16,7 @@
         </div>
       </div>
 
-      <span class="item item-text-wrap">
+      <div class="item item-text-wrap">
           <span class="gray" translate>TRANSFER.FROM</span>
           <span class="badge badge-balanced">
               <ion-spinner icon="android" ng-if="!$root.walletData.pubkey"></ion-spinner>
@@ -27,10 +27,10 @@
                 {{$root.walletData.name||$root.walletData.uid}}
               </span>
           </span>
-      </span>
+      </div>
 
       <!-- Object -->
-      <label class="item item-input"
+      <div class="item item-input"
              ng-class="{'item-input-error': form.$submitted && form.title.$invalid}">
         <!--<span class="input-label">{{'MESSAGE.COMPOSE.OBJECT' | translate}}</span>-->
         <input type="text"
@@ -40,7 +40,7 @@
                ng-maxlength="256"
                required>
         </input>
-      </label>
+      </div>
       <div class="form-errors"
            ng-show="form.$submitted && form.title.$error"
            ng-messages="form.title.$error">
@@ -53,7 +53,7 @@
       </div>
 
       <!-- Content -->
-      <label class="item item-input item-floating-label"
+      <div class="item item-input item-floating-label"
              ng-class="{'item-input-error': form.$submitted && form.content.$invalid}">
         <span class="input-label">{{'MESSAGE.COMPOSE.MESSAGE' | translate}}</span>
         <textarea placeholder="{{'MESSAGE.COMPOSE.MESSAGE_HELP' | translate}}"
@@ -62,7 +62,7 @@
                   rows="8"
                   ng-maxlength="5000">
         </textarea>
-      </label>
+      </div>
       <div class="form-errors"
            ng-show="form.$submitted && form.content.$error"
            ng-messages="form.content.$error">

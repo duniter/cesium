@@ -398,6 +398,36 @@
       "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
     }
   },
+  "SUBSCRIPTION": {
+    "SUBSCRIPTION_DIVIDER": "Services en ligne",
+    "BTN_ADD": "Ajouter un service",
+    "BTN_EDIT": "Gérer mes services",
+    "NO_SUBSCRIPTION": "Aucun service utilisé",
+    "EMAIL": "Email de réception des notifications",
+    "SUBSCRIPTION_COUNT": "Services / Abonnements",
+    "EDIT": {
+      "TITLE": "Services en lignes",
+      "HELP_TEXT": "Gérer ici vos abonnements et autres services en ligne"
+    },
+    "TYPE": {
+      "ENUM": {
+        "EMAIL": "Recevoir les notifications par email"
+      }
+    },
+    "ERROR": {
+      "LOAD_SUBSCRIPTIONS_FAILED": "Erreur lors du chargement des services en ligne"
+    },
+    "MODAL_EMAIL": {
+      "TITLE" : "Notification par email",
+      "HELP" : "Remplissez ce formulaire pour <b>être notifié par email</b> des événements de votre compte.<br/>Votre adresse email sera chiffrée pour n'être visible que par le prestataire de service.",
+      "EMAIL_LABEL" : "Votre email :",
+      "EMAIL_HELP": "jean.dupond@domaine.com",
+      "FREQUENCY_LABEL": "Fréquence des notifications :",
+      "FREQUENCY_DAILY": "Journalier",
+      "FREQUENCY_WEEKLY": "Hebdomadaire",
+      "PROVIDER": "Prestataire du service :"
+    }
+  },
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Cesium+",
     "PLUGIN_NAME_HELP": "Profils, notifications, messages privés",
@@ -417,6 +447,11 @@
       "ENABLE_TX_RECEIVED": "Notifier la validation des <b>paiement reçus</b> ?",
       "ENABLE_CERT_SENT": "Notifier la validation des <b>certifications émises</b> ?",
       "ENABLE_CERT_RECEIVED": "Notifier la validation des <b>certifications reçues</b> ?"
+    },
+    "SUBSCRIPTIONS": {
+      "DIVIDER": "Abonnements",
+      "HELP_TEXT": "Activez les abonnements qui vous intéresse :",
+      "EMAIL": "Réception des notifications par email"
     },
     "CONFIRM": {
       "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",

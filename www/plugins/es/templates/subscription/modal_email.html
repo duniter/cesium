@@ -1,0 +1,95 @@
+
+<ion-modal-view id="composeMessage"
+                class="modal-full-height">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>SUBSCRIPTION.MODAL_EMAIL.TITLE</h1>
+
+    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doSubmit()">
+    </button>
+  </ion-header-bar>
+
+  <ion-content scroll="true">
+
+    <!-- Encryption info -->
+    <div class="item item-icon-left item-text-wrap">
+      <i class="icon ion-ios-information-outline positive"></i>
+      <h4 class="positive" translate>SUBSCRIPTION.MODAL_EMAIL.HELP</h4>
+    </div>
+
+    <form name="subscriptionForm" novalidate="" ng-submit="doSubmit()">
+
+      <div class="list" ng-init="setForm(subscriptionForm)">
+
+        <!-- email -->
+        <label class="item item-input"
+               ng-class="{'item-input-error': form.$submitted && form.email.$invalid}">
+          <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.EMAIL_LABEL</span>
+          <input name="email" type="text" placeholder="{{'SUBSCRIPTION.MODAL_EMAIL.EMAIL_HELP' | translate}}"
+                 ng-model="formData.email"
+                 ng-minlength="3"
+                 required
+                 email>
+        </label>
+        <div class="form-errors"
+             ng-if="form.$submitted && form.email.$invalid"
+             ng-messages="form.email.$error">
+          <div class="form-error" ng-message="minlength">
+            <span translate="ERROR.FIELD_TOO_SHORT"></span>
+          </div>
+          <div class="form-error" ng-message="email">
+            <span translate="ERROR.FIELD_NOT_EMAIL"></span>
+          </div>
+        </div>
+
+        <!-- Frequency -->
+        <label class="item item-input item-select"
+             ng-class="{'item-input-error': form.$submitted && !formData.frequency}">
+          <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.FREQUENCY_LABEL</span>
+          <select ng-model="formData.frequency" style="height: 46px;margin-top: 1px;">
+            <option value="weekly" translate>SUBSCRIPTION.MODAL_EMAIL.FREQUENCY_WEEKLY</option>
+            <option value="daily" translate>SUBSCRIPTION.MODAL_EMAIL.FREQUENCY_DAILY</option>
+          </select>
+        </label>
+        <div class="form-errors"
+             ng-if="form.$submitted && !formData.frequency">
+          <div class="form-error">
+            <span translate="ERROR.FIELD_REQUIRED"></span>
+          </div>
+        </div>
+
+        <!-- Recipient (service provider) -->
+        <a class="item item-input item-icon-right gray ink"
+           ng-class="{'item-input-error': form.$submitted && !formData.recipient}"
+           ng-click="showNetworkLookup()">
+          <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.PROVIDER</span>
+          <span class="badge badge-positive" ng-if="peer">
+            {{peer.getServer()}}
+          </span>
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </a>
+        <div class="form-errors"
+             ng-if="form.$submitted && !formData.recipient">
+          <div class="form-error">
+            <span translate="ERROR.FIELD_REQUIRED"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="padding hidden-xs text-right">
+        <button class="button button-small button-clear button-dark ink"
+                ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
+        </button>
+        <button class="button button-small button-positive ink" type="submit">
+          {{'COMMON.BTN_SEND' | translate}}
+        </button>
+      </div>
+
+    </form>
+  </ion-content>
+</ion-modal-view>
+
+
+
+
