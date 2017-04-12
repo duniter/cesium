@@ -64,8 +64,8 @@
            ng-click="showNetworkLookup()"
           style="height: 67px;">
           <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.PROVIDER</span>
-          <span class="badge badge-positive animate-fade-in animate-show-hide ng-hide" ng-show="recipient && (recipient.name||recipient.uid)">
-            {{recipient.name||recipient.uid}}
+          <span class="badge badge-royal animate-fade-in animate-show-hide ng-hide" ng-show="recipient && recipient.uid">
+            <i class="ion-person"></i> {{recipient.name||recipient.uid}}
           </span>
           <span class="badge badge-secondary animate-fade-in animate-show-hide ng-hide" ng-show="formData.recipient">
             <i class="ion-key"></i> {{formData.recipient | formatPubkey}}

@@ -7,8 +7,13 @@
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal()">
           <span class="gray" translate>TRANSFER.TO</span>
-          <span class="badge badge-royal">{{destUid}}{{destPub | formatPubkey}}</span>&nbsp;
-          <i class="gray icon ion-ios-arrow-right"></i>
+          <span class="badge badge-royal animate-fade-in animate-show-hide ng-hide" ng-show="destUid" >
+            <i class="ion-person"></i> {{destUid}}
+          </span>&nbsp;
+          <span class="badge badge-royal " ng-show="!destUid && formData.destPub">
+            <i class="ion-key"></i> {{formData.destPub | formatPubkey}}
+          </span>
+        <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"
            ng-if="form.$submitted && !formData.destPub">
@@ -23,10 +28,10 @@
               ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
               <ion-spinner icon="android" ng-if="!$root.walletData.pubkey"></ion-spinner>
               <span ng-if="$root.walletData.pubkey && !$root.walletData.isMember">
-              {{$root.walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
+                <i class="ion-key"></i> {{$root.walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
               </span>
               <span ng-if="$root.walletData.isMember">
-                {{$root.walletData.name||$root.walletData.uid}}&nbsp;&nbsp;
+                <i class="ion-person"></i> {{$root.walletData.name||$root.walletData.uid}}&nbsp;&nbsp;
               </span>
               <span ng-bind-html="$root.walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
           </span>

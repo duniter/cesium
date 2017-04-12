@@ -67,7 +67,8 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     return function(params) {
       return $q(function(resolve, reject) {
         var config = {
-          timeout: timeout
+          timeout: timeout,
+          responseType: 'json'
         };
 
         prepare(url, params, config, function(url, config) {

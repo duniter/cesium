@@ -261,6 +261,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   .config(function($httpProvider, csConfig) {
     'ngInject';
+
     // Set default timeout
     $httpProvider.defaults.timeout = !!csConfig.TIMEOUT ? csConfig.TIMEOUT : 4000 /* default timeout */;
 
@@ -269,6 +270,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     //Remove the header used to identify ajax call  that would prevent CORS from working
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+    // removeIf(no-device)
+    // Group http request response processing (better performance when many request)
+    $httpProvider.useApplyAsync(true);
+    // endRemoveIf(no-device)
   })
 
   .config(function($compileProvider, csConfig) {
