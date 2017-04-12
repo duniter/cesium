@@ -77,7 +77,7 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
       .catch(function(err){
         UIUtils.loading.hide(10);
         if (err && err.ucode == 404) {
-          $scope.updateView({});
+          $scope.updateView([]);
           $scope.existing = false;
         }
         else {
@@ -122,7 +122,7 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
             UIUtils.loading.hide();
             $scope.updateView();
           })
-          .catch(UIUtils.onError('SUBSCRIPTION.ERROR.FAILED_ADD_SUBSCRIPTION'));
+          .catch(UIUtils.onError('SUBSCRIPTION.ERROR.ADD_SUBSCRIPTION_FAILED'));
       });
   };
 
@@ -153,15 +153,29 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
             UIUtils.loading.hide();
             $scope.updateView();
           })
-          .catch(UIUtils.onError('SUBSCRIPTION.ERROR.FAILED_ADD_SUBSCRIPTION'));
+          .catch(UIUtils.onError('SUBSCRIPTION.ERROR.UPDATE_SUBSCRIPTION_FAILED'));
       });
   };
 
-  $scope.deleteSubscription = function(record) {
+  $scope.deleteSubscription = function(record, confirm) {
     if (!record || !record.id) return;
 
-    esSubscription.record.remove(record.id);
-    $scope.removeFromUI(record);
+    if (!confirm) {
+      return UIUtils.alert.confirm('SUBSCRIPTION.CONFIRM.DELETE_SUBSCRIPTION')
+        .then(function(confirm) {
+          if (confirm) return $scope.deleteSubscription(record, confirm);
+        });
+    }
+
+    UIUtils.loading.show();
+    esSubscription.record.remove(record.id)
+      .then(function() {
+        $rootScope.walletData.subscriptions = $rootScope.walletData.subscriptions || {count: 1};
+        $rootScope.walletData.subscriptions.count--;
+        $scope.removeFromUI(record);
+        UIUtils.loading.hide();
+      })
+      .catch(UIUtils.onError('SUBSCRIPTION.ERROR.DELETE_SUBSCRIPTION_FAILED'));
   };
 
   $scope.removeFromUI = function(record) {

@@ -373,8 +373,14 @@
         "EMAIL": "Receive email notifications"
       }
     },
+    "CONFIRM": {
+      "DELETE_SUBSCRIPTION": "Are you sur you want to <b>delete this subscription</b>?"
+    },
     "ERROR": {
-      "LOAD_SUBSCRIPTIONS_FAILED": "Error loading online services"
+      "LOAD_SUBSCRIPTIONS_FAILED": "Error while loading online services",
+      "ADD_SUBSCRIPTION_FAILED": "Error while adding subscription",
+      "UPDATE_SUBSCRIPTION_FAILED": "Error during subscription update",
+      "DELETE_SUBSCRIPTION_FAILED": "Error while deleting subscription"
     },
     "MODAL_EMAIL": {
       "TITLE" : "Notification by email",

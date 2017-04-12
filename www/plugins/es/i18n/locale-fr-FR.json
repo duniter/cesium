@@ -414,10 +414,14 @@
         "EMAIL": "Recevoir les notifications par email"
       }
     },
+    "CONFIRM": {
+      "DELETE_SUBSCRIPTION": "Etes-vous sûr de vouloir <b>supprimer cet abonnement</b> ?"
+    },
     "ERROR": {
       "LOAD_SUBSCRIPTIONS_FAILED": "Erreur lors du chargement des services en ligne",
       "ADD_SUBSCRIPTION_FAILED": "Erreur de l'envoi de l'abonnement",
-      "UPDATE_SUBSCRIPTION_FAILED": "Erreur de la mise à jour de l'abonnement"
+      "UPDATE_SUBSCRIPTION_FAILED": "Erreur de la mise à jour de l'abonnement",
+      "DELETE_SUBSCRIPTION_FAILED": "Erreur lors de la suppression de l'abonnement"
     },
     "MODAL_EMAIL": {
       "TITLE" : "Notification par email",

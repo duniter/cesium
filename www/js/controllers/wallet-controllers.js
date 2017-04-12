@@ -72,6 +72,10 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
           }
         });
     }
+    else {
+      // update view (to refresh profile and subscriptions)
+      $scope.updateView();
+    }
   });
 
   $scope.updateView = function() {

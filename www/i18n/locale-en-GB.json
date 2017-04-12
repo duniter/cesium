@@ -453,6 +453,7 @@
     "FIELD_ACCENT": "Commas and accent characters not allowed",
     "FIELD_NOT_NUMBER": "Value is not a number",
     "FIELD_NOT_INT": "Value is not an integer",
+    "FIELD_NOT_EMAIL": "Email adress not valid",
     "PASSWORD_NOT_CONFIRMED": "Must match previous password.",
     "SALT_NOT_CONFIRMED": "Must match previous identifier.",
     "SEND_IDENTITY_FAILED": "Error while trying to register.",
