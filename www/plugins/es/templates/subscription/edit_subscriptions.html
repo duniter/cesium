@@ -39,25 +39,9 @@
 
       <div class="col list {{::motion.ionListClass}} item-border-large">
 
-        <ng-repeat ng-repeat="subscriptions in search.results">
-
-          <!-- emails -->
-          <div class="item item-thumbnail-left" ng-if="subscriptions.type == 'email'">
-            <i class="item-image icon ion-email"></i>
-            <div class="input-label">
-              {{'SUBSCRIPTION.TYPE.ENUM.' + subscriptions.type.toUpperCase() | translate}}
-            </div>
-            <div class="item-note">
-
-              <span ng-repeat="item in subscriptions.items">
-                {{item.recipient | formatPubkey}} <i class="ion-arrow-right-a"></i>
-                {{item.content.email}}
-                <a class="icon ion-close assertive padding-left" ng-click="deleteSubscription(item)"></a>
-                <a class="icon ion-edit gray padding-left" ng-click="editSubscription(item)"></a>
-                <br/>
-              </span>
-            </div>
-          </div>
+        <!-- emails -->
+        <ng-repeat ng-repeat="subscriptions in search.results | filter: { type: 'email' }"
+                   ng-include="'plugins/es/templates/subscription/item_' + subscriptions.type.toLowerCase() + '_subscription.html'">>
         </ng-repeat>
 
       </div>

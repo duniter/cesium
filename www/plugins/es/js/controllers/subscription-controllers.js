@@ -21,7 +21,7 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 
 ;
 
-function ViewSubscriptionsController($scope, $rootScope, $translate, $ionicPopup, UIUtils, ModalUtils, csSettings, esSubscription) {
+function ViewSubscriptionsController($scope, $rootScope, csWot, UIUtils, ModalUtils, esSubscription) {
 
   $scope.popupData = {}; // need for the node popup
   $scope.search = {
@@ -54,12 +54,22 @@ function ViewSubscriptionsController($scope, $rootScope, $translate, $ionicPopup
     return esSubscription.record.load($rootScope.walletData.pubkey, $rootScope.walletData.keypair)
       .then(function(results) {
         // Group by type
-        results = _.groupBy((results || []), function(record) {
-          return record.type;
+        var groups = _.groupBy((results || []), function (record) {
+          return [record.type, record.recipient].join('|');
         });
-        results = _.keys(results).reduce(function(res, type) {
-          return res.concat({type: type, items: results[type]});
+        return _.keys(groups).reduce(function (res, key) {
+          var parts = key.split('|');
+          return res.concat({
+            type: parts[0],
+            recipient: parts[1],
+            items: groups[key]
+          });
         }, []);
+      })
+      .then(function(results) {
+        return csWot.extendAll(results, 'recipient');
+      })
+      .then(function(results) {
         // Display result
         $scope.updateView(results);
       })
@@ -96,24 +106,22 @@ function ViewSubscriptionsController($scope, $rootScope, $translate, $ionicPopup
         if (type == 'email') {
           return $scope.showEmailModal();
         }
+        else {
+          UIUtils.alert.notImplemented();
+        }
       })
-      .then(function(content) {
-        UIUtils.loading.hide();
-        if (!content) return;
-
-        esSubscription.record.add(type, content)
-          .then(function(record) {
-            $scope.search.results = $scope.search.results || [];
-            var subscriptions = _.findWhere($scope.search.results, {type: type});
-            if (!subscriptions) {
-              subscriptions = {type: type, items:[]};
-              $scope.search.results.push(subscriptions);
-            }
-            subscriptions.items.push(record);
+      .then(function(record) {
+        if (!record) return;
+        UIUtils.loading.show();
+        esSubscription.record.add(record)
+          .then($scope.addToUI)
+          .then(function() {
             $rootScope.walletData.subscriptions = $rootScope.walletData.subscriptions || {count: 0};
             $rootScope.walletData.subscriptions.count++;
+            UIUtils.loading.hide();
             $scope.updateView();
-          });
+          })
+          .catch(UIUtils.onError('SUBSCRIPTION.ERROR.FAILED_ADD_SUBSCRIPTION'));
       });
   };
 
@@ -121,21 +129,30 @@ function ViewSubscriptionsController($scope, $rootScope, $translate, $ionicPopup
 
     // get subscription parameters
     var promise;
+    var oldRecord = angular.copy(record);
     if (record.type == 'email') {
-      promise = $scope.showEmailModal(record.content);
+      promise = $scope.showEmailModal(record);
     }
     if (!promise) return;
     return promise
-      .then(function(content) {
-        UIUtils.loading.hide();
-        if (!content) return;
-        record.content = angular.copy(content);
-        record.recipient = record.content.recipient;
-        delete record.content.recipient;
+      .then(function() {
+        if (!record) return;
+        UIUtils.loading.show();
+        record.id = oldRecord.id;
         return esSubscription.record.update(record)
           .then(function() {
+            // If recipient change, update in results
+            if (oldRecord.type != record.type ||
+              oldRecord.recipient != record.recipient) {
+              $scope.removeFromUI(oldRecord);
+              return $scope.addToUI(record);
+            }
+          })
+          .then(function() {
+            UIUtils.loading.hide();
             $scope.updateView();
-          });
+          })
+          .catch(UIUtils.onError('SUBSCRIPTION.ERROR.FAILED_ADD_SUBSCRIPTION'));
       });
   };
 
@@ -143,16 +160,38 @@ function ViewSubscriptionsController($scope, $rootScope, $translate, $ionicPopup
     if (!record || !record.id) return;
 
     esSubscription.record.remove(record.id);
-    var subscriptions = _.findWhere($scope.search.results, {type: record.type});
+    $scope.removeFromUI(record);
+  };
+
+  $scope.removeFromUI = function(record) {
+    var subscriptions = _.findWhere($scope.search.results, {type: record.type, recipient: record.recipient});
     var index = _.findIndex(subscriptions.items, record);
     if (index >= 0) {
       subscriptions.items.splice(index, 1);
-      $rootScope.walletData.subscriptions.count--;
     }
     if (!subscriptions.items.length) {
       index = _.findIndex($scope.search.results, subscriptions);
       $scope.search.results.splice(index, 1);
     }
+  };
+
+  $scope.addToUI = function(record) {
+    $scope.search.results = $scope.search.results || [];
+    var subscriptions = _.findWhere($scope.search.results,
+      {type: record.type, recipient: record.recipient});
+
+    if (!subscriptions) {
+      subscriptions = {type: record.type, recipient: record.recipient, items: []};
+      return csWot.extendAll([subscriptions], 'recipient')
+        .then(function(){
+          subscriptions.items.push(record);
+          $scope.search.results.push(subscriptions);
+          return record;
+        });
+    }
+
+    subscriptions.items.push(record);
+    return $q.when(record);
   };
 
   /* -- modals -- */
@@ -180,25 +219,38 @@ function ViewSubscriptionsController($scope, $rootScope, $translate, $ionicPopup
 }
 
 
-function ModalEmailSubscriptionsController($scope, Modals, csSettings, esUser, parameters) {
+function ModalEmailSubscriptionsController($scope, Modals, csSettings, esUser, csWot, parameters) {
 
-  $scope.formData = parameters || {};
   $scope.frequencies = [
     {id: "daily", label: "daily"},
     {id: "weekly", label: "weekly"}
   ];
-  $scope.provider = {};
+  $scope.formData = parameters || {};
+  $scope.formData.content = $scope.formData.content || {};
+  $scope.formData.content.frequency = $scope.formData.content.frequency || $scope.frequencies[0].id; // set to first value
+  $scope.recipient = {};
+
+  $scope.$on('modal.shown', function() {
+    // Load recipient (uid, name, avatar...)
+    if ($scope.formData.recipient) {
+      $scope.recipient = {pubkey: $scope.formData.recipient};
+      return csWot.extendAll([$scope.recipient]);
+    }
+  });
 
   // Submit
   $scope.doSubmit = function() {
     $scope.form.$submitted = true;
-    if (!$scope.form.$valid || !$scope.formData.email || !$scope.formData.frequency) return;
+    if (!$scope.form.$valid || !$scope.formData.content.email || !$scope.formData.content.frequency) return;
 
     var record = {
-      email: $scope.formData.email,
-      locale: csSettings.data.locale.id,
-      frequency: $scope.formData.frequency,
-      recipient: $scope.formData.recipient
+      type: 'email',
+      recipient: $scope.formData.recipient,
+      content: {
+        email: $scope.formData.content.email,
+        locale: csSettings.data.locale.id,
+        frequency: $scope.formData.content.frequency
+      }
     };
     $scope.closeModal(record);
   };
@@ -218,10 +270,8 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esUser, p
     })
       .then(function (peer) {
         if (peer) {
+          $scope.recipient = peer;
           $scope.formData.recipient = peer.pubkey;
-          $scope.peer = peer;
-          var eps = peer.getEndpoints(esUser.constants.ES_USER_API_ENDPOINT);
-          peer.bma = esUser.node.parseEndPoint(eps[0]);
         }
       });
 

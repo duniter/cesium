@@ -1,0 +1,27 @@
+<div class="item item-thumbnail-left">
+  <i class="item-image icon ion-email"></i>
+  <h3>
+    {{'SUBSCRIPTION.TYPE.ENUM.' + subscriptions.type.toUpperCase() | translate}}
+  </h3>
+  <h4 class="gray">
+    {{'SUBSCRIPTION.EDIT.PROVIDER'|translate}}
+    <a ui-sref="app.wot_identity({pubkey: subscriptions.recipient, uid: subscriptions.uid})">
+      <span class="positive" ng-if="subscriptions.uid">
+        <i class="ion-person"></i>
+        {{subscriptions.name||subscriptions.uid}}
+      </span>
+      <span class="gray" ng-if="!subscriptions.uid">
+        <i class="ion-key"></i>
+        {{subscriptions.recipient | formatPubkey}}
+      </span>
+    </a>
+  </h4>
+  <div class="item-note text-right">
+    <span ng-repeat="item in subscriptions.items">
+      {{item.content.email}}
+      <a class="icon ion-close assertive padding-left" ng-click="deleteSubscription(item)"></a>
+      <a class="icon ion-edit gray padding-left" ng-click="editSubscription(item)"></a>
+      <br/>
+    </span>
+  </div>
+</div>

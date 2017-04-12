@@ -403,11 +403,11 @@
     "BTN_ADD": "Ajouter un service",
     "BTN_EDIT": "Gérer mes services",
     "NO_SUBSCRIPTION": "Aucun service utilisé",
-    "EMAIL": "Email de réception des notifications",
     "SUBSCRIPTION_COUNT": "Services / Abonnements",
     "EDIT": {
       "TITLE": "Services en lignes",
-      "HELP_TEXT": "Gérer ici vos abonnements et autres services en ligne"
+      "HELP_TEXT": "Gérer ici vos abonnements et autres services en ligne",
+      "PROVIDER": "Prestataire :"
     },
     "TYPE": {
       "ENUM": {
@@ -415,7 +415,9 @@
       }
     },
     "ERROR": {
-      "LOAD_SUBSCRIPTIONS_FAILED": "Erreur lors du chargement des services en ligne"
+      "LOAD_SUBSCRIPTIONS_FAILED": "Erreur lors du chargement des services en ligne",
+      "ADD_SUBSCRIPTION_FAILED": "Erreur de l'envoi de l'abonnement",
+      "UPDATE_SUBSCRIPTION_FAILED": "Erreur de la mise à jour de l'abonnement"
     },
     "MODAL_EMAIL": {
       "TITLE" : "Notification par email",

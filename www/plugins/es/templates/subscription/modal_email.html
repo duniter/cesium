@@ -23,16 +23,16 @@
 
         <!-- email -->
         <label class="item item-input"
-               ng-class="{'item-input-error': form.$submitted && form.email.$invalid}">
+               ng-class="{'item-input-error': form.$submitted && (form.email.$invalid || form.email.$error)}">
           <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.EMAIL_LABEL</span>
           <input name="email" type="text" placeholder="{{'SUBSCRIPTION.MODAL_EMAIL.EMAIL_HELP' | translate}}"
-                 ng-model="formData.email"
+                 ng-model="formData.content.email"
                  ng-minlength="3"
                  required
                  email>
         </label>
         <div class="form-errors"
-             ng-if="form.$submitted && form.email.$invalid"
+             ng-if="form.$submitted && (form.email.$invalid || form.email.$error)"
              ng-messages="form.email.$error">
           <div class="form-error" ng-message="minlength">
             <span translate="ERROR.FIELD_TOO_SHORT"></span>
@@ -44,15 +44,15 @@
 
         <!-- Frequency -->
         <label class="item item-input item-select"
-             ng-class="{'item-input-error': form.$submitted && !formData.frequency}">
+             ng-class="{'item-input-error': form.$submitted && !formData.content.frequency}">
           <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.FREQUENCY_LABEL</span>
-          <select ng-model="formData.frequency" style="height: 46px;margin-top: 1px;">
+          <select name="frequency" ng-model="formData.content.frequency" style="height: 46px;margin-top: 1px;">
             <option value="weekly" translate>SUBSCRIPTION.MODAL_EMAIL.FREQUENCY_WEEKLY</option>
             <option value="daily" translate>SUBSCRIPTION.MODAL_EMAIL.FREQUENCY_DAILY</option>
           </select>
         </label>
         <div class="form-errors"
-             ng-if="form.$submitted && !formData.frequency">
+             ng-if="form.$submitted && !formData.content.frequency">
           <div class="form-error">
             <span translate="ERROR.FIELD_REQUIRED"></span>
           </div>
@@ -61,10 +61,14 @@
         <!-- Recipient (service provider) -->
         <a class="item item-input item-icon-right gray ink"
            ng-class="{'item-input-error': form.$submitted && !formData.recipient}"
-           ng-click="showNetworkLookup()">
+           ng-click="showNetworkLookup()"
+          style="height: 67px;">
           <span class="input-label" translate>SUBSCRIPTION.MODAL_EMAIL.PROVIDER</span>
-          <span class="badge badge-positive" ng-if="peer">
-            {{peer.getServer()}}
+          <span class="badge badge-positive animate-fade-in animate-show-hide ng-hide" ng-show="recipient && (recipient.name||recipient.uid)">
+            {{recipient.name||recipient.uid}}
+          </span>
+          <span class="badge badge-secondary animate-fade-in animate-show-hide ng-hide" ng-show="formData.recipient">
+            <i class="ion-key"></i> {{formData.recipient | formatPubkey}}
           </span>
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>

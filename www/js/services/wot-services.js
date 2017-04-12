@@ -933,6 +933,8 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 
       extendAll = function(idties, pubkeyAttributeName, skipAddUid) {
 
+        pubkeyAttributeName = pubkeyAttributeName || 'pubkey';
+
         var jobs = [];
         if (!skipAddUid) jobs.push(BMA.wot.member.uids());
 

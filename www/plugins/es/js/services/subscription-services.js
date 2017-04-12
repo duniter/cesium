@@ -79,16 +79,14 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
       });
   };
 
-  function addRecord(type, content) {
-    if (!type || !content) {
-      return $q.reject("Missing arguments 'type' or 'params'");
+  function addRecord(record) {
+    if (!record || !record.type || !record.content || !record.recipient) {
+      return $q.reject("Missing arguments 'record' or 'record.type' or 'record.content' or 'record.recipient'");
     }
 
     var issuer = csWallet.data.pubkey;
-    // TODO get the ES node pubkey
-    var recipient = 'G2CBgZBPLe6FSFUgpx2Jf1Aqsgta6iib3vmDRA1yLiqU';
 
-    var contentStr = JSON.stringify(content);
+    var contentStr = JSON.stringify(record.content);
 
     // Get a unique nonce
     return CryptoUtils.util.random_nonce()
@@ -96,21 +94,18 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
       .then(function(nonce) {
         return $q.all([
           esWallet.box.record.pack({issuer: issuer, issuerContent: contentStr}, csWallet.data.keypair, 'issuer', 'issuerContent', nonce),
-          esWallet.box.record.pack({recipient: recipient, recipientContent: contentStr}, csWallet.data.keypair, 'recipient', 'recipientContent', nonce)
+          esWallet.box.record.pack({recipient: record.recipient, recipientContent: contentStr}, csWallet.data.keypair, 'recipient', 'recipientContent', nonce)
         ]);
       })
       // Merge encrypted record
       .then(function(res){
-        var record = angular.merge(res[0], res[1]);
-        record.type = type;
+        var encryptedRecord = angular.merge(res[0], res[1]);
+        encryptedRecord.type = record.type;
 
         // Post subscription
-        return that.raw.add(record)
+        return that.raw.add(encryptedRecord)
           .then(function(id) {
             record.id = id;
-            record.content = content;
-            delete record.issuerContent;
-            delete record.recipientContent;
             return record;
           });
       })
@@ -136,10 +131,11 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
       })
       // Merge encrypted record
       .then(function(res){
-        var recordToSend = angular.merge(res[0], res[1]);
+        var encryptedRecord = angular.merge(res[0], res[1]);
+        encryptedRecord.type = record.type;
 
         // Post subscription
-        return that.raw.update(recordToSend, {id:record.id})
+        return that.raw.update(encryptedRecord, {id:record.id})
           .then(function() {
             return record; // return original record
           });

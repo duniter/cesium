@@ -15119,3 +15119,13 @@ div[dropzone] {
 
 .popover-locked-outputs .item .badge {
   right: 16px; }
+
+/************************
+ Animation hide/show
+*************************/
+.animate-show-hide.ng-hide {
+  opacity: 0; }
+
+.animate-show-hide.ng-hide-add,
+.animate-show-hide.ng-hide-remove {
+  transition: all linear 0.3s; }
