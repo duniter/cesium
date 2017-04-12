@@ -22,6 +22,7 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 ;
 
 function ViewSubscriptionsController($scope, $rootScope, csWot, UIUtils, ModalUtils, esSubscription) {
+  'ngInject';
 
   $scope.popupData = {}; // need for the node popup
   $scope.search = {
@@ -220,6 +221,7 @@ function ViewSubscriptionsController($scope, $rootScope, csWot, UIUtils, ModalUt
 
 
 function ModalEmailSubscriptionsController($scope, Modals, csSettings, esUser, csWot, parameters) {
+  'ngInject';
 
   $scope.frequencies = [
     {id: "daily", label: "daily"},
