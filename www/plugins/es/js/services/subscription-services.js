@@ -2,7 +2,7 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
 .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
-    var enable = csConfig.plugins && csConfig.plugins.es;
+    var enable = false; // csConfig.plugins && csConfig.plugins.es;
     if (enable) {
       // Will force to load this service
       PluginServiceProvider.registerEagerLoadingService('esSubscription');
@@ -15,8 +15,6 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
   'ngInject';
   var
     constants = {
-    },
-    regexp = {
     },
     that = this,
     listeners;
