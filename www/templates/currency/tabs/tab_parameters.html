@@ -1,4 +1,10 @@
 <ion-view>
+
+  <ion-nav-buttons side="secondary">
+    <!-- Allow extension here -->
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
+  </ion-nav-buttons>
+
   <ion-content>
     <div class="list">
       <ng-include src="'templates/currency/items_parameters.html'"></ng-include>

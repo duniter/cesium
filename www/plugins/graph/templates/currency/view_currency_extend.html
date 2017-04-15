@@ -1,0 +1,21 @@
+<!-- Buttons section -->
+<ng-if ng-if="enable && extensionPoint === 'nav-buttons'">
+
+  <button class="button button-icon button-clear icon ion-podium visible-xs visible-sm"
+          ui-sref="app.currency_stats">
+  </button>
+</ng-if>
+
+<!-- section actual parameters -->
+<ng-if ng-if="enable && extensionPoint === 'parameters-actual'" >
+
+  <ng-include src="'plugins/graph/templates/currency/graph_monetary_mass.html'" ng-controller="GpGraphMonetaryMassCtrl"></ng-include>
+
+</ng-if>
+
+<!-- section Wot -->
+<ng-if ng-if="enable && extensionPoint === 'wot-actual'">
+
+  <ng-include src="'plugins/graph/templates/currency/graph_members_count.html'" ng-controller="GpGraphMonetaryMassCtrl"></ng-include>
+</ng-if>
+

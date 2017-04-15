@@ -1,0 +1,61 @@
+<ion-view left-buttons="leftButtons"
+          cache-view="false">
+  <ion-nav-title>
+    {{'GRAPH.BLOCKCHAIN.TITLE' | translate}}{{id}}
+  </ion-nav-title>
+
+  <ion-content scroll="true" class="list no-padding">
+
+    <!-- Blocks per issuer -->
+    <div class="item item-divider" translate>
+      GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_DIVIDER
+    </div>
+
+    <div class="center" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="row responsive-lg" ng-if="!loading">
+
+      <!-- bar -->
+      <div class="col col-75">
+        <canvas id="bar" class="chart chart-bar"
+                chart-data="blocksByIssuer.data" chart-labels="blocksByIssuer.labels"
+                chart-colors="blocksByIssuer.colors"
+                chart-options="blocksByIssuer.bar.options"
+                chart-click="showBlockIssuer">
+        </canvas>
+      </div>
+
+      <!-- pie -->
+      <div class="col col-25 padding-top">
+        <canvas id="blocksByIssuer-pie" class="chart chart-pie"
+                style="max-height: 300px; max-width: 300px;"
+                chart-data="blocksByIssuer.data"
+                chart-labels="blocksByIssuer.labels"
+                chart-colors="blocksByIssuer.colors"
+                chart-click="showBlockIssuer">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- monetary mass -->
+    <div class="row responsive-lg" ng-if="!loading">
+
+      <!-- bar -->
+      <div class="col col-50">
+        <canvas id="monetaryMass-line" class="chart chart-line"
+                chart-data="monetaryMass.data"
+                chart-labels="monetaryMass.labels"
+                chart-click="showBlock">
+        </canvas>
+      </div>
+
+      <!-- bar -->
+      <div class="col col-50">
+
+      </div>
+    </div>
+  </ion-content>
+
+</ion-view>

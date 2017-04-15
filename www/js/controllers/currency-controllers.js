@@ -222,6 +222,8 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
         }
       });
     }
+    // Notify extensions
+    $scope.$broadcast('$csExtension.enter', state);
   });
 
   $scope.init = function(currency) {

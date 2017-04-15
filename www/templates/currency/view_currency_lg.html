@@ -7,6 +7,9 @@
     <ion-nav-buttons side="secondary">
         <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refreshPeers()">
         </button>
+
+        <!-- Allow extension here -->
+        <cs-extension-point name="nav-buttons"></cs-extension-point>
     </ion-nav-buttons>
 
     <ion-content>
@@ -17,6 +20,7 @@
             <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
           </div>
           <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
+
         </div>
 
         <!-- wot -->
@@ -25,6 +29,9 @@
             <span translate>CURRENCY.VIEW.TAB_WOT</span>
           </div>
           <ng-include src="'templates/currency/items_wot.html'"></ng-include>
+
+          <!-- Allow extension here -->
+          <cs-extension-point name="wot"></cs-extension-point>
         </div>
       </div>
     </ion-content>

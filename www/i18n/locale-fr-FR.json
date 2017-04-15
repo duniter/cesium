@@ -48,6 +48,7 @@
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YYYY HH:mm",
     "DATE_SHORT_PATTERN": "DD/MM/YYYY",
+    "DATE_MONTH_YEAR_PATTERN": "MM/YYYY",
     "EMPTY_PARENTHESIS": "(vide)",
     "UID": "Pseudonyme",
     "ENABLE": "Activé",

@@ -118,6 +118,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  .filter('formatDateMonth', function($rootScope) {
+    return function(input) {
+      return input ? moment(parseInt(input)*1000).local().format($rootScope.translations.DATE_MONTH_YEAR_PATTERN || 'MMM YY') : '';
+    };
+  })
+
   .filter('formatTime', function() {
     return function(input) {
       return input ? moment(parseInt(input)*1000).local().format('HH:mm') : '';
@@ -369,6 +375,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         if ($rootScope.translations.DATE_SHORT_PATTERN === 'COMMON.DATE_SHORT_PATTERN') {
           $rootScope.translations.DATE_SHORT_PATTERN = 'YYYY-MM-DD';
         }
+        $rootScope.translations.DATE_MONTH_YEAR_PATTERN = translations['COMMON.DATE_MONTH_YEAR_PATTERN'];
+        if ($rootScope.translations.DATE_MONTH_YEAR_PATTERN === 'COMMON.DATE_MONTH_YEAR_PATTERN') {
+          $rootScope.translations.DATE_MONTH_YEAR_PATTERN = 'MMM YY';
+        }
+
         $rootScope.translations.UD = translations['COMMON.UD'];
         if ($rootScope.translations.UD === 'COMMON.UD') {
           $rootScope.translations.UD = 'UD';

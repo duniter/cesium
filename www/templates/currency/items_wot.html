@@ -7,7 +7,7 @@
         <span translate>CURRENCY.VIEW.MEMBERS</span>
         <span class="gray">(N<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)</span>
       </div>
-      <span class="badge badge-assertive" ng-if="!loading">{{formData.N | formatInteger}}</span>
+      <span class="badge badge-calm" ng-if="!loading">{{formData.N | formatInteger}}</span>
     </ion-item>
 
     <ion-item id="helptip-currency-newcomers" class="item-icon-left item-text-wrap">
@@ -17,7 +17,7 @@
         <span class="gray">(&#916;N)</span>
       </div>
       <div class="badge" ng-if="!loading"
-           ng-class="{'badge-balanced': (formData.N>formData.Nprev), 'badge-calm': (formData.N==formData.Nprev) ,'badge-assertive': (formData.Nprev>formData.N)}">
+           ng-class="{'badge-balanced': (formData.N>formData.Nprev), 'badge-stable': (formData.N==formData.Nprev) ,'badge-assertive': (formData.Nprev>formData.N)}">
         {{formData.N > formData.Nprev ? '+' : ''}}{{formData.N - formData.Nprev}}
       </div>
     </ion-item>
@@ -28,6 +28,9 @@
       <span class="col col-75" translate>CURRENCY.VIEW.SENTRIES</span>
       <span class="badge badge-royal" ng-if="!loading">{{formData.sentries}}</span>
     </ion-item>
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="wot-actual"></cs-extension-point>
 
     <div id="helptip-currency-rules"
          class="item item-divider">

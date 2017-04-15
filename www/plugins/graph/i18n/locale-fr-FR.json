@@ -1,0 +1,19 @@
+{
+  "NETWORK": {
+    "VIEW": {
+      "BTN_GRAPH": "Stats"
+    }
+  },
+  "GRAPH": {
+    "BLOCKCHAIN": {
+      "TITLE": "Statistiques",
+      "BLOCKS_ISSUERS_DIVIDER": "Répartition du calcul des blocs par membre",
+      "BLOCKS_ISSUERS_TITLE": "{{issuerCount}} membres ont calculé {{blockCount}} blocs"
+    },
+    "CURRENCY": {
+      "MEMBERS_COUNT_TITLE": "Evolution du nombre de membres",
+      "MONETARY_MASS_TITLE": "Evolution de la masse monétaire ({{currency | currencySymbolNoHtml: false }})",
+      "MONETARY_MASS_TITLE_RELATIVE": "Evolution de la masse monétaire ({{currency | currencySymbolNoHtml: true }})",
+    }
+  }
+}
