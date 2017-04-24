@@ -60,9 +60,6 @@ function GpGraphMonetaryMassController($scope, $q, $state, $translate, csCurrenc
   $scope.formData.useRelative = angular.isDefined($scope.formData.useRelative) ? $scope.formData.useRelative :
     csSettings.data.useRelative;
 
-  $scope.defaultLineColors = ['rgba(178,224,255,0.65)'];
-  $scope.defaultLineColors = ['rgba(17,193,243,0.75)'];
-
   $scope.enter = function(e, state) {
     if ($scope.loading) {
 
@@ -134,7 +131,7 @@ function GpGraphMonetaryMassController($scope, $q, $state, $translate, csCurrenc
               }]
             }
           },
-          colors: ['rgba(17,193,243,0.5)']/*$scope.defaultLineColors*/
+          colors: ['rgba(17,193,243,0.5)']
         };
         membersCount.data = result.blocks.reduce(function(res, block) {
           return res.concat(block.membersCount);
@@ -154,7 +151,7 @@ function GpGraphMonetaryMassController($scope, $q, $state, $translate, csCurrenc
               }]
             }
           },
-          colors: ['rgba(255,201,0,0.5)']/*$scope.defaultLineColors*/
+          colors: ['rgba(255,201,0,0.5)']
         };
         if($scope.formData.useRelative) {
           // If relative, divide by UD

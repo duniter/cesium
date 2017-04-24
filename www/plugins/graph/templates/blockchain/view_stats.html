@@ -4,7 +4,7 @@
     {{'GRAPH.BLOCKCHAIN.TITLE' | translate}}{{id}}
   </ion-nav-title>
 
-  <ion-content scroll="true" class="list no-padding">
+  <ion-content scroll="true" class="no-padding">
 
     <!-- Blocks per issuer -->
     <div class="item item-divider" translate>
@@ -39,21 +39,17 @@
       </div>
     </div>
 
-    <!-- monetary mass -->
+    <!-- tx count -->
     <div class="row responsive-lg" ng-if="!loading">
 
       <!-- bar -->
-      <div class="col col-50">
-        <canvas id="monetaryMass-line" class="chart chart-line"
-                chart-data="monetaryMass.data"
-                chart-labels="monetaryMass.labels"
-                chart-click="showBlock">
+      <div class="col col-75">
+        <canvas id="txCount-line" class="chart chart-bar"
+                chart-data="txCount.data"
+                chart-colors="txCount.colors"
+                chart-options="txCount.options"
+                chart-labels="txCount.labels">
         </canvas>
-      </div>
-
-      <!-- bar -->
-      <div class="col col-50">
-
       </div>
     </div>
   </ion-content>

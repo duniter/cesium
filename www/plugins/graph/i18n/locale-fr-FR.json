@@ -8,7 +8,8 @@
     "BLOCKCHAIN": {
       "TITLE": "Statistiques",
       "BLOCKS_ISSUERS_DIVIDER": "Répartition du calcul des blocs par membre",
-      "BLOCKS_ISSUERS_TITLE": "{{issuerCount}} membres ont calculé {{blockCount}} blocs"
+      "BLOCKS_ISSUERS_TITLE": "{{issuerCount}} membres ont calculé {{blockCount}} blocs",
+      "TX_COUNT_TITLE": "Nombre de transactions écrites"
     },
     "CURRENCY": {
       "MEMBERS_COUNT_TITLE": "Evolution du nombre de membres",

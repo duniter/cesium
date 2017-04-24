@@ -68,10 +68,10 @@ function GpBlockchainController($scope, $q, $state, $translate, csCurrency, gpDa
         .then(function(res) {
           $scope.blocksByIssuer = res;
         })
-      /*, $scope.loadMonetaryMass()
+      , $scope.loadTxCount()
         .then(function(res) {
-          $scope.monetaryMass = res;
-        })*/
+          $scope.txCount = res;
+        })
       ])
       .then(function() {
         $scope.loading = false;
@@ -117,12 +117,12 @@ function GpBlockchainController($scope, $q, $state, $translate, csCurrency, gpDa
       });
 
   };
-/*
-  $scope.loadMonetaryMass = function(from, size) {
+
+  $scope.loadTxCount = function(from, size) {
     from = from || 0;
     size = size || 10000;
 
-    return gpData.block.monetaryMass($scope.currency, {
+    return gpData.blockchain.txCount($scope.currency, {
       from: from,
       size: size
     })
@@ -131,18 +131,16 @@ function GpBlockchainController($scope, $q, $state, $translate, csCurrency, gpDa
         if (!result || !result.data) return;
 
         // Block by issuer
-        result.line = {
-          options: {
-            title: {
-              display: true
-            },
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero:true
-                }
-              }]
-            }
+        result.options = {
+          title: {
+            display: true
+          },
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero:true
+              }
+            }]
           }
         };
 
@@ -152,23 +150,23 @@ function GpBlockchainController($scope, $q, $state, $translate, csCurrency, gpDa
           return res.concat(formDateFilter(time));
         }, []);
 
-        // Compute color
-        if (result.data.length) {
-          result.colors = gpData.util.colors.custom(result.data.length);
-        }
+        result.colors = result.labels.reduce(function(res) {
+          return res.concat('rgba(17,193,243,0.5)');
+        }, []);
+
 
         // Compute graph title
-        return $translate('GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_TITLE', {
+        return $translate('GRAPH.BLOCKCHAIN.TX_COUNT_TITLE', {
           issuerCount: result.data.length,
           blockCount: result.blockCount
         })
           .then(function(title) {
-            result.line.options.title.text = title;
+            result.options.title.text = title;
             return result;
           });
       });
 
-  };*/
+  };
 
   $scope.showBlockIssuer = function(data, e, item) {
     if (!item) return

@@ -229,6 +229,67 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       return promise;
     };
 
+    /**
+     * Graph: "tx count"
+     * @param currency
+     * @returns {*}
+     */
+    exports.blockchain.txCount = function(currency, options) {
+      var ranges = [];
+      var sliceSize = 24*60*60*2;
+      var now = esHttp.date.now();
+      var start = now - (30.4375 * sliceSize);
+      for (var i = start; i <= now; i=i+sliceSize) {
+        ranges.push({
+          from: i,
+          to: i + sliceSize
+        });
+      }
+
+      var request = {
+        size: 0,
+        aggs: {
+          txCount: {
+            range: {
+              field: "medianTime",
+              ranges: ranges
+            },
+            aggs: {
+              tx_stats : {
+                stats: {
+                  script : {
+                    inline: "txcount",
+                    lang: "native"
+                  }
+                }
+              }
+            }
+
+          }
+        }
+      };
+
+
+      return exports.raw.block.search(request, {currency: currency})
+        .then(function(res) {
+          var aggs = res.aggregations;
+          if (!aggs.txCount || !aggs.txCount.buckets || !aggs.txCount.buckets.length) return;
+
+          var result = {};
+          var started = false;
+          result.data = (aggs.txCount.buckets || []).reduce(function(res, agg) {
+            if (!started) {
+              started = agg.tx_stats.count > 0;
+            }
+            return started ? res.concat(agg.tx_stats.sum) : res;
+          }, []);
+          result.labels = (aggs.txCount.buckets || []).reduce(function(res, agg) {
+            return res.concat(agg.to);
+          }, []);
+          return result;
+        });
+    };
+
 
     return exports;
   })

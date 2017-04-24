@@ -8,7 +8,8 @@
     "BLOCKCHAIN": {
       "TITLE": "Statistics",
       "BLOCKS_ISSUERS_DIVIDER": "Written blocks by members",
-      "BLOCKS_ISSUERS_TITLE": "{{issuerCount}} members has written {{blockCount}} blocks"
+      "BLOCKS_ISSUERS_TITLE": "{{issuerCount}} members has written {{blockCount}} blocks",
+      "TX_COUNT_TITLE": "Number of written transactions"
     },
     "CURRENCY": {
       "MEMBERS_COUNT_TITLE": "Evolution of the number of members",
