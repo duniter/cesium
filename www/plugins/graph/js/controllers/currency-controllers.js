@@ -305,14 +305,23 @@ function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionic
       if (scale == 'linear') {
         yAxe.ticks.beginAtZero = true;
         delete yAxe.ticks.min;
+        yAxe.ticks.callback = function(value) {
+          return format(value);
+        };
       }
       else {
         yAxe.ticks.min = 0;
         delete yAxe.ticks.beginAtZero;
+        delete yAxe.ticks.callback;
+        yAxe.ticks.callback = function(value, index) {
+          if (!value) return;
+          //console.log(value + '->' + Math.log10(value)%1);
+          if (Math.log10(value)%1 === 0 || Math.log10(value/3)%1 === 0) {
+            return format(value);
+          }
+          return '';
+        };
       }
-      yAxe.ticks.callback = function(value) {
-        return format(value);
-      };
     });
   };
 
