@@ -9,17 +9,19 @@
       </button>
     </div>
 
-    <canvas id="tx-line" class="chart-bar" height="300" width="1000"
-            height="{{height}}" width="{{width}}"
-            chart-data="data"
-            chart-dataset-override="datasetOverride"
-            chart-colors="colors"
-            chart-options="options"
-            chart-labels="labels"
-            chart-click="showTxRange">
-    </canvas>
+    <div class="padding-left padding-right">
+      <canvas id="tx-line" class="chart-bar"
+              height="{{height}}" width="{{width}}"
+              chart-data="data"
+              chart-dataset-override="datasetOverride"
+              chart-colors="colors"
+              chart-options="options"
+              chart-labels="labels"
+              chart-click="showTxRange">
+      </canvas>
+    </div>
 
-    <div class="range range-positive padding">
+    <div class="range range-positive no-padding-left no-padding-right">
       <a
         class="button button-stable button-clear no-padding pull-left"
         ng-click="loadPreviousTx()">

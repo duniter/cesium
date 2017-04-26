@@ -13,12 +13,16 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         },
         raw: {
           block: {
-            search: esHttp.post('/:currency/block/_search?pretty')
+            search: esHttp.post('/:currency/block/_search')
+          },
+          blockStat: {
+            search: esHttp.post('/:currency/blockStat/_search?pretty')
           }
         },
         regex: {
         }
       };
+
 
     /**
      * Compute colors scale
@@ -184,6 +188,10 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         }
       }
 
+      function _powBase(amount, base) {
+        return base <= 0 ? amount : amount * Math.pow(10, base);
+      }
+
       var request = {
         query: {
           filtered: {
@@ -202,7 +210,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         },
         size: options.size || 10000,
         from: options.from || 0,
-        _source: ["medianTime", "number", "dividend", "monetaryMass", "membersCount"],
+        _source: ["medianTime", "number", "dividend", "monetaryMass", "membersCount", "unitbase"],
         sort: {
           "medianTime" : "asc"
         }
@@ -214,7 +222,13 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
           var result = {};
           result.blocks = res.hits.hits.reduce(function(res, hit){
-            return res.concat(hit._source);
+            var block = hit._source;
+
+            // Apply unitbase on dividend
+            block.dividend = _powBase(block.dividend, block.unitbase);
+            delete block.unitbase;
+
+            return res.concat(block);
           }, []);
           result.labels = res.hits.hits.reduce(function(res, hit){
             return res.concat(hit._source.medianTime);
@@ -261,18 +275,20 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           var request = {
             size: 0,
             aggs: {
-              txCount: {
+              tx: {
                 range: {
                   field: "medianTime",
                   ranges: ranges
                 },
                 aggs: {
-                  tx_stats : {
+                  txCount : {
                     stats: {
-                      script : {
-                        inline: "txcount",
-                        lang: "native"
-                      }
+                      field : "txCount"
+                    }
+                  },
+                  txAmount : {
+                    stats: {
+                      field : "txAmount"
                     }
                   }
                 }
@@ -286,21 +302,18 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           if (jobs.length < 10) {
 
             jobs.push(
-              exports.raw.block.search(request, {currency: currency})
+              exports.raw.blockStat.search(request, {currency: currency})
                 .then(function (res) {
                   var aggs = res.aggregations;
-                  if (!aggs.txCount || !aggs.txCount.buckets || !aggs.txCount.buckets.length) return;
-                  //var started = false;
-                  return (aggs.txCount.buckets || []).reduce(function (res, agg) {
-                    /*if (!started) {
-                     started = agg.tx_stats.count > 0;
-                     }*/
-                    return /*!started ? res : */res.concat({
+                  if (!aggs.tx || !aggs.tx.buckets || !aggs.tx.buckets.length) return;
+                  return (aggs.tx.buckets || []).reduce(function (res, agg) {
+                    return res.concat({
                       from: agg.from,
                       to: agg.to,
-                      count: agg.tx_stats.sum,
-                      avgByBlock: Math.round(agg.tx_stats.avg * 100) / 100,
-                      maxByBlock: agg.tx_stats.max
+                      count: agg.txCount.sum||0,
+                      amount: agg.txAmount.sum || 0,
+                      avgByBlock: Math.round(agg.txCount.avg * 100) / 100,
+                      maxByBlock: agg.txCount.max
                     });
                   }, []);
                 })
@@ -332,6 +345,9 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           }, []);
           result.maxByBlock =  res.reduce(function(res, hit){
             return res.concat(hit.maxByBlock);
+          }, []);
+          result.amount =  res.reduce(function(res, hit){
+            return res.concat(hit.amount/100);
           }, []);
           result.times =  res.reduce(function(res, hit){
             return res.concat(hit.from);

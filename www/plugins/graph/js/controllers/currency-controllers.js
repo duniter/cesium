@@ -43,7 +43,7 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
         url: "/currency/stats/lg",
         views: {
           'menuContent': {
-            templateUrl: "plugins/graph/templates/currency/view_stats.html"
+            templateUrl: "plugins/graph/templates/currency/view_stats_lg.html"
           }
         }
       });
@@ -83,6 +83,8 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
 
   .controller('GpCurrencyMonetaryMassCtrl', GpCurrencyMonetaryMassController)
 
+  .controller('GpCurrencyDUCtrl', GpCurrencyDUController)
+
   .controller('GpCurrencyMembersCountCtrl', GpCurrencyMembersCountController)
 ;
 
@@ -98,7 +100,7 @@ function GpCurrencyViewExtendController($scope, PluginService, UIUtils, esSettin
   });
 }
 
-function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover, csCurrency, gpData, $filter, csSettings) {
+function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionicPopover, csCurrency, gpData, $filter, csSettings) {
   'ngInject';
 
   $scope.loading = true;
@@ -108,7 +110,9 @@ function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover,
     csSettings.data.useRelative;
   $scope.height = undefined;
   $scope.width = undefined;
+  $scope.maintainAspectRatio = true;
   $scope.scale = 'linear';
+  $scope.displayShareAxis = true;
 
   $scope.enter = function(e, state) {
     if ($scope.loading) {
@@ -142,17 +146,18 @@ function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover,
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged);
 
+  var truncAmount = function(value) {
+    return Math.trunc(value*100)/100;
+  };
+
   $scope.load = function(from, size) {
     from = from || 0;
     size = size || 10000;
 
     return $q.all([
-      $translate(['GRAPH.CURRENCY.MONETARY_MASS_LABEL']),
-      $translate($scope.formData.useRelative ?
-        'GRAPH.CURRENCY.MONETARY_MASS_TITLE_RELATIVE' :
-        'GRAPH.CURRENCY.MONETARY_MASS_TITLE', {
-        currency: $scope.formData.currency
-      }),
+      $translate(['GRAPH.CURRENCY.MONETARY_MASS_TITLE',
+        'GRAPH.CURRENCY.MONETARY_MASS_LABEL',
+        'GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL']),
       gpData.blockchain.withDividend($scope.formData.currency, {
         from: from,
         size: size
@@ -160,23 +165,58 @@ function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover,
     ])
       .then(function(result) {
         var translations = result[0];
-        var title = result[1];
-        result = result[2];
+        result = result[1];
         if (!result || !result.blocks) return;
 
         // Choose a date formatter, depending on the blocks period
         var blocksPeriod = result.blocks[result.blocks.length-1].medianTime - result.blocks[0].medianTime;
-        var dateFilter;
+        var formatDate;
         if (blocksPeriod < 15778800/* less than 6 months*/) {
-          dateFilter = $filter('formatDateShort');
+          formatDate = $filter('formatDateShort');
         }
         else {
-          dateFilter = $filter('formatDateMonth');
+          formatDate = $filter('formatDateMonth');
         }
 
-        // Format time
+        var formatAmount =  $filter('formatDecimal');
+        $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, $scope.formData.useRelative);
+
+        // Data: relative
+        var data = [];
+        if($scope.formData.useRelative) {
+
+          // Mass
+          data.push(
+            result.blocks.reduce(function(res, block) {
+              return res.concat(truncAmount(block.monetaryMass / block.dividend));
+            }, []));
+
+          // M/N
+          data.push(
+            result.blocks.reduce(function(res, block) {
+              return res.concat(truncAmount(block.monetaryMass / block.dividend / block.membersCount));
+            }, []));
+        }
+
+        // Data: quantitative
+        else {
+          // Mass
+          data.push(
+            result.blocks.reduce(function(res, block) {
+              return res.concat(block.monetaryMass / 100);
+            }, []));
+
+          // M/N
+          data.push(
+            result.blocks.reduce(function(res, block) {
+              return res.concat(truncAmount(block.monetaryMass / block.membersCount / 100));
+            }, []));
+        }
+        $scope.data = data;
+
+        // Labels
         $scope.labels = result.labels.reduce(function(res, time) {
-          return res.concat(dateFilter(time));
+          return res.concat(formatDate(time));
         }, []);
 
         // Colors
@@ -187,41 +227,51 @@ function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover,
         // Options
         $scope.options = {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: $scope.maintainAspectRatio,
           title: {
             display: true,
-            text: title
+            text: translations['GRAPH.CURRENCY.MONETARY_MASS_TITLE']
           },
           scales: {
-            yAxes: [{
-              id: 'y-axis-1'
-            }]
+            yAxes: [
+              {
+                id: 'y-axis-mass'
+              },
+              {
+                id: 'y-axis-mn',
+                display: $scope.displayShareAxis,
+                position: 'right'
+              }
+            ]
+          },
+          tooltips: {
+            enabled: true,
+            mode: 'index',
+            callbacks: {
+              label: function(tooltipItems, data) {
+                return data.datasets[tooltipItems.datasetIndex].label +
+                  ': ' + formatAmount(tooltipItems.yLabel) +
+                  ' ' + $scope.currencySymbol;
+              }
+            }
           }
         };
         $scope.setScale($scope.scale);
 
-        $scope.datasetOverride = [{
-          yAxisID: 'y-axis-1',
-          type: 'bar',
-          label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL']
-        }];
-
-        // Data
-        if($scope.formData.useRelative) {
-          // If relative, divide by UD
-          $scope.data = [
-            result.blocks.reduce(function(res, block) {
-              return res.concat(block.monetaryMass / block.dividend);
-            }, [])
-          ];
-        }
-        else {
-          $scope.data = [
-            result.blocks.reduce(function(res, block) {
-              return res.concat(block.monetaryMass/100);
-            }, [])
-          ];
-        }
+        $scope.datasetOverride = [
+          {
+            yAxisID: 'y-axis-mass',
+            type: 'bar',
+            label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL']
+          },
+          {
+            yAxisID: 'y-axis-mn',
+            type: 'line',
+            label: translations['GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL'],
+            fill: false,
+            borderColor: 'rgba(150,150,150,0.5)',
+            borderWidth: 2
+          }];
 
         // Keep only block number (need for click)
         $scope.blocks = result.blocks.reduce(function(res, block) {
@@ -231,46 +281,39 @@ function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover,
 
   };
 
-  $scope.setMonetaryMassScale = function(scaleType) {
-    $scope.hideActionsPopover();
-    $scope.options.scales.yAxes[0].type = scaleType;
-    if (scaleType == 'linear') {
-      $scope.options.scales.yAxes[0].ticks = {
-        beginAtZero: true
-      };
-    }
-    else {
-      $scope.options.scales.yAxes[0].ticks = {
-        min: 0
-      };
-    }
-  };
-
   $scope.showBlock = function(data, e, item) {
     if (!item) return;
     var number = $scope.blocks[item._index];
     $state.go('app.view_block', {number: number});
   };
 
-  $scope.setSize = function(height, width) {
+  $scope.setSize = function(height, width, maintainAspectRatio) {
     $scope.height = height;
     $scope.width = width;
+    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
   };
 
-  $scope.setScale = function(scaleType) {
+  $scope.setScale = function(scale) {
     $scope.hideActionsPopover();
-    $scope.scale = scaleType;
-    $scope.options.scales.yAxes[0].type = scaleType;
-    if (scaleType == 'linear') {
-      $scope.options.scales.yAxes[0].ticks = {
-        beginAtZero: true
+    $scope.scale = scale;
+
+    var format = $filter('formatInteger');
+
+    _.forEach($scope.options.scales.yAxes, function(yAxe) {
+      yAxe.type = scale;
+      yAxe.ticks = yAxe.ticks || {};
+      if (scale == 'linear') {
+        yAxe.ticks.beginAtZero = true;
+        delete yAxe.ticks.min;
+      }
+      else {
+        yAxe.ticks.min = 0;
+        delete yAxe.ticks.beginAtZero;
+      }
+      yAxe.ticks.callback = function(value) {
+        return format(value);
       };
-    }
-    else {
-      $scope.options.scales.yAxes[0].ticks = {
-        min: 0
-      };
-    }
+    });
   };
 
   /* -- Popover -- */
@@ -296,6 +339,109 @@ function GpCurrencyMonetaryMassController($scope, $q, $translate, $ionicPopover,
   };
 }
 
+
+function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $filter) {
+  'ngInject';
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('GpCurrencyMonetaryMassCtrl', {$scope: $scope}));
+
+  $scope.load = function(from, size) {
+    from = from || 0;
+    size = size || 10000;
+
+    return $q.all([
+      $translate([
+        'GRAPH.CURRENCY.UD_TITLE',
+        'COMMON.UNIVERSAL_DIVIDEND']),
+      gpData.blockchain.withDividend($scope.formData.currency, {
+        from: from,
+        size: size
+      })
+    ])
+      .then(function(result) {
+        var translations = result[0];
+        result = result[1];
+        if (!result || !result.blocks) return;
+
+        // Choose a date formatter, depending on the blocks period
+        var blocksPeriod = result.blocks[result.blocks.length-1].medianTime - result.blocks[0].medianTime;
+        var dateFilter;
+        if (blocksPeriod < 15778800/* less than 6 months*/) {
+          dateFilter = $filter('formatDateShort');
+        }
+        else {
+          dateFilter = $filter('formatDateMonth');
+        }
+
+        var formatAmount =  $filter('formatDecimal');
+        $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, false);
+
+        // Data
+        $scope.data = [
+          result.blocks.reduce(function(res, block) {
+            return res.concat(block.dividend / 100);
+          }, [])
+        ];
+
+        // Labels
+        $scope.labels = result.labels.reduce(function(res, time) {
+          return res.concat(dateFilter(time));
+        }, []);
+
+        // Colors
+        $scope.colors = result.blocks.reduce(function(res) {
+          return res.concat('rgba(17,193,243,0.5)');
+        }, []);
+
+        // Options
+        $scope.options = {
+          responsive: true,
+          maintainAspectRatio: $scope.maintainAspectRatio,
+          title: {
+            display: true,
+            text: translations['GRAPH.CURRENCY.UD_TITLE']
+          },
+          scales: {
+            yAxes: [
+              {
+                id: 'y-axis-ud',
+                ticks: {
+                  beginAtZero: true
+                }
+              }
+            ]
+          },
+          tooltips: {
+            enabled: true,
+            mode: 'index',
+            callbacks: {
+              label: function(tooltipItems, data) {
+                return data.datasets[tooltipItems.datasetIndex].label +
+                  ': ' + formatAmount(tooltipItems.yLabel) +
+                  ' ' + $scope.currencySymbol;
+              }
+            }
+          }
+        };
+        $scope.setScale($scope.scale);
+
+        $scope.datasetOverride = [
+          {
+            yAxisID: 'y-axis-ud',
+            type: 'bar',
+            label: translations['COMMON.UNIVERSAL_DIVIDEND']
+          }];
+
+        // Keep only block number (need for click)
+        $scope.blocks = result.blocks.reduce(function(res, block) {
+          return res.concat(block.number);
+        }, []);
+      });
+
+  };
+}
+
+
 function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurrency, gpData, $filter) {
   'ngInject';
 
@@ -303,6 +449,7 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurr
   $scope.formData = $scope.formData || {};
   $scope.height = undefined;
   $scope.width = undefined;
+  $scope.maintainAspectRatio = true;
 
   $scope.enter = function(e, state) {
     if ($scope.loading) {
@@ -363,7 +510,7 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurr
         // Members count graph: -------------------------
         $scope.options = {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: $scope.maintainAspectRatio,
             title: {
               display: true,
               text: translations['GRAPH.CURRENCY.MEMBERS_COUNT_TITLE']
@@ -418,9 +565,10 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurr
     });
   };
 
-  $scope.setSize = function(height, width) {
+  $scope.setSize = function(height, width, maintainAspectRatio) {
     $scope.height = height;
     $scope.width = width;
+    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
   };
 
 }

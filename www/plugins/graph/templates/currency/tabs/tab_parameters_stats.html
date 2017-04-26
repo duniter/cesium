@@ -4,9 +4,17 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="list">
-      <div class="item"
-           ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'">
+    <div class="row responsive-sm">
+      <div class="col"
+           ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
+           ng-init="setSize(500,700,true)">
+      </div>
+
+      <!-- DU -->
+      <div class="col"
+           ng-include="'plugins/graph/templates/currency/graph_du.html'"
+           ng-controller="GpCurrencyDUCtrl"
+           ng-init="setSize(500,700,true)">
       </div>
     </div>
   </ion-content>

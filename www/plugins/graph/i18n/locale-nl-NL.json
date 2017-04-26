@@ -8,7 +8,8 @@
     "COMMON": {
       "LINEAR_SCALE" : "Lineaire schaal",
       "LOGARITHMIC_SCALE" : "Logaritmische schaal",
-      "BTN_SHOW_STATS": "Zie statistieken"
+      "BTN_SHOW_STATS": "Zie statistieken",
+      "BTN_SHOW_DETAILED_STATS": "Gedetailleerde statistieken"
     },
     "BLOCKCHAIN": {
       "TITLE": "Statistieken",
@@ -17,9 +18,11 @@
       "BLOCKS_ISSUERS_TITLE": "Aantal blokken berekend per lid",
       "BLOCKS_ISSUERS_LABEL": "Aantal blokken",
       "TX_DIVIDER": "Analyse van transacties",
+      "TX_AMOUNT_TITLE": "Trading volume",
+      "TX_AMOUNT_LABEL": "Verhandeld volume",
       "TX_COUNT_TITLE": "Aantal schriftelijke transacties",
       "TX_COUNT_LABEL": "Aantal transacties",
-      "TX_AVG_BY_BLOCK": "Gemiddeld per blok",
+      "TX_AVG_BY_BLOCK": "Gemiddeld aantal transacties / blok",
       "TX_RANGE_DURATION": {
         "HOUR": "Groep per <b>uur</b>",
         "DAY": "Groep per <b>dag</b>",
@@ -27,11 +30,12 @@
       }
     },
     "CURRENCY": {
+      "MONETARY_MASS_TITLE": "Evolutie van de monetaire massa",
+      "MONETARY_MASS_LABEL": "Monetaire massa",
+      "MONETARY_MASS_SHARE_LABEL": "Gemiddelde leden",
+      "UD_TITLE": "Ontwikkeling van de universele dividend",
       "MEMBERS_COUNT_TITLE": "Evolutie van het aantal leden",
-      "MEMBERS_COUNT_LABEL": "Aantal leden",
-      "MONETARY_MASS_TITLE": "Evolutie van de monetaire massa ({{currency | currencySymbolNoHtml: false }})",
-      "MONETARY_MASS_TITLE_RELATIVE": "Evolutie van de monetaire massa ({{currency | currencySymbolNoHtml: true }})",
-      "MONETARY_MASS_LABEL": "Monetaire massa"
+      "MEMBERS_COUNT_LABEL": "Aantal leden"
     }
   }
 }

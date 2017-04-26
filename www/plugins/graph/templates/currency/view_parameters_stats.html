@@ -7,6 +7,17 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <ng-include src="'plugins/graph/templates/currency/graph_monetary_mass.html'" ></ng-include>
+    <div class="list no-padding-xs">
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'">
+      </div>
+
+      <!-- DU -->
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/currency/graph_du.html'"
+           ng-controller="GpCurrencyDUCtrl"
+           ng-init="setSize(undefined, undefined)">
+      </div>
+    </div>
   </ion-content>
 </ion-view>

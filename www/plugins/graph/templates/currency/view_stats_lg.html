@@ -7,10 +7,12 @@
   <ion-content scroll="true" class="padding" >
 
     <div class="list" >
-      <ng-controller ng-controller="GpCurrencyMonetaryMassCtrl"
-                     ng-init="setSize(300, 1000)">
+
+      <!-- Monetary mass -->
+      <ng-controller ng-controller="GpCurrencyMonetaryMassCtrl">
         <div class="item no-padding-xs"
-             ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'">
+             ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
+             ng-init="setSize(250, 1000)">
         </div>
 
         <div class="item item-toggle dark no-border text-right">
@@ -24,10 +26,17 @@
         </div>
       </ng-controller>
 
+      <!-- DU -->
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/currency/graph_du.html'"
+           ng-controller="GpCurrencyDUCtrl"
+           ng-init="setSize(250, 1000)">
+      </div>
+
       <div class="item no-padding-xs"
            ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
            ng-controller="GpCurrencyMembersCountCtrl"
-           ng-init="setSize(300, 1000)">
+           ng-init="setSize(250, 1000)">
       </div>
 
 

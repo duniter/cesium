@@ -2,11 +2,19 @@
 <!-- section actual parameters -->
 <ng-if ng-if="enable && extensionPoint === 'parameters-actual'" >
 
-  <div class="item padding-left padding-right no-padding-xs"
-       ng-if="!smallscreen"
-       ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
-       ng-controller="GpCurrencyMonetaryMassCtrl">
-  </div>
+  <ng-if ng-if="!smallscreen">
+    <div class="item padding-left padding-right no-padding-xs"
+         ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
+         ng-controller="GpCurrencyMonetaryMassCtrl"
+         ng-init="displayShareAxis=false;">
+    </div>
+    <div class="item buttons no-padding-top ">
+      <a class="pull-right button button-text button-small button-small-padding ink" ui-sref="app.currency_stats_lg">
+        <i class="icon ion-stats-bars"></i>
+        <span translate>GRAPH.COMMON.BTN_SHOW_DETAILED_STATS</span>
+      </a>
+    </div>
+  </ng-if>
 
   <div class="item item-divider"
        ng-if="smallscreen">
@@ -20,11 +28,18 @@
 <!-- section Wot -->
 <ng-if ng-if="enable && extensionPoint === 'wot-actual'" >
 
-  <div class="item padding-left padding-right no-padding-xs"
-       ng-if="!smallscreen"
-       ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
-       ng-controller="GpCurrencyMembersCountCtrl">
-  </div>
+  <ng-if ng-if="!smallscreen">
+    <div class="item padding-left padding-right no-padding-xs"
+         ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
+         ng-controller="GpCurrencyMembersCountCtrl">
+    </div>
+    <div class="item buttons no-padding-top ">
+      <a class="pull-right button button-text button-small button-small-padding ink" ui-sref="app.currency_stats_lg">
+        <i class="icon ion-stats-bars"></i>
+        <span translate>GRAPH.COMMON.BTN_SHOW_DETAILED_STATS</span>
+      </a>
+    </div>
+  </ng-if>
 
   <div class="item item-divider"
        ng-if="smallscreen">

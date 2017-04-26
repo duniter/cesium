@@ -24,6 +24,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   .filter('formatAmount', function(csConfig, csSettings, csWallet, $filter) {
     var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
     var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+    var currencySymbol = $filter('currencySymbol');
 
     function formatRelative(input, options) {
       var currentUD = options && options.currentUD ? options.currentUD : csWallet.data.currentUD;
@@ -39,7 +40,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         amount = numeral(amount).format(format);
       }
       if (options && options.currency) {
-        return amount + ' ' + $filter('currencySymbol')(options.currency, true);
+        return amount + ' ' + currencySymbol(options.currency, true);
       }
       return amount;
     }
@@ -47,7 +48,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     function formatQuantitative(input, options) {
       var amount = numeral(input/100).format((input > -1000000000 && input < 1000000000) ? '0,0.00' : '0,0.000 a');
       if (options && options.currency) {
-        return amount + ' ' + $filter('currencySymbol')(options.currency, false);
+        return amount + ' ' + currencySymbol(options.currency, false);
       }
       return amount;
     }
@@ -59,6 +60,47 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         formatQuantitative(input, options);
     };
   })
+
+  .filter('formatAmountNoHtml', function(csConfig, csSettings, csWallet, $filter) {
+    var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
+    var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+    var currencySymbol = $filter('currencySymbolNoHtml');
+
+    function formatRelative(input, options) {
+      var currentUD = options && options.currentUD ? options.currentUD : csWallet.data.currentUD;
+      if (!currentUD) {
+        console.warn("formatAmount: currentUD not defined");
+        return;
+      }
+      var amount = input / currentUD;
+      if (Math.abs(amount) < minValue && input !== 0) {
+        amount = '~ 0';
+      }
+      else {
+        amount = numeral(amount).format(format);
+      }
+      if (options && options.currency) {
+        return amount + ' ' + currencySymbol(options.currency, true);
+      }
+      return amount;
+    }
+
+    function formatQuantitative(input, options) {
+      var amount = numeral(input/100).format((input > -1000000000 && input < 1000000000) ? '0,0.00' : '0,0.000 a');
+      if (options && options.currency) {
+        return amount + ' ' + currencySymbol(options.currency, false);
+      }
+      return amount;
+    }
+
+    return function(input, options) {
+      if (input === undefined) return;
+      return (options && angular.isDefined(options.useRelative) ? options.useRelative : csSettings.data.useRelative) ?
+        formatRelative(input, options) :
+        formatQuantitative(input, options);
+    };
+  })
+
 
   .filter('currencySymbol', function($rootScope, $filter, csSettings) {
     return function(input, useRelative) {

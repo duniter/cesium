@@ -4,9 +4,10 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="list">
-      <div class="item"
-           ng-include="'plugins/graph/templates/currency/graph_members_count.html'">
+    <div class="list no-padding">
+      <div class="item no-padding-top"
+           ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
+           ng-init="setSize(600,700,false)">
       </div>
     </div>
   </ion-content>

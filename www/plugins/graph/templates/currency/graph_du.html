@@ -1,0 +1,21 @@
+
+  <!-- graphs button bar -->
+  <div class="button-bar-inline "
+       style="top: 33px; margin-top:-33px; position: relative;">
+    <button
+      class="button button-stable button-clear no-padding-xs pull-right"
+      ng-click="showActionsPopover($event)">
+      <i class="icon ion-navicon-round"></i>
+    </button>
+  </div>
+
+  <canvas id="monetaryMass-bar" class="chart-bar"
+          height="{{height}}"
+          width="{{width}}"
+          chart-data="data"
+          chart-labels="labels"
+          chart-colors="colors"
+          chart-dataset-override="datasetOverride"
+          chart-options="options"
+          chart-click="showBlock">
+  </canvas>

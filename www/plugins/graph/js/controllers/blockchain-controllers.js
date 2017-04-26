@@ -27,93 +27,19 @@ angular.module('cesium.graph.blockchain.controllers', ['chart.js', 'cesium.servi
   })
 
   .controller('GpBlockchainTxCountCtrl', GpBlockchainTxCountController)
-
   .controller('GpBlockchainIssuersCtrl', GpBlockchainIssuersController)
 ;
 
 
-function GpBlockchainIssuersController($scope, $q, $translate, csCurrency, gpData) {
-  'ngInject';
-  $scope.loading = true;
-
-  $scope.enter = function(e, state) {
-    if ($scope.loading) {
-
-      if (state && state.stateParams && state.stateParams.currency) { // Currency parameter
-        $scope.currency = state.stateParams.currency;
-      }
-
-      // Make sure there is currency, or load it not
-      if (!$scope.currency) {
-        return csCurrency.default()
-          .then(function(currency) {
-            $scope.currency = currency ? currency.name : null;
-            return $scope.enter(e, state);
-          });
-      }
-
-      $scope.load()
-        .then(function() {
-          $scope.loading = false;
-        });
-    }
-  };
-  $scope.$on('$ionicParentView.enter', $scope.enter);
-
-  $scope.load = function() {
-    return $q.all([
-      $translate([
-        'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_TITLE',
-        'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_LABEL'
-      ]),
-      gpData.blockchain.countByIssuer($scope.currency)
-    ])
-      .then(function(result) {
-        var translations =  result[0];
-        result = result[1];
-        if (!result || !result.data) return;
-
-        // Data
-        $scope.data = result.data;
-        $scope.blockCount = result.blockCount;
-        $scope.labels = result.labels;
-
-        // Options
-        $scope.barOptions = {
-          responsive: true,
-          maintainAspectRatio: true,
-          title: {
-            display: true,
-            text: translations['GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_TITLE']
-          },
-          scales: {
-            yAxes: [{
-              type: 'linear',
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        };
-
-        // Colors
-        $scope.colors = gpData.util.colors.custom(result.data.length);
-
-      });
-  };
-
-  $scope.setSize = function(height, width) {
-    $scope.height = height;
-    $scope.width = width;
-  };
-}
-
-function GpBlockchainTxCountController($scope, $q, $state, $translate, $ionicPopover, csCurrency, BMA, esHttp, gpData) {
+function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, $ionicPopover, csSettings, csCurrency, BMA, esHttp, gpData) {
   'ngInject';
 
   $scope.loading = true;
+  $scope.height=undefined;
+  $scope.width=undefined;
   $scope.formData = {
-    timePct: 100
+    timePct: 100,
+    useRelative: false /*csSettings.data.useRelative*/
   };
 
   // Default TX range duration
@@ -158,7 +84,8 @@ function GpBlockchainTxCountController($scope, $q, $state, $translate, $ionicPop
     return $q.all([
 
       // translate i18n keys
-      $translate(['GRAPH.BLOCKCHAIN.TX_COUNT_TITLE',
+      $translate(['GRAPH.BLOCKCHAIN.TX_AMOUNT_TITLE',
+        'GRAPH.BLOCKCHAIN.TX_AMOUNT_LABEL',
         'GRAPH.BLOCKCHAIN.TX_COUNT_LABEL',
         'GRAPH.BLOCKCHAIN.TX_AVG_BY_BLOCK',
         'COMMON.DATE_PATTERN',
@@ -188,15 +115,21 @@ function GpBlockchainTxCountController($scope, $q, $state, $translate, $ionicPop
         if (!result || !result.times) return; // no data
         $scope.times = result.times;
 
+        var formatInteger = $filter('formatInteger');
+        var formatAmount =  $filter('formatDecimal');
+        $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.currency, false/*$scope.formData.useRelative*/);
+
         // Data
         if ($scope.txOptions.rangeDuration != 'hour') {
           $scope.data = [
+            result.amount,
             result.count,
             result.avgByBlock
           ];
         }
         else {
           $scope.data = [
+            result.amount,
             result.count
           ];
         }
@@ -237,20 +170,32 @@ function GpBlockchainTxCountController($scope, $q, $state, $translate, $ionicPop
           maintainAspectRatio: true,
           title: {
             display: true,
-            text: translations['GRAPH.BLOCKCHAIN.TX_COUNT_TITLE']
+            text: translations['GRAPH.BLOCKCHAIN.TX_AMOUNT_TITLE']
           },
           scales: {
             yAxes: [
               {
-                id: 'y-axis-1',
+                id: 'y-axis-amount',
                 type: 'linear',
                 position: 'left',
+                ticks: {
+                  beginAtZero:true,
+                  callback: function(value) {
+                    return formatInteger(value);
+                  }
+                }
+              },
+              {
+                id: 'y-axis-count',
+                display: false,
+                type: 'linear',
+                position: 'right',
                 ticks: {
                   beginAtZero:true
                 }
               },
               {
-                id: 'y-axis-2',
+                id: 'y-axis-avg',
                 display: false,
                 type: 'linear',
                 position: 'right',
@@ -259,39 +204,58 @@ function GpBlockchainTxCountController($scope, $q, $state, $translate, $ionicPop
                 }
               }
             ]
+          },
+          tooltips: {
+            enabled: true,
+            mode: 'index',
+            callbacks: {
+              label: function(tooltipItems, data) {
+                if (tooltipItems.datasetIndex === 0) {
+                  return data.datasets[tooltipItems.datasetIndex].label +
+                    ': ' + formatAmount(tooltipItems.yLabel) +
+                    ' ' + $scope.currencySymbol;
+                }
+                return data.datasets[tooltipItems.datasetIndex].label +
+                  ': ' + tooltipItems.yLabel;
+              }
+            }
           }
         };
 
         $scope.datasetOverride = [
           {
-            yAxisID: 'y-axis-1',
+            yAxisID: 'y-axis-amount',
             type: 'bar',
-            label: translations['GRAPH.BLOCKCHAIN.TX_COUNT_LABEL']
+            label: translations['GRAPH.BLOCKCHAIN.TX_AMOUNT_LABEL']
           },
           {
-            yAxisID: 'y-axis-2',
+            yAxisID: 'y-axis-count',
             type: 'line',
-            display: false,
+            label: translations['GRAPH.BLOCKCHAIN.TX_COUNT_LABEL'],
+            fill: false,
+            borderColor: 'rgba(150,150,150,0.5)',
+            borderWidth: 2
+          },
+          {
+            yAxisID: 'y-axis-avg',
+            type: 'line',
             label: translations['GRAPH.BLOCKCHAIN.TX_AVG_BY_BLOCK'],
-            backgroundColor: 'rgba(17,193,243,0)',
-            borderColor: 'rgba(100,100,100,0.5)',
-            pointBackgroundColor: 'rgba(100,100,100,0.6)',
-            pointBorderColor: 'rgba(200,200,200,0.6)',
-            pointHoverBackgroundColor: 'rgba(17,193,243,0.8)'
+            fill: false,
+            showLine: false,
+            borderColor: 'rgba(0,0,0,0)',
+            pointBackgroundColor: 'rgba(0,0,0,0)',
+            pointBorderColor: 'rgba(0,0,0,0)',
+            pointHoverBackgroundColor: 'rgba(0,0,0,0)',
+            pointHoverBorderColor: 'rgba(0,0,0,0)'
           }
         ];
       });
   };
 
-  $scope.setSize = function(height, width) {
+  $scope.setSize = function(height, width, maintainAspectRatio) {
     $scope.height = height;
     $scope.width = width;
-  };
-
-  $scope.showBlockIssuer = function(data, e, item) {
-    if (!item) return
-    var issuer = $scope.blocksByIssuer.issuers[item._index];
-    $state.go('app.wot_identity', issuer);
+    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
   };
 
   $scope.showTxRange = function(data, e, item) {
@@ -372,3 +336,93 @@ function GpBlockchainTxCountController($scope, $q, $state, $translate, $ionicPop
 
 }
 
+
+function GpBlockchainIssuersController($scope, $q, $state, $translate, csCurrency, gpData) {
+  'ngInject';
+  $scope.loading = true;
+  $scope.height = undefined;
+  $scope.width = undefined;
+
+  $scope.enter = function(e, state) {
+    if ($scope.loading) {
+
+      if (state && state.stateParams && state.stateParams.currency) { // Currency parameter
+        $scope.currency = state.stateParams.currency;
+      }
+
+      // Make sure there is currency, or load it not
+      if (!$scope.currency) {
+        return csCurrency.default()
+          .then(function(currency) {
+            $scope.currency = currency ? currency.name : null;
+            return $scope.enter(e, state);
+          });
+      }
+
+      $scope.load()
+        .then(function() {
+          $scope.loading = false;
+        });
+    }
+  };
+  $scope.$on('$ionicParentView.enter', $scope.enter);
+
+  $scope.load = function() {
+    return $q.all([
+      $translate([
+        'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_TITLE',
+        'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_LABEL'
+      ]),
+      gpData.blockchain.countByIssuer($scope.currency)
+    ])
+      .then(function(result) {
+        var translations =  result[0];
+        result = result[1];
+        if (!result || !result.data) return;
+
+        // Data
+        $scope.data = result.data;
+
+        // Labels
+        $scope.labels = result.labels;
+
+        // Data to keep (for click or label)
+        $scope.blockCount = result.blockCount;
+        $scope.issuers = result.issuers;
+
+        // Options
+        $scope.barOptions = {
+          responsive: true,
+          maintainAspectRatio: $scope.maintainAspectRatio,
+          title: {
+            display: true,
+            text: translations['GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_TITLE']
+          },
+          scales: {
+            yAxes: [{
+              type: 'linear',
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        };
+
+        // Colors
+        $scope.colors = gpData.util.colors.custom(result.data.length);
+
+      });
+  };
+
+  $scope.setSize = function(height, width, maintainAspectRatio) {
+    $scope.height = height;
+    $scope.width = width;
+    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
+  };
+
+  $scope.showBlockIssuer = function(data, e, item) {
+    if (!item) return;
+    var issuer = $scope.issuers[item._index];
+    $state.go('app.wot_identity', issuer);
+  };
+}

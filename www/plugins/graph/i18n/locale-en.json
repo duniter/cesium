@@ -8,7 +8,8 @@
     "COMMON": {
       "LINEAR_SCALE" : "Linear scale",
       "LOGARITHMIC_SCALE" : "Logarithmic scale",
-      "BTN_SHOW_STATS": "See statistics"
+      "BTN_SHOW_STATS": "See statistics",
+      "BTN_SHOW_DETAILED_STATS": "Detailed statistics"
     },
     "BLOCKCHAIN": {
       "TITLE": "Statistics",
@@ -17,6 +18,8 @@
       "BLOCKS_ISSUERS_TITLE": "Number of blocks calculated per member",
       "BLOCKS_ISSUERS_LABEL": "Number of blocks",
       "TX_DIVIDER": "Analysis of transactions",
+      "TX_AMOUNT_TITLE": "Transaction volume",
+      "TX_AMOUNT_LABEL": "Exchange volume",
       "TX_COUNT_TITLE": "Number of written transactions",
       "TX_COUNT_LABEL": "Number of transactions",
       "TX_AVG_BY_BLOCK": "Average per block",
@@ -27,11 +30,12 @@
       }
     },
     "CURRENCY": {
+      "MONETARY_MASS_TITLE": "Evolution of the monetary mass",
+      "MONETARY_MASS_LABEL": "Monetary mass",
+      "MONETARY_MASS_SHARE_LABEL": "Average per member",
+      "UD_TITLE": "Evolution of the universal dividend",
       "MEMBERS_COUNT_TITLE": "Evolution of the number of members",
-      "MEMBERS_COUNT_LABEL": "Number of members",
-      "MONETARY_MASS_TITLE": "Evolution of the monetary mass ({{currency | currencySymbolNoHtml: false }})",
-      "MONETARY_MASS_TITLE_RELATIVE": "Evolution of the monetary mass ({{currency | currencySymbolNoHtml: true }})",
-      "MONETARY_MASS_LABEL": "Monetary mass"
+      "MEMBERS_COUNT_LABEL": "Number of members"
     }
   }
 }
