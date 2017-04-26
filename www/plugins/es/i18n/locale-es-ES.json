@@ -398,6 +398,42 @@
       "WARNING_PUBLIC_DATA": "Las informaciónes informadas en su perfil <b>están públicas</b> : visibles también por personas <b>no conectadas</b>."
     }
   },
+  "SUBSCRIPTION": {
+    "SUBSCRIPTION_DIVIDER": "Servicios en línea",
+    "BTN_ADD": "Agregar un servicio",
+    "BTN_EDIT": "Administrar mis servicios",
+    "NO_SUBSCRIPTION": "Ningún servicio definido",
+    "SUBSCRIPTION_COUNT": "Servicios / Suscripción",
+    "EDIT": {
+      "TITLE": "Servicios en línea",
+      "HELP_TEXT": "Gestione sus suscripciones y otros servicios en línea aquí",
+      "PROVIDER": "Proveedor:"
+    },
+    "TYPE": {
+      "ENUM": {
+        "EMAIL": "Recibir notificaciones por correo electrónico"
+      }
+    },
+    "CONFIRM": {
+      "DELETE_SUBSCRIPTION": "Deseas <b>eliminar</b> esta suscripción ?"
+    },
+    "ERROR": {
+      "LOAD_SUBSCRIPTIONS_FAILED": "Error al cargar servicios en línea",
+      "ADD_SUBSCRIPTION_FAILED": "Error al agregar suscripción",
+      "UPDATE_SUBSCRIPTION_FAILED": "Error durante la actualización de la suscripción",
+      "DELETE_SUBSCRIPTION_FAILED": "Error al eliminar la suscripción"
+    },
+    "MODAL_EMAIL": {
+      "TITLE" : "Notificación por correo electrónico",
+      "HELP" : "Rellene este formulario para <b> ser notificado por correo electrónico </ b> de los eventos de su cuenta. <br/> Su dirección de correo electrónico se cifrará únicamente para que sea visible para el proveedor de servicios.",
+      "EMAIL_LABEL" : "Tu correo electrónico :",
+      "EMAIL_HELP": "carlos@dominio.com",
+      "FREQUENCY_LABEL": "Frecuencia de las notificaciones :",
+      "FREQUENCY_DAILY": "Diariamente",
+      "FREQUENCY_WEEKLY": "Semanal",
+      "PROVIDER": "Proveedor de servicio :"
+    }
+  },
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Cesium+",
     "PLUGIN_NAME_HELP": "Perfiles, notificaciónes, mensajes privados",

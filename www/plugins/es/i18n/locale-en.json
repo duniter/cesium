@@ -362,11 +362,11 @@
     "BTN_ADD": "Add a service",
     "BTN_EDIT": "Manage my services",
     "NO_SUBSCRIPTION": "No service defined",
-    "EMAIL": "Email",
     "SUBSCRIPTION_COUNT": "Services / Subscription",
     "EDIT": {
       "TITLE": "Online services",
-      "HELP_TEXT": "Manage your subscriptions and other online services here"
+      "HELP_TEXT": "Manage your subscriptions and other online services here",
+      "PROVIDER": "Provider:"
     },
     "TYPE": {
       "ENUM": {
