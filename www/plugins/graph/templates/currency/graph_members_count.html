@@ -1,9 +1,10 @@
-<div class="padding-left padding-right">
-  <canvas id="membersCount-line" class="chart chart-line"
-          chart-data="membersCount.data"
+  <canvas id="membersCount-bar" class="chart-bar"
+          height="{{height}}"
+          width="{{width}}"
+          chart-data="data"
           chart-labels="labels"
-          chart-options="membersCount.options"
-          chart-colors="membersCount.colors"
+          chart-colors="colors"
+          chart-options="options"
+          chart-dataset-override="datasetOverride"
           chart-click="showBlock">
   </canvas>
-</div>

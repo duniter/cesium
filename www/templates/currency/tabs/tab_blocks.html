@@ -16,7 +16,11 @@
   </ion-nav-buttons>
 
   <ion-content>
-    <div class="item item-divider" translate>BLOCKCHAIN.LOOKUP.LAST_BLOCKS</div>
+    <div class="item item-divider">
+      <span translate>BLOCKCHAIN.LOOKUP.LAST_BLOCKS</span>
+    </div>
+
+    <cs-extension-point name="buttons"></cs-extension-point>
 
     <ng-include src="'templates/blockchain/list_blocks.html'"></ng-include>
   </ion-content>

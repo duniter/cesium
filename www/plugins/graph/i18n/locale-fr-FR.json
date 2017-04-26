@@ -1,20 +1,37 @@
 {
   "NETWORK": {
     "VIEW": {
-      "BTN_GRAPH": "Stats"
+      "BTN_GRAPH": "Statistiques"
     }
   },
   "GRAPH": {
+    "COMMON": {
+      "LINEAR_SCALE" : "Echelle linéaire",
+      "LOGARITHMIC_SCALE" : "Echelle logarithmique",
+      "BTN_SHOW_STATS": "Voir les statistiques"
+    },
     "BLOCKCHAIN": {
       "TITLE": "Statistiques",
-      "BLOCKS_ISSUERS_DIVIDER": "Répartition du calcul des blocs par membre",
-      "BLOCKS_ISSUERS_TITLE": "{{issuerCount}} membres ont calculé {{blockCount}} blocs",
-      "TX_COUNT_TITLE": "Nombre de transactions écrites"
+      "BLOCKS_ISSUERS_DIVIDER": "Analyse de la répartition du calcul",
+      "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} membres</b> ont calculé <b>{{blockCount|formatInteger}} blocs</b>",
+      "BLOCKS_ISSUERS_TITLE": "Nombre de blocs calculés par membre",
+      "BLOCKS_ISSUERS_LABEL": "Nombre de blocs",
+      "TX_DIVIDER": "Analyse des transactions",
+      "TX_COUNT_TITLE": "Nombre de transactions écrites",
+      "TX_COUNT_LABEL": "Nombre de transactions",
+      "TX_AVG_BY_BLOCK": "Moyenne par bloc",
+      "TX_RANGE_DURATION": {
+        "HOUR": "Regrouper par <b>heure</b>",
+        "DAY": "Regrouper par <b>jour</b>",
+        "MONTH": "Regrouper par <b>mois</b>"
+      }
     },
     "CURRENCY": {
       "MEMBERS_COUNT_TITLE": "Evolution du nombre de membres",
+      "MEMBERS_COUNT_LABEL": "Nombre de membres",
       "MONETARY_MASS_TITLE": "Evolution de la masse monétaire ({{currency | currencySymbolNoHtml: false }})",
       "MONETARY_MASS_TITLE_RELATIVE": "Evolution de la masse monétaire ({{currency | currencySymbolNoHtml: true }})",
+      "MONETARY_MASS_LABEL": "Masse monétaire"
     }
   }
 }

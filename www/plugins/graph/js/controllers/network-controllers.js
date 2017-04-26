@@ -6,14 +6,15 @@ angular.module('cesium.graph.network.controllers', ['chart.js', 'cesium.graph.se
 
     var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
-      PluginServiceProvider.extendState('app.network', {
-        points: {
-          'buttons': {
-            templateUrl: "plugins/graph/templates/network/view_network_extend.html",
-            controller: 'GpNetworkViewExtendCtrl'
+      PluginServiceProvider
+        .extendState('app.network', {
+          points: {
+            'buttons': {
+              templateUrl: "plugins/graph/templates/network/view_network_extend.html",
+              controller: 'GpNetworkViewExtendCtrl'
+            }
           }
-        }
-      })
+        })
       ;
     }
   })

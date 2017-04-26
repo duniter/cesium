@@ -1,0 +1,30 @@
+
+    <div class="row responsive-lg">
+
+      <!-- bar -->
+      <div class="col col-75">
+        <canvas id="bar" class="chart-bar"
+                height="{{height}}" width="{{width}}"
+                chart-data="data"
+                chart-labels="labels"
+                chart-colors="colors"
+                chart-options="barOptions"
+                chart-click="showBlockIssuer">
+        </canvas>
+      </div>
+
+      <!-- pie -->
+      <div class="col col-25 padding-top">
+        <canvas id="blocksByIssuer-pie" class="chart-pie"
+                style="max-height: 300px; max-width: 300px;"
+                chart-data="data"
+                chart-labels="labels"
+                chart-colors="colors"
+                chart-click="showBlockIssuer">
+        </canvas>
+
+        <div class="gray padding-top text-center">
+          <small ng-bind-html="'GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_HELP'| translate:{issuerCount: data.length, blockCount: blockCount }"></small>
+        </div>
+      </div>
+    </div>

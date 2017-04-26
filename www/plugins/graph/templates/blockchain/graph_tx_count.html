@@ -1,0 +1,40 @@
+
+    <!-- button bar -->
+    <div class="button-bar-inline "
+         style="top: 33px; margin-top:-33px; position: relative;">
+      <button
+        class="button button-stable button-clear no-padding-xs pull-right"
+        ng-click="showTxActionsPopover($event)">
+        <i class="icon ion-navicon-round"></i>
+      </button>
+    </div>
+
+    <canvas id="tx-line" class="chart-bar" height="300" width="1000"
+            height="{{height}}" width="{{width}}"
+            chart-data="data"
+            chart-dataset-override="datasetOverride"
+            chart-colors="colors"
+            chart-options="options"
+            chart-labels="labels"
+            chart-click="showTxRange">
+    </canvas>
+
+    <div class="range range-positive padding">
+      <a
+        class="button button-stable button-clear no-padding pull-left"
+        ng-click="loadPreviousTx()">
+        <i class="icon ion-chevron-left"></i>
+      </a>
+      <input type="range"
+             ng-model="formData.timePct"
+             name="timePct"
+             min="0" max="100"
+             value="{{formData.timePct}}"
+             ng-change="onTxTimeChanged();"
+             ng-model-options="{ debounce: 250 }">
+      <a
+        class="button button-stable button-clear no-padding pull-right"
+        ng-click="loadNextTx($event)">
+        <i class="icon ion-chevron-right"></i>
+      </a>
+    </div>

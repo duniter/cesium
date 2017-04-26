@@ -13,6 +13,9 @@
     <span class="badge badge-stable">{{formData.difficulty | formatInteger}}</span>
   </ion-item>
 
+  <!-- Allow extension here -->
+  <cs-extension-point name="network-actual"></cs-extension-point>
+
   <div class="item item-divider">
     <span translate>CURRENCY.VIEW.NETWORK_RULES_DIVIDER</span>
   </div>
@@ -46,6 +49,7 @@
            ng-if="!search.loading"
            ng-click="showActionsPopover($event)">
         </a>
+
       </div>
     </div>
 

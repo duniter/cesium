@@ -1,21 +1,55 @@
-<!-- Buttons section -->
-<ng-if ng-if="enable && extensionPoint === 'nav-buttons'">
-
-  <button class="button button-icon button-clear icon ion-podium visible-xs visible-sm"
-          ui-sref="app.currency_stats">
-  </button>
-</ng-if>
 
 <!-- section actual parameters -->
 <ng-if ng-if="enable && extensionPoint === 'parameters-actual'" >
 
-  <ng-include src="'plugins/graph/templates/currency/graph_monetary_mass.html'" ng-controller="GpGraphMonetaryMassCtrl"></ng-include>
+  <div class="item padding-left padding-right no-padding-xs"
+       ng-if="!smallscreen"
+       ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
+       ng-controller="GpCurrencyMonetaryMassCtrl">
+  </div>
 
+  <div class="item item-divider"
+       ng-if="smallscreen">
+    <a class="badge button button-text button-small button-small-padding ink" ui-sref="app.currency.tab_parameters_stats">
+      <i class="icon ion-stats-bars"></i>
+      <span translate>GRAPH.COMMON.BTN_SHOW_STATS</span>
+    </a>
+  </div>
 </ng-if>
 
 <!-- section Wot -->
-<ng-if ng-if="enable && extensionPoint === 'wot-actual'">
+<ng-if ng-if="enable && extensionPoint === 'wot-actual'" >
 
-  <ng-include src="'plugins/graph/templates/currency/graph_members_count.html'" ng-controller="GpGraphMonetaryMassCtrl"></ng-include>
+  <div class="item padding-left padding-right no-padding-xs"
+       ng-if="!smallscreen"
+       ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
+       ng-controller="GpCurrencyMembersCountCtrl">
+  </div>
+
+  <div class="item item-divider"
+       ng-if="smallscreen">
+    <a class="badge button button-text button-small button-small-padding ink" ui-sref="app.currency.tab_wot_stats">
+      <i class="icon ion-stats-bars"></i>
+      <span translate>GRAPH.COMMON.BTN_SHOW_STATS</span>
+    </a>
+  </div>
+</ng-if>
+
+<!-- section Wot -->
+<ng-if ng-if="enable && extensionPoint === 'network-actual'" >
+
+  <div class="item padding-left padding-right no-padding-xs"
+       ng-if="!smallscreen"
+       ng-include="'plugins/graph/templates/blockchain/graph_block_issuers.html'"
+       ng-controller="GpBlockchainIssuersCtrl">
+  </div>
+
+  <div class="item item-divider"
+       ng-if="smallscreen">
+    <a class="badge button button-text button-small button-small-padding ink" ui-sref="app.currency.tab_network_stats">
+      <i class="icon ion-stats-bars"></i>
+      <span translate>GRAPH.COMMON.BTN_SHOW_STATS</span>
+    </a>
+  </div>
 </ng-if>
 

@@ -13,7 +13,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         },
         raw: {
           block: {
-            search: esHttp.post('/:currency/block/_search')
+            search: esHttp.post('/:currency/block/_search?pretty')
           }
         },
         regex: {
@@ -46,7 +46,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       // From [0,1]
       opacity = opacity || '0.55';
 
-      var defaultStateSize = Math.round(count / 4/*=4 states max*/);
+      var defaultStateSize = Math.round(count / 2.5/*=4 states max*/);
 
       // Start color [r,v,b]
       var color = startColor ? angular.copy(startColor) : [255,0,0]; // Red
@@ -173,7 +173,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           if (!result.blocks) {
             var deferred = $q.defer();
             result.then(function(res) {
-              console.debug("[graph] monetaryMass for [" + currency + "] waiting previous call", res);
+              //console.debug("[graph] Detected a duplicated request on monetaryMass [" + currency + "]: will use same request result");
               deferred.resolve(res);
               return res;
             });
@@ -235,56 +235,106 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
      * @returns {*}
      */
     exports.blockchain.txCount = function(currency, options) {
-      var ranges = [];
-      var sliceSize = 24*60*60*2;
-      var now = esHttp.date.now();
-      var start = now - (30.4375 * sliceSize);
-      for (var i = start; i <= now; i=i+sliceSize) {
-        ranges.push({
-          from: i,
-          to: i + sliceSize
-        });
-      }
 
-      var request = {
-        size: 0,
-        aggs: {
-          txCount: {
-            range: {
-              field: "medianTime",
-              ranges: ranges
-            },
+      var maxRangeSize = 30;
+      var defaultTotalRangeCount = maxRangeSize*2;
+
+      options = options || {};
+      options.rangeDuration = options.rangeDuration || 'day';
+      options.endTime = options.endTime || moment.unix(esHttp.date.now()).utc().add(1, options.rangeDuration).unix();
+      options.startTime = options.startTime ||
+        moment.unix(options.endTime).utc().subtract(defaultTotalRangeCount, options.rangeDuration).unix();
+
+      var jobs = [];
+
+      var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
+      var ranges = [];
+      while(from.unix() < options.endTime) {
+
+        ranges.push({
+          from: from.unix(),
+          to: from.add(1, options.rangeDuration).unix()
+        });
+
+        // Do not exceed max range count
+        if (ranges.length == maxRangeSize) {
+          var request = {
+            size: 0,
             aggs: {
-              tx_stats : {
-                stats: {
-                  script : {
-                    inline: "txcount",
-                    lang: "native"
+              txCount: {
+                range: {
+                  field: "medianTime",
+                  ranges: ranges
+                },
+                aggs: {
+                  tx_stats : {
+                    stats: {
+                      script : {
+                        inline: "txcount",
+                        lang: "native"
+                      }
+                    }
                   }
                 }
+
               }
             }
+          };
+          // prepare next loop
+          ranges = [];
 
+          if (jobs.length < 10) {
+
+            jobs.push(
+              exports.raw.block.search(request, {currency: currency})
+                .then(function (res) {
+                  var aggs = res.aggregations;
+                  if (!aggs.txCount || !aggs.txCount.buckets || !aggs.txCount.buckets.length) return;
+                  //var started = false;
+                  return (aggs.txCount.buckets || []).reduce(function (res, agg) {
+                    /*if (!started) {
+                     started = agg.tx_stats.count > 0;
+                     }*/
+                    return /*!started ? res : */res.concat({
+                      from: agg.from,
+                      to: agg.to,
+                      count: agg.tx_stats.sum,
+                      avgByBlock: Math.round(agg.tx_stats.avg * 100) / 100,
+                      maxByBlock: agg.tx_stats.max
+                    });
+                  }, []);
+                })
+            );
           }
+          else {
+            console.error('Too many cal of txCount request ! ');
+            from = moment.unix(options.endTime).utc();
+          }
+
         }
-      };
+      }
 
-
-      return exports.raw.block.search(request, {currency: currency})
+      return $q.all(jobs)
         .then(function(res) {
-          var aggs = res.aggregations;
-          if (!aggs.txCount || !aggs.txCount.buckets || !aggs.txCount.buckets.length) return;
+          res = res.reduce(function(res, hits){
+            if (!hits || !hits.length) return res;
+            return res.concat(hits);
+          }, []);
+
+          res = _.sortBy(res, 'from');
 
           var result = {};
-          var started = false;
-          result.data = (aggs.txCount.buckets || []).reduce(function(res, agg) {
-            if (!started) {
-              started = agg.tx_stats.count > 0;
-            }
-            return started ? res.concat(agg.tx_stats.sum) : res;
+          result.count =  res.reduce(function(res, hit){
+            return res.concat(hit.count);
           }, []);
-          result.labels = (aggs.txCount.buckets || []).reduce(function(res, agg) {
-            return res.concat(agg.to);
+          result.avgByBlock =  res.reduce(function(res, hit){
+            return res.concat(hit.avgByBlock);
+          }, []);
+          result.maxByBlock =  res.reduce(function(res, hit){
+            return res.concat(hit.maxByBlock);
+          }, []);
+          result.times =  res.reduce(function(res, hit){
+            return res.concat(hit.from);
           }, []);
           return result;
         });

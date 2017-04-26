@@ -6,52 +6,35 @@
 
   <ion-content scroll="true" class="no-padding">
 
-    <!-- Blocks per issuer -->
-    <div class="item item-divider" translate>
-      GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_DIVIDER
-    </div>
-
-    <div class="center" ng-if="loading">
+    <div class="center padding" ng-if="loading">
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <div class="row responsive-lg" ng-if="!loading">
+    <div class="list" ng-if="!loading">
 
-      <!-- bar -->
-      <div class="col col-75">
-        <canvas id="bar" class="chart chart-bar"
-                chart-data="blocksByIssuer.data" chart-labels="blocksByIssuer.labels"
-                chart-colors="blocksByIssuer.colors"
-                chart-options="blocksByIssuer.bar.options"
-                chart-click="showBlockIssuer">
-        </canvas>
+      <!--  - - - - TX divider - - - - -->
+      <div class="item item-divider" translate>
+        GRAPH.BLOCKCHAIN.TX_DIVIDER
       </div>
 
-      <!-- pie -->
-      <div class="col col-25 padding-top">
-        <canvas id="blocksByIssuer-pie" class="chart chart-pie"
-                style="max-height: 300px; max-width: 300px;"
-                chart-data="blocksByIssuer.data"
-                chart-labels="blocksByIssuer.labels"
-                chart-colors="blocksByIssuer.colors"
-                chart-click="showBlockIssuer">
-        </canvas>
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/blockchain/graph_tx_count.html'"
+           ng-controller="GpBlockchainTxCountCtrl"
+           ng-init="setSize(350, 1000)">
       </div>
-    </div>
 
-    <!-- tx count -->
-    <div class="row responsive-lg" ng-if="!loading">
-
-      <!-- bar -->
-      <div class="col col-75">
-        <canvas id="txCount-line" class="chart chart-bar"
-                chart-data="txCount.data"
-                chart-colors="txCount.colors"
-                chart-options="txCount.options"
-                chart-labels="txCount.labels">
-        </canvas>
+      <!-- Blocks issuer -->
+      <div class="item item-divider" translate>
+        GRAPH.BLOCKCHAIN.BLOCKS_ISSUERS_DIVIDER
       </div>
-    </div>
+
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/blockchain/graph_block_issuers.html'"
+           ng-controller="GpBlockchainIssuersCtrl"
+           ng-init="setSize(300, 750)">
+      </div>
+
+
   </ion-content>
 
 </ion-view>

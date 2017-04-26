@@ -122,7 +122,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       else { // default sort
         request.sort = "number:desc";
       }
-      request.excludeCurrent = true;
+      request.excludeCurrent = false;
       promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
     }
 

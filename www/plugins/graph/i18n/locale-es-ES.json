@@ -1,0 +1,37 @@
+{
+  "NETWORK": {
+    "VIEW": {
+      "BTN_GRAPH": "Estadística"
+    }
+  },
+  "GRAPH": {
+    "COMMON": {
+      "LINEAR_SCALE" : "Escala lineal",
+      "LOGARITHMIC_SCALE" : "Escala logarítmica",
+      "BTN_SHOW_STATS": "Ver estadísticas"
+    },
+    "BLOCKCHAIN": {
+      "TITLE": "Estadística",
+      "BLOCKS_ISSUERS_DIVIDER": "Bloques escritos por los miembros",
+      "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} members</b> has computed <b>{{blockCount|formatInteger}} blocks</b>",
+      "BLOCKS_ISSUERS_TITLE": "Número de bloques miembro calculado",
+      "BLOCKS_ISSUERS_LABEL": "Número de bloques",
+      "TX_DIVIDER": "Análisis de transacciones",
+      "TX_COUNT_TITLE": "Número de transacciones escritas",
+      "TX_COUNT_LABEL": "Número de transacciones",
+      "TX_AVG_BY_BLOCK": "Promedio por bloque",
+      "TX_RANGE_DURATION": {
+        "HOUR": "Grupo por <b>hora</b>",
+        "DAY": "Grupo por <b>día</b>",
+        "MONTH": "Grupo por <b>mes</b>"
+      }
+    },
+    "CURRENCY": {
+      "MEMBERS_COUNT_TITLE": "Evolución del número de miembros",
+      "MEMBERS_COUNT_LABEL": "Número de miembros",
+      "MONETARY_MASS_TITLE": "Evolución de la masa monetaria ({{currency | currencySymbolNoHtml: false }})",
+      "MONETARY_MASS_TITLE_RELATIVE": "Evolución de la masa monetaria ({{currency | currencySymbolNoHtml: true }})",
+      "MONETARY_MASS_LABEL": "Masa monetaria"
+    }
+  }
+}
