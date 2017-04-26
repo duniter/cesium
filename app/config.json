@@ -134,7 +134,7 @@
     "decimalCount": 2,
     "httpsMode": false,
     "helptip": {
-      "enable": true,
+      "enable": false,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
     "node": {
@@ -145,8 +145,9 @@
       "es": {
         "enable": true,
         "askEnable": false,
-        "host": "g1.data.duniter.fr",
-        "port": "443"
+        "host": "localhost",
+        "port": "9200",
+        "wsPort": "9400"
       },
       "graph": {
         "enable": true

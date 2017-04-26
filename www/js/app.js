@@ -108,44 +108,44 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   .filter('formatDate', function($rootScope) {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).local().format($rootScope.translations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
+      return input ? moment.unix(parseInt(input)).local().format($rootScope.translations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
   .filter('formatDateShort', function($rootScope) {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).local().format($rootScope.translations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
+      return input ? moment.unix(parseInt(input)).local().format($rootScope.translations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
     };
   })
 
   .filter('formatDateMonth', function($rootScope) {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).local().format($rootScope.translations.DATE_MONTH_YEAR_PATTERN || 'MMM YY') : '';
+      return input ? moment.unix(parseInt(input)).local().format($rootScope.translations.DATE_MONTH_YEAR_PATTERN || 'MMM YY') : '';
     };
   })
 
   .filter('formatTime', function() {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).local().format('HH:mm') : '';
+      return input ? moment.unix(parseInt(input)).local().format('HH:mm') : '';
     };
   })
 
   .filter('formatFromNow', function() {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).startOf('minute').fromNow() : '';
+      return input ? moment.unix(parseInt(input)).startOf('minute').fromNow() : '';
     };
   })
 
 
   .filter('formatDurationTo', function() {
     return function(input) {
-      return input ? moment(moment().utc().valueOf() + parseInt(input)*1000).startOf('minute').fromNow() : '';
+      return input ? moment.unix(moment().utc().unix() + parseInt(input)).startOf('minute').fromNow() : '';
     };
   })
 
   .filter('formatDuration', function() {
     return function(input) {
-      return input ? moment(0).startOf('minute').from(moment(parseInt(input)*1000), true) : '';
+      return input ? moment(0).startOf('minute').from(moment.unix(parseInt(input)), true) : '';
     };
   })
 
@@ -162,14 +162,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   .filter('formatPeriod', function() {
     return function(input) {
       if (!input) {return null;}
-      var duration = moment(0).startOf('minute').from(moment(parseInt(input)*1000), true);
+      var duration = moment(0).startOf('minute').from(moment.unix(parseInt(input)), true);
       return duration.split(' ').slice(-1)[0]; // keep only last words (e.g. remove "un" "a"...)
     };
   })
 
   .filter('formatFromNowShort', function() {
     return function(input) {
-      return input ? moment(parseInt(input)*1000).startOf('minute').fromNow(true) : '';
+      return input ? moment.unix(parseInt(input)).startOf('minute').fromNow(true) : '';
     };
   })
 

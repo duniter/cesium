@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.controllers', ['cesium.services'])
 
-.config(function($stateProvider, csConfig) {
+.config(function($stateProvider) {
   'ngInject';
 
   $stateProvider
@@ -87,7 +87,6 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
       });
 
   };
-  //$scope.$on('$ionicView.enter', $scope.enter);
   $scope.$on('$ionicParentView.enter', $scope.enter);
 
   /**

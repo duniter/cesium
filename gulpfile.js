@@ -37,7 +37,6 @@ var sourcemaps = require('gulp-sourcemaps');
 var paths = {
   sass: ['./scss/**/*.scss'],
   config: ['./app/config.json'],
-  templates: ['./www/templates/**/*.html'],
   templatecache: ['./www/templates/**/*.html'],
   ng_translate: ['./www/i18n/locale-*.json'],
   ng_annotate: ['./www/js/**/*.js', '!./www/js/vendor/*.js'],
