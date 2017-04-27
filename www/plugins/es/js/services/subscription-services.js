@@ -75,7 +75,7 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
             return records;
           });
       });
-  };
+  }
 
   function addRecord(record) {
     if (!record || !record.type || !record.content || !record.recipient) {
