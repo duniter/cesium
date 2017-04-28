@@ -68,7 +68,6 @@ function TransferController($scope, $controller, UIUtils, $q, csWot) {
         parameters.udAmount = state.stateParams.udAmount;
       }
       if (state.stateParams.comment) {
-        //$scope.formData.comment = state.stateParams.comment;
         parameters.comment = state.stateParams.comment;
       }
     }
