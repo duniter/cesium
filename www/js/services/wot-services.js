@@ -931,6 +931,13 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         });
       },
 
+      extend = function(idty, pubkeyAttributeName, skipAddUid) {
+        return extendAll([idty], pubkeyAttributeName, skipAddUid)
+          .then(function(res) {
+            return res[0];
+          });
+      },
+
       extendAll = function(idties, pubkeyAttributeName, skipAddUid) {
 
         pubkeyAttributeName = pubkeyAttributeName || 'pubkey';
@@ -985,6 +992,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       newcomers: getNewcomers,
       pending: getPending,
       all: getAll,
+      extend: extend,
       extendAll: extendAll,
       // api extension
       api: api

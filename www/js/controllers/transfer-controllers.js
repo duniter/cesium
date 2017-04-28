@@ -6,10 +6,10 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer', {
         cache: false,
-        url: "/transfer?uid&pubkey",
+        url: "/transfer?amount&udAmount&comment",
         views: {
           'menuContent': {
-            templateUrl: "templates/wallet/new_transfer.html",
+            templateUrl: "templates/wot/view_identity.html",
             controller: 'TransferCtrl'
           }
         }
@@ -17,7 +17,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey_uid', {
         cache: false,
-        url: "/transfer/:pubkey/:uid",
+        url: "/transfer/:pubkey/:uid?amount&udAmount&comment",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -28,7 +28,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey', {
         cache: false,
-        url: "/transfer/:pubkey",
+        url: "/transfer/:pubkey?amount&udAmount&comment",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -44,32 +44,58 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $controller, UIUtils, csSettings) {
+function TransferController($scope, $controller, UIUtils, $q, csWot) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('TransferModalLookupCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('TransferModalCtrl', {$scope: $scope, parameters: null}));
 
-  $scope.$on('$ionicView.enter', function(e, state) {
-    if (!!state.stateParams && !!state.stateParams.pubkey) {
-      $scope.formData.destPub = state.stateParams.pubkey;
-      if (!!state.stateParams.uid) {
-        $scope.destUid = state.stateParams.uid;
-        $scope.destPub = '';
+  $scope.enter = function(e, state) {
+    var initJobs = [];
+
+    // Compute parameters
+    var parameters = {};
+    if (state && state.stateParams) {
+      if (state.stateParams.pubkey) {
+        parameters.pubkey = state.stateParams.pubkey;
       }
-      else {
-        $scope.destUid = '';
-        $scope.destPub = $scope.formData.destPub;
+      if (state.stateParams.amount) {
+        parameters.useRelative = false;
+        parameters.amount = state.stateParams.amount;
+      }
+      else if (state.stateParams.udAmount) {
+        parameters.useRelative = true;
+        parameters.udAmount = state.stateParams.udAmount;
+      }
+      if (state.stateParams.comment) {
+        //$scope.formData.comment = state.stateParams.comment;
+        parameters.comment = state.stateParams.comment;
       }
     }
 
+    // Make sure wallet is loaded
     $scope.loadWallet()
-    .then(function() {
-      $scope.formData.useRelative = csSettings.data.useRelative;
-      $scope.onUseRelativeChanged();
-      UIUtils.loading.hide();
-    });
-  });
+
+    // If pubkey, get the uid (+ name, avatar)
+      .then(function() {
+        if (parameters.pubkey) {
+          return csWot.extend({pubkey: parameters.pubkey})
+            .then(function(dest) {
+              if (dest && dest.uid) {
+                parameters.uid = dest.name || dest.uid;
+              }
+            });
+        }
+      })
+
+      // Apply parameters, then recompute relative amount
+      .then(function() {
+        $scope.setParameters(parameters);
+        $scope.onUseRelativeChanged();
+        UIUtils.loading.hide();
+      });
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.setForm = function(form) {
     $scope.form = form;
@@ -96,13 +122,14 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
   $scope.udAmount = null;
   $scope.commentPattern = BMA.regexp.COMMENT;
 
-  if (parameters) {
+  $scope.setParameters = function(parameters) {
+    if (!parameters) return;
     if (parameters.pubkey) {
       $scope.formData.destPub = parameters.pubkey;
     }
     if (parameters.uid) {
-        $scope.destUid = parameters.uid;
-        $scope.destPub = '';
+      $scope.destUid = parameters.uid;
+      $scope.destPub = '';
     }
     else {
       $scope.destUid = '';
@@ -110,12 +137,19 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
     }
     if (parameters.amount) {
       $scope.formData.amount = parameters.amount;
+      $scope.formData.useRelative=false;
+    }
+    else if (parameters.udAmount) {
+      $scope.formData.amount = parameters.udAmount;
+      $scope.formData.useRelative=true;
     }
     if (parameters.comment) {
       $scope.formData.useComment=true;
       $scope.formData.comment = parameters.comment;
     }
-  }
+  };
+  // Read default parameters
+  $scope.setParameters(parameters);
 
   $scope.cancel = function() {
     $scope.closeModal();
