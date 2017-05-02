@@ -80,7 +80,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         host = host || csSettings.data.node.host;
         port = port || csSettings.data.node.port;
 
-        useSsl = angular.isDefined(useSsl) ? useSsl : (csSettings.data.node.port == 443 || csSettings.data.node.useSsl || forceUseSsl);
+        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.node.useSsl || forceUseSsl);
         useCache =  angular.isDefined(useCache) ? useCache : true;
       }
 
