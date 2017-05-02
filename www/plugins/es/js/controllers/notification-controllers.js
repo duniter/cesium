@@ -45,12 +45,16 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
 
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
-      $scope.load();
+      $scope.loadWallet({minData: true})
+        .then(function() {
+          $scope.load();
+          UIUtils.loading.hide();
 
-      // Reset unread counter
-      $timeout(function() {
-        $scope.resetUnreadCount();
-      }, 1000);
+          // Reset unread counter
+          return $timeout(function() {
+            $scope.resetUnreadCount();
+          }, 1000);
+        });
     }
   });
 

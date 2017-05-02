@@ -15,8 +15,8 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           block: {
             search: esHttp.post('/:currency/block/_search')
           },
-          blockStat: {
-            search: esHttp.post('/:currency/blockStat/_search?pretty')
+          blockstat: {
+            search: esHttp.post('/:currency/blockstat/_search?pretty')
           }
         },
         regex: {
@@ -302,7 +302,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           if (jobs.length < 10) {
 
             jobs.push(
-              exports.raw.blockStat.search(request, {currency: currency})
+              exports.raw.blockstat.search(request, {currency: currency})
                 .then(function (res) {
                   var aggs = res.aggregations;
                   if (!aggs.tx || !aggs.tx.buckets || !aggs.tx.buckets.length) return;

@@ -85,6 +85,7 @@
     "useLocalStorage": true,
     "useRelative": true,
     "expertMode": true,
+    "decimalCount": 2,
     "helptip": {
       "enable": false,
       "installDocUrl": {

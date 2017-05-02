@@ -94,11 +94,16 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
     console.debug("[ES] [message] detected new message (from notification service)");
 
     var notification = new Notification(event);
+    notification.issuer = notification.pubkey;
+    delete notification.pubkey;
 
-    csWot.extendAll([notification])
+    csWot.extend(notification, 'issuer')
       .then(function() {
+
+
         csWallet.data.messages = csWallet.data.messages || {};
         csWallet.data.messages.unreadCount++;
+
         // Raise event
         api.data.raise.new(notification);
       });

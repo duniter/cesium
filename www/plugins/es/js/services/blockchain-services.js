@@ -47,7 +47,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
 
     exports.raw.block.processSearchResult = function(res, options) {
       options = options || {};
-      options.excludeCurrent = angular.isDefined(options.excludeCurrent) ? options.excludeCurrent : false;
+      options.excludeCurrent = angular.isDefined(options.excludeCurrent) ? options.excludeCurrent : true;
       options.fillAvatar = angular.isDefined(options.fillAvatar) ? options.fillAvatar : true;
       options.cleanData = angular.isDefined(options.cleanData) ? options.cleanData : true;
 

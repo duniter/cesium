@@ -778,9 +778,12 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       });
   };
 
-  $scope.doAction = function(action) {
+  $scope.doAction = function(action, options) {
     if (action == 'certify') {
       return $scope.certify();
+    }
+    if (action == 'transfer') {
+      $scope.showTransferModal(options);
     }
   };
 
