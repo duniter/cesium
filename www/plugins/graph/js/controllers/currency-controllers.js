@@ -262,15 +262,22 @@ function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionic
           {
             yAxisID: 'y-axis-mass',
             type: 'bar',
-            label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL']
+            label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL'],
+            hoverBackgroundColor: 'rgba(17,193,243,0.7)'
           },
           {
             yAxisID: 'y-axis-mn',
             type: 'line',
             label: translations['GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL'],
             fill: false,
-            borderColor: 'rgba(150,150,150,0.5)',
-            borderWidth: 2
+            showLine: true,
+            borderColor: 'rgba(255,201,0,1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(255,201,0,1)',
+            pointBorderColor: 'rgba(255,255,255,1)',
+            pointHoverBackgroundColor: 'rgba(255,201,0,1)',
+            pointHoverBorderColor: 'rgba(0,0,0,0)',
+            pointRadius: 3
           }];
 
         // Keep only block number (need for click)
@@ -438,7 +445,8 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
           {
             yAxisID: 'y-axis-ud',
             type: 'bar',
-            label: translations['COMMON.UNIVERSAL_DIVIDEND']
+            label: translations['COMMON.UNIVERSAL_DIVIDEND'],
+            hoverBackgroundColor: 'rgba(17,193,243,0.7)'
           }];
 
         // Keep only block number (need for click)
@@ -539,7 +547,8 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurr
         $scope.datasetOverride = [{
             yAxisID: 'y-axis-1',
             type: 'bar',
-            label: translations['GRAPH.CURRENCY.MEMBERS_COUNT_LABEL']
+            label: translations['GRAPH.CURRENCY.MEMBERS_COUNT_LABEL'],
+            hoverBackgroundColor: 'rgba(17,193,243,0.7)'
           }];
 
         // Data
