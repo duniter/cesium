@@ -35,11 +35,14 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   esac
 
   # Update config file
-  gulp config --env default
+  gulp config --env default_fr
 
-  # Build assets
+  # Build assets for mobile device
   ionic build android --release
   ionic build firefoxos --release
+
+  # Update config file
+  gulp config --env default
   gulp build:web --release
   ionic build ubuntu --release
   cd platforms/ubuntu/native/cesium; debuild

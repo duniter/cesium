@@ -37,6 +37,44 @@
     }
   },
 
+  "default_fr": {
+    "cacheTimeMs": 60000,
+    "fallbackLanguage": "fr",
+    "rememberMe": false,
+    "showUDHistory": false,
+    "timeout": 10000,
+    "timeWarningExpireMembership": 5184000,
+    "timeWarningExpire": 7776000,
+    "useLocalStorage": false,
+    "useRelative": false,
+    "initPhase": false,
+    "expertMode": false,
+    "decimalCount": 2,
+    "httpsMode": false,
+    "helptip": {
+      "enable": true,
+      "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+    },
+    "node": {
+      "host": "g1.duniter.fr",
+      "port": "443"
+    },
+    "plugins":{
+      "es": {
+        "enable": true,
+        "askEnable": false,
+        "host": "g1.data.duniter.fr",
+        "port": "443",
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
+      }
+    }
+  },
+
   "gtest": {
     "cacheTimeMs": 60000,
     "fallbackLanguage": "en",
