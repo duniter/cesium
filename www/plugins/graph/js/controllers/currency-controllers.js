@@ -263,7 +263,7 @@ function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionic
             yAxisID: 'y-axis-mass',
             type: 'bar',
             label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL'],
-            hoverBackgroundColor: 'rgba(17,193,243,0.7)'
+            hoverBackgroundColor: 'rgba(17,193,243,0.6)'
           },
           {
             yAxisID: 'y-axis-mn',
@@ -446,7 +446,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
             yAxisID: 'y-axis-ud',
             type: 'bar',
             label: translations['COMMON.UNIVERSAL_DIVIDEND'],
-            hoverBackgroundColor: 'rgba(17,193,243,0.7)'
+            hoverBackgroundColor: 'rgba(17,193,243,0.6)'
           }];
 
         // Keep only block number (need for click)
@@ -546,7 +546,7 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurr
           };
         $scope.datasetOverride = [{
             yAxisID: 'y-axis-1',
-            type: 'bar',
+            type: 'line',
             label: translations['GRAPH.CURRENCY.MEMBERS_COUNT_LABEL'],
             hoverBackgroundColor: 'rgba(17,193,243,0.7)'
           }];
