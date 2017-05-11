@@ -31,7 +31,7 @@ angular.module('cesium.graph.blockchain.controllers', ['chart.js', 'cesium.servi
 ;
 
 
-function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, $ionicPopover, csSettings, csCurrency, BMA, esHttp, gpData) {
+function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, $ionicPopover, csCurrency, BMA, esHttp, gpData) {
   'ngInject';
 
   $scope.loading = true;

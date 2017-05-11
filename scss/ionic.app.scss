@@ -231,7 +231,6 @@ $screen-lg:                       1200px;
 
 }
 
-
 // Medium devices: Desktops (≥992px)
 @media screen and (min-width: $screen-md) and (max-width: $screen-md-max) {
   .hidden-md {
@@ -248,14 +247,6 @@ $screen-lg:                       1200px;
   .badge:empty {
     display: none !important;
   }
-  /*
-  see issue #
-  html{
-    -webkit-user-selectuser-select: all !important;
-    -moz-user-select: all !important;
-    -ms-user-select: all !important;
-    user-select: all !important;
-  }*/
 }
 @media screen and (min-width: $screen-lg) {
   .hidden-md {
@@ -309,12 +300,6 @@ $screen-lg:                       1200px;
   .badge:empty {
     display: none !important;
   }
-  /*html{
-    -webkit-user-select: all !important;
-    -moz-user-select: all !important;
-    -ms-user-select: all !important;
-    user-select: all !important;
-  }*/
 }
 @media screen and (max-width: $screen-md-max) {
     .hidden-lg {
@@ -338,6 +323,15 @@ $screen-lg:                       1200px;
     .no-margin-xs {
         margin: 0px !important;
     }
+}
+
+@media screen and (min-width: $screen-md) {
+  html, body, .scroll, .disable-user-behavior {
+    -webkit-user-selectuser-select: auto !important;
+    -moz-user-select: auto !important;
+    -ms-user-select: auto !important;
+    user-select: auto !important;
+  }
 }
 
 /* ============
@@ -1773,6 +1767,10 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 
 .ion-es-user-api:before {
   content: url('../img/logo.small.cs.dune.svg');
+}
+
+.ion-bma-tor-api:before {
+  content: url('../img/logo_tor_32px.png');
 }
 
 .row-header{

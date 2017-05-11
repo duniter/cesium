@@ -23,7 +23,8 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           mirror: true,
           endpointFilter: null,
           online: false,
-          ssl: false
+          ssl: undefined,
+          tor: undefined
         },
         sort:{
           type: null,
@@ -212,6 +213,11 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           return false;
         }
 
+        // Filter on tor
+        if (angular.isDefined(data.filter.tor) && peer.isTor() != data.filter.tor) {
+          return false;
+        }
+
         return true;
       },
 
@@ -305,8 +311,20 @@ angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.se
           return $q.when(peer);
         }
 
-        // Do not try not SSL node, if Cesium running in SSL
+        // Cesium running in SSL: Do not try to access not SSL node,
         if (isHttpsMode && !peer.bma.useSsl) {
+          peer.online = (peer.status == 'UP');
+          peer.buid = constants.UNKNOWN_BUID;
+          delete peer.version;
+
+          if (peer.uid && data.expertMode && data.difficulties) {
+            peer.difficulty = data.difficulties[peer.uid];
+          }
+          return $q.when(peer);
+        }
+
+        // Do not try to access TOR endpoints
+        if (peer.bma.useTor) {
           peer.online = (peer.status == 'UP');
           peer.buid = constants.UNKNOWN_BUID;
           delete peer.version;

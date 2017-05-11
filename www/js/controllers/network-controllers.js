@@ -18,7 +18,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
     })
 
     .state('app.view_peer', {
-      url: "/network/peer/:server",
+      url: "/network/peer/:server?ssl&tor",
       cache: false,
       views: {
         'menuContent': {
@@ -217,7 +217,14 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
   };
 
   $scope.selectPeer = function(peer) {
-    $state.go('app.view_peer', {server: peer.getServer()});
+    var stateParams = {server: peer.getServer()};
+    if (peer.isSsl()) {
+      stateParams.ssl = true;
+    }
+    if (peer.isTor()) {
+      stateParams.tor = true;
+    }
+    $state.go('app.view_peer', stateParams);
   };
 
   $scope.$on('csView.action.refresh', function(event, context) {
@@ -254,6 +261,28 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
+  };
+
+  $scope.showEndpointsPopover = function($event, peer, endpointFilter) {
+    var endpoints = peer.getEndpoints(endpointFilter);
+    endpoints = (endpoints||[]).reduce(function(res, ep) {
+        var parts = ep.split(' ');
+        if (parts[0] == endpointFilter) {
+          return res.concat(parts[1] + (parts[2] != 80 ? (':'+parts[2]) : ''));
+        }
+        return res;
+      }, []);
+    if (!endpoints.length) return;
+
+    UIUtils.popover.show($event, {
+      templateUrl: 'templates/network/popover_endpoints.html',
+      bindings: {
+        titleKey: 'NETWORK.VIEW.ENDPOINTS.' + endpointFilter,
+        valueKey: 'NETWORK.VIEW.NODE_ADDRESS',
+        endpoints: endpoints
+      }
+    });
+    $event.stopPropagation();
   };
 
   /* -- help tip -- */
@@ -308,49 +337,81 @@ function NetworkLookupModalController($scope, $controller, parameters) {
 }
 
 
-function PeerViewController($scope, BMA) {
+function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
   'ngInject';
 
+  $scope.node = {};
+  $scope.loading = true;
+
   $scope.$on('$ionicView.enter', function(e, state) {
-    if (!$scope.memberUidsByPubkeys) {
-      BMA.wot.member.uids()
-        .then(function(uids){
-          $scope.memberUidsByPubkeys = uids;
-          $scope.showPeer(state.stateParams.server);
-        });
-    }
-    else {
-      $scope.showPeer(state.stateParams.server);
-    }
+    if (!state.stateParams || !state.stateParams.server) return;
+
+    var useSsl = state.stateParams.ssl == "true";
+    var useTor = state.stateParams.tor == "true";
+
+    return $scope.load(state.stateParams.server, useSsl, useTor)
+      .then(function() {
+        return $scope.$broadcast('$csExtension.enter', e, state);
+      })
+      .then(function(){
+        $scope.loading = false;
+      });
   });
 
-  $scope.showPeer = function(server) {
+  $scope.load = function(server, useSsl, useTor) {
+    var node = {
+      server: server,
+      host: server,
+      useSsl: useSsl,
+      useTor: useTor
+    };
     var serverParts = server.split(':');
     if (serverParts.length == 2) {
-      $scope.node = BMA.lightInstance(serverParts[0], serverParts[1]);
+      node.host = serverParts[0];
+      node.port = serverParts[1];
     }
-    else {
-      $scope.node = BMA.lightInstance(server);
-    }
-    // Get the peers
-    $scope.node.network.peers()
-      .then(function(json){
-        $scope.loaded = true;
-        var peers = json.peers.map(function(p) {
-          var peer = new Peer(p);
-          peer.online = p.status == 'UP';
-          peer.blockNumber = peer.block.replace(/-.+$/, '');
-          peer.dns = peer.getDns();
-          peer.uid = $scope.memberUidsByPubkeys[peer.pubkey];
-          return peer;
-        });
-        $scope.peers = _.sortBy(peers, function(p) {
-          var score = 1;
-          score += 10000 * (p.online ? 1 : 0);
-          score += 1000  * (p.hasMainConsensusBlock ? 1 : 0);
-          score += 100   * (p.uid ? 1 : 0);
-          return -score;
-        });
-      });
+
+    angular.merge($scope.node,
+      useTor ?
+        // For TOR, use a web2tor to access the endpoint
+        BMA.lightInstance(node.host + ".to", 443, true/*ssl*/, 60000 /*long timeout*/) :
+        BMA.lightInstance(node.host, node.port, node.useSsl),
+      node);
+
+    return $q.all([
+
+      // Get node peer info
+      $scope.node.network.peering.self()
+        .then(function(json) {
+          $scope.node.pubkey = json.pubkey;
+          $scope.node.currency = json.currency;
+        }),
+
+      // Get known peers
+      $scope.node.network.peers()
+        .then(function(json) {
+          var peers = json.peers.map(function (p) {
+            var peer = new Peer(p);
+            peer.online = p.status == 'UP';
+            peer.blockNumber = peer.block.replace(/-.+$/, '');
+            peer.dns = peer.getDns();
+            return peer;
+          });
+
+          // Extend (add uid+name+avatar)
+          return csWot.extendAll([$scope.node].concat(peers))
+            .then(function() {
+              // Final sort
+              $scope.peers = _.sortBy(peers, function(p) {
+                var score = 1;
+                score += 10000 * (p.online ? 1 : 0);
+                score += 1000  * (p.hasMainConsensusBlock ? 1 : 0);
+                score += 100   * (p.uid ? 1 : 0);
+                return -score;
+              });
+            });
+        })
+      ])
+      .catch(UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR"));
   };
 }

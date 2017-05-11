@@ -62,12 +62,12 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     return callback(newUri, config);
   }
 
-  function getResource(host, port, path, useSsl) {
+  function getResource(host, port, path, useSsl, forcedTimeout) {
     var url = getUrl(host, port, path, useSsl);
     return function(params) {
       return $q(function(resolve, reject) {
         var config = {
-          timeout: timeout,
+          timeout: forcedTimeout || timeout,
           responseType: 'json'
         };
 
@@ -84,7 +84,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     };
   }
 
-  function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh) {
+  function getResourceWithCache(host, port, path, useSsl, maxAge, autoRefresh, forcedTimeout) {
     var url = getUrl(host, port, path, useSsl);
     maxAge = maxAge || csCache.constants.LONG;
     //console.debug('[http] will cache ['+url+'] ' + maxAge + 'ms' + (autoRefresh ? ' with auto-refresh' : ''));
@@ -92,7 +92,8 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     return function(params) {
       return $q(function(resolve, reject) {
         var config = {
-          timeout: timeout
+          timeout: forcedTimeout || timeout,
+          responseType: 'json'
         };
         if (autoRefresh) { // redo the request if need
           config.cache = csCache.get(cachePrefix, maxAge, function (key, value) {

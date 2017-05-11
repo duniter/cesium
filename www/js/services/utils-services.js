@@ -412,7 +412,7 @@ angular.module('cesium.utils.services', ['ngResource'])
 
   function showCopyPopover(event, value) {
     var rows = value && value.indexOf('\n') >= 0 ? value.split('\n').length : 1;
-    showPopover(event, {
+    return showPopover(event, {
       templateUrl: 'templates/common/popover_copy.html',
       bindings: {
         value: value,
@@ -432,7 +432,7 @@ angular.module('cesium.utils.services', ['ngResource'])
     options.bindings.postUrl = options.bindings.postUrl || options.bindings.value;
     options.bindings.postMessage = options.bindings.postMessage || '';
     options.bindings.titleKey = options.bindings.titleKey || 'COMMON.POPOVER_SHARE.TITLE';
-    showPopover(event, options);
+    return showPopover(event, options);
   }
 
   function showHelptip(id, options) {

@@ -44,14 +44,13 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $controller, UIUtils, $q, csWot) {
+function TransferController($scope, $controller, UIUtils, csWot) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('TransferModalCtrl', {$scope: $scope, parameters: null}));
+  angular.extend(this, $controller('TransferModalCtrl', {$scope: $scope}));
 
   $scope.enter = function(e, state) {
-    var initJobs = [];
 
     // Compute parameters
     var parameters = {};

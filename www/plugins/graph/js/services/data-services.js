@@ -4,12 +4,12 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
     'ngInject';
 
     var
-      currencyCache = csCache.get('gpData-icurrency-', csCache.constants.SHORT),
+      currencyCache = csCache.get('gpData-currency-', csCache.constants.SHORT),
       exports = {
+        node: {},
         blockchain: {},
         util: {
-          colors: {
-          }
+          colors: {}
         },
         raw: {
           block: {
@@ -295,7 +295,12 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
               }
             }
+
           };
+
+          if (options.issuer) {
+            request.query = {bool: {filter: {term: {issuer: options.issuer}}}};
+          }
           // prepare next loop
           ranges = [];
 
@@ -320,7 +325,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             );
           }
           else {
-            console.error('Too many cal of txCount request ! ');
+            console.error('Too many call of txCount request ! ');
             from = moment.unix(options.endTime).utc();
           }
 
@@ -356,6 +361,25 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         });
     };
 
+    /**
+     * Graph: "tx count"
+     * @param currency
+     * @returns {*}
+     */
+    exports.node.blockCount = function(currency, pubkey, options) {
+
+      options = options || {};
+
+      var request = {
+        size: 0,
+        query: {bool: {filter: {term: {issuer: pubkey}}}}
+      };
+
+      return exports.raw.block.search(request, {currency: currency})
+        .then(function (res) {
+          return res.hits.total;
+        });
+    };
 
     return exports;
   })

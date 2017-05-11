@@ -229,16 +229,20 @@
   "NETWORK": {
     "VIEW": {
       "MEDIAN_TIME": "Heure de la blockchain",
-      "LOADING_PEERS": "Chargement des noeuds..."
+      "LOADING_PEERS": "Chargement des noeuds...",
+      "NODE_ADDRESS": "Adresse du noeud",
+      "ENDPOINTS": {
+        "BMAS": "Interface sécurisée (SSL)",
+        "BMATOR": "Interface réseau TOR",
+        "ES_USER_API": "Noeud de données Cesium+"
+      }
     },
     "INFO": {
       "ONLY_SSL_PEERS": "Les noeuds non SSL ont un affichage dégradé, car Cesium fonctionne en mode HTTPS."
     }
   },
   "PEER": {
-    "TITLE": "Nœud",
     "PEERS": "Nœuds",
-    "KNOWN_PEERS": "Nœuds connus",
     "SIGNED_ON_BLOCK": "Signé sur le bloc",
     "MIRROR": "miroir",
     "MIRRORS": "Nœuds miroirs",
@@ -249,7 +253,18 @@
     "API" : "API",
     "CURRENT_BLOCK" : "Bloc #",
     "POPOVER_FILTER_TITLE": "Filtre",
-    "OFFLINE": "Nœuds hors ligne"
+    "OFFLINE": "Nœuds hors ligne",
+    "VIEW": {
+      "TITLE": "Nœud",
+      "OWNER": "Appartient à",
+      "SHOW_RAW_CURRENT_BLOCK": "Voir le bloc courant",
+      "KNOWN_PEERS": "Nœuds connus :",
+      "GENERAL_DIVIDER": "Informations générales",
+      "ERROR": {
+        "LOADING_TOR_NODE_ERROR": "Récupération des donénes via TOR impossible.",
+        "LOADING_NODE_ERROR": "Récupération des informations du noeud impossible"
+      }
+    }
   },
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",

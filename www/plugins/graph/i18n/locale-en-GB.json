@@ -36,6 +36,11 @@
       "UD_TITLE": "Evolution of the universal dividend",
       "MEMBERS_COUNT_TITLE": "Evolution of the number of members",
       "MEMBERS_COUNT_LABEL": "Number of members"
+    },
+    "PEER": {
+      "VIEW": {
+        "BLOCK_COUNT": "Computed blocks count"
+      }
     }
   }
 }

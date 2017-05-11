@@ -18,6 +18,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       OUTPUT_FUNCTIONS = OUTPUT_FUNCTION+'([ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_FUNCTION +')*',
       OUTPUT_OBJ = 'OBJ\\(([0-9]+)\\)',
       OUTPUT_OBJ_OPERATOR = OUTPUT_OBJ + '[ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_OBJ,
+      REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))",
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
@@ -26,8 +27,9 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         // duniter://[uid]:[pubkey]@[host]:[port]
         URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?",
-        BMA_ENDPOINT: "BASIC_MERKLED_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))",
-        BMAS_ENDPOINT: "BMAS( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))"
+        BMA_ENDPOINT: "BASIC_MERKLED_API" + REGEX_ENDPOINT_PARAMS,
+        BMAS_ENDPOINT: "BMAS" + REGEX_ENDPOINT_PARAMS,
+        BMATOR_ENDPOINT: "BMATOR" + "( ([a-z0-9-_.]+.onion))( ([0-9]+))?"
       },
       errorCodes = {
         REVOCATION_ALREADY_REGISTERED: 1002,
@@ -321,6 +323,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         URI: exact(regexp.URI),
         BMA_ENDPOINT: exact(regexp.BMA_ENDPOINT),
         BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT),
+        BMATOR_ENDPOINT: exact(regexp.BMATOR_ENDPOINT),
         // TX output conditions
         TX_OUTPUT_SIG: exact(SIG),
         TX_OUTPUT_FUNCTION: test(OUTPUT_FUNCTION),
@@ -501,14 +504,33 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       }
       // Try BMAS
       matches = exports.regexp.BMAS_ENDPOINT.exec(endpoint);
-      if (!matches) return;
-      return {
-        "dns": matches[2] || '',
-        "ipv4": matches[4] || '',
-        "ipv6": matches[6] || '',
-        "port": matches[8] || 80,
-        "useSsl": true
-      };
+      if (matches) {
+        return {
+          "dns": matches[2] || '',
+          "ipv4": matches[4] || '',
+          "ipv6": matches[6] || '',
+          "port": matches[8] || 80,
+          "useSsl": true
+        };
+      }
+      // Try BMATOR
+      matches = exports.regexp.BMATOR_ENDPOINT.exec(endpoint);
+      console.log("Invalid endpoint:", endpoint);
+      if (matches) {
+
+        console.log({
+          "dns": matches[2] || '',
+          "port": matches[4] || 80,
+          "useSsl": false,
+          "useTor": true
+        });
+        return {
+          "dns": matches[2] || '',
+          "port": matches[4] || 80,
+          "useSsl": false,
+          "useTor": true
+        };
+      }
     };
 
     exports.copy = function(otherNode) {
@@ -751,23 +773,26 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     return bma;
   };
 
-  service.lightInstance = function(host, port, useSsl) {
+  service.lightInstance = function(host, port, useSsl, timeout) {
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
     return {
+      host: host,
+      port: port,
+      useSsl: useSsl,
       node: {
-        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG)
+        summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG, false, timeout)
       },
       network: {
         peering: {
-          self: csHttp.get(host, port, '/network/peering', useSsl)
+          self: csHttp.get(host, port, '/network/peering', useSsl, timeout)
         },
-        peers: csHttp.get(host, port, '/network/peers', useSsl)
+        peers: csHttp.get(host, port, '/network/peers', useSsl, timeout)
       },
       blockchain: {
-        current: csHttp.get(host, port, '/blockchain/current', useSsl),
+        current: csHttp.get(host, port, '/blockchain/current', useSsl, timeout),
         stats: {
-          hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey', useSsl)
+          hardship: csHttp.get(host, port, '/blockchain/hardship/:pubkey', useSsl, timeout)
         }
       }
     };

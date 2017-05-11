@@ -156,7 +156,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       delete $scope.wsBlock;
     }
   };
-  $scope.$on('îoncView.leave', $scope.leave);
+  $scope.$on('$ionicView.leave', $scope.leave);
   $scope.$on('$ionicParentView.leave', $scope.leave);
   $scope.$on('$destroy', $scope.leave);
 

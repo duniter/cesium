@@ -229,16 +229,20 @@
   "NETWORK": {
     "VIEW": {
       "MEDIAN_TIME": "Blockchain time",
-      "LOADING_PEERS": "Loading peers..."
+      "LOADING_PEERS": "Loading peers...",
+      "NODE_ADDRESS": "Node address",
+      "ENDPOINTS": {
+        "BMAS": "Secure endpoint (SSL)",
+        "BMATOR": "TOR network endpoint",
+        "ES_USER_API": "Cesium+ data node"
+      }
     },
     "INFO": {
       "ONLY_SSL_PEERS": "Non-SSL nodes have a degraded display because Cesium works in HTTPS mode."
     }
   },
   "PEER": {
-    "TITLE": "Peer",
     "PEERS": "Peers",
-    "KNOWN_PEERS": "Known peers",
     "SIGNED_ON_BLOCK": "Signed on block",
     "MIRROR": "mirror",
     "MIRRORS": "Mirror peers",
@@ -249,7 +253,18 @@
     "API" : "API",
     "CURRENT_BLOCK" : "Block #",
     "POPOVER_FILTER_TITLE": "Filter",
-    "OFFLINE": "Offline peers"
+    "OFFLINE": "Offline peers",
+    "VIEW": {
+      "TITLE": "Node",
+      "OWNER": "Owned by ",
+      "SHOW_RAW_CURRENT_BLOCK": "See current block",
+      "KNOWN_PEERS": "Known peers :",
+      "GENERAL_DIVIDER": "General data",
+      "ERROR": {
+        "LOADING_TOR_NODE_ERROR": "Could not get peer data, using the TOR network.",
+        "LOADING_NODE_ERROR": "Could not get peer data"
+      }
+    }
   },
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",

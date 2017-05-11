@@ -1,21 +1,78 @@
 <ion-view>
   <ion-nav-title>
-    <span translate>PEER.TITLE</span>
+    <span translate>PEER.VIEW.TITLE</span>
   </ion-nav-title>
 
-  <ion-content class="has-header padding">
+  <ion-content class="has-header padding" scroll="true">
     <div class="list">
 
-      <div class="item item-divider">
-          <h2 translate>PEER.KNOWN_PEERS</h2>
+      <ion-item>
+        <h1>
+          <span translate>PEER.VIEW.TITLE</span>
+          <span class="gray">
+            {{node.host}}
+          </span>
+        </h1>
+        <h2 class="gray">
+          <i class="gray icon ion-android-globe"></i>
+          {{node.bma.dns || node.server}}
+          <span class="gray" ng-if="node.useSsl">
+            <i class="gray ion-locked"></i> <small>SSL</small>
+          </span>
+          <span class="gray" ng-if="node.useTor">
+            <i class="gray ion-bma-tor-api"></i>
+          </span>
+        </h2>
+
+        <!-- node owner -->
+        <h3>
+          <span class="dark">
+            <i class="icon ion-android-desktop"></i>
+            {{'PEER.VIEW.OWNER'|translate}}
+          </span>
+          <a class="positive"
+                ng-if="node.uid"
+                ui-sref="app.wot_identity({pubkey: node.pubkey, uid: node.uid})">
+            <i class="ion-person"></i> {{node.name || node.uid}}
+            <span class="gray" ng-if="node.name">
+              ({{node.uid}})
+            </span>
+          </a>
+        </h3>
+
+        <h3>
+          <a target="_blank"
+             ng-href="{{(node.useSsl ? 'https://' : 'http://') + node.server}}/blockchain/current">
+            <i class="icon ion-share"></i> {{'PEER.VIEW.SHOW_RAW_CURRENT_BLOCK'|translate}}
+          </a>
+        </h3>
+      </ion-item>
+
+
+      <div class="item item-divider" translate>
+        PEER.VIEW.GENERAL_DIVIDER
       </div>
 
-      <div class="item center" ng-if="!loaded">
+      <ion-item class="item-icon-left item-text-wrap ink"
+                copy-on-click="{{node.pubkey}}">
+        <i class="icon ion-key"></i>
+        <span translate>COMMON.PUBKEY</span>
+        <h4 class="dark text-left">{{node.pubkey}}</h4>
+      </ion-item>
+
+      <!-- Allow extension here -->
+      <cs-extension-point name="general"></cs-extension-point>
+
+      <div class="item item-divider" translate>
+        PEER.VIEW.KNOWN_PEERS
+      </div>
+
+      <div class="item center" ng-if="loading">
           <ion-spinner class="icon" icon="android"></ion-spinner>
       </div>
 
       <a class="item-peer item item-icon-left"
-         collection-repeat="peer in peers"
+         ng-repeat="peer in peers"
          ng-class="{ assertive: !peer.online, balanced: peer.online }"
          target="_blank"
          ng-href="{{peer.getURL()}}/blockchain/current">

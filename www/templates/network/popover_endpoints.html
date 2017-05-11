@@ -1,0 +1,15 @@
+<ion-popover-view class="popover-endpoints" style="height: {{(titleKey?44:0)+((!endpoints || endpoints.length &lt;= 1) ? 50 : endpoints.length*22)}}px">
+  <ion-content scroll="false">
+    <div class="bar bar-header" ng-if="titleKey">
+      <h1 class="title">
+        {{titleKey | translate:titleValues }}
+      </h1>
+    </div>
+    <div class="list" ng-class="{'has-header': titleKey}">
+      <div class="item item-input" ng-repeat="endpoint in endpoints">
+        <span class="input-label" ng-if="valueKey">{{valueKey | translate}}</span>
+        <div id="endpoint_{{$index}}" class="item-note text-right">{{endpoint}}</span>
+      </div>
+    </div>
+  </ion-content>
+</ion-popover-view>

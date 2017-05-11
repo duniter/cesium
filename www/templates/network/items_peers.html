@@ -42,33 +42,32 @@
 
     <div class="row no-padding">
       <div class="col no-padding">
-        <h3>
-          <span class="dark" ng-if=":rebind:peer.uid"
-             ui-sref="app.wot_identity({pubkey: peer.pubkey, uid: peer.uid})">
-            {{:rebind:peer.name||peer.uid}}
-          </span>
+        <h3 class="dark">
+          {{:rebind:peer.dns || peer.server}}
+        </h3>
+        <h4>
           <span class="gray" ng-if=":rebind:!peer.uid">
             <i class="ion-key"></i> {{:rebind:peer.pubkey|formatPubkey}}
           </span>
-          <span class="gray">{{:rebind:peer.dns && ' | ' + peer.dns}}</span></h3>
-        <h4 class="positive">
-          <span ng-if=":rebind:peer.uid && peer.name">
-            <i class="ion-person"></i> {{:rebind:peer.uid}}
-            <span class="gray"> | </span>
+          <span class="positive" ng-if=":rebind:peer.uid">
+            <i class="ion-person"></i> {{:rebind:peer.name || peer.uid}}
           </span>
-          <span class="gray">{{:rebind:peer.server}}</span>
+          <span class="gray">{{:rebind:peer.dns && (' | ' + peer.server)}}</span>
         </h4>
       </div>
       <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
         <div style="min-width: 50px; padding-top: 5px;" >
-          <span ng-if=":rebind:peer.isSsl()">
+          <span ng-if="peer.isSsl()">
             <i class="ion-locked"></i> <small>SSL</small>
           </span>
         </div>
-        <span class="" ng-if=":rebind:peer.hasEndpoint('ES_USER_API')">
+        <div ng-if=":rebind:peer.hasEndpoint('ES_USER_API')" ng-click="showEndpointsPopover($event, peer, 'ES_USER_API')">
           <i class="ion-es-user-api"></i>
           <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
-        </span>
+        </div>
+        <div ng-if=":rebind:peer.isTor()" ng-click="showEndpointsPopover($event, peer, 'BMATOR')">
+          <i class="ion-bma-tor-api"></i>
+        </div>
       </div>
       <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs gray">

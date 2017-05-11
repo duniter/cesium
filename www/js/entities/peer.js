@@ -141,3 +141,8 @@ Peer.prototype.isSsl = function() {
   var bma = this.bma || this.getBMA();
   return bma.useSsl;
 };
+
+Peer.prototype.isTor = function() {
+  var bma = this.bma || this.getBMA();
+  return bma.useTor;
+};

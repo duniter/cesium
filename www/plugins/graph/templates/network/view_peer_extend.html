@@ -1,0 +1,16 @@
+<!-- Buttons section -->
+<ng-if ng-if="enable && extensionPoint === 'general'">
+
+  <a class="item item-icon-left item-text-wrap ink"
+    ui-sref="app.view_peer_stats({pubkey: node.pubkey})">
+    <i class="icon ion-cube"></i>
+    <span translate>GRAPH.PEER.VIEW.BLOCK_COUNT</span>
+    <span class="badge"
+          ng-if="!loading"
+          ng-class="{'badge-balanced': blockCount > 0, 'badge-assertive': !blockCount}">
+      {{blockCount||0}}
+    </span>
+    <ion-spinner class="badge" icon="android" ng-if="loading"></ion-spinner>
+  </a>
+</ng-if>
+
