@@ -261,7 +261,7 @@
       "KNOWN_PEERS": "Nœuds connus :",
       "GENERAL_DIVIDER": "Informations générales",
       "ERROR": {
-        "LOADING_TOR_NODE_ERROR": "Récupération des donénes via TOR impossible.",
+        "LOADING_TOR_NODE_ERROR": "Récupération des informations du noeud impossible. Le délai d'attente est dépassé.",
         "LOADING_NODE_ERROR": "Récupération des informations du noeud impossible"
       }
     }
