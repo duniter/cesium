@@ -18,11 +18,10 @@ angular.module('cesium.join.controllers', ['cesium.services'])
 
   .controller('JoinCtrl', JoinController)
 
+  .controller('JoinChooseAccountTypeModalCtrl', JoinChooseAccountTypeModalController)
+
   .controller('JoinModalCtrl', JoinModalController)
-
 ;
-
-
 
 function JoinController($timeout, Modals) {
   'ngInject';
@@ -31,11 +30,66 @@ function JoinController($timeout, Modals) {
   $timeout(function() {
     Modals.showJoin();
   }, 100);
+}
 
+function JoinChooseAccountTypeModalController($scope, $timeout, UIUtils, csCurrency) {
+  'ngInject';
+
+  $scope.formData = {};
+  $scope.slides = {
+    slider: null,
+    options: {
+      loop: false,
+      effect: 'slide',
+      speed: 500
+    }
+  };
+  $scope.loading = true;
+
+  $scope.load = function() {
+    if ($scope.loading) {
+      return csCurrency.load()
+        .then(function (data) {
+          if (!data) return;
+          $scope.currencies = data.currencies;
+          $scope.loading = false;
+        })
+        .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));
+    }
+  };
+  $scope.$on('modal.shown', $scope.load);
+
+  $scope.slidePrev = function() {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slidePrev();
+    $scope.slides.slider.lockSwipes();
+  };
+
+  $scope.slideNext = function() {
+    $scope.slides.slider.unlockSwipes();
+    $scope.slides.slider.slideNext();
+    $scope.slides.slider.lockSwipes();
+  };
+
+  $scope.selectCurrency = function(currency) {
+    $scope.formData.currency = currency;
+    $scope.slideNext();
+  };
+
+  $scope.selectAccountTypeAndClose = function(type) {
+    $scope.formData.accountType = type;
+    $scope.closeModal($scope.formData);
+  };
+
+  // TODO DEV only
+  /*$timeout(function() {
+   $scope.selectCurrency('g1');
+   $scope.selectAccountTypeAndClose('member');
+   }, 400);*/
 }
 
 
-function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, CryptoUtils, csSettings, Modals, csWallet, csCurrency, BMA) {
+function JoinModalController($scope, $state, $interval, $timeout, UIUtils, CryptoUtils, csSettings, Modals, csWallet, csConfig, BMA, parameters) {
   'ngInject';
 
   $scope.formData = {
@@ -49,49 +103,46 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
       speed: 500
     }
   };
-  $scope.isLastSlide = false;
-  $scope.search = {
-    looking: true
-  };
+  $scope.slideBehavior = {};
+  $scope.loading = true;
 
-  $scope.isLicenceRead = false;
+  $scope.isLicenseRead = true; //false;
   $scope.showUsername = false;
   $scope.showPassword = false;
   $scope.formData.computing=false;
   $scope.smallscreen = UIUtils.screen.isSmall();
   $scope.userIdPattern = BMA.constants.regex.USER_ID;
 
-  csCurrency.load()
-  .then(function (data) {
-    if (data) {
-      $scope.knownCurrencies = data.currencies;
+  // Read input parameters
+  $scope.currency = parameters.currency;
+  $scope.accountType = parameters.accountType || 'member';
+
+  $scope.load = function() {
+    if ($scope.loading) {
+
+      var locale = csSettings.data.locale.id;
+      $scope.licenseFileUrl = (csConfig.license) ?
+        (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license['en'] || csConfig.license) : undefined;
+
+      $timeout($scope.listenLicenseRead, 3000);
+
+      $scope.slideBehavior = $scope.computeSlideBehavior();
+
+      $scope.loading = false;
     }
-    $scope.search.looking = false;
-  })
-  .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));
+  };
+  $scope.$on('modal.shown', $scope.load);
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slidePrev();
     $scope.slides.slider.lockSwipes();
-    $scope.isLastSlide = false;
   };
 
   $scope.slideNext = function() {
     $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slideNext();
     $scope.slides.slider.lockSwipes();
-    $scope.isLastSlide = $scope.formData.isMember ? ($scope.slides.slider.activeIndex === 5) : ($scope.slides.slider.activeIndex === 4);
-  };
-
-  $scope.selectCurrency = function(currency) {
-    $scope.formData.currency = currency;
-    $scope.slideNext();
-  };
-
-  $scope.selectAccountType = function(type) {
-    $scope.formData.isMember = (type === 'member');
-    $scope.slideNext();
   };
 
   $scope.showAccountPubkey = function() {
@@ -114,47 +165,101 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
     $scope.formData.pubkey=null;
   };
 
-  $scope.doNext = function(formName) {
-    console.debug("[join] form " + formName + " OK. index=" + $scope.slides.slider.activeIndex);
-    if($rootScope.accountType === 'member'){
-      if (formName) {
-        if((formName === 'pseudoForm') ||
-          (formName === 'saltForm') ||
-          (formName === 'passwordForm')){
-          $scope[formName].$submitted=true;
-          if(!$scope[formName].$valid) {
-            return;
-          }
-        }
-
-        if (formName === 'passwordForm') {
-            $scope.showAccountPubkey();
-        }
-        $scope.slideNext();
-      }
+  $scope.getCurrentFormName = function() {
+    var index = $scope.slides.slider.activeIndex;
+    if($scope.accountType === 'member') {
+      if (index === 0) return "licenseForm";
+      if (index === 1) return "pseudoForm";
+      if (index === 2) return "saltForm";
+      if (index === 3) return "passwordForm";
+      if (index === 4) return "confirmForm";
     }
-    else{
+    else {
+      if (index === 0) return "saltForm";
+      if (index === 1) return "passwordForm";
+      if (index === 2) return "confirmForm";
+    }
+  };
+
+  $scope.computeSlideBehavior = function() {
+    var formName = $scope.getCurrentFormName();
+
+    if (formName == "licenseForm") {
+      return {
+        hasPreviousButton: false,
+        hasNextButton: false,
+        hasAcceptButton: true
+      };
+    }
+    else if (formName == "pseudoForm") {
+      return {
+        helpAnchor: 'join-pseudo',
+        hasPreviousButton: true,
+        hasNextButton: true
+      };
+    }
+    else if (formName == "saltForm") {
+      return {
+        helpAnchor: 'join-salt',
+        hasPreviousButton: true,
+        hasNextButton: true
+      };
+    }
+    else if (formName == "passwordForm") {
+      return {
+        helpAnchor: 'join-password',
+        hasPreviousButton: true,
+        hasNextButton: true
+      };
+    }
+    else if (formName == "confirmForm") {
+      return {
+        hasPreviousButton: true,
+        hasNextButton: false,
+        hasSendButton: true
+      };
+    }
+    return {
+      hasPreviousButton: false,
+      hasNextButton: true
+    };
+  };
+
+
+  $scope.doNext = function() {
+    var formName = $scope.getCurrentFormName();
+    if (formName && $scope[formName]){
       $scope[formName].$submitted=true;
       if(!$scope[formName].$valid) {
         return;
       }
-      if(formName === 'passwordForm'){
+      if (formName === "passwordForm") {
         $scope.showAccountPubkey();
       }
-    $scope.slideNext();
     }
+
+    $scope.slideNext();
+
+    $scope.slideBehavior = $scope.computeSlideBehavior();
   };
 
   $scope.doNewAccount = function(confirm) {
 
     if (!confirm) {
 
-      return UIUtils.alert.confirm(($rootScope.accountType === 'member') ? 'ACCOUNT.NEW.CONFIRMATION_MEMBER_ACCOUNT' :
-        'ACCOUNT.NEW.CONFIRMATION_WALLET_ACCOUNT')
+      var messageKey = ($scope.accountType === 'member') ? 'ACCOUNT.NEW.CONFIRMATION_MEMBER_ACCOUNT' :
+        'ACCOUNT.NEW.CONFIRMATION_WALLET_ACCOUNT';
+
+      return UIUtils.alert.confirm(messageKey, undefined,
+        {
+          cssClass: 'warning',
+          okText: 'COMMON.BTN_SEND',
+          okType: 'button-assertive'
+        })
         .then(function(confirm) {
           if (confirm) {
             $scope.doNewAccount(true);
-          }  
+          }
         });
     }
 
@@ -171,13 +276,12 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
 
     csWallet.login($scope.formData.username, $scope.formData.password)
     .then(function() {
-      if ($rootScope.accountType === "member") {
+      if ($scope.accountType === "member") {
         $scope.closeModal();
         csSettings.data.wallet = csSettings.data.wallet || {};
         csSettings.data.wallet.alertIfUnusedWallet = false; // do not alert if empty
         // Redirect to wallet
         $state.go('app.view_wallet');
-      
 
         // Send self
         csWallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
@@ -191,7 +295,7 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
               // Redirect to wallet
               $state.go('app.view_wallet')
               .then(function() {
-                $scope.dowloadRevocationRegistration();
+                $scope.downloadRevocationRegistration();
               });
             })
             .catch(function(err) {
@@ -205,12 +309,14 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
           .catch(onErrorLogout('ERROR.SEND_IDENTITY_FAILED'));
       }
       else{
-        
+
+        csWallet.data.isNew = true;
+
         $scope.closeModal();
 
         //Redirect to wallet
         $state.go('app.view_wallet');
-          
+
       }
     })
     .catch(function(err) {
@@ -218,11 +324,9 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
       console.error('>>>>>>>' , err);
       UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
     });
-
   };
 
-
-  $scope.dowloadRevocationRegistration = function() {
+  $scope.downloadRevocationRegistration = function() {
     return UIUtils.alert.download('DOWNLOAD.POPUP_REVOKE_MESSAGE', 'DOWNLOAD.POPUP_TITLE')
     .then(function() {
       return csWallet.downloadRevocation();
@@ -230,72 +334,63 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
   };
 
   $scope.showHelpModal = function(helpAnchor) {
-    if (!helpAnchor) {
-      helpAnchor = $scope.slides.slider.activeIndex == 2 ?
-        'join-salt' : ( $scope.slides.slider.activeIndex == 3 ?
-          'join-password' : 'join-pseudo');
-    }
     Modals.showHelp({anchor: helpAnchor});
   };
 
-  $scope.isBottom = function(){
-    var yPos = document.getElementById("iframe").contentWindow.document.body.scrollTop;
-    var scrollHeight = document.getElementById("iframe").contentWindow.document.body.scrollHeight;
-    var clientHeight = document.getElementById("iframe").contentWindow.document.body.clientHeight;
+  $scope.isLicenseOnBottom = function(){
+    var iframeEl = angular.element(document.querySelector('.modal #iframe-license'));
+    iframeEl = iframeEl && iframeEl.length ? iframeEl[0] : undefined;
+    if (!iframeEl) return false;
+    var yPos = iframeEl.contentWindow.document.body.scrollTop;
+    var scrollHeight = iframeEl.contentWindow.document.body.scrollHeight;
+    var clientHeight = iframeEl.contentWindow.document.body.clientHeight;
     if(scrollHeight - clientHeight === yPos){
       return true;
     }
     return false;
   };
 
-  $rootScope.startLicenceRead = function(){
+  $scope.listenLicenseRead = function(){
+    var disableSwipe = false;
 
-    $scope.licenceReadInterval = $interval(function(){
-      var counter = 0;
-      if(counter === 0){
+    $scope.licenseReadInterval = $interval(function(){
+
+      // Disable swipe (only once)
+      if(!disableSwipe){
         $scope.slides.slider.lockSwipes();
-        counter++;
+        disableSwipe = true;
       }
 
-      if($scope.isBottom()){
-        $scope.isLicenceRead = true; 
-        $interval.cancel($scope.licenceReadInterval);
+      if($scope.isLicenseOnBottom()){
+        $scope.isLicenseRead = true;
+        $interval.cancel($scope.licenseReadInterval);
       }
-      },1000);
+    },1000);
   };
 
-  $scope.checkUID = function(){
-    var uid = $scope.formData.pseudo;
-    $scope.UIDFound = false;
+  $scope.checkUid = function(){
+    if (!$scope.formData.pseudo || !$scope.formData.pseudo.length) return;
+
+    var uid = $scope.formData.pseudo.toUpperCase();
     $scope.formData.computing=true;
-    BMA.wot.lookup({ search: uid }) // search on uid
+
+    // search on uid
+    BMA.wot.lookup({ search: uid })
       .then(function(res) {
-        var found;
-        if(!res.ucode){
-          found = res.results &&
-              res.results.length > 0 &&
-              res.results.some(function(pub){
-                return pub.uids && pub.uids.length > 0 &&
-                  pub.uids.some(function(idty) {
-                    return (idty.uid.toUpperCase() === uid.toUpperCase()); // same Uid
-                  });
+        var uidAlreadyUsed = (res.results || []).some(function(pub){
+            return (pub.uids || []).some(function(idty) {
+                return (idty.uid.toUpperCase() === uid); // same Uid
               });
-        }
-        if(found){
-          $scope.formData.computing=false;
-          $scope.UIDFound = true;
-        }
-        else{
-          $scope.formData.computing=false;
-          $scope.UIDFound = false;
-        }
-      })
-      .catch(function(){
+          });
+        $scope.isUidValid = !uidAlreadyUsed;
         $scope.formData.computing=false;
-        $scope.UIDFound = false;
-      });  
-  };  
-  $scope.$watch('formData.pseudo', $scope.checkUID, true);
+      })
+      .catch(function(err){
+        $scope.formData.computing=false;
+        $scope.isUidValid = true;
+      });
+  };
+  //$scope.$watch('formData.pseudo', $scope.checkUid, true);
 
   $scope.checkAccountAvailable = function() {
     var pub = $scope.formData.pubkey;
@@ -313,7 +408,7 @@ function JoinModalController($scope, $state, $interval, $rootScope, UIUtils, Cry
   };
 
   $scope.identifierRecovery = function() {
-    for (var i = 0; i < 2; i++) 
+    for (var i = 0; i < 2; i++)
       $scope.slidePrev();
   };
 

@@ -32,7 +32,11 @@
         <ion-content class="has-header padding">
           <h3 translate>ACCOUNT.NEW.SLIDE_1_TITLE</h3>
           <div class="list">
-            <div ng-repeat="currency in knownCurrencies"
+            <div class="item text-center" ng-if="loading">
+              <ion-spinner class="icon" icon="android"></ion-spinner>
+            </div>
+            <div ng-repeat="currency in currencies"
+                 ng-if="!loading"
                class="item card item-icon-right stable-bg padding ink"
                ng-class="{ selected: selectedCurrency == currency }"
                ng-click="selectCurrency(currency.name, true)">
@@ -56,7 +60,7 @@
           <div class="list">
             <!-- member account -->
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-               ng-click="closeModal('member')">
+               ng-click="selectAccountTypeAndClose('member')">
               <div class="item-content item-text-wrap">
                 <i class="item-image icon dark ion-person"></i>
                 <h2 translate>ACCOUNT.NEW.MEMBER_ACCOUNT</h2>
@@ -70,7 +74,7 @@
 
             <!-- simple wallet -->
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
-               ng-click="closeModal('wallet')">
+               ng-click="selectAccountTypeAndClose('wallet')">
               <div class="item-content item-text-wrap">
                 <i class="item-image icon dark ion-card"></i>
                 <h2 translate>ACCOUNT.NEW.WALLET_ACCOUNT</h2>

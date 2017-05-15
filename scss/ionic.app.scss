@@ -654,7 +654,7 @@ $screen-menu:                     845px;
 .button-text-stable {
   color: #b2b2b2 !important;
 }
-.popup-buttons .button.icon-right, 
+.popup-buttons .button.icon-right,
 .popup-buttons .button.icon-left {
   padding-left: 32px !important;
   padding-right: 32px !important;
@@ -1886,3 +1886,18 @@ div[dropzone] {
   transition: all linear 0.3s;
 }
 
+/**********
+  join waizard modal
+**********/
+@media screen and (max-width: $screen-sm-max) {
+  .modal iframe.iframe-license {
+    width: 100%;
+    height: 100%;
+  }
+}
+@media screen and (min-width: $screen-md) {
+  .modal iframe.iframe-license {
+    width: 100%;
+    height: 70%;
+  }
+}

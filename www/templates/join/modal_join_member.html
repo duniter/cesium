@@ -8,52 +8,64 @@
     </button>
     <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
             ng-click="slidePrev()"
-            ng-if="slides.slider.activeIndex">
+            ng-if="slideBehavior.hasPreviousButton">
     </button>
     <button class="button button-icon button-clear icon ion-ios-help-outline visible-xs"
-            ng-if="slides.slider.activeIndex > 1 && !isLastSlide"
-            ng-click="showHelpModal()"></button>
+            ng-if="slideBehavior.helpAnchor"
+            ng-click="showHelpModal(slideBehavior.helpAnchor)"></button>
 
     <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
 
+    <!-- next -->
     <button class="button button-clear icon-right visible-xs"
-            ng-if="!isLastSlide && slides.slider.activeIndex > 1"
+            ng-if="slideBehavior.hasNextButton"
             ng-click="doNext()">
       <span translate>COMMON.BTN_NEXT</span>
       <i class="icon ion-ios-arrow-right"></i>
     </button>
+    <!-- accept -->
     <button class="button button-clear icon-right visible-xs"
-            ng-if="isLastSlide"
+            ng-class="{'button-text-stable': !isLicenseRead}"
+            ng-if="slideBehavior.hasAcceptButton"
+            ng-click="isLicenseRead ? doNext() : undefined">
+      <span translate>ACCOUNT.NEW.BTN_ACCEPT</span>
+      <i class="icon ion-ios-arrow-right"></i>
+    </button>
+    <!-- send -->
+    <button class="button button-clear icon-right visible-xs"
+            ng-if="slideBehavior.hasSendButton"
             ng-click="doNewAccount()">
       <i class="icon ion-android-send"></i>
     </button>
   </ion-header-bar>
 
 
-    <ion-slides options="slides.options" slider="slides.slider">
+    <ion-slides options="slides.options" slider="slides.slider" ng-init="console.log('START SLIDE');">
 
       <!-- STEP 1: license -->
       <ion-slide-page>
-        <ion-content class="has-header padding" scroll="false">
-            <div class="item item-text-wrap text-center padding hidden-xs no-border">
-              <span translate>ACCOUNT.NEW.INFO_LICENSE</span>
+        <ion-content class="has-header" scroll="true">
+            <div class="padding" translate>ACCOUNT.NEW.INFO_LICENSE</div>
+
+            <div ng-if="loading" class="text-center">
+              <ion-spinner class="icon" icon="android"></ion-spinner>
             </div>
-            <iframe width="100%" height="60%" src="licence_g1.txt" style="margin-bottom : 20px" id="iframe"></iframe>
-            <ion-checkbox class="item item-text-wrap item-border" ng-model="isLicenceAccept" 
-            ng-disabled="!isLicenceRead" class="no-border">
-              <p id="modal-license" ng-class="{'gray': !isLicenceRead, 'black': isLicenceRead}" translate>
-                CONFIRM.LICENCE
-              </p>
-            </ion-checkbox>
+
+            <iframe ng-if="!loading"
+                    class="padding-left padding-right no-padding-xs iframe-license"
+                    id="iframe-license"
+                    ng-src="{{licenseFileUrl}}">
+            </iframe>
+
             <div class="padding hidden-xs text-right">
               <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button"   translate>
                 COMMON.BTN_CANCEL
               </button>
-              <button class="button button-calm icon-right ion-chevron-right ink" ng-click="doNext('licenceForm')" 
-               ng-disabled="!isLicenceAccept" type="button" translate>
-                COMMON.BTN_NEXT
+              <button class="button button-calm icon-right ion-chevron-right ink" ng-click="doNext('licenceForm')"
+               ng-disabled="!isLicenseRead" type="button" translate>
+                ACCOUNT.NEW.BTN_ACCEPT_LICENSE
               </button>
-            </div>  
+            </div>
         </ion-content>
       </ion-slide-page>
 
@@ -83,7 +95,6 @@
                        required>
               </div>
               <div class="form-errors"
-                   ng-if="formData.isMember"
                    ng-show="pseudoForm.$submitted && pseudoForm.pseudo.$error"
                    ng-messages="pseudoForm.pseudo.$error">
                 <div class="form-error" ng-message="minlength">
@@ -98,25 +109,31 @@
                 <div class="form-error" ng-message="pattern">
                   <span translate="ERROR.INVALID_USER_ID"></span>
                 </div>
+                <div class="form-error" ng-message="uidAlreadyUsed">
+                  <!--<i class="icon ion-close-circled assertive"></i>-->
+                  <span translate="ACCOUNT.NEW.PSEUDO_NOT_AVAILABLE"></span>
+                </div>
               </div>
 
               <!-- Show if valid pseudo-->
               <div class="item item-button-right left" ng-if="formData.computing && formData.pseudo">
                   <ion-spinner icon="android"></ion-spinner>
               </div>
-              <ion-item class="item-icon-left" ng-if="!UIDFound && !formData.computing && formData.pseudo">
-                <i class="icon ion-checkmark-circled active"></i>
-                <span translate>ACCOUNT.NEW.PSEUDO_AVAILABLE</span>
-              </ion-item>
-              <ion-item class="item-icon-left" ng-if="UIDFound && !formData.computing && formData.pseudo">
-                <i class="icon ion-android-close active"></i>
-                <span translate>ACCOUNT.NEW.PSEUDO_NOT_AVAILABLE</span>
-              </ion-item>
+              <!--<div class="form-errors">
+                <ion-item class="item-icon-left" ng-if="!UIDFound && !formData.computing && formData.pseudo">
+                  <i class="icon ion-checkmark balanced"></i>
+                  <span translate>ACCOUNT.NEW.PSEUDO_AVAILABLE</span>
+                </ion-item>
+                <ion-item class="item-icon-left" ng-if="UIDFound && !formData.computing && formData.pseudo">
+                  <i class="icon ion-close-circled assertive"></i>
+                  <span translate>ACCOUNT.NEW.PSEUDO_NOT_AVAILABLE</span>
+                </ion-item>
+              </div>-->
 
               <div class="padding hidden-xs text-right">
                 <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
                 </button>
-                <button class="button button-calm icon-right ion-chevron-right ink" type="submit" 
+                <button class="button button-calm icon-right ion-chevron-right ink" type="submit"
                 ng-disabled="UIDFound" translate>
                   COMMON.BTN_NEXT
                 </button>
@@ -352,7 +369,7 @@
           <div ng-if="!accountAvailable && !formData.computing">
 
             <ion-item class="item-icon-left item-text-wrap text-center">
-                <i class="icon ion-alert-circled active"></i>
+                <i class="icon ion-minus-circled assertive"></i>
                 <span id="modal-license" translate>ERROR.EXISTING_ACCOUNT</span>
             </ion-item>
 
@@ -378,7 +395,7 @@
 
             </div>
             <div class="padding hidden-xs text-left">
-              <button class="button button-assertive icon-left ion-chevron-left ink" 
+              <button class="button button-assertive icon-left ion-chevron-left ink"
                       ng-click="identifierRecovery()" translate>
                 COMMON.BTN_MODIFY
               </button>

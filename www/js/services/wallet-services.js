@@ -31,6 +31,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           signPk: null
         };
       data.uid = null;
+      data.isNew = null;
       data.balance = 0;
       data.sources = null;
       data.sourcesIndexByKey = null;
@@ -1747,6 +1748,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       isLogin: isLogin,
       hasSelf: hasSelf,
       isNeverUsed: isNeverUsed,
+      isNew: function() {return !!data.isNew;},
       isUserPubkey: isUserPubkey,
       getData: getData,
       loadData: loadData,

@@ -396,12 +396,13 @@
       "SLIDE_6_TITLE": "Confirmation :",
       "COMPUTING_PUBKEY": "Calcul en cours...",
       "LAST_SLIDE_CONGRATULATION": "<b>Bravo !</b> Vous avez saisi toutes les informations nécessaires.<br/><b>Vous pouvez envoyer la demande</b> de création de compte.</b><br/><br/>Pour information, la clé publique ci-dessous identifiera votre futur compte.<br/>Elle pourra être communiquée à des tiers pour recevoir leur paiement.<br/>Cependant, <b>il n'est pas utile</b> de la noter ici.",
-      "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret, le mot de passe et le pseudonyme ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir envoyer cette demande d'inscription ?",
-      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret et le mot de passe ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir continuer avec ces identifiants ?",
-      "PSEUDO_AVAILABLE": "Ce pseudo est disponible",
-      "PSEUDO_NOT_AVAILABLE": "Ce pseudo n'est pas disponible",
-      "INFO_LICENSE": "Pour pouvoir adhérer à la monnaie, nous vous demandons de bien vouloir lire et accepter cette licence."
-
+      "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret, le mot de passe et le pseudonyme ne pourront plus être modifiés.<br/><br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir envoyer cette demande d'inscription ?",
+      "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret et le mot de passe ne pourront plus être modifiés.<br/><br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir continuer avec ces identifiants ?",
+      "PSEUDO_AVAILABLE": "Pseudonyme disponible",
+      "PSEUDO_NOT_AVAILABLE": "Pseudonyme non disponible",
+      "INFO_LICENSE": "Avant d'adhérer à la monnaie, veuillez <b>lire et accepter la licence</b> d'usage de la monnaie :",
+      "BTN_ACCEPT": "J'accepte",
+      "BTN_ACCEPT_LICENSE": "J'accepte la license"
     },
     "POPUP_REGISTER": {
       "TITLE": "Choisissez un pseudonyme",
@@ -564,8 +565,7 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveler votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
-    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?",
-    "LICENCE": "Je déclare avoir lu et accepté les conditions de la licence Ğ1"
+    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Fichier de révocation</b>",

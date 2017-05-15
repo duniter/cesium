@@ -156,7 +156,7 @@ angular.module('cesium.modal.services', [])
   }
 
   function showJoin(parameters) {
-    return ModalUtils.show('templates/join/modal_join.html','JoinModalCtrl',
+    return ModalUtils.show('templates/join/modal_choose_account_type.html','JoinChooseAccountTypeModalCtrl',
       parameters);
   }
 
