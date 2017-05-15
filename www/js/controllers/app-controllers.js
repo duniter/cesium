@@ -205,17 +205,22 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         // Warn if wallet has been never used - see #167
         var showAlert = !csConfig.initPhase && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
         if (!showAlert) return walletData;
-        return UIUtils.loading.hide()
-          .then(function(){
-            return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE',
-              {
-                okText: 'COMMON.BTN_CONTINUE'
-              });
-          })
-          .then(function(confirm) {
-            if (confirm) return walletData;
-            return csWallet.logout();
-          });
+        if($rootScope.accountType === "member"){
+          return UIUtils.loading.hide()
+            .then(function(){
+              return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE',
+                {
+                  okText: 'COMMON.BTN_CONTINUE'
+                });
+            })
+            .then(function(confirm) {
+              if (confirm) return walletData;
+              return csWallet.logout();
+            });
+        }
+        else{
+          return walletData;
+        }
       })
 
       .then(function(walletData) {
@@ -392,7 +397,19 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.showJoinModal = function() {
     $scope.closeProfilePopover();
-    return Modals.showJoin();
+    return Modals.showJoin()
+    .then(function(res){
+      if (!res) return;
+      if (res === 'member'){
+        $rootScope.accountType = 'member';
+        Modals.showJoinMember();
+        $rootScope.startLicenceRead();
+      }
+      else if (res === 'wallet'){
+        $rootScope.accountType = 'wallet';
+        Modals.showJoinWallet();
+      }
+    }); 
   };
 
   $scope.showSettings = function() {

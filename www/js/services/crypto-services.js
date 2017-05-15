@@ -241,8 +241,8 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       this.connect = function(salt, password) {
         return $q(function(resolve, reject) {
           var seed = that.scrypt.crypto_scrypt(
-            that.util.encode_utf8(password),
             that.util.encode_utf8(salt),
+            that.util.encode_utf8(password),
             that.constants.SCRYPT_PARAMS.N,
             that.constants.SCRYPT_PARAMS.r,
             that.constants.SCRYPT_PARAMS.p,

@@ -35,6 +35,8 @@
     "BTN_OPTIONS": "Options",
     "BTN_HELP_TOUR": "Visite guidée",
     "BTN_HELP_TOUR_SCREEN": "Découvrir cet écran",
+    "BTN_DOWNLOAD": "Télécharger",
+    "BTN_MODIFY": "Modifier",
     "DAYS": "jours",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
@@ -396,8 +398,10 @@
       "LAST_SLIDE_CONGRATULATION": "<b>Bravo !</b> Vous avez saisi toutes les informations nécessaires.<br/><b>Vous pouvez envoyer la demande</b> de création de compte.</b><br/><br/>Pour information, la clé publique ci-dessous identifiera votre futur compte.<br/>Elle pourra être communiquée à des tiers pour recevoir leur paiement.<br/>Cependant, <b>il n'est pas utile</b> de la noter ici.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret, le mot de passe et le pseudonyme ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir envoyer cette demande d'inscription ?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret et le mot de passe ne pourront plus être modifiés.<br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir continuer avec ces identifiants ?",
-      "MSG_UID_ALREADY_USED": "Pseudonyme déjà utilisé par quelqu'un d'autre.<br/>Veuillez en choisir un autre.",
-      "MSG_PUBKEY_ALREADY_USED": "Clé publique déjà utilisée par quelqu'un d'autre.<br/>Veuillez choisir d'autres identifiants de connexion."
+      "PSEUDO_AVAILABLE": "Ce pseudo est disponible",
+      "PSEUDO_NOT_AVAILABLE": "Ce pseudo n'est pas disponible",
+      "INFO_LICENSE": "Pour pouvoir adhérer à la monnaie, nous vous demandons de bien vouloir lire et accepter cette licence."
+
     },
     "POPUP_REGISTER": {
       "TITLE": "Choisissez un pseudonyme",
@@ -435,6 +439,7 @@
       "QUESTION_19": "Quel était le métier de votre grand-père ?",
       "RECOVER_ID": "Recupérer vos identifiants",
       "REVOCATION": "Révocation ...",
+      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
       "REVOKE": "Révoquer cette identité",
       "REVOKE_WITH_FILE": "Révoquer une identité à partir d'un fichier",
       "SAVE_ID": "Sauvegarder vos identifiants",
@@ -523,15 +528,9 @@
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
     "LOAD_NEWCOMERS_FAILED": "Echec du chargement des nouveaux membres.",
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
-    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
-    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
-    "GET_BLOCK_FAILED": "Echec de la récupération du bloc",
-    "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)",
-    "REVOCATION_FAILED": "Echec de la révocation.",
-    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identifiant secret ou mot de passe incorrects",
-    "RECOVER_ID_FAILED": "Echec de la récupération des identifiants",
-    "LOAD_FILE_FAILED" : "Echec du chargement du fichier",
-    "ONLY_TEXT_FILE": "Vous devez selectionner un fichier texte"
+    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuerTING",
+    "EXISTING_ACCOUNT": "Vos identifiants correspondent à un compte déjà existant, dont la <a ng-click=\"showHelpModal('pubkey')\">clef publique</a> est :",
+    "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -565,7 +564,12 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveler votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
-    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?"
+    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?",
+    "LICENCE": "Je déclare avoir lu et accepté les conditions de la licence Ğ1"
+  },
+  "DOWNLOAD": {
+    "POPUP_TITLE": "<b>Fichier de révocation</b>",
+    "POPUP_REVOKE_MESSAGE": "Il faut maintenant récupérer le fichier de révocation, veuillez le télécharger en cliquant sur le boutton ci-dessous.</br></br> Le fichier de révocation permet d'annuler son compte (en cas d'un vol de compte, d'un changement d'identifiant, d'un compte créé à tort etc.), il est donc <b>important de le stocker en lieu sûr</b>."
   },
   "HELP": {
     "TITLE": "Aide en ligne",
@@ -577,7 +581,7 @@
     },
     "GLOSSARY": {
       "SECTION": "Glossaire",
-      "PUBKEY_DEF": "Une clé publique identifie un portefeuille de monnaie. Il peut identifier un membre",
+      "PUBKEY_DEF": "Une clé publique identifie un portefeuille de monnaie. Il peut identifier un membre. Dans Cesium elle est calculée grâce à l'identifiant secret et au mot de passe.",
       "MEMBER": "Membre",
       "MEMBER_DEF": "Un membre est une personne humaine physique et vivante, désireuse de participer librement à la communauté monétaire. Elle percoit un dividende universel, suivant une période et un montant tels que définis dans les <span class=\"text-italic\">règles de la monnaie</span>",
       "CURRENCY_RULES": "Règles de la monnaie",

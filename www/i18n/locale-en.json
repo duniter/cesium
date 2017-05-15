@@ -35,6 +35,8 @@
     "BTN_OPTIONS": "Options",
     "BTN_HELP_TOUR": "Features tour",
     "BTN_HELP_TOUR_SCREEN": "Discover this screen",
+    "BTN_DOWNLOAD": "Download",
+    "BTN_MODIFY": "Modify",
     "DAYS": "days",
     "NO_ACCOUNT_QUESTION": "Not a member yet? Register now!",
     "SEARCH_NO_RESULT": "No result found",
@@ -396,8 +398,9 @@
       "LAST_SLIDE_CONGRATULATION": "You completed all required fields.<br/><b>You can send the account creation request</b>.<br/><br/>For information, the public key below identifies your future account.<br/>It can be communicated to third parties to receive their payment.<br/>Once your account has been approved, you can find this key under <b>{{'ACCOUNT.TITLE'|translate}}</b>.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Warning:</b> your secret identifier, password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Warning:</b> your password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to continue?",
-      "MSG_UID_ALREADY_USED": "This pseudonym is already used by an existing member.<br/>Please choose another one.",
-      "MSG_PUBKEY_ALREADY_USED": "Public key already used by an existing member.<br/>Please choose other connection parameters."
+      "PSEUDO_AVAILABLE": "This nickname is available",
+      "PSEUDO_NOT_AVAILABLE": "This nickname is not available",
+      "INFO_LICENSE": "To be able to adhere to the currency, we ask you to kindly read and accept this license."
     },
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
@@ -435,6 +438,7 @@
       "QUESTION_19": "What was your grand-father's job ?",
       "RECOVER_ID": "Recover your password",
       "REVOCATION": "Revocation ...",
+      "REVOCATION_SAVE": "revocation",
       "REVOKE" : "Revoke this identity",
       "REVOKE_WITH_FILE" : "Rekoke this identity with a file",
       "SAVE_ID": "Save your login",
@@ -531,7 +535,9 @@
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong secret identifier or password ",
     "RECOVER_ID_FAILED": "Could not recover password",
     "LOAD_FILE_FAILED" : "Unable to load file",
-    "ONLY_TEXT_FILE": "You have to select a text file"
+    "ONLY_TEXT_FILE": "You have to select a text file",
+    "EXISTING_ACCOUNT": "Your identifiers correspond to an already existing account, whose <a ng-click=\"showHelpModal('pubkey')\">public key</a> is:",
+    "EXISTING_ACCOUNT_REQUEST": "Please modify your credentials so that they correspond to an unused account."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -565,7 +571,12 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
     "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
-    "LOGOUT": "Are you sure you want to logout?"
+    "LOGOUT": "Are you sure you want to logout?",
+    "LICENCE": "I declare that I have read and accepted the conditions of the license Ğ1"
+  },
+  "DOWNLOAD": {
+    "POPUP_TITLE": "<b>Revocation file</b>",
+    "POPUP_REVOKE_MESSAGE": "The revocation file now needs to be retrieved by clicking on the button below.</br></br>The revocation file allows you to cancel your account (in the event of an account theft, A change of identifier, an incorrectly created account etc.), it is therefore<b> important to store it in place on.</b>"
   },
   "HELP": {
     "TITLE": "Online help",
@@ -577,7 +588,7 @@
     },
     "GLOSSARY": {
       "SECTION": "Glossary",
-      "PUBKEY_DEF": "A public key always identifies a wallet. It may identify a member.",
+      "PUBKEY_DEF": "A public key always identifies a wallet. It may identify a member. In Cesium it is calculated using the secret identifier and the password.",
       "MEMBER": "Member",
       "MEMBER_DEF": "A member is a real and living human, wishing to participate freely to the monitary community. The member will receive universal dividend, according to the period and amount as defined in the <span class=\"text-italic\">currency parameters</span>.",
       "CURRENCY_RULES": "Currency rules",

@@ -35,6 +35,8 @@
     "BTN_OPTIONS": "Opciónes",
     "BTN_HELP_TOUR": "Visita guiada",
     "BTN_HELP_TOUR_SCREEN": "Descubrir esta pantalla",
+    "BTN_DOWNLOAD": "Descargar",
+    "BTN_MODIFY": "Cambio",
     "DAYS": "Dias",
     "NO_ACCOUNT_QUESTION": "Todavía no miembre ? Creer una cuenta !",
     "SEARCH_NO_RESULT": "Ninguno resultado encontrado",
@@ -381,8 +383,9 @@
       "LAST_SLIDE_CONGRATULATION": "<b>Bravo !</b> Ha introducido todas las informaciónes necesarias.<br/><b>Puede mandar la solicitud</b> de creación de su cuenta.</b><br/><br/>Por su información, la llave pública más abajo identificará su cuenta futura.<br/>Podrá estar comunicada a terceros para recibir sus pagos.<br/>Sin embargo, <b>no es útil</b> anotarla aquí.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Advertencia :</b> el identificador secreto, la contraseña y el seudónimo no podrán estar modificados.<br/><b>Asegurase siempre se los recordar !</b><br/><br/><b>Está usted seguro</b> querer mandar esta solicitud de inscripción ?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Advertencia :</b> el identificador secreto y la contraseña no podrán estar modificados.<br/><b>Asegurase siempre se los recordar !</b><br/><br/><b>Está usted seguro</b> querer continuar con estos identificadores ?",
-      "MSG_UID_ALREADY_USED": "Seudónimo ya utilizado por una otra persona.<br/>Elige un otro por favor.",
-      "MSG_PUBKEY_ALREADY_USED": "Llave pública ya utilizada por una otra persona.<br/>Elige otros identificadores de conexión por favor."
+      "PSEUDO_AVAILABLE": "Este nombre está disponible",
+      "PSEUDO_NOT_AVAILABLE": "Este nombre de usuario no está disponible",
+      "INFO_LICENSE": "Para unirse a la moneda, le pedimos que leer y aceptar esta licencia."
     },
     "POPUP_REGISTER": {
       "TITLE": "Elige un seudónimo",
@@ -420,6 +423,7 @@
       "QUESTION_19": "Cuál fue el oficio de su abuelo ?",
       "RECOVER_ID": "Recuperar sus identificadores",
       "REVOCATION": "Revocación ...",
+      "REVOCATION_SAVE": "revocacion",
       "REVOKE": "Revocar esta identidad",
       "REVOKE_WITH_FILE": "Revocar una identidad a partir de un fichero",
       "SAVE_ID": "Salvar sus identificadores",
@@ -516,7 +520,9 @@
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identificador secreto o contraseña incorrectos",
     "RECOVER_ID_FAILED": "Fracaso en la recuperación de los identificadores",
     "LOAD_FILE_FAILED" : "Fracaso en la carga del fichero",
-    "ONLY_TEXT_FILE": "Debe seleccionar un fichero texto"
+    "ONLY_TEXT_FILE": "Debe seleccionar un fichero texto",
+    "EXISTING_ACCOUNT": "Su contraseña corresponde a una cuenta existente, la <a ng-click=\"showHelpModal('pubkey')\">clave pública</a> es:",
+    "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su contraseña para que coincida con una cuenta sin usar."
   },
   "INFO": {
     "POPUP_TITLE": "Información",
@@ -550,7 +556,12 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Su adhesión no necesita estar renovada (solo va a caducar en {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Está usted seguro</b> querer renovar su adhesión ?",
     "SAVE_BEFORE_LEAVE": "Quiere usted <b>guardar sus modificaciónes</b> antes dejar la página ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modificaciónes no registradas",
-    "LOGOUT": "Está usted seguro querer desconectarse ?"
+    "LOGOUT": "Está usted seguro querer desconectarse ?",
+    "LICENCE": "He leído y acepto las condiciones de la licencia G1"
+  },
+  "DOWNLOAD": {
+    "POPUP_TITLE": "<b>Revocación del archivo</b>",
+    "POPUP_REVOKE_MESSAGE": "Ahora tenemos que recuperar el archivo de revocación, puede descargarlo haciendo clic en el botón de abajo.</br></br>El archivo de revocación, se cancelará su cuenta (en caso de robo de cuenta, un cambio de identificador, una cuenta falsamente creado etc.), por lo que es<b> importante para almacenarlo en un lugar seguro.</b>"
   },
   "HELP": {
     "TITLE": "Ayuda en línea",
@@ -562,7 +573,7 @@
     },
     "GLOSSARY": {
       "SECTION": "Glosario",
-      "PUBKEY_DEF": "Una llave pública identifica un monedero. Puede identificar un miembro",
+      "PUBKEY_DEF": "Una llave pública identifica un monedero. Puede identificar un miembro. En Cesium se calcula con el identificador y la contraseña secreta.",
       "MEMBER": "Miembro",
       "MEMBER_DEF": "Un miembro es una persona humana física y viva, deseosa de participar libremente a la comunidad monetaria. Percibe un dividendo universal, dependiendo de un período y un importe como definido en las <span class=\"text-italic\">reglas de la moneda</span>",
       "CURRENCY_RULES": "Reglas de la moneda",

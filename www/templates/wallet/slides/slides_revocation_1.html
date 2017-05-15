@@ -2,11 +2,11 @@
   <ion-content class="has-header padding">
     <h3 translate>ACCOUNT.SECURITY.REVOCATION</h3>
     <div class="list">
-      <div class="item card item-icon-right stable-bg padding ink dark"
+      <button class="item card item-icon-right stable-bg padding ink dark"
            ng-click="downloadRevokeFile()" ng-if="isLogin && hasSelf">
         <i class="icon ion-android-archive"></i>
         <span ng-bind-html="'ACCOUNT.SECURITY.DOWNLOAD_REVOKE' | translate"></span>
-      </div>
+      </button>
       <div class="item card item-icon-right stable-bg padding ink dark"
            ng-click="slideNext()">
         <i class="icon ion-ios-arrow-right"></i>

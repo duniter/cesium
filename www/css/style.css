@@ -37,6 +37,10 @@
   color: grey;
 }
 
+#modal-license {
+  color:rgb(0, 0, 0);
+}
+
 .bar .button.button-clear {
   font-size: 12px !important;
   font-weight: 300 !important;
@@ -205,3 +209,4 @@
 .item-block.item-block-empty.compacted {
   border-bottom: double 1px #eee !important;
 }
+

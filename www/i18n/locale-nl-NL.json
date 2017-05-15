@@ -35,6 +35,8 @@
     "BTN_OPTIONS": "Opties",
     "BTN_HELP_TOUR": "Rondleiding",
     "BTN_HELP_TOUR_SCREEN": "Ontdek dit scherm",
+    "BTN_DOWNLOAD": "Downloaden",
+    "BTN_MODIFY": "Bewerken",
     "DAYS": "dagen",
     "NO_ACCOUNT_QUESTION": "Nog geen lid? Registreer nu!",
     "SEARCH_NO_RESULT": "Geen resultaten",
@@ -335,8 +337,9 @@
       "LAST_SLIDE_CONGRATULATION": "Bravo! Je hebt alle verplichte velden ingevuld.<br/>Je kunt je <b>rekeningaanvraag verzenden</b>.<br/><br/>Ter informatie, de publieke sleutel hieronder identificeert je toekomstige rekening.<br/>Je kunt deze aan derde partijen communiceren om geld te ontvangen. Zodra je rekening geopend is, kun je de sleutel terugvinden onder <b>{{'ACCOUNT.TITLE'|translate}}</b>.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Waarschuwing:</b> je beveiligingszin, wachtwoord en pseudoniem kunnen hierna niet gewijzigd worden.<br/><b>Zorg dat ze goed onthoudt!</b><br/><b>Weet je zeker</b> dat je je persoonlijke rekeningaanvraag wil verzenden?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Waarschuwing:</b> je wachtwoord en pseudoniem kunnen hierna niet gewijzigd worden.<br/><b>Zorg dat ze goed onthoudt!</b><br/><b>Weet je zeker</b> dat je deze portefeilleaanvraag wil verzenden?",
-      "MSG_UID_ALREADY_USED": "Deze pseudoniem is al in gebruik door een bestaand lid.<br/>Kies een andere.",
-      "MSG_PUBKEY_ALREADY_USED": "Publieke sleutel komt overeen met die van een bestaand lid.<br/>Kies andere verbindingsparameters."
+      "PSEUDO_AVAILABLE": "Deze naam is beschikbaar",
+      "PSEUDO_NOT_AVAILABLE": "Deze gebruikersnaam is niet beschikbaar",
+      "INFO_LICENSE": "Om de valuta te sluiten, vragen wij u om te lezen en deze licentie te accepteren."
     },
     "POPUP_REGISTER": {
       "TITLE": "Voer een pseudoniem in",
@@ -420,7 +423,9 @@
     "LOAD_NEWCOMERS_FAILED": "Unable to load new members.",
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
-    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action."
+    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
+    "EXISTING_ACCOUNT": "Uw wachtwoord overeenkomen met een bestaande account, de <a ng-click=\"showHelpModal('pubkey')\">publieke sleutel</a> is:",
+    "EXISTING_ACCOUNT_REQUEST": "Gelieve uw wachtwoord wijzigen om een ongebruikte account."
   },
   "INFO": {
     "POPUP_TITLE": "Informatie",
@@ -448,7 +453,12 @@
     "REVOKE_IDENTITY_2": "Deze handeling is <b>niet terug te draaien</b>!<br/><br/><b>Weet je zeker</b> dat je door wil gaan?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Je lidmaatschap hoeft niet verlengd te worden (het zal pas verlopen na {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Weet je zeker</b> dat je een verlengingsaanvraag wil versturen?",
     "SAVE_BEFORE_LEAVE": "Wil je <b>je wijzigingen opslaan</b> voor je de pagina verlaat?",
-    "SAVE_BEFORE_LEAVE_TITLE": "Wijzigingen niet opgeslagen"
+    "SAVE_BEFORE_LEAVE_TITLE": "Wijzigingen niet opgeslagen",
+    "LICENCE": "Ik heb gelezen en geaccepteerd de voorwaarden van de vergunning G1"
+  },
+  "DOWNLOAD": {
+    "POPUP_TITLE": "<b>Intrekking File</b>",
+    "POPUP_REVOKE_MESSAGE": "We moeten nu herstellen van de herroeping bestand, dan kunt u downloaden door te klikken op de onderstaande knop.</br></br>De herroeping bestand zullen hun rekening (in het geval van de rekening van diefstal te annuleren, een verandering van de identifier, een ten onrechte gemaakte account etc.), dus het is<b> belangrijk om het op te slaan op een veilige plaats.</b>"
   },
   "HELP": {
     "TITLE": "Online help",
@@ -460,7 +470,7 @@
     },
     "GLOSSARY": {
       "SECTION": "Glossary",
-      "PUBKEY_DEF": "A public key always identifies a wallet. It may identify a member.",
+      "PUBKEY_DEF": "Een publieke sleutel identificeert altijd een portemonnee. Het kan een lid identificeren. In Cesium wordt berekend met de geheime ID en wachtwoord.",
       "MEMBER": "Member",
       "MEMBER_DEF": "A member is a real and living human, wishing to participate freely to the monitary community. The member will receive universal dividend, according to the period and amount as defined in the <span class=\"text-italic\">currency parameters</span>.",
       "CURRENCY_RULES": "Currency rules",
