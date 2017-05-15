@@ -233,6 +233,9 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
       if(!$scope[formName].$valid) {
         return;
       }
+      if (formName === "pseudoForm" && $scope.uiAlreadyUsed) {
+        return;
+      }
       if (formName === "passwordForm") {
         $scope.showAccountPubkey();
       }
@@ -369,7 +372,10 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   };
 
   $scope.checkUid = function(){
-    if (!$scope.formData.pseudo || !$scope.formData.pseudo.length) return;
+    if (!$scope.formData.pseudo || !$scope.formData.pseudo.length) {
+      $scope.uiAlreadyUsed = undefined;
+      return;
+    }
 
     var uid = $scope.formData.pseudo.toUpperCase();
     $scope.formData.computing=true;
@@ -377,20 +383,19 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
     // search on uid
     BMA.wot.lookup({ search: uid })
       .then(function(res) {
-        var uidAlreadyUsed = (res.results || []).some(function(pub){
+        $scope.uiAlreadyUsed = (res.results || []).some(function(pub){
             return (pub.uids || []).some(function(idty) {
                 return (idty.uid.toUpperCase() === uid); // same Uid
               });
           });
-        $scope.isUidValid = !uidAlreadyUsed;
         $scope.formData.computing=false;
       })
       .catch(function(err){
         $scope.formData.computing=false;
-        $scope.isUidValid = true;
+        $scope.uiAlreadyUsed = false;
       });
   };
-  //$scope.$watch('formData.pseudo', $scope.checkUid, true);
+  $scope.$watch('formData.pseudo', $scope.checkUid, true);
 
   $scope.checkAccountAvailable = function() {
     var pub = $scope.formData.pubkey;

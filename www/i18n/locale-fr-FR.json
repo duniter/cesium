@@ -400,7 +400,7 @@
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Avertissement :</b> l'identifiant secret et le mot de passe ne pourront plus être modifiés.<br/><br/><b>Assurez-vous de toujours vous en rappeller !</b><br/><br/><b>Etes-vous sûr</b> de vouloir continuer avec ces identifiants ?",
       "PSEUDO_AVAILABLE": "Pseudonyme disponible",
       "PSEUDO_NOT_AVAILABLE": "Pseudonyme non disponible",
-      "INFO_LICENSE": "Avant d'adhérer à la monnaie, veuillez <b>lire et accepter la licence</b> d'usage de la monnaie :",
+      "INFO_LICENSE": "Avant de créer un compte membre, <b>veuillez lire et accepter la licence</b> d'usage de la monnaie :",
       "BTN_ACCEPT": "J'accepte",
       "BTN_ACCEPT_LICENSE": "J'accepte la license"
     },
