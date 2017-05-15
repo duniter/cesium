@@ -98,6 +98,27 @@ angular.module('cesium.utils.services', ['ngResource'])
       });
   }
 
+  function alertDownload(message, title) {
+    return $q(function(resolve) {
+      $translate([message, title, 'COMMON.BTN_DOWNLOAD'])
+      .then(function (translations) {
+        $ionicPopup.show({
+          template: '<p>' + translations[message] + '</p>',
+          title: translations[title],
+          buttons: [
+            {
+              text: translations['COMMON.BTN_DOWNLOAD'],
+              type: 'button-assertive icon-right ion-android-archive',
+              onTap: function(e) {
+                resolve(e);
+              }
+            }
+          ]
+        });
+      });
+    });
+  }
+  
   function hideLoading(timeout){
     if (timeout) {
       return $timeout(function(){
@@ -668,7 +689,8 @@ angular.module('cesium.utils.services', ['ngResource'])
       error: alertError,
       info: alertInfo,
       confirm: askConfirm,
-      notImplemented: alertNotImplemented
+      notImplemented: alertNotImplemented,
+      download: alertDownload
     },
     loading: {
       show: showLoading,

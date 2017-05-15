@@ -14144,6 +14144,12 @@ a {
 .button-text-stable {
   color: #b2b2b2 !important; }
 
+.popup-buttons .button.icon-right,
+.popup-buttons .button.icon-left {
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+  line-height: 42px; }
+
 /* ============
  Home page
 =============== */

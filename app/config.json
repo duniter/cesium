@@ -132,12 +132,12 @@
       }
     },
     "node": {
-      "host": "gtest.duniter.org",
-      "port": 10900
+      "host": "localhost",
+      "port": 9600
     },
     "plugins":{
       "es": {
-        "enable": true,
+        "enable": false,
         "askEnable": false,
         "host": "localhost",
         "port": 9200,

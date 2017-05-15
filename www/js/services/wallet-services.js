@@ -1251,62 +1251,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
     },
 
-    checkUidNotExists = function(uid, pubkey) {
-      return $q(function(resolve, reject) {
-        BMA.wot.lookup({ search: uid }) // search on uid
-          .then(function(res) {
-            var found = res.results &&
-              res.results.length > 0 &&
-              res.results.some(function(pub){
-                return pub.uids && pub.uids.length > 0 &&
-                  pub.uids.some(function(idty) {
-                    return (idty.uid === uid) && // same Uid
-                      (idty.revoked || pub.pubkey !== pubkey); // but not same pubkey
-                  });
-              });
-            if (found) { // uid is already used : display a message and call failed callback
-              reject('ACCOUNT.NEW.MSG_UID_ALREADY_USED');
-            }
-            else {
-              resolve(uid);
-            }
-          })
-          .catch(function() {
-            resolve(uid); // not found, so OK
-          });
-      });
-    },
-
-    checkPubkeyNotExists = function(uid, pubkey) {
-      return $q(function(resolve, reject) {
-        BMA.wot.lookup({ search: pubkey }) // search on pubkey
-          .then(function(res) {
-            var found = res.results &&
-              res.results.length > 0 &&
-              res.results.some(function(pub){
-                return pub.pubkey === pubkey &&
-                  pub.uids && pub.uids.length > 0 &&
-                  pub.uids.some(function(idty) {
-                    return (!idty.revoked); // excluded revoked uid
-                  });
-              });
-            if (found) { // uid is already used : display a message and reopen the popup
-              reject('ACCOUNT.NEW.MSG_PUBKEY_ALREADY_USED');
-            }
-            else {
-              resolve(uid);
-            }
-          })
-          .catch(function() {
-            resolve(uid); // not found, so OK
-          });
-      });
-    },
-
     getIdentityDocument = function(uid, blockUid) {
       uid = uid || data.uid;
       blockUid = blockUid || data.blockUid;
-      if (!uid || !blockUid) {
+      if ((!uid || !blockUid)) {
         throw {message: 'ERROR.WALLET_HAS_NO_SELF'};
       }
       if (data.requirements && data.requirements.expired) {
@@ -1331,59 +1279,56 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     * Send self identity
     */
     self = function(uid, needToLoadRequirements) {
-      if (!BMA.regexp.USER_ID.test(uid)){
-        return $q.reject({message: 'ERROR.INVALID_USER_ID'});
-      }
-      var block;
-      return $q.all([
-        // check uid used by another pubkey
-        checkUidNotExists(uid, data.pubkey),
-
-        // Load parameters (need to known the currency)
-        loadParameters(),
-
-        // Get th current block
-        BMA.blockchain.current()
-          .then(function(current) {
-            block = current;
-          })
-          .catch(function(err) {
-            // Special case for currency init (root block not exists): use fixed values
-            if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-              block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
-            }
-            else {
-              throw err;
-            }
-          })
-      ])
-
-      // Create identity document
-      .then(function() {
-        return getIdentityDocument(uid, block.number + '-' + block.hash);
-      })
-
-      // Send to node
-      .then(function (identity) {
-        return BMA.wot.add({identity: identity});
-      })
-
-      .then(function () {
-        if (!!needToLoadRequirements) {
-          // Refresh membership data (if need)
-          return loadRequirements();
+        if (!BMA.regexp.USER_ID.test(uid)){
+          return $q.reject({message: 'ERROR.INVALID_USER_ID'});
         }
-        else {
-          data.uid = uid;
-          data.blockUid = block.number + '-' + block.hash;
-        }
-      })
-      .catch(function (err) {
-        if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
-          throw {ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'};
-        }
-        throw err;
-      });
+        var block;
+        return $q.all([
+
+          // Load parameters (need to known the currency)
+          loadParameters(),
+
+          // Get th current block
+          BMA.blockchain.current()
+            .then(function(current) {
+              block = current;
+            })
+            .catch(function(err) {
+              // Special case for currency init (root block not exists): use fixed values
+              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+                block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
+              }
+              else {
+                throw err;
+              }
+            })
+        ])
+        // Create identity document
+        .then(function() {
+          return getIdentityDocument(uid, block.number + '-' + block.hash);
+        })
+
+        // Send to node
+        .then(function (identity) {
+          return BMA.wot.add({identity: identity});
+        })
+
+        .then(function () {
+          if (!!needToLoadRequirements) {
+            // Refresh membership data (if need)
+            return loadRequirements();
+          }
+          else {
+            data.uid = uid;
+            data.blockUid = block.number + '-' + block.hash;
+          }
+        })
+        .catch(function (err) {
+          if (err && err.ucode === BMA.errorCodes.IDENTITY_SANDBOX_FULL) {
+            throw {ucode: BMA.errorCodes.IDENTITY_SANDBOX_FULL, message: 'ERROR.IDENTITY_SANDBOX_FULL'};
+          }
+          throw err;
+        });
     },
 
    /**
@@ -1698,7 +1643,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         return getRevocationDocument()
           .then(function(revocation) {
             var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
-            FileSaver.saveAs(revocationFile, 'revocation.txt');
+            return $translate('ACCOUNT.SECURITY.REVOCATION_FILENAME', {uid: data.uid, currency: data.currency, pubkey: data.pubkey})
+              .then(function(fileName){
+                FileSaver.saveAs(revocationFile, fileName);
+              });
           });
       },
 

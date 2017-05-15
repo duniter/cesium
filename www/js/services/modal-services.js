@@ -160,6 +160,16 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+  function showJoinMember(parameters) {
+    return ModalUtils.show('templates/join/modal_join_member.html','JoinModalCtrl',
+      parameters);
+  }
+
+  function showJoinWallet(parameters) {
+    return ModalUtils.show('templates/join/modal_join_wallet.html','JoinModalCtrl',
+      parameters);
+  }
+
   function showHelp(parameters) {
     return ModalUtils.show('templates/help/modal_help.html','HelpModalCtrl',
       parameters);
@@ -173,6 +183,8 @@ angular.module('cesium.modal.services', [])
     showNetworkLookup: showNetworkLookup,
     showAbout: showAbout,
     showJoin: showJoin,
+    showJoinMember: showJoinMember,
+    showJoinWallet: showJoinWallet,
     showHelp: showHelp,
     showAccountSecurity: showAccountSecurity
   };
