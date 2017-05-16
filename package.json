@@ -83,6 +83,7 @@
     "cordova-plugin-websocket",
     "cordova-plugin-vibration",
     "cordova-plugin-dialogs",
+    "cordova-plugin-minisodium",
     {
       "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
       "id": "phonegap-plugin-barcodescanner"
