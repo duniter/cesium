@@ -106,7 +106,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.slideBehavior = {};
   $scope.loading = true;
 
-  $scope.isLicenseRead = true; //false;
+  $scope.isLicenseRead = false;
   $scope.showUsername = false;
   $scope.showPassword = false;
   $scope.formData.computing=false;
@@ -120,9 +120,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.load = function() {
     if ($scope.loading) {
 
-      var locale = csSettings.data.locale.id;
-      $scope.licenseFileUrl = (csConfig.license) ?
-        (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license['en'] || csConfig.license) : undefined;
+      $scope.licenseFileUrl = csSettings.getLicenseUrl();
 
       $timeout($scope.listenLicenseRead, 3000);
 
@@ -417,12 +415,9 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
       $scope.slidePrev();
   };
 
-
-
-
   // TODO: remove auto add account when done
   /*$timeout(function() {
-    //$scope.selectCurrency('test_net');
+    //$scope.selectCurrency('g1');
     //$scope.selectAccountType('member');
     $scope.formData.username="azertypoi";
     $scope.formData.confirmUsername=$scope.formData.username;

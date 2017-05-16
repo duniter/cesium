@@ -220,12 +220,20 @@
       "SIG_WINDOW": "Maximum delay before a certification will be treated",
       "STEP_MAX": "Maximum distance between a newcomer and each referring members.",
       "WOT_RULES_DIVIDER": "Rules for web of trust",
-      "SENTRIES": "Required number of certifications to become a referring member",
+      "SENTRIES": "Required number of certifications (given <b>and</b> received) to become a referring member",
       "SENTRIES_FORMULA": "Required number of certifications to become a referring member (formula)",
       "XPERCENT":"Minimum percent of referring member to reach to match the distance rule",
       "AVG_GEN_TIME": "The average time between 2 blocks",
       "CURRENT": "current",
-      "MATH_CEILING": "CEILING"
+      "MATH_CEILING": "CEILING",
+      "DISPLAY_ALL_RULES": "Display all rules?",
+      "BTN_SHOW_LICENSE": "Show license",
+      "WOT_DIVIDER": "Web of trust"
+    },
+    "LICENSE": {
+      "TITLE": "Currency license",
+      "BTN_DOWNLOAD": "Download file",
+      "NO_LICENSE_FILE": "License file not found."
     }
   },
   "NETWORK": {
@@ -438,7 +446,7 @@
       "QUESTION_19": "What was your grand-father's job ?",
       "RECOVER_ID": "Recover your password",
       "REVOCATION": "Revocation ...",
-      "REVOCATION_SAVE": "revocation",
+      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
       "REVOKE" : "Revoke this identity",
       "REVOKE_WITH_FILE" : "Rekoke this identity with a file",
       "SAVE_ID": "Save your login",
@@ -529,7 +537,7 @@
     "LOAD_PENDING_FAILED": "Unable to load pending registrations.",
     "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "You must <b>be a member</b> in order to perform this action.",
     "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "You must have <b>published your identity</b> in order to perform this action.",
-    "GET_BLOCK_FAILED": "Error xhole getting block",
+    "GET_BLOCK_FAILED": "Error while getting block",
     "INVALID_BLOCK_HASH": "Block not found (incorrect hash)",
     "REVOCATION_FAILED": "Error while trying to revoke the identity.",
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Wrong secret identifier or password ",
@@ -537,7 +545,8 @@
     "LOAD_FILE_FAILED" : "Unable to load file",
     "ONLY_TEXT_FILE": "You have to select a text file",
     "EXISTING_ACCOUNT": "Your identifiers correspond to an already existing account, whose <a ng-click=\"showHelpModal('pubkey')\">public key</a> is:",
-    "EXISTING_ACCOUNT_REQUEST": "Please modify your credentials so that they correspond to an unused account."
+    "EXISTING_ACCOUNT_REQUEST": "Please modify your credentials so that they correspond to an unused account.",
+    "GET_LICENSE_FILE_FAILED": "Unable to get license file"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -571,8 +580,7 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
     "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
-    "LOGOUT": "Are you sure you want to logout?",
-    "LICENCE": "I declare that I have read and accepted the conditions of the license Ğ1"
+    "LOGOUT": "Are you sure you want to logout?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocation file</b>",
@@ -602,8 +610,8 @@
       "CURRENCY_WOT": "The <b>member count</b> shows the <b>community's weight and evolution</b>.",
       "CURRENCY_MASS": "Shown here is the <b>total amount</b> currently in circulation and its <b>average distribution</b> per member.<br/><br/>This allows to estimate the <b>worth of any amount</b>, in respect to what <b>others own</b> on their account (on average).",
       "CURRENCY_UNIT_RELATIVE": "The unit used here (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifies that the amounts in {{currency|capitalize}} have been devided by the <b>Universal Dividend</b> (UD).<br/><br/><small>This relative unit is <b>relevant</b> because it is stable in contrast to the permanently growing monitary mass.</small>",
-      "CURRENCY_CHANGE_UNIT": "This button allows to <b>switch the unit</b> to show amounts in <b>{{currency|capitalize}}</b>, undevided by the Universal Dividend (instead of in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
-      "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "This button allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
+      "CURRENCY_CHANGE_UNIT": "The option <b>{{'COMMON.BTN_RELATIVE_UNIT'|translate}}</b> allows to <b>switch the unit</b> to show amounts in <b>{{currency|capitalize}}</b>, undevided by the Universal Dividend (instead of in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
+      "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "The option <b>{{'COMMON.BTN_RELATIVE_UNIT'|translate}}</b> allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
       "CURRENCY_RULES": "The <b>rules</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the currency these rules make the monetary code <b>transparent and understandable</b>.",
       "MENU_BTN_NETWORK": "Menu <b>{{'MENU.NETWORK'|translate}}</b> allows discovery of <b>network's state<b>.",
       "NETWORK_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",

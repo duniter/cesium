@@ -80,6 +80,10 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
       header: 0,
       settings: 0
     },
+    currency: {
+      allRules: false,
+      allWotRules: false
+    },
     wallet: {
       showPubkey: true,
       alertIfUnusedWallet: true,
@@ -208,6 +212,12 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
         });
   },
 
+  getLicenseUrl = function() {
+    var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
+    return (csConfig.license) ?
+      (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license) : undefined;
+  },
+
     // Detect locale sucessuf changes, then apply to vendor libs
   onLocaleChange = function() {
     var locale = $translate.use();
@@ -282,6 +292,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     reset: reset,
     store: store,
     restore: restore,
+    getLicenseUrl: getLicenseUrl,
     defaultSettings: defaultSettings,
     // api extension
     api: api,

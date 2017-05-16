@@ -1,0 +1,34 @@
+<ion-modal-view class="modal-full-height modal-license">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>CURRENCY.LICENSE.TITLE</h1>
+
+    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doTransfer()">
+    </button>
+  </ion-header-bar>
+
+  <ion-content scroll="false" style="bottom: 0px;">
+
+    <p ng-if="!licenseUrl && !loading">
+      translate>CURRENCY.LICENSE.NO_LICENSE_FILE
+    </p>
+    <iframe
+      ng-if="licenseUrl && !loading"
+      class="padding-left padding-right no-padding-xs iframe-license"
+      id="iframe-license"
+      ng-src="{{licenseUrl}}">
+    </iframe>
+
+    <div class="padding hidden-xs text-center">
+      <button class="button button-stable ink"
+              ng-click="downloadFile()">
+        {{'CURRENCY.LICENSE.BTN_DOWNLOAD' | translate}}
+      </button>
+
+      <button class="button button-positive ink" type="submit"
+              ng-click="closeModal()">
+        {{'COMMON.BTN_CLOSE' | translate}}
+      </button>
+    </div>
+  </ion-content>
+</ion-modal-view>

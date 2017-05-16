@@ -225,7 +225,15 @@
       "XPERCENT":"Porcentaje mínimo de miembros referentes a alcanzar para respetar la regla de distancia",
       "AVG_GEN_TIME": "Tiempo medio entre dos bloques",
       "CURRENT": "actual",
-      "MATH_CEILING": "TECHO"
+      "MATH_CEILING": "TECHO",
+      "DISPLAY_ALL_RULES": "Ver todas las reglas?",
+      "BTN_SHOW_LICENSE": "Ver la licencia",
+      "WOT_DIVIDER": "Red de confianza"
+    },
+    "LICENSE": {
+      "TITLE": "License de la monnaie",
+      "BTN_DOWNLOAD": "Télécharger le fichier",
+      "NO_LICENSE_FILE": "Fichier de license non trouvé."
     }
   },
   "NETWORK": {
@@ -385,7 +393,9 @@
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Advertencia :</b> el identificador secreto y la contraseña no podrán estar modificados.<br/><b>Asegurase siempre se los recordar !</b><br/><br/><b>Está usted seguro</b> querer continuar con estos identificadores ?",
       "PSEUDO_AVAILABLE": "Este nombre está disponible",
       "PSEUDO_NOT_AVAILABLE": "Este nombre de usuario no está disponible",
-      "INFO_LICENSE": "Para unirse a la moneda, le pedimos que leer y aceptar esta licencia."
+      "INFO_LICENSE": "Para unirse a la moneda, le pedimos que leer y aceptar esta licencia.",
+      "BTN_ACCEPT": "Acepto",
+      "BTN_ACCEPT_LICENSE": "Acepto la licencia"
     },
     "POPUP_REGISTER": {
       "TITLE": "Elige un seudónimo",
@@ -423,7 +433,7 @@
       "QUESTION_19": "Cuál fue el oficio de su abuelo ?",
       "RECOVER_ID": "Recuperar sus identificadores",
       "REVOCATION": "Revocación ...",
-      "REVOCATION_SAVE": "revocacion",
+      "REVOCATION_FILENAME": "revocation-{{uid}}-{{pubkey|formatPubkey}}-{{currency}}.txt",
       "REVOKE": "Revocar esta identidad",
       "REVOKE_WITH_FILE": "Revocar una identidad a partir de un fichero",
       "SAVE_ID": "Salvar sus identificadores",
@@ -522,7 +532,8 @@
     "LOAD_FILE_FAILED" : "Fracaso en la carga del fichero",
     "ONLY_TEXT_FILE": "Debe seleccionar un fichero texto",
     "EXISTING_ACCOUNT": "Su contraseña corresponde a una cuenta existente, la <a ng-click=\"showHelpModal('pubkey')\">clave pública</a> es:",
-    "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su contraseña para que coincida con una cuenta sin usar."
+    "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su contraseña para que coincida con una cuenta sin usar.",
+    "GET_LICENSE_FILE_FAILED": "Obtener el archivo de licencia no puede"
   },
   "INFO": {
     "POPUP_TITLE": "Información",
@@ -556,8 +567,7 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Su adhesión no necesita estar renovada (solo va a caducar en {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Está usted seguro</b> querer renovar su adhesión ?",
     "SAVE_BEFORE_LEAVE": "Quiere usted <b>guardar sus modificaciónes</b> antes dejar la página ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modificaciónes no registradas",
-    "LOGOUT": "Está usted seguro querer desconectarse ?",
-    "LICENCE": "He leído y acepto las condiciones de la licencia G1"
+    "LOGOUT": "Está usted seguro querer desconectarse ?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocación del archivo</b>",

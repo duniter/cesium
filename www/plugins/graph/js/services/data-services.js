@@ -216,8 +216,21 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         }
       };
 
-      var promise = exports.raw.block.search(request, {currency: currency})
+      var promise = $q.all([
+        // Get the current block is need
+        options.withCurrent ?
+          BMA.blockchain.current()
+          .catch(function(err) {
+            // Special case when currency not started
+            if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) return undefined;
+            throw err;
+          }) : $q.when(),
+        // Send search request to the ES node
+        exports.raw.block.search(request, {currency: currency})
+      ])
         .then(function(res) {
+          var currentBlock = res[0];
+          res = res[1];
           if (!res.hits.total || !res.hits.hits.length) return;
 
           var result = {};
@@ -230,8 +243,20 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
             return res.concat(block);
           }, []);
-          result.labels = res.hits.hits.reduce(function(res, hit){
-            return res.concat(hit._source.medianTime);
+
+          // Add current block
+          if (currentBlock) {
+            var deltaWithLastDividend = result.blocks.length && (currentBlock.medianTime - result.blocks[result.blocks.length-1].medianTime);
+            if (deltaWithLastDividend && deltaWithLastDividend >= 60*60) {
+              // Apply unitbase on dividend
+              currentBlock.dividend = _powBase(currentBlock.dividend, currentBlock.unitbase);
+              delete currentBlock.unitbase;
+              result.blocks.push(currentBlock);
+            }
+          }
+
+          result.labels = result.blocks.reduce(function(res, block){
+            return res.concat(block.medianTime);
           }, []);
 
           // replace promise in cache, with data

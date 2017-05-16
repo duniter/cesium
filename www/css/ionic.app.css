@@ -13931,7 +13931,9 @@ a {
     -webkit-user-selectuser-select: auto !important;
     -moz-user-select: auto !important;
     -ms-user-select: auto !important;
-    user-select: auto !important; } }
+    user-select: auto !important; }
+  body {
+    user-select: text !important; } }
 
 /* ============
  Left menu
@@ -15143,4 +15145,7 @@ div[dropzone] {
 @media screen and (min-width: 992px) {
   .modal iframe.iframe-license {
     width: 100%;
-    height: 70%; } }
+    height: 70%; }
+  .modal.modal-license iframe.iframe-license {
+    width: 100%;
+    height: 85% !important; } }

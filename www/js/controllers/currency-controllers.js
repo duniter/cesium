@@ -38,7 +38,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
         }
       },
       data: {
-        large: 'app.currency_view_lg'
+        large: 'app.currency_lg'
       }
     })
 
@@ -80,7 +80,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency_view_name_lg', {
+    .state('app.currency_name_lg', {
       url: "/currency/lg/:name",
       cache: false,
       views: {
@@ -91,7 +91,7 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency_view_lg', {
+    .state('app.currency_lg', {
       url: "/currency/lg",
       cache: false,
       views: {
@@ -101,23 +101,15 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
         }
       }
     })
-
-    .state('app.currency_name_lg', {
-      url: "/currencies/:currency/lg",
-      cache: false,
-      views: {
-        'menuContent': {
-          templateUrl: "templates/currency/view_currency_lg.html",
-          controller: 'CurrencyViewCtrl'
-        }
-      }
-    });
+  ;
 
 })
 
 .controller('CurrencyLookupCtrl', CurrencyLookupController)
 
 .controller('CurrencyViewCtrl', CurrencyViewController)
+
+  .controller('CurrencyLicenseModalCtrl', CurrencyLicenseModalController)
 ;
 
 function CurrencyLookupController($scope, $state, $q, UIUtils, BMA, csCurrency) {
@@ -169,7 +161,8 @@ function CurrencyLookupController($scope, $state, $q, UIUtils, BMA, csCurrency) 
   };
 }
 
-function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, csCurrency, csNetwork) {
+function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
+
   $scope.formData = {
     useRelative: csSettings.data.useRelative,
     currency: '',
@@ -192,13 +185,20 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     durationFromLastUD: 0,
     blockUid: null,
     dtReeval: 0,
-    udReevalTime0: 0
+    udReevalTime0: 0,
+    allRules: angular.isDefined(csSettings.data.currency && csSettings.data.currency.allRules) ?
+      csSettings.data.currency.allRules :
+      csSettings.data.expertMode,
+    allWotRules: angular.isDefined(csSettings.data.currency && csSettings.data.currency.allWotRules) ?
+      csSettings.data.currency.allWotRules :
+      csSettings.data.expertMode,
+    licenseUrl: csSettings.getLicenseUrl()
   };
   $scope.node = null;
   $scope.loading = true;
   $scope.screen = UIUtils.screen;
 
-  $scope.$on('$ionicView.enter', function(e, state) {
+  $scope.enter = function(e, state) {
     if ($scope.loading) { // run only once (first enter)
       if (state.stateParams && state.stateParams.currency) { // Load by name
         csCurrency.searchByName(state.stateParams.currency)
@@ -224,7 +224,8 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     }
     // Notify extensions
     $scope.$broadcast('$csExtension.enter', state);
-  });
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.init = function(currency) {
     $scope.formData.currency = currency.name;
@@ -235,9 +236,12 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
 
     // Load data
     $scope.load()
-
-      // Show help tip
-      .then($scope.showHelpTip);
+      .then(function() {
+        // Show help tip, if login
+        if ($scope.isLogin()) {
+          $scope.showHelpTip();
+        }
+      });
   };
 
   $scope.load = function() {
@@ -325,15 +329,18 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
       data.MoverN = (Mprev ? Mprev : M/*need at currency start only*/) / data.Nprev;
       data.UD = data.currentUD;
       data.durationFromLastUD = lastUDTime ? data.medianTime - lastUDTime : 0;
-      data.useRelative = $scope.formData.useRelative;
       data.sentries = Math.ceil(Math.pow(data.N, 1/ data.stepMax));
 
       // Apply to formData
-      angular.copy(data, $scope.formData);
+      angular.extend($scope.formData, data);
 
       console.debug("[currency] Parameters loaded in " + (new Date().getTime() - now) + 'ms' );
       $scope.loading = false;
       $scope.$broadcast('$$rebind::' + 'rebind'); // force bind of currency name
+
+      // Set Ink
+      UIUtils.ink();
+
       return UIUtils.loading.hide();
     })
     .catch(function(err) {
@@ -342,24 +349,63 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
     });
   };
 
+  $scope.refresh = function() {
+    if ($scope.loading) return;
+
+    $scope.loading= true;
+    UIUtils.loading.show();
+
+    // Load data
+    $scope.load()
+      .then(function() {
+        // Notify extensions
+        $scope.$broadcast('csView.action.refresh', 'currency');
+      });
+  };
+
   $scope.refreshPeers = function() {
     $scope.$broadcast('csView.action.refresh', 'peers');
   };
 
-  $scope.showActionsPopover = function(event) {
+  $scope.showExtendActionsPopover = function(event) {
     $scope.$broadcast('csView.action.showActionsPopover', event);
   };
 
+  $scope.onAllRulesChange = function() {
+    csSettings.data.currency = csSettings.data.currency || {};
+    if (csSettings.data.currency.allRules !== $scope.formData.allRules) {
+      csSettings.data.currency.allRules = $scope.formData.allRules;
+      csSettings.store();
+    }
+  };
+  $scope.$watch('formData.allRules', $scope.onAllRulesChange, true);
+
+  $scope.onAllWotRulesChange = function() {
+    csSettings.data.currency = csSettings.data.currency || {};
+    if (csSettings.data.currency.allWotRules !== $scope.formData.allWotRules) {
+      csSettings.data.currency.allWotRules = $scope.formData.allWotRules;
+      csSettings.store();
+    }
+  };
+  $scope.$watch('formData.allWotRules', $scope.onAllWotRulesChange, true);
+
   /* -- help tip -- */
 
-  $scope.showHelpTip = function() {
-    if (!$scope.isLogin()) return;
-    index = csSettings.data.helptip.currency;
+
+  $scope.startCurrencyTour = function() {
+    $scope.hideActionsPopover();
+    return $scope.showHelpTip(0, true);
+  };
+
+  $scope.showHelpTip = function(index, isTour) {
+    index = angular.isDefined(index) ? index : csSettings.data.helptip.currency;
+    isTour = angular.isDefined(isTour) ? isTour : false;
     if (index < 0) return;
 
     // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope();
+    var helptipScope = $scope.createHelptipScope(isTour);
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
+    helptipScope.tour = isTour;
 
     return helptipScope.startCurrencyTour(index, false)
       .then(function(endIndex) {
@@ -367,5 +413,64 @@ function CurrencyViewController($scope, $q, $timeout, BMA, UIUtils, csSettings, 
         csSettings.data.helptip.currency = endIndex;
         csSettings.store();
       });
+  };
+
+  /* -- modals -- */
+
+  $scope.showLicenseModal = function() {
+    return ModalUtils.show('templates/currency/modal_license.html','CurrencyLicenseModalCtrl');
+  };
+
+  /* -- popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('templates/currency/popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+}
+
+
+function CurrencyLicenseModalController($scope, $http, UIUtils, csSettings, FileSaver) {
+  'ngInject';
+
+  $scope.loading = true;
+
+  $scope.load = function() {
+    if ($scope.loading) {
+      $scope.licenseUrl = csSettings.getLicenseUrl();
+      $scope.loading = false;
+    }
+  };
+  $scope.$on('modal.shown', $scope.load);
+
+  $scope.downloadFile = function() {
+    if (!$scope.licenseUrl) return;
+    return $http.get($scope.licenseUrl)
+      .success(function(data){
+        var file = new Blob([data], {type: 'text/plain; charset=utf-8'});
+        FileSaver.saveAs(file, 'license.txt');
+      }).error(function(data){
+        UIUtils.onError('ERROR.GET_LICENSE_FILE_FAILED')();
+      });
+
   };
 }

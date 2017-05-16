@@ -51,7 +51,7 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
     var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
       PluginServiceProvider
-        .extendStates(['app.currency_name', 'app.currency', 'app.currency_view_name_lg', 'app.currency_view_lg'], {
+        .extendStates(['app.currency_name', 'app.currency', 'app.currency_name_lg', 'app.currency_lg'], {
           points: {
             'parameters-actual': {
               templateUrl: "plugins/graph/templates/currency/view_currency_extend.html",
@@ -459,7 +459,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
 }
 
 
-function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurrency, gpData, $filter) {
+function GpCurrencyMembersCountController($scope, $q, $state, $translate, BMA, csCurrency, gpData, $filter) {
   'ngInject';
 
   $scope.loading = true;
@@ -501,7 +501,8 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, csCurr
       $translate(['GRAPH.CURRENCY.MEMBERS_COUNT_TITLE', 'GRAPH.CURRENCY.MEMBERS_COUNT_LABEL']),
       gpData.blockchain.withDividend($scope.formData.currency, {
         from: from,
-        size: size
+        size: size,
+        withCurrent: true
       })
     ])
       .then(function(result) {

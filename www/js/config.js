@@ -19,7 +19,7 @@ angular.module("cesium.config", [])
 	"useLocalStorage": true,
 	"useRelative": false,
 	"initPhase": false,
-	"expertMode": true,
+	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
 	"helptip": {

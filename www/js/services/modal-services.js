@@ -175,6 +175,10 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+  function showLicense(parameters) {
+    return ModalUtils.show('templates/currency/modal_license.html','CurrencyLicenseModalCtrl',
+      parameters);
+  }
 
   return {
     showTransfer: showTransfer,
@@ -186,7 +190,8 @@ angular.module('cesium.modal.services', [])
     showJoinMember: showJoinMember,
     showJoinWallet: showJoinWallet,
     showHelp: showHelp,
-    showAccountSecurity: showAccountSecurity
+    showAccountSecurity: showAccountSecurity,
+    showLicense: showLicense
   };
 
 });

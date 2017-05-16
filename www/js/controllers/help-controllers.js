@@ -288,7 +288,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        return $state.go(UIUtils.screen.isSmall() ? 'app.currency' : 'app.currency_view_lg')
+        return $state.go(UIUtils.screen.isSmall() ? 'app.currency' : 'app.currency_lg')
           .then(function () {
             return $scope.showHelpTip('helptip-currency-mass-member', {
               bindings: {
@@ -321,7 +321,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             content: 'HELP.TIP.CURRENCY_CHANGE_UNIT',
             contentParams: contentParams,
             icon: {
-              position: UIUtils.screen.isSmall() ? 'right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'right' : undefined
             }
           }
         });
@@ -334,7 +334,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
             content: 'HELP.TIP.CURRENCY_CHANGE_UNIT_TO_RELATIVE',
             contentParams: contentParams,
             icon: {
-              position: UIUtils.screen.isSmall() ? 'right' : 'center'
+              position: UIUtils.screen.isSmall() ? 'right' : undefined
             }
           }
         });

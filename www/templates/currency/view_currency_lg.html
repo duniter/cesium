@@ -1,7 +1,12 @@
 <ion-view left-buttons="leftButtons"
           cache-view="false">
-    <ion-nav-title>
-     {{'CURRENCY.VIEW.TITLE' | translate}} {{id}}
+    <ion-nav-title bind-notifier="{ rebind:formData.useRelative }">
+      <span>
+        {{'CURRENCY.VIEW.TITLE' | translate}} {{id}}
+      </span>
+      <span ng-if="!loading">
+        {{formData.currency}} (<span ng-bind-html=":rebind:formData.currency | currencySymbol:formData.useRelative"></span>)
+      </span>
     </ion-nav-title>
 
     <ion-nav-buttons side="secondary">
@@ -13,6 +18,30 @@
     </ion-nav-buttons>
 
     <ion-content>
+
+      <!-- Buttons bar-->
+      <div class="hidden-xs hidden-sm padding text-center">
+        <button class="button button-stable icon-right ink"
+                ng-if="formData.licenseUrl"
+                ng-click="showLicenseModal()">
+          <i class="icon ion-document-text"></i>&nbsp;
+          {{'CURRENCY.VIEW.BTN_SHOW_LICENSE' | translate}}
+        </button>
+
+        <button class="button button-stable button-small-padding icon ion-loop ink"
+                ng-click="refresh()"
+                title="{{'COMMON.BTN_REFRESH' | translate}}">
+        </button>
+
+        &nbsp;&nbsp;
+
+        <button class="button button-stable icon-right ink"
+                ng-click="showActionsPopover($event)">
+          &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
+          {{:locale:'COMMON.BTN_OPTIONS' | translate}}
+        </button>
+      </div>
+
       <div class="row responsive-sm">
         <!-- currency -->
         <div class="col list">
@@ -21,17 +50,22 @@
           </div>
           <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
 
+          <a name="helptip-currency-rules-anchor"></a>
+          <div class="item item-divider" id="helptip-currency-rules">
+            <span translate>CURRENCY.VIEW.MONEY_RULES_DIVIDER</span>
+          </div>
+
+          <ng-include src="'templates/currency/items_parameters_rules.html'"></ng-include>
+
         </div>
 
         <!-- wot -->
         <div class="col list">
           <div class="item item-divider">
-            <span translate>CURRENCY.VIEW.TAB_WOT</span>
+            <span translate>CURRENCY.VIEW.WOT_DIVIDER</span>
           </div>
           <ng-include src="'templates/currency/items_wot.html'"></ng-include>
 
-          <!-- Allow extension here -->
-          <cs-extension-point name="wot"></cs-extension-point>
         </div>
       </div>
     </ion-content>

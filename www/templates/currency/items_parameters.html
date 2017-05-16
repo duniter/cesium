@@ -1,6 +1,6 @@
 <div bind-notifier="{ rebind:formData.useRelative }">
 
-  <ion-item class="item-icon-left item-text-wrap">
+  <ion-item class="item-icon-left item-text-wrap visible-xs visible-sm">
     <i class="icon ion-android-bookmark"></i>
     <span translate>CURRENCY.VIEW.CURRENCY_NAME</span>
     <div class="item-note dark" ng-if="!loading">
@@ -14,10 +14,22 @@
       <span translate>CURRENCY.VIEW.MASS</span>
       <span class="gray">(M<sub>t</sub>)</span>
     </div>
-    <span class="badge badge-stable"
+    <span class="badge badge-calm"
           ng-if="!loading"
           ng-bind-html=":rebind:formData.M | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
   </ion-item>
+
+  <ion-item class="item-icon-left item-text-wrap">
+    <i class="icon ion-arrow-graph-up-right"></i>
+    <div class="col col-60">
+      <span translate>CURRENCY.VIEW.C_ACTUAL</span>
+      <span class="gray">(c<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)</span>
+    </div>
+    <span class="badge badge-stable">{{formData.cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
+  </ion-item>
+
+  <!-- Allow extension here -->
+  <cs-extension-point name="parameters-actual"></cs-extension-point>
 
   <ion-item id="helptip-currency-mass-member" class="item-icon-left item-text-wrap">
     <i class="icon ion-pie-graph"></i>
@@ -31,9 +43,6 @@
           ng-bind-html=":rebind:formData.MoverN | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
     </span>
   </ion-item>
-
-  <!-- Allow extension here -->
-  <cs-extension-point name="parameters-actual"></cs-extension-point>
 
   <ion-item class="item-icon-left item-text-wrap">
     <i class="icon ion-load-c"></i>
@@ -52,29 +61,20 @@
     </div>
   </ion-item>
 
-  <ion-item class="item-icon-left item-text-wrap">
-    <i class="icon ion-arrow-graph-up-right"></i>
-    <div class="col col-60">
-      <span translate>CURRENCY.VIEW.C_ACTUAL</span>
-      <span class="gray">(c<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)</span>
-    </div>
-    <span class="badge badge-stable">{{formData.cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
-  </ion-item>
-
   <div class="item item-toggle dark">
-    <span translate>COMMON.BTN_RELATIVE_UNIT</span>
+    <div class="item-label text-right gray" translate>COMMON.BTN_RELATIVE_UNIT</div>
     <label class="toggle toggle-royal" id="helptip-currency-change-unit">
       <input type="checkbox" ng-model="formData.useRelative">
       <div class="track">
-          <div class="handle"></div>
+        <div class="handle"></div>
       </div>
     </label>
   </div>
 
-  <a nam="helptip-currency-rules-anchor"></a>
-  <div id="helptip-currency-rules"
-       class="item item-divider">
-      <span translate>CURRENCY.VIEW.MONEY_RULES_DIVIDER</span>
+
+  <a name="helptip-currency-rules-anchor"></a>
+  <div class="item item-divider" id="helptip-currency-rules">
+    <span translate>CURRENCY.VIEW.MONEY_RULES_DIVIDER</span>
   </div>
 
   <ion-item class="item-icon-left item-text-wrap">
@@ -86,11 +86,11 @@
     <!-- compat with Duniter 0.90 -->
     <span class="item-note dark" ng-if="!loading && !formData.udReevalTime0">{{formData.c*100 | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
     <!-- Duniter 1.0+ -->
-    <span class="item-note dark" ng-if="!loading && formData.udReevalTime0">{{formData.c*100 | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dtReeval | formatDuration}}</span>
+    <span class="badge badge-stable" ng-if="!loading && formData.udReevalTime0">{{formData.c*100 | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dtReeval | formatDuration}}</span>
   </ion-item>
 
   <!-- only Duniter 1.0+ -->
-  <ion-item class="item-icon-left item-text-wrap" ng-if="formData.udReevalTime0">
+  <ion-item class="item-icon-left item-text-wrap" ng-if="formData.udReevalTime0 && formData.allRules">
     <i class="icon ion-load-c"></i>
     <b class="ion-clock icon-secondary" style="font-size: 18px; left: 36px; top: -12px;"></b>
     <div class="col col-60">
@@ -104,7 +104,7 @@
   </ion-item>
 
   <!-- only Duniter 1.0+ -->
-  <ion-item class="item-icon-left item-text-wrap" ng-if="formData.udReevalTime0">
+  <ion-item class="item-icon-left item-text-wrap" ng-if="formData.udReevalTime0 && formData.allRules">
     <i class="icon ion-load-c"></i>
     <b class="ion-calendar icon-secondary" style="font-size: 18px; left: 36px; top: -12px;"></b>
     <div class="col col-60">
@@ -115,7 +115,7 @@
     </span>
   </ion-item>
 
-  <ion-item  class="item-icon-left item-text-wrap">
+  <ion-item  class="item-icon-left item-text-wrap" ng-if="formData.allRules">
     <i class="icon ion-load-c"></i>
     <div class="col col-60">
       <span translate>CURRENCY.VIEW.UD_RULE</span>
@@ -126,5 +126,15 @@
     <!-- Duniter 1.0+ -->
     <span class="item-note dark" ng-if="!loading && formData.udReevalTime0">{{'COMMON.UD'|translate}}<sub>{{formData.dt|formatPeriod}}</sub>(t<sub>{{'CURRENCY.VIEW.REEVAL_SYMBOL'|translate}}</sub> - dt<sub>{{'CURRENCY.VIEW.REEVAL_SYMBOL'|translate}}</sub>)+ c<sup>2</sup> * (M/N)(t<sub>{{'CURRENCY.VIEW.REEVAL_SYMBOL'|translate}}</sub> - dt<sub>{{'CURRENCY.VIEW.REEVAL_SYMBOL'|translate}}</sub>) / dt<sub>{{'CURRENCY.VIEW.REEVAL_SYMBOL'|translate}}</sub></span>
   </ion-item>
+
+  <div class="item item-toggle dark">
+    <div class="item-label text-right gray" translate>CURRENCY.VIEW.DISPLAY_ALL_RULES</div>
+    <label class="toggle toggle-royal">
+      <input type="checkbox" ng-model="formData.allRules">
+      <div class="track">
+        <div class="handle"></div>
+      </div>
+    </label>
+  </div>
 
 </div>

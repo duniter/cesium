@@ -220,12 +220,20 @@
       "SIG_WINDOW": "Délai limite de prise en compte d'une certification",
       "STEP_MAX": "Distance maximale, par les certifications, entre un nouvel entrant et les membres référents",
       "WOT_RULES_DIVIDER": "Règles de la toile de confiance",
-      "SENTRIES": "Nombre de certifications requises pour être membre référent",
+      "SENTRIES": "Nombre de certifications requises (émises <b>et</b> reçues) pour être membre référent",
       "SENTRIES_FORMULA": "Nombre de certification requises pour être un membre référent (formule)",
       "XPERCENT":"Pourcentage minimum de membres référents à atteindre pour respecter la règle de distance",
       "AVG_GEN_TIME": "Temps moyen entre deux blocs",
       "CURRENT": "actuel",
-      "MATH_CEILING": "PLAFOND"
+      "MATH_CEILING": "PLAFOND",
+      "DISPLAY_ALL_RULES": "Afficher toutes les règles ?",
+      "BTN_SHOW_LICENSE": "Voir la licence",
+      "WOT_DIVIDER": "Toile de confiance"
+    },
+    "LICENSE": {
+      "TITLE": "License de la monnaie",
+      "BTN_DOWNLOAD": "Télécharger le fichier",
+      "NO_LICENSE_FILE": "Fichier de license non trouvé."
     }
   },
   "NETWORK": {
@@ -529,9 +537,18 @@
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
     "LOAD_NEWCOMERS_FAILED": "Echec du chargement des nouveaux membres.",
     "LOAD_PENDING_FAILED": "Echec du chargement des inscriptions en attente.",
-    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuerTING",
+    "ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION": "Vous devez <b>être membre</b> pour pouvoir effectuer cette action.",
+    "ONLY_SELF_CAN_EXECUTE_THIS_ACTION": "Vous devez avoir <b>publié votre identité</b> pour pouvoir effectuer cette action.",
+    "GET_BLOCK_FAILED": "Echec de la récupération du bloc",
+    "INVALID_BLOCK_HASH": "Bloc non trouvé (hash différent)",
+    "REVOCATION_FAILED": "Echec de la révocation.",
+    "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identifiant secret ou mot de passe incorrects",
+    "RECOVER_ID_FAILED": "Echec de la récupération des identifiants",
+    "LOAD_FILE_FAILED" : "Echec du chargement du fichier",
+    "ONLY_TEXT_FILE": "Vous devez selectionner un fichier texte",
     "EXISTING_ACCOUNT": "Vos identifiants correspondent à un compte déjà existant, dont la <a ng-click=\"showHelpModal('pubkey')\">clef publique</a> est :",
-    "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé."
+    "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
+    "GET_LICENSE_FILE_FAILED": "Récupérer du fichier de license impossible"
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -595,8 +612,8 @@
       "CURRENCY_WOT": "Le <b>nombre de membres</b> montre l'importance de la communauté et permet de <b>suivre son évolution</b>.",
       "CURRENCY_MASS": "Suivez ici la <b>quantité totale de monnaie</b> existante et sa <b>répartition moyenne</b> par membre.<br/><br/>Ceci permet de juger de l'<b>importance d'un montant</b>, vis à vis de ce que <b>possède les autres</b> sur leur compte (en moyenne).",
       "CURRENCY_UNIT_RELATIVE": "L'unité utilisée (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) signifie que les montants en {{currency|capitalize}} ont été divisés par le <b>Dividende Universel</b> (DU).<br/><br/><small>Cette unité relative est <b>pertinente</b>, car stable malgré la quantitié de monnaie qui augmente en permanence.</small>",
-      "CURRENCY_CHANGE_UNIT": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants <b>directement en {{currency|capitalize}}</b> (plutôt qu'en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
-      "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "Ce bouton permet de <b>changer d'unité</b>, pour visualiser les montants en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, c'est à dire relativement au Dividende Universel (le montant co-produit par chaque membre).",
+      "CURRENCY_CHANGE_UNIT": "L'option <b>{{'COMMON.BTN_RELATIVE_UNIT'|translate}}</b> permet de <b>changer d'unité</b>, pour visualiser les montants <b>directement en {{currency|capitalize}}</b> (plutôt qu'en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
+      "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "L'option <b>{{'COMMON.BTN_RELATIVE_UNIT'|translate}}</b> permet de <b>changer d'unité</b>, pour visualiser les montants en &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, c'est à dire relativement au Dividende Universel (le montant co-produit par chaque membre).",
       "CURRENCY_RULES": "Les <b>règles</b> de la monnaie fixent son fonctionnement <b>exact et prévisible</b>.<br/><br/>Véritable ADN de la monnaie, elles rendent son code monétaire <b>lisible et transparent</b>.",
       "MENU_BTN_NETWORK": "Le menu <b>{{'MENU.NETWORK'|translate}}</b> permet la consultation de l'état du réseau.",
       "NETWORK_BLOCKCHAIN": "Toutes les opérations de la monnaie sont enregistrées dans un grand livre de compte <b>public et infalsifiable</b>, appellé aussi <b>chaine de blocs</b> (<em>BlockChain</em> en anglais).",
