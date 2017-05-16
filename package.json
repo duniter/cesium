@@ -84,6 +84,7 @@
     "cordova-plugin-vibration",
     "cordova-plugin-dialogs",
     "cordova-plugin-minisodium",
+    "cordova-plugin-secure-storage",
     {
       "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
       "id": "phonegap-plugin-barcodescanner"
