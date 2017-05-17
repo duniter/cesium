@@ -248,7 +248,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (!data.loaded) return undefined; // undefined if not full loaded
       return !data.pubkey ||
         (!data.isMember &&
-        (!data.requirements || !data.requirements.pendingMembership) &&
+        (!data.requirements || (!data.requirements.pendingMembership && !data.requirements.wasMember)) &&
          !data.tx.history.length &&
          !data.tx.pendings.length);
     },
@@ -371,6 +371,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         canMembershipOut: false,
         needRenew: false,
         pendingMembership: false,
+        wasMember: false,
         certificationCount: 0,
         needCertifications: false,
         needCertificationCount: 0,
@@ -415,6 +416,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               score += (100000000   * (idty.membershipPendingExpiresIn > 0 ? 1 : 0));
               score += (10000000    * (!idty.expired ? 1 : 0));
               score += (1000000     * (!idty.outdistanced ? 1 : 0));
+              score += (100000      * (idty.wasMember ? 1 : 0));
               var certCount = !idty.expired && idty.certifications ? idty.certifications.length : 0;
               score += (1         * (certCount ? certCount : 0));
               score += (1         * (!certCount && idty.membershipPendingExpiresIn > 0 ? idty.membershipPendingExpiresIn/1000 : 0));
@@ -428,10 +430,13 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
           // Compute useful fields
           idty.needSelf = false;
-          idty.needMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn <= 0 );
+          idty.wasMember = angular.isDefined(idty.wasMember) ? idty.wasMember : false; // Compat with Duniter 0.9
+          idty.needMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn <= 0 && !idty.wasMember);
           idty.needRenew = (!idty.needMembership &&
                             idty.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
-                            idty.membershipPendingExpiresIn <= 0);
+                            idty.membershipPendingExpiresIn <= 0) ||
+                           (idty.wasMember && idty.membershipExpiresIn === 0 &&
+                            idty.membershipPendingExpiresIn === 0);
           idty.canMembershipOut = (idty.membershipExpiresIn > 0);
           idty.pendingMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn > 0);
           idty.certificationCount = (idty.certifications) ? idty.certifications.length : 0;

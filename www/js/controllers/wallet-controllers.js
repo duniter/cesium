@@ -280,7 +280,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
    */
   $scope.renewMembership = function(confirm) {
 
-    if (!$scope.formData.isMember) {
+    if (!$scope.formData.isMember && !$scope.formData.requirements.wasMember) {
       return UIUtils.alert.error("ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION");
     }
     if (!confirm && !$scope.formData.requirements.needRenew) {
