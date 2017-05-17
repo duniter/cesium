@@ -1,7 +1,7 @@
 
 angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.services'])
 
-.factory('csCurrency', function($q, BMA, Api) {
+.factory('csCurrency', function($q, BMA, Api, $rootScope) {
   'ngInject';
 
   factory = function(id) {
@@ -9,7 +9,10 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
     var
       data = {
         loaded: false,
-        currencies: null
+        currencies: null,
+        cache: {
+          loadPromise: null
+        }
       },
       api = new Api(this, "csCurrency-" + id),
 
@@ -18,10 +21,17 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
           return $q.when(data);
         }
 
+        // Previous load not finished: return the existing promise - fix #452
+        if (data.cache.loadPromise) { // load only once
+          return $q.when(data.cache.loadPromise);
+        }
+
         data.currencies = [];
 
+        var now = new Date().getTime();
+
         // Load currency from default node
-        return BMA.blockchain.parameters()
+        var promise = BMA.blockchain.parameters()
           .then(function(res){
             data.currencies.push({
                 name: res.currency,
@@ -37,14 +47,20 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
             return api.data.raisePromise.load(data);
           })
           .then(function() {
+            console.debug('[currency] Loaded in ' + (new Date().getTime() - now) + 'ms');
             data.loaded = true;
+            delete data.cache.loadJobPromise;
             return data;
           })
           .catch(function(err) {
             data.loaded = false;
             data.currencies = [];
+            delete data.cache.loadJobPromise;
             throw err;
           });
+
+        data.cache.loadPromise = promise;
+        return promise;
       },
 
       getAll = function() {
