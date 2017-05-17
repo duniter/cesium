@@ -141,9 +141,13 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
 
   function onWalletFinishLoad(data, deferred) {
     deferred = deferred || $q.defer();
+
+    // Reset events
+    csWallet.events.cleanByContext('cesium+');
+
     // If membership pending, but not enough certifications: suggest to fill user profile
     if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
-      data.events.push({type:'info',message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE'});
+      csWallet.events.add({type:'info', message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE', context: 'cesium+'});
     }
 
     console.debug('[ES] [user] Loading full user profile...');

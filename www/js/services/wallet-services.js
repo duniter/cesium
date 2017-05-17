@@ -1772,7 +1772,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         out: membership(false)
       },
       events: {
-        add: addEvent
+        add: addEvent,
+        cleanByContext: cleanEventsByContext
       },
       certify: certify,
       store: store,
