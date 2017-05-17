@@ -8,22 +8,25 @@
     </button>
     <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
             ng-click="slidePrev()"
-            ng-if="slides.slider.activeIndex">
+            ng-if="slideBehavior.hasPreviousButton">
     </button>
     <button class="button button-icon button-clear icon ion-ios-help-outline visible-xs"
-            ng-if="slides.slider.activeIndex > 1 && !isLastSlide"
-            ng-click="showHelpModal()"></button>
+            ng-if="slideBehavior.helpAnchor"
+            ng-click="showHelpModal(slideBehavior.helpAnchor)">
+    </button>
 
     <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
 
+    <!-- next -->
     <button class="button button-clear icon-right visible-xs"
-            ng-if="!isLastSlide && slides.slider.activeIndex > 1"
+            ng-if="slideBehavior.hasNextButton"
             ng-click="doNext()">
       <span translate>COMMON.BTN_NEXT</span>
       <i class="icon ion-ios-arrow-right"></i>
     </button>
+    <!-- send -->
     <button class="button button-clear icon-right visible-xs"
-            ng-if="isLastSlide"
+            ng-if="slideBehavior.hasSendButton"
             ng-click="doNewAccount()">
       <i class="icon ion-android-send"></i>
     </button>

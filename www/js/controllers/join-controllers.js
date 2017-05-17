@@ -82,10 +82,10 @@ function JoinChooseAccountTypeModalController($scope, $timeout, UIUtils, csCurre
   };
 
   // TODO DEV only
-  /*$timeout(function() {
-   $scope.selectCurrency('g1');
-   $scope.selectAccountTypeAndClose('member');
-   }, 400);*/
+  //$timeout(function() {
+   //$scope.selectCurrency('g1');
+   //$scope.selectAccountTypeAndClose('member');
+   //}, 400);
 }
 
 
@@ -106,7 +106,8 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.slideBehavior = {};
   $scope.loading = true;
 
-  $scope.isLicenseRead = false;
+
+  $scope.isLicenseRead = false; 
   $scope.showUsername = false;
   $scope.showPassword = false;
   $scope.formData.computing=false;
@@ -328,7 +329,12 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   };
 
   $scope.downloadRevocationRegistration = function() {
-    return UIUtils.alert.download('DOWNLOAD.POPUP_REVOKE_MESSAGE', 'DOWNLOAD.POPUP_TITLE')
+    return UIUtils.alert.confirm('DOWNLOAD.POPUP_REVOKE_MESSAGE', 'DOWNLOAD.POPUP_TITLE', {
+        cssClass: 'warning',
+        okText: 'COMMON.BTN_DOWNLOAD',
+        okType: 'button-assertive',
+        cancelText: 'COMMON.BTN_LATER'
+      })
     .then(function() {
       return csWallet.downloadRevocation();
     });
