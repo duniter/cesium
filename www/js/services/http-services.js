@@ -210,6 +210,7 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
 
   function closeAllWs() {
     if (sockets.length > 0) {
+      console.debug('[http] Closing all websocket...');
       _.forEach(sockets, function(sock) {
         sock.close();
       });

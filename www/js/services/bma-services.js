@@ -517,13 +517,6 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       matches = exports.regexp.BMATOR_ENDPOINT.exec(endpoint);
       console.log("Invalid endpoint:", endpoint);
       if (matches) {
-
-        console.log({
-          "dns": matches[2] || '',
-          "port": matches[4] || 80,
-          "useSsl": false,
-          "useTor": true
-        });
         return {
           "dns": matches[2] || '',
           "port": matches[4] || 80,
