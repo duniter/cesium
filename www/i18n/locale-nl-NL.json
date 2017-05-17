@@ -21,6 +21,7 @@
     "BTN_NEXT": "Volgende",
     "BTN_CANCEL": "Annuleer",
     "BTN_CLOSE": "Sluit",
+    "BTN_LATER": "Later",
     "BTN_LOGIN": "Aanmelden",
     "BTN_LOGOUT": "Uitloggen",
     "BTN_ADD_ACCOUNT": "Nieuwe Rekening",
@@ -187,7 +188,8 @@
   "CURRENCY": {
     "SELECT": {
       "TITLE": "Valuta's",
-      "CURRENCIES": "Bekende valuta's"
+      "CURRENCIES": "Bekende valuta's",
+      "MEMBERS_COUNT": "{{membersCount}} leden"
     },
     "VIEW": {
       "TITLE": "Valuta",
@@ -202,7 +204,7 @@
       "SHARE": "Aandeel per lid",
       "UD": "Universeel Dividend",
       "C_ACTUAL": "Huidige toename",
-      "TIME": "Blockchain tijd",
+      "MEDIAN_TIME": "Blockchain tijd",
       "POW_MIN": "Algemene moeilijkheidsgraad",
       "MONEY_RULES_DIVIDER": "Monetaire regels",
       "C_RULE": "Toename",
@@ -216,12 +218,36 @@
       "XPERCENT":"Minimum percentage schildwachten te bereiken om de afstandsregel te respecteren"
     }
   },
+  "NETWORK": {
+    "VIEW": {
+      "MEDIAN_TIME": "Blockchain tijd",
+      "LOADING_PEERS": "Even geduld...",
+      "NODE_ADDRESS": "knooppunt adres",
+      "ENDPOINTS": {
+        "BMAS": "Endpoint (SSL)",
+        "BMATOR": "Endpoint TOR",
+        "ES_USER_API": "Knoop Cesium+"
+      }
+    },
+    "INFO": {
+      "ONLY_SSL_PEERS": "Les noeuds non SSL ont un affichage dégradé, car Cesium fonctionne en mode HTTPS."
+    }
+  },
   "PEER": {
-    "TITLE": "Knoop",
     "PEERS": "Knopen",
-    "KNOWN_PEERS": "Bekende knopen",
     "SIGNED_ON_BLOCK": "Getekend op blok",
-    "MIRROR": "spiegel"
+    "MIRROR": "spiegel",
+    "VIEW": {
+      "TITLE": "Knoop",
+      "OWNER": "Maakt deel uit van",
+      "SHOW_RAW_CURRENT_BLOCK": "Zie het huidige blok",
+      "KNOWN_PEERS": "Bekende knopen :",
+      "GENERAL_DIVIDER": "Algemene informatie",
+      "ERROR": {
+        "LOADING_TOR_NODE_ERROR": "Kan knooppunt niet worden opgehaald. De wachttijd wordt overschreden.",
+        "LOADING_NODE_ERROR": "Kan knooppunt niet worden opgehaald"
+      }
+    }
   },
   "WOT": {
     "SEARCH_HELP": "Zoeken (lid of publieke sleutel)",
@@ -239,6 +265,7 @@
     "GENERAL_DIVIDER": "Algemene informatie",
     "TECHNICAL_DIVIDER": "Technishe informatie",
     "BTN_CERTIFY": "Certificeren",
+    "BTN_YES_CERTIFY": "Ja, Certificeren",
     "BTN_SELECT_AND_CERTIFY": "Nieuwe certificatie",
     "VIEW": {
       "POPOVER_SHARE_TITLE": "Identiteit {{title}}"
@@ -266,7 +293,8 @@
       "PENDING_LIST": "Certificaties in afwachting",
       "RECEIVED": "Ontvangen certificaties",
       "RECEIVED_BY": "Certificaties ontvanged door {{uid}}",
-      "ERROR": "Ontvangen vertificaties met fout"
+      "ERROR": "Ontvangen vertificaties met fout",
+      "SENTRY_MEMBER": "Referent lid"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Verzonden certificaties",
@@ -286,7 +314,8 @@
     "PASSWORD": "Wachtwoord",
     "PASSWORD_HELP": "Wachtwoord ter beveiliging van uw rekening",
     "NO_ACCOUNT_QUESTION": "Nog geen rekening?",
-    "CREATE_ACCOUNT": "Open een rekening"
+    "CREATE_ACCOUNT": "Open een rekening",
+    "FORGOTTEN_ID": "Wachtwoord vergeten?"
   },
   "ACCOUNT": {
     "TITLE": "Mijn rekening",
@@ -314,6 +343,8 @@
     "BTN_MEMBERSHIP_RENEW_DOTS": "Lidmaatschap verlengen...",
     "BTN_MEMBERSHIP_OUT_DOTS": "Lidmaatschap opzeggen...",
     "BTN_SEND_IDENTITY_DOTS": "Identiteit publiceren...",
+    "BTN_SECURITY_DOTS": "Account en veiligheid...",
+    "BTN_SHOW_DETAILS": "Tonen technische informatie",
     "BTN_REVOKE": "Deze identiteit<span class='hidden-xs hidden-sm'> definitief</span> opzeggen...",
     "NEW": {
       "TITLE": "Registratie",
@@ -339,7 +370,9 @@
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Waarschuwing:</b> je wachtwoord en pseudoniem kunnen hierna niet gewijzigd worden.<br/><b>Zorg dat ze goed onthoudt!</b><br/><b>Weet je zeker</b> dat je deze portefeilleaanvraag wil verzenden?",
       "PSEUDO_AVAILABLE": "Deze naam is beschikbaar",
       "PSEUDO_NOT_AVAILABLE": "Deze gebruikersnaam is niet beschikbaar",
-      "INFO_LICENSE": "Om de valuta te sluiten, vragen wij u om te lezen en deze licentie te accepteren."
+      "INFO_LICENSE": "Om de valuta te sluiten, vragen wij u om te lezen en deze licentie te accepteren.",
+      "BTN_ACCEPT": "Ik accepteer",
+      "BTN_ACCEPT_LICENSE": "Ik ga akkoord met de licentie"
     },
     "POPUP_REGISTER": {
       "TITLE": "Voer een pseudoniem in",
@@ -458,7 +491,7 @@
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Intrekking File</b>",
-    "POPUP_REVOKE_MESSAGE": "We moeten nu herstellen van de herroeping bestand, dan kunt u downloaden door te klikken op de onderstaande knop.</br></br>De herroeping bestand zullen hun rekening (in het geval van de rekening van diefstal te annuleren, een verandering van de identifier, een ten onrechte gemaakte account etc.), dus het is<b> belangrijk om het op te slaan op een veilige plaats.</b>"
+    "POPUP_REVOKE_MESSAGE": "Om uw account te beveiligen, het downloaden van de <b>Account intrekking document</b>. U zult indien nodig om uw account (annuleren in het geval van de rekening van diefstal, een verandering van de identifier, een ten onrechte gemaakte account, etc.).<br/><br/><b>Bewaar deze op een veilige plaats.</b>"
   },
   "HELP": {
     "TITLE": "Online help",

@@ -25,16 +25,6 @@
     <!-- Allow extension here -->
     <cs-extension-point name="wot-actual"></cs-extension-point>
 
-    <ion-item  class="item-icon-left item-text-wrap">
-      <i class="icon ion-ribbon-b"></i>
-      <b class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
-      <span class="col col-75" translate>CURRENCY.VIEW.SENTRIES</span>
-      <span class="badge badge-royal" ng-if="!loading">{{formData.sentries}}</span>
-    </ion-item>
-
-    <!-- Allow extension here -->
-    <cs-extension-point name="wot"></cs-extension-point>
-
     <div class="item item-divider">
       <span translate>CURRENCY.VIEW.WOT_RULES_DIVIDER</span>
     </div>
@@ -42,25 +32,22 @@
     <ion-item class="item-icon-left item-text-wrap">
       <i class="icon ion-ribbon-b"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_QTY_RULE</span>
-      <span class="badge badge-positive" ng-if="!loading">{{formData.sigQty}}</span>
+      <span class="badge badge-balanced" ng-if="!loading">{{formData.sigQty}}</span>
     </ion-item>
 
-
     <ion-item class="item-icon-left item-text-wrap">
-      <i class="icon ion-steam"></i>
-      <b class="ion-person icon-secondary" style="left: 38px; top: -17px"></b>
-      <div class="col col-75">
-        <span ng-bind-html="'CURRENCY.VIEW.STEP_MAX'|translate"></span>
-        <span class="gray">(stepMax)</span>
-      </div>
-      <span class="badge badge-assertive" ng-if="!loading">{{formData.stepMax}}</span>
+      <i class="icon ion-person"></i>
+      <b class="ion-clock icon-secondary" style="font-size: 18px; left: 33px; top: -12px;"></b>
+      <span class="col col-60" translate>CURRENCY.VIEW.MS_WINDOW</span>
+      <span class="badge badge-assertive" ng-if="!loading">{{formData.msWindow | formatDuration}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
       <i class="icon ion-ribbon-a"></i>
       <span class="col col-75" translate>CURRENCY.VIEW.SIG_STOCK</span>
-      <span class="badge badge-energized" ng-if="!loading">{{formData.sigStock}}</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.sigStock}}</span>
     </ion-item>
+
 
     <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
       <i class="icon ion-ribbon-b"></i>
@@ -78,18 +65,34 @@
       <span class="badge badge-stable" ng-if="!loading">{{formData.sigPeriod | formatDuration}}</span>
     </ion-item>
 
-
     <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
-      <i class="icon ion-pull-request"></i>
-      <span class="col col-75" translate>CURRENCY.VIEW.XPERCENT</span>
-      <span class="badge badge-stable" ng-if="!loading">{{formData.xpercent*100| formatNumeral: '0,0'}} %</span>
+      <i class="icon ion-steam"></i>
+      <b class="ion-person icon-secondary" style="left: 38px; top: -17px"></b>
+      <div class="col col-75">
+        <span ng-bind-html="'CURRENCY.VIEW.STEP_MAX'|translate"></span>
+        <span class="gray">(stepMax)</span>
+      </div>
+      <span class="badge badge-assertive" ng-if="!loading">{{formData.stepMax}}</span>
     </ion-item>
 
     <ion-item  class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
       <i class="icon ion-ribbon-b"></i>
       <b class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
-      <span ng-bind-html="'CURRENCY.VIEW.SENTRIES_FORMULA'|translate"></span>
+      <span class="col col-75" translate>CURRENCY.VIEW.SENTRIES</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.sentries}}</span>
+    </ion-item>
+
+    <ion-item  class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
+      <i class="icon ion-ribbon-b"></i>
+      <b class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
+      <span class="col col-75" translate>CURRENCY.VIEW.SENTRIES_FORMULA</span>
       <span class="item-note dark" ng-if="!loading">{{'CURRENCY.VIEW.MATH_CEILING'| translate}}( N<sub>t</sub><sup>^ (1 / stepMax)</sup>)</span>
+    </ion-item>
+
+    <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
+      <i class="icon ion-pull-request"></i>
+      <span class="col col-75" translate>CURRENCY.VIEW.XPERCENT</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.xpercent*100| formatNumeral: '0,0'}} %</span>
     </ion-item>
 
     <div class="item item-toggle dark">

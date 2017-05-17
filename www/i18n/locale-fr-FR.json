@@ -21,6 +21,7 @@
     "BTN_NEXT": "Suivant",
     "BTN_CANCEL": "Annuler",
     "BTN_CLOSE": "Fermer",
+    "BTN_LATER": "Plus tard",
     "BTN_LOGIN": "Se connecter",
     "BTN_LOGOUT": "Déconnexion",
     "BTN_ADD_ACCOUNT": "Nouveau compte",
@@ -218,10 +219,11 @@
       "SIG_STOCK": "Nombre maximal de certifications émises par membre",
       "SIG_PERIOD": "Délai minimal d'attente entre 2 certifications successives émises par une même personne",
       "SIG_WINDOW": "Délai limite de prise en compte d'une certification",
+      "MS_WINDOW": "Délai limite de prise en compte d'une demande d'adhésion comme membre",
       "STEP_MAX": "Distance maximale, par les certifications, entre un nouvel entrant et les membres référents",
       "WOT_RULES_DIVIDER": "Règles de la toile de confiance",
-      "SENTRIES": "Nombre de certifications requises (émises <b>et</b> reçues) pour être membre référent",
-      "SENTRIES_FORMULA": "Nombre de certification requises pour être un membre référent (formule)",
+      "SENTRIES": "Nombre de certifications (émises <b>et</b> reçues) pour devenir membre référent",
+      "SENTRIES_FORMULA": "Nombre de certification (émises <b>et</b> reçues) pour devenir membre référent (formule)",
       "XPERCENT":"Pourcentage minimum de membres référents à atteindre pour respecter la règle de distance",
       "AVG_GEN_TIME": "Temps moyen entre deux blocs",
       "CURRENT": "actuel",
@@ -586,7 +588,7 @@
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Fichier de révocation</b>",
-    "POPUP_REVOKE_MESSAGE": "Il faut maintenant récupérer le fichier de révocation, veuillez le télécharger en cliquant sur le boutton ci-dessous.</br></br> Le fichier de révocation permet d'annuler son compte (en cas d'un vol de compte, d'un changement d'identifiant, d'un compte créé à tort etc.), il est donc <b>important de le stocker en lieu sûr</b>."
+    "POPUP_REVOKE_MESSAGE": "Pour sécuriser votre compte, veuillez télécharger le <b>document de révocation de compte</b>. Il vous permettra le cas échéant d'annuler votre compte (en cas d'un vol de compte, d'un changement d'identifiant, d'un compte créé à tort, etc.).<br/><br/><b>Veuillez le stocker en lieu sûr.</b>"
   },
   "HELP": {
     "TITLE": "Aide en ligne",

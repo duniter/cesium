@@ -10,51 +10,37 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 60000,
-	"fallbackLanguage": "fr-FR",
-	"defaultLanguage": "fr-FR",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": false,
-	"timeout": 6000,
+	"timeout": 10000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"useLocalStorage": true,
-<<<<<<< Updated upstream
 	"useRelative": false,
 	"initPhase": false,
-	"expertMode": false,
-=======
-	"useRelative": true,
 	"expertMode": true,
->>>>>>> Stashed changes
 	"decimalCount": 2,
+	"httpsMode": false,
 	"helptip": {
 		"enable": false,
-		"installDocUrl": {
-			"fr-FR": "http://www.le-sou.org/devenir-noeud/",
-			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-		}
+		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 	},
 	"license": {
-		"fr-FR": "license_g1-fr.txt",
-		"en": "license_g1.txt"
+		"fr-FR": "license/license_g1-fr-FR.txt",
+		"en": "license/license_g1-en.txt"
 	},
 	"node": {
-		"host": "localhost",
-		"port": 9600
+		"host": "g1.duniter.org",
+		"port": "443"
 	},
 	"plugins": {
 		"es": {
-			"enable": false,
+			"enable": true,
 			"askEnable": false,
 			"host": "localhost",
-			"port": 9200,
-			"wsPort": 9400,
-			"notifications": {
-				"txSent": true,
-				"txReceived": true,
-				"certSent": true,
-				"certReceived": true
-			}
+			"port": "9200",
+			"wsPort": "9400"
 		},
 		"graph": {
 			"enable": true
@@ -64,7 +50,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "0.12.2",
-	"build": "2017-05-16T14:44:34.619Z",
+	"build": "2017-05-17T09:36:43.035Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

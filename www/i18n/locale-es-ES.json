@@ -21,6 +21,7 @@
     "BTN_NEXT": "Siguiente",
     "BTN_CANCEL": "Anular",
     "BTN_CLOSE": "Cerrar",
+    "BTN_LATER": "Más tarde",
     "BTN_LOGIN": "Connectarse",
     "BTN_LOGOUT": "Desconexión",
     "BTN_ADD_ACCOUNT": "Nueva cuenta",
@@ -217,7 +218,8 @@
       "SIG_QTY_RULE": "Número de certificaciónes requeridas para estar miembro",
       "SIG_STOCK": "Número máximo de certificaciónes emitidas por miembros",
       "SIG_PERIOD": "Plazo mínimo de espera entre 2 certificaciónes sucesivas emitidas por la misma persona",
-      "SIG_WINDOW": "Plazo límite para toma en cuenta de una certificación ",
+      "SIG_WINDOW": "Plazo límite para toma en cuenta de una certificación",
+      "MS_WINDOW": "Plazo límite para toma en cuenta de una adhesión",
       "STEP_MAX": "Distancia máxima entre un nuevo entrante y los miembros referentes",
       "WOT_RULES_DIVIDER": "Regla de la red de confianza",
       "SENTRIES": "Número de certificaciónes necesarias para hacerse miembro referente",
@@ -239,16 +241,20 @@
   "NETWORK": {
     "VIEW": {
       "MEDIAN_TIME": "Hora de la blockchain",
-      "LOADING_PEERS": "Carga de los nodos..."
+      "LOADING_PEERS": "Carga de los nodos...",
+      "NODE_ADDRESS": "Dirección del nodo",
+      "ENDPOINTS": {
+        "BMAS": "Endpoint seguro (SSL)",
+        "BMATOR": "TOR endpoint",
+        "ES_USER_API": "Nodo de datos Cesium+"
+      }
     },
     "INFO": {
       "ONLY_SSL_PEERS": "La visualización de los nodos no SSL es deteriorada, porque Cesium funciona en modo HTTPS."
     }
   },
   "PEER": {
-    "TITLE": "Nodo",
     "PEERS": "Nodos",
-    "KNOWN_PEERS": "Nodos conocidos",
     "SIGNED_ON_BLOCK": "Firmado sobre el bloque",
     "MIRROR": "espejo",
     "MIRRORS": "Nodos espejos",
@@ -259,7 +265,18 @@
     "API" : "API",
     "CURRENT_BLOCK" : "Bloque #",
     "POPOVER_FILTER_TITLE": "Filtro",
-    "OFFLINE": "Nodos fuera de línea"
+    "OFFLINE": "Nodos fuera de línea",
+    "VIEW": {
+      "TITLE": "Nodo",
+      "OWNER": "Propiedad de ",
+      "SHOW_RAW_CURRENT_BLOCK": "Véase el bloque actual",
+      "KNOWN_PEERS": "Nodos conocidos :",
+      "GENERAL_DIVIDER": "Informaciónes generales",
+      "ERROR": {
+        "LOADING_TOR_NODE_ERROR": "Could not get peer data, using the TOR network.",
+        "LOADING_NODE_ERROR": "Could not get peer data"
+      }
+    }
   },
   "WOT": {
     "SEARCH_HELP": "Búsqueda (seudónimo o llave publica)",
@@ -277,7 +294,7 @@
     "PSEUDO": "Seudónimo",
     "SIGNED_ON_BLOCK": "Emitida al bloque #{{block}}",
     "WRITTEN_ON_BLOCK": "Escrita al bloque #{{block}}",
-    "GENERAL_DIVIDER": "informaciónes generales",
+    "GENERAL_DIVIDER": "Informaciónes generales",
     "NOT_MEMBER_ACCOUNT": "Cuenta no miembro",
     "NOT_MEMBER_ACCOUNT_HELP": "Se trata de un simple monedero, sin solicitud de adhesión en espera.",
     "TECHNICAL_DIVIDER": "Informaciónes técnicas",
@@ -571,7 +588,7 @@
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocación del archivo</b>",
-    "POPUP_REVOKE_MESSAGE": "Ahora tenemos que recuperar el archivo de revocación, puede descargarlo haciendo clic en el botón de abajo.</br></br>El archivo de revocación, se cancelará su cuenta (en caso de robo de cuenta, un cambio de identificador, una cuenta falsamente creado etc.), por lo que es<b> importante para almacenarlo en un lugar seguro.</b>"
+    "POPUP_REVOKE_MESSAGE": "Para proteger su cuenta, descargar el <b>documento de revocación cuenta</b>. Usted si es necesario cancelar su cuenta (en caso de robo de cuenta, un cambio de identificador, una cuenta falsa creada, etc.).<br/><br/><b>Por favor, almacenarlo en un lugar seguro.</b>"
   },
   "HELP": {
     "TITLE": "Ayuda en línea",

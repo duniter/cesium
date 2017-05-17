@@ -17,6 +17,10 @@
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
+    "license": {
+      "fr-FR": "license/license_g1-fr-FR.txt",
+      "en": "license/license_g1-en.txt"
+    },
     "node": {
       "host": "g1.duniter.org",
       "port": "443"
@@ -132,8 +136,8 @@
       }
     },
     "license": {
-      "fr-FR": "license_g1-fr.txt",
-      "en": "license_g1.txt"
+      "fr-FR": "license/license_g1-fr-FR.txt",
+      "en": "license/license_g1-en.txt"
     },
     "node": {
       "host": "localhost",
@@ -181,10 +185,8 @@
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
     "license": {
-      "fr-FR": "license_g1.txt",
-      "en": "license_g1-en.txt",
-      "es-ES": "license_g1-es-ES.txt",
-      "nl-NL": "license_g1-nl-NL.txt"
+      "fr-FR": "license/license_g1-fr-FR.txt",
+      "en": "license/license_g1-en.txt"
     },
     "node": {
       "host": "g1.duniter.org",

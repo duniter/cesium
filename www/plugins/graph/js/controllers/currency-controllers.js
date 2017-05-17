@@ -79,7 +79,10 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
     }
   })
 
+
   .controller('GpCurrencyViewExtendCtrl', GpCurrencyViewExtendController)
+
+  .controller('GpCurrencyAbstractCtrl', GpCurrencyAbstractController)
 
   .controller('GpCurrencyMonetaryMassCtrl', GpCurrencyMonetaryMassController)
 
@@ -100,21 +103,18 @@ function GpCurrencyViewExtendController($scope, PluginService, UIUtils, esSettin
   });
 }
 
-function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionicPopover, csCurrency, gpData, $filter, csSettings) {
+
+
+function GpCurrencyAbstractController($scope, csCurrency) {
   'ngInject';
 
   $scope.loading = true;
   $scope.formData = $scope.formData || {};
-  $scope.formData.useRelative = angular.isDefined($scope.formData.useRelative) ?
-    $scope.formData.useRelative :
-    csSettings.data.useRelative;
   $scope.height = undefined;
   $scope.width = undefined;
   $scope.maintainAspectRatio = true;
-  $scope.scale = 'linear';
-  $scope.displayShareAxis = true;
 
-  $scope.enter = function(e, state) {
+  $scope.enter = function (e, state) {
     if ($scope.loading) {
 
       if (!$scope.formData.currency && state && state.stateParams && state.stateParams.currency) { // Currency parameter
@@ -124,20 +124,52 @@ function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionic
       // Make sure there is currency, or load it not
       if (!$scope.formData.currency) {
         return csCurrency.default()
-          .then(function(currency) {
+          .then(function (currency) {
             $scope.formData.currency = currency ? currency.name : null;
             return $scope.enter(e, state);
           });
       }
 
       $scope.load()
-        .then(function() {
+        .then(function () {
           $scope.loading = false;
         });
     }
   };
   $scope.$on('$csExtension.enter', $scope.enter);
   $scope.$on('$ionicParentView.enter', $scope.enter);
+
+  // Allow to fixe size, form a template (e.g. in a 'ng-init' tag)
+  $scope.setSize = function(height, width, maintainAspectRatio) {
+    $scope.height = height;
+    $scope.width = width;
+    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
+  };
+
+  // When parent view execute a refresh action
+  $scope.$on('csView.action.refresh', function(event, context) {
+    if (!context || context == 'currency') {
+      return $scope.load();
+    }
+  });
+
+  $scope.load = function() {
+    // Should be override by subclasses
+  };
+
+}
+
+function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, $ionicPopover, gpData, $filter, csSettings) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
+
+  $scope.formData.useRelative = angular.isDefined($scope.formData.useRelative) ?
+    $scope.formData.useRelative :
+    csSettings.data.useRelative;
+  $scope.scale = 'linear';
+  $scope.displayShareAxis = true;
 
   $scope.onUseRelativeChanged = function() {
     if (!$scope.loading) {
@@ -292,12 +324,6 @@ function GpCurrencyMonetaryMassController($scope, $q, $state, $translate, $ionic
     if (!item) return;
     var number = $scope.blocks[item._index];
     $state.go('app.view_block', {number: number});
-  };
-
-  $scope.setSize = function(height, width, maintainAspectRatio) {
-    $scope.height = height;
-    $scope.width = width;
-    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
   };
 
   $scope.setScale = function(scale) {
@@ -459,39 +485,11 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
 }
 
 
-function GpCurrencyMembersCountController($scope, $q, $state, $translate, BMA, csCurrency, gpData, $filter) {
+function GpCurrencyMembersCountController($scope, $controller, $q, $state, $translate, gpData, $filter) {
   'ngInject';
 
-  $scope.loading = true;
-  $scope.formData = $scope.formData || {};
-  $scope.height = undefined;
-  $scope.width = undefined;
-  $scope.maintainAspectRatio = true;
-
-  $scope.enter = function(e, state) {
-    if ($scope.loading) {
-
-      if (!$scope.formData.currency && state && state.stateParams && state.stateParams.currency) { // Currency parameter
-        $scope.formData.currency = state.stateParams.currency;
-      }
-
-      // Make sure there is currency, or load it not
-      if (!$scope.formData.currency) {
-        return csCurrency.default()
-          .then(function(currency) {
-            $scope.formData.currency = currency ? currency.name : null;
-            return $scope.enter(e, state);
-          });
-      }
-
-      $scope.load()
-        .then(function() {
-          $scope.loading = false;
-        });
-    }
-  };
-  $scope.$on('$csExtension.enter', $scope.enter);
-  $scope.$on('$ionicParentView.enter', $scope.enter);
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
   $scope.load = function(from, size) {
     from = from || 0;
@@ -583,11 +581,4 @@ function GpCurrencyMembersCountController($scope, $q, $state, $translate, BMA, c
       q: '(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded) AND medianTime:>{0} AND medianTime:<={1}'.format(from, to)
     });
   };
-
-  $scope.setSize = function(height, width, maintainAspectRatio) {
-    $scope.height = height;
-    $scope.width = width;
-    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
-  };
-
 }

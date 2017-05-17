@@ -914,7 +914,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
  */
 function WotCertificationsViewController($scope, $rootScope, $controller, csSettings, csWallet, UIUtils) {
   'ngInject';
-// Initialize the super class and extend it.
+  // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
 
   // Values overwritten in tab controller (for small screen)

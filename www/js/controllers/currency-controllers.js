@@ -174,6 +174,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
     dt: 0,
     sigQty: 0,
     sigStock: 0,
+    msWindow: 0,
     sigWindow: 0,
     sigPeriod: 0,
     medianTime : 0,
@@ -261,6 +262,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
           data.dt = json.dt;
           data.sigQty = json.sigQty;
           data.sigStock = json.sigStock;
+          data.msWindow = json.msWindow;
           data.sigWindow = json.sigWindow;
           data.sigPeriod = json.sigPeriod;
           data.stepMax = json.stepMax;

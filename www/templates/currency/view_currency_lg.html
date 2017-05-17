@@ -33,13 +33,10 @@
                 title="{{'COMMON.BTN_REFRESH' | translate}}">
         </button>
 
-        &nbsp;&nbsp;
-
-        <button class="button button-stable icon-right ink"
+        <button class="button button-stable button-small-padding icon ion-android-more-vertical ink"
                 ng-click="showActionsPopover($event)">
-          &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
-          {{:locale:'COMMON.BTN_OPTIONS' | translate}}
         </button>
+        
       </div>
 
       <div class="row responsive-sm">
@@ -49,13 +46,6 @@
             <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
           </div>
           <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
-
-          <a name="helptip-currency-rules-anchor"></a>
-          <div class="item item-divider" id="helptip-currency-rules">
-            <span translate>CURRENCY.VIEW.MONEY_RULES_DIVIDER</span>
-          </div>
-
-          <ng-include src="'templates/currency/items_parameters_rules.html'"></ng-include>
 
         </div>
 
