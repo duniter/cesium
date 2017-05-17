@@ -59,6 +59,11 @@ function JoinChooseAccountTypeModalController($scope, $timeout, UIUtils, csCurre
   };
   $scope.$on('modal.shown', $scope.load);
 
+  $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+    // Disable swipe
+    data.slider.lockSwipes();
+  });
+
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
     $scope.slides.slider.slidePrev();
@@ -107,7 +112,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.loading = true;
 
 
-  $scope.isLicenseRead = false; 
+  $scope.isLicenseRead = false;
   $scope.showUsername = false;
   $scope.showPassword = false;
   $scope.formData.computing=false;
@@ -123,7 +128,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
 
       $scope.licenseFileUrl = csSettings.getLicenseUrl();
 
-      $timeout($scope.listenLicenseRead, 3000);
+      $scope.startListenLicenseBottom();
 
       $scope.slideBehavior = $scope.computeSlideBehavior();
 
@@ -131,6 +136,11 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
     }
   };
   $scope.$on('modal.shown', $scope.load);
+
+  $scope.$on("$ionicSlides.sliderInitialized", function(event, data){
+    // Disable swipe
+    data.slider.lockSwipes();
+  });
 
   $scope.slidePrev = function() {
     $scope.slides.slider.unlockSwipes();
@@ -344,35 +354,25 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
     Modals.showHelp({anchor: helpAnchor});
   };
 
-  $scope.isLicenseOnBottom = function(){
+  $scope.startListenLicenseBottom = function(){
     var iframeEl = angular.element(document.querySelector('.modal #iframe-license'));
     iframeEl = iframeEl && iframeEl.length ? iframeEl[0] : undefined;
-    if (!iframeEl) return false;
-    var yPos = iframeEl.contentWindow.document.body.scrollTop;
-    var scrollHeight = iframeEl.contentWindow.document.body.scrollHeight;
-    var clientHeight = iframeEl.contentWindow.document.body.clientHeight;
-    if(scrollHeight - clientHeight === yPos){
-      return true;
+    if (!iframeEl) {
+      console.debug('[join] Waiting license frame to be load...');
+      return $timeout($scope.startListenLicenseBottom, 1000);
     }
-    return false;
-  };
 
-  $scope.listenLicenseRead = function(){
-    var disableSwipe = false;
-
-    $scope.licenseReadInterval = $interval(function(){
-
-      // Disable swipe (only once)
-      if(!disableSwipe){
-        $scope.slides.slider.lockSwipes();
-        disableSwipe = true;
-      }
-
-      if($scope.isLicenseOnBottom()){
+    $scope.licenseBottomInterval = $interval(function(){
+      var yPos = iframeEl.contentWindow.document.body.scrollTop;
+      var scrollHeight = iframeEl.contentWindow.document.body.scrollHeight;
+      var clientHeight = iframeEl.contentWindow.document.body.clientHeight;
+      var isBottom = (scrollHeight - clientHeight === yPos);
+      if(isBottom){
         $scope.isLicenseRead = true;
-        $interval.cancel($scope.licenseReadInterval);
+        $interval.cancel($scope.licenseBottomInterval);
+        delete $scope.licenseBottomInterval;
       }
-    },1000);
+    }, 1000);
   };
 
   $scope.checkUid = function(){
