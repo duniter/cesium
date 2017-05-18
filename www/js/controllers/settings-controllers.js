@@ -32,7 +32,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
 
 
   $scope.logoutIdleLabels = {
-    10: {
+    30: {
       labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_SECONDS',
       labelParams: {value: 30}
     },
