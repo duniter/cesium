@@ -48,7 +48,7 @@ function TransferController($scope, $controller, UIUtils, csWot) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('TransferModalCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('TransferModalCtrl', {$scope: $scope, parameters: {}}));
 
   $scope.enter = function(e, state) {
 
