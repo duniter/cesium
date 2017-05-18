@@ -16,6 +16,7 @@ angular.module("cesium.config", [])
 	"timeout": 10000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
+	"logoutIlde": 600,
 	"useLocalStorage": false,
 	"useRelative": false,
 	"initPhase": false,
@@ -48,8 +49,8 @@ angular.module("cesium.config", [])
 			}
 		}
 	},
-	"version": "0.12.3",
-	"build": "2017-05-17T12:32:45.839Z",
+	"version": "0.12.4",
+	"build": "2017-05-18T14:51:20.521Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
