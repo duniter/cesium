@@ -112,19 +112,30 @@
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
-    "REPORT_ISSUE": "Report an issue"
+    "REPORT_ISSUE": "Report an issue",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "You do not own the account <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
+    "BTN_CHANGE_ACCOUNT": "Disconnect this account"
   },
   "SETTINGS": {
     "TITLE": "Settings",
     "NETWORK_SETTINGS": "Network",
     "PEER": "Duniter peer address",
     "USE_LOCAL_STORAGE": "Enable local storage",
+    "USE_LOCAL_STORAGE_HELP": "Allows you to save your settings",
     "ENABLE_HELPTIP": "Enable contextual help tips",
     "ENABLE_UI_EFFECTS": "Enable visual effects",
     "HISTORY_SETTINGS": "My Account",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",
     "AUTHENTICATION_SETTINGS": "Authentication",
+    "AUTO_LOGOUT": "Automatic logout",
+    "AUTO_LOGOUT_OPTION_NEVER": "Never",
+    "AUTO_LOGOUT_OPTION_SECONDS": "After {{value}} seconds",
+    "AUTO_LOGOUT_OPTION_MINUTE": "After {{value}} minute",
+    "AUTO_LOGOUT_OPTION_MINUTES": "After {{value}} minutes",
+    "AUTO_LOGOUT_OPTION_HOUR": "After {{value}} hour",
+    "AUTO_LOGOUT_HELP": "Inactivity timeout before logout",
     "REMEMBER_ME": "Remember me",
+    "REMEMBER_ME_HELP": "Allow you to stay always login (not recommended).",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restore default values",
     "EXPERT_MODE": "Enable expert mode",
@@ -349,7 +360,13 @@
     "PASSWORD_HELP": "Password",
     "NO_ACCOUNT_QUESTION": "Don't have an account yet?",
     "CREATE_ACCOUNT": "Create an account",
-    "FORGOTTEN_ID": "Forgot password?"
+    "FORGOTTEN_ID": "Forgot password?",
+    "AUTO_LOGOUT": {
+      "TITLE": "Information",
+      "MESSAGE": "<i class=\"ion-android-time\"></i> You were <b>logout</ b> automatically, due to prolonged inactivity.",
+      "BTN_RELOGIN": "Sign In",
+      "IDLE_WARNING": "You will be logout... {{countdown}}"
+    }
   },
   "ACCOUNT": {
     "TITLE": "My Account",

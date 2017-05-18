@@ -16,7 +16,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   var
     SETTINGS_SAVE_SPEC = {
-      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode'],
+      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode', 'logoutIdle'],
       excludes: ['time'],
       plugins: {
         es: {

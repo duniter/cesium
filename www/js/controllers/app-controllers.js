@@ -1,4 +1,4 @@
-angular.module('cesium.app.controllers', ['cesium.services'])
+angular.module('cesium.app.controllers', ['ngIdle', 'cesium.services'])
 
   .config(function($httpProvider) {
     'ngInject';
@@ -29,7 +29,8 @@ angular.module('cesium.app.controllers', ['cesium.services'])
         url: "/home",
         views: {
           'menuContent': {
-            templateUrl: "templates/home/home.html"
+            templateUrl: "templates/home/home.html",
+            controller: 'HomeCtrl'
           }
         }
       })
@@ -51,7 +52,11 @@ angular.module('cesium.app.controllers', ['cesium.services'])
 
   })
 
+  .controller('AutoLogoutCtrl', AutoLogoutController)
+
   .controller('AppCtrl', AppController)
+
+  .controller('HomeCtrl', HomeController)
 
   .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
 
@@ -82,10 +87,14 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicHistory, $controller, $window,
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
+                       $ionicHistory, $controller, $window,
                        UIUtils, BMA, csWallet, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('AutoLogoutCtrl', {$scope: $scope}));
 
   $scope.search = {};
   $scope.login = csWallet.isLogin();
@@ -257,7 +266,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // Login and go to a state (or wallet if not)
-  $scope.loginAndGo = function(state) {
+  $scope.loginAndGo = function(state, stateParams) {
     $scope.closeProfilePopover();
 
     state = state || 'app.view_wallet';
@@ -285,13 +294,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       return $scope.showLoginModal()
         .then(function(walletData){
           if (walletData) {
-            return $state.go(state ? state : 'app.view_wallet')
+            return $state.go(state ? state : 'app.view_wallet', stateParams)
               .then(UIUtils.loading.hide);
           }
         });
     }
     else {
-      return $state.go(state);
+      return $state.go(state, stateParams);
     }
   };
 
@@ -352,6 +361,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .catch(UIUtils.onError());
   };
 
+  // If connected and same pubkey
+  $scope.isUserPubkey = function(pubkey) {
+    return csWallet.isUserPubkey(pubkey);
+  };
+
   // add listener on wallet event
   csWallet.api.data.on.login($scope, function(walletData, deferred) {
     $scope.login = true;
@@ -360,11 +374,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   csWallet.api.data.on.logout($scope, function() {
     $scope.login = false;
   });
-
-  // If connected and same pubkey
-  $scope.isUserPubkey = function(pubkey) {
-    return csWallet.isUserPubkey(pubkey);
-  };
 
   ////////////////////////////////////////
   // Useful modals
@@ -436,7 +445,98 @@ function AboutController($scope, csConfig) {
   $scope.config = csConfig;
 }
 
+
+function HomeController($scope) {
+  'ngInject';
+
+}
+
 function PassCodeController($scope) {
   'ngInject';
 
+}
+
+
+function AutoLogoutController($scope, $ionicHistory, $state, Idle, UIUtils, $ionicLoading, csWallet, csSettings) {
+  'ngInject';
+
+  $scope.enableAutoLogout = false;
+
+  $scope.checkAutoLogout = function(isLogin) {
+    isLogin = angular.isDefined(isLogin) ? isLogin : $scope.isLogin();
+    var enable = !csSettings.data.rememberMe && csSettings.data.logoutIdle > 0 && isLogin;
+    var changed = ($scope.enableAutoLogout != enable);
+
+    // need start/top watching
+    if (changed) {
+      // start idle
+      if (enable) {
+        console.debug("[app] Start auto-logout (idle time: {0}s)".format(csSettings.data.logoutIdle));
+        Idle.setIdle(csSettings.data.logoutIdle);
+        Idle.watch();
+      }
+      // stop idle, if need
+      else if ($scope.enableAutoLogout){
+        console.debug("[app] Stop auto-logout");
+        Idle.unwatch();
+      }
+      $scope.enableAutoLogout = enable;
+    }
+
+    // if idle time changed: apply it
+    else if (enable && Idle.getIdle() !== csSettings.data.logoutIdle) {
+      console.debug("[app] Updating auto-logout (idle time: {0}s)".format(csSettings.data.logoutIdle));
+      Idle.setIdle(csSettings.data.logoutIdle);
+    }
+  };
+  csSettings.api.data.on.changed($scope, function() {
+    $scope.checkAutoLogout();
+  });
+
+  // add listener on wallet event
+  csWallet.api.data.on.login($scope, function(walletData, deferred) {
+    $scope.checkAutoLogout(true);
+    return deferred ? deferred.resolve() : $q.when();
+  });
+  csWallet.api.data.on.logout($scope, function() {
+    $scope.checkAutoLogout(false);
+  });
+
+  $scope.$on('IdleStart', function() {
+    $ionicLoading.hide(); // close previous toast
+    $ionicLoading.show({
+      template: "<div idle-countdown=\"countdown\" ng-init=\"countdown=5\">{{'LOGIN.AUTO_LOGOUT.IDLE_WARNING'|translate:{countdown:countdown} }}</div>"
+    });
+  });
+
+  $scope.$on('IdleEnd', function() {
+    $ionicLoading.hide();
+  });
+
+  $scope.$on('IdleTimeout', function() {
+    return csWallet.logout()
+      .then(function() {
+        $ionicHistory.clearCache();
+        if ($state.current.data.auth === true) {
+          $ionicHistory.clearHistory();
+          return $scope.showHome();
+        }
+      })
+      .then(function() {
+        $ionicLoading.hide();
+        return UIUtils.alert.confirm('LOGIN.AUTO_LOGOUT.MESSAGE',
+          'LOGIN.AUTO_LOGOUT.TITLE', {
+          cancelText: 'COMMON.BTN_CLOSE',
+          okText: 'COMMON.BTN_LOGIN'
+        });
+      })
+      .then(function(relogin){
+        if (relogin) {
+          //$ionicHistory.clean
+          return $scope.loginAndGo($state.current.name, $state.params,
+            {reload: true});
+        }
+      })
+      .catch(UIUtils.onError());
+  });
 }

@@ -12,6 +12,9 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
             templateUrl: "plugins/es/templates/invitation/view_invitations.html",
             controller: 'InvitationsCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
     ;

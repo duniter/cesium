@@ -108,6 +108,8 @@ newIssueUrl                 | Used for link in the About screen, to submit new i
 timeout                     | Default network request timeout, in millisecond.                                               | `4000`
 timeWarningExpire           | Delay (in second) before expiration of certifications, use to warn the user that there will soon be a lack of certifications | `5184000` (2 mois)
 timeWarningExpireMembership | Delay (in second) before membership expiration, use to warns user that he should renew his membership.  | `7776000` (3 mois)
+logoutIdle                  | Duration (in second) of inactivity, before logout                                              | `600` (10 minutes)
+logoutTimout                | Duration (in second) of a warning message, before logout                                       | `15` (15s)
 walletHistoryTimeSecond     | Default transaction history to load (in second), in 'My account' screen.                       | `86400` (30 days) 
 walletHistorySliceSecond    | Slice size (in second) for downloading transaction history (need for cache optimization)       | `432000` (5 days)
 wallet.alertIfUnusedWallet  | Should warn user if account seems to be used ?                                                 | `true`

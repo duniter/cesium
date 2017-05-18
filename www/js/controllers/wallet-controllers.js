@@ -12,6 +12,9 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
             templateUrl: "templates/wallet/view_wallet.html",
             controller: 'WalletCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
 
@@ -22,6 +25,9 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
             templateUrl: "templates/wallet/view_wallet_tx.html",
             controller: 'WalletTxCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
 
@@ -32,6 +38,9 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
             templateUrl: "templates/wallet/view_wallet_tx_error.html",
             controller: 'WalletTxErrorCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
     ;
@@ -57,26 +66,30 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.$on('$ionicView.enter', function() {
     if ($scope.loading) { // load once
-      $scope.loadWallet()
-        .then(function(walletData) {
-          $scope.formData = walletData;
-          $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
-          $scope.updateView();
-          $scope.showQRCode('qrcode', $scope.formData.pubkey, 1100);
-          $scope.showHelpTip();
-          UIUtils.loading.hide(); // loading could have be open (e.g. new account)
-        })
-        .catch(function(err){
-          if (err == 'CANCELLED') {
-            $scope.showHome();
-          }
-        });
+      return $scope.load();
     }
     else {
       // update view (to refresh profile and subscriptions)
       $scope.updateView();
     }
   });
+
+  $scope.load = function() {
+    return $scope.loadWallet()
+      .then(function(walletData) {
+        $scope.formData = walletData;
+        $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+        $scope.updateView();
+        $scope.showQRCode('qrcode', $scope.formData.pubkey, 1100);
+        $scope.showHelpTip();
+        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+      })
+      .catch(function(err){
+        if (err == 'CANCELLED') {
+          $scope.showHome();
+        }
+      });
+  };
 
   $scope.updateView = function() {
     $scope.motion.show({selector: '#wallet .item'});
@@ -99,6 +112,14 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     $scope.loading = true;
   };
   csWallet.api.data.on.logout($scope, $scope.onWalletLogout);
+
+  /*// Relogin (e.g. after auto logout)
+  $scope.onWalletLogin = function() {
+    if ($scope.loading) {
+      return $scope.load();
+    }
+  };
+  csWallet.api.data.on.login($scope, $scope.onWalletLogin);*/
 
   // Ask uid
   $scope.showUidPopup = function() {

@@ -174,44 +174,34 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   .filter('formatFromNow', function() {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).startOf('minute').fromNow() : '';
+      return input ? moment.unix(parseInt(input)).fromNow() : '';
     };
   })
 
 
   .filter('formatDurationTo', function() {
     return function(input) {
-      return input ? moment.unix(moment().utc().unix() + parseInt(input)).startOf('minute').fromNow() : '';
+      return input ? moment.unix(moment().utc().unix() + parseInt(input)).fromNow() : '';
     };
   })
 
   .filter('formatDuration', function() {
     return function(input) {
-      return input ? moment(0).startOf('minute').from(moment.unix(parseInt(input)), true) : '';
-    };
-  })
-
-  .filter('formatDurationMs', function() {
-    return function(input) {
-      return input ? (
-        (input < 1000) ?
-          (input + 'ms') :
-          (input/1000 + 's')
-      ) : '';
+      return input ? moment(0).from(moment.unix(parseInt(input)), true) : '';
     };
   })
 
   .filter('formatPeriod', function() {
     return function(input) {
       if (!input) {return null;}
-      var duration = moment(0).startOf('minute').from(moment.unix(parseInt(input)), true);
+      var duration = moment(0).from(moment.unix(parseInt(input)), true);
       return duration.split(' ').slice(-1)[0]; // keep only last words (e.g. remove "un" "a"...)
     };
   })
 
   .filter('formatFromNowShort', function() {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).startOf('minute').fromNow(true) : '';
+      return input ? moment.unix(parseInt(input)).fromNow(true) : '';
     };
   })
 
@@ -354,6 +344,13 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     // Configure the view cache
     $ionicConfigProvider.views.maxCache(5);
+  })
+
+  .config(function(IdleProvider, csConfig) {
+    'ngInject';
+
+    IdleProvider.idle(csConfig.logoutIdle||10*60/*10min*/);
+    IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
 .run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {

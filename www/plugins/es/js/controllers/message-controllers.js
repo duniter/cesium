@@ -12,6 +12,9 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
             templateUrl: "plugins/es/templates/message/list.html",
             controller: 'ESMessageListCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
 
@@ -34,6 +37,9 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
             templateUrl: "plugins/es/templates/message/view_message.html",
             controller: 'ESMessageViewCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
 

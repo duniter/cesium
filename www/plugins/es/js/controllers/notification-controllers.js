@@ -14,6 +14,9 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
             templateUrl: "plugins/es/templates/notification/view_notifications.html",
             controller: 'NotificationsCtrl'
           }
+        },
+        data: {
+          auth: true
         }
       })
     ;

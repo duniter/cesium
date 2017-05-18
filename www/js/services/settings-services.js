@@ -59,6 +59,7 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
     rememberMe: true, // override to false if no device
+    logoutIdle: 10 * 60, // 10min - override to false if no device
     showUDHistory: true,
     showLoginSalt: false,
     initPhase: false, // For currency start (when block #0 not written)
@@ -102,7 +103,6 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
 
   // Change some defaults, when no device
   // removeIf(device)
-  defaultSettings.useLocalStorage = false;
   defaultSettings.rememberMe = false;
   // endRemoveIf(device)
 

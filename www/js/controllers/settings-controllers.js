@@ -31,6 +31,26 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
   $scope.bma = BMA;
 
 
+  $scope.logoutIdleLabels = {
+    10: {
+      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_SECONDS',
+      labelParams: {value: 30}
+    },
+    60: {
+      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_MINUTE',
+      labelParams: {value: 1}
+    },
+    600: {
+      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_MINUTES',
+      labelParams: {value: 10}
+    },
+    3600: {
+      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_HOUR',
+      labelParams: {value: 1}
+    }
+  };
+  $scope.logoutIdles = _.keys($scope.logoutIdleLabels);
+
   $scope.$on('$ionicView.enter', function() {
     csSettings.ready().then($scope.load);
   });
@@ -58,7 +78,7 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
       // Set Ink
       UIUtils.ink({selector: '.item'});
       $scope.showHelpTip();
-    }, 10);
+    }, 100);
   };
 
   $scope.reset = function() {
@@ -210,7 +230,6 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
     }
   };
   $scope.$watch('formData', $scope.onDataChanged, true);
-
 
   $scope.getServer = function() {
     if (!$scope.formData.node || !$scope.formData.node.host) return '';

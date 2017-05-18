@@ -38,7 +38,7 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
 /*
  * Settings extend controller
  */
-function ESExtendSettingsController ($scope, PluginService, csSettings) {
+function ESExtendSettingsController ($scope, PluginService) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();

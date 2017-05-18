@@ -93,7 +93,7 @@ angular.module('cesium.utils.services', ['ngResource'])
           cancelText: translations[options.cancelText],
           cancelType: options.cancelType,
           okText: translations[options.okText],
-          okType: options.okType,
+          okType: options.okType
         });
       });
   }
@@ -118,7 +118,7 @@ angular.module('cesium.utils.services', ['ngResource'])
       });
     });
   }
-  
+
   function hideLoading(timeout){
     if (timeout) {
       return $timeout(function(){

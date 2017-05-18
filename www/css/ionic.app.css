@@ -13931,9 +13931,7 @@ a {
     -webkit-user-selectuser-select: auto !important;
     -moz-user-select: auto !important;
     -ms-user-select: auto !important;
-    user-select: auto !important; }
-  body {
-    user-select: text !important; } }
+    user-select: auto !important; } }
 
 /* ============
  Left menu

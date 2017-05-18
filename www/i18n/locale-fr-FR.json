@@ -112,19 +112,30 @@
     "BTN_CURRENCY": "Explorer la monnaie",
     "BTN_ABOUT": "à propos",
     "BTN_HELP": "Aide en ligne",
-    "REPORT_ISSUE": "anomalie"
+    "REPORT_ISSUE": "anomalie",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
+    "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte"
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
     "NETWORK_SETTINGS": "Réseau",
     "PEER": "Adresse du nœud Duniter",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
+    "USE_LOCAL_STORAGE_HELP": "Permet de sauvegarder vos paramètres",
     "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
     "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Mon compte",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
     "AUTHENTICATION_SETTINGS": "Authentification",
-    "REMEMBER_ME": "Se souvenir de moi",
+    "AUTO_LOGOUT": "Déconnexion automatique",
+    "AUTO_LOGOUT_OPTION_NEVER": "Jamais",
+    "AUTO_LOGOUT_OPTION_SECONDS": "Après {{value}} secondes",
+    "AUTO_LOGOUT_OPTION_MINUTE": "Après {{value}} minute",
+    "AUTO_LOGOUT_OPTION_MINUTES": "Après {{value}} minutes",
+    "AUTO_LOGOUT_OPTION_HOUR": "Après {{value}} heure",
+    "AUTO_LOGOUT_HELP": "Délai d'inactivité avant déconnection",
+    "REMEMBER_ME": "Se souvenir de moi ?",
+    "REMEMBER_ME_HELP": "Permet de rester toujours connecté (non recommandée).",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "EXPERT_MODE": "Activer le mode expert",
@@ -349,7 +360,13 @@
     "PASSWORD_HELP": "Mot de passe",
     "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
     "CREATE_ACCOUNT": "Créer un compte",
-    "FORGOTTEN_ID": "Mot de passe oublié ?"
+    "FORGOTTEN_ID": "Mot de passe oublié ?",
+    "AUTO_LOGOUT": {
+      "TITLE": "Information",
+      "MESSAGE": "<i class=\"ion-android-time\"></i> Vous avez été <b>déconnecté</b> automatiquement, suite à une inactivité prolongée.",
+      "BTN_RELOGIN": "Me reconnecter",
+      "IDLE_WARNING": "Vous allez être déconnecté... {{countdown}}"
+    }
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",

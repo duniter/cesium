@@ -54,6 +54,8 @@
         <div class="input-label">
          {{'SETTINGS.USE_LOCAL_STORAGE' | translate}}
         </div>
+        <h4 class="gray" ng-bind-html="'SETTINGS.USE_LOCAL_STORAGE_HELP' | translate">
+        </h4>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.useLocalStorage" >
           <div class="track">
@@ -90,10 +92,16 @@
         {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
       </span>
 
+
       <div class="item item-toggle" >
         <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
           {{'SETTINGS.REMEMBER_ME' | translate}}
         </div>
+        <h4 class="gray text-wrap"
+            ng-class="{'assertive': formData.rememberMe}">
+          <i class="icon ion-alert-circled" ng-if="formData.rememberMe"></i>
+          <span ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></span>
+        </h4>
         <label class="toggle" ng-class="{'toggle-stable': !formData.useLocalStorage, 'toggle-royal': formData.useLocalStorage}">
           <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage"
           >
@@ -101,6 +109,23 @@
             <div class="handle"></div>
           </div>
         </label>
+      </div>
+
+      <div class="item item-input"
+        ng-class="{'item-select': !formData.rememberMe}">
+        <div class="input-label">
+          <span class="input-label" ng-class="{'gray': formData.rememberMe}">
+              {{'SETTINGS.AUTO_LOGOUT' | translate}}
+          </span>
+          <h4 class="gray" ng-bind-html="'SETTINGS.AUTO_LOGOUT_HELP' | translate"></h4>
+        </div>
+        <select ng-model="formData.logoutIdle"
+                ng-if="!formData.rememberMe"
+                ng-options="i as (logoutIdleLabels[i].labelKey | translate:logoutIdleLabels[i].labelParams ) for i in logoutIdles track by i">
+        </select>
+        <div class="badge item-note"  ng-if="formData.rememberMe">
+          <span translate>SETTINGS.AUTO_LOGOUT_OPTION_NEVER</span>
+        </div>
       </div>
 
       <!-- FIXME see issue on UD history -->
