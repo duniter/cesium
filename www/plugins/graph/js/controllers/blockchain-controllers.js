@@ -268,9 +268,11 @@ function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, 
     if (!item) return
     var from = $scope.times[item._index];
     var to = moment.unix(from).utc().add(1, $scope.txOptions.rangeDuration).unix();
-    $state.go('app.blockchain_search', {
-      q: '_exists_:transactions AND medianTime:>={0} AND medianTime:<{1}'.format(from, to)
-    });
+    var query = '_exists_:transactions AND medianTime:>={0} AND medianTime:<{1}'.format(from, to);
+    if ($scope.txOptions.issuer) {
+      query += ' AND issuer:' + $scope.txOptions.issuer;
+    }
+    $state.go('app.blockchain_search', {q: query});
   };
 
   $scope.setTxRangeDuration = function(txRangeDuration) {

@@ -115,11 +115,11 @@ function GpPeerViewExtendController($scope, $q, $timeout, PluginService, esSetti
   };
 }
 
-function GpPeerStatsController($scope, $timeout, $controller, csCurrency) {
+function GpPeerStatsController($scope, $controller, csCurrency) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('GpBlockchainTxCountCtrl', {$scope: $scope, parameters: null}));
+  angular.extend(this, $controller('GpBlockchainTxCountCtrl', {$scope: $scope}));
 
   $scope.txOptions = $scope.txOptions || {};
   $scope.node = $scope.node || {};
