@@ -10,6 +10,9 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
           templateUrl: "plugins/es/templates/subscription/edit_subscriptions.html",
           controller: 'ViewSubscriptionsCtrl'
         }
+      },
+      data: {
+        auth: true
       }
     });
 

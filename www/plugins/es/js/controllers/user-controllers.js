@@ -10,6 +10,9 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
           templateUrl: "plugins/es/templates/user/edit_profile.html",
           controller: 'ProfileCtrl'
         }
+      },
+      data: {
+        auth: true
       }
     });
 
