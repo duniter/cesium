@@ -169,7 +169,12 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
   // Mark a notification as read
   function markNotificationAsRead(notification) {
-    if (notification.read) return; // avoid multi call
+    if (notification.read || !notification.id) return; // avoid multi call
+    // Should never append (fix in Duniter4j issue #12)
+    if (!notification.id) {
+      console.error('[ES] [notification] Could not mark as read: no \'id\' found!', notification);
+      return;
+    }
     notification.read = true;
     CryptoUtils.sign(notification.hash, csWallet.data.keypair)
       .then(function(signature){
