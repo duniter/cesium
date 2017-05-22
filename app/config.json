@@ -8,7 +8,7 @@
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "logoutIlde": 600,
-    "useLocalStorage": false,
+    "useLocalStorage": true,
     "useRelative": false,
     "initPhase": false,
     "expertMode": false,
@@ -51,7 +51,7 @@
     "timeWarningExpireMembership": 5184000,
     "timeWarningExpire": 7776000,
     "logoutIlde": 600,
-    "useLocalStorage": false,
+    "useLocalStorage": true,
     "useRelative": false,
     "initPhase": false,
     "expertMode": false,
@@ -60,6 +60,10 @@
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+    },
+    "license": {
+      "fr-FR": "license/license_g1-fr-FR.txt",
+      "en": "license/license_g1-en.txt"
     },
     "node": {
       "host": "g1.duniter.fr",
