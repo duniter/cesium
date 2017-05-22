@@ -106,6 +106,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
           "number": "desc"
         };
       }
+      request.excludeCurrent = (from == 0);
       promise = esBlockchain.block.search($scope.currency, request);
     }
 
@@ -121,22 +122,26 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       else { // default sort
         request.sort = "number:desc";
       }
+      request.excludeCurrent = true;
       promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
     }
 
     var time = new Date().getTime();
     return promise
       .then(function(result) {
+        // Apply transformation need by UI (e.g add avatar and name...)
         return $scope.doPrepareResult(result.hits)
           .then(function() {
-            // remove 'name' if
             return result;
           });
       })
       .then(function(result) {
         $scope.showPubkey = ($scope.search.sort == 'issuer');
-        $scope.search.took = (new Date().getTime() - time);
-        $scope.doDisplayResult(result.hits, from, result.total);
+        // Compute time only once (on first page)
+        $scope.search.took = (from === 0) ? (new Date().getTime() - time) : $scope.search.took;
+        // Keep previous total, when already computed (because of current, that is excluded only in the first page)
+        var total = (from === 0) ? result.total : $scope.search.total;
+        $scope.doDisplayResult(result.hits, from, total);
         $scope.search.loading = false;
       })
       .catch(function(err) {

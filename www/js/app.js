@@ -191,6 +191,17 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  // Display time in ms or seconds (see i18n label 'COMMON.EXECUTION_TIME')
+  .filter('formatDurationMs', function() {
+    return function(input) {
+      return input ? (
+        (input < 1000) ?
+          (input + 'ms') :
+          (input/1000 + 's')
+      ) : '';
+    };
+  })
+
   .filter('formatPeriod', function() {
     return function(input) {
       if (!input) {return null;}

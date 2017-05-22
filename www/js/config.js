@@ -11,20 +11,19 @@ angular.module("cesium.config", [])
 .constant("csConfig", {
 	"cacheTimeMs": 60000,
 	"fallbackLanguage": "en",
-	"rememberMe": false,
+	"rememberMe": true,
 	"showUDHistory": false,
 	"timeout": 10000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
-	"logoutIlde": 600,
-	"useLocalStorage": false,
+	"useLocalStorage": true,
 	"useRelative": false,
 	"initPhase": false,
-	"expertMode": false,
+	"expertMode": true,
 	"decimalCount": 2,
 	"httpsMode": false,
 	"helptip": {
-		"enable": true,
+		"enable": false,
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 	},
 	"license": {
@@ -39,18 +38,18 @@ angular.module("cesium.config", [])
 		"es": {
 			"enable": true,
 			"askEnable": false,
-			"host": "g1.data.duniter.fr",
-			"port": "443",
-			"notifications": {
-				"txSent": true,
-				"txReceived": true,
-				"certSent": true,
-				"certReceived": true
-			}
+            "host": "g1.data.duniter.fr",
+            "port": "443",
+		},
+		"graph": {
+			"enable": true
+		},
+		"neo4j": {
+			"enable": true
 		}
 	},
 	"version": "0.12.5",
-	"build": "2017-05-18T16:10:51.026Z",
+	"build": "2017-05-19T08:58:22.076Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

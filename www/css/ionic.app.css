@@ -15138,7 +15138,7 @@ div[dropzone] {
 @media screen and (max-width: 991px) {
   .modal iframe.iframe-license {
     width: 100%;
-    height: 100%; } }
+    height: 78%; } }
 
 @media screen and (min-width: 992px) {
   .modal iframe.iframe-license {

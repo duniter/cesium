@@ -71,14 +71,6 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
           hasExcludedCurrent ? res.hits.total-1 : res.hits.total) : 0
       };
 
-      // Fill avatar
-      if (result.hits.length && options.fillAvatar) {
-        return esUser.profile.fillAvatars(result.hits, 'issuer')
-          .then(function() {
-            return result;
-          });
-      }
-
       return result;
     };
 

@@ -254,6 +254,9 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           var notFirstEmpty = (index !== 0) || (offset !== 0);
           var previousNotEmptyOrSameDay = !previousEmptyBlockDay || (previousEmptyBlockDay == blockDay);
           block.compacted = notFirstEmpty && previousNotEmptyOrSameDay;
+          if (block.number > 20751) {
+            console.log(block.number, block.compacted);
+          }
           previousEmptyBlockDay = blockDay;
         }
         else {
@@ -273,7 +276,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       $scope.search.results = $scope.search.results.concat(res);
     }
     $scope.search.hasMore = total && $scope.search.results.length < total;
-    $scope.search.total = total;
+    $scope.search.total = total || $scope.search.total;
 
     $scope.smallscreen = UIUtils.screen.isSmall();
 
@@ -385,7 +388,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.toggleCompactMode = function() {
     $scope.compactMode = !$scope.compactMode;
-    $scope.doDisplayResult($scope.search.results, 0, $scope.search.results.length);
+    $scope.doDisplayResult($scope.search.results, 0, $scope.search.total/*keep previous total*/);
 
     // Workaround to re-initialized the <ion-infinite-loop>
     if (!$scope.search.hasMore && $scope.search.results.length && $scope.search.type == 'last') {
