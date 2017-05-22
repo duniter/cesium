@@ -19,6 +19,7 @@
       "BLOCKS_ISSUERS_LABEL": "Aantal blokken",
       "TX_DIVIDER": "Analyse van transacties",
       "TX_AMOUNT_TITLE": "Trading volume",
+      "TX_AMOUNT_PUBKEY_TITLE": "Trading volume dat wordt berekend door {{issuer | formatPubkey}}",
       "TX_AMOUNT_LABEL": "Verhandeld volume",
       "TX_COUNT_TITLE": "Aantal schriftelijke transacties",
       "TX_COUNT_LABEL": "Aantal transacties",
