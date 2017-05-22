@@ -83,9 +83,12 @@ function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, 
 
     return $q.all([
 
+      $translate($scope.txOptions.issuer?
+        'GRAPH.BLOCKCHAIN.TX_AMOUNT_PUBKEY_TITLE':
+        'GRAPH.BLOCKCHAIN.TX_AMOUNT_TITLE', txOptions),
+
       // translate i18n keys
-      $translate(['GRAPH.BLOCKCHAIN.TX_AMOUNT_TITLE',
-        'GRAPH.BLOCKCHAIN.TX_AMOUNT_LABEL',
+      $translate(['GRAPH.BLOCKCHAIN.TX_AMOUNT_LABEL',
         'GRAPH.BLOCKCHAIN.TX_COUNT_LABEL',
         'GRAPH.BLOCKCHAIN.TX_AVG_BY_BLOCK',
         'COMMON.DATE_PATTERN',
@@ -106,11 +109,14 @@ function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, 
       gpData.blockchain.txCount($scope.currency, txOptions)
     ])
       .then(function(result) {
-        var translations = result[0];
-        $scope.firstBlockTime = $scope.firstBlockTime || result[1].medianTime;
+
+        var title = result[0];
+
+        var translations = result[1];
+        $scope.firstBlockTime = $scope.firstBlockTime || result[2].medianTime;
         $scope.formData.firstBlockTime = $scope.formData.firstBlockTime || truncDate($scope.firstBlockTime);
         $scope.formData.currencyAge = truncDate(esHttp.date.now()) - $scope.formData.firstBlockTime;
-        result = result[2];
+        result = result[3];
 
         if (!result || !result.times) return; // no data
         $scope.times = result.times;
@@ -170,7 +176,7 @@ function GpBlockchainTxCountController($scope, $q, $state, $filter, $translate, 
           maintainAspectRatio: true,
           title: {
             display: true,
-            text: translations['GRAPH.BLOCKCHAIN.TX_AMOUNT_TITLE']
+            text: title
           },
           scales: {
             yAxes: [

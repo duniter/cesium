@@ -19,6 +19,7 @@
       "BLOCKS_ISSUERS_LABEL": "Número de bloques",
       "TX_DIVIDER": "Análisis de transacciones",
       "TX_AMOUNT_TITLE": "El volumen de operaciones",
+      "TX_AMOUNT_PUBKEY_TITLE": "El volumen de operaciones calculado por {{issuer | formatPubkey}}",
       "TX_AMOUNT_LABEL": "Volumen negociado",
       "TX_COUNT_TITLE": "Número de transacciones escritas",
       "TX_COUNT_LABEL": "Número de transacciones",
