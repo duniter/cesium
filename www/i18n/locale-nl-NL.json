@@ -240,7 +240,7 @@
     "VIEW": {
       "TITLE": "Knoop",
       "OWNER": "Maakt deel uit van",
-      "SHOW_RAW_CURRENT_BLOCK": "Zie het huidige blok",
+      "SHOW_RAW_PEERING": "Zie netwerkdocument",
       "KNOWN_PEERS": "Bekende knopen :",
       "GENERAL_DIVIDER": "Algemene informatie",
       "ERROR": {
@@ -251,11 +251,14 @@
   },
   "WOT": {
     "SEARCH_HELP": "Zoeken (lid of publieke sleutel)",
+    "SEARCH_INIT_PHASE_WARNING": "Tijdens de pre-registratiefase, het zoeken van lopende registraties <b>kan lang</b> zijn. Dank je wel geduld...",
     "REGISTERED_SINCE": "Registratie",
     "REGISTERED_SINCE_BLOCK": "Geregistreerd op blok #",
     "NO_CERTIFICATION": "Geen gevalideerde certificaties",
     "NO_GIVEN_CERTIFICATION": "Geen uitgegeven certificaties",
     "NOT_MEMBER_PARENTHESIS": "(niet-lid)",
+    "IDENTITY_REVOKED_PARENTHESIS": "(ingetrokken identiteit)",
+    "MEMBER_PENDING_REVOCATION_PARENTHESIS": "(en cours de révocation)",
     "EXPIRE_IN": "Verloopt",
     "NOT_WRITTEN_EXPIRE_IN": "Uiterlijke<br/>behandeling",
     "EXPIRED": "Verlopen",
@@ -263,6 +266,8 @@
     "SIGNED_ON_BLOCK": "Uitgegeven op block #{{block}}",
     "WRITTEN_ON_BLOCK": "Geschreven op block #{{block}}",
     "GENERAL_DIVIDER": "Algemene informatie",
+    "NOT_MEMBER_ACCOUNT": "Geen lidaccount",
+    "NOT_MEMBER_ACCOUNT_HELP": "Dit is een eenvoudige account zonder te wachten lidmaatschap aanvragen.",
     "TECHNICAL_DIVIDER": "Technishe informatie",
     "BTN_CERTIFY": "Certificeren",
     "BTN_YES_CERTIFY": "Ja, Certificeren",

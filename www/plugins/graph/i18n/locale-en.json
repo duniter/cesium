@@ -40,7 +40,9 @@
     },
     "PEER": {
       "VIEW": {
-        "BLOCK_COUNT": "Computed blocks count"
+        "BLOCK_COUNT_LABEL": "Computed blocks count",
+        "BLOCK_COUNT": "{{count}} blocks",
+        "NO_BLOCK": "No block"
       }
     }
   }

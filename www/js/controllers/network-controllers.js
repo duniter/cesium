@@ -409,8 +409,15 @@ function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
                 score += 100   * (p.uid ? 1 : 0);
                 return -score;
               });
+              $scope.motion.show({selector: '.item-peer'});
             });
-        })
+        }),
+
+        // Get current block
+        $scope.node.blockchain.current()
+          .then(function(json) {
+            $scope.current = json;
+          })
       ])
       .catch(UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR"));
   };

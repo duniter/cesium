@@ -119,12 +119,21 @@
     "NETWORK_SETTINGS": "Red",
     "PEER": "Dirección del nodo Duniter",
     "USE_LOCAL_STORAGE": "Activar el almacenamiento local",
+    "USE_LOCAL_STORAGE_HELP": "Permitir el ahorro de almacenamiento local",
     "ENABLE_HELPTIP": "Activar bocadillos contextuales de ayuda",
     "ENABLE_UI_EFFECTS": "Activar los efectos visuales",
     "HISTORY_SETTINGS": "Mi cuenta",
     "DISPLAY_UD_HISTORY": "Publicar los dividendos producidos ?",
     "AUTHENTICATION_SETTINGS": "Autenticación",
+    "AUTO_LOGOUT": "Desconexión automática",
+    "AUTO_LOGOUT_OPTION_NEVER": "Jamas",
+    "AUTO_LOGOUT_OPTION_SECONDS": "Después de {{value}} segundos",
+    "AUTO_LOGOUT_OPTION_MINUTE": "Después de {{value}} minuto",
+    "AUTO_LOGOUT_OPTION_MINUTES": "Después de {{value}} minutos",
+    "AUTO_LOGOUT_OPTION_HOUR": "Después de {{value}} hora",
+    "AUTO_LOGOUT_HELP": "Tiempo de inactividad antes de la desconexión",
     "REMEMBER_ME": "Recordarme",
+    "REMEMBER_ME_HELP": "Siempre mantenerse conectado (no recomendado).",
     "PLUGINS_SETTINGS": "Extensiónes",
     "BTN_RESET": "Restaurar los valores por defecto" ,
     "EXPERT_MODE": "Activar el modo experto",
@@ -269,7 +278,7 @@
     "VIEW": {
       "TITLE": "Nodo",
       "OWNER": "Propiedad de ",
-      "SHOW_RAW_CURRENT_BLOCK": "Véase el bloque actual",
+      "SHOW_RAW_PEERING": "Ver la tarjeta de red",
       "KNOWN_PEERS": "Nodos conocidos :",
       "GENERAL_DIVIDER": "Informaciónes generales",
       "ERROR": {
@@ -349,7 +358,13 @@
     "PASSWORD_HELP": "Contraseña",
     "NO_ACCOUNT_QUESTION": "Ahora no tiene cuenta ?",
     "CREATE_ACCOUNT": "Creer una cuenta",
-    "FORGOTTEN_ID": "Contraseña olvidada ?"
+    "FORGOTTEN_ID": "Contraseña olvidada ?",
+    "AUTO_LOGOUT": {
+      "TITLE": "Información",
+      "MESSAGE": "<i class=\"ion-android-time\"></i> Has sido <b>fuera de línea</b> de forma automática, después de una inactividad prolongada.",
+      "BTN_RELOGIN": "Me vuelva a conectar",
+      "IDLE_WARNING": "Se le desconectará... {{countdown}}"
+    }
   },
   "ACCOUNT": {
     "TITLE": "Mi cuenta",

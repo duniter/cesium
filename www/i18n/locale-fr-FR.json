@@ -280,7 +280,7 @@
     "VIEW": {
       "TITLE": "Nœud",
       "OWNER": "Appartient à",
-      "SHOW_RAW_CURRENT_BLOCK": "Voir le bloc courant",
+      "SHOW_RAW_PEERING": "Voir la fiche de pair",
       "KNOWN_PEERS": "Nœuds connus :",
       "GENERAL_DIVIDER": "Informations générales",
       "ERROR": {

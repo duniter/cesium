@@ -254,9 +254,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           var notFirstEmpty = (index !== 0) || (offset !== 0);
           var previousNotEmptyOrSameDay = !previousEmptyBlockDay || (previousEmptyBlockDay == blockDay);
           block.compacted = notFirstEmpty && previousNotEmptyOrSameDay;
-          if (block.number > 20751) {
-            console.log(block.number, block.compacted);
-          }
           previousEmptyBlockDay = blockDay;
         }
         else {

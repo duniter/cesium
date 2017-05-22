@@ -280,7 +280,7 @@
     "VIEW": {
       "TITLE": "Node",
       "OWNER": "Owned by ",
-      "SHOW_RAW_CURRENT_BLOCK": "See current block",
+      "SHOW_RAW_PEERING": "See peering document",
       "KNOWN_PEERS": "Known peers :",
       "GENERAL_DIVIDER": "General information",
       "ERROR": {

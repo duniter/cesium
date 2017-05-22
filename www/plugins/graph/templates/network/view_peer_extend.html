@@ -3,12 +3,12 @@
 
   <a class="item item-icon-left item-text-wrap ink"
     ui-sref="app.view_peer_stats({pubkey: node.pubkey})">
-    <i class="icon ion-cube"></i>
-    <span translate>GRAPH.PEER.VIEW.BLOCK_COUNT</span>
+    <i class="icon ion-stats-bars"></i>
+    <span translate>GRAPH.PEER.VIEW.BLOCK_COUNT_LABEL</span>
     <span class="badge"
           ng-if="!loading"
-          ng-class="{'badge-balanced': blockCount > 0, 'badge-assertive': !blockCount}">
-      {{blockCount||0}}
+          ng-class="{'badge-stable': blockCount > 0, 'badge-assertive': !blockCount}">
+      {{!blockCount ? 'GRAPH.PEER.VIEW.NO_BLOCK' : 'GRAPH.PEER.VIEW.BLOCK_COUNT' | translate:{count: blockCount} }}
     </span>
     <ion-spinner class="badge" icon="android" ng-if="loading"></ion-spinner>
   </a>
