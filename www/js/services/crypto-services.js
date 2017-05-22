@@ -510,6 +510,18 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       };
 
       /**
+       * Compute the box secret key, from a sign secret key
+       */
+      this.box_sk_from_sign = function(signSk) {
+        var deferred = $q.defer();
+        that.nacl.crypto_sign_ed25519_sk_to_curve25519(signSk, function(err, boxSk) {
+          if (err) { deferred.reject(err); return;}
+          deferred.resolve(boxSk);
+        });
+        return deferred.promise;
+      };
+
+      /**
        * Encrypt a message, from a key pair
        */
       this.box = function(message, nonce, recipientPk, senderSk) {
@@ -596,6 +608,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
       this.box = {
         keypair: {
           fromSignKeypair: that.box_keypair_from_sign,
+          skFromSignSk: that.box_sk_from_sign,
           pkFromSignPk: that.box_pk_from_sign
         },
         pack: that.box,
