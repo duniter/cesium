@@ -106,7 +106,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
           "number": "desc"
         };
       }
-      request.excludeCurrent = (from == 0);
+      request.excludeCurrent = (from === 0);
       promise = esBlockchain.block.search($scope.currency, request);
     }
 
