@@ -68,7 +68,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         hits: hits,
         took: res.took,
         total: res && res.hits && res.hits.total ? (
-          options.excludeCurrent ? res.hits.total-1 : res.hits.total) : 0
+          hasExcludedCurrent ? res.hits.total-1 : res.hits.total) : 0
       };
 
       // Fill avatar
