@@ -20,6 +20,7 @@
       "TX_DIVIDER": "Analysis of transactions",
       "TX_AMOUNT_TITLE": "Transaction volume",
       "TX_AMOUNT_PUBKEY_TITLE": "Volume of transactions calculated by {{issuer | formatPubkey}}",
+      "TX_AMOUNT_LABEL": "Exchange volume",
       "TX_COUNT_TITLE": "Number of written transactions",
       "TX_COUNT_LABEL": "Number of transactions",
       "TX_AVG_BY_BLOCK": "Average per block",
