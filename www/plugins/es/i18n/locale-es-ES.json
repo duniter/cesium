@@ -97,6 +97,10 @@
       "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitación ilegible (formato desconocido)</span> - mandada por <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a>"
     }
   },
+  "TX_SEARCH": {
+    "PERIOD": "Las transacciones entre el {{date.startDate|formatDate}} y el {{date.endDate|formatDate}}",
+    "PUBKEY": "Clave pública : {{pubkey|formatPubkey}}"
+  },
   "COMMENTS": {
     "DIVIDER": "Comentarios",
     "DIVIDER_WITH_TOTAL": "Comentarios ({{total}})",

@@ -97,6 +97,10 @@
       "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid||pubkey}}</a>"
     }
   },
+  "TX_SEARCH": {
+    "PERIOD": "Transactions between the {{date.startDate|formatDate}} and the {{date.endDate|formatDate}}",
+    "PUBKEY": "Public key : {{pubkey|formatPubkey}}"
+  },
   "COMMENTS": {
     "DIVIDER": "Comments",
     "DIVIDER_WITH_TOTAL": "Comments ({{total}})",

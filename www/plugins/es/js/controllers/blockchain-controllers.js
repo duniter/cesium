@@ -38,6 +38,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
   // Initialize the super class and extend it.
   angular.extend(this, $controller('BlockLookupCtrl', {$scope: $scope}));
 
+  $scope.activeLookupPeriod=false;
   $scope.search.text = null;
   $scope.search.type = 'last';
   $scope.search.sort = undefined;
@@ -83,6 +84,72 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       notify: false});
   };
 
+  // Cancel search filter
+  $scope.itemRemove = function(itemType) {
+    if(itemType === $scope.dynamicSearchFilter[0][0])
+      $scope.dynamicSearchFilter[0][3] = false;
+    else if(itemType === $scope.dynamicSearchFilter[1][0])
+      $scope.dynamicSearchFilter[0][3] = false;
+    $scope.newQuery = $scope.query.replace(itemType, '');
+    $scope.newQuery = $scope.newQuery.replace(/^ AND /, '');
+    $scope.newQuery = $scope.newQuery.replace(/ AND $/, '');
+    $scope.search.text = $scope.newQuery;
+    $scope.doSearchText();
+  };
+
+
+  $scope.filterConstructor = function() {
+
+    $scope.dynamicSearchFilter = new Array(2);
+
+    for (var i = 0; i < $scope.dynamicSearchFilter.length; i++) {
+      $scope.dynamicSearchFilter[i] = new Array(5)
+    }
+
+    /*
+              +-----------+--------+
+              | period    | pubkey |
+     +--------+-----------+--------+
+     | regex  |           |        |
+     +--------+-----------+--------+
+     | query  |           |        |
+     +--------+-----------+--------+
+     | key    |           |        |
+     +--------+-----------+--------+
+     | params | startDate | pubkey |
+     +--------+-----------+--------+
+     |        | endDate   |        |
+     +--------+-----------+--------+
+     */
+
+    //Period
+    $scope.dynamicSearchFilter[0][0] = /_exists_:transactions AND medianTime:>=([0-9]+) AND medianTime:<([0-9]+)/;
+    var matches = $scope.search.text.match($scope.dynamicSearchFilter[0][0]);
+    if (matches){
+      $scope.dynamicSearchFilter[0][1] = matches[0];
+      $scope.dynamicSearchFilter[0][2] = 'TX_SEARCH.PERIOD';
+      $scope.dynamicSearchFilter[0][3] = true;
+      $scope.dynamicSearchFilter[0][4] = matches[1];
+      $scope.dynamicSearchFilter[0][5] = matches[2];
+    }
+    //Pubkey
+    $scope.dynamicSearchFilter[1][0] = /issuer:([a-zA-Z0-9]+)/;
+    var matches = $scope.search.text.match($scope.dynamicSearchFilter[1][0]);
+    if (matches){
+      $scope.dynamicSearchFilter[1][1] = matches[0];
+      $scope.dynamicSearchFilter[1][2] = 'TX_SEARCH.PUBKEY';
+      $scope.dynamicSearchFilter[1][3] = true;
+      $scope.dynamicSearchFilter[1][4] = matches[1];
+    }
+    $scope.params ={
+      date : {
+        startDate : $scope.dynamicSearchFilter[0][4],
+        endDate : $scope.dynamicSearchFilter[0][5]
+      },
+      pubkey: $scope.dynamicSearchFilter[1][4]
+    }
+  };
+
   // This method override the base class method
   $scope.doSearch = function(from) {
     from = angular.isDefined(from) ? from : 0;
@@ -107,7 +174,12 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
         };
       }
       request.excludeCurrent = (from === 0);
+
+      $scope.filterConstructor();
+
       promise = esBlockchain.block.search($scope.currency, request);
+      $scope.query = $scope.search.text;
+      $scope.search.text = null;
     }
 
     // Full text search
@@ -123,7 +195,12 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
         request.sort = "number:desc";
       }
       request.excludeCurrent = true;
+
+      $scope.filterConstructor();
+
       promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
+      $scope.query = $scope.search.text;
+      $scope.search.text = null;
     }
 
     var time = new Date().getTime();

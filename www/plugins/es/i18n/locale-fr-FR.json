@@ -294,6 +294,10 @@
       "RECORD_REMOVED" : "Annonce supprimée"
     }
   },
+  "TX_SEARCH": {
+    "PERIOD": "Transactions effectuées entre le {{date.startDate|formatDate}} et le {{date.endDate|formatDate}}",
+    "PUBKEY": "Clé publique : {{pubkey|formatPubkey}}"
+  },
   "REGISTRY": {
     "CATEGORY": "Activité principale",
     "GENERAL_DIVIDER": "Informations générales",

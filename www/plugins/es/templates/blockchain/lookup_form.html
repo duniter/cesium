@@ -1,24 +1,35 @@
 <div class="lookupForm">
 
-  <!-- search text-->
-  <label class="item item-input">
-    <i class="icon ion-search placeholder-icon"></i>
-    <input type="text"
-           class="visible-xs visible-sm"
-           placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           ng-model-options="{ debounce: 650 }"
-           ng-change="doSearchText()">
-    <input type="text"
-           class="hidden-xs hidden-sm"
-           id="{{searchTextId}}" placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           on-return="doSearchText()">
-    <div class="helptip-anchor-center">
-      <a id="helptip-blockchain-search-text"></a>
+
+  <div class="item no-padding">
+
+    <div class="gray double-padding-x padding-top item-text-wrap"
+         ng-repeat="items in dynamicSearchFilter" ng-if="items[3]">
+      <span>{{items[2]|translate:params}}</span>
+      <a class="icon ion-close" ng-click="itemRemove(items[0])"></a>
+
     </div>
 
-  </label>
+    <label class="item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="text"
+             class="visible-xs visible-sm"
+             placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             ng-model-options="{ debounce: 650 }"
+             ng-change="doSearchText()">
+      <input type="text"
+             class="hidden-xs hidden-sm"
+             id="{{searchTextId}}" placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             on-return="doSearchText()">
+      <div class="helptip-anchor-center">
+        <a id="helptip-blockchain-search-text"></a>
+      </div>
+
+    </label>
+  </div>
+
 
   <div class="padding-top padding-xs" style="display: block; height: 60px;">
     <div class="pull-left">
