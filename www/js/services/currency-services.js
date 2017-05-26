@@ -7,6 +7,15 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
   factory = function(id) {
 
     var
+      constants = {
+        // Avoid to many call on well known currencies
+        WELL_KNOWN_CURRENCIES: {
+          g1: {
+            firstBlockTime: 1488987127
+          }
+        }
+      },
+
       data = {
         loaded: false,
         currencies: null,
@@ -33,7 +42,7 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
         // Load currency from default node
         var promise = BMA.blockchain.parameters()
           .then(function(res){
-            data.currencies.push({
+            var currency = {
                 name: res.currency,
                 peer: {
                   host: BMA.host,
@@ -41,21 +50,47 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
                   server: BMA.server
                 },
                 parameters: res
-              });
+              };
+            // Add to data
+            data.currencies.push(currency);
 
+            // Well known currencies
+            if (constants.WELL_KNOWN_CURRENCIES[res.currency]){
+              angular.merge(currency, constants.WELL_KNOWN_CURRENCIES[res.currency]);
+            }
+
+            // Load some default values
+            else {
+              return BMA.blockchain.block({block:0})
+                .then(function(json) {
+                  // Need by graph plugin
+                  currency.firstBlockTime = json.medianTime;
+                })
+                .catch(function(err) {
+                  // Special case, when currency not started yet
+                  if (err && err.ucode === BMA.errorCodes.BLOCK_NOT_FOUND) {
+                    currency.firstBlockTime = 0;
+                    return;
+                  }
+                  throw err;
+                })
+                ;
+            }
+          })
+          .then(function() {
             // API extension point
             return api.data.raisePromise.load(data);
           })
           .then(function() {
             console.debug('[currency] Loaded in ' + (new Date().getTime() - now) + 'ms');
             data.loaded = true;
-            delete data.cache.loadJobPromise;
+            delete data.cache.loadPromise;
             return data;
           })
           .catch(function(err) {
             data.loaded = false;
             data.currencies = [];
-            delete data.cache.loadJobPromise;
+            delete data.cache.loadPromise;
             throw err;
           });
 
@@ -83,8 +118,7 @@ angular.module('cesium.currency.services', ['ngResource', 'ngApi', 'cesium.bma.s
           .then(function(data){
             return _.findWhere(data.currencies, {name: name});
           });
-      }
-    ;
+      };
 
     // Register extension points
     api.registerEvent('data', 'load');

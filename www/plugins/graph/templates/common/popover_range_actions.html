@@ -7,23 +7,23 @@
 
       <!-- duration: hour -->
       <a class="item item-icon-right ink"
-         ng-click="setTxRangeDuration('hour')">
+         ng-click="setRangeDuration('hour')">
         <span ng-bind-html="'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION.HOUR' | translate"></span>
-        <i class="icon ion-ios-checkmark-empty" ng-show="txOptions.rangeDuration=='hour'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='hour'"></i>
       </a>
 
       <!-- duration: day -->
       <a class="item item-icon-right ink"
-         ng-click="setTxRangeDuration('day')">
+         ng-click="setRangeDuration('day')">
         <span ng-bind-html="'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION.DAY' | translate"></span>
-        <i class="icon ion-ios-checkmark-empty" ng-show="txOptions.rangeDuration=='day'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='day'"></i>
       </a>
 
       <!-- duration: month -->
       <a class="item item-icon-right ink"
-         ng-click="setTxRangeDuration('month')">
+         ng-click="setRangeDuration('month')">
         <span ng-bind-html="'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION.MONTH' | translate"></span>
-        <i class="icon ion-ios-checkmark-empty" ng-show="txOptions.rangeDuration=='month'"></i>
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='month'"></i>
       </a>
 
     </div>

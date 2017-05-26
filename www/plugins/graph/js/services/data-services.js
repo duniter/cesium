@@ -1,119 +1,72 @@
 angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.http.services'])
 
-  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache) {
+  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache, csCurrency) {
     'ngInject';
 
     var
       currencyCache = csCache.get('gpData-currency-', csCache.constants.SHORT),
       exports = {
         node: {},
+        wot: {},
         blockchain: {},
-        util: {
-          colors: {}
-        },
         raw: {
           block: {
             search: esHttp.post('/:currency/block/_search')
           },
           blockstat: {
-            search: esHttp.post('/:currency/blockstat/_search?pretty')
+            search: esHttp.post('/:currency/blockstat/_search')
+          },
+          movement: {
+            search: esHttp.post('/:currency/movement/_search')
+          },
+          user: {
+            event: esHttp.post('/user/event/_search?pretty')
           }
         },
         regex: {
         }
       };
 
+      function onCurrencyLoad(data, deferred) {
+        deferred = deferred || $q.defer();
+        var currency = data.currencies[data.currencies.length-1];
 
-    /**
-     * Compute colors scale
-     * @param count
-     * @param opacity
-     * @param startColor
-     * @param startState
-     * @returns {Array}
-     */
-    exports.util.colors.custom = function(count, opacity, startColor, startState) {
-
-      function _state2side(state) {
-        switch(state) {
-          case 0:
-            return 0;
-          case 1:
-            return -1;
-          case 2:
-            return 0;
-          case 3:
-            return 1;
+        if (currency.firstBlockTime) {
+          deferred.resolve();
+          return deferred.promise;
         }
+        // Fill first block time value
+        BMA.blockchain.block({block: 0})
+            .then(function(block) {
+              currency.firstBlockTime = block.medianTime;
+              deferred.resolve();
+            })
+            .catch(function(err) {
+              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND) {
+                currency.firstBlockTime = esHttp.date.now();
+                deferred.resolve();
+              }
+              deferred.reject(err);
+            });
+        return deferred.promise;
       }
 
-      // From [0,1]
-      opacity = opacity || '0.55';
 
-      var defaultStateSize = Math.round(count / 2.5/*=4 states max*/);
+    function _powBase(amount, base) {
+      return base <= 0 ? amount : amount * Math.pow(10, base);
+    }
 
-      // Start color [r,v,b]
-      var color = startColor ? angular.copy(startColor) : [255,0,0]; // Red
+    function _initRangeOptions(options) {
+      options = options || {};
+      options.maxRangeSize = options.maxRangeSize || 30;
+      options.defaultTotalRangeCount = options.defaultTotalRangeCount || options.maxRangeSize*2;
 
-      // Colors state: 0=keep, 1=decrease, 2=keep, 3=increase
-      var states = startState ? angular.copy(startState) : [0,2,3]; // R=keep, V=keep, B=increase
-
-      var steps = startColor ? [
-        Math.round(255 / defaultStateSize),
-        Math.round(255 / defaultStateSize),
-        Math.round(255 / defaultStateSize)
-      ] : [
-        Math.round((color[0]-50) / defaultStateSize),
-        Math.round((255-color[1]) / defaultStateSize),
-        Math.round((255-color[2]) / defaultStateSize)
-      ];
-
-
-      // Compute start sides (1=increase, 0=flat, -1=decrease)
-      var sides = [
-        _state2side(states[0]),
-        _state2side(states[1]),
-        _state2side(states[2])];
-
-      // Use to detect when need to change a 'flat' state (when state = 0 or 2)
-      var stateCounters  = [0,0,0];
-
-      var result = [];
-      for (var i = 0; i<count; i++) {
-        for (var j=0; j<3;j++) {
-          color[j] +=  sides[j] * steps[j];
-          stateCounters[j]++;
-          // color has reach a limit
-          if (((color[j] <= 0 || color[j] >= 255) && sides[j] !== 0) ||
-            (sides[j] === 0 && stateCounters[j] == defaultStateSize)) {
-            // Max sure not overflow limit
-            if (color[j] <= 0) {
-              color[j] = 0;
-            }
-            else if (color[j] >= 255) {
-              color[j] = 255;
-            }
-            // Go to the next state, in [0..3]
-            states[j] = (states[j] + 1) % 4;
-
-            // Update side from this new state
-            sides[j] = _state2side(states[j]);
-
-            // Reset state counter
-            stateCounters[j] = 0;
-          }
-        }
-
-        // Add the color to result
-        result.push('rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + opacity+')');
-
-      }
-      return result;
-    };
-
-    exports.util.colors.default = function() {
-      return exports.util.colors.custom(25);
-    };
+      options.rangeDuration = options.rangeDuration || 'day';
+      options.endTime = options.endTime || moment().utc().add(1, options.rangeDuration).unix();
+      options.startTime = options.startTime ||
+        moment.unix(options.endTime).utc().subtract(options.defaultTotalRangeCount, options.rangeDuration).unix();
+      return options;
+    }
 
     /**
      * Graph: "blocks count by issuer"
@@ -188,10 +141,6 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         }
       }
 
-      function _powBase(amount, base) {
-        return base <= 0 ? amount : amount * Math.pow(10, base);
-      }
-
       var request = {
         query: {
           filtered: {
@@ -255,7 +204,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             }
           }
 
-          result.labels = result.blocks.reduce(function(res, block){
+          result.times = result.blocks.reduce(function(res, block){
             return res.concat(block.medianTime);
           }, []);
 
@@ -275,20 +224,14 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
      */
     exports.blockchain.txCount = function(currency, options) {
 
-      var maxRangeSize = 30;
-      var defaultTotalRangeCount = maxRangeSize*2;
-
-      options = options || {};
-      options.rangeDuration = options.rangeDuration || 'day';
-      options.endTime = options.endTime || moment.unix(esHttp.date.now()).utc().add(1, options.rangeDuration).unix();
-      options.startTime = options.startTime ||
-        moment.unix(options.endTime).utc().subtract(defaultTotalRangeCount, options.rangeDuration).unix();
+      options = _initRangeOptions(options);
 
       var jobs = [];
 
       var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
+      var to = moment.unix(options.endTime).utc();
       var ranges = [];
-      while(from.unix() < options.endTime) {
+      while(from.isBefore(to)) {
 
         ranges.push({
           from: from.unix(),
@@ -296,7 +239,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         });
 
         // Do not exceed max range count
-        if (ranges.length == maxRangeSize) {
+        if (ranges.length == options.maxRangeSize) {
           var request = {
             size: 0,
             aggs: {
@@ -329,8 +272,11 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           // prepare next loop
           ranges = [];
 
-          if (jobs.length < 10) {
-
+          if (jobs.length == 10) {
+            console.error('Too many parallel jobs!');
+            from = moment.unix(options.endTime).utc(); // stop while
+          }
+          else {
             jobs.push(
               exports.raw.blockstat.search(request, {currency: currency})
                 .then(function (res) {
@@ -349,11 +295,6 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
                 })
             );
           }
-          else {
-            console.error('Too many call of txCount request ! ');
-            from = moment.unix(options.endTime).utc();
-          }
-
         }
       }
 
@@ -366,23 +307,15 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
           res = _.sortBy(res, 'from');
 
-          var result = {};
-          result.count =  res.reduce(function(res, hit){
-            return res.concat(hit.count);
-          }, []);
-          result.avgByBlock =  res.reduce(function(res, hit){
-            return res.concat(hit.avgByBlock);
-          }, []);
-          result.maxByBlock =  res.reduce(function(res, hit){
-            return res.concat(hit.maxByBlock);
-          }, []);
-          result.amount =  res.reduce(function(res, hit){
-            return res.concat(hit.amount/100);
-          }, []);
-          result.times =  res.reduce(function(res, hit){
-            return res.concat(hit.from);
-          }, []);
-          return result;
+          return {
+            count: _.pluck(res, 'count'),
+            avgByBlock: _.pluck(res, 'avgByBlock'),
+            maxByBlock: _.pluck(res, 'maxByBlock'),
+            amount:  res.reduce(function(res, hit){
+              return res.concat(hit.amount/100);
+            }, []),
+            times: _.pluck(res, 'from')
+          };
         });
     };
 
@@ -391,9 +324,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
      * @param currency
      * @returns {*}
      */
-    exports.node.blockCount = function(currency, pubkey, options) {
-
-      options = options || {};
+    exports.node.blockCount = function(currency, pubkey) {
 
       var request = {
         size: 0,
@@ -406,6 +337,356 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         });
     };
 
+
+    exports.raw.movement.getByRange = function(currency, pubkey, ranges) {
+      if (!pubkey) {
+        throw new Error('Missing \'pubkey\' argument!');
+      }
+      var request = {
+        size: 0,
+        query: {
+          bool: {
+            should: [
+              {term: {recipient: pubkey}},
+              {term: {issuer: pubkey}}
+            ]
+          }
+        },
+        aggs: {
+          tx: {
+            range: {
+              field: "medianTime",
+              ranges: ranges
+            },
+            aggs: {
+              received: {
+                filter: {term: {recipient: pubkey}},
+                aggs: {
+                  received_stats: {
+                    stats: {
+                      field: "amount"
+                    }
+                  }
+                }
+              },
+              sent: {
+                filter: {term: {issuer: pubkey}},
+                aggs: {
+                  sent_stats: {
+                    stats: {
+                      field: "amount"
+                    }
+                  }
+                }
+              }
+            }
+
+          }
+        }
+      };
+
+      return exports.raw.movement.search(request, {currency: currency})
+        .then(function(res) {
+          var aggs = res.aggregations;
+          if (!aggs.tx || !aggs.tx.buckets || !aggs.tx.buckets.length) return;
+          return (aggs.tx.buckets || []).reduce(function (res, agg) {
+            var sent = agg.sent.sent_stats;
+            var received = agg.received.received_stats;
+            return res.concat({
+              from: agg.from,
+              to: agg.to,
+              sent: -sent.sum / 100,
+              received: received.sum / 100,
+              delta: (received.sum - sent.sum) / 100,
+              count: received.count + sent.count
+            });
+          }, []);
+        });
+    };
+
+    exports.raw.movement.getUds = function(currency, ranges, fromMapping) {
+      var request = {
+        size: 0,
+        query: {
+          bool: {
+            should: [
+              {exists: {field: 'dividend'}}
+            ]
+          }
+        },
+        aggs: {
+          ud: {
+            range: {
+              field: 'medianTime',
+              ranges: ranges
+            },
+            aggs: {
+              ud_stats: {
+                stats: {
+                  field: 'dividend'
+                }
+              },
+              unitbase_stats: {
+                stats: {
+                  field: 'unitbase'
+                }
+              }
+            }
+          }
+        }
+      };
+
+      return exports.raw.block.search(request, {currency: currency})
+        .then(function(res) {
+          var aggs = res.aggregations;
+          if (!aggs.ud || !aggs.ud.buckets || !aggs.ud.buckets.length) return;
+          return (aggs.ud.buckets || []).reduce(function (res, agg) {
+            var from = fromMapping[agg.from];
+            res[from] = _powBase(agg.ud_stats.sum, agg.unitbase_stats.min) / 100;
+            return res;
+          }, {});
+        });
+    };
+
+    /**
+     * Graph: "tx count"
+     * @param currency
+     * @returns {*}
+     */
+    exports.blockchain.movement = function(currency, options) {
+
+      options = _initRangeOptions(options);
+      options.withUD = angular.isDefined(options.withUD) ? options.withUD : true;
+
+      var jobs = [];
+
+      // If need and missing: load membership periods
+      if (options.withUD && !options.memberships) {
+        return exports.wot.memberships(options)
+          .then(function(res) {
+            options.memberships = res || [];
+            return exports.blockchain.movement(currency, options);
+          });
+      }
+
+      var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
+      var to = moment.unix(options.endTime).utc();
+
+      // Add a range to get TX before startTime
+      var ranges = [{
+        from: 0,
+        to: from.unix()
+      }];
+
+      var memberships = angular.copy(options.memberships).reverse();
+      var membership = memberships.pop();
+      while (membership && (membership.leaveTime && membership.leaveTime < from.unix())) {
+        membership = memberships.pop();
+      }
+
+      var udRanges = [];
+      var udFromMapping = {};
+
+      while(from.isBefore(to)) {
+
+        var range = {
+          from: from.unix(),
+          to: from.add(1, options.rangeDuration).unix()
+        };
+        ranges.push(range);
+
+        var member = membership && membership.joinTime < range.to;
+        if (member) {
+          var udRange = {
+            from: Math.max(membership.joinTime, range.from),
+            to: Math.min(membership.leaveTime, range.to)
+          };
+          udRanges.push(udRange);
+          udFromMapping[udRange.from] = range.from;
+          while (membership && (membership.leaveTime && membership.leaveTime < range.to)) {
+            membership = memberships.pop();
+          }
+        }
+
+        // Do not exceed max range count
+        if ((!jobs.length && ranges.length == options.maxRangeSize+1) || (jobs.length && ranges.length == options.maxRangeSize)) {
+
+          if (udRanges.length) {
+            jobs.push($q.all([
+              exports.raw.movement.getUds(currency, udRanges, udFromMapping),
+              exports.raw.movement.getByRange(currency, options.pubkey, ranges)
+            ])
+            .then(function(res){
+              var udsMap = res[0];
+              res[1].forEach(function(hit){
+                hit.ud = udsMap[hit.from]||0;
+              });
+              return res[1];
+            }));
+          }
+          else {
+            jobs.push(exports.raw.movement.getByRange(currency, options.pubkey, ranges));
+          }
+
+          // reset ranges for the next loop
+          ranges = [];
+        }
+      } // loop
+
+      return $q.all(jobs)
+        .then(function(res) {
+          // concat all results
+          res = res.reduce(function(res, hits){
+            if (!hits || !hits.length) return res;
+            return res.concat(hits);
+          }, []);
+
+          // Sort by 'from' field
+          res = _.sortBy(res, 'from');
+
+          // First item should be history (tx before startTime)
+          var history = res.splice(0,1)[0];
+          var txSum = history.delta||0;
+          var udSum = history.ud||0;
+          var balance = history.delta+history.ud||0;
+
+          return {
+            times: _.pluck(res, 'from'),
+            sent: _.pluck(res, 'sent'),
+            received: _.pluck(res, 'received'),
+            delta: _.pluck(res, 'delta'),
+            ud: _.pluck(res, 'ud'),
+            txSum: res.reduce(function(res, hit){
+              txSum += hit.delta;
+              return res.concat(txSum);
+            }, []),
+            udSum: res.reduce(function(res, hit){
+              udSum += hit.ud||0;
+              return res.concat(udSum);
+            }, []),
+            balance: res.reduce(function(res, hit){
+              balance += hit.delta+hit.ud||0;
+              return res.concat(balance);
+            }, []),
+            count: _.pluck(res, 'count')
+          };
+        });
+    };
+
+
+    /**
+     * Graph: "tx count"
+     * @param currency
+     * @returns {*}
+     */
+    exports.wot.certifications = function(options) {
+
+      options = _initRangeOptions(options);
+
+      return csWot.load(options.pubkey)
+        .then(function(idty) {
+          var res = {};
+          _.forEach(idty.given_cert||[], function(cert){
+            var truncTime = moment.unix(cert.time).utc().startOf(options.rangeDuration).unix();
+            res[truncTime] = res[truncTime] || {time:truncTime,given:0,received:0};
+            res[truncTime].given++;
+          });
+          _.forEach(idty.received_cert||[], function(cert){
+            var truncTime = moment.unix(cert.time).utc().startOf(options.rangeDuration).unix();
+            res[truncTime] = res[truncTime] || {time:truncTime,given:0,received:0};
+            res[truncTime].received++;
+          });
+
+          // Sort by time
+          res = _.sortBy(_.values(res), 'time');
+
+          // create final result
+          var result = {
+            times: _.pluck(res, 'time'),
+            deltaGiven: _.pluck(res, 'given'),
+            deltaReceived: _.pluck(res, 'received')
+          };
+          var sum = 0;
+          result.given = result.deltaGiven.reduce(function(res, delta) {
+            sum += delta;
+            return res.concat(sum);
+          }, []);
+          sum = 0;
+          result.received = result.deltaReceived.reduce(function(res, delta) {
+            sum += delta;
+            return res.concat(sum);
+          }, []);
+          return result;
+
+        });
+    };
+
+
+    exports.wot.memberships = function(options) {
+
+      options = options || {};
+
+      // Get user events on membership state
+      var request = {
+        "size": 1000,
+        "query": {
+          "bool": {
+            "filter": [
+              {"term": {"recipient" : options.pubkey }},
+              {"terms": {"code" : ["MEMBER_JOIN","MEMBER_ACTIVE","MEMBER_LEAVE","MEMBER_EXCLUDE","MEMBER_REVOKE"] }}
+            ]
+          }
+        },
+        "sort" : [
+          { "time" : {"order" : "asc"}}
+        ],
+        _source: ["code", "time"]
+      };
+
+      return exports.raw.user.event(request)
+
+        .then(function(res) {
+          if (!res.hits || !res.hits.total) return;
+
+          // Compute member periods
+          var lastJoinTime;
+          var result = res.hits.hits.reduce(function(res, hit){
+            var isMember = hit._source.code == 'MEMBER_JOIN' || hit._source.code == 'MEMBER_ACTIVE';
+            // If join
+            if (isMember && !lastJoinTime) {
+              lastJoinTime = hit._source.time;
+            }
+            // If leave
+            else if (!isMember && lastJoinTime) {
+              // Add an entry
+              res = res.concat({
+                joinTime: lastJoinTime,
+                leaveTime: hit._source.time
+              });
+              lastJoinTime = 0; // reset
+            }
+            return res;
+          }, []);
+
+          if (lastJoinTime) {
+            // Add last entry if need
+            result.push({
+              joinTime: lastJoinTime,
+              leaveTime: moment().utc().unix()
+            });
+          }
+
+          return result;
+        });
+    };
+
+
+    // register listener
+//    csCurrency.api.data.on.load($rootScope, onCurrencyLoad, this);
+
     return exports;
   })
+
+
+
 ;

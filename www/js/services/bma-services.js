@@ -615,7 +615,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
             }
           })
           .catch(function(err){
-            if (err && err.ucode === errorCodes.HTTP_LIMITATION) {
+            if (err && err.ucode === exports.errorCodes.HTTP_LIMITATION) {
               resolve(result);
             }
             else {
@@ -623,6 +623,19 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
             }
           });
       });
+    };
+
+    exports.raw.getHttpWithRetryIfLimitation = function(exec) {
+      return exec()
+        .catch(function(err){
+          // When too many request, retry in 3s
+          if (err && err.ucode == exports.errorCodes.HTTP_LIMITATION) {
+            return $timeout(function() {
+              // retry
+              return exports.raw.getHttpWithRetryIfLimitation(exec);
+            }, exports.constants.LIMIT_REQUEST_DELAY);
+          }
+        });
     };
 
     exports.blockchain.lastUd = function() {

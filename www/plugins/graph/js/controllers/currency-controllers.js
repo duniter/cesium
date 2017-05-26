@@ -1,5 +1,5 @@
 
-angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.services', 'cesium.graph.blockchain.controllers'])
+angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.services', 'cesium.graph.common.controllers'])
 
   .config(function($stateProvider, PluginServiceProvider, csConfig) {
     'ngInject';
@@ -82,8 +82,6 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
 
   .controller('GpCurrencyViewExtendCtrl', GpCurrencyViewExtendController)
 
-  .controller('GpCurrencyAbstractCtrl', GpCurrencyAbstractController)
-
   .controller('GpCurrencyMonetaryMassCtrl', GpCurrencyMonetaryMassController)
 
   .controller('GpCurrencyDUCtrl', GpCurrencyDUController)
@@ -103,63 +101,7 @@ function GpCurrencyViewExtendController($scope, PluginService, UIUtils, esSettin
   });
 }
 
-
-
-function GpCurrencyAbstractController($scope, csCurrency) {
-  'ngInject';
-
-  $scope.loading = true;
-  $scope.formData = $scope.formData || {};
-  $scope.height = undefined;
-  $scope.width = undefined;
-  $scope.maintainAspectRatio = true;
-
-  $scope.enter = function (e, state) {
-    if ($scope.loading) {
-
-      if (!$scope.formData.currency && state && state.stateParams && state.stateParams.currency) { // Currency parameter
-        $scope.formData.currency = state.stateParams.currency;
-      }
-
-      // Make sure there is currency, or load it not
-      if (!$scope.formData.currency) {
-        return csCurrency.default()
-          .then(function (currency) {
-            $scope.formData.currency = currency ? currency.name : null;
-            return $scope.enter(e, state);
-          });
-      }
-
-      $scope.load()
-        .then(function () {
-          $scope.loading = false;
-        });
-    }
-  };
-  $scope.$on('$csExtension.enter', $scope.enter);
-  $scope.$on('$ionicParentView.enter', $scope.enter);
-
-  // Allow to fixe size, form a template (e.g. in a 'ng-init' tag)
-  $scope.setSize = function(height, width, maintainAspectRatio) {
-    $scope.height = height;
-    $scope.width = width;
-    $scope.maintainAspectRatio = angular.isDefined(maintainAspectRatio) ? maintainAspectRatio : $scope.maintainAspectRatio;
-  };
-
-  // When parent view execute a refresh action
-  $scope.$on('csView.action.refresh', function(event, context) {
-    if (!context || context == 'currency') {
-      return $scope.load();
-    }
-  });
-
-  $scope.load = function() {
-    // Should be override by subclasses
-  };
-
-}
-
-function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, $ionicPopover, gpData, $filter, csSettings) {
+function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $translate, $ionicPopover, gpColor, gpData, $filter, csSettings) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -168,7 +110,6 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
   $scope.formData.useRelative = angular.isDefined($scope.formData.useRelative) ?
     $scope.formData.useRelative :
     csSettings.data.useRelative;
-  $scope.scale = 'linear';
   $scope.displayShareAxis = true;
 
   $scope.onUseRelativeChanged = function() {
@@ -198,10 +139,11 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
       .then(function(result) {
         var translations = result[0];
         result = result[1];
-        if (!result || !result.blocks) return;
+        if (!result || !result.times) return;
+        $scope.times = result.times;
 
         // Choose a date formatter, depending on the blocks period
-        var blocksPeriod = result.blocks[result.blocks.length-1].medianTime - result.blocks[0].medianTime;
+        var blocksPeriod = result.times[result.times.length-1] - result.times[0];
         var formatDate;
         if (blocksPeriod < 15778800/* less than 6 months*/) {
           formatDate = $filter('formatDateShort');
@@ -247,14 +189,12 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
         $scope.data = data;
 
         // Labels
-        $scope.labels = result.labels.reduce(function(res, time) {
+        $scope.labels = result.times.reduce(function(res, time) {
           return res.concat(formatDate(time));
         }, []);
 
         // Colors
-        $scope.colors = result.blocks.reduce(function(res) {
-          return res.concat('rgba(17,193,243,0.5)');
-        }, []);
+        $scope.colors = gpColor.scale.fix(result.times.length);
 
         // Options
         $scope.options = {
@@ -263,6 +203,9 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
           title: {
             display: true,
             text: translations['GRAPH.CURRENCY.MONETARY_MASS_TITLE']
+          },
+          legend: {
+            display: $scope.displayShareAxis
           },
           scales: {
             yAxes: [
@@ -293,9 +236,10 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
         $scope.datasetOverride = [
           {
             yAxisID: 'y-axis-mass',
-            type: 'bar',
+            type: 'line',
             label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL'],
-            hoverBackgroundColor: 'rgba(17,193,243,0.6)'
+            hoverBackgroundColor: gpColor.rgba.calm(0.6),
+            borderWidth: 1
           },
           {
             yAxisID: 'y-axis-mn',
@@ -305,6 +249,7 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
             showLine: true,
             borderColor: 'rgba(255,201,0,1)',
             borderWidth: 2,
+            backgroundColor: 'rgba(255,201,0,1)',
             pointBackgroundColor: 'rgba(255,201,0,1)',
             pointBorderColor: 'rgba(255,255,255,1)',
             pointHoverBackgroundColor: 'rgba(255,201,0,1)',
@@ -320,42 +265,10 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
 
   };
 
-  $scope.showBlock = function(data, e, item) {
+  $scope.onChartClick = function(data, e, item) {
     if (!item) return;
     var number = $scope.blocks[item._index];
     $state.go('app.view_block', {number: number});
-  };
-
-  $scope.setScale = function(scale) {
-    $scope.hideActionsPopover();
-    $scope.scale = scale;
-
-    var format = $filter('formatInteger');
-
-    _.forEach($scope.options.scales.yAxes, function(yAxe) {
-      yAxe.type = scale;
-      yAxe.ticks = yAxe.ticks || {};
-      if (scale == 'linear') {
-        yAxe.ticks.beginAtZero = true;
-        delete yAxe.ticks.min;
-        yAxe.ticks.callback = function(value) {
-          return format(value);
-        };
-      }
-      else {
-        yAxe.ticks.min = 0;
-        delete yAxe.ticks.beginAtZero;
-        delete yAxe.ticks.callback;
-        yAxe.ticks.callback = function(value, index) {
-          if (!value) return;
-          //console.log(value + '->' + Math.log10(value)%1);
-          if (Math.log10(value)%1 === 0 || Math.log10(value/3)%1 === 0) {
-            return format(value);
-          }
-          return '';
-        };
-      }
-    });
   };
 
   /* -- Popover -- */
@@ -403,10 +316,11 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
       .then(function(result) {
         var translations = result[0];
         result = result[1];
-        if (!result || !result.blocks) return;
+        if (!result || !result.times) return;
+        $scope.times = result.times;
 
         // Choose a date formatter, depending on the blocks period
-        var blocksPeriod = result.blocks[result.blocks.length-1].medianTime - result.blocks[0].medianTime;
+        var blocksPeriod = result.times[result.times.length-1] - result.times[0];
         var dateFilter;
         if (blocksPeriod < 15778800/* less than 6 months*/) {
           dateFilter = $filter('formatDateShort');
@@ -426,7 +340,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
         ];
 
         // Labels
-        $scope.labels = result.labels.reduce(function(res, time) {
+        $scope.labels = result.times.reduce(function(res, time) {
           return res.concat(dateFilter(time));
         }, []);
 
@@ -485,7 +399,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
 }
 
 
-function GpCurrencyMembersCountController($scope, $controller, $q, $state, $translate, gpData, $filter) {
+function GpCurrencyMembersCountController($scope, $controller, $q, $state, $translate, gpColor, gpData, $filter) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -506,10 +420,12 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
       .then(function(result) {
         var translations = result[0];
         result = result[1];
-        if (!result || !result.blocks) return;
+
+        if (!result || !result.times) return;
+        $scope.times = result.times;
 
         // Choose a date formatter, depending on the blocks period
-        var blocksPeriod = result.blocks[result.blocks.length-1].medianTime - result.blocks[0].medianTime;
+        var blocksPeriod = result.times[result.blocks.length-1] - result.times[0].medianTime;
         var dateFormat;
         if (blocksPeriod < 15778800/* less than 6 months*/) {
           dateFormat = $filter('formatDateShort');
@@ -519,7 +435,7 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
         }
 
         // Format time
-        $scope.labels = result.labels.reduce(function(res, time) {
+        $scope.labels = result.times.reduce(function(res, time) {
           return res.concat(dateFormat(time));
         }, []);
 
@@ -558,24 +474,17 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
         ];
 
         // Colors
-        $scope.colors = result.blocks.reduce(function(res) {
-          return res.concat('rgba(17,193,243,0.5)');
-        }, []);
-
-        // Keep times (need for click)
-        $scope.blockTimes = result.blocks.reduce(function(res, block) {
-          return res.concat(block.medianTime);
-        }, []);
+        $scope.colors = gpColor.scale.fix(result.blocks.length);
       });
   };
 
-  $scope.showBlock = function(data, e, item) {
+  $scope.onChartClick = function(data, e, item) {
     if (!item) return;
     if (!item._index) {
       $state.go('app.view_block', {number: 0});
       return;
     }
-    var from = $scope.blockTimes[item._index-1];
+    var from = $scope.times[item._index-1];
     var to = moment.unix(from).utc().add(1, 'day').unix();
     $state.go('app.blockchain_search', {
       q: '(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded) AND medianTime:>{0} AND medianTime:<={1}'.format(from, to)

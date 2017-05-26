@@ -11,6 +11,23 @@
       "BTN_SHOW_STATS": "Voir les statistiques",
       "BTN_SHOW_DETAILED_STATS": "Statistiques détaillées"
     },
+    "ACCOUNT": {
+      "TITLE": "Statistiques",
+      "BALANCE_DIVIDER": "Situation du compte",
+      "BALANCE_TITLE": "Balance - {{pubkey|formatPubkey}}",
+      "TX_RECEIVED_LABEL": "Recettes",
+      "TX_SENT_LABEL": "Dépenses",
+      "TX_ACCUMULATION_LABEL": "Bilan des transactions",
+      "UD_LABEL": "DU",
+      "UD_ACCUMULATION_LABEL": "Bilan des DU",
+      "BALANCE_LABEL": "Solde",
+      "WOT_DIVIDER": "Toile de confiance",
+      "CERTIFICATION_TITLE": "Nombre de certifications - {{pubkey|formatPubkey}}",
+      "RECEIVED_CERT_LABEL": "Total reçues",
+      "RECEIVED_CERT_DELTA_LABEL": "Variation reçues",
+      "GIVEN_CERT_LABEL": "Total envoyées",
+      "GIVEN_CERT_DELTA_LABEL": "Variation envoyées"
+    },
     "BLOCKCHAIN": {
       "TITLE": "Statistiques",
       "BLOCKS_ISSUERS_DIVIDER": "Analyse de la répartition du calcul",
