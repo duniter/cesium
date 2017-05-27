@@ -21,30 +21,29 @@ Quand l'utilisateur cliquera sur le champ "dividende universel" de la page suiva
 
 Passez sur la branche du code #rml8  : https://github.com/duniter/cesium/tree/rml8
 
-### Démarrer Cesium
 
-Lancer Cesium : 
+### Ajout de librairie dans Cesium
 
-```bash
-cd cesium
-ionic serve
-```
-### Démarrer le noeud ElasticSearch 
+#### librairie Chart.js
 
-Démarrer votre noeud ES :  
+[Chart.js](chartjs.org) est une librairie JS qui permet de faire de magnifiques graphiques.
 
-```bash
-cd duniter4j
-mvn install -DskipTests
-mvn install -Prun -pl duniter4j-elasticsearch 
+Vérifier que cette librairie est installé dans Cesium, en ouvrant la page principale de l'application  `www/index.html` et en repérant la ligne :
+```html
+<script src="js/vendor/Chart.js"></script>
 ```
 
-### Ajout de la librairie D3.js
+Si ce n'est pas le cas, ajouté là avec la commande :
+```
+bower install chartjs --save
+```
 
-D3.js est une puissante librairie JS qui permet de faire de magnifiques graphiques.
+Puis ajouter la librairie dans `www/index.html`.  
 
-Vous pouvez utiliser `bower` pour installer la dépendance.
-Puis ajouter la librairie dans la page principale de l'application : `www/index.html` 
+#### librairie Angular Chart
+
+[Angular Chart](https://jtblin.github.io/angular-chart.js/) est une librairie qui intègre pleinement `Chart.js` dans Angular JS, utilisé par Cesium.
+Cela permet de définir plus facilement un graphique. 
 
 ### Gestion du controlleur 
 
@@ -59,14 +58,35 @@ Editez le fichier `www/js/controllers/currency-charts-controllers.js`.
 
 A vous de jouer ! Il faut : 
 
-- Remplir la requete POST vers le noeud ES sur l'index `/test_net/block/_search`; cf méthode `$scope.loadUds()';
+- Remplir la requete POST vers le noeud ES sur l'index `/g1/block/_search`; cf méthode `$scope.loadUds()';
 - Traiter le retour de la requête, pour la transformer dans le format attendu par D3.js.
 
 ### Template
 
-Editez le template HTML, dans le fichier `www/templates/currency/charts/ud.html`
+Editez le template HTML.
 
-Regardez la documentation D3.js pour savoir comment faire la suite !
+Regardez la documentation Chart.js pour savoir comment faire la suite !
+
+### Testez !
+
+#### Démarrer le noeud ElasticSearch 
+
+Démarrer votre noeud ES :  
+
+```bash
+cd duniter4j
+mvn install -DskipTests
+mvn install -Prun -pl duniter4j-es-assembly 
+```
+
+#### Démarrer Cesium
+
+Lancer Cesium : 
+
+```bash
+cd cesium
+ionic serve
+```
 
 ## La suite ?
 

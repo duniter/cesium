@@ -46,7 +46,7 @@ angular.module("cesium.config", [])
 		},
     "rml9": {
       "enable": true
-    },
+    }
 	},
 	"version": "0.12.6",
 	"build": "2017-05-23T08:45:46.819Z",
