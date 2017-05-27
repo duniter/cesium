@@ -43,7 +43,7 @@ var paths = {
   // plugins:
   templatecache_plugin: ['./www/plugins/*/templates/**/*.html'],
   ng_translate_plugin: ['./www/plugins/*/i18n/locale-*.json'],
-  ng_annotate_plugin: ['./www/plugins/*/js/**/*.js', '!./www/plugins/*/js/vendor/*.js'],
+  ng_annotate_plugin: ['./www/plugins/*/**/*.js', '!./www/plugins/*/js/vendor/*.js'],
   css_plugin: ['./www/plugins/*/css/**/*.css']
 };
 
@@ -188,7 +188,6 @@ gulp.task('templatecache_plugin', function (done) {
       root: "plugins/"
      }))
     .pipe(gulp.dest('./www/dist/dist_js/plugins'))
-    //.pipe(gulp.dest('./www/plugins'))
     .on('end', done);
 });
 
@@ -203,7 +202,6 @@ gulp.task('ng_translate_plugin', function() {
   return gulp.src(paths.ng_translate_plugin)
     .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/plugins'));
-    //.pipe(gulp.dest('www/plugins'));
 });
 
 gulp.task('css_plugin', function (done) {
