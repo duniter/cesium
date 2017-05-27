@@ -60,6 +60,7 @@ function HelpController($scope, $state, $timeout, $anchorScroll, csSettings) {
   $scope.$on('$ionicView.enter', function(e) {
     $scope.locale = csSettings.data.locale.id;
     if ($state.stateParams && $state.stateParams.anchor) {
+      $scope.anchor = $state.stateParams.anchor;
       $timeout(function () {
         $anchorScroll($state.stateParams.anchor);
       }, 100);
@@ -70,13 +71,21 @@ function HelpController($scope, $state, $timeout, $anchorScroll, csSettings) {
 function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parameters) {
   'ngInject';
 
+  $scope.itemsClass = {};
   $scope.locale = csSettings.data.locale.id;
 
   if (parameters && parameters.anchor) {
+
     $timeout(function() {
       $anchorScroll(parameters.anchor);
     }, 100);
+
+    // Change CSS classes
+    $scope.itemsClass = {};
+    $scope.itemsClass[parameters.anchor] = 'positive';
+    $scope.listClass = 'gray';
   }
+
 }
 
 
@@ -370,7 +379,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     ];
 
     // Get currency parameters, with currentUD
-    return csCurrency.default().then(function(currency) {
+    return csCurrency.get().then(function(currency) {
       contentParams = currency.parameters;
       // Launch steps
       return $scope.executeStep('currency', steps, startIndex);
@@ -481,8 +490,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     ];
 
     // Get currency parameters, with currentUD
-    return csCurrency.default().then(function(currency) {
-      contentParams = currency.parameters;
+    return csCurrency.parameters().then(function(parameters) {
+      contentParams = parameters;
       // Launch steps
       return $scope.executeStep('network', steps, startIndex);
     });
@@ -581,9 +590,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     ];
 
     // Get currency parameters, with currentUD
-    return csCurrency.default().then(function(currency) {
+    return csCurrency.get().then(function(currency) {
       contentParams = currency.parameters;
-      contentParams.currentUD = $rootScope.walletData.currentUD;
+      contentParams.currentUD = currency.currentUD;
       // Launch steps
       return $scope.executeStep('wot', steps, startIndex);
     });
@@ -732,10 +741,10 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     ];
 
     // Get currency parameters, with currentUD
-    return csCurrency.default()
+    return csCurrency.get()
       .then(function(currency) {
         contentParams = currency.parameters;
-        contentParams.currentUD = $rootScope.walletData.currentUD;
+        contentParams.currentUD = currency.currentUD;
         // Launch steps
         return $scope.executeStep('wallet', steps, startIndex);
       });
@@ -844,8 +853,8 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       }*/
     ];
 
-    return csCurrency.default().then(function(currency) {
-      contentParams = currency.parameters;
+    return csCurrency.parameters().then(function(parameters) {
+      contentParams = parameterss;
       return $scope.executeStep('certs', steps, startIndex);
     });
   };
@@ -908,10 +917,10 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
     ];
 
     // Get currency parameters, with currentUD
-    return csCurrency.default()
+    return csCurrency.get()
       .then(function(currency) {
         contentParams = currency.parameters;
-        contentParams.currentUD = $rootScope.walletData.currentUD;
+        contentParams.currentUD = currency.currentUD;
         // Launch steps
         return $scope.executeStep('tx', steps, startIndex);
       });
@@ -1036,9 +1045,9 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       }
     ];
 
-    return csCurrency.default()
-      .then(function(currency) {
-        contentParams = currency.parameters;
+    return csCurrency.parameters()
+      .then(function(parameters) {
+        contentParams = parameters;
         return $scope.executeStep('settings', steps, startIndex);
       });
   };
@@ -1072,7 +1081,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
       return $q.all([
         $scope.showHome(),
 
-        csCurrency.default()
+        csCurrency.parameters()
           .then(function(parameters) {
             contentParams = parameters;
           })

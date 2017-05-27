@@ -337,7 +337,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       node: {
         summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
-          return host2 == host && ((!port && !port2) || (port == port2));
+          return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80));
         }
       },
       network: {

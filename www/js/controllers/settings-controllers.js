@@ -20,7 +20,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHttp,
+function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, csHttp,
   UIUtils, BMA, csSettings, $ionicPopover, Modals) {
   'ngInject';
 
@@ -121,6 +121,9 @@ function SettingsController($scope, $q, $ionicPopup, $timeout, $translate, csHtt
           UIUtils.loading.hide();
           $scope.formData.node = newNode;
           BMA.copy(nodeBMA);
+
+          // Reset history cache
+          return $ionicHistory.clearCache();
         });
     });
   };

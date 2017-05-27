@@ -44,7 +44,7 @@
     <ion-slides options="slides.options" slider="slides.slider" ng-init="console.log('START SLIDE');">
 
       <!-- STEP 1: license -->
-      <ion-slide-page>
+      <ion-slide-page ng-if="licenseFileUrl">
         <ion-content class="has-header" scroll="false">
             <div class="padding" translate>ACCOUNT.NEW.INFO_LICENSE</div>
 
@@ -75,8 +75,8 @@
         <ion-content class="has-header" scroll="false">
           <form name="pseudoForm" novalidate="" ng-submit="doNext('pseudoForm')">
 
-            <div class="item item-text-wrap text-center padding hidden-xs" >
-              <a class="pull-right icon-help" ng-click="showHelpModal('join-pseudo')"></a>
+            <div class="item item-text-wrap text-center padding" >
+              <a class="pull-right icon-help hidden-xs" ng-click="showHelpModal('join-pseudo')"></a>
               <span translate>ACCOUNT.NEW.PSEUDO_WARNING</span>
             </div>
 
@@ -87,7 +87,7 @@
               <div class="item item-input"
                    ng-class="{'item-input-error': (pseudoForm.$submitted && pseudoForm.pseudo.$invalid) || (uiAlreadyUsed && formData.pseudo)}">
                 <span class="input-label" translate>ACCOUNT.NEW.PSEUDO</span>
-                <input name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
+                <input id="pseudo" name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
                        ng-model="formData.pseudo"
                        ng-minlength="3"
                        ng-maxlength="100"
@@ -113,18 +113,23 @@
               </div>
 
               <!-- Show if valid pseudo-->
-              <div class="item item-button-right left" ng-if="formData.computing && formData.pseudo">
-                  <ion-spinner icon="android"></ion-spinner>
-              </div>
-              <div class="text-right" ng-if="!formData.computing">
-                <div class="form-error balanced" ng-if="!uiAlreadyUsed && formData.pseudo">
-                  <i class="icon ion-checkmark balanced"></i>
-                  <span translate>ACCOUNT.NEW.PSEUDO_AVAILABLE</span>
+              <div class="text-right" style="min-height: 18px;">
+                <div class="form-error gray" ng-if="formData.computing && formData.pseudo">
+                  <ion-spinner class="icon ion-spinner-small" icon="android" ng-if="formData.computing && formData.pseudo"></ion-spinner>
+                  <span translate>ACCOUNT.NEW.CHECKING_PSEUDO</span>
                 </div>
-                <div class="form-error" ng-if="uiAlreadyUsed && formData.pseudo">
-                  <i class="icon ion-close-circled assertive"></i>
-                  <span translate>ACCOUNT.NEW.PSEUDO_NOT_AVAILABLE</span>
-                </div>
+
+                <ng-if ng-if="!formData.computing && formData.pseudo">
+                  <div class="form-error balanced" ng-if="!uiAlreadyUsed ">
+                    <i class="icon ion-checkmark balanced"></i>
+                    <span translate>ACCOUNT.NEW.PSEUDO_AVAILABLE</span>
+                  </div>
+                  <div class="form-error" ng-if="uiAlreadyUsed">
+                    <i class="icon ion-close-circled assertive"></i>
+                    <span translate>ACCOUNT.NEW.PSEUDO_NOT_AVAILABLE</span>
+                  </div>
+                </ng-if>
+
               </div>
 
               <div class="padding hidden-xs text-right">
@@ -326,11 +331,9 @@
         <ion-content class="has-header" scroll="false">
 
           <!-- Computing -->
-
           <div class="padding text-center" ng-if="formData.computing">
             <ion-spinner icon="android"></ion-spinner>
           </div>
-          <!-- ng-if="formData.computing" -->
 
           <!-- Account available -->
           <div ng-if="accountAvailable && !formData.computing">
@@ -339,14 +342,8 @@
             <div class="list">
 
               <ion-item class="item item-text-wrap item-border">
-                <div class="dark pull-right padding-right" ng-if="formData.computing">
-                  <ion-spinner icon="android"></ion-spinner>
-                </div>
                 <span class="input-label" translate>COMMON.PUBKEY</span>
-                <span class="gray text-no-wrap" ng-if="formData.computing" translate>
-                  ACCOUNT.NEW.COMPUTING_PUBKEY
-                </span>
-                <span class="gray text-no-wrap" ng-if="formData.pubkey">
+                <span class="gray text-no-wrap" copy-on-click="{{formData.pubkey}}">
                   {{formData.pubkey}}
                 </span>
               </ion-item>
@@ -367,20 +364,14 @@
 
             <ion-item class="item-icon-left item-text-wrap text-center">
                 <i class="icon ion-minus-circled assertive"></i>
-                <span id="modal-license" translate>ERROR.EXISTING_ACCOUNT</span>
+                <span id="modal-license" trust-as-html="'ERROR.EXISTING_ACCOUNT'|translate"></span>
             </ion-item>
 
             <div class="list">
 
               <ion-item class="item item-text-wrap item-border">
-                <div class="dark pull-right padding-right" ng-if="formData.computing">
-                  <ion-spinner icon="android"></ion-spinner>
-                </div>
-                <span class="gray text-no-wrap" ng-if="formData.computing" translate>
-                  ACCOUNT.NEW.COMPUTING_PUBKEY
-                </span>
                 <div class="padding text-center">
-                  <span class="gray text-no-wrap" ng-if="formData.pubkey">
+                  <span class="gray text-no-wrap">
                     {{formData.pubkey}}
                   </span>
                 </div>

@@ -2,10 +2,10 @@
           cache-view="false">
     <ion-nav-title bind-notifier="{ rebind:formData.useRelative }">
       <span>
-        {{'CURRENCY.VIEW.TITLE' | translate}} {{id}}
+        {{'CURRENCY.VIEW.TITLE' | translate}}
       </span>
       <span ng-if="!loading">
-        {{formData.currency}} (<span ng-bind-html=":rebind:formData.currency | currencySymbol:formData.useRelative"></span>)
+        {{formData.currency|capitalize}}
       </span>
     </ion-nav-title>
 
@@ -36,7 +36,16 @@
         <button class="button button-stable button-small-padding icon ion-android-more-vertical ink"
                 ng-click="showActionsPopover($event)">
         </button>
-        
+
+      </div>
+
+      <div class="item item-text-wrap no-border no-padding"
+           ng-if="!loading">
+        <div class="item-icon-left card padding stable-900-bg">
+          <i class="icon ion-help-circled calm"></i>
+          <div class="item-icon-left-padding" trust-as-html=":rebind:'CURRENCY.VIEW.CURRENCY_SHORT_DESCRIPTION'|translate:formData">
+          </div>
+        </div>
       </div>
 
       <div class="row responsive-sm">
@@ -44,6 +53,9 @@
         <div class="col list">
           <div class="item item-divider">
             <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
+            <span ng-if="!loading">
+              {{formData.currency|capitalize}}
+            </span>
           </div>
           <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
 

@@ -31,6 +31,7 @@
     "BTN_ADD": "Añadir",
     "BTN_SEARCH": "Buscar",
     "BTN_REFRESH": "Actualisar",
+    "BTN_START": "Empezar",
     "BTN_CONTINUE": "Continuar",
     "BTN_UNDERSTOOD": "He entendido",
     "BTN_OPTIONS": "Opciónes",
@@ -108,11 +109,12 @@
     "MESSAGE_SHORT": "Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a><br/>en tiempo real !",
     "BTN_REGISTRY": "Anuario",
     "BTN_MARKET": "Ofertas/demandas",
-    "BTN_CURRENCIES": "Explorar las monedas",
     "BTN_CURRENCY": "Explorar la moneda",
     "BTN_ABOUT": "A propósito",
     "BTN_HELP": "Ayuda en línea",
-    "REPORT_ISSUE": "anomalía"
+    "REPORT_ISSUE": "anomalía",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Usted no es dueño de la cuenta <<b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
+    "BTN_CHANGE_ACCOUNT": "Desconectar esta cuenta"
   },
   "SETTINGS": {
     "TITLE": "Configuraciónes",
@@ -195,17 +197,13 @@
     }
   },
   "CURRENCY": {
-    "SELECT": {
-      "TITLE": "Monedas",
-      "CURRENCIES": "Monedas conocidas",
-      "MEMBERS_COUNT": "{{membersCount}} miembros"
-    },
     "VIEW": {
       "TITLE": "Moneda",
       "TAB_CURRENCY": "Moneda",
       "TAB_WOT": "Red de confianza",
       "TAB_NETWORK": "Red",
       "TAB_BLOCKS": "Bloques",
+      "CURRENCY_SHORT_DESCRIPTION": "{{currency|capitalizar}} es un <b>moneda libre</b>, iniciado {{firstBlockTime|formatFromNow}}. Ella actualmente <b>{{N}} miembros</b>, que producen y recibir un <a ng-click=\"showHelpModal('ud')\">Dividendo universal</a> (DU), cada {{dt|formatPeriod}}.",
       "NETWORK_RULES_DIVIDER": "Reglas de la red",
       "CURRENCY_NAME": "Nombre de la moneda",
       "MEMBERS": "Número de miembros",
@@ -403,8 +401,13 @@
     },
     "NEW": {
       "TITLE": "Inscripción",
-      "SLIDE_1_TITLE": "Elección de la moneda :",
-      "SLIDE_2_TITLE": "Tipo de cuenta :",
+      "INTRO_WARNING_TIME": "Crear una cuenta en {{name|capitalize}} es muy simple. Sin embargo, por favor tome el tiempo suficiente para tomar correctamente este paso (no olvidar los identificadores, contraseñas, etc.).",
+      "INTRO_WARNING_SECURITY": "Asegúrate de que el equipo que se utiliza actualmente (ordenador, tableta, teléfono) <b>es seguro y digno de confianza</b>.",
+      "INTRO_WARNING_SECURITY_HELP": "Actualizaciones de antivirus, firewall activado, sesión protegidos por contraseña o código PIN, etc.",
+      "INTRO_HELP": "Haga clic en <b>{{'COMMON.BTN_START'|translate}}</b> para iniciar la creación de la cuenta. Se le guiará paso a paso.",
+      "REGISTRATION_NODE": "Su registro será grabado a través del nodo Duniter <b>{{server}}</b>, que luego se transmitió al resto del sistema de moneda.",
+      "REGISTRATION_NODE_HELP": "Si usted no confía en este nodo, <a ng-click=\"doQuickFix('settings')\">cambie la configuración</a> de Cesium.",
+      "SELECT_ACCOUNT_TYPE": "Elegir el tipo de cuenta para crear:",
       "MEMBER_ACCOUNT": "Cuenta miembro",
       "MEMBER_ACCOUNT_HELP": "Si ya no está inscrito como un individuo (Solamente una cuenta posible por individuo).",
       "WALLET_ACCOUNT": "Simple monedero",
@@ -423,6 +426,7 @@
       "LAST_SLIDE_CONGRATULATION": "<b>Bravo !</b> Ha introducido todas las informaciónes necesarias.<br/><b>Puede mandar la solicitud</b> de creación de su cuenta.</b><br/><br/>Por su información, la llave pública más abajo identificará su cuenta futura.<br/>Podrá estar comunicada a terceros para recibir sus pagos.<br/>Sin embargo, <b>no es útil</b> anotarla aquí.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Advertencia :</b> el identificador secreto, la contraseña y el seudónimo no podrán estar modificados.<br/><b>Asegurase siempre se los recordar !</b><br/><br/><b>Está usted seguro</b> querer mandar esta solicitud de inscripción ?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Advertencia :</b> el identificador secreto y la contraseña no podrán estar modificados.<br/><b>Asegurase siempre se los recordar !</b><br/><br/><b>Está usted seguro</b> querer continuar con estos identificadores ?",
+      "CHECKING_PSEUDO": "Comprobación de disponibilidad...",
       "PSEUDO_AVAILABLE": "Este nombre está disponible",
       "PSEUDO_NOT_AVAILABLE": "Este nombre de usuario no está disponible",
       "INFO_LICENSE": "Para unirse a la moneda, le pedimos que leer y aceptar esta licencia.",

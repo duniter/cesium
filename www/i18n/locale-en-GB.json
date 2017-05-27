@@ -31,6 +31,7 @@
     "BTN_ADD": "Add",
     "BTN_SEARCH": "Search",
     "BTN_REFRESH": "Refresh",
+    "BTN_START": "Start",
     "BTN_CONTINUE": "Continue",
     "BTN_UNDERSTOOD": "I understood",
     "BTN_OPTIONS": "Options",
@@ -197,17 +198,13 @@
     }
   },
   "CURRENCY": {
-    "SELECT": {
-      "TITLE": "Currencies",
-      "CURRENCIES": "Known currencies",
-      "MEMBERS_COUNT": "{{membersCount}} members"
-    },
     "VIEW": {
       "TITLE": "Currency",
       "TAB_CURRENCY": "Currency",
       "TAB_WOT": "Web of trust",
       "TAB_NETWORK": "Network",
       "TAB_BLOCKS": "Blocks",
+      "CURRENCY_SHORT_DESCRIPTION": "{{currency|capitalize}} is a <b>libre money</b>, started {{firstBlockTime | formatFromNow}}. It currently counts <b>{{N}} members </b>, who produce and collect a <a ng-click=\"showHelpModal('ud')\">Universal Dividend</a> (DU), each {{dt | formatPeriod}}.",
       "NETWORK_RULES_DIVIDER": "Network rules",
       "CURRENCY_NAME": "Currency name",
       "MEMBERS": "Members count",
@@ -253,7 +250,7 @@
     "VIEW": {
       "MEDIAN_TIME": "Blockchain time",
       "LOADING_PEERS": "Loading peers...",
-      "NODE_ADDRESS": "Node address",
+      "NODE_ADDRESS": "Peer address",
       "ENDPOINTS": {
         "BMAS": "Secure endpoint (SSL)",
         "BMATOR": "TOR endpoint",
@@ -278,7 +275,7 @@
     "POPOVER_FILTER_TITLE": "Filter",
     "OFFLINE": "Offline peers",
     "VIEW": {
-      "TITLE": "Node",
+      "TITLE": "Peer",
       "OWNER": "Owned by ",
       "SHOW_RAW_PEERING": "See peering document",
       "KNOWN_PEERS": "Known peers :",
@@ -405,8 +402,13 @@
     },
     "NEW": {
       "TITLE": "Registration",
-      "SLIDE_1_TITLE": "Select a currency:",
-      "SLIDE_2_TITLE": "Kind of account:",
+      "INTRO_WARNING_TIME": "Creating an account on {{name|capitalize}} is very simple. Please take sufficient time to do this correctly (not to forget the usernames, passwords, etc.).",
+      "INTRO_WARNING_SECURITY": "Check that the hardware you are currently using (computer, tablet, phone) <b>is secure and trustworthy </b>.",
+      "INTRO_WARNING_SECURITY_HELP": "Up-to-date anti-virus, firewall enabled, session protected by password or pin code...",
+      "INTRO_HELP": "Click <b> {{'COMMON.BTN_START'|translate}}</b> to begin creating an account. You will be guided step by step.",
+      "REGISTRATION_NODE": "Your registration will be registered via the Duniter peer <b>{{server}}</b> node, which will then be distributed to the rest of the currency network.",
+      "REGISTRATION_NODE_HELP": "If you do not trust this peer, please change <a ng-click=\"doQuickFix('settings')\">in the settings</a> of Cesium.",
+      "SELECT_ACCOUNT_TYPE": "Choose the type of account to create:",
       "MEMBER_ACCOUNT": "Member account",
       "MEMBER_ACCOUNT_HELP": "If you are not yet registered as an individual (one account possible per individual).",
       "WALLET_ACCOUNT": "Simple wallet",
@@ -425,8 +427,9 @@
       "LAST_SLIDE_CONGRATULATION": "You completed all required fields.<br/><b>You can send the account creation request</b>.<br/><br/>For information, the public key below identifies your future account.<br/>It can be communicated to third parties to receive their payment.<br/>Once your account has been approved, you can find this key under <b>{{'ACCOUNT.TITLE'|translate}}</b>.",
       "CONFIRMATION_MEMBER_ACCOUNT": "<b class=\"assertive\">Warning:</b> your secret identifier, password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to send this account creation request?",
       "CONFIRMATION_WALLET_ACCOUNT": "<b class=\"assertive\">Warning:</b> your password and pseudonym can not be changed.<br/><b>Make sure you always remember it!</b><br/><b>Are you sure</b> you want to continue?",
-      "PSEUDO_AVAILABLE": "This nickname is available",
-      "PSEUDO_NOT_AVAILABLE": "This nickname is not available",
+      "CHECKING_PSEUDO": "Checking...",
+      "PSEUDO_AVAILABLE": "This pseudonym is available",
+      "PSEUDO_NOT_AVAILABLE": "This pseudonym is not available",
       "INFO_LICENSE": "To be able to adhere to the currency, we ask you to kindly read and accept this license.",
       "BTN_ACCEPT": "I accept",
       "BTN_ACCEPT_LICENSE": "I accept the license"
@@ -596,7 +599,7 @@
     "FIX_IDENTITY": "The pseudonym <b>{{uid}}</b> will be published again, replacing the old publication that has expired.<br/></br/><b>Are you sure</b> you want to continue?",
     "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure?</b>",
     "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure?</b>",
-    "REVOKE_IDENTITY": "You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated nickname <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to revoke this identity?",
+    "REVOKE_IDENTITY": "You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated pseudonym <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to revoke this identity?",
     "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/>Are you sure you want to <b>revoke this identity</b>?",
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",

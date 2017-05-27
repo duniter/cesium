@@ -65,11 +65,11 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
     if ($scope.networkStarted) return;
     $scope.networkStarted = true;
     $scope.search.loading = true;
-    csCurrency.default()
+    csCurrency.get()
       .then(function (currency) {
         if (currency) {
-          $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
-            BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+          $scope.node = !BMA.node.same(currency.node.host, currency.node.port) ?
+            BMA.instance(currency.node.host, currency.node.port) : BMA;
           if (state && state.stateParams) {
             if (state.stateParams.type && ['mirror', 'member', 'offline'].indexOf(state.stateParams.type) != -1) {
               $scope.search.type = state.stateParams.type;

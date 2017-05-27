@@ -4,6 +4,7 @@ angular.module('cesium.plugins', [
   'cesium.plugins.templates',
   // Plugins
   'cesium.es.plugin',
-  'cesium.graph.plugin'
+  'cesium.graph.plugin',
+  'cesium.rml9.plugin'
   ])
 ;

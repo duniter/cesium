@@ -21,10 +21,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
     data = {},
 
-
     api = new Api(this, 'csWallet-' + id),
 
     resetData = function(init) {
+      data.loaded = false;
       data.pubkey= null;
       data.keypair = {
           signSk: null,
@@ -48,7 +48,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.sigDate = null;
       data.isMember = false;
       data.events = [];
-      data.loaded = false;
       if (init) {
         api.data.raise.init(data);
       }
@@ -316,12 +315,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   // Call extend api
                   api.data.raisePromise.login(data),
 
-                  // Load parameters
+                  // Load currency (e.g parameters)
                   // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-                  loadParameters(),
-
-                  // Load current UD is need by features tour
-                  loadCurrentUD()
+                  loadCurrency()
                 ]);
               }
               else */if (storedData && storedData.keypair && storedData.pubkey) {
@@ -340,18 +336,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
                   // Call extend api
                   api.data.raisePromise.login(data),
 
-                  // Load parameters
-                  // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-                  loadParameters(),
-
-                  // Load current UD is need by features tour
-                  loadCurrentUD()
+                  // Load currency
+                  // This prevent timeout error, when loading record after a browser refresh (e.g. F5)
+                  loadCurrency()
                 ]);
               }
               else {
-                // Load parameters
+                // Load currency
                 // This prevent timeout error, when loading a market record after a browser refresh (e.g. F5)
-                return loadParameters();
+                return loadCurrency();
               }
             })
             .then(function(){
@@ -686,49 +679,23 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         });
     },
 
-    loadParameters = function() {
+    loadCurrency = function() {
       if (data.parameters && data.currency) return $q.when();
-      return BMA.blockchain.parameters()
-        .then(function(json){
-          data.currency = json.currency;
-          data.parameters = json;
-          if (data.currentUD == -1) data.currentUD = data.parameters.ud0;
+      return csCurrency.get()
+        .then(function(currency){
+          data.currency = currency.name;
+          data.parameters =currency.parameters;
+          data.currentUD = currency.currentUD;
         })
         .catch(function(err) {
           data.currency = null;
           data.parameters = null;
+          data.currentUD = -1;
           throw err;
         });
     },
 
-    loadCurrentUD = function() {
-      return BMA.blockchain.stats.ud()
-        .then(function(res){
-          // Special case for currency init
-          if (!res.result.blocks.length) {
-            data.currentUD = data.parameters ? data.parameters.ud0 : -1;
-            return data.currentUD ;
-          }
-          else {
-            var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-            return BMA.blockchain.block({ block: lastBlockWithUD })
-              .then(function(block){
-                data.currentUD = powBase(block.dividend, block.unitbase);
-                return data.currentUD;
-              })
-              .catch(function(err) {
-                data.currentUD = null;
-                throw err;
-              });
-            }
-        })
-        .catch(function(err) {
-          data.currentUD = null;
-          throw err;
-        });
-    },
-
-    // Must be call after loadParameters() and loadRequirements()
+    // Must be call after loadCurrency() and loadRequirements()
     finishLoadRequirements = function() {
       data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.parameters.sigQty)) ?
           (data.parameters.sigQty - data.requirements.certificationCount) : 0;
@@ -804,10 +771,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return $q.all([
 
           // Get currency parameters
-          loadParameters(),
-
-          // Get current UD
-          loadCurrentUD(),
+          loadCurrency(),
 
           // Get requirements
           loadRequirements(),
@@ -833,7 +797,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           return processTransactionsAndSources();
         })
         .then(function() {
-          finishLoadRequirements(); // must be call after loadParameters() and loadRequirements()
+          finishLoadRequirements(); // must be call after loadCurrency() and loadRequirements()
           return api.data.raisePromise.finishLoad(data)
             .catch(function(err) {
               console.error('Error while finishing wallet data load, on extension point. Try to continue');
@@ -884,11 +848,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       // Reset events
       cleanEventsByContext('requirements');
 
-      // Get parameters
-      if (options.parameters) jobs.push(loadParameters());
-
-      // Get current UD
-      if (options.currentUd) jobs.push(loadCurrentUD());
+      // Get currency (e.g parameters)
+      if (options.parameters || options.currentUd) jobs.push(loadCurrency());
 
       // Get requirements
       if (options.requirements) {
@@ -1291,8 +1252,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         var block;
         return $q.all([
 
-          // Load parameters (need to known the currency)
-          loadParameters(),
+          // Load currency (e.g parameters)
+          loadCurrency(),
 
           // Get th current block
           BMA.blockchain.current()

@@ -364,11 +364,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-.run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
+.run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig, csCurrency) {
   'ngInject';
 
   $rootScope.config = csConfig;
   $rootScope.settings = csSettings.data;
+  $rootScope.currency = csCurrency.data;
   $rootScope.walletData = csWallet.data;
   $rootScope.device = Device;
 
@@ -477,14 +478,19 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       return csSettings.ready();
     })
 
-    // Trying to restore default wallet
+    // Load currency
+    .then(csCurrency.get)
+    .then(function(currency){
+      $rootScope.currency = currency;
+    })
+
+    // Trying to restore wallet
     .then(csWallet.restore)
 
     // Storing wallet to root scope
     .then(function(walletData){
       $rootScope.walletData = walletData;
     });
-
 
 })
 ;
