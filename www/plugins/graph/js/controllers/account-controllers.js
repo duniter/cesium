@@ -7,18 +7,25 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
     var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
 
-      /*PluginServiceProvider
-        .extendState('app.view_wallet', {
+      PluginServiceProvider
+        .extendState('app.view_wallet_tx', {
           points: {
-            'general': {
-              templateUrl: "plugins/graph/templates/network/view_wallet_extend.html",
-              controller: 'GpWalletExtendCtrl'
+            'buttons': {
+              templateUrl: "plugins/graph/templates/account/view_wallet_tx_extend.html",
+              controller: 'GpExtendCtrl'
             }
           }
         })
 
-        // TODO add wot extend
-      ;*/
+        .extendState('app.wot_identity', {
+          points: {
+            'buttons': {
+              templateUrl: "plugins/graph/templates/account/view_identity_extend.html",
+              controller: 'GpExtendCtrl'
+            }
+          }
+        })
+      ;
 
       $stateProvider
         .state('app.view_wallet_stats', {
@@ -44,7 +51,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
     }
   })
 
-  .controller('GpWalletExtendCtrl', GpWalletExtendController)
+  .controller('GpExtendCtrl', GpExtendController)
 
   .controller('GpAccountBalanceCtrl', GpAccountBalanceController)
 
@@ -52,7 +59,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
 
 ;
 
-function GpWalletExtendController($scope, PluginService, esSettings) {
+function GpExtendController($scope, PluginService, esSettings, $state, csWallet) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
@@ -61,10 +68,22 @@ function GpWalletExtendController($scope, PluginService, esSettings) {
   esSettings.api.state.on.changed($scope, function(enable) {
     $scope.enable = enable;
   });
+
+  $scope.showIdentityStats = function() {
+    if ($scope.formData && $scope.formData.pubkey) {
+      $state.go('app.wot_identity_stats', {pubkey: $scope.formData.pubkey});
+    }
+  };
+
+  $scope.showWalletStats = function() {
+    if (csWallet.isLogin()) {
+      $state.go('app.wot_identity_stats', {pubkey: csWallet.data.pubkey});
+    }
+  };
 }
 
 
-function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $translate, gpData, gpColor, csWallet) {
+function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $translate, csWot, gpData, gpColor, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -79,41 +98,62 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
         $scope.formData.pubkey = csWallet.data.pubkey;
       }
 
-      // for DEV only
-      //$scope.formData.pubkey = '38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE';
+  };
+
+  $scope.inheritedSetScale = $scope.setScale;
+  $scope.setScale = function(scale) {
+    // linear scale: sent values as negative
+    if (scale === 'linear') {
+      $scope.data[$scope.data.length-2] = _.map($scope.data[$scope.data.length-2], function(value) {
+        return -1 * Math.abs(value);
+      });
+    }
+    // log scale: sent values as positive
+    else {
+      $scope.data[$scope.data.length-2] = _.map($scope.data[$scope.data.length-2], function(value) {
+        return Math.abs(value);
+      });
+    }
+
+    $scope.inheritedSetScale(scale);
   };
 
   $scope.load = function(updateTimePct) {
 
     updateTimePct = angular.isDefined(updateTimePct) ? updateTimePct : true;
 
-    return $q.all([
+    var withUD = true;
 
-      $translate('GRAPH.ACCOUNT.BALANCE_TITLE', $scope.formData),
+    return csWot.load($scope.formData.pubkey)
+      .then(function(identity) {
+        $scope.identity = identity;
+        withUD = $scope.identity.isMember || $scope.identity.wasMember;
 
-      // translate i18n keys
-      $translate(['GRAPH.ACCOUNT.UD_LABEL',
-        'GRAPH.ACCOUNT.TX_RECEIVED_LABEL',
-        'GRAPH.ACCOUNT.TX_SENT_LABEL',
-        'GRAPH.ACCOUNT.UD_ACCUMULATION_LABEL',
-        'GRAPH.ACCOUNT.TX_ACCUMULATION_LABEL',
-        'GRAPH.ACCOUNT.BALANCE_LABEL',
-        'COMMON.DATE_PATTERN',
-        'COMMON.DATE_SHORT_PATTERN',
-        'COMMON.DATE_MONTH_YEAR_PATTERN']),
+        return $q.all([
 
-      // get data
-      gpData.blockchain.movement($scope.formData.currency, angular.copy($scope.formData))
-    ])
+          $translate('GRAPH.ACCOUNT.BALANCE_TITLE', $scope.formData),
+
+          // translate i18n keys
+          $translate(['GRAPH.ACCOUNT.UD_LABEL',
+            'GRAPH.ACCOUNT.TX_RECEIVED_LABEL',
+            'GRAPH.ACCOUNT.TX_SENT_LABEL',
+            'GRAPH.ACCOUNT.UD_ACCUMULATION_LABEL',
+            'GRAPH.ACCOUNT.TX_ACCUMULATION_LABEL',
+            'GRAPH.ACCOUNT.BALANCE_LABEL',
+            'COMMON.DATE_PATTERN',
+            'COMMON.DATE_SHORT_PATTERN',
+            'COMMON.DATE_MONTH_YEAR_PATTERN']),
+
+          // get data
+          gpData.blockchain.movement($scope.formData.currency, angular.copy($scope.formData))
+        ]);
+      })
       .then(function(result) {
         var title = result[0];
         var translations = result[1];
         result = result[2];
 
-        if (!result || !result.times) {
-          console.log('No DATA');
-          return; // no data
-        }
+        if (!result || !result.times) return; // no data
         $scope.times = result.times;
 
         var formatInteger = $filter('formatInteger');
@@ -122,11 +162,9 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
 
         // Data
         $scope.data = [
-          //result.ud,
+          result.ud,
           result.received,
           result.sent,
-          result.udSum,
-          result.txSum,
           result.balance
         ];
 
@@ -161,28 +199,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
                 id: 'y-axis-left',
                 type: 'linear',
                 position: 'left',
-                ticks: {
-                  beginAtZero:true,
-                  callback: function(value) {
-                    return formatInteger(value);
-                  }
-                }
-              },
-              {
-                id: 'y-axis-right',
-                type: 'linear',
-                position: 'right',
-                stacked: true,
-                display: false,
-                gridLines: {
-                  show: false
-                },
-                ticks: {
-                  beginAtZero:true,
-                  callback: function(value) {
-                    return formatInteger(value);
-                  }
-                }
+                stacked: true
               }
             ]
           },
@@ -194,72 +211,40 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             mode: 'index',
             callbacks: {
               label: function(tooltipItems, data) {
-                // Should add a '+' before value ?
-                var addPlus = (tooltipItems.datasetIndex < 2)
-                  && tooltipItems.yLabel > 0;
                 return data.datasets[tooltipItems.datasetIndex].label +
                   ': ' +
                   (!tooltipItems.yLabel ? '0' :
-                    ((addPlus ? '+' : '') + formatAmount(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
+                    (formatAmount(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
               }
             }
           }
         };
+        $scope.setScale($scope.scale);
 
         $scope.datasetOverride = [
-          /*{
-            yAxisID: 'y-axis-right',
+          {
+            yAxisID: 'y-axis-left',
             type: 'bar',
             label: translations['GRAPH.ACCOUNT.UD_LABEL'],
             backgroundColor: gpColor.rgba.energized(0.3),
             hoverBackgroundColor: gpColor.rgba.energized(0.5),
             borderWidth: 1
-          },*/
+          },
           {
-            yAxisID: 'y-axis-right',
+            yAxisID: 'y-axis-left',
             type: 'bar',
             label: translations['GRAPH.ACCOUNT.TX_RECEIVED_LABEL'],
-            backgroundColor: gpColor.rgba.positive(0.3),
-            hoverBackgroundColor: gpColor.rgba.positive(0.5),
+            backgroundColor: gpColor.rgba.positive(0.4),
+            hoverBackgroundColor: gpColor.rgba.positive(0.6),
             borderWidth: 1
           },
           {
-            yAxisID: 'y-axis-right',
+            yAxisID: 'y-axis-left',
             type: 'bar',
             label: translations['GRAPH.ACCOUNT.TX_SENT_LABEL'],
-            backgroundColor: gpColor.rgba.gray(0.3),
-            hoverBackgroundColor: gpColor.rgba.gray(0.5),
+            backgroundColor: gpColor.rgba.assertive(0.4),
+            hoverBackgroundColor: gpColor.rgba.assertive(0.6),
             borderWidth: 1
-          },
-          {
-            yAxisID: 'y-axis-left',
-            type: 'line',
-            label: translations['GRAPH.ACCOUNT.UD_ACCUMULATION_LABEL'],
-            fill: false,
-            borderColor: gpColor.rgba.energized(0.5),
-            borderWidth: 2,
-            backgroundColor: gpColor.rgba.energized(0.7),
-            pointBackgroundColor: gpColor.rgba.energized(0.5),
-            pointBorderColor: gpColor.rgba.white(),
-            pointHoverBackgroundColor: gpColor.rgba.energized(1),
-            pointHoverBorderColor: 'rgba(0,0,0,0)',
-            pointRadius: 3,
-            lineTension: 0.1
-          },
-          {
-            yAxisID: 'y-axis-left',
-            type: 'line',
-            label: translations['GRAPH.ACCOUNT.TX_ACCUMULATION_LABEL'],
-            fill: false,
-            borderColor: gpColor.rgba.positive(0.5),
-            borderWidth: 2,
-            backgroundColor: gpColor.rgba.positive(0.7),
-            pointBackgroundColor: gpColor.rgba.positive(0.5),
-            pointBorderColor: gpColor.rgba.white(),
-            pointHoverBackgroundColor: gpColor.rgba.positive(1),
-            pointHoverBorderColor: 'rgba(0,0,0,0)',
-            pointRadius: 3,
-            lineTension: 0.1
           },
           {
             yAxisID: 'y-axis-left',
@@ -276,6 +261,19 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             lineTension: 0.1
           }
         ];
+
+
+        if (!withUD) {
+          // remove UD
+          $scope.data.splice(0,1);
+          $scope.datasetOverride.splice(0,1);
+        }
+        else {
+          // FIXME: fund why UD data not working well
+          // remove UD
+          /*$scope.data.splice(0,1);
+          $scope.datasetOverride.splice(0,1);*/
+        }
       });
   };
 
@@ -339,10 +337,7 @@ function GpAccountCertificationController($scope, $controller, $q, $state, $filt
         var translations = result[1];
         result = result[2];
 
-        if (!result || !result.times) {
-          console.log('No DATA');
-          return; // no data
-        }
+        if (!result || !result.times) return; // no data
         $scope.times = result.times;
 
         var formatInteger = $filter('formatInteger');

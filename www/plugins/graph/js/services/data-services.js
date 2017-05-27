@@ -395,10 +395,8 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             return res.concat({
               from: agg.from,
               to: agg.to,
-              sent: -sent.sum / 100,
-              received: received.sum / 100,
-              delta: (received.sum - sent.sum) / 100,
-              count: received.count + sent.count
+              sent: sent.sum ? (-sent.sum / 100) : 0,
+              received: received.sum ? (received.sum / 100) : 0
             });
           }, []);
         });
@@ -472,29 +470,14 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
       var to = moment.unix(options.endTime).utc();
 
-      // Add a range to get TX before startTime
-      var ranges = [{
-        from: 0,
-        to: from.unix()
-      }];
-
-      var memberships = angular.copy(options.memberships).reverse();
-      var membership = memberships.pop();
-      while (membership && (membership.leaveTime && membership.leaveTime < from.unix())) {
-        membership = memberships.pop();
-      }
-
+      var ranges = [];
       var udRanges = [];
       var udFromMapping = {};
+      var memberships = angular.copy(options.memberships).reverse();
+      var membership = memberships.pop();
 
-      while(from.isBefore(to)) {
-
-        var range = {
-          from: from.unix(),
-          to: from.add(1, options.rangeDuration).unix()
-        };
+      function addRange(range) {
         ranges.push(range);
-
         var member = membership && membership.joinTime < range.to;
         if (member) {
           var udRange = {
@@ -507,6 +490,20 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             membership = memberships.pop();
           }
         }
+      }
+
+      // Add a range to get TX before startTime
+      addRange({
+        from: 0,
+        to: from.unix()
+      });
+
+      while(from.isBefore(to)) {
+
+        addRange({
+          from: from.unix(),
+          to: from.add(1, options.rangeDuration).unix()
+        });
 
         // Do not exceed max range count
         if ((!jobs.length && ranges.length == options.maxRangeSize+1) || (jobs.length && ranges.length == options.maxRangeSize)) {
@@ -518,14 +515,23 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             ])
             .then(function(res){
               var udsMap = res[0];
-              res[1].forEach(function(hit){
-                hit.ud = udsMap[hit.from]||0;
+              res = res[1];
+              // fill UD
+              res.forEach(function(hit){
+                hit.ud = (udsMap[hit.from]) || 0;
               });
-              return res[1];
+              return res;
             }));
           }
           else {
-            jobs.push(exports.raw.movement.getByRange(currency, options.pubkey, ranges));
+            jobs.push(exports.raw.movement.getByRange(currency, options.pubkey, ranges)
+              .then(function(res){
+                // fill UD
+                res.forEach(function(hit){
+                  hit.ud = 0;
+                });
+                return res;
+              }));
           }
 
           // reset ranges for the next loop
@@ -548,29 +554,17 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
           // First item should be history (tx before startTime)
           var history = res.splice(0,1)[0];
-          var txSum = history.delta||0;
-          var udSum = history.ud||0;
-          var balance = history.delta+(history.ud||0);
+          var balance = history.received + history.sent + history.ud;
 
           return {
             times: _.pluck(res, 'from'),
+            ud: _.pluck(res, 'ud'),
             sent: _.pluck(res, 'sent'),
             received: _.pluck(res, 'received'),
-            delta: _.pluck(res, 'delta'),
-            ud: _.pluck(res, 'ud'),
-            txSum: res.reduce(function(res, hit){
-              txSum += hit.delta;
-              return res.concat(txSum);
-            }, []),
-            udSum: res.reduce(function(res, hit){
-              udSum += hit.ud||0;
-              return res.concat(udSum);
-            }, []),
             balance: res.reduce(function(res, hit){
-              balance += hit.delta+(hit.ud||0);
+              balance += hit.received + hit.sent + hit.ud;
               return res.concat(balance);
-            }, []),
-            count: _.pluck(res, 'count')
+            }, [])
           };
         });
     };

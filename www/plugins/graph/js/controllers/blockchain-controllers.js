@@ -120,31 +120,19 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
               {
                 id: 'y-axis-amount',
                 type: 'linear',
-                position: 'left',
-                ticks: {
-                  beginAtZero:true,
-                  callback: function(value) {
-                    return formatInteger(value);
-                  }
-                }
+                position: 'left'
               },
               {
                 id: 'y-axis-count',
                 display: false,
                 type: 'linear',
-                position: 'right',
-                ticks: {
-                  beginAtZero:true
-                }
+                position: 'right'
               },
               {
                 id: 'y-axis-avg',
                 display: false,
                 type: 'linear',
-                position: 'right',
-                ticks: {
-                  beginAtZero:true
-                }
+                position: 'right'
               }
             ]
           },
@@ -164,6 +152,8 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
             }
           }
         };
+
+        $scope.setScale($scope.scale);
 
         $scope.datasetOverride = [
           {

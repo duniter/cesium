@@ -13,8 +13,9 @@
     },
     "ACCOUNT": {
       "TITLE": "Statistiques",
+      "BTN_SHOW_STATS": "Voir les statistiques du compte",
       "BALANCE_DIVIDER": "Situation du compte",
-      "BALANCE_TITLE": "Balance - {{pubkey|formatPubkey}}",
+      "BALANCE_TITLE": "Evolution du compte {{pubkey|formatPubkey}}",
       "TX_RECEIVED_LABEL": "Recettes",
       "TX_SENT_LABEL": "Dépenses",
       "TX_ACCUMULATION_LABEL": "Bilan des transactions",
@@ -41,10 +42,11 @@
       "TX_COUNT_TITLE": "Nombre de transactions écrites",
       "TX_COUNT_LABEL": "Nombre de transactions",
       "TX_AVG_BY_BLOCK": "Nombre moyen de transactions / bloc",
+      "TX_RANGE_DURATION_DIVIDER": "Unité de temps :",
       "TX_RANGE_DURATION": {
-        "HOUR": "Regrouper par <b>heure</b>",
-        "DAY": "Regrouper par <b>jour</b>",
-        "MONTH": "Regrouper par <b>mois</b>"
+        "HOUR": "Heure",
+        "DAY": "Jour",
+        "MONTH": "Mois"
       }
     },
     "CURRENCY": {

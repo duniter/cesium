@@ -14,8 +14,8 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     rangeDuration: 'day',
     firstBlockTime: 0
   };
-  $scope.formData.useRelative = angular.isDefined($scope.formData.useRelative) ?
-    $scope.formData.useRelative : csSettings.data.useRelative;
+  $scope.formData.useRelative = false; /*angular.isDefined($scope.formData.useRelative) ?
+    $scope.formData.useRelative : csSettings.data.useRelative;*/
   $scope.scale = 'linear';
   $scope.height = undefined;
   $scope.width = undefined;
@@ -110,6 +110,10 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     // Should be override by subclasses
   };
 
+  $scope.toggleScale = function() {
+    $scope.setScale($scope.scale === 'linear' ? 'logarithmic' : 'linear');
+  };
+
   $scope.setScale = function(scale) {
     $scope.hideActionsPopover();
     $scope.scale = scale;
@@ -127,7 +131,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
         };
       }
       else {
-        yAxe.ticks.min = 0;
+        //yAxe.ticks.min = 0;
         delete yAxe.ticks.beginAtZero;
         delete yAxe.ticks.callback;
         yAxe.ticks.callback = function(value, index) {
@@ -160,6 +164,9 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
   };
 
   $scope.goPreviousRange = function() {
+    if ($scope.loading) return;
+    $scope.loading = true;
+
     $scope.formData.startTime -= $scope.times.length * $scope.formData.rangeDurationSec;
     if ($scope.formData.startTime < $scope.formData.firstBlockTime) {
       $scope.formData.startTime = $scope.formData.firstBlockTime;
@@ -167,31 +174,46 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     $scope.formData.endTime = $scope.formData.startTime + $scope.times.length * $scope.formData.rangeDurationSec;
 
     // Reload data
-    $scope.load();
-    // Update location
-    $scope.updateLocation();
+    $scope.load().then(function(){
+      // Update location
+      $scope.updateLocation();
+
+      $scope.loading = false;
+    });
   };
 
   $scope.goNextRange = function() {
+    if ($scope.loading) return;
+    $scope.loading = true;
     $scope.formData.startTime += $scope.times.length * $scope.formData.rangeDurationSec;
     if ($scope.formData.startTime > $scope.formData.firstBlockTime + $scope.formData.currencyAge - $scope.formData.timeWindow) {
       $scope.formData.startTime = $scope.formData.firstBlockTime + $scope.formData.currencyAge - $scope.formData.timeWindow;
     }
     $scope.formData.endTime = $scope.formData.startTime + $scope.times.length * $scope.formData.rangeDurationSec;
+
     // Reload data
-    $scope.load();
-    // Update location
-    $scope.updateLocation();
+    $scope.load().then(function(){
+      // Update location
+      $scope.updateLocation();
+
+      $scope.loading = false;
+    });
   };
 
   $scope.onRangeChanged = function() {
+    if ($scope.loading) return;
+    $scope.loading = true;
+
     $scope.formData.startTime = $scope.formData.firstBlockTime + (parseFloat($scope.formData.timePct) / 100) * ($scope.formData.currencyAge - $scope.formData.timeWindow) ;
     $scope.formData.endTime = $scope.formData.startTime + $scope.times.length * $scope.formData.rangeDurationSec;
 
     // Reload data
-    $scope.load(false);
-    // Update location
-    $scope.updateLocation();
+    $scope.load().then(function(){
+      // Update location
+      $scope.updateLocation();
+
+      $scope.loading = false;
+    });
   };
 
   $scope.updateRange = function(startTime, endTime, updateTimePct) {
