@@ -541,6 +541,8 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             return res.concat(hits);
           }, []);
 
+          if (!res.length) return;
+
           // Sort by 'from' field
           res = _.sortBy(res, 'from');
 
@@ -548,7 +550,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           var history = res.splice(0,1)[0];
           var txSum = history.delta||0;
           var udSum = history.ud||0;
-          var balance = history.delta+history.ud||0;
+          var balance = history.delta+(history.ud||0);
 
           return {
             times: _.pluck(res, 'from'),
@@ -565,7 +567,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
               return res.concat(udSum);
             }, []),
             balance: res.reduce(function(res, hit){
-              balance += hit.delta+hit.ud||0;
+              balance += hit.delta+(hit.ud||0);
               return res.concat(balance);
             }, []),
             count: _.pluck(res, 'count')
@@ -585,6 +587,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
       return csWot.load(options.pubkey)
         .then(function(idty) {
+          if (!idty) return;
           var res = {};
           _.forEach(idty.given_cert||[], function(cert){
             var truncTime = moment.unix(cert.time).utc().startOf(options.rangeDuration).unix();

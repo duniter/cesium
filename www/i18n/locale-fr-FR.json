@@ -203,7 +203,7 @@
       "TAB_WOT": "Toile de confiance",
       "TAB_NETWORK": "Réseau",
       "TAB_BLOCKS": "Blocs",
-      "CURRENCY_SHORT_DESCRIPTION": "{{currency|capitalize}} est une <b>monnaie libre</b>, démarrée {{firstBlockTime|formatFromNow}}. Elle compte actuellement <b>{{N}} membres</b>, qui produisent et perçoivent un <a ng-click=\"showHelpModal('ud')\">Dividende Universel</a> (DU), chaque {{dt|formatPeriod}}.",
+      "CURRENCY_SHORT_DESCRIPTION": "{{currency|abbreviate}} est une <b>monnaie libre</b>, démarrée {{firstBlockTime|formatFromNow}}. Elle compte actuellement <b>{{N}} membres</b>, qui produisent et perçoivent un <a ng-click=\"showHelpModal('ud')\">Dividende Universel</a> (DU), chaque {{dt|formatPeriod}}.",
       "NETWORK_RULES_DIVIDER": "Règles du réseau",
       "CURRENCY_NAME": "Nom de la monnaie",
       "MEMBERS": "Nombre de membres",

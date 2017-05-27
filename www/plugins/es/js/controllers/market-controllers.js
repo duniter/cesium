@@ -618,7 +618,7 @@ function ESMarketRecordEditController($scope, $q, $timeout, $state, $ionicPopove
           $scope.formData.type=state.stateParams.type;
         }
         // Set the default currency
-        csCurrency.default()
+        csCurrency.get()
           .then(function(currency){
             $scope.formData.currency = currency.name;
             $scope.loading = false;

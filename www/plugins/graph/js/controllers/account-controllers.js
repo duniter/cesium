@@ -110,16 +110,19 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
         var translations = result[1];
         result = result[2];
 
-        if (!result || !result.times) return; // no data
+        if (!result || !result.times) {
+          console.log('No DATA');
+          return; // no data
+        }
         $scope.times = result.times;
 
         var formatInteger = $filter('formatInteger');
         var formatAmount =  $filter('formatDecimal');
-        $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.currency, $scope.formData.useRelative);
+        $scope.currencySymbol = $filter('currencySymbolNoHtml')($scope.formData.currency, $scope.formData.useRelative);
 
         // Data
         $scope.data = [
-          result.ud,
+          //result.ud,
           result.received,
           result.sent,
           result.udSum,
@@ -196,7 +199,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
                   && tooltipItems.yLabel > 0;
                 return data.datasets[tooltipItems.datasetIndex].label +
                   ': ' +
-                  (tooltipItems.yLabel === 0 ? '0' :
+                  (!tooltipItems.yLabel ? '0' :
                     ((addPlus ? '+' : '') + formatAmount(tooltipItems.yLabel) + ' ' + $scope.currencySymbol));
               }
             }
@@ -204,14 +207,14 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
         };
 
         $scope.datasetOverride = [
-          {
+          /*{
             yAxisID: 'y-axis-right',
             type: 'bar',
             label: translations['GRAPH.ACCOUNT.UD_LABEL'],
             backgroundColor: gpColor.rgba.energized(0.3),
             hoverBackgroundColor: gpColor.rgba.energized(0.5),
             borderWidth: 1
-          },
+          },*/
           {
             yAxisID: 'y-axis-right',
             type: 'bar',
@@ -336,7 +339,10 @@ function GpAccountCertificationController($scope, $controller, $q, $state, $filt
         var translations = result[1];
         result = result[2];
 
-        if (!result || !result.times) return; // no data
+        if (!result || !result.times) {
+          console.log('No DATA');
+          return; // no data
+        }
         $scope.times = result.times;
 
         var formatInteger = $filter('formatInteger');
@@ -405,7 +411,7 @@ function GpAccountCertificationController($scope, $controller, $q, $state, $filt
                 return data.datasets[tooltipItems.datasetIndex].label +
                   ': ' +
                   (addPlus ? '+' : '') +
-                  formatInteger(tooltipItems.yLabel);
+                  !tooltipItems.yLabel ? '0' : formatInteger(tooltipItems.yLabel);
               }
             }
           }

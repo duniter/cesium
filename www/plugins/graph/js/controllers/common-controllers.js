@@ -49,7 +49,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
 
       // Make sure there is currency, or load it not
       if (!$scope.formData.currency) {
-        return csCurrency.default()
+        return csCurrency.get()
           .then(function (currency) {
             $scope.formData.currency = currency ? currency.name : null;
             $scope.formData.firstBlockTime = currency ? _truncDate(currency.firstBlockTime) : 0;

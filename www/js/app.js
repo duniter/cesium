@@ -225,21 +225,32 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   })
 
   .filter('abbreviate', function() {
+    var _cache = {};
     return function(input) {
       var currency = input || '';
+      if (_cache[currency]) return _cache[currency];
       if (currency.length > 3) {
         var unit = '', sepChars = ['-', '_', ' '];
         for (var i = 0; i < currency.length; i++) {
           var c = currency[i];
-          if (i === 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
+          if (i === 0) {
+            unit = (c === 'g' || c === 'G') ? 'Ğ' : c ;
+          }
+          else if (i > 0 && sepChars.indexOf(currency[i-1]) != -1) {
             unit += c;
           }
         }
-        return unit.toUpperCase();
+        currency = unit.toUpperCase();
       }
       else {
-        return currency.toUpperCase();
+        currency = currency.toUpperCase();
+        if (currency.charAt(0) === 'G') {
+          currency = 'Ğ' + (currency.length > 1 ? currency.substr(1) : '');
+        }
       }
+
+      _cache[input] = currency;
+      return currency;
     };
   })
 

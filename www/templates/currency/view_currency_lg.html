@@ -1,11 +1,8 @@
 <ion-view left-buttons="leftButtons"
           cache-view="false">
     <ion-nav-title bind-notifier="{ rebind:formData.useRelative }">
-      <span>
-        {{'CURRENCY.VIEW.TITLE' | translate}}
-      </span>
       <span ng-if="!loading">
-        {{formData.currency|capitalize}}
+         {{'CURRENCY.VIEW.TITLE' | translate}} {{formData.currency|abbreviate}}
       </span>
     </ion-nav-title>
 
@@ -21,6 +18,8 @@
 
       <!-- Buttons bar-->
       <div class="hidden-xs hidden-sm padding text-center">
+
+
         <button class="button button-stable icon-right ink"
                 ng-if="formData.licenseUrl"
                 ng-click="showLicenseModal()">
@@ -39,7 +38,7 @@
 
       </div>
 
-      <div class="item item-text-wrap no-border no-padding"
+      <div class="item item-text-wrap no-border no-padding pull-left"
            ng-if="!loading">
         <div class="item-icon-left card padding stable-900-bg">
           <i class="icon ion-help-circled calm"></i>
@@ -53,9 +52,6 @@
         <div class="col list">
           <div class="item item-divider">
             <span translate>CURRENCY.VIEW.MONEY_DIVIDER</span>
-            <span ng-if="!loading">
-              {{formData.currency|capitalize}}
-            </span>
           </div>
           <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
 

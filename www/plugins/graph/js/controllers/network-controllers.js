@@ -59,7 +59,7 @@ function GpNetworkViewExtendController($scope, PluginService, esSettings) {
   });
 }
 
-function GpPeerViewExtendController($scope, $q, $timeout, PluginService, esSettings, csCurrency, gpData) {
+function GpPeerViewExtendController($scope, $timeout, PluginService, esSettings, csCurrency, gpData) {
   'ngInject';
 
   $scope.extensionPoint = PluginService.extensions.points.current.get();
@@ -84,7 +84,7 @@ function GpPeerViewExtendController($scope, $q, $timeout, PluginService, esSetti
 
     // Make sure there is currency, or load if not
     if (!$scope.node.currency) {
-      return csCurrency.default()
+      return csCurrency.get()
         .then(function(currency) {
           $scope.node.currency = currency ? currency.name : null;
           return $scope.enter(e, state);
@@ -133,7 +133,7 @@ function GpPeerStatsController($scope, $controller, csCurrency) {
 
       // Make sure there is currency, or load it not
       if (!$scope.currency) {
-        return csCurrency.default()
+        return csCurrency.get()
           .then(function(currency) {
             $scope.currency = currency ? currency.name : null;
             return $scope.enter(e, state);
