@@ -4,9 +4,9 @@
   <div class="item no-padding">
 
     <div class="gray double-padding-x padding-top item-text-wrap"
-         ng-repeat="items in dynamicSearchFilter" ng-if="items[3]">
-      <span>{{items[2]|translate:params}}</span>
-      <a class="icon ion-close" ng-click="itemRemove(items[0])"></a>
+         ng-repeat="filter in search.filters" ng-if="filter">
+      <span>{{'BLOCKCHAIN.LOOKUP.TX_SEARCH_FILTER.'+filter.type|translate:filter}}</span>
+      <a class="icon ion-close" ng-click="itemRemove(filter)"></a>
 
     </div>
 

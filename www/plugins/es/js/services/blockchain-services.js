@@ -119,6 +119,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
     return exports;
   }
 
+
   return EsBlockchain();
 })
 ;
