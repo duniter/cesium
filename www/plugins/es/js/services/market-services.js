@@ -191,7 +191,7 @@ angular.module('cesium.es.market.services', ['ngResource', 'cesium.services', 'c
 
               // Make sure currency if present (fix old data)
               if (!record.currency) {
-                return csCurrency.default()
+                return csCurrency.get()
                   .then(function (currency) {
                     record.currency = currency.name;
                     return data;

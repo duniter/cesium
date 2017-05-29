@@ -1,0 +1,20 @@
+
+  <div class="range range-positive no-padding-left no-padding-right">
+    <a
+      class="button button-stable button-clear no-padding pull-left"
+      ng-click="goPreviousRange($event)">
+      <i class="icon ion-chevron-left"></i>
+    </a>
+    <input type="range"
+           ng-model="formData.timePct"
+           name="timePct"
+           min="0" max="100"
+           value="{{formData.timePct}}"
+           ng-change="onRangeChanged();"
+           ng-model-options="{ debounce: 250 }">
+    <a
+      class="button button-stable button-clear no-padding pull-right"
+      ng-click="goNextRange($event)">
+      <i class="icon ion-chevron-right"></i>
+    </a>
+  </div>

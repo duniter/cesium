@@ -101,11 +101,11 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       }
       // Load currency if need
       if (!$scope.currency) {
-        csCurrency.default()
+        csCurrency.get()
           .then(function(currency) {
             $scope.currency = currency ? currency.name : null;
-            $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
-              BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+            $scope.node = !BMA.node.same(currency.node.host, currency.node.port) ?
+              BMA.instance(currency.node.host, currency.node.port) : BMA;
 
             if (!$scope.currency) {
               UIUtils.alert.error('ERROR.GET_CURRENCY_FAILED');
@@ -434,12 +434,11 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
     $scope.hash = state && state.stateParams && state.stateParams.hash ? state.stateParams.hash : undefined;
 
     if (!$scope.currency) {
-      csCurrency.default()
+      csCurrency.get()
         .then(function (currency) {
           if (currency) {
             $scope.currency = currency.name;
-            $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
-              BMA.instance(currency.peer.host, currency.peer.port) : BMA;
+            $scope.node = currency.node;
             $scope.load();
           }
         })

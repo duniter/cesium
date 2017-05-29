@@ -1,0 +1,9 @@
+
+/**********
+   Graph currency popover
+**********/
+
+.popover-graph-currency {
+  height: 300px !important;
+  max-width: 250px !important;
+}

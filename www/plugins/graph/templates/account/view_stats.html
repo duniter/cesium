@@ -1,0 +1,39 @@
+<ion-view left-buttons="leftButtons"
+          cache-view="false">
+  <ion-nav-title>
+    {{'GRAPH.ACCOUNT.TITLE' | translate}}{{id}}
+  </ion-nav-title>
+
+  <ion-content scroll="true" class="no-padding">
+
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="list" ng-if="!loading">
+
+      <!--  - - - - Balance - - - - -->
+      <div class="item item-divider" translate>
+        GRAPH.ACCOUNT.BALANCE_DIVIDER
+      </div>
+
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/account/graph_balance.html'"
+           ng-controller="GpAccountBalanceCtrl"
+           ng-init="setSize(350, 1000)">
+      </div>
+
+      <!--  - - - - WOT - - - - -->
+      <!--<div class="item item-divider" translate>
+        GRAPH.ACCOUNT.WOT_DIVIDER
+      </div>
+
+      <div class="item no-padding-xs"
+           ng-include="'plugins/graph/templates/account/graph_certifications.html'"
+           ng-controller="GpAccountCertificationCtrl"
+           ng-init="setSize(350, 1000)">
+      </div>-->
+
+  </ion-content>
+
+</ion-view>

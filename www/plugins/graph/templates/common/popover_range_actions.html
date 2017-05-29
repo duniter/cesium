@@ -1,0 +1,43 @@
+<ion-popover-view class="has-header popover-graph-currency">
+  <ion-header-bar>
+    <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <!-- scale -->
+      <a class="item item-icon-left ink"
+         ng-click="toggleScale()">
+        <i class="icon ion-ios-checkmark-empty" ng-show="scale=='logarithmic'"></i>
+        <span ng-bind-html="'GRAPH.COMMON.LOGARITHMIC_SCALE' | translate"></span>
+      </a>
+
+      <!-- duration divider -->
+      <div class="item item-divider">
+        {{'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION_DIVIDER'|translate}}
+      </div>
+
+      <!-- duration: hour -->
+      <a class="item item-icon-left ink"
+         ng-click="setRangeDuration('hour')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='hour'"></i>
+        <span ng-bind-html="'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION.HOUR' | translate"></span>
+      </a>
+
+      <!-- duration: day -->
+      <a class="item item-icon-left ink"
+         ng-click="setRangeDuration('day')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='day'"></i>
+        <span ng-bind-html="'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION.DAY' | translate"></span>
+      </a>
+
+      <!-- duration: month -->
+      <a class="item item-icon-left ink"
+         ng-click="setRangeDuration('month')">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.rangeDuration=='month'"></i>
+        <span ng-bind-html="'GRAPH.BLOCKCHAIN.TX_RANGE_DURATION.MONTH' | translate"></span>
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

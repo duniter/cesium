@@ -5,6 +5,8 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
+
     <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
     </button>
   </ion-nav-buttons>
@@ -39,6 +41,8 @@
               ng-click="doUpdate()"
               title="{{'COMMON.BTN_REFRESH' | translate}}">
       </button>
+
+      <cs-extension-point name="buttons"></cs-extension-point>
 
       &nbsp;&nbsp;
 

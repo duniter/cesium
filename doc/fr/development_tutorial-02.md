@@ -18,7 +18,7 @@ Pour mettre en place votre environnement de développement, suivez le [1er tutor
 
 ## Niveau VI : Afficher un paramètre monétaire manquant
 
-__Objectif :__ Dans ce niveau, l'objectif est d'afficher dans la page [`Monnaie`](http://cesium.duniter.fr/#/app/currency/view/lg/) le paramètre monétaire `stepMax`.
+__Objectif :__ Dans ce niveau, l'objectif est d'afficher dans la page [`Monnaie`](http://g1.duniter.fr/#/app/currency/view/lg/) le paramètre monétaire `stepMax`.
 
 > Pour rappel, `stepMax` est la distance maximale entre un membre et un postulant, pour que ce dernier puisse rentrer dans la toile de confiance.
 

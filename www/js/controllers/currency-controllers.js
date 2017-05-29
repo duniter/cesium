@@ -6,29 +6,6 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
   $stateProvider
 
-    .state('app.currency_lookup', {
-      url: "/currencies?q",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/currency/lookup.html",
-          controller: 'CurrencyLookupCtrl'
-        }
-      }
-    })
-
-    .state('app.currency_name', {
-      url: "/currencies/:currency",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/currency/view_currency.html",
-          controller: 'CurrencyViewCtrl'
-        }
-      },
-      data: {
-        large: 'app.currency_name_lg'
-      }
-    })
-
     .state('app.currency', {
       url: "/currency",
       views: {
@@ -80,17 +57,6 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
       }
     })
 
-    .state('app.currency_name_lg', {
-      url: "/currency/lg/:name",
-      cache: false,
-      views: {
-        'menuContent': {
-          templateUrl: "templates/currency/view_currency_lg.html",
-          controller: 'CurrencyViewCtrl'
-        }
-      }
-    })
-
     .state('app.currency_lg', {
       url: "/currency/lg",
       cache: false,
@@ -105,63 +71,12 @@ angular.module('cesium.currency.controllers', ['cesium.services'])
 
 })
 
-.controller('CurrencyLookupCtrl', CurrencyLookupController)
-
-.controller('CurrencyViewCtrl', CurrencyViewController)
+  .controller('CurrencyViewCtrl', CurrencyViewController)
 
   .controller('CurrencyLicenseModalCtrl', CurrencyLicenseModalController)
 ;
 
-function CurrencyLookupController($scope, $state, $q, UIUtils, BMA, csCurrency) {
-  'ngInject';
-
-  $scope.selectedCurrency = '';
-  $scope.knownCurrencies = [];
-  $scope.search = {
-    loading: true,
-    results: []
-  };
-  $scope.entered = false;
-
-  $scope.$on('$ionicView.enter', function(e, state) {
-    if (!$scope.entered) {
-      if (state && state.stateParams && state.stateParams.q) {
-        $scope.search.text = state.stateParams.q;
-      }
-
-      csCurrency.all()
-        .then(function (currencies) {
-
-          $q.all(currencies.map(function(currency) {
-            var bma = BMA.lightInstance(currency.peer.host,currency.peer.port);
-            return bma.blockchain.current()
-              .then(function(block) {
-                currency.membersCount = block.membersCount;
-              });
-          }))
-          .then(function() {
-            $scope.search.results = currencies;
-            $scope.search.loading = false;
-            if (!!currencies && currencies.length == 1) {
-              $scope.selectedCurrency = currencies[0].id;
-            }
-            // Set Ink
-            UIUtils.ink({selector: 'a.item'});
-          });
-
-
-        });
-    }
-  });
-
-  // Called to navigate to the main app
-  $scope.selectCurrency = function(currency) {
-    $scope.selectedCurrency = currency;
-    $state.go('app.currency_name', {currency: currency.name});
-  };
-}
-
-function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
+function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA, UIUtils, csSettings, csCurrency, csNetwork, ModalUtils) {
 
   $scope.formData = {
     useRelative: csSettings.data.useRelative,
@@ -195,25 +110,23 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
       csSettings.data.expertMode,
     licenseUrl: csSettings.getLicenseUrl()
   };
-  $scope.node = null;
   $scope.loading = true;
   $scope.screen = UIUtils.screen;
 
   $scope.enter = function(e, state) {
     if ($scope.loading) { // run only once (first enter)
-      if (state.stateParams && state.stateParams.currency) { // Load by name
-        csCurrency.searchByName(state.stateParams.currency)
-        .then(function(currency){
-          $scope.init(currency);
-        });
-      }
-      else {
-        csCurrency.default()
-        .then(function (currency) {
-          $scope.init(currency);
+
+      UIUtils.loading.show();
+
+      csCurrency.get()
+        .then($scope.load)
+        .then(function() {
+          // Show help tip, if login
+          if ($scope.isLogin()) {
+            $scope.showHelpTip();
+          }
         })
         .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-      }
 
       csNetwork.api.data.on.mainBlockChanged($scope, function(mainBlock) {
         if ($scope.loading) return;
@@ -228,34 +141,13 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
   };
   $scope.$on('$ionicView.enter', $scope.enter);
 
-  $scope.init = function(currency) {
-    $scope.formData.currency = currency.name;
-    $scope.node = !BMA.node.same(currency.peer.host, currency.peer.port) ?
-      BMA.instance(currency.peer.host, currency.peer.port) : BMA;
-
-    UIUtils.loading.show();
-
-    // Load data
-    $scope.load()
-      .then(function() {
-        // Show help tip, if login
-        if ($scope.isLogin()) {
-          $scope.showHelpTip();
-        }
-      });
-  };
-
   $scope.load = function() {
-    if (!$scope.node) {
-      return;
-    }
-
     // Load data from node
     var data = {}, M, lastUDTime, now = new Date().getTime();
     return $q.all([
 
       // Get the currency parameters
-      $scope.node.blockchain.parameters()
+      BMA.blockchain.parameters()
         .then(function(json){
           data.currency = json.currency;
           data.c = json.c;
@@ -279,7 +171,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
         }),
 
       // Get the current block informations
-      $scope.node.blockchain.current()
+      BMA.blockchain.current()
         .then(function(block){
           M = block.monetaryMass;
           data.N = block.membersCount;
@@ -299,11 +191,11 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
         }),
 
       // Get the UD informations
-      $scope.node.blockchain.stats.ud()
+      BMA.blockchain.stats.ud()
         .then(function(res){
           if (res.result.blocks.length) {
             var lastBlockWithUD = res.result.blocks[res.result.blocks.length - 1];
-            return $scope.node.blockchain.block({ block: lastBlockWithUD })
+            return BMA.blockchain.block({ block: lastBlockWithUD })
               .then(function(block){
                 data.currentUD = (block.unitbase > 0) ? block.dividend * Math.pow(10, block.unitbase) : block.dividend;
                 lastUDTime = block.medianTime;
@@ -314,7 +206,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
           else {
             lastUDTime=0;
             data.Nprev=0;
-            return $scope.node.blockchain.parameters()
+            return BMA.blockchain.parameters()
               .then(function(json){
                 data.currentUD = json.ud0;
               });
@@ -421,6 +313,10 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, BMA, UIUtil
 
   $scope.showLicenseModal = function() {
     return ModalUtils.show('templates/currency/modal_license.html','CurrencyLicenseModalCtrl');
+  };
+
+  $scope.showHelpModal = function(helpAnchor) {
+    Modals.showHelp({anchor: helpAnchor});
   };
 
   /* -- popover -- */

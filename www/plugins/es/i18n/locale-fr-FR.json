@@ -474,6 +474,8 @@
     "NODE_BMA_UP": "Le noeud <b>{{params[0]}}:{{params[1]}}</b> est à nouveau accessible.",
     "MEMBER_JOIN": "Vous êtes maintenant <b>membre</b> de la monnaie <b>{{params[0]}}</b> !",
     "MEMBER_LEAVE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>!",
+    "MEMBER_EXCLUDE": "Vous n'êtes <b>plus membre</b> de la monnaie <b>{{params[0]}}</b>, faute de non renouvellement ou par manque de certifications.",
+    "MEMBER_REVOKE": "La révocation de votre compte a été effectuée. Il ne pourra plus être un compte membre de la monnaie <b>{{params[0]}}</b>.",
     "MEMBER_ACTIVE": "Votre renouvellement d'adhésion à la monnaie <b>{{params[0]}}</b> a été <b>pris en compte</b>.",
     "TX_SENT": "Votre <b>paiement</b> à <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a été effectué.",
     "TX_SENT_MULTI": "Votre <b>paiement</b> à <b>{{params[1]}}</b> a été effectué.",

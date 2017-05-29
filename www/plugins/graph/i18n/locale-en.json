@@ -11,6 +11,16 @@
       "BTN_SHOW_STATS": "See statistics",
       "BTN_SHOW_DETAILED_STATS": "Detailed statistics"
     },
+    "ACCOUNT": {
+      "TITLE": "Statistics",
+      "BTN_SHOW_STATS": "View account Statistics",
+      "BALANCE_DIVIDER": "Account status",
+      "BALANCE_TITLE": "Evolution of the account {{pubkey|formatPubkey}}",
+      "TX_RECEIVED_LABEL": "Receipts",
+      "TX_SENT_LABEL": "Spending",
+      "UD_LABEL": "UD",
+      "BALANCE_LABEL": "Balance"
+    },
     "BLOCKCHAIN": {
       "TITLE": "Statistics",
       "BLOCKS_ISSUERS_DIVIDER": "Written blocks by members",
@@ -24,6 +34,7 @@
       "TX_COUNT_TITLE": "Number of written transactions",
       "TX_COUNT_LABEL": "Number of transactions",
       "TX_AVG_BY_BLOCK": "Average per block",
+      "TX_RANGE_DURATION_DIVIDER": "Step unit:",
       "TX_RANGE_DURATION": {
         "HOUR": "Group by <b>hour</b>",
         "DAY": "Group by <b>day</b>",

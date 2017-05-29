@@ -4,7 +4,7 @@
          style="top: 33px; margin-top:-33px; position: relative;">
       <button
         class="button button-stable button-clear no-padding-xs pull-right"
-        ng-click="showTxActionsPopover($event)">
+        ng-click="showActionsPopover($event)">
         <i class="icon ion-navicon-round"></i>
       </button>
     </div>
@@ -17,26 +17,8 @@
               chart-colors="colors"
               chart-options="options"
               chart-labels="labels"
-              chart-click="showTxRange">
+              chart-click="onChartClick">
       </canvas>
     </div>
 
-    <div class="range range-positive no-padding-left no-padding-right">
-      <a
-        class="button button-stable button-clear no-padding pull-left"
-        ng-click="loadPreviousTx()">
-        <i class="icon ion-chevron-left"></i>
-      </a>
-      <input type="range"
-             ng-model="formData.timePct"
-             name="timePct"
-             min="0" max="100"
-             value="{{formData.timePct}}"
-             ng-change="onTxTimeChanged();"
-             ng-model-options="{ debounce: 250 }">
-      <a
-        class="button button-stable button-clear no-padding pull-right"
-        ng-click="loadNextTx($event)">
-        <i class="icon ion-chevron-right"></i>
-      </a>
-    </div>
+    <ng-include src="'plugins/graph/templates/common/graph_range_bar.html'"></ng-include>

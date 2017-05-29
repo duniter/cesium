@@ -225,21 +225,32 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   })
 
   .filter('abbreviate', function() {
+    var _cache = {};
     return function(input) {
       var currency = input || '';
+      if (_cache[currency]) return _cache[currency];
       if (currency.length > 3) {
         var unit = '', sepChars = ['-', '_', ' '];
         for (var i = 0; i < currency.length; i++) {
           var c = currency[i];
-          if (i === 0 || (i > 0 && sepChars.indexOf(currency[i-1]) != -1)) {
+          if (i === 0) {
+            unit = (c === 'g' || c === 'G') ? 'Ğ' : c ;
+          }
+          else if (i > 0 && sepChars.indexOf(currency[i-1]) != -1) {
             unit += c;
           }
         }
-        return unit.toUpperCase();
+        currency = unit.toUpperCase();
       }
       else {
-        return currency.toUpperCase();
+        currency = currency.toUpperCase();
+        if (currency.charAt(0) === 'G') {
+          currency = 'Ğ' + (currency.length > 1 ? currency.substr(1) : '');
+        }
       }
+
+      _cache[input] = currency;
+      return currency;
     };
   })
 
@@ -364,11 +375,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-.run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig) {
+.run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig, csCurrency) {
   'ngInject';
 
   $rootScope.config = csConfig;
   $rootScope.settings = csSettings.data;
+  $rootScope.currency = csCurrency.data;
   $rootScope.walletData = csWallet.data;
   $rootScope.device = Device;
 
@@ -477,14 +489,19 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       return csSettings.ready();
     })
 
-    // Trying to restore default wallet
+    // Load currency
+    .then(csCurrency.get)
+    .then(function(currency){
+      $rootScope.currency = currency;
+    })
+
+    // Trying to restore wallet
     .then(csWallet.restore)
 
     // Storing wallet to root scope
     .then(function(walletData){
       $rootScope.walletData = walletData;
     });
-
 
 })
 ;

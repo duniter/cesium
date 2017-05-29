@@ -1,0 +1,24 @@
+
+    <!-- button bar -->
+    <div class="button-bar-inline "
+         style="top: 33px; margin-top:-33px; position: relative;">
+      <button
+        class="button button-stable button-clear no-padding-xs pull-right"
+        ng-click="showActionsPopover($event)">
+        <i class="icon ion-navicon-round"></i>
+      </button>
+    </div>
+
+    <div class="padding-left padding-right">
+      <canvas id="account-balance" class="chart-bar"
+              height="{{height}}" width="{{width}}"
+              chart-data="data"
+              chart-dataset-override="datasetOverride"
+              chart-colors="colors"
+              chart-options="options"
+              chart-labels="labels"
+              chart-click="onChartClick">
+      </canvas>
+    </div>
+
+    <ng-include src="'plugins/graph/templates/common/graph_range_bar.html'"></ng-include>

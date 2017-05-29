@@ -1,11 +1,8 @@
 <ion-view left-buttons="leftButtons"
           cache-view="false">
     <ion-nav-title bind-notifier="{ rebind:formData.useRelative }">
-      <span>
-        {{'CURRENCY.VIEW.TITLE' | translate}} {{id}}
-      </span>
       <span ng-if="!loading">
-        {{formData.currency}} (<span ng-bind-html=":rebind:formData.currency | currencySymbol:formData.useRelative"></span>)
+         {{'CURRENCY.VIEW.TITLE' | translate}} {{formData.currency|abbreviate}}
       </span>
     </ion-nav-title>
 
@@ -21,6 +18,8 @@
 
       <!-- Buttons bar-->
       <div class="hidden-xs hidden-sm padding text-center">
+
+
         <button class="button button-stable icon-right ink"
                 ng-if="formData.licenseUrl"
                 ng-click="showLicenseModal()">
@@ -36,7 +35,16 @@
         <button class="button button-stable button-small-padding icon ion-android-more-vertical ink"
                 ng-click="showActionsPopover($event)">
         </button>
-        
+
+      </div>
+
+      <div class="item item-text-wrap no-border no-padding pull-left"
+           ng-if="!loading">
+        <div class="item-icon-left card padding stable-900-bg">
+          <i class="icon ion-help-circled calm"></i>
+          <div class="item-icon-left-padding" trust-as-html=":rebind:'CURRENCY.VIEW.CURRENCY_SHORT_DESCRIPTION'|translate:formData">
+          </div>
+        </div>
       </div>
 
       <div class="row responsive-sm">

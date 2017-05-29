@@ -436,7 +436,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.doMotion = function(options) {
     return $scope.motion.show(options);
   };
-
 }
 
 
@@ -448,12 +447,11 @@ function AboutController($scope, csConfig) {
 
 function HomeController($scope) {
   'ngInject';
-
 }
+
 
 function PassCodeController($scope) {
   'ngInject';
-
 }
 
 

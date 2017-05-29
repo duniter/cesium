@@ -1,4 +1,4 @@
-<ion-view class="modal slide-in-up ng-enter active ng-enter-active">
+<ion-modal-view class="modal-full-height modal-help">
 
     <ion-header-bar class="bar-positive">
       <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CLOSE
@@ -7,9 +7,11 @@
       <h1 class="title" translate>HELP.TITLE</h1>
     </ion-header-bar>
 
-    <ion-content scroll="true" class="padding">
+    <ion-content croll="false" class="padding">
 
-      <ng-include src="'templates/help/help.html'"></ng-include>
+      <div ng-class="listClass">
+        <ng-include src="'templates/help/help.html'"></ng-include>
+      </div>
 
       <div class="padding hidden-xs text-center">
         <button class="button button-positive ink" type="submit"
@@ -19,4 +21,4 @@
       </div>
 
     </ion-content>
-</ion-view>
+</ion-modal-view>

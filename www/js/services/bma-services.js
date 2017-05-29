@@ -337,7 +337,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       node: {
         summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
-          return host2 == host && ((!port && !port2) || (port == port2));
+          return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80));
         }
       },
       network: {
@@ -615,7 +615,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
             }
           })
           .catch(function(err){
-            if (err && err.ucode === errorCodes.HTTP_LIMITATION) {
+            if (err && err.ucode === exports.errorCodes.HTTP_LIMITATION) {
               resolve(result);
             }
             else {
@@ -623,6 +623,19 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
             }
           });
       });
+    };
+
+    exports.raw.getHttpWithRetryIfLimitation = function(exec) {
+      return exec()
+        .catch(function(err){
+          // When too many request, retry in 3s
+          if (err && err.ucode == exports.errorCodes.HTTP_LIMITATION) {
+            return $timeout(function() {
+              // retry
+              return exports.raw.getHttpWithRetryIfLimitation(exec);
+            }, exports.constants.LIMIT_REQUEST_DELAY);
+          }
+        });
     };
 
     exports.blockchain.lastUd = function() {

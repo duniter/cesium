@@ -1,0 +1,23 @@
+<ion-view left-buttons="leftButtons">
+
+  <ion-nav-title>
+    {{'RML9.VIEW.TITLE' | translate}}
+  </ion-nav-title>
+
+  <ion-content>
+
+    <!-- items container -->
+    <div class="list">
+
+      <!-- an item -->
+      <div class="item" ng-repeat="item in items">
+        <h3>{{item.time|formatDate}}</h3>
+        <h4>{{item.issuer|formatPubkey}}</h4>
+        <div class="badge">{{item.amount}}</div>
+      </div>
+
+    </div>
+
+  </ion-content>
+
+</ion-view>
