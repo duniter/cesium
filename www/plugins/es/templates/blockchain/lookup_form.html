@@ -6,7 +6,7 @@
     <div class="gray double-padding-x padding-top item-text-wrap"
          ng-repeat="filter in search.filters" ng-if="filter">
       <span>{{'BLOCKCHAIN.LOOKUP.TX_SEARCH_FILTER.'+filter.type|translate:filter}}</span>
-      <a class="icon ion-close" ng-click="itemRemove(filter)"></a>
+      <a class="icon ion-close" ng-click="itemRemove($index)"></a>
 
     </div>
 
@@ -45,6 +45,18 @@
         <small class="gray" ng-if=":rebind:search.took && expertMode">
           - {{:rebind:'COMMON.EXECUTION_TIME'|translate: {duration: search.took} }}
         </small>
+        <small class="gray" ng-if=":rebind:expertMode && search.filters && search.filters.length">
+          - <a ng-click="toggleShowQuery()"
+            ng-if="!showQuery" >
+            Voir la requête
+            <i class="icon ion-arrow-down-b gray"></i>
+          </a>
+          <a ng-click="toggleShowQuery()"
+             ng-if="showQuery" >
+             Masquer la requête
+             <i class="icon ion-arrow-up-b gray"></i>
+          </a>
+        </small>
       </h5>
       <h5 class="gray" ng-if="search.loading" >
         <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
@@ -70,6 +82,12 @@
         {{'COMMON.BTN_SEARCH' | translate:search}}
       </button>
     </div>
+  </div>
+
+  <div class="item no-border no-padding" ng-if=":rebind:search.filters && search.filters.length && expertMode">
+    <small class="no-padding no-margin" ng-if="showQuery">
+      <span class="gray text-wrap dark">{{:rebind:search.query}}</span>
+    </small>
   </div>
 
   <ion-list class="list list-blocks" ng-class="::motion.ionListClass">

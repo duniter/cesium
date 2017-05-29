@@ -97,10 +97,6 @@
       "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid||pubkey}}</a>"
     }
   },
-  "TX_SEARCH": {
-    "PERIOD": "Transactions between the {{date.startDate|formatDate}} and the {{date.endDate|formatDate}}",
-    "PUBKEY": "Public key : {{pubkey|formatPubkey}}"
-  },
   "COMMENTS": {
     "DIVIDER": "Comments",
     "DIVIDER_WITH_TOTAL": "Comments ({{total}})",
@@ -189,7 +185,13 @@
       "HEADER_MEDIAN_TIME": "Date / Time",
       "HEADER_BLOCK": "Block #",
       "HEADER_ISSUER": "Peer owner",
-      "BTN_LAST": "Last blocks"
+      "BTN_LAST": "Last blocks",
+      "DISPLAY_QUERY": "View query",
+      "HIDE_QUERY": "Hide query",
+      "TX_SEARCH_FILTER": {
+        "PERIOD": "Transactions between the {{params[1]|formatDate}} and the {{params[2]|formatDate}}",
+        "PUBKEY": "Public key : {{params[1]|formatPubkey}}"
+      }
     },
     "ERROR": {
       "SEARCH_BLOCKS_FAILED": "Error while searching blocks."

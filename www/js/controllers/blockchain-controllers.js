@@ -92,7 +92,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     if (!$scope.entered) {
       if (state && state.stateParams && state.stateParams.q) { // Query parameter
         $scope.search.text = state.stateParams.q;
-        if ($scope.search.text && $scope.search.text .trim().length) {
+        if ($scope.search.text && $scope.search.text.trim().length) {
           $scope.search.type='text';
         }
       }

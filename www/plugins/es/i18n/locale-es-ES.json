@@ -97,10 +97,6 @@
       "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitación ilegible (formato desconocido)</span> - mandada por <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a>"
     }
   },
-  "TX_SEARCH": {
-    "PERIOD": "Las transacciones entre el {{date.startDate|formatDate}} y el {{date.endDate|formatDate}}",
-    "PUBKEY": "Clave pública : {{pubkey|formatPubkey}}"
-  },
   "COMMENTS": {
     "DIVIDER": "Comentarios",
     "DIVIDER_WITH_TOTAL": "Comentarios ({{total}})",
@@ -189,7 +185,13 @@
       "HEADER_MEDIAN_TIME": "Fecha / Hora",
       "HEADER_BLOCK": "Bloque #",
       "HEADER_ISSUER": "Nodo emisor",
-      "BTN_LAST": "últimos bloques"
+      "BTN_LAST": "últimos bloques",
+      "DISPLAY_QUERY": "Ver la consulta",
+      "HIDE_QUERY": "Ocultar la solicitud",
+      "TX_SEARCH_FILTER": {
+        "PERIOD": "Las transacciones entre el {{params[1]|formatDate}} y el {{params[2]|formatDate}}",
+        "PUBKEY": "Clave pública : {{params[1]|formatPubkey}}"
+      }
     },
     "ERROR": {
       "SEARCH_BLOCKS_FAILED": "Fracaso en la búsqueda de los bloques."

@@ -48,12 +48,13 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
   $scope.enableFilter = true;
 
   $scope.doSearchText = function() {
-    if (!$scope.search.text || $scope.search.text.trim().length === 0) {
+    if ((!$scope.search.text || !$scope.search.text.trim().length) &&
+      (!$scope.search.filters || !$scope.search.filters.length) ) {
       return $scope.doSearchLast();
     }
 
     $scope.search.type = 'text';
-    $scope.processSearchText($scope.search.text);
+
     $scope.doSearch();
 
     $ionicHistory.nextViewOptions({
@@ -61,7 +62,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       disableBack: true,
       historyRoot: true
     });
-    $state.go('app.blockchain_search', {q: $scope.search.text}, {
+    $state.go('app.blockchain_search', {q: $scope.search.query}, {
       reload: false,
       inherit: true,
       notify: false});
@@ -85,41 +86,6 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       notify: false});
   };
 
-  // Cancel search filter
-  $scope.itemRemove = function(item) {
-    $scope.newQuery = $scope.query.replace(item.query, '');
-    $scope.newQuery = $scope.newQuery.replace(/^ AND /, '');
-    $scope.newQuery = $scope.newQuery.replace(/ AND $/, '');
-    $scope.searchFilter.item = null;
-    $scope.search.text = $scope.newQuery;
-    $scope.doSearchText();
-  };
-
-
-  $scope.processSearchText = function(text) {
-
-
-    //exports.block.parseSearchText = function(text) {
-      var filterRegexps = {
-        PERIOD: /_exists_:transactions AND medianTime:>=([0-9]+) AND medianTime:<([0-9]+)/,
-        PUBKEY: /issuer:([a-zA-Z0-9]+)/
-      };
-
-      $scope.search.filters = _.keys(filterRegexps).reduce(function(res, filterType){
-        var matches = filterRegexps[filterType].exec(text);
-        if (matches) {
-          console.log(filterType, matches);
-          var filter = {
-            type: filterType,
-            params: matches
-          };
-          return res.concat(filter);
-        }
-        return res;
-      }, []);
-    //};
-
-  };
 
   // This method override the base class method
   $scope.doSearch = function(from) {
@@ -152,6 +118,19 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
     // Full text search
     else if ($scope.search.type == 'text') {
 
+      // Parse text search into filters array
+      var res = esBlockchain.block.parseSearchText($scope.search.text, $scope.search.filters);
+      $scope.search.filters = res.filters;
+      var query = $scope.search.filters.reduce(function(query, filter){
+        return query + ' AND ' + filter.text;
+      }, '');
+      if (res.text.length) {
+        query += ' AND ' + res.text;
+      }
+
+      $scope.search.query = query.substr(5);
+      $scope.search.text = res.text;
+
       request.from = from;
 
       // add sort
@@ -163,7 +142,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       }
       request.excludeCurrent = true;
 
-      promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
+      promise = esBlockchain.block.searchText($scope.currency, $scope.search.query, request);
     }
 
     var time = new Date().getTime();
@@ -230,6 +209,20 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
+  };
+
+  /* -- manage click -- */
+
+
+  // Cancel search filter
+  $scope.itemRemove = function(index) {
+    $scope.search.filters.splice(index, 1);
+    $scope.doSearchText();
+  };
+
+  //Show the query
+  $scope.toggleShowQuery = function() {
+    $scope.showQuery = !$scope.showQuery;
   };
 }
 

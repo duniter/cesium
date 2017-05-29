@@ -186,6 +186,8 @@
       "HEADER_BLOCK": "Bloc #",
       "HEADER_ISSUER": "Noeud émetteur",
       "BTN_LAST": "Derniers blocs",
+      "DISPLAY_QUERY": "Afficher la requête",
+      "HIDE_QUERY": "Masquer la requête",
       "TX_SEARCH_FILTER": {
         "PERIOD": "Transactions effectuées entre le {{params[1]|formatDate}} et le {{params[2]|formatDate}}",
         "PUBKEY": "Clé publique : {{params[1]|formatPubkey}}"
