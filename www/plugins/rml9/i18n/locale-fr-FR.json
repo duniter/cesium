@@ -1,6 +1,7 @@
 {
   "RML9": {
     "BTN_EXPORT": "Exporter les transactions",
+    "BTN_OPEN": "Ouvrir la page RML9",
     "VIEW": {
       "TITLE": "RML9"
     }
