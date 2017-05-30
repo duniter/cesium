@@ -179,17 +179,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
     return deferred.promise;
   }
 
-  function onWalletLoadTx(tx, deferred) {
-    fillAvatars((tx.history || []).concat(tx.pendings||[]), 'pubkey')
-      .then(function() {
-        deferred.resolve();
-      })
-      .catch(function(err) {
-        console.error(err);
-        deferred.resolve(); // silent
-      });
-  }
-
   function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
     deferred = deferred || $q.defer();
     if (!text && (!datas || !datas.length)) {
@@ -383,7 +372,6 @@ angular.module('cesium.es.user.services', ['cesium.services', 'cesium.es.http.se
       csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
       csWallet.api.data.on.init($rootScope, onWalletReset, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this),
-      csWallet.api.data.on.loadTx($rootScope, onWalletLoadTx, this),
       csWot.api.data.on.load($rootScope, onWotLoad, this),
       csWot.api.data.on.search($rootScope, onWotSearch, this)
     ];

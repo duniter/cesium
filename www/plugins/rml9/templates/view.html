@@ -1,23 +1,26 @@
 <ion-view left-buttons="leftButtons">
-
   <ion-nav-title>
     {{'RML9.VIEW.TITLE' | translate}}
   </ion-nav-title>
 
   <ion-content>
-
-    <!-- items container -->
     <div class="list">
 
-      <!-- an item -->
-      <div class="item" ng-repeat="item in items">
-        <h3>{{item.time|formatDate}}</h3>
-        <h4>{{item.issuer|formatPubkey}}</h4>
-        <div class="badge">{{item.amount}}</div>
+      <!-- the pubkey -->
+      <div class="item">
+        {{'COMMON.PUBKEY'|translate}}
+        <div class="badge">{{pubkey|formatPubkey}}</div>
       </div>
 
+      <!-- a text divider-->
+      <div class="item item-divider">{{'RML9.VIEW.DIVIDER'|translate:{pubkey: pubkey} }}</div>
+
+      <!-- iterate on each TX -->
+      <div class="item" ng-repeat="item in items">
+        <h3>{{item.time|formatDate}}</h3>
+        <h4>{{item.pubkey|formatPubkey}}</h4>
+        <div class="badge">{{item.amount|formatAmount}}</div>
+      </div>
     </div>
-
   </ion-content>
-
 </ion-view>

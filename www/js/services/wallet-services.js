@@ -4,10 +4,10 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
 
 .factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage,
-                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csCurrency) {
+                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csTx, csCurrency) {
   'ngInject';
 
-  factory = function(id) {
+  function factory(id, BMA) {
 
     var
     constants = {
@@ -32,22 +32,19 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         };
       data.uid = null;
       data.isNew = null;
-      data.balance = 0;
-      data.sources = null;
       data.sourcesIndexByKey = null;
       data.currency= null;
       data.parameters = null;
       data.currentUD = null;
       data.medianTime = null;
-      data.tx = data.tx || {};
-      data.tx.history = [];
-      data.tx.pendings = [];
-      data.tx.errors = [];
       data.requirements = {};
       data.blockUid = null;
       data.sigDate = null;
       data.isMember = false;
       data.events = [];
+
+      resetTxAndSources();
+
       if (init) {
         api.data.raise.init(data);
       }
@@ -59,130 +56,18 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       }
     },
 
-    reduceTxAndPush = function(txArray, result, processedTxMap, excludePending) {
-      if (!txArray || txArray.length === 0) {
-        return;
-      }
-      var txPendingsTimeByKey = excludePending ? [] : data.tx.pendings.reduce(function(res, tx) {
-        if (tx.time) {
-          res[tx.amount+':'+tx.hash] = tx.time;
-        }
-        return res;
-      }, []);
-
-      _.forEach(txArray, function(tx) {
-        if (!excludePending || tx.block_number !== null) {
-          var walletIsIssuer = false;
-          var otherIssuer = tx.issuers.reduce(function(issuer, res) {
-              walletIsIssuer = (res === data.pubkey) ? true : walletIsIssuer;
-              return issuer + ((res !== data.pubkey) ? ', ' + res : '');
-          }, '');
-          if (otherIssuer.length > 0) {
-            otherIssuer = otherIssuer.substring(2);
-          }
-          var otherReceiver;
-          var outputBase;
-          var sources = [];
-          var lockedOutputs;
-          var amount = tx.outputs.reduce(function(sum, output, noffset) {
-              var outputArray = output.split(':',3);
-              outputBase = parseInt(outputArray[1]);
-              var outputAmount = powBase(parseInt(outputArray[0]), outputBase);
-              var outputCondition = outputArray[2];
-              var sigMatches =  BMA.regexp.TX_OUTPUT_SIG.exec(outputCondition);
-
-              // Simple unlock condition
-              if (sigMatches) {
-                var outputPubkey = sigMatches[1];
-                if (outputPubkey == data.pubkey) { // output is for the wallet
-                  if (!walletIsIssuer) {
-                    return sum + outputAmount;
-                  }
-                  // If pending: use output as new sources
-                  else if (tx.block_number === null) {
-                    sources.push({
-                      amount: parseInt(outputArray[0]),
-                      base: outputBase,
-                      type: 'T',
-                      identifier: tx.hash,
-                      noffset: noffset,
-                      consumed: false
-                    });
-                  }
-                }
-                else { // output is for someone else
-                  if (outputPubkey !== '' && outputPubkey != otherIssuer) {
-                    otherReceiver = outputPubkey;
-                  }
-                  if (walletIsIssuer) {
-                    return sum - outputAmount;
-                  }
-                }
-              }
-
-              // Complex unlock condition, on the issuer pubkey
-              else if (outputCondition.indexOf('SIG('+data.pubkey+')') != -1) {
-                var lockedOutput = BMA.tx.parseUnlockCondition(outputCondition);
-                if (lockedOutput) {
-                  // Add a source
-                  // FIXME: should be uncomment when filtering source on transfer()
-                  /*sources.push(angular.merge({
-                    amount: parseInt(outputArray[0]),
-                    base: outputBase,
-                    type: 'T',
-                    identifier: tx.hash,
-                    noffset: noffset,
-                    consumed: false
-                  }, lockedOutput));
-                  */
-                  lockedOutput.amount = outputAmount;
-                  lockedOutputs = lockedOutputs || [];
-                  lockedOutputs.push(lockedOutput);
-                  console.debug('[BMA] [TX] has locked output:', lockedOutput);
-
-                  return sum + outputAmount;
-                }
-              }
-              return sum;
-            }, 0);
-
-          var pubkey = amount > 0 ? otherIssuer : otherReceiver;
-          var time = tx.time;
-          if (tx.block_number === null) {
-            time = tx.blockstampTime || txPendingsTimeByKey[amount + ':' + tx.hash];
-          }
-
-          // Avoid duplicated tx, or tx to him self
-          var txKey = amount + ':' + tx.hash + ':' + time;
-          if (!processedTxMap[txKey] && amount !== 0) {
-            processedTxMap[txKey] = true;
-            var newTx = {
-              time: time,
-              amount: amount,
-              pubkey: pubkey,
-              comment: tx.comment,
-              isUD: false,
-              hash: tx.hash,
-              locktime: tx.locktime,
-              block_number: tx.block_number
-            };
-            // If pending: store sources and inputs for a later use - see method processTransactionsAndSources()
-            if (walletIsIssuer && tx.block_number === null) {
-              newTx.inputs = tx.inputs;
-              newTx.sources = sources;
-            }
-            if (lockedOutputs) {
-              newTx.lockedOutputs = lockedOutputs;
-            }
-            result.push(newTx);
-          }
-        }
-      });
-    },
-
-    resetSources = function(){
+    resetTxAndSources = function(){
+      // reset sources data
       data.sources = [];
       data.sourcesIndexByKey = {};
+      data.balance = 0;
+      // reset TX data
+      data.tx = data.tx || {};
+      data.tx.history = [];
+      data.tx.pendings = [];
+      data.tx.errors = [];
+      delete data.tx.fromTime;
+      delete data.tx.toTime;
     },
 
     addSource = function(src, sources, sourcesIndexByKey) {
@@ -273,21 +158,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
             version: csConfig.version
           };
 
-          if (data.tx && data.tx.pendings && data.tx.pendings.length>0) {
-            var pendings = data.tx.pendings.reduce(function(res, tx){
-              return tx.time ? res.concat({
-                amount: tx.amount,
-                time: tx.time,
-                hash: tx.hash
-              }) : res;
-            }, []);
-            if (pendings.length) {
-              dataToStore.tx = {
-                pendings: pendings
-              };
-            }
-          }
-
           localStorage.setObject(constants.STORAGE_KEY, dataToStore);
         }
         else {
@@ -326,10 +196,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
                 // FOR DEV ONLY - on crosschain
                 // console.error('TODO REMOVE this code - dev only'); data.pubkey = '36j6pCNzKDPo92m7UXJLFpgDbcLFAZBgThD2TCwTwGrd';
-
-                if (storedData.tx && storedData.tx.pendings) {
-                  data.tx.pendings = storedData.tx.pendings;
-                }
                 data.loaded = false;
 
                 return $q.all([
@@ -489,193 +355,14 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       });
     },
 
-    loadSources = function() {
-      return $q(function(resolve, reject) {
-        // Get transactions
-        BMA.tx.sources({pubkey: data.pubkey})
+    loadTxAndSources = function(fromTime) {
+      return csTx.load(data.pubkey, fromTime)
         .then(function(res){
-          resetSources();
-          var balance = 0;
-          if (res.sources) {
-            _.forEach(res.sources, function(src) {
-              src.consumed = false;
-              balance += powBase(src.amount, src.base);
-            });
-            addSources(res.sources);
-          }
-          data.balance = balance;
-          resolve();
+          angular.merge(data, res);
         })
         .catch(function(err) {
-          resetSources();
-          reject(err);
-        });
-      });
-    },
-
-    loadTransactions = function(fromTime) {
-      return $q(function(resolve, reject) {
-        var txHistory = [];
-        var udHistory = [];
-        var txPendings = [];
-
-        var now = new Date().getTime();
-        var nowInSec = Math.trunc(now / 1000);
-        fromTime = fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
-        var processedTxMap = {};
-
-        var reduceTx = function(res){
-          reduceTxAndPush(res.history.sent, txHistory, processedTxMap, true/*exclude pending*/);
-          reduceTxAndPush(res.history.received, txHistory, processedTxMap, true/*exclude pending*/);
-          reduceTxAndPush(res.history.sending, txHistory, processedTxMap, true/*exclude pending*/);
-          reduceTxAndPush(res.history.pending, txPendings, processedTxMap, false/*include pending*/);
-        };
-
-        var jobs = [
-          // get pendings history
-          BMA.tx.history.pending({pubkey: data.pubkey})
-            .then(reduceTx)
-        ];
-
-        // get TX history since
-        if (fromTime !== -1) {
-          var sliceTime = csSettings.data.walletHistorySliceSecond;
-          for(var i = fromTime - (fromTime % sliceTime); i - sliceTime < nowInSec; i += sliceTime)  {
-            jobs.push(BMA.tx.history.times({pubkey: data.pubkey, from: i, to: i+sliceTime-1})
-              .then(reduceTx)
-            );
-          }
-
-          jobs.push(BMA.tx.history.timesNoCache({pubkey: data.pubkey, from: nowInSec - (nowInSec % sliceTime), to: nowInSec+999999999})
-            .then(reduceTx));
-        }
-
-        // get all TX
-        else {
-          jobs.push(BMA.tx.history.all({pubkey: data.pubkey})
-            .then(reduceTx)
-          );
-        }
-
-        // get UD history
-        if (csSettings.data.showUDHistory) {
-          jobs.push(
-            BMA.ud.history({pubkey: data.pubkey})
-            .then(function(res){
-              udHistory = !res.history || !res.history.history ? [] :
-               res.history.history.reduce(function(res, ud){
-                 if (ud.time < fromTime) return res; // skip to old UD
-                 var amount = powBase(ud.amount, ud.base);
-                 return res.concat({
-                   time: ud.time,
-                   amount: amount,
-                   isUD: true,
-                   block_number: ud.block_number
-                 });
-               }, []);
-            }));
-        }
-
-        // Execute jobs
-        $q.all(jobs)
-        .then(function(){
-          // sort by time desc
-          data.tx.history  = txHistory.concat(udHistory).sort(function(tx1, tx2) {
-             return (tx2.time - tx1.time);
-          });
-          data.tx.pendings = txPendings;
-          data.tx.fromTime = fromTime;
-          data.tx.toTime = data.tx.history.length ? data.tx.history[0].time /*=max(tx.time)*/: fromTime;
-
-          // Call extend api
-          return api.data.raisePromise.loadTx(data.tx)
-            .then(function() {
-              console.debug('[wallet] TX history loaded in '+ (new Date().getTime()-now) +'ms');
-              resolve();
-            });
-        })
-        .catch(function(err) {
-          data.tx.history = [];
-          data.tx.pendings = [];
-          data.tx.errors = [];
-          delete data.tx.fromTime;
-          delete data.tx.toTime;
-          reject(err);
-        });
-      });
-    },
-
-    processTransactionsAndSources = function() {
-      return BMA.wot.member.uids()
-        .then(function(uids){
-          var txPendings = [];
-          var txErrors = [];
-          var balance = data.balance;
-
-          // process TX history
-          _.forEach(data.tx.history, function(tx) {
-             tx.uid = uids[tx.pubkey] || null;
-          });
-
-          var processPendingTx = function(tx) {
-            tx.uid = uids[tx.pubkey] || null;
-
-            var consumedSources = [];
-            var valid = true;
-            if (tx.amount > 0) { // do not check sources from received TX
-              valid = false;
-              // TODO get sources from the issuer ?
-            }
-            else {
-              _.forEach(tx.inputs, function(input) {
-                var inputKey = input.split(':').slice(2).join(':');
-                var srcIndex = data.sourcesIndexByKey[inputKey];
-                if (angular.isDefined(srcIndex)) {
-                  consumedSources.push(data.sources[srcIndex]);
-                }
-                else {
-                  valid = false;
-                  return false; // break
-                }
-              });
-              if (tx.sources) { // add source output
-                addSources(tx.sources);
-              }
-              delete tx.sources;
-              delete tx.inputs;
-            }
-            if (valid) {
-              balance += tx.amount; // update balance
-              txPendings.push(tx);
-              _.forEach(consumedSources, function(src) {
-                src.consumed=true;
-              });
-            }
-            else {
-              txErrors.push(tx);
-            }
-          };
-
-          var txs = data.tx.pendings;
-          var retry = true;
-          while(txs && txs.length > 0) {
-            // process TX pendings
-            _.forEach(txs, processPendingTx);
-
-            // Retry once (TX could be chained and processed in a wrong order)
-            if (txErrors.length > 0 && txPendings.length > 0 && retry) {
-              txs = txErrors;
-              txErrors = [];
-              retry = false;
-            }
-            else {
-              txs = null;
-            }
-          }
-
-          data.tx.pendings = txPendings;
-          data.tx.errors = txErrors;
-          data.balance = balance;
+          resetTxAndSources();
+          throw err;
         });
     },
 
@@ -776,11 +463,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
           // Get requirements
           loadRequirements(),
 
-          // Get sources
-          loadSources(),
-
-          // Get transactions
-          loadTransactions(),
+          // Get TX and sources
+          loadTxAndSources(),
 
           // Load sigStock
           loadSigStock(),
@@ -792,10 +476,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               console.error(err);
             })
         ])
-        .then(function() {
-          // Process transactions and sources
-          return processTransactionsAndSources();
-        })
         .then(function() {
           finishLoadRequirements(); // must be call after loadCurrency() and loadRequirements()
           return api.data.raisePromise.finishLoad(data)
@@ -860,11 +540,8 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       }
 
       if (options.sources || (options.tx && options.tx.enable)) {
-        // Get sources
-        jobs.push(loadSources());
-
-        // Get transactions
-        jobs.push(loadTransactions(options.tx.fromTime));
+        // Get TX and sources
+        jobs.push(loadTxAndSources());
       }
 
       // Load sigStock
@@ -874,12 +551,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       if (!jobs.length || options.api) jobs.push(api.data.raisePromise.load(data, options));
 
       return $q.all(jobs)
-      .then(function() {
-        if (options.sources || (options.tx && options.tx.enable)) {
-          // Process transactions and sources
-          return processTransactionsAndSources();
-        }
-      })
       .then(function(){
         return api.data.raisePromise.finishLoad(data);
       })
@@ -1065,7 +736,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
               csWot.extendAll([pendingTx], 'pubkey')
                 .then(function() {
                   data.tx.pendings.unshift(pendingTx);
-                  store(); // save pendings in local storage
                   resolve();
                 }).catch(function(err){reject(err);});
             }).catch(function(err){reject(err);});
@@ -1697,7 +1367,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     api.registerEvent('data', 'finishLoad');
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
-    api.registerEvent('data', 'loadTx');
     api.registerEvent('action', 'certify');
 
     csSettings.api.data.on.changed($rootScope, store);
@@ -1744,9 +1413,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       fromJson: fromJson,
       api: api
     };
-  };
+  }
 
-  var service = factory('default');
+  var service = factory('default', BMA);
   service.instance = factory;
 
   return service;

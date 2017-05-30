@@ -1,9 +1,11 @@
 {
   "RML9": {
-    "BTN_EXPORT": "Exporter les transactions",
+    "BTN_EXPORT": "Télécharger",
     "BTN_OPEN": "Ouvrir la page RML9",
     "VIEW": {
-      "TITLE": "RML9"
+      "TITLE": "RML9",
+      "DIVIDER": "Dernières transactions :",
+      "BALANCE": "Solde du compte"
     }
   }
 }

@@ -5,7 +5,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
 .factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csConfig, csSettings, csCache) {
   'ngInject';
 
-  factory = function(id) {
+  function factory(id) {
 
     var
       api = new Api(this, "csWot-" + id),
@@ -489,29 +489,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
         }
       },
 
-      loadSources = function(pubkey) {
-        return BMA.tx.sources({pubkey: pubkey})
-          .then(function(res){
-            var sources = [];
-            var sourcesIndexByKey = [];
-            var balance = 0;
-            if (!!res.sources && res.sources.length > 0) {
-              _.forEach(res.sources, function(src) {
-                var srcKey = src.type+':'+src.identifier+':'+src.noffset;
-                src.consumed = false;
-                balance += (src.base > 0) ? (src.amount * Math.pow(10, src.base)) : src.amount;
-                sources.push(src);
-                sourcesIndexByKey[srcKey] = sources.length -1 ;
-              });
-            }
-            return {
-              sources: sources,
-              sourcesIndexByKey: sourcesIndexByKey,
-              balance: balance
-            };
-          });
-      },
-
       loadData = function(pubkey, withCache, uid, force) {
 
         var data;
@@ -602,14 +579,6 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
                   data.given_cert_pending = res.pending;
                   data.given_cert_error = res.error;
                 })
-
-              // Get sources
-               // NOT NEED for now
-              /*loadSources(pubkey)
-                .then(function (sources) {
-                  data.sources = sources;
-                })
-              */
             ]);
           })
           .then(function() {
@@ -997,9 +966,9 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
       // api extension
       api: api
     };
-  };
+  }
 
-  var service = factory('default');
+  var service = factory('default', BMA);
 
   service.instance = factory;
   return service;
