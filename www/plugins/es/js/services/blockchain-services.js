@@ -10,6 +10,15 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         DEFAULT_SEARCH_SIZE: 40,
         ES_CORE_API_ENDPOINT: 'ES_CORE_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))'
       },
+      REGEXPS = {
+        SEARCH_FILTER: {
+          MEMBER_FLOWS: /\(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded\)([ ]+AND)?/,
+          EXISTING_TRANSACTION: /_exists_:transactions([ ]+AND)?/,
+          PERIOD: /medianTime:>(=)?([0-9]+)[ ]+AND[ ]+medianTime:<(=)?([0-9]+)([ ]+AND)?/,
+          PUBKEY: /issuer:([a-zA-Z0-9]+)([ ]+AND)?/
+        },
+        LAST_AND: /[ ]+AND$/
+      },
       FIELDS = {
         MINIMAL: ['number', 'hash', 'medianTime', 'issuer'],
         COMMONS: ['number', 'hash', 'medianTime', 'issuer', 'currency', 'version', 'powMin', 'dividend', 'membersCount', 'identities', 'joiners', 'actives', 'leavers', 'revoked', 'excluded', 'certifications', 'transactions']
@@ -116,8 +125,38 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
         });
     };
 
+    exports.block.parseSearchText = function(text, filters) {
+
+      var unparsedText = text;
+      filters = _.keys(REGEXPS.SEARCH_FILTER).reduce(function(res, filterType){
+        var matches = REGEXPS.SEARCH_FILTER[filterType].exec(unparsedText);
+        if (matches) {
+          var filterText = matches[0];
+
+          // update rest
+          unparsedText = unparsedText.replace(filterText, '');
+
+          filterText = filterText.replace(REGEXPS.LAST_AND, '');
+
+          var filter = {
+            type: filterType,
+            text: filterText,
+            params: matches
+          };
+          return res.concat(filter);
+        }
+        return res;
+      }, filters||[]);
+
+      return {
+        filters: filters,
+        text: unparsedText.trim()
+      };
+    };
+
     return exports;
   }
+
 
   return EsBlockchain();
 })

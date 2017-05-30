@@ -185,7 +185,15 @@
       "HEADER_MEDIAN_TIME": "Fecha / Hora",
       "HEADER_BLOCK": "Bloque #",
       "HEADER_ISSUER": "Nodo emisor",
-      "BTN_LAST": "últimos bloques"
+      "BTN_LAST": "últimos bloques",
+      "DISPLAY_QUERY": "Mostrar la consulta",
+      "HIDE_QUERY": "Ocultar la consulta",
+      "TX_SEARCH_FILTER": {
+        "MEMBER_FLOWS": "Entradas/salidas de miembros",
+        "EXISTING_TRANSACTION": "Con transacciones",
+        "PERIOD": "Calculado entre el {{params[2]|formatDate}} y el {{params[4]|formatDate}}",
+        "PUBKEY": "Calculado por {{params[1]|formatPubkey}}"
+      }
     },
     "ERROR": {
       "SEARCH_BLOCKS_FAILED": "Fracaso en la búsqueda de los bloques."
