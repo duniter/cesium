@@ -36,7 +36,7 @@ Ajouter un nouvel élément dans la liste des paramètres, c'est à dire un nouv
 
 Si vous rafraichissez la page `Monnaie` de votre navigateur, vous devriez observer la modification :
 
-<img src="https://forum.duniter.org/uploads/default/original/2X/1/19a637b1fa847aa5bbb18565737e9e5e28729221.jpg" width="431" height="97">
+<img src="./img/19a637b1fa847aa5bbb18565737e9e5e28729221.jpg" width="431" height="97">
 
 ### Internationliser un libellé
 
@@ -69,7 +69,7 @@ N'oubliez pas **d'ajouter une virgule** sur la ligne qui précéde...
 
 Refarichissez la page de votre navigateur : la clef a bien été traduite ! 
 
-<img src="https://forum.duniter.org/uploads/default/original/2X/6/6bd04622dd2eb59f6d716ae9e2f114276e4ca35a.jpg" width="690" height="116">
+<img src="./img/6bd04622dd2eb59f6d716ae9e2f114276e4ca35a.jpg" width="690" height="116">
 
 Recommencez l'opération dans les **autres fichiers de traduction** présents dans `www/i18n` : 
 
@@ -122,7 +122,7 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
 
 Votre navigateur doit maintenant afficher : 
 
-<img src="https://forum.duniter.org/uploads/default/original/2X/3/3df8cbd2133ea9e9a28855f4b50413846fdf292c.jpg" width="519" height="85">
+<img src="./img/3df8cbd2133ea9e9a28855f4b50413846fdf292c.jpg" width="519" height="85">
 
 Bravo, vous savez maintenant afficher de nouvelle valeurs dans les écrans de Cesium !
 

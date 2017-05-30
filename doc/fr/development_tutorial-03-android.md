@@ -27,7 +27,7 @@ Le JDK ou _Java Development Kit_
 
 Vous pouvez la télécharger sur le site [d'Oracle](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/fef4f4dfe7c2168cb27c9e7f5e399fd547ce774a.png" width="400">
+<img src="./img/fef4f4dfe7c2168cb27c9e7f5e399fd547ce774a.png" width="400">
 
 En fonction de votre système d'exploitation, téléchargez correspondant.
 
@@ -39,7 +39,7 @@ Vous trouverez tous les fichiers à l'adresse [AndroidStudio-Downloads](https://
 
 Pour Windows télécharger le fichier sans SDK Android:
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/3b8fa2f5c0465b13ae5ce74d49702e0c9f027866.png" width="690" height="237">
+<img src="./img/3b8fa2f5c0465b13ae5ce74d49702e0c9f027866.png" width="690" height="237">
 
 ##### Sous Linux
 
@@ -73,11 +73,11 @@ Encore une fois téléchargé la bonne version, décompressez le fichier à cot�
 
 Sous Android Studio allez dans le menu `File > Project Structure...`
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/04e64b769cbd45b9d275cd5f81002a399a1a7684.png" width="300">
+<img src="./img/04e64b769cbd45b9d275cd5f81002a399a1a7684.png" width="300">
 
 Une fenêtre comme celle-ci devrait s'ouvrir : 
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/ceb75301172038e75f5c43b328dd7febd7bedc7e.png" width="450">
+<img src="./img/ceb75301172038e75f5c43b328dd7febd7bedc7e.png" width="450">
 
 Renseignez le chemin d'installation du NDK.
 
@@ -128,7 +128,7 @@ ionic build android
 
 Lancez maintenant Android Studio. Vous devriez arriver sur cette fenêtre:
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/33266d44fdbfd6c8b44e46a3664edafacaf0a316.png" width="500">
+<img src="./img/33266d44fdbfd6c8b44e46a3664edafacaf0a316.png" width="500">
 
 Sélectionnez "Open an existing Android Studio project" et indiquez le dossier vers `cesium/platforms/android`.
 
@@ -138,14 +138,14 @@ Pour pouvoir lancer un émulateur, on va devoir en créer un.
 
 Pour cela cliqué sur l'icone suivante :
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/46e959d1e616e34972a41f4d120a1d4f5beb0955.png" width="690" height="42">
+<img src="./img/46e959d1e616e34972a41f4d120a1d4f5beb0955.png" width="690" height="42">
 
 Une fenêtre va s'ouvrir et vous proposer de créer un "Virtual Device" suivez le logiciel.
 
 Si vous avez un téléphone Android vous pouvez le mettre en mode développeur et le brancher si vous souhaitez vois l'application sur votre téléphone.
 
-Puis une fois l'émulateur de créer vous pouvez le bouton "Play" (<img src="https://forum.duniter.org/uploads/default/original/1X/70b2ce88a5e7aa5754f6a771cf5efed3c639a27b.png" width="46" height="44">) pour lancer l'application.
-Vous pouvez aussi utiliser l'icone (<img src="https://forum.duniter.org/uploads/default/original/1X/b7c419b33a43f6a43c5b756074ee0c199072f7d1.png" width="40" height="44">) pour lancer l'application en mode debug.
+Puis une fois l'émulateur de créer vous pouvez le bouton "Play" (<img src="./img/70b2ce88a5e7aa5754f6a771cf5efed3c639a27b.png" width="46" height="44">) pour lancer l'application.
+Vous pouvez aussi utiliser l'icone (<img src="./img/b7c419b33a43f6a43c5b756074ee0c199072f7d1.png" width="40" height="44">) pour lancer l'application en mode debug.
 
 Android Studio vous demandera sur quel appareil vous souhaitez lancer l'application, sélectionner l'émulateur ou le téléphone et laissez faire. 
 
