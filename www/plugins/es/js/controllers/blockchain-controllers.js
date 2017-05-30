@@ -47,11 +47,13 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
   $scope.enableFilter = true;
 
   $scope.doSearchText = function() {
-    if (!$scope.search.text || $scope.search.text.trim().length === 0) {
+    if ((!$scope.search.text || !$scope.search.text.trim().length) &&
+      (!$scope.search.filters || !$scope.search.filters.length) ) {
       return $scope.doSearchLast();
     }
 
     $scope.search.type = 'text';
+
     $scope.doSearch();
 
     $ionicHistory.nextViewOptions({
@@ -59,7 +61,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       disableBack: true,
       historyRoot: true
     });
-    $state.go('app.blockchain_search', {q: $scope.search.text}, {
+    $state.go('app.blockchain_search', {q: $scope.search.query}, {
       reload: false,
       inherit: true,
       notify: false});
@@ -82,6 +84,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
       inherit: true,
       notify: false});
   };
+
 
   // This method override the base class method
   $scope.doSearch = function(from) {
@@ -107,11 +110,25 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
         };
       }
       request.excludeCurrent = (from === 0);
+
       promise = esBlockchain.block.search($scope.currency, request);
     }
 
     // Full text search
     else if ($scope.search.type == 'text') {
+
+      // Parse text search into filters array
+      var res = esBlockchain.block.parseSearchText($scope.search.text, $scope.search.filters);
+      $scope.search.filters = res.filters;
+      var query = $scope.search.filters.reduce(function(query, filter){
+        return query + ' AND ' + filter.text;
+      }, '');
+      if (res.text.length) {
+        query += ' AND ' + res.text;
+      }
+
+      $scope.search.query = query.substr(5);
+      $scope.search.text = res.text;
 
       request.from = from;
 
@@ -123,7 +140,8 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
         request.sort = "number:desc";
       }
       request.excludeCurrent = true;
-      promise = esBlockchain.block.searchText($scope.currency, $scope.search.text, request);
+
+      promise = esBlockchain.block.searchText($scope.currency, $scope.search.query, request);
     }
 
     var time = new Date().getTime();
@@ -190,6 +208,20 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
     if ($scope.actionsPopover) {
       $scope.actionsPopover.hide();
     }
+  };
+
+  /* -- manage click -- */
+
+
+  // Cancel search filter
+  $scope.itemRemove = function(index) {
+    $scope.search.filters.splice(index, 1);
+    $scope.doSearchText();
+  };
+
+  //Show the query
+  $scope.toggleShowQuery = function() {
+    $scope.showQuery = !$scope.showQuery;
   };
 }
 

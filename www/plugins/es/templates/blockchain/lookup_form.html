@@ -1,24 +1,35 @@
 <div class="lookupForm">
 
-  <!-- search text-->
-  <label class="item item-input">
-    <i class="icon ion-search placeholder-icon"></i>
-    <input type="text"
-           class="visible-xs visible-sm"
-           placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           ng-model-options="{ debounce: 650 }"
-           ng-change="doSearchText()">
-    <input type="text"
-           class="hidden-xs hidden-sm"
-           id="{{searchTextId}}" placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           on-return="doSearchText()">
-    <div class="helptip-anchor-center">
-      <a id="helptip-blockchain-search-text"></a>
+
+  <div class="item no-padding">
+
+    <div class="button button-small button-text button-stable button-icon-event padding no-padding-right ink"
+         ng-repeat="filter in search.filters" ng-if="filter">
+      <span>{{'BLOCKCHAIN.LOOKUP.TX_SEARCH_FILTER.'+filter.type|translate:filter}}</span>
+      <i class="icon ion-close" ng-click="itemRemove($index)"></i>
+
     </div>
 
-  </label>
+    <label class="item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="text"
+             class="visible-xs visible-sm"
+             placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             ng-model-options="{ debounce: 650 }"
+             ng-change="doSearchText()">
+      <input type="text"
+             class="hidden-xs hidden-sm"
+             id="{{searchTextId}}" placeholder="{{'BLOCKCHAIN.LOOKUP.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             on-return="doSearchText()">
+      <div class="helptip-anchor-center">
+        <a id="helptip-blockchain-search-text"></a>
+      </div>
+
+    </label>
+  </div>
+
 
   <div class="padding-top padding-xs" style="display: block; height: 60px;">
     <div class="pull-left">
@@ -33,6 +44,18 @@
         <span translate="COMMON.RESULTS_COUNT" translate-values="{count: search.total}"></span>
         <small class="gray" ng-if=":rebind:search.took && expertMode">
           - {{:rebind:'COMMON.EXECUTION_TIME'|translate: {duration: search.took} }}
+        </small>
+        <small class="gray" ng-if=":rebind:expertMode && search.filters && search.filters.length">
+          - <a ng-click="toggleShowQuery()"
+            ng-if="!showQuery" >
+            Voir la requête
+            <i class="icon ion-arrow-down-b gray"></i>
+          </a>
+          <a ng-click="toggleShowQuery()"
+             ng-if="showQuery" >
+             Masquer la requête
+             <i class="icon ion-arrow-up-b gray"></i>
+          </a>
         </small>
       </h5>
       <h5 class="gray" ng-if="search.loading" >
@@ -59,6 +82,12 @@
         {{'COMMON.BTN_SEARCH' | translate:search}}
       </button>
     </div>
+  </div>
+
+  <div class="item no-border no-padding" ng-if=":rebind:search.filters && search.filters.length && expertMode">
+    <small class="no-padding no-margin" ng-if="showQuery">
+      <span class="gray text-wrap dark">{{:rebind:search.query}}</span>
+    </small>
   </div>
 
   <ion-list class="list list-blocks" ng-class="::motion.ionListClass">
