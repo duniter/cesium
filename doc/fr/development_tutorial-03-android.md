@@ -5,7 +5,7 @@ Cet article est un tutoriel pour développer sur Cesium, pour compiler et tester
 ## Prérequis
 
 Avant de faire ce tutoriel, vous devez : 
- 
+
  - Avoir suivi les tutoriels sur Cesium [jusqu'au niveau VII](./development_tutorial-02.md)
 
 ## Niveau IX
@@ -166,6 +166,6 @@ Vous pouvez maintenant utiliser directement l'outil `ionic` :
 
 ## La Suite ?!
 
-Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment ajouter des graphiques dynamiques à Cesium.
+Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment ajouter un plugin à Cesium.
 
-[Voir la suite ici >>](./development_tutorial-04.md)
+[Voir la suite ici >>](./development_tutorial-04-add_plugin.md)

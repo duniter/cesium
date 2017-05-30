@@ -7,14 +7,10 @@ en les modifiant afin d'améliorer un écran de Cesium.
 
 ## Prérequis
 
-### Connaitre les fonctionnalités
-
-Il nécessite que vous connaissiez déjà l'outil Cesium.
-Si ce n'est pas le cas, reportez vous à [la vidéo de présentation générale des fonctionnalités](https://www.youtube.com/watch?v=FQzGIzJf9Nw&list=PLr7acQJbh5rzgkXOrCws2bELR8TNRIuv0&index=6) (RML7) et à celle détaillant les nouveautés (RML8 - lien à venir)
-
-### Avoir atteint le niveau III : Mise en place de l'environnement
-
-Pour mettre en place votre environnement de développement, suivez le [1er tutoriel de mise en place de l'environnement](https://github.com/duniter/cesium/blob/master/doc/fr/development_tutorial.md) (au moins jusqu'au niveau III)
+Avant de faire ce tutoriel, vous devez :
+  
+ - Connaitre les fonctionnalités de Cesium. Si ce n'est pas le cas, reportez vous à [la vidéo de présentation générale des fonctionnalités](https://www.youtube.com/watch?v=FQzGIzJf9Nw&list=PLr7acQJbh5rzgkXOrCws2bELR8TNRIuv0&index=6) (RML7) et à celle détaillant les nouveautés (RML8 - lien à venir)
+ - Avoir suivi le 1er tutoriel de mise en place de l'environnement [jusqu'au niveau III](https://github.com/duniter/cesium/blob/master/doc/fr/development_tutorial.md)
 
 ## Niveau VI : Afficher un paramètre monétaire manquant
 
@@ -24,9 +20,9 @@ __Objectif :__ Dans ce niveau, l'objectif est d'afficher dans la page [`Monnaie`
 
 ### Modifier le template HTML
 
-Ouvrez le fichier de template `/www/templates/currency/tabs/items_parameters.html`.
+Ouvrez le fichier de template `/www/templates/currency/items_parameters.html`.
 
-Ajouter un nouvel élément dans la liste des paramètres, c'est à dire un nouveau tag `<ion-item>`, sous le tag `<ion-list>` : 
+Ajouter un nouvel élément dans la liste des paramètres, c'est à dire un nouveau tag `<ion-item>`, en dessous les autres tag du même nom : 
 
 ```html
    (...)
@@ -130,7 +126,11 @@ Votre navigateur doit maintenant afficher :
 
 Bravo, vous savez maintenant afficher de nouvelle valeurs dans les écrans de Cesium !
 
-### Devenir contributeur officiel > faire `pull request`
+## Niveau VII : Publier vos modifications
+
+__Objectif :__  Devenir contributeur officiel, en publiant votre code !
+
+### Faire un `pull request`
 
 La modification que vous venez de faire correspond en réalité au [ticket gihub #209](https://github.com/duniter/cesium/issues/209).
 Pour lui adjoindre votre modification, et ainsi **devenir officiellement contributeur** de Cesium : 
@@ -143,13 +143,21 @@ Pour lui adjoindre votre modification, et ainsi **devenir officiellement contrib
 
 Votre contribution est maintenant visible par les développeurs de Cesium, qui pourront plus facilement intégrer votre code.
 
-### Pour aller plus loin : d'autres variables ?  (optionnel)
+> _Note :_ Depuis les RML7, ce ticket a été fermé. Vous pouvez donc continuer ce niveau, en ajoutant d'autres variables manquantes (cf paragraphe suivant), puis 
+> publier vos modifications : la démarche du `pull request` reste la même.
 
-Pour vous faire la main sur les modifications dans Cesium, vous pouvez ajouter d'autres paramètres manquants de la monnaie, notamment ceux qui concernent la Blockchain  : `xpercent`, `percentRot`, `blocksRot`...
+## Niveau VIII : Modification libre
+
+__Objectif :__  A vous maintenant d'ajouter les informations manquantes, et qui semblent intéressantes.
+
+### Ajouter de nouvelles variables
+
+Pour vous faire la main sur les modifications dans Cesium, vous pouvez ajouter d'autres paramètres manquants de la monnaie.
+Par exemple, parmi ceux qui concernent la _BlockChain_ : `xpercent`, `percentRot`, `blocksRot`...
 
 Vous trouverez leur définition dans la [documentation du protocole Duniter](https://github.com/duniter/duniter/blob/master/doc/Protocol.md#protocol-parameters).
 
-Astuce : pour séparer les différentes partie de l'écran, ajoutez un séparateur, c'est à dire un tag `<div>` avec la classe CSS `item item-divider` :
+> _Astuce :_ pour séparer les différentes partie de l'écran, ajoutez un séparateur, c'est à dire un tag `<div>` avec la classe CSS `item item-divider` :
 
 ```html
   <div class="item item-divider">
@@ -158,10 +166,8 @@ Astuce : pour séparer les différentes partie de l'écran, ajoutez un séparate
   <!-- paramètres relatifs à la blockchain -->
 ```
 
-Autre modification que vous pouvez faire : la correction de la formule du DU (cf [ce ticket](https://github.com/duniter/cesium/issues/210)).
-
 ## La Suite ?!
 
-Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment compiler et déployer Cesium sur Android, puis comment ajouter des graphiques dynamiques.
+Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment compiler et déployer Cesium sur Android, puis comment ajouter un plugin, et même ajouter un graphique dynamique !
 
 [Voir la suite ici >>](./development_tutorial-03.md)
