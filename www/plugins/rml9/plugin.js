@@ -7,30 +7,30 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
     var enable = csConfig.plugins && csConfig.plugins.rml9;
     if (enable) {
 
-      // Extend existing view
+      // Extension de la vue d'une identité
       PluginServiceProvider
-        .extendState('app.view_wallet_tx', {
-          points: {
-            'buttons': {
-              templateUrl: "plugins/rml9/templates/button.html",
-              controller: 'Rml9ButtonCtrl'
-            }
-          }
-        })
-
         .extendState('app.wot_identity', {
           points: {
             'buttons': {
-              templateUrl: "plugins/rml9/templates/button.html",
-              controller: 'Rml9ButtonCtrl'
+              templateUrl: "plugins/rml9/templates/buttons.html",
+              controller: 'Rml9ButtonsCtrl'
             }
           }
-        })
-      ;
+        });
 
-      // Add new view
+      // Extension de 'Mes opérations'
+      /*PluginServiceProvider
+        .extendState('app.view_wallet_tx', {
+          points: {
+            'buttons': {
+              templateUrl: "plugins/rml9/templates/buttons.html",
+              controller: 'Rml9ButtonsCtrl'
+            }
+          }
+        });*/
+
+      // Ajout d'une nouvelle vue #/app/rml9
       $stateProvider
-
         .state('app.rml9', {
           url: "/rml9?pubkey",
           views: {
@@ -48,16 +48,18 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
   /**
    * Les controlleurs sont chargés de gérer faire la liaison entre les services d'accès aux données, et l'interface graphique.
    *
-   * Celui-ci sert à étendre la page 'Mes opérations'
+   * Celui-ci sert à étendre les vues 'Mes opérations' et celle d'une identité
    */
-  .controller('Rml9ButtonCtrl', function($scope, $state, PluginService, FileSaver, BMA, csWallet) {
+  .controller('Rml9ButtonsCtrl', function($scope, $state, PluginService, FileSaver, BMA, csWallet) {
     'ngInject';
 
     $scope.extensionPoint = PluginService.extensions.points.current.get();
 
-    // Manage click on the export button
-    $scope.onButtonClick = function() {
-      console.debug("[RML9] calling onButtonClick()");
+    /**
+     * Manage click event, on the export button
+     */
+    $scope.onExportButtonClick = function() {
+      console.debug("[RML9] calling onExportButtonClick()");
 
       var pubkey = $scope.formData.pubkey || csWallet.isLogin() && csWallet.data.pubkey;
       if (!pubkey) return;
@@ -72,6 +74,19 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
           var file = new Blob(fileContent, {type: 'text/plain; charset=utf-8'});
           FileSaver.saveAs(file, 'transactions.txt');
         });
+    };
+
+    /**
+     * Manage click event, on the export button
+     */
+    $scope.onOpenButtonClick = function() {
+      console.debug("[RML9] calling onOpenButtonClick()");
+
+      // Get the pubkey from the extended view
+      var pubkey = $scope.formData.pubkey || csWallet.isLogin() && csWallet.data.pubkey;
+
+      // Open the RML9 view (#/app/rml9)
+      $state.go('app.rml9', {pubkey: pubkey});
     };
   })
 

@@ -13,9 +13,9 @@ Avant de faire ce tutoriel, vous devez :
 
 ### Objectif
 
-L'objectif ici est de réaliser un graphique représentant l'évolution de montant du dividende universel.
+L'objectif ici est de réaliser un graphique représentant la répartition des émétteurs de paiement à destination d'un compte.
 
-Quand l'utilisateur cliquera sur le champ "dividende universel" de la page suivante : http://g1.duniter.fr/#/app/currency/view/lg/  
+: http://g1.duniter.fr/#/app/currency/view/lg/  
 
 ### Récupérer le code (tag rml8)
 
