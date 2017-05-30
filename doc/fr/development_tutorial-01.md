@@ -24,7 +24,7 @@ Rendez-vous sur https://github.com (site en anglais). Renseigner les 3 champs pr
 * E-mail
 * Mot de passe
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/13ade346327b73bbf1acc97027af147eeb4e9089.png" width="346" height="325">
+<img src="https://forum.duniter.org/uploads/default/original/1X/13ade346327b73bbf1acc97027af147eeb4e9089.png">
 
 Vous recevrez probablement un e-mail de confirmation qu'il vous faudra valider. Une fois cette étape passée, vous devriez disposer d'un compte GitHub .
 
