@@ -12,9 +12,10 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       },
       REGEXPS = {
         SEARCH_FILTER: {
-          PERIOD: /_exists_:transactions[ ]+AND[ ]+medianTime:>=([0-9]+)[ ]+AND[ ]+medianTime:<([0-9]+)([ ]+AND)?/,
+          MEMBER_FLOWS: /\(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded\)([ ]+AND)?/,
+          EXISTING_TRANSACTION: /_exists_:transactions([ ]+AND)?/,
+          PERIOD: /medianTime:>(=)?([0-9]+)[ ]+AND[ ]+medianTime:<(=)?([0-9]+)([ ]+AND)?/,
           PUBKEY: /issuer:([a-zA-Z0-9]+)([ ]+AND)?/
-
         },
         LAST_AND: /[ ]+AND$/
       },

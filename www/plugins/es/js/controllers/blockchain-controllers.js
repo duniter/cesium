@@ -38,7 +38,6 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
   // Initialize the super class and extend it.
   angular.extend(this, $controller('BlockLookupCtrl', {$scope: $scope}));
 
-  $scope.activeLookupPeriod=false;
   $scope.search.text = null;
   $scope.search.type = 'last';
   $scope.search.sort = undefined;

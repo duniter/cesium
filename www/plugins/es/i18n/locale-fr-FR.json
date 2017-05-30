@@ -189,7 +189,9 @@
       "DISPLAY_QUERY": "Afficher la requête",
       "HIDE_QUERY": "Masquer la requête",
       "TX_SEARCH_FILTER": {
-        "PERIOD": "Transactions effectuées entre le {{params[1]|formatDate}} et le {{params[2]|formatDate}}",
+        "MEMBER_FLOWS": "Entrée/Sortie de membres",
+        "EXISTING_TRANSACTION": "Transactions existantes",
+        "PERIOD": "Blocs calculé entre le {{params[2]|formatDate}} et le {{params[4]|formatDate}}",
         "PUBKEY": "Clé publique : {{params[1]|formatPubkey}}"
       }
     },

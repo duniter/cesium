@@ -186,10 +186,12 @@
       "HEADER_BLOCK": "Bloque #",
       "HEADER_ISSUER": "Nodo emisor",
       "BTN_LAST": "últimos bloques",
-      "DISPLAY_QUERY": "Ver la consulta",
-      "HIDE_QUERY": "Ocultar la solicitud",
+      "DISPLAY_QUERY": "Mostrar la consulta",
+      "HIDE_QUERY": "Ocultar la consulta",
       "TX_SEARCH_FILTER": {
-        "PERIOD": "Las transacciones entre el {{params[1]|formatDate}} y el {{params[2]|formatDate}}",
+        "MEMBER_FLOWS": "Entrada/Salida de miembros",
+        "EXISTING_TRANSACTION": "Transacciones existentes",
+        "PERIOD": "Las transacciones entre el {{params[2]|formatDate}} y el {{params[4]|formatDate}}",
         "PUBKEY": "Clave pública : {{params[1]|formatPubkey}}"
       }
     },

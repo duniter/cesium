@@ -189,7 +189,9 @@
       "DISPLAY_QUERY": "View query",
       "HIDE_QUERY": "Hide query",
       "TX_SEARCH_FILTER": {
-        "PERIOD": "Transactions between the {{params[1]|formatDate}} and the {{params[2]|formatDate}}",
+        "MEMBER_FLOWS": "Members Input/Output",
+        "EXISTING_TRANSACTION": "Existing transactions",
+        "PERIOD": "Transactions between the {{params[2]|formatDate}} and the {{params[4]|formatDate}}",
         "PUBKEY": "Public key : {{params[1]|formatPubkey}}"
       }
     },
