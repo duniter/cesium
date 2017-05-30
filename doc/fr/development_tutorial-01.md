@@ -24,7 +24,7 @@ Rendez-vous sur https://github.com (site en anglais). Renseigner les 3 champs pr
 * E-mail
 * Mot de passe
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/13ade346327b73bbf1acc97027af147eeb4e9089.png">
+<img src="./img/13ade346327b73bbf1acc97027af147eeb4e9089.png" width="346" height="325">
 
 Vous recevrez probablement un e-mail de confirmation qu'il vous faudra valider. Une fois cette étape passée, vous devriez disposer d'un compte GitHub .
 
@@ -32,7 +32,7 @@ Vous recevrez probablement un e-mail de confirmation qu'il vous faudra valider. 
 
 Rendez-vous à l'adresse https://github.com/duniter/cesium. Cliquez sur le bouton « Fork » en dans le coin supérieur droit de la page :
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/3b9228c664520496d6a7e86e3f9c4c438f111914.png" width="388" height="98">
+<img src="./img/3b9228c664520496d6a7e86e3f9c4c438f111914.png" width="388" height="98">
 
 ### Installer Git
 
@@ -49,7 +49,7 @@ Pour récupérer le code source, lancez Git en mode console.
 * Sous Linux et MacOS, ouvrez tout simplement le Terminal
 * Sous Windows lancez le programme *Git Bash* :
 
-<img src="https://forum.duniter.org/uploads/default/original/1X/6fc638dc0a22d88da7e84dbf0371e69747767f78.png" width="432" height="80">
+<img src="./img/6fc638dc0a22d88da7e84dbf0371e69747767f78.png" width="432" height="80">
 
 #### Clonez votre fork, en ligne de commande
 
@@ -346,7 +346,7 @@ Chercher et répérer dans le code :
 * les controllers (JS)  : www/js/controllers
 * les services (JS)  : www/js/services
 
-<img src="https://forum.duniter.org/uploads/default/original/2X/a/a5078db3abdf71c87f245e948ce94a181b0e0f37.png" width="690" height="369">
+<img src="./img/a5078db3abdf71c87f245e948ce94a181b0e0f37.png" width="690" height="369">
 
 
 ### Aller plus loin dans le code
@@ -375,12 +375,12 @@ Recherchez la méthode `$scope.certify()`, et placez y un point d'arrêt.
 
 Naviguez dans l'application Cesium de la manière suivante : 
 
- * Cliuquez dans le menu (à gauche) `Annuaire`;
+ * Cliquez dans le menu (à gauche) `Annuaire`;
  * Recherche un utilisateur, puis visualiser son identité;
  * Dans `Certification reçues`, cliquez sur le bouton `Certifier`;
  * Vérifier que la console s'arrête sur le point d'arrêt.
 
-<img src="https://forum.duniter.org/uploads/default/original/2X/e/eca671a6d24b8e11566cfcca11b65e6c9c9c370c.png" width="690" height="223">
+<img src="./img/eca671a6d24b8e11566cfcca11b65e6c9c9c370c.png" width="690" height="223">
 
 Découvrez le code en déroulant l'action pas à pas.
 
