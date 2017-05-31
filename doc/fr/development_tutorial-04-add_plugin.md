@@ -391,6 +391,8 @@ Voici les plus importants :
 
 __Objectif :__ Ce niveau a pour objectif de développer un fonctionnalité d'export des transactions d'un comptes, dans un fichier.
 
+La encore, il s'agit d'une demande réelle (cf ticket #[445](#https://github.com/duniter/cesium/issues/445)).
+
 ### Activation du plugin (en version `03`)
 
 Editez le fichier `www/index.html` pour activer cette fois le plugin en version 3 : 
@@ -410,18 +412,21 @@ La communauté AngularJS est très active : de nombreux plugins, de tous genres,
 
 Généralement, installer un nouveau plugin AngularJS est très simple. Il suffit d'executer la commande suivante pour que le téléchargement de la librairie soit fait : 
  
-```bower install <nom_du_plugin_AngularJS>````
+```bash
+ > bower install <nom_du_plugin_AngularJS>
+```
 
 Le chemin de la librairie installée doit ensuite être ajouté à la main, dans le fichier `www/index.html` : 
+
 ```html
 <script src="lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
 ```
 
-### 5 min de coding !
+### Hop : 5 min de dev !
 
-Allez, une petite fonction facile à coder : le remplissage du fichier ! ;)
+Allez, une petite fonction facile à coder : le remplissage du fichier d'export ! ;)
 
-Editez maintenant le code du plugin (version `03`), et identifiez la méthode `onExportButtonClick()` :
+Editez maintenant le plugin (en version `03`) et modifier la méthode `onExportButtonClick()` :
 
 ```
     // [NEW] Manage click on the export button
@@ -447,13 +452,15 @@ Editez maintenant le code du plugin (version `03`), et identifiez la méthode `o
         });
 
     };
-
 ```
 
+Il suffit de remplir le tableau nommé `content` :)
 
-## Niveau XVI : 
 
-__Objectif :__ 
+## Niveau XVI : Etendre un service
+
+__Objectif :__ Nous allons voir comment étendre le fonctionnement du code présent dans les services.
+ 
 
 ### Activation du plugin (en version `04`)
 
