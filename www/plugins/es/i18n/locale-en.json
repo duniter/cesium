@@ -185,7 +185,15 @@
       "HEADER_MEDIAN_TIME": "Date / Time",
       "HEADER_BLOCK": "Block #",
       "HEADER_ISSUER": "Peer owner",
-      "BTN_LAST": "Last blocks"
+      "BTN_LAST": "Last blocks",
+      "DISPLAY_QUERY": "View query",
+      "HIDE_QUERY": "Hide query",
+      "TX_SEARCH_FILTER": {
+        "MEMBER_FLOWS": "Members Input/Output",
+        "EXISTING_TRANSACTION": "Existing transactions",
+        "PERIOD": "Calculated between the {{params[2]|formatDate}} and the {{params[4]|formatDate}}",
+        "PUBKEY": "Calculated by {{params[1]|formatPubkey}}"
+      }
     },
     "ERROR": {
       "SEARCH_BLOCKS_FAILED": "Error while searching blocks."
