@@ -174,10 +174,6 @@
       "RECORD_REMOVED" : "Advertentie succesvol verwijderd"
     }
   },
-  "TX_SEARCH": {
-    "PERIOD": "Transacties tussen de {{date.startDate|formatDate}} en {{date.endDate|formatDate}}",
-    "PUBKEY": "Public key : {{pubkey|formatPubkey}}"
-  },
   "REGISTRY": {
     "CATEGORY": "Hoofdactiviteit",
     "GENERAL_DIVIDER": "Basisinformatie",
