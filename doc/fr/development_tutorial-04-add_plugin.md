@@ -57,15 +57,14 @@ Editer le fichier `www/index.html`, et ajouter la ligne suivante, vers la fin du
 Editer le fichier `www/js/plugins.js`, et ajoutez une entrée dans la liste, comme indiqué ci-dessous : 
 ```
    (...)
-   // Plugins
-   'cesium.graph.plugin', // Ligne déjà existante, mais n'oubliez pas la virgule à la fin ! ;)
-   'cesium.rml9.plugin'   // <-- La nouvelle ligne
+  // RML9 plugin:
+  'cesium.rml9.plugin',  // <-- La nouvelle ligne
    (...)
 ```
 
 Editer le fichier `www/js/config.js`, et ajouter les lignes suivantes dans sous la balise `plugins` : 
 
-```JSON
+```js
    // (...)
    "plugins": {
        // (...)
@@ -80,9 +79,9 @@ Editer le fichier `www/js/config.js`, et ajouter les lignes suivantes dans sous 
 
 Le plugin `rml9` est maintenant activé. Il ne vous reste plus qu'à lancer Cesium pour vérifier !
 
-```bash
-cd cesium
-ionic serve
+```
+  > cd cesium
+  > ionic serve
 ```
 
  - Ouvrez un navigateur à l'adresse [http://localhost:8100](http://localhost:8100) 
@@ -118,8 +117,8 @@ En haut du fichier, identifiez la partie qui définit le point d'insertion du pl
         .extendState('app.wot_identity', {
           points: {
             'buttons': {
-              templateUrl: "plugins/rml9/templates/button.html",
-              controller: 'Rml9ButtonsCtrl'
+              templateUrl: "plugins/rml9/templates/01-button.html",
+              controller: 'Rml9ButtonCtrl'
             }
           }
         });
@@ -146,19 +145,18 @@ Ouvrez le fichier `www/templates/wot/view_identity.html` :
 ```
 Vous voyez que le formalisme utilisé pour le définir l'emplacement d'un point d'extension est très simple.
 
-Ouvrez maintenant le fichier `www/plugins/rml9/templates/buttons.html` : 
+Ouvrez maintenant le fichier `www/plugins/rml9/templates/01-button.html` : 
 
 ```html
-  <!-- Button: export -->
-  <button class="button button-balanced button-small-padding icon ion-android-archive"
-          ng-click="onExportButtonClick()"
-          title="{{'RML9.BTN_EXPORT' | translate}}">
-  </button>
+<!-- Button that call a function of the controller -->
+<button class="button button-balanced button-small-padding icon ion-android-archive"
+        ng-click="onButtonClick()"
+        title="{{'RML9.BTN_OPEN' | translate}}">
+</button>
 ```
 
 Ce fichier contient le **contenu visuel de notre plugin**.
-Ici, il s'agit simplement d'un bouton, avec l'appel d'une fonction à chaque clic.
-
+Ici, il s'agit simplement d'un bouton, avec l'appel d'une fonction JS à chaque clic.
 
 Simple comme un `Hello world`, non ? ;)
 
@@ -176,8 +174,8 @@ Editer le fichier  `www/plugins/rml9/plugin-01-add_button.js`. Puis, sous la pre
        .extendState('app.view_wallet_tx', {
           points: {
             'buttons': {
-              templateUrl: "plugins/rml9/templates/buttons.html",
-              controller: 'Rml9ButtonsCtrl'
+              templateUrl: "plugins/rml9/templates/01-button.html",
+              controller: 'Rml9ButtonCtrl'
             }
           }
         });
@@ -210,54 +208,56 @@ La méthologie est toujours la même :
 ```
  - Dans le code des controlleurs (fichiers du répertoire `www/js/controllers`) recherchez le nom de la page (state) concernée;
  - Dans le code du plugin, étendre le point d'extension de la manière suivante  : 
-```javascript      
+```
      PluginServiceProvider
        .extendState('app.a_state_name', {          // ici, le nom de la page (state), à identifier dans les controlleurs
           points: {
             'this-is-a-good-extension-place': {    // ici, le nom du point d'extension concerné
-              templateUrl: "plugins/rml9/templates/buttons.html",
-              controller: 'Rml9ButtonsCtrl'
+              templateUrl: "plugins/rml9/templates/template.html", // le template HTML
+              controller: 'MyCtrl'                 // Le controlleur associé au template  
             }
           }
         });
 ```
 
-##Niveau XIV : Ajouter une page
+## Niveau XIV : Ajouter une page
 
-__Objectif :__ Ce niveau a pour objectif de vous apprendre à ajouter une nouvelle page dans Cesium. il s'agira ensuite utilise run service d'accès aux données pour afficher les transactions d'un compte.
+__Objectif :__ L'objectif est d'apprendre à ajouter une nouvelle page (un nouvel écran) dans Cesium. Il s'agira également d'utiliser un service d'accès aux données.
 
 ### Activation du plugin (en version `02`)
 
 Editez le fichier `www/index.html` pour activer cette fois le plugin en version 2 : 
- ```
+```html
      <script src="dist/dist_js/plugins/rml9/plugin-02-add_view.js"></script>
-  ```
+```
 
 Dans votre navigateur, vérifiez que le bouton est toujours présent (page d'une identité ou `Mes opérations`).
 
-Cliquez sur le bouton. Une nouvelle page s'ouvre alors : 
+Cliquez sur notre bouton vert : une nouvelle page s'ouvre : 
+
 <img src="https://forum.duniter.org/uploads/default/original/2X/5/5a8b4eb0c09d8125b1d6f92551256377a700e128.png" width="690" height="299">
 
 ### Se repérer dans le code
 
-Ouvrez le code du plugin.
-En haut u fichier, repérez le code suivant : 
+Ouvrez le code du plugin (fichier `www/plugins/rml9/plugin-02-add_view.js`).
 
-```
+En haut du fichier, repérez le code suivant : 
+
+```js
       // [NEW] Ajout d'une nouvelle page #/app/rml9
       $stateProvider
         .state('app.rml9', {
           url: "/rml9/:pubkey",
           views: {
             'menuContent': {
-              templateUrl: "plugins/rml9/templates/view.html",
+              templateUrl: "plugins/rml9/templates/02-view.html",
               controller: 'Rml9ViewCtrl'
             }
           }
         });
 ```
 
-Cette déclaration ajoute une nouvelle page (state) `app.rml9`, utilisant le template HTML `view.html` et un nouveau controlleur associé.
+Cette déclaration ajoute une nouvelle page (state) `app.rml9`, utilisant le template HTML `02-view.html` et un nouveau controlleur associé.
 
 Le code du controlleur de cette page est sité un peu plus bas : 
 ```
@@ -286,7 +286,7 @@ Le code du controlleur de cette page est sité un peu plus bas :
 > Le reste du code provient du plugin réalisé lors du niveau précédent.
 > Le nouveau code est identifié par des commentaire précédé de la balise "`[NEW]`"
 
-Ouvrez maintenant le fichier `www/plugins/rml9/templates/view.html` qui contient le template HTML.
+Ouvrez maintenant le fichier `www/plugins/rml9/templates/02-view.html` qui contient le template HTML.
 Observez notamment l'affichage des données que nous avons stockées dans la variable `$scope.items` :
 
 ```html
@@ -303,15 +303,15 @@ Observez notamment l'affichage des données que nous avons stockées dans la var
 
 ### Utiliser un service d'accès aux données
 
-Nous allons maintenant remplacer les données "en dures" dans le code, par l'appel à un "service" existant de Cesium.
+Nous allons maintenant remplacer les données _en dur_ dans le code, par l'appel à un "service" existant de Cesium.
 
-> Les "services" d'AngularJS sont des objets indépendant des interfaces, et donc réutiliables entre plusieurs écrans ou compasant graphiques. Typiquement, dans Cesium, ils executent les requêtes HTTP vers le noeud Duniter (le noeud configuré dans vos paramètres Cesium).
+> Les "services" d'AngularJS sont des objets indépendants des composants graphiques, et donc réutiliables entre plusieurs écrans ou compasants graphiques. Typiquement, dans Cesium, ils executent les requêtes HTTP vers le noeud Duniter (le noeud configuré dans vos paramètres Cesium).
 
-Dans le fichier `plugin-02-add_view.js`, remplacez l'initialisation du tableau `$scope.items` par cet appel au service `csTx` : 
+Dans le fichier `plugin-02-add_view.js`, remplacez l'initialisation du tableau `$scope.items` par un appel au service `csTx` : 
 
 ```
       // Load account TX data
-      csTx.load($scope.pubkey)
+      csTx.load($scope.pubkey) //  <- appel au service csTx
         .then(function(result) {
           console.log(result);  // Allow to discover data structure
           if (result && result.tx && result.tx.history) {
@@ -319,10 +319,11 @@ Dans le fichier `plugin-02-add_view.js`, remplacez l'initialisation du tableau `
           }
         });
 ```
+
 > Le `console.log()` est un moyen simple pour découvrir la structure des données renvoyées par le service.
 > Un point d'arrêt dans la fonction aura le même effet.
 
-Notez bien le formalisme de traitement du retour de la méthode, propre aux méthodes asynchrones : 
+Notez bien le formalisme de traitement du retour de la méthode, propre aux executions asynchrones : 
 ```
   monService.maMethode()
     .then(function(result) {
@@ -330,7 +331,7 @@ Notez bien le formalisme de traitement du retour de la méthode, propre aux mét
     });
 ```
 
-> Pour ne pas pénaliser les performances de la navigation, les services utilisent le plus souvent une execution _asynchrone_. Il est donc indespensable de bien maitriser l'usage de telles méthodes.
+> Pour ne pas pénaliser les performances de la navigation, les services utilisent le plus souvent un mode d'execution _asynchrone_. Il est donc indespensable de bien maitriser l'usage de telles méthodes.
 
 #### Déclaration du service utilisé
 
@@ -342,7 +343,7 @@ Vous devriez avoir une erreur dans la console Javascript :
 pas de panique : ce type d'erreur est fréquent ! il indique simplement que le service utilisé, `csTx`, n'a pas été déclaré comme dépendence du controlleur de la page.
 Pour corriger l'erreur, ajouté le simplement dans la fonction du controlleur : 
 ```
-  .controller('Rml9ViewCtrl', function($scope, csTx /*ICI, ajouter la décalration du service*/) {
+  .controller('Rml9ViewCtrl', function($scope, csTx /*ICI, ajouter la déclaration du service*/) {
     'ngInject';   
     // ...
 ```
@@ -422,11 +423,10 @@ Le chemin de la librairie installée doit ensuite être ajouté à la main, dans
 <script src="lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
 ```
 
-### Hop : 5 min de dev !
+### 5 minutes de dev : Top chrono !
 
-Allez, une petite fonction facile à coder : le remplissage du fichier d'export ! ;)
-
-Editez maintenant le plugin (en version `03`) et modifier la méthode `onExportButtonClick()` :
+Editez maintenant le code du plugin (fichier `www/plugins/rml9/plugin-03-file_export.js`)*[]: 
+Modifier la méthode `onExportButtonClick()`, afin que le contenu du fichier soit correct :
 
 ```
     // [NEW] Manage click on the export button
@@ -454,18 +454,149 @@ Editez maintenant le plugin (en version `03`) et modifier la méthode `onExportB
     };
 ```
 
-Il suffit de remplir le tableau nommé `content` :)
+Il suffit de remplir le tableau nommé `content`.
+
+Allez hop: une petite fonction bien codée, ca vaut bien une pause, non ? ;)
 
 
-## Niveau XVI : Etendre un service
+
+## Niveau XVI : Ajouter un graphique ChartJS
+
+__Objectif :__ Nous allons voir comment ajouter simplement un graphique, dans un écran.
+ 
+### Activation du plugin (en version `04`)
+
+Editez le fichier `www/index.html` pour activer cette fois le plugin en version `04` : 
+```
+  <script src="dist/dist_js/plugins/rml9/plugin-04-chart.js"></script>
+```
+
+En vous rendant dans la page `rml9`, vous devriez voir apparaitre deux graphiques : 
+
+<img src="/uploads/default/original/2X/5/503d5d31c7bc3987d74a5109a7f39c5cbef4876b.png" width="667" height="500">
+
+On y voit deux graphiques, représentant respectovement : 
+
+ - la somme des **montants entrants**, regroupé par émétteur ;
+ - la somme des **montants sortants**, regroupé par destinataire.
+
+### Se repérer dans le code
+
+Ouvrir le code du plugin (fichier `www/plugins/rml9/plugin-04-chart.js`), et répérer le code du controlleur qui pépare les données pour ces graphiques : 
+
+```
+     // [NEW] data for input chart
+     $scope.inputChart = {
+       data: [500, 100, 64],
+       labels: ['2RFPQGxYraKTFKKBXgpNn1QDEPdFM7rHNu7HdbmmF43v','5U2xuAUEPFeUQ4zpns6Zn33Q1ZWaHxEd3sPx689ZpaZV','2ny7YAdmzReQxAayyJZsyVYwYhVyax2thKcGknmQy5nQ']
+     };
+
+     // [NEW] data for output chart
+     $scope.outputChart = {
+       data: [650, 240, 154],
+       labels: ['2RFPQGxYraKTFKKBXgpNn1QDEPdFM7rHNu7HdbmmF43v','5U2xuAUEPFeUQ4zpns6Zn33Q1ZWaHxEd3sPx689ZpaZV','2ny7YAdmzReQxAayyJZsyVYwYhVyax2thKcGknmQy5nQ']
+     };
+```
+
+Cette fois encore, les données ont été fixées _en dur_, pour bien comprendre la structure des données attendues.
+
+ - La partie `data` est un simple tableau, possédant les valeurs numériques du graphique
+ - La partie `labels` contient les libellés associées aux valeurs. elles sont visibles quand on passe la sourie sur un élément du graphique.
+ 
+Ouvrez maintenant le template HTML : 
+
+```html
+    <!-- [NEW] TX input chart -->
+    <p class="gray" translate>RML9.CHART.INPUT_CHART_TITLE</p>
+    <canvas id="chart-received-pie" class="chart-pie"
+            chart-data="inputChart.data"
+            chart-labels="inputChart.labels">
+    </canvas>
+
+    <!-- [NEW] TX output chart -->
+    <p class="gray" translate>RML9.CHART.OUTPUT_CHART_TITLE</p>
+    <canvas id="chart-sent-pie" class="chart-pie"
+            chart-data="outputChart.data"
+            chart-labels="outputChart.labels">
+    </canvas>
+```
+
+> Cesium n'utilise pas directement ChartJS, mais une adaptation pour angular JS, nommé `angular-chart`.
+> Vous trouverez toute la documentation nécessaire sur le site http://jtblin.github.io/angular-chart.js/
+ 
+
+### A vous de jouer !
+
+A vous de jouer, afin de remplacer par du contenu dynamique !
+
+> Une méthode qui pourrait vous faire gagner du temps à été placée dans le controlleur : `$scope.computeChartData()`.
+> Elle prend en paramètres une liste de transaction, et renvoi les données telles que attendues par ChartJS.
+> Reste à savoir quelle liste de transaction il faut lui envoyer, et comment la constituer ! ;) 
+
+
+
+## Niveau XVII : Etendre un service
 
 __Objectif :__ Nous allons voir comment étendre le fonctionnement du code présent dans les services.
  
 
-### Activation du plugin (en version `04`)
+### Activation du plugin (en version `05`)
 
 
 
+TODO
+
+
+
+## Niveau XVIII : Etendre les paramètres
+
+__Objectif :__ Nous allons voir comment étendre les paramètres de Cesium, en y ajoutant une entrée.
+ 
+
+### Activation du plugin (en version `06`)
+
+Dans le code du plugin (fichier `www/plugins/rml9/plugin-06-settings`) observez notamment cette partie :
+
+```js
+  .controller('Rml9ButtonCtrl', function($scope, UIUtils, csSettings) {
+    'ngInject';
+
+    // [NEW] Calcul l'état du plugin (actif ou non)
+    function isPluginEnable(settings) {
+      return settings.plugins && settings.plugins.rml9 && settings.plugins.rml9.enable;
+    }
+
+    // [NEW] Nouvelle variable stockée dans le contexte de la page
+    $scope.enable = isPluginEnable(csSettings.data);
+
+    // [NEW] Détection des changements dans les paramètres
+    csSettings.api.data.on.changed($scope, function(settings) {
+      console.debug("[RML9] Detect changes in settings!");
+
+      $scope.enable = isPluginEnable(settings);
+      console.debug("[RML9] RML9 plugin enable: " + $scope.enable);
+    });
+
+    // (...)
+  });
+```
+
+Nous voyons que l'état du plugin (actif ou non) est stocké dans la variable `$scope.enable` :  
+```
+   $scope.enable = isPluginEnable(csSettings.data);
+```
+
+Cette même variable est **maintenue à jour**, lors de changement survenu dans les paramètres :  
+```
+    csSettings.api.data.on.changed($scope, function(settings) {
+      // ...
+      $scope.enable = isPluginEnable(settings);
+      //...
+    });
+```
+
+> Au passage, notez l'usage d'une API de service  comme vu plus haut : ici le service 
+`csSettings`.
 
 
 

@@ -2,10 +2,18 @@
   "RML9": {
     "BTN_EXPORT": "Télécharger",
     "BTN_OPEN": "Ouvrir la page RML9",
+    "BTN_SWOW_TX": "Voir les transactions",
     "VIEW": {
       "TITLE": "RML9",
       "DIVIDER": "Dernières transactions :",
       "BALANCE": "Solde du compte"
+    },
+    "CHART": {
+      "INPUT_CHART_TITLE": "Somme des flux entrants, par émetteur :",
+      "OUTPUT_CHART_TITLE": "Somme des flux sortants, par destinaire :"
+    },
+    "SETTINGS": {
+      "ENABLE_TOGGLE": "Activer le plugin RML9 ?"
     }
   }
 }

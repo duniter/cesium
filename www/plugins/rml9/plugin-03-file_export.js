@@ -7,23 +7,22 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
     var enable = csConfig.plugins && csConfig.plugins.rml9;
     if (enable) {
 
-      // Extension de la vue d'une identité: ajout d'un bouton
       PluginServiceProvider
+
+        // Extension de la vue d'une identité: ajout d'un bouton
         .extendState('app.wot_identity', {
           points: {
             'buttons': {
-              templateUrl: "plugins/rml9/templates/button.html",
-              controller: 'Rml9ButtonCtrl'
+              templateUrl: "plugins/rml9/templates/03-button.html"
             }
           }
-        });
+        })
 
-      // Extension de 'Mes opérations' : insertion d'un bouton
-      PluginServiceProvider.extendState('app.view_wallet_tx', {
+        // Extension de 'Mes opérations' : insertion d'un bouton
+        .extendState('app.view_wallet_tx', {
            points: {
              'buttons': {
-               templateUrl: "plugins/rml9/templates/button.html",
-               controller: 'Rml9ButtonCtrl'
+               templateUrl: "plugins/rml9/templates/03-button.html"
            }
          }
        });
@@ -34,30 +33,13 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
           url: "/rml9/:pubkey",
           views: {
             'menuContent': {
-              templateUrl: "plugins/rml9/templates/view-03.html",
+              templateUrl: "plugins/rml9/templates/03-view_with_button.html",
               controller: 'Rml9ViewCtrl'
             }
           }
         });
     }
 
-  })
-
-  // Manage events from the plugin button
-  .controller('Rml9ButtonCtrl', function($scope, $state) {
-    'ngInject';
-
-    // Manage click event, on the plugin button
-    $scope.onButtonClick = function() {
-
-      // [Get the public key, from the page context ($scope.formData)
-      var pubkey = $scope.formData.pubkey;
-      if (!pubkey) return;
-      console.debug("[RML9] call method onButtonClick() on pubkey: " + pubkey);
-
-      // [NEW] Open the RML9 view (#/app/rml9)
-      $state.go('app.rml9', {pubkey: pubkey});
-    };
   })
 
   // [NEW] Manage events from the page #/app/rml9
@@ -80,8 +62,6 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
           console.log(result); // Allow to discover data structure
           if (result && result.tx && result.tx.history) {
             $scope.items = result.tx.history;
-            $scope.items = result && result.tx && result.tx.history || [];
-
           }
           // [NEW] store the account balance
           $scope.balance = (result && result.balance) || 0;

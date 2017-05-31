@@ -1,6 +1,6 @@
 angular.module('cesium.graph.color.services', [])
 
-  .factory('gpColor', function($rootScope) {
+  .factory('gpColor', function() {
     'ngInject';
 
     var

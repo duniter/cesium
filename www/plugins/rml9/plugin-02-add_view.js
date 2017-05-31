@@ -12,7 +12,7 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
         .extendState('app.wot_identity', {
           points: {
             'buttons': {
-              templateUrl: "plugins/rml9/templates/button.html",
+              templateUrl: "plugins/rml9/templates/01-button.html",
               controller: 'Rml9ButtonCtrl'
             }
           }
@@ -22,7 +22,7 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
       PluginServiceProvider.extendState('app.view_wallet_tx', {
            points: {
              'buttons': {
-               templateUrl: "plugins/rml9/templates/button.html",
+               templateUrl: "plugins/rml9/templates/01-button.html",
                controller: 'Rml9ButtonCtrl'
            }
          }
@@ -34,7 +34,7 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
           url: "/rml9/:pubkey",
           views: {
             'menuContent': {
-              templateUrl: "plugins/rml9/templates/view.html",
+              templateUrl: "plugins/rml9/templates/02-view.html",
               controller: 'Rml9ViewCtrl'
             }
           }
