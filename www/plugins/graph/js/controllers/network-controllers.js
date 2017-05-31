@@ -33,7 +33,7 @@ angular.module('cesium.graph.network.controllers', ['chart.js', 'cesium.graph.se
           views: {
             'menuContent': {
               templateUrl: "plugins/graph/templates/network/view_peer_stats.html",
-              controller: 'GpPeerStatsCtrl'
+              controller: 'GpBlockchainTxCountCtrl'
             }
           }
         });
@@ -44,7 +44,6 @@ angular.module('cesium.graph.network.controllers', ['chart.js', 'cesium.graph.se
 
   .controller('GpPeerViewExtendCtrl', GpPeerViewExtendController)
 
-  .controller('GpPeerStatsCtrl', GpPeerStatsController)
 ;
 
 
@@ -113,44 +112,4 @@ function GpPeerViewExtendController($scope, $timeout, PluginService, esSettings,
         $scope.loading = false;
       });
   };
-}
-
-function GpPeerStatsController($scope, $controller, csCurrency) {
-  'ngInject';
-
-  // Initialize the super class and extend it.
-  angular.extend(this, $controller('GpBlockchainTxCountCtrl', {$scope: $scope}));
-
-  $scope.txOptions = $scope.txOptions || {};
-  $scope.node = $scope.node || {};
-
-  $scope.enter = function(e, state) {
-    if ($scope.loading) {
-
-      if (!$scope.currency && state && state.stateParams && state.stateParams.currency) { // Currency parameter
-        $scope.currency = state.stateParams.currency;
-      }
-
-      // Make sure there is currency, or load it not
-      if (!$scope.currency) {
-        return csCurrency.get()
-          .then(function(currency) {
-            $scope.currency = currency ? currency.name : null;
-            return $scope.enter(e, state);
-          });
-      }
-
-      if (!$scope.txOptions.issuer && state && state.stateParams && state.stateParams.pubkey) { // Pubkey parameter
-        // Add option to filter on issuer pubkey
-        $scope.txOptions.issuer = state.stateParams.pubkey;
-      }
-
-      return $scope.load()
-        .then(function() {
-          $scope.loading = false;
-        });
-    }
-  };
-  $scope.$on('$ionicView.enter', $scope.enter);
-
 }

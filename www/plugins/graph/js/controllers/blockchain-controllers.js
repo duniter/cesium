@@ -37,6 +37,16 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
+  $scope.init = function(e, state) {
+    if (state && state.stateParams) {
+
+      // get the pubkey
+      if (!$scope.formData.issuer && state && state.stateParams && state.stateParams.pubkey) { // Currency parameter
+        $scope.formData.issuer = state.stateParams.pubkey;
+      }
+    }
+  };
+
   $scope.load = function(updateTimePct) {
 
     var formData = $scope.formData;

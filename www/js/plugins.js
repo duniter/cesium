@@ -1,14 +1,22 @@
 
 angular.module('cesium.plugins', [
+  /* --  Generated plugin's modules -- */
+
   'cesium.plugins.translations',
   'cesium.plugins.templates',
-  // Plugins
-  'cesium.es.plugin'
 
+  /* --  Plugins  -- */
+
+  // Graph plugin:
   // removeIf(ubuntu)
-  ,'cesium.graph.plugin'
+  // FIXME: issue #463
+  'cesium.graph.plugin',
   // endRemoveIf(ubuntu)
 
-  //,'cesium.rml9.plugin'
+  // RML9 plugin:
+  //'cesium.rml9.plugin',
+
+  // ES plugin (Cesium+):
+  'cesium.es.plugin'
   ])
 ;
