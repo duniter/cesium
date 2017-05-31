@@ -189,10 +189,11 @@
       "DISPLAY_QUERY": "Afficher la requête",
       "HIDE_QUERY": "Masquer la requête",
       "TX_SEARCH_FILTER": {
-        "MEMBER_FLOWS": "Entrées/sorties de membres",
-        "EXISTING_TRANSACTION": "Avec transactions",
-        "PERIOD": "Calculés entre le {{params[2]|formatDate}} et le {{params[4]|formatDate}}",
-        "PUBKEY": "Calculé par {{params[1]|formatPubkey}}"
+        "MEMBER_FLOWS": "<b class=\"ion-person\"></b> Entrées/sorties de membres",
+        "EXISTING_TRANSACTION": "<b class=\"ion-card\"></b> Avec transactions",
+        "PERIOD": "<b class=\"ion-clock\"></b> Entre <b class=\"gray\">{{params[1]|formatDateShort}}</b> ({{params[1]|formatTime}}) et <b class=\"gray\">{{params[2]|formatDateShort}}</b> ({{params[2]|formatTime}})",
+        "ISSUER": "<b class=\"ion-android-desktop\"></b> Calculé par <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}",
+        "TX_PUBKEY": "<b class=\"ion-card\"></b> Transactions concernant <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
       }
     },
     "ERROR": {

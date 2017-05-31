@@ -1,21 +1,24 @@
 angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.http.services', 'cesium.es.user.services'])
 
-.factory('esBlockchain', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, esUser) {
+.factory('esBlockchain', function($rootScope, $q, $timeout, BMA, esHttp) {
   'ngInject';
 
   function EsBlockchain() {
 
     var
+      PUBKEY = BMA.constants.regexp.PUBKEY,
       CONSTANTS = {
         DEFAULT_SEARCH_SIZE: 40,
         ES_CORE_API_ENDPOINT: 'ES_CORE_API( ([a-z_][a-z0-9-_.]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))'
       },
       REGEXPS = {
+        /* WARNING: keep keys order for UI */
         SEARCH_FILTER: {
-          MEMBER_FLOWS: /\(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded\)([ ]+AND)?/,
-          EXISTING_TRANSACTION: /_exists_:transactions([ ]+AND)?/,
-          PERIOD: /medianTime:>(=)?([0-9]+)[ ]+AND[ ]+medianTime:<(=)?([0-9]+)([ ]+AND)?/,
-          PUBKEY: /issuer:([a-zA-Z0-9]+)([ ]+AND)?/
+          TX_PUBKEY: new RegExp('\\(transactions\\.issuers:('+PUBKEY+') OR transactions\\.outputs:\\*('+PUBKEY+')\\)([ ]+AND)?'),
+          ISSUER: new RegExp('issuer:('+PUBKEY+')([ ]+AND)?'),
+          MEMBER_FLOWS: new RegExp('\\(_exists_:joiners OR _exists_:leavers OR _exists_:revoked OR _exists_:excluded\\)([ ]+AND)?'),
+          EXISTING_TRANSACTION: new RegExp('_exists_:transactions([ ]+AND)?'),
+          PERIOD: new RegExp('medianTime:>=?([0-9]+)[ ]+AND[ ]+medianTime:<=?([0-9]+)([ ]+AND)?')
         },
         LAST_AND: /[ ]+AND$/
       },

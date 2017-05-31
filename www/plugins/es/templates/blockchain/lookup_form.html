@@ -5,7 +5,7 @@
 
     <div class="button button-small button-text button-stable button-icon-event padding no-padding-right ink"
          ng-repeat="filter in search.filters" ng-if="filter">
-      <span>{{'BLOCKCHAIN.LOOKUP.TX_SEARCH_FILTER.'+filter.type|translate:filter}}</span>
+      <span ng-bind-html="'BLOCKCHAIN.LOOKUP.TX_SEARCH_FILTER.'+filter.type|translate:filter"></span>
       <i class="icon ion-close" ng-click="itemRemove($index)"></i>
 
     </div>

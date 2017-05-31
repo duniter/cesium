@@ -281,7 +281,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
     if (!item) return;
     var from = $scope.times[item._index];
     var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
-    var query = '_exists_:transactions AND medianTime:>={0} AND medianTime:<{1}'.format(from, to);
+    var query = 'medianTime:>={0} AND medianTime:<{1}'.format(from, to);
     if ($scope.formData.pubkey) {
       query += ' AND (transactions.issuers:' + $scope.formData.pubkey + ' OR transactions.outputs:*' + $scope.formData.pubkey + ')';
     }
