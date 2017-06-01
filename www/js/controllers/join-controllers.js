@@ -254,11 +254,12 @@ function JoinModalController($scope, $state, $interval, $timeout, $focus, UIUtil
 
     // removeIf(device)
     // Focus input text (only if NOT device, to avoid keyboard opening)
-    if (behavior.focus) {
+    // FIXME: this cause issue #464
+    /*if (behavior.focus) {
       $timeout(function(){
         $focus(behavior.focus);
       }, 100);
-    }
+    }*/
     // endRemoveIf(device)
 
     return behavior;
