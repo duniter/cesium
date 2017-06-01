@@ -1,75 +1,42 @@
 
 angular.module('cesium.rml9.plugin', ['cesium.services'])
 
-  .config(function($stateProvider, PluginServiceProvider, csConfig) {
+  .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
     var enable = csConfig.plugins && csConfig.plugins.rml9;
     if (enable) {
-
-      PluginServiceProvider
-
-        // Extension de la vue d'une identité: ajout d'un bouton
-        .extendState('app.wot_identity', {
-          points: {
-            'buttons': {
-              templateUrl: "plugins/rml9/templates/04-button.html",
-              controller: 'Rml9ButtonCtrl'
-            }
-          }
-        })
-
-        // Extension de 'Mes opérations' : insertion d'un bouton
-        .extendState('app.view_wallet_tx', {
-           points: {
-             'buttons': {
-               templateUrl: "plugins/rml9/templates/04-button.html",
-               controller: 'Rml9ButtonCtrl'
-           }
-         }
-       });
-
-      // [NEW] Ajout d'une entrée dans les paramètres générale
-      PluginServiceProvider.extendState('app.settings', {
-        points: {
-          'plugins': {
-            templateUrl: "plugins/rml9/templates/04-settings_item.html"
-          }
-        }
-      });
+      // [NEW] Will force to load this RML9 service
+      PluginServiceProvider.registerEagerLoadingService('rml9Service');
     }
 
   })
 
-  // Manage events from the plugin button
-  .controller('Rml9ButtonCtrl', function($scope, UIUtils,
-                                         // [NEW] Service d'accès aux paramètres
-                                         csSettings) {
+  // [NEW] Add a RML9 service, that listen some Cesium events
+  .factory('rml9Service', function($rootScope, csWallet, csWot) {
     'ngInject';
 
+    var exports = {};
 
-    // [NEW] A simple helper method
-    function isEnable(settings) {
-      return settings.plugins && settings.plugins.rml9 && settings.plugins.rml9.enable;
-    }
+    console.log('[RML9] Starting rml9Service service...');
 
-    // [NEW] Nouvelle variable stockée dans le contexte de la page
-    $scope.enable = isEnable(csSettings.data);
+    // [NEW] add listeners on Cesium services
+    csWallet.api.data.on.login($rootScope, function(walletData, deferred){
+      console.log('[RML9] Successfull login. Wallet data:', walletData);
 
-    // [NEW] Rafraichir cette variable à chaque changement dans les paramètres
-    csSettings.api.data.on.changed($scope, function(settings) {
-      console.debug("[RML9] Detect changes in settings!");
+      // IMPORTANT: this is required, because of async call of extension
+      deferred.resolve();
+    }, this);
 
-      $scope.enable = isEnable(settings);
-      console.debug("[RML9] RML9 plugin enable: " + $scope.enable);
-    });
+    csWot.api.data.on.load($rootScope, function(idty, deferred){
+      console.log('[RML9] Loading a wot identity: ', idty);
+      deferred.resolve();
+    }, this);
 
+    csWot.api.data.on.search($rootScope, function(searchText, datas, pubkeyAtributeName, deferred){
+      console.log('[RML9] Searching on Wot registry, using [searchText,datas]: ', searchText, datas);
+      deferred.resolve();
+    }, this);
 
-    // Click event on button
-    $scope.onButtonClick = function() {
-      console.debug("[RML9] call function onButtonClick()");
-      UIUtils.toast.show("Fine, this plugin works !");
-    };
+    return exports;
   });
-
-

@@ -47,7 +47,10 @@ angular.module("cesium.config", [])
 				"certSent": true,
 				"certReceived": true
 			}
-		}
+		},
+    "rml9": {
+		  enable: true
+    }
 	},
 	"version": "0.12.7",
 	"build": "2017-05-31T14:31:24.792Z",
