@@ -209,15 +209,15 @@ La configuration par défaut de notre environnement est visible dans le fichier 
          "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
        },
        "node": {
-         "host": "cgeek.fr",
-         "port": "9330"
+         "host": "g1.duniter.org",
+         "port": "443"
        },
        "plugins":{
          "es": {
            "enable": true,
            "askEnable": false,
-           "host": "data.duniter.fr",
-           "port": "80"
+           "host": "g1.data.duniter.fr",
+           "port": "443"
          }
        }
      },

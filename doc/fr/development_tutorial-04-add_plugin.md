@@ -226,7 +226,7 @@ __Objectif :__ L'objectif est d'apprendre à ajouter une nouvelle page (un nouve
 
 ### Activation du plugin (en version `02`)
 
-Editez le fichier `www/index.html` pour activer cette fois le plugin en version 2 : 
+Editez le fichier `www/index.html` pour activer cette fois le plugin en version `02` (remettre en commentaire la version précédente): 
 ```html
      <script src="dist/dist_js/plugins/rml9/plugin-02-add_view.js"></script>
 ```
@@ -535,18 +535,41 @@ A vous de jouer, afin de remplacer par du contenu dynamique !
 
 
 
-## Niveau XVII : Etendre un service
+## Niveau XVII : Etendre les services
 
 __Objectif :__ Nous allons voir comment étendre le fonctionnement du code présent dans les services.
  
 
 ### Activation du plugin (en version `05`)
 
+Editez le fichier `www/index.html` pour activer cette fois le plugin en version `05` : 
+```
+  <script src="dist/dist_js/plugins/rml9/plugin-05-service_api.js"></script>
+```
 
+### Se repérer dans le code
 
-TODO
+Dans le code du plugin, observez notamment les lignes suivantes : 
+```
+// [NEW] Add a RML9 service, that listen some Cesium events
+  .factory('rml9Service', function($rootScope, csWallet, csWot) {
+    'ngInject';
 
+    var exports = {};
 
+    // [NEW] add listeners on Cesium services
+    csWallet.api.data.on.login($rootScope, function(walletData, deferred){
+      console.log('[RML9] Successfull login. Wallet data:', walletData);
+
+      // IMPORTANT: this is required, because of async call of extension
+      deferred.resolve();
+    }, this);
+
+    (...)
+
+    return exports;
+  });
+``` 
 
 ## Niveau XVIII : Etendre les paramètres
 
@@ -555,9 +578,13 @@ __Objectif :__ Nous allons voir comment étendre les paramètres de Cesium, en y
 
 ### Activation du plugin (en version `06`)
 
-Dans le code du plugin (fichier `www/plugins/rml9/plugin-06-settings`) observez notamment cette partie :
+Dans le code du plugin (fichier `www/plugins/rml9/plugin-06-settings`).
 
-```js
+### Se repérer dans le code
+
+Observez notamment cette partie du code du plugin :
+
+```
   .controller('Rml9ButtonCtrl', function($scope, UIUtils, csSettings) {
     'ngInject';
 
