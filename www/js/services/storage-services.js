@@ -85,12 +85,12 @@ angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'ngApi', 
 
     // Set a object to the secure storage
     exports.secure.setObject = function(key, value) {
-      return exports.secure.set(key, JSON.stringify(value));
+      return exports.secure.put(key, value ? JSON.stringify(value) : undefined);
     };
 
     // Get a object from the secure storage
     exports.secure.getObject = function(key) {
-      return exports.secure.get(key)
+      return exports.secure.storage.get(key)
         .then(function(value) {
           return (value && JSON.parse(value)) || {};
         });
