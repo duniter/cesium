@@ -125,14 +125,16 @@ To build Cesium, you will have to:
   wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 ```
 
+> Il faut ensuite recharger votre terminal, par exemple en lançant la commande `bash`
+
   - Configure NodeJS to use a version 8:
 ```
-  nvm install 7
+  nvm install 5
 ```
       
   - Installing node.js build tools:
 ```
-   npm install -g gulp ionic@1.7.16 cordova
+   npm install -g gulp bower cordova ionic@1.7.16
 ```
    
 ### Source code

@@ -36,24 +36,24 @@ angular.module("cesium.config", [])
 		"port": "443"
 	},
 	"plugins": {
-		"es": {
-			"enable": true,
-			"askEnable": false,
-			"host": "g1.data.duniter.fr",
-			"port": "443",
-			"notifications": {
-				"txSent": true,
-				"txReceived": true,
-				"certSent": true,
-				"certReceived": true
-			}
-		},
-    "rml9": {
-		  enable: true
-    }
-	},
+      "es": {
+        "enable": true,
+        "askEnable": false,
+        "host": "g1.data.duniter.fr",
+        "port": "443",
+        "notifications": {
+          "txSent": true,
+          "txReceived": true,
+          "certSent": true,
+          "certReceived": true
+        }
+      },
+      "rml9": {
+        enable: true
+      }
+    },
 	"version": "0.12.7",
-	"build": "2017-05-31T14:31:24.792Z",
+	"build": "2017-06-06T16:36:59.777Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
