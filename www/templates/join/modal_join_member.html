@@ -343,7 +343,8 @@
 
               <ion-item class="item item-text-wrap item-border">
                 <span class="input-label" translate>COMMON.PUBKEY</span>
-                <span class="gray text-no-wrap" copy-on-click="{{formData.pubkey}}">
+                <!-- do NOT add copy-on-click attribute here - see issue #470-->
+                <span class="gray text-no-wrap">
                   {{formData.pubkey}}
                 </span>
               </ion-item>
