@@ -1,6 +1,6 @@
-angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'ngApi', 'cesium.config'])
+angular.module('cesium.storage.services', ['ngResource', 'ngApi', 'cesium.config'])
 
-  .factory('localStorage', function($window, $q, $rootScope, $timeout, ionicReady, csConfig, Api) {
+  .factory('localStorage', function($window, $q, $rootScope, $timeout, csConfig, Api) {
     'ngInject';
 
     var
@@ -114,26 +114,24 @@ angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'ngApi', 
         exports[key] = exports.secure[key];
       });
 
+
+      // No secure storage plugin: fall back to standard storage
+      if (!cordova.plugins || !cordova.plugins.SecureStorage) {
+        console.debug('[storage] No cordova plugin. Will use standard....');
+        return initStandardStorage();
+      }
+
       var deferred = $q.defer();
-
-      ionicReady().then(function() {
-        // No secure storage plugin: fall back to standard storage
-        if (!cordova.plugins || !cordova.plugins.SecureStorage) {
-          console.debug('[storage] No cordova plugin. Will use standard....');
-          deferred.resolve(initStandardStorage());
-          return;
-        }
-        exports.secure.storage = new cordova.plugins.SecureStorage(
-          function () {
-            deferred.resolve();
-          },
-          function (err) {
-            console.error('[storage] Could not use secure storage. Will use standard.', err);
-            deferred.resolve(initStandardStorage());
-          },
-          appName);
-      });
-
+      exports.secure.storage = new cordova.plugins.SecureStorage(
+        function () {
+          deferred.resolve();
+        },
+        function (err) {
+          console.error('[storage] Could not use secure storage. Will use standard.', err);
+          deferred.promise.then(initStandardStorage);
+          deferred.resolve();
+        },
+        appName);
       return deferred.promise;
     }
 
@@ -142,6 +140,7 @@ angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'ngApi', 
     };
 
     exports.ready = function() {
+      console.debug("[storage] Calling ready()");
       if (started) return $q.when();
       return startPromise || start();
     };
@@ -153,6 +152,7 @@ angular.module('cesium.storage.services', ['ngResource', 'ngResource', 'ngApi', 
 
       // Use Cordova secure storage plugin
       if (isDevice) {
+        console.debug("[storage] Staring secure storage...");
         startPromise = initSecureStorage();
       }
 

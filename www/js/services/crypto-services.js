@@ -630,6 +630,7 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
     // endRemoveIf(device)
 
     ionicReady().then(function() {
+      console.debug('[crypto] Starting...');
       var now = new Date().getTime();
 
       var serviceImpl;
