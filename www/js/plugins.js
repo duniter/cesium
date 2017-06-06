@@ -9,7 +9,7 @@ angular.module('cesium.plugins', [
 
   // Graph plugin:
   // removeIf(ubuntu)
-  // FIXME: issue #463
+  // Graph should be disable for Ubuntu build - see issue #463
   'cesium.graph.plugin',
   // endRemoveIf(ubuntu)
 
