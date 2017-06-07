@@ -6,6 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
   'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier','ImageCropper', 'ngFileSaver',
+  //'ui-leaflet',
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
@@ -394,7 +395,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(firefoxos)
   // Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if (next.data.large && !UIUtils.screen.isSmall()) {
+    if (next.data && next.data.large && !UIUtils.screen.isSmall()) {
       var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
       if (redirect) {
         event.preventDefault();
@@ -408,7 +409,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
   // removeIf(device)
   // Automatic redirection to HTTPS
-  if ((csConfig.httpsMode === true || csConfig.httpsMode == 'true' ||csConfig.httpsMode === 'force') &&
+  if ((csConfig.httpsMode == true || csConfig.httpsMode === 'force') &&
     $window.location.protocol != 'https:') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
       var path = 'https' + $rootScope.rootPath.substr(4) + $state.href(next, nextParams);
