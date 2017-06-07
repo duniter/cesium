@@ -1,6 +1,6 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.services', 'cesium.settings.services'])
+angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
 .factory('BMA', function($q, $window, $rootScope, $timeout, Api, Device, csConfig, csSettings, csHttp) {
   'ngInject';
@@ -271,7 +271,6 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         .then(function(res) {
           that.alive = res[1];
           if (!that.alive) {
-            // TODO : alert user ?
             console.error('[BMA] Could not start [{0}]: node unreachable'.format(that.server));
             that.started = true;
             delete that._startPromise;
@@ -304,13 +303,18 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     that.restart = function() {
       csHttp.cache.clear();
       that.stop();
-      return $timeout(function() {
-        that.start();
-      }, 200);
+      return $timeout(that.start, 200)
+        .then(function(alive) {
+          if (alive) {
+            that.api.node.raise.restart();
+          }
+          return alive;
+        });
     };
 
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');
+    that.api.registerEvent('node', 'restart');
 
     var exports = {
       errorCodes: errorCodes,
@@ -804,7 +808,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
   };
 
   // default action
-  service.start();
+  //service.start();
 
   return service;
 })

@@ -1,4 +1,4 @@
-angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es.http.services'])
+angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es.http.services'])
 .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
@@ -11,7 +11,7 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
   })
 
 .factory('esSubscription', function($rootScope, $q, $timeout, esHttp, $state, $sce, $sanitize,
-                            esSettings, CryptoUtils, UIUtils, csWallet, csWot, BMA, Device, esWallet) {
+                            esSettings, CryptoUtils, UIUtils, csWallet, csWot, BMA, csPlatform, esWallet) {
   'ngInject';
   var
     constants = {
@@ -213,7 +213,7 @@ angular.module('cesium.es.subscription.services', ['cesium.services', 'cesium.es
   }
 
   // Default actions
-  Device.ready().then(function() {
+  csPlatform.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
     esHttp.api.node.on.stop($rootScope, refreshState, this);
     return refreshState();

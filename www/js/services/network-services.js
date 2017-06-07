@@ -1,5 +1,5 @@
 
-angular.module('cesium.network.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.http.services'])
+angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
 .factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api) {
   'ngInject';

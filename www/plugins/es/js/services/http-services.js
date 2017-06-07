@@ -3,7 +3,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, CryptoUtils, csHttp, csConfig, csSettings, BMA, csWallet, Api) {
+.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, CryptoUtils, csHttp, csConfig, csSettings, BMA, csWallet, csPlatform, Api) {
   'ngInject';
 
   function Factory(host, port, wsPort, useSsl) {
@@ -119,8 +119,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.start = function() {
 
-      return csSettings.ready()
-        .then(service.init)
+      return csPlatform.ready()
+        .then(that.init)
         .then(function() {
           console.debug('[ES] [http] Starting on [{0}]...'.format(that.server));
           var now = new Date().getTime();
@@ -148,9 +148,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     that.restart = function() {
       that.stop();
-      return $timeout(function() {
-        that.start();
-      }, 200);
+      return $timeout(that.start, 200);
     };
 
     function parseTagsFromText(value, prefix) {

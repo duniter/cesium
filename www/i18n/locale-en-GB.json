@@ -109,7 +109,6 @@
     "MESSAGE_SHORT": "Watch your <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> wallets<br/>in real time!",
     "BTN_REGISTRY": "Registry",
     "BTN_MARKET": "Market place",
-    "BTN_CURRENCIES": "Explore currencies",
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
@@ -121,6 +120,7 @@
     "TITLE": "Settings",
     "NETWORK_SETTINGS": "Network",
     "PEER": "Duniter peer address",
+    "PEER_CHANGED_TEMPORARY": "Address used temporarily",
     "USE_LOCAL_STORAGE": "Enable local storage",
     "USE_LOCAL_STORAGE_HELP": "Allows you to save your settings",
     "ENABLE_HELPTIP": "Enable contextual help tips",
@@ -521,7 +521,6 @@
     "SEND_MEMBERSHIP_OUT_FAILED": "Error while sending membership revocation.",
     "REFRESH_WALLET_DATA": "Could not refresh wallet.",
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters.",
-    "GET_CURRENCIES_FAILED": "Unable to load currencies. Please retry later.",
     "GET_CURRENCY_FAILED": "Could not load currency. Please retry later.",
     "SEND_TX_FAILED": "Could not send transaction.",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
@@ -570,7 +569,8 @@
     "ONLY_TEXT_FILE": "You have to select a text file",
     "EXISTING_ACCOUNT": "Your identifiers correspond to an already existing account, whose <a ng-click=\"showHelpModal('pubkey')\">public key</a> is:",
     "EXISTING_ACCOUNT_REQUEST": "Please modify your credentials so that they correspond to an unused account.",
-    "GET_LICENSE_FILE_FAILED": "Unable to get license file"
+    "GET_LICENSE_FILE_FAILED": "Unable to get license file",
+    "CHECK_NETWORK_CONNECTION": "No peer appears to be accessible.<br/><br/>Please <b>check your Internet connection</b>."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -604,7 +604,8 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Your membership does not need to be renewed (it will only expire in {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Are you sure you</b> want to renew your membership?",
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
     "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
-    "LOGOUT": "Are you sure you want to logout?"
+    "LOGOUT": "Are you sure you want to logout?",
+    "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the <b>{{new}}</b> node?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocation file</b>",

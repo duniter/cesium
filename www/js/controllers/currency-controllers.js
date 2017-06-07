@@ -116,8 +116,6 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
   $scope.enter = function(e, state) {
     if ($scope.loading) { // run only once (first enter)
 
-      UIUtils.loading.show();
-
       csCurrency.get()
         .then($scope.load)
         .then(function() {
@@ -182,9 +180,11 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
         .catch(function(err){
           // Special case for currency init (root block not exists): use fixed values
           if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+            M = 0;
             data.N = 0;
             data.medianTime = Math.trunc(new Date().getTime() / 1000);
             data.difficulty  = 0;
+            data.blockUid = null;
             return;
           }
           throw err;
@@ -217,10 +217,10 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
     // Process loaded data
     .then(function(){
       var Mprev = M - data.currentUD * data.Nprev; // remove fresh money
-      var MoverNprev = Mprev / data.Nprev;
+      var MoverNprev = data.Nprev ? (Mprev / data.Nprev) : 0;
       data.cactual = MoverNprev ? 100 * data.currentUD / MoverNprev : 0;
       data.M = M;
-      data.MoverN = (Mprev ? Mprev : M/*need at currency start only*/) / data.Nprev;
+      data.MoverN = data.Nprev ? ((Mprev ? Mprev : M/*need at currency start only*/) / data.Nprev) : 0;
       data.UD = data.currentUD;
       data.durationFromLastUD = lastUDTime ? data.medianTime - lastUDTime : 0;
       data.sentries = Math.ceil(Math.pow(data.N, 1/ data.stepMax));

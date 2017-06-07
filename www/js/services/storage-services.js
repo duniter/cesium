@@ -1,4 +1,4 @@
-angular.module('cesium.storage.services', ['ngResource', 'ngApi', 'cesium.config'])
+angular.module('cesium.storage.services', ['ngApi', 'cesium.config'])
 
   .factory('localStorage', function($window, $q, $rootScope, $timeout, csConfig, Api) {
     'ngInject';
@@ -114,24 +114,27 @@ angular.module('cesium.storage.services', ['ngResource', 'ngApi', 'cesium.config
         exports[key] = exports.secure[key];
       });
 
+      var deferred = $q.defer();
 
       // No secure storage plugin: fall back to standard storage
       if (!cordova.plugins || !cordova.plugins.SecureStorage) {
         console.debug('[storage] No cordova plugin. Will use standard....');
-        return initStandardStorage();
+        initStandardStorage();
+        deferred.resolve();
       }
+      else {
 
-      var deferred = $q.defer();
-      exports.secure.storage = new cordova.plugins.SecureStorage(
-        function () {
-          deferred.resolve();
-        },
-        function (err) {
-          console.error('[storage] Could not use secure storage. Will use standard.', err);
-          deferred.promise.then(initStandardStorage);
-          deferred.resolve();
-        },
-        appName);
+        exports.secure.storage = new cordova.plugins.SecureStorage(
+          function () {
+            deferred.resolve();
+          },
+          function (err) {
+            console.error('[storage] Could not use secure storage. Will use standard.', err);
+            initStandardStorage();
+            deferred.resolve();
+          },
+          appName);
+      }
       return deferred.promise;
     }
 
@@ -140,7 +143,6 @@ angular.module('cesium.storage.services', ['ngResource', 'ngApi', 'cesium.config
     };
 
     exports.ready = function() {
-      console.debug("[storage] Calling ready()");
       if (started) return $q.when();
       return startPromise || start();
     };
@@ -152,7 +154,7 @@ angular.module('cesium.storage.services', ['ngResource', 'ngApi', 'cesium.config
 
       // Use Cordova secure storage plugin
       if (isDevice) {
-        console.debug("[storage] Staring secure storage...");
+        console.debug("[storage] Starting secure storage...");
         startPromise = initSecureStorage();
       }
 

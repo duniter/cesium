@@ -9,9 +9,13 @@
     <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
     <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
 
-    <!-- Help tour (NOT ready yet for small device) -->
-    <div class="center">
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
 
+    <div class="center animate-fade-in animate-show-hide ng-hide" ng-show="!loading">
+
+      <!-- Help tour (NOT ready yet for small device) -->
       <button type="button"
               class="button button-block button-stable button-raised icon-left icon ion-easel ink-dark hidden-xs"
               ng-click="startHelpTour()" >

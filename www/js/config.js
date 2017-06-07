@@ -19,7 +19,6 @@ angular.module("cesium.config", [])
 	"logoutIlde": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
-	"initPhase": false,
 	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
@@ -35,6 +34,15 @@ angular.module("cesium.config", [])
 		"host": "g1.duniter.org",
 		"port": "443"
 	},
+  "fallbackNodes": [{
+      "host": "g1.duniter.org",
+      "port": "443"
+    },
+    {
+      "host": "g1.duniter.fr",
+      "port": "443"
+    }
+  ],
 	"plugins": {
       "es": {
         "enable": true,

@@ -1,5 +1,5 @@
 
-angular.module('cesium.tx.services', ['ngResource', 'ngApi', 'cesium.bma.services',
+angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   'cesium.settings.services', 'cesium.wot.services' ])
 
 .factory('csTx', function($q, $timeout, BMA, Api, csConfig, csSettings, csWot) {

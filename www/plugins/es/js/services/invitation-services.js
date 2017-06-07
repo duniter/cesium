@@ -1,4 +1,4 @@
-angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesium.device.services',  'cesium.wallet.services', 'cesium.wot.services',
+angular.module('cesium.es.invitation.services', ['cesium.platform',
   'cesium.es.http.services', 'cesium.es.wallet.services', 'cesium.es.notification.services'])
 
   .config(function(PluginServiceProvider, csConfig) {
@@ -12,7 +12,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
 
   })
 
-.factory('esInvitation', function($rootScope, $q, CryptoUtils, Device, Api, esHttp, csWallet, esWallet, csWot, esNotification) {
+.factory('esInvitation', function($rootScope, $q, CryptoUtils, csPlatform, Api, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
   var
@@ -363,7 +363,7 @@ angular.module('cesium.es.invitation.services', ['cesium.crypto.services', 'cesi
   api.registerEvent('data', 'new');
 
   // Default action
-  Device.ready().then(function() {
+  csPlatform.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
     esHttp.api.node.on.stop($rootScope, refreshState, this);
     return refreshState();

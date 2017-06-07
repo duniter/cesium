@@ -1,5 +1,5 @@
 
-angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.config'])
+angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
 .factory('csSettings', function($rootScope, $q, Api, localStorage, $translate, csConfig) {
   'ngInject';
@@ -62,7 +62,6 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
     logoutIdle: 10 * 60, // 10min - override to false if no device
     showUDHistory: true,
     showLoginSalt: false,
-    initPhase: false, // For currency start (when block #0 not written)
     httpsMode: false,
     expertMode: false,
     decimalCount: 4,
@@ -142,12 +141,24 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
   store = function() {
     if (!started) {
       console.debug('[setting] Waiting start finished...');
-      return startPromise.then(store);
+      return (startPromise || start()).then(store);
     }
 
     var promise;
     if (data.useLocalStorage) {
-      promise = localStorage.setObject(constants.STORAGE_KEY, data);
+      // When node is temporary (fallback node): keep previous node address - issue #476
+      if (data.node.temporary === true) {
+        promise = localStorage.getObject(constants.STORAGE_KEY)
+          .then(function(previousSettings) {
+            var savedData = angular.copy(data);
+            savedData.node = previousSettings && previousSettings.node || {};
+            delete savedData.temporary; // never store temporary flag
+            return localStorage.setObject(constants.STORAGE_KEY, savedData);
+          });
+      }
+      else {
+        promise = localStorage.setObject(constants.STORAGE_KEY, data);
+      }
     }
     else {
       promise  = localStorage.setObject(constants.STORAGE_KEY, null);
@@ -283,10 +294,11 @@ angular.module('cesium.settings.services', ['ngResource', 'ngApi', 'cesium.confi
   applyData(defaultSettings);
 
   // Default action
-  start();
+  //start();
 
   return {
     ready: ready,
+    start: start,
     data: data,
     getByPath: getByPath,
     reset: reset,

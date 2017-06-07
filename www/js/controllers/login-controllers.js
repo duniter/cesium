@@ -4,7 +4,7 @@ angular.module('cesium.login.controllers', ['cesium.services'])
   .controller('LoginModalCtrl', LoginModalController)
 ;
 
-function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, csSettings, Device) {
+function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, csPlatform, csSettings, Device) {
   'ngInject';
 
   $scope.computing = false;
@@ -16,7 +16,7 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
   $scope.showPubkeyButton = false;
   $scope.autoComputePubkey = false;
 
-  Device.ready().then(function() {
+  csPlatform.ready().then(function() {
     $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a' &&
       !UIUtils.screen.isSmall();
   });

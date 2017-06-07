@@ -38,8 +38,8 @@
                  enable-menu-with-back-views="false"
                  width="225">
     <ion-header-bar>
-      <h1 class="title dark hidden-sm hidden-xs" translate>
-        MENU.TITLE
+      <h1 class="title dark hidden-sm hidden-xs" >
+        {{'MENU.TITLE'|translate}} <ng-if ng-if="$root.currency">{{$root.currency.name|currencySymbol:false }}</ng-if>
       </h1>
 
       <div class="visible-sm visible-xs hero">

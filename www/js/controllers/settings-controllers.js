@@ -120,7 +120,9 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
           }
           UIUtils.loading.hide();
           $scope.formData.node = newNode;
+          delete $scope.formData.temporary;
           BMA.copy(nodeBMA);
+          $scope.bma = BMA;
 
           // Reset history cache
           return $ionicHistory.clearCache();
@@ -210,6 +212,10 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
       // Make sure to format helptip
       $scope.cleanupHelpTip();
       angular.merge(csSettings.data, $scope.formData);
+      // Manually removed some attributes
+      if (!$scope.formData.temporary) {
+        delete csSettings.data.node.temporary;
+      }
       csSettings.store();
       $scope.saving = false;
     }, 100);

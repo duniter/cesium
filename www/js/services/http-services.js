@@ -1,4 +1,4 @@
-angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
+angular.module('cesium.http.services', ['cesium.cache.services'])
 
 .factory('csHttp', function($http, $q, csSettings, csCache, $timeout) {
   'ngInject';

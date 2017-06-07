@@ -1,4 +1,4 @@
-angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es.http.services'])
+angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es.http.services'])
 .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
@@ -10,7 +10,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
 
   })
 
-.factory('esNotification', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, Device, Api, esUser) {
+.factory('esNotification', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, csPlatform, Api, esUser) {
   'ngInject';
 
   var
@@ -278,7 +278,7 @@ angular.module('cesium.es.notification.services', ['cesium.services', 'cesium.es
   api.registerEvent('event', 'newMessage');
 
   // Default actions
-  Device.ready().then(function() {
+  csPlatform.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
     esHttp.api.node.on.stop($rootScope, refreshState, this);
     return refreshState();

@@ -1,4 +1,4 @@
-angular.module('cesium.app.controllers', ['ngIdle', 'cesium.services'])
+angular.module('cesium.app.controllers', ['ngIdle', 'cesium.platform', 'cesium.services'])
 
   .config(function($httpProvider) {
     'ngInject';
@@ -88,8 +88,8 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
-                       $ionicHistory, $controller, $window,
-                       UIUtils, BMA, csWallet, Device, Modals, csSettings, csConfig
+                       $ionicHistory, $controller, $window, csPlatform,
+                       UIUtils, BMA, csWallet, csCurrency, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
 
@@ -99,7 +99,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.search = {};
   $scope.login = csWallet.isLogin();
   $scope.motion = UIUtils.motion.default;
-  $scope.initPhase = csConfig.initPhase;
 
   $scope.showHome = function() {
     $ionicHistory.nextViewOptions({
@@ -212,7 +211,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
       .then(function(walletData) {
         // Warn if wallet has been never used - see #167
-        var showAlert = !csConfig.initPhase && csWallet.isNew() && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
+        var showAlert = !csCurrency.data.initPhase && !csWallet.isNew() && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
         if (!showAlert) return walletData;
 
         // Alert: wallet is empty !
@@ -242,6 +241,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Login and load wallet
   $scope.loadWallet = function(options) {
+
+    // Make the platform is ready
+    if (!csPlatform.isStarted()) {
+      return csPlatform.ready().then(function(){
+        return $scope.loadWallet(options);
+      });
+    }
+
     if (!csWallet.isLogin()) {
       return $scope.showLoginModal()
         .then(function (walletData) {
@@ -445,8 +452,18 @@ function AboutController($scope, csConfig) {
 }
 
 
-function HomeController($scope) {
+function HomeController($scope, csPlatform) {
   'ngInject';
+
+  $scope.loading = true;
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    csPlatform.ready()
+      .then(function() {
+        $scope.loading = false;
+      });
+  });
+
 }
 
 

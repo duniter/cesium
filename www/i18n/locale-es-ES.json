@@ -120,6 +120,7 @@
     "TITLE": "Configuraciónes",
     "NETWORK_SETTINGS": "Red",
     "PEER": "Dirección del nodo Duniter",
+    "PEER_CHANGED_TEMPORARY": "Dirección utiliza temporalmente",
     "USE_LOCAL_STORAGE": "Activar el almacenamiento local",
     "USE_LOCAL_STORAGE_HELP": "Permitir el ahorro de almacenamiento local",
     "ENABLE_HELPTIP": "Activar bocadillos contextuales de ayuda",
@@ -520,7 +521,6 @@
     "SEND_MEMBERSHIP_OUT_FAILED": "Fracaso en la interrupción de adhesión.",
     "REFRESH_WALLET_DATA": "Fracaso en la actualización del monedero.",
     "GET_CURRENCY_PARAMETER": "Fracaso en la recuperación de las reglas de moneda.",
-    "GET_CURRENCIES_FAILED": "Imposible de cargar la lista de las monedas. For favor,  reintenta más tarde.",
     "GET_CURRENCY_FAILED": "Carga de la moneda imposible. Por favor, intenta más tarde.",
     "SEND_TX_FAILED": "Fracaso en la transferencia.",
     "ALL_SOURCES_USED": "Por favor, espera el cálculo del bloque siguiente (Todas sus fuentes de moneda fueron utilizada).",
@@ -569,7 +569,8 @@
     "ONLY_TEXT_FILE": "Debe seleccionar un fichero texto",
     "EXISTING_ACCOUNT": "Su contraseña corresponde a una cuenta existente, la <a ng-click=\"showHelpModal('pubkey')\">clave pública</a> es:",
     "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su contraseña para que coincida con una cuenta sin usar.",
-    "GET_LICENSE_FILE_FAILED": "Obtener el archivo de licencia no puede"
+    "GET_LICENSE_FILE_FAILED": "Obtener el archivo de licencia no puede",
+    "CHECK_NETWORK_CONNECTION": "Sin nodo parece alcanzable.<br/><br/><b>Comprobar la conexión a Internet</b>."
   },
   "INFO": {
     "POPUP_TITLE": "Información",
@@ -603,7 +604,8 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Su adhesión no necesita estar renovada (solo va a caducar en {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Está usted seguro</b> querer renovar su adhesión ?",
     "SAVE_BEFORE_LEAVE": "Quiere usted <b>guardar sus modificaciónes</b> antes dejar la página ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modificaciónes no registradas",
-    "LOGOUT": "Está usted seguro querer desconectarse ?"
+    "LOGOUT": "Está usted seguro querer desconectarse ?",
+    "USE_FALLBACK_NODE": "Nodo <b>{{edad}}</ b> dirección inalcanzable o no válido.<br/><br/>Se desea utilizar temporalmente el nodo <b>{{nuevo}}</b> ?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocación del archivo</b>",

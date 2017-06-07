@@ -19,7 +19,7 @@
           <span ng-bind-html=":rebind:unit"></span>
 
         </h1>
-        <h4 ng-if="$root.settings.expertMode"
+        <h4 ng-if="!loading && $root.settings.expertMode"
                style="font-style: italic;">
           (<span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{useRelative:!$root.settings.useRelative}"></span>
           <span ng-bind-html=":rebind:secondaryUnit"></span>)
