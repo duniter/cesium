@@ -26,6 +26,15 @@
       "host": "g1.duniter.org",
       "port": "443"
     },
+    "fallbackNodes": [{
+        "host": "g1.duniter.org",
+        "port": "443"
+      },
+      {
+        "host": "g1.duniter.fr",
+        "port": "443"
+      }
+    ],
     "plugins":{
       "es": {
         "enable": true,
@@ -69,6 +78,15 @@
       "host": "g1.duniter.fr",
       "port": "443"
     },
+    "fallbackNodes": [{
+        "host": "g1.duniter.org",
+        "port": "443"
+      },
+      {
+        "host": "g1.duniter.fr",
+        "port": "443"
+      }
+    ],
     "plugins":{
       "es": {
         "enable": true,
@@ -102,8 +120,8 @@
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
     },
     "node": {
-      "host": "gtest.duniter.org",
-      "port": 10900
+      "host": "g1-test.duniter.org",
+      "port": 443
     },
     "plugins":{
       "es": {
@@ -149,6 +167,15 @@
       "host": "localhost",
       "port": 9600
     },
+    "fallbackNodes": [{
+        "host": "g1.duniter.org",
+        "port": "443"
+      },
+      {
+        "host": "g1.duniter.fr",
+        "port": "443"
+      }
+    ],
     "plugins":{
       "es": {
         "enable": false,
