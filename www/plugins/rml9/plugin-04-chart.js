@@ -87,17 +87,17 @@ angular.module('cesium.rml9.plugin', ['chart.js', 'cesium.graph.services', 'cesi
       _.forEach(txArray, function (tx) {
         sumByPubkeys[tx.pubkey] = sumByPubkeys[tx.pubkey] || {
               label: tx.uid || tx.pubkey,
-              sum: 0
+              amount: 0
             };
-        sumByPubkeys[tx.pubkey].sum += tx.amount;
+        sumByPubkeys[tx.pubkey].amount += tx.amount;
       });
 
       // Get values (from the map), then sort (desc) on sum
-      var sumItems = _.sortBy(_.values(sumByPubkeys), 'sum').reverse();
+      var sumItems = _.sortBy(_.values(sumByPubkeys), 'amount').reverse();
 
       // Return arrays expected by angular-chart
       return {
-        data: _.pluck(sumItems, 'sum'),
+        data: _.pluck(sumItems, 'amount'),
         labels: _.pluck(sumItems, 'label'),
         colors: gpColor.scale.custom(sumItems.length)
       };

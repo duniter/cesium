@@ -1,0 +1,75 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    {{'RML9.VIEW.TITLE' | translate}}
+  </ion-nav-title>
+
+  <ion-content>
+    <div class="list">
+
+      <!-- buttons bar -->
+      <div class="center padding">
+        <div class="buttons">
+          <button class="button button-balanced icon-left icon ion-archive"
+                  ng-click="onExportButtonClick()">{{'RML9.BTN_EXPORT' | translate}}
+          </button>
+        </div>
+      </div>
+
+      <!-- the pubkey -->
+      <div class="item">
+        {{'COMMON.PUBKEY'|translate}}
+        <div class="badge">{{pubkey|formatPubkey}}</div>
+      </div>
+
+      <!-- the balance -->
+      <div class="item">
+        {{'RML9.VIEW.BALANCE'|translate}}
+        <div class="badge badge-calm">
+          {{balance|formatAmount}} <span ng-bind-html="$root.currency.name|currencySymbol"></span>
+        </div>
+      </div>
+
+      <!-- a text divider-->
+      <div class="item item-divider">{{'RML9.VIEW.DIVIDER'|translate:{pubkey: pubkey} }}</div>
+
+      <!-- iterate on each TX -->
+      <div class="row">
+        <div class="col col-75">
+          <div class="item item-text-wrap" ng-repeat="item in items">
+
+            <h3>
+              {{item.time|formatDate}}
+              <span ng-if="item.comment" class="gray"> | {{item.comment}}</span>
+            </h3>
+
+            <h4 ng-if="item.uid" class="positive"><i class="icon ion-person"></i> {{item.name||item.uid}}</h4>
+            <h4 ng-if="!item.uid" class="gray"><i class="icon ion-key"></i> {{item.pubkey|formatPubkey}}</h4>
+
+            <div class="badge"
+                 ng-class="{'badge-balanced': item.amount > 0}">
+              {{item.amount|formatAmount}} <span ng-bind-html="$root.currency.name|currencySymbol"></span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col col-25">
+
+          <!-- [NEW] TX input chart -->
+          <p class="gray" translate>RML9.CHART.INPUT_CHART_TITLE</p>
+          <canvas id="chart-received-pie" class="chart-pie"
+                  chart-data="inputChart.data"
+                  chart-labels="inputChart.labels">
+          </canvas>
+
+          <!-- [NEW] TX input chart -->
+          <p class="gray" translate>RML9.CHART.OUTPUT_CHART_TITLE</p>
+          <canvas id="chart-sent-pie" class="chart-pie"
+                  chart-data="outputChart.data"
+                  chart-labels="outputChart.labels">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
