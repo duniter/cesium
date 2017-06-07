@@ -376,7 +376,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-.run(function($rootScope, $translate, $state, $window, ionicReady, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig, csCurrency) {
+.run(function($rootScope, $translate, $state, $window, ionicReady, localStorage, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig, csCurrency) {
   'ngInject';
 
   $rootScope.config = csConfig;
@@ -486,9 +486,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         StatusBar.styleDefault();
       }
 
-      // Force to start settings
-      return csSettings.ready();
+      // Start local storage
+      return localStorage.ready();
     })
+
+    // Force to start settings
+    .then(csSettings.ready)
 
     // Load currency
     .then(csCurrency.get)

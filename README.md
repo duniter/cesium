@@ -115,24 +115,26 @@ This software is distributed under [GNU GPLv3](https://raw.github.com/duniter/ce
 
 To build Cesium, you will have to: 
  
+  - Installing build tools:
+```
+ sudo apt-get install build-essential
+```
+
   - Installing [nvm](https://github.com/creationix/nvm)
 ```
   wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 ```
 
-  - Configure NodeJS to use a version 5:
+> Il faut ensuite recharger votre terminal, par exemple en lançant la commande `bash`
+
+  - Configure NodeJS to use a version 8:
 ```
-  nvm install 5 
+  nvm install 5
 ```
       
-  - Installing nodejs build tools:
+  - Installing node.js build tools:
 ```
-   npm install -g bower gulp ionic@1.7.16 cordova
-```
-
-  - Installing other build dependencies:
-```
- sudo apt-get install build-essential
+   npm install -g gulp bower cordova ionic@1.7.16
 ```
    
 ### Source code
@@ -142,12 +144,12 @@ To build Cesium, you will have to:
   git clone https://github.com/duniter/cesium.git
   cd cesium
   npm install
-  bower install
 ```
-  - Installing Cordova plugins    
+  - Installing Cordova plugins (need for platforms specific builds)   
 ```
   ionic state restore
 ```
+
 
 ### Build environment
 

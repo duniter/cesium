@@ -20,7 +20,7 @@
     "crypto-currency"
   ],
   "author": "Duniter team",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/duniter/cesium/issues",

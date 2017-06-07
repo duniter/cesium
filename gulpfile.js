@@ -132,7 +132,6 @@ gulp.task('config', function (done) {
     .pipe(rename('config.js'))
     .pipe(gulp.dest('www/js'))
     .on('end', done);
-    ;
 });
 
 gulp.task('templatecache', function (done) {
@@ -421,7 +420,7 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function(done) {
     .on('end', done);
 });
 
-gulp.task('build:web', ['zip:web'], function(done) {
+gulp.task('build:web', ['git-check', 'zip:web'], function(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-web-" + version + ".zip'"));
   return del([
