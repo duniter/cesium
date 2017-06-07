@@ -1,9 +1,6 @@
-<!-- [NEW] Display only if plugin is enable -->
-
-  <!-- Button: call a method from the state controller -->
-  <button ng-if="enable" class="button button-balanced button-small-padding icon ion-android-archive"
-          ng-click="onButtonClick()"
-          title="{{'RML9.BTN_SWOW_TX' | translate}}">
-  </button>
-
+<!-- Button: Open a view, using `ui-sref` attribute -->
+<button class="button button-balanced button-small-padding icon ion-android-archive"
+        ui-sref="app.rml9({pubkey: formData.pubkey})"
+        title="{{'RML9.BTN_SWOW_TX' | translate}}">
+</button>
 
