@@ -26,12 +26,13 @@
       "host": "g1.duniter.org",
       "port": "443"
     },
-    "fallbackNodes": [{
-        "host": "g1.duniter.org",
+    "fallbackNodes": [
+      {
+        "host": "g1.duniter.fr",
         "port": "443"
       },
       {
-        "host": "g1.duniter.fr",
+        "host": "g1.duniter.org",
         "port": "443"
       }
     ],
