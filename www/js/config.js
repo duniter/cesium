@@ -19,6 +19,7 @@ angular.module("cesium.config", [])
 	"logoutIlde": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
+	"initPhase": false,
 	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
@@ -34,34 +35,32 @@ angular.module("cesium.config", [])
 		"host": "g1.duniter.org",
 		"port": "443"
 	},
-  "fallbackNodes": [{
-      "host": "g1.duniter.org",
-      "port": "443"
-    },
-    {
-      "host": "g1.duniter.fr",
-      "port": "443"
-    }
-  ],
+	"fallbackNodes": [
+		{
+			"host": "g1.duniter.fr",
+			"port": "443"
+		},
+		{
+			"host": "g1.duniter.org",
+			"port": "443"
+		}
+	],
 	"plugins": {
-      "es": {
-        "enable": true,
-        "askEnable": false,
-        "host": "g1.data.duniter.fr",
-        "port": "443",
-        "notifications": {
-          "txSent": true,
-          "txReceived": true,
-          "certSent": true,
-          "certReceived": true
-        }
-      },
-      "rml9": {
-        enable: true
-      }
-    },
-	"version": "0.12.7",
-	"build": "2017-06-06T16:36:59.777Z",
+		"es": {
+			"enable": true,
+			"askEnable": false,
+			"host": "g1.data.duniter.fr",
+			"port": "443",
+			"notifications": {
+				"txSent": true,
+				"txReceived": true,
+				"certSent": true,
+				"certReceived": true
+			}
+		}
+	},
+	"version": "0.12.8",
+	"build": "2017-06-08T07:05:18.126Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
