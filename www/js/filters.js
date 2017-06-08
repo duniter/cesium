@@ -1,8 +1,8 @@
 // Cesium filters
-angular.module('cesium.filters', ['cesium.config', 'cesium.settings.services', 'pascalprecht.translate', 'cesium.translations'
+angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalprecht.translate', 'cesium.translations'
 ])
 
-  .service('filterTranslations', function($rootScope, csSettings, $translate) {
+  .service('filterTranslations', function($rootScope, csPlatform, csSettings, $translate) {
     'ngInject';
 
     var
@@ -34,7 +34,6 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.settings.services', '
           }
         });
     }
-    csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
 
     that.ready = function() {
       if (started) return $q.when(data);
@@ -42,10 +41,12 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.settings.services', '
     };
 
     that.start = function() {
-      startPromise = csSettings.ready()
+      startPromise = csPlatform.ready()
         .then(onLocaleChange)
         .then(function() {
           started = true;
+
+          csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
         });
       return startPromise;
     };

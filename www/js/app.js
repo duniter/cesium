@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
-  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper', 'ngFileSaver',
+  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper',
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
@@ -85,11 +85,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-  .factory('$exceptionHandler', function($log) {
+  .factory('$exceptionHandler', function() {
     'ngInject';
 
     return function(exception, cause) {
-      $log.error(exception, cause);
+      console.error(exception, cause);
     };
   })
 

@@ -1,5 +1,5 @@
 
-angular.module('cesium.currency.controllers', ['cesium.services'])
+angular.module('cesium.currency.controllers', ['ngFileSaver', 'cesium.services'])
 
 .config(function($stateProvider) {
   'ngInject';

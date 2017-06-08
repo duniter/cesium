@@ -72,7 +72,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       that.cache = _emptyCache();
 
       // Allow to force SSL connection with port different from 443
-      var forceUseSsl = (csConfig.httpsMode == true || csConfig.httpsMode === 'force') ||
+      var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
         ($window.location && $window.location.protocol === 'https:') ? true : false;
       if (forceUseSsl) {
         console.debug('[BMA] Enable SSL (forced by config or detected in URL)');

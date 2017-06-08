@@ -1,4 +1,4 @@
-angular.module('cesium.utils.services', ['ngResource'])
+angular.module('cesium.utils.services', [])
 
 // Replace the '$ionicPlatform.ready()', to enable multiple calls
 // See http://stealthcode.co/multiple-calls-to-ionicplatform-ready/

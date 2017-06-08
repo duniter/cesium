@@ -110,19 +110,19 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           Device.ready(),
 
           // Start settings
-          csSettings.start()
+          csSettings.ready()
         ]))
 
         // Load BMA
         .then(function(){
-          return BMA.start().then(checkBmaNodeAlive);
+          return BMA.ready().then(checkBmaNodeAlive);
         })
 
         // Load currency
-        .then(csCurrency.start)
+        .then(csCurrency.ready)
 
         // Trying to restore wallet
-        .then(csWallet.start)
+        .then(csWallet.ready)
 
         .then(function(){
           enableChangeState();
