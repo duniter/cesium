@@ -15,11 +15,16 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
 
     function disableChangeState() {
       var remove = $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-        if (startPromise && next.name !== 'app.home') {
+        if (next.name !== 'app.home' && next.name !== 'app.settings') {
           event.preventDefault();
-          startPromise.then(function() {
-            $state.go(next.name, nextParams);
-          });
+          if (startPromise) {
+            startPromise.then(function() {
+              $state.go(next.name, nextParams);
+            });
+          }
+          else {
+            UIUtils.loading.hide();
+          }
         }
       });
 
@@ -41,13 +46,7 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
 
       var fallbackNode = csSettings.data.fallbackNodes && fallbackNodeIndex < csSettings.data.fallbackNodes.length && csSettings.data.fallbackNodes[fallbackNodeIndex++];
       if (!fallbackNode) {
-        return UIUtils.alert.error('ERROR.CHECK_NETWORK_CONNECTION')
-          .then(function() {
-            fallbackNodeIndex = 0;
-            // loop
-            return BMA.copy(defaultSettingsNode)
-              .then(checkBmaNodeAlive);
-          });
+        throw 'ERROR.CHECK_NETWORK_CONNECTION';
       }
       var newServer = fallbackNode.host + ((!fallbackNode.port && fallbackNode.port != 80 && fallbackNode.port != 443) ? (':' + fallbackNode.port) : '');
       return $translate('CONFIRM.USE_FALLBACK_NODE', {old: BMA.server, new: newServer})
@@ -99,6 +98,8 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
     }
 
     function start() {
+      enableChangeState();
+
       // Avoid change state
       disableChangeState();
 
@@ -129,6 +130,14 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           addListeners();
           startPromise = null;
           started = true;
+        })
+        .catch(function(err) {
+          startPromise = null;
+          started = false;
+          if($state.current.name !== 'app.home') {
+            $state.go('app.home', {error: 'peer'});
+          }
+          throw err;
         });
 
       return startPromise;
@@ -157,6 +166,8 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
     return  {
       isStarted: isStarted,
       ready: ready,
+      restart: restart,
+      start: start,
       stop: stop
     };
   })

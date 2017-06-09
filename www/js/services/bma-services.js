@@ -785,9 +785,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
   };
 
   service.lightInstance = function(host, port, useSsl, timeout) {
-    if (host && host =='g1.duniter.tednet.fr') {
-      console.log('TORTUE Node [{0}:{1}] useSsl [{2}]'.format(host, port, useSsl ? 'true': 'false'));
-    }
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
     return {

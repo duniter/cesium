@@ -89,7 +89,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     'ngInject';
 
     return function(exception, cause) {
-      console.error(exception, cause);
+      if (cause) console.error(exception, cause);
+      else console.error(exception);
     };
   })
 

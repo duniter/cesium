@@ -546,7 +546,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       if (options.sources || (options.tx && options.tx.enable)) {
         // Get TX and sources
-        jobs.push(loadTxAndSources());
+        jobs.push(loadTxAndSources(options.tx ? options.tx.fromTime: undefined));
       }
 
       // Load sigStock

@@ -14077,7 +14077,9 @@ a {
     padding: 0px 5px !important;
     line-height: 30px; }
 
-.popover-invitation {
+.popover-invitation,
+.popover-network,
+.popover-peer-info {
   width: 420px; }
 
 /**********

@@ -26,7 +26,7 @@ angular.module('cesium.app.controllers', ['ngIdle', 'cesium.platform', 'cesium.s
       })
 
       .state('app.home', {
-        url: "/home",
+        url: "/home?error",
         views: {
           'menuContent': {
             templateUrl: "templates/home/home.html",
@@ -87,7 +87,7 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicPopover,
                        $ionicHistory, $controller, $window, csPlatform,
                        UIUtils, BMA, csWallet, csCurrency, Device, Modals, csSettings, csConfig
   ) {
@@ -429,6 +429,21 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   ////////////////////////////////////////
+  // Change node (expert mode)
+  ////////////////////////////////////////
+
+  $scope.showNodeListPopover = function(event) {
+    UIUtils.popover.show(event, {
+      templateUrl: 'templates/network/popover_peer_info.html',
+      autoremove: true,
+      scope: $scope.$new(true)
+    }).then(function(res) {
+      console.log(res);
+    });
+  };
+
+
+  ////////////////////////////////////////
   // Layout Methods
   ////////////////////////////////////////
   $scope.showFab = function(id, timeout) {
@@ -452,18 +467,60 @@ function AboutController($scope, csConfig) {
 }
 
 
-function HomeController($scope, csPlatform) {
+function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csCurrency) {
   'ngInject';
 
   $scope.loading = true;
 
-  $scope.$on('$ionicView.enter', function(e, state) {
-    csPlatform.ready()
-      .then(function() {
-        $scope.loading = false;
+  $scope.enter = function(e, state) {
+    if (state && state.stateParams && state.stateParams.error) { // Query parameter
+      $scope.error = state.stateParams.error;
+      $scope.node =  csCurrency.data.node;
+      $scope.loading = false;
+      $ionicHistory.nextViewOptions({
+        disableAnimate: true,
+        disableBack: true,
+        historyRoot: true
       });
-  });
+      $state.go('app.home', {error: undefined}, {
+        reload: false,
+        inherit: true,
+        notify: false});
+    }
+    else {
+      // Start platform
+      csPlatform.ready()
+        .then(function() {
+          $scope.loading = false;
+        })
+        .catch(function(err) {
+          $scope.node =  csCurrency.data.node;
+          $scope.loading = false;
+          $scope.error = err;
+        });
+    }
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
 
+  $scope.reload = function() {
+    $scope.loading = true;
+    delete $scope.error;
+
+    $timeout($scope.enter, 200);
+  };
+
+  /**
+   * Catch click for quick fix
+   * @param event
+   */
+  $scope.doQuickFix = function(event) {
+    if (event == 'settings') {
+      $ionicHistory.nextViewOptions({
+        historyRoot: true
+      });
+      $state.go('app.settings');
+    }
+  };
 }
 
 

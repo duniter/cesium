@@ -9,11 +9,25 @@
     <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
     <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
 
-    <div class="center padding" ng-if="loading">
-      <ion-spinner icon="android"></ion-spinner>
+    <div class="center padding" >
+
+      <ion-spinner icon="android" ng-if="loading"></ion-spinner>
+
+      <div class="animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
+        <div class="card card-item padding">
+          <p class="item-content item-text-wrap">
+              <span class="dark" trust-as-html="'HOME.CONNECTION_ERROR'|translate:node"></span>
+          </p>
+
+          <!-- Retry-->
+          <button type="button"
+                  class="button button-positive icon icon-left ion-refresh ink"
+                  ng-click="reload()">{{'COMMON.BTN_REFRESH'|translate}}</button>
+        </div>
+      </div>
     </div>
 
-    <div class="center animate-fade-in animate-show-hide ng-hide" ng-show="!loading">
+    <div class="center animate-fade-in animate-show-hide ng-hide" ng-show="!loading && !error">
 
       <!-- Help tour (NOT ready yet for small device) -->
       <button type="button"

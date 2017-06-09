@@ -21,7 +21,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, csHttp,
-  UIUtils, BMA, csSettings, $ionicPopover, Modals) {
+  UIUtils, BMA, csSettings, csPlatform, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -87,6 +87,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     }
     $scope.pendingSaving = true;
     csSettings.reset()
+      .then(csPlatform.restart)
       .then(function() {
         // reload
         $scope.load();
@@ -125,6 +126,9 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
           delete $scope.formData.temporary;
           BMA.copy(nodeBMA);
           $scope.bma = BMA;
+
+          // Start platform is not already started
+          csPlatform.restart();
 
           // Reset history cache
           return $ionicHistory.clearCache();
