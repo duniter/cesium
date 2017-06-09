@@ -279,7 +279,12 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
 
     // Copy lib/ionic
     gulp.src('./www/lib/ionic/**/*.*')
-      .pipe(gulp.dest(tmpPath + '/lib/ionic'))
+      .pipe(gulp.dest(tmpPath + '/lib/ionic')),
+
+    // Copy license
+    gulp.src('./www/license/**/*.*')
+      .pipe(gulp.dest(tmpPath + '/license'))
+
   )
   .on('end', done);
 });
