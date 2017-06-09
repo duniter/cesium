@@ -19,23 +19,28 @@ angular.module("cesium.config", [])
   "timeWarningExpire": 7776000,
   "useLocalStorage": true,
   "useRelative": false,
-  "initPhase": false,
   "expertMode": false,
-  "decimalCount": 4,
+  "decimalCount": 2,
   "httpsMode": false,
   "helptip": {
     "enable": true,
     "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
   },
   "node": {
-    "host": "gtest.duniter.org",
-    "port": "10900"
+    "host": "g1-test.duniter.org",
+    "port": 10900
   },
+  "fallbackNodes": [
+    {
+      "host": "g1-test.cgeek.fr",
+      "port": 443
+    }
+  ],
 	"plugins": {
 		"es": {
-			"enable": "false",
-			"host": "data.gtest.duniter.fr",
-			"port": "80"
+			"enable": "true",
+			"host": "g1-test.data.duniter.fr",
+			"port": 443
 		}
 	},
 	"version": "...",
@@ -66,13 +71,13 @@ Because of default options values (see details below), the minimal configuration
     angular.module("cesium.config", [])
     .constant("csConfig", {
     	"node": {
-    		"host": "gtest.duniter.fr",
-    		"port": "10900"
+    		"host": "g1-test.duniter.fr",
+    		"port": 10900
     	},
     	"plugins": {
     	   "es": {
-           "host": "data.gtest.duniter.fr",
-           "port": "80"
+           "host": "g1-test.data.duniter.fr",
+           "port": 443
          }
       },
     	"version": "0.9.18",
@@ -98,12 +103,12 @@ This technical options are optional (default values will be applied if not set).
 
 Option                      | Description                                                                                    | Default value
 --------------------------- | ---------------------------------------------------------------------------------------------- | -----------------
+fallbackNodes               | Fallback nodes, when default node is unreacheable (array of object with host+port properties)  | no fallback nodes
 cacheTimeMs                 | Default network request cache time, in millisecond.                                            | `60000` (1 min).
 fallbackLanguage            | Default locale, if browser default language not exists in Cesium                               | `en`
 defaultLanguage             | Used to force the default language (ignore browser's language), on user first connection.      | =`fallbackLanguage`
 decimalCount                | Number of decimal to display, on float value (when using relative unit)                        | `4`
 helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node'.                              | URL of [Duniter installation node](https://github.com/duniter/duniter/blob/master/doc/install-a-node.md)
-initPhase                   | Enable a special mode, used when currency is NOT initialized (block #0 not written)            | `false`
 newIssueUrl                 | Used for link in the About screen, to submit new issue                                         | URL of [Cesium issues on GitHub](https://github.com/duniter/cesium/issues/new?labels=bug)
 timeout                     | Default network request timeout, in millisecond.                                               | `4000`
 timeWarningExpire           | Delay (in second) before expiration of certifications, use to warn the user that there will soon be a lack of certifications | `5184000` (2 mois)
@@ -126,9 +131,10 @@ Options                     | Description                                       
 --------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------
 expertMode                  | Enable the expert mode (display more technical details)                            | `false`
 helptip.enable              | Should open help tips (contextual tips) ?                                          | `true`
-node.host                   | Duniter peer host to use by default (DNS name or IP)                               | defined in `config.js` file
-node.port                   | Duniter peer port to use by default                                                | defined in `config.js` file
-rememberMe                  | Default value of the 'Remember me' button, in the login popup                      | `true` if Android  build, `false` if not
+node.host                   | Duniter peer host to use by default (DNS name or IP)                               | No default value (mandatory in `config.js` file)
+node.port                   | Duniter peer port to use by default                                                | No default value (mandatory in `config.js` file)
+node.useSsl                 | Duniter peer port to use by default                                                | `true` if `node.port=443` or if Cesium URL starts with `https://`, `false` otherwise
+rememberMe                  | Default value of the 'Remember me' button, in the login popup                      | `true` on Android  build, `false` otherwise
 showUDHistory               | Should display UD history in the transaction history ?                             | `false`
 showLoginSalt               | Should display salt value (pass phrase) in the login screen. If `false`, masked.   | `false`
 useLocalStorage             | Enable data storage (settings, credentials, cache) in the browser local storage ?  | `true`
