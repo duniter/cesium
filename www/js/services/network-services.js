@@ -335,7 +335,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           return $q.when(peer);
         }
 
-        peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort());
+        peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl());
 
         // Get current block
         return peer.api.blockchain.current()
@@ -362,7 +362,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
               if (bma.dns && peer.server.indexOf(bma.dns) == -1) {
                 // try again, using DNS instead of IPv4 / IPV6
                 peer.secondTry = true;
-                peer.api = BMA.lightInstance(bma.dns, bma.port);
+                peer.api = BMA.lightInstance(bma.dns, bma.port, bma.useSsl);
                 return refreshPeer(peer); // recursive call
               }
             }

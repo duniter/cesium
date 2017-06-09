@@ -212,7 +212,6 @@ angular.module('cesium.utils.services', [])
 
       // Otherwise, log to console and display error
       else {
-        console.error(err);
         hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
         return alertError(fullMsg, subtitle);
       }

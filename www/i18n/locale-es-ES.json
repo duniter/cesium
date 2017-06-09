@@ -142,10 +142,11 @@
     "EXPERT_MODE_HELP": "Permite una visualización más detallada",
     "POPUP_PEER": {
       "TITLE" : "Nodo Duniter",
-      "HELP" : "Dirección del nodo :",
-      "PEER_HELP": "servidor.dominio.com:puerto",
-      "BTN_SHOW_LIST_HELP" : "Ingresa más arriba al formato <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> o hace un clic sobre el botón más abajo :",
-      "BTN_SHOW_LIST" : "Lista de los nodos"
+      "HOST" : "Dirección",
+      "HOST_HELP": "Dirección : servidor:puerto",
+      "USE_SSL" : "Segura ?",
+      "USE_SSL_HELP" : "(Cifrado SSL)",
+      "BTN_SHOW_LIST" : "Lista de nodos"
     }
   },
   "BLOCKCHAIN": {

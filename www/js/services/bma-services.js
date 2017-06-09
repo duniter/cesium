@@ -235,7 +235,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     that.ready = function() {
-      if (that.started) return $q.when();
+      if (that.started) return $q.when(true);
       return that._startPromise || that.start();
     };
 
@@ -294,14 +294,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     that.stop = function() {
       console.debug('[BMA] Stopping...');
       removeListeners();
+      csHttp.cache.clear();
       that.cleanCache();
       that.alive = false;
       that.started = false;
+      delete that._startPromise;
       that.api.node.raise.stop();
     };
 
     that.restart = function() {
-      csHttp.cache.clear();
       that.stop();
       return $timeout(that.start, 200)
         .then(function(alive) {
@@ -530,8 +531,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     exports.copy = function(otherNode) {
-      init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
-      return that.restart();
+      if (that.started) that.stop();
+      that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
+      return that.start();
     };
 
     exports.wot.member.uids = function() {
@@ -783,6 +785,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
   };
 
   service.lightInstance = function(host, port, useSsl, timeout) {
+    if (host && host =='g1.duniter.tednet.fr') {
+      console.log('TORTUE Node [{0}:{1}] useSsl [{2}]'.format(host, port, useSsl ? 'true': 'false'));
+    }
     port = port || 80;
     useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443);
     return {

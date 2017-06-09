@@ -142,9 +142,10 @@
     "EXPERT_MODE_HELP": "Allow to see more details",
     "POPUP_PEER": {
       "TITLE" : "Duniter peer",
-      "HELP" : "Peer address:",
-      "PEER_HELP": "server.domain.com:port",
-      "BTN_SHOW_LIST_HELP" : "Enter above in the format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> or click on the button below:",
+      "HOST" : "Address",
+      "HOST_HELP": "Address: server:port",
+      "USE_SSL" : "Secured?",
+      "USE_SSL_HELP" : "(SSL Encryption)",
       "BTN_SHOW_LIST" : "Peer's list"
     }
   },

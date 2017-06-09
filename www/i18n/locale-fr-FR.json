@@ -142,9 +142,10 @@
     "EXPERT_MODE_HELP": "Permet un affichage plus détaillé",
     "POPUP_PEER": {
       "TITLE" : "Nœud Duniter",
-      "HELP" : "Adresse du nœud :",
-      "PEER_HELP": "serveur.domaine.com:port",
-      "BTN_SHOW_LIST_HELP" : "Saisissez ci-dessus au format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> ou bien cliquez sur le bouton ci-dessous :",
+      "HOST" : "Adresse",
+      "HOST_HELP": "Adresse : serveur:port",
+      "USE_SSL" : "Sécurisé ?",
+      "USE_SSL_HELP" : "(Chiffrement SSL)",
       "BTN_SHOW_LIST" : "Liste des noeuds"
     }
   },
