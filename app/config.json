@@ -104,7 +104,7 @@
     }
   },
 
-  "gtest": {
+  "g1-test": {
     "cacheTimeMs": 60000,
     "fallbackLanguage": "en",
     "rememberMe": false,
@@ -115,7 +115,7 @@
     "useLocalStorage": true,
     "useRelative": false,
     "expertMode": true,
-    "decimalCount": 4,
+    "decimalCount": 2,
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -124,12 +124,18 @@
       "host": "g1-test.duniter.org",
       "port": 443
     },
+    "fallbackNodes": [
+      {
+        "host": "g1-test.cgeek.fr",
+        "port": 443
+      }
+    ],
     "plugins":{
       "es": {
         "enable": true,
         "askEnable": false,
-        "host": "data.gtest.duniter.fr",
-        "port": 80,
+        "host": "g1-test.data.duniter.fr",
+        "port": 443,
         "notifications": {
           "txSent": true,
           "txReceived": true,
