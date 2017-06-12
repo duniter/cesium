@@ -53,7 +53,6 @@
   </div>
 
     <div class="row no-padding">
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
       <div class="col">
 
@@ -122,9 +121,6 @@
           <span class="item item-divider" ng-if="!loading">
             {{:locale:'ACCOUNT.LAST_TX'|translate}}
             <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
-            <div class="badge item-note">
-              <span ng-bind-html="formData.parameters.currency|currencySymbol"></span>
-            </div>
           </span>
 
 
@@ -132,69 +128,68 @@
             <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
           </span>
 
-          <!-- TX history -->
-          <!-- (make sure to keep ng-if=!loading to avoid division by zero on Firefox, because currentUD not loaded -->
-          <div ng-if="!loading"
-                class="item item-badge-right item-avatar"
-                ng-repeat="tx in formData.tx.history">
-            <i class="item-image avatar"
+
+          <div ng-repeat="tx in formData.tx.history"
+               class="item item-tx item-icon-left"
+               ng-class="::ionItemClass">
+
+            <i class="icon item-image "
                ng-if="::!tx.avatar"
                ng-class="::{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
-            <i ng-if="::tx.avatar" class="item-image avatar" style="background-image: url({{::tx.avatar.src}})"></i>
-            <h2 class="col-80">
-              <a ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" class="positive">
-                <span ng-if="::tx.uid">
+            <i class="avatar" ng-if="::tx.avatar" style="background-image: url({{::tx.avatar.src}})"></i>
+
+            <div class="row no-padding">
+              <div class="col no-padding">
+                <a class="positive" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="tx.uid">
                   {{::tx.name||tx.uid}}
-                </span>
-                <span ng-if="::!tx.uid && !tx.isUD && tx.pubkey" class="gray">
-                  <i class="icon ion-key gray"></i>
+                </a>
+                <a class="dark" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="!tx.uid">
+                  <i class="ion-key gray"></i>
                   {{::tx.pubkey | formatPubkey}}
+                </a>
+                <h3 class="dark visible-xs item-text-wrap">
+                  <i class="ion-ios-chatbubble-outline"></i>
+                  {{::tx.comment}}<br/>
+                </h3>
+                <h4>
+                  <span class="gray" >
+                       {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
+                   </span>
+                </h4>
+              </div>
+
+              <div class="col col-50 no-padding text-left hidden-xs">
+                <span ng-if="tx.comment" class="gray item-text-wrap">
+                  <span class="vertical-center">{{::tx.comment}}</span>
                 </span>
-              </a>
-              <span class="dark" ng-if="tx.isUD">
-                {{:locale:'COMMON.UNIVERSAL_DIVIDEND' | translate}}
-              </span>
+              </div>
 
-              <span ng-if="tx.comment" class="dark hidden-xs item-text-wrap">
-                <smaller>{{::tx.comment}}</smaller>
-              </span>
-            </h2>
-            <h3 ng-if="tx.comment" class="dark visible-xs item-text-wrap">
-              <i class="icon ion-ios-chatbubble-outline"></i>
-              {{::tx.comment}}<br/>
-            </h3>
-            <h3 class="dark">
-              {{::tx.time | formatFromNow}}
-              <span class="gray hidden-xs">|
-                {{::tx.time | formatDate}}
-              </span>
-            </h3>
+              <div class="col col-10 no-padding">
+                  <!-- not locked TX -->
+                  <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-balanced': tx.amount > 0}">
+                    <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
+                    <span ng-bind-html=":rebind:unit"></span>
+                  </span>
 
-            <!-- not locked TX -->
-            <span ng-if="::!tx.lockedOutputs"
-                  class="badge item-note"
-                  ng-class="{'badge-balanced': tx.amount > 0}">
-              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-              <span ng-bind-html=":rebind:unit"></span>
-            </span>
+                  <!-- Locked TX -->
+                  <a ng-if="::tx.lockedOutputs"
+                    class="badge item-note"
+                    ng-class="{'badge-balanced': tx.amount > 0}"
+                    ng-click="showLockedOutputsPopover(tx, $event)">
+                    <i class="icon ion-locked" ></i>
+                    <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
+                    <span ng-bind-html=":rebind:unit"></span>
+                  </a>
 
-            <!-- Locked TX -->
-            <a ng-if="::tx.lockedOutputs"
-               class="badge item-note"
-               ng-class="{'badge-balanced': tx.amount > 0}"
-               ng-click="showLockedOutputsPopover(tx, $event)">
-              <i class="icon ion-locked" ></i>
-              <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-              <span ng-bind-html=":rebind:unit"></span>
-            </a>
-
-            <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
-              (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}"></ng-bind-html>
-              <span ng-bind-html=":rebind:secondaryUnit"></span>)
+                  <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
+                    (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}">
+                    </ng-bind-html>
+                    <span ng-bind-html=":rebind:secondaryUnit"></span>)
+                  </div>
+              </div>
             </div>
           </div>
-
-          <div class="item item-text-wrap" ng-if="formData.tx.fromTime > 0">
+          <div class="item item-text-wrap text-center" ng-if="formData.tx.fromTime > 0">
             <p>
               <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
               <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: formData.tx.fromTime}"></span>
@@ -204,9 +199,9 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="col col-20 hidden-xs hidden-sm">&nbsp;
-      </div>
+
     </div>
   </ion-content>
 

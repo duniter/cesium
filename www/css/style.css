@@ -142,15 +142,6 @@
     display:none;
 }
 
-.item-peer {
-    padding-top: 9px;
-    padding-bottom: 3px;
-}
-
-.item-peer .badge {
-    top: 14px;
-    right: 6%;
-}
 
 .item-peer:hover .badge.badge-energized,
 .item-peer:hover .badge.badge-balanced
@@ -165,6 +156,20 @@
 
 .no-margin {
   margin: 0 !important;
+}
+
+/**********
+   Network/Peer items
+**********/
+
+.item-peer {
+  padding-top: 9px;
+  padding-bottom: 3px;
+}
+
+.item-peer .badge {
+  top: 14px;
+  right: 6%;
 }
 
 /**********
@@ -209,4 +214,36 @@
 .item-block.item-block-empty.compacted {
   border-bottom: double 1px #eee !important;
 }
+
+
+/**********
+   TX items
+**********/
+
+.item-tx{
+  border-top: solid 1px lightgray !important;
+  margin-bottom: 4px ;
+  padding-bottom: 6px;
+  padding-top: 8px;
+  margin: 0 !important;
+}
+
+.item-tx .badge{
+  right : 1%;
+  top: 13px;
+}
+
+.item-tx .vertical-center{
+  position: absolute;
+  top: 30%;
+}
+
+.expert-mode .item-tx .item-note {
+  top : 8%;
+}
+
+.expert-mode .item-tx .badge-secondary {
+  top : 52% !important;
+}
+
 

@@ -51,6 +51,7 @@
     "UNIVERSAL_DIVIDEND": "Dividendo universal",
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YYYY HH:mm",
+    "DATE_FILE_PATTERN": "YYYYMMDD",
     "DATE_SHORT_PATTERN": "DD/MM/YY",
     "DATE_MONTH_YEAR_PATTERN": "MM/YYYY",
     "EMPTY_PARENTHESIS": "(vacío)",

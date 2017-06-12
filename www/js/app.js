@@ -155,6 +155,12 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+  .filter('formatDateForFile', function($rootScope) {
+    return function(input) {
+      return input ? moment.unix(parseInt(input)).local().format($rootScope.translations.DATE_FILE_PATTERN || 'YYYY-MM-DD') : '';
+    };
+  })
+
   .filter('formatDateShort', function($rootScope) {
     return function(input) {
       return input ? moment.unix(parseInt(input)).local().format($rootScope.translations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
