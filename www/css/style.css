@@ -236,6 +236,7 @@
 .item-tx .vertical-center{
   position: absolute;
   top: 30%;
+  width: 40%;
 }
 
 .expert-mode .item-tx .item-note {
