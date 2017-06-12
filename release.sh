@@ -11,12 +11,13 @@ fi
 DIRNAME=`pwd`
 
 ### Releasing
-current=`grep -P "version\": \"\d+.\d+.\d+(\w*)" package.json | grep -oP "\d+.\d+.\d+(\w*)"`
+current=`grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?" package.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
 echo "Current version: $current"
-currentAndroid=`grep -P "android-versionCode=\"\d+\"" config.xml | grep -oP "\d+"`
+currentAndroid=`grep -oP "android-versionCode=\"[0-9]+\"" config.xml | grep -oP "\d+"`
 echo "Current Android version: $currentAndroid"
 
 if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
+
   echo "new build version: $2"
   echo "new build android version: $3"
   case "$1" in
@@ -54,6 +55,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git commit -m "v$2"
   git tag "v$2"
   git push
+
 
   echo "**********************************"
   echo "* Build release succeed !"

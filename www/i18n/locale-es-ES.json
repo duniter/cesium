@@ -80,7 +80,6 @@
     "BTN_PICTURE_CAMERA": "<b>Cámara</b>"
   },
   "MENU": {
-    "TITLE": "Cesium",
     "HOME": "Recepción",
     "WOT": "Anuario",
     "MARKET": "Anuncios",
@@ -121,6 +120,7 @@
     "TITLE": "Configuraciónes",
     "NETWORK_SETTINGS": "Red",
     "PEER": "Dirección del nodo Duniter",
+    "PEER_CHANGED_TEMPORARY": "Dirección utiliza temporalmente",
     "USE_LOCAL_STORAGE": "Activar el almacenamiento local",
     "USE_LOCAL_STORAGE_HELP": "Permitir el ahorro de almacenamiento local",
     "ENABLE_HELPTIP": "Activar bocadillos contextuales de ayuda",
@@ -143,10 +143,11 @@
     "EXPERT_MODE_HELP": "Permite una visualización más detallada",
     "POPUP_PEER": {
       "TITLE" : "Nodo Duniter",
-      "HELP" : "Dirección del nodo :",
-      "PEER_HELP": "servidor.dominio.com:puerto",
-      "BTN_SHOW_LIST_HELP" : "Ingresa más arriba al formato <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> o hace un clic sobre el botón más abajo :",
-      "BTN_SHOW_LIST" : "Lista de los nodos"
+      "HOST" : "Dirección",
+      "HOST_HELP": "Dirección : servidor:puerto",
+      "USE_SSL" : "Segura ?",
+      "USE_SSL_HELP" : "(Cifrado SSL)",
+      "BTN_SHOW_LIST" : "Lista de nodos"
     }
   },
   "BLOCKCHAIN": {
@@ -521,7 +522,6 @@
     "SEND_MEMBERSHIP_OUT_FAILED": "Fracaso en la interrupción de adhesión.",
     "REFRESH_WALLET_DATA": "Fracaso en la actualización del monedero.",
     "GET_CURRENCY_PARAMETER": "Fracaso en la recuperación de las reglas de moneda.",
-    "GET_CURRENCIES_FAILED": "Imposible de cargar la lista de las monedas. For favor,  reintenta más tarde.",
     "GET_CURRENCY_FAILED": "Carga de la moneda imposible. Por favor, intenta más tarde.",
     "SEND_TX_FAILED": "Fracaso en la transferencia.",
     "ALL_SOURCES_USED": "Por favor, espera el cálculo del bloque siguiente (Todas sus fuentes de moneda fueron utilizada).",
@@ -570,7 +570,8 @@
     "ONLY_TEXT_FILE": "Debe seleccionar un fichero texto",
     "EXISTING_ACCOUNT": "Su contraseña corresponde a una cuenta existente, la <a ng-click=\"showHelpModal('pubkey')\">clave pública</a> es:",
     "EXISTING_ACCOUNT_REQUEST": "Por favor, cambie su contraseña para que coincida con una cuenta sin usar.",
-    "GET_LICENSE_FILE_FAILED": "Obtener el archivo de licencia no puede"
+    "GET_LICENSE_FILE_FAILED": "Obtener el archivo de licencia no puede",
+    "CHECK_NETWORK_CONNECTION": "Sin nodo parece alcanzable.<br/><br/><b>Comprobar la conexión a Internet</b>."
   },
   "INFO": {
     "POPUP_TITLE": "Información",
@@ -604,7 +605,8 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Su adhesión no necesita estar renovada (solo va a caducar en {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Está usted seguro</b> querer renovar su adhesión ?",
     "SAVE_BEFORE_LEAVE": "Quiere usted <b>guardar sus modificaciónes</b> antes dejar la página ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modificaciónes no registradas",
-    "LOGOUT": "Está usted seguro querer desconectarse ?"
+    "LOGOUT": "Está usted seguro querer desconectarse ?",
+    "USE_FALLBACK_NODE": "Nodo <b>{{edad}}</ b> dirección inalcanzable o no válido.<br/><br/>Se desea utilizar temporalmente el nodo <b>{{nuevo}}</b> ?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocación del archivo</b>",

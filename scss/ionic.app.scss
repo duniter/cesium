@@ -552,9 +552,12 @@ $screen-menu:                     845px;
   }
 }
 
-.popover-invitation {
+.popover-invitation,
+.popover-network,
+.popover-peer-info{
   width: 420px;
 }
+
 
 /**********
    Unit popover

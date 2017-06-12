@@ -1,4 +1,4 @@
-angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'cesium.es.http.services',
+angular.module('cesium.es.group.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services',
   'cesium.es.user.services', 'cesium.es.notification.services', 'cesium.es.comment.services'])
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
@@ -11,7 +11,7 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
 
   })
 
-.factory('esGroup', function($q, $rootScope, Device, csSettings, esHttp, CryptoUtils, esUser, csWallet, esNotification, esComment) {
+.factory('esGroup', function($q, $rootScope, csPlatform, csSettings, esHttp, CryptoUtils, esUser, csWallet, esNotification, esComment) {
   'ngInject';
 
   function EsGroup() {
@@ -204,7 +204,7 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.services', 'ce
     }
 
     // Default actions
-    Device.ready().then(function() {
+    csPlatform.ready().then(function() {
       esHttp.api.node.on.start($rootScope, refreshState, this);
       esHttp.api.node.on.stop($rootScope, refreshState, this);
       return refreshState();

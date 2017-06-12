@@ -405,7 +405,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Transfer
   $scope.showTransferModal = function() {
-    var hasCredit = (!!$scope.walletData.balance && $scope.walletData.balance > 0);
+    var hasCredit = (!!$scope.formData.balance && $scope.formData.balance > 0);
     if (!hasCredit) {
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
@@ -524,7 +524,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxController($scope, $rootScope, $timeout, $filter, $ionicPopover, $state, UIUtils, csWallet, Modals, csSettings, BMA) {
+function WalletTxController($scope, $filter, $ionicPopover, $state, UIUtils, csWallet, Modals, csSettings, BMA) {
   'ngInject';
 
   $scope.loading = true;
@@ -616,7 +616,7 @@ function WalletTxController($scope, $rootScope, $timeout, $filter, $ionicPopover
   $scope.showMoreTx = function(fromTime) {
 
     fromTime = fromTime ||
-      ($rootScope.walletData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
+      ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
       (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
 
     UIUtils.loading.show();
@@ -758,7 +758,7 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
 
 }
 
-function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $translate, CryptoUtils){
+function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, CryptoUtils){
 
   $scope.slides = {
     slider: null,
@@ -1036,7 +1036,7 @@ function WalletSecurityModalController($scope, $rootScope, UIUtils, csWallet, $t
    * Revoke identity
    */
   $scope.revokeIdentity = function (confirm, confirmAgain) {
-    if ($rootScope.walletData.requirements.needSelf) {
+    if (!$scope.hasSelf) {
       return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
     }
     if (!confirm) {

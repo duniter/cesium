@@ -1,5 +1,5 @@
 
-angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
+angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
 
@@ -20,7 +20,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       REVOKE_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION
     },
     data = {},
-
+    listeners,
+    started,
+    startPromise,
     api = new Api(this, 'csWallet-' + id),
 
     resetData = function(init) {
@@ -44,6 +46,9 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       data.events = [];
 
       resetTxAndSources();
+
+      started = false;
+      startPromise = undefined;
 
       if (init) {
         api.data.raise.init(data);
@@ -371,7 +376,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       return csCurrency.get()
         .then(function(currency){
           data.currency = currency.name;
-          data.parameters =currency.parameters;
+          data.parameters = currency.parameters;
           data.currentUD = currency.currentUD;
         })
         .catch(function(err) {
@@ -541,7 +546,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
 
       if (options.sources || (options.tx && options.tx.enable)) {
         // Get TX and sources
-        jobs.push(loadTxAndSources());
+        jobs.push(loadTxAndSources(options.tx ? options.tx.fromTime: undefined));
       }
 
       // Load sigStock
@@ -1295,16 +1300,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     },
 
     /**
-    * Serialize to JSON string
-    */
-    toJson = function() {
-      return $q(function(resolve, reject) {
-        var json = JSON.stringify(data);
-        resolve(json);
-      });
-    },
-
-    /**
     * De-serialize from JSON string
     */
     fromJson = function(json, failIfInvalid) {
@@ -1360,7 +1355,79 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     }
     ;
 
+    function addListeners() {
+      listeners = [
+        // Listen if settings changed
+        csSettings.api.data.on.changed($rootScope, store, this),
+        // Listen if node changed
+        BMA.api.node.on.restart($rootScope, restart, this)
+      ];
+    }
+
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
+
+    function ready() {
+      if (started) return $q.when();
+      return startPromise || start();
+    }
+
+    function stop() {
+      console.debug('[wallet] Stopping...');
+      removeListeners();
+      resetData();
+    }
+
+    function restart() {
+      stop();
+      return $timeout(start, 200);
+    }
+
+    function start() {
+      console.debug('[wallet] Starting...');
+      var now = new Date().getTime();
+
+      startPromise = $q.all([
+          csSettings.ready(),
+          csCurrency.ready(),
+          BMA.ready()
+        ])
+
+        // Restore
+        .then(restore)
+
+        // Load data (if a wallet restored)
+        .then(function(data) {
+          if (data && data.pubkey) {
+            return loadData({minData: true});
+          }
+        })
+
+        // Emit ready event
+        .then(function() {
+          addListeners();
+
+          console.debug('[wallet] Started in ' + (new Date().getTime() - now) + 'ms');
+
+          started = true;
+          startPromise = null;
+
+          // Emit event (used by plugins)
+          api.data.raise.ready(data);
+        })
+        .then(function(){
+          return data;
+        });
+
+      return startPromise;
+    }
+
     // Register extension points
+    api.registerEvent('data', 'ready');
     api.registerEvent('data', 'init');
     api.registerEvent('data', 'login');
     api.registerEvent('data', 'load');
@@ -1369,14 +1436,15 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
     api.registerEvent('data', 'reset');
     api.registerEvent('action', 'certify');
 
-    csSettings.api.data.on.changed($rootScope, store);
-
     // init data
     resetData(true);
 
     return {
       id: id,
       data: data,
+      ready: ready,
+      start: start,
+      stop: stop,
       // auth
       login: login,
       logout: logout,
@@ -1393,6 +1461,7 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
       self: self,
       revoke: revoke,
       revokeWithFile: revokeWithFile,
+      certify: certify,
       downloadSaveId: downloadSaveId,
       getCryptedId: getCryptedId,
       recoverId: recoverId,
@@ -1405,12 +1474,6 @@ angular.module('cesium.wallet.services', ['ngResource', 'ngApi', 'cesium.bma.ser
         add: addEvent,
         cleanByContext: cleanEventsByContext
       },
-      certify: certify,
-      store: store,
-      restore: restore,
-      // serialization
-      toJson: toJson,
-      fromJson: fromJson,
       api: api
     };
   }

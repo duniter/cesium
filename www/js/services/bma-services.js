@@ -1,6 +1,6 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.services', 'cesium.settings.services'])
+angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
 .factory('BMA', function($q, $window, $rootScope, $timeout, Api, Device, csConfig, csSettings, csHttp) {
   'ngInject';
@@ -72,7 +72,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
       that.cache = _emptyCache();
 
       // Allow to force SSL connection with port different from 443
-      var forceUseSsl = (csConfig.httpsMode == true || csConfig.httpsMode === 'force') ||
+      var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
         ($window.location && $window.location.protocol === 'https:') ? true : false;
       if (forceUseSsl) {
         console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
@@ -235,7 +235,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     that.ready = function() {
-      if (that.started) return $q.when();
+      if (that.started) return $q.when(true);
       return that._startPromise || that.start();
     };
 
@@ -271,7 +271,6 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
         .then(function(res) {
           that.alive = res[1];
           if (!that.alive) {
-            // TODO : alert user ?
             console.error('[BMA] Could not start [{0}]: node unreachable'.format(that.server));
             that.started = true;
             delete that._startPromise;
@@ -295,22 +294,28 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     that.stop = function() {
       console.debug('[BMA] Stopping...');
       removeListeners();
+      csHttp.cache.clear();
       that.cleanCache();
       that.alive = false;
       that.started = false;
+      delete that._startPromise;
       that.api.node.raise.stop();
     };
 
     that.restart = function() {
-      csHttp.cache.clear();
       that.stop();
-      return $timeout(function() {
-        that.start();
-      }, 200);
+      return $timeout(that.start, 200)
+        .then(function(alive) {
+          if (alive) {
+            that.api.node.raise.restart();
+          }
+          return alive;
+        });
     };
 
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');
+    that.api.registerEvent('node', 'restart');
 
     var exports = {
       errorCodes: errorCodes,
@@ -526,8 +531,9 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
     };
 
     exports.copy = function(otherNode) {
-      init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
-      return that.restart();
+      if (that.started) that.stop();
+      that.init(otherNode.host, otherNode.port, otherNode.useSsl, that.useCache/*keep original value*/);
+      return that.start();
     };
 
     exports.wot.member.uids = function() {
@@ -804,7 +810,7 @@ angular.module('cesium.bma.services', ['ngResource', 'ngApi', 'cesium.http.servi
   };
 
   // default action
-  service.start();
+  //service.start();
 
   return service;
 })

@@ -80,7 +80,6 @@
     "BTN_PICTURE_CAMERA": "<b>Caméra</b>"
   },
   "MENU": {
-    "TITLE": "Cesium",
     "HOME": "Accueil",
     "WOT": "Annuaire",
     "MARKET": "Annonces",
@@ -115,12 +114,14 @@
     "BTN_HELP": "Aide en ligne",
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
-    "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte"
+    "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
+    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifez votre connection Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
     "NETWORK_SETTINGS": "Réseau",
     "PEER": "Adresse du nœud Duniter",
+    "PEER_CHANGED_TEMPORARY": "Adresse utilisée temporairement",
     "USE_LOCAL_STORAGE": "Activer le stockage local",
     "USE_LOCAL_STORAGE_HELP": "Permet de sauvegarder vos paramètres",
     "ENABLE_HELPTIP": "Activer les bulles d'aide contextuelles",
@@ -143,9 +144,10 @@
     "EXPERT_MODE_HELP": "Permet un affichage plus détaillé",
     "POPUP_PEER": {
       "TITLE" : "Nœud Duniter",
-      "HELP" : "Adresse du nœud :",
-      "PEER_HELP": "serveur.domaine.com:port",
-      "BTN_SHOW_LIST_HELP" : "Saisissez ci-dessus au format <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> ou bien cliquez sur le bouton ci-dessous :",
+      "HOST" : "Adresse",
+      "HOST_HELP": "Adresse : serveur:port",
+      "USE_SSL" : "Sécurisé ?",
+      "USE_SSL_HELP" : "(Chiffrement SSL)",
       "BTN_SHOW_LIST" : "Liste des noeuds"
     }
   },
@@ -521,7 +523,6 @@
     "SEND_MEMBERSHIP_OUT_FAILED": "Echec de l'arret de l'adhésion.",
     "REFRESH_WALLET_DATA": "Echec du rafraichissement du portefeuille.",
     "GET_CURRENCY_PARAMETER": "Echec de la récupération des règles de la monnaie.",
-    "GET_CURRENCIES_FAILED": "Impossible de charger la liste des monnaies. Veuillez ressayer plus tard.",
     "GET_CURRENCY_FAILED": "Chargement de la monnaie impossible. Veuillez ressayer plus tard.",
     "SEND_TX_FAILED": "Echec du virement.",
     "ALL_SOURCES_USED": "Veuillez attendre le calcul du prochain bloc (Toutes vos sources de monnaie ont été utilisées).",
@@ -570,7 +571,8 @@
     "ONLY_TEXT_FILE": "Vous devez selectionner un fichier texte",
     "EXISTING_ACCOUNT": "Vos identifiants correspondent à un compte déjà existant, dont la <a ng-click=\"showHelpModal('pubkey')\">clef publique</a> est :",
     "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
-    "GET_LICENSE_FILE_FAILED": "Récupérer du fichier de license impossible"
+    "GET_LICENSE_FILE_FAILED": "Récupérer du fichier de license impossible",
+    "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connection Internet</b>."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -604,7 +606,8 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveler votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
-    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?"
+    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?",
+    "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Fichier de révocation</b>",

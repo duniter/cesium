@@ -5,13 +5,13 @@
          ng-class="{ 'selected': !formData.useRelative}"
               ng-click="closePopover(false)">
         <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': !formData.useRelative}"></i>
-        <i ng-bind-html="$root.walletData.currency | currencySymbol:false"></i>
+        <i ng-bind-html="$root.currency.name | currencySymbol:false"></i>
       </a>
       <a class="item item-icon-left"
            ng-class="{ 'selected': formData.useRelative}"
             ng-click="closePopover(true)">
         <i class="icon" ng-class="{ 'ion-ios-checkmark-empty': formData.useRelative}"></i>
-        <i ng-bind-html="$root.walletData.currency | currencySymbol:true"></i>
+        <i ng-bind-html="$root.currency.name | currencySymbol:true"></i>
       </a>
     </div>
   </ion-content>

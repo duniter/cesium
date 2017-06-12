@@ -38,11 +38,14 @@
 
       </div>
 
-      <div class="item item-text-wrap no-border no-padding pull-left"
-           ng-if="!loading">
+      <div class="item item-text-wrap no-border no-padding pull-left">
         <div class="item-icon-left card padding stable-900-bg">
-          <i class="icon ion-help-circled calm"></i>
-          <div class="item-icon-left-padding" trust-as-html=":rebind:'CURRENCY.VIEW.CURRENCY_SHORT_DESCRIPTION'|translate:formData">
+          <ion-spinner class="icon" icon="android" ng-if="loading"></ion-spinner>
+          <i class="icon ion-help-circled calm" ng-if="!loading"></i>
+          <div class="item-icon-left-padding" style="min-height: 26px;">
+            <span ng-if="!loading"
+               trust-as-html="'CURRENCY.VIEW.CURRENCY_SHORT_DESCRIPTION'|translate:formData">
+            </span>
           </div>
         </div>
       </div>

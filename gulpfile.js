@@ -279,7 +279,13 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
 
     // Copy lib/ionic
     gulp.src('./www/lib/ionic/**/*.*')
-      .pipe(gulp.dest(tmpPath + '/lib/ionic'))
+      .pipe(gulp.dest(tmpPath + '/lib/ionic')),
+
+    // Copy license
+    gulp.src('./www/license/**/*.txt')
+      .pipe(header('\ufeff')) // Need BOM character for UTF-8 files
+      .pipe(gulp.dest(tmpPath + '/license'))
+
   )
   .on('end', done);
 });
@@ -411,11 +417,17 @@ gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function(d
 gulp.task('zip:web', ['clean-unused-directories:web'], function(done) {
   var tmpPath = './platforms/web/www';
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  var fileFilter = filter(['**', '!*/templates', '!*/css', '!*/js']);
+  var txtFilter = filter(["**/*.txt"], { restore: true });
 
   gulp.src(tmpPath + '/**/*.*')
+
+    // Process TXT files: Add the UTF-8 BOM character
+    .pipe(txtFilter)
+    .pipe(header('\ufeff'))
+    .pipe(txtFilter.restore)
+
     .pipe(zip('cesium-web-'+version+'.zip'))
-    .pipe(fileFilter)
+
     .pipe(gulp.dest('./platforms/web/build'))
     .on('end', done);
 });

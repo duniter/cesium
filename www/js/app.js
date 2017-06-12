@@ -5,17 +5,17 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht.translate',
-  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier','ImageCropper', 'ngFileSaver',
-  //'ui-leaflet',
+  'ngApi', 'angular-cache', 'angular.screenmatch', 'angular.bind.notifier', 'ImageCropper',
   // removeIf(no-device)
   'ngCordova',
   // endRemoveIf(no-device)
   // removeIf(no-plugin)
   'cesium.plugins',
   // endRemoveIf(no-plugin)
-  'cesium.controllers', 'cesium.templates', 'cesium.translations'
+  'cesium.filters', 'cesium.config', 'cesium.platform', 'cesium.controllers', 'cesium.templates', 'cesium.translations'
   ])
 
+<<<<<<< HEAD
   .filter('formatInteger', function() {
     return function(input) {
       return !input ? '0' : (input < 10000000 ? numeral(input).format('0,0') : numeral(input).format('0,0.000 a'));
@@ -312,6 +312,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     };
   })
 
+=======
+>>>>>>> upstream/master
   // Translation i18n
   .config(function ($translateProvider, csConfig) {
     'ngInject';
@@ -382,9 +384,22 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     IdleProvider.timeout(csConfig.logoutTimeout||15); // display warning during 15s
   })
 
-.run(function($rootScope, $translate, $state, $window, ionicReady, localStorage, Device, UIUtils, $ionicConfig, PluginService, csWallet, csSettings, csConfig, csCurrency) {
+  .factory('$exceptionHandler', function() {
+    'ngInject';
+
+    return function(exception, cause) {
+      if (cause) console.error(exception, cause);
+      else console.error(exception);
+    };
+  })
+
+
+
+.run(function($rootScope, $translate, $state, $window, ionicReady, localStorage,
+              filterTranslations, Device, BMA, UIUtils, csHttp, $ionicConfig, PluginService, csPlatform, csWallet, csSettings, csConfig, csCurrency) {
   'ngInject';
 
+  // Allow access to service data, from HTML templates
   $rootScope.config = csConfig;
   $rootScope.settings = csSettings.data;
   $rootScope.currency = csCurrency.data;
@@ -396,26 +411,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   $rootScope.rootPath = (hashIndex != -1) ? $window.location.href.substr(0, hashIndex) : $window.location.href;
   console.debug('[app] Root path is [' + $rootScope.rootPath + ']');
 
-  // removeIf(android)
-  // removeIf(ios)
-  // removeIf(firefoxos)
-  // Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
-  $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if (next.data && next.data.large && !UIUtils.screen.isSmall()) {
-      var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
-      if (redirect) {
-        event.preventDefault();
-        $state.go(next.data.large, nextParams);
-      }
-    }
-  });
-  // endRemoveIf(firefoxos)
-  // endRemoveIf(ios)
-  // endRemoveIf(android)
-
   // removeIf(device)
-  // Automatic redirection to HTTPS
-  if ((csConfig.httpsMode == true || csConfig.httpsMode === 'force') &&
+  // -- Automatic redirection to HTTPS
+  if ((csConfig.httpsMode === true || csConfig.httpsMode == 'true' ||csConfig.httpsMode === 'force') &&
     $window.location.protocol != 'https:') {
     $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
       var path = 'https' + $rootScope.rootPath.substr(4) + $state.href(next, nextParams);
@@ -430,89 +428,57 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   }
   // endRemoveIf(device)
 
-  // Update some translations, when locale changed
-  function onLocaleChange() {
-    console.debug('[app] Loading cached translations for locale [{0}]'.format($translate.use()));
-    $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD'])
-      .then(function(translations) {
-        $rootScope.translations = $rootScope.translations || {};
-        $rootScope.translations.DATE_PATTERN = translations['COMMON.DATE_PATTERN'];
-        if ($rootScope.translations.DATE_PATTERN === 'COMMON.DATE_PATTERN') {
-          $rootScope.translations.DATE_PATTERN = 'YYYY-MM-DD HH:mm';
-        }
-        $rootScope.translations.DATE_SHORT_PATTERN = translations['COMMON.DATE_SHORT_PATTERN'];
-        if ($rootScope.translations.DATE_SHORT_PATTERN === 'COMMON.DATE_SHORT_PATTERN') {
-          $rootScope.translations.DATE_SHORT_PATTERN = 'YYYY-MM-DD';
-        }
-        $rootScope.translations.DATE_MONTH_YEAR_PATTERN = translations['COMMON.DATE_MONTH_YEAR_PATTERN'];
-        if ($rootScope.translations.DATE_MONTH_YEAR_PATTERN === 'COMMON.DATE_MONTH_YEAR_PATTERN') {
-          $rootScope.translations.DATE_MONTH_YEAR_PATTERN = 'MMM YY';
-        }
-
-        $rootScope.translations.UD = translations['COMMON.UD'];
-        if ($rootScope.translations.UD === 'COMMON.UD') {
-          $rootScope.translations.UD = 'UD';
-        }
-      });
-  }
-  csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
+  // removeIf(android)
+  // removeIf(ios)
+  // removeIf(firefoxos)
+  // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
+  $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+    if (next.data && next.data.large && !UIUtils.screen.isSmall()) {
+      var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
+      if (redirect) {
+        event.preventDefault();
+        $state.go(next.data.large, nextParams);
+      }
+    }
+  });
+  // endRemoveIf(firefoxos)
+  // endRemoveIf(ios)
+  // endRemoveIf(android)
 
   // Start plugins eager services
   PluginService.start();
 
-  // Force at least on call
-  onLocaleChange();
-
   // We use 'ionicReady()' instead of '$ionicPlatform.ready()', because this one is callable many times
-  ionicReady()
-    .then(function() {
+  ionicReady().then(function() {
 
-      // Keyboard
-      if (Device.keyboard.enable) {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        Device.keyboard.hideKeyboardAccessoryBar(true);
+    // Keyboard
+    if (Device.keyboard.enable) {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      Device.keyboard.hideKeyboardAccessoryBar(true);
 
-        // iOS: do not push header up when opening keyboard
-        // (see http://ionicframework.com/docs/api/page/keyboard/)
-        if (ionic.Platform.isIOS()) {
-          Device.keyboard.disableScroll(true);
-        }
+      // iOS: do not push header up when opening keyboard
+      // (see http://ionicframework.com/docs/api/page/keyboard/)
+      if (ionic.Platform.isIOS()) {
+        Device.keyboard.disableScroll(true);
       }
+    }
 
-      // Ionic Platform Grade is not A, disabling views transitions
-      if (ionic.Platform.grade.toLowerCase()!='a') {
-        console.log('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
-        UIUtils.setEffects(false);
-      }
+    // Ionic Platform Grade is not A, disabling views transitions
+    if (ionic.Platform.grade.toLowerCase() != 'a') {
+      console.log('[app] Disabling UI effects, because plateform\'s grade is [' + ionic.Platform.grade + ']');
+      UIUtils.setEffects(false);
+    }
 
-      // Status bar style
-      if (window.StatusBar) {
-        // org.apache.cordova.statusbar required
-        StatusBar.styleDefault();
-      }
+    // Status bar style
+    if (window.StatusBar) {
+      // org.apache.cordova.statusbar required
+      StatusBar.styleDefault();
+    }
 
-      // Start local storage
-      return localStorage.ready();
-    })
-
-    // Force to start settings
-    .then(csSettings.ready)
-
-    // Load currency
-    .then(csCurrency.get)
-    .then(function(currency){
-      $rootScope.currency = currency;
-    })
-
-    // Trying to restore wallet
-    .then(csWallet.restore)
-
-    // Storing wallet to root scope
-    .then(function(walletData){
-      $rootScope.walletData = walletData;
-    });
-
+    // Make sure platform is ready
+    return csPlatform.ready();
+  });
 })
 ;
 

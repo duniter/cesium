@@ -9,9 +9,27 @@
     <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
     <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
 
-    <!-- Help tour (NOT ready yet for small device) -->
-    <div class="center">
+    <div class="center padding" >
 
+      <ion-spinner icon="android" ng-if="loading"></ion-spinner>
+
+      <div class="animate-fade-in animate-show-hide ng-hide" ng-show="!loading && error">
+        <div class="card card-item padding">
+          <p class="item-content item-text-wrap">
+              <span class="dark" trust-as-html="'HOME.CONNECTION_ERROR'|translate:node"></span>
+          </p>
+
+          <!-- Retry-->
+          <button type="button"
+                  class="button button-positive icon icon-left ion-refresh ink"
+                  ng-click="reload()">{{'COMMON.BTN_REFRESH'|translate}}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="center animate-fade-in animate-show-hide ng-hide" ng-show="!loading && !error">
+
+      <!-- Help tour (NOT ready yet for small device) -->
       <button type="button"
               class="button button-block button-stable button-raised icon-left icon ion-easel ink-dark hidden-xs"
               ng-click="startHelpTour()" >
@@ -68,7 +86,7 @@
       <div class="text-center no-padding visible-xs stable">
         <br/>
         <!-- version -->
-        <span translate="COMMON.APP_VERSION" translate-values="{version: config.version}"></span>
+        {{'COMMON.APP_VERSION'|translate:{version: config.version} }}
         |
         <!-- about -->
         <a href="#" ng-click="showAboutModal()" translate>HOME.BTN_ABOUT</a>

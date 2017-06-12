@@ -1,5 +1,5 @@
 
-angular.module('cesium.rml9.plugin', ['cesium.services'])
+angular.module('cesium.rml9.plugin', ['ngFileSaver', 'cesium.services'])
 
   .config(function($stateProvider, PluginServiceProvider, csConfig) {
     'ngInject';

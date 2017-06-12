@@ -1,8 +1,8 @@
 
-angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
+angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.crypto.services', 'cesium.utils.services',
   'cesium.settings.services'])
 
-.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csConfig, csSettings, csCache) {
+.factory('csWot', function($q, $timeout, BMA, Api, CacheFactory, csConfig, csCurrency, csSettings, csCache) {
   'ngInject';
 
   function factory(id) {
@@ -351,7 +351,7 @@ angular.module('cesium.wot.services', ['ngResource', 'ngApi', 'cesium.bma.servic
             if (!pendingCertifications.length) return certifications; // No more pending continue
 
             // Special case for initPhase - issue #
-            if (csConfig.initPhase) {
+            if (csCurrency.data.initPhase) {
               return pendingCertifications.reduce(function(res, cert) {
                 return res.concat({
                   pubkey: cert.pubkey,

@@ -123,7 +123,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             var settings = JSON.parse(json || '{}');
             settings.time = record.time;
             console.debug('[ES] [settings] Loaded user settings in '+ (new Date().getTime()-now) +'ms');
-            console.log(settings);
+            console.debug(settings);
             return settings;
           })
           // if error: skip stored content
@@ -298,7 +298,6 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     if (!enable && listeners && listeners.length > 0) {
       console.debug("[ES] [settings] Disable");
       removeListeners();
-
 
       // Force ES node to stop
       return esHttp.stop()

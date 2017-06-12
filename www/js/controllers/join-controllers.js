@@ -55,7 +55,7 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
           $scope.formData.currency = currency.name;
           $scope.loading = false;
         })
-        .catch(UIUtils.onError('ERROR.GET_CURRENCIES_FAILED'));
+        .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
     }
   };
   $scope.$on('modal.shown', $scope.load);

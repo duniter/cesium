@@ -97,7 +97,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 ;
 
 function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $ionicHistory,
-                             UIUtils, csConfig, csSettings, Device, BMA, csWallet, csWot) {
+                             UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -133,7 +133,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
       else {
         $timeout(function() {
           // Init phase
-          if (csConfig.initPhase && !state.stateParams.type) {
+          if (csCurrency.data.initPhase && !state.stateParams.type) {
             $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
           }
           // get new comers
@@ -272,7 +272,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
     $scope.search.loading = (offset === 0);
     $scope.search.type = 'pending';
 
-    var searchFunction =  csConfig.initPhase ?
+    var searchFunction =  csCurrency.data.initPhase ?
       csWot.all :
       csWot.pending;
 
@@ -286,7 +286,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
         if ($scope.search.type != 'pending') return false; // could have change
         $scope.doDisplayResult(idties, offset, size);
         // Always disable "more" on initphase
-        $scope.search.hasMore = !csConfig.initPhase && $scope.search.hasMore;
+        $scope.search.hasMore = !csCurrency.data.initPhase && $scope.search.hasMore;
         return true;
       })
       .catch(function(err) {
@@ -546,7 +546,7 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
  * @param csWallet
  * @constructor
  */
-function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csConfig, csWot, csWallet) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csCurrency, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {
@@ -581,13 +581,13 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       .then(function() {
         UIUtils.loading.hide();
 
-        if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
+        if (!csCurrency.data.initPhase && !$rootScope.walletData.isMember) {
           UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
             'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;
         }
 
-        if (!csConfig.initPhase && !$scope.formData.hasSelf) {
+        if (!csCurrency.data.initPhase && !$scope.formData.hasSelf) {
           UIUtils.alert.error('ERROR.IDENTITY_TO_CERTIFY_HAS_NO_SELF');
           return;
         }
@@ -656,7 +656,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     $scope.loadWallet()
       .catch(UIUtils.onError('ERROR.LOGIN_FAILED'))
       .then(function() {
-        if (!csConfig.initPhase && !$rootScope.walletData.isMember) {
+        if (!csCurrency.data.initPhase && !$rootScope.walletData.isMember) {
           UIUtils.alert.error($rootScope.walletData.requirements.needSelf || $rootScope.walletData.requirements.needMembership ?
             'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;

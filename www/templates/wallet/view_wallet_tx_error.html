@@ -34,8 +34,8 @@
         <span class="item item-divider">
           <span translate>ACCOUNT.ERROR_TX_SENT</span>
           <div class="badge item-note">
-            <span ng-if="!$root.settings.useRelative">({{$root.walletData.currency | abbreviate}})</span>
-            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{$root.walletData.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{$root.currency.name | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{$root.currency.name | abbreviate}}</sub>)</span>
           </div>
         </span>
 
@@ -75,8 +75,8 @@
         <span class="item item-divider">
           <span translate>ACCOUNT.ERROR_TX_RECEIVED</span>
           <div class="badge item-note">
-            <span ng-if="!$root.settings.useRelative">({{$root.walletData.currency | abbreviate}})</span>
-            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{$root.walletData.currency | abbreviate}}</sub>)</span>
+            <span ng-if="!$root.settings.useRelative">({{$root.currency.name | abbreviate}})</span>
+            <span ng-if="$root.settings.useRelative">({{'COMMON.UD' | translate}}<sub>{{$root.currency.name | abbreviate}}</sub>)</span>
           </div>
         </span>
 

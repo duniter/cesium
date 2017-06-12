@@ -1,4 +1,5 @@
-<ion-side-menus enable-menu-with-back-views="true">
+<ion-side-menus enable-menu-with-back-views="true"
+                bind-notifier="{locale:$root.settings.locale.id}">
   <!-- HEADER -->
   <ion-side-menu-content
     >
@@ -10,6 +11,16 @@
         <button class="button button-icon button-clear icon ion-navicon visible-nomenu" menu-toggle="left" ></button>
       </ion-nav-buttons>
       <ion-nav-buttons side="right" >
+
+        <!-- current node info -->
+        <button class="button button-clear hidden-xs hidden-sm gray"
+                ng-if="$root.settings.expertMode"
+                style="max-width: 450px !important;"
+                ng-click="showNodeListPopover($event)">
+          {{$root.currency.node.server}}
+          <small class="ion-arrow-down-b"></small>
+        </button>
+
         <!-- Allow extension here -->
         <cs-extension-point name="nav-buttons-right"></cs-extension-point>
 
@@ -38,8 +49,10 @@
                  enable-menu-with-back-views="false"
                  width="225">
     <ion-header-bar>
-      <h1 class="title dark hidden-sm hidden-xs" translate>
-        MENU.TITLE
+      <h1 class="title dark hidden-sm hidden-xs" >
+        <span class="animate-fade-in animate-show-hide ng-hide" ng-show="$root.currency.name">
+          {{:locale:'COMMON.APP_NAME'|translate}} {{$root.currency.name|currencySymbol:false }}
+        </span>
       </h1>
 
       <div class="visible-sm visible-xs hero">
@@ -72,9 +85,9 @@
       <ion-list class="list">
 
         <!-- DISCOVER Section -->
-        <ion-item menu-close class="item-icon-left hidden-xs" href="#/app/home" active-link="active">
+        <ion-item menu-close class="item-icon-left hidden-xs" ui-sref="app.home" active-link="active">
           <i class="icon ion-home"></i>
-          <span translate>MENU.HOME</span>
+          {{:locale:'MENU.HOME'|translate}}
         </ion-item>
 
         <a menu-close
@@ -82,10 +95,9 @@
            class="item item-icon-left"
            active-link="active"
            active-link-path-prefix="#/app/currency"
-           ui-sref="app.currency"
-           ng-if="!options.registry || !options.registry.enable">
+           ui-sref="app.currency">
           <i class="icon ion-ios-world-outline"></i>
-          <span translate>MENU.CURRENCY</span>
+          {{:locale:'MENU.CURRENCY'|translate}}
         </a>
 
         <a menu-close
@@ -95,7 +107,7 @@
            active-link-path-prefix="#/app/network"
            ui-sref="app.network">
           <i class="icon ion-cloud"></i>
-          <span translate>MENU.NETWORK</span>
+          {{:locale:'MENU.NETWORK'|translate}}
         </a>
 
         <!-- Allow extension here -->
@@ -106,17 +118,15 @@
 
         <a menu-close class="item item-icon-left" active-link="active" ui-sref="app.wot_lookup">
           <i class="icon ion-person-stalker"></i>
-          <span translate>MENU.WOT</span>
+          {{:locale:'MENU.WOT'|translate}}
         </a>
         <a id="helptip-menu-btn-wot"></a>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-main"></cs-extension-point>
 
-
         <!-- USER Section -->
         <div class="item item-divider"></div>
-
 
         <a menu-close
            class="item item-icon-left"
@@ -125,7 +135,7 @@
            ng-click="loginAndGo('app.view_wallet')"
            ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-person"></i>
-          <span translate>MENU.ACCOUNT</span>
+          {{:locale:'MENU.ACCOUNT'|translate}}
         </a>
         <a id="helptip-menu-btn-account"></a>
 
@@ -136,7 +146,7 @@
            ng-click="loginAndGo('app.view_wallet_tx')"
            ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-card"></i>
-          <span translate>MENU.TRANSACTIONS</span>
+          {{:locale:'MENU.TRANSACTIONS'|translate}}
         </a>
         <a id="helptip-menu-btn-tx"></a>
 
@@ -151,7 +161,7 @@
            active-link-path-prefix="#/app/settings"
            ui-sref="app.settings">
           <i class="icon ion-android-settings"></i>
-          <span translate>MENU.SETTINGS</span>
+          {{:locale:'MENU.SETTINGS'|translate}}
         </a>
         <a id="helptip-menu-btn-settings"></a>
 
@@ -160,7 +170,7 @@
 
         <!-- transfer -->
         <ion-item menu-close class="item item-button-right hidden-xs hidden-sm" ng-if="login">
-          <span translate>MENU.TRANSFER</span>
+          {{:locale:'MENU.TRANSFER'|translate}}
           <button class="button button-positive ink-dark" ng-click="showTransferModal()">
           <i class="icon ion-paper-airplane"></i>
           </button>
@@ -168,7 +178,7 @@
 
         <!-- scan QR code -->
         <ion-item menu-close class="item item-button-right" ng-if="$root.device.barcode.enable">
-          <span translate>Scan</span>
+          {{:locale:'MENU.SCAN'|translate}}
           <button class="button button-stable ink" ng-click="scanQrCodeAndGo()">
             <i class="icon ion-qr-scanner"></i>
           </button>
@@ -182,15 +192,16 @@
 
     <!-- removeIf(device) -->
     <ion-footer-bar class="bar-stable footer hidden-xs hidden-sm" >
-      <a class="pull-left icon-help" menu-toggle="left" title="{{'HOME.BTN_HELP'|translate}}" ui-sref="app.help"></a>
+      <a class="pull-left icon-help" menu-toggle="left" title="{{:locale:'HOME.BTN_HELP'|translate}}" ui-sref="app.help"></a>
 
-      <a class="title gray" ng-click="showAboutModal()" title="{{'HOME.BTN_ABOUT'|translate}}">
+      <a class="title gray" ng-click="showAboutModal()" title="{{:locale:'HOME.BTN_ABOUT'|translate}}">
         <!-- version -->
-        <span translate="COMMON.APP_VERSION" translate-values="{version: config.version}"></span>
+        {{:locale:'COMMON.APP_VERSION'|translate:{version: config.version} }}
         |
         <!-- about -->
-        <span translate>HOME.BTN_ABOUT</span>
+        {{:locale:'HOME.BTN_ABOUT'|translate}}
       </a>
+
     </ion-footer-bar>
     <!-- endRemoveIf(device) -->
   </ion-side-menu>

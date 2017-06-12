@@ -1,4 +1,19 @@
-angular.module('cesium.utils.services', ['ngResource'])
+angular.module('cesium.utils.services', [])
+
+// Replace the '$ionicPlatform.ready()', to enable multiple calls
+// See http://stealthcode.co/multiple-calls-to-ionicplatform-ready/
+.factory('ionicReady', function($ionicPlatform) {
+  'ngInject';
+
+  var readyPromise;
+
+  return function () {
+    if (!readyPromise) {
+      readyPromise = $ionicPlatform.ready();
+    }
+    return readyPromise;
+  };
+})
 
 .factory('UIUtils', function($ionicLoading, $ionicPopup, $ionicConfig, $translate, $q, ionicMaterialInk, ionicMaterialMotion, $window, $timeout,
                              // removeIf(no-device)
@@ -197,7 +212,6 @@ angular.module('cesium.utils.services', ['ngResource'])
 
       // Otherwise, log to console and display error
       else {
-        console.error(err);
         hideLoading(10); // timeout, to avoid bug on transfer (when error on reference)
         return alertError(fullMsg, subtitle);
       }

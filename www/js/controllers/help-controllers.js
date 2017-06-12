@@ -655,7 +655,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         $ionicSideMenuDelegate.toggleLeft(true);
         return $scope.showHelpTip('helptip-menu-btn-account', {
           bindings: {
-            content: $rootScope.walletData.isMember ? 'HELP.TIP.MENU_BTN_ACCOUNT_MEMBER' : 'HELP.TIP.MENU_BTN_ACCOUNT',
+            content: 'HELP.TIP.MENU_BTN_ACCOUNT',
             icon: {
               position: 'left'
             },
@@ -682,7 +682,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         $ionicSideMenuDelegate.toggleLeft(true);
         return $scope.showHelpTip('helptip-menu-btn-account', {
           bindings: {
-            content: $rootScope.walletData.isMember ? 'HELP.TIP.MENU_BTN_ACCOUNT_MEMBER' : 'HELP.TIP.MENU_BTN_ACCOUNT',
+            content: csWallet.data.isMember ? 'HELP.TIP.MENU_BTN_ACCOUNT_MEMBER' : 'HELP.TIP.MENU_BTN_ACCOUNT',
             icon: {
               position: 'left'
             }
@@ -873,7 +873,7 @@ function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDe
         $ionicSideMenuDelegate.toggleLeft(true);
         return $scope.showHelpTip('helptip-menu-btn-tx', {
           bindings: {
-            content: $rootScope.walletData.isMember ? 'HELP.TIP.MENU_BTN_TX_MEMBER' : 'HELP.TIP.MENU_BTN_TX',
+            content: csWallet.data.isMember ? 'HELP.TIP.MENU_BTN_TX_MEMBER' : 'HELP.TIP.MENU_BTN_TX',
             icon: {
               position: 'left'
             }

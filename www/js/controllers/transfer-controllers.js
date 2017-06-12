@@ -106,7 +106,7 @@ function TransferController($scope, $controller, UIUtils, csWot) {
 }
 
 function TransferModalController($scope, $rootScope, $translate, $filter, BMA, csWallet, UIUtils, Modals,
-                                 csSettings, parameters) {
+                                 csCurrency, csSettings, parameters) {
   'ngInject';
 
   $scope.convertedBalance = 0;
@@ -119,6 +119,7 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
   };
   $scope.udAmount = null;
   $scope.commentPattern = BMA.regexp.COMMENT;
+  $scope.currency = csCurrency.data.name;
 
   $scope.setParameters = function(parameters) {
     if (!parameters) return;
@@ -155,12 +156,12 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
 
   // When changing use relative UD
   $scope.onUseRelativeChanged = function() {
-    $scope.currency = $rootScope.walletData.currency;
+    $scope.currency = csCurrency.data.name;
     if ($scope.formData.useRelative) {
-      $scope.convertedBalance = $rootScope.walletData.balance / $rootScope.walletData.currentUD;
-      $scope.udAmount = $scope.amount * $rootScope.walletData.currentUD;
+      $scope.convertedBalance = csWallet.data.balance / csCurrency.data.currentUD;
+      $scope.udAmount = $scope.amount * csCurrency.data.currentUD;
     } else {
-      $scope.convertedBalance = $rootScope.walletData.balance;
+      $scope.convertedBalance = csWallet.data.balance;
       // Convert to number
       $scope.formData.amount = (!!$scope.formData.amount && typeof $scope.formData.amount == "string") ?
           Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.'))) :
@@ -168,9 +169,9 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
       // Compute UD
       $scope.udAmount = (!!$scope.formData.amount &&
         typeof $scope.formData.amount == "number" &&
-        !!$rootScope.walletData.currentUD &&
-        typeof $rootScope.walletData.currentUD == "number") ?
-          $scope.formData.amount / $rootScope.walletData.currentUD :null;
+        !!csCurrency.data.currentUD &&
+        typeof csCurrency.data.currentUD == "number") ?
+          $scope.formData.amount / csCurrency.data.currentUD :null;
     }
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
@@ -201,7 +202,7 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
               amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
             }
             if ($scope.formData.useRelative) {
-              amount = $rootScope.walletData.currentUD * amount;
+              amount = csWallet.data.currentUD * amount;
             }
             else {
               amount = amount * 100; // remove 2 decimals of quantitative mode
@@ -221,10 +222,10 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
     return $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
       .then(function(translations) {
         return $translate('CONFIRM.TRANSFER', {
-          from: $rootScope.walletData.isMember ? $rootScope.walletData.uid : $filter('formatPubkey')($rootScope.walletData.pubkey),
+          from: csWallet.data.isMember ? csWallet.data.uid : $filter('formatPubkey')(csWallet.data.pubkey),
           to: $scope.destUid ? $scope.destUid : $scope.destPub,
           amount: $scope.formData.amount,
-          unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($rootScope.walletData.parameters.currency),
+          unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.currency),
           comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
         });
       })

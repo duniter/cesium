@@ -38,6 +38,10 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 .controller('NetworkLookupModalCtrl', NetworkLookupModalController)
 
+.controller('NetworkLookupPopoverCtrl', NetworkLookupPopoverController)
+
+.controller('PeerInfoPopoverCtrl', PeerInfoPopoverController)
+
 ;
 
 function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, $window,
@@ -336,6 +340,61 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.enter();
 }
 
+
+function NetworkLookupPopoverController($scope, $controller) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('NetworkLookupCtrl', {$scope: $scope}));
+
+  // Read parameters
+  var parameters = parameters || {};
+  $scope.enableFilter = angular.isDefined(parameters.enableFilter) ? parameters.enableFilter : true;
+  $scope.search.type = angular.isDefined(parameters.type) ? parameters.type : $scope.search.type;
+  $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
+  $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
+  $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
+
+  $scope.selectPeer = function(peer) {
+    $scope.closePopover(peer);
+  };
+
+  $scope.$on('popover.hidden', function(){
+    $scope.leave();
+  });
+
+  // Disable this unsed method - called by load()
+  $scope.showHelpTip = function() {};
+
+  // Enter the popover
+  $scope.enter();
+}
+
+function PeerInfoPopoverController($scope, csCurrency) {
+  'ngInject';
+
+  $scope.loading = true;
+  $scope.formData = {};
+
+  $scope.enter = function() {
+    csCurrency.blockchain.current()
+      .then(function(block) {
+        $scope.formData = block;
+      })
+      .then(function() {
+        $scope.loading = false;
+      });
+  };
+
+  // Update UI on new block
+  csCurrency.api.data.on.newBlock($scope, function(block) {
+    $scope.formData = block;
+    console.debug("[peer info] Received a new block: ", block);
+  });
+
+  // Enter the popover
+  $scope.enter();
+}
 
 function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
   'ngInject';

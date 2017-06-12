@@ -1,37 +1,39 @@
-<!-- profile -->
-<div class="item item-divider item-divider-top-border">
-  {{'PROFILE.PROFILE_DIVIDER' | translate}}
-  <a class="badge button button-text button-small button-small-padding "
-     ui-sref="app.user_edit_profile">
-    <i class="icon ion-edit"></i>
-    <span ng-if="!formData.profile" translate>PROFILE.BTN_ADD</span>
-    <span ng-if="formData.profile" translate>PROFILE.BTN_EDIT</span>
-  </a>
-</div>
+<ng-if ng-if="enable">
+  <!-- profile -->
+  <div class="item item-divider item-divider-top-border">
+    {{'PROFILE.PROFILE_DIVIDER' | translate}}
+    <a class="badge button button-text button-small button-small-padding "
+       ui-sref="app.user_edit_profile">
+      <i class="icon ion-edit"></i>
+      <span ng-if="!formData.profile" translate>PROFILE.BTN_ADD</span>
+      <span ng-if="formData.profile" translate>PROFILE.BTN_EDIT</span>
+    </a>
+  </div>
 
-<div class="double-padding-x padding-bottom">
-  <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=true;"></ng-include>
-</div>
+  <div class="double-padding-x padding-bottom">
+    <ng-include src="'plugins/es/templates/user/items_profile.html'" ng-init="showName=true;"></ng-include>
+  </div>
 
-<!-- subscriptions -->
-<div class="item item-divider item-divider-top-border">
-  {{'SUBSCRIPTION.SUBSCRIPTION_DIVIDER' | translate}}
-  <a class="badge button button-text button-small button-small-padding "
-     ng-if="!formData.subscriptions.count"
+  <!-- subscriptions -->
+  <div class="item item-divider item-divider-top-border">
+    {{'SUBSCRIPTION.SUBSCRIPTION_DIVIDER' | translate}}
+    <a class="badge button button-text button-small button-small-padding "
+       ng-if="!formData.subscriptions.count"
+       ui-sref="app.edit_subscriptions">
+      <i class="icon ion-edit"></i>
+      <span translate>SUBSCRIPTION.BTN_ADD</span>
+    </a>
+  </div>
+  <div ng-if="!formData.subscriptions.count"
+       class="item gray" translate>SUBSCRIPTION.NO_SUBSCRIPTION</div>
+
+  <a class="item item-icon-left item-text-wrap item-icon-right ink"
+     ng-if="formData.subscriptions.count"
      ui-sref="app.edit_subscriptions">
-    <i class="icon ion-edit"></i>
-    <span translate>SUBSCRIPTION.BTN_ADD</span>
+    <i class="icon ion-gear-a"></i>
+    <span translate>SUBSCRIPTION.SUBSCRIPTION_COUNT</span>
+    <span class="badge badge-positive">{{formData.subscriptions.count}}</span>
+
+    <i class="gray icon ion-ios-arrow-right"></i>
   </a>
-</div>
-<div ng-if="!formData.subscriptions.count"
-     class="item gray" translate>SUBSCRIPTION.NO_SUBSCRIPTION</div>
-
-<a class="item item-icon-left item-text-wrap item-icon-right ink"
-   ng-if="formData.subscriptions.count"
-   ui-sref="app.edit_subscriptions">
-  <i class="icon ion-gear-a"></i>
-  <span translate>SUBSCRIPTION.SUBSCRIPTION_COUNT</span>
-  <span class="badge badge-positive">{{formData.subscriptions.count}}</span>
-
-  <i class="gray icon ion-ios-arrow-right"></i>
-</a>
+</ng-if>

@@ -1,7 +1,6 @@
-angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.services', 'cesium.device.services', 'cesium.crypto.services',
-  'cesium.es.http.services'])
+angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services'])
 
-.factory('esWallet', function($q, $rootScope, CryptoUtils, Device, csWallet, esHttp) {
+.factory('esWallet', function($q, $rootScope, CryptoUtils, csPlatform, csWallet, esHttp) {
   'ngInject';
 
   var
@@ -177,7 +176,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.wallet.servic
   }
 
   // Default action
-  Device.ready().then(function() {
+  csPlatform.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
     esHttp.api.node.on.stop($rootScope, refreshState, this);
     return refreshState();

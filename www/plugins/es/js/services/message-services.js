@@ -1,4 +1,4 @@
-angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', 'cesium.crypto.services', 'cesium.wot.services',
+angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
   'cesium.es.http.services', 'cesium.es.wallet.services', 'cesium.es.notification.services'])
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
@@ -11,7 +11,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
 
   })
 
-.factory('esMessage', function($q, $rootScope, Api, CryptoUtils, Device, csSettings, esHttp, csWallet, esWallet, csWot, esNotification) {
+.factory('esMessage', function($q, $rootScope, Api, CryptoUtils, csPlatform, csSettings, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
   var
@@ -469,7 +469,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.services', '
   api.registerEvent('data', 'new');
 
   // Default action
-  Device.ready().then(function() {
+  csPlatform.ready().then(function() {
     esHttp.api.node.on.start($rootScope, refreshState, this);
     esHttp.api.node.on.stop($rootScope, refreshState, this);
     return refreshState();

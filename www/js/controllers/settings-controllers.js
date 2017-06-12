@@ -21,7 +21,7 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
 ;
 
 function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, csHttp,
-  UIUtils, BMA, csSettings, $ionicPopover, Modals) {
+  UIUtils, BMA, csSettings, csPlatform, $ionicPopover, Modals) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -87,6 +87,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
     }
     $scope.pendingSaving = true;
     csSettings.reset()
+      .then(csPlatform.restart)
       .then(function() {
         // reload
         $scope.load();
@@ -102,13 +103,15 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   $scope.changeNode= function(node) {
     $scope.showNodePopup(node || $scope.formData.node)
     .then(function(newNode) {
+      console.log(newNode);
       if (newNode.host === $scope.formData.node.host &&
-        newNode.port === $scope.formData.node.port) {
+        newNode.port === $scope.formData.node.port &&
+        newNode.useSsl === $scope.formData.node.useSsl) {
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
 
-      var nodeBMA = BMA.instance(newNode.host, newNode.port, undefined/*auto detect*/, true /*cache*/);
+      var nodeBMA = BMA.instance(newNode.host, newNode.port, newNode.useSsl, true /*cache*/);
       nodeBMA.isAlive()
         .then(function(alive) {
           if (!alive) {
@@ -120,7 +123,12 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
           }
           UIUtils.loading.hide();
           $scope.formData.node = newNode;
+          delete $scope.formData.temporary;
           BMA.copy(nodeBMA);
+          $scope.bma = BMA;
+
+          // Start platform is not already started
+          csPlatform.restart();
 
           // Reset history cache
           return $ionicHistory.clearCache();
@@ -137,7 +145,8 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
           return {
             host: (bma.dns ? bma.dns :
                    (peer.hasValid4(bma) ? bma.ipv4 : bma.ipv6)),
-            port: bma.port || 80
+            port: bma.port || 80,
+            useSsl: bma.useSsl
           };
         }
       })
@@ -150,6 +159,7 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   $scope.showNodePopup = function(node) {
     return $q(function(resolve, reject) {
       $scope.popupData.newNode = node.port ? [node.host, node.port].join(':') : node.host;
+      $scope.popupData.useSsl = node.useSsl;
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
@@ -171,22 +181,26 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
                     //don't allow the user to close unless he enters a node
                     e.preventDefault();
                   } else {
-                    return $scope.popupData.newNode;
+                    return {
+                      server: $scope.popupData.newNode,
+                      useSsl: $scope.popupData.useSsl
+                    };
                   }
                 }
               }
             ]
           })
-          .then(function(node) {
-            if (!node) { // user cancel
+          .then(function(res) {
+            if (!res) { // user cancel
               UIUtils.loading.hide();
               return;
             }
-            var parts = node.split(':');
+            var parts = res.server.split(':');
             parts[1] = parts[1] ? parts[1] : 80;
             resolve({
               host: parts[0],
-              port: parts[1]
+              port: parts[1],
+              useSsl: res.useSsl
             });
           });
         });
@@ -210,6 +224,10 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
       // Make sure to format helptip
       $scope.cleanupHelpTip();
       angular.merge(csSettings.data, $scope.formData);
+      // Manually removed some attributes
+      if (!$scope.formData.temporary) {
+        delete csSettings.data.node.temporary;
+      }
       csSettings.store();
       $scope.saving = false;
     }, 100);

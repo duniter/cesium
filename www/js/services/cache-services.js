@@ -1,4 +1,4 @@
-angular.module('cesium.cache.services', ['ngResource', 'angular-cache'])
+angular.module('cesium.cache.services', ['angular-cache'])
 
 .factory('csCache', function($http, csSettings, CacheFactory) {
   'ngInject';

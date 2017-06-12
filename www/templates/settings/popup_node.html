@@ -1,15 +1,14 @@
 <form name="popupForm" ng-submit="">
 
-  <span ng-bind-html="'SETTINGS.POPUP_PEER.HELP'|translate"></span>
-
-  <div class="list" ng-init="setPopupForm(popupForm)">
-    <label class="item item-input"
+  <div class="list no-padding" ng-init="setPopupForm(popupForm)">
+    <div class="item  item-input item-floating-label"
            ng-class="{'item-input-error': popupForm.$submitted && popupForm.newNode.$invalid}">
-      <input name="newNode" type="text" placeholder="{{'SETTINGS.POPUP_PEER.PEER_HELP' | translate}}"
+      <span class="input-label" ng-bind-html="'SETTINGS.POPUP_PEER.HOST'|translate"></span>
+      <input name="newNode" type="text" placeholder="{{'SETTINGS.POPUP_PEER.HOST_HELP' | translate}}"
              ng-model="popupData.newNode"
              ng-minlength="3"
              required>
-    </label>
+    </div>
     <div class="form-errors"
          ng-if="popupForm.$submitted && popupForm.newNode.$error"
          ng-messages="popupForm.newNode.$error">
@@ -20,15 +19,33 @@
         <span translate="ERROR.FIELD_TOO_SHORT"></span>
       </div>
     </div>
+
+
+    <div class="item item-toggle">
+      <span class="input-label">
+        {{'SETTINGS.POPUP_PEER.USE_SSL' | translate}}
+      </span>
+      <h4>
+        <small class="gray" ng-bind-html="'SETTINGS.POPUP_PEER.USE_SSL_HELP' | translate">
+        </small>
+      </h4>
+      <label class="toggle toggle-royal no-padding-right">
+        <input type="checkbox" ng-model="popupData.useSsl">
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
+
+
+    <a class="button button-positive button-clear positive button-outline button-full button-small-padding icon-left ink no-padding" ng-click="showNodeList()">
+      <i class="icon ion-search"></i>
+      {{'SETTINGS.POPUP_PEER.BTN_SHOW_LIST' | translate}}
+    </a>
   </div>
 
   <button type="submit" class="hide"></button>
 </form>
 
-<small ng-bind-html="'SETTINGS.POPUP_PEER.BTN_SHOW_LIST_HELP' | translate"></small>
-<button class="button button-positive button-clear positive button-outline button-full button-small-padding icon-left ink" ng-click="showNodeList()">
-  <i class="icon ion-wifi "></i>
-  {{'SETTINGS.POPUP_PEER.BTN_SHOW_LIST' | translate}}
-</button>
 
 

@@ -1,6 +1,6 @@
 //var Base58, Base64, scrypt_module_factory = null, nacl_factory = null;
 
-angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'])
+angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
   .factory('CryptoUtils', function($q, $timeout, ionicReady) {
     'ngInject';
@@ -628,6 +628,8 @@ angular.module('cesium.crypto.services', ['ngResource', 'cesium.device.services'
     // removeIf(device)
     isDevice = false;
     // endRemoveIf(device)
+
+    console.debug("[crypto] Created CyprotUils service. device=" + isDevice);
 
     ionicReady().then(function() {
       console.debug('[crypto] Starting...');

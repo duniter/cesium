@@ -31,6 +31,7 @@
     "BTN_ADD": "Toevoegen",
     "BTN_SEARCH": "Zoeken",
     "BTN_REFRESH": "Verwezenlijken",
+    "BTN_START": "Beginnen",
     "BTN_CONTINUE": "Doorgaan",
     "BTN_UNDERSTOOD": "Ik heb het begrepen",
     "BTN_OPTIONS": "Opties",
@@ -79,7 +80,6 @@
     "BTN_PICTURE_CAMERA": "<b>Camera</b>"
   },
   "MENU": {
-    "TITLE": "Duniter",
     "HOME": "Welkom",
     "WOT": "Register",
     "MARKET": "Marktplaats",
@@ -109,11 +109,12 @@
     "MESSAGE_SHORT": "Bekijk je <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> portefeilles<br/>in real time!",
     "BTN_REGISTRY": "Register",
     "BTN_MARKET": "Marktplaats",
-    "BTN_CURRENCIES": "Verken valuta's",
     "BTN_CURRENCY": "Verken valuta",
     "BTN_ABOUT": "over",
     "BTN_HELP": "Help",
-    "REPORT_ISSUE": "Meld een probleem"
+    "REPORT_ISSUE": "Meld een probleem",
+    "NOT_YOUR_ACCOUNT_QUESTION" : "Je hoeft niet de rekening <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> in uw bezit?",
+    "BTN_CHANGE_ACCOUNT": "Dit account ontkoppelen"
   },
   "SETTINGS": {
     "TITLE": "Instellingen",
@@ -132,9 +133,10 @@
     "EXPERT_MODE_HELP": "Toon meer details",
     "POPUP_PEER": {
       "TITLE" : "Duniter Knooppunt",
-      "HELP" : "Stel het adres van het knooppunt in:",
-      "PEER_HELP": "server.domein.com:poort",
-      "BTN_SHOW_LIST_HELP" : "Voer bovenstaande bij <b>{{'SETTINGS.POPUP_PEER.PEER_HELP'|translate}}</b> indeling of klik op de knop hieronder:",
+      "HOST" : "Adres",
+      "HOST_HELP": "Aadres: server:poort",
+      "USE_SSL" : "Secure?",
+      "USE_SSL_HELP" : "(SSL-encryptie)",
       "BTN_SHOW_LIST" : "Lijst van knooppunten"
     }
   },
@@ -427,7 +429,6 @@
     "SEND_MEMBERSHIP_OUT_FAILED": "Error while sending membership revocation.",
     "REFRESH_WALLET_DATA": "Could not refresh wallet.",
     "GET_CURRENCY_PARAMETER": "Could not get currency parameters.",
-    "GET_CURRENCIES_FAILED": "Unable to load currencies. Please retry later.",
     "GET_CURRENCY_FAILED": "Could not load currency.",
     "SEND_TX_FAILED": "Could not send transaction.",
     "ALL_SOURCES_USED": "Please wait the next block computation (All transaction sources has been used).",
@@ -526,10 +527,10 @@
       "CURRENCY_CHANGE_UNIT": "This button allows to <b>switch the unit</b> to show amounts in <b>{{currency|capitalize}}</b>, undevided by the Universal Dividend (instead of in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
       "CURRENCY_CHANGE_UNIT_TO_RELATIVE": "This button allows to <b>switch the unit</b> to show amounts in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;, which is relative to the Universal Dividend (the amount co-produced by each member).",
       "CURRENCY_RULES": "The <b>rules</b> of the currency determine its <b>exact and predictible</b> performance.<br/><br/>As a true DNA of the currency these rules make the monetary code <b>transparent and understandable</b>.",
-      "CURRENCY_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
-      "CURRENCY_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
-      "CURRENCY_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
-      "CURRENCY_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre and open source). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
+      "NETWORK_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
+      "NETWORK_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
+      "NETWORK_PEERS_BLOCK_NUMBER": "This <b>number</b> indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
+      "NETWORK_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre and open source). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",
       "WALLET_CERTIFICATIONS": "Click here to reveiw the details of your certifications (given and received).",

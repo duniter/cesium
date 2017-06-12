@@ -1,4 +1,4 @@
-angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
+angular.module('cesium.http.services', ['cesium.cache.services'])
 
 .factory('csHttp', function($http, $q, csSettings, csCache, $timeout) {
   'ngInject';
@@ -121,13 +121,13 @@ angular.module('cesium.http.services', ['ngResource', 'cesium.cache.services'])
     };
   }
 
-  function postResource(host, port, path) {
-    var url = getUrl(host, port, path);
+  function postResource(host, port, path, useSsl, forcedTimeout) {
+    var url = getUrl(host, port, path, useSsl);
     return function(data, params) {
       return $q(function(resolve, reject) {
         var config = {
-          timeout: timeout,
-          headers : {'Content-Type' : 'application/json'} // TODO: test using "application/json;charset=UTF-8"
+          timeout: forcedTimeout || timeout,
+          headers : {'Content-Type' : 'application/json;charset=UTF-8'} // TODO: test using "application/json"
         };
 
         prepare(url, params, config, function(url, config) {
