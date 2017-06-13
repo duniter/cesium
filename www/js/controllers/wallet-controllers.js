@@ -575,10 +575,11 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, UIUtils, csW
     $scope.motion.show({ink: false});
   };
 
-  $scope.getDataForAccountStatement = function(options) {
-    options = options || -1;// all TX (full history)
+  $scope.downloadHistoryFile = function(options) {
+    options = options || {};
+    options.fromTime = options.fromTime || -1; // default: full history
     var pubkey = $scope.formData.pubkey;
-    csTx.downloadAccountStatement(pubkey, options);
+    csTx.downloadHistoryFile(pubkey, options);
   };
 
   // Updating wallet data

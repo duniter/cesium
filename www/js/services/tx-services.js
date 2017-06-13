@@ -83,7 +83,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                   lockedOutput.amount = outputAmount;
                   lockedOutputs = lockedOutputs || [];
                   lockedOutputs.push(lockedOutput);
-                  console.debug('[BMA] [TX] has locked output:', lockedOutput);
+                  console.debug('[tx] has locked output:', lockedOutput);
 
                   return sum + outputAmount;
                 }
@@ -337,13 +337,13 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           });
       };
 
-    // Download transactions history on current wallet
-    downloadAccountStatement = function(pubkey, options) {
+    // Download TX history file
+    downloadHistoryFile = function(pubkey, options) {
 
-      // Load account TX data
-      fromTime = options;
+      options = options || {};
+      options.fromTime = options.fromTime || -1;
 
-      console.debug("[TX] Download transactions history on pubkey: " + pubkey);
+      console.debug("[tx] Exporting TX history for pubkey [{0}]".format(pubkey.substr(0,8)));
 
       return $q.all([
         $translate(['ACCOUNT.HEADERS.TIME',
@@ -351,16 +351,19 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           'COMMON.PUBKEY',
           'ACCOUNT.HEADERS.AMOUNT',
           'ACCOUNT.HEADERS.COMMENT']),
+        //TODO : Utiliser plutôt csCurency pour avoir le bloc courant
         BMA.blockchain.current(),
-        loadData(pubkey, fromTime)
+        loadData(pubkey, options.fromTime)
       ])
         .then(function(result){
 
           var translations = result[0];
-          //TODO : Utiliser plutôt csCurency
-          var currentTime = (result[1] && result[1].medianTime) || moment().utc().unix();
-          result = result[2];
 
+          var currentBlock = result[1];
+          var currentTime = (currentBlock && currentBlock.medianTime) || moment().utc().unix();
+          var currency = currentBlock && currentBlock.currency;
+
+          result = result[2];
 
           if (!result || !result.tx || !result.tx.history) return; // no TX
 
@@ -368,12 +371,15 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           var formatPubkey = $filter('formatPubkey');
           var formatDate = $filter('formatDate');
           var formatDateForFile = $filter('formatDateForFile');
+          var formatSymbol = $filter('currencySymbolNoHtml');
 
-          var headers = [translations['ACCOUNT.HEADERS.TIME'],
+          var headers = [
+            translations['ACCOUNT.HEADERS.TIME'],
             translations['COMMON.UID'],
             translations['COMMON.PUBKEY'],
-            translations['ACCOUNT.HEADERS.AMOUNT'],
-            translations['ACCOUNT.HEADERS.COMMENT']];
+            translations['ACCOUNT.HEADERS.AMOUNT'] + ' (' + formatSymbol(currency) + ')',
+            translations['ACCOUNT.HEADERS.COMMENT']
+          ];
           var content = result.tx.history.reduce(function(res, tx){
             return res.concat([
                 formatDate(tx.time),
@@ -385,7 +391,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           }, [headers.join(';') + '\n']);
 
           var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
-          $translate('ACCOUNT.FILE_NAME', {pubkey: pubkey, currentTime : currentTime})
+          $translate('ACCOUNT.FILE_NAME', {currency: currency, pubkey: pubkey, currentTime : currentTime})
             .then(function(result){
               FileSaver.saveAs(file, result);
             })
@@ -396,9 +402,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
     return {
       id: id,
       load: loadData,
-      downloadAccountStatement: downloadAccountStatement,
+      downloadHistoryFile: downloadHistoryFile,
       // api extension
-      api: api,
+      api: api
     };
   }
 

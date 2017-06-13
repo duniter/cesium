@@ -1,14 +1,15 @@
 <i class="icon item-image "
    ng-if="::!tx.avatar"
-   ng-class="::{'ion-arrow-up-c': tx.isUD, 'ion-person': tx.uid, 'ion-card': !tx.uid && !tx.isUD}"></i>
+   ng-class="::{'ion-arrow-up-c': tx.isUD, 'ion-person dark': tx.uid, 'ion-card dark': !tx.uid && !tx.isUD}"></i>
 <i class="avatar" ng-if="::tx.avatar" style="background-image: url({{::tx.avatar.src}})"></i>
 
 <div class="row no-padding">
   <div class="col no-padding">
-    <a class="positive" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="tx.uid">
+    <b class="ion-clock" ng-if="pending"> </b>
+    <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="tx.uid">
       {{::tx.name||tx.uid}}
     </a>
-    <a class="dark" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="!tx.uid">
+    <a class="gray" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="!tx.uid">
       <i class="ion-key gray"></i>
       {{::tx.pubkey | formatPubkey}}
     </a>
@@ -30,6 +31,7 @@
        title="{{::tx.comment}}">{{::tx.comment}}</p>
   </div>
   <div class="col col-10 no-padding">
+
     <!-- not locked TX -->
     <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-balanced': tx.amount > 0}">
       <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>

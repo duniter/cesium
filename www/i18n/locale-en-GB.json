@@ -479,7 +479,7 @@
       "STRONG_LEVEL": "Strong <span class=\"hidden-xs \">(6 questions minimum)</span>",
       "TITLE": "Sign-in and security"
     },
-    "FILE_NAME": "Account statement {{pubkey|formatPubkey}} to {{currentTime|formatDateForFile}}.csv",
+    "FILE_NAME": "{{currency}} - Account statement {{pubkey|formatPubkey}} to {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Date",
       "AMOUNT": "Amount",

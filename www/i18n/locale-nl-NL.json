@@ -387,7 +387,7 @@
       "TITLE": "Voer een pseudoniem in",
       "HELP": "Een pseudoniem is nodig voor anderen om je te kunnen vinden."
     },
-    "FILE_NAME": "Rekeningafschrift {{pubkey|formatPubkey}} {{currentTime|formatDateForFile}}.csv",
+    "FILE_NAME": "{{currency}} - Rekeningafschrift {{pubkey|formatPubkey}} {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Datum",
       "AMOUNT": "Bedrag",
