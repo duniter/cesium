@@ -38,6 +38,7 @@
     "BTN_HELP_TOUR": "Visita guiada",
     "BTN_HELP_TOUR_SCREEN": "Descubrir esta pantalla",
     "BTN_DOWNLOAD": "Descargar",
+    "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Descargar el estado de cuenta",
     "BTN_MODIFY": "Cambio",
     "DAYS": "Dias",
     "NO_ACCOUNT_QUESTION": "Todavía no miembre ? Creer una cuenta !",
@@ -51,7 +52,7 @@
     "UNIVERSAL_DIVIDEND": "Dividendo universal",
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YYYY HH:mm",
-    "DATE_FILE_PATTERN": "YYYYMMDD",
+    "DATE_FILE_PATTERN": "YYYY-MM-DD",
     "DATE_SHORT_PATTERN": "DD/MM/YY",
     "DATE_MONTH_YEAR_PATTERN": "MM/YYYY",
     "EMPTY_PARENTHESIS": "(vacío)",
@@ -477,6 +478,12 @@
       "SAVE_ID": "Salvar sus identificadores",
       "STRONG_LEVEL": "Alto <span class=\"hidden-xs \">(6 preguntas mínimo)</span>",
       "TITLE": "Cuenta y seguridad"
+    },
+    "FILE_NAME": "Encuesta cuenta {{pubkey|formatPubkey}} a {{currentTime|formatDateForFile}}.csv",
+    "HEADERS": {
+      "TIME": "Fecha",
+      "AMOUNT": "Cantidad",
+      "COMMENT": "Comentario"
     }
   },
   "TRANSFER": {

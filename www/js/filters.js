@@ -208,9 +208,9 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-  .filter('formatDateForFile', function($rootScope) {
+  .filter('formatDateForFile', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).local().format($rootScope.translations.DATE_FILE_PATTERN || 'YYYY-MM-DD') : '';
+      return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_FILE_PATTERN || 'YYYY-MM-DD') : '';
     };
   })
 

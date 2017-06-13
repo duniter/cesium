@@ -38,6 +38,7 @@
     "BTN_HELP_TOUR": "Rondleiding",
     "BTN_HELP_TOUR_SCREEN": "Ontdek dit scherm",
     "BTN_DOWNLOAD": "Downloaden",
+    "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Downloaden het rekeningoverzicht",
     "BTN_MODIFY": "Bewerken",
     "DAYS": "dagen",
     "NO_ACCOUNT_QUESTION": "Nog geen lid? Registreer nu!",
@@ -51,8 +52,8 @@
     "UNIVERSAL_DIVIDEND": "Universeel dividend",
     "UD": "UD",
     "DATE_PATTERN": "DD-MM-YYYY HH:mm",
+    "DATE_FILE_PATTERN": "YYYY-MM-DD",
     "DATE_SHORT_PATTERN": "DD-MM-YY",
-    "DATE_FILE_PATTERN": "YYYYMMDD",
     "DATE_MONTH_YEAR_PATTERN": "MM-YYYY",
     "EMPTY_PARENTHESIS": "(leeg)",
     "UID": "Pseudoniem",
@@ -385,6 +386,12 @@
     "POPUP_REGISTER": {
       "TITLE": "Voer een pseudoniem in",
       "HELP": "Een pseudoniem is nodig voor anderen om je te kunnen vinden."
+    },
+    "FILE_NAME": "Rekeningafschrift {{pubkey|formatPubkey}} {{currentTime|formatDateForFile}}.csv",
+    "HEADERS": {
+      "TIME": "Datum",
+      "AMOUNT": "Bedrag",
+      "COMMENT": "Commentaar"
     }
   },
   "TRANSFER": {

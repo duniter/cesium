@@ -38,6 +38,7 @@
     "BTN_HELP_TOUR": "Visite guidée",
     "BTN_HELP_TOUR_SCREEN": "Découvrir cet écran",
     "BTN_DOWNLOAD": "Télécharger",
+    "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Télécharger le relevé du compte",
     "BTN_MODIFY": "Modifier",
     "DAYS": "jours",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
@@ -51,7 +52,7 @@
     "UNIVERSAL_DIVIDEND": "Dividende universel",
     "UD": "DU",
     "DATE_PATTERN": "DD/MM/YY HH:mm",
-    "DATE_FILE_PATTERN": "YYYYMMDD",
+    "DATE_FILE_PATTERN": "YYYY-MM-DD",
     "DATE_SHORT_PATTERN": "DD/MM/YY",
     "DATE_MONTH_YEAR_PATTERN": "MM/YYYY",
     "EMPTY_PARENTHESIS": "(vide)",
@@ -478,6 +479,12 @@
       "SAVE_ID": "Sauvegarder vos identifiants",
       "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
       "TITLE": "Compte et sécurité"
+    },
+    "FILE_NAME": "Relevé du compte {{pubkey|formatPubkey}} au {{currentTime|formatDateForFile}}.csv",
+    "HEADERS": {
+      "TIME": "Date",
+      "AMOUNT": "Montant",
+      "COMMENT": "Commentaire"
     }
   },
   "TRANSFER": {
