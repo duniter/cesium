@@ -524,7 +524,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxController($scope, $filter, $ionicPopover, $state, UIUtils, csWallet, Modals, csSettings, BMA) {
+function WalletTxController($scope, $filter, $ionicPopover, $state, UIUtils, csWallet,
+                            Modals, csSettings, BMA,csTx) {
   'ngInject';
 
   $scope.loading = true;
@@ -572,6 +573,12 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, UIUtils, csW
     $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
     $scope.updateUnit();
     $scope.motion.show({ink: false});
+  };
+
+  $scope.getDataForAccountStatement = function(options) {
+    options = options || -1;// all TX (full history)
+    var pubkey = $scope.formData.pubkey;
+    csTx.downloadAccountStatement(pubkey, options);
   };
 
   // Updating wallet data

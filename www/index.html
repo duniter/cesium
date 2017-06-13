@@ -209,7 +209,7 @@
   <script src="dist/dist_js/app/config.js"></script>
   <!-- endbuild -->
 </head>
-<body ng-app="cesium" id="cesium" ng-strict-di ng-class="{'nobackdrop': $root.tour}">
+<body ng-app="cesium" id="cesium" ng-strict-di ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}">
   <ion-nav-view></ion-nav-view>
 </body>
 </html>

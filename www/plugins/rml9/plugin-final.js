@@ -52,7 +52,7 @@ angular.module('cesium.rml9.plugin', ['ngFileSaver', 'cesium.services'])
   })
 
   // [NEW] Manage events from the page #/app/rml9
-  .controller('Rml9ViewCtrl', function($scope, csTx, FileSaver, gpColor) {
+  .controller('Rml9ViewCtrl', function(BMA, $scope, csTx, FileSaver, gpColor, $filter, $translate, $q) {
     'ngInject';
 
     // When opening the view
@@ -90,26 +90,52 @@ angular.module('cesium.rml9.plugin', ['ngFileSaver', 'cesium.services'])
 
       // Load account TX data
       var fromTime = -1; // all TX (full history)
-      csTx.load($scope.pubkey, fromTime)
-        .then(function(result) {
+
+      return $q.all([
+        $translate(['RML9.HEADERS.TIME',
+          'COMMON.UID',
+          'COMMON.PUBKEY',
+          'RML9.HEADERS.AMOUNT',
+          'RML9.HEADERS.COMMENT']),
+        BMA.blockchain.current(),
+        csTx.load($scope.pubkey, fromTime)
+      ])
+        .then(function(result){
+
+          var translations = result[0];
+          //TODO : Utiliser plutôt csCurency
+          var currentTime = (result[1] && result[1].medianTime) || moment().utc().unix();
+          result = result[2];
+
+
           if (!result || !result.tx || !result.tx.history) return; // no TX
 
+          var formatDecimal = $filter('formatDecimal');
+          var formatPubkey = $filter('formatPubkey');
+          var formatDate = $filter('formatDate');
+          var formatDateForFile = $filter('formatDateForFile');
 
-          var headers = ['time', 'issuer', 'amount', 'comment'];
+          var headers = [translations['RML9.HEADERS.TIME'],
+            translations['COMMON.UID'],
+            translations['COMMON.PUBKEY'],
+            translations['RML9.HEADERS.AMOUNT'],
+            translations['RML9.HEADERS.COMMENT']];
           var content = result.tx.history.reduce(function(res, tx){
             return res.concat([
-                tx.time,
+                formatDate(tx.time),
+                tx.uid,
                 tx.pubkey,
-                (''+tx.amount/100).replace('.',','),
-                tx.comment
+                formatDecimal(tx.amount/100),
+                '"' + tx.comment + '"'
               ].join(';') + '\n');
           }, [headers.join(';') + '\n']);
 
           var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
-          var filename = $scope.pubkey+'-history.csv';
-          FileSaver.saveAs(file, filename);
+          $translate('RML9.FILE_NAME', {pubkey: $scope.pubkey, currentTime : currentTime})
+            .then(function(result){
+              FileSaver.saveAs(file, result);
+            })
         });
-
     };
 
     // Load chart data: received amount by pubkey

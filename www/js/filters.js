@@ -208,6 +208,12 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
+  .filter('formatDateForFile', function(filterTranslations) {
+    return function(input) {
+      return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_FILE_PATTERN || 'YYYY-MM-DD') : '';
+    };
+  })
+
   .filter('formatTime', function() {
     return function(input) {
       return input ? moment.unix(parseInt(input)).local().format('HH:mm') : '';
