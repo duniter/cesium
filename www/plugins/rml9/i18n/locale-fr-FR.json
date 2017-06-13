@@ -3,6 +3,12 @@
     "BTN_EXPORT": "Télécharger",
     "BTN_OPEN": "Ouvrir la page RML9",
     "BTN_SWOW_TX": "Voir les transactions",
+    "FILE_NAME": "relevé du compte {{pubkey|formatPubkey}} au {{currentTime|formatDateForFile}}.csv",
+    "HEADERS": {
+      "TIME": "Date",
+      "AMOUNT": "Montant",
+      "COMMENT": "Commentaire"
+    },
     "VIEW": {
       "TITLE": "RML9",
       "DIVIDER": "Dernières transactions :",

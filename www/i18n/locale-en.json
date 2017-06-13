@@ -38,6 +38,7 @@
     "BTN_HELP_TOUR": "Features tour",
     "BTN_HELP_TOUR_SCREEN": "Discover this screen",
     "BTN_DOWNLOAD": "Download",
+    "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Download account statement",
     "BTN_MODIFY": "Modify",
     "DAYS": "days",
     "NO_ACCOUNT_QUESTION": "Not a member yet? Register now!",
@@ -51,6 +52,7 @@
     "UNIVERSAL_DIVIDEND": "Universal dividend",
     "UD": "UD",
     "DATE_PATTERN": "MM/DD/YYYY HH:mm",
+    "DATE_FILE_PATTERN": "YYYY-MM-DD",
     "DATE_SHORT_PATTERN": "MM/DD/YY",
     "DATE_MONTH_YEAR_PATTERN": "MM/YYYY",
     "EMPTY_PARENTHESIS": "(empty)",
@@ -476,6 +478,12 @@
       "SAVE_ID": "Save your login",
       "STRONG_LEVEL": "Strong <span class=\"hidden-xs \">(6 questions minimum)</span>",
       "TITLE": "Sign-in and security"
+    },
+    "FILE_NAME": "Account statement {{pubkey|formatPubkey}} to {{currentTime|formatDateForFile}}.csv",
+    "HEADERS": {
+      "TIME": "Date",
+      "AMOUNT": "Amount",
+      "COMMENT": "Comment"
     }
   },
   "TRANSFER": {

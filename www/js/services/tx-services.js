@@ -2,7 +2,7 @@
 angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   'cesium.settings.services', 'cesium.wot.services' ])
 
-.factory('csTx', function($q, $timeout, BMA, Api, csConfig, csSettings, csWot) {
+.factory('csTx', function($q, $timeout, $filter, $translate, BMA, Api, csConfig, csSettings, csWot, FileSaver) {
   'ngInject';
 
   function factory(id, BMA) {
@@ -335,15 +335,70 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             console.debug('[tx] TX and sources loaded in '+ (new Date().getTime()-now) +'ms');
             return data;
           });
-      }
+      };
 
-      ;
+    // Download transactions history on current wallet
+    downloadAccountStatement = function(pubkey, options) {
+
+      // Load account TX data
+      fromTime = options;
+
+      console.debug("[TX] Download transactions history on pubkey: " + pubkey);
+
+      return $q.all([
+        $translate(['ACCOUNT.HEADERS.TIME',
+          'COMMON.UID',
+          'COMMON.PUBKEY',
+          'ACCOUNT.HEADERS.AMOUNT',
+          'ACCOUNT.HEADERS.COMMENT']),
+        BMA.blockchain.current(),
+        loadData(pubkey, fromTime)
+      ])
+        .then(function(result){
+
+          var translations = result[0];
+          //TODO : Utiliser plutôt csCurency
+          var currentTime = (result[1] && result[1].medianTime) || moment().utc().unix();
+          result = result[2];
+
+
+          if (!result || !result.tx || !result.tx.history) return; // no TX
+
+          var formatDecimal = $filter('formatDecimal');
+          var formatPubkey = $filter('formatPubkey');
+          var formatDate = $filter('formatDate');
+          var formatDateForFile = $filter('formatDateForFile');
+
+          var headers = [translations['ACCOUNT.HEADERS.TIME'],
+            translations['COMMON.UID'],
+            translations['COMMON.PUBKEY'],
+            translations['ACCOUNT.HEADERS.AMOUNT'],
+            translations['ACCOUNT.HEADERS.COMMENT']];
+          var content = result.tx.history.reduce(function(res, tx){
+            return res.concat([
+                formatDate(tx.time),
+                tx.uid,
+                tx.pubkey,
+                formatDecimal(tx.amount/100),
+                '"' + tx.comment + '"'
+              ].join(';') + '\n');
+          }, [headers.join(';') + '\n']);
+
+          var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
+          $translate('ACCOUNT.FILE_NAME', {pubkey: pubkey, currentTime : currentTime})
+            .then(function(result){
+              FileSaver.saveAs(file, result);
+            })
+        });
+    };
+
 
     return {
       id: id,
       load: loadData,
+      downloadAccountStatement: downloadAccountStatement,
       // api extension
-      api: api
+      api: api,
     };
   }
 
