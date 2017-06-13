@@ -48,8 +48,8 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
 
     $scope.map = {
       center: {
-        lat: 37.26,
-        lng: 138.86,
+        lat: 48.19,
+        lng: -0.66,
         zoom: 4
       },
       defaults: {
@@ -61,7 +61,7 @@ angular.module('cesium.rml9.plugin', ['cesium.services'])
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [125.6, 10.1]
+        "coordinates": [-0.66, 48.19]
       },
       "properties": {
         "name": "Dinagat Islands"

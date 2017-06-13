@@ -20,6 +20,8 @@
   <!--removeIf(no-plugin)-->
   <link href="dist/dist_css/plugins/es/css/style.css" rel="stylesheet">
   <link href="dist/dist_css/plugins/graph/css/style.css" rel="stylesheet">
+
+
   <!--endRemoveIf(no-plugin)-->
   <!-- endbuild -->
   <!-- build:js dist_js/vendor.js -->
@@ -36,7 +38,6 @@
   <script src="js/vendor/socket-io.js"></script>
   <script src="js/vendor/underscore.js"></script>
   <script src="js/vendor/qrcode.min.js"></script>
-  <!--<script src="lib/leaflet/dist/leaflet.js"></script>-->
   <!--removeIf(ubuntu)--> <!-- FIXME: issue #463 -->
   <script src="js/vendor/Chart.js"></script>
   <!--endRemoveIf(ubuntu)-->
@@ -54,10 +55,6 @@
   <script src="lib/ionic/js/angular/angular-image-crop.js"></script>
   <script src="lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
   <script src="lib/ionic/js/angular/angular-idle.js"></script>
-
-  <!-- Need to leaflet
-  <script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
-  <script src="lib/ui-leaflet/dist/ui-leaflet.js"></script>-->
 
   <!--removeIf(ubuntu)--> <!-- FIXME: issue #463 -->
   <script src="lib/ionic/js/angular/angular-chart.min.js"></script>
@@ -190,8 +187,15 @@
   <!--<script src="dist/dist_js/plugins/rml9/plugin-04-chart.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-05-service_api.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-06-settings.js"></script>-->
-  <!--<script src="dist/dist_js/plugins/rml9/plugin-07-add_map.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-final.js"></script>-->
+
+  <!-- RML9 plugin: add a map
+  <link rel="stylesheet" type="text/css" href="lib/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/rml9/css/style.css">
+  <script src="lib/leaflet/dist/leaflet.js"></script>
+  <script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
+  <script src="lib/ui-leaflet/dist/ui-leaflet.js"></script>
+  <script src="dist/dist_js/plugins/rml9/plugin-07-add_map.js"></script>-->
 
   <!--endRemoveIf(no-plugin)-->
 
