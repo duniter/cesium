@@ -14,7 +14,7 @@ angular.module('cesium.plugins', [
   // endRemoveIf(ubuntu)
 
   // RML9 plugin:
-  'cesium.rml9.plugin',
+  //'cesium.rml9.plugin',
 
   // ES plugin (Cesium+):
   'cesium.es.plugin'

@@ -337,13 +337,13 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           });
       };
 
-    // [NEW] Manage click on the export button
+    // Download transactions history on current wallet
     downloadAccountStatement = function(pubkey, options) {
 
       // Load account TX data
       fromTime = options;
 
-      console.debug("[RML9] call method onExportButtonClick() on pubkey: " + pubkey);
+      console.debug("[TX] Download transactions history on pubkey: " + pubkey);
 
       return $q.all([
         $translate(['ACCOUNT.HEADERS.TIME',
@@ -396,9 +396,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
     return {
       id: id,
       load: loadData,
+      downloadAccountStatement: downloadAccountStatement,
       // api extension
       api: api,
-      downloadAccountStatement: downloadAccountStatement
     };
   }
 

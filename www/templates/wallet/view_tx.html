@@ -12,10 +12,12 @@
       <i class="ion-key gray"></i>
       {{::tx.pubkey | formatPubkey}}
     </a>
-    <h3 class="dark visible-xs item-text-wrap">
+    <p class="dark visible-xs width-cup text-italic"
+       data-toggle="tooltip"
+       title="{{::tx.comment}}">
       <i class="ion-ios-chatbubble-outline"></i>
       {{::tx.comment}}<br/>
-    </h3>
+    </p>
     <h4>
       <span class="gray" >
         {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}

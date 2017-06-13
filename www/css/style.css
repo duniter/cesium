@@ -239,6 +239,10 @@
   width: 40%;
 }
 
+.item-tx .width-cup{
+  width: 175px;
+}
+
 .expert-mode .item-tx .item-note {
   top : 8%;
 }
