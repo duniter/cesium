@@ -479,7 +479,7 @@
       "STRONG_LEVEL": "Alto <span class=\"hidden-xs \">(6 preguntas mínimo)</span>",
       "TITLE": "Cuenta y seguridad"
     },
-    "FILE_NAME": "Encuesta cuenta {{pubkey|formatPubkey}} a {{currentTime|formatDateForFile}}.csv",
+    "FILE_NAME": "{{currency}} - Encuesta cuenta {{pubkey|formatPubkey}} a {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
       "TIME": "Fecha",
       "AMOUNT": "Cantidad",

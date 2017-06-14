@@ -425,7 +425,7 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
         $scope.times = result.times;
 
         // Choose a date formatter, depending on the blocks period
-        var blocksPeriod = result.times[result.blocks.length-1] - result.times[0].medianTime;
+        var blocksPeriod = result.times[result.blocks.length-1]- result.times[0];
         var dateFormat;
         if (blocksPeriod < 15778800/* less than 6 months*/) {
           dateFormat = $filter('formatDateShort');

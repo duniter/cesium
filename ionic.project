@@ -3,7 +3,9 @@
   "app_id": "",
   "watchPatterns": [
     "www/**/*",
-    "!www/lib/**/*"
+    "!www/dist/**/*",
+    "!www/lib/**/*",
+    "!www/css/ionic.app**"
   ],
   "gulpStartupTasks": [
     "sass",

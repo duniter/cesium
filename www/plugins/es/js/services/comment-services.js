@@ -184,7 +184,8 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
       // Open websocket
       var time = new Date().getTime();
       console.info("[ES] [comment] Starting websocket to listen comments on [{0}/record/{1}]".format(index, recordId.substr(0,8)));
-      return exports.raw.wsChanges.open()
+      var wsChanges = exports.raw.wsChanges();
+      return wsChanges.open()
 
         // Define source filter
         .then(function(sock) {
@@ -194,7 +195,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         // Listen changes
         .then(function(){
           console.debug("[ES] [comment] Websocket opened in {0} ms".format(new Date().getTime() - time));
-          exports.raw.wsChanges.on(function(change) {
+          wsChanges.on(function(change) {
             if (!change) return;
             var comment = data.mapById[change._id];
             if (change._operation === 'DELETE') {
@@ -303,7 +304,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.bma.services
         comment.cleanAllListeners();
       });
       // Close previous
-      exports.raw.wsChanges.close();
+      exports.raw.wsChanges().close();
     };
 
     // Expose functions

@@ -74,31 +74,30 @@
 
   <div class="visible-xs visible-sm">
     <div class="block">
-      <div class="item item-input-inset">
-
-        <!-- reply to comment-->
-        <ng-if ng-if="formData.parent">
-          <div class="padding text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
-          <div class="padding-left expanded">
-            <div class="card card-comment stable-900-bg item-text-wrap no-padding in done">
-              <ng-include ng-if="formData.parent.message"
-                          ng-init="comment = formData.parent"
-                          src="'plugins/es/templates/common/item_comment_content.html'">
-              </ng-include>
-              <span ng-if="!formData.parent.message" translate>
-                COMMENTS.DELETED_COMMENT
-              </span>
-              <div class="card-footer text-right gray">
-                <div class="pull-right">
-                  <a class="ion-close" ng-click="removeParentLink()">
-                    {{::'COMMON.BTN_CANCEL'|translate}}
-                  </a>
-                </div>
+      <!-- reply to comment-->
+      <div class="item item-input-inset done in" ng-if="formData.parent">
+        <div class="padding text-right pull-left" translate>COMMENTS.REPLY_TO</div><br/>
+        <div class="padding-left expanded">
+          <div class="card card-comment stable-900-bg item-text-wrap no-padding in done">
+            <ng-include ng-if="::formData.parent.message"
+                        ng-init="comment = formData.parent"
+                        src="'plugins/es/templates/common/item_comment_content.html'">
+            </ng-include>
+            <span ng-if="::!formData.parent.message" translate>
+              COMMENTS.DELETED_COMMENT
+            </span>
+            <div class="card-footer text-right gray">
+              <div class="pull-right">
+                <a class="ion-close" ng-click="removeParentLink()">
+                  {{::'COMMON.BTN_CANCEL'|translate}}
+                </a>
               </div>
             </div>
           </div>
-        </ng-if>
+        </div>
+      </div>
 
+      <div class="item item-input-inset">
         <div class="item-input-wrapper">
           <input type="text"
                  id="comment-form-input"
@@ -106,10 +105,12 @@
                  placeholder="{{'COMMENTS.COMMENT_HELP'|translate}}"
                  on-return="save();"
                  ng-model="formData.message"/>
-          <button class="button button-small button-small-padding button-icon button-dark button-icon icon ion-android-send gray" ng-click="save()">
+          <button class="button button-small button-small-padding button-icon button-dark button-icon gray" ng-click="save()">
+            <i class="icon ion-android-send"></i>
           </button>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>
