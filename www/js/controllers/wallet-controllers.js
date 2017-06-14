@@ -524,7 +524,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxController($scope, $filter, $ionicPopover, $state, UIUtils, csWallet,
+function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UIUtils, csWallet,
                             Modals, csSettings, BMA,csTx) {
   'ngInject';
 
