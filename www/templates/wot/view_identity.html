@@ -77,11 +77,20 @@
           <h4 class="gray" translate>WOT.NOT_MEMBER_ACCOUNT_HELP</h4>
         </div>
 
+        <!-- Account transaction -->
+        <a class="item item-icon-left item-icon-right ink"
+           ng-if="!loading"
+           ui-sref="app.wot_identity_tx_uid({name:formData.name,uid:formData.uid,pubkey:formData.pubkey})">
+          <i class="icon ion-card"></i>
+          <span translate>Opérations sur le compte</span>
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </a>
+
         <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
            ng-if=":rebind:formData.hasSelf"
-           ng-click="showCertifications()">
+           ui-sref="app.wot_cert({pubkey:formData.pubkey,uid:formData.uid, type:'received'})">
           <i class="icon ion-ribbon-b"></i>
           <b ng-if=":rebind:formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
@@ -96,7 +105,7 @@
         <!-- Signature stock -->
         <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
              ng-if=":rebind:formData.hasSelf && formData.isMember"
-             ng-click="showGivenCertifications()">
+           ui-sref="app.wot_cert({pubkey:formData.pubkey,uid:formData.uid, type:'given'})">
           <i class="icon ion-ribbon-a"></i>
           <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
           <cs-badge-given-certification identity="formData"

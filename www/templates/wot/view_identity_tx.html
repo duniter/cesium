@@ -1,0 +1,48 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span class="visible-xs visible-sm">{{::formData.name||formData.uid}}</span>
+    <span class="hidden-xs hidden-sm"
+          ng-if="!loading"
+          translate="WOT.OPERATIONS.TITLE" translate-values="{uid: formData.name || formData.uid}"></span>
+  </ion-nav-title>
+
+  <ion-content>
+
+    <!-- buttons bar -->
+    <div class="center padding">
+      <div class="buttons">
+        <button class="button button-balanced icon-left icon ion-archive"
+                ng-click="onExportButtonClick()">{{'RML9.BTN_EXPORT' | translate}}
+        </button>
+      </div>
+    </div>
+
+    <div class="list {{motion.ionListClass}}" ng-if="!loading">
+
+      <div class="row">
+
+        <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
+
+        <div class="col">
+
+          <!-- the balance -->
+          <div class="item">
+            {{'RML9.VIEW.BALANCE'|translate}}
+            <div class="badge badge-calm">
+              {{balance|formatAmount}} <span ng-bind-html="$root.currency.name|currencySymbol"></span>
+            </div>
+          </div>
+
+          <!-- iterate on each TX -->
+          <div class="item item-tx item-icon-left"
+               ng-repeat="tx in items"
+               ng-include="'templates/wallet/view_tx.html'">
+          </div>
+        </div>
+
+        <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
+
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

@@ -341,6 +341,9 @@
       "ERROR": "Certifications reçues en erreur",
       "SENTRY_MEMBER": "Membre référent"
     },
+    "OPERATIONS": {
+      "TITLE": "{{uid}} - Opérations"
+    },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications émises",
       "SUMMARY": "Certifications émises",
