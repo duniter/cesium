@@ -27,7 +27,9 @@
       "RECEIVED_CERT_LABEL": "Total reçues",
       "RECEIVED_CERT_DELTA_LABEL": "Variation reçues",
       "GIVEN_CERT_LABEL": "Total envoyées",
-      "GIVEN_CERT_DELTA_LABEL": "Variation envoyées"
+      "GIVEN_CERT_DELTA_LABEL": "Variation envoyées",
+      "INPUT_CHART_TITLE": "Somme des flux entrants, par émetteur :",
+      "OUTPUT_CHART_TITLE": "Somme des flux sortants, par destinaire :"
     },
     "BLOCKCHAIN": {
       "TITLE": "Statistiques",
