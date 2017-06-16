@@ -902,33 +902,48 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
 /**
  * Identity tx view controller
  */
-function WotIdentityTxViewController($q, $scope, $filter, $translate, csTx, FileSaver, gpColor, BMA, UIUtils) {
+function WotIdentityTxViewController($scope, $timeout, csSettings, $controller, csTx, csWallet, BMA, UIUtils) {
   'ngInject';
 
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
+
+  $scope.formData= {};
   $scope.loading = true;
   $scope.motion = UIUtils.motion.fadeSlideInRight;
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
-    $scope.formData = {
-      name:state.stateParams.name,
-      uid:state.stateParams.uid,
-      pubkey:state.stateParams.pubkey
-    };
+    $scope.pubkey= state.stateParams.pubkey;
+    $scope.uid= state.stateParams.uid;
 
     // Load account TX data
-    csTx.load($scope.formData.pubkey)
+    csTx.load($scope.pubkey)
       .then(function(result) {
           console.log(result); // Allow to discover data structure
           if (result && result.tx && result.tx.history) {
-            $scope.items = result.tx.history;
+            $scope.tx = result.tx;
+            $scope.history = result.tx.history;
           }
           $scope.balance = result.balance;
-          $scope.motion.show();
-          $scope.loading = false;
+        $scope.load($scope.pubkey, true, $scope.uid)
+          .then(function(){
+            $scope.motion.show();
+            $scope.loading = false;
+          });
       });
   });
+
+  $scope.downloadHistoryFile = function(options) {
+    options = options || {};
+    options.fromTime = options.fromTime || -1; // default: full history
+    csTx.downloadHistoryFile($scope.pubkey, options);
+  };
+
+  //TODO :
+
 };
+
 
 /**
  * Certifications controller - extend WotIdentityAbstractCtrl

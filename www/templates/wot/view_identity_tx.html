@@ -8,13 +8,24 @@
 
   <ion-content>
 
-    <!-- buttons bar -->
-    <div class="center padding">
-      <div class="buttons">
-        <button class="button button-balanced icon-left icon ion-archive"
-                ng-click="onExportButtonClick()">{{'RML9.BTN_EXPORT' | translate}}
-        </button>
-      </div>
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="doUpdate()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
+      </button>
+
+      <button class="button button-stable button-small-padding icon ion-android-download ink"
+              ng-click="downloadHistoryFile()"
+              title="{{'COMMON.BTN_DOWNLOAD_ACCOUNT_STATEMENT' | translate}}">
+      </button>
+
+      <cs-extension-point name="buttons"></cs-extension-point>
+
+    </div>
+
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
     </div>
 
     <div class="list {{motion.ionListClass}}" ng-if="!loading">
@@ -26,17 +37,31 @@
         <div class="col">
 
           <!-- the balance -->
-          <div class="item">
+          <div class="item item-divider item-tx">
             {{'RML9.VIEW.BALANCE'|translate}}
-            <div class="badge badge-calm">
+            <div class="badge badge-balanced">
               {{balance|formatAmount}} <span ng-bind-html="$root.currency.name|currencySymbol"></span>
             </div>
           </div>
 
+          <span class="item item-divider" ng-if="!loading">
+            {{:locale:'ACCOUNT.LAST_TX'|translate}}
+            <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
+          </span>
+
           <!-- iterate on each TX -->
           <div class="item item-tx item-icon-left"
-               ng-repeat="tx in items"
-               ng-include="'templates/wallet/view_tx.html'">
+               ng-repeat="tx in history"
+               ng-include="'templates/wallet/item_tx.html'">
+          </div>
+
+          <div class="item item-text-wrap text-center" ng-if="tx.fromTime > 0">
+            <p>
+              <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
+              <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: tx.fromTime}"></span>
+              <span class="gray">|</span>
+              <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>
+            </p>
           </div>
         </div>
 
