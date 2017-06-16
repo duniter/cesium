@@ -55,6 +55,8 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
 
   .controller('GpAccountBalanceCtrl', GpAccountBalanceController)
 
+  .controller('GpAccountSumTxCtrl', GpAccountSumTxController)
+
   .controller('GpAccountCertificationCtrl', GpAccountCertificationController)
 
 ;
@@ -286,6 +288,65 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
       query += ' AND (transactions.issuers:' + $scope.formData.pubkey + ' OR transactions.outputs:*' + $scope.formData.pubkey + ')';
     }
     $state.go('app.blockchain_search', {q: query});
+  };
+}
+
+//TODO : Avoid csTx loading, switch to Elasticsearch
+function GpAccountSumTxController($scope, $controller,$filter, csTx, gpColor) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
+
+  // When opening the view
+  $scope.init = function(e, state) {
+
+    var formatDecimal = $filter('formatDecimal');
+
+    // Get the pubkey (from URL params) and store it in the page context ($scope)
+    $scope.pubkey = (state && state.stateParams && state.stateParams.pubkey);
+    if (!$scope.pubkey) return;
+
+    // Load account TX data
+    csTx.load($scope.pubkey, -1)
+      .then(function(result) {
+        console.log(result); // Allow to discover data structure
+        if (result && result.tx && result.tx.history) {
+           //Charts data
+           $scope.inputChart = $scope.computeChartData(_.filter(result.tx.history, function(tx) {
+             return tx.amount > 0;
+           }));
+          $scope.outputChart = $scope.computeChartData(_.filter(result.tx.history, function(tx) {
+            return tx.amount < 0;
+          }));
+          console.log( $scope.outputChart);
+        }
+      });
+  };
+
+  // Load chart data: received amount by pubkey
+  $scope.computeChartData = function(txArray) {
+
+
+    // Sum TX amount, with a group by pubkey
+    var sumByPubkeys = {};
+    _.forEach(txArray, function (tx) {
+      sumByPubkeys[tx.pubkey] = sumByPubkeys[tx.pubkey] || {
+          label: tx.uid || tx.pubkey,
+          sum: 0
+        };
+      sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount/100);
+    });
+
+    // Get values (from the map), then sort (desc) on sum
+    var sumItems = _.sortBy(_.values(sumByPubkeys), 'sum').reverse();
+
+    // Return arrays expected by angular-chart
+    return {
+      data: _.pluck(sumItems, 'sum'),
+      labels: _.pluck(sumItems, 'label'),
+      colors: gpColor.scale.custom(sumItems.length)
+    };
   };
 }
 
