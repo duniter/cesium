@@ -40,7 +40,7 @@ angular.module('cesium.graph.currency.controllers', ['chart.js', 'cesium.graph.s
         }
       })
       .state('app.currency_stats_lg', {
-        url: "/currency/stats/lg",
+        url: "/currency/stats/lg?hide&scale",
         views: {
           'menuContent': {
             templateUrl: "plugins/graph/templates/currency/view_stats_lg.html"
@@ -111,6 +111,11 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
     $scope.formData.useRelative :
     csSettings.data.useRelative;
   $scope.displayShareAxis = true;
+  $scope.hiddenDatasets = [];
+
+  $scope.init = function(e, state) {
+    // nothing to do here
+  };
 
   $scope.onUseRelativeChanged = function() {
     if (!$scope.loading) {
@@ -145,7 +150,7 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
         // Choose a date formatter, depending on the blocks period
         var blocksPeriod = result.times[result.times.length-1] - result.times[0];
         var formatDate;
-        if (blocksPeriod < 15778800/* less than 6 months*/) {
+        if (blocksPeriod < 31557600/* less than 1 year */) {
           formatDate = $filter('formatDateShort');
         }
         else {
@@ -205,7 +210,8 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
             text: translations['GRAPH.CURRENCY.MONETARY_MASS_TITLE']
           },
           legend: {
-            display: $scope.displayShareAxis
+            display: $scope.displayShareAxis,
+            onClick: $scope.onLegendClick
           },
           scales: {
             yAxes: [
@@ -215,7 +221,10 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
               {
                 id: 'y-axis-mn',
                 display: $scope.displayShareAxis,
-                position: 'right'
+                position: 'right',
+                gridLines: {
+                  drawOnChartArea: false
+                }
               }
             ]
           },
@@ -231,15 +240,16 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
             }
           }
         };
-        $scope.setScale($scope.scale);
 
         $scope.datasetOverride = [
           {
             yAxisID: 'y-axis-mass',
             type: 'line',
             label: translations['GRAPH.CURRENCY.MONETARY_MASS_LABEL'],
-            hoverBackgroundColor: gpColor.rgba.calm(0.6),
-            borderWidth: 1
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 4,
+            pointHoverRadius: 3
           },
           {
             yAxisID: 'y-axis-mn',
@@ -247,15 +257,19 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
             label: translations['GRAPH.CURRENCY.MONETARY_MASS_SHARE_LABEL'],
             fill: false,
             showLine: true,
-            borderColor: 'rgba(255,201,0,1)',
-            borderWidth: 2,
-            backgroundColor: 'rgba(255,201,0,1)',
-            pointBackgroundColor: 'rgba(255,201,0,1)',
-            pointBorderColor: 'rgba(255,255,255,1)',
-            pointHoverBackgroundColor: 'rgba(255,201,0,1)',
-            pointHoverBorderColor: 'rgba(0,0,0,0)',
-            pointRadius: 3
+            borderColor: gpColor.rgba.energized(),
+            borderWidth: 1,
+            backgroundColor: gpColor.rgba.energized(),
+            pointBackgroundColor: gpColor.rgba.energized(),
+            pointBorderColor: gpColor.rgba.energized(),
+            pointHoverBackgroundColor: gpColor.rgba.energized(),
+            pointHoverBorderColor: gpColor.rgba.energized(),
+            pointRadius: 0,
+            pointHitRadius: 4,
+            pointHoverRadius: 3
           }];
+
+        $scope.setScale($scope.scale);
 
         // Keep only block number (need for click)
         $scope.blocks = result.blocks.reduce(function(res, block) {
@@ -295,7 +309,7 @@ function GpCurrencyMonetaryMassController($scope, $controller, $q, $state, $tran
 }
 
 
-function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $filter) {
+function GpCurrencyDUController($scope, $q, $controller, $translate, gpColor, gpData, $filter) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyMonetaryMassCtrl', {$scope: $scope}));
@@ -322,7 +336,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
         // Choose a date formatter, depending on the blocks period
         var blocksPeriod = result.times[result.times.length-1] - result.times[0];
         var dateFilter;
-        if (blocksPeriod < 15778800/* less than 6 months*/) {
+        if (blocksPeriod < 31557600/* less than 1 year */) {
           dateFilter = $filter('formatDateShort');
         }
         else {
@@ -346,7 +360,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
 
         // Colors
         $scope.colors = result.blocks.reduce(function(res) {
-          return res.concat('rgba(17,193,243,0.5)');
+          return res.concat(gpColor.rgba.calm(0.5));
         }, []);
 
         // Options
@@ -362,7 +376,7 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
               {
                 id: 'y-axis-ud',
                 ticks: {
-                  beginAtZero: true
+                  beginAtZero: false
                 }
               }
             ]
@@ -384,9 +398,12 @@ function GpCurrencyDUController($scope, $q, $controller, $translate, gpData, $fi
         $scope.datasetOverride = [
           {
             yAxisID: 'y-axis-ud',
-            type: 'bar',
+            type: 'line',
             label: translations['COMMON.UNIVERSAL_DIVIDEND'],
-            hoverBackgroundColor: 'rgba(17,193,243,0.6)'
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 4,
+            pointHoverRadius: 3
           }];
 
         // Keep only block number (need for click)
@@ -425,18 +442,18 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
         $scope.times = result.times;
 
         // Choose a date formatter, depending on the blocks period
-        var blocksPeriod = result.times[result.blocks.length-1]- result.times[0];
-        var dateFormat;
-        if (blocksPeriod < 15778800/* less than 6 months*/) {
-          dateFormat = $filter('formatDateShort');
+        var blocksPeriod = result.times[result.blocks.length-1] - result.times[0];
+        var dateFilter;
+        if (blocksPeriod < 31557600/* less than 1 year*/) {
+          dateFilter = $filter('formatDateShort');
         }
         else {
-          dateFormat = $filter('formatDateMonth');
+          dateFilter = $filter('formatDateMonth');
         }
 
         // Format time
         $scope.labels = result.times.reduce(function(res, time) {
-          return res.concat(dateFormat(time));
+          return res.concat(dateFilter(time));
         }, []);
 
         // Members count graph: -------------------------
@@ -463,7 +480,10 @@ function GpCurrencyMembersCountController($scope, $controller, $q, $state, $tran
             yAxisID: 'y-axis-1',
             type: 'line',
             label: translations['GRAPH.CURRENCY.MEMBERS_COUNT_LABEL'],
-            hoverBackgroundColor: 'rgba(17,193,243,0.7)'
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 4,
+            pointHoverRadius: 3
           }];
 
         // Data

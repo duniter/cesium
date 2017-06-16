@@ -29,7 +29,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
 
       $stateProvider
         .state('app.view_wallet_stats', {
-          url: "/wallet/stats?t&stepUnit",
+          url: "/wallet/stats?t&stepUnit&hide&scale",
           views: {
             'menuContent': {
               templateUrl: "plugins/graph/templates/account/view_stats.html"
@@ -41,7 +41,7 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
         })
 
         .state('app.wot_identity_stats', {
-          url: "/wot/:pubkey/stats?t&stepUnit",
+          url: "/wot/:pubkey/stats?t&stepUnit&hide&scale",
           views: {
             'menuContent': {
               templateUrl: "plugins/graph/templates/account/view_stats.html"
@@ -100,7 +100,7 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
 
   };
 
-  $scope.inheritedSetScale = $scope.setScale;
+  var defaultSetScale = $scope.setScale;
   $scope.setScale = function(scale) {
     // linear scale: sent values as negative
     if (scale === 'linear') {
@@ -115,7 +115,8 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
       });
     }
 
-    $scope.inheritedSetScale(scale);
+    // call default implementation
+    defaultSetScale(scale);
   };
 
   $scope.load = function(updateTimePct) {
@@ -168,15 +169,15 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
           result.balance
         ];
 
-        var displayFormats = {
+        var datePatterns = {
           hour: translations['COMMON.DATE_PATTERN'],
           day: translations['COMMON.DATE_SHORT_PATTERN'],
           month: translations['COMMON.DATE_MONTH_YEAR_PATTERN']
         };
-        var displayFormat = displayFormats[$scope.formData.rangeDuration];
         // Labels
+        var labelPattern = datePatterns[$scope.formData.rangeDuration];
         $scope.labels = result.times.reduce(function(res, time) {
-          return res.concat(moment.unix(time).local().format(displayFormat));
+          return res.concat(moment.unix(time).local().format(labelPattern));
         }, []);
 
         // Colors
@@ -204,7 +205,8 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             ]
           },
           legend: {
-            display: true
+            display: true,
+            onClick: $scope.onLegendClick
           },
           tooltips: {
             enabled: true,
@@ -219,7 +221,6 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             }
           }
         };
-        $scope.setScale($scope.scale);
 
         $scope.datasetOverride = [
           {

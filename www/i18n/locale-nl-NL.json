@@ -146,7 +146,7 @@
     "VIEW": {
       "HEADER_TITLE": "Blok #{{number}}-{{hash|formatHash}}",
       "TITLE_CURRENT": "Huidige blok",
-      "TITLE": "Blok #{{number}}",
+      "TITLE": "Blok #{{number|formatInteger}}",
       "COMPUTED_BY": "Berekend door het knooppunt",
       "SHOW_RAW": "Bekijk RAW-bestand",
       "TECHNICAL_DIVIDER": "Technische informatie",

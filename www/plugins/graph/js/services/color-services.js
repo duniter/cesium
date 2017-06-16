@@ -132,6 +132,10 @@ angular.module('cesium.graph.color.services', [])
       };
     });
 
+    exports.rgba.translucent = function() {
+      return 'rgb(0,0,0,0)';
+    };
+
     return exports;
   })
 

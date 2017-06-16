@@ -433,12 +433,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.showNodeListPopover = function(event) {
-    UIUtils.popover.show(event, {
+    return UIUtils.popover.show(event, {
       templateUrl: 'templates/network/popover_peer_info.html',
       autoremove: true,
       scope: $scope.$new(true)
-    }).then(function(res) {
-      console.log(res);
     });
   };
 

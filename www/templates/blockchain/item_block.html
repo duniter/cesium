@@ -33,7 +33,7 @@
     </div>
 
     <div class="col col-20">
-      <span class="badge " ng-class="{'badge-balanced': !$index , 'badge-calm': $index && !block.compacted && !block.empty}">{{:rebind:block.number}}</span>
+      <span class="badge " ng-class="{'badge-balanced': !$index , 'badge-calm': $index && !block.compacted && !block.empty}">{{:rebind:block.number|formatInteger}}</span>
     </div>
 
   </div>

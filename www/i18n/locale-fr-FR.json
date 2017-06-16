@@ -157,7 +157,7 @@
     "VIEW": {
       "HEADER_TITLE": "Bloc #{{number}}-{{hash|formatHash}}",
       "TITLE_CURRENT": "Bloc courant",
-      "TITLE": "Bloc #{{number}}",
+      "TITLE": "Bloc #{{number|formatInteger}}",
       "COMPUTED_BY": "Calculé par le noeud de",
       "SHOW_RAW": "Voir le fichier brut",
       "TECHNICAL_DIVIDER": "Informations techniques",

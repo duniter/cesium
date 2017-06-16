@@ -72,7 +72,7 @@
           <i class="icon ion-cube"></i>
           <span translate>BLOCKCHAIN.VIEW.TITLE_CURRENT</span>
           <div class="badge badge-calm" ng-if="!loading">
-            {{current.number}}
+            {{current.number|formatInteger}}
           </div>
         </a>
 

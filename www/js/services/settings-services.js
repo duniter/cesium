@@ -65,7 +65,6 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     httpsMode: false,
     expertMode: false,
     decimalCount: 4,
-    forceNetworkViewToHttp: false,
     uiEffects: true,
     minVersion: csConfig.compatProtocol_0_80 ? '0.80.0' : '0.90.0', // TODO update this if need
     newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",

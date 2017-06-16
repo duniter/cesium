@@ -156,7 +156,7 @@
     "VIEW": {
       "HEADER_TITLE": "Block #{{number}}-{{hash|formatHash}}",
       "TITLE_CURRENT": "Current block",
-      "TITLE": "Block #{{number}}",
+      "TITLE": "Block #{{number|formatInteger}}",
       "COMPUTED_BY": "Computed by",
       "SHOW_RAW": "Show raw data",
       "TECHNICAL_DIVIDER": "Technical informations",

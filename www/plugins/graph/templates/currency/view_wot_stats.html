@@ -7,6 +7,8 @@
       <ion-spinner icon="android"></ion-spinner>
     </div>
 
-    <ng-include src="'plugins/graph/templates/currency/graph_members_count.html'" ></ng-include>
+    <ng-include
+      ng-if="!loading"
+      src="'plugins/graph/templates/currency/graph_members_count.html'" ></ng-include>
   </ion-content>
   </ion-view>

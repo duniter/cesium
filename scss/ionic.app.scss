@@ -1043,6 +1043,7 @@ $screen-menu:                     845px;
   }
   .card-footer {
     padding-left: 88px;
+    overflow: hidden;
 
     .pull-right {
       a {
@@ -1344,7 +1345,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 **********/
 
 .modal.modal-full-height {
-  //height: 100% !important;
   bottom: 0px;
 }
 

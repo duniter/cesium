@@ -7,7 +7,7 @@ angular.module('cesium.graph.blockchain.controllers', ['chart.js', 'cesium.servi
     $stateProvider
 
       .state('app.blockchain_stats', {
-        url: "/blockchain/stats?currency",
+        url: "/blockchain/stats?currency&stepUnit&t&hide&scale",
         views: {
           'menuContent': {
             templateUrl: "plugins/graph/templates/blockchain/view_stats.html"
@@ -37,8 +37,15 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
+  $scope.displayRightAxis = true;
+
   $scope.init = function(e, state) {
     if (state && state.stateParams) {
+
+      // get the pubkey
+      if (!$scope.formData.issuer && state && state.stateParams && state.stateParams.pubkey) { // Currency parameter
+        $scope.formData.issuer = state.stateParams.pubkey;
+      }
 
       // get the pubkey
       if (!$scope.formData.issuer && state && state.stateParams && state.stateParams.pubkey) { // Currency parameter
@@ -50,6 +57,7 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
   $scope.load = function(updateTimePct) {
 
     var formData = $scope.formData;
+    console.log(angular.copy($scope.formData));
 
     return $q.all([
 
@@ -73,6 +81,12 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
         var title = result[0];
 
         var translations = result[1];
+        var datePatterns = {
+          hour: translations['COMMON.DATE_PATTERN'],
+          day: translations['COMMON.DATE_SHORT_PATTERN'],
+          month: translations['COMMON.DATE_MONTH_YEAR_PATTERN']
+        };
+
         result = result[2];
 
         if (!result || !result.times) return; // no data
@@ -86,8 +100,8 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
         if ($scope.formData.rangeDuration != 'hour') {
           $scope.data = [
             result.amount,
-            result.count,
-            result.avgByBlock
+            result.count/*,
+            result.avgByBlock*/
           ];
         }
         else {
@@ -98,17 +112,9 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
         }
 
         // Labels
-        $scope.labels = result.labels;
-
-        var displayFormats = {
-          hour: translations['COMMON.DATE_PATTERN'],
-          day: translations['COMMON.DATE_SHORT_PATTERN'],
-          month: translations['COMMON.DATE_MONTH_YEAR_PATTERN']
-        };
-        var displayFormat = displayFormats[$scope.formData.rangeDuration];
-        // Labels
+        var labelPattern = datePatterns[$scope.formData.rangeDuration];
         $scope.labels = result.times.reduce(function(res, time) {
-          return res.concat(moment.unix(time).local().format(displayFormat));
+          return res.concat(moment.unix(time).local().format(labelPattern));
         }, []);
 
         // Colors
@@ -129,22 +135,26 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
             yAxes: [
               {
                 id: 'y-axis-amount',
-                type: 'linear',
                 position: 'left'
               },
               {
                 id: 'y-axis-count',
-                display: false,
-                type: 'linear',
-                position: 'right'
-              },
+                display: $scope.displayRightAxis,
+                position: 'right',
+                gridLines: {
+                  drawOnChartArea: false
+                }
+              }/*,
               {
                 id: 'y-axis-avg',
                 display: false,
-                type: 'linear',
                 position: 'right'
-              }
+              }*/
             ]
+          },
+          legend: {
+            display: $scope.displayRightAxis,
+            onClick: $scope.onLegendClick
           },
           tooltips: {
             enabled: true,
@@ -163,8 +173,7 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
           }
         };
 
-        $scope.setScale($scope.scale);
-
+        // Override dataset config
         $scope.datasetOverride = [
           {
             yAxisID: 'y-axis-amount',
@@ -179,24 +188,25 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
             fill: false,
             borderColor: gpColor.rgba.gray(0.5),
             borderWidth: 2,
+            backgroundColor: gpColor.rgba.gray(0.5),
             pointBackgroundColor: gpColor.rgba.gray(0.5),
             pointBorderColor: gpColor.rgba.white(),
             pointHoverBackgroundColor: gpColor.rgba.gray(1),
-            pointHoverBorderColor: 'rgba(0,0,0,0)',
+            pointHoverBorderColor: gpColor.rgba.translucent(),
             pointRadius: 3
-          },
+          }/*,
           {
             yAxisID: 'y-axis-avg',
             type: 'line',
             label: translations['GRAPH.BLOCKCHAIN.TX_AVG_BY_BLOCK'],
             fill: false,
-            showLine: false,
+            showLine: true,
             borderColor: 'rgba(0,0,0,0)',
             pointBackgroundColor: 'rgba(0,0,0,0)',
             pointBorderColor: 'rgba(0,0,0,0)',
             pointHoverBackgroundColor: 'rgba(0,0,0,0)',
             pointHoverBorderColor: 'rgba(0,0,0,0)'
-          }
+          }*/
         ];
       });
   };

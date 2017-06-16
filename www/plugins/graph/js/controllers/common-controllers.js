@@ -12,7 +12,9 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     useRelative: csSettings.data.useRelative,
     timePct: 100,
     rangeDuration: 'day',
-    firstBlockTime: 0
+    firstBlockTime: 0,
+    scale: 'linear',
+    hide: []
   };
   $scope.formData.useRelative = false; /*angular.isDefined($scope.formData.useRelative) ?
     $scope.formData.useRelative : csSettings.data.useRelative;*/
@@ -37,14 +39,27 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
         if (!$scope.formData.currency && state && state.stateParams && state.stateParams.currency) { // Currency parameter
           $scope.formData.currency = state.stateParams.currency;
         }
-        if (state.stateParams.timePct) {
+        if (state.stateParams.t) {
+          $scope.formData.timePct = state.stateParams.t;
+        }
+        else if (state.stateParams.timePct) {
           $scope.formData.timePct = state.stateParams.timePct;
         }
-        if (state.stateParams.group) {
-          $scope.formData.rangeDuration = state.stateParams.group;
+        if (state.stateParams.stepUnit) {
+          $scope.formData.rangeDuration = state.stateParams.stepUnit;
+        }
+        if (state.stateParams.scale) {
+          $scope.formData.scale = state.stateParams.scale;
+        }
+        // Allow to hide some dataset
+        if (state.stateParams.hide) {
+          $scope.formData.hide = state.stateParams.hide.split(',').reduce(function(res, index){
+            return res.concat(parseInt(index));
+          }, []);
         }
       }
 
+      // Should be override by subclasses
       $scope.init(e, state);
 
       // Make sure there is currency, or load it not
@@ -61,8 +76,13 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
           });
       }
 
-      $scope.load()
+      $scope.load()  // Should be override by subclasses
         .then(function () {
+          // Update scale
+          $scope.setScale($scope.formData.scale);
+          // Hide some dataset by index (read from state params)
+          $scope.updateHiddenDataset();
+
           $scope.loading = false;
         });
     }
@@ -78,8 +98,10 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     });
 
     $scope.stateParams = $scope.stateParams || {};
-    $scope.stateParams.t = $scope.formData.timePct < 100 || $scope.formData.timePct >= 0 ? $scope.formData.timePct : undefined;
+    $scope.stateParams.t = ($scope.formData.timePct >= 0 && $scope.formData.timePct < 100) ? $scope.formData.timePct : undefined;
     $scope.stateParams.stepUnit = $scope.formData.rangeDuration != 'day' ? $scope.formData.rangeDuration : undefined;
+    $scope.stateParams.hide = $scope.formData.hide && $scope.formData.hide.length ? $scope.formData.hide.join(',') : undefined;
+    $scope.stateParams.scale = $scope.formData.scale != 'linear' ?$scope.formData.scale : undefined;
 
     $state.go($scope.stateName, $scope.stateParams, {
       reload: false,
@@ -102,7 +124,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     }
   });
 
-  $scope.init = function(stateParams) {
+  $scope.init = function(e, state) {
     // Should be override by subclasses
   };
 
@@ -111,16 +133,19 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
   };
 
   $scope.toggleScale = function() {
-    $scope.setScale($scope.scale === 'linear' ? 'logarithmic' : 'linear');
+    $scope.setScale($scope.formData.scale === 'linear' ? 'logarithmic' : 'linear');
+    $scope.updateLocation();
   };
 
   $scope.setScale = function(scale) {
     $scope.hideActionsPopover();
-    $scope.scale = scale;
+    $scope.formData.scale = scale;
+
+    if (!$scope.options || !$scope.options.scales || !$scope.options.scales.yAxes) return;
 
     var format = $filter('formatInteger');
 
-    _.forEach($scope.options.scales.yAxes, function(yAxe) {
+    _.forEach($scope.options.scales.yAxes, function(yAxe, index) {
       yAxe.type = scale;
       yAxe.ticks = yAxe.ticks || {};
       if (scale == 'linear') {
@@ -163,9 +188,62 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
     $scope.updateLocation();
   };
 
+  $scope.updateHiddenDataset = function(datasetOverride) {
+    datasetOverride = datasetOverride || $scope.datasetOverride || {};
+
+    _.forEach($scope.formData.hide||[], function(index) {
+      if (!datasetOverride[index]) return; // skip invalid index
+
+      // Hide the dataset (stroke the legend)
+      datasetOverride[index].hidden = true;
+
+      // If this dataset has an yAxis, hide it (if not used elsewhere)
+      var yAxisID = datasetOverride[index].yAxisID;
+      var yAxe = yAxisID && $scope.options && $scope.options.scales && _.findWhere($scope.options.scales.yAxes||[], {id: yAxisID});
+      if (yAxisID && yAxe) {
+        var yAxisDatasetCount = _.filter(datasetOverride, function(dataset) {
+          return dataset.yAxisID === yAxisID;
+        }).length;
+        if (yAxisDatasetCount == 1) {
+          yAxe.display = false;
+        }
+      }
+
+    });
+  };
+
+  $scope.onLegendClick = function(e, legendItem) {
+    var index = legendItem.datasetIndex;
+    var ci = this.chart;
+    var meta = ci.getDatasetMeta(index);
+
+    // Hide/show the dataset
+    meta.hidden = meta.hidden === null? !ci.data.datasets[index].hidden : null;
+
+    // Update yAxis display (if used by only ONE dataset)
+    if (ci.config && ci.config.data && ci.config.data.datasets) {
+      var yAxisDatasetCount = _.filter(ci.config.data.datasets, function(dataset) {
+        return dataset.yAxisID && dataset.yAxisID === meta.yAxisID;
+      }).length;
+      if (yAxisDatasetCount === 1) {
+        ci.scales[meta.yAxisID].options.display = !(meta.hidden === true);
+      }
+    }
+
+    // We hid a dataset ... rerender the chart
+    ci.update();
+
+    // Update window location
+    $scope.formData.hide = $scope.formData.hide||[];
+    $scope.formData.hide = meta.hidden ?
+      _.union($scope.formData.hide, [index]) :
+      _.difference($scope.formData.hide, [index]);
+    $scope.updateLocation();
+  };
+
   $scope.goPreviousRange = function() {
-    if ($scope.loading) return;
-    $scope.loading = true;
+    if ($scope.loadingRange) return;
+    $scope.loadingRange = true;
 
     $scope.formData.startTime -= $scope.times.length * $scope.formData.rangeDurationSec;
     if ($scope.formData.startTime < $scope.formData.firstBlockTime) {
@@ -178,13 +256,13 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
       // Update location
       $scope.updateLocation();
 
-      $scope.loading = false;
+      $scope.loadingRange = false;
     });
   };
 
   $scope.goNextRange = function() {
-    if ($scope.loading) return;
-    $scope.loading = true;
+    if ($scope.loadingRange) return;
+    $scope.loadingRange = true;
     $scope.formData.startTime += $scope.times.length * $scope.formData.rangeDurationSec;
     if ($scope.formData.startTime > $scope.formData.firstBlockTime + $scope.formData.currencyAge - $scope.formData.timeWindow) {
       $scope.formData.startTime = $scope.formData.firstBlockTime + $scope.formData.currencyAge - $scope.formData.timeWindow;
@@ -196,13 +274,13 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
       // Update location
       $scope.updateLocation();
 
-      $scope.loading = false;
+      $scope.loadingRange = false;
     });
   };
 
   $scope.onRangeChanged = function() {
-    if ($scope.loading) return;
-    $scope.loading = true;
+    if ($scope.loadingRange) return;
+    $scope.loadingRange = true;
 
     $scope.formData.startTime = $scope.formData.firstBlockTime + (parseFloat($scope.formData.timePct) / 100) * ($scope.formData.currencyAge - $scope.formData.timeWindow) ;
     $scope.formData.endTime = $scope.formData.startTime + $scope.times.length * $scope.formData.rangeDurationSec;
@@ -212,7 +290,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
       // Update location
       $scope.updateLocation();
 
-      $scope.loading = false;
+      $scope.loadingRange = false;
     });
   };
 

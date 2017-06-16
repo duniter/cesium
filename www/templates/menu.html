@@ -13,11 +13,12 @@
       <ion-nav-buttons side="right" >
 
         <!-- current node info -->
-        <button class="button button-clear hidden-xs hidden-sm gray"
+        <button class="button button-clear hidden-xs hidden-sm gray icon-left"
                 ng-if="$root.settings.expertMode"
                 style="max-width: 450px !important;"
                 ng-click="showNodeListPopover($event)">
-          {{$root.currency.node.server}}
+          <small class="ion-locked" ng-if="$root.currency.node.useSsl"></small>
+          {{$root.currency.node.host}}{{$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
           <small class="ion-arrow-down-b"></small>
         </button>
 

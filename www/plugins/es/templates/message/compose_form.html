@@ -2,6 +2,8 @@
 
     <div class="list" ng-init="setForm(messageForm)">
 
+      <!-- TODO: allow multi dest ?
+           Do IT with a ion-scroll - see https://stackoverflow.com/a/38308803 -->
       <a class="item item-icon-right gray ink"
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal()">

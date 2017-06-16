@@ -14,10 +14,10 @@
       "decimal": ","
     },
     "abbreviations": {
-      "thousand": "<small>x10<sup>3</sup></small>",
-      "million":  "<small>x10<sup>6</sup></small>",
-      "billion":  "<small>x10<sup>9</sup></small>",
-      "trillion": "<small>x10<sup>12</sup></small>"
+      "thousand": "x10^3",
+      "million":  "x10^6",
+      "billion":  "x10^9",
+      "trillion": "x10^12"
     },
     "ordinal": function (number) {
       return (number === 1) ? 'er' : 'ième';

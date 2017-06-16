@@ -6,16 +6,24 @@
 
   <ion-content scroll="true" class="padding" >
 
+
+
     <div class="list" >
 
       <!-- Monetary mass -->
-      <ng-controller ng-controller="GpCurrencyMonetaryMassCtrl">
-        <div class="item no-padding-xs"
+      <ng-controller ng-controller="GpCurrencyMonetaryMassCtrl" >
+
+        <div class="center padding" ng-if="loading">
+          <ion-spinner icon="android"></ion-spinner>
+        </div>
+
+        <div class="item no-padding-xs" ng-if="!loading"
              ng-include="'plugins/graph/templates/currency/graph_monetary_mass.html'"
              ng-init="setSize(250, 1000)">
         </div>
 
-        <div class="item item-toggle dark no-border text-right">
+        <div ng-if="!loading"
+             class="item item-toggle dark no-border text-right">
           <span class="" translate>COMMON.BTN_RELATIVE_UNIT</span>
           <label class="toggle toggle-royal" id="helptip-currency-change-unit">
             <input type="checkbox" ng-model="formData.useRelative">
@@ -27,15 +35,19 @@
       </ng-controller>
 
       <!-- DU -->
-      <div class="item no-padding-xs"
-           ng-include="'plugins/graph/templates/currency/graph_du.html'"
-           ng-controller="GpCurrencyDUCtrl"
-           ng-init="setSize(250, 1000)">
-      </div>
+      <ng-controller ng-controller="GpCurrencyDUCtrl" >
+        <div class="item no-padding-xs"
+             ng-if="!loading"
+             ng-include="'plugins/graph/templates/currency/graph_du.html'"
+             ng-init="setSize(250, 1000)">
+        </div>
+      </ng-controller>
 
+      <!-- Member count  -->
+      <ng-controller ng-controller="GpCurrencyMembersCountCtrl" >
       <div class="item no-padding-xs"
+           ng-if="!loading"
            ng-include="'plugins/graph/templates/currency/graph_members_count.html'"
-           ng-controller="GpCurrencyMembersCountCtrl"
            ng-init="setSize(250, 1000)">
       </div>
 

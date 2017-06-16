@@ -65,6 +65,10 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       options.endTime = options.endTime || moment().utc().add(1, options.rangeDuration).unix();
       options.startTime = options.startTime ||
         moment.unix(options.endTime).utc().subtract(options.defaultTotalRangeCount, options.rangeDuration).unix();
+      // Make to sure startTime is never before the currency starts - fix #483
+      if (options.firstBlockTime && options.startTime < options.firstBlockTime) {
+        options.startTime = options.firstBlockTime;
+      }
       return options;
     }
 
@@ -229,7 +233,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       var jobs = [];
 
       var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
-      var to = moment.unix(options.endTime).utc();
+      var to = moment.unix(options.endTime).utc().startOf(options.rangeDuration);
       var ranges = [];
       while(from.isBefore(to)) {
 
@@ -238,8 +242,9 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           to: from.add(1, options.rangeDuration).unix()
         });
 
-        // Do not exceed max range count
-        if (ranges.length == options.maxRangeSize) {
+        // Flush if max range count, or just before loop condition end (fix #483)
+        var flush = (ranges.length === options.maxRangeSize) || !from.isBefore(to);
+        if (flush) {
           var request = {
             size: 0,
             aggs: {
@@ -296,7 +301,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
             );
           }
         }
-      }
+      } // loop
 
       return $q.all(jobs)
         .then(function(res) {
@@ -468,7 +473,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       }
 
       var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
-      var to = moment.unix(options.endTime).utc();
+      var to = moment.unix(options.endTime).utc().startOf(options.rangeDuration);
 
       var ranges = [];
       var udRanges = [];
@@ -505,9 +510,11 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           to: from.add(1, options.rangeDuration).unix()
         });
 
-        // Do not exceed max range count
-        if ((!jobs.length && ranges.length == options.maxRangeSize+1) || (jobs.length && ranges.length == options.maxRangeSize)) {
-
+        // Flush if max range count, or just before loop condition end (fix #483)
+        var flush = (!jobs.length && ranges.length == options.maxRangeSize+1) ||
+          (jobs.length && ranges.length == options.maxRangeSize) ||
+          !from.isBefore(to);
+        if (flush) {
           if (udRanges.length) {
             jobs.push($q.all([
               exports.raw.movement.getUds(currency, udRanges, udFromMapping),
