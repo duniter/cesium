@@ -11,7 +11,6 @@
 /cesium.iml
 /pom.xml
 /www/css/ionic.app.css
-/www/css/ionic.app.min.css
 
 /www/lib/*
 !/www/lib/ionic
@@ -21,3 +20,5 @@
 
 .directory
 www/js/config.js
+
+www/css/ionic.app.min.css
