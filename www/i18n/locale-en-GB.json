@@ -311,6 +311,7 @@
     "BTN_CERTIFY": "Certify",
     "BTN_YES_CERTIFY": "Yes, certify",
     "BTN_SELECT_AND_CERTIFY": "New certification",
+    "ACCOUNT_OPERATIONS": "Account operations",
     "VIEW": {
       "POPOVER_SHARE_TITLE": "Identity {{title}}"
     },
@@ -371,6 +372,7 @@
     "TITLE": "My Account",
     "BALANCE": "Balance",
     "LAST_TX": "Latest transactions",
+    "BALANCE_ACCOUNT": "Account balance",
     "NO_TX": "No transaction",
     "SHOW_MORE_TX": "Show more",
     "SHOW_ALL_TX": "Show all",

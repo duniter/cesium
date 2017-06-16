@@ -276,6 +276,7 @@
     "BTN_CERTIFY": "Certificeren",
     "BTN_YES_CERTIFY": "Ja, Certificeren",
     "BTN_SELECT_AND_CERTIFY": "Nieuwe certificatie",
+    "ACCOUNT_OPERATIONS": "Operaties op de rekening",
     "VIEW": {
       "POPOVER_SHARE_TITLE": "Identiteit {{title}}"
     },
@@ -330,6 +331,7 @@
     "TITLE": "Mijn rekening",
     "BALANCE": "Saldo",
     "LAST_TX": "Recente transacties",
+    "BALANCE_ACCOUNT": "Rekeningsaldo",
     "NO_TX": "Geen transacties",
     "SHOW_MORE_TX": "Show more",
     "SHOW_ALL_TX": "Show all",

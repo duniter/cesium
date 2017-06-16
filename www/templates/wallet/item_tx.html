@@ -1,6 +1,6 @@
 <i class="icon item-image "
    ng-if="::!tx.avatar"
-   ng-class="::{'ion-arrow-up-c': tx.isUD, 'ion-person dark': tx.uid, 'ion-card dark': !tx.uid && !tx.isUD}"></i>
+   ng-class="::{'ion-person dark': tx.uid, 'ion-card dark': !tx.uid}"></i>
 <i class="avatar" ng-if="::tx.avatar" style="background-image: url({{::tx.avatar.src}})"></i>
 
 <div class="row no-padding">
@@ -33,19 +33,19 @@
   <div class="col col-10 no-padding">
 
     <!-- not locked TX -->
-    <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-balanced': tx.amount > 0}">
+    <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0}">
       <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-      <span ng-bind-html=":rebind:unit"></span>
+      <span ng-bind-html=":rebind:$root.currency.name|currencySymbol"></span>
     </span>
 
     <!-- Locked TX -->
     <a ng-if="::tx.lockedOutputs"
        class="badge item-note"
-       ng-class="{'badge-balanced': tx.amount > 0}"
+       ng-class="{'badge-calm': tx.amount > 0}"
        ng-click="showLockedOutputsPopover(tx, $event)">
       <i class="icon ion-locked" ></i>
       <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-      <span ng-bind-html=":rebind:unit"></span>
+      <span ng-bind-html=":rebind:$root.currency.name|currencySymbol"></span>
     </a>
 
     <div class="badge badge-secondary" ng-if="$root.settings.expertMode">

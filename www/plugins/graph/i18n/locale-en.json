@@ -19,7 +19,9 @@
       "TX_RECEIVED_LABEL": "Receipts",
       "TX_SENT_LABEL": "Spending",
       "UD_LABEL": "UD",
-      "BALANCE_LABEL": "Balance"
+      "BALANCE_LABEL": "Balance",
+      "INPUT_CHART_TITLE": "Sum of incoming flows, per transmitter:",
+      "OUTPUT_CHART_TITLE": "Sum of outgoing flows, per recipient:"
     },
     "BLOCKCHAIN": {
       "TITLE": "Statistics",
