@@ -940,7 +940,7 @@ function WotIdentityTxViewController($scope, $timeout, csSettings, $controller, 
     csTx.downloadHistoryFile($scope.pubkey, options);
   };
 
-  //TODO :
+  //TODO : Manque l'actualisation des transaction + afficher plus/tout + bouton statistiques du compte
 
 };
 
