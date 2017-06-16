@@ -458,6 +458,24 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
   };
 
+  $scope.showCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+    $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
+      pubkey: $scope.formData.pubkey,
+      uid: $scope.formData.name || $scope.formData.uid,
+      type: 'received'
+    });
+  };
+
+  $scope.showGivenCertifications = function() {
+    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
+      $state.go(UIUtils.screen.isSmall() ? 'app.wallet_cert' : 'app.wallet_cert_lg', {
+        pubkey: $scope.formData.pubkey,
+        uid: $scope.formData.name || $scope.formData.uid,
+        type: 'given'
+    });
+  };
+
   $scope.showActionsPopover = function(event) {
     if (!$scope.actionsPopover) {
       $ionicPopover.fromTemplateUrl('templates/wallet/popover_actions.html', {

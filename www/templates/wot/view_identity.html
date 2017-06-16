@@ -77,20 +77,11 @@
           <h4 class="gray" translate>WOT.NOT_MEMBER_ACCOUNT_HELP</h4>
         </div>
 
-        <!-- Account transaction -->
-        <a class="item item-icon-left item-icon-right ink"
-           ng-if="!loading"
-           ui-sref="app.wot_identity_tx_uid({uid:formData.uid,pubkey:formData.pubkey})">
-          <i class="icon ion-card"></i>
-          <span translate>WOT.ACCOUNT_OPERATIONS</span>
-          <i class="gray icon ion-ios-arrow-right"></i>
-        </a>
-
         <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
            class="item item-icon-left item-text-wrap item-icon-right ink"
            ng-if=":rebind:formData.hasSelf"
-           ui-sref="app.wot_cert({pubkey:formData.pubkey,uid:formData.uid, type:'received'})">
+           ng-click="showCertifications()">
           <i class="icon ion-ribbon-b"></i>
           <b ng-if=":rebind:formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
           <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
@@ -105,7 +96,7 @@
         <!-- Signature stock -->
         <a class="item item-icon-left item-text-wrap item-icon-right ink visible-xs visible-sm"
              ng-if=":rebind:formData.hasSelf && formData.isMember"
-           ui-sref="app.wot_cert({pubkey:formData.pubkey,uid:formData.uid, type:'given'})">
+             ng-click="showGivenCertifications()">
           <i class="icon ion-ribbon-a"></i>
           <span translate>WOT.GIVEN_CERTIFICATIONS.SENT</span>
           <cs-badge-given-certification identity="formData"
@@ -121,6 +112,15 @@
           <h5 class="dark">{{:rebind:formData.sigDate | formatDate}}</h5>
           <span class="badge badge-balanced">{{:rebind:formData.sigDate | formatFromNow}}</span>
         </ion-item>
+
+        <!-- Account transaction -->
+        <a class="item item-icon-left item-icon-right ink"
+           ng-if="!loading"
+           ui-sref="app.wot_identity_tx_uid({uid:formData.uid,pubkey:formData.pubkey})">
+          <i class="icon ion-card"></i>
+          <span translate>WOT.ACCOUNT_OPERATIONS</span>
+          <i class="gray icon ion-ios-arrow-right"></i>
+        </a>
 
         <div
           class="item item-text-wrap item-icon-left item-wallet-event assertive"
