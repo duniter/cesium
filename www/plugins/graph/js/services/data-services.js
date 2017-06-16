@@ -447,7 +447,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
     };
 
     /**
-     * Graph: "tx count"
+     * Graph: "tx amount"
      * @param currency
      * @returns {*}
      */

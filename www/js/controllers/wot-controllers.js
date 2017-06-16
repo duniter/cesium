@@ -34,6 +34,29 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         }
       })
 
+      .state('app.wot_identity_tx_uid', {
+        url: "/wot/tx/:pubkey/:uid?action",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_identity_tx.html",
+            controller: 'WotIdentityTxViewCtrl'
+          },
+          data: {
+            large: 'app.wot_identity_tx_uid_lg'
+          }
+        }
+      })
+
+      .state('app.wot_identity_tx_uid_lg', {
+        url: "/wot/tx/lg/:pubkey/:uid?action",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/view_identity_tx.html",
+            controller: 'WotIdentityTxViewCtrl'
+          }
+        }
+      })
+
       .state('app.wot_cert', {
         url: "/wot/:pubkey/:uid/:type",
         views: {
@@ -90,6 +113,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
   .controller('WotIdentityAbstractCtrl', WotIdentityAbstractController)
 
   .controller('WotIdentityViewCtrl', WotIdentityViewController)
+
+  .controller('WotIdentityTxViewCtrl', WotIdentityTxViewController)
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 
@@ -787,42 +812,6 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     }
   };
 
-  /* -- open screens -- */
-
-  $scope.showCertifications = function() {
-    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
-    if (UIUtils.screen.isSmall() ) {
-      $state.go('app.wot_cert', {
-        pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid,
-        type: 'received'
-      });
-    }
-    else {
-      $state.go('app.wot_cert_lg', {
-        pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid
-      });
-    }
-  };
-
-  $scope.showGivenCertifications = function() {
-    // Warn: do not use a simple link here (a ng-click is mandatory for help tour)
-    if (UIUtils.screen.isSmall() ) {
-      $state.go('app.wot_cert', {
-        pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid,
-        type: 'given'
-      });
-    }
-    else {
-      $state.go('app.wot_cert_lg', {
-        pubkey: $scope.formData.pubkey,
-        uid: $scope.formData.uid
-      });
-    }
-  };
-
   $scope.showSharePopover = function(event) {
     var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
     // Use rootPath (fix #390)
@@ -841,7 +830,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UIUtils, csWallet) {
+function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UIUtils, csWallet, csTx) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -892,6 +881,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
     else {
       $scope.showHome();
     }
+
   });
 
   $scope.doMotion = function() {
@@ -908,6 +898,52 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
 
 
 }
+
+/**
+ * Identity tx view controller
+ */
+function WotIdentityTxViewController($scope, $timeout, csSettings, $controller, csTx, csWallet, BMA, UIUtils) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
+
+  $scope.formData= {};
+  $scope.loading = true;
+  $scope.motion = UIUtils.motion.fadeSlideInRight;
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+
+    $scope.pubkey= state.stateParams.pubkey;
+    $scope.uid= state.stateParams.uid;
+
+    // Load account TX data
+    csTx.load($scope.pubkey)
+      .then(function(result) {
+          console.log(result); // Allow to discover data structure
+          if (result && result.tx && result.tx.history) {
+            $scope.tx = result.tx;
+            $scope.history = result.tx.history;
+          }
+          $scope.balance = result.balance;
+        $scope.load($scope.pubkey, true, $scope.uid)
+          .then(function(){
+            $scope.motion.show();
+            $scope.loading = false;
+          });
+      });
+  });
+
+  $scope.downloadHistoryFile = function(options) {
+    options = options || {};
+    options.fromTime = options.fromTime || -1; // default: full history
+    csTx.downloadHistoryFile($scope.pubkey, options);
+  };
+
+  //TODO : Manque l'actualisation des transaction + afficher plus/tout + bouton statistiques du compte
+
+};
+
 
 /**
  * Certifications controller - extend WotIdentityAbstractCtrl

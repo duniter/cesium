@@ -11,6 +11,10 @@
       "BTN_SHOW_STATS": "Ver estadísticas",
       "BTN_SHOW_DETAILED_STATS": "Estadísticas detalladas"
     },
+    "ACCOUNT": {
+      "INPUT_CHART_TITLE": "Suma del flujo entrante, por el transmisor:",
+      "OUTPUT_CHART_TITLE": "Suma de las salidas por destino:"
+    },
     "BLOCKCHAIN": {
       "TITLE": "Estadística",
       "BLOCKS_ISSUERS_DIVIDER": "Bloques escritos por los miembros",

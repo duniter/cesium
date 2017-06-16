@@ -11,6 +11,10 @@
       "BTN_SHOW_STATS": "Zie statistieken",
       "BTN_SHOW_DETAILED_STATS": "Gedetailleerde statistieken"
     },
+    "ACCOUNT": {
+    "INPUT_CHART_TITLE": "Som van de binnenkomende stroom, door de zender:",
+    "OUTPUT_CHART_TITLE": "Som van de uitstroom per bestemming:"
+    },
     "BLOCKCHAIN": {
       "TITLE": "Statistieken",
       "BLOCKS_ISSUERS_DIVIDER": "Schriftelijke blokken door leden",

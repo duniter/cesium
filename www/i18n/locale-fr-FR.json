@@ -312,6 +312,7 @@
     "BTN_CERTIFY": "Certifier",
     "BTN_YES_CERTIFY": "Oui, certifier",
     "BTN_SELECT_AND_CERTIFY": "Nouvelle certification",
+    "ACCOUNT_OPERATIONS": "Opérations sur le compte",
     "VIEW": {
       "POPOVER_SHARE_TITLE": "Identité {{title}}"
     },
@@ -340,6 +341,9 @@
       "RECEIVED_BY": "Certifications reçues par {{uid}}",
       "ERROR": "Certifications reçues en erreur",
       "SENTRY_MEMBER": "Membre référent"
+    },
+    "OPERATIONS": {
+      "TITLE": "{{uid}} - Opérations"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications émises",
@@ -372,6 +376,7 @@
     "TITLE": "Mon compte",
     "BALANCE": "Solde",
     "LAST_TX": "Dernières transactions",
+    "BALANCE_ACCOUNT": "Solde du compte",
     "NO_TX": "Aucune transaction",
     "SHOW_MORE_TX": "Afficher plus",
     "SHOW_ALL_TX": "Afficher tout",

@@ -1,0 +1,73 @@
+<ion-view left-buttons="leftButtons">
+  <ion-nav-title>
+    <span class="visible-xs visible-sm">{{::formData.name||formData.uid}}</span>
+    <span class="hidden-xs hidden-sm"
+          ng-if="!loading"
+          translate="WOT.OPERATIONS.TITLE" translate-values="{uid: formData.name || formData.uid}"></span>
+  </ion-nav-title>
+
+  <ion-content>
+
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="doUpdate()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
+      </button>
+
+      <button class="button button-stable button-small-padding icon ion-android-download ink"
+              ng-click="downloadHistoryFile()"
+              title="{{'COMMON.BTN_DOWNLOAD_ACCOUNT_STATEMENT' | translate}}">
+      </button>
+
+      <cs-extension-point name="buttons"></cs-extension-point>
+
+    </div>
+
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="list {{motion.ionListClass}}" ng-if="!loading">
+
+      <div class="row">
+
+        <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
+
+        <div class="col">
+
+          <!-- the balance -->
+          <div class="item item-divider item-tx">
+            {{'ACCOUNT.BALANCE_ACCOUNT'|translate}}
+            <div class="badge badge-balanced">
+              {{balance|formatAmount}} <span ng-bind-html="$root.currency.name|currencySymbol"></span>
+            </div>
+          </div>
+
+          <span class="item item-divider" ng-if="!loading">
+            {{:locale:'ACCOUNT.LAST_TX'|translate}}
+            <a id="helptip-wallet-tx" style="position: relative; bottom: 0; right: 0px;">&nbsp;</a>
+          </span>
+
+          <!-- iterate on each TX -->
+          <div class="item item-tx item-icon-left"
+               ng-repeat="tx in history"
+               ng-include="'templates/wallet/item_tx.html'">
+          </div>
+
+          <div class="item item-text-wrap text-center" ng-if="tx.fromTime > 0">
+            <p>
+              <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
+              <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: tx.fromTime}"></span>
+              <span class="gray">|</span>
+              <a ng-click="showMoreTx(-1)" translate>ACCOUNT.SHOW_ALL_TX</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
+
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

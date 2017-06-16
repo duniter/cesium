@@ -169,6 +169,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           }
 
           // get UD history
+          // FIXME issue#232
+          /*
           if (csSettings.data.showUDHistory) {
             jobs.push(
               BMA.ud.history({pubkey: pubkey})
@@ -186,6 +188,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                     }, []);
                 }));
           }
+          */
 
           // Execute jobs
           $q.all(jobs)
