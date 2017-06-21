@@ -370,7 +370,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, c
 }
 
 
-function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHistory, UIUtils, esModals, esMessage, esUser) {
+function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHistory, UIUtils, esModals, esMessage) {
   'ngInject';
 
   $scope.formData = {};

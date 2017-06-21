@@ -1,6 +1,6 @@
 angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 'cesium.es.http.services'])
 
-.factory('esRegistry', function($q, csSettings, esHttp, esComment, esUser) {
+.factory('esRegistry', function($q, csSettings, esHttp, esComment, esProfile) {
   'ngInject';
 
   function EsRegistry() {
@@ -146,14 +146,13 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         var record = readRecordFromHit(hit, categories);
 
         // Load issuer (avatar, name, uid, etc.)
-        return esUser.profile.fillAvatars([{pubkey: record.issuer}])
-          .then(function(idties) {
-            var data = {
+        return csWot.extend({pubkey: record.issuer})
+          .then(function(issuer) {
+            return {
               id: hit._id,
-              issuer: idties[0],
+              issuer: issuer,
               record: record
             };
-            return data;
           });
       });
     }

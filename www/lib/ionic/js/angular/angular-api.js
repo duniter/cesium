@@ -100,11 +100,43 @@
             // Creating raise that return a promise event method: featureName.raisePromise.eventName
             feature.raisePromise[eventName] = function() {
               // If no listener: continue
-              if (!$rootScope.$$listenerCount[eventId]) {
+              var listenerCount = $rootScope.$$listenerCount[eventId];
+              if (!listenerCount) {
                 return $q.when();
               }
               // Add promise reject/resolve has last arguments
               var deferred = $q.defer();
+                // If more than one listener : create a buffered defferred
+              if (listenerCount > 1) {
+                  deferred = {
+                      promise: deferred.promise,
+                      notify: deferred.notify,
+                      raw: deferred,
+                      count: 0 ,
+                      errors: [],
+                      results: []
+                  };
+                  deferred.checkFinish = function() {
+                    if (deferred.count < listenerCount) return;
+                    if (deferred.errors.length) {
+                        deferred.raw.reject(deferred.errors);
+                    }
+                    else {
+                        deferred.raw.resolve(deferred.results);
+                    }
+                  };
+                  deferred.resolve = function(result) {
+                      deferred.results.push(result);
+                      deferred.count++;
+                      deferred.checkFinish();
+                  };
+                  deferred.reject = function(err) {
+                      deferred.errors.push(err);
+                      deferred.count++;
+                      deferred.checkFinish();
+                  };
+              }
+
               var eventArgs = [eventId].concat(Array.prototype.slice.call(arguments)).concat([deferred]);
               $rootScope.$emit.apply($rootScope, eventArgs);
               return deferred.promise;

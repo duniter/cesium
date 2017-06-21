@@ -1,196 +1,169 @@
-angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services'])
+angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services', 'cesium.es.crypto.services'])
 
-.factory('esWallet', function($q, $rootScope, CryptoUtils, csPlatform, csWallet, esHttp) {
-  'ngInject';
+  .factory('esWallet', function($q, $rootScope, CryptoUtils, csPlatform, csWallet, esCrypto, esProfile, esHttp) {
+    'ngInject';
 
-  var
-    listeners,
-    that = this;
+    var
+      listeners,
+      that = this;
 
-  function onWalletReset(data) {
-    if (data.keypair) {
-      delete data.keypair.boxSk;
-      delete data.keypair.boxPk;
-    }
-  }
-
-  function getBoxKeypair(keypair) {
-    keypair = keypair || (csWallet.isLogin() ? csWallet.data.keypair : undefined);
-    if (!keypair) {
-      throw new Error('User not connected, or no keypair found in wallet');
-    }
-    if (keypair.boxPk && keypair.boxSk) {
-      return $q.when(keypair);
-    }
-
-    return $q.all([
-        CryptoUtils.box.keypair.skFromSignSk(keypair.signSk),
-        CryptoUtils.box.keypair.pkFromSignPk(keypair.signPk)
-      ])
-      .then(function(res) {
-        csWallet.data.keypair.boxSk = res[0];
-        csWallet.data.keypair.boxPk = res[1];
-        console.debug("[ES] [wallet] Secret box keypair successfully computed");
-        return csWallet.data.keypair;
-      });
-  }
-
-  function packRecordFields(record, keypair, recipientFieldName, cypherFieldNames, nonce) {
-
-    recipientFieldName = recipientFieldName || 'recipient';
-    if (!record[recipientFieldName]) {
-      return $q.reject({message:'ES_WALLET.ERROR.RECIPIENT_IS_MANDATORY'});
-    }
-
-    cypherFieldNames = cypherFieldNames || 'content';
-    if (typeof cypherFieldNames == 'string') {
-      cypherFieldNames = [cypherFieldNames];
-    }
-
-    // Work on a copy, to keep the original record (as it could be use again - fix #382)
-    record = angular.copy(record);
-
-    // Get recipient
-    var recipientPk = CryptoUtils.util.decode_base58(record[recipientFieldName]);
-
-    return $q.all([
-      getBoxKeypair(keypair),
-      CryptoUtils.box.keypair.pkFromSignPk(recipientPk),
-      nonce ? $q.when(nonce) : CryptoUtils.util.random_nonce()
-    ])
-      .then(function(res) {
-        //var senderSk = res[0];
-        var boxKeypair = res[0];
-        var senderSk = boxKeypair.boxSk;
-        var boxRecipientPk = res[1];
-        var nonce = res[2];
-
-        return $q.all(
-          cypherFieldNames.reduce(function(res, fieldName) {
-            if (!record[fieldName]) return res; // skip undefined fields
-            return res.concat(
-              CryptoUtils.box.pack(record[fieldName], nonce, boxRecipientPk, senderSk)
-            );
-          }, []))
-
-          .then(function(cypherTexts){
-            // Replace field values with cypher texts
-            var i = 0;
-            _.forEach(cypherFieldNames, function(cypherFieldName) {
-              if (!record[cypherFieldName]) {
-                // Force undefined fields to be present in object
-                // This is better for ES storage, that always works on lazy update mode
-                record[cypherFieldName] = null;
-              }
-              else {
-                record[cypherFieldName] = cypherTexts[i++];
-              }
-            });
-
-            // Set nonce
-            record.nonce = CryptoUtils.util.encode_base58(nonce);
-
-            return record;
-          });
-      });
-  }
-
-  function openRecordFields(records, keypair, issuerFieldName, cypherFieldNames) {
-
-    issuerFieldName = issuerFieldName || 'issuer';
-    cypherFieldNames = cypherFieldNames || 'content';
-    if (typeof cypherFieldNames == 'string') {
-      cypherFieldNames = [cypherFieldNames];
-    }
-
-    var now = new Date().getTime();
-    var issuerBoxPks = {}; // a map used as cache
-
-    var jobs = [getBoxKeypair(keypair)];
-    return $q.all(records.reduce(function(jobs, message) {
-      var issuer = message[issuerFieldName];
-      if (!issuer) {throw 'Record has no ' + issuerFieldName;}
-      if (issuerBoxPks[issuer]) return res;
-      return jobs.concat(
-        CryptoUtils.box.keypair.pkFromSignPk(CryptoUtils.util.decode_base58(issuer))
-          .then(function(issuerBoxPk) {
-            issuerBoxPks[issuer] = issuerBoxPk; // fill box pk cache
-          }));
-    }, jobs))
-      .then(function(res){
-        var boxKeypair = res[0];
-        return $q.all(records.reduce(function(jobs, record) {
-          var issuerBoxPk = issuerBoxPks[record[issuerFieldName]];
-          var nonce = CryptoUtils.util.decode_base58(record.nonce);
-          record.valid = true;
-
-          return jobs.concat(
-            cypherFieldNames.reduce(function(res, cypherFieldName) {
-              if (!record[cypherFieldName]) return res;
-              return res.concat(CryptoUtils.box.open(record[cypherFieldName], nonce, issuerBoxPk, boxKeypair.boxSk)
-                .then(function(text) {
-                  record[cypherFieldName] = text;
-                })
-                .catch(function(err){
-                  console.error(err);
-                  console.warn('[ES] [wallet] a record may have invalid cypher ' + cypherFieldName);
-                  record.valid = false;
-                }));
-            }, []));
-        }, []));
-      })
-      .then(function() {
-        console.debug('[ES] [wallet] All record decrypted in ' + (new Date().getTime() - now) + 'ms');
-        return records;
-      });
-
-  }
-
-  function addListeners() {
-    // Extend csWallet events
-    listeners = [
-      csWallet.api.data.on.reset($rootScope, onWalletReset, this)
-    ];
-  }
-
-  function removeListeners() {
-    _.forEach(listeners, function(remove){
-      remove();
-    });
-    listeners = [];
-  }
-
-  function refreshState() {
-    var enable = esHttp.alive;
-    if (!enable && listeners && listeners.length > 0) {
-      console.debug("[ES] [wallet] Disable");
-      removeListeners();
-      if (csWallet.isLogin()) {
-        onWalletReset(csWallet.data);
+    function onWalletReset(data) {
+      data.avatar = null;
+      data.profile = null;
+      data.name = null;
+      csWallet.events.cleanByContext('esWallet');
+      if (data.keypair) {
+        delete data.keypair.boxSk;
+        delete data.keypair.boxPk;
       }
     }
-    else if (enable && (!listeners || listeners.length === 0)) {
-      console.debug("[ES] [wallet] Enable");
-      addListeners();
+
+    function onWalletLogin(data, deferred) {
+      deferred = deferred || $q.defer();
+      if (!data || !data.pubkey || !data.keypair) {
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      // Waiting to load crypto libs
+      if (!CryptoUtils.isLoaded()) {
+        console.debug('[ES] [wallet] Waiting crypto lib loading...');
+        return $timeout(function() {
+          return onWalletLogin(data, deferred);
+        }, 50);
+      }
+
+      console.debug('[ES] [wallet] Loading user avatar+name...');
+      var now = new Date().getTime();
+
+      esProfile.getAvatarAndName(data.pubkey)
+        .then(function(profile) {
+          if (profile) {
+            data.name = profile.name;
+            data.avatarStyle = profile.avatarStyle;
+            data.avatar = profile.avatar;
+            console.debug('[ES] [wallet] Loaded user avatar+name in '+ (new Date().getTime()-now) +'ms');
+          }
+          else {
+            console.debug('[ES] [wallet] No user avatar+name found');
+          }
+          deferred.resolve(data);
+        })
+        .catch(function(err){
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
     }
-  }
 
-  // Default action
-  csPlatform.ready().then(function() {
-    esHttp.api.node.on.start($rootScope, refreshState, this);
-    esHttp.api.node.on.stop($rootScope, refreshState, this);
-    return refreshState();
-  });
+    function onWalletFinishLoad(data, deferred) {
+      deferred = deferred || $q.defer();
 
-  // exports
-  that.box = {
-    getKeypair: getBoxKeypair,
-    record: {
-      pack: packRecordFields,
-      open: openRecordFields
+      // Reset events
+      csWallet.events.cleanByContext('esWallet');
+
+      // If membership pending, but not enough certifications: suggest to fill user profile
+      if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
+        csWallet.events.add({type:'info', message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE', context: 'esWallet'});
+      }
+
+      console.debug('[ES] [wallet] Loading full user profile...');
+      var now = new Date().getTime();
+
+      // Load full profile
+      esProfile.get(data.pubkey)
+        .then(function(profile) {
+          if (profile) {
+            data.name = profile.name;
+            data.avatar = profile.avatar;
+            data.profile = profile.source;
+            console.debug('[ES] [wallet] Loaded full user profile in '+ (new Date().getTime()-now) +'ms');
+          }
+          deferred.resolve();
+        });
+
+      return deferred.promise;
     }
-  };
 
-  return that;
-})
+    function getBoxKeypair() {
+      if (!csWallet.isLogin()) {
+        throw new Error('Unable to get box keypair: user not connected !');
+      }
+      var keypair = csWallet.data.keypair;
+      if (keypair.boxPk && keypair.boxSk) {
+        return $q.when(keypair);
+      }
+
+      return esCrypto.box.getKeypair(keypair)
+        .then(function(res) {
+          csWallet.data.keypair.boxSk = res.boxSk;
+          csWallet.data.keypair.boxPk = res.boxPk;
+          console.debug("[ES] [wallet] Secret box keypair successfully computed");
+          return csWallet.data.keypair;
+        });
+    }
+
+    function addListeners() {
+      // Extend csWallet events
+      listeners = [
+        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
+        csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
+        csWallet.api.data.on.init($rootScope, onWalletReset, this),
+        csWallet.api.data.on.reset($rootScope, onWalletReset, this)
+      ];
+    }
+
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
+
+    function refreshState() {
+      var enable = esHttp.alive;
+      if (!enable && listeners && listeners.length > 0) {
+        console.debug("[ES] [wallet] Disable");
+        removeListeners();
+        if (csWallet.isLogin()) {
+          return onWalletReset(csWallet.data);
+        }
+      }
+      else if (enable && (!listeners || listeners.length === 0)) {
+        console.debug("[ES] [wallet] Enable");
+        addListeners();
+        if (csWallet.isLogin()) {
+          return onWalletLogin(csWallet.data);
+        }
+      }
+    }
+
+    // Default action
+    csPlatform.ready().then(function() {
+      esHttp.api.node.on.start($rootScope, refreshState, this);
+      esHttp.api.node.on.stop($rootScope, refreshState, this);
+      return refreshState();
+    });
+
+    // exports
+    that.box = {
+      getKeypair: getBoxKeypair,
+      record: {
+        pack: function(record, keypair, recipientFieldName, cypherFieldNames, nonce) {
+          return getBoxKeypair()
+            .then(function(keypair) {
+              return esCrypto.box.pack(record, keypair, recipientFieldName, cypherFieldNames, nonce);
+            });
+        },
+        open: function(records, keypair, issuerFieldName, cypherFieldNames) {
+          return getBoxKeypair()
+            .then(function(keypair) {
+              return esCrypto.box.open(records, keypair, issuerFieldName, cypherFieldNames);
+            });
+        }
+      }
+    };
+
+    return that;
+  })
 ;

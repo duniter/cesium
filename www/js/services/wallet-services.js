@@ -896,7 +896,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     getIdentityDocument = function(uid, blockUid) {
       uid = uid || data.uid;
       blockUid = blockUid || data.blockUid;
-      if ((!uid || !blockUid)) {
+      if (!uid || !blockUid) {
         throw {message: 'ERROR.WALLET_HAS_NO_SELF'};
       }
       if (data.requirements && data.requirements.expired) {

@@ -662,8 +662,28 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               // Add unique id (if enable)
               return options.addUniqueId ? _addUniqueIds(idties) : idties;
             }
+            var lookupResultCount = idties.length;
             // call extension point
             return api.data.raisePromise.search(text, idties, 'pubkey')
+              .then(function() {
+
+                // Make sure to add uid to new results - fix #488
+                if (idties.length > lookupResultCount) {
+                  var idtiesWithoutUid = _.filter(idties, function(idty) {
+                    return !idty.uid && idty.pubkey;
+                  });
+                  if (idtiesWithoutUid.length) {
+                    return BMA.wot.member.uids()
+                      .then(function(uids) {
+                        _.forEach(idties, function(idty) {
+                          if (!idty.uid && idty.pubkey) {
+                            idty.uid = uids[idty.pubkey];
+                          }
+                        });
+                      });
+                  }
+                }
+              })
               .then(function() {
                 // Add unique id (if enable)
                 return options.addUniqueId ? _addUniqueIds(idties) : idties;

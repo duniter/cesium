@@ -48,7 +48,7 @@ function ESExtendSettingsController ($scope, PluginService) {
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esUser, esHttp) {
+function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -165,12 +165,12 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
     $ionicPopup._popupStack[0].responseDeferred.promise.close();
     return Modals.showNetworkLookup({
       enableFilter: true,
-      endpointFilter: esUser.constants.ES_USER_API_ENDPOINT
+      endpointFilter: esHttp.constants.ES_USER_API_ENDPOINT
     })
       .then(function (peer) {
         if (!peer) return;
           var esEps = peer.getEndpoints().reduce(function(res, ep){
-            var esEp = esUser.node.parseEndPoint(ep);
+            var esEp = esHttp.node.parseEndPoint(ep);
             return esEp ? res.concat(esEp) : res;
           }, []);
           if (!esEps.length) return;

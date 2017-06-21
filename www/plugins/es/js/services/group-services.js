@@ -1,5 +1,5 @@
-angular.module('cesium.es.group.services', ['ngResource', 'cesium.platform', 'cesium.es.http.services',
-  'cesium.es.user.services', 'cesium.es.notification.services', 'cesium.es.comment.services'])
+angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.services',
+  'cesium.es.profile.services', 'cesium.es.notification.services', 'cesium.es.comment.services'])
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
@@ -11,7 +11,7 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.platform', 'ce
 
   })
 
-.factory('esGroup', function($q, $rootScope, csPlatform, csSettings, esHttp, CryptoUtils, esUser, csWallet, esNotification, esComment) {
+.factory('esGroup', function($q, $rootScope, csPlatform, csSettings, esHttp, CryptoUtils, csWot, csWallet, esNotification, esComment) {
   'ngInject';
 
   function EsGroup() {
@@ -157,14 +157,13 @@ angular.module('cesium.es.group.services', ['ngResource', 'cesium.platform', 'ce
           var record = readRecordFromHit(hit, options.html);
 
           // Load issuer (avatar, name, uid, etc.)
-          return esUser.profile.fillAvatars([{pubkey: record.issuer}])
-            .then(function(idties) {
-              var data = {
+          return csWot.extend({pubkey: record.issuer})
+            .then(function(issuer) {
+              return {
                 id: hit._id,
-                issuer: idties[0],
+                issuer: issuer,
                 record: record
               };
-              return data;
             });
         });
     }

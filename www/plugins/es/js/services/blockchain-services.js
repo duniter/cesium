@@ -1,4 +1,4 @@
-angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.http.services', 'cesium.es.user.services'])
+angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.http.services'])
 
 .factory('esBlockchain', function($rootScope, $q, $timeout, BMA, esHttp) {
   'ngInject';

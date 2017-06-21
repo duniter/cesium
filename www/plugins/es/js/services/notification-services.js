@@ -10,7 +10,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
   })
 
-.factory('esNotification', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, csPlatform, Api, esUser) {
+.factory('esNotification', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, csPlatform, Api) {
   'ngInject';
 
   var
@@ -126,7 +126,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
           return res.concat(item);
         }, []);
 
-        return esUser.profile.fillAvatars(notifications);
+        return csWot.extendAll(notifications);
       });
   }
 

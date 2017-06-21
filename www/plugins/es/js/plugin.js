@@ -9,7 +9,7 @@ angular.module('cesium.es.plugin', [
     'cesium.es.currency.controllers',
     'cesium.es.wot.controllers',
     'cesium.es.wallet.controllers',
-    'cesium.es.user.controllers',
+    'cesium.es.profile.controllers',
     'cesium.es.message.controllers',
     'cesium.es.notification.controllers',
     'cesium.es.blockchain.controllers',

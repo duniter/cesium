@@ -2,7 +2,7 @@
 angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   'cesium.settings.services', 'cesium.wot.services' ])
 
-.factory('csTx', function($q, $timeout, $filter, $translate, BMA, Api, csConfig, csSettings, csWot, FileSaver) {
+.factory('csTx', function($q, $timeout, $filter, $translate, UIUtils, BMA, Api, csConfig, csSettings, csWot, FileSaver) {
   'ngInject';
 
   function factory(id, BMA) {
@@ -368,36 +368,40 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
           result = result[2];
 
-          if (!result || !result.tx || !result.tx.history) return; // no TX
+          // no TX
+          if (!result || !result.tx || !result.tx.history) {
+            return UIUtils.toast.show('INFO.EMPTY_TX_HISTORY');
+          }
 
-          var formatDecimal = $filter('formatDecimal');
-          var formatPubkey = $filter('formatPubkey');
-          var formatDate = $filter('formatDate');
-          var formatDateForFile = $filter('formatDateForFile');
-          var formatSymbol = $filter('currencySymbolNoHtml');
+          return $translate('ACCOUNT.FILE_NAME', {currency: currency, pubkey: pubkey, currentTime : currentTime})
+            .then(function(filename){
 
-          var headers = [
-            translations['ACCOUNT.HEADERS.TIME'],
-            translations['COMMON.UID'],
-            translations['COMMON.PUBKEY'],
-            translations['ACCOUNT.HEADERS.AMOUNT'] + ' (' + formatSymbol(currency) + ')',
-            translations['ACCOUNT.HEADERS.COMMENT']
-          ];
-          var content = result.tx.history.reduce(function(res, tx){
-            return res.concat([
-                formatDate(tx.time),
-                tx.uid,
-                tx.pubkey,
-                formatDecimal(tx.amount/100),
-                '"' + tx.comment + '"'
-              ].join(';') + '\n');
-          }, [headers.join(';') + '\n']);
+              var formatDecimal = $filter('formatDecimal');
+              var formatPubkey = $filter('formatPubkey');
+              var formatDate = $filter('formatDate');
+              var formatDateForFile = $filter('formatDateForFile');
+              var formatSymbol = $filter('currencySymbolNoHtml');
 
-          var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
-          $translate('ACCOUNT.FILE_NAME', {currency: currency, pubkey: pubkey, currentTime : currentTime})
-            .then(function(result){
-              FileSaver.saveAs(file, result);
-            })
+              var headers = [
+                translations['ACCOUNT.HEADERS.TIME'],
+                translations['COMMON.UID'],
+                translations['COMMON.PUBKEY'],
+                translations['ACCOUNT.HEADERS.AMOUNT'] + ' (' + formatSymbol(currency) + ')',
+                translations['ACCOUNT.HEADERS.COMMENT']
+              ];
+              var content = result.tx.history.reduce(function(res, tx){
+                return res.concat([
+                    formatDate(tx.time),
+                    tx.uid,
+                    tx.pubkey,
+                    formatDecimal(tx.amount/100),
+                    '"' + tx.comment + '"'
+                  ].join(';') + '\n');
+              }, [headers.join(';') + '\n']);
+
+              var file = new Blob(content, {type: 'text/plain; charset=utf-8'});
+              FileSaver.saveAs(file, filename);
+            });
         });
     };
 

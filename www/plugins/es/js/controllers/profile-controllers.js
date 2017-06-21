@@ -1,4 +1,4 @@
-angular.module('cesium.es.user.controllers', ['cesium.es.services'])
+angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 
   .config(function($stateProvider) {
 
@@ -8,7 +8,7 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/user/edit_profile.html",
-          controller: 'ProfileCtrl'
+          controller: 'ESViewEditProfileCtrl'
         }
       },
       data: {
@@ -18,14 +18,14 @@ angular.module('cesium.es.user.controllers', ['cesium.es.services'])
 
   })
 
- .controller('ProfileCtrl', ProfileController)
+ .controller('ESViewEditProfileCtrl', ESViewEditProfileController)
 
- .controller('AvatarModalCtrl', AvatarModalController)
+ .controller('ESAvatarModalCtrl', ESAvatarModalController)
 
 ;
 
-function ProfileController($scope, $rootScope, $timeout, $state, $focus, $translate, $ionicHistory,
-                           esUser, SocialUtils, UIUtils, esHttp, ModalUtils, Device) {
+function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focus, $translate, $ionicHistory,
+                           UIUtils, esHttp, esProfile, ModalUtils, Device) {
   'ngInject';
 
   $scope.loading = true;
@@ -88,14 +88,17 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
 
   $scope.load = function(walletData) {
     $scope.loading = true; // to avoid the call of doSave()
-    return esUser.profile.get({id: walletData.pubkey})
-      .then(function(res) {
-        if (res && res.found && res._source) {
-          var profile = res._source;
-          $scope.avatar = profile.avatar ? esHttp.image.fromAttachment(profile.avatar) : null;
-          profile.socials = profile.socials ? SocialUtils.reduce(profile.socials) : [];
+    return esProfile.get(walletData.pubkey, {raw: true})
+      .then(function(profile) {
+        if (profile) {
+          $scope.avatar = esHttp.image.fromAttachment(profile.source.avatar);
           $scope.existing = true;
-          $scope.updateView(walletData, profile);
+          $scope.updateView(walletData, profile.source);
+        }
+        else {
+          $scope.avatar = undefined;
+          $scope.existing = false;
+          $scope.updateView(walletData, {});
         }
 
         // removeIf(device)
@@ -104,13 +107,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
       })
       .catch(function(err){
         UIUtils.loading.hide(10);
-        if (err && err.ucode == 404) {
-          $scope.updateView(walletData, {});
-          $scope.existing = false;
-        }
-        else {
-          UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
-        }
+        UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
       });
   };
 
@@ -186,9 +183,9 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
         });
       }
       if (!$scope.existing) {
-        return esUser.profile.add(formData)
+        return esProfile.add(formData)
           .then(function() {
-            console.log("User profile successfully created.");
+            console.info("[ES] Profile successfully created.");
             $scope.existing = true;
             $scope.saving = false;
             $scope.dirty = false;
@@ -198,9 +195,9 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
           .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
       else {
-        return esUser.profile.update(formData, {id: $rootScope.walletData.pubkey})
+        return esProfile.update(formData, {id: $rootScope.walletData.pubkey})
           .then(function() {
-            console.log("User profile successfully updated.");
+            console.info("[ES] Profile successfully updated.");
             $scope.saving = false;
             $scope.dirty = false;
             updateWallet(formData);
@@ -254,7 +251,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
         .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
     }
     else {
-      return ModalUtils.show('plugins/es/templates/user/modal_edit_avatar.html','AvatarModalCtrl',
+      return ModalUtils.show('plugins/es/templates/user/modal_edit_avatar.html','ESAvatarModalCtrl',
         {})
         .then(function(imageData) {
           if (!imageData) return;
@@ -267,7 +264,7 @@ function ProfileController($scope, $rootScope, $timeout, $state, $focus, $transl
 }
 
 
-function AvatarModalController($scope) {
+function ESAvatarModalController($scope) {
 
   $scope.openFileSelector = function() {
     var fileInput = angular.element(document.querySelector('.modal-avatar #fileInput'));

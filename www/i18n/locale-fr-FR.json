@@ -108,8 +108,6 @@
     "TITLE": "Cesium",
     "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes en monnaie libre <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a>.",
     "MESSAGE_SHORT": "Suivez vos comptes en monnaie libre <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> !",
-    "BTN_REGISTRY": "Annuaire",
-    "BTN_MARKET": "Offres/demandes",
     "BTN_CURRENCY": "Explorer la monnaie {{name|abbreviate}}",
     "BTN_ABOUT": "à propos",
     "BTN_HELP": "Aide en ligne",
@@ -597,7 +595,8 @@
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
     "REVOCATION_SENT": "Revocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
-    "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/><br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)"
+    "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/><br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
+    "EMPTY_TX_HISTORY": "Aucune transaction à exporter"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

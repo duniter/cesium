@@ -237,7 +237,7 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
 }
 
 
-function ModalEmailSubscriptionsController($scope, Modals, csSettings, esUser, csWot, parameters) {
+function ModalEmailSubscriptionsController($scope, Modals, csSettings, csWot, parameters) {
   'ngInject';
 
   $scope.frequencies = [
@@ -285,7 +285,7 @@ function ModalEmailSubscriptionsController($scope, Modals, csSettings, esUser, c
   $scope.showNetworkLookup = function() {
     return Modals.showNetworkLookup({
       enableFilter: true,
-      endpointFilter: esUser.constants.ES_USER_API_ENDPOINT
+      endpointFilter: esHttp.constants.ES_USER_API_ENDPOINT
     })
       .then(function (peer) {
         if (peer) {
