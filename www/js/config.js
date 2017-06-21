@@ -20,7 +20,7 @@ angular.module("cesium.config", [])
 	"useLocalStorage": true,
 	"useRelative": false,
 	"initPhase": false,
-	"expertMode": true,
+	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
 	"helptip": {
@@ -32,13 +32,22 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en.txt"
 	},
 	"node": {
-		"host": "g1.duniter.tednet.fr",
-		"port": "8999",
-    "useSsl": true
+		"host": "g1.duniter.org",
+		"port": "443"
 	},
+	"fallbackNodes": [
+		{
+			"host": "g1.duniter.fr",
+			"port": "443"
+		},
+		{
+			"host": "g1.duniter.org",
+			"port": "443"
+		}
+	],
 	"plugins": {
 		"es": {
-			"enable": false,
+			"enable": true,
 			"askEnable": false,
 			"host": "g1.data.duniter.fr",
 			"port": "443",
@@ -50,8 +59,8 @@ angular.module("cesium.config", [])
 			}
 		}
 	},
-	"version": "0.12.9",
-	"build": "2017-06-09T09:32:01.817Z",
+	"version": "0.13.0",
+	"build": "2017-06-21T15:10:10.340Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
