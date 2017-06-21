@@ -293,34 +293,38 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
 }
 
 //TODO : Avoid csTx loading, switch to Elasticsearch
-function GpAccountSumTxController($scope, $controller,$filter, csTx, gpColor) {
+function GpAccountSumTxController($scope, $controller, $filter, $state, csTx, gpColor) {
   'ngInject';
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('GpCurrencyAbstractCtrl', {$scope: $scope}));
 
   // When opening the view
-  $scope.init = function(e, state) {
-
-    var formatDecimal = $filter('formatDecimal');
+  $scope.init= function(e, state) {
 
     // Get the pubkey (from URL params) and store it in the page context ($scope)
     $scope.pubkey = (state && state.stateParams && state.stateParams.pubkey);
+
+  };
+
+  // When opening the view
+  $scope.load = function(e, state) {
     if (!$scope.pubkey) return;
 
+    var formatDecimal = $filter('formatDecimal');
+
     // Load account TX data
-    csTx.load($scope.pubkey, -1)
+    return csTx.load($scope.pubkey, -1)
       .then(function(result) {
-        console.log(result); // Allow to discover data structure
+
         if (result && result.tx && result.tx.history) {
-           //Charts data
-           $scope.inputChart = $scope.computeChartData(_.filter(result.tx.history, function(tx) {
-             return tx.amount > 0;
-           }));
+          //Charts data
+          $scope.inputChart = $scope.computeChartData(_.filter(result.tx.history, function(tx) {
+            return tx.amount > 0;
+          }));
           $scope.outputChart = $scope.computeChartData(_.filter(result.tx.history, function(tx) {
             return tx.amount < 0;
           }));
-          console.log( $scope.outputChart);
         }
       });
   };
@@ -328,12 +332,14 @@ function GpAccountSumTxController($scope, $controller,$filter, csTx, gpColor) {
   // Load chart data: received amount by pubkey
   $scope.computeChartData = function(txArray) {
 
+    var formatPubkey = $filter('formatPubkey');
 
     // Sum TX amount, with a group by pubkey
     var sumByPubkeys = {};
     _.forEach(txArray, function (tx) {
       sumByPubkeys[tx.pubkey] = sumByPubkeys[tx.pubkey] || {
-          label: tx.uid || tx.pubkey,
+          label: tx.name || tx.uid || formatPubkey(tx.pubkey),
+          pubkey: tx.pubkey,
           sum: 0
         };
       sumByPubkeys[tx.pubkey].sum += Math.abs(tx.amount/100);
@@ -346,8 +352,23 @@ function GpAccountSumTxController($scope, $controller,$filter, csTx, gpColor) {
     return {
       data: _.pluck(sumItems, 'sum'),
       labels: _.pluck(sumItems, 'label'),
-      colors: gpColor.scale.custom(sumItems.length)
+      pubkeys: _.pluck(sumItems, 'pubkey'),
+      colors: gpColor.scale.custom(
+        Math.max(10, sumItems.length) // avoid strange colors
+      )
     };
+  };
+
+  $scope.onInputChartClick = function(data, e, item) {
+    if (!item) return;
+    var pubkey = $scope.inputChart.pubkeys[item._index];
+    $state.go('app.wot_identity', {pubkey: pubkey});
+  };
+
+  $scope.onOutputChartClick = function(data, e, item) {
+    if (!item) return;
+    var pubkey = $scope.outputChart.pubkeys[item._index];
+    $state.go('app.wot_identity', {pubkey: pubkey});
   };
 }
 
