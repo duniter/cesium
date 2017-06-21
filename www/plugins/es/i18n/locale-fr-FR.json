@@ -19,8 +19,7 @@
     }
   },
   "MENU": {
-    "MARKET": "Annonces",
-    "REGISTRY": "Professionnels",
+    "REGISTRY": "Pages",
     "USER_PROFILE": "Mon profil",
     "MESSAGES": "Messages",
     "NOTIFICATIONS": "Notifications",
@@ -362,7 +361,9 @@
       "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de la page",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
-      "RECORD_NOT_EXISTS": "Page inexistante"
+      "RECORD_NOT_EXISTS": "Page inexistante",
+      "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
+      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
     },
     "INFO": {
       "RECORD_REMOVED" : "Page supprimée"

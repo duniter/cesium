@@ -202,7 +202,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
         $scope.focusNewComment();
         return $scope.service.save($scope.id, $scope.comments, comment);
       })
-      .catch(UIUtils.onError('MARKET.ERROR.FAILED_SAVE_COMMENT'));
+      .catch(UIUtils.onError('REGISTRY.ERROR.FAILED_SAVE_COMMENT'));
   };
 
   $scope.share = function(event, comment) {
