@@ -129,9 +129,11 @@ function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) 
 
   csSettings.api.data.on.changed($scope, $scope.updateView);
   csSettings.api.data.on.ready($scope, $scope.updateView);
-  csWallet.api.data.on.login($scope, function(walletData, resolve){
+  csWallet.api.data.on.login($scope, function(data, deferred){
+    deferred = deferred || $q.defer();
     $scope.updateView();
-    if (resolve) resolve();
+    deferred.resolve();
+    return deferred.promise;
   });
   csWallet.api.data.on.logout($scope, $scope.updateView);
   $scope.updateView();

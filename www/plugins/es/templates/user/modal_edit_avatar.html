@@ -20,8 +20,7 @@
         <p translate>PROFILE.MODAL_AVATAR.BTN_SELECT_FILE</p>
       </div>
 
-      <input type="file" name="fileInput" accept=".png,.jpeg,.jpg" id="fileInput" onchange="angular.element(this).scope().fileChanged(event)"
-             accept=".png,.jpeg,.jpg"
+      <input type="file" name="fileInput" accept="image/*" id="fileInput" onchange="angular.element(this).scope().fileChanged(event)"
              style="visibility:hidden; position:absolute;"/>
     </div>
 
