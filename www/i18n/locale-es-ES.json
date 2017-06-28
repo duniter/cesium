@@ -278,7 +278,7 @@
     "VIEW": {
       "TITLE": "Nodo",
       "OWNER": "Propiedad de ",
-      "SHOW_RAW_PEERING": "Ver la tarjeta de red",,
+      "SHOW_RAW_PEERING": "Ver la tarjeta de red",
       "LAST_BLOCKS": "Bloques recientes",
       "KNOWN_PEERS": "Nodos conocidos :",
       "GENERAL_DIVIDER": "Informaciónes generales",
