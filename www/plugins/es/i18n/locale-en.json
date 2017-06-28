@@ -19,8 +19,7 @@
     }
   },
   "MENU": {
-    "MARKET": "Ads",
-    "REGISTRY": "Companies",
+    "REGISTRY": "Pages",
     "USER_PROFILE": "My Profile",
     "MESSAGES": "Messages",
     "NOTIFICATIONS": "Notifications",
@@ -93,7 +92,7 @@
       "LOAD_INVITATIONS_FAILED": "Error while loading invitations",
       "REMOVE_INVITATION_FAILED": "Error while deleting the invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Error while deleting invitations",
-      "SUGGEST_CERTIFICATIONS_FAILED": "Error while sending invitation",
+      "SEND_INVITATION_FAILED": "Error while sending invitation",
       "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid||pubkey}}</a>"
     }
   },
@@ -321,7 +320,9 @@
       "LOOKUP_RECORDS_FAILED": "Error while loading records.",
       "REMOVE_RECORD_FAILED": "Deleting failed",
       "SAVE_RECORD_FAILED": "Saving failed",
-      "RECORD_NOT_EXISTS": "Record not found"
+      "RECORD_NOT_EXISTS": "Record not found",
+      "FAILED_SAVE_COMMENT": "Saving comment failed",
+      "FAILED_REMOVE_COMMENT": "Deleting comment failed"
     },
     "INFO": {
       "RECORD_REMOVED" : "Reference successfully deleted"
@@ -438,6 +439,8 @@
     "NODE_BMA_UP": "Node <b>{{params[0]}}:{{params[1]}}</b> is reachable again.",
     "MEMBER_JOIN": "You are now a <b>member</b> of currency <b>{{params[0]}}</b>!",
     "MEMBER_LEAVE": "You are <b>not a member anymore</b> of currency <b>{{params[0]}}</b>!",
+    "MEMBER_EXCLUDE": "You are <b>not more member</b> of the currency <b>{{params[0]}}</b>, for lack of renewal or lack of certifications.",
+    "MEMBER_REVOKE": "Your account has been revoked. It will no longer be a member of the currency <b>{{params[0]}}</b>.",
     "MEMBER_ACTIVE": "Your membership to <b>{{params[0]}}</b> has been <b>renewed successfully</b>.",
     "TX_SENT": "Your payment to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
     "TX_SENT_MULTI": "Your payment to <b>{{params[1]}}</b> was executed.",

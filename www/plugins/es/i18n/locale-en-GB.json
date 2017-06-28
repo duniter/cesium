@@ -19,8 +19,7 @@
     }
   },
   "MENU": {
-    "MARKET": "Ads",
-    "REGISTRY": "Companies",
+    "REGISTRY": "Pages",
     "USER_PROFILE": "My Profile",
     "MESSAGES": "Messages",
     "NOTIFICATIONS": "Notifications",
@@ -93,7 +92,7 @@
       "LOAD_INVITATIONS_FAILED": "Error while loading invitations",
       "REMOVE_INVITATION_FAILED": "Error while deleting the invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Error while deleting invitations",
-      "SUGGEST_CERTIFICATIONS_FAILED": "Error while sending invitation",
+      "SEND_INVITATION_FAILED": "Error while sending invitation",
       "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid||pubkey}}</a>"
     }
   },
@@ -189,10 +188,11 @@
       "DISPLAY_QUERY": "View query",
       "HIDE_QUERY": "Hide query",
       "TX_SEARCH_FILTER": {
-        "MEMBER_FLOWS": "Members inputs/outputs",
-        "EXISTING_TRANSACTION": "With transactions",
-        "PERIOD": "Calculated between the {{params[2]|formatDate}} and the {{params[4]|formatDate}}",
-        "PUBKEY": "Calculated by {{params[1]|formatPubkey}}"
+        "MEMBER_FLOWS": "<b class=\"ion-person\"></b> Members input/output",
+        "EXISTING_TRANSACTION": "<b class=\"ion-card\"></b> Having transactions",
+        "PERIOD": "<b class=\"ion-clock\"></b> Between <b class=\"gray\">{{params[1]|formatDateShort}}</b> ({{params[1]|formatTime}}) and <b class=\"gray\">{{params[2]|formatDateShort}}</b> ({{params[2]|formatTime}})",
+        "ISSUER": "<b class=\"ion-android-desktop\"></b> Computed by {{params[1]|formatPubkey}}",
+        "TX_PUBKEY": "<b class=\"ion-card\"></b> Transactions concerning <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
       }
     },
     "ERROR": {
