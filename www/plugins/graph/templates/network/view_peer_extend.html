@@ -1,7 +1,7 @@
 <!-- Buttons section -->
 <ng-if ng-if="enable && extensionPoint === 'general'">
 
-  <a class="item item-icon-left item-text-wrap ink"
+  <a class="item item-icon-left item-icon-right item-text-wrap ink"
     ui-sref="app.view_peer_stats({pubkey: node.pubkey})">
     <i class="icon ion-stats-bars"></i>
     <span translate>GRAPH.PEER.VIEW.BLOCK_COUNT_LABEL</span>
@@ -11,6 +11,7 @@
       {{!blockCount ? 'GRAPH.PEER.VIEW.NO_BLOCK' : 'GRAPH.PEER.VIEW.BLOCK_COUNT' | translate:{count: blockCount} }}
     </span>
     <ion-spinner class="badge" icon="android" ng-if="loading"></ion-spinner>
+    <i class="gray icon ion-ios-arrow-right"></i>
   </a>
 </ng-if>
 

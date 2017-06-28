@@ -29,12 +29,25 @@ angular.module('cesium.blockchain.controllers', ['cesium.services'])
         }
       })
 
-      .state('app.view_currency_block_hash', {
-        url: "/:currency/block/:number/:hash",
+      .state('app.server_blockchain', {
+        url: "/network/peer/:server/blockchain?ssl&tor",
         views: {
           'menuContent': {
-            templateUrl: "templates/blockchain/view_block.html",
-            controller: 'BlockViewCtrl'
+            templateUrl: "templates/blockchain/lookup.html",
+            controller: 'BlockLookupCtrl'
+          }
+        },
+        data: {
+          large: 'app.server_blockchain_lg'
+        }
+      })
+
+      .state('app.server_blockchain_lg', {
+        url: "/network/peer/:server/blockchain/lg?ssl&tor",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/blockchain/lookup_lg.html",
+            controller: 'BlockLookupCtrl'
           }
         }
       })
@@ -51,6 +64,16 @@ angular.module('cesium.blockchain.controllers', ['cesium.services'])
 
       .state('app.view_block_hash', {
         url: "/block/:number/:hash",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/blockchain/view_block.html",
+            controller: 'BlockViewCtrl'
+          }
+        }
+      })
+
+      .state('app.view_server_block_hash', {
+        url: "/network/peer/:server/block/:number/:hash?ssl&tor",
         views: {
           'menuContent': {
             templateUrl: "templates/blockchain/view_block.html",
@@ -77,6 +100,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
     hasMore: false,
     type: 'last'
   };
+  $scope.node = {};
   $scope.currency = false;
   $scope.entered = false;
   $scope.searchTextId = null;
@@ -96,16 +120,46 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
           $scope.search.type='text';
         }
       }
-      if (state && state.stateParams && state.stateParams.currency) { // Currency parameter
-        $scope.currency = state.stateParams.currency;
+
+      // Load from server if need
+      if (state && state.stateParams && state.stateParams.server) {
+        var useSsl = state.stateParams.ssl == "true";
+        var useTor = state.stateParams.tor == "true";
+
+        var node = {
+          server: state.stateParams.server,
+          host: state.stateParams.server,
+          useSsl: useSsl,
+          useTor: useTor
+        };
+        var serverParts = state.stateParams.server.split(':');
+        if (serverParts.length == 2) {
+          node.host = serverParts[0];
+          node.port = serverParts[1];
+        }
+
+        if (BMA.node.same(node.host, node.port)) {
+          $scope.node = BMA;
+        }
+        else {
+          $scope.node = useTor ?
+              // For TOR, use a web2tor to access the endpoint
+              BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+              BMA.instance(node.host, node.port, node.useSsl);
+          return $scope.node.blockchain.parameters()
+            .then(function(json) {
+              $scope.currency = json.currency;
+              $scope.enter(); // back to enter()
+            });
+        }
       }
+
       // Load currency if need
       if (!$scope.currency) {
-        csCurrency.get()
+        return csCurrency.get()
           .then(function(currency) {
             $scope.currency = currency ? currency.name : null;
-            $scope.node = !BMA.node.same(currency.node.host, currency.node.port) ?
-              BMA.instance(currency.node.host, currency.node.port) : BMA;
+            $scope.node = currency.node ? currency.node : BMA;
 
             if (!$scope.currency) {
               UIUtils.alert.error('ERROR.GET_CURRENCY_FAILED');
@@ -114,7 +168,6 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
             $scope.enter(); // back to enter()
           })
           .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
-        return;
       }
 
       $scope.compactMode = angular.isDefined($scope.compactMode) ? $scope.compactMode : true;
@@ -141,8 +194,9 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       $scope.startListenBlock();
     }
   };
-  $scope.$on('$ionicView.enter', $scope.enter);
+  //$scope.$on('$ionicView.enter', $scope.enter);
   $scope.$on('$ionicParentView.enter', $scope.enter);
+
 
   /**
    * Leave the view
@@ -156,7 +210,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       delete $scope.wsBlock;
     }
   };
-  $scope.$on('$ionicView.leave', $scope.leave);
+  //$scope.$on('$ionicView.leave', $scope.leave);
   $scope.$on('$ionicParentView.leave', $scope.leave);
   $scope.$on('$destroy', $scope.leave);
 
@@ -235,6 +289,8 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       });
   };
 
+  var formatDateShort = $filter('formatDateShort');
+
   $scope.doPrepareResult = function(blocks, offset) {
     offset = angular.isDefined(offset) ? offset : 0;
 
@@ -250,7 +306,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         // If empty
         if (block.empty) {
           // compute the day
-          var blockDay = $filter('formatDateShort')(block.medianTime);
+          var blockDay = formatDateShort(block.medianTime);
           var notFirstEmpty = (index !== 0) || (offset !== 0);
           var previousNotEmptyOrSameDay = !previousEmptyBlockDay || (previousEmptyBlockDay == blockDay);
           block.compacted = notFirstEmpty && previousNotEmptyOrSameDay;
@@ -429,9 +485,42 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
   $scope.enter = function(e, state) {
     if (!$scope.loading) return; // call once
 
-    $scope.currency = state && state.stateParams ? state.stateParams.currency : undefined;
     $scope.number = state && state.stateParams && angular.isDefined(state.stateParams.number) ? state.stateParams.number : 'current';
     $scope.hash = state && state.stateParams && state.stateParams.hash ? state.stateParams.hash : undefined;
+
+    // Load from server if need
+    if (state && state.stateParams && state.stateParams.server) {
+      var useSsl = state.stateParams.ssl == "true";
+      var useTor = state.stateParams.tor == "true";
+
+      var node = {
+        server: state.stateParams.server,
+        host: state.stateParams.server,
+        useSsl: useSsl,
+        useTor: useTor
+      };
+      var serverParts = state.stateParams.server.split(':');
+      if (serverParts.length == 2) {
+        node.host = serverParts[0];
+        node.port = serverParts[1];
+      }
+
+      if (BMA.node.same(node.host, node.port)) {
+        $scope.node = BMA;
+      }
+      else {
+        $scope.node = useTor ?
+          // For TOR, use a web2tor to access the endpoint
+          BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+          BMA.instance(node.host, node.port, node.useSsl);
+        return $scope.node.blockchain.parameters()
+          .then(function(json) {
+            $scope.currency = json.currency;
+            $scope.enter(); // back to enter()
+          });
+      }
+    }
+
 
     if (!$scope.currency) {
       csCurrency.get()
@@ -445,7 +534,6 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
         .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
     }
     else {
-      $scope.node = BMA;
       $scope.load();
     }
   };

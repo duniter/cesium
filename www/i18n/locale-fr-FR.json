@@ -114,7 +114,7 @@
     "REPORT_ISSUE": "anomalie",
     "NOT_YOUR_ACCOUNT_QUESTION" : "Vous n'êtes pas propriétaire du compte <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b> ?",
     "BTN_CHANGE_ACCOUNT": "Déconnecter ce compte",
-    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifez votre connection Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
+    "CONNECTION_ERROR": "Nœud <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Vérifiez votre connection Internet, ou changer de nœud <a class=\"positive\" ng-click=\"doQuickFix('settings')\">dans les paramètres</a>."
   },
   "SETTINGS": {
     "TITLE": "Paramètres",
@@ -279,6 +279,7 @@
       "TITLE": "Nœud",
       "OWNER": "Appartient à",
       "SHOW_RAW_PEERING": "Voir la fiche de pair",
+      "LAST_BLOCKS": "Derniers blocs",
       "KNOWN_PEERS": "Nœuds connus :",
       "GENERAL_DIVIDER": "Informations générales",
       "ERROR": {
@@ -596,7 +597,7 @@
     "REVOCATION_SENT": "Revocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/><br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
-    "EMPTY_TX_HISTORY": "Aucune transaction à exporter"
+    "EMPTY_TX_HISTORY": "Aucune opération à exporter"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",

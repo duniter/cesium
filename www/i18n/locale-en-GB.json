@@ -108,14 +108,13 @@
     "TITLE": "Cesium",
     "MESSAGE": "Welcome to the Cesium Application!<br/>Watch your <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> wallets in real time.",
     "MESSAGE_SHORT": "Watch your <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> wallets<br/>in real time!",
-    "BTN_REGISTRY": "Registry",
-    "BTN_MARKET": "Market place",
     "BTN_CURRENCY": "Explore currency",
     "BTN_ABOUT": "about",
     "BTN_HELP": "Help",
     "REPORT_ISSUE": "Report an issue",
     "NOT_YOUR_ACCOUNT_QUESTION" : "You do not own the account <b><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</b>?",
-    "BTN_CHANGE_ACCOUNT": "Disconnect this account"
+    "BTN_CHANGE_ACCOUNT": "Disconnect this account",
+    "CONNECTION_ERROR": "Peer <b>{{server}}</b> unreachable or invalid address.<br/><br/>Check your Internet connection, or change node <a class=\"positive\" ng-click=\"doQuickFix('settings')\">in the settings</a>."
   },
   "SETTINGS": {
     "TITLE": "Settings",
@@ -280,6 +279,7 @@
       "TITLE": "Peer",
       "OWNER": "Owned by ",
       "SHOW_RAW_PEERING": "See peering document",
+      "LAST_BLOCKS": "Last blocks",
       "KNOWN_PEERS": "Known peers :",
       "GENERAL_DIVIDER": "General information",
       "ERROR": {
@@ -340,6 +340,9 @@
       "RECEIVED_BY": "Certifications received by {{uid}}",
       "ERROR": "Received certifications in error",
       "SENTRY_MEMBER": "Referring member"
+    },
+    "OPERATIONS": {
+      "TITLE": "{{uid}} - Operations"
     },
     "GIVEN_CERTIFICATIONS": {
       "TITLE": "{{uid}} - Certifications sent",
@@ -593,7 +596,8 @@
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
     "REVOCATION_SENT": "Revocation sent successfully",
     "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
-    "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)"
+    "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)",
+    "EMPTY_TX_HISTORY": "No operations to export"
   },
   "CONFIRM": {
     "POPUP_TITLE": "<b>Confirmation</b>",
