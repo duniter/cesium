@@ -92,7 +92,6 @@
         {{'SETTINGS.AUTHENTICATION_SETTINGS' | translate}}
       </span>
 
-
       <div class="item item-toggle" >
         <div class="input-label" ng-class="{'gray': !formData.useLocalStorage}">
           {{'SETTINGS.REMEMBER_ME' | translate}}
@@ -102,9 +101,9 @@
           <i class="icon ion-alert-circled" ng-if="formData.rememberMe"></i>
           <span ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></span>
         </h4>
-        <label class="toggle" ng-class="{'toggle-stable': !formData.useLocalStorage, 'toggle-royal': formData.useLocalStorage}">
-          <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage"
-          >
+
+        <label class="toggle" ng-class="{'toggle-stable': !formData.useLocalStorage, 'toggle-assertive': formData.useLocalStorage}">
+          <input type="checkbox" ng-model="formData.rememberMe" ng-disabled="!formData.useLocalStorage">
           <div class="track">
             <div class="handle"></div>
           </div>

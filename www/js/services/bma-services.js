@@ -114,10 +114,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     }
 
     function closeWs() {
+      console.warn('[BMA] Closing all websockets...');
       _.keys(that.cache.wsByPath).forEach(function(key) {
         var sock = that.cache.wsByPath[key];
         sock.close();
       });
+      that.cache.wsByPath = {};
     }
 
     that.cleanCache = function() {
