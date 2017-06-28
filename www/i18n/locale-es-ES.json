@@ -106,8 +106,8 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "MESSAGE": "Bienvenida en la aplicación Cesium !<br/>Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> en tiempo real.",
-    "MESSAGE_SHORT": "Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a><br/>en tiempo real !",
+    "MESSAGE": "Bienvenida en la aplicación Cesium !<br/>Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> en tiempo real.",
+    "MESSAGE_SHORT": "Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_system\">Duniter</a><br/>en tiempo real !",
     "BTN_REGISTRY": "Anuario",
     "BTN_MARKET": "Ofertas/demandas",
     "BTN_CURRENCY": "Explorar la moneda",
@@ -637,7 +637,7 @@
       "CURRENCY_RULES": "Reglas de la moneda",
       "CURRENCY_RULES_DEF": "Las reglas de la moneda son definido una vez por todas. Fija el funcionamiento de la moneda : el cálculo del dividendo universal, el número de certificacións necesarias para ser miembro, el número de certificaciónes máximo que un miembro puede dar, etc. <a href=\"#/app/currency/view/\">Ver las reglas actuales</a>.<br/>La no modificación de las reglas en el tiempo es posible por el uso de una <span class=\"text-italic\">BlockChain</span> que sostiene et ejecuta estas reglas, y verifica continuamente sus buena aplicación.",
       "BLOCKCHAIN": "Cadena de bloques (<span class=\"text-italic\">Blockchain</span>)",
-      "BLOCKCHAIN_DEF": "La BlockChain es un sistema descentralizado, que, por el caso de Duniter, sirve a sostener y ejecutar las <span class=\"text-italic\">reglas de la moneda</span>.<br/><a href=\"http://fr.duniter.org/presentation/\">Saber más a proposito de Duniter</a> y el funcionamiento de su Blockchain.",
+      "BLOCKCHAIN_DEF": "La BlockChain es un sistema descentralizado, que, por el caso de Duniter, sirve a sostener y ejecutar las <span class=\"text-italic\">reglas de la moneda</span>.<br/><a href=\"http://duniter.org\" target=\"_system\">Saber más a proposito de Duniter</a> y el funcionamiento de su Blockchain.",
       "UNIVERSAL_DIVIDEND_DEF": "El Dividendo Universal (DU) es la cantidad de moneda co-creída por cada uno miembro, dependiendo del período y del cálculo como definido en las <span class=\"text-italic\">reglas de la moneda</span>.<br/>A cada plazo, los miembros reciben en sus cuentas la misma cantidad de moneda nueva.<br/><br/>El DU sube un crecimiento regular, para quedar justo entre los miembros (actuales y futuros), calculado en función de la esperanza de vida media, como demostrado en la Théorie Relative de la Monnaie (TRM) = Teoría Relativa de la Moneda, ya no está traducida en español, contactarnos para contribuir a su traducción.<br/><a href=\"http://trm.creationmonetaire.info\">Saber más a propósito de la TRM</a> y las monedas libres."
     },
     "TIP": {
@@ -652,7 +652,7 @@
       "NETWORK_BLOCKCHAIN": "Todas las operaciónes de la moneda están registradas dentro un grande libro de cuenta <b>público y infalsificable</b>, también llamado <b>cadena de bloques</b> (<em>BlockChain</em> en inglés).",
       "NETWORK_PEERS": "Los <b>nodos</b> visibles aquí corresponden a los <b>ordenadores que actualizan y controlan</b> la cadena de bloques.<br/><br/>Lo más hay nodos, más la moneda tiene una gestión <b>descentralizada</b> y digna de confianza.",
       "NETWORK_PEERS_BLOCK_NUMBER": "Este <b>número</b> (en verde) indica el <b>último bloque validado</b> por este nodo (última pagina escrita dentro el grande libro de cuentas).<br/><br/>El color verde indica que este bloque es también validado por <b>la mayoría de los otros nodos</b>.",
-      "NETWORK_PEERS_PARTICIPATE": "<b>Cada miembro</b>, equipado de un ordenador con internet, <b>puede participar añando un nodo</b>. Necesito <b>instalar el programa Duniter</b> (libre y gratis). <a target=\"_new\" href=\"{{installDocUrl}}\">Ver el manual de uso &gt;&gt;</a>.",
+      "NETWORK_PEERS_PARTICIPATE": "<b>Cada miembro</b>, equipado de un ordenador con internet, <b>puede participar añando un nodo</b>. Necesito <b>instalar el programa Duniter</b> (libre y gratis). <a href=\"{{installDocUrl}}\" target=\"_system\">Ver el manual de uso &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "El menú <b>{{'ACCOUNT.TITLE'|translate}}</b> permite acceder a la gestión de su cuenta.",
       "MENU_BTN_ACCOUNT_MEMBER": "Consulta aquí el estado de su cuenta y las informaciónes sobre sus certificaciónes.",
       "WALLET_CERTIFICATIONS": "Hace un clic aquí para consultar el detalle de sus certificaciónes (recibidas y emitidas).",

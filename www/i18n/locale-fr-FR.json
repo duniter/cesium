@@ -106,8 +106,8 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes en monnaie libre <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a>.",
-    "MESSAGE_SHORT": "Suivez vos comptes en monnaie libre <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> !",
+    "MESSAGE": "Bienvenue dans l'application Cesium !<br/>Suivez vos comptes en monnaie libre <a href=\"http://duniter.org\" target=\"_system\">Duniter</a>.",
+    "MESSAGE_SHORT": "Suivez vos comptes en monnaie libre <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> !",
     "BTN_CURRENCY": "Explorer la monnaie {{name|abbreviate}}",
     "BTN_ABOUT": "à propos",
     "BTN_HELP": "Aide en ligne",
@@ -640,8 +640,8 @@
       "CURRENCY_RULES": "Règles de la monnaie",
       "CURRENCY_RULES_DEF": "Les règles de la monnaie sont définies une fois pour toute. Elle fixe le fonctionnement de la monnaie : le calcul du dividend universel, le nombre de certifications nécessaire pour être membre, le nombre de certification maximum qu'un membre peut donner, etc. <a href=\"#/app/currency/view/\">Voir les règles actuelles</a>.<br/>La non modification des règles dans le temps est possible par l'utilisation d'une <span class=\"text-italic\">BlockChain</span> qui porte et execute ces règles, et en vérifie constamment la bonne application.",
       "BLOCKCHAIN": "Chaîne de blocs (<span class=\"text-italic\">Blockchain</span>)",
-      "BLOCKCHAIN_DEF": "La BlockChain est un système décentralisé, qui, dans le cas de Duniter, sert à porter et executer les <span class=\"text-italic\">règles de la monnaie</span>.<br/><a href=\"http://fr.duniter.org/presentation/\">En savoir plus sur Duniter</a> et le fonctionnement de sa blockchain.",
-      "UNIVERSAL_DIVIDEND_DEF": "Le Dividende Universel (DU) est la quantité de monnaie co-créée par chaque membre, suivant la période et le calcul définie dans les <span class=\"text-italic\">règles de la monnaie</span>.<br/>A chaque échéance, les membres recoivent sur leur compte la meme quantité de nouvelle monnaie.<br/><br/>Le DU subit une croissance régulière, pour rester juste entre les membres (actuels et à venir), calculée en fonction de l'espérance de vie moyenne, telle que démontré dans la Thérorie Relative de la Monnaie (TRM).<br/><a href=\"http://trm.creationmonetaire.info\">En savoir plus sur la TRM</a> et les monnaies libres."
+      "BLOCKCHAIN_DEF": "La BlockChain est un système décentralisé, qui, dans le cas de Duniter, sert à porter et executer les <span class=\"text-italic\">règles de la monnaie</span>.<br/><a href=\"https://duniter.org/fr/comprendre/\" target=\"_system\">En savoir plus sur Duniter</a> et le fonctionnement de sa blockchain.",
+      "UNIVERSAL_DIVIDEND_DEF": "Le Dividende Universel (DU) est la quantité de monnaie co-créée par chaque membre, suivant la période et le calcul définie dans les <span class=\"text-italic\">règles de la monnaie</span>.<br/>A chaque échéance, les membres recoivent sur leur compte la meme quantité de nouvelle monnaie.<br/><br/>Le DU subit une croissance régulière, pour rester juste entre les membres (actuels et à venir), calculée en fonction de l'espérance de vie moyenne, telle que démontré dans la Thérorie Relative de la Monnaie (TRM).<br/><a href=\"http://trm.creationmonetaire.info\" target=\"_system\">En savoir plus sur la TRM</a> et les monnaies libres."
     },
     "TIP": {
       "MENU_BTN_CURRENCY": "Le menu <b>{{'MENU.CURRENCY'|translate}}</b> permet la consultation des <b>règles de la monnaie</b> et de son état.",
@@ -655,7 +655,7 @@
       "NETWORK_BLOCKCHAIN": "Toutes les opérations de la monnaie sont enregistrées dans un grand livre de compte <b>public et infalsifiable</b>, appellé aussi <b>chaine de blocs</b> (<em>BlockChain</em> en anglais).",
       "NETWORK_PEERS": "Les <b>nœuds</b> visibles ici correspondent aux <b>ordinateurs qui actualisent et contrôlent</b> la chaine de blocs.<br/><br/>Plus il y a de nœuds, plus la monnaie à une gestion <b>décentralisée</b> et digne de confiance.",
       "NETWORK_PEERS_BLOCK_NUMBER": "Ce <b>numéro</b> (en vert) indique le <b>dernier bloc validé</b> pour ce nœud (dernière page écrite dans le grand livre de comptes).<br/><br/>La couleur verte indique que ce bloc est également validé par <b>la plupart des autres nœuds</b>.",
-      "NETWORK_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a target=\"_new\" href=\"{{installDocUrl}}\">Voir le manuel d'installation &gt;&gt;</a>.",
+      "NETWORK_PEERS_PARTICIPATE": "<b>Chaque membre</b>, équipé d'un ordinateur avec Internet, <b>peut participer en ajoutant un nœud</b>. Il suffit d'<b>installer le logiciel Duniter</b> (libre et gratuit). <a href=\"{{installDocUrl}}\" target=\"_system\">Voir le manuel d'installation &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "Le menu <b>{{'ACCOUNT.TITLE'|translate}}</b> permet d'accéder à la gestion de votre compte.",
       "MENU_BTN_ACCOUNT_MEMBER": "Consultez ici l'état de votre compte et les informations sur vos certifications.",
       "WALLET_CERTIFICATIONS": "Cliquez ici pour consulter le détail de vos certifications (reçues et émises).",

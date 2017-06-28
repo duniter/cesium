@@ -106,8 +106,8 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "MESSAGE": "Welcome to the Cesium Application!<br/>Watch your <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> wallets in real time.",
-    "MESSAGE_SHORT": "Watch your <a href=\"http://duniter.org\" target=\"_blank\">Duniter</a> wallets<br/>in real time!",
+    "MESSAGE": "Welcome to the Cesium Application!<br/>Watch your <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> wallets in real time.",
+    "MESSAGE_SHORT": "Watch your <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> wallets<br/>in real time!",
     "BTN_REGISTRY": "Registry",
     "BTN_MARKET": "Market place",
     "BTN_CURRENCY": "Explore currency",
@@ -638,7 +638,7 @@
       "CURRENCY_RULES_DEF": "The currency rules are defined only once, and for all. They set the parameters under which the currency will perform: universal dividend calculation, the amount of certifications needed to become a member, the maximum amount of certifications a member can send, etc.<br/><br/>The parameters cannot be modified because of the use of a <span class=\"text-italic\">Blockchain</span> which carries and executes these rules, and constantly verifies their correct application. <a href=\"#/app/currency/view/\">See current parameters</a>.",
       "BLOCKCHAIN": "Blockchain",
       "BLOCKCHAIN_DEF": "The Blockchain is a decentralised system which, in case of Duniter, serves to carry and execute the <span class=\"text-italic\">currency rules</span>.<br/><a href=\"http://en.duniter.org/presentation/\" target=\"_blank\">Read more about Duniter</a> and the working of its blockchain.",
-      "UNIVERSAL_DIVIDEND_DEF": "The Universal Dividend (UD) is the quantity of money co-created by each member, according to the period and the calculation defined in the <span class=\"text-italic\">currency rules</span>.<br/>Every term, the members receive an equal amount of new money on their account.<br/><br/>The UD undergoes a steady growth, to remain fair under its members (current and future), calculated by an average life expectancy, as demonstrated in the Relative Theory of Money (RTM).<br/><a href=\"http://trm.creationmonetaire.info\" target=\"_blank\">Read more about RTM</a> and open money."
+      "UNIVERSAL_DIVIDEND_DEF": "The Universal Dividend (UD) is the quantity of money co-created by each member, according to the period and the calculation defined in the <span class=\"text-italic\">currency rules</span>.<br/>Every term, the members receive an equal amount of new money on their account.<br/><br/>The UD undergoes a steady growth, to remain fair under its members (current and future), calculated by an average life expectancy, as demonstrated in the Relative Theory of Money (RTM).<br/><a href=\"http://trm.creationmonetaire.info\" target=\"_system\">Read more about RTM</a> and open money."
     },
     "TIP": {
       "MENU_BTN_CURRENCY": "Menu <b>{{'MENU.CURRENCY'|translate}}</b> allows discovery of <b>currency parameters</b> and its state.",
@@ -652,7 +652,7 @@
       "NETWORK_BLOCKCHAIN": "All monetary transactions are recoded in a <b>public and tamper proof</b> ledger, generally referred to as the <b>blockchain</b>.",
       "NETWORK_PEERS": "The <b>peers</b> shown here correspond to <b>computers that update and check</b> the blockchain.<br/><br/>The more active peers there are, the more <b>decentralised</b> and therefore trustworhty the currency becomes.",
       "NETWORK_PEERS_BLOCK_NUMBER": "This <b>number</b> (in green) indicates the peer's <b>latest validated block</b> (last page written in the ledger).<br/><br/>Green indicates that the block was equally validated by the <b>majority of other peers</b>.",
-      "NETWORK_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\">Read the installation manual &gt;&gt;</a>.",
+      "NETWORK_PEERS_PARTICIPATE": "<b>Each member</b>, equiped with a computer with Internet, <b>can participate, adding a peer</b> simply by <b>installing the Duniter software</b> (free/libre). <a target=\"_new\" href=\"{{installDocUrl}}\" target=\"_system\">Read the installation manual &gt;&gt;</a>.",
       "MENU_BTN_ACCOUNT": "<b>{{'ACCOUNT.TITLE'|translate}}</b> allows access to your account balance and transaction history.",
       "MENU_BTN_ACCOUNT_MEMBER": "Here you can consult your account status, transaction history and your certifications.",
       "WALLET_CERTIFICATIONS": "Click here to reveiw the details of your certifications (given and received).",

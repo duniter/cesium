@@ -335,7 +335,7 @@ function ESSocialsViewController($scope, $window, Device, UIUtils)  {
 
   $scope.open = function(event, social) {
     if (!social) return;
-    var url = (social.type == 'email')  ? ('mailto:' + social.url) : social.url;
+    var url = (social.type == 'email') ? ('mailto:' + social.url) : social.url;
 
     // If email, do not try to open, but copy value
     if (!Device.enable && social.type == 'email') {
