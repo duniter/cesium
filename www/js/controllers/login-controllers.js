@@ -13,7 +13,8 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
     rememberMe: csSettings.data.rememberMe
   };
   $scope.showSalt = csSettings.data.showLoginSalt;
-  $scope.showPubkeyButton = false;
+  $scope.showPubkey = false;
+  $scope.showComputePubkeyButton = false;
   $scope.autoComputePubkey = false;
 
   csPlatform.ready().then(function() {
@@ -35,45 +36,44 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
   };
 
   $scope.formDataChanged = function() {
+    if ($scope.computing) return; // avoid multiple call
     $scope.computing=false;
     $scope.pubkey = null;
-    if ($scope.autoComputePubkey && $scope.formData.username && $scope.formData.password) {
-      $scope.showPubkey();
+    $scope.showPubkey = !!$scope.formData.username && !!$scope.formData.password;
+    if ($scope.autoComputePubkey && $scope.showPubkey) {
+      $scope.computePubkey();
+      $scope.showComputePubkeyButton = false;
     }
     else {
-      $scope.showPubkeyButton = $scope.formData.username && $scope.formData.password;
+      $scope.showComputePubkeyButton = !$scope.autoComputePubkey && $scope.showPubkey;
     }
   };
-  $scope.$watch('formData.username', $scope.formDataChanged, true);
-  $scope.$watch('formData.password', $scope.formDataChanged, true);
+  $scope.$watch('formData.username + formData.password', $scope.formDataChanged, true);
 
-  $scope.showPubkey = function() {
-    $scope.computing=true;
-    $scope.showPubkeyButton = false;
-    $scope.pubkey = '';
-    $timeout(function() {
+  $scope.computePubkey = function() {
+    $scope.showComputePubkeyButton = false;
+    $scope.computing = true;
+    $scope.pubkey = null;
+    return $timeout(function() {
       var salt = $scope.formData.username;
       var pwd = $scope.formData.password;
-      CryptoUtils.connect(salt, pwd).then(
+      return CryptoUtils.connect(salt, pwd).then(
         function (keypair) {
-          // form has changed: retry
+
+          // If model has changed before the response, then retry
           if (salt !== $scope.formData.username || pwd !== $scope.formData.password) {
-            $scope.showPubkey();
+            return $scope.computePubkey();
           }
-          else {
-            $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            $scope.computing = false;
-          }
+
+          $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+          $scope.computing = false;
         }
       )
         .catch(function (err) {
-          $scope.pubkey = '';
-          $scope.computing = false;
-          UIUtils.loading.hide();
-          console.error('>>>>>>>', err);
-          UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+          UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR')(err);
+          $scope.formDataChanged();
         });
-    }, 500);
+    }, 100);
   };
 
   $scope.showJoinModal = function() {
@@ -90,6 +90,9 @@ function LoginModalController($scope, $timeout, CryptoUtils, UIUtils, Modals, cs
     }, 300);
   };
 
+  $scope.showHelpModal = function(parameters) {
+    return Modals.showHelp(parameters);
+  };
 
   // TODO : for DEV only
   /*$timeout(function() {

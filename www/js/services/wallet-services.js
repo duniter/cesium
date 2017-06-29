@@ -89,21 +89,32 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       });
     },
 
-    login = function(salt, password) {
+    loginBySalt = function(salt, password) {
+      console.warn("[wallet] deprecacted API. use login instead");
+
       return CryptoUtils.connect(salt, password)
-        .then(function(keypair) {
-          // Copy result to properties
-          data.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-
-          // FOR DEV ONLY - on crosschain
-          // console.error('TODO REMOVE this code - dev only'); data.pubkey = '36j6pCNzKDPo92m7UXJLFpgDbcLFAZBgThD2TCwTwGrd';
-
-          data.keypair = keypair;
-
+        .then(function (keypair) {
+          var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
           // Call extend api
-          return api.data.raisePromise.login(data);
-        })
-        // store if need
+          return login(pubkey, keypair);
+        });
+    },
+
+    login = function(pubkey, keypair) {
+      data.pubkey = pubkey;
+
+      // FOR DEV ONLY - on crosschain
+      //console.error('TODO REMOVE this code - dev only');
+      //data.pubkey = '38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE';
+
+      data.keypair = keypair || {
+        signSk: null,
+        signPk: null
+      };
+
+      // Call extend api
+      return api.data.raisePromise.login(data)
+        // store wallet if need
         .then(function() {
           if (csSettings.data.useLocalStorage) {
             store();
@@ -1446,6 +1457,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       start: start,
       stop: stop,
       // auth
+      loginBySalt: loginBySalt, // deprecated
       login: login,
       logout: logout,
       isLogin: isLogin,

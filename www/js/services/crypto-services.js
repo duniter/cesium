@@ -48,9 +48,26 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       crypto_box_MACBYTES: 16,
       SEED_LENGTH: 32, // Length of the key
       SCRYPT_PARAMS:{
-        N: 4096,
-        r: 16,
-        p: 1
+        SIMPLE: {
+          N: 4096,
+          r: 16,
+          p: 1
+        },
+        SECURE: {
+          N: 16384,
+          r: 32,
+          p: 2
+        },
+        HARDEST: {
+          N: 65536,
+          r: 32,
+          p: 4
+        },
+        EXTREME: {
+          N: 262144,
+          r: 64,
+          p: 8
+        }
       }
     };
 
@@ -238,14 +255,14 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       /**
        * Create key pairs (sign and box), from salt+password
        */
-      this.connect = function(salt, password) {
+      this.connect = function(salt, password, N, r, p) {
         return $q(function(resolve, reject) {
           var seed = that.scrypt.crypto_scrypt(
             that.util.encode_utf8(password),
             that.util.encode_utf8(salt),
-            that.constants.SCRYPT_PARAMS.N,
-            that.constants.SCRYPT_PARAMS.r,
-            that.constants.SCRYPT_PARAMS.p,
+            N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
+            r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
+            p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
             that.constants.SEED_LENGTH);
           var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
           var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
@@ -397,15 +414,15 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       /**
        * Create key pairs (sign and box), from salt+password, using cordova
        */
-      this.connect = function(salt, password) {
+      this.connect = function(salt, password, N, r, p) {
         var deferred = $q.defer();
 
         that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
           that.nacl.from_string(password),
           that.nacl.from_string(salt),
-          that.constants.SCRYPT_PARAMS.N,
-          that.constants.SCRYPT_PARAMS.r,
-          that.constants.SCRYPT_PARAMS.p,
+          N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
+          r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
+          p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
           that.constants.SEED_LENGTH,
           function (err, seed) {
             if (err) { deferred.reject(err); return;}

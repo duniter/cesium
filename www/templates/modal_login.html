@@ -7,14 +7,16 @@
       <span class="secondary-buttons">
         <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
         </button>
-    </span></div>
+
+      </span>
+    </div>
 
   </ion-header-bar>
 
   <ion-content>
     <form name="loginForm" novalidate="" ng-submit="doLogin()" autocomplete="off">
 
-      <div class="list" ng-init="setForm(loginForm)">
+      <div class="list padding no-padding-xs" ng-init="setForm(loginForm)">
 
         <!-- avoid web browser to fill password automatically -->
         <input type="password" name="fake-password" style="visibility:hidden; position:absolute;"/>
@@ -23,18 +25,11 @@
         <label class="item item-input"
                ng-class="{ 'item-input-error': form.$submitted && form.username.$invalid}">
           <span class="input-label hidden-xs" translate>LOGIN.SALT</span>
-          <input ng-if="!showSalt"
-                 name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
+          <input name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                  ng-model="formData.username"
                  ng-model-options="{ debounce: 650 }"
                  class="highlight-light"
                  required >
-          <input ng-if="showSalt"
-                 name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
-                 ng-model="formData.username"
-                 ng-model-options="{ debounce: 650 }"
-                 class="highlight-light"
-                 required>
         </label>
         <div class="form-errors"
              ng-show="form.$submitted && form.username.$error"
@@ -42,17 +37,6 @@
           <div class="form-error" ng-message="required">
             <span translate="ERROR.FIELD_REQUIRED"></span>
           </div>
-        </div>
-
-        <!-- Show salt -->
-        <div class="item item-toggle dark">
-          <span translate>LOGIN.SHOW_SALT</span>
-          <label class="toggle toggle-stable">
-            <input type="checkbox" ng-model="showSalt">
-            <div class="track">
-              <div class="handle"></div>
-            </div>
-          </label>
         </div>
 
         <!-- password-->
@@ -74,39 +58,38 @@
         </div>
 
 
-        <!-- remember me -->
-        <div class="item item-toggle  hidden-xs">
-          <div class="input-label " translate>SETTINGS.REMEMBER_ME</div>
-          <h4 class="gray text-wrap"
+        <!-- remember me (checkbox) -->
+        <ion-checkbox ng-model="formData.rememberMe"
+                      class="item ink item-text-wrap">
+          <div class="item-content dark" translate>SETTINGS.REMEMBER_ME</div>
+          <h4 class="gray text-wrap">
+            <span ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></span>
+          </h4>
+          <!--<h4 class="gray text-wrap"
               ng-class="{'assertive': formData.rememberMe}">
             <i class="icon ion-alert-circled" ng-if="formData.rememberMe"></i>
             <span ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></span>
-          </h4>
-          <label class="toggle toggle-assertive">
-            <input type="checkbox" ng-model="formData.rememberMe">
-            <div class="track">
-              <div class="handle"></div>
-            </div>
-          </label>
-        </span>
+          </h4>-->
+        </ion-checkbox>
 
 
         <!-- Show public key -->
-        <div class="item item-button-right left">
-          <span ng-if="formData.username && formData.password"
-                class="input-label" translate>COMMON.PUBKEY</span>
-          <a class="button button-light button-small ink animate-if"
-             ng-click="showPubkey()"
-             ng-if="showPubkeyButton"
-            >
-            {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
+        <div class="item text-center no-margin item-icon-right item-text-wrap" style="min-height: 72px;">
+          <h3 class="gray animate-show-hide ng-hide" ng-show="showPubkey" translate>LOGIN.ASSOCIATED_PUBKEY</h3>
+          <h3>
+            <a class="positive ink animate-show-hide ng-hide"
+               ng-show="showComputePubkeyButton"
+               ng-click="computePubkey()">
+              <i class="ion-eye"></i>
+              {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
+            </a>
+            <span class="dark bold animate-show-hide ng-hide" ng-show="!computing">{{pubkey}}</span>
+            <ion-spinner class="ion-spinner-small" icon="android" ng-if="computing"></ion-spinner>
+          </h3>
+          <a class="button button-icon positive button-small-padding  icon ion-ios-help-outline animate-show-hide ng-hide"
+             ng-click="showHelpModal('login-pubkey')"
+             ng-show="showPubkey">
           </a>
-          <h3 class="gray text-no-wrap" ng-if="!computing">
-            {{pubkey}}
-          </h3>
-          <h3 ng-if="computing">
-            <ion-spinner icon="android"></ion-spinner>
-          </h3>
         </div>
 
       </div>
@@ -119,8 +102,6 @@
           {{'COMMON.BTN_LOGIN' | translate}}
         </button>
       </div>
-
-      <br class="visible-xs"/>
 
       <!-- Register ? -->
       <div class="text-center no-padding">
@@ -138,11 +119,6 @@
           LOGIN.FORGOTTEN_ID
         </a>
       </div>
-
-      <!--div class="padding hidden-xs text-right">
-        <a class="assertive ink" ng-click="openNewAccount()" type="button" translate>COMMON.NO_ACOUNT_QUESTION
-        </a>
-      </div-->
     </form>
   </ion-content>
 </ion-modal-view>

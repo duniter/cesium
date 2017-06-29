@@ -105,7 +105,7 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
 }
 
 
-function JoinModalController($scope, $state, $interval, $timeout, $focus, UIUtils, CryptoUtils, csSettings, Modals, csWallet, BMA, parameters) {
+function JoinModalController($scope, $state, $interval, $timeout, UIUtils, CryptoUtils, csSettings, Modals, csWallet, BMA, parameters) {
   'ngInject';
 
   $scope.formData = {
@@ -176,8 +176,8 @@ function JoinModalController($scope, $state, $interval, $timeout, $focus, UIUtil
       })
       .catch(function(err) {
         $scope.formData.computing=false;
-        console.error('>>>>>>>' , err);
-        UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+        $scope.formData.pubkey = undefined;
+        UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR')(err);
       });
   };
 
@@ -242,7 +242,8 @@ function JoinModalController($scope, $state, $interval, $timeout, $focus, UIUtil
       behavior = {
         hasPreviousButton: true,
         hasNextButton: false,
-        hasSendButton: true
+        hasSendButton: true,
+        helpAnchor: 'join-pubkey'
       };
     }
     else {
@@ -388,7 +389,7 @@ function JoinModalController($scope, $state, $interval, $timeout, $focus, UIUtil
   $scope.startListenLicenseBottom = function(){
     var iframeEl = angular.element(document.querySelector('.modal #iframe-license'));
     iframeEl = iframeEl && iframeEl.length ? iframeEl[0] : undefined;
-    if (!iframeEl) {
+    if (!iframeEl || !iframeEl.contentWindow) {
       console.debug('[join] Waiting license frame to be load...');
       return $timeout($scope.startListenLicenseBottom, 1000);
     }
@@ -400,11 +401,18 @@ function JoinModalController($scope, $state, $interval, $timeout, $focus, UIUtil
       var isBottom = (scrollHeight - clientHeight === yPos);
       if(isBottom){
         $scope.isLicenseRead = true;
-        $interval.cancel($scope.licenseBottomInterval);
-        delete $scope.licenseBottomInterval;
+        $scope.stopListenLicenseBottom();
       }
     }, 1000);
   };
+
+  $scope.stopListenLicenseBottom = function() {
+    if ($scope.licenseBottomInterval) {
+      $interval.cancel($scope.licenseBottomInterval);
+      delete $scope.licenseBottomInterval;
+    }
+  };
+  $scope.$on('modal.hidden', $scope.stopListenLicenseBottom);
 
   $scope.checkUid = function(){
     if (!$scope.formData.pseudo || $scope.formData.pseudo.length < 3) {

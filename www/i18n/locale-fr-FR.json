@@ -15,7 +15,7 @@
     "BTN_YES_SAVE": "Oui, Enregistrer",
     "BTN_YES_CONTINUE": "Oui, Continuer",
     "BTN_SHOW": "Voir",
-    "BTN_SHOW_PUBKEY": "Voir la clé",
+    "BTN_SHOW_PUBKEY": "Afficher la clé publique",
     "BTN_RELATIVE_UNIT": "Afficher en unité relative ?",
     "BTN_BACK": "Retour",
     "BTN_NEXT": "Suivant",
@@ -364,6 +364,7 @@
     "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
     "CREATE_ACCOUNT": "Créer un compte",
     "FORGOTTEN_ID": "Mot de passe oublié ?",
+    "ASSOCIATED_PUBKEY": "Clé publique de votre trousseau :",
     "AUTO_LOGOUT": {
       "TITLE": "Information",
       "MESSAGE": "<i class=\"ion-android-time\"></i> Vous avez été <b>déconnecté</b> automatiquement, suite à une inactivité prolongée.",
@@ -633,9 +634,14 @@
       "PASSWORD": "Le mot de passe est très important. Avec l'identifiant secret, il sert à à calculer le numéro (la clé publique) de votre compte, et la clé secrète pour y accéder.<br/><b>Veuillez à bien le mémoriser</b>, car aucun moyen n'est de le retrouver en cas de perte (sauf à générer un fichier de sauvegarde).<br/>Par ailleurs, il ne peut pas être modifié sans devoir créer un nouveau compte.<br/><br/>Un bon mot de passe contient (idéalement) au moins 8 caractères, dont au moins une majuscule et un chiffre.",
       "PSEUDO": "Le pseudonyme utilisé uniquement dans le cas d'inscription comme <span class=\"text-italic\">membre</span>. Il est toujours associé à un portefeuille (via sa <span class=\"text-italic\">clé publique</span>).<br/>Il est publié sur le réseau, afin que les autres utilisateurs puisse l'identifier, le certifier ou envoyer de la monnaie sur le compte.<br/>Un pseudonyme doit être unique au sein des membres (<u>actuels</u> et anciens)."
     },
+    "LOGIN": {
+      "SECTION": "Connexion",
+      "PUBKEY": "Clé publique du trousseau",
+      "PUBKEY_DEF": "La clef publique du trousseau est générée à partir des identifiants saisis (n'importe lesquels), sans pour autant qu'ils correspondent à un compte déjà utilisé.<br/><b>Vérifiez attentivement que la clé publique est celle de votre compte</b>. Dans le cas contraire, vous serez connecté à un compte probablement jamais utilisé, le risque de collision avec un compte existant étant infime.<br/><a href=\"https://fr.wikipedia.org/wiki/Cryptographie_asym%C3%A9trique\" target=\"_system\">En savoir plus sur la cryptographie</a> par clé publique."
+    },
     "GLOSSARY": {
       "SECTION": "Glossaire",
-      "PUBKEY_DEF": "Une clé publique identifie un portefeuille de monnaie. Il peut identifier un membre. Dans Cesium elle est calculée grâce à l'identifiant secret et au mot de passe.",
+      "PUBKEY_DEF": "Une clé publique identifie un portefeuille de monnaie, qui peut identifier un membre ou correspondre à un portefeuille anonyme. Dans Cesium la clé publique est calculée (par défaut) grâce à l'identifiant secret et au mot de passe.<br/><a href=\"https://fr.wikipedia.org/wiki/Cryptographie_asym%C3%A9trique\" target=\"_system\">En savoir plus sur la cryptographie</a> par clé publique.",
       "MEMBER": "Membre",
       "MEMBER_DEF": "Un membre est une personne humaine physique et vivante, désireuse de participer librement à la communauté monétaire. Elle percoit un dividende universel, suivant une période et un montant tels que définis dans les <span class=\"text-italic\">règles de la monnaie</span>",
       "CURRENCY_RULES": "Règles de la monnaie",

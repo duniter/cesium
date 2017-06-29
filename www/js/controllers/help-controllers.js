@@ -74,7 +74,12 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
   $scope.itemsClass = {};
   $scope.locale = csSettings.data.locale.id;
 
-  if (parameters && parameters.anchor) {
+  parameters = parameters || {};
+  if (parameters && typeof parameters == "string") {
+    parameters = {anchor: parameters};
+  }
+
+  if (parameters.anchor) {
 
     $timeout(function() {
       $anchorScroll(parameters.anchor);
@@ -82,8 +87,8 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 
     // Change CSS classes
     $scope.itemsClass = {};
-    $scope.itemsClass[parameters.anchor] = 'positive';
-    $scope.listClass = 'gray';
+    $scope.itemsClass[parameters.anchor] = 'selected';
+    $scope.listClass = 'selection';
   }
 
 }
@@ -92,7 +97,7 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 /* ----------------------------
 *  Help Tip
 * ---------------------------- */
-function HelpTipController($scope, $rootScope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
+function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
                            UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?

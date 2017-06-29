@@ -322,7 +322,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         csSettings.data.useLocalStorage = csSettings.data.rememberMe ? true : csSettings.data.useLocalStorage;
         csSettings.store();
       }
-      return csWallet.login(formData.username, formData.password);
+      return csWallet.loginBySalt(formData.username, formData.password);
     })
     .then(function(walletData){
       if (walletData) {

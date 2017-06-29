@@ -1888,7 +1888,7 @@ div[dropzone] {
 }
 
 /**********
-  join waizard modal
+  join wizard modal
 **********/
 @media screen and (max-width: $screen-sm-max) {
   .modal iframe.iframe-license {
@@ -1908,4 +1908,27 @@ div[dropzone] {
   }
 }
 
+/**********
+  Help modal
+**********/
+.modal.modal-help {
 
+  .row.selected {
+    @extend .energized-100-bg;
+
+    .col:first-child {
+      font-weight: bold;
+    }
+  }
+}
+@media screen and (max-width: $screen-xs-max) {
+  .modal.modal-help {
+    .row .col:first-child {
+      font-weight: bold;
+    }
+
+    h2 {
+      padding-left: 10px;
+    }
+  }
+}
