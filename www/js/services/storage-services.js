@@ -1,17 +1,14 @@
-angular.module('cesium.storage.services', ['ngApi', 'cesium.config'])
+angular.module('cesium.storage.services', [ 'cesium.config'])
 
-  .factory('localStorage', function($window, $q, $rootScope, $timeout, csConfig, Api) {
+  .factory('localStorage', function($window, $q) {
     'ngInject';
 
     var
       appName = "Cesium",
-      api = new Api(this, "localStorage"),
       started = false,
       startPromise,
       isDevice = true, // default for device (override later)
       exports = {
-        api: api,
-        useHttpsFrame: false,
         standard: {
           storage: null
         },
@@ -173,6 +170,36 @@ angular.module('cesium.storage.services', ['ngApi', 'cesium.config'])
 
     // default action
     start();
+
+    return exports;
+  })
+
+
+  .factory('sessionStorage', function($window, $q) {
+    'ngInject';
+
+    var
+      exports = {
+        storage: $window.sessionStorage
+      };
+
+    exports.put = function(key, value) {
+      exports.storage[key] = value;
+      return $q.when();
+    };
+
+    exports.get = function(key, defaultValue) {
+      return $q.when(exports.storage[key] || defaultValue);
+    };
+
+    exports.setObject = function(key, value) {
+      exports.storage[key] = JSON.stringify(value);
+      return $q.when();
+    };
+
+    exports.getObject = function(key) {
+      return $q.when(JSON.parse(exports.storage[key] || '{}'));
+    };
 
     return exports;
   })

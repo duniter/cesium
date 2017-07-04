@@ -145,7 +145,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   function onWalletLogin(data, deferred) {
     deferred = deferred || $q.defer();
-    if (!data || !data.pubkey || !data.keypair) {
+    if (!data || !data.pubkey || !data.keypair || !data.keypair.signSk) {
       deferred.resolve();
       return deferred.promise;
     }
@@ -192,7 +192,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     refreshState();
 
     var isEnable = that.isEnable();
-    if (csWallet.isLogin()) {
+    if (csWallet.isAuth()) {
       if (!wasEnable && isEnable) {
 
         onWalletLogin(csWallet.data);

@@ -40,6 +40,7 @@
     "BTN_DOWNLOAD": "Télécharger",
     "BTN_DOWNLOAD_ACCOUNT_STATEMENT": "Télécharger le relevé du compte",
     "BTN_MODIFY": "Modifier",
+    "CHOOSE_FILE": "Déposez votre fichier <br/>ou cliquez pour le sélectionner",
     "DAYS": "jours",
     "NO_ACCOUNT_QUESTION": "Pas de encore membre ? Créer un compte !",
     "SEARCH_NO_RESULT": "Aucun résultat trouvé",
@@ -127,16 +128,20 @@
     "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Mon compte",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
-    "AUTHENTICATION_SETTINGS": "Authentification",
-    "AUTO_LOGOUT": "Déconnexion automatique",
-    "AUTO_LOGOUT_OPTION_NEVER": "Jamais",
-    "AUTO_LOGOUT_OPTION_SECONDS": "Après {{value}} secondes",
-    "AUTO_LOGOUT_OPTION_MINUTE": "Après {{value}} minute",
-    "AUTO_LOGOUT_OPTION_MINUTES": "Après {{value}} minutes",
-    "AUTO_LOGOUT_OPTION_HOUR": "Après {{value}} heure",
-    "AUTO_LOGOUT_HELP": "Délai d'inactivité avant déconnection",
+    "AUTHENTICATION_SETTINGS": "Identification et authentification",
+    "KEEP_AUTH": "Expiration de l'authentification",
+    "KEEP_AUTH_HELP": "Défini le moment où l'authentification est nettoyée de la mémoire",
+    "KEEP_AUTH_WARN": "Il n'est pas recommandé de conserver l'authentification pendant toute la session !",
+    "KEEP_AUTH_OPTION": {
+      "NEVER": "Après chaque opération",
+      "SECONDS": "Après {{value}}s d'inactivité",
+      "MINUTE": "Après {{value}}min d'inactivité",
+      "MINUTES": "Après {{value}}min d'inactivité",
+      "HOUR": "Après {{value}}h d'inactivité",
+      "ALWAYS": "A la fin de la session"
+    },
     "REMEMBER_ME": "Se souvenir de moi ?",
-    "REMEMBER_ME_HELP": "Permet de rester toujours connecté (non recommandée).",
+    "REMEMBER_ME_HELP": "Permet de rester identifié, entre les sessions de navigation<br/>(Seule la clé publique du compte sera conservée localement)",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "EXPERT_MODE": "Activer le mode expert",
@@ -355,21 +360,60 @@
     }
   },
   "LOGIN": {
-    "TITLE": "<i class=\"icon ion-locked\"></i> Connexion",
+    "TITLE": "<i class=\"icon ion-log-in\"></i> Connexion",
+    "SCRYPT_FORM_HELP": "Veuillez saisir vos identifiants.<br>Pensez à vérifier que la clé publique est celle de votre compte.",
+    "PUBKEY_FORM_HELP": "Veuillez saisir une clé publique de compte.",
+    "FILE_FORM_HELP": "Choisissez le fichier de trousseau à utiliser :",
     "SALT": "Identifiant secret",
     "SALT_HELP": "Identifiant secret",
     "SHOW_SALT": "Afficher l'identifiant secret ?",
     "PASSWORD": "Mot de passe",
     "PASSWORD_HELP": "Mot de passe",
+    "PUBKEY_HELP": "Exemple : « AbsxSY4qoZRzyV2irfep1V9xw1EMNyKJw2TkuVD4N1mv »",
     "NO_ACCOUNT_QUESTION": "Vous n'avez pas encore de compte ?",
     "CREATE_ACCOUNT": "Créer un compte",
     "FORGOTTEN_ID": "Mot de passe oublié ?",
-    "ASSOCIATED_PUBKEY": "Clé publique de votre trousseau :",
+    "ASSOCIATED_PUBKEY": "Clé publique du trousseau :",
+    "BTN_SHOW_OTHER_METHODS": "Choisir la méthode de connexion",
+    "METHOD_LABEL": "Méthode de connexion",
+    "MEMORIZE_AUTH_FILE": "Mémoriser ce trousseau le temps de la session de navigation",
+    "SCRYPT_PARAMETERS": "Paramètres (Scrypt) :",
     "AUTO_LOGOUT": {
       "TITLE": "Information",
       "MESSAGE": "<i class=\"ion-android-time\"></i> Vous avez été <b>déconnecté</b> automatiquement, suite à une inactivité prolongée.",
       "BTN_RELOGIN": "Me reconnecter",
       "IDLE_WARNING": "Vous allez être déconnecté... {{countdown}}"
+    },
+    "METHOD": {
+      "SCRYPT_DEFAULT": "Sallage simple (par défaut)",
+      "SCRYPT_ADVANCED": "Sallage avancé",
+      "FILE": "Fichier de trousseau",
+      "PUBKEY": "Clé publique seule"
+    },
+    "SCRYPT": {
+      "SIMPLE": "Sallage simple (défaut)",
+      "SECURE": "Sallage sûr",
+      "HARDEST": "Sallage le plus sûr",
+      "EXTREME": "Sallage extrème",
+      "USER": "Sallage personnalisé"
+    },
+    "FILE": {
+      "DATE" : "Date :",
+      "TYPE" : "Type :",
+      "SIZE": "Taille :",
+      "VALIDATING": "Validation..."
+    }
+  },
+  "AUTH": {
+    "TITLE": "<i class=\"icon ion-locked\"></i> Authentification",
+    "METHOD_LABEL": "Méthode d'authentification",
+    "BTN_SHOW_OTHER_METHODS": "Choisir la méthode d'authentification",
+    "BTN_AUTH": "S'authentifier",
+    "SCRYPT_FORM_HELP": "Veuillez vous authentifier :",
+    "ERROR": {
+      "SCRYPT_DEFAULT": "Sallage simple (par défaut)",
+      "SCRYPT_ADVANCED": "Sallage avancé",
+      "FILE": "Fichier de trousseau"
     }
   },
   "ACCOUNT": {
@@ -383,8 +427,8 @@
     "TX_FROM_DATE": "(limite actuelle à {{fromTime|formatFromNowShort}})",
     "PENDING_TX": "Transactions en cours de traitement",
     "ERROR_TX": "Transactions non executées",
-    "ERROR_TX_SENT": "Transactions envoyées",
-    "ERROR_TX_RECEIVED": "Transactions reçues",
+    "ERROR_TX_SENT": "Transactions envoyées en échec",
+    "PENDING_TX_RECEIVED": "Transactions en attente de réception",
     "EVENTS": "Evénements",
     "WAITING_MEMBERSHIP": "Demande d'adhésion envoyée. En attente d'acceptation.",
     "WAITING_CERTIFICATIONS": "Vous devez obtenir {{needCertificationCount}} certification(s) pour devenir membre.",
@@ -450,7 +494,7 @@
       "ADD_QUESTION": "Ajouter une question personnalisée ",
       "BTN_CLEAN": "Vider",
       "BTN_RESET": "Réinitialiser",
-      "CHOOSE_FILE": "Déposez votre fichier <br/>ou cliquez pour le sélectionner",
+      "CHOOSE_FILE": "{{'COMMON.CHOOSE_FILE'|translate}}",
       "DEFINITELY_REVOKE": "Revoquer définitivement cette identité",
       "DOWNLOAD_REVOKE": "Sauvegarder un fichier de revocation",
       "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
@@ -567,6 +611,11 @@
     "WALLET_IDENTITY_EXPIRED": "La publication de <b>votre identité a expirée</b>.<br/>Vous devez <a ng-click=\"doQuickFix('fixIdentity')\">publier à nouveau votre identité</a> pour résoudre ce problème.",
     "WALLET_REVOKED": "Votre identité a été <b>révoquée</b> : ni votre pseudonyme ni votre clef publique ne pourront être utilisés à l'avenir pour un compte membre.",
     "WALLET_HAS_NO_SELF": "Votre identité doit d'abord avoir été publiée, et ne pas être expirée.",
+    "AUTH_REQUIRED": "Authentification requise.",
+    "AUTH_INVALID_PUBKEY": "La clé publique ne correspond pas au compte connecté.",
+    "AUTH_INVALID_SCRYPT": "Identifiant ou mot de passe invalide.",
+    "AUTH_INVALID_FILE": "Fichier de trousseau invalide.",
+    "AUTH_FILE_ERROR": "Echec de l'ouverture du fichier de trousseau",
     "IDENTITY_ALREADY_CERTIFY": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est encore valide (expiration {{expiresIn|formatDurationTo}}).",
     "IDENTITY_ALREADY_CERTIFY_PENDING": "Vous avez <b>déjà certifié</b> cette identité.<br/><br/>Cette certification est en attente de traitement (date limite de traitement {{expiresIn|formatDurationTo}}).",
     "UNABLE_TO_CERTIFY_TITLE": "Certification impossible",
@@ -580,7 +629,8 @@
     "SALT_OR_PASSWORD_NOT_CONFIRMED": "Identifiant secret ou mot de passe incorrects",
     "RECOVER_ID_FAILED": "Echec de la récupération des identifiants",
     "LOAD_FILE_FAILED" : "Echec du chargement du fichier",
-    "ONLY_TEXT_FILE": "Vous devez selectionner un fichier texte",
+    "NOT_VALID_REVOCATION_FILE": "Fichier de revocation non valide (mauvais format de fichier)",
+    "NOT_VALID_KEY_FILE": "Fichier de trousseau non valide (format non reconnu)",
     "EXISTING_ACCOUNT": "Vos identifiants correspondent à un compte déjà existant, dont la <a ng-click=\"showHelpModal('pubkey')\">clef publique</a> est :",
     "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
     "GET_LICENSE_FILE_FAILED": "Récupérer du fichier de license impossible",
@@ -597,7 +647,7 @@
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
     "REVOCATION_SENT": "Revocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
-    "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/><br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
+    "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
     "EMPTY_TX_HISTORY": "Aucune opération à exporter"
   },
   "CONFIRM": {
@@ -637,7 +687,9 @@
     "LOGIN": {
       "SECTION": "Connexion",
       "PUBKEY": "Clé publique du trousseau",
-      "PUBKEY_DEF": "La clef publique du trousseau est générée à partir des identifiants saisis (n'importe lesquels), sans pour autant qu'ils correspondent à un compte déjà utilisé.<br/><b>Vérifiez attentivement que la clé publique est celle de votre compte</b>. Dans le cas contraire, vous serez connecté à un compte probablement jamais utilisé, le risque de collision avec un compte existant étant infime.<br/><a href=\"https://fr.wikipedia.org/wiki/Cryptographie_asym%C3%A9trique\" target=\"_system\">En savoir plus sur la cryptographie</a> par clé publique."
+      "PUBKEY_DEF": "La clef publique du trousseau est générée à partir des identifiants saisis (n'importe lesquels), sans pour autant qu'ils correspondent à un compte déjà utilisé.<br/><b>Vérifiez attentivement que la clé publique est celle de votre compte</b>. Dans le cas contraire, vous serez connecté à un compte probablement jamais utilisé, le risque de collision avec un compte existant étant infime.<br/><a href=\"https://fr.wikipedia.org/wiki/Cryptographie_asym%C3%A9trique\" target=\"_system\">En savoir plus sur la cryptographie</a> par clé publique.",
+      "METHOD": "Méthode de connexion",
+      "METHOD_DEF": "Plusieurs options sont disponibles pour vous connecter à un portfeuille :<br/> - La connexion <b>par sallage (simple ou avancé)</b> mélange votre mot de passe grâce à l'identifiant secret, pour limiter les tentatives de piratge par force brute (par exemple à partir de mots connus).<br/> - La connexion <b>par clé publique</b> évite de saisir vos identifiants, qui vous seront demandé seulement le moment venu lors d'une opération sur le compte.<br/> - La connexion <b>par fichier de trousseau</b> va lire les clés (publique et privée) du compte, depuis un fichier, sans besoin de saisir d'identifiants. Plusieurs formats de fichier sont possibles."
     },
     "GLOSSARY": {
       "SECTION": "Glossaire",

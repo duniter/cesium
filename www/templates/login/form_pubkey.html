@@ -1,0 +1,24 @@
+<div class="item">
+  <p class="item-text-wrap" translate>LOGIN.PUBKEY_FORM_HELP</p>
+</div>
+
+<!-- pubkey  -->
+<label class="item item-input"
+       ng-class="{ 'item-input-error': form.$submitted && form.pubkey.$invalid}">
+  <span class="input-label hidden-xs" translate>COMMON.PUBKEY</span>
+  <input name="username" type="text" placeholder="{{'LOGIN.PUBKEY_HELP' | translate}}"
+         ng-model="formData.pubkey"
+         ng-model-options="{ debounce: 650 }"
+         required >
+</label>
+<div class="form-errors"
+     ng-show="form.$submitted && form.pubkey.$error"
+     ng-messages="form.pubkey.$error">
+  <div class="form-error" ng-message="required">
+    <span translate="ERROR.FIELD_REQUIRED"></span>
+  </div>
+</div>
+
+<!-- remember me -->
+<ng-include src="'templates/login/item_remember_me.html'"></ng-include>
+

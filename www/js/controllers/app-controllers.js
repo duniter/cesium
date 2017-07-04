@@ -52,8 +52,6 @@ angular.module('cesium.app.controllers', ['ngIdle', 'cesium.platform', 'cesium.s
 
   })
 
-  .controller('AutoLogoutCtrl', AutoLogoutController)
-
   .controller('AppCtrl', AppController)
 
   .controller('HomeCtrl', HomeController)
@@ -63,8 +61,6 @@ angular.module('cesium.app.controllers', ['ngIdle', 'cesium.platform', 'cesium.s
   .controller('EmptyModalCtrl', EmptyModalController)
 
   .controller('AboutCtrl', AboutController)
-
-  .controller('PassCodeCtrl', PassCodeController)
 
 ;
 
@@ -87,14 +83,14 @@ function PluginExtensionPointController($scope, PluginService) {
 /**
  * Abstract controller (inherited by other controllers)
  */
-function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout, $ionicPopover,
+function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
                        $ionicHistory, $controller, $window, csPlatform,
                        UIUtils, BMA, csWallet, csCurrency, Device, Modals, csSettings, csConfig
   ) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('AutoLogoutCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('AuthIdleCtrl', {$scope: $scope}));
 
   $scope.search = {};
   $scope.login = csWallet.isLogin();
@@ -250,7 +246,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     }
 
     if (!csWallet.isLogin()) {
-      return $scope.showLoginModal()
+      return csWallet.login(options)
         .then(function (walletData) {
           if (walletData) {
             $rootScope.viewFirstEnter = false;
@@ -298,7 +294,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
       }
 
-      return $scope.showLoginModal()
+      return csWallet.login()
         .then(function(walletData){
           if (walletData) {
             return $state.go(state ? state : 'app.view_wallet', stateParams)
@@ -309,28 +305,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     else {
       return $state.go(state, stateParams);
     }
-  };
-
-  // Show login modal
-  $scope.showLoginModal = function() {
-    return Modals.showLogin()
-    .then(function(formData){
-      if (!formData) return;
-      var rememberMeChanged = (csSettings.data.rememberMe !== formData.rememberMe);
-      if (rememberMeChanged) {
-        csSettings.data.rememberMe = formData.rememberMe;
-        csSettings.data.useLocalStorage = csSettings.data.rememberMe ? true : csSettings.data.useLocalStorage;
-        csSettings.store();
-      }
-      return csWallet.loginBySalt(formData.username, formData.password);
-    })
-    .then(function(walletData){
-      if (walletData) {
-        $rootScope.walletData = walletData;
-      }
-      return walletData;
-    })
-    .catch(UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR'));
   };
 
   // Logout
@@ -376,10 +350,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // add listener on wallet event
   csWallet.api.data.on.login($scope, function(walletData, deferred) {
     $scope.login = true;
+    $rootScope.walletData = walletData || {};
     return deferred ? deferred.resolve() : $q.when();
   });
   csWallet.api.data.on.logout($scope, function() {
     $scope.login = false;
+    $rootScope.walletData = {};
   });
 
   ////////////////////////////////////////
@@ -519,94 +495,9 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
       $state.go('app.settings');
     }
   };
-}
 
-
-function PassCodeController($scope) {
-  'ngInject';
-}
-
-
-function AutoLogoutController($scope, $ionicHistory, $state, Idle, UIUtils, $ionicLoading, csWallet, csSettings) {
-  'ngInject';
-
-  $scope.enableAutoLogout = false;
-
-  $scope.checkAutoLogout = function(isLogin) {
-    isLogin = angular.isDefined(isLogin) ? isLogin : $scope.isLogin();
-    var enable = !csSettings.data.rememberMe && csSettings.data.logoutIdle > 0 && isLogin;
-    var changed = ($scope.enableAutoLogout != enable);
-
-    // need start/top watching
-    if (changed) {
-      // start idle
-      if (enable) {
-        console.debug("[app] Start auto-logout (idle time: {0}s)".format(csSettings.data.logoutIdle));
-        Idle.setIdle(csSettings.data.logoutIdle);
-        Idle.watch();
-      }
-      // stop idle, if need
-      else if ($scope.enableAutoLogout){
-        console.debug("[app] Stop auto-logout");
-        Idle.unwatch();
-      }
-      $scope.enableAutoLogout = enable;
-    }
-
-    // if idle time changed: apply it
-    else if (enable && Idle.getIdle() !== csSettings.data.logoutIdle) {
-      console.debug("[app] Updating auto-logout (idle time: {0}s)".format(csSettings.data.logoutIdle));
-      Idle.setIdle(csSettings.data.logoutIdle);
-    }
-  };
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.checkAutoLogout();
-  });
-
-  // add listener on wallet event
-  csWallet.api.data.on.login($scope, function(walletData, deferred) {
-    $scope.checkAutoLogout(true);
-    return deferred ? deferred.resolve() : $q.when();
-  });
-  csWallet.api.data.on.logout($scope, function() {
-    $scope.checkAutoLogout(false);
-  });
-
-  $scope.$on('IdleStart', function() {
-    $ionicLoading.hide(); // close previous toast
-    $ionicLoading.show({
-      template: "<div idle-countdown=\"countdown\" ng-init=\"countdown=5\">{{'LOGIN.AUTO_LOGOUT.IDLE_WARNING'|translate:{countdown:countdown} }}</div>"
-    });
-  });
-
-  $scope.$on('IdleEnd', function() {
-    $ionicLoading.hide();
-  });
-
-  $scope.$on('IdleTimeout', function() {
-    return csWallet.logout()
-      .then(function() {
-        $ionicHistory.clearCache();
-        if ($state.current.data.auth === true) {
-          $ionicHistory.clearHistory();
-          return $scope.showHome();
-        }
-      })
-      .then(function() {
-        $ionicLoading.hide();
-        return UIUtils.alert.confirm('LOGIN.AUTO_LOGOUT.MESSAGE',
-          'LOGIN.AUTO_LOGOUT.TITLE', {
-          cancelText: 'COMMON.BTN_CLOSE',
-          okText: 'COMMON.BTN_LOGIN'
-        });
-      })
-      .then(function(relogin){
-        if (relogin) {
-          //$ionicHistory.clean
-          return $scope.loginAndGo($state.current.name, $state.params,
-            {reload: true});
-        }
-      })
-      .catch(UIUtils.onError());
-  });
+  // For DEV ONLY
+  $timeout(function() {
+    $scope.loginAndGo();
+  }, 1000);
 }

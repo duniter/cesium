@@ -51,23 +51,31 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         SIMPLE: {
           N: 4096,
           r: 16,
-          p: 1
+          p: 1,
+          requested_total_memory: -1 // default
         },
         SECURE: {
           N: 16384,
           r: 32,
-          p: 2
+          p: 2,
+          memory: -1 // default
         },
         HARDEST: {
           N: 65536,
           r: 32,
-          p: 4
+          p: 4,
+          memory: -1 // default
         },
         EXTREME: {
           N: 262144,
           r: 64,
-          p: 8
+          p: 8,
+          memory: -1 // default
         }
+      },
+      REGEXP: {
+        PUBKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}',
+        SECKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88}'
       }
     };
 
@@ -79,7 +87,11 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
     CryptoAbstractService.prototype.async_load_scrypt = function(on_ready, options) {
       var that = this;
-      if (scrypt_module_factory !== null){on_ready(scrypt_module_factory(options.requested_total_memory));}
+      if (scrypt_module_factory !== null){
+        on_ready(scrypt_module_factory(options.requested_total_memory));
+        that.scrypt.requested_total_memory = options.requested_total_memory;
+        console.log('inside async_load_scrypt', that);
+      }
       else {$timeout(function(){that.async_load_scrypt(on_ready, options);}, 100);}
     };
 
@@ -99,6 +111,79 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       var that = this;
       if (sha256 !== null){return on_ready(sha256);}
       else {$timeout(function(){that.async_load_sha256(on_ready);}, 100);}
+    };
+
+    // TODO pub file in file.* functions
+    //CryptoAbstractService.prototype.file = {};
+
+    CryptoAbstractService.prototype.readKeyFile = function(file, withSecret) {
+      var that = this;
+      return $q(function(resolve, reject) {
+        if (!file) {
+          return reject('Argument [file] is missing');
+        }
+
+        console.debug('[crypto] [keypair] reading file: ', file);
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          var res = that.parseKeyFileContent(event.target.result, withSecret);
+          res
+            .then(function (res) {
+              resolve(res);
+            })
+            .catch(function (err) {
+              reject(err);
+            });
+        };
+        reader.readAsText(file, 'utf8');
+      });
+    };
+
+    CryptoAbstractService.prototype.parseKeyFileContent = function(content, withSecret, defaultType) {
+      var that = this;
+      return $q(function(resolve, reject) {
+        if (!content) {
+          return reject('Argument [content] is missing');
+        }
+        var typeMatch = content.match(/^Type: ([a-zA-Z0-9]+)\n/);
+
+        // no Type (first line)
+        if (!typeMatch) {
+          // Add default type then retry
+          return resolve(that.parseKeyFileContent('Type: PubSec\n' + content, withSecret, true));
+        }
+
+        var type = typeMatch[1];
+
+        // Type: PubSec
+        if (type == 'PubSec') {
+          var pubMatch = content.match(/\npub: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})\n/)
+          if (!pubMatch) {
+            return reject('Missing [pub] field in file, or invalid public key value');
+          }
+          if (!withSecret) {
+            return resolve({
+              signPk: that.base58.decode(pubMatch[1])
+            });
+          }
+          var secMatch = content.match(/\nsec: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88})\n?$/)
+          if (!secMatch) {
+            return reject('Missing [sec] field in file, or invalid secret key value');
+          }
+          return resolve({
+            signPk: that.base58.decode(pubMatch[1]),
+            signSk: that.base58.decode(secMatch[1])
+          });
+        }
+        else {
+          if (defaultType) {
+            return reject('Bad file format: missing Type field');
+          }
+          else {
+            return reject('Bad file format, unknown type [' + type + ']');
+          }
+        }
+      });
     };
 
     // Web crypto API - see https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API
@@ -253,16 +338,17 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       };
 
       /**
-       * Create key pairs (sign and box), from salt+password
+       * Create key pairs (sign and box), from salt+password (Scrypt auth)
        */
-      this.connect = function(salt, password, N, r, p) {
+      this.scryptKeypair = function(salt, password, scryptParams) {
         return $q(function(resolve, reject) {
+          //console.debug('[crypto] Scrypt params:', scryptParams && scryptParams.memory);
           var seed = that.scrypt.crypto_scrypt(
             that.util.encode_utf8(password),
             that.util.encode_utf8(salt),
-            N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
-            r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
-            p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+            scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
+            scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
+            scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
             that.constants.SEED_LENGTH);
           var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
           var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
@@ -272,6 +358,28 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
             boxPk: boxKeypair.boxPk,
             boxSk: boxKeypair.boxSk
           });
+        });
+      };
+
+      /**
+       * Get sign pk from salt+password (scrypt auth)
+       */
+      this.scryptSignPk = function(salt, password, scryptParams) {
+        return $q(function(resolve, reject) {
+          try {
+            var seed = that.scrypt.crypto_scrypt(
+              that.util.encode_utf8(password),
+              that.util.encode_utf8(salt),
+              scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
+              scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
+              scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+              that.constants.SEED_LENGTH);
+            var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
+            resolve(signKeypair.signPk);
+          }
+          catch(err) {
+            reject(err);
+          }
         });
       };
 
@@ -412,17 +520,17 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       };
 
       /**
-       * Create key pairs (sign and box), from salt+password, using cordova
+       * Create key pairs (sign and box), from salt+password (Scrypt), using cordova
        */
-      this.connect = function(salt, password, N, r, p) {
+      this.scryptKeypair = function(salt, password, scryptParams) {
         var deferred = $q.defer();
 
         that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
           that.nacl.from_string(password),
           that.nacl.from_string(salt),
-          N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
-          r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
-          p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
+          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
+          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
           that.constants.SEED_LENGTH,
           function (err, seed) {
             if (err) { deferred.reject(err); return;}
@@ -442,6 +550,33 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
                 .catch(function(err) {
                   deferred.reject(err);
                 });
+            });
+
+          }
+        );
+
+        return deferred.promise;
+      };
+
+      /**
+       * Get sign PK from salt+password (Scrypt), using cordova
+       */
+      this.scryptSignPk = function(salt, password, scryptParams) {
+        var deferred = $q.defer();
+
+        that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
+          that.nacl.from_string(password),
+          that.nacl.from_string(salt),
+          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
+          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
+          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+          that.constants.SEED_LENGTH,
+          function (err, seed) {
+            if (err) { deferred.reject(err); return;}
+
+            that.nacl.crypto_sign_seed_keypair(seed, function (err, signKeypair) {
+              if (err) { deferred.reject(err); return;}
+              deferred.resolve(signKeypair.pk);
             });
 
           }

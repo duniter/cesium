@@ -18,12 +18,12 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 function ESPicturesEditController($scope, UIUtils, $q, Device) {
   'ngInject';
 
-  $scope.selectNewPicture = function() {
+  $scope.selectNewPicture = function(inputSelector) {
     if (Device.enable){
       openPicturePopup();
     }
     else {
-      var fileInput = angular.element(document.querySelector('#pictureFile'));
+      var fileInput = angular.element(document.querySelector(inputSelector));
       if (fileInput && fileInput.length > 0) {
         fileInput[0].click();
       }
@@ -32,11 +32,14 @@ function ESPicturesEditController($scope, UIUtils, $q, Device) {
 
   $scope.openPicturePopup = function() {
     Device.camera.getPicture()
-    .then(function(imageData) {
-      $scope.pictures.push({src: "data:image/png;base64," + imageData});
-      $scope.$apply();
-    })
-    .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
+      .then(function(imageData) {
+        $scope.pictures.push({
+          src: "data:image/png;base64," + imageData,
+          isnew: true // use to prevent visibility hidden (if animation)
+        });
+        $scope.$apply();
+      })
+      .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
 
   $scope.fileChanged = function(event) {
@@ -50,7 +53,6 @@ function ESPicturesEditController($scope, UIUtils, $q, Device) {
           isnew: true // use to prevent visibility hidden (if animation)
         });
         UIUtils.loading.hide(100);
-        //$scope.$apply();
         resolve();
       });
     });

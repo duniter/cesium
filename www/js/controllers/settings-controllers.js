@@ -31,25 +31,35 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   $scope.bma = BMA;
 
 
-  $scope.logoutIdleLabels = {
+  $scope.keepAuthIdleLabels = {
+    /*0: {
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.NEVER'
+    },*/
+    10: {
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.SECONDS',
+      labelParams: {value: 10}
+    },
     30: {
-      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_SECONDS',
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.SECONDS',
       labelParams: {value: 30}
     },
     60: {
-      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_MINUTE',
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.MINUTE',
       labelParams: {value: 1}
     },
     600: {
-      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_MINUTES',
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.MINUTES',
       labelParams: {value: 10}
     },
     3600: {
-      labelKey: 'SETTINGS.AUTO_LOGOUT_OPTION_HOUR',
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.HOUR',
       labelParams: {value: 1}
+    },
+    9999: {
+      labelKey: 'SETTINGS.KEEP_AUTH_OPTION.ALWAYS'
     }
   };
-  $scope.logoutIdles = _.keys($scope.logoutIdleLabels);
+  $scope.keepAuthIdles = _.keys($scope.keepAuthIdleLabels);
 
   $scope.$on('$ionicView.enter', function() {
     csSettings.ready().then($scope.load);

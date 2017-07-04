@@ -237,7 +237,7 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
 }
 
 
-function ModalEmailSubscriptionsController($scope, Modals, csSettings, csWot, parameters) {
+function ModalEmailSubscriptionsController($scope, Modals, csSettings, esHttp, csWot, parameters) {
   'ngInject';
 
   $scope.frequencies = [

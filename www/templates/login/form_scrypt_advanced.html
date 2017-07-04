@@ -1,0 +1,38 @@
+
+<!-- Scrypt method: params -->
+<div class="row responsive-md responsive-sm padding-left">
+  <div class="col col-33 no-padding">
+    <label class="item item-input item-select">
+      <select ng-model="formData.scrypt" style="max-width: 100%"
+              ng-change="changeScrypt(formData.scrypt)"
+              ng-options="l as (l.label | translate) for l in formData.method.values track by l.id">
+      </select>
+    </label>
+  </div>
+  <div class="col no-padding">
+    <label class="item item-input">
+      <span class="input-label hidden-xs">N:</span>
+      <input class="no-padding-right" type="number" placeholder="N" ng-model="formData.scrypt.params.N" required>
+    </label>
+  </div>
+  <div class="col no-padding">
+    <label class="item item-input">
+      <span class="input-label hidden-xs">r:</span>
+      <input class="no-padding-right" type="number" placeholder="r" ng-model="formData.scrypt.params.r" required>
+    </label>
+  </div>
+  <div class="col no-padding">
+    <label class="item item-input">
+      <span class="input-label hidden-xs">p:</span>
+      <input class="no-padding-right" type="number" placeholder="p" ng-model="formData.scrypt.params.p" required>
+    </label>
+  </div>
+</div>
+
+<ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+
+<!-- WARN: not implemented yet -->
+<p class="energized-100-bg padding " >
+  <i class="icon ion-android-warning"></i>
+  <span translate>INFO.FEATURES_NOT_IMPLEMENTED</span>
+</p>

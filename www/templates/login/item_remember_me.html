@@ -1,0 +1,9 @@
+  <!-- remember me (checkbox) -->
+  <ion-checkbox ng-model="formData.rememberMe"
+                ng-if="!isAuth"
+                class="item ink item-text-wrap">
+    <div class="item-content dark" translate>SETTINGS.REMEMBER_ME</div>
+    <h4 class="gray text-wrap">
+      <span ng-bind-html="'SETTINGS.REMEMBER_ME_HELP' | translate"></span>
+    </h4>
+  </ion-checkbox>

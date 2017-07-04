@@ -294,7 +294,7 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
 
     if (!csWallet.isLogin()) return $scope.closeModal(); // should never happen
 
-    return $q.all([
+    return  $q.all([
         // Get keypair only once (if not done here, certification.send() with compute it many times)
         esWallet.box.getKeypair(csWallet.data.keypair),
         // Ask confirmation

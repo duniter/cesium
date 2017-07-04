@@ -338,4 +338,38 @@ angular.module('cesium')
       }
     };
   })
+
+  // Detect window close
+  // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
+  .directive('windowExitConfirm', function($window, $translate) {
+    return {
+      restrict: 'AE',
+      link: function(element, attrs){
+        var myEvent = $window.attachEvent || $window.addEventListener,
+          chkevent = $window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compatable
+
+        myEvent(chkevent, function (e) { // For >=IE7, Chrome, Firefox
+          var confirmationMessage = ' ';  // a space
+          (e || $window.event).returnValue = "Are you sure that you'd like to close the browser?";
+          return confirmationMessage;
+        });
+      }
+    };
+  })
+
+  // Un-authenticate when window closed
+  // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
+  .directive('windowExitUnauth', function($window, csWallet) {
+    return {
+      restrict: 'AE',
+      link: function(element, attrs){
+        var myEvent = $window.attachEvent || $window.addEventListener,
+          chkevent = $window.attachEvent ? 'onunload' : 'unload'; /// make IE7, IE8 compatable
+
+        myEvent(chkevent, function (e) { // For >=IE7, Chrome, Firefox
+          return csWallet.unauth();
+        });
+      }
+    };
+  });
 ;

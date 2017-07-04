@@ -105,7 +105,7 @@ function TransferController($scope, $controller, UIUtils, csWot) {
   };
 }
 
-function TransferModalController($scope, $rootScope, $translate, $filter, BMA, csWallet, UIUtils, Modals,
+function TransferModalController($scope, $translate, $filter, BMA, csWallet, UIUtils, Modals,
                                  csCurrency, csSettings, parameters) {
   'ngInject';
 
@@ -191,7 +191,8 @@ function TransferModalController($scope, $rootScope, $translate, $filter, BMA, c
       return;
     }
 
-    return $scope.askTransferConfirm()
+    return csWallet.auth()
+      .then($scope.askTransferConfirm)
       .then(function(confirm){
         if (!confirm) return;
 

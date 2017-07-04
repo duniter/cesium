@@ -31,6 +31,10 @@ angular.module('cesium.modal.services', [])
       return $scope.modal.show();
     };
 
+    $scope.hideModal = function () {
+      return $scope.modal.hide();
+    };
+
     $scope.closeModal = function (result) {
       $scope.resolved = true;
       return $scope.modal.remove()
@@ -131,9 +135,20 @@ angular.module('cesium.modal.services', [])
   }
 
   function showLogin(parameters) {
-    return ModalUtils.show('templates/modal_login.html','LoginModalCtrl',
+    return ModalUtils.show('templates/login/modal_login.html','LoginModalCtrl',
       parameters, {focusFirstInput: true});
   }
+
+  function showAuth(parameters) {
+    return ModalUtils.show('templates/login/modal_login.html','AuthModalCtrl',
+      parameters, {focusFirstInput: true});
+  }
+
+  function showAdvancedLogin(parameters) {
+    return ModalUtils.show('templates/login/modal_advanced_login.html','LoginModalCtrl',
+      parameters, {focusFirstInput: true});
+  }
+
 
   function showWotLookup(parameters) {
     return ModalUtils.show('templates/wot/modal_lookup.html','WotLookupModalCtrl',
@@ -183,6 +198,8 @@ angular.module('cesium.modal.services', [])
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
+    showAuth: showAuth,
+    showAdvancedLogin: showAdvancedLogin,
     showWotLookup: showWotLookup,
     showNetworkLookup: showNetworkLookup,
     showAbout: showAbout,

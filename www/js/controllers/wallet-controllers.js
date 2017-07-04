@@ -533,6 +533,8 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (!$scope.loading && (!state.stateParams || state.stateParams.refresh != 'true')) {
+      // Make sure to display new pending (e.g. sending using another screen button)
+      $scope.updateView();
       return; // skip loading
     }
     $scope.loadWallet()
@@ -732,9 +734,12 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
 function WalletTxErrorController($scope, UIUtils, csWallet) {
   'ngInject';
 
+  $scope.formData = {};
+
   $scope.$on('$ionicView.enter', function(e) {
     $scope.loadWallet()
-      .then(function() {
+      .then(function(walletData) {
+        $scope.formData = walletData;
         $scope.doMotion();
         $scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
@@ -752,16 +757,12 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
     .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
-  $scope.filterPositive = function(prop){
-    return function(item){
-      return item[prop] > 0;
-    };
+  $scope.filterReceivedTx = function(tx){
+    return tx.amount && tx.amount > 0;
   };
 
-  $scope.filterNegative = function(prop){
-    return function(item){
-      return item[prop] < 0;
-    };
+  $scope.filterSentTx = function(tx){
+    return tx.amount && tx.amount < 0;
   };
 
 }
@@ -834,7 +835,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
 
         }
         else {
-          UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
+          UIUtils.alert.error("ERROR.NOT_VALID_REVOCATION_FILE", "ERROR.LOAD_FILE_FAILED");
         }
       }
     }
@@ -1029,7 +1030,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
         $scope.revokeIdentity();
       }
       else {
-        UIUtils.alert.error("ERROR.ONLY_TEXT_FILE", "ERROR.LOAD_FILE_FAILED");
+        UIUtils.alert.error("ERROR.NOT_VALID_REVOCATION_FILE", "ERROR.LOAD_FILE_FAILED");
       }
   };
 

@@ -47,7 +47,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   var
   constants = {
-    STORAGE_KEY: 'CESIUM_SETTINGS'
+    OLD_STORAGE_KEY: 'CESIUM_SETTINGS'
   },
   defaultSettings = angular.merge({
     timeout : 4000,
@@ -59,9 +59,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
     rememberMe: true, // override to false if no device
-    logoutIdle: 10 * 60, // 10min - override to false if no device
+    keepAuthIdle: 10 * 60, // 10min - override to false if no device
     showUDHistory: true,
-    showLoginSalt: false,
     httpsMode: false,
     expertMode: false,
     decimalCount: 4,
@@ -147,20 +146,20 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     if (data.useLocalStorage) {
       // When node is temporary (fallback node): keep previous node address - issue #476
       if (data.node.temporary === true) {
-        promise = localStorage.getObject(constants.STORAGE_KEY)
+        promise = localStorage.getObject(constants.OLD_STORAGE_KEY)
           .then(function(previousSettings) {
             var savedData = angular.copy(data);
             savedData.node = previousSettings && previousSettings.node || {};
             delete savedData.temporary; // never store temporary flag
-            return localStorage.setObject(constants.STORAGE_KEY, savedData);
+            return localStorage.setObject(constants.OLD_STORAGE_KEY, savedData);
           });
       }
       else {
-        promise = localStorage.setObject(constants.STORAGE_KEY, data);
+        promise = localStorage.setObject(constants.OLD_STORAGE_KEY, data);
       }
     }
     else {
-      promise  = localStorage.setObject(constants.STORAGE_KEY, null);
+      promise  = localStorage.setObject(constants.OLD_STORAGE_KEY, null);
     }
 
     return promise
@@ -204,7 +203,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   restore = function() {
     var now = new Date().getTime();
-    return localStorage.getObject(constants.STORAGE_KEY)
+    return localStorage.getObject(constants.OLD_STORAGE_KEY)
         .then(function(storedData) {
           // No settings stored
           if (!storedData) {

@@ -89,12 +89,14 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       if (!csWallet.isLogin()) {
         throw new Error('Unable to get box keypair: user not connected !');
       }
-      var keypair = csWallet.data.keypair;
-      if (keypair.boxPk && keypair.boxSk) {
-        return $q.when(keypair);
-      }
 
-      return esCrypto.box.getKeypair(keypair)
+      return csWallet.getKeypair()
+        .then(function(keypair) {
+          if (keypair && keypair.boxPk && keypair.boxSk) {
+            return $q.when(csWallet.data.keypair);
+          }
+          return esCrypto.box.getKeypair(keypair);
+        })
         .then(function(res) {
           csWallet.data.keypair.boxSk = res.boxSk;
           csWallet.data.keypair.boxPk = res.boxPk;

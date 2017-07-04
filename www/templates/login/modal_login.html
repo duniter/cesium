@@ -1,0 +1,99 @@
+<ion-modal-view class="modal-full-height">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL
+    </button>
+    <h1 class="title" ng-bind-html="isAuth ? 'AUTH.TITLE' : 'LOGIN.TITLE' | translate">
+    </h1>
+    <div class="buttons buttons-right">
+      <span class="secondary-buttons">
+        <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
+        </button>
+
+      </span>
+    </div>
+
+  </ion-header-bar>
+
+  <ion-content>
+    <form name="loginForm" novalidate="" ng-submit="doLogin()" autocomplete="off">
+
+     <div class="list padding no-padding-xs"
+           ng-init="setForm(loginForm)"
+           ng-switch on="formData.method.id">
+
+
+       <div class="item assertive"
+            ng-if="error">
+         <i class="icon ion-close-circled"></i>
+         {{error|translate:$root.walletData }}
+       </div>
+
+        <a class="pull-right ink hidden-xs"
+           ng-class="{'gray': !showMethods}"
+           ng-click="showMethods=!showMethods;">
+          {{isAuth ? 'AUTH.BTN_SHOW_OTHER_METHODS' : 'LOGIN.BTN_SHOW_OTHER_METHODS' | translate}}
+          <i ng-class="{'ion-arrow-down-b': !showMethods, 'ion-arrow-up-b': showMethods}"></i>
+        </a>
+
+        <div class="item item-input item-select item-icon-right" ng-if="showMethods">
+          <div class="input-label">
+            {{'LOGIN.METHOD_LABEL' | translate}}
+          </div>
+          <select ng-model="formData.method"
+                  ng-change="changeMethod(formData.method)"
+                  ng-options="l as (l.label | translate) for l in methods track by l.id">
+          </select>
+          <a class="positive button-small-padding icon ion-ios-help-outline"
+             style="right: 8px;"
+             ng-click="showHelpModal('login-method')">
+          </a>
+        </div>
+
+        <!-- Form content, depending of the login method -->
+        <div ng-switch-when="SCRYPT_DEFAULT">
+          <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+        </div>
+        <div ng-switch-when="SCRYPT_ADVANCED">
+          <ng-include src="'templates/login/form_scrypt_advanced.html'"></ng-include>
+        </div>
+        <div ng-switch-when="PUBKEY">
+          <ng-include src="'templates/login/form_pubkey.html'"></ng-include>
+        </div>
+        <div ng-switch-when="FILE">
+          <ng-include src="'templates/login/form_file_import.html'"></ng-include>
+        </div>
+        <div ng-switch-default>
+          <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+        </div>
+      </div>
+
+      <div class="padding hidden-xs text-right">
+        <button class="button button-clear button-dark ink"
+                ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+        </button>
+        <button class="button button-positive ink" type="submit">
+          {{isAuth ? 'AUTH.BTN_AUTH' : 'COMMON.BTN_LOGIN' | translate}}
+        </button>
+      </div>
+
+      <!-- Register ? -->
+      <ng-if ng-if="!isAuth">
+        <div class="text-center no-padding">
+          {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
+          <br class="visible-xs"/>
+          <a ng-click="showJoinModal()" translate>
+            LOGIN.CREATE_ACCOUNT
+          </a>
+        </div>
+
+        <br class="visible-xs"/>
+
+        <div class="text-center no-padding">
+          <a ng-click="showAccountSecurityModal()" translate>
+            LOGIN.FORGOTTEN_ID
+          </a>
+        </div>
+      </ng-if>
+    </form>
+  </ion-content>
+</ion-modal-view>
