@@ -214,68 +214,61 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function postRecord(path) {
       var postRequest = that.post(path);
       return function(record, params) {
-        if (!csWallet.isLogin()) {
-          var deferred = $q.defer();
-          deferred.reject('Wallet must be login before sending record to ES node');
-          return deferred.promise;
-        }
+        return csWallet.auth()
+          .then(function(walletData) {
+            if (!record.time) {
+              record.time = that.date.now();
+            }
+            var obj = {};
+            angular.copy(record, obj);
+            delete obj.signature;
+            delete obj.hash;
+            obj.issuer = walletData.pubkey;
 
-        if (!record.time) {
-          record.time = that.date.now();
-        }
-        var keypair = $rootScope.walletData.keypair;
-        var obj = {};
-        angular.copy(record, obj);
-        delete obj.signature;
-        delete obj.hash;
-        obj.issuer = $rootScope.walletData.pubkey;
+            // Fill tags
+            fillRecordTags(obj);
 
-        // Fill tags
-        fillRecordTags(obj);
+            var str = JSON.stringify(obj);
 
-        var str = JSON.stringify(obj);
-
-        return CryptoUtils.util.hash(str)
-          .then(function(hash) {
-            return CryptoUtils.sign(str, keypair)
-              .then(function(signature) {
-                obj.hash = hash;
-                obj.signature = signature;
-                return postRequest(obj, params)
-                  .then(function (id){
-                    return id;
+            return CryptoUtils.util.hash(str)
+              .then(function(hash) {
+                return CryptoUtils.sign(str, walletData.keypair)
+                  .then(function(signature) {
+                    obj.hash = hash;
+                    obj.signature = signature;
+                    return postRequest(obj, params)
+                      .then(function (id){
+                        return id;
+                      });
                   });
               });
-            });
+          });
       };
     }
 
     function removeRecord(index, type) {
       return function(id) {
-        if (!csWallet.isLogin()) {
-          var deferred = $q.defer();
-          deferred.reject('Wallet must be login before sending record to ES node');
-          return deferred.promise;
-        }
+        return csWallet.auth()
+          .then(function(walletData) {
 
-        var keypair = $rootScope.walletData.keypair;
-        var obj = {
-          index: index,
-          type: type,
-          id: id,
-          issuer: $rootScope.walletData.pubkey,
-          time: that.date.now()
-        };
-        var str = JSON.stringify(obj);
-        return CryptoUtils.util.hash(str)
-          .then(function(hash) {
-            return CryptoUtils.sign(str, keypair)
-              .then(function(signature) {
-                obj.hash = hash;
-                obj.signature = signature;
-                return that.post('/history/delete')(obj)
-                  .then(function (id){
-                    return id;
+            var obj = {
+              index: index,
+              type: type,
+              id: id,
+              issuer: walletData.pubkey,
+              time: that.date.now()
+            };
+            var str = JSON.stringify(obj);
+            return CryptoUtils.util.hash(str)
+              .then(function (hash) {
+                return CryptoUtils.sign(str, walletData.keypair)
+                  .then(function (signature) {
+                    obj.hash = hash;
+                    obj.signature = signature;
+                    return that.post('/history/delete')(obj)
+                      .then(function (id) {
+                        return id;
+                      });
                   });
               });
           });
@@ -350,50 +343,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return image;
     };
 
-    function login(host, node, keypair) {
-      return $q(function(resolve, reject) {
-        var errorFct = function(err) {
-          reject(err);
-        };
-        var getChallenge = getResource(host, node, '/auth');
-        var postAuth = postResource(host, node, '/auth');
-
-        getChallenge() // get the challenge phrase to sign
-        .then(function(challenge) {
-          CryptoUtils.sign(challenge, keypair) // sign the challenge
-          .then(function(signature) {
-            var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-            postAuth({
-              pubkey: pubkey,
-              challenge: challenge,
-              signature: signature
-            }) // get token
-            .then(function(token) {
-              /*var authdata = CryptoUtils.util.encode_base64(pubkey + ':' + token);
-              $rootScope.globals = {
-                  currentUser: {
-                      username: pubkey,
-                      authdata: token
-                  }
-              };
-              $http.defaults.headers.common['Authorization'] = 'Basic ' + token; // jshint ignore:line
-              $cookies.put('globals', $rootScope.globals);
-              resolve(token);*/
-            })
-            .catch(errorFct);
-          })
-          .catch(errorFct);
-        })
-        .catch(errorFct);
-      });
-    }
-
-    function logout(host, node) {
-        /*$rootScope.globals = {};
-        $cookie.remove('globals');
-        $http.defaults.headers.common.Authorization = 'Basic ';*/
-    }
-
     function parseEndPoint(endpoint) {
       var matches = regexp.ES_USER_API_ENDPOINT.exec(endpoint);
       if (!matches) return;
@@ -431,10 +380,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       image: {
         fromAttachment: imageFromAttachment,
         toAttachment: imageToAttachment
-      },
-      auth: {
-        login: login,
-        logout: logout
       },
       hit: {
         empty: emptyHit
