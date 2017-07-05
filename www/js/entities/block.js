@@ -8,7 +8,7 @@ function Block(json, attributes) {
 
   // Copy default fields
   if (!attributes || !attributes.length) {
-    ["currency", "issuer", "medianTime", "number", "version", "powMin", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions"]
+    ["currency", "issuer", "medianTime", "number", "version", "powMin", "dividend", "membersCount", "hash", "identities", "joiners", "actives", "leavers", "revoked", "excluded", "certifications", "transactions", "unitbase"]
       .forEach(function (key) {
       that[key] = json[key];
     });

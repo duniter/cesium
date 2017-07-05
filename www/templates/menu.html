@@ -37,6 +37,8 @@
              ng-if="$root.walletData.avatar"
              style="background-image: url('{{$root.walletData.avatar.src}}')">
           </i>
+          <span ng-if="login && !auth"
+                class="badge badge-button badge-secondary badge-assertive ion-locked"> </span>
         </a>
       </ion-nav-buttons>
     </ion-nav-bar>
@@ -58,10 +60,10 @@
 
       <div class="visible-sm visible-xs hero">
         <div class="content">
-          <i class="avatar avatar-member hero-icon" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="!login ? showHome() : loginAndGo('app.view_wallet')" menu-close></i>
-          <i class="avatar hero-icon" ng-if="$root.walletData.avatar" style="background-image: url('{{$root.walletData.avatar.src}}')" ng-click="loginAndGo('app.view_wallet')" menu-close></i>
+          <i class="avatar avatar-member hero-icon" ng-if="!$root.walletData.avatar" ng-class="{'royal-bg': login, 'stable-bg': !login}" ng-click="!login ? showHome() : loginAndGo()" menu-close></i>
+          <a class="avatar hero-icon" ng-if="$root.walletData.avatar" style="background-image: url('{{$root.walletData.avatar.src}}')" ui-sref="app.view_wallet" menu-close></a>
           <h4 ng-if="login">
-            <a class="light" ng-click="loginAndGo('app.view_wallet')" menu-close>
+            <a class="light" ui-sref="app.view_wallet" menu-close>
               {{$root.walletData.name||$root.walletData.uid}}
               <span ng-if="!$root.walletData.name && !$root.walletData.uid"><i class="icon ion-key"></i>&nbsp;{{$root.walletData.pubkey|formatPubkey}}</span>
             </a>

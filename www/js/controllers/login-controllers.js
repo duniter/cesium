@@ -3,13 +3,11 @@ angular.module('cesium.login.controllers', ['cesium.services'])
 
   .controller('LoginModalCtrl', LoginModalController)
 
-  .controller('AuthModalCtrl', AuthModalController)
-
   .controller('AuthIdleCtrl', AuthIdleController)
 
 ;
 
-function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals, csSettings, Device, parameters) {
+function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, UIUtils, Modals, csSettings, Device, parameters) {
   'ngInject';
 
   $scope.computing = false;
@@ -19,24 +17,13 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
   $scope.showComputePubkeyButton = false;
   $scope.autoComputePubkey = false;
 
-  $scope.error = parameters && parameters.error;
   $scope.isAuth = parameters && parameters.auth;
   $scope.expectedPubkey = parameters && parameters.expectedPubkey;
 
-  var loginMethods = [
-    {id: 'PUBKEY', label: 'LOGIN.METHOD.PUBKEY'}
-  ];
-  var authMethods = [
-    {id: 'SCRYPT_DEFAULT', label: 'LOGIN.METHOD.SCRYPT_DEFAULT'},
-    {
-      id: 'SCRYPT_ADVANCED', label: 'LOGIN.METHOD.SCRYPT_ADVANCED',
-      values: _.keys(CryptoUtils.constants.SCRYPT_PARAMS).reduce(function(res, key) {
-        return res.concat({id: key, label: 'LOGIN.SCRYPT.' + key, params: CryptoUtils.constants.SCRYPT_PARAMS[key]});
-      }, [{id: 'user', label: 'LOGIN.SCRYPT.USER', params: {}}])
-    },
-    {id: 'FILE', label: 'LOGIN.METHOD.FILE'}
-  ];
-  $scope.showMethods = false;
+  $scope.scryptParamsValues = _.keys(CryptoUtils.constants.SCRYPT_PARAMS)
+    .reduce(function(res, key) {
+      return res.concat({id: key, label: 'LOGIN.SCRYPT.' + key, params: CryptoUtils.constants.SCRYPT_PARAMS[key]});
+    }, [{id: 'user', label: 'LOGIN.SCRYPT.USER', params: {}}]);
 
   // modal enter
   $scope.enter = function() {
@@ -49,18 +36,12 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
     // Init remember me
     $scope.formData.rememberMe = csSettings.data.rememberMe;
 
-    // Prepare methods
-    if (parameters && parameters.auth) {
-      $scope.methods = authMethods;
-    }
-    else {
-      // All methods : login and auth
-      $scope.methods = authMethods.concat(loginMethods);
-    }
+    // Init keep auth, from idle time
+    $scope.formData.keepAuthIdle = csSettings.data.keepAuthIdle;
+    $scope.formData.keepAuth = ($scope.formData.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION);
 
     // Init method
-    var defaultMethod = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
-    $scope.formData.method = _.findWhere($scope.methods, {id:  defaultMethod}) || $scope.methods[0];
+    $scope.formData.method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
     $scope.changeMethod($scope.formData.method);
   };
   $scope.$on('modal.shown', $scope.enter);
@@ -83,7 +64,8 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
     Device.keyboard.close();
     // endRemoveIf(no-device)
 
-    var method = $scope.formData.method.id;
+    var method = $scope.formData.method;
+    var keepAuthIdle = $scope.formData.keepAuthIdle;
     var promise;
 
     // Scrypt
@@ -96,14 +78,13 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
           if (!keypair) return UIUtils.loading.hide(10);
           var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
           // Check pubkey
-          if ($scope.expectedPubkey && $scope.expectedPubkey != pubkey) {
+          if (parameters && parameters.expectedPubkey != pubkey) {
             $scope.pubkey = pubkey;
             $scope.showPubkey = true;
             $scope.pubkeyError = true;
             return UIUtils.loading.hide(10);
           }
 
-          $scope.error = null;
           $scope.pubkeyError = false;
 
           return {
@@ -119,25 +100,26 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
     else if (method === 'FILE') {
       if (!$scope.formData.file || !$scope.formData.file.valid || !$scope.formData.file.pubkey) return;
 
-      UIUtils.loading.show();
-      promise = CryptoUtils.readKeyFile($scope.formData.file, $scope.formData.keepAuth/*withSecret*/)
+      // If checkbox keep auth checked: set idle time to session
+      keepAuthIdle = ($scope.formData.keepAuth && csSettings.constants.KEEP_AUTH_IDLE_SESSION) || keepAuthIdle;
+
+        UIUtils.loading.show();
+      promise = CryptoUtils.readKeyFile($scope.formData.file, $scope.isAuth||$scope.formData.keepAuth/*withSecret*/)
         .then(function(keypair) {
           if (!keypair) return UIUtils.loading.hide(10);
           var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
 
           // Check pubkey
-          if ($scope.expectedPubkey && $scope.expectedPubkey != pubkey) {
+          if (parameters && parameters.expectedPubkey != pubkey) {
             $scope.formData.file.valid = false;
             return UIUtils.loading.hide(10);
           }
 
-          $scope.error = null;
           $scope.pubkeyError = false;
 
           return {
             pubkey: pubkey,
-            keypair: keypair,
-            params: $scope.formData.file
+            keypair: keypair
           };
         })
         .catch(UIUtils.onError('ERROR.AUTH_FILE_ERROR'));
@@ -159,13 +141,28 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
     return promise.then(function(res) {
       if (!res) return;
 
-      return $scope.closeModal({
-        pubkey: res.pubkey,
-        keypair: res.keypair,
-        method: method,
-        rememberMe: $scope.formData.rememberMe,
-        params: res.params
-      });
+      // Update settings (if need)
+      var rememberMeChanged = !angular.equals(csSettings.data.rememberMe, $scope.formData.rememberMe);
+      var keepAuthIdleChanged = !angular.equals(csSettings.data.keepAuthIdle, keepAuthIdle);
+      var methodChanged = !angular.equals(csSettings.data.login && csSettings.data.login.method, method);
+      var paramsChanged = !angular.equals(csSettings.data.login && csSettings.data.login.params, res.params);
+      if (rememberMeChanged || keepAuthIdleChanged || methodChanged || paramsChanged) {
+        csSettings.data.rememberMe = $scope.formData.rememberMe;
+        csSettings.data.keepAuthIdle = keepAuthIdle;
+        csSettings.data.useLocalStorage = csSettings.data.rememberMe ? true : csSettings.data.useLocalStorage;
+        csSettings.data.login = csSettings.data.login || {};
+        csSettings.data.login.method = method;
+        csSettings.data.login.params = res.params;
+        $timeout(csSettings.store, 500);
+      }
+
+      // hide loading
+      if (parameters && parameters.silent) {
+        UIUtils.loading.hide();
+      }
+
+      // Return result then close
+      return $scope.closeModal(res);
     });
   };
 
@@ -235,11 +232,16 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
   };
 
   $scope.changeMethod = function(method){
+    $scope.hideMethodsPopover();
+    if (method == $scope.formData.method) return; // same method
+
     console.debug("[login] method changed: ", method);
+    $scope.formData.method = method;
+
     // Scrypt (advanced or not)
-    if (method && (method.id == "SCRYPT_DEFAULT" || method.id == "SCRYPT_ADVANCED")) {
-      $scope.changeScrypt(method.values && method.values[1]/*=default scrypt params*/);
-      $scope.autoComputePubkey = $scope.autoComputePubkey && (method.id == "SCRYPT_DEFAULT");
+    if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
+      $scope.changeScrypt($scope.scryptParamsValues[1]/*=default scrypt params*/);
+      $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
     }
     else {
       $scope.formData.username = null;
@@ -286,17 +288,38 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
           UIUtils.onError('ERROR.AUTH_FILE_ERROR')(err);
         });
     });
-
-
-  };
-
-  $scope.readFileContent = function(content) {
-    console.log(content);
   };
 
   $scope.removeKeyFile = function() {
     $scope.formData.file = undefined;
   };
+
+  /* -- popover -- */
+
+  $scope.showMethodsPopover = function(event) {
+    if (!$scope.methodsPopover) {
+      $ionicPopover.fromTemplateUrl('templates/login/popover_methods.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.methodsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.methodsPopover.remove();
+        });
+        $scope.methodsPopover.show(event);
+      });
+    }
+    else {
+      $scope.methodsPopover.show(event);
+    }
+  };
+
+  $scope.hideMethodsPopover = function() {
+    if ($scope.methodsPopover) {
+      $scope.methodsPopover.hide();
+    }
+  };
+
 
   // TODO : for DEV only
   /*$timeout(function() {
@@ -306,18 +329,6 @@ function LoginModalController($scope, $timeout, $q, CryptoUtils, UIUtils, Modals
     };
     //$scope.form = {$valid:true};
   }, 900);*/
-}
-
-
-
-function AuthModalController($scope, $controller, parameters) {
-  'ngInject';
-
-  parameters = parameters || {};
-  parameters.auth = true;
-
-  // Initialize the super class and extend it.
-  angular.extend(this, $controller('LoginModalCtrl', {$scope: $scope, parameters: parameters}));
 }
 
 
@@ -337,53 +348,52 @@ function AuthModalController($scope, $controller, parameters) {
 function AuthIdleController($scope, $ionicHistory, $state, $q, Idle, UIUtils, $ionicLoading, csWallet, csSettings) {
   'ngInject';
 
-  $scope.enableAuthIdle = false;
+  var enableAuthIdle = false;
 
-  $scope.checkAuth = function(isAuth) {
+  function checkAuth(isAuth) {
     isAuth = angular.isDefined(isAuth) ? isAuth : csWallet.isAuth();
     var enable = csSettings.data.keepAuthIdle > 0 && csSettings.data.keepAuthIdle != 9999 && isAuth;
-    var changed = ($scope.enableAuthIdle != enable);
+    var changed = (enableAuthIdle != enable);
 
     // need start/top watching
     if (changed) {
       // start idle
       if (enable) {
-        console.debug("[app] Start auth idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
+        console.debug("[idle] Start auth idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
         Idle.setIdle(csSettings.data.keepAuthIdle);
         Idle.watch();
       }
       // stop idle, if need
-      else if ($scope.enableAuthIdle){
+      else if (enableAuthIdle){
         console.debug("[app] Stop auth idle");
         Idle.unwatch();
       }
-      $scope.enableAuthIdle = enable;
+      enableAuthIdle = enable;
     }
 
     // if idle time changed: apply it
     else if (enable && Idle.getIdle() !== csSettings.data.keepAuthIdle) {
-      console.debug("[app] Updating auth idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
+      console.debug("[idle] Updating auth idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
       Idle.setIdle(csSettings.data.keepAuthIdle);
     }
-  };
-  csSettings.api.data.on.changed($scope, function() {
-    $scope.checkAuth();
-  });
+  }
+
+  csSettings.api.data.on.changed($scope, checkAuth);
 
   // add listeners on wallet events
   csWallet.api.data.on.login($scope, function(walletData, deferred) {
-    $scope.checkAuth();
-    return deferred ? deferred.resolve() : $q.when();
+    checkAuth();
+    return (deferred && deferred.resolve()) || $q.when();
   });
   csWallet.api.data.on.auth($scope, function(walletData, deferred) {
-    $scope.checkAuth(true);
-    return deferred ? deferred.resolve() : $q.when();
+    checkAuth(true);
+    return (deferred && deferred.resolve()) || $q.when();
   });
   csWallet.api.data.on.unauth($scope, function() {
-    $scope.checkAuth(false);
+    checkAuth(false);
   });
   csWallet.api.data.on.logout($scope, function() {
-    $scope.checkAuth(false);
+    checkAuth(false);
   });
 
   $scope.$on('IdleStart', function() {
@@ -404,8 +414,10 @@ function AuthIdleController($scope, $ionicHistory, $state, $q, Idle, UIUtils, $i
   $scope.$on('IdleTimeout', function() {
     // Keep user login, but remove auth
     if (csSettings.data.rememberMe) {
+      if (!csWallet.isAuth()) return;
+
       return csWallet.unauth()
-        .then(function () {
+        .then(function() {
           $ionicHistory.clearCache();
         })
         .catch(UIUtils.onError());
@@ -430,10 +442,12 @@ function AuthIdleController($scope, $ionicHistory, $state, $q, Idle, UIUtils, $i
             });
         })
         .then(function (relogin) {
-          if (relogin) {
-            return $scope.loginAndGo($state.current.name, $state.params,
-              {reload: true});
-          }
+          if (!relogin) return;
+          return csWallet.login(options)
+            .then(function(){
+              return $state.go($state.current.name, $state.params, {reload: true});
+            })
+            .then(UIUtils.loading.hide);
         })
         .catch(UIUtils.onError());
     }

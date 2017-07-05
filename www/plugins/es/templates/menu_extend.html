@@ -1,5 +1,5 @@
 
-<!-- Main section -->
+<!-- Top header: Main section -->
 <ng-if ng-if="enable && extensionPoint === 'nav-buttons-right'">
 
 
@@ -40,7 +40,7 @@
 
 </ng-if>
 
-<!-- User section -->
+<!-- Left menu: User section -->
 <ng-if ng-if="enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
 
   <div menu-close class="item item-icon-left" active-link="active"
@@ -56,7 +56,7 @@
   <div menu-close class="item item-icon-left" active-link="active"
             active-link-path-prefix="#/app/user/message"
             ng-class="{'item-menu-disable': !login}"
-            ng-click="loginAndGo('app.user_message')">
+            ui-sref="app.user_message">
     <i class="icon ion-email"></i>
     <span translate>MENU.MESSAGES</span>
     <span class="badge badge-positive"
@@ -66,7 +66,7 @@
   <div menu-close class="item item-icon-left" active-link="active"
        active-link-path-prefix="#/app/notifications"
        ng-class="{'item-menu-disable': !login}"
-       ng-click="loginAndGo('app.view_notifications')">
+       ui-sref="app.view_notifications"">
     <i class="icon ion-android-notifications"></i>
     <span translate>MENU.NOTIFICATIONS</span>
     <span class="badge badge-positive"

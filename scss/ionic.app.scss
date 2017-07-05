@@ -1353,14 +1353,17 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   content: $ionicon-var-badge-editable;
 }
 
-.badge-button {
-  position: absolute !important;
-  margin: 0 !important;
-  padding: 0px 4px !important;
-  font-size: 10px;
-  top: 5px !important;
-  right: 3px !important;
+.bar {
+  .badge-button {
+    margin: 0 !important;
+    padding: 0px 4px !important;
+    font-size: 10px;
+    position: absolute !important;
+    top: 5px;
+    right: 3px;
+  }
 }
+
 
 /**********
    Modals
@@ -1779,16 +1782,17 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
-.badge.badge-secondary,
-.badge .badge-secondary {
-  font-size: 12px;
-  font-style: italic;
-  top: 37px !important;
-  font-weight: normal !important;
-  margin-right: 0px;
-  padding-right: 0px;
+.list {
+  .badge.badge-secondary,
+  .badge .badge-secondary {
+    font-size: 12px;
+    font-style: italic;
+    top: 37px;
+    font-weight: normal !important;
+    margin-right: 0px;
+    padding-right: 0px;
+  }
 }
-
 /**********
   Item peer
 **********/

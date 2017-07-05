@@ -46,7 +46,6 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     }
   };
 
-
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
       if (esHttp.isAlive()) {
@@ -71,8 +70,10 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
         $scope.search.loading = false;
         $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
         $scope.updateView();
+        UIUtils.loading.hide();
       })
       .catch(function(err) {
+        if (err == 'CANCELLED') return $scope.cancel();
         $scope.search.loading = false;
         if (!from) {
           $scope.search.results = [];
@@ -80,6 +81,10 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
         $scope.search.hasMore = false;
         UIUtils.onError('INVITATION.ERROR.LOAD_INVITATIONS_FAILED')(err);
       });
+  };
+
+  $scope.cancel = function() {
+
   };
 
   $scope.updateView = function() {
@@ -249,6 +254,10 @@ function PopoverInvitationController($scope, $controller) {
   $scope.$on('popover.hidden', $scope.resetUnreadCount);
 
   $scope.hideActionsPopover = function() {
+    $scope.closePopover();
+  };
+
+  $scope.cancel = function() {
     $scope.closePopover();
   };
 }

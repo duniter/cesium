@@ -139,11 +139,6 @@ angular.module('cesium.modal.services', [])
       parameters, {focusFirstInput: true});
   }
 
-  function showAuth(parameters) {
-    return ModalUtils.show('templates/login/modal_login.html','AuthModalCtrl',
-      parameters, {focusFirstInput: true});
-  }
-
   function showAdvancedLogin(parameters) {
     return ModalUtils.show('templates/login/modal_advanced_login.html','LoginModalCtrl',
       parameters, {focusFirstInput: true});
@@ -198,7 +193,6 @@ angular.module('cesium.modal.services', [])
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
-    showAuth: showAuth,
     showAdvancedLogin: showAdvancedLogin,
     showWotLookup: showWotLookup,
     showNetworkLookup: showNetworkLookup,

@@ -238,18 +238,36 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Login and load wallet
   $scope.loadWallet = function(options) {
 
-    // Make the platform is ready
+    // Make sure the platform is ready
     if (!csPlatform.isStarted()) {
       return csPlatform.ready().then(function(){
         return $scope.loadWallet(options);
       });
     }
 
-    if (!csWallet.isLogin()) {
+    options = options || {};
+
+    // If need auth
+    if (options.auth && !csWallet.isAuth()) {
+      return csWallet.auth(options)
+        .then(function (walletData) {
+          if (walletData) {
+            // Force full load, even if min data asked
+            // Because user can wait when just filled login (by modal)
+            if (options && options.minData) options.minData = false;
+            return $scope.loadWalletData(options);
+          }
+          else { // failed to auth
+            throw 'CANCELLED';
+          }
+        });
+    }
+
+    // If need login
+    else if (!csWallet.isLogin()) {
       return csWallet.login(options)
         .then(function (walletData) {
           if (walletData) {
-            $rootScope.viewFirstEnter = false;
             // Force full load, even if min data asked
             // Because user can wait when just filled login (by modal)
             if (options && options.minData) options.minData = false;
@@ -260,6 +278,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
           }
         });
     }
+
+    // Laready login ro auth
     else if (!csWallet.data.loaded) {
       return $scope.loadWalletData(options);
     }
@@ -269,7 +289,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // Login and go to a state (or wallet if not)
-  $scope.loginAndGo = function(state, stateParams) {
+  $scope.loginAndGo = function(state, options) {
     $scope.closeProfilePopover();
 
     state = state || 'app.view_wallet';
@@ -294,16 +314,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
       }
 
-      return csWallet.login()
-        .then(function(walletData){
-          if (walletData) {
-            return $state.go(state ? state : 'app.view_wallet', stateParams)
-              .then(UIUtils.loading.hide);
-          }
-        });
+      return csWallet.login(options)
+        .then(function(){
+          return $state.go(state, options);
+        })
+        .then(UIUtils.loading.hide);
     }
     else {
-      return $state.go(state, stateParams);
+      return $state.go(state, options);
     }
   };
 
@@ -356,6 +374,12 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   csWallet.api.data.on.logout($scope, function() {
     $scope.login = false;
     $rootScope.walletData = {};
+  });
+  csWallet.api.data.on.auth($scope, function() {
+    $scope.auth = true;
+  });
+  csWallet.api.data.on.unauth($scope, function() {
+    $scope.auth = false;
   });
 
   ////////////////////////////////////////
@@ -499,5 +523,5 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
   // For DEV ONLY
   $timeout(function() {
     $scope.loginAndGo();
-  }, 1000);
+  }, 500);
 }

@@ -122,7 +122,10 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         });
     }
 
-    function getData() {
+    function getData(options) {
+      options = options || {};
+      //options.current = angular.isDefined(options.current) ? options.current : false;
+
       if (started) { // load only once
         return $q.when(data);
       }
@@ -151,6 +154,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       console.debug('[currency] Received new block', block);
 
       data.currentBlock = block;
+      data.currentBlock.receivedAt = new Date().getTime() / 1000;
 
       data.medianTime = block.medianTime;
       data.membersCount = block.membersCount;
@@ -227,6 +231,38 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       return startPromise;
     }
 
+    var currentBlockField = getDataField('currentBlock');
+
+    function getCurrent(cache) {
+      // Get field (and make sure service is started)
+      return currentBlockField()
+
+        .then(function(currentBlock) {
+          var now = new Date().getTime() / 1000;
+          if (currentBlock && (currentBlock.receivedAt - now) < 60/*1min*/) {
+            console.debug('[currency] finde current block in cache: return IT !');
+            return currentBlock;
+          }
+
+          // TODO : Should never occured if block event works !!?
+          console.warn('[currency] No current block in cache: get it from network');
+
+          return BMA.blockchain.current(cache)
+            .catch(function(err){
+              // Special case for currency init (root block not exists): use fixed values
+              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
+                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH, medianTime: Math.trunc(new Date().getTime() / 1000)};
+              }
+              throw err;
+            })
+            .then(function(current) {
+              data.currentBlock = current;
+              data.currentBlock.receivedAt = now;
+              return current;
+            });
+        });
+    }
+
     // TODO register new block event, to get new UD value
 
     // Register extension points
@@ -250,7 +286,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       parameters: getDataField('parameters'),
       currentUD: getDataField('currentUD'),
       blockchain: {
-        current: getDataField('currentBlock')
+        current: getCurrent
       },
       // api extension
       api: api,

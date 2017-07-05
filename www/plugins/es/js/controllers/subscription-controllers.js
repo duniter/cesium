@@ -12,7 +12,8 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
         }
       },
       data: {
-        auth: true
+        auth: true,
+        minData: true
       }
     });
 

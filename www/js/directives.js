@@ -339,20 +339,13 @@ angular.module('cesium')
     };
   })
 
-  // Detect window close
+  // Auto remove auth/login data, after some inactivity
   // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
-  .directive('windowExitConfirm', function($window, $translate) {
+  .directive('cleanAuthIdle', function() {
     return {
       restrict: 'AE',
       link: function(element, attrs){
-        var myEvent = $window.attachEvent || $window.addEventListener,
-          chkevent = $window.attachEvent ? 'onbeforeunload' : 'beforeunload'; /// make IE7, IE8 compatable
 
-        myEvent(chkevent, function (e) { // For >=IE7, Chrome, Firefox
-          var confirmationMessage = ' ';  // a space
-          (e || $window.event).returnValue = "Are you sure that you'd like to close the browser?";
-          return confirmationMessage;
-        });
       }
     };
   })

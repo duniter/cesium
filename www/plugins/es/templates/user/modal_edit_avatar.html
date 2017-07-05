@@ -2,7 +2,13 @@
   <ion-header-bar class="bar-positive">
     <button class="button button-clear visible-xs visible-sm" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
     <h1 class="title" translate>PROFILE.MODAL_AVATAR.TITLE</h1>
-    <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="closeModal(result)">
+    <button class="button button-icon button-clear ion-ios-arrow-right visible-xs visible-sm"
+            ng-if="imageCropStep <= 2"
+            ng-click="doCrop()">
+    </button>
+    <button class="button button-icon button-clear ion-android-done visible-xs visible-sm"
+            ng-if="imageCropStep == 3"
+            ng-click="closeModal(result)">
     </button>
   </ion-header-bar>
 

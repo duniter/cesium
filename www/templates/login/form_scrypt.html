@@ -1,6 +1,6 @@
 
-  <div class="item">
-    <p class="item-text-wrap" ng-bind-html="isAuth ? 'AUTH.SCRYPT_FORM_HELP': 'LOGIN.SCRYPT_FORM_HELP'|translate"></p>
+  <div class="item item-text-wrap">
+    <p  ng-bind-html="isAuth ? 'AUTH.SCRYPT_FORM_HELP': 'LOGIN.SCRYPT_FORM_HELP'|translate"></p>
   </div>
 
   <!-- avoid web browser to fill password automatically -->
@@ -90,5 +90,3 @@
     </div>
   </div>
 
-  <!-- remember me -->
-  <ng-include src="'templates/login/item_remember_me.html'"></ng-include>

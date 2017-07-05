@@ -18,6 +18,14 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       }
     }
 
+    function onWalletUnauth(data) {
+      data = data || csWallet.data;
+      if (data.keypair) {
+        delete data.keypair.boxSk;
+        delete data.keypair.boxPk;
+      }
+    }
+
     function onWalletLogin(data, deferred) {
       deferred = deferred || $q.defer();
       if (!data || !data.pubkey || !data.keypair) {
@@ -111,7 +119,8 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
         csWallet.api.data.on.init($rootScope, onWalletReset, this),
-        csWallet.api.data.on.reset($rootScope, onWalletReset, this)
+        csWallet.api.data.on.reset($rootScope, onWalletReset, this),
+        csWallet.api.data.on.unauth($rootScope, onWalletUnauth, this)
       ];
     }
 

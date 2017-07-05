@@ -14,7 +14,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         },
         data: {
-          auth: true
+          login: true
         }
       })
 
@@ -27,7 +27,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         },
         data: {
-          auth: true
+          login: true
         }
       })
 
@@ -40,7 +40,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         },
         data: {
-          auth: true
+          login: true
         }
       })
     ;
@@ -69,7 +69,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       return $scope.load();
     }
     else {
-      // update view (to refresh profile and subscriptions)
+      // update view (to refresh avatar + plugin data, such as profile, subscriptions...)
       $scope.updateView();
     }
   });

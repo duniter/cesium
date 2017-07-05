@@ -1,0 +1,57 @@
+<ion-popover-view class="fit has-header popover-login-methods">
+  <ion-header-bar>
+    <h1 class="title" translate>LOGIN.METHOD_POPOVER_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+
+
+    <div class="list item-text-wrap">
+
+      <a class="item item-icon-left ink "
+         ng-click="changeMethod('SCRYPT_DEFAULT')">
+        <i class="icon ion-shuffle" style="font-size: 22px;"></i>
+        {{'LOGIN.METHOD.SCRYPT_DEFAULT' | translate}}
+      </a>
+
+      <a class="item item-icon-left ink "
+         ng-click="changeMethod('SCRYPT_ADVANCED')">
+        <i class="icon ion-shuffle" style="font-size: 22px;"></i>
+        <i class="icon-secondary ion-plus" style="font-size: 13px; left: 40px; margin-top: -4px;"></i>
+        {{'LOGIN.METHOD.SCRYPT_ADVANCED' | translate}}
+      </a>
+
+      <a class="item item-icon-left ink "
+         ng-click="changeMethod('FILE')">
+        <i class="icon ion-document-text"></i>
+        {{'LOGIN.METHOD.FILE' | translate}}
+      </a>
+
+      <ng-if ng-if="!isAuth">
+
+        <div class="item-divider"></div>
+
+        <a class="item item-icon-left ink "
+           ng-click="changeMethod('PUBKEY')">
+          <i class="icon ion-key"></i>
+          {{'LOGIN.METHOD.PUBKEY' | translate}}
+        </a>
+
+      </ng-if>
+
+<!--
+      {id: 'PUBKEY', label: 'LOGIN.METHOD.PUBKEY'}
+      ];
+      var authMethods = [
+      {id: 'SCRYPT_DEFAULT', label: 'LOGIN.METHOD.SCRYPT_DEFAULT'},
+      {
+      id: 'SCRYPT_ADVANCED', label: 'LOGIN.METHOD.SCRYPT_ADVANCED',
+      values: _.keys(CryptoUtils.constants.SCRYPT_PARAMS).reduce(function(res, key) {
+      return res.concat({id: key, label: 'LOGIN.SCRYPT.' + key, params: CryptoUtils.constants.SCRYPT_PARAMS[key]});
+      }, [{id: 'user', label: 'LOGIN.SCRYPT.USER', params: {}}])
+      },
+      {id: 'FILE', label: 'LOGIN.METHOD.FILE'}
+       -->
+
+    </div>
+  </ion-content>
+</ion-popover-view>

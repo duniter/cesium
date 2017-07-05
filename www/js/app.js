@@ -135,11 +135,29 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(firefoxos)
   // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if (next.data && next.data.large && !UIUtils.screen.isSmall()) {
-      var redirect = !$rootScope.tour && !event.currentScope.tour; // disabled for help tour
-      if (redirect) {
+    if (next.data) {
+      var skip = $rootScope.tour || event.currentScope.tour; // disabled for help tour
+      if (skip) return;
+
+      if (next.data.large && !UIUtils.screen.isSmall()) {
         event.preventDefault();
         $state.go(next.data.large, nextParams);
+      }
+      else if (next.data.login && !csWallet.isLogin()) {
+        event.preventDefault();
+        csWallet.login()
+          .then(csWallet.loadData)
+          .then(function() {
+            return $state.go(next.name, nextParams);
+          });
+      }
+      else if (next.data.auth && !csWallet.isAuth()) {
+        event.preventDefault();
+        csWallet.auth()
+          .then(csWallet.loadData)
+          .then(function() {
+            return $state.go(next.name, nextParams);
+          });
       }
     }
   });

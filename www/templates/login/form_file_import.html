@@ -2,11 +2,11 @@
   <p class="item-text-wrap" translate>LOGIN.FILE_FORM_HELP</p>
 </div>
 
-<!--
-<div class="padding energized-100-bg">
-  <p translate>INFO.FEATURES_NOT_IMPLEMENTED</p>
-</div>
--->
+<!-- WARN: not implemented yet -->
+<p class="energized-100-bg padding " >
+  <i class="icon ion-android-warning"></i>
+  <span translate>INFO.FEATURES_NOT_IMPLEMENTED</span>
+</p>
 
 
 <div  dropzone="recoverContent(file)">
@@ -15,8 +15,7 @@
     <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
     <input type="file" id="loginImportFile" accept=".yml"
            style="visibility:hidden; position:absolute;"
-           onchange="angular.element(this).scope().fileChanged(event)"
-           on-read-file="readFileContent(file)"/>
+           onchange="angular.element(this).scope().fileChanged(event)"/>
   </div>
 
   <div class="item item-icon-left item-icon-right stable-bg"
@@ -57,14 +56,8 @@
   </div>
 </div>
 
-<!-- keep auth after login (checkbox) -->
+<!-- keep auth after login (checkbox)  -->
 <ion-checkbox ng-model="formData.keepAuth"
               class="item ink item-text-wrap">
   <div class="item-content dark" translate>LOGIN.MEMORIZE_AUTH_FILE</div>
 </ion-checkbox>
-
-<!-- WARN: not implemented yet -->
-<p class="energized-100-bg padding " >
-  <i class="icon ion-android-warning"></i>
-  <span translate>INFO.FEATURES_NOT_IMPLEMENTED</span>
-</p>

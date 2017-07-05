@@ -374,8 +374,9 @@
     "CREATE_ACCOUNT": "Créer un compte",
     "FORGOTTEN_ID": "Mot de passe oublié ?",
     "ASSOCIATED_PUBKEY": "Clé publique du trousseau :",
-    "BTN_SHOW_OTHER_METHODS": "Choisir la méthode de connexion",
-    "METHOD_LABEL": "Méthode de connexion",
+    "BTN_METHODS": "Autres méthodes",
+    "BTN_CHANGE_METHODS_DOTS": "Changer de méthode...",
+    "METHOD_POPOVER_TITLE": "Méthodes",
     "MEMORIZE_AUTH_FILE": "Mémoriser ce trousseau le temps de la session de navigation",
     "SCRYPT_PARAMETERS": "Paramètres (Scrypt) :",
     "AUTO_LOGOUT": {
@@ -407,7 +408,6 @@
   "AUTH": {
     "TITLE": "<i class=\"icon ion-locked\"></i> Authentification",
     "METHOD_LABEL": "Méthode d'authentification",
-    "BTN_SHOW_OTHER_METHODS": "Choisir la méthode d'authentification",
     "BTN_AUTH": "S'authentifier",
     "SCRYPT_FORM_HELP": "Veuillez vous authentifier :",
     "ERROR": {
@@ -688,7 +688,7 @@
       "SECTION": "Connexion",
       "PUBKEY": "Clé publique du trousseau",
       "PUBKEY_DEF": "La clef publique du trousseau est générée à partir des identifiants saisis (n'importe lesquels), sans pour autant qu'ils correspondent à un compte déjà utilisé.<br/><b>Vérifiez attentivement que la clé publique est celle de votre compte</b>. Dans le cas contraire, vous serez connecté à un compte probablement jamais utilisé, le risque de collision avec un compte existant étant infime.<br/><a href=\"https://fr.wikipedia.org/wiki/Cryptographie_asym%C3%A9trique\" target=\"_system\">En savoir plus sur la cryptographie</a> par clé publique.",
-      "METHOD": "Méthode de connexion",
+      "METHOD": "Méthodes de connexion",
       "METHOD_DEF": "Plusieurs options sont disponibles pour vous connecter à un portfeuille :<br/> - La connexion <b>par sallage (simple ou avancé)</b> mélange votre mot de passe grâce à l'identifiant secret, pour limiter les tentatives de piratge par force brute (par exemple à partir de mots connus).<br/> - La connexion <b>par clé publique</b> évite de saisir vos identifiants, qui vous seront demandé seulement le moment venu lors d'une opération sur le compte.<br/> - La connexion <b>par fichier de trousseau</b> va lire les clés (publique et privée) du compte, depuis un fichier, sans besoin de saisir d'identifiants. Plusieurs formats de fichier sont possibles."
     },
     "GLOSSARY": {

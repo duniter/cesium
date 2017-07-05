@@ -19,35 +19,20 @@
 
      <div class="list padding no-padding-xs"
            ng-init="setForm(loginForm)"
-           ng-switch on="formData.method.id">
+           ng-switch on="formData.method">
 
-
-       <div class="item assertive"
-            ng-if="error">
-         <i class="icon ion-close-circled"></i>
-         {{error|translate:$root.walletData }}
+       <div class="item hidden-xs no-padding">
+         <div class="pull-right">
+            <a class="button button-text button-small-padding ink icon-right"
+               ng-click="showMethodsPopover($event)">
+              {{'LOGIN.BTN_METHODS'| translate}}
+            </a>
+            <a class="button button-icon positive button-small-padding icon ion-ios-help-outline"
+              style="right: 8px;"
+              ng-click="showHelpModal('login-method')">
+            </a>
+         </div>
        </div>
-
-        <a class="pull-right ink hidden-xs"
-           ng-class="{'gray': !showMethods}"
-           ng-click="showMethods=!showMethods;">
-          {{isAuth ? 'AUTH.BTN_SHOW_OTHER_METHODS' : 'LOGIN.BTN_SHOW_OTHER_METHODS' | translate}}
-          <i ng-class="{'ion-arrow-down-b': !showMethods, 'ion-arrow-up-b': showMethods}"></i>
-        </a>
-
-        <div class="item item-input item-select item-icon-right" ng-if="showMethods">
-          <div class="input-label">
-            {{'LOGIN.METHOD_LABEL' | translate}}
-          </div>
-          <select ng-model="formData.method"
-                  ng-change="changeMethod(formData.method)"
-                  ng-options="l as (l.label | translate) for l in methods track by l.id">
-          </select>
-          <a class="positive button-small-padding icon ion-ios-help-outline"
-             style="right: 8px;"
-             ng-click="showHelpModal('login-method')">
-          </a>
-        </div>
 
         <!-- Form content, depending of the login method -->
         <div ng-switch-when="SCRYPT_DEFAULT">
@@ -74,6 +59,14 @@
         <button class="button button-positive ink" type="submit">
           {{isAuth ? 'AUTH.BTN_AUTH' : 'COMMON.BTN_LOGIN' | translate}}
         </button>
+      </div>
+
+      <div class="text-center visible-xs">
+        <a ng-click="showMethodsPopover($event)" translate>LOGIN.BTN_METHODS_DOTS</a>
+        <a class="button button-icon positive button-small-padding icon ion-ios-help-outline"
+           style="right: 8px;"
+           ng-click="showHelpModal('login-method')">
+        </a>
       </div>
 
       <!-- Register ? -->

@@ -47,7 +47,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   var
   constants = {
-    OLD_STORAGE_KEY: 'CESIUM_SETTINGS'
+    OLD_STORAGE_KEY: 'CESIUM_SETTINGS',
+    KEEP_AUTH_IDLE_SESSION: 9999
   },
   defaultSettings = angular.merge({
     timeout : 4000,
@@ -306,6 +307,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     defaultSettings: defaultSettings,
     // api extension
     api: api,
-    locales: locales
+    locales: locales,
+    constants: constants
   };
 });

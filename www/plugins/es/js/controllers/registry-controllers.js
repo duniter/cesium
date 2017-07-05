@@ -67,6 +67,10 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
           templateUrl: "plugins/es/templates/registry/edit_record.html",
           controller: 'ESRegistryRecordEditCtrl'
         }
+      },
+      data: {
+        auth: true,
+        minData: true
       }
     })
     ;

@@ -71,7 +71,7 @@ function ESJoinController($scope, esSettings, PluginService) {
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUtils) {
+function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUtils, csWallet) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
   $scope.enable = esSettings.isEnable();
@@ -97,16 +97,34 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
   };
 
   $scope.showInvitationsPopover = function(event) {
+    // Make sure tobe auth before opening this popover
+    if (!csWallet.isAuth()) {
+      return csWallet.auth().then(function(){
+        UIUtils.loading.hide();
+        return $scope.showInvitationsPopover(event); // loop
+      })
+    }
+
     return UIUtils.popover.show(event, {
       templateUrl :'plugins/es/templates/invitation/popover_invitation.html',
       scope: $scope,
-      autoremove: false // reuse popover
+      autoremove: false, // reuse popover
+      // Auto-close if open when un-authenticate
+      afterShow: function(popover) {
+        csWallet.api.data.on.unauth(popover.scope, function() {
+          popover.scope.closePopover();
+        });
+      }
+    })
+      .then(function() {
     });
   };
 
   esSettings.api.state.on.changed($scope, function(enable) {
     $scope.enable = enable;
   });
+
+
 }
 
 /**
@@ -130,12 +148,12 @@ function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) 
   csSettings.api.data.on.changed($scope, $scope.updateView);
   csSettings.api.data.on.ready($scope, $scope.updateView);
   csWallet.api.data.on.login($scope, function(data, deferred){
-    deferred = deferred || $q.defer();
     $scope.updateView();
-    deferred.resolve();
-    return deferred.promise;
+    return deferred && deferred.resolve() || $q.when();
   });
   csWallet.api.data.on.logout($scope, $scope.updateView);
+
+  // Default action
   $scope.updateView();
 
 }

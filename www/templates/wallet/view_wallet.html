@@ -24,7 +24,7 @@
       <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-if=":rebind:!formData.avatar"
-           ng-class="{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
+           ng-class=":rebind:{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
         <i class="avatar"
            ng-if=":rebind:formData.avatar"
            style="background-image: url({{:rebind:formData.avatar.src}})"></i>

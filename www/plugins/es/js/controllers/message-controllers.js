@@ -14,7 +14,8 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
           }
         },
         data: {
-          auth: true
+          auth: true,
+          minData: true
         }
       })
 
@@ -39,7 +40,8 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
           }
         },
         data: {
-          auth: true
+          auth: true,
+          minData: true
         }
       })
 
