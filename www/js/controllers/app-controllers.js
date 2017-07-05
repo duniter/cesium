@@ -89,9 +89,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ) {
   'ngInject';
 
-  // Initialize the super class and extend it.
-  angular.extend(this, $controller('AuthIdleCtrl', {$scope: $scope}));
-
   $scope.search = {};
   $scope.login = csWallet.isLogin();
   $scope.motion = UIUtils.motion.default;

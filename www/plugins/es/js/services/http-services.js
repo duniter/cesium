@@ -211,10 +211,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       });
     }
 
-    function postRecord(path) {
+    function postRecord(path, walletData) {
       var postRequest = that.post(path);
       return function(record, params) {
-        return csWallet.auth()
+        return (!walletData ? csWallet.auth() : $q.when(walletData))
           .then(function(walletData) {
             if (!record.time) {
               record.time = that.date.now();
@@ -246,9 +246,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
     }
 
-    function removeRecord(index, type) {
+    function removeRecord(index, type, walletData) {
       return function(id) {
-        return csWallet.auth()
+        return (walletData ? csWallet.auth() : $q.when(walletData))
           .then(function(walletData) {
 
             var obj = {

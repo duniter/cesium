@@ -141,7 +141,7 @@
       "ALWAYS": "A la fin de la session"
     },
     "REMEMBER_ME": "Se souvenir de moi ?",
-    "REMEMBER_ME_HELP": "Permet de rester identifié, entre les sessions de navigation<br/>(Seule la clé publique du compte sera conservée localement)",
+    "REMEMBER_ME_HELP": "Permet de rester identifié d'une session à l'autre, en conservant localement la clé publique.",
     "PLUGINS_SETTINGS": "Extensions",
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "EXPERT_MODE": "Activer le mode expert",

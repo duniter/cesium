@@ -57,7 +57,6 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
   $scope.load = function(updateTimePct) {
 
     var formData = $scope.formData;
-    console.log(angular.copy($scope.formData));
 
     return $q.all([
 

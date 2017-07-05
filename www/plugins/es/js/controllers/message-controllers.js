@@ -60,7 +60,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
 ;
 
-function ESMessageListController($scope, $rootScope, $state, $translate, $ionicHistory, $ionicPopover,
+function ESMessageListController($scope, $state, $translate, $ionicHistory, $ionicPopover,
                                  esModals, UIUtils, esMessage) {
   'ngInject';
 
@@ -96,7 +96,7 @@ function ESMessageListController($scope, $rootScope, $state, $translate, $ionicH
     options.type = $scope.type;
 
     $scope.loading = true;
-    return esMessage.load($rootScope.walletData.keypair, options)
+    return esMessage.load(options)
       .then(function(messages) {
         $scope.messages = messages;
 

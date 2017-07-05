@@ -3,7 +3,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
   'cesium.settings.services'])
 
 
-.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, Api, localStorage, sessionStorage, Modals,
+.factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, $ionicHistory,
+                              Api, Idle, localStorage, sessionStorage, Modals,
                               CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csTx, csCurrency) {
   'ngInject';
 
@@ -26,7 +27,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     listeners,
     started,
     startPromise,
-    authPromise,
+    enableAuthIdle = false,
     api = new Api(this, 'csWallet-' + id),
 
     resetData = function(init) {
@@ -109,7 +110,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!needLogin && !needAuth) {
         return $q.when(data);
       }
+      var keepAuth = csSettings.data.keepAuthIdle > 0;
 
+      var authData;
       return Modals.showLogin(options)
         .then(function(res){
           if (!res || !res.pubkey ||
@@ -118,11 +121,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             throw 'CANCELLED';
           } // invalid data
 
+          authData = res;
           data.pubkey = res.pubkey;
-          data.keypair = res.keypair || {
-              signSk: null,
-              signPk: null
-            };
+          if (csSettings.data.keepAuthIdle > 0) {
+            data.keypair = res.keypair || {
+                signSk: null,
+                signPk: null
+              };
+          }
 
           // Call extend api
           if (needLogin) {
@@ -138,12 +144,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // Send auth event (if need)
           if (needAuth) {
             api.data.raise.auth();
+
+            // Check if need to start/stop auth idle
+            checkAuthIdle(true);
           }
-          return data;
+
+          return keepAuth ? data : angular.merge({}, data, authData);
         });
     },
 
     logout = function() {
+      var wasAuth = isAuth();
+
       return $q(function(resolve, reject) {
 
         resetData(); // will reset keypair
@@ -151,6 +163,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         // Send logout event
         api.data.raise.logout();
+
+        if (wasAuth) {
+          api.data.raise.unauth();
+        }
+
+        checkAuthIdle(false);
+
+        $ionicHistory.clearCache();
 
         resolve();
       });
@@ -186,6 +206,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         // Send unauth event
         api.data.raise.unauth();
+
+        checkAuthIdle(false);
+
+        $ionicHistory.clearCache();
 
         resolve();
       });
@@ -1458,16 +1482,46 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           resolve();
         }
       });
-    }
-    ;
+    },
+
+    checkAuthIdle = function(isAuth) {
+      isAuth = angular.isDefined(isAuth) ? isAuth : isAuth();
+      var enable = isAuth && csSettings.data.keepAuthIdle > 0 && csSettings.data.keepAuthIdle != csSettings.constants.KEEP_AUTH_IDLE_SESSION;
+      var changed = (enableAuthIdle != enable);
+
+      // need start/top watching
+      if (changed) {
+        // start idle
+        if (enable) {
+          console.debug("[wallet] Start idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
+          Idle.setIdle(csSettings.data.keepAuthIdle);
+          Idle.watch();
+        }
+        // stop idle, if need
+        else if (enableAuthIdle){
+          console.debug("[wallet] Stop idle");
+          Idle.unwatch();
+        }
+        enableAuthIdle = enable;
+      }
+
+      // if idle time changed: apply it
+      else if (enable && Idle.getIdle() !== csSettings.data.keepAuthIdle) {
+        console.debug("[idle] Updating auth idle (delay: {0}s)".format(csSettings.data.keepAuthIdle));
+        Idle.setIdle(csSettings.data.keepAuthIdle);
+      }
+    };
 
     function addListeners() {
       listeners = [
         // Listen if settings changed
         csSettings.api.data.on.changed($rootScope, store, this),
+        csSettings.api.data.on.changed($rootScope, checkAuthIdle, this),
         // Listen if node changed
         BMA.api.node.on.restart($rootScope, restart, this)
       ];
+
+      $rootScope.$on('IdleStart', unauth);
     }
 
     function removeListeners() {

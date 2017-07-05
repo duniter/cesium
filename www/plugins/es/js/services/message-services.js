@@ -172,10 +172,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
   }
 
 
-  function searchMessages(options) {
-    if (!csWallet.isLogin()) {
-      return $q.when([]);
-    }
+  function searchMessages(pubkey, options) {
+    pubkey = pubkey || csWallet.data.pubkey;
 
     options = options || {};
     options.type = options.type || 'inbox';
@@ -192,10 +190,10 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     };
 
     if (options.type == 'inbox') {
-      request.query = {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}};
+      request.query = {bool: {filter: {term: {recipient: pubkey}}}};
     }
     else {
-      request.query = {bool: {filter: {term: {issuer: csWallet.data.pubkey}}}};
+      request.query = {bool: {filter: {term: {issuer: pubkey}}}};
     }
 
     return esHttp.post('/message/:type/_search')(request, {type: options.type})
@@ -217,22 +215,22 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       });
   }
 
-  function loadMessages(keypair, options) {
-    if (!csWallet.isLogin()) {
-      return $q.when([]);
-    }
-
+  function loadMessages(options) {
     options = options || {};
     options.type = options.type || 'inbox';
     options._source = fields.commons;
     options.summary = angular.isDefined(options.summary) ? options.summary : true;
 
-    // Get encrypted message (with common fields)
-    return searchMessages(options)
+    return csWallet.auth()
+      .then(function(walletData) {
 
-      // Encrypt content
-      .then(function(messages) {
-        return decryptMessages(messages, keypair, options.summary);
+        // Get encrypted message (with common fields)
+        return searchMessages(walletData.pubkey, options)
+
+          // Encrypt content
+          .then(function(messages) {
+            return decryptMessages(messages, walletData.keypair, options.summary);
+          });
       })
 
       // Add avatar
@@ -355,23 +353,26 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
   function removeAllMessages(type) {
     type = type || 'inbox';
 
-    // Get all message id
-    return searchMessages({type: type, from: 0, size: 1000, _source: false})
-      .then(function(res) {
-        if (!res || !res.length) return;
+    return csWallet.auth()
+      .then(function(walletData) {
+        // Get all message id
+        return searchMessages(walletData.pubkey, {type: type, from: 0, size: 1000, _source: false})
+          .then(function (res) {
+            if (!res || !res.length) return;
 
-        // Remove each messages
-        return $q.all(res.reduce(function(res, msg) {
-          return res.concat(esHttp.record.remove('message', type)(msg.id));
-        }, []));
-      })
-      .then(function() {
-        // update message count
-        if (type == 'inbox') {
-          csWallet.data.messages = csWallet.data.messages || {};
-          csWallet.data.messages.count = 0;
-          csWallet.data.messages.unreadCount = 0;
-        }
+            // Remove each messages
+            return $q.all(res.reduce(function (res, msg) {
+              return res.concat(esHttp.record.remove('message', type)(msg.id, walletData));
+            }, []));
+          })
+          .then(function () {
+            // update message count
+            if (type == 'inbox') {
+              csWallet.data.messages = csWallet.data.messages || {};
+              csWallet.data.messages.count = 0;
+              csWallet.data.messages.unreadCount = 0;
+            }
+          });
       });
   }
 
@@ -385,7 +386,12 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     }
     message.read = true;
 
-    return CryptoUtils.sign(message.hash, csWallet.data.keypair)
+    return csWallet.getKeypair()
+
+      // Prepare the read_signature to sent
+      .then(function(keypair) {
+        return CryptoUtils.sign(message.hash, keypair);
+      })
 
       // Send read request
       .then(function(signature){
@@ -398,35 +404,44 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           csWallet.data.messages = csWallet.data.messages || {};
           csWallet.data.messages.unreadCount = csWallet.data.messages.unreadCount ? csWallet.data.messages.unreadCount - 1 : 0;
         }
-      }) ;
+      });
   }
 
   // Mark all messages as read
   function markAllMessageAsRead() {
-    // Get all messages hash
-    return searchMessages({type: 'inbox', from: 0, size: 1000, _source: ['hash', 'read_signature']})
+    return csWallet.auth()
+      .then(function(walletData) {
 
-      .then(function(messages) {
-        if (!messages || !messages.length) return;
+        // Get all messages hash
+        return searchMessages(walletData.pubkey, {
+            type: 'inbox',
+            from: 0,
+            size: 1000,
+            _source: ['hash', 'read_signature']
+          })
 
-        // Keep only unread message
-        messages = _.filter(messages, {read:false});
+          .then(function (messages) {
+            if (!messages || !messages.length) return;
 
-        // Remove  messages
-        return $q.all(messages.reduce(function(res, message) {
-          return res.concat(
-            // Sign hash
-            CryptoUtils.sign(message.hash, csWallet.data.keypair)
-            // then send read request
-            .then(function(signature){
-              return raw.postReadById(signature, {id:message.id});
-            }));
-        }, []));
-      })
-      .then(function() {
-        // update message count
-        csWallet.data.messages = csWallet.data.messages || {};
-        csWallet.data.messages.unreadCount = 0;
+            // Keep only unread message
+            messages = _.filter(messages, {read: false});
+
+            // Remove  messages
+            return $q.all(messages.reduce(function (res, message) {
+              return res.concat(
+                // Sign hash
+                CryptoUtils.sign(message.hash, walletData.keypair)
+                  // then send read request
+                  .then(function (signature) {
+                    return raw.postReadById(signature, {id: message.id});
+                  }));
+            }, []));
+          })
+          .then(function () {
+            // update message count
+            csWallet.data.messages = csWallet.data.messages || {};
+            csWallet.data.messages.unreadCount = 0;
+          });
       });
   }
 
