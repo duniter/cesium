@@ -64,7 +64,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       return deferred.promise;
     }
 
-    function onWalletFinishLoad(data, deferred) {
+    function onWalletLoad(data, deferred) {
       deferred = deferred || $q.defer();
 
       // Reset events
@@ -117,7 +117,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       // Extend csWallet events
       listeners = [
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
-        csWallet.api.data.on.finishLoad($rootScope, onWalletFinishLoad, this),
+        csWallet.api.data.on.load($rootScope, onWalletLoad, this),
         csWallet.api.data.on.init($rootScope, onWalletReset, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
         csWallet.api.data.on.unauth($rootScope, onWalletUnauth, this)

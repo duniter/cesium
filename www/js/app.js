@@ -135,29 +135,62 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(firefoxos)
   // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if (next.data) {
+    if (!event.defaultPrevented && next.data) {
       var skip = $rootScope.tour || event.currentScope.tour; // disabled for help tour
       if (skip) return;
 
+      // Large screen: redirect to specific state
       if (next.data.large && !UIUtils.screen.isSmall()) {
         event.preventDefault();
         $state.go(next.data.large, nextParams);
       }
-      else if (next.data.login && !csWallet.isLogin()) {
-        event.preventDefault();
-        csWallet.login()
-          .then(csWallet.loadData)
-          .then(function() {
-            return $state.go(next.name, nextParams);
-          });
-      }
+
+      // If state need auth
       else if (next.data.auth && !csWallet.isAuth()) {
         event.preventDefault();
-        csWallet.auth()
-          .then(csWallet.loadData)
+        return csWallet.auth()
+          .then(function() {
+            var options = next.data.minData ? {minData: true} : undefined;
+            return csWallet.loadData(options);
+          })
           .then(function() {
             return $state.go(next.name, nextParams);
+          })
+          .catch(function(err) {
+            if (err == 'CANCELLED') {
+              return $state.go('app.home');
+            }
           });
+      }
+
+      // If state need login
+      else if (next.data.login && !csWallet.isLogin()) {
+        event.preventDefault();
+        return csWallet.login()
+          .then(function() {
+            var options = next.data.minData ? {minData: true} : undefined;
+            return csWallet.loadData(options);
+          })
+          .then(function() {
+            return $state.go(next.name, nextParams);
+          })
+          .catch(function(err) {
+            if (err == 'CANCELLED') {
+              return $state.go('app.home');
+            }
+          });
+      }
+
+      // If state need login or auth, make sure to load wallet data
+      else if (next.data.login || next.data.auth)  {
+        var options = next.data.minData ? {minData: true} : undefined;
+        if (!csWallet.isDataLoaded(options)) {
+          event.preventDefault();
+          return csWallet.loadData(options)
+            .then(function() {
+              return $state.go(next.name, nextParams);
+            });
+        }
       }
     }
   });

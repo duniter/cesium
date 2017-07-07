@@ -113,14 +113,6 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
   csWallet.api.data.on.logout($scope, $scope.onWalletLogout);
 
-  /*// Relogin (e.g. after auto logout)
-  $scope.onWalletLogin = function() {
-    if ($scope.loading) {
-      return $scope.load();
-    }
-  };
-  csWallet.api.data.on.login($scope, $scope.onWalletLogin);*/
-
   // Ask uid
   $scope.showUidPopup = function() {
     return $q(function(resolve, reject) {

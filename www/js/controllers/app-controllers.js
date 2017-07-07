@@ -518,7 +518,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
   };
 
   // For DEV ONLY
-  $timeout(function() {
+  /*$timeout(function() {
     $scope.loginAndGo();
-  }, 500);
+  }, 500);*/
 }

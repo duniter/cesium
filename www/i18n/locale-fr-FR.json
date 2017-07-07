@@ -375,7 +375,7 @@
     "FORGOTTEN_ID": "Mot de passe oublié ?",
     "ASSOCIATED_PUBKEY": "Clé publique du trousseau :",
     "BTN_METHODS": "Autres méthodes",
-    "BTN_CHANGE_METHODS_DOTS": "Changer de méthode...",
+    "BTN_METHODS_DOTS": "Changer de méthode...",
     "METHOD_POPOVER_TITLE": "Méthodes",
     "MEMORIZE_AUTH_FILE": "Mémoriser ce trousseau le temps de la session de navigation",
     "SCRYPT_PARAMETERS": "Paramètres (Scrypt) :",
@@ -386,7 +386,7 @@
       "IDLE_WARNING": "Vous allez être déconnecté... {{countdown}}"
     },
     "METHOD": {
-      "SCRYPT_DEFAULT": "Sallage simple (par défaut)",
+      "SCRYPT_DEFAULT": "Sallage simple",
       "SCRYPT_ADVANCED": "Sallage avancé",
       "FILE": "Fichier de trousseau",
       "PUBKEY": "Clé publique seule"

@@ -107,6 +107,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       var needLogin = !isLogin();
       var needAuth = options && options.auth && !isAuth();
+
+      // user already login
       if (!needLogin && !needAuth) {
         return $q.when(data);
       }
@@ -123,7 +125,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           authData = res;
           data.pubkey = res.pubkey;
-          if (csSettings.data.keepAuthIdle > 0) {
+          if (csSettings.data.keepAuthIdle) {
             data.keypair = res.keypair || {
                 signSk: null,
                 signPk: null
@@ -149,6 +151,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             checkAuthIdle(true);
           }
 
+          // Load data
+          if (!data.loaded) {
+            var loadOptions = options && angular.isDefined(options.minData) ? {minData: true} : undefined;
+            return loadData(loadOptions);
+          }
+        }).then(function() {
           return keepAuth ? data : angular.merge({}, data, authData);
         });
     },
@@ -243,11 +251,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return !!data.pubkey && data.requirements && !data.requirements.needSelf;
     },
 
+    isDataLoaded = function(options) {
+      if (options && options.minData) return data.loaded;
+      return data.loaded && data.sources;
+    },
+
     isNeverUsed = function() {
       if (!data.loaded) return undefined; // undefined if not full loaded
       return !data.pubkey ||
         (!data.isMember &&
-        (!data.requirements || (!data.requirements.pendingMembership && !data.requirements.wasMember)) &&
+         !data.requirements.pendingMembership &&
+         !data.requirements.wasMember &&
          !data.tx.history.length &&
          !data.tx.pendings.length);
     },
@@ -265,9 +279,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         if (isLogin() && csSettings.data.rememberMe) {
 
           var jobs = [];
-          // Use session storage for secret key - fix #372
 
-          if (isAuth()) {
+          // Use session storage for secret key - fix #372
+          if (csSettings.data.keepAuthIdle == constants.KEEP_AUTH_IDLE_SESSION && isAuth()) {
             jobs.push(sessionStorage.put(constants.STORAGE_SECKEY, CryptoUtils.base58.encode(data.keypair.signSk)));
           }
           else {
@@ -322,13 +336,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               };
             }
             catch(err) {
-              console.warn('Unable to restore secret ket: ', err);
+              console.warn('[wallet] Secret key restoration failed: ', err);
               keypair = undefined;
             }
           }
 
           data.pubkey = pubkey;
           data.keypair = keypair || {signPk: undefined, signSk: undefined};
+
+          console.debug('[wallet] Restore \'{0}\' from local storage.'.format(pubkey.substring(0,8)));
 
           // Call extend api
           return  api.data.raisePromise.login(data);
@@ -600,22 +616,16 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           loadTxAndSources(),
 
           // Load sigStock
-          loadSigStock(),
-
-          // API extension
-          api.data.raisePromise.load(data, null)
-            .catch(function(err) {
-              console.error('Error while loading wallet data, on extension point. Try to continue');
-              console.error(err);
-            })
+          loadSigStock()
         ])
         .then(function(res) {
           var currency = res[0];
           finishLoadRequirements(currency); // must be call after csCurrency.get() and loadRequirements()
-          return api.data.raisePromise.finishLoad(data)
+
+          // API extension
+          return api.data.raisePromise.load(data)
             .catch(function(err) {
-              console.error('Error while finishing wallet data load, on extension point. Try to continue');
-              console.error(err);
+              console.error('[wallet] Error during load API extension point. Try to continue',err);
             });
         })
         .then(function() {
@@ -651,7 +661,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         };
 
       // Force some load (requirements) if not already loaded
-      options.requirements = angular.isDefined(options.requirements) ? options.requirements : !data.requirements;
+      options.requirements = angular.isDefined(options.requirements) ? options.requirements : angular.isDefined(data.requirements.needSelf);
 
       var jobs = [];
 
@@ -678,12 +688,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       // Load sigStock
       if (options.sigStock) jobs.push(loadSigStock());
 
-      // API extension (force if no other jobs)
-      if (!jobs.length || options.api) jobs.push(api.data.raisePromise.load(data, options));
-
-      return $q.all(jobs)
+      return (jobs.length ? $q.all(jobs) : $q.when())
       .then(function(){
-        return api.data.raisePromise.finishLoad(data);
+        // API extension (after all other jobs)
+        return api.data.raisePromise.load(data);
       })
       .then(function(){
         return data;
@@ -1560,12 +1568,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         // Restore
         .then(restore)
 
+/*
+// loading must be done by state definition
         // Load data (if a wallet restored)
         .then(function(data) {
           if (data && data.pubkey) {
             return loadData({minData: true});
           }
         })
+*/
 
         // Emit ready event
         .then(function() {
@@ -1575,9 +1586,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           started = true;
           startPromise = null;
+          startLoadOptions = null;
 
-          // Emit event (used by plugins)
-          api.data.raise.ready(data);
         })
         .then(function(){
           return data;
@@ -1587,13 +1597,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     }
 
     // Register extension points
-    api.registerEvent('data', 'ready');
     api.registerEvent('data', 'init');
     api.registerEvent('data', 'login');
     api.registerEvent('data', 'auth');
     api.registerEvent('data', 'unauth');
     api.registerEvent('data', 'load');
-    api.registerEvent('data', 'finishLoad');
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
     api.registerEvent('action', 'certify');
@@ -1616,6 +1624,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       isAuth: isAuth,
       getKeypair: getKeypair,
       hasSelf: hasSelf,
+      isDataLoaded : isDataLoaded,
       isNeverUsed: isNeverUsed,
       isNew: isNew,
       isUserPubkey: isUserPubkey,

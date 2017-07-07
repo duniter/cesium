@@ -8,6 +8,8 @@ angular.module('cesium.login.controllers', ['cesium.services'])
 function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, UIUtils, Modals, csSettings, Device, parameters) {
   'ngInject';
 
+  parameters = parameters || {};
+
   $scope.computing = false;
   $scope.pubkey = null;
   $scope.formData = {};
@@ -15,8 +17,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.showComputePubkeyButton = false;
   $scope.autoComputePubkey = false;
 
-  $scope.isAuth = parameters && parameters.auth;
-  $scope.expectedPubkey = parameters && parameters.expectedPubkey;
+  $scope.isAuth = parameters.auth;
+  $scope.expectedPubkey = parameters.expectedPubkey;
 
   $scope.scryptParamsValues = _.keys(CryptoUtils.constants.SCRYPT_PARAMS)
     .reduce(function(res, key) {
@@ -40,6 +42,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     // Init method
     $scope.formData.method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
+    if ($scope.isAuth && $scope.formData.method == 'PUBKEY') {
+      $scope.formData.method = 'SCRYPT_DEFAULT';
+    }
     $scope.changeMethod($scope.formData.method);
   };
   $scope.$on('modal.shown', $scope.enter);
@@ -76,7 +81,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
           if (!keypair) return UIUtils.loading.hide(10);
           var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
           // Check pubkey
-          if (parameters && parameters.expectedPubkey != pubkey) {
+          if (parameters.expectedPubkey && parameters.expectedPubkey != pubkey) {
             $scope.pubkey = pubkey;
             $scope.showPubkey = true;
             $scope.pubkeyError = true;
@@ -108,7 +113,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
           var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
 
           // Check pubkey
-          if (parameters && parameters.expectedPubkey != pubkey) {
+          if (parameters.expectedPubkey && parameters.expectedPubkey != pubkey) {
             $scope.formData.file.valid = false;
             return UIUtils.loading.hide(10);
           }
@@ -155,7 +160,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       }
 
       // hide loading
-      if (parameters && parameters.silent) {
+      if (parameters.silent) {
         UIUtils.loading.hide();
       }
 
@@ -292,10 +297,22 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     $scope.formData.file = undefined;
   };
 
+  /* -- modals -- */
+
+  $scope.showWotLookupModal = function() {
+    return Modals.showWotLookup()
+      .then(function(res){
+        if (res && res.pubkey) {
+          $scope.formData.pubkey = res.pubkey;
+        }
+      });
+  };
+
   /* -- popover -- */
 
   $scope.showMethodsPopover = function(event) {
     if (!$scope.methodsPopover) {
+
       $ionicPopover.fromTemplateUrl('templates/login/popover_methods.html', {
         scope: $scope
       }).then(function(popover) {
@@ -304,7 +321,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
         $scope.$on('$destroy', function() {
           $scope.methodsPopover.remove();
         });
-        $scope.methodsPopover.show(event);
+        $scope.methodsPopover.show(event)
+          .then(function() {
+            UIUtils.ink({selector: '.popover-login-methods .item'});
+          });
       });
     }
     else {

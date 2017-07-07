@@ -1728,7 +1728,7 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
    Profile popover
 **********/
 
-#profile-popover {
+.popover.popover-profile {
   height: 200px;
   .avatar {
     height: 90px;
@@ -1793,6 +1793,21 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     padding-right: 0px;
   }
 }
+
+/**********
+  Login method popover
+**********/
+
+.popover.popover-login-methods {
+  height: 280px;
+  width: 260px;
+}
+
+.popover.popover-login-methods.auth {
+  height: 204px;
+}
+
+
 /**********
   Item peer
 **********/
