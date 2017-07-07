@@ -248,7 +248,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
-      $scope.changeScrypt($scope.scryptParamsValues[1]/*=default scrypt params*/);
+      var defaultScrypt = _.findWhere($scope.scryptParamsValues, {id: 'DEFAULT'});
+      $scope.changeScrypt(defaultScrypt);
       $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
     }
     else {
