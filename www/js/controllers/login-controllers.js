@@ -43,10 +43,13 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     // Init method
     $scope.formData.method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
+    var params = csSettings.data.login && csSettings.data.login.params;
     if ($scope.isAuth && $scope.formData.method == 'PUBKEY') {
       $scope.formData.method = 'SCRYPT_DEFAULT';
+      params = undefined; // will use default
+
     }
-    $scope.changeMethod($scope.formData.method);
+    $scope.changeMethod($scope.formData.method, params);
 
     // Ink effect
     UIUtils.ink({selector: '.modal-login .ink'});
@@ -238,7 +241,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     return Modals.showHelp(parameters);
   };
 
-  $scope.changeMethod = function(method){
+  $scope.changeMethod = function(method, params){
     $scope.hideMethodsPopover();
     if (method == $scope.formData.method) return; // same method
 
@@ -248,8 +251,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
-      var defaultScrypt = _.findWhere($scope.scryptParamsValues, {id: 'DEFAULT'});
-      $scope.changeScrypt(defaultScrypt);
+      var scrypt = params || _.findWhere($scope.scryptParamsValues, {id: 'DEFAULT'});
+      $scope.changeScrypt(scrypt);
       $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
     }
     else {
