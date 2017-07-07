@@ -369,9 +369,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           var seed = that.scrypt.crypto_scrypt(
             that.util.encode_utf8(password),
             that.util.encode_utf8(salt),
-            scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
-            scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
-            scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+            scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
+            scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
+            scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
             that.constants.SEED_LENGTH);
           var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
           var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
@@ -393,9 +393,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
             var seed = that.scrypt.crypto_scrypt(
               that.util.encode_utf8(password),
               that.util.encode_utf8(salt),
-              scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
-              scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
-              scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+              scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
+              scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
+              scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
               that.constants.SEED_LENGTH);
             var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
             resolve(signKeypair.signPk);
@@ -551,9 +551,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
           that.nacl.from_string(password),
           that.nacl.from_string(salt),
-          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
-          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
-          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
+          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
+          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
           that.constants.SEED_LENGTH,
           function (err, seed) {
             if (err) { deferred.reject(err); return;}
@@ -590,9 +590,9 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
           that.nacl.from_string(password),
           that.nacl.from_string(salt),
-          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.SIMPLE.N,
-          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.SIMPLE.r,
-          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.SIMPLE.p,
+          scryptParams && scryptParams.N || that.constants.SCRYPT_PARAMS.DEFAULT.N,
+          scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
+          scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
           that.constants.SEED_LENGTH,
           function (err, seed) {
             if (err) { deferred.reject(err); return;}
