@@ -47,7 +47,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   var
   constants = {
-    OLD_STORAGE_KEY: 'CESIUM_SETTINGS',
+    STORAGE_KEY: 'CESIUM_SETTINGS',
     KEEP_AUTH_IDLE_SESSION: 9999
   },
   defaultSettings = angular.merge({
@@ -142,20 +142,20 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     if (data.useLocalStorage) {
       // When node is temporary (fallback node): keep previous node address - issue #476
       if (data.node.temporary === true) {
-        promise = localStorage.getObject(constants.OLD_STORAGE_KEY)
+        promise = localStorage.getObject(constants.STORAGE_KEY)
           .then(function(previousSettings) {
             var savedData = angular.copy(data);
             savedData.node = previousSettings && previousSettings.node || {};
             delete savedData.temporary; // never store temporary flag
-            return localStorage.setObject(constants.OLD_STORAGE_KEY, savedData);
+            return localStorage.setObject(constants.STORAGE_KEY, savedData);
           });
       }
       else {
-        promise = localStorage.setObject(constants.OLD_STORAGE_KEY, data);
+        promise = localStorage.setObject(constants.STORAGE_KEY, data);
       }
     }
     else {
-      promise  = localStorage.setObject(constants.OLD_STORAGE_KEY, null);
+      promise  = localStorage.setObject(constants.STORAGE_KEY, null);
     }
 
     return promise
@@ -183,7 +183,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     // Apply stored settings
     angular.merge(data, newData);
 
-    // Always force the usage of deffault settings
+    // Always force the usage of default settings
     // This is a workaround for DEV (TODO: implement edition in settings ?)
     data.timeWarningExpire = defaultSettings.timeWarningExpire;
     data.timeWarningExpireMembership = defaultSettings.timeWarningExpireMembership;
@@ -199,7 +199,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   restore = function() {
     var now = new Date().getTime();
-    return localStorage.getObject(constants.OLD_STORAGE_KEY)
+    return localStorage.getObject(constants.STORAGE_KEY)
         .then(function(storedData) {
           // No settings stored
           if (!storedData) {
@@ -207,6 +207,11 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
             applyData(defaultSettings);
             emitChangedEvent();
             return;
+          }
+
+          // Workaround, to turn on 'rememberMe', but only once (at version 0.13.2)
+          if (!storedData.rememberMe && (!storedData.login || !storedData.login.method)) {
+            storedData.rememberMe = true;
           }
 
           // Apply stored data
