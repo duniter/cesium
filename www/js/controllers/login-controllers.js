@@ -24,12 +24,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.scryptParamsValues = _.keys(CryptoUtils.constants.SCRYPT_PARAMS)
     .reduce(function(res, key) {
       return res.concat({id: key, label: 'LOGIN.SCRYPT.' + key, params: CryptoUtils.constants.SCRYPT_PARAMS[key]});
-    }, [{id: 'user', label: 'LOGIN.SCRYPT.USER', params: {}}]);
+    }, [{id: 'USER', label: 'LOGIN.SCRYPT.USER', params: {}}]);
 
-  // modal enter
-  $scope.enter = function() {
-    UIUtils.loading.hide();
-
+  // modal init
+  $scope.init = function() {
     // Should auto-compute pubkey ?
     $scope.autoComputePubkey = ionic.Platform.grade.toLowerCase()==='a' &&
       !UIUtils.screen.isSmall();
@@ -42,15 +40,17 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     $scope.formData.keepAuth = ($scope.formData.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION);
 
     // Init method
-    $scope.formData.method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
+    var method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
     var params = csSettings.data.login && csSettings.data.login.params;
-    if ($scope.isAuth && $scope.formData.method == 'PUBKEY') {
+    if ($scope.isAuth && method == 'PUBKEY') {
       $scope.formData.method = 'SCRYPT_DEFAULT';
-      params = undefined; // will use default
-
     }
-    $scope.changeMethod($scope.formData.method, params);
+    $scope.changeMethod(method, params);
+  };
 
+  // modal enter
+  $scope.enter = function() {
+    UIUtils.loading.hide();
     // Ink effect
     UIUtils.ink({selector: '.modal-login .ink'});
   };
@@ -176,7 +176,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     });
   };
 
-  $scope.scryptFormDataChanged = function() {
+  $scope.onScryptFormChanged = function() {
     if ($scope.computing) return; // avoid multiple call
     $scope.pubkey = null;
     $scope.pubkeyError = false;
@@ -189,7 +189,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       $scope.showComputePubkeyButton = !$scope.autoComputePubkey && $scope.showPubkey;
     }
   };
-  $scope.$watch('formData.username + formData.password', $scope.scryptFormDataChanged, true);
+  $scope.$watch('formData.username + formData.password', $scope.onScryptFormChanged, true);
 
   $scope.computePubkey = function() {
     $scope.showComputePubkeyButton = false;
@@ -218,7 +218,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       .catch(function (err) {
         UIUtils.onError('ERROR.CRYPTO_UNKNOWN_ERROR')(err);
         $scope.computing = false;
-        $scope.scryptFormDataChanged();
+        $scope.onScryptFormChanged();
       });
     }, 100);
   };
@@ -245,14 +245,32 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     $scope.hideMethodsPopover();
     if (method == $scope.formData.method) return; // same method
 
-    console.debug("[login] method changed: ", method);
+    console.debug("[login] method is: " + method);
     $scope.formData.method = method;
-    delete $scope.form.$submitted; // hide form's fields errors on the form
+
+    if ($scope.form) {
+      // hide form's fields errors on the form
+      delete $scope.form.$submitted;
+    }
 
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
-      var scrypt = params || _.findWhere($scope.scryptParamsValues, {id: 'DEFAULT'});
+      // Search scrypt object
+      var scrypt;
+      if (params) {
+        scrypt = _.find($scope.scryptParamsValues, function(item){
+            return item.params && angular.equals(item.params, params);
+          });
+        if (!scrypt) {
+          scrypt = _.findWhere($scope.scryptParamsValues, {id: 'USER'}) || {};
+          scrypt.params = params;
+        }
+      }
+      else {
+        scrypt = _.findWhere($scope.scryptParamsValues, {id: 'DEFAULT'});
+      }
       $scope.changeScrypt(scrypt);
+
       $scope.autoComputePubkey = $scope.autoComputePubkey && (method == 'SCRYPT_DEFAULT');
     }
     else {
@@ -266,6 +284,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.changeScrypt = function(scrypt) {
     // Protect params against changes
     $scope.formData.scrypt = angular.copy(scrypt||{});
+    $scope.onScryptFormChanged();
   };
 
   $scope.fileChanged = function(event) {
@@ -379,6 +398,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       $scope.methodsPopover.hide();
     }
   };
+
+  // Default action
+  $scope.init();
 
 
   // TODO : for DEV only
