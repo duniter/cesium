@@ -125,7 +125,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           authData = res;
           data.pubkey = res.pubkey;
-          data.isNew = angular.isDefined(options.isNew) ? options.isNew : data.isNew;
+          data.isNew = options && angular.isDefined(options.isNew) ? options.isNew : data.isNew;
           if (csSettings.data.keepAuthIdle) {
             data.keypair = res.keypair || {
                 signSk: null,
