@@ -149,6 +149,12 @@
     color: #fff !important;
 }
 
+.list .item-peer .badge.badge-secondary,
+.list .item-peer .badge .badge-secondary {
+  top: 31px;
+  font-size: 10px;
+}
+
 .settings .item-divider {
     background-color: #f5f5f5;
 }

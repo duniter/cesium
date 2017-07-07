@@ -239,6 +239,18 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
+
+  .filter('formatDurationTime', function() {
+    return function(input) {
+      if (!input) return '';
+      var sign = input && input < 0 ? '- ' : '+ ';
+      var hourFloat = Math.abs(input / 60 / 60);
+      var hour = Math.trunc(hourFloat);
+      var min = Math.trunc((hourFloat - hour) * 60);
+      return hour > 0 ? (sign + hour + 'h ' + min + 's') : (sign + min + 's') ;
+    };
+  })
+
   // Display time in ms or seconds (see i18n label 'COMMON.EXECUTION_TIME')
   .filter('formatDurationMs', function() {
     return function(input) {

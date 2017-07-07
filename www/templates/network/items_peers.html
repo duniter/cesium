@@ -32,10 +32,10 @@
        ng-click="selectPeer(peer)">
 
     <i class="icon ion-android-desktop"
-       ng-class="{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
        ng-if=":rebind:!peer.uid || !peer.avatar"></i>
     <b class="icon-secondary ion-person" ng-if=":rebind:!peer.avatar && peer.uid"
-       ng-class="{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
        style="left: 26px; top: -3px;"></b>
     <i class="avatar" ng-if=":rebind:peer.uid && peer.avatar" style="background-image: url('{{:rebind:peer.avatar.src}}')"></i>
     <b class="icon-secondary assertive ion-close-circled" ng-if=":rebind:!peer.online" style="left: 37px; top: -10px;"></b>
@@ -78,7 +78,9 @@
       </div>
       <div class="col col-20 no-padding text-center">
         <span id="helptip-network-peer-{{$index}}-block"
-          class="badge" ng-class="{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{:rebind:peer.currentNumber|formatInteger}}</span>
+          class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{:rebind:peer.currentNumber|formatInteger}}</span>
+        <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta">{{:rebind:peer.consensusBlockDelta|formatDurationTime}}</span>
+
       </div>
     </div>
   </div>

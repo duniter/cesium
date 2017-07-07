@@ -472,6 +472,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         _.forEach(data.peers, function(peer){
           peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
           peer.hasConsensusBlock = !peer.hasMainConsensusBlock && buids[peer.buid].count > 1;
+          if (peer.hasConsensusBlock) {
+            peer.consensusBlockDelta = buids[peer.buid].medianTime - mainBlock.medianTime;
+          }
         });
         data.peers = _.uniq(data.peers, false, function(peer) {
           return peer.id;

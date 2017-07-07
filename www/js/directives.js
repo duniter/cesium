@@ -339,17 +339,6 @@ angular.module('cesium')
     };
   })
 
-  // Auto remove auth/login data, after some inactivity
-  // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
-  .directive('cleanAuthIdle', function() {
-    return {
-      restrict: 'AE',
-      link: function(element, attrs){
-
-      }
-    };
-  })
-
   // Un-authenticate when window closed
   // see: https://stackoverflow.com/questions/28197316/javascript-or-angularjs-defer-browser-close-or-tab-close-between-refresh
   .directive('windowExitUnauth', function($window, csWallet) {
