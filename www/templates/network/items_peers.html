@@ -79,7 +79,7 @@
       <div class="col col-20 no-padding text-center">
         <span id="helptip-network-peer-{{$index}}-block"
           class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{:rebind:peer.currentNumber|formatInteger}}</span>
-        <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta">{{:rebind:peer.consensusBlockDelta|formatDurationTime}}</span>
+        <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta && expertMode">{{:rebind:peer.consensusBlockDelta|formatDurationTime}}</span>
 
       </div>
     </div>
