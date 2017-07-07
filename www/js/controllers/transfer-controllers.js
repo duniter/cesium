@@ -9,7 +9,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
         url: "/transfer?amount&udAmount&comment",
         views: {
           'menuContent': {
-            templateUrl: "templates/wot/view_identity.html",
+            templateUrl: "templates/wallet/new_transfer.html",
             controller: 'TransferCtrl'
           }
         }
@@ -91,6 +91,7 @@ function TransferController($scope, $controller, UIUtils, csWot) {
         $scope.setParameters(parameters);
         $scope.onUseRelativeChanged();
         UIUtils.loading.hide();
+        UIUtils.ink({selector: '.modal-transfer .ink'});
       });
   };
   $scope.$on('$ionicView.enter', $scope.enter);
@@ -149,6 +150,11 @@ function TransferModalController($scope, $translate, $filter, BMA, csWallet, UIU
   };
   // Read default parameters
   $scope.setParameters(parameters);
+
+  $scope.enter = function() {
+    UIUtils.ink({selector: '.modal-transfer .ink'});
+  };
+  $scope.$on('modal.shown', $scope.enter);
 
   $scope.cancel = function() {
     $scope.closeModal();

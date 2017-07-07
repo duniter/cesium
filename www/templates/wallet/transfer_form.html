@@ -48,11 +48,11 @@
                keyboard-attach=""
                name="amount" placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{currency | currencySymbolNoHtml:formData.useRelative}})" ng-model="formData.amount"
                required number-float>
-        <span class="gray button button-block icon ion-arrow-swap hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
-        </span>
-        <span class="gray button button-block button-icon visible-xs visible-sm" ng-click="showUnitPopover($event)">
+        <a class="button button-stable icon ion-arrow-swap gray ink hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
+        </a>
+        <a class="button button-icon button-small-padding gray ink visible-xs visible-sm" ng-click="showUnitPopover($event)">
           <i class="icon ion-android-more-vertical"></i>
-        </span>
+        </a>
       </ion-item>
       <div class="form-errors"
            ng-show="form.$submitted && form.amount.$error"

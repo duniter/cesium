@@ -1349,6 +1349,12 @@ a.underline:hover,
   textarea {
     padding-right: 100px;
   }
+
+  .button,
+  button {
+    top: inherit;
+    bottom: 6px;
+  }
 }
 
 /*
