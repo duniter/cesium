@@ -59,14 +59,14 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     useLocalStorage: true, // override to false if no device
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
-    rememberMe: true, // override to false if no device
+    rememberMe: true,
     keepAuthIdle: 10 * 60, // 10min - override to false if no device
     showUDHistory: true,
     httpsMode: false,
     expertMode: false,
     decimalCount: 4,
     uiEffects: true,
-    minVersion: csConfig.compatProtocol_0_80 ? '0.80.0' : '0.90.0', // TODO update this if need
+    minVersion: '1.1.0',
     newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",
     helptip: {
       enable: true,
@@ -98,11 +98,6 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   started = false,
   startPromise,
   api = new Api(this, "csSettings");
-
-  // Change some defaults, when no device
-  // removeIf(device)
-  defaultSettings.rememberMe = false;
-  // endRemoveIf(device)
 
   var
   reset = function() {
