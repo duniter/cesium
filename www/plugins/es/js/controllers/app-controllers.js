@@ -102,7 +102,7 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
       return csWallet.auth().then(function(){
         UIUtils.loading.hide();
         return $scope.showInvitationsPopover(event); // loop
-      })
+      });
     }
 
     return UIUtils.popover.show(event, {

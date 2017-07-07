@@ -353,5 +353,5 @@ angular.module('cesium')
         });
       }
     };
-  });
+  })
 ;
