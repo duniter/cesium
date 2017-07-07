@@ -153,6 +153,7 @@
 .list .item-peer .badge .badge-secondary {
   top: 31px;
   font-size: 10px;
+  padding-right: 6px;
 }
 
 .settings .item-divider {

@@ -135,7 +135,7 @@
            class="item item-icon-left"
            active-link="active"
            active-link-path-prefix="#/app/wallet"
-           ng-click="loginAndGo('app.view_wallet')"
+           ui-sref="app.view_wallet"
            ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-person"></i>
           {{:locale:'MENU.ACCOUNT'|translate}}
@@ -146,7 +146,7 @@
            class="item item-icon-left"
            active-link="active"
            active-link-path-prefix="#/app/history"
-           ng-click="loginAndGo('app.view_wallet_tx')"
+           ui-sref="app.view_wallet_tx"
            ng-class="{'item-menu-disable': !login}">
           <i class="icon ion-card"></i>
           {{:locale:'MENU.TRANSACTIONS'|translate}}

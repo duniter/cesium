@@ -144,7 +144,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
 
           // Send auth event (if need)
-          if (needAuth) {
+          if (needAuth || isAuth()) {
             api.data.raise.auth();
 
             // Check if need to start/stop auth idle

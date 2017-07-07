@@ -198,6 +198,7 @@ function TransferModalController($scope, $translate, $filter, BMA, csWallet, UIU
     }
 
     return csWallet.auth()
+      .then(UIUtils.loading.hide)
       .then($scope.askTransferConfirm)
       .then(function(confirm){
         if (!confirm) return;

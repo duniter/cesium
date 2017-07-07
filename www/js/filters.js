@@ -243,7 +243,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   .filter('formatDurationTime', function() {
     return function(input) {
       if (!input) return '';
-      var sign = input && input < 0 ? '- ' : '+ ';
+      var sign = input && input < 0 ? '-' : '+';
       var hourFloat = Math.abs(input / 60 / 60);
       var hour = Math.trunc(hourFloat);
       var min = Math.trunc((hourFloat - hour) * 60);
