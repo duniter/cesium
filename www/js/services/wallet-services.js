@@ -157,6 +157,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             return loadData(loadOptions);
           }
         }).then(function() {
+          if (options && options.silent) {
+            UIUtils.loading.hide();
+          }
           return keepAuth ? data : angular.merge({}, data, authData);
         });
     },

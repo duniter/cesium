@@ -89,6 +89,14 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
   };
 
   $scope.showMessagesPopover = function(event) {
+    // Make sure tobe auth before opening this popover
+    if (!csWallet.isAuth()) {
+      return csWallet.auth().then(function(){
+        UIUtils.loading.hide();
+        return $scope.showMessagesPopover(event); // loop
+      });
+    }
+
     return UIUtils.popover.show(event, {
       templateUrl :'plugins/es/templates/message/popover_message.html',
       scope: $scope,

@@ -16,7 +16,7 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
           }
         },
         data: {
-          auth: true
+          login: true
         }
       })
     ;
@@ -95,6 +95,14 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
   };
 
   $scope.markAllAsRead = function() {
+    // Make sure to be auth before doing this
+    if (!csWallet.isAuth()) {
+      return csWallet.auth().then(function(){
+        UIUtils.loading.hide();
+        return $scope.markAllAsRead(); // loop
+      });
+    }
+
     $scope.hideActionsPopover();
 
     if (!$scope.search.results.length) return;
@@ -125,7 +133,10 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
   };
 
   $scope.select = function(item) {
-    if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
+
+    if (item.markAsRead && typeof item.markAsRead == 'function') {
+      $timeout(item.markAsRead);
+    }
     if (item.state) {
       $state.go(item.state, item.stateParams);
     }

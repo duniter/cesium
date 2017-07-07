@@ -175,13 +175,21 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       console.error('[ES] [notification] Could not mark as read: no \'id\' found!', notification);
       return;
     }
+
+    // user not auth: could not mark as read
+    if (!csWallet.isAuth()) return;
+
     notification.read = true;
-    CryptoUtils.sign(notification.hash, csWallet.data.keypair)
-      .then(function(signature){
-        return that.raw.postReadById(signature, {id:notification.id});
-      })
-      .catch(function(err) {
-        console.error('[ES] [notification] Error while trying to mark event as read.', err);
+    return csWallet.getKeypair()
+      .then(function(keypair) {
+        return CryptoUtils.sign(notification.hash, keypair)
+          .then(function(signature){
+            return that.raw.postReadById(signature, {id:notification.id});
+          })
+          .catch(function(err) {
+            console.error('[ES] [notification] Error while trying to mark event as read.', err);
+          });
+
       });
   }
 
