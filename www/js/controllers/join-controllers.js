@@ -318,7 +318,13 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
 
     UIUtils.loading.show();
 
-    return csWallet.login({auth: true, expectedPubkey: $scope.formData.pubkey, isNew: true})
+    return csWallet.login({
+        auth: true,
+        isNew: true,
+        method: 'SCRYPT_DEFAULT',
+        expectedPubkey: $scope.formData.pubkey,
+        showMethods: false
+      })
       .then(function() {
         if ($scope.accountType === "member") {
           $scope.closeModal();

@@ -19,6 +19,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.pubkeyPattern = '^' + BMA.constants.regexp.PUBKEY + '$';
 
   $scope.isAuth = parameters.auth;
+  $scope.showMethods = angular.isDefined(parameters.showMethods) ? parameters.showMethods : true;
   $scope.expectedPubkey = parameters.expectedPubkey;
 
   $scope.scryptParamsValues = _.keys(CryptoUtils.constants.SCRYPT_PARAMS)
@@ -40,7 +41,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     $scope.formData.keepAuth = ($scope.formData.keepAuthIdle == csSettings.constants.KEEP_AUTH_IDLE_SESSION);
 
     // Init method
-    var method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
+    var method = parameters.method || csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
     var params = csSettings.data.login && csSettings.data.login.params;
     if ($scope.isAuth && method == 'PUBKEY') {
       method = 'SCRYPT_DEFAULT'; // PUBKEY not enable if auth need

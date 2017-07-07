@@ -22,7 +22,7 @@
            ng-init="setForm(loginForm)"
            ng-switch on="formData.method">
 
-       <div class="item hidden-xs no-padding">
+       <div class="item hidden-xs no-padding" ng-if="showMethods">
          <div class="pull-right">
             <a class="button button-text button-small-padding icon-right ink"
                ng-click="showMethodsPopover($event)">
