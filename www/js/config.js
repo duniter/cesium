@@ -11,12 +11,12 @@ angular.module("cesium.config", [])
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
-	"rememberMe": false,
+	"rememberMe": true,
 	"showUDHistory": false,
 	"timeout": 300000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
-	"logoutIlde": 600,
+	"keepAuthIlde": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
 	"expertMode": false,
@@ -58,8 +58,8 @@ angular.module("cesium.config", [])
 			}
 		}
 	},
-	"version": "0.13.1",
-	"build": "2017-07-07T16:00:58.724Z",
+	"version": "0.13.2",
+	"build": "2017-07-07T19:28:24.218Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
