@@ -125,6 +125,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           authData = res;
           data.pubkey = res.pubkey;
+          data.isNew = angular.isDefined(options.isNew) ? options.isNew : data.isNew;
           if (csSettings.data.keepAuthIdle) {
             data.keypair = res.keypair || {
                 signSk: null,
@@ -506,7 +507,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     // Must be call after loadCurrency() and loadRequirements()
     finishLoadRequirements = function(currency) {
-      data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < currency.parameters.sigQty)) ?
+      currency = currency || csCurrency.data;
+      data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < csCurrency.parameters.sigQty)) ?
           (currency.parameters.sigQty - data.requirements.certificationCount) : 0;
       data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
           data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < currency.parameters.sigQty) ?
@@ -1234,7 +1236,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         var nbCharSalt = Math.round(record.answer.length / 2);
         var salt = record.answer.substr(0, nbCharSalt);
         var pwd = record.answer.substr(nbCharSalt);
-        return CryptoUtils.connect(salt, pwd)
+        return CryptoUtils.scryptKeypair(salt, pwd)
           .then(function (keypair) {
             record.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
             record.keypair = keypair;

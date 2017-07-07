@@ -122,9 +122,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         });
     }
 
-    function getData(options) {
-      options = options || {};
-      //options.current = angular.isDefined(options.current) ? options.current : false;
+    function getData() {
 
       if (started) { // load only once
         return $q.when(data);

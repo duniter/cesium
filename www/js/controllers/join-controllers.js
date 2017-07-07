@@ -168,7 +168,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.showAccountPubkey = function() {
     $scope.formData.computing=true;
 
-    CryptoUtils.connect($scope.formData.username, $scope.formData.password)
+    CryptoUtils.scryptKeypair($scope.formData.username, $scope.formData.password)
       .then(function(keypair) {
         $scope.formData.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
         $scope.formData.computing=false;
@@ -318,56 +318,48 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
 
     UIUtils.loading.show();
 
-    csWallet.login($scope.formData.username, $scope.formData.password)
-    .then(function() {
-      if ($scope.accountType === "member") {
-        $scope.closeModal();
-        csSettings.data.wallet = csSettings.data.wallet || {};
-        csSettings.data.wallet.alertIfUnusedWallet = false; // do not alert if empty
-        // Redirect to wallet
-        $state.go('app.view_wallet');
+    return csWallet.login({auth: true, expectedPubkey: $scope.formData.pubkey, isNew: true})
+      .then(function() {
+        if ($scope.accountType === "member") {
+          $scope.closeModal();
+          csSettings.data.wallet = csSettings.data.wallet || {};
+          csSettings.data.wallet.alertIfUnusedWallet = false; // do not alert if empty
 
-        // Send self
-        csWallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
-          .then(function() {
-            // Send membership IN
-            csWallet.membership.inside()
+          // Send self
+          return csWallet.self($scope.formData.pseudo, false/*do NOT load membership here*/)
             .then(function() {
-
-              $scope.closeModal();
-
-              // Redirect to wallet
-              $state.go('app.view_wallet')
+              // Send membership IN
+              csWallet.membership.inside()
               .then(function() {
-                $scope.downloadRevocationRegistration();
+
+                $scope.closeModal();
+
+                // Redirect to wallet
+                $state.go('app.view_wallet')
+                .then(function() {
+                  $scope.downloadRevocationRegistration();
+                });
+              })
+              .catch(function(err) {
+                if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) return;
+                onErrorLogout('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
               });
             })
-            .catch(function(err) {
-              //
-              if (err && err.ucode == BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) {
+            .catch(onErrorLogout('ERROR.SEND_IDENTITY_FAILED'));
+        }
+        else{
+          $scope.closeModal();
 
-              }
-              onErrorLogout('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
-            });
-          })
-          .catch(onErrorLogout('ERROR.SEND_IDENTITY_FAILED'));
-      }
-      else{
+          // Redirect to wallet
+          $state.go('app.view_wallet');
 
-        csWallet.data.isNew = true;
-
-        $scope.closeModal();
-
-        //Redirect to wallet
-        $state.go('app.view_wallet');
-
-      }
-    })
-    .catch(function(err) {
-      UIUtils.loading.hide();
-      console.error('>>>>>>>' , err);
-      UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
-    });
+        }
+      })
+      .catch(function(err) {
+        UIUtils.loading.hide();
+        console.error('>>>>>>>' , err);
+        UIUtils.alert.error('ERROR.CRYPTO_UNKNOWN_ERROR');
+      });
   };
 
   $scope.downloadRevocationRegistration = function() {

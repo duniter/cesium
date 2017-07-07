@@ -976,11 +976,10 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
 
     var salt = $scope.formData.username;
     var pwd = $scope.formData.password;
-    CryptoUtils.connect(salt, pwd)
+    CryptoUtils.scryptKeypair(salt, pwd)
       .then(function (keypair) {
         $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
     })
-
       .then(function () {
         if (!csWallet.isUserPubkey($scope.pubkey)) {
           UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
