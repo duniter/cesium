@@ -3,7 +3,7 @@
 
   <div dropzone="recoverContent(file)">
     <div ng-if="!hasContent" onclick="angular.element(document.querySelector('#revocationFile'))[0].click();">
-      <span translate>ACCOUNT.SECURITY.CHOOSE_FILE</span>
+      <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
       <input type="file" id="revocationFile" accept=".txt"
              style="visibility:hidden; position:absolute;" on-read-file="recoverContent(file)"/>
     </div>

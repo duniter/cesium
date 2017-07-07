@@ -5,6 +5,10 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
   .factory('CryptoUtils', function($q, $timeout, ionicReady) {
     'ngInject';
 
+    function test(regexpContent) {
+      return new RegExp(regexpContent);
+    }
+
     /**
      * CryptoAbstract, abstract class with useful methods
      * @type {number}
@@ -49,10 +53,16 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       SEED_LENGTH: 32, // Length of the key
       SCRYPT_PARAMS:{
         SIMPLE: {
+          N: 2048,
+          r: 8,
+          p: 1,
+          memory: -1 // default
+        },
+        DEFAULT: {
           N: 4096,
           r: 16,
           p: 1,
-          requested_total_memory: -1 // default
+          memory: -1 // default
         },
         SECURE: {
           N: 16384,
@@ -75,7 +85,20 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       },
       REGEXP: {
         PUBKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}',
-        SECKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88}'
+        SECKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88}',
+        FILE: {
+          TYPE_LINE: '^Type: ([a-zA-Z0-9]+)\n',
+          PUB: '\npub: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})\n',
+          SEC: '\nsec: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88})\n?$'
+        }
+      }
+    };
+
+    CryptoAbstractService.prototype.regexp = {
+      FILE: {
+        TYPE_LINE: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.TYPE_LINE),
+        PUB: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.PUB),
+        SEC: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.SEC)
       }
     };
 
@@ -145,7 +168,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         if (!content) {
           return reject('Argument [content] is missing');
         }
-        var typeMatch = content.match(/^Type: ([a-zA-Z0-9]+)\n/);
+        var typeMatch = that.regexp.FILE.TYPE_LINE.exec(content);
 
         // no Type (first line)
         if (!typeMatch) {
@@ -157,7 +180,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
         // Type: PubSec
         if (type == 'PubSec') {
-          var pubMatch = content.match(/\npub: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})\n/)
+          var pubMatch = that.regexp.FILE.PUB.exec(content);
           if (!pubMatch) {
             return reject('Missing [pub] field in file, or invalid public key value');
           }
@@ -166,7 +189,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
               signPk: that.base58.decode(pubMatch[1])
             });
           }
-          var secMatch = content.match(/\nsec: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88})\n?$/)
+          var secMatch = that.regexp.FILE.SEC.exec(content);
           if (!secMatch) {
             return reject('Missing [sec] field in file, or invalid secret key value');
           }

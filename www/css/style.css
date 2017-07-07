@@ -252,3 +252,9 @@
 }
 
 
+.dropzone {
+  cursor: pointer;
+}
+.dropzone.hover {
+  background: lawngreen;
+}

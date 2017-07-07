@@ -47,6 +47,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       $scope.formData.method = 'SCRYPT_DEFAULT';
     }
     $scope.changeMethod($scope.formData.method);
+
+    // Ink effect
+    UIUtils.ink({selector: '.modal-login .ink'});
   };
   $scope.$on('modal.shown', $scope.enter);
 
@@ -241,7 +244,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     console.debug("[login] method changed: ", method);
     $scope.formData.method = method;
-    delete $scope.form.$submitted; // hide form's fields errors
+    delete $scope.form.$submitted; // hide form's fields errors on the form
 
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
@@ -295,6 +298,38 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     });
   };
 
+  /**
+   * Recover Id
+   */
+
+  $scope.onKeyFileDrop = function(file) {
+    if (!file || !file.fileData) return;
+
+    $scope.formData.file = {
+      name: file.fileData.name,
+      size: file.fileData.size
+    };
+    return CryptoUtils.parseKeyFileContent(file.fileContent, false/*withSecret*/)
+      .then(function(keypair) {
+        if (!keypair || !keypair.signPk) {
+          $scope.formData.file.valid = false;
+          $scope.formData.file.pubkey = undefined;
+        }
+        else {
+          $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+          $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
+          $scope.validatingFile = false;
+        }
+
+      })
+      .catch(function(err) {
+        $scope.validatingFile = false;
+        $scope.formData.file.valid = false;
+        $scope.formData.file.pubkey = undefined;
+        UIUtils.onError('ERROR.AUTH_FILE_ERROR')(err);
+      });
+  };
+
   $scope.removeKeyFile = function() {
     $scope.formData.file = undefined;
   };
@@ -313,6 +348,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   /* -- popover -- */
 
   $scope.showMethodsPopover = function(event) {
+    if (event.defaultPrevented) return;
     if (!$scope.methodsPopover) {
 
       $ionicPopover.fromTemplateUrl('templates/login/popover_methods.html', {

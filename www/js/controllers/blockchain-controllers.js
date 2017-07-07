@@ -522,7 +522,7 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
     }
 
 
-    if (!$scope.currency) {
+    if (!$scope.currency || !$scope.node) {
       csCurrency.get()
         .then(function (currency) {
           if (currency) {

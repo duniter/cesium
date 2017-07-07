@@ -2,14 +2,13 @@
   <p class="item-text-wrap" translate>LOGIN.FILE_FORM_HELP</p>
 </div>
 
-<!-- WARN: not implemented yet -->
-<p class="energized-100-bg padding " >
-  <i class="icon ion-android-warning"></i>
-  <span translate>INFO.FEATURES_NOT_IMPLEMENTED</span>
-</p>
 
+<div class="item item-icon-left ">
+  <i class="icon ion-ios-information-outline positive"></i>
+  <span class="positive" translate>LOGIN.FILE.HELP</span>
+</div>
 
-<div  dropzone="recoverContent(file)">
+<div class="dropzone" dropzone="onKeyFileDrop(file)">
   <div ng-if="!formData.file"
        onclick="angular.element(document.querySelector('#loginImportFile'))[0].click();">
     <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
@@ -56,8 +55,11 @@
   </div>
 </div>
 
+
 <!-- keep auth after login (checkbox)  -->
 <ion-checkbox ng-model="formData.keepAuth"
               class="item ink item-text-wrap">
   <div class="item-content dark" translate>LOGIN.MEMORIZE_AUTH_FILE</div>
 </ion-checkbox>
+
+

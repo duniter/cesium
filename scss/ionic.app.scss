@@ -1827,10 +1827,20 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   height: 280px;
   width: 260px;
 }
-
 .popover.popover-login-methods.auth {
   height: 204px;
 }
+
+@media (max-width: $screen-xs-max) {
+  .popover.popover-login-methods {
+    height: 233px;
+  }
+
+  .popover.popover-login-methods.auth {
+    height: 152px;
+  }
+}
+
 
 
 /**********

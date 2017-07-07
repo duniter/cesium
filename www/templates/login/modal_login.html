@@ -1,5 +1,6 @@
-<ion-modal-view class="modal-full-height">
-  <ion-header-bar class="bar-positive">
+<ion-modal-view class="modal-full-height modal-login">
+  <ion-header-bar class=""
+    ng-class="{'bar-positive': !isAuth, 'bar-assertive': isAuth}">
     <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL
     </button>
     <h1 class="title" ng-bind-html="isAuth ? 'AUTH.TITLE' : 'LOGIN.TITLE' | translate">
@@ -23,10 +24,11 @@
 
        <div class="item hidden-xs no-padding">
          <div class="pull-right">
-            <a class="button button-text button-small-padding ink icon-right"
+            <a class="button button-text button-small-padding icon-right ink"
                ng-click="showMethodsPopover($event)">
+              <i class="icon ion-wrench"></i>
               {{'LOGIN.BTN_METHODS'| translate}}
-            </a>
+            </a>&nbsp;
             <a class="button button-icon positive button-small-padding icon ion-ios-help-outline"
               style="right: 8px;"
               ng-click="showHelpModal('login-method')">
@@ -61,12 +63,13 @@
         </button>
       </div>
 
-      <div class="text-center visible-xs">
-        <a ng-click="showMethodsPopover($event)" translate>LOGIN.BTN_METHODS_DOTS</a>
-        <a class="button button-icon positive button-small-padding icon ion-ios-help-outline"
-           style="right: 8px;"
-           ng-click="showHelpModal('login-method')">
+      <div class="text-center no-padding visible-xs">
+        <br/>
+        <a ng-click="showMethodsPopover($event)">
+          <i class="ion-loop"></i>
+          <span translate>LOGIN.BTN_METHODS_DOTS</span>
         </a>
+        <br/><br/>
       </div>
 
       <!-- Register ? -->
