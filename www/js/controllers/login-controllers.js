@@ -43,7 +43,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     var method = csSettings.data.login && csSettings.data.login.method || 'SCRYPT_DEFAULT';
     var params = csSettings.data.login && csSettings.data.login.params;
     if ($scope.isAuth && method == 'PUBKEY') {
-      $scope.formData.method = 'SCRYPT_DEFAULT';
+      method = 'SCRYPT_DEFAULT'; // PUBKEY not enable if auth need
     }
     $scope.changeMethod(method, params);
   };
