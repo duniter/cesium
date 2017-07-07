@@ -1332,6 +1332,25 @@ a.underline:hover,
   border-bottom: 2px solid red !important;
 }
 
+// See login screen (pubkey form)
+.item-input.item-button-right {
+  input,
+  textarea {
+    margin-right: 100px;
+  }
+
+  .button,
+  button {
+    top: 6px;
+  }
+}
+.item-input.item-button-right.item-floating-label {
+  input,
+  textarea {
+    padding-right: 100px;
+  }
+}
+
 /*
 * Badge
 */

@@ -157,7 +157,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
             return $state.go(next.name, nextParams);
           })
           .catch(function(err) {
-            if (err == 'CANCELLED') {
+            // If cancel, redirect to home, if no current state
+            if (err == 'CANCELLED' && !$state.current.name) {
               return $state.go('app.home');
             }
           });
@@ -175,7 +176,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
             return $state.go(next.name, nextParams);
           })
           .catch(function(err) {
-            if (err == 'CANCELLED') {
+            // If cancel, redirect to home, if no current state
+            if (err == 'CANCELLED' && !$state.current.name) {
               return $state.go('app.home');
             }
           });

@@ -5,7 +5,7 @@ angular.module('cesium.login.controllers', ['cesium.services'])
 
 ;
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, UIUtils, Modals, csSettings, Device, parameters) {
+function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, UIUtils, BMA, Modals, csSettings, Device, parameters) {
   'ngInject';
 
   parameters = parameters || {};
@@ -16,6 +16,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.showPubkey = false;
   $scope.showComputePubkeyButton = false;
   $scope.autoComputePubkey = false;
+  $scope.pubkeyPattern = '^' + BMA.constants.regexp.PUBKEY + '$';
 
   $scope.isAuth = parameters.auth;
   $scope.expectedPubkey = parameters.expectedPubkey;
@@ -240,6 +241,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     console.debug("[login] method changed: ", method);
     $scope.formData.method = method;
+    delete $scope.form.$submitted; // hide form's fields errors
 
     // Scrypt (advanced or not)
     if (method == 'SCRYPT_DEFAULT' || method == 'SCRYPT_ADVANCED') {
