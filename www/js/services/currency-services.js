@@ -236,16 +236,18 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       return currentBlockField()
 
         .then(function(currentBlock) {
-          var now = new Date().getTime() / 1000;
-          if (currentBlock && (currentBlock.receivedAt - now) < 60/*1min*/) {
-            console.debug('[currency] finde current block in cache: return IT !');
-            return currentBlock;
+          if (cache) {
+            var now = new Date().getTime() / 1000;
+            if (currentBlock && (currentBlock.receivedAt - now) < 60/*1min*/) {
+              console.debug('[currency] find current block in cache: use it');
+              return currentBlock;
+            }
+
+            // TODO : Should never occured if block event listener works !
+            console.warn('[currency] No current block in cache: get it from network');
           }
 
-          // TODO : Should never occured if block event works !!?
-          console.warn('[currency] No current block in cache: get it from network');
-
-          return BMA.blockchain.current(cache)
+          return BMA.blockchain.current()
             .catch(function(err){
               // Special case for currency init (root block not exists): use fixed values
               if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {

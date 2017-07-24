@@ -306,7 +306,11 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         });
     }
 
-    return UIUtils.alert.confirm("CONFIRM.RENEW_MEMBERSHIP")
+    return csWallet.auth({minData: true}) // Ask user to auth, before confirmation - fix #508
+      .then(function() {
+        UIUtils.loading.hide();
+        return UIUtils.alert.confirm("CONFIRM.RENEW_MEMBERSHIP");
+      })
       .then(function(confirm) {
         if (confirm) {
           UIUtils.loading.show();
@@ -314,6 +318,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         }
       })
       .catch(function(err){
+        if (err == 'CANCELLED') return;
         UIUtils.loading.hide();
         UIUtils.alert.error(err)
           // loop

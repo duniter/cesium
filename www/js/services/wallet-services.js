@@ -566,6 +566,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     loadData = function(options) {
 
       var promise;
+      var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) && !data.loaded;
       if (options && options.minData) {
         promise = loadMinData(options);
       }
@@ -581,7 +582,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         // Warn if wallet has been never used - see #167
         .then(function() {
-          var showAlert = !csCurrency.data.initPhase && !isNew() && isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
+          var showAlert = alertIfUnusedWallet && !isNew() && isNeverUsed();
           if (!showAlert) return true;
           return UIUtils.loading.hide()
             .then(function(){
@@ -1035,7 +1036,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
     },
 
-    getIdentityDocument = function(uid, blockUid) {
+    getIdentityDocument = function(currency, keypair, uid, blockUid) {
       uid = uid || data.uid;
       blockUid = blockUid || data.blockUid;
       if (!uid || !blockUid) {
@@ -1045,25 +1046,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         throw {message: 'ERROR.WALLET_IDENTITY_EXPIRED'};
       }
 
-      return $q.all([
-          getKeypair(),
-          csCurrency.get()
-        ])
-        .then(function(res) {
-          var keypair = res[0];
-          var currency = res[1];
-          var identity = 'Version: '+ constants.IDTY_VERSION +'\n' +
-            'Type: Identity\n' +
-            'Currency: ' + currency.name + '\n' +
-            'Issuer: ' + data.pubkey + '\n' +
-            'UniqueID: ' + uid + '\n' +
-            'Timestamp: ' + blockUid + '\n';
-          return CryptoUtils.sign(identity, keypair)
-            .then(function(signature) {
-              identity += signature + '\n';
-              console.debug('Has generate an identity document:\n----\n' + identity + '----');
-              return identity;
-            });
+      var identity = 'Version: '+ constants.IDTY_VERSION +'\n' +
+        'Type: Identity\n' +
+        'Currency: ' + currency.name + '\n' +
+        'Issuer: ' + data.pubkey + '\n' +
+        'UniqueID: ' + uid + '\n' +
+        'Timestamp: ' + blockUid + '\n';
+      return CryptoUtils.sign(identity, keypair)
+        .then(function(signature) {
+          identity += signature + '\n';
+          console.debug('Has generate an identity document:\n----\n' + identity + '----');
+          return identity;
         });
     },
 
@@ -1076,25 +1069,16 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         }
         var block;
         return $q.all([
-
-          // Get th current block
+          getKeypair(),
+          csCurrency.get(),
           csCurrency.blockchain.current()
-            .then(function(current) {
-              block = current;
-            })
-            .catch(function(err) {
-              // Special case for currency init (root block not exists): use fixed values
-              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                block = {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
-              }
-              else {
-                throw err;
-              }
-            })
         ])
         // Create identity document
-        .then(function() {
-          return getIdentityDocument(uid, block.number + '-' + block.hash);
+        .then(function(res) {
+          var keypair = res[0];
+          var currency = res[1];
+          var block = res[2];
+          return getIdentityDocument(currency, keypair, uid, block.number + '-' + block.hash);
         })
 
         // Send to node
@@ -1126,15 +1110,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     membership = function(sideIn) {
       return function() {
         var membership;
-        return csCurrency.blockchain.current()
-            .catch(function(err){
-              // Special case for currency init (root block not exists): use fixed values
-              if (err && err.ucode == BMA.errorCodes.NO_CURRENT_BLOCK) {
-                return {number: 0, hash: BMA.constants.ROOT_BLOCK_HASH};
-              }
-              throw err;
-            })
-          .then(function(block) {
+
+        return $q.all([
+            getKeypair(),
+            csCurrency.blockchain.current()
+          ])
+          .then(function(res) {
+            var keypair = res[0];
+            var block = res[1];
             // Create membership to sign
             membership = 'Version: '+ constants.MS_VERSION +'\n' +
               'Type: Membership\n' +
@@ -1145,7 +1128,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               'UserID: ' + data.uid + '\n' +
               'CertTS: ' + data.blockUid + '\n';
 
-            return CryptoUtils.sign(membership, data.keypair);
+            return CryptoUtils.sign(membership, keypair);
           })
           .then(function(signature) {
             var signedMembership = membership + signature + '\n';
@@ -1172,7 +1155,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           csCurrency.get(),
           csCurrency.blockchain.current()
         ])
-        .then(function() {
+        .then(function(res) {
           var keypair = res[0];
           var currency = res[1];
           var block = res[2];
@@ -1314,38 +1297,41 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     getRevocationDocument = function() {
-
-      // Get current identity document
       return $q.all([
-          csCurrency.get(),
-          getIdentityDocument()
+          getKeypair(),
+          csCurrency.get()
         ])
 
-        // Create membership document (unsigned)
-        .then(function(res){
-          var currency = res[0];
-          var identity = res[1];
-          var identityLines = identity.trim().split('\n');
-          var idtySignature = identityLines[identityLines.length-1];
+        .then(function(res) {
+          var keypair = res[0];
+          var currency = res[1];
+          // get the Identity document
+          return getIdentityDocument(currency, keypair)
 
-          var revocation = 'Version: '+ constants.REVOKE_VERSION +'\n' +
-            'Type: Revocation\n' +
-            'Currency: ' + currency.name + '\n' +
-            'Issuer: ' + data.pubkey + '\n' +
-            'IdtyUniqueID: ' + data.uid + '\n' +
-            'IdtyTimestamp: ' + data.blockUid + '\n' +
-            'IdtySignature: ' + idtySignature + '\n';
+            // Create membership document (unsigned)
+            .then(function(identity){
+              var identityLines = identity.trim().split('\n');
+              var idtySignature = identityLines[identityLines.length-1];
+
+              var revocation = 'Version: '+ constants.REVOKE_VERSION +'\n' +
+                'Type: Revocation\n' +
+                'Currency: ' + currency.name + '\n' +
+                'Issuer: ' + data.pubkey + '\n' +
+                'IdtyUniqueID: ' + data.uid + '\n' +
+                'IdtyTimestamp: ' + data.blockUid + '\n' +
+                'IdtySignature: ' + idtySignature + '\n';
 
 
-          // Sign revocation document
-          return CryptoUtils.sign(revocation, data.keypair)
+              // Sign revocation document
+              return CryptoUtils.sign(revocation, keypair)
 
-            // Add revocation to document
-            .then(function(signature) {
-              revocation += signature + '\n';
-              console.debug('Has generate an revocation document:\n----\n' + revocation + '----');
-              return revocation;
-            });
+              // Add revocation to document
+                .then(function(signature) {
+                  revocation += signature + '\n';
+                  console.debug('Has generate an revocation document:\n----\n' + revocation + '----');
+                  return revocation;
+                });
+            })
         });
     },
 

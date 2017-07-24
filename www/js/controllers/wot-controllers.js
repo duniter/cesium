@@ -602,12 +602,15 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
   // Certify the current identity
   $scope.certify = function() {
-    $scope.loadWallet()
-      .then(function() {
+
+    // Need user auth - fix #513
+    return csWallet.auth({minData: true})
+      .then(function(walletData) {
+        console.log(walletData);
         UIUtils.loading.hide();
 
-        if (!csCurrency.data.initPhase && !$rootScope.walletData.isMember) {
-          UIUtils.alert.error($rootScope.walletData.requirements.needSelf ?
+        if (!csCurrency.data.initPhase && !walletData.isMember) {
+          UIUtils.alert.error(walletData.requirements.needSelf ?
             'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;
         }
@@ -624,7 +627,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
         }
 
         // Check not already certified
-        var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: csWallet.data.pubkey, valid: true});
+        var previousCert = _.findWhere($scope.formData.received_cert, { pubkey: walletData.pubkey, valid: true});
         if (previousCert) {
           $translate('ERROR.IDENTITY_ALREADY_CERTIFY', previousCert)
             .then(function(message) {
@@ -634,7 +637,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
         }
 
         // Check not pending certification
-        previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: csWallet.data.pubkey, valid: true});
+        previousCert = _.findWhere($scope.formData.received_cert_pending, { pubkey: walletData.pubkey, valid: true});
         if (previousCert) {
           $translate('ERROR.IDENTITY_ALREADY_CERTIFY_PENDING', previousCert)
             .then(function(message) {
@@ -673,16 +676,21 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
           });
       })
-      .catch(UIUtils.onError('ERROR.LOGIN_FAILED'));
+      .catch(function(err) {
+        if (err == 'CANCELLED') return;
+        UIUtils.onError('ERROR.LOGIN_FAILED')(err);
+      });
   };
 
   // Select an identity and certify
   $scope.selectAndCertify = function() {
-    $scope.loadWallet()
-      .catch(UIUtils.onError('ERROR.LOGIN_FAILED'))
-      .then(function() {
-        if (!csCurrency.data.initPhase && !$rootScope.walletData.isMember) {
-          UIUtils.alert.error($rootScope.walletData.requirements.needSelf || $rootScope.walletData.requirements.needMembership ?
+
+    // Need user auth - fix #513
+    return $scope.auth({minData: true})
+
+      .then(function(walletData) {
+        if (!csCurrency.data.initPhase && !walletData.isMember) {
+          UIUtils.alert.error(walletData.requirements.needSelf || walletData.requirements.needMembership ?
             'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY' : 'ERROR.NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF');
           return;
         }
@@ -700,9 +708,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
         }
 
         UIUtils.loading.show();
+
         // load selected identity
         return csWot.load(idty.pubkey, false /*no cache*/);
       })
+
       .then(function(identity) {
         if (!identity) return; // cancelled
         UIUtils.loading.hide();
@@ -768,7 +778,10 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
               .catch(UIUtils.onError('ERROR.SEND_CERTIFICATION_FAILED'));
           });
       })
-      .catch(UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED'));
+      .catch(function(err) {
+        if (err == 'CANCELLED') return;
+        UIUtils.onError('ERROR.LOAD_IDENTITY_FAILED')(err);
+      });
 
   };
 
