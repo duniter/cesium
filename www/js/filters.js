@@ -247,7 +247,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
       var hourFloat = Math.abs(input / 60 / 60);
       var hour = Math.trunc(hourFloat);
       var min = Math.trunc((hourFloat - hour) * 60);
-      return hour > 0 ? (sign + hour + 'h ' + min + 's') : (sign + min + 's') ;
+      return hour > 0 ? (sign + hour + 'h ' + min + 'm') : (sign + min + 'm') ;
     };
   })
 
