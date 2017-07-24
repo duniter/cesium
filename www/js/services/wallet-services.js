@@ -508,7 +508,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     // Must be call after loadCurrency() and loadRequirements()
     finishLoadRequirements = function(currency) {
       currency = currency || csCurrency.data;
-      data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < csCurrency.parameters.sigQty)) ?
+      data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < currency.parameters.sigQty)) ?
           (currency.parameters.sigQty - data.requirements.certificationCount) : 0;
       data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
           data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < currency.parameters.sigQty) ?
@@ -1077,7 +1077,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function(res) {
           var keypair = res[0];
           var currency = res[1];
-          var block = res[2];
+          block = res[2];
           return getIdentityDocument(currency, keypair, uid, block.number + '-' + block.hash);
         })
 
