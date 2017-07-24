@@ -13,7 +13,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     // Update some translations, when locale changed
     function onLocaleChange() {
       console.debug('[filter] Loading translations for locale [{0}]'.format($translate.use()));
-      return $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD'])
+      return $translate(['COMMON.DATE_PATTERN', 'COMMON.DATE_SHORT_PATTERN', 'COMMON.UD', 'COMMON.DAYS'])
         .then(function(translations) {
           that.DATE_PATTERN = translations['COMMON.DATE_PATTERN'];
           if (that.DATE_PATTERN === 'COMMON.DATE_PATTERN') {
@@ -27,7 +27,10 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
           if (that.DATE_MONTH_YEAR_PATTERN === 'COMMON.DATE_MONTH_YEAR_PATTERN') {
             that.DATE_MONTH_YEAR_PATTERN = 'MMM YY';
           }
-
+          that.DAYS = translations['COMMON.DAYS'];
+          if (that.DAYS === 'COMMON.DAYS') {
+            that.DAYS = 'days';
+          }
           that.UD = translations['COMMON.UD'];
           if (that.UD === 'COMMON.UD') {
             that.UD = 'UD';
@@ -240,14 +243,16 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
 
-  .filter('formatDurationTime', function() {
+  .filter('formatDurationTime', function(filterTranslations) {
     return function(input) {
       if (!input) return '';
       var sign = input && input < 0 ? '-' : '+';
-      var hourFloat = Math.abs(input / 60 / 60);
-      var hour = Math.trunc(hourFloat);
-      var min = Math.trunc((hourFloat - hour) * 60);
-      return hour > 0 ? (sign + hour + 'h ' + min + 'm') : (sign + min + 'm') ;
+      input = Math.abs(input);
+      var day = Math.trunc(input/3600/24);
+      var hour = Math.trunc(input/3600 - day*24);
+      var min = Math.trunc(input/60 - day*24*60 - hour*60);
+      return day > 0 ? (sign + day + ' ' + filterTranslations.DAYS + ' ' + hour + 'h ' + min + 'm') :
+        (hour > 0 ? (sign + hour + 'h ' + min + 'm') : (sign + min + 'm')) ;
     };
   })
 
