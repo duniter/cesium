@@ -106,7 +106,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       var needLogin = !isLogin();
-      var needAuth = options && options.auth && !isAuth();
+      var needAuth = options && ((options.auth && !isAuth()) || options.forceAuth);
 
       // user already login
       if (!needLogin && !needAuth) {
@@ -126,7 +126,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           authData = res;
           data.pubkey = res.pubkey;
           data.isNew = options && angular.isDefined(options.isNew) ? options.isNew : data.isNew;
-          if (csSettings.data.keepAuthIdle) {
+          if (keepAuth) {
             data.keypair = res.keypair || {
                 signSk: null,
                 signPk: null
@@ -161,6 +161,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           if (options && options.silent) {
             UIUtils.loading.hide();
           }
+
           return keepAuth ? data : angular.merge({}, data, authData);
         });
     },
@@ -200,7 +201,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           });
       }
 
-      if (isAuth()) {
+      if (isAuth() && (!options || !options.forceAuth)) {
         return $q.when(data);
       }
 
@@ -1414,10 +1415,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             var currency = res[0];
             var revocation = res[1];
             var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
-            return $translate('ACCOUNT.SECURITY.REVOCATION_FILENAME', {uid: data.uid, currency: currency.name, pubkey: data.pubkey})
-              .then(function(fileName){
-                FileSaver.saveAs(revocationFile, fileName);
-              });
+            return $translate('ACCOUNT.SECURITY.REVOCATION_FILENAME', {
+              uid: data.uid,
+              currency: currency.name,
+              pubkey: data.pubkey
+            })
+            .then(function (fileName) {
+              FileSaver.saveAs(revocationFile, fileName);
+            });
           });
       },
 

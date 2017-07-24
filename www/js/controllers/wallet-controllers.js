@@ -776,13 +776,13 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
   };
   $scope.isLastSlide = false;
   $scope.smallscreen = UIUtils.screen.isSmall();
-  $scope.option = 'recoverID';
 
   $scope.recover = {};
   $scope.isValidFile = false;
 
   $scope.isLogin = csWallet.isLogin();
   $scope.hasSelf = csWallet.hasSelf();
+  $scope.option = $scope.isLogin ? 'saveID' : 'recoverID';
 
   $scope.formData = {
     addQuestion: '',
@@ -821,8 +821,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
     if (!formName) {
       formName = $scope.slides.slider.activeIndex === 1 && $scope.option == "saveID" ? 'questionsForm' :
         ($scope.slides.slider.activeIndex === 2 && $scope.option === "recoverID" ? 'recoverForm' :
-          ($scope.slides.slider.activeIndex === 2 && $scope.option === "saveID" ? 'answersForm' :
-            ($scope.slides.slider.activeIndex === 3 && $scope.option === "saveID" ? 'loginForm' : formName)));
+          ($scope.slides.slider.activeIndex === 2 && $scope.option === "saveID" ? 'answersForm' : formName));
 
       if ($scope.slides.slider.activeIndex === 1 && $scope.option === "recoverID") {
         if ($scope.isValidFile) {
@@ -832,7 +831,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
 
         }
         else {
-          UIUtils.alert.error("ERROR.NOT_VALID_REVOCATION_FILE", "ERROR.LOAD_FILE_FAILED");
+          UIUtils.alert.error("ERROR.NOT_VALID_SAVE_ID_FILE", "ERROR.LOAD_FILE_FAILED");
         }
       }
     }
@@ -845,8 +844,8 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
       if(formName === 'recoverForm'){
         $scope.recoverId();
       }
-      else if(formName === 'loginForm'){
-        $scope.submit();
+      else if(formName === 'answersForm'){
+        $scope.downloadSaveIDFile();
       }
       else {
         $scope.slideNext();
@@ -973,31 +972,33 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
     }
   };
 
-  $scope.submit = function(){
-
-    if(!$scope.loginForm.$valid){
-      return;
-    }
-
-    var salt = $scope.formData.username;
-    var pwd = $scope.formData.password;
-    CryptoUtils.scryptKeypair(salt, pwd)
-      .then(function (keypair) {
-        $scope.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-    })
-      .then(function () {
-        if (!csWallet.isUserPubkey($scope.pubkey)) {
-          UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
-          return;
+  $scope.downloadSaveIDFile = function(){
+    // Force user re-auth
+    var loginData;
+    return csWallet.auth({
+        forceAuth: true,
+        expectedPubkey: $scope.pubkey,
+        silent: true,
+        success: function(values) {
+          loginData = values;
         }
+      })
+      .catch(function(err) {
+        if (err && err == 'CANCELLED') return;
+        UIUtils.alert.error('ERROR.SALT_OR_PASSWORD_NOT_CONFIRMED', 'ERROR.LOGIN_FAILED');
+        return;
+      })
+      .then(function(res) {
+        if (!res) return;
+        console.log(res);
         var file = {
           file: _.filter($scope.formData.questions, function (question) {
             return question.checked;
           })
         };
         var record = {
-          salt: $scope.formData.username,
-          pwd: $scope.formData.password,
+          salt: loginData.username,
+          pwd: loginData.password,
           questions: '',
           answer: ''
         };
@@ -1011,7 +1012,8 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
             csWallet.downloadSaveId(record);
             $scope.closeModal();
           });
-      });
+      })
+      ;
   };
 
   $scope.isRequired = function(){
@@ -1034,34 +1036,69 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
    * Download revocation file
    */
   $scope.downloadRevokeFile = function () {
-    csWallet.downloadRevocation();
+    // Force re-authentication
+    return csWallet.auth({forceAuth: true})
+
+      // Download file
+      .then(function() {
+        return csWallet.downloadRevocation();
+      })
+
+      .then(function() {
+        UIUtils.loading.hide();
+      })
+
+      .catch(function(err){
+        if (err && err == 'CANCELLED') return;
+        UIUtils.onError('ERROR.DOWNLOAD_REVOCATION_FAILED')(err);
+      })
+      ;
+
+  };
+
+  /**
+   * Revoke wallet identity
+   */
+  $scope.revokeWalletIdentity = function () {
+    if (!$scope.hasSelf) {
+      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
+    }
+
+    // Make sure user re-auth
+    return csWallet.auth({forceAuth: true})
+      .then(function(confirm) {
+        UIUtils.loading.hide();
+        if (!confirm) return;
+        return $scope.revokeIdentity();
+      })
+      .catch(function (err) {
+        if (err == 'CANCELLED') return;
+        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
+      });
   };
 
   /**
    * Revoke identity
    */
-  $scope.revokeIdentity = function (confirm, confirmAgain) {
-    if (!$scope.hasSelf) {
-      return UIUtils.alert.error("ERROR.ONLY_SELF_CAN_EXECUTE_THIS_ACTION");
-    }
+  $scope.revokeIdentity = function (confirm) {
+
+    // Make sure user re-auth + confirm
     if (!confirm) {
-      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
-        cssClass: 'warning',
-        okText: 'COMMON.BTN_YES',
-        okType: 'button-assertive'
-      })
+        return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY", 'CONFIRM.POPUP_WARNING_TITLE', {
+          cssClass: 'warning',
+          okText: 'COMMON.BTN_YES',
+          okType: 'button-assertive'
+        })
         .then(function (confirm) {
-          if (confirm) $scope.revokeIdentity(true); // loop with confirm
-        });
-    }
-    if (!confirmAgain) {
-      return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
-        cssClass: 'warning',
-        okText: 'COMMON.BTN_YES',
-        okType: 'button-assertive'
-      })
+          if (!confirm) return;
+          return UIUtils.alert.confirm("CONFIRM.REVOKE_IDENTITY_2", 'CONFIRM.POPUP_TITLE', {
+            cssClass: 'warning',
+            okText: 'COMMON.BTN_YES',
+            okType: 'button-assertive'
+          });
+        })
         .then(function (confirm) {
-          if (confirm) $scope.revokeIdentity(true, true); // loop with all confirmation
+          if (confirm) $scope.revokeIdentity(true, true); // loop with confirmation
         });
     }
 
@@ -1079,9 +1116,7 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
         $scope.closeModal();
         return UIUtils.loading.hide();
       })
-      .catch(function (err) {
-        UIUtils.onError('ERROR.REVOCATION_FAILED')(err);
-      });
+      .catch(UIUtils.onError('ERROR.REVOCATION_FAILED'));
   };
 
 }

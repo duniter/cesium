@@ -167,6 +167,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
         $timeout(csSettings.store, 500);
       }
 
+      if (parameters.success) {
+        parameters.success($scope.formData);
+      }
+
       // hide loading
       if (parameters.silent) {
         UIUtils.loading.hide();
