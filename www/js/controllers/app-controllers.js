@@ -200,26 +200,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Load wallet data (after login)
   $scope.loadWalletData = function(options) {
     return csWallet.loadData(options)
-      /*.catch(UIUtils.onError('ERROR.LOAD_WALLET_DATA_ERROR'))*/
-
-      .then(function(walletData) {
-        // Warn if wallet has been never used - see #167
-        var showAlert = !csCurrency.data.initPhase && !csWallet.isNew() && csWallet.isNeverUsed() && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet);
-        if (!showAlert) return walletData;
-
-        // Alert: wallet is empty !
-        return UIUtils.loading.hide()
-          .then(function(){
-            return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE',
-              {
-                okText: 'COMMON.BTN_CONTINUE'
-              });
-          })
-          .then(function(confirm) {
-            if (confirm) return walletData;
-            return csWallet.logout();
-          });
-      })
 
       .then(function(walletData) {
         if (walletData) {
