@@ -148,11 +148,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // If state need auth
       else if (next.data.auth && !csWallet.isAuth()) {
         event.preventDefault();
-        return csWallet.auth()
-          .then(function() {
-            var options = next.data.minData ? {minData: true} : undefined;
-            return csWallet.loadData(options);
-          })
+        var options = next.data.minData ? {minData: true} : undefined;
+        return csWallet.auth(options)
           .then(function() {
             return $state.go(next.name, nextParams);
           })
@@ -167,11 +164,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // If state need login
       else if (next.data.login && !csWallet.isLogin()) {
         event.preventDefault();
-        return csWallet.login()
-          .then(function() {
-            var options = next.data.minData ? {minData: true} : undefined;
-            return csWallet.loadData(options);
-          })
+        var options = next.data.minData ? {minData: true} : undefined;
+        return csWallet.login(options)
           .then(function() {
             return $state.go(next.name, nextParams);
           })
