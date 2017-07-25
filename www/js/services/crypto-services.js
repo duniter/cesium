@@ -638,7 +638,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
             if (signedMsg.length > that.constants.crypto_sign_BYTES) {
               sig = new Uint8Array(that.constants.crypto_sign_BYTES);
               for (var i = 0; i < sig.length; i++) sig[i] = signedMsg[i];
-              console.debug("//******** HAS REDUCE signedMsg ********* /// ");
             }
             else {
               sig = signedMsg;
