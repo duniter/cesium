@@ -148,6 +148,7 @@ To build Cesium, you will have to:
   - Installing Cordova plugins (need for platforms specific builds)   
 ```
   ionic state restore
+  ionic browser add crosswalk@12.41.296.5
 ```
 
 
