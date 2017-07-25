@@ -25,6 +25,15 @@ angular.module('cesium.graph.account.controllers', ['chart.js', 'cesium.graph.se
             }
           }
         })
+
+        .extendStates(['app.wot_identity_tx_uid', 'app.wot_identity_tx_uid_lg'], {
+          points: {
+            'buttons': {
+              templateUrl: "plugins/graph/templates/account/view_identity_tx_extend.html",
+              controller: 'GpExtendCtrl'
+            }
+          }
+        })
       ;
 
       $stateProvider
