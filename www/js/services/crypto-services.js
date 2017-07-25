@@ -365,7 +365,6 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
        */
       this.scryptKeypair = function(salt, password, scryptParams) {
         return $q(function(resolve, reject) {
-          //console.debug('[crypto] Scrypt params:', scryptParams && scryptParams.memory);
           var seed = that.scrypt.crypto_scrypt(
             that.util.encode_utf8(password),
             that.util.encode_utf8(salt),
@@ -804,7 +803,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     isDevice = false;
     // endRemoveIf(device)
 
-    console.debug("[crypto] Created CyprotUils service. device=" + isDevice);
+    console.debug("[crypto] Created CryptotUtils service. device=" + isDevice);
 
     ionicReady().then(function() {
       console.debug('[crypto] Starting...');
