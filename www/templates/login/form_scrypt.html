@@ -42,29 +42,6 @@
     </div>
   </div>
 
-  <!-- Show public key
-  <div class="item text-center no-margin item-icon-right item-text-wrap" style="min-height: 72px;">
-    <h3 class="gray animate-show-hide ng-hide" ng-show="showPubkey" translate>LOGIN.ASSOCIATED_PUBKEY</h3>
-    <h3>
-      <a class="positive ink animate-show-hide ng-hide"
-         ng-show="showComputePubkeyButton"
-         ng-click="computePubkey()">
-        <i class="ion-eye"></i>
-        {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
-      </a>
-      <span class="bold animate-show-hide" ng-show="!computing"
-            ng-class="{'assertive': pubkeyError, 'dark': !pubkeyError}">
-        <i class="ion-close-circled" ng-if="pubkeyError"></i>
-        {{pubkey}}
-      </span>
-      <ion-spinner class="ion-spinner-small" icon="android" ng-if="computing"></ion-spinner>
-    </h3>
-    <a class="button button-icon positive button-small-padding icon ion-ios-help-outline animate-show-hide "
-       ng-click="showHelpModal('login-pubkey')"
-       ng-show="showPubkey">
-    </a>
-  </div>-->
-
   <div class="item item-icon-right item-text-wrap"
        ng-class="{ 'item-input-error': pubkeyError, 'item-input': showPubkey}">
     <span class="input-label hidden-xs animate-show-hide ng-hide" ng-show="showPubkey" translate>COMMON.PUBKEY</span>
@@ -75,7 +52,7 @@
         <i class="ion-eye"></i>
         {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
       </a>
-      <span class="gray animate-show-hide" ng-show="!computing">{{pubkey}}</span>
+      <span class="gray animate-show-hide text-wrap" ng-show="!computing">{{pubkey}}</span>
       <ion-spinner class="ion-spinner-small" icon="android" ng-if="computing"></ion-spinner>
     </div>
     <a class="button button-icon positive button-small-padding icon ion-ios-help-outline animate-show-hide "

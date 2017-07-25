@@ -108,30 +108,9 @@ angular.module('cesium.utils.services', [])
           cancelText: translations[options.cancelText],
           cancelType: options.cancelType,
           okText: translations[options.okText],
-          okType: options.okType
+          okType: options.okType,
         });
       });
-  }
-
-  function alertDownload(message, title) {
-    return $q(function(resolve) {
-      $translate([message, title, 'COMMON.BTN_DOWNLOAD'])
-      .then(function (translations) {
-        $ionicPopup.show({
-          template: '<p>' + translations[message] + '</p>',
-          title: translations[title],
-          buttons: [
-            {
-              text: translations['COMMON.BTN_DOWNLOAD'],
-              type: 'button-assertive icon-right ion-android-archive',
-              onTap: function(e) {
-                resolve(e);
-              }
-            }
-          ]
-        });
-      });
-    });
   }
 
   function hideLoading(timeout){
@@ -145,7 +124,7 @@ angular.module('cesium.utils.services', [])
     }
   }
 
-  function showLoading() {
+  function showLoading(options) {
     if (!loadingTextCache) {
       return $translate('COMMON.LOADING')
         .then(function(translation){
@@ -153,10 +132,10 @@ angular.module('cesium.utils.services', [])
           return showLoading();
         });
     }
+    options = options || {};
+    options.template = options.template||loadingTextCache;
 
-    return $ionicLoading.show({
-      template: loadingTextCache
-    });
+    return $ionicLoading.show(options);
   }
 
   function showToast(message, duration, position) {
@@ -310,15 +289,63 @@ angular.module('cesium.utils.services', [])
   function resizeImageFromSrc(imageSrc, thumbnail) {
     var img = document.createElement("img");
     return $q(function(resolve, reject) {
-      img.onload = imageOnLoadResize(resolve, reject, thumbnail);
-      img.src = imageSrc;
-    })
-    .then(function(data){
-      img.remove();
-      return data;
-    });
+        img.onload = imageOnLoadResize(resolve, reject, thumbnail);
+        img.src = imageSrc;
+      })
+      .then(function(data){
+        img.remove();
+        return data;
+      });
   }
 
+  function imageOnLoadRotate(resolve, reject) {
+    var deg = Math.PI / 180;
+    var angle = 90 * deg;
+    return function(event) {
+      var width = event.target.width;
+      var height = event.target.height;
+      var maxWidth = CONST.MAX_WIDTH;
+      var maxHeight = CONST.MAX_HEIGHT;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      var canvas = document.createElement("canvas");
+      canvas.width = height;
+      canvas.height = width;
+
+      var ctx = canvas.getContext("2d");
+      ctx.rotate(angle);
+      ctx.drawImage(event.target, 0, (-1) * canvas.width);
+
+      var dataurl = canvas.toDataURL();
+
+      canvas.remove();
+
+      resolve(dataurl);
+    };
+  }
+
+  function rotateFromSrc(imageSrc, angle) {
+    var img = document.createElement("img");
+    return $q(function(resolve, reject) {
+        img.onload = imageOnLoadRotate(resolve, reject, angle);
+        img.src = imageSrc;
+      })
+      .then(function(data){
+        img.remove();
+        return data;
+      });
+  }
 
   function showPopover(event, options) {
 
@@ -401,10 +428,8 @@ angular.module('cesium.utils.services', [])
           popover.isResolved = false;
 
           popover.scope.closePopover = function(result) {
-            var autoremove = popover.options && popover.options.autoremove;
-            if (autoremove) {
-              delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
-            }
+            var autoremove = popover.options.autoremove;
+            delete popover.options.autoremove; // remove to avoid to trigger 'popover.hidden'
             popover.hide()
               .then(function() {
                 if (autoremove) {
@@ -705,8 +730,7 @@ angular.module('cesium.utils.services', [])
       error: alertError,
       info: alertInfo,
       confirm: askConfirm,
-      notImplemented: alertNotImplemented,
-      download: alertDownload
+      notImplemented: alertNotImplemented
     },
     loading: {
       show: showLoading,
@@ -738,7 +762,8 @@ angular.module('cesium.utils.services', [])
     },
     image: {
       resizeFile: resizeImageFromFile,
-      resizeSrc: resizeImageFromSrc
+      resizeSrc: resizeImageFromSrc,
+      rotateSrc: rotateFromSrc
     },
     raw: raw
   };

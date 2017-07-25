@@ -137,12 +137,18 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
   $scope.$watch('formData', $scope.onFormDataChanged, true);
 
   $scope.save = function(silent) {
-    console.debug('saving');
-    if(!$scope.form.$valid || !$rootScope.walletData) {
+    if(!$scope.form.$valid || !$rootScope.walletData || $scope.saving) {
       return;
     }
 
+    console.debug('[ES] [profile] Saving user profile...');
     $scope.saving = true;
+
+    // removeIf(device)
+    if (!silent) {
+      UIUtils.loading.show();
+    }
+    // endRemoveIf(device)
 
     var onError = function(message) {
       return function(err) {
@@ -168,6 +174,10 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
 
     var showSuccessToast = function() {
       if (!silent) {
+        // removeIf(device)
+        UIUtils.loading.hide();
+        // endRemoveIf(device)
+
         return $translate('PROFILE.INFO.PROFILE_SAVED')
           .then(function(message){
             UIUtils.toast.show(message);
@@ -185,7 +195,7 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
       if (!$scope.existing) {
         return esProfile.add(formData)
           .then(function() {
-            console.info("[ES] Profile successfully created.");
+            console.info("[ES] [profile] successfully created.");
             $scope.existing = true;
             $scope.saving = false;
             $scope.dirty = false;
@@ -238,7 +248,7 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
   };
 
   $scope.close = function() {
-    return $state.go('app.view_wallet');
+    return $state.go('app.view_wallet', {refresh: true});
   };
 
   $scope.showAvatarModal = function() {
@@ -260,6 +270,24 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
           $scope.dirty = true;
         });
     }
+  };
+
+  $scope.rotateAvatar = function(){
+    if (!$scope.avatar || !$scope.avatar.src || $scope.rotating) return;
+
+    $scope.rotating = true;
+
+    return UIUtils.image.rotateSrc($scope.avatar.src)
+      .then(function(imageData){
+        $scope.avatar.src = imageData;
+        $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
+        $scope.dirty = true;
+        $scope.rotating = false;
+      })
+      .catch(function(err) {
+        console.error(err);
+        $scope.rotating = false;
+      });
   };
 }
 

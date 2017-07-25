@@ -27,42 +27,42 @@
 
     <span class="item gray item-text-wrap" translate>ES_SETTINGS.NOTIFICATIONS.HELP_TEXT</span>
 
-    <div class="item item-toggle dark" >
-      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_SENT</div>
-      <label class="toggle toggle-royal">
+    <label class="item item-toggle dark item-text-wrap">
+      <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_SENT</span>
+      <div class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.txSent" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>
-      </label>
-    </div>
-    <div class="item item-toggle dark" >
-      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_RECEIVED</div>
+      </div>
+    </label>
+    <label class="item item-toggle dark item-text-wrap">
+      <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_TX_RECEIVED</span>
       <label class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.txReceived" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>
       </label>
-    </div>
-    <div class="item item-toggle dark" >
-      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_SENT</div>
-      <label class="toggle toggle-royal">
+    </label>
+    <label class="item item-toggle dark item-text-wrap">
+      <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_SENT</span>
+      <div class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.certSent" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>
-      </label>
-    </div>
-    <div class="item item-toggle dark" >
-      <div class="input-label" ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_RECEIVED</div>
-      <label class="toggle toggle-royal">
+      </div>
+    </label>
+    <label class="item item-toggle dark item-text-wrap">
+      <span ng-class="{'gray': !formData.enable}" translate>ES_SETTINGS.NOTIFICATIONS.ENABLE_CERT_RECEIVED</span>
+      <div class="toggle toggle-royal">
         <input type="checkbox" ng-model="formData.notifications.certReceived" ng-disabled="!formData.enable">
         <div class="track">
           <div class="handle"></div>
         </div>
-      </label>
-    </div>
+      </div>
+    </label>
 
   </ion-content>
 </ion-view>

@@ -18,6 +18,13 @@
           <button class="button button-positive button-large button-clear flat icon ion-camera visible-xs visible-sm"
                   style="display: inline-block;"
                   ng-click="showAvatarModal()"></button>
+          <button ng-if="avatar.src"
+                  class="button button-positive button-large button-clear flat  visible-xs visible-sm"
+                  style="display: inline-block; left: 85px; bottom:15px;"
+                  ng-click="rotateAvatar()">
+            <i class="icon-secondary ion-image" style="left: 24px; top: 3px; font-size: 24px;"></i>
+            <i class="icon-secondary ion-forward" style="left: 26px; top: -13px;"></i>
+          </button>
           <button class="button button-positive button-large button-clear icon ion-camera hidden-xs hidden-sm"
                   ng-click="showAvatarModal()"></button>
         </i>

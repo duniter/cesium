@@ -6,7 +6,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 
       .state('app.view_wallet', {
-        url: "/wallet",
+        url: "/wallet?refresh",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/view_wallet.html",
@@ -70,7 +70,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     }
     else {
       // update view (to refresh avatar + plugin data, such as profile, subscriptions...)
-      $scope.updateView();
+      $timeout($scope.updateView, 300);
     }
   });
 

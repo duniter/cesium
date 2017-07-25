@@ -15,6 +15,7 @@
     </a>
     <p class="dark visible-xs width-cup text-italic"
        data-toggle="tooltip"
+       ng-if="::tx.comment"
        title="{{::tx.comment}}">
       <i class="ion-ios-chatbubble-outline"></i>
       {{::tx.comment}}<br/>
@@ -25,7 +26,7 @@
       </span>
     </h4>
   </div>
-  <div class="col col-50 no-padding" ng-if="tx.comment">
+  <div class="col col-50 no-padding" ng-if="::tx.comment">
     <p class="vertical-center gray text-italic hidden-xs"
        data-toggle="tooltip"
        title="{{::tx.comment}}">{{::tx.comment}}</p>
@@ -39,7 +40,7 @@
     </span>
 
     <!-- Locked TX -->
-    <a ng-if="::tx.lockedOutputs"
+    <a ng-if=":rebind:tx.lockedOutputs"
        class="badge item-note"
        ng-class="{'badge-calm': tx.amount > 0}"
        ng-click="showLockedOutputsPopover(tx, $event)">

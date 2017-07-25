@@ -108,6 +108,7 @@ $screen-lg:                       1200px;
   .padding-top-xs {
     padding-top: 10px;
   }
+
 }
 @media screen and (min-width: $screen-sm) {
     .hidden-xs {
@@ -1550,11 +1551,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     }
   }
 
-  body.platform-android #menu .item-icon-left .icon,
-  .item-icon-right .icon:last-child {
-    top: 5px;
-  }
-
 }
 
 // other screen
@@ -1596,6 +1592,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     top: 175px;
   }
 }
+
+
+
 
 /**********
    Screen - identity Certifications
@@ -2006,6 +2005,21 @@ div[dropzone] {
 
     h2 {
       padding-left: 10px;
+    }
+  }
+}
+
+/**********
+  Login modal
+**********/
+.modal.modal-login {
+
+  .item.item-icon-right.item-text-wrap {
+
+    .item-content {
+      margin-right: 58px;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 }
