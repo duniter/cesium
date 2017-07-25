@@ -31,8 +31,10 @@ if (rootdir && !skip) {
       wwwPath = path.join(rootdir, 'platforms', platform, 'www');
     }
 
+    // Log
+    //console.log('['+process.mainModule.filename+'] Cleaning unused directories');
+
     // Clean unused directories
-    console.log('Cleaning dir ' + path.join(wwwPath, 'lib', '**'));
     del([
       path.join(wwwPath, 'i18n'),
       path.join(wwwPath, 'js'),

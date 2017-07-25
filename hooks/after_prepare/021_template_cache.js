@@ -27,7 +27,7 @@ if (rootdir) {
 
     // Concat templates into a JS
     es.concat(
-      gulp.src(wwwPath + 'templates/**/*.html')
+      gulp.src(path.join(wwwPath, 'templates', '**', '*.html'))
         .pipe(templateCache({
           standalone:true,
           module:"cesium.templates",
@@ -35,11 +35,11 @@ if (rootdir) {
          }))
         .pipe(gulp.dest(distJsPath)),
 
-       gulp.src(wwwPath + 'plugins/*/templates/**/*.html')
+       gulp.src(path.join(wwwPath, 'plugins', '*', 'templates', '**', '*.html'))
          .pipe(templateCache({
            standalone:true,
            module:"cesium.plugins.templates",
-           root: "templates/"
+           root: "plugins/"
           }))
          .pipe(gulp.dest(pluginDistJsPath))
      );
