@@ -138,6 +138,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     if (!event.defaultPrevented && next.data) {
       var skip = $rootScope.tour || event.currentScope.tour; // disabled for help tour
       if (skip) return;
+      var options;
 
       // Large screen: redirect to specific state
       if (next.data.large && !UIUtils.screen.isSmall()) {
@@ -148,7 +149,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // If state need auth
       else if (next.data.auth && !csWallet.isAuth()) {
         event.preventDefault();
-        var options = next.data.minData ? {minData: true} : undefined;
+        options = next.data.minData ? {minData: true} : undefined;
         return csWallet.auth(options)
           .then(function() {
             return $state.go(next.name, nextParams);
@@ -164,7 +165,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       // If state need login
       else if (next.data.login && !csWallet.isLogin()) {
         event.preventDefault();
-        var options = next.data.minData ? {minData: true} : undefined;
+        options = next.data.minData ? {minData: true} : undefined;
         return csWallet.login(options)
           .then(function() {
             return $state.go(next.name, nextParams);
@@ -179,7 +180,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
       // If state need login or auth, make sure to load wallet data
       else if (next.data.login || next.data.auth)  {
-        var options = next.data.minData ? {minData: true} : undefined;
+        options = next.data.minData ? {minData: true} : undefined;
         if (!csWallet.isDataLoaded(options)) {
           event.preventDefault();
           return csWallet.loadData(options)

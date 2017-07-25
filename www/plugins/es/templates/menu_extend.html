@@ -41,7 +41,7 @@
 </ng-if>
 
 <!-- Left menu: User section -->
-<ng-if ng-if="enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
+<div ng-if="enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
 
   <div menu-close class="item item-icon-left" active-link="active"
        active-link-path-prefix="#/app/invitations"
@@ -66,11 +66,11 @@
   <div menu-close class="item item-icon-left" active-link="active"
        active-link-path-prefix="#/app/notifications"
        ng-class="{'item-menu-disable': !login}"
-       ui-sref="app.view_notifications"">
+       ui-sref="app.view_notifications">
     <i class="icon ion-android-notifications"></i>
     <span translate>MENU.NOTIFICATIONS</span>
     <span class="badge badge-positive"
           ng-if="$root.walletData.notifications.unreadCount">{{$root.walletData.notifications.unreadCount}}</span>
   </div>
 
-</ng-if>
+</div>

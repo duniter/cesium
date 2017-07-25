@@ -1332,7 +1332,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                   console.debug('Has generate an revocation document:\n----\n' + revocation + '----');
                   return revocation;
                 });
-            })
+            });
         });
     },
 
