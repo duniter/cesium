@@ -112,6 +112,60 @@
                      ng-model-options="{ debounce: 350 }">
             </div>
 
+            <!--<div class="item">
+              <span class="input-label">
+              {{'PROFILE.GEO_POINT_DIVIDER' | translate}}
+                </span>
+            </div>-->
+
+            <!-- Position (lat/lon) -->
+            <div class="row responsive-md responsive-sm no-padding">
+
+              <!-- lat -->
+              <div class="col no-padding">
+                <label class="item item-input item-floating-label">
+                  <span class="input-label" translate>PROFILE.LATITUDE</span>
+                  <input class="no-padding-right" type="number" placeholder="{{'PROFILE.LATITUDE_HELP'|translate}}"
+                         ng-model="formData.geoPoint.lat"
+                         ng-model-options="{ debounce: 350 }"
+                         ng-change="onGeoPointChanged()"
+                         required>
+                </label>
+              </div>
+
+              <div class="col-10 no-padding hidden-xs">
+                &nbsp;
+              </div>
+
+              <!-- lon -->
+              <div class="col no-padding">
+                <label class="item item-input item-floating-label">
+                  <span class="input-label" translate>PROFILE.LONGITUDE</span>
+                  <input class="no-padding-right" type="number" placeholder="{{'PROFILE.LONGITUDE_HELP'|translate}}"
+                         ng-model="formData.geoPoint.lon"
+                         ng-model-options="{ debounce: 350 }"
+                         ng-change="onGeoPointChanged()"
+                         required>
+                </label>
+              </div>
+
+              <div class="col no-padding">
+                <div class="item no-padding text-center">
+                  <span class="input-label"></span>
+
+                  <a class="button  button-stable button-small-padding icon ion-refresh"
+                     title="{{'PROFILE.BTN_GEOLOC_CITY'|translate}}"
+                     ng-click="localizeByCity()">
+                  </a>
+
+                  <a class="button button-stable button-small-padding icon ion-pinpoint"
+                     title="{{'PROFILE.BTN_GEOLOC_ME'|translate}}"
+                     ng-click="localizeMe()">
+                  </a>
+                </div>
+              </div>
+            </div>
+
             <!-- social networks -->
             <ng-include src="'plugins/es/templates/common/edit_socials.html'"></ng-include>
 

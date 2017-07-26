@@ -1,0 +1,60 @@
+.leaflet-top  {
+  top: 44px !important;
+}
+
+.legend {
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: rgba(255,255,255, 0.9);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  padding: 6px 8px;
+  width: 180px;
+  line-height: 18px;
+  color: #555;
+}
+
+.legend .outline {
+  border: 0;
+}
+.legend i {
+  width: 16px;
+  height: 16px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+
+/* Control: Seach - see */
+/*.leaflet-marker-icon {*/
+  /*color: #fff;*/
+  /*font-size: 16px;*/
+  /*line-height: 16px;*/
+  /*text-align: center;*/
+  /*vertical-align: middle;*/
+  /*box-shadow: 2px 1px 4px rgba(0,0,0,0.3);*/
+  /*border-radius: 8px;*/
+  /*border:1px solid #fff;*/
+/*}*/
+.search-tip {
+  white-space: nowrap;
+}
+.search-tip b {
+  color: #fff;
+}
+.search-tip.member b {
+  background: #38aadd; /* blue */
+}
+.search-tip.wallet b {
+  background: #a3a3a3; /* lightgray */
+}
+.search-tip.group b {
+  background: #71ae26; /* lightgray */
+}
+.search-tip b {
+  display: inline-block;
+  clear: left;
+  float: right;
+  padding: 0;
+  margin-left: 4px;
+}

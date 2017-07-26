@@ -17,6 +17,9 @@ angular.module('cesium.plugins', [
   //'cesium.rml9.plugin',
 
   // ES plugin (Cesium+):
-  'cesium.es.plugin'
+  'cesium.es.plugin',
+
+  // Map plugin (Cesium+):
+  'cesium.map.plugin'
   ])
 ;

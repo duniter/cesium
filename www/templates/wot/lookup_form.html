@@ -64,12 +64,15 @@
       </a>
       &nbsp;
       <a ng-if="enableFilter"
-         class="button button-text button-small"
+         class="button button-text button-small ink"
          ng-class="{'button-text-positive': search.type=='pending'}"
          ng-click="doGetPending()" class="badge-balanced">
         <i class="icon ion-clock"></i>
         {{'WOT.LOOKUP.BTN_PENDING' | translate}}
       </a>
+
+      <!-- Allow extension here -->
+      <cs-extension-point name="filter-buttons"></cs-extension-point>
       &nbsp;
       <button class="button button-small button-stable ink"
               ng-click="doSearch()">

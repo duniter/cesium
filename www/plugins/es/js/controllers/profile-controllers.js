@@ -25,7 +25,7 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 ;
 
 function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focus, $translate, $ionicHistory,
-                           UIUtils, esHttp, esProfile, ModalUtils, Device) {
+                           UIUtils, esHttp, esProfile, esGeo, ModalUtils, Device) {
   'ngInject';
 
   $scope.loading = true;
@@ -34,7 +34,8 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
   $scope.formData = {
     title: null,
     description: null,
-    socials: []
+    socials: [],
+    geoPoint: {}
   };
   $scope.avatar = null;
   $scope.existing = false;
@@ -144,11 +145,11 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
     console.debug('[ES] [profile] Saving user profile...');
     $scope.saving = true;
 
-    // removeIf(device)
+    // removeIf(no-device)
     if (!silent) {
       UIUtils.loading.show();
     }
-    // endRemoveIf(device)
+    // endRemoveIf(no-device)
 
     var onError = function(message) {
       return function(err) {
@@ -174,9 +175,9 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
 
     var showSuccessToast = function() {
       if (!silent) {
-        // removeIf(device)
+        // removeIf(no-device)
         UIUtils.loading.hide();
-        // endRemoveIf(device)
+        // endRemoveIf(no-device)
 
         return $translate('PROFILE.INFO.PROFILE_SAVED')
           .then(function(message){
@@ -289,6 +290,50 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
         $scope.rotating = false;
       });
   };
+
+  $scope.localizeByCity = function() {
+    if (!$scope.formData.city) {
+      return;
+    }
+
+    var address = angular.copy($scope.formData.city);
+
+    return esGeo.point.searchByAddress(address)
+      .then(function(res) {
+        if (address != $scope.formData.city) return; // user changed value again
+
+        if (res && res.length >= 1) {
+          var position = res[0];
+          if (position.lat && position.lon) {
+            $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+            $scope.formData.geoPoint.lat =  parseFloat(position.lat);
+            $scope.formData.geoPoint.lon =  parseFloat(position.lon);
+            $scope.dirty = true;
+          }
+        }
+      });
+  };
+
+
+  $scope.localizeMe = function() {
+    return esGeo.point.current()
+      .then(function(position) {
+        if (!position || !position.lat || !position.lon) return;
+        $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+        $scope.formData.geoPoint.lat =  parseFloat(position.lat);
+        $scope.formData.geoPoint.lon =  parseFloat(position.lon);
+      })
+      .catch(UIUtils.onError('PROFILE.ERROR.GEO_LOCATION_FAILED'));
+  };
+
+  $scope.onCityChanged = function() {
+    var hasGeoPoint = $scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon;
+    if (!hasGeoPoint) {
+      return $scope.localizeByCity();
+    }
+  };
+  $scope.$watch('formData.city', $scope.onCityChanged, true);
+
 }
 
 

@@ -1,0 +1,18 @@
+{
+  "MAP": {
+    "WOT": {
+      "BTN_SHOW_IDENTITY": "Consulter la fiche",
+      "LOOKUP": {
+        "BTN_SHOW_MAP": "Carte"
+      },
+      "VIEW": {
+        "TITLE": "Carte des membres",
+        "SEARCH_DOTS": "Rechercher...",
+        "LEGEND": {
+          "MEMBER": "Membre",
+          "WALLET": "Non-membres"
+        }
+      }
+    }
+  }
+}

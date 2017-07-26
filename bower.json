@@ -15,7 +15,10 @@
     "angular-bind-notifier": "^1.1.7",
     "angular-image-crop": "^2.0.0",
     "ng-idle": "^1.3.2",
-    "chart.js": "chartjs#^2.6.0"
+    "chart.js": "chartjs#^2.6.0",
+    "Leaflet.awesome-markers": "^2.0.2",
+    "ui-leaflet": "^2.0.0",
+    "leaflet-search": "^2.7.2"
   },
   "resolutions": {
     "angular-sanitize": "1.5.3",

@@ -18,11 +18,19 @@
   <!--endRemoveIf(device)-->
 
   <!--removeIf(no-plugin)-->
-  <link href="dist/dist_css/plugins/es/css/style.css" rel="stylesheet">
-  <link href="dist/dist_css/plugins/graph/css/style.css" rel="stylesheet">
-
-
+  <link rel="stylesheet" type="text/css" href="lib/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" type="text/css" href="lib/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+  <!--removeIf(no-device)-->
+  <!--<link rel="stylesheet" type="text/css" href="lib/leaflet-search/dist/leaflet-search.mobile.src.css">-->
+  <!--endRemoveIf(no-device)-->
+  <!--removeIf(device)-->
+  <link rel="stylesheet" type="text/css" href="lib/leaflet-search/dist/leaflet-search.src.css">
+  <!--endRemoveIf(device)-->
+  <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/es/css/style.css">
+  <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/graph/css/style.css">
+  <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/map/css/style.css">
   <!--endRemoveIf(no-plugin)-->
+
   <!-- endbuild -->
   <!-- build:js dist_js/vendor.js -->
   <!-- vendor js -->
@@ -72,6 +80,15 @@
   <script src="js/vendor/sha256.min.js" async></script>
   <script src="js/vendor/ng-cordova.min.js"></script>
   <!--endRemoveIf(no-device)-->
+
+  <!--removeIf(no-plugin)-->
+  <script src="lib/leaflet/dist/leaflet.js"></script>
+  <script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
+  <script src="lib/ui-leaflet/dist/ui-leaflet.js"></script>
+  <script src="lib/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+  <script src="lib/leaflet-search/dist/leaflet-search.src.js"></script>
+  <!--endRemoveIf(no-plugin)-->
+
   <!-- endbuild -->
 
   <!--removeIf(no-device)-->
@@ -149,6 +166,7 @@
   <script src="dist/dist_js/plugins/es/js/services/invitation-services.js"></script>
   <script src="dist/dist_js/plugins/es/js/services/subscription-services.js"></script>
   <script src="dist/dist_js/plugins/es/js/services/wallet-services.js"></script>
+  <script src="dist/dist_js/plugins/es/js/services/geo-services.js"></script>
   <script src="dist/dist_js/plugins/es/js/controllers/common-controllers.js"></script>
   <script src="dist/dist_js/plugins/es/js/controllers/app-controllers.js"></script>
   <script src="dist/dist_js/plugins/es/js/controllers/settings-controllers.js"></script>
@@ -165,7 +183,6 @@
   <script src="dist/dist_js/plugins/es/js/controllers/invitation-controllers.js"></script>
   <script src="dist/dist_js/plugins/es/js/controllers/subscription-controllers.js"></script>
 
-
   <!-- Graph plugin -->
   <!--removeIf(ubuntu)--> <!-- FIXME: issue #463 -->
   <script src="dist/dist_js/plugins/graph/js/plugin.js"></script>
@@ -179,6 +196,9 @@
   <script src="dist/dist_js/plugins/graph/js/controllers/account-controllers.js"></script>
   <!--endRemoveIf(ubuntu)-->
 
+  <!-- Map plugin -->
+  <script src="dist/dist_js/plugins/map/js/plugin.js"></script>
+
   <!-- RML9 plugin -->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-01-add_button.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-02-add_view.js"></script>-->
@@ -186,15 +206,8 @@
   <!--<script src="dist/dist_js/plugins/rml9/plugin-04-chart.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-05-service_api.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-06-settings.js"></script>-->
+  <!--<script src="dist/dist_js/plugins/rml9/plugin-07-add_map.js"></script>-->
   <!--<script src="dist/dist_js/plugins/rml9/plugin-final.js"></script>-->
-
-  <!-- RML9 plugin: add a map
-  <link rel="stylesheet" type="text/css" href="lib/leaflet/dist/leaflet.css">
-  <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/rml9/css/style.css">
-  <script src="lib/leaflet/dist/leaflet.js"></script>
-  <script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
-  <script src="lib/ui-leaflet/dist/ui-leaflet.js"></script>
-  <script src="dist/dist_js/plugins/rml9/plugin-07-add_map.js"></script>-->
 
   <!--endRemoveIf(no-plugin)-->
 
