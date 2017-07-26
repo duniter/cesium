@@ -36,7 +36,8 @@ angular.module('cesium.map.plugin', ['cesium.services'])
   })
 
   // [NEW] Manage events from the page #/app/wot/map
-  .controller('MapWotViewCtrl', function($scope, $q, $translate, $state, $filter, $templateCache, $timeout, $ionicHistory, UIUtils, MapData, leafletData) {
+  .controller('MapWotViewCtrl', function($scope, $q, $translate, $state, $filter, $templateCache, $timeout, $ionicHistory,
+                                         esGeo, UIUtils, MapData, leafletData) {
     'ngInject';
 
     $scope.loading = true;
@@ -243,34 +244,21 @@ angular.module('cesium.map.plugin', ['cesium.services'])
             markerLocation: true
           }).addTo(map);
 
-          L.control.search({
-            url: 'search.php?q={s}',
-            jsonpParam:'callback',
-            position: 'topright',
-            hideMarkerOnCollapse: true,
-            marker: {
-              icon: new L.Icon({iconUrl:'data/custom-icon.png', iconSize: [20,20]}),
-              circle: {
-                radius: 20,
-                color: '#0a0',
-                opacity: 1
-              }
-            }
+          L.easyButton('<i class="icon ion-ios-location"></i>', function(btn, map){
+            return esGeo.point.current()
+              .then(function(res) {
+                console.log(res);
+                $scope.map.center = {
+                  lat: res.lat,
+                  lng: res.lon,
+                  zoom: 14
+                };
+              });
           }).addTo(map);
 
           map.invalidateSize();
           map._resetView(map.getCenter(), map.getZoom(), true);
         });
-        /*
-        leafletData.getMap().then(function(map) {
-          // Show map
-          $scope.loading = false;
-          $timeout(function() {
-            map.invalidateSize();
-            UIUtils.loading.hide();
-          }, 300);
-        });*/
-
       });
     };
 

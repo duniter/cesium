@@ -18,7 +18,9 @@
     "chart.js": "chartjs#^2.6.0",
     "Leaflet.awesome-markers": "^2.0.2",
     "ui-leaflet": "^2.0.0",
-    "leaflet-search": "^2.7.2"
+    "leaflet-search": "^2.7.2",
+    "angular-leaflet-directive": "angular-leaflet#^0.10.0",
+    "Leaflet.EasyButton": "~1.3.2"
   },
   "resolutions": {
     "angular-sanitize": "1.5.3",
