@@ -22,7 +22,6 @@ angular.module('cesium.map.plugin', ['cesium.services'])
       $stateProvider
         .state('app.view_wot_map', {
           url: "/wot/map?lat&lng&zoom",
-          cache: false,
           views: {
             'menuContent': {
               templateUrl: "plugins/map/templates/wot/map.html",
@@ -40,8 +39,6 @@ angular.module('cesium.map.plugin', ['cesium.services'])
                                          esGeo, UIUtils, MapData, leafletData) {
     'ngInject';
 
-    $scope.loading = true;
-
     var constants = {
       FRANCE: {
         lat: 47.35, lng: 5.65, zoom: 6
@@ -49,6 +46,8 @@ angular.module('cesium.map.plugin', ['cesium.services'])
     };
     constants.DEFAULT_CENTER = constants.FRANCE;
 
+    $scope.loading = true;
+    $scope.mapId = 'map-wot-' + $scope.$id;
     $scope.map = {
       center: angular.copy(constants.DEFAULT_CENTER),
       defaults: {
@@ -118,16 +117,22 @@ angular.module('cesium.map.plugin', ['cesium.services'])
         $scope.stateName = state && state.stateName;
         $scope.stateParams = angular.copy(state && state.stateParams||{});
 
-        var center = angular.copy(constants.DEFAULT_CENTER);
+        var center;
         if (state.stateParams) {
-          if (state.stateParams && state.stateParams.lat) {
+          if (state.stateParams.lat) {
+            center = {};
             center.lat = parseFloat(state.stateParams.lat);
           }
-          if (state.stateParams && state.stateParams.lng) {
+          if (state.stateParams.lng) {
+            center = center || {};
             center.lng = parseFloat(state.stateParams.lng);
           }
-          if (state.stateParams && state.stateParams.zoom) {
+          if (state.stateParams.zoom) {
+            center = center || {};
             center.zoom = parseFloat(state.stateParams.zoom);
+          }
+          if (center) {
+            center = angular.merge({}, constants.DEFAULT_CENTER, center);
           }
         }
 
@@ -139,8 +144,6 @@ angular.module('cesium.map.plugin', ['cesium.services'])
     });
 
     $scope.load = function(center) {
-      center = center||constants.DEFAULT_CENTER;
-
       $scope.loading = true;
 
       // removeIf(no-device)
@@ -212,13 +215,9 @@ angular.module('cesium.map.plugin', ['cesium.services'])
         }, {});
 
         $scope.map.markers = markers;
-        angular.merge($scope.map.center, center);
 
 
-        $scope.loading = false;
-        UIUtils.loading.hide();
-        leafletData.getMap().then(function(map) {
-
+        leafletData.getMap(/*$scope.mapId*/).then(function(map) {
           // Control: search
           L.control.search({
             layer: markersLayer,
@@ -256,8 +255,16 @@ angular.module('cesium.map.plugin', ['cesium.services'])
               });
           }).addTo(map);
 
-          map.invalidateSize();
-          map._resetView(map.getCenter(), map.getZoom(), true);
+          var needCenterUpdate = center && !angular.equals($scope.map.center, center);
+          if (needCenterUpdate) {
+            //angular.merge($scope.map.center, center);
+            $timeout(function() {
+              map.invalidateSize();
+              map._resetView(center, center.zoom, true);
+            }, 300);
+          }
+          $scope.loading = false;
+          UIUtils.loading.hide();
         });
       });
     };
@@ -266,7 +273,7 @@ angular.module('cesium.map.plugin', ['cesium.services'])
       $ionicHistory.nextViewOptions({
         disableAnimate: true,
         disableBack: true,
-        historyRoot: true
+        historyRoot: false
       });
 
       $scope.stateParams = $scope.stateParams || {};
