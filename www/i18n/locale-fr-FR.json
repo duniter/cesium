@@ -279,6 +279,7 @@
     "CURRENT_BLOCK" : "Bloc #",
     "POPOVER_FILTER_TITLE": "Filtre",
     "OFFLINE": "Nœuds hors ligne",
+    "BTN_SHOW_PEER": "Voir le nœud",
     "VIEW": {
       "TITLE": "Nœud",
       "OWNER": "Appartient à",
