@@ -52,17 +52,20 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         member: {
           type: 'awesomeMarker',
           icon: 'person',
-          markerColor: 'green'
+          markerColor: 'green',
+          iconColor: 'white'
         },
         mirror: {
           type: 'awesomeMarker',
-          icon: 'android-desktop',
-          markerColor: 'green'
+          icon: 'radio-waves',
+          markerColor: 'green',
+          iconColor: 'white'
         },
         offline: {
           type: 'awesomeMarker',
           icon: 'ion-close-circled',
-          markerColor: 'red'
+          markerColor: 'red',
+          iconColor: 'white'
         }
       },
       markerIdByPeerId = {},
@@ -176,8 +179,9 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         }
 
         // Get position by IP
-        var ip = peer.getHost();
-        esGeo.point.searchByIP(ip)
+        var bma = peer.bma;
+        var address = peer.hasValid4(bma) ? bma.ipv4 : (bma.dns || bma.ipv6);
+        esGeo.point.searchByIP(address)
 
           // Create the marker
           .then(function(position){
@@ -243,10 +247,11 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     $scope.updateMarker = function(marker, peer) {
       marker.layer = !peer.online ? 'offline' : (peer.uid ? 'member' : 'mirror');
       marker.icon = angular.copy(icons[marker.layer]);
-      marker.opacity = peer.online ? 0.9 : 0.7;
+      marker.opacity = peer.online ? 1 : 0.7;
       marker.title = peer.dns || peer.server;
       if (peer.online && !peer.hasMainConsensusBlock) {
-        marker.icon.markerColor = peer.hasConsensusBlock ? 'beige' : 'lightgray';
+        marker.icon.markerColor = peer.hasConsensusBlock ? 'lightgreen' : 'lightgray';
+        marker.opacity = peer.hasConsensusBlock ? 0.9 : 0.8;
       }
       if (!marker.lng) {
         marker.lng = marker.position.lng + Math.random() / 1000;
