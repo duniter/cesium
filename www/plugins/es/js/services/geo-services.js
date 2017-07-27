@@ -56,12 +56,12 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
     function searchPositionByIP(ip) {
 
-      var now = new Date();
-      console.debug('[ES] [geo] Searching IP position [{0}]...'.format(ip));
+      //var now = new Date();
+      //console.debug('[ES] [geo] Searching IP position [{0}]...'.format(ip));
 
       return that.raw.searchByIP({ip: ip})
         .then(function(res) {
-          console.debug('[ES] [geo] Found IP {0} position in {0}ms'.format(res ? 1 : 0, new Date().getTime() - now.getTime()));
+          //console.debug('[ES] [geo] Found IP {0} position in {0}ms'.format(res ? 1 : 0, new Date().getTime() - now.getTime()));
           return res ? {lat: res.latitude,lng: res.longitude} : undefined;
         });
     }

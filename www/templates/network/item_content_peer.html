@@ -1,0 +1,55 @@
+
+    <i class="icon ion-android-desktop"
+       ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       ng-if=":rebind:!peer.uid || !peer.avatar"></i>
+    <b class="icon-secondary ion-person" ng-if=":rebind:!peer.avatar && peer.uid"
+       ng-class=":rebind:{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+       style="left: 26px; top: -3px;"></b>
+    <i class="avatar" ng-if=":rebind:peer.uid && peer.avatar" style="background-image: url('{{:rebind:peer.avatar.src}}')"></i>
+    <b class="icon-secondary assertive ion-close-circled" ng-if=":rebind:!peer.online" style="left: 37px; top: -10px;"></b>
+
+    <div class="row no-padding">
+      <div class="col no-padding">
+        <h3 class="dark">
+          {{:rebind:peer.dns || peer.server}}
+        </h3>
+        <h4>
+          <span class="gray" ng-if=":rebind:!peer.uid">
+            <i class="ion-key"></i> {{:rebind:peer.pubkey|formatPubkey}}
+          </span>
+          <span class="positive" ng-if=":rebind:peer.uid">
+            <i class="ion-person"></i> {{:rebind:peer.name || peer.uid}}
+          </span>
+          <span class="gray">{{:rebind:peer.dns && (' | ' + peer.server)}}</span>
+        </h4>
+      </div>
+      <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
+        <div style="min-width: 50px; padding-top: 5px;" >
+          <span ng-if="peer.isSsl()">
+            <i class="ion-locked"></i> <small>SSL</small>
+          </span>
+        </div>
+        <div ng-if=":rebind:peer.hasEndpoint('ES_USER_API')" ng-click="showEndpointsPopover($event, peer, 'ES_USER_API')">
+          <i class="ion-es-user-api"></i>
+          <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
+        </div>
+        <div ng-if=":rebind:peer.isTor()" ng-click="showEndpointsPopover($event, peer, 'BMATOR')">
+          <i class="ion-bma-tor-api"></i>
+        </div>
+      </div>
+      <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
+        <h3 class="hidden-sm hidden-xs gray">
+          <span ng-if=":rebind:peer.uid"><i class="ion-lock-combination"></i>{{:rebind:peer.difficulty||'?'}}</span>
+          <span ng-if=":rebind:!peer.uid" translate>PEER.MIRROR</span>
+        </h3>
+        <h4 class="hidden-sm hidden-xs gray">{{:rebind: peer.version ? ('v'+peer.version) : ''}}</h4>
+      </div>
+      <div class="col col-20 no-padding text-center">
+        <span id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}"
+          class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{:rebind:peer.currentNumber|formatInteger}}</span>
+        <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta && expertMode">
+          <i class="ion-clock"></i>&nbsp;
+          {{:rebind:peer.consensusBlockDelta|formatDurationTime}}</span>
+
+      </div>
+    </div>

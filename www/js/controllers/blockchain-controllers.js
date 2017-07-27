@@ -106,6 +106,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
   $scope.searchTextId = null;
   $scope.ionItemClass = 'item-border-large';
   $scope.defaultSizeLimit = UIUtils.screen.isSmall() ? 50 : 100;
+  $scope.helptipPrefix = 'helptip-network';
 
   /**
    * Enter into the view
