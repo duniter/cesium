@@ -1,18 +1,33 @@
-<div class="item no-border no-padding" ng-class="::{'item-avatar': hit.avatar}">
-  <img ng-if="::hit.avatar" class="avatar" ng-src="{{::hit.avatar.src}}">
-  <div class="item-content item-avatar-left-padding padding-top">
-    <h2 class="dark"><a ui-sref="app.wot_identity({pubkey: hit.issuer, uid: hit.uid})">{{::hit.title}}</a></h2>
+<div class="item no-border item-peer item-icon-left no-padding-top">
+
+  <i class="icon ion-android-desktop"
+     ng-class="{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+     ng-if="!peer.uid || !peer.avatar"></i>
+  <b class="icon-secondary ion-person" ng-if="!peer.avatar && peer.uid"
+     ng-class="{'balanced': peer.online && peer.hasMainConsensusBlock, 'energized': peer.online && peer.hasConsensusBlock, 'gray': peer.online && !peer.hasConsensusBlock && !peer.hasMainConsensusBlock, 'stable': !peer.online}"
+     style="left: 26px; top: -3px;"></b>
+  <i class="avatar" ng-if="peer.uid && peer.avatar" style="background-image: url('{{peer.avatar.src}}')"></i>
+  <b class="icon-secondary assertive ion-close-circled" ng-if="!peer.online" style="left: 37px; top: -10px;"></b>
+
+
+    <h2 class="dark"><a ng-click="selectPeer(peer)">{{peer.dns||peer.server}}</a></h2>
+    <h5 class="gray" ng-if="peer.dns && peer.dns != peer.server">{{peer.server}}</h5>
     <h4>
-      <span ng-if="::hit.uid" class="positive">
-        <i class="icon ion-person"></i>
-        {{::hit.uid}}
-      </span>
-      <span class="assertive" ng-if="!hit.uid">
-        {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
-      </span>
+      <a ui-sref="app.wot_identity({pubkey: peer.pubkey, uid: peer.uid})">
+        <span ng-if="peer.uid" class="positive">
+          <i class="ion-person"></i>
+          {{peer.name||peer.uid}}
+        </span>
+        <span ng-if="!peer.uid" class="gray" title="{{peer.pubkey}}"><i class="ion-key"></i> {{peer.pubkey|formatPubkey}} |</span>
+      </a>
+      <span ng-if="!peer.uid" class="assertive">{{'PEER.MIRROR'|translate}}</span>
     </h4>
-    <h4>
-      <span class="gray" title="{{::hit.issuer}}"><i class="icon ion-key"></i> {{::hit.issuer|formatPubkey}}</span>
-    </h4>
-  </div>
+
+
+    <span class="badge" ng-class="{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.currentNumber|formatInteger}}</span>
+    <span class="badge badge-secondary" ng-if="peer.consensusBlockDelta && expertMode">
+          <i class="ion-clock"></i>&nbsp;
+          {{peer.consensusBlockDelta|formatDurationTime}}</span>
+
 </div>
+

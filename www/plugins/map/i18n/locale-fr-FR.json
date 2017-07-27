@@ -1,16 +1,19 @@
 {
   "MAP": {
+    "COMMON": {
+      "SEARCH_DOTS": "Rechercher...",
+    },
     "NETWORK": {
       "LOOKUP": {
         "BTN_MAP": "Carte",
         "BTN_MAP_HELP": "Ouvrir la carte des noeuds"
       },
       "VIEW": {
-        "TITLE": "Carte des membres",
-        "SEARCH_DOTS": "Rechercher...",
-        "LEGEND": {
-          "MEMBER": "Membre",
-          "WALLET": "Non-membres"
+        "TITLE": "Carte des noeuds",
+        "LAYER": {
+          "MEMBER": "Nœuds membre",
+          "MIRROR": "Nœuds mirroir",
+          "OFFLINE": "Nœuds hors ligne"
         }
       }
     },
@@ -22,9 +25,9 @@
       "VIEW": {
         "TITLE": "Carte des membres",
         "SEARCH_DOTS": "Rechercher...",
-        "LEGEND": {
-          "MEMBER": "Membre",
-          "WALLET": "Non-membres"
+        "LAYER": {
+          "MEMBER": "Membres",
+          "WALLET": "Simples portefeuilles"
         }
       }
     },

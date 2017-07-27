@@ -10,28 +10,6 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
         lat: 46.5588603, lng: 4.229736328124999, zoom: 6
       }
     },
-    icons: {
-      member: {
-        type: 'awesomeMarker',
-        icon: 'person',
-        markerColor: 'blue'
-      },
-      wallet: {
-        type: 'awesomeMarker',
-        icon: 'key',
-        markerColor: 'lightgray'
-      },
-      group: {
-        type: 'awesomeMarker',
-        icon: 'person-stalker',
-        markerColor: 'green'
-      },
-      registry: {
-        type: 'awesomeMarker',
-        icon: 'person-stalker', // TODO
-        markerColor: 'green' // TODO
-      }
-    },
     LOCALIZE_ZOOM: 14
   };
   constants.DEFAULT_CENTER = csSettings.data && csSettings.data.plugins && csSettings.data.plugins.map && csSettings.data.plugins.map.center || constants.locations.FRANCE;
@@ -79,10 +57,6 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       map.invalidateSize();
       map._resetView(center, center.zoom, true);
     }, 300);
-  }
-
-  function initIcon(type) {
-    return constants.icons[type];
   }
 
   function initCenter(options) {
@@ -146,7 +120,6 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
   return {
     map: initMap,
-    icon: initIcon,
     center: initCenter,
     updateCenter: updateMapCenter,
     control: {

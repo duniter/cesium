@@ -89,7 +89,6 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
         UIUtils.onError('ERROR.GET_CURRENCY_FAILED')(err);
         $scope.networkStarted = false;
       });
-
   };
   $scope.$on('$ionicParentView.enter', $scope.enter);
 
@@ -422,9 +421,10 @@ function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, state) {
+    var isDefaultNode = !state.stateParams || !state.stateParams.server;
     var server = state.stateParams && state.stateParams.server || BMA.server;
-    var useSsl = state.stateParams && state.stateParams.ssl == "true" || BMA.useSsl;
-    var useTor = state.stateParams.tor == "true" || BMA.useTor;
+    var useSsl = state.stateParams && state.stateParams.ssl == "true" || (isDefaultNode ? BMA.useSsl : false);
+    var useTor = state.stateParams.tor == "true" || (isDefaultNode ? BMA.useTor : false);
 
     return $scope.load(server, useSsl, useTor)
       .then(function() {

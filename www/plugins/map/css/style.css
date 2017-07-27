@@ -12,6 +12,7 @@
 .legend .outline {
   border: 0;
 }
+
 .legend i {
   width: 16px;
   height: 16px;
@@ -20,37 +21,40 @@
   opacity: 0.7;
 }
 
-
-/* Control: Seach - see */
-/*.leaflet-marker-icon {*/
-  /*color: #fff;*/
-  /*font-size: 16px;*/
-  /*line-height: 16px;*/
-  /*text-align: center;*/
-  /*vertical-align: middle;*/
-  /*box-shadow: 2px 1px 4px rgba(0,0,0,0.3);*/
-  /*border-radius: 8px;*/
-  /*border:1px solid #fff;*/
-/*}*/
 .search-tip {
   white-space: nowrap;
 }
-.search-tip b {
-  color: #fff;
+
+/**********
+   Map network: Peer items
+**********/
+
+.leaflet-popup .item-peer {
+  padding-top: 9px;
+  padding-bottom: 3px;
 }
-.search-tip.member b {
-  background: #38aadd; /* blue */
+
+.leaflet-popup .item.item-icon-left > i.avatar:first-child {
+  left: 9px;
+  top: 0;
 }
-.search-tip.wallet b {
-  background: #a3a3a3; /* lightgray */
+
+.leaflet-popup .item-peer .badge {
+  top: inherit;
+  bottom: 0px;
+  right: 5px;
+  font-size: 12px;
 }
-.search-tip.group b {
-  background: #71ae26; /* lightgray */
+
+.leaflet-popup .item-peer .badge.badge-secondary,
+.leaflet-popup .item-peer .badge .badge-secondary {
+  top: inherit;
+  bottom: -16px;
+  right: 5px;
+  font-size: 9px;
+  padding-right: 0px;
 }
-.search-tip b {
-  display: inline-block;
-  clear: left;
-  float: right;
-  padding: 0;
-  margin-left: 4px;
+
+.leaflet-popup .item-peer {
+  overflow: visible;
 }

@@ -36,27 +36,48 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
   // [NEW] Manage events from the page #/app/wot/map
   .controller('MapWotViewCtrl', function($scope, $q, $translate, $state, $filter, $templateCache, $interpolate, $timeout, $ionicHistory,
-                                         esGeo, UIUtils, MapUtils, MapData, leafletData) {
+                                         esGeo, UIUtils, MapUtils, mapWot, leafletData) {
     'ngInject';
 
     var
       // Create a  hidden layer, to hold search markers
-      markersSearchLayer = L.layerGroup({visible: false});
+      markersSearchLayer = L.layerGroup({visible: false}),
+      icons= {
+        member: {
+          type: 'awesomeMarker',
+            icon: 'person',
+            markerColor: 'blue'
+        },
+        wallet: {
+          type: 'awesomeMarker',
+            icon: 'key',
+            markerColor: 'lightgray'
+        },
+        group: {
+          type: 'awesomeMarker',
+            icon: 'person-stalker',
+            markerColor: 'green'
+        },
+        registry: {
+          type: 'awesomeMarker',
+            icon: 'person-stalker', // TODO
+            markerColor: 'green' // TODO
+        }
+      };
 
-    $scope.init = false;
     $scope.loading = true;
     $scope.mapId = 'map-wot-' + $scope.$id;
     $scope.map = MapUtils.map({
       layers: {
         overlays: {
-          member: {
-            type: 'group',
-            name: 'MAP.WOT.VIEW.LEGEND.MEMBER',
-            visible: true
-          },
           wallet: {
             type: 'group',
-            name: 'MAP.WOT.VIEW.LEGEND.WALLET',
+            name: 'MAP.WOT.VIEW.LAYER.WALLET',
+            visible: true
+          },
+          member: {
+            type: 'group',
+            name: 'MAP.WOT.VIEW.LAYER.MEMBER',
             visible: true
           }
         }
@@ -89,7 +110,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       UIUtils.loading.show();
       // endRemoveIf(no-device)
 
-      return MapData.load()
+      return mapWot.load()
         .then(function(res) {
           if (!res || !res.length) {
             $scope.loading = false;
@@ -100,18 +121,19 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
 
           // Sort with member first
-          res = _.sortBy(res, function(hit) {
+          /*res = _.sortBy(res, function(hit) {
             var score = 0;
             score += (!hit.uid) ? 100 : 0;
             return -score;
-          });
+          });*/
 
           var markers = res.reduce(function(res, hit) {
             var type = hit.uid ? 'member' : 'wallet';
             var shortPubkey = formatPubkey(hit.issuer);
             var marker = {
               layer: type,
-              icon: MapUtils.icon(type),
+              icon: icons[type],
+              opacity: 0.8,
               title: hit.title + ' | ' + shortPubkey,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
@@ -150,6 +172,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           return leafletData.getMap($scope.mapId);
         })
         .then(function(map) {
+          if (!map) return;
+
           // Update map center (if need)
           var needCenterUpdate = center && !angular.equals($scope.map.center, center);
           if (needCenterUpdate) {
@@ -190,18 +214,6 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
         inherit: true,
         notify: false}
       );
-    };
-
-    $scope.localizeMe = function() {
-      return esGeo.point.current()
-        .then(function(res) {
-          $scope.map.center = {
-            lat: res.lat,
-            lng: res.lon,
-            zoom: 14
-          };
-        })
-        .catch(UIUtils.onError('MAP.ERROR.LOCALIZE_ME_FAILED'));
     };
 
     // removeIf(device)

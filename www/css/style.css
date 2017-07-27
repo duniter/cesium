@@ -142,24 +142,9 @@
     display:none;
 }
 
-
-.item-peer:hover .badge.badge-energized,
-.item-peer:hover .badge.badge-balanced
-{
-    color: #fff !important;
-}
-
-.list .item-peer .badge.badge-secondary,
-.list .item-peer .badge .badge-secondary {
-  top: 31px;
-  font-size: 10px;
-  padding-right: 6px;
-}
-
 .settings .item-divider {
     background-color: #f5f5f5;
 }
-
 
 .no-margin {
   margin: 0 !important;
@@ -169,14 +154,28 @@
    Network/Peer items
 **********/
 
-.item-peer {
+
+.list .item-peer {
   padding-top: 9px;
   padding-bottom: 3px;
 }
 
-.item-peer .badge {
+.list .item-peer .badge {
   top: 14px;
   right: 6%;
+}
+
+.list .item-peer:hover .badge.badge-energized,
+.list .item-peer:hover .badge.badge-balanced
+{
+  color: #fff !important;
+}
+
+.list .item-peer .badge.badge-secondary,
+.list .item-peer .badge .badge-secondary {
+  top: 31px;
+  font-size: 10px;
+  padding-right: 6px;
 }
 
 /**********

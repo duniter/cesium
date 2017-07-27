@@ -1,8 +1,7 @@
 
-angular.module('cesium.map.data.services', ['cesium.services'])
+angular.module('cesium.map.wot.services', ['cesium.services'])
 
-// [NEW] Manage events from the page #/app/wot/map
-.factory('MapData', function(csHttp, esHttp, csWot) {
+.factory('mapWot', function(csHttp, esHttp, csWot) {
   'ngInject';
 
   var
