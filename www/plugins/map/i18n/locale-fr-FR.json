@@ -13,6 +13,9 @@
           "WALLET": "Non-membres"
         }
       }
+    },
+    "ERROR": {
+      "LOCALIZE_ME_FAILED": "Echec de la récupération de votre position"
     }
   }
 }
