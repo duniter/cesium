@@ -155,33 +155,14 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     $scope.updateView = function(data) {
       console.debug("[map] [peers] Updating UI");
 
-      $scope.search.results = data.peers;
       $scope.search.memberPeersCount = data.memberPeersCount;
       // Always tru if network not started (e.g. after leave+renter the view)
       $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
 
-      if (!$scope.search.results || !$scope.search.results.length) return; // nothing
-
+      // Store marker id, to be able to apply deletion
       var markerIdByPeerIdToRemove = angular.copy(markerIdByPeerId);
-      var lngStep = 0.001;
 
-      var updateMarker = function(marker, peer) {
-        marker.layer = !peer.online ? 'offline' : (peer.uid ? 'member' : 'mirror');
-        marker.icon = angular.copy(icons[marker.layer]);
-        marker.opacity = peer.online ? 0.9 : 0.7;
-        marker.title = peer.dns || peer.server;
-        if (peer.online && !peer.hasMainConsensusBlock) {
-          marker.icon.markerColor = peer.hasConsensusBlock ? 'beige' : 'lightgray';
-        }
-        if (!marker.lng) {
-          marker.lng = marker.position.lng + Math.random() / 1000;
-          marker.lat = marker.position.lat + Math.random() / 1000;
-        }
-
-        return marker;
-      };
-
-      _.forEach(data.peers, function(peer){
+      _.forEach(data.peers||[], function(peer){
         // skip TOR peer
         if (peer.isTor()) return; // already define
         // get marker id
@@ -189,7 +170,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
 
         // if already exists
         if (markerId && $scope.map.markers[markerId]) {
-          updateMarker($scope.map.markers[markerId], peer);
+          $scope.updateMarker($scope.map.markers[markerId], peer);
           delete markerIdByPeerIdToRemove[peer.id];
           return;
         }
@@ -200,7 +181,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
 
           // Create the marker
           .then(function(position){
-            var marker = updateMarker({
+            var marker = $scope.updateMarker({
               position: position,
               getMessageScope: function() {
                 var scope = $scope.$new();
@@ -220,14 +201,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
           .catch(function(err) {
             console.debug('No position found for IP ['+ip+']', err);
           });
-      });
-
-      // Remove old markers not found in the new result
-      _.forEach(_.keys(markerIdByPeerIdToRemove), function(peerId) {
-        delete markerIdByPeerId[peerId];
-      });
-      _.forEach(_.values(markerIdByPeerIdToRemove), function(markerId) {
-        delete $scope.map.markers[markerId];
       });
 
       leafletData.getMap($scope.mapId).then(function(map) {
@@ -255,6 +228,32 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
           delete $scope.stateCenter;
         }
       });
+
+      // Remove old markers not found in the new result
+      _.forEach(_.keys(markerIdByPeerIdToRemove), function(peerId) {
+        delete markerIdByPeerId[peerId];
+      });
+      _.forEach(_.values(markerIdByPeerIdToRemove), function(markerId) {
+        delete $scope.map.markers[markerId];
+      });
+
+
+    };
+
+    $scope.updateMarker = function(marker, peer) {
+      marker.layer = !peer.online ? 'offline' : (peer.uid ? 'member' : 'mirror');
+      marker.icon = angular.copy(icons[marker.layer]);
+      marker.opacity = peer.online ? 0.9 : 0.7;
+      marker.title = peer.dns || peer.server;
+      if (peer.online && !peer.hasMainConsensusBlock) {
+        marker.icon.markerColor = peer.hasConsensusBlock ? 'beige' : 'lightgray';
+      }
+      if (!marker.lng) {
+        marker.lng = marker.position.lng + Math.random() / 1000;
+        marker.lat = marker.position.lat + Math.random() / 1000;
+      }
+
+      return marker;
     };
 
   });
