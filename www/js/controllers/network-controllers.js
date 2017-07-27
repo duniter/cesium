@@ -151,12 +151,16 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
 
   $scope.updateView = function(data) {
     console.debug("[peers] Updating UI");
+    $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
     $scope.search.results = data.peers;
     $scope.search.memberPeersCount = data.memberPeersCount;
     // Always tru if network not started (e.g. after leave+renter the view)
     $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
     if ($scope.motion && $scope.search.results && $scope.search.results.length > 0) {
       $scope.motion.show({selector: '.item-peer'});
+    }
+    if (!$scope.loading) {
+      $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
     }
   };
 
@@ -370,7 +374,7 @@ function NetworkLookupPopoverController($scope, $controller) {
   $scope.enter();
 }
 
-function PeerInfoPopoverController($scope, csCurrency) {
+function PeerInfoPopoverController($scope, csSettings, csCurrency, BMA) {
   'ngInject';
 
   $scope.loading = true;
@@ -379,17 +383,32 @@ function PeerInfoPopoverController($scope, csCurrency) {
   $scope.enter = function() {
     csCurrency.blockchain.current()
       .then(function(block) {
-        $scope.formData = block;
+        $scope.formData = angular.copy(block);
+        $scope.formData.useSsl = BMA.useSsl;
       })
       .then(function() {
         $scope.loading = false;
+        $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
       });
   };
 
   // Update UI on new block
   csCurrency.api.data.on.newBlock($scope, function(block) {
-    $scope.formData = block;
-    console.debug("[peer info] Received a new block: ", block);
+    if ($scope.loading) return;
+    $scope.formData = angular.copy(block);
+    $scope.formData.useSsl = BMA.useSsl;
+    console.debug("[peer info] Received new block ", block);
+    $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+  });
+
+  // Update UI on settings changed
+  csSettings.api.data.on.changed($scope, function(data) {
+    if ($scope.loading) return;
+    if ($scope.formData.useSsl != BMA.useSsl) {
+      console.debug("[peer info] Peer settings changed");
+      $scope.formData.useSsl = BMA.useSsl;
+      $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+    }
   });
 
   // Enter the popover
@@ -403,12 +422,11 @@ function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
   $scope.loading = true;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    if (!state.stateParams || !state.stateParams.server) return;
+    var server = state.stateParams && state.stateParams.server || BMA.server;
+    var useSsl = state.stateParams && state.stateParams.ssl == "true" || BMA.useSsl;
+    var useTor = state.stateParams.tor == "true" || BMA.useTor;
 
-    var useSsl = state.stateParams.ssl == "true";
-    var useTor = state.stateParams.tor == "true";
-
-    return $scope.load(state.stateParams.server, useSsl, useTor)
+    return $scope.load(server, useSsl, useTor)
       .then(function() {
         return $scope.$broadcast('$csExtension.enter', e, state);
       })

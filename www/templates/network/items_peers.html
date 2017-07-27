@@ -1,4 +1,5 @@
-<bind-notifier bind-notifier="{ rebind:search.results}" ng-class="::motion.ionListClass">
+<!-- bind-notifier="{ rebind:search.results}" -->
+<bind-notifier  ng-class="::motion.ionListClass">
 
   <div class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom" ng-if="isHttps && expertMode">
     <small><i class="icon ion-alert-circled"></i> {{'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}</small>

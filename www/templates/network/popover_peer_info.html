@@ -5,7 +5,7 @@
       {{'PEER.VIEW.TITLE'|translate}}
     </div>
   </ion-header-bar>
-  <ion-content  scroll="false">
+  <ion-content  scroll="false" >
     <div class="center" ng-if="loading">
       <ion-spinner icon="android"></ion-spinner>
     </div>
@@ -14,15 +14,15 @@
       <div class="item">
         <i class="ion-locked"></i>
         {{'NETWORK.VIEW.ENDPOINTS.BMAS'|translate}}
-        <div class="badge badge-balanced" ng-if="$root.settings.node.useSsl" translate>COMMON.BTN_YES</div>
-        <div class="badge badge-assertive" ng-if="!$root.settings.node.useSsl" translate>COMMON.BTN_NO</div>
+        <div class="badge badge-balanced" ng-if=":rebind:formData.useSsl" translate>COMMON.BTN_YES</div>
+        <div class="badge badge-assertive" ng-if=":rebind:!formData.useSsl" translate>COMMON.BTN_NO</div>
       </div>
 
       <div class="item">
         <i class="ion-cube"></i>
         {{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}
         <div class="badge badge-balanced">
-          {{formData.number | formatInteger}}
+          {{:rebind:formData.number | formatInteger}}
         </div>
       </div>
 
@@ -30,7 +30,7 @@
           <i class="ion-clock"></i>
           {{'CURRENCY.VIEW.MEDIAN_TIME'|translate}}
         <div class="badge dark">
-          {{formData.medianTime | formatDate}}
+          {{:rebind:formData.medianTime | formatDate}}
         </div>
       </div>
 
@@ -38,7 +38,7 @@
         <i class="ion-lock-combination"></i>
         {{'CURRENCY.VIEW.POW_MIN'|translate}}
         <div class="badge dark">
-          {{formData.powMin | formatInteger}}
+          {{:rebind:formData.powMin | formatInteger}}
         </div>
       </div>
 
@@ -60,9 +60,9 @@
     <!-- show all -->
     <div class="pull-right">
       <a class="positive"
-         ui-sref="app.network"
+         ui-sref="app.view_peer"
          ng-click="closePopover()"
-         translate>COMMON.NOTIFICATIONS.SHOW_ALL</a>
+         translate>PEER.BTN_SHOW_PEER</a>
     </div>
   </ion-footer-bar>
 </ion-popover-view>

@@ -205,7 +205,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
    */
   $scope.leave = function() {
     if ($scope.wsBlock) {
-      console.info('[block] Stopping websocket on block');
+      console.debug('[block] Stopping websocket [/ws/block]');
       $scope.wsBlock.close();
       delete $scope.wsBlock;
     }
@@ -361,70 +361,79 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
 
   $scope.startListenBlock = function() {
     if (!$scope.wsBlock) {
-      console.info('[block] Starting websocket on block');
-      $scope.wsBlock = $scope.node.websocket.block();
-    }
-
-    var showBlock = function(block){
-      // Force rebind
-      $scope.$broadcast('$$rebind::rebind');
-      $scope.motion.show({selector: '#block-'+block.number});
-    };
-
-    $scope.wsBlock.on(function(json) {
-      // Skip if still loading or if filter/sort is not the default (not last blocks)
-      if ($scope.search.loading || !json || $scope.search.type != 'last' ||
-        ($scope.search.sort && $scope.search.sort != 'desc')) return; // skip
-
-      var block = new Block(json);
-      block.cleanData(); // release arrays content
-
-      // Make sure results is init
-      $scope.search.results = $scope.search.results || [];
-
-      if (!$scope.search.results.length) {
-        console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
-        // add it to result
-        $scope.search.total++;
-        $scope.search.results.push(block);
-
-        // Prepare the new block, then show it
-        $scope.doPrepareResult([block])
-          .then(function() {
-            return showBlock(block);
-          });
+      if ($scope.node == BMA) {
+        csCurrency.api.data.on.newBlock($scope, $scope.onBlock);
       }
       else {
-        // Find existing block, by number
-        var existingBlock = _.findWhere($scope.search.results, {number: block.number});
+        console.debug('[block] Listening on websocket [/ws/block]');
+        $scope.wsBlock = $scope.node.websocket.block();
+        $scope.wsBlock.on(function(json) {
+          // Skip if WS closed (after leave view - should never happen) or invalid json
+          if (!$scope.wsBlock || !json) return;
+          var block = new Block(json);
+          block.cleanData(); // Remove unused content (arrays...)
+          $scope.onBlock(block);
+        });
+      }
+    }
+  };
 
-        // replace existing block (fork could have replaced previous block)
-        if (existingBlock) {
-          if (existingBlock.hash != block.hash) {
-            console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
-            // Replace existing content
-            angular.copy(block, existingBlock);
-            // Prepare the new block, then show it
-            $scope.doPrepareResult([block, $scope.search.results[1]])
-              .then(function() {
-                return showBlock(existingBlock);
-              });
-          }
-        }
-        else {
-          console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
-          // Insert at index 0
-          $scope.search.total++;
-          $scope.search.results.splice(0, 0, block);
+  $scope.onBlock = function(block) {
+    // Skip if still loading or if filter/sort is not the default (not last blocks)
+    if ($scope.search.loading || $scope.search.type != 'last' ||
+      ($scope.search.sort && $scope.search.sort != 'desc')) return; // skip
 
+    // Make sure results is init
+    $scope.search.results = $scope.search.results || [];
+
+    if (!$scope.search.results.length) {
+      console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+      // add it to result
+      $scope.search.total++;
+      $scope.search.results.push(block);
+
+      // Prepare the new block, then show it
+      $scope.doPrepareResult([block])
+        .then(function() {
+          return $scope.showBlock(block);
+        });
+    }
+    else {
+      // Find existing block, by number
+      var existingBlock = _.findWhere($scope.search.results, {number: block.number});
+
+      // replace existing block (fork could have replaced previous block)
+      if (existingBlock) {
+        if (existingBlock.hash != block.hash) {
+          console.debug('[ES] [blockchain] block #{0} updated (by websocket)'.format(block.number));
+          // Replace existing content
+          angular.copy(block, existingBlock);
           // Prepare the new block, then show it
           $scope.doPrepareResult([block, $scope.search.results[1]])
             .then(function() {
-              return showBlock(block);
+              return $scope.showBlock(existingBlock);
             });
         }
       }
-    });
+      else {
+        console.debug('[ES] [blockchain] new block #{0} received (by websocket)'.format(block.number));
+        // Insert at index 0
+        $scope.search.total++;
+        $scope.search.results.splice(0, 0, block);
+
+        // Prepare the new block, then show it
+        $scope.doPrepareResult([block, $scope.search.results[1]])
+          .then(function() {
+            return $scope.showBlock(block);
+          });
+      }
+    }
+  };
+
+  $scope.showBlock = function(block){
+    // Force rebind
+    $scope.$broadcast('$$rebind::rebind');
+    $scope.motion.show({selector: '#block-'+block.number});
   };
 
   $scope.selectBlock = function(block) {

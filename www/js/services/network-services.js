@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api, csCurrency) {
   'ngInject';
 
   factory = function(id) {
@@ -16,6 +16,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
 
       data = {
         bma: null,
+        websockets: [],
         loading: true,
         peers: [],
         filter: {
@@ -45,6 +46,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
 
       resetData = function() {
         data.bma = null;
+        data.websockets = [];
         data.peers.splice(0);
         data.filter = {
           member: true,
@@ -517,7 +519,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
 
       startListeningOnSocket = function() {
         // Listen for new block
-        data.bma.websocket.block().on(function(block) {
+        var wsBlock = data.bma.websocket.block();
+        data.websockets.push(wsBlock);
+        wsBlock.on(function(block) {
           if (!block || data.loading) return;
           var buid = [block.number, block.hash].join('-');
           if (data.knownBlocks.indexOf(buid) === -1) {
@@ -536,7 +540,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           }
         });
         // Listen for new peer
-        data.bma.websocket.peer().on(function(json) {
+        var wsPeer = data.bma.websocket.peer();
+        data.websockets.push(wsPeer);
+        wsPeer.on(function(json) {
           if (!json || data.loading) return;
           var newPeers = [];
           addOrRefreshPeerFromJson(json, newPeers)
@@ -585,7 +591,10 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
       close = function() {
         if (data.bma) {
           console.info('[network] Stopping');
-          data.bma.websocket.close();
+
+          _.forEach(data.websockets, function(ws){
+            ws.close();
+          });
           resetData();
         }
       },

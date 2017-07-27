@@ -148,7 +148,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
     function onBlock(json) {
       var block = new Block(json);
-      block.cleanData(); // keep only count values
+      block.cleanData(); // Remove unused content (arrays...) and keep items count
       console.debug('[currency] Received new block', block);
 
       data.currentBlock = block;
