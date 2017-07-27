@@ -1,9 +1,23 @@
 {
   "MAP": {
-    "WOT": {
-      "BTN_SHOW_IDENTITY": "Consulter la fiche",
+    "NETWORK": {
       "LOOKUP": {
-        "BTN_SHOW_MAP": "Carte"
+        "BTN_MAP": "Carte",
+        "BTN_MAP_HELP": "Ouvrir la carte des noeuds"
+      },
+      "VIEW": {
+        "TITLE": "Carte des membres",
+        "SEARCH_DOTS": "Rechercher...",
+        "LEGEND": {
+          "MEMBER": "Membre",
+          "WALLET": "Non-membres"
+        }
+      }
+    },
+    "WOT": {
+      "LOOKUP": {
+        "BTN_MAP": "Carte",
+        "BTN_MAP_HELP": "Ouvrir la carte des membres"
       },
       "VIEW": {
         "TITLE": "Carte des membres",

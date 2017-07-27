@@ -35,118 +35,33 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
   })
 
   // [NEW] Manage events from the page #/app/wot/map
-  .controller('MapWotViewCtrl', function($scope, $q, $translate, $state, $filter, $templateCache, $timeout, $ionicHistory,
-                                         esGeo, UIUtils, MapData, leafletData) {
+  .controller('MapWotViewCtrl', function($scope, $q, $translate, $state, $filter, $templateCache, $interpolate, $timeout, $ionicHistory,
+                                         esGeo, UIUtils, MapUtils, MapData, leafletData) {
     'ngInject';
 
-    var constants = {
-      FRANCE: {
-        lat: 47.35, lng: 5.65, zoom: 6
-      },
-      ICONS: {
-        member: {
-          type: 'awesomeMarker',
-          icon: 'person',
-          markerColor: 'blue'
-        },
-        wallet: {
-          type: 'awesomeMarker',
-          icon: 'key',
-          markerColor: 'lightgray'
-        },
-        group: {
-          type: 'awesomeMarker',
-          icon: 'person-stalker',
-          markerColor: 'green'
-        },
-        registry: {
-          type: 'awesomeMarker',
-          icon: 'person-stalker', // TODO
-          markerColor: 'green' // TODO
-        }
-      }
-    };
-    constants.DEFAULT_CENTER = constants.FRANCE;
     var
-      markersSearchLayer,
-      searchControl;
+      // Create a  hidden layer, to hold search markers
+      markersSearchLayer = L.layerGroup({visible: false});
 
     $scope.init = false;
     $scope.loading = true;
     $scope.mapId = 'map-wot-' + $scope.$id;
-    $scope.map = {
-      center: angular.copy(constants.DEFAULT_CENTER),
-      defaults: {
-        scrollWheelZoom: true
-      },
+    $scope.map = MapUtils.map({
       layers: {
-        baselayers: {
-          openStreetMap: {
-            name: 'OpenStreetMap',
-            type: 'xyz',
-            url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          }
-        },
         overlays: {
           member: {
             type: 'group',
-            name: '',
+            name: 'MAP.WOT.VIEW.LEGEND.MEMBER',
             visible: true
           },
           wallet: {
             type: 'group',
-            name: '',
+            name: 'MAP.WOT.VIEW.LEGEND.WALLET',
             visible: true
           }
         }
-      },
-      legend: {},
-      controls: {
-        custom: []
       }
-    };
-
-    $scope.init = function() {
-      if ($scope.initialized) return $q.when(); // init only once
-
-      return $translate(['MAP.WOT.VIEW.LEGEND.MEMBER', 'MAP.WOT.VIEW.LEGEND.WALLET', 'MAP.WOT.VIEW.SEARCH_DOTS', 'COMMON.SEARCH_NO_RESULT'])
-        .then(function(translations){
-
-          // Set layers overlays
-          $scope.map.layers.overlays.member.name=translations['MAP.WOT.VIEW.LEGEND.MEMBER'];
-          $scope.map.layers.overlays.wallet.name=translations['MAP.WOT.VIEW.LEGEND.WALLET'];
-
-          // Create a  hidden layer, to hold search markers
-          markersSearchLayer = L.layerGroup({visible: false});
-
-          // Add search control
-          searchControl = L.control.search({
-            layer: markersSearchLayer,
-            initial: false,
-            marker: false,
-            propertyName: 'title',
-            position: 'topleft',
-            zoom: 13,
-            buildTip: function(text, val) {
-              var marker = val.layer.options;
-              var title = marker.name != marker.uid ? marker.name +' ' : '';
-              if (marker.type == 'member') {
-                return '<a href="#" class="'+marker.type+'">'+title+'<span class="positive"><i class="icon ion-person"></i> '+marker.uid+'</span></a>';
-              }
-              else {
-                return '<a href="#" class="'+marker.type+'">'+title+'<span class="gray"><i class="icon ion-key"></i> '+marker.shortPubkey+'</span></a>';
-              }
-
-              return '<a href="#" class="'+marker.type+'">'+title+'</a>';
-            },
-            textPlaceholder: translations['MAP.WOT.VIEW.SEARCH_DOTS'],
-            textErr: translations['COMMON.SEARCH_NO_RESULT'],
-            markerLocation: true
-          });
-
-          $scope.initialized = true;
-        });
-    };
+    });
 
     // [NEW] When opening the view
     $scope.enter = function(e, state) {
@@ -157,32 +72,11 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
         $scope.stateName = state && state.stateName;
         $scope.stateParams = angular.copy(state && state.stateParams||{});
 
-        // Read state params
-        var center;
-        if (state.stateParams) {
-          if (state.stateParams.lat) {
-            center = {};
-            center.lat = parseFloat(state.stateParams.lat);
-          }
-          if (state.stateParams.lng) {
-            center = center || {};
-            center.lng = parseFloat(state.stateParams.lng);
-          }
-          if (state.stateParams.zoom) {
-            center = center || {};
-            center.zoom = parseFloat(state.stateParams.zoom);
-          }
-          if (center) {
-            center = angular.merge({}, constants.DEFAULT_CENTER, center);
-          }
-        }
+        // Read center from state params
+        var center = MapUtils.center(state.stateParams);
 
-        // Init map
-        return $scope.init()
-          .then(function() {
-            // Load data
-            return $scope.load(center);
-          });
+        // Load data
+        return $scope.load(center);
       }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
@@ -217,7 +111,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
             var shortPubkey = formatPubkey(hit.issuer);
             var marker = {
               layer: type,
-              icon: constants.ICONS[type],
+              icon: MapUtils.icon(type),
               title: hit.title + ' | ' + shortPubkey,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
@@ -240,7 +134,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                 className: type + ' ng-hide',
                 iconSize: L.point(0, 0)
               })
-            }, {title: searchText, shortPubkey: shortPubkey, uid: hit.uid, name: hit.title});
+            }, {title: searchText, issuer: hit.issuer, uid: hit.uid, name: hit.title});
             markersSearchLayer.addLayer(new L.Marker({
                 lat: hit.geoPoint.lat,
                 lng: hit.geoPoint.lon
@@ -250,28 +144,30 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           }, {});
 
           $scope.map.markers = markers;
+          $scope.loading = false;
+          UIUtils.loading.hide();
 
+          return leafletData.getMap($scope.mapId);
+        })
+        .then(function(map) {
+          // Update map center (if need)
+          var needCenterUpdate = center && !angular.equals($scope.map.center, center);
+          if (needCenterUpdate) {
+            MapUtils.updateCenter(map, center);
+          }
 
-          leafletData.getMap($scope.mapId).then(function(map) {
-            // Add search control to map
-            searchControl.addTo(map);
+          // Add localize me control
+          MapUtils.control.localizeMe().addTo(map);
 
-            // Add center to me control to map
-            L.easyButton('icon ion-android-locate', function(btn, map){
-              $scope.localizeMe();
-            }).addTo(map);
-
-            var needCenterUpdate = center && !angular.equals($scope.map.center, center);
-            if (needCenterUpdate) {
-              //angular.merge($scope.map.center, center);
-              $timeout(function() {
-                map.invalidateSize();
-                map._resetView(center, center.zoom, true);
-              }, 300);
+          // Add search control
+          var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
+          MapUtils.control.search({
+            layer: markersSearchLayer,
+            propertyName: 'title',
+            buildTip: function(text, val) {
+              return searchTip(val.layer.options);
             }
-            $scope.loading = false;
-            UIUtils.loading.hide();
-          });
+          }).addTo(map);
         });
     };
 
@@ -285,9 +181,9 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       });
 
       $scope.stateParams = $scope.stateParams || {};
-      $scope.stateParams.lat = ($scope.map.center.lat != constants.DEFAULT_CENTER.lat) ? $scope.map.center.lat : undefined;
-      $scope.stateParams.lng = ($scope.map.center.lng != constants.DEFAULT_CENTER.lng) ? $scope.map.center.lng : undefined;
-      $scope.stateParams.zoom = ($scope.map.center.zoom != constants.DEFAULT_CENTER.zoom) ? $scope.map.center.zoom : undefined;
+      $scope.stateParams.lat = ($scope.map.center.lat != MapUtils.constants.DEFAULT_CENTER.lat) ? $scope.map.center.lat : undefined;
+      $scope.stateParams.lng = ($scope.map.center.lng != MapUtils.constants.DEFAULT_CENTER.lng) ? $scope.map.center.lng : undefined;
+      $scope.stateParams.zoom = ($scope.map.center.zoom != MapUtils.constants.DEFAULT_CENTER.zoom) ? $scope.map.center.zoom : undefined;
 
       $state.go($scope.stateName, $scope.stateParams, {
         reload: false,

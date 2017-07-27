@@ -2,7 +2,7 @@
 angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalprecht.translate', 'cesium.translations'
 ])
 
-  .service('filterTranslations', function($rootScope, csPlatform, csSettings, $translate) {
+  .factory('filterTranslations', function($rootScope, csPlatform, csSettings, $translate) {
     'ngInject';
 
     var

@@ -1,0 +1,7 @@
+<a href="#" class="{{type}}">
+  {{name != uid ? name +' ' : ''}}
+  <span class="{{uid ? 'positive' : 'gray'}}">
+    <i class="icon {{uid ? 'ion-person' : 'ion-key'}}"></i>
+    {{uid ? uid : (issuer|formatPubkey) }}
+  </span>
+</a>

@@ -113,7 +113,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       if (scrypt_module_factory !== null){
         on_ready(scrypt_module_factory(options.requested_total_memory));
         that.scrypt.requested_total_memory = options.requested_total_memory;
-        console.log('inside async_load_scrypt', that);
+        //console.log('inside async_load_scrypt', that); // TODO manage memory changes
       }
       else {$timeout(function(){that.async_load_scrypt(on_ready, options);}, 100);}
     };
