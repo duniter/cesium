@@ -1,7 +1,8 @@
-<a href="#" class="{{type}}">
-  {{name != uid ? name +' ' : ''}}
+<a href="#">
+  {{server}}
   <span class="{{uid ? 'positive' : 'gray'}}">
     <i class="icon {{uid ? 'ion-person' : 'ion-key'}}"></i>
-    {{uid ? uid : (issuer|formatPubkey) }}
+    {{uid ? (name||uid) : (pubkey|formatPubkey) }}
   </span>
+  <span class="gray">{{ipv4 ? (ipv4 + ':' + port) : ''}}</span>
 </a>

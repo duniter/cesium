@@ -46,8 +46,10 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       formatPubkey = $filter('formatPubkey'),
       markerMessageTemplate,
       // Create a  hidden layer, to hold search markers
-      searchLayer = L.layerGroup({visible: false}),
+      markersSearchLayer = L.layerGroup({visible: false}),
+      formatPubkey = $filter('formatPubkey'),
       loadingControl,
+      searchControl,
       icons= {
         member: {
           type: 'awesomeMarker',
@@ -201,9 +203,38 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
             markerId = '' + markerCounter++;
             $scope.map.markers[markerId] = marker;
             markerIdByPeerId[peer.id] = markerId;
+
+            // Create a search marker (will be hide)
+            var searchServer = peer.dns || peer.server;
+            var searchText = searchServer +
+              (peer.uid ? (' | ' + peer.name||peer.uid) : '') +
+              ' | ' + formatPubkey(peer.pubkey);
+            var searchIp;;
+            if (bma.ipv4 && !(peer.dns || peer.server).startsWith(bma.ipv4)) {
+              searchIp = bma.ipv4;
+              searchText += ' | ' + bma.ipv4;
+            }
+            markersSearchLayer.addLayer(new L.Marker({
+                lat: position.lat,
+                lng: position.lng
+              },
+              {
+                opacity: 0,
+                icon: L.divIcon({
+                  className: 'ng-hide',
+                  iconSize: L.point(0, 0)
+                }),
+                title: searchText,
+                uid: peer.uid,
+                name: peer.name,
+                pubkey: peer.pubkey,
+                ipv4: searchIp,
+                port: bma.port,
+                server: (peer.dns || peer.server)
+              }));
           })
           .catch(function(err) {
-            console.debug('No position found for IP ['+ip+']', err);
+            console.debug('No position found for address ['+address+']', err);
           });
       });
 
@@ -212,8 +243,10 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         // Add loading control
         if (!loadingControl) {
           loadingControl = L.Control.loading({
+            position: 'topright',
             separate: true
-          }).addTo(map);
+          });
+          loadingControl.addTo(map);
           if ($scope.search.loading) {
             map.fire('dataloading');
           }
@@ -222,7 +255,20 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         else if (!$scope.search.loading) {
           $timeout(function() {
             map.fire('dataload');
-          }, 1000);
+          }, 500);
+        }
+
+        // Add search control
+        if (!searchControl) {
+          var searchTip = $interpolate($templateCache.get('plugins/map/templates/network/item_search_tooltip.html'));
+          searchControl = MapUtils.control.search({
+            layer: markersSearchLayer,
+            propertyName: 'title',
+            buildTip: function (text, val) {
+              return searchTip(val.layer.options);
+            }
+          });
+          searchControl.addTo(map);
         }
 
         // Recenter map// Update map center (if need)
@@ -231,6 +277,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
           MapUtils.updateCenter(map, $scope.stateCenter);
           delete $scope.stateCenter;
         }
+
       });
 
       // Remove old markers not found in the new result

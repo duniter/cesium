@@ -1,5 +1,6 @@
 
 angular.module('cesium.map.plugin', [
+    'leaflet-directive',
     // Services
     'cesium.map.services',
     // Controllers

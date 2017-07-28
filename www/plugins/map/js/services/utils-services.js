@@ -1,5 +1,5 @@
 
-angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
+angular.module('cesium.map.utils.services', ['cesium.services', 'leaflet-directive'])
 
 .factory('MapUtils', function($timeout, $q, $translate, leafletData, csSettings, esGeo, UIUtils) {
   'ngInject';

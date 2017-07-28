@@ -42,6 +42,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     var
       // Create a  hidden layer, to hold search markers
       markersSearchLayer = L.layerGroup({visible: false}),
+      loadingControl, searchControl,
       icons= {
         member: {
           type: 'awesomeMarker',
@@ -81,7 +82,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
             visible: true
           }
         }
-      }
+      },
+      markers: {}
     });
 
     // [NEW] When opening the view
@@ -106,13 +108,45 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     $scope.load = function(center) {
       $scope.loading = true;
 
-      // removeIf(no-device)
-      UIUtils.loading.show();
-      // endRemoveIf(no-device)
+      var map;
+      return leafletData.getMap($scope.mapId)
+        .then(function(res) {
+          map = res;
 
-      return mapWot.load()
+          // Add localize me control
+          MapUtils.control.localizeMe().addTo(map);
+
+          // Add search control
+          if (!searchControl) {
+            var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
+            searchControl = MapUtils.control.search({
+              layer: markersSearchLayer,
+              propertyName: 'title',
+              buildTip: function (text, val) {
+                return searchTip(val.layer.options);
+              }
+            });
+            searchControl.addTo(map);
+          }
+
+          // Add loading control
+          if (!loadingControl) {
+            loadingControl = L.Control.loading({
+              position: 'topright',
+              separate: true
+            });
+            loadingControl.addTo(map);
+          }
+
+          // Enable loading UI
+          map.fire('dataloading');
+
+          // Load wot data
+          return mapWot.load();
+        })
         .then(function(res) {
           if (!res || !res.length) {
+            map.fire('dataload');
             $scope.loading = false;
             return;
           }
@@ -127,7 +161,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
             return -score;
           });*/
 
-          var markers = res.reduce(function(res, hit) {
+          _.forEach(res, function(hit) {
             var type = hit.uid ? 'member' : 'wallet';
             var shortPubkey = formatPubkey(hit.issuer);
             var marker = {
@@ -145,7 +179,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
               focus: false,
               message: markerTemplate
             };
-            res[hit.issuer] = marker;
+            var id = hit.uid ? (hit.uid + ':' + hit.issuer) : hit.issuer;
+            $scope.map.markers[id] = marker;
 
             // Create a search marker (will be hide)
             var searchText = hit.title + ((hit.uid && hit.uid != hit.title) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
@@ -162,36 +197,18 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                 lng: hit.geoPoint.lon
               },
               searchMarker));
-            return res;
-          }, {});
+          });
 
-          $scope.map.markers = markers;
-          $scope.loading = false;
-          UIUtils.loading.hide();
-
-          return leafletData.getMap($scope.mapId);
-        })
-        .then(function(map) {
-          if (!map) return;
+          // end loading
+          $timeout(function() {
+            map.fire('dataload');
+          }, 1000);
 
           // Update map center (if need)
           var needCenterUpdate = center && !angular.equals($scope.map.center, center);
           if (needCenterUpdate) {
             MapUtils.updateCenter(map, center);
           }
-
-          // Add localize me control
-          MapUtils.control.localizeMe().addTo(map);
-
-          // Add search control
-          var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
-          MapUtils.control.search({
-            layer: markersSearchLayer,
-            propertyName: 'title',
-            buildTip: function(text, val) {
-              return searchTip(val.layer.options);
-            }
-          }).addTo(map);
         });
     };
 

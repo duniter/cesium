@@ -21,4 +21,11 @@
 .directory
 www/js/config.js
 
+www/css/ionic.app.css
 www/css/ionic.app.min.css
+
+# Leaflet generated files
+www/css/leaflet.app.css
+www/css/leaflet.app.min.css
+www/img/layers*.png
+www/img/marker*.png

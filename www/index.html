@@ -7,27 +7,16 @@
   <title>Cesium</title>
   <link rel="icon" href="./img/favicon.ico">
   <link rel="apple-touch-icon" href="./img/logo_57px.png">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="./manifest.json">
   <!-- build:css dist_css/cesium.css -->
-  <link href="css/ionic.app.css" rel="stylesheet">
-  <link href="css/style.css" rel="stylesheet">
-  <link href="css/angular-image-crop.css" rel="stylesheet">
-
+  <link rel="stylesheet" type="text/css" href="css/ionic.app.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
   <!--removeIf(device)-->
-  <link href="css/style-no-device.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/style-no-device.css">
   <!--endRemoveIf(device)-->
 
   <!--removeIf(no-plugin)-->
-  <link rel="stylesheet" type="text/css" href="lib/leaflet/dist/leaflet.css">
-  <link rel="stylesheet" type="text/css" href="lib/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
-  <!--removeIf(no-device)-->
-  <!--<link rel="stylesheet" type="text/css" href="lib/leaflet-search/dist/leaflet-search.mobile.src.css">-->
-  <!--endRemoveIf(no-device)-->
-  <!--removeIf(device)-->
-  <link rel="stylesheet" type="text/css" href="lib/leaflet-search/dist/leaflet-search.src.css">
-  <link rel="stylesheet" type="text/css" href="lib/leaflet.loading/src/Control.Loading.css">
-  <!--endRemoveIf(device)-->
-  <link rel="stylesheet" href="lib/Leaflet.EasyButton/src/easy-button.css">
+  <link rel="stylesheet" type="text/css" href="css/leaflet.app.min.css">
   <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/es/css/style.css">
   <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/graph/css/style.css">
   <link rel="stylesheet" type="text/css" href="dist/dist_css/plugins/map/css/style.css">
@@ -65,6 +54,8 @@
   <script src="lib/ionic/js/angular/angular-image-crop.js"></script>
   <script src="lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
   <script src="lib/ionic/js/angular/angular-idle.js"></script>
+  <script src="lib/ionic/js/angular/angular-simple-logger.light.js"></script>
+  <script src="lib/ionic/js/angular/angular-leaflet-directive.min.js"></script>
 
   <!--removeIf(ubuntu)--> <!-- FIXME: issue #463 -->
   <script src="lib/ionic/js/angular/angular-chart.min.js"></script>
@@ -84,13 +75,11 @@
   <!--endRemoveIf(no-device)-->
 
   <!--removeIf(no-plugin)-->
-  <script src="lib/leaflet/dist/leaflet.js"></script>
-  <script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
-  <script src="lib/ui-leaflet/dist/ui-leaflet.js"></script>
-  <script src="lib/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
-  <script src="lib/leaflet-search/dist/leaflet-search.src.js"></script>
-  <script src="lib/Leaflet.EasyButton/src/easy-button.js"></script>
-  <script src="lib/leaflet.loading/src/Control.Loading.js"></script>
+  <script src="js/vendor/leaflet.js"></script>
+  <script src="js/vendor/leaflet.awesome-markers.min.js"></script>
+  <script src="js/vendor/leaflet.search.min.js"></script>
+  <script src="js/vendor/leaflet.easy-button.js"></script>
+  <script src="js/vendor/leaflet.loading.js"></script>
   <!--endRemoveIf(no-plugin)-->
 
   <!-- endbuild -->
