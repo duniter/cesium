@@ -66,9 +66,8 @@ gulp.task('sass', ['sass-images'], function(done) {
       .pipe(sass()).on('error', sass.logError)
       .pipe(base64({
               baseDir: "./www/css",
-              extensions: ['svg', 'png', /\.jpg#datauri$/i],
-              maxImageSize: 14 * 1024,
-        debug: true
+              extensions: ['svg', 'png', 'gif', /\.jpg#datauri$/i],
+              maxImageSize: 14 * 1024
             }))
       .pipe(gulp.dest('./www/css/'))
       .pipe(cleanCss({
