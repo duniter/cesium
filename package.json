@@ -1,142 +1,142 @@
 {
-  "name": "cesium",
-  "version": "0.14.1",
-  "description": "Unhosted webapp client for Duniter network",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:duniter/cesium.git"
-  },
-  "scripts": {
-    "postinstall": "bower install",
-    "install-for-mobile": "ionic state restore",
-    "start": "ionic serve"
-  },
-  "keywords": [
-    "duniter",
-    "cesium",
-    "ionic",
-    "angular",
-    "cordova",
-    "crypto-currency"
-  ],
-  "author": "Duniter team",
-  "license": "GPL-3.0",
-  "readmeFilename": "README.md",
-  "bugs": {
-    "url": "https://github.com/duniter/cesium/issues",
-    "new": "https://github.com/duniter/cesium/issues/new?labels=bug"
-  },
-  "dependencies": {
-    "bower": "^1.8.0",
-    "cordova-android": "^6.2.3",
-    "cordova-plugin-camera": "^2.4.1",
-    "cordova-plugin-compat": "^1.1.0",
-    "cordova-plugin-console": "^1.0.7",
-    "cordova-plugin-crosswalk-webview": "^2.3.0",
-    "cordova-plugin-device": "^1.1.6",
-    "cordova-plugin-dialogs": "^1.3.3",
-    "cordova-plugin-inappbrowser": "^1.7.1",
-    "cordova-plugin-minisodium": "^1.0.0",
-    "cordova-plugin-secure-storage": "^2.6.8",
-    "cordova-plugin-splashscreen": "^3.2.2",
-    "cordova-plugin-statusbar": "^2.2.3",
-    "cordova-plugin-vibration": "^2.1.5",
-    "cordova-plugin-websocket": "^0.12.2",
-    "cordova-plugin-whitelist": "^1.3.2",
-    "cordova-plugin-x-toast": "^2.6.0",
-    "delete-empty": "^0.1.3",
-    "gulp": "^3.9.1",
-    "gulp-bump": "^2.1.0",
-    "gulp-concat": "^2.2.0",
-    "gulp-rename": "^1.2.0",
-    "gulp-sass": "^2.2.0",
-    "ionic": "^1.7.16",
-    "ionic-plugin-keyboard": "^2.2.1",
-    "node-sass": "^3.3.3",
-    "phonegap-plugin-barcodescanner": "git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git"
-  },
-  "devDependencies": {
-    "cordova-uglify": "^0.2.3",
-    "del": "^2.2.0",
-    "fs": "0.0.2",
-    "gulp": "^3.9.1",
-    "gulp-angular-templatecache": "^1.8.0",
-    "gulp-angular-translate": "^0.1.4",
-    "gulp-base64": "^0.1.3",
-    "gulp-clean": "^0.3.2",
-    "gulp-clean-css": "^2.0.10",
-    "gulp-concat-css": "^2.3.0",
-    "gulp-css-base64": "^1.3.4",
-    "gulp-csso": "^2.0.0",
-    "gulp-filter": "^4.0.0",
-    "gulp-header": "^1.7.1",
-    "gulp-html-remove": "^0.1.1",
-    "gulp-htmlmin": "^2.0.0",
-    "gulp-jshint": "^2.0.1",
-    "gulp-ng-annotate": "^2.0.0",
-    "gulp-ng-constant": "^1.1.0",
-    "gulp-remove-code": "^1.0.2",
-    "gulp-replace": "^0.5.4",
-    "gulp-rev": "^7.0.0",
-    "gulp-rev-replace": "^0.4.3",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.5.3",
-    "gulp-useref": "^3.1.0",
-    "gulp-util": "^2.2.14",
-    "gulp-zip": "^3.2.0",
-    "ionic-minify": "^2.0.8",
-    "jshint": "^2.9.2",
-    "mv": "^2.1.1",
-    "playup": "^1.0.2",
-    "shelljs": "^0.3.0",
-    "yargs": "^4.3.1"
-  },
-  "cordovaPlugins": [
-    "cordova-plugin-whitelist",
-    "cordova-plugin-splashscreen",
-    "cordova-plugin-console",
-    "ionic-plugin-keyboard",
-    "cordova-plugin-device",
-    "cordova-plugin-statusbar",
-    "cordova-plugin-camera",
-    "cordova-plugin-websocket",
-    "cordova-plugin-vibration",
-    "cordova-plugin-dialogs",
-    "cordova-plugin-minisodium",
-    "cordova-plugin-secure-storage",
-    {
-      "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
-      "id": "phonegap-plugin-barcodescanner"
+    "name": "cesium",
+    "version": "0.15.0",
+    "description": "Unhosted webapp client for Duniter network",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:duniter/cesium.git"
     },
-    "cordova-plugin-inappbrowser",
-    "cordova-plugin-x-toast"
-  ],
-  "cordovaPlatforms": [
-    "android",
-    "firefoxos"
-  ],
-  "cordova": {
-    "plugins": {
-      "cordova-plugin-camera": {},
-      "cordova-plugin-console": {},
-      "cordova-plugin-device": {},
-      "cordova-plugin-dialogs": {},
-      "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-minisodium": {},
-      "cordova-plugin-secure-storage": {},
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-statusbar": {},
-      "cordova-plugin-vibration": {},
-      "cordova-plugin-websocket": {},
-      "cordova-plugin-whitelist": {},
-      "cordova-plugin-x-toast": {},
-      "ionic-plugin-keyboard": {},
-      "phonegap-plugin-barcodescanner": {
-        "CAMERA_USAGE_DESCRIPTION": " "
-      }
+    "scripts": {
+        "postinstall": "bower install",
+        "install-for-mobile": "ionic state restore",
+        "start": "ionic serve"
     },
-    "platforms": [
-      "android"
-    ]
-  }
+    "keywords": [
+        "duniter",
+        "cesium",
+        "ionic",
+        "angular",
+        "cordova",
+        "crypto-currency"
+    ],
+    "author": "Duniter team",
+    "license": "GPL-3.0",
+    "readmeFilename": "README.md",
+    "bugs": {
+        "url": "https://github.com/duniter/cesium/issues",
+        "new": "https://github.com/duniter/cesium/issues/new?labels=bug"
+    },
+    "dependencies": {
+        "bower": "^1.8.0",
+        "cordova-android": "^6.2.3",
+        "cordova-plugin-camera": "^2.4.1",
+        "cordova-plugin-compat": "^1.1.0",
+        "cordova-plugin-console": "^1.0.7",
+        "cordova-plugin-crosswalk-webview": "^2.3.0",
+        "cordova-plugin-device": "^1.1.6",
+        "cordova-plugin-dialogs": "^1.3.3",
+        "cordova-plugin-inappbrowser": "^1.7.1",
+        "cordova-plugin-minisodium": "^1.0.0",
+        "cordova-plugin-secure-storage": "^2.6.8",
+        "cordova-plugin-splashscreen": "^3.2.2",
+        "cordova-plugin-statusbar": "^2.2.3",
+        "cordova-plugin-vibration": "^2.1.5",
+        "cordova-plugin-websocket": "^0.12.2",
+        "cordova-plugin-whitelist": "^1.3.2",
+        "cordova-plugin-x-toast": "^2.6.0",
+        "delete-empty": "^0.1.3",
+        "gulp": "^3.9.1",
+        "gulp-bump": "^2.1.0",
+        "gulp-concat": "^2.2.0",
+        "gulp-rename": "^1.2.0",
+        "gulp-sass": "^2.2.0",
+        "ionic": "^1.7.16",
+        "ionic-plugin-keyboard": "^2.2.1",
+        "node-sass": "^3.3.3",
+        "phonegap-plugin-barcodescanner": "git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git"
+    },
+    "devDependencies": {
+        "cordova-uglify": "^0.2.3",
+        "del": "^2.2.0",
+        "fs": "0.0.2",
+        "gulp": "^3.9.1",
+        "gulp-angular-templatecache": "^1.8.0",
+        "gulp-angular-translate": "^0.1.4",
+        "gulp-base64": "^0.1.3",
+        "gulp-clean": "^0.3.2",
+        "gulp-clean-css": "^2.0.10",
+        "gulp-concat-css": "^2.3.0",
+        "gulp-css-base64": "^1.3.4",
+        "gulp-csso": "^2.0.0",
+        "gulp-filter": "^4.0.0",
+        "gulp-header": "^1.7.1",
+        "gulp-html-remove": "^0.1.1",
+        "gulp-htmlmin": "^2.0.0",
+        "gulp-jshint": "^2.0.1",
+        "gulp-ng-annotate": "^2.0.0",
+        "gulp-ng-constant": "^1.1.0",
+        "gulp-remove-code": "^1.0.2",
+        "gulp-replace": "^0.5.4",
+        "gulp-rev": "^7.0.0",
+        "gulp-rev-replace": "^0.4.3",
+        "gulp-sourcemaps": "^1.6.0",
+        "gulp-uglify": "^1.5.3",
+        "gulp-useref": "^3.1.0",
+        "gulp-util": "^2.2.14",
+        "gulp-zip": "^3.2.0",
+        "ionic-minify": "^2.0.8",
+        "jshint": "^2.9.2",
+        "mv": "^2.1.1",
+        "playup": "^1.0.2",
+        "shelljs": "^0.3.0",
+        "yargs": "^4.3.1"
+    },
+    "cordovaPlugins": [
+        "cordova-plugin-whitelist",
+        "cordova-plugin-splashscreen",
+        "cordova-plugin-console",
+        "ionic-plugin-keyboard",
+        "cordova-plugin-device",
+        "cordova-plugin-statusbar",
+        "cordova-plugin-camera",
+        "cordova-plugin-websocket",
+        "cordova-plugin-vibration",
+        "cordova-plugin-dialogs",
+        "cordova-plugin-minisodium",
+        "cordova-plugin-secure-storage",
+        {
+            "locator": "https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
+            "id": "phonegap-plugin-barcodescanner"
+        },
+        "cordova-plugin-inappbrowser",
+        "cordova-plugin-x-toast"
+    ],
+    "cordovaPlatforms": [
+        "android",
+        "firefoxos"
+    ],
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-camera": {},
+            "cordova-plugin-console": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-dialogs": {},
+            "cordova-plugin-inappbrowser": {},
+            "cordova-plugin-minisodium": {},
+            "cordova-plugin-secure-storage": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-vibration": {},
+            "cordova-plugin-websocket": {},
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-x-toast": {},
+            "ionic-plugin-keyboard": {},
+            "phonegap-plugin-barcodescanner": {
+                "CAMERA_USAGE_DESCRIPTION": " "
+            }
+        },
+        "platforms": [
+            "android"
+        ]
+    }
 }
