@@ -65,10 +65,11 @@ gulp.task('sass', ['sass-images'], function(done) {
     gulp.src('./scss/ionic.app.scss')
       .pipe(sass()).on('error', sass.logError)
       .pipe(base64({
-                      baseDir: "./www/css",
-                      extensions: ['svg', 'png', 'gif', /\.jpg#datauri$/i],
-                      maxImageSize: 14 * 1024
-                  }))
+              baseDir: "./www/css",
+              extensions: ['svg', 'png', /\.jpg#datauri$/i],
+              maxImageSize: 14 * 1024,
+        debug: true
+            }))
       .pipe(gulp.dest('./www/css/'))
       .pipe(cleanCss({
         keepSpecialComments: 0
@@ -88,7 +89,7 @@ gulp.task('sass', ['sass-images'], function(done) {
       .pipe(replace("url(images/", "url(../img/"))
       .pipe(base64({
         baseDir: "./www/css/",
-        extensions: ['svg', 'png', 'gif', /\.jpg#datauri$/i],
+        extensions: ['png', 'gif', /\.jpg#datauri$/i],
         maxImageSize: 14 * 1024,
         deleteAfterEncoding: true
       }))
