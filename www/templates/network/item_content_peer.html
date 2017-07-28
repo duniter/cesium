@@ -46,7 +46,7 @@
       </div>
       <div class="col col-20 no-padding text-center">
         <span id="{{$index === 0 ? helptipPrefix + '-peer-0-block' : ''}}"
-          class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{:rebind:peer.currentNumber|formatInteger}}</span>
+            class="badge" ng-class=":rebind:{'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock, 'ng-hide': !peer.currentNumber }">{{:rebind:peer.currentNumber|formatInteger}}</span>
         <span class="badge badge-secondary" ng-if=":rebind:peer.consensusBlockDelta && expertMode">
           <i class="ion-clock"></i>&nbsp;
           {{:rebind:peer.consensusBlockDelta|formatDurationTime}}</span>
