@@ -86,7 +86,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   })
 
 
-  // removeIf(device)
   // Override the automatic sync between location URL and state
   // (see watch event $locationChangeSuccess in the run() function bellow)
   .config(function ($urlRouterProvider) {
@@ -94,7 +93,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     $urlRouterProvider.deferIntercept();
   })
-  // endRemoveIf(device)
 
   .factory('$exceptionHandler', function() {
     'ngInject';
@@ -205,12 +203,11 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // endRemoveIf(ios)
   // endRemoveIf(android)
 
-  // removeIf(device)
+  // Prevent $urlRouter's default handler from firing (don't sync ui router)
   $rootScope.$on('$locationChangeSuccess', function(e, newUrl, oldUrl) {
     if ($state.current.data && $state.current.data.silentLocationChange === true) {
-      // Prevent $urlRouter's default handler from firing (don't sync ui router)
+      console.debug('[app] Skipping state sync (silent location change)');
       e.preventDefault();
-      console.debug('[app] Skipping state sync for location change');
     }
     else {
       $urlRouter.sync();
@@ -218,7 +215,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   });
   // Configures $urlRouter's listener *after* the previous listener
   $urlRouter.listen();
-  // endRemoveIf(device)
 
   // Start plugins eager services
   PluginService.start();
