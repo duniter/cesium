@@ -10,12 +10,13 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
       defaultSettingsNode,
       started = false,
       startPromise,
+      readyDeffered,
       listeners,
       removeChangeStateListener;
 
     function disableChangeState() {
       var remove = $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-        if (next.name !== 'app.home' && next.name !== 'app.settings') {
+        if (!event.defaultPrevented && next.name !== 'app.home' && next.name !== 'app.settings') {
           event.preventDefault();
           if (startPromise) {
             startPromise.then(function() {
@@ -86,7 +87,10 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
 
     function ready() {
       if (started) return $q.when();
-      return startPromise || start();
+      if (startPromise) return startPromise;
+      if (readyDeffered) return readyDeffered.promise;
+      readyDeffered = $q.defer();
+      return readyDeffered.promise;
     }
 
     function restart() {
@@ -130,6 +134,8 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           addListeners();
           startPromise = null;
           started = true;
+          if (readyDeffered) readyDeffered.resolve();
+          readyDeffered = null;
         })
         .catch(function(err) {
           startPromise = null;
@@ -137,6 +143,8 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           if($state.current.name !== 'app.home') {
             $state.go('app.home', {error: 'peer'});
           }
+          if (readyDeffered) readyDeffered.reject(err);
+          readyDeffered = null;
           throw err;
         });
 
@@ -157,11 +165,6 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           startPromise = null;
         }, 500);
     }
-
-    // default action
-    start();
-
-
 
     return  {
       isStarted: isStarted,

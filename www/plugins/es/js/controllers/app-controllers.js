@@ -93,7 +93,7 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
   $scope.showMessagesPopover = function(event) {
     // Make sure tobe auth before opening this popover
     if (!csWallet.isAuth()) {
-      return csWallet.auth().then(function(){
+      return csWallet.auth({minData: true}).then(function(){
         UIUtils.loading.hide();
         return $scope.showMessagesPopover(event); // loop
       });

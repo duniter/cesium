@@ -437,7 +437,9 @@ angular.module('cesium.utils.services', [])
                 }
               })
               .then(function() {
-                popover.deferred.resolve(result);
+                if (popover.deferred) {
+                  popover.deferred.resolve(result);
+                }
                 delete popover.deferred;
                 delete popover.options;
               });

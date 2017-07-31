@@ -24,7 +24,7 @@
 
       <span class="item item-text-wrap">
           <span class="gray" translate>TRANSFER.FROM</span>
-          <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!$root.loading && !loading"
+          <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
               ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
               <ion-spinner icon="android" ng-if="!walletData.pubkey"></ion-spinner>
               <span ng-if="walletData.pubkey && !walletData.isMember">
@@ -35,6 +35,7 @@
               </span>
               <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
           </span>
+
       </span>
 
       <!-- Amount -->

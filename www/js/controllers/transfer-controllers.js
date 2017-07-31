@@ -44,7 +44,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $controller, UIUtils, csWot) {
+function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -70,10 +70,9 @@ function TransferController($scope, $controller, UIUtils, csWot) {
         parameters.comment = state.stateParams.comment;
       }
     }
-    $scope.setParameters(parameters);
 
     // Make sure wallet is loaded
-    $scope.login({sources: true})
+    csWallet.login({sources: true})
 
       // If pubkey, get the uid (+ name, avatar)
       .then(function(data) {
@@ -90,7 +89,7 @@ function TransferController($scope, $controller, UIUtils, csWot) {
 
       // Apply parameters, then recompute relative amount
       .then(function() {
-
+        $scope.setParameters(parameters);
         $scope.onUseRelativeChanged();
         UIUtils.loading.hide();
         $scope.loading = false;
@@ -159,10 +158,12 @@ function TransferModalController($scope, $q, $translate, $filter, BMA, csWallet,
     UIUtils.ink({selector: '.modal-transfer .ink'});
 
     // Make to sure to load full wallet data (balance)
-    return csWallet.login({sources: true})
+    return csWallet.login({sources: true, silent: true})
       .then(function(data) {
           $scope.walletData = data;
+          $scope.onUseRelativeChanged();
           $scope.loading = false;
+          UIUtils.ink({selector: '.modal-transfer .ink'});
         })
         .catch(function(err){
           if (err == 'CANCELLED') return $scope.cancel(); // close the modal

@@ -110,10 +110,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // user already login
       if (!needLogin && !needAuth) {
-        // Load data
-        if (!data.loaded) {
-          var loadOptions = options && angular.isDefined(options.minData) ? {minData: true} : undefined;
-          return loadData(loadOptions);
+        if (!isDataLoaded(options)) {
+          return loadData(options);
         }
         return $q.when(data);
       }
@@ -168,6 +166,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
 
           return keepAuth ? data : angular.merge({}, data, authData);
+        })
+        .catch(function(err) {
+          if (err == 'RETRY') {
+            return $timeout(function(){
+              return login(options);
+            }, 300);
+          }
+          throw err;
         });
     },
 
@@ -572,7 +578,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     loadData = function(options) {
 
       var promise;
-      var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) && !data.loaded;
+      var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) &&
+        !data.loaded && (!options || !options.minData);
       if (options && options.minData) {
         promise = loadMinData(options);
       }
@@ -591,26 +598,31 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           var showAlert = alertIfUnusedWallet && !isNew() && isNeverUsed();
           if (!showAlert) return true;
           return UIUtils.loading.hide()
-            .then(function(){
-              return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE',{
-                  okText: 'COMMON.BTN_CONTINUE'
-                }).then(function(confirm) {
-                  if (confirm) return true;
-                  return logout();
+            .then(function() {
+              return UIUtils.alert.confirm('CONFIRM.LOGIN_UNUSED_WALLET', 'CONFIRM.LOGIN_UNUSED_WALLET_TITLE', {
+                cancelText: 'COMMON.BTN_CONTINUE',
+                okText: 'COMMON.BTN_RETRY'
+              });
+            })
+            .then(function(retry) {
+              if (retry) {
+                return logout().then(function() {
+                  throw 'RETRY';
                 });
+              }
+              return true;
             });
         })
 
         // Return wallet data
-        .then(function(res) {
-          if (res) {
+        .then(function(confirm) {
+          if (confirm) {
             return data;
           }
           else { // cancel
             throw 'CANCELLED';
           }
         });
-
     },
 
     loadFullData = function() {
@@ -657,7 +669,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!options.requirements) {
         return $q.when(data);
       }
-      return refreshData(options);
+      return refreshData(options)
+        .then(function(data) {
+          data.loaded = true;
+          return data;
+        });
     },
 
     refreshData = function(options) {
@@ -1572,16 +1588,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         // Restore
         .then(restore)
-
-/*
-// loading must be done by state definition
-        // Load data (if a wallet restored)
-        .then(function(data) {
-          if (data && data.pubkey) {
-            return loadData({minData: true});
-          }
-        })
-*/
 
         // Emit ready event
         .then(function() {

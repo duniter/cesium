@@ -141,62 +141,82 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // removeIf(ios)
   // removeIf(firefoxos)
   // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
+  var preventStateChange = false; // usefull to avoid duplicate login, when a first page with auth
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
-    if (!event.defaultPrevented && next.data) {
-      var skip = $rootScope.tour || event.currentScope.tour; // disabled for help tour
-      if (skip) return;
-      var options;
+    if (event.defaultPrevented) return;
 
-      // Large screen: redirect to specific state
-      if (next.data.large && !UIUtils.screen.isSmall()) {
-        event.preventDefault();
-        $state.go(next.data.large, nextParams);
-      }
+    var skip = !next.data || $rootScope.tour || event.currentScope.tour; // disabled for help tour
+    if (skip) return;
 
-      // If state need auth
-      else if (next.data.auth && !csWallet.isAuth()) {
+    if (preventStateChange) {
+      event.preventDefault();
+      return;
+    }
+
+    var options;
+
+    // Large screen: redirect to specific state
+    if (next.data.large && !UIUtils.screen.isSmall()) {
+      event.preventDefault();
+      $state.go(next.data.large, nextParams);
+    }
+
+    // If state need auth
+    else if (next.data.auth && !csWallet.isAuth()) {
+      event.preventDefault();
+      options = next.data.minData ? {minData: true} : undefined;
+      preventStateChange = true;
+      return csWallet.auth(options)
+        .then(function() {
+          preventStateChange = false;
+          return $state.go(next.name, nextParams);
+        })
+        .catch(function(err) {
+          preventStateChange = false;
+          // If cancel, redirect to home, if no current state
+          if (err == 'CANCELLED' && !$state.current.name) {
+            return $state.go('app.home');
+          }
+        });
+    }
+
+    // If state need login
+    else if (next.data.login && !csWallet.isLogin()) {
+      event.preventDefault();
+      options = next.data.minData ? {minData: true} : undefined;
+      preventStateChange = true;
+      return csWallet.login(options)
+        .then(function() {
+          preventStateChange = false;
+          return $state.go(next.name, nextParams);
+        })
+        .catch(function(err) {
+          preventStateChange = false;
+          // If cancel, redirect to home, if no current state
+          if (err == 'CANCELLED' && !$state.current.name) {
+            return $state.go('app.home');
+          }
+        });
+    }
+
+    // If state need login or auth, make sure to load wallet data
+    else if (next.data.login || next.data.auth)  {
+      options = next.data.minData ? {minData: true} : undefined;
+      if (!csWallet.isDataLoaded(options)) {
         event.preventDefault();
-        options = next.data.minData ? {minData: true} : undefined;
-        return csWallet.auth(options)
+        return csWallet.loadData(options)
           .then(function() {
+            preventStateChange = false;
             return $state.go(next.name, nextParams);
-          })
-          .catch(function(err) {
-            // If cancel, redirect to home, if no current state
-            if (err == 'CANCELLED' && !$state.current.name) {
-              return $state.go('app.home');
-            }
           });
       }
+    }
+  });
 
-      // If state need login
-      else if (next.data.login && !csWallet.isLogin()) {
-        event.preventDefault();
-        options = next.data.minData ? {minData: true} : undefined;
-        return csWallet.login(options)
-          .then(function() {
-            return $state.go(next.name, nextParams);
-          })
-          .catch(function(err) {
-            // If cancel, redirect to home, if no current state
-            if (err == 'CANCELLED' && !$state.current.name) {
-              return $state.go('app.home');
-            }
-          });
-      }
-
-      // If state need login or auth, make sure to load wallet data
-      else if (next.data.login || next.data.auth)  {
-        options = next.data.minData ? {minData: true} : undefined;
-        if (!csWallet.isDataLoaded(options)) {
-          event.preventDefault();
-          return csWallet.loadData(options)
-            .then(function() {
-              return $state.go(next.name, nextParams);
-            });
-        }
-      }
-
+  // Leave the current page, if auth was required to access it
+  csWallet.api.data.on.unauth($rootScope, function() {
+    if ($state.current && $state.current.data && $state.current.data.auth) {
+      $state.go('app.home');
     }
   });
   // endRemoveIf(firefoxos)
@@ -247,8 +267,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       StatusBar.styleDefault();
     }
 
-    // Make sure platform is ready
-    return csPlatform.ready();
+    // Make sure platform is started
+    return csPlatform.start();
   });
 })
 ;

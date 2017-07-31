@@ -248,7 +248,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     function removeRecord(index, type, walletData) {
       return function(id) {
-        return (walletData ? csWallet.auth() : $q.when(walletData))
+        return (!walletData ? csWallet.auth() : $q.when(walletData))
           .then(function(walletData) {
 
             var obj = {
