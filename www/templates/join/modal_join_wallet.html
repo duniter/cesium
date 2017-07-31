@@ -15,7 +15,7 @@
             ng-click="showHelpModal(slideBehavior.helpAnchor)">
     </button>
 
-    <h1 class="title" translate>ACCOUNT.NEW.TITLE</h1>
+    <h1 class="title" translate>ACCOUNT.NEW.WALLET_ACCOUNT_TITLE</h1>
 
     <!-- next -->
     <button class="button button-clear icon-right visible-xs"
@@ -251,8 +251,7 @@
               <button class="button button-clear button-dark ink" ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
               </button>
               <button class="button button-positive ink" ng-click="doNewAccount()" translate>
-                COMMON.BTN_SEND
-                <i class="icon ion-android-send"></i>
+                COMMON.BTN_CREATE
               </button>
             </div>
           </div>
@@ -288,7 +287,7 @@
 
             </div>
             <div class="padding hidden-xs text-left">
-              <button class="button button-assertive icon-left ion-chevron-left ink" 
+              <button class="button button-assertive icon-left ion-chevron-left ink"
                       ng-click="identifierRecovery()" translate>
                 COMMON.BTN_MODIFY
               </button>

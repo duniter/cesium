@@ -137,9 +137,11 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.load = function() {
     if ($scope.loading) {
 
-      $scope.licenseFileUrl = csSettings.getLicenseUrl();
-      if ($scope.licenseFileUrl) {
-        $scope.startListenLicenseBottom();
+      if ($scope.accountType == 'member') {
+        $scope.licenseFileUrl = csSettings.getLicenseUrl();
+        if ($scope.licenseFileUrl) {
+          $scope.startListenLicenseBottom();
+        }
       }
 
       $scope.slideBehavior = $scope.computeSlideBehavior();
@@ -297,7 +299,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
       return UIUtils.alert.confirm(messageKey, undefined,
         {
           cssClass: 'warning',
-          okText: 'COMMON.BTN_SEND',
+          okText: $scope.accountType == 'member' ? 'COMMON.BTN_SEND' : 'COMMON.BTN_CONTINUE',
           okType: 'button-assertive'
         })
         .then(function(confirm) {
@@ -342,9 +344,9 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
 
                 // Redirect to wallet
                 $state.go('app.view_wallet')
-                .then(function() {
-                  $scope.downloadRevocationRegistration();
-                });
+                  .then(function() {
+                    $scope.downloadRevocationRegistration();
+                  });
               })
               .catch(function(err) {
                 if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) return;

@@ -33,6 +33,7 @@
     "BTN_REFRESH": "Actualiser",
     "BTN_START": "Commencer",
     "BTN_CONTINUE": "Continuer",
+    "BTN_CREATE": "Créer",
     "BTN_UNDERSTOOD": "J'ai compris",
     "BTN_OPTIONS": "Options",
     "BTN_HELP_TOUR": "Visite guidée",
@@ -458,7 +459,7 @@
       "LOCKED_AMOUNT": "Conditions pour le montant :"
     },
     "NEW": {
-      "TITLE": "Inscription",
+      "TITLE": "Création de compte",
       "INTRO_WARNING_TIME": "La création d'un compte sur {{name|capitalize}} est très simple. Veuillez néanmoins prendre suffisament de temps pour faire correctement cette formalité (pour ne pas oublier les identifiants, mots de passe, etc.).",
       "INTRO_WARNING_SECURITY": "Vérifier que le matériel que vous utilisez actuellement (ordinateur, tablette, téléphone) <b>est sécurisé et digne de confiance</b>.",
       "INTRO_WARNING_SECURITY_HELP": "Anti-virus à jour, pare-feu activé, session protégée par mot de passe ou code pin, etc.",
@@ -467,8 +468,10 @@
       "REGISTRATION_NODE_HELP": "Si vous ne faites pas confiance en ce noeud, veuillez en changer <a ng-click=\"doQuickFix('settings')\">dans les paramètres</a> de Cesium.",
       "SELECT_ACCOUNT_TYPE": "Choisissez le type de compte à créer :",
       "MEMBER_ACCOUNT": "Compte membre",
+      "MEMBER_ACCOUNT_TITLE": "Création d'un compte membre",
       "MEMBER_ACCOUNT_HELP": "Si vous n'êtes pas encore inscrit en tant qu'individu (un seul compte possible par individu). Ce compte permet de co-produire la monnaie, en recevant un <b>dividende universel</b> chaque {{parameters.dt|formatPeriod}}.",
       "WALLET_ACCOUNT": "Simple portefeuille",
+      "WALLET_ACCOUNT_TITLE": "Création d'un portefeuille",
       "WALLET_ACCOUNT_HELP": "Pour tous les autres cas, par exemple si vous avez besoin d'un compte supplémentaire.<br/>Aucun dividende universel ne sera créé par ce compte.",
       "SALT_WARNING": "Choisissez votre identifiant secret.<br/>Il vous sera demandé à chaque connexion sur ce compte.<br/><br/><b>Retenez le bien</b>.<br/>En cas de perte, plus personne ne pourra accéder à votre compte !",
       "PASSWORD_WARNING": "Choisissez un mot de passe.<br/>Il vous sera demandé à chaque connexion sur ce compte.<br/><br/><b>Retenez bien ce mot de passe</b>.<br/>En cas de perte, plus personne ne pourra accéder à votre compte !",

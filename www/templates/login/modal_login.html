@@ -57,7 +57,7 @@
         <button class="button button-clear button-dark ink"
                 ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
         </button>
-        <button class="button button-positive ink" type="submit">
+        <button class="button button-positive ink" ng-class="{'button-assertive': isAuth, 'button-positive': !isAuth}" type="submit">
           {{isAuth ? 'AUTH.BTN_AUTH' : 'COMMON.BTN_LOGIN' | translate}}
         </button>
       </div>
