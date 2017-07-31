@@ -166,7 +166,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
               UIUtils.alert.error('ERROR.GET_CURRENCY_FAILED');
               return;
             }
-            $scope.enter(); // back to enter()
+            $scope.enter(); // back to enter(), with no stateParams
           })
           .catch(UIUtils.onError('ERROR.GET_CURRENCY_FAILED'));
       }
@@ -444,8 +444,11 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
         $anchorScroll('block-' + block.number);
       }, 900);
     }
-    else {
+    else if (BMA.node.same($scope.node.host, $scope.node.port)) {
       $state.go('app.view_block_hash', {number: block.number, hash: block.hash});
+    }
+    else {
+      $state.go('app.view_server_block_hash', {server: $scope.node.server, ssl: $scope.node.useSsl, number: block.number, hash: block.hash});
     }
   };
 
@@ -495,42 +498,43 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
   $scope.enter = function(e, state) {
     if (!$scope.loading) return; // call once
 
-    $scope.number = state && state.stateParams && angular.isDefined(state.stateParams.number) ? state.stateParams.number : 'current';
-    $scope.hash = state && state.stateParams && state.stateParams.hash ? state.stateParams.hash : undefined;
+    if (state) {
+      $scope.number = state.stateParams && angular.isDefined(state.stateParams.number) ? state.stateParams.number : 'current';
+      $scope.hash = state.stateParams && state.stateParams.hash ? state.stateParams.hash : undefined;
 
-    // Load from server if need
-    if (state && state.stateParams && state.stateParams.server) {
-      var useSsl = state.stateParams.ssl == "true";
-      var useTor = state.stateParams.tor == "true";
+      // Load from server if need
+      if (state.stateParams && state.stateParams.server) {
+        var useSsl = state.stateParams.ssl == "true";
+        var useTor = state.stateParams.tor == "true";
 
-      var node = {
-        server: state.stateParams.server,
-        host: state.stateParams.server,
-        useSsl: useSsl,
-        useTor: useTor
-      };
-      var serverParts = state.stateParams.server.split(':');
-      if (serverParts.length == 2) {
-        node.host = serverParts[0];
-        node.port = serverParts[1];
-      }
+        var node = {
+          server: state.stateParams.server,
+          host: state.stateParams.server,
+          useSsl: useSsl,
+          useTor: useTor
+        };
+        var serverParts = state.stateParams.server.split(':');
+        if (serverParts.length == 2) {
+          node.host = serverParts[0];
+          node.port = serverParts[1];
+        }
 
-      if (BMA.node.same(node.host, node.port)) {
-        $scope.node = BMA;
-      }
-      else {
-        $scope.node = useTor ?
-          // For TOR, use a web2tor to access the endpoint
-          BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
-          BMA.instance(node.host, node.port, node.useSsl);
-        return $scope.node.blockchain.parameters()
-          .then(function(json) {
-            $scope.currency = json.currency;
-            $scope.enter(); // back to enter()
-          });
+        if (BMA.node.same(node.host, node.port)) {
+          $scope.node = BMA;
+        }
+        else {
+          $scope.node = useTor ?
+            // For TOR, use a web2tor to access the endpoint
+            BMA.instance(node.host + ".to", 443, true/*ssl*/, 600000 /*long timeout*/) :
+            BMA.instance(node.host, node.port, node.useSsl);
+          return $scope.node.blockchain.parameters()
+            .then(function (json) {
+              $scope.currency = json.currency;
+              $scope.enter(); // back to enter(), with no stateParams
+            });
+        }
       }
     }
-
 
     if (!$scope.currency || !$scope.node) {
       csCurrency.get()

@@ -110,6 +110,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // user already login
       if (!needLogin && !needAuth) {
+        // Load data
+        if (!data.loaded) {
+          var loadOptions = options && angular.isDefined(options.minData) ? {minData: true} : undefined;
+          return loadData(loadOptions);
+        }
         return $q.when(data);
       }
       var keepAuth = csSettings.data.keepAuthIdle > 0;
@@ -887,6 +892,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               return csWot.extendAll([pendingTx], 'pubkey')
                 .then(function() {
                   data.tx.pendings.unshift(pendingTx);
+
+                  // API extension
+                  api.data.raise.balanceChanged(data);
+                  api.data.raise.newTx(data);
                 });
             });
         });
@@ -1600,6 +1609,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
+
+    // Data changed : balance changed, new TX
+    api.registerEvent('data', 'balanceChanged');
+    api.registerEvent('data', 'newTx');
+
     api.registerEvent('action', 'certify');
 
     // init data

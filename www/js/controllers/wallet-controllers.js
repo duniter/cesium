@@ -573,6 +573,7 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
     $scope.updateUnit();
     $scope.motion.show({ink: false});
   };
+  csWallet.api.data.on.balanceChanged($scope, $scope.updateView);
 
   $scope.downloadHistoryFile = function(options) {
     options = options || {};
@@ -585,15 +586,9 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
   $scope.doUpdate = function() {
     console.debug('[wallet] TX history reloading...');
     return UIUtils.loading.show()
-      .then(function() {
-        return csWallet.refreshData();
-      })
-      .then(function() {
-        return UIUtils.loading.hide();
-      })
-      .then(function() {
-        $scope.updateView();
-      })
+      .then(csWallet.refreshData)
+      .then(UIUtils.loading.hide)
+      .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
@@ -610,8 +605,6 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
       .then(function(done){
         if (done) {
           UIUtils.toast.show('INFO.TRANSFER_SENT');
-          $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-          $scope.motion.show({selector: '.item-pending'});
         }
       });
   };

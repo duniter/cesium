@@ -256,8 +256,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         });
     }
 
-    // Laready login ro auth
-    else if (!csWallet.data.loaded) {
+    // Already login or auth
+    else if (!csWallet.isDataLoaded(options)) {
       return $scope.loadWalletData(options);
     }
     else {
@@ -365,20 +365,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Open transfer modal
   $scope.showTransferModal = function(parameters) {
-    return $scope.loadWallet()
-    .then(function(walletData){
-      UIUtils.loading.hide();
-      if (walletData) {
-        return Modals.showTransfer(parameters);
-      }
-    })
-    .then(function(result){
-      if (result){
-        return $timeout(function(){
-          return UIUtils.toast.show('INFO.TRANSFER_SENT');
-        }, 10);
-      }
-    });
+    return Modals.showTransfer(parameters);
   };
 
   $scope.showAboutModal = function() {

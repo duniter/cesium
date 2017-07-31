@@ -228,12 +228,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
                   iconSize: L.point(0, 0)
                 }),
                 title: searchText,
-                uid: peer.uid,
-                name: peer.name,
-                pubkey: peer.pubkey,
-                ipv4: searchIp,
-                port: bma.port,
-                server: (peer.dns || peer.server)
+                peer: angular.extend({ipv4: searchIp}, peer)
               }));
           })
           .catch(function(err) {

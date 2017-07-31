@@ -24,16 +24,16 @@
 
       <span class="item item-text-wrap">
           <span class="gray" translate>TRANSFER.FROM</span>
-          <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!$root.loading"
+          <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!$root.loading && !loading"
               ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
-              <ion-spinner icon="android" ng-if="!$root.walletData.pubkey"></ion-spinner>
-              <span ng-if="$root.walletData.pubkey && !$root.walletData.isMember">
-                <i class="ion-key"></i> {{$root.walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
+              <ion-spinner icon="android" ng-if="!walletData.pubkey"></ion-spinner>
+              <span ng-if="walletData.pubkey && !walletData.isMember">
+                <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
               </span>
-              <span ng-if="$root.walletData.isMember">
-                <i class="ion-person"></i> {{$root.walletData.name||$root.walletData.uid}}&nbsp;&nbsp;
+              <span ng-if="walletData.isMember">
+                <i class="ion-person"></i> {{walletData.name||walletData.uid}}&nbsp;&nbsp;
               </span>
-              <span ng-bind-html="$root.walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
+              <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
           </span>
       </span>
 

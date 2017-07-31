@@ -579,7 +579,7 @@
     "NEED_MEMBER_ACCOUNT_TO_CERTIFY_HAS_SELF": "Vous ne pouvez pas effectuer de certification, car votre compte n'est pas encore membre.<br/><br/>Il vous manque encore des certifications, ou bien celles-ci n'ont pas encore été validées.",
     "NOT_MEMBER_FOR_CERTIFICATION": "Votre compte n'est pas encore membre.",
     "IDENTITY_TO_CERTIFY_HAS_NO_SELF": "Compte non certifiable. Aucune demande d'adhésion n'a été faite, ou bien elle n'a pas été renouvellée.",
-    "LOGIN_FAILED": "Erreur lors de l'authentification.",
+    "LOGIN_FAILED": "Erreur lors de la connexion.",
     "LOAD_IDENTITY_FAILED": "Erreur de chargement de l'identité.",
     "LOAD_REQUIREMENTS_FAILED": "Erreur de chargement des prérequis de l'identité.",
     "SEND_MEMBERSHIP_IN_FAILED": "Echec de la tentative d'entrée dans la communauté.",
