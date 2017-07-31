@@ -23,6 +23,9 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
             templateUrl: "plugins/es/templates/blockchain/lookup.html",
             controller: 'ESBlockLookupCtrl'
           }
+        },
+        data: {
+          silentLocationChange: true
         }
       })
     ;
@@ -32,7 +35,7 @@ angular.module('cesium.es.blockchain.controllers', ['cesium.es.services'])
 ;
 
 
-function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIUtils, esBlockchain, $ionicHistory) {
+function ESBlockLookupController($scope, $controller, $ionicPopover, $location, UIUtils, esBlockchain) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -56,15 +59,8 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
 
     $scope.doSearch();
 
-    $ionicHistory.nextViewOptions({
-      disableAnimate: true,
-      disableBack: true,
-      historyRoot: true
-    });
-    $state.go('app.blockchain_search', {q: $scope.search.query}, {
-      reload: false,
-      inherit: true,
-      notify: false});
+    // Update location href
+    $location.search({q: $scope.search.query}).replace();
   };
 
   $scope.doSearchLast = function() {
@@ -74,15 +70,7 @@ function ESBlockLookupController($scope, $state, $controller, $ionicPopover, UIU
     $scope.search.sort = undefined;
     $scope.doSearch();
 
-    $ionicHistory.nextViewOptions({
-      disableAnimate: true,
-      disableBack: true,
-      historyRoot: true
-    });
-    $state.go('app.blockchain_search', {q: undefined}, {
-      reload: false,
-      inherit: true,
-      notify: false});
+    $location.search({q: undefined}).replace();
   };
 
 

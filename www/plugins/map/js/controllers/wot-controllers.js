@@ -18,31 +18,32 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           }
         });
 
-      // [NEW] Ajout d'une nouvelle page #/app/wot/map
+      // Wot map (default position)
       $stateProvider
         .state('app.view_wot_map', {
-          url: "/wot/map?lat&lng&zoom",
+          url: "/wot/map?c&center",
           views: {
             'menuContent': {
               templateUrl: "plugins/map/templates/wot/view_map.html",
               controller: 'MapWotViewCtrl'
             }
+          },
+          data: {
+            silentLocationChange: true
           }
         });
     }
-
-    L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
   })
 
   // [NEW] Manage events from the page #/app/wot/map
-  .controller('MapWotViewCtrl', function($scope, $q, $translate, $state, $filter, $templateCache, $interpolate, $timeout, $ionicHistory,
-                                         esGeo, UIUtils, MapUtils, mapWot, leafletData) {
+  .controller('MapWotViewCtrl', function($scope, $rootScope, $q, $translate, $state, $stateParams, $filter, $templateCache, $interpolate, $timeout, $ionicHistory,
+                                         esGeo, UIUtils, MapUtils, mapWot, leafletData, $location) {
     'ngInject';
 
     var
       // Create a  hidden layer, to hold search markers
       markersSearchLayer = L.layerGroup({visible: false}),
-      loadingControl, searchControl,
+      loadingControl, searchControl, localizeMe,
       icons= {
         member: {
           type: 'awesomeMarker',
@@ -83,163 +84,150 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           }
         }
       },
+      loading: true,
       markers: {}
     });
 
     // [NEW] When opening the view
     $scope.enter = function(e, state) {
       if ($scope.loading) {
-        console.log("[map] Opening the view... (first time)");
 
-        // remember state, to be able to refresh location
-        $scope.stateName = state && state.stateName;
-        $scope.stateParams = angular.copy(state && state.stateParams||{});
+        // Load the map (and init if need)
+        $scope.loadMap().then(function(map) {
 
-        // Read center from state params
-        var center = MapUtils.center(state.stateParams);
+          // Load indicator
+          map.fire('dataloading');
 
-        // Load data
-        return $scope.load(center);
+          // Load data
+          return $scope.load()
+
+            // Hide loading indicator
+            .then(function() {
+              map.fire('dataload');
+            });
+        });
+      }
+      else {
+        // Make sur to have previous center coordinate defined in the location URL
+        $scope.updateLocationHref();
       }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
 
+    $scope.loadMap = function() {
+      return leafletData.getMap($scope.mapId).then(function(map) {
+        if (!$scope.map.loading) return map; // already loaded
+
+        // Add loading control
+        loadingControl = L.Control.loading({
+          position: 'topright',
+          separate: true
+        });
+        loadingControl.addTo(map);
+
+        // Add localize me control
+        localizeMe = MapUtils.control.localizeMe();
+        localizeMe.addTo(map);
+
+        // Add search control
+        var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
+        searchControl = MapUtils.control.search({
+          layer: markersSearchLayer,
+          propertyName: 'title',
+          buildTip: function (text, val) {
+            return searchTip(val.layer.options);
+          }
+        });
+        searchControl.addTo(map);
+
+        $scope.map.loading = false;
+        return map;
+      });
+    };
+
     // Load markers data
-    $scope.load = function(center) {
+    $scope.load = function() {
       $scope.loading = true;
 
-      var map;
-      return leafletData.getMap($scope.mapId)
+      // Load wot data
+      return mapWot.load()
+
         .then(function(res) {
-          map = res;
+          if (res && res.length) {
 
-          // Add localize me control
-          MapUtils.control.localizeMe().addTo(map);
+            var formatPubkey = $filter('formatPubkey');
+            var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
 
-          // Add search control
-          if (!searchControl) {
-            var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
-            searchControl = MapUtils.control.search({
-              layer: markersSearchLayer,
-              propertyName: 'title',
-              buildTip: function (text, val) {
-                return searchTip(val.layer.options);
-              }
-            });
-            searchControl.addTo(map);
-          }
+            // Sort with member first
+            /*res = _.sortBy(res, function(hit) {
+             var score = 0;
+             score += (!hit.uid) ? 100 : 0;
+             return -score;
+             });*/
 
-          // Add loading control
-          if (!loadingControl) {
-            loadingControl = L.Control.loading({
-              position: 'topright',
-              separate: true
-            });
-            loadingControl.addTo(map);
-          }
-
-          // Enable loading UI
-          map.fire('dataloading');
-
-          // Load wot data
-          return mapWot.load();
-        })
-        .then(function(res) {
-          if (!res || !res.length) {
-            map.fire('dataload');
-            $scope.loading = false;
-            return;
-          }
-
-          var formatPubkey = $filter('formatPubkey');
-          var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
-
-          // Sort with member first
-          /*res = _.sortBy(res, function(hit) {
-            var score = 0;
-            score += (!hit.uid) ? 100 : 0;
-            return -score;
-          });*/
-
-          _.forEach(res, function(hit) {
-            var type = hit.uid ? 'member' : 'wallet';
-            var shortPubkey = formatPubkey(hit.issuer);
-            var marker = {
-              layer: type,
-              icon: icons[type],
-              opacity: 0.8,
-              title: hit.title + ' | ' + shortPubkey,
-              lat: hit.geoPoint.lat,
-              lng: hit.geoPoint.lon,
-              getMessageScope: function() {
-                var scope = $scope.$new();
-                scope.hit = hit;
-                return scope;
-              },
-              focus: false,
-              message: markerTemplate
-            };
-            var id = hit.uid ? (hit.uid + ':' + hit.issuer) : hit.issuer;
-            $scope.map.markers[id] = marker;
-
-            // Create a search marker (will be hide)
-            var searchText = hit.title + ((hit.uid && hit.uid != hit.title) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
-            var searchMarker = angular.merge({
-              type: type,
-              opacity: 0,
-              icon: L.divIcon({
-                className: type + ' ng-hide',
-                iconSize: L.point(0, 0)
-              })
-            }, {title: searchText, issuer: hit.issuer, uid: hit.uid, name: hit.title});
-            markersSearchLayer.addLayer(new L.Marker({
+            _.forEach(res, function (hit) {
+              var type = hit.uid ? 'member' : 'wallet';
+              var shortPubkey = formatPubkey(hit.issuer);
+              var marker = {
+                layer: type,
+                icon: icons[type],
+                opacity: 0.8,
+                title: hit.title + ' | ' + shortPubkey,
                 lat: hit.geoPoint.lat,
-                lng: hit.geoPoint.lon
-              },
-              searchMarker));
-          });
+                lng: hit.geoPoint.lon,
+                getMessageScope: function () {
+                  var scope = $scope.$new();
+                  scope.hit = hit;
+                  return scope;
+                },
+                focus: false,
+                message: markerTemplate
+              };
+              var id = hit.uid ? (hit.uid + ':' + hit.issuer) : hit.issuer;
+              $scope.map.markers[id] = marker;
 
-          // end loading
-          $timeout(function() {
-            map.fire('dataload');
-          }, 1000);
-
-          // Update map center (if need)
-          var needCenterUpdate = center && !angular.equals($scope.map.center, center);
-          if (needCenterUpdate) {
-            MapUtils.updateCenter(map, center);
+              // Create a search marker (will be hide)
+              var searchText = hit.title + ((hit.uid && hit.uid != hit.title) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
+              var searchMarker = angular.merge({
+                type: type,
+                opacity: 0,
+                icon: L.divIcon({
+                  className: type + ' ng-hide',
+                  iconSize: L.point(0, 0)
+                })
+              }, {title: searchText, issuer: hit.issuer, uid: hit.uid, name: hit.title});
+              markersSearchLayer.addLayer(new L.Marker({
+                  lat: hit.geoPoint.lat,
+                  lng: hit.geoPoint.lon
+                },
+                searchMarker));
+            });
           }
+
+          $scope.loading = false;
         });
     };
 
-    // Update the browser location, to be able to refresh the page
-    $scope.updateLocation = function() {
 
-      $ionicHistory.nextViewOptions({
-        disableAnimate: true,
-        disableBack: true,
-        historyRoot: false
-      });
-
-      $scope.stateParams = $scope.stateParams || {};
-      $scope.stateParams.lat = ($scope.map.center.lat != MapUtils.constants.DEFAULT_CENTER.lat) ? $scope.map.center.lat : undefined;
-      $scope.stateParams.lng = ($scope.map.center.lng != MapUtils.constants.DEFAULT_CENTER.lng) ? $scope.map.center.lng : undefined;
-      $scope.stateParams.zoom = ($scope.map.center.zoom != MapUtils.constants.DEFAULT_CENTER.zoom) ? $scope.map.center.zoom : undefined;
-
-      $state.go($scope.stateName, $scope.stateParams, {
-        reload: false,
-        inherit: true,
-        notify: false}
-      );
+    $scope.updateLocationHref = function(centerHash) {
+      // removeIf(device)
+      var params = $location.search() || {};
+      if (!params.c || !MapUtils.center.isDefault($scope.map.center)) {
+        centerHash = centerHash || '{0}:{1}:{2}'.format($scope.map.center.lat.toFixed(4), $scope.map.center.lng.toFixed(4), $scope.map.center.zoom);
+        $location.search({ c:  centerHash}).replace();
+      }
+      // endRemoveIf(device)
     };
 
     // removeIf(device)
-    $scope.onMapCenterChanged = function() {
+    // Update the browser location, to be able to refresh the page
+    $scope.$on("centerUrlHash", function(event, centerHash) {
       if (!$scope.loading) {
-        $timeout($scope.updateLocation, 500);
+        return $timeout(function() {
+          $scope.updateLocationHref(centerHash);
+        }, 300);
       }
-    };
-    $scope.$watch('map.center', $scope.onMapCenterChanged, true);
+    });
     // endRemoveIf(device)
 
   });

@@ -1,16 +1,15 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="view-map-wot">
   <ion-nav-title>
-
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-
   </ion-nav-buttons>
 
   <ion-content data-tap-disabled="true">
     <leaflet id="{{mapId}}"
              height="100%"
-             center="map.center"
+             url-hash-center="yes"
+             lf-center="map.center"
              markers="map.markers"
              layers="map.layers">
     </leaflet>

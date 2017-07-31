@@ -21,21 +21,22 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       // [NEW] Ajout d'une nouvelle page #/app/wot/map
       $stateProvider
         .state('app.view_network_map', {
-          url: "/network/map?lat&lng&zoom",
+          url: "/network/map?c",
           views: {
             'menuContent': {
               templateUrl: "plugins/map/templates/network/view_map.html",
               controller: 'MapNetworkViewCtrl'
             }
+          },
+          data: {
+            silentLocationChange: true
           }
         });
     }
-
-    L.AwesomeMarkers.Icon.prototype.options.prefix = 'ion';
   })
 
   // [NEW] Manage events from the page #/app/wot/map
-  .controller('MapNetworkViewCtrl', function($scope, $controller, $q, $interpolate, $translate, $state, $filter, $templateCache, $timeout, $ionicHistory,
+  .controller('MapNetworkViewCtrl', function($scope, $controller, $q, $interpolate, $translate, $filter, $templateCache, $timeout, $location,
                                          esGeo, UIUtils, csNetwork, MapUtils, leafletData) {
     'ngInject';
 
@@ -103,64 +104,66 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
             }
           }
         },
+      loading: true,
         markers: {}
       });
 
     var inheritedEnter = $scope.enter;
     $scope.enter = function(e, state) {
-      if ($scope.networkStarted) return;
+      if ($scope.map.loading) {
 
-      // remember state, to be able to refresh location
-      $scope.stateName = state && state.stateName;
-      $scope.stateParams = angular.copy(state && state.stateParams||{});
+        // Load the map (and init if need)
+        $scope.loadMap().then(function(map){
 
-      // Read center from state params
-      $scope.stateCenter = MapUtils.center(state.stateParams);
+          // Load indicator
+          map.fire('dataloading');
 
-      // inherited
-      return inheritedEnter(e, state);
+          // inherited
+          return inheritedEnter(e, state); // will call inherited load()
+        });
+      }
+
+      else {
+        // Make sur to have previous center coordinate defined in the location URL
+        $scope.updateLocationHref();
+
+        // inherited
+        return inheritedEnter(e, state);
+      }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
 
-    // Update the browser location, to be able to refresh the page
-    $scope.updateLocation = function() {
+    $scope.loadMap = function() {
+      return leafletData.getMap($scope.mapId).then(function(map) {
+        if (!$scope.map.loading) return map; // already loaded
 
-      $ionicHistory.nextViewOptions({
-        disableAnimate: true,
-        disableBack: true,
-        historyRoot: false
+        // Add loading control
+        loadingControl = L.Control.loading({
+          position: 'topright',
+          separate: true
+        });
+        loadingControl.addTo(map);
+
+        // Add search control
+        var searchTip = $interpolate($templateCache.get('plugins/map/templates/network/item_search_tooltip.html'));
+        searchControl = MapUtils.control.search({
+          layer: markersSearchLayer,
+          propertyName: 'title',
+          zoom: 10,
+          buildTip: function (text, val) {
+            return searchTip(val.layer.options);
+          }
+        });
+        searchControl.addTo(map);
+
+        $scope.map.loading = false;
+        return map;
       });
-
-      $scope.stateParams = $scope.stateParams || {};
-      $scope.stateParams.lat = ($scope.map.center.lat != MapUtils.constants.DEFAULT_CENTER.lat) ? $scope.map.center.lat : undefined;
-      $scope.stateParams.lng = ($scope.map.center.lng != MapUtils.constants.DEFAULT_CENTER.lng) ? $scope.map.center.lng : undefined;
-      $scope.stateParams.zoom = ($scope.map.center.zoom != MapUtils.constants.DEFAULT_CENTER.zoom) ? $scope.map.center.zoom : undefined;
-
-      $state.go($scope.stateName, $scope.stateParams, {
-        reload: false,
-        inherit: true,
-        notify: false}
-      );
-    };
-
-
-    // removeIf(device)
-    $scope.onMapCenterChanged = function() {
-      if (!$scope.loading) {
-        $timeout($scope.updateLocation, 500);
-      }
-    };
-    $scope.$watch('map.center', $scope.onMapCenterChanged, true);
-    // endRemoveIf(device)
-
-    $scope.showHelpTip = function() {
-      // override subclass
     };
 
     $scope.updateView = function(data) {
       console.debug("[map] [peers] Updating UI");
 
-      $scope.search.memberPeersCount = data.memberPeersCount;
       // Always tru if network not started (e.g. after leave+renter the view)
       $scope.search.loading = !$scope.networkStarted || csNetwork.isBusy();
 
@@ -185,7 +188,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         var address = peer.hasValid4(bma) ? bma.ipv4 : (bma.dns || bma.ipv6);
         esGeo.point.searchByIP(address)
 
-          // Create the marker
+        // Create the marker
           .then(function(position){
             var marker = $scope.updateMarker({
               position: position,
@@ -238,48 +241,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
           });
       });
 
-      leafletData.getMap($scope.mapId).then(function(map) {
-
-        // Add loading control
-        if (!loadingControl) {
-          loadingControl = L.Control.loading({
-            position: 'topright',
-            separate: true
-          });
-          loadingControl.addTo(map);
-          if ($scope.search.loading) {
-            map.fire('dataloading');
-          }
-        }
-
-        else if (!$scope.search.loading) {
-          $timeout(function() {
-            map.fire('dataload');
-          }, 500);
-        }
-
-        // Add search control
-        if (!searchControl) {
-          var searchTip = $interpolate($templateCache.get('plugins/map/templates/network/item_search_tooltip.html'));
-          searchControl = MapUtils.control.search({
-            layer: markersSearchLayer,
-            propertyName: 'title',
-            buildTip: function (text, val) {
-              return searchTip(val.layer.options);
-            }
-          });
-          searchControl.addTo(map);
-        }
-
-        // Recenter map// Update map center (if need)
-        var needCenterUpdate = $scope.stateCenter && !angular.equals($scope.map.center, $scope.stateCenter);
-        if (needCenterUpdate) {
-          MapUtils.updateCenter(map, $scope.stateCenter);
-          delete $scope.stateCenter;
-        }
-
-      });
-
       // Remove old markers not found in the new result
       _.forEach(_.keys(markerIdByPeerIdToRemove), function(peerId) {
         delete markerIdByPeerId[peerId];
@@ -288,7 +249,12 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         delete $scope.map.markers[markerId];
       });
 
-
+      // Hide loading indicator, when finished
+      if (!$scope.search.loading) {
+        leafletData.getMap($scope.mapId).then(function (map) {
+            map.fire('dataload');
+          });
+      }
     };
 
     $scope.updateMarker = function(marker, peer) {
@@ -307,5 +273,32 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
 
       return marker;
     };
+
+    $scope.showHelpTip = function() {
+      // override subclass
+    };
+
+    // Update the browser location, to be able to refresh the page
+    $scope.updateLocationHref = function(centerHash) {
+      // removeIf(device)
+      var params = $location.search() || {};
+      if (!params.c || !MapUtils.center.isDefault($scope.map.center)) {
+        centerHash = centerHash || '{0}:{1}:{2}'.format($scope.map.center.lat.toFixed(4), $scope.map.center.lng.toFixed(4), $scope.map.center.zoom);
+        $location.search({ c:  centerHash}).replace();
+      }
+      // endRemoveIf(device)
+    };
+
+    // removeIf(device)
+    // Update the browser location, to be able to refresh the page
+    $scope.$on("centerUrlHash", function(event, centerHash) {
+      if (!$scope.loading) {
+        return $timeout(function() {
+          $scope.updateLocationHref(centerHash);
+        }, 300);
+      }
+    });
+    // endRemoveIf(device)
+
 
   });

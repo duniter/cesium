@@ -11,6 +11,9 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
             templateUrl: "templates/wot/lookup.html",
             controller: 'WotLookupCtrl'
           }
+        },
+        data: {
+          silentLocationChange: true
         }
       })
 
@@ -121,7 +124,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $ionicHistory,
+function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $location,
                              UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
@@ -182,6 +185,13 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
 
       $scope.showHelpTip();
     }
+    else {
+
+      $scope.doRefreshLocationHref();
+      if ($scope.search.results && $scope.search.results.length) {
+        $scope.motion.show({selector: '.lookupForm .list .item', ink: true});
+      }
+    }
   });
 
   $scope.resetWotSearch = function() {
@@ -210,22 +220,12 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $i
         stateParams.q = text;
       }
     }
-    else {
+    else if ($scope.search.type != 'last') {
       stateParams.type = $scope.search.type;
     }
 
     // Update location href
-    $ionicHistory.nextViewOptions({
-      disableAnimate: true,
-      disableBack: true,
-      historyRoot: true
-    });
-    $state.go('app.wot_lookup', stateParams,
-      {
-        reload: false,
-        inherit: true,
-        notify: false
-      });
+    $location.search(stateParams).replace();
   };
 
   $scope.doSearchText = function() {

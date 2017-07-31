@@ -1,7 +1,7 @@
 
-angular.module('cesium.map.utils.services', ['cesium.services', 'leaflet-directive'])
+angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
-.factory('MapUtils', function($timeout, $q, $translate, leafletData, csSettings, esGeo, UIUtils) {
+.factory('MapUtils', function($timeout, $q, $translate, leafletData, csSettings, esGeo, UIUtils, leafletHelpers) {
   'ngInject';
 
   var constants = {
@@ -53,13 +53,15 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'leaflet-directi
   }
 
   function updateMapCenter(map, center) {
+    if (isSameCenter(center, map)) return $q.when();
+
     return $timeout(function () {
       map.invalidateSize();
       map._resetView(center, center.zoom, true);
     }, 300);
   }
 
-  function initCenter(options) {
+  function getCenter(options) {
     if (!options) return;
     var center;
     if (options.lat) {
@@ -75,7 +77,24 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'leaflet-directi
       center.zoom = parseFloat(options.zoom);
     }
     if (!center) return;
-    return angular.merge({}, constants.DEFAULT_CENTER, center);
+
+    // If missing some properties, complete with defaults
+    if (!leafletHelpers.isValidCenter(center)) {
+      center = angular.merge({}, constants.DEFAULT_CENTER, center);
+    }
+    return center;
+  }
+
+  function isSameCenter(center, map) {
+    return leafletHelpers.isSameCenterOnMap(center, map);
+  }
+
+  function isDefaultCenter(centerModel) {
+    var mapCenter = constants.DEFAULT_CENTER;
+    if (centerModel.lat && centerModel.lng && mapCenter.lat.toFixed(4) === centerModel.lat.toFixed(4) && mapCenter.lng.toFixed(4) === centerModel.lng.toFixed(4) && mapCenter.zoom === centerModel.zoom) {
+      return true;
+    }
+    return false;
   }
 
   // Create a default serach control, with default options
@@ -120,7 +139,11 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'leaflet-directi
 
   return {
     map: initMap,
-    center: initCenter,
+    center: {
+      get: getCenter,
+      isSame: isSameCenter,
+      isDefault: isDefaultCenter
+    },
     updateCenter: updateMapCenter,
     control: {
       search: initSearchControl,
