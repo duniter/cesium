@@ -281,6 +281,16 @@ if (typeof String.prototype.startsWith !== 'function') {
   };
 }
 
+// Workaround to add "".startsWith() if not present
+if (typeof String.prototype.trim !== 'function') {
+  console.debug("Adding String.prototype.trim() -> was missing on this platform");
+  // Make sure we trim BOM and NBSP
+  var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+  String.prototype.trim = function() {
+    return this.replace(rtrim, '');
+  };
+}
+
 // Workaround to add Math.trunc() if not present - fix #144
 if (Math && typeof Math.trunc !== 'function') {
   console.debug("Adding Math.trunc() -> was missing on this platform");

@@ -224,6 +224,7 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
   };
 
   $scope.selectPeer = function(peer) {
+    if (!peer.online) return; // nothing to do
     var stateParams = {server: peer.getServer()};
     if (peer.isSsl()) {
       stateParams.ssl = true;

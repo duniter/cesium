@@ -374,8 +374,9 @@
     "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
-    "BTN_GEOLOC_CITY": "Localiser la ville",
+    "BTN_GEOLOC_ADDRESS": "Mettre à jour à partir de l'adresse",
     "BTN_GEOLOC_ME": "Me localiser",
+    "BTN_REMOVE_GEOLOC": "Supprimer la position",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",
     "TITLE_HELP": "Nom, Prénom",
@@ -389,7 +390,6 @@
     "GENERAL_DIVIDER": "Informations générales",
     "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux, sites web",
-    "GEO_POINT_DIVIDER": "Position GPS",
     "LATITUDE": "Latitude",
     "LATITUDE_HELP": "Latitude",
     "LONGITUDE": "Longitude",
@@ -407,7 +407,7 @@
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image",
-      "GEO_LOCATION_FAILED": "Echec de la récupération de votre position"
+      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position actuelle"
     },
     "INFO": {
       "PROFILE_SAVED": "Profil sauvegardé"

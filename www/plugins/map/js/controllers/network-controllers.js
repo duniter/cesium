@@ -9,7 +9,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
 
       PluginServiceProvider
 
-      // Extension de la vue d'une identité: ajout d'un bouton
         .extendState('app.network', {
           points: {
             'filter-buttons': {
@@ -18,7 +17,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
           }
         });
 
-      // [NEW] Ajout d'une nouvelle page #/app/wot/map
       $stateProvider
         .state('app.view_network_map', {
           url: "/network/map?c",
@@ -132,6 +130,13 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
+
+    var inheritedComputeOptions = $scope.computeOptions;
+    $scope.computeOptions = function() {
+      var options = inheritedComputeOptions();
+      options.filter.online = 'all';
+      return options;
+    };
 
     $scope.loadMap = function() {
       return leafletData.getMap($scope.mapId).then(function(map) {

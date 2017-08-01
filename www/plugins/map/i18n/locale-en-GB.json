@@ -1,0 +1,40 @@
+{
+  "MAP": {
+    "COMMON": {
+      "SEARCH_DOTS": "Search..."
+    },
+    "NETWORK": {
+      "LOOKUP": {
+        "BTN_MAP": "Peers map",
+        "BTN_MAP_HELP": "Open peers map"
+      },
+      "VIEW": {
+        "TITLE": "Peers map",
+        "LAYER": {
+          "MEMBER": "Member peers",
+          "MIRROR": "Mirror peers",
+          "OFFLINE": "Offline peers"
+        }
+      }
+    },
+    "WOT": {
+      "LOOKUP": {
+        "BTN_MAP": "Members map",
+        "BTN_MAP_HELP": "Open members map"
+      },
+      "VIEW": {
+        "TITLE": "Members map",
+        "LAYER": {
+          "MEMBER": "Members",
+          "WALLET": "Simple wallets"
+        }
+      }
+    },
+    "PROFILE": {
+      "MARKER_HELP": "<b>Drag and drop</b> this marker to <b>update<br/>your position</b>, or use the buttons<br/>on top of the map."
+    },
+    "ERROR": {
+      "LOCALIZE_ME_FAILED": "Unable to retrieve your current position"
+    }
+  }
+}

@@ -17,18 +17,33 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
       that = this;
 
     that.raw = {
-      searchByAddress: csHttp.get('nominatim.openstreetmap.org', 80, '/search.php?format=json&q=:query'),
+      searchByString: csHttp.get('nominatim.openstreetmap.org', 80, '/search.php?format=json&q=:query'),
+      searchByQuery: csHttp.get('nominatim.openstreetmap.org', 80, '/search.php?format=json'),
       searchByIP: csHttp.get('freegeoip.net', 80, '/json/:ip')
     };
 
-    function searchPositionByAddress(queryString) {
+    function searchPositionByString(queryString) {
 
       var now = new Date();
-      console.debug('[ES] [geo] Searching address position [{0}]...'.format(queryString));
+      console.debug('[ES] [geo] Searching position by string query [{0}]...'.format(queryString));
 
-      return that.raw.searchByAddress({query: queryString})
+      return that.raw.searchByString({query: queryString})
         .then(function(res) {
           console.debug('[ES] [geo] Found {0} address position(s) in {0}ms'.format(res && res.length || 0, new Date().getTime() - now.getTime()));
+          return res;
+        });
+    }
+
+    function searchhPositionByQuery(query) {
+
+      if (typeof query == 'string') return searchPositionByString(query);
+
+      var now = new Date();
+      console.debug('[ES] [geo] Searching position by query...', query);
+
+      return that.raw.searchByQuery(query)
+        .then(function(res) {
+          console.debug('[ES] [geo] Found {0} address position(s) in {0}ms'.format(res && res.length || 0, new Date().getTime() - now.getTime()), res);
           return res;
         });
     }
@@ -69,7 +84,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
     return {
       point: {
         current: getCurrentPosition,
-        searchByAddress: searchPositionByAddress,
+        searchByAddress: searchhPositionByQuery,
         searchByIP: searchPositionByIP
       }
     };

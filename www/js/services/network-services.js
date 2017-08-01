@@ -239,7 +239,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                 .then(function (refreshedPeer) {
                   if (existingPeer) {
                     // remove existing peers, when reject or offline
-                    if (!refreshedPeer || (refreshedPeer.online !== data.filter.online)) {
+                    if (!refreshedPeer || (refreshedPeer.online !== data.filter.online && data.filter.online !== 'all')) {
                       console.debug('[network] Peer [{0}] removed (cause: {1})'.format(peer.server, !refreshedPeer ? 'filtered' : (refreshedPeer.online ? 'UP': 'DOWN')));
                       data.peers.splice(data.peers.indexOf(existingPeer), 1);
                       hasUpdates = true;
@@ -249,15 +249,15 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                       hasUpdates = true;
                     }
                     else if (existingOnline !== refreshedPeer.online){
-                      console.debug('[network] Peer [{0}] is now UP'.format(refreshedPeer.server));
+                      console.debug('[network] Peer [{0}] is now {1}'.format(refreshedPeer.server, refreshedPeer.online ? 'UP' : 'DOWN'));
                       hasUpdates = true;
                     }
                     else {
                       console.debug("[network] Peer [{0}] unchanged".format(refreshedPeer.server));
                     }
                   }
-                  else if (refreshedPeer && (refreshedPeer.online === data.filter.online)) {
-                    console.debug("[network] Peer [{0}] is UP".format(refreshedPeer.server));
+                  else if (refreshedPeer && (refreshedPeer.online === data.filter.online || data.filter.online === 'all')) {
+                    console.debug("[network] Peer [{0}] is {1}".format(refreshedPeer.server, refreshedPeer.online ? 'UP' : 'DOWN'));
                     list.push(refreshedPeer);
                     hasUpdates = true;
                   }
@@ -308,14 +308,14 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        if (!data.filter.online) {
+        if (!data.filter.online || (data.filter.online === 'all' && peer.status === 'DOWN')) {
           peer.online = false;
           return $q.when(peer);
         }
 
         // Cesium running in SSL: Do not try to access not SSL node,
         if (isHttpsMode && !peer.bma.useSsl) {
-          peer.online = (peer.status == 'UP');
+          peer.online = (peer.status === 'UP');
           peer.buid = constants.UNKNOWN_BUID;
           delete peer.version;
 
@@ -473,7 +473,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         });
         _.forEach(data.peers, function(peer){
           peer.hasMainConsensusBlock = peer.buid == mainBlock.buid;
-          peer.hasConsensusBlock = !peer.hasMainConsensusBlock && buids[peer.buid].count > 1;
+          peer.hasConsensusBlock = peer.buid && !peer.hasMainConsensusBlock && buids[peer.buid].count > 1;
           if (peer.hasConsensusBlock) {
             peer.consensusBlockDelta = buids[peer.buid].medianTime - mainBlock.medianTime;
           }

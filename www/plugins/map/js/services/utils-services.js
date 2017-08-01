@@ -108,14 +108,14 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
     options.zoom = angular.isDefined(options.zoom) ? options.zoom : constants.LOCALIZE_ZOOM;
     options.markerLocation = angular.isDefined(options.markerLocation) ? options.markerLocation : true;
 
-    var translatePromise = $translate(['MAP.WOT.VIEW.SEARCH_DOTS', 'COMMON.SEARCH_NO_RESULT']);
+    var translatePromise = $translate(['MAP.COMMON.SEARCH_DOTS', 'COMMON.SEARCH_NO_RESULT']);
 
     return {
       // Simulate an addTo function, but wait for end of translations job
       addTo: function (map) {
         translatePromise.then(function (translations) {
           L.control.search(angular.merge(options, {
-            textPlaceholder: translations['MAP.WOT.VIEW.SEARCH_DOTS'],
+            textPlaceholder: translations['MAP.COMMON.SEARCH_DOTS'],
             textErr: translations['COMMON.SEARCH_NO_RESULT']
           })).addTo(map);
         });

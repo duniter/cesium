@@ -24,7 +24,7 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 
 ;
 
-function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focus, $translate, $ionicHistory,
+function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $ionicHistory,
                            UIUtils, esHttp, esProfile, esGeo, ModalUtils, Device) {
   'ngInject';
 
@@ -137,13 +137,20 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
   };
   $scope.$watch('formData', $scope.onFormDataChanged, true);
 
-  $scope.save = function(silent) {
+  $scope.save = function(silent, hasWaitDebounce) {
     if(!$scope.form.$valid || !$rootScope.walletData || $scope.saving) {
-      return;
+      return $q.reject();
     }
 
-    console.debug('[ES] [profile] Saving user profile...');
+    if (!hasWaitDebounce) {
+      console.debug('[ES] [profile] Waiting debounce end, before saving...');
+      return $timeout(function() {
+        return $scope.save(silent, true);
+      }, 650);
+    }
+
     $scope.saving = true;
+    console.debug('[ES] [profile] Saving user profile...');
 
     // removeIf(no-device)
     if (!silent) {
@@ -193,6 +200,19 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
           return social.url;
         });
       }
+
+      // Workaround for old data
+      if (formData.position) {
+        delete formData.position;
+      }
+      if ($scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon) {
+        $scope.formData.geoPoint.lat =  parseFloat($scope.formData.geoPoint.lat);
+        $scope.formData.geoPoint.lon =  parseFloat($scope.formData.geoPoint.lon);
+      }
+      else{
+        $scope.formData.geoPoint = null;
+      }
+
       if (!$scope.existing) {
         return esProfile.add(formData)
           .then(function() {
@@ -291,29 +311,97 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
       });
   };
 
-  $scope.localizeByCity = function() {
-    if (!$scope.formData.city) {
-      return;
-    }
+  $scope.localizeByAddress = function() {
 
-    var address = angular.copy($scope.formData.city);
-
-    return esGeo.point.searchByAddress(address)
+    return $scope.searchPositions()
       .then(function(res) {
-        if (address != $scope.formData.city) return; // user changed value again
+        if (!res) return; // no result, or city value just changed
+        if (res.length == 1) {
+          return res[0];
+        }
 
-        if (res && res.length >= 1) {
-          var position = res[0];
-          if (position.lat && position.lon) {
-            $scope.formData.geoPoint = $scope.formData.geoPoint || {};
-            $scope.formData.geoPoint.lat =  parseFloat(position.lat);
-            $scope.formData.geoPoint.lon =  parseFloat(position.lon);
-            $scope.dirty = true;
-          }
+        return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
+          {categories : res},
+          {focusFirstInput: true}
+        );
+      })
+      .then(function(position) {
+        if (position && position.lat && position.lon) {
+          $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+          $scope.formData.geoPoint.lat =  parseFloat(position.lat);
+          $scope.formData.geoPoint.lon =  parseFloat(position.lon);
+
+          //$scope.dirty = true; // not need ??
         }
       });
   };
 
+  $scope.searchPositions = function(query) {
+
+    // Build the query
+    if (!query) {
+      if (!$scope.formData.city) {
+        return $q.when(); // nothing to search
+      }
+
+      var cityPart = $scope.formData.city.split(',');
+      var city = cityPart[0];
+      var country = cityPart.length > 1 ? cityPart[1].trim() : undefined;
+      var street = $scope.formData.address ? angular.copy($scope.formData.address.trim()) : undefined;
+      if (street) {
+        // Search with AND without street
+        return $q.all([
+          $scope.searchPositions({
+            street: street,
+            city: city,
+            country: country
+          }),
+          $scope.searchPositions({
+            city: city,
+            country: country
+          })
+        ])
+        .then(function(res){
+          return res[0].concat(res[1]);
+        });
+      }
+      else {
+        return $scope.searchPositions({
+          city: city,
+          country: country
+        });
+      }
+    }
+
+    // Execute the given query
+    return esGeo.point.searchByAddress(query)
+      .then(function(res) {
+        if (!res) return $q.when(); // no result
+
+        // Ask user to choose
+        var index = 0;
+        var parent = {name: 'Résultat pour <b>' +
+          (query.street ? query.street + ', ' : '') +
+          query.city +
+          (query.country ? ', ' + query.country : '')  +
+        '</b>', id: 0};
+        var hits = res.reduce(function(res, hit){
+          index++;
+          if (hit.class == 'waterway') return res;
+          return res.concat({
+            id: index,
+            name: hit.display_name,
+            parent: parent,
+            lat: hit.lat,
+            lon: hit.lon
+          });
+        }, [parent]);
+
+        if (hits.length == 1) return $q.when(); // no result (after filtering)
+
+        return hits;
+      });
+  };
 
   $scope.localizeMe = function() {
     return esGeo.point.current()
@@ -326,13 +414,20 @@ function ESViewEditProfileController($scope, $rootScope, $timeout, $state, $focu
       .catch(UIUtils.onError('PROFILE.ERROR.GEO_LOCATION_FAILED'));
   };
 
-  $scope.onCityChanged = function() {
-    var hasGeoPoint = $scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon;
-    if (!hasGeoPoint) {
-      return $scope.localizeByCity();
+  $scope.removeLocalisation = function() {
+    if ($scope.formData.geoPoint) {
+      $scope.formData.geoPoint.lat = null;
+      $scope.formData.geoPoint.lon = null;
     }
   };
-  $scope.$watch('formData.city', $scope.onCityChanged, true);
+
+  $scope.onCityChanged = function() {
+    if ($scope.loading) return;
+    var hasGeoPoint = $scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon;
+    if (!hasGeoPoint) {
+      return $scope.localizeByAddress();
+    }
+  };
 
 }
 

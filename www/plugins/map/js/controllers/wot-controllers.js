@@ -9,7 +9,6 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
       PluginServiceProvider
 
-      // Extension de la vue d'une identité: ajout d'un bouton
         .extendState('app.wot_lookup', {
           points: {
             'filter-buttons': {
@@ -18,7 +17,6 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           }
         });
 
-      // Wot map (default position)
       $stateProvider
         .state('app.view_wot_map', {
           url: "/wot/map?c&center",
@@ -43,7 +41,6 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     var
       // Create a  hidden layer, to hold search markers
       markersSearchLayer = L.layerGroup({visible: false}),
-      loadingControl, searchControl, localizeMe,
       icons= {
         member: {
           type: 'awesomeMarker',
@@ -119,19 +116,19 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
         if (!$scope.map.loading) return map; // already loaded
 
         // Add loading control
-        loadingControl = L.Control.loading({
+        var loadingControl = L.Control.loading({
           position: 'topright',
           separate: true
         });
         loadingControl.addTo(map);
 
         // Add localize me control
-        localizeMe = MapUtils.control.localizeMe();
+        var localizeMe = MapUtils.control.localizeMe();
         localizeMe.addTo(map);
 
         // Add search control
         var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
-        searchControl = MapUtils.control.search({
+        var searchControl = MapUtils.control.search({
           layer: markersSearchLayer,
           propertyName: 'title',
           buildTip: function (text, val) {

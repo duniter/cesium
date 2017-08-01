@@ -109,14 +109,9 @@
               <span class="input-label" translate>PROFILE.CITY</span>
               <input type="text" placeholder="{{'PROFILE.CITY_HELP'|translate}}"
                      ng-model="formData.city"
-                     ng-model-options="{ debounce: 350 }">
+                     ng-model-options="{ updateOn: 'blur' }"
+                     ng-change="onCityChanged()">
             </div>
-
-            <!--<div class="item">
-              <span class="input-label">
-              {{'PROFILE.GEO_POINT_DIVIDER' | translate}}
-                </span>
-            </div>-->
 
             <!-- Position (lat/lon) -->
             <div class="row responsive-md responsive-sm no-padding">
@@ -128,8 +123,7 @@
                   <input class="no-padding-right" type="number" placeholder="{{'PROFILE.LATITUDE_HELP'|translate}}"
                          ng-model="formData.geoPoint.lat"
                          ng-model-options="{ debounce: 350 }"
-                         ng-change="onGeoPointChanged()"
-                         required>
+                         ng-change="onGeoPointChanged()">
                 </label>
               </div>
 
@@ -144,8 +138,7 @@
                   <input class="no-padding-right" type="number" placeholder="{{'PROFILE.LONGITUDE_HELP'|translate}}"
                          ng-model="formData.geoPoint.lon"
                          ng-model-options="{ debounce: 350 }"
-                         ng-change="onGeoPointChanged()"
-                         required>
+                         ng-change="onGeoPointChanged()">
                 </label>
               </div>
 
@@ -154,17 +147,26 @@
                   <span class="input-label"></span>
 
                   <a class="button  button-stable button-small-padding icon ion-refresh"
-                     title="{{'PROFILE.BTN_GEOLOC_CITY'|translate}}"
-                     ng-click="localizeByCity()">
+                     title="{{'PROFILE.BTN_GEOLOC_ADDRESS'|translate}}"
+                     ng-disabled="!formData.city"
+                     ng-click="localizeByAddress()">
                   </a>
 
                   <a class="button button-stable button-small-padding icon ion-android-locate"
                      title="{{'PROFILE.BTN_GEOLOC_ME'|translate}}"
                      ng-click="localizeMe()">
                   </a>
+
+                  <a class="button button-stable button-small-padding icon ion-close"
+                     title="{{'PROFILE.BTN_REMOVE_GEOLOC'|translate}}"
+                     ng-disabled="!formData.geoPoint || (!formData.geoPoint.lat && !formData.geoPoint.lon)"
+                     ng-click="removeLocalisation()">
+                  </a>
                 </div>
               </div>
             </div>
+
+            <cs-extension-point name="after-position"></cs-extension-point>
 
             <!-- social networks -->
             <ng-include src="'plugins/es/templates/common/edit_socials.html'"></ng-include>

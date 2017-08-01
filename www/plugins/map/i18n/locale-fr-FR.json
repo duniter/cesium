@@ -31,8 +31,11 @@
         }
       }
     },
+    "PROFILE": {
+      "MARKER_HELP": "<b>Glissez-déposez</b> ce marqueur pour <b>mettre<br/>à jour votre position</b>, ou utilisez les boutons<br/>au dessus de la carte."
+    },
     "ERROR": {
-      "LOCALIZE_ME_FAILED": "Echec de la récupération de votre position"
+      "LOCALIZE_ME_FAILED": "Impossible de récupérer votre position actuelle"
     }
   }
 }
