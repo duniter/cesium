@@ -46,7 +46,8 @@
           "txReceived": true,
           "certSent": true,
           "certReceived": true
-        }
+        },
+        "defaultCountry": "France"
       }
     }
   },
@@ -97,7 +98,8 @@
           "txReceived": true,
           "certSent": true,
           "certReceived": true
-        }
+        },
+        "defaultCountry": "France"
       }
     }
   },
@@ -138,7 +140,8 @@
           "txReceived": true,
           "certSent": true,
           "certReceived": true
-        }
+        },
+        "defaultCountry": "France"
       }
     }
   },
@@ -192,7 +195,8 @@
           "txReceived": true,
           "certSent": true,
           "certReceived": true
-        }
+        },
+        "defaultCountry": "France"
       },
       "graph": {
         "enable": true
@@ -238,7 +242,8 @@
         "askEnable": false,
         "host": "localhost",
         "port": "9200",
-        "wsPort": "9400"
+        "wsPort": "9400",
+        "defaultCountry": "France"
       },
       "graph": {
         "enable": true
@@ -277,48 +282,6 @@
     "node": {
       "host": "duniter.le-sou.org",
       "port": "80"
-    },
-    "plugins":{
-      "es": {
-        "enable": true,
-        "askEnable": true,
-        "host": "data.le-sou.org",
-        "port": "80",
-        "notifications": {
-          "txSent": true,
-          "txReceived": true,
-          "certSent": true,
-          "certReceived": true
-        }
-      }
-    }
-  },
-
-  "dev_sou": {
-    "cacheTimeMs": 60000,
-    "fallbackLanguage": "fr-FR",
-    "defaultLanguage": "fr-FR",
-    "rememberMe": true,
-    "showUDHistory": false,
-    "timeout": 6000,
-    "timeWarningExpireMembership": 5184000,
-    "timeWarningExpire": 7776000,
-    "useLocalStorage": true,
-    "useRelative": true,
-    "initPhase": false,
-    "expertMode": false,
-    "decimalCount": 2,
-    "compatProtocol_0_80": true,
-    "helptip": {
-      "enable": true,
-      "installDocUrl": {
-        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
-      }
-    },
-    "node": {
-      "host": "duniter.le-sou.org",
-      "port": "9600"
     },
     "plugins":{
       "es": {
