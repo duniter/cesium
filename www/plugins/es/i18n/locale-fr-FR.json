@@ -402,12 +402,17 @@
       "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
+    "MODAL_LOCATIONS": {
+      "TITLE": "Validation de l'addresse",
+      "RESULT_DIVIDER": "Résultat(s) pour <b>{{address}}</b> :"
+    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image",
-      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position actuelle"
+      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position actuelle",
+      "ADDRESS_LOCATION_FAILED": "Impossible de récupérer la position à partir de l'adresse"
     },
     "INFO": {
       "PROFILE_SAVED": "Profil sauvegardé"

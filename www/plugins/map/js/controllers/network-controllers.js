@@ -215,9 +215,9 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
             // Create a search marker (will be hide)
             var searchServer = peer.dns || peer.server;
             var searchText = searchServer +
-              (peer.uid ? (' | ' + peer.name||peer.uid) : '') +
+              (peer.uid ? (' | ' + (peer.name||peer.uid)) : '') +
               ' | ' + formatPubkey(peer.pubkey);
-            var searchIp;;
+            var searchIp;
             if (bma.ipv4 && !(peer.dns || peer.server).startsWith(bma.ipv4)) {
               searchIp = bma.ipv4;
               searchText += ' | ' + bma.ipv4;

@@ -55,7 +55,9 @@ angular.module("cesium.config", [])
 				"txReceived": true,
 				"certSent": true,
 				"certReceived": true
-			}
+			},
+      "defaultCountry": "France",
+      "googleApiKey": "AIzaSyBSMd4vSr3P6TV8WI-trqio9z0Qpr1hKVk"
 		}
 	},
 	"version": "0.15.0",

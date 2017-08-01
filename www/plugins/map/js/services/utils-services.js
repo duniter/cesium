@@ -1,10 +1,13 @@
 
 angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
-.factory('MapUtils', function($timeout, $q, $translate, leafletData, csSettings, esGeo, UIUtils, leafletHelpers) {
+.factory('MapUtils', function($timeout, $q, $translate, leafletData, csConfig, csSettings, esGeo, UIUtils, leafletHelpers) {
   'ngInject';
 
-  var constants = {
+
+  var
+    googleApiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey;
+    constants = {
     locations: {
       FRANCE: {
         lat: 46.5588603, lng: 4.229736328124999, zoom: 6
@@ -22,10 +25,25 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       },
       layers: {
         baselayers: {
-          openStreetMap: {
+          osm: {
             name: 'OpenStreetMap',
             type: 'xyz',
-            url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+            url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            layerOptions: {
+              subdomains: ["a", "b", "c"],
+              attribution: "&copy; <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+              continuousWorld: true
+            }
+          },
+          cycle: {
+            name: "Google map",
+            type: "xyz",
+            url: 'http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key='+googleApiKey,
+            layerOptions: {
+              subdomains: ['mt0','mt1','mt2','mt3'],
+              attribution: "&copy; <a href=\"http://google.com/copyright\">Google</a>",
+              continuousWorld: true
+            }
           }
         }
       },

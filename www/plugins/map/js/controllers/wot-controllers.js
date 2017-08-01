@@ -47,6 +47,12 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
             icon: 'person',
             markerColor: 'blue'
         },
+        pending: {
+          type: 'awesomeMarker',
+          icon: 'clock',
+          markerColor: 'lightgreen',
+          iconColor: 'gray'
+        },
         wallet: {
           type: 'awesomeMarker',
             icon: 'key',
@@ -69,14 +75,19 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     $scope.map = MapUtils.map({
       layers: {
         overlays: {
-          wallet: {
-            type: 'group',
-            name: 'MAP.WOT.VIEW.LAYER.WALLET',
-            visible: true
-          },
           member: {
             type: 'group',
             name: 'MAP.WOT.VIEW.LAYER.MEMBER',
+            visible: true
+          },
+          pending: {
+            type: 'group',
+            name: 'MAP.WOT.VIEW.LAYER.PENDING',
+            visible: true
+          },
+          wallet: {
+            type: 'group',
+            name: 'MAP.WOT.VIEW.LAYER.WALLET',
             visible: true
           }
         }
@@ -163,13 +174,13 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
              });*/
 
             _.forEach(res, function (hit) {
-              var type = hit.uid ? 'member' : 'wallet';
-              var shortPubkey = formatPubkey(hit.issuer);
+              var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
+              var shortPubkey = formatPubkey(hit.pubkey);
               var marker = {
                 layer: type,
                 icon: icons[type],
-                opacity: 0.8,
-                title: hit.title + ' | ' + shortPubkey,
+                opacity: hit.uid ? 1 : 0.7,
+                title: hit.name + ' | ' + shortPubkey,
                 lat: hit.geoPoint.lat,
                 lng: hit.geoPoint.lon,
                 getMessageScope: function () {
@@ -180,11 +191,11 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                 focus: false,
                 message: markerTemplate
               };
-              var id = hit.uid ? (hit.uid + ':' + hit.issuer) : hit.issuer;
+              var id = hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey;
               $scope.map.markers[id] = marker;
 
               // Create a search marker (will be hide)
-              var searchText = hit.title + ((hit.uid && hit.uid != hit.title) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
+              var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
               var searchMarker = angular.merge({
                 type: type,
                 opacity: 0,
@@ -192,7 +203,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                   className: type + ' ng-hide',
                   iconSize: L.point(0, 0)
                 })
-              }, {title: searchText, issuer: hit.issuer, uid: hit.uid, name: hit.title});
+              }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending});
               markersSearchLayer.addLayer(new L.Marker({
                   lat: hit.geoPoint.lat,
                   lng: hit.geoPoint.lon

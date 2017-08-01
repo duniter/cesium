@@ -80,6 +80,9 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
   $scope.categories = [];
   this.searchText = '';
 
+  // modal title
+  this.title = parameters && parameters.title;
+
   $scope.afterLoad = function(result) {
     $scope.categories = result;
     $scope.allCategories = result;
@@ -117,6 +120,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
       $scope.afterLoad(res);
     });
   }
+
 
 }
 

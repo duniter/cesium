@@ -361,12 +361,17 @@
       "RESIZE_HELP": "<b>Re-crop the image</b> if necessary. A click on the image allows to move it. Click on the area at the bottom left to zoom in.",
       "RESULT_HELP": "<b>Here is the result</b> as seen on your profile:"
     },
+    "MODAL_LOCATIONS": {
+      "TITLE": "Validation de l'adresse",
+      "RESULT_DIVIDER": "Résultat(s) pour <b>{{address}}</b> :"
+    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Could not load user profile.",
       "SAVE_PROFILE_FAILED": "Saving profile failed",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Invalid format: please fill a valid Internet address.<br/><br/>Examples :<ul><li>- A Facebook page (https://www.facebook.com/user)</li><li>- A web page (http://www.domain.com)</li><li>- An email address (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Error while resizing picture",
-      "GEO_LOCATION_FAILED": "Unable to retrieve your current position"
+      "GEO_LOCATION_FAILED": "Unable to retrieve your current position",
+      "ADDRESS_LOCATION_FAILED": "Unable to retrieve the address position"
     },
     "INFO": {
       "PROFILE_SAVED": "Profile saved"

@@ -25,8 +25,11 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 ;
 
 function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $ionicHistory,
-                           UIUtils, esHttp, esProfile, esGeo, ModalUtils, Device) {
+                           csConfig, UIUtils, esHttp, esProfile, esGeo, ModalUtils, Device) {
   'ngInject';
+
+  // The default country used for address localisation
+  var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
 
   $scope.loading = true;
   $scope.dirty = false;
@@ -313,27 +316,32 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
 
   $scope.localizeByAddress = function() {
 
-    return $scope.searchPositions()
+    return UIUtils.loading.show()
+      .then($scope.searchPositions)
       .then(function(res) {
+        UIUtils.loading.hide();
+
         if (!res) return; // no result, or city value just changed
         if (res.length == 1) {
           return res[0];
         }
 
         return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-          {categories : res},
+          {
+            categories : res,
+            title: 'PROFILE.MODAL_LOCATIONS.TITLE'
+          },
           {focusFirstInput: true}
         );
       })
-      .then(function(position) {
-        if (position && position.lat && position.lon) {
+      .then(function(res) {
+        if (res && res.lat && res.lon) {
           $scope.formData.geoPoint = $scope.formData.geoPoint || {};
-          $scope.formData.geoPoint.lat =  parseFloat(position.lat);
-          $scope.formData.geoPoint.lon =  parseFloat(position.lon);
-
-          //$scope.dirty = true; // not need ??
+          $scope.formData.geoPoint.lat =  parseFloat(res.lat);
+          $scope.formData.geoPoint.lon =  parseFloat(res.lon);
         }
-      });
+      })
+      .catch(UIUtils.onError('PROFILE.ERROR.ADDRESS_LOCATION_FAILED'));
   };
 
   $scope.searchPositions = function(query) {
@@ -346,7 +354,8 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
 
       var cityPart = $scope.formData.city.split(',');
       var city = cityPart[0];
-      var country = cityPart.length > 1 ? cityPart[1].trim() : undefined;
+
+      var country = cityPart.length > 1 ? cityPart[1].trim() : defaultCountry;
       var street = $scope.formData.address ? angular.copy($scope.formData.address.trim()) : undefined;
       if (street) {
         // Search with AND without street
@@ -373,23 +382,24 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       }
     }
 
+    var queryString = (query.street ? query.street + ', ' : '') +
+      query.city +
+      (query.country ? ', ' + query.country : '')
     // Execute the given query
-    return esGeo.point.searchByAddress(query)
+    return $q.all([
+      $translate('PROFILE.MODAL_LOCATIONS.RESULT_DIVIDER', {address: queryString}),
+      esGeo.point.searchByAddress(query)
+    ])
       .then(function(res) {
+        var dividerText = res[0];
+        res = res[1];
         if (!res) return $q.when(); // no result
 
         // Ask user to choose
-        var index = 0;
-        var parent = {name: 'Résultat pour <b>' +
-          (query.street ? query.street + ', ' : '') +
-          query.city +
-          (query.country ? ', ' + query.country : '')  +
-        '</b>', id: 0};
+        var parent = {name: dividerText};
         var hits = res.reduce(function(res, hit){
-          index++;
           if (hit.class == 'waterway') return res;
           return res.concat({
-            id: index,
             name: hit.display_name,
             parent: parent,
             lat: hit.lat,

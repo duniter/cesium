@@ -26,6 +26,7 @@
         "TITLE": "Members map",
         "LAYER": {
           "MEMBER": "Members",
+          "PENDING": "Pending registrations",
           "WALLET": "Simple wallets"
         }
       }

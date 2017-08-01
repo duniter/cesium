@@ -24,9 +24,9 @@
       },
       "VIEW": {
         "TITLE": "Carte des membres",
-        "SEARCH_DOTS": "Rechercher...",
         "LAYER": {
           "MEMBER": "Membres",
+          "PENDING": "Inscriptions en attente",
           "WALLET": "Simples portefeuilles"
         }
       }

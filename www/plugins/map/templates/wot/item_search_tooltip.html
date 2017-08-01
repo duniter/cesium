@@ -1,7 +1,8 @@
 <a href="#" class="{{type}}">
+  <i class="{{pending ? 'ion-clock': ''}}"></i>
   {{name != uid ? name +' ' : ''}}
   <span class="{{uid ? 'positive' : 'gray'}}">
-    <i class="icon {{uid ? 'ion-person' : 'ion-key'}}"></i>
-    {{uid ? uid : (issuer|formatPubkey) }}
+    <i class="{{uid ? 'ion-person' : 'ion-key'}}"></i>
+    {{uid ? uid : (pubkey|formatPubkey) }}
   </span>
 </a>
