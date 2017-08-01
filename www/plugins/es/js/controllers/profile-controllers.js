@@ -384,7 +384,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
 
     var queryString = (query.street ? query.street + ', ' : '') +
       query.city +
-      (query.country ? ', ' + query.country : '')
+      (query.country ? ', ' + query.country : '');
     // Execute the given query
     return $q.all([
       $translate('PROFILE.MODAL_LOCATIONS.RESULT_DIVIDER', {address: queryString}),
