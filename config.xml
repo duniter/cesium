@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="15000">
+<widget android-versionCode="15100">
     <name>Cesium</name>
     <description>
     An simple App for Duniter wallet

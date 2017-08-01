@@ -56,12 +56,11 @@ angular.module("cesium.config", [])
 				"certSent": true,
 				"certReceived": true
 			},
-      "defaultCountry": "France",
-      "googleApiKey": "AIzaSyBSMd4vSr3P6TV8WI-trqio9z0Qpr1hKVk"
+			"defaultCountry": "France"
 		}
 	},
-	"version": "0.15.0",
-	"build": "2017-07-31T07:51:20.763Z",
+	"version": "0.15.1",
+	"build": "2017-08-01T15:12:52.961Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
