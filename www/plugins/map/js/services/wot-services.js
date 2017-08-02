@@ -29,7 +29,6 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     if (options.searchAddress) {
       query.bool.should = [
         {exists: {field: "geoPoint"}},
-        {exists: {field: "address"}},
         {exists: {field: "city"}}
       ];
     }
