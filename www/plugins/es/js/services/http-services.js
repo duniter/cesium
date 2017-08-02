@@ -15,7 +15,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       },
       regexp = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
-        HASH_TAG: match('#([\\wḡĞğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
+        HASH_TAG: match('#([\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
         USER_TAG: match('@('+BMA.constants.regexp.USER_ID+')'),
         ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT)
       };

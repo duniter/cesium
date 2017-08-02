@@ -802,7 +802,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     isDevice = false;
     // endRemoveIf(device)
 
-    console.debug("[crypto] Created CryptotUtils service. device=" + isDevice);
+    //console.debug("[crypto] Created CryptotUtils service. device=" + isDevice);
 
     ionicReady().then(function() {
       console.debug('[crypto] Starting...');

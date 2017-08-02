@@ -8,12 +8,16 @@
         <b class="ion-person"></b>
         {{::hit.uid}}
       </span>
+      <span class="gray" title="{{::hit.pubkey}}"><b class="ion-key"></b> {{::hit.pubkey|formatPubkey}}</span>
       <span class="assertive" ng-if="!hit.uid">
         {{::'WOT.NOT_MEMBER_PARENTHESIS'|translate}}
       </span>
     </h4>
-    <h4>
-      <span class="gray" title="{{::hit.pubkey}}"><b class="ion-key"></b> {{::hit.pubkey|formatPubkey}}</span>
+    <h4 ng-if="::hit.city" class="gray" title="{{::hit.city}}">
+      <b class="ion-location"></b> {{::hit.city}}
     </h4>
   </div>
+</div>
+<div class="item no-border no-padding item-text-wrap" ng-if="::hit.description">
+  <small ng-bind-html="::hit.description"></small>
 </div>

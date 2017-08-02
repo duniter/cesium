@@ -10,7 +10,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       DEFAULT_LOAD_SIZE: 1000
     },
     fields = {
-      profile: ["title", "geoPoint", "avatar._content_type"]
+      profile: ["title", "geoPoint", "avatar._content_type", "city", "description"]
     };
 
   that.raw = {
@@ -28,6 +28,25 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       }
     };
 
+    // Filter on bounding box
+    // see https://www.elastic.co/guide/en/elasticsearch/reference/2.4/geo-point.html
+    if (options && options.bounds) {
+
+      query.bool.filter = {
+        "geo_bounding_box" : {
+          "geoPoint" : {
+            "top_left" : {
+              "lat" : Math.max(Math.min(options.bounds.northEast.lat, 90), -90),
+              "lon" : Math.max(Math.min(options.bounds.southWest.lng, 180), -180)
+            },
+            "bottom_right" : {
+              "lat" : Math.max(Math.min(options.bounds.southWest.lat, 90), -90),
+              "lon" : Math.max(Math.min(options.bounds.northEast.lng, 180), -180)
+            }
+          }
+        }
+      };
+    }
     return query;
   }
 
@@ -107,7 +126,12 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           if (item.name && item.name.length > 30) {
             item.name = item.name.substr(0, 27) + '...';
           }
-          console.log(item);
+
+          // Description
+          item.description = esHttp.util.trustAsHtml(hit._source.description);
+
+          // City
+          item.city = hit._source.city;
 
           return res.concat(item);
         }, []);

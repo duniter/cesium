@@ -104,8 +104,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   })
 
 
-.run(function($rootScope, $translate, $state, $window, $urlRouter, ionicReady, localStorage,
-              filterTranslations, Device, BMA, UIUtils, csHttp, $ionicConfig, PluginService, csPlatform, csWallet, csSettings, csConfig, csCurrency) {
+.run(function($rootScope, $translate, $state, $window, $urlRouter, ionicReady,
+              Device, UIUtils, $ionicConfig, PluginService, csPlatform, csWallet, csSettings, csConfig, csCurrency) {
   'ngInject';
 
   // Allow access to service data, from HTML templates
@@ -224,14 +224,20 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // endRemoveIf(android)
 
   // Prevent $urlRouter's default handler from firing (don't sync ui router)
-  $rootScope.$on('$locationChangeSuccess', function(e, newUrl, oldUrl) {
+  $rootScope.$on('$locationChangeSuccess', function(event, newUrl, oldUrl) {
     if ($state.current.data && $state.current.data.silentLocationChange === true) {
-      console.debug('[app] Skipping state sync (silent location change)');
-      e.preventDefault();
+      var oldPath = oldUrl.split('?')[0];
+      var newPath = newUrl.split('?')[0];
+      if (newPath === oldPath) {
+        console.debug('[app] Skipping state sync (silent location change)');
+
+        event.preventDefault();
+        return;
+      }
     }
-    else {
-      $urlRouter.sync();
-    }
+
+    // default action, propagate to ui-router
+    //$urlRouter.sync();
   });
   // Configures $urlRouter's listener *after* the previous listener
   $urlRouter.listen();

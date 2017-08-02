@@ -92,8 +92,9 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           }
         }
       },
-      loading: true,
-      markers: {}
+      bounds: {},
+      markers: {},
+      loading: true
     });
 
     // [NEW] When opening the view
@@ -158,7 +159,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       $scope.loading = true;
 
       // Load wot data
-      return mapWot.load()
+      return mapWot.load({bounds: $scope.map.bounds})
 
         .then(function(res) {
           if (res && res.length) {
@@ -192,23 +193,26 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                 message: markerTemplate
               };
               var id = hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey;
+              var wasExisting = !!$scope.map.markers[id];
               $scope.map.markers[id] = marker;
 
               // Create a search marker (will be hide)
-              var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
-              var searchMarker = angular.merge({
-                type: type,
-                opacity: 0,
-                icon: L.divIcon({
-                  className: type + ' ng-hide',
-                  iconSize: L.point(0, 0)
-                })
-              }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending});
-              markersSearchLayer.addLayer(new L.Marker({
-                  lat: hit.geoPoint.lat,
-                  lng: hit.geoPoint.lon
-                },
-                searchMarker));
+              if (!wasExisting) {
+                var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
+                var searchMarker = angular.merge({
+                  type: type,
+                  opacity: 0,
+                  icon: L.divIcon({
+                    className: type + ' ng-hide',
+                    iconSize: L.point(0, 0)
+                  })
+                }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending});
+                markersSearchLayer.addLayer(new L.Marker({
+                    lat: hit.geoPoint.lat,
+                    lng: hit.geoPoint.lon
+                  },
+                  searchMarker));
+              }
             });
           }
 
@@ -231,6 +235,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     // Update the browser location, to be able to refresh the page
     $scope.$on("centerUrlHash", function(event, centerHash) {
       if (!$scope.loading) {
+        $scope.load();
+
         return $timeout(function() {
           $scope.updateLocationHref(centerHash);
         }, 300);
