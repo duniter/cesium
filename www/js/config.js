@@ -10,7 +10,7 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"fallbackLanguage": "en",
+	"fallbackLanguage": "fr",
 	"rememberMe": true,
 	"showUDHistory": false,
 	"timeout": 300000,
@@ -31,16 +31,16 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en.txt"
 	},
 	"node": {
-		"host": "g1.duniter.org",
+		"host": "g1.duniter.fr",
 		"port": "443"
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.duniter.fr",
+			"host": "g1.duniter.org",
 			"port": "443"
 		},
 		{
-			"host": "g1.duniter.org",
+			"host": "g1.duniter.fr",
 			"port": "443"
 		}
 	],
@@ -59,8 +59,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.15.1",
-	"build": "2017-08-01T15:12:52.961Z",
+	"version": "0.15.2",
+	"build": "2017-08-02T17:45:09.812Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

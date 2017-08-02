@@ -285,7 +285,7 @@ function ESMessageComposeController($scope, $controller, UIUtils, parameters) {
 
 }
 
-function ESMessageComposeModalController($scope, Modals, UIUtils, CryptoUtils, csWallet, esHttp, esMessage, parameters) {
+function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHttp, esMessage, parameters) {
   'ngInject';
 
   $scope.formData = {

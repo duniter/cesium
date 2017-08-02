@@ -140,7 +140,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
           csSettings.api.data.on.changed($rootScope, onSettingsChanged, this);
 
           onSettingsChanged(csSettings.data);
-        })
+        });
     }
 
 
