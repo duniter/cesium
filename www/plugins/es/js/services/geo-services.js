@@ -10,7 +10,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
   })
 
-  .factory('esGeo', function($q, csConfig, csHttp) {
+  .factory('esGeo', function($rootScope, $q, csConfig, csSettings, csHttp) {
     'ngInject';
 
     var
@@ -22,7 +22,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         searchByQuery: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json')
       },
       google: {
-        apiKey: csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey,
+        apiKey: undefined,
         search: csHttp.get('maps.google.com', 443, '/maps/api/geocode/json')
       },
       searchByIP: csHttp.get('freegeoip.net', 80, '/json/:ip')
@@ -126,6 +126,24 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         });
     }
 
+    // If no google api key in config: get it from settings
+    that.raw.google.apiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey;
+    if (!that.raw.google.apiKey) {
+      csSettings.ready()
+        .then(function() {
+
+          // Listen settings changed
+          function onSettingsChanged(data){
+            that.raw.google.enable = data.plugins && data.plugins.es && data.plugins.es.enableGoogleApi;
+            that.raw.google.apiKey = that.raw.google.enable && data.plugins.es.googleApiKey;
+          }
+          csSettings.api.data.on.changed($rootScope, onSettingsChanged, this);
+
+          onSettingsChanged(csSettings.data);
+        })
+    }
+
+
     return {
       point: {
         current: getCurrentPosition,
@@ -133,8 +151,8 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         searchByIP: searchPositionByIP
       },
       google: {
-        hasApiKey : function() {
-          return !!that.raw.google.apiKey;
+        isEnable: function() {
+          return that.raw.google.enable && that.raw.google.apiKey;
         },
         searchByAddress: googleSearchPositionByString
       }

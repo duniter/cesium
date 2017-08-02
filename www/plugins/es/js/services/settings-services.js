@@ -40,7 +40,10 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             },
             invitations: {
               readTime: true
-            }
+            },
+            defaultCountry: undefined,
+            enableGoogleApi: false,
+            googleApiKey: undefined
           }
         }
     }, {plugins: {es: csConfig.plugins && csConfig.plugins.es || {}}}),

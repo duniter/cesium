@@ -26,7 +26,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     };
 
     // Limit to profile with geo point
-    if (esGeo.google.hasApiKey()) {
+    if (options.searchAddress) {
       query.bool.should = [
         {exists: {field: "geoPoint"}},
         {exists: {field: "address"}},
@@ -63,6 +63,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     options = options || {};
     options.from = options.from || 0;
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;
+    options.searchAddress = esGeo.google.isEnable() && (angular.isDefined(options.searchAddress) ? options.searchAddress : true);
 
     var request = {
       query: createFilterQuery(options),
@@ -107,7 +108,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
         // Transform profile hits
         var commaRegexp = new RegExp('[,]');
-        var noPositionItems = [];
+        var searchAddressItems = [];
         var items = res.hits.hits.reduce(function(res, hit) {
           var pubkey =  hit._id;
 
@@ -117,13 +118,13 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
           // City & address
           item.city = hit._source.city;
-          item.fullAddress = item.city && ((hit._source.address ? hit._source.address+ ', ' : '') + item.city);
 
           // Set geo point
           item.geoPoint = hit._source.geoPoint;
           if (!item.geoPoint || !item.geoPoint.lat || !item.geoPoint.lon) {
-            if (!item.fullAddress) return res; // no city: exclude this item
-            noPositionItems.push(item);
+            if (!options.searchAddress || !item.city) return res; // no city: exclude this item
+            item.searchAddress = item.city && ((hit._source.address ? hit._source.address+ ', ' : '') + item.city);
+            searchAddressItems.push(item);
           }
           else {
             // Convert lat/lon to float (if need)
@@ -152,24 +153,29 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
         }, []);
 
         // Resolve missing positions by addresses (only if google API enable)
-        if (noPositionItems.length && esGeo.google.hasApiKey()) {
+        if (searchAddressItems.length) {
           var now = new Date().getTime();
-          console.log('[map] [wot] Search positions of {0} addresses...'.format(noPositionItems.length));
+          console.log('[map] [wot] Search positions of {0} addresses...'.format(searchAddressItems.length));
           var counter = 0;
 
-          return $q.all(noPositionItems.reduce(function(res, item) {
-            return res.concat(esGeo.google.searchByAddress(item.fullAddress)
+          return $q.all(searchAddressItems.reduce(function(res, item) {
+            return !item.searchAddress ? res : res.concat(esGeo.google.searchByAddress(item.searchAddress)
               .then(function(res) {
                 if (!res || !res.length) return;
                 item.geoPoint = res[0];
-                delete item.fullAddress;
+                // If search on city, add a randomized delta to avoid superposition
+                if (item.city == item.searchAddress) {
+                  item.geoPoint.lon += Math.random() / 1000;
+                  item.geoPoint.lat += Math.random() / 1000;
+                }
+                delete item.searchAddress; // not need anymore
                 items.push(item);
                 counter++;
               })
               .catch(function() {/*silent*/}));
             }, []))
               .then(function(){
-                console.log('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, noPositionItems.length, new Date().getTime()-now));
+                console.log('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, searchAddressItems.length, new Date().getTime()-now));
                 return items;
               });
         }

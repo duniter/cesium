@@ -1,0 +1,35 @@
+
+<span class="item item-divider" translate>MAP.SETTINGS.MAP_DIVIDER</span>
+
+<label class="item item-toggle dark item-text-wrap">
+  <span translate>MAP.SETTINGS.ENABLE_GOOGLE_API</span>
+  <h4 class="gray" translate>MAP.SETTINGS.ENABLE_GOOGLE_API_HELP</h4>
+  <div class="toggle toggle-royal">
+    <input type="checkbox" ng-model="formData.enableGoogleApi">
+    <div class="track">
+      <div class="handle"></div>
+    </div>
+  </div>
+</label>
+
+<ion-item class="item-input"
+          ng-if="!$root.config.plugins.es.googleApiKey"
+          ng-class="{'item-input-error': formData.enableGoogleApi && !formData.googleApiKey}">
+  <div class="input-label col-33">
+    <span class="" ng-class="{'gray': !formData.enableGoogleApi}"translate>MAP.SETTINGS.GOOGLE_API_KEY</span>
+    <h4>
+      <a href="https://console.developers.google.com/apis/credentials/key" target="_system" translate>MAP.SETTINGS.BTN_GOOGLE_API</a>
+      <span class="gray"> ({{'MAP.SETTINGS.BTN_GOOGLE_API_WARNING'|translate}})</span>
+    </h4>
+  </div>
+  <input type="text"
+         placeholder="{{'MAP.SETTINGS.GOOGLE_API_KEY_PLACEHOLDER' | translate}}"
+         ng-model="formData.googleApiKey"
+         ng-if="formData.enableGoogleApi">
+</ion-item>
+<div class="form-errors"
+     ng-show="formData.enableGoogleApi && !formData.googleApiKey">
+  <div class="form-error">
+    <span translate="ERROR.FIELD_REQUIRED"></span>
+  </div>
+</div>

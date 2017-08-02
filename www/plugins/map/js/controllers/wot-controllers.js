@@ -102,19 +102,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       if ($scope.loading) {
 
         // Load the map (and init if need)
-        $scope.loadMap().then(function(map) {
-
-          // Load indicator
-          map.fire('dataloading');
-
-          // Load data
-          return $scope.load()
-
-            // Hide loading indicator
-            .then(function() {
-              map.fire('dataload');
-            });
-        });
+        $scope.loadMap()
+          .then($scope.load);
       }
       else {
         // Make sur to have previous center coordinate defined in the location URL
@@ -127,16 +116,24 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       return leafletData.getMap($scope.mapId).then(function(map) {
         if (!$scope.map.loading) return map; // already loaded
 
+        // Add a refresh button
+        if (!UIUtils.screen.isSmall()) {
+          L.easyButton('icon ion-refresh', function(btn, map){
+              return $scope.load(map);
+            },
+            {position: 'topright'}
+          ).addTo(map);
+        }
+
         // Add loading control
-        var loadingControl = L.Control.loading({
+        L.Control.loading({
           position: 'topright',
           separate: true
-        });
-        loadingControl.addTo(map);
+        }).addTo(map);
 
         // Add localize me control
-        var localizeMe = MapUtils.control.localizeMe();
-        localizeMe.addTo(map);
+        MapUtils.control.localizeMe()
+          .addTo(map);
 
         // Add search control
         var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
@@ -155,24 +152,27 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     };
 
     // Load markers data
-    $scope.load = function() {
+    $scope.load = function(map) {
+      if (!map) {
+        return leafletData.getMap($scope.mapId).then(function(map) {
+          return $scope.load(map); // loop with the map object
+        });
+      }
+
       $scope.loading = true;
+      // Show loading indicator
+      map.fire('dataloading');
 
       // Load wot data
       return mapWot.load()
 
         .then(function(res) {
+          var markers = {};
+          var existingMarkerIds = _.keys($scope.map.markers);
           if (res && res.length) {
 
             var formatPubkey = $filter('formatPubkey');
             var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
-
-            // Sort with member first
-            /*res = _.sortBy(res, function(hit) {
-             var score = 0;
-             score += (!hit.uid) ? 100 : 0;
-             return -score;
-             });*/
 
             _.forEach(res, function (hit) {
               var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
@@ -193,11 +193,10 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                 message: markerTemplate
               };
               var id = (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey).replace(/-/g, '_');
-              var wasExisting = !!$scope.map.markers[id];
-              $scope.map.markers[id] = marker;
+              markers[id] = marker;
 
               // Create a search marker (will be hide)
-              if (!wasExisting) {
+              if (!existingMarkerIds[id]) {
                 var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
                 var searchMarker = angular.merge({
                   type: type,
@@ -215,8 +214,11 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
               }
             });
           }
-
+          $scope.map.markers = markers;
           $scope.loading = false;
+
+          // hide loading indicator
+          map.fire('dataload');
         });
     };
 

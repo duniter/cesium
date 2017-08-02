@@ -36,6 +36,15 @@
     },
     "ERROR": {
       "LOCALIZE_ME_FAILED": "Impossible de récupérer votre position actuelle"
+    },
+    "SETTINGS": {
+      "MAP_DIVIDER": "Cartes",
+      "ENABLE_GOOGLE_API": "Activer les services Google API ?",
+      "ENABLE_GOOGLE_API_HELP": "Permet l'affichage dans la <b>carte des membres</b> des comptes ayant une adresse mais aucun positionnement GPS.",
+      "GOOGLE_API_KEY": "Clé d'API Google",
+      "BTN_GOOGLE_API": "Obtenir une clé",
+      "BTN_GOOGLE_API_WARNING": "nécessite d'avoir un compte Google",
+      "GOOGLE_API_KEY_PLACEHOLDER": "Exemple: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
     }
   }
 }
