@@ -59,8 +59,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.15.2",
-	"build": "2017-08-02T18:29:52.980Z",
+	"version": "0.15.3",
+	"build": "2017-08-02T18:53:38.178Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
