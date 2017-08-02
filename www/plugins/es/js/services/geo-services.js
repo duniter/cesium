@@ -25,7 +25,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         apiKey: undefined,
         search: csHttp.get('maps.google.com', 443, '/maps/api/geocode/json')
       },
-      searchByIP: csHttp.get('freegeoip.net', 80, '/json/:ip')
+      searchByIP: csHttp.get('freegeoip.net', 443, '/json/:ip')
     };
 
     function googleSearchPositionByString(address) {
