@@ -23,9 +23,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   case "$1" in
     rel|pre)
       # Change the version in package.json and test file
-      sed -i "s/version\": \"$current/version\": \"$2/g" package.json
-      sed -i "s/ version=\".*\"/ version=\"$2\"/g" config.xml
-      sed -i "s/ android-versionCode=\".*\"/ android-versionCode=\"$3\"/g" config.xml
+      sed -i "s/version\": \"$current\"/version\": \"$2\"/g" package.json
+      sed -i "s/ version=\"[^\"]+\"/ version=\"$2\"/g" config.xml
+      sed -i "s/ android-versionCode=\"[^\"]+\"/ android-versionCode=\"$3\"/g" config.xml
 
       # Bump the install.sh
       sed -i "s/echo \"v.*\" #lastest/echo \"v$2\" #lastest/g" install.sh

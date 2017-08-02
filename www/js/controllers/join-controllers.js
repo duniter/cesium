@@ -377,7 +377,8 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
         okType: 'button-assertive',
         cancelText: 'COMMON.BTN_LATER'
       })
-    .then(function() {
+    .then(function(confirm) {
+      if (!confirm) return;
       return csWallet.downloadRevocation();
     });
   };
