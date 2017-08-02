@@ -22,17 +22,15 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         searchByQuery: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json')
       },
       google: {
+        apiKey: csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey,
         search: csHttp.get('maps.google.com', 443, '/maps/api/geocode/json')
       },
       searchByIP: csHttp.get('freegeoip.net', 80, '/json/:ip')
     };
 
-    function _fallbackSearchPositionByString(err, address) {
+    function googleSearchPositionByString(address) {
 
-      console.debug('[ES] [geo] Search position failed on [OSM]. Trying [google] service');
-      var apiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.googleApiKey;
-
-      return that.raw.google.search({address: address, key: apiKey})
+      return that.raw.google.search({address: address, key: that.raw.google.apiKey})
         .then(function(res) {
           if (!res || !res.results || !res.results.length) return;
           return res.results.reduce(function(res, hit) {
@@ -44,10 +42,17 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
               lon: hit.geometry && hit.geometry.location && hit.geometry.location.lng
             });
           }, []);
-        })
-        .catch(function() {
+        });
+    }
+
+    function _fallbackSearchPositionByString(osmErr, address) {
+
+      console.debug('[ES] [geo] Search position failed on [OSM]. Trying [google] service');
+
+      return googleSearchPositionByString(address)
+        .catch(function(googleErr) {
           console.debug('[ES] [geo] Search position failed on [google] service');
-          throw err; // throw first error (OMS error)
+          throw osmErr || googleErr; // throw first OMS error if exists
         });
     }
 
@@ -126,6 +131,12 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         current: getCurrentPosition,
         searchByAddress: searchhPositionByQuery,
         searchByIP: searchPositionByIP
+      },
+      google: {
+        hasApiKey : function() {
+          return !!that.raw.google.apiKey;
+        },
+        searchByAddress: googleSearchPositionByString
       }
     };
   });

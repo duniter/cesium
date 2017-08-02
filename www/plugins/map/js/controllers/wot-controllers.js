@@ -159,7 +159,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       $scope.loading = true;
 
       // Load wot data
-      return mapWot.load({bounds: $scope.map.bounds})
+      return mapWot.load()
 
         .then(function(res) {
           if (res && res.length) {
@@ -192,7 +192,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                 focus: false,
                 message: markerTemplate
               };
-              var id = hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey;
+              var id = (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey).replace(/-/g, '_');
               var wasExisting = !!$scope.map.markers[id];
               $scope.map.markers[id] = marker;
 
@@ -235,7 +235,6 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     // Update the browser location, to be able to refresh the page
     $scope.$on("centerUrlHash", function(event, centerHash) {
       if (!$scope.loading) {
-        $scope.load();
 
         return $timeout(function() {
           $scope.updateLocationHref(centerHash);

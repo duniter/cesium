@@ -10,11 +10,12 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
       defaultSettingsNode,
       started = false,
       startPromise,
-      readyDeffered,
       listeners,
       removeChangeStateListener;
 
     function disableChangeState() {
+      if (removeChangeStateListener) return; // make sure to call this once
+
       var remove = $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
         if (!event.defaultPrevented && next.name !== 'app.home' && next.name !== 'app.settings') {
           event.preventDefault();
@@ -87,10 +88,7 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
 
     function ready() {
       if (started) return $q.when();
-      if (startPromise) return startPromise;
-      if (readyDeffered) return readyDeffered.promise;
-      readyDeffered = $q.defer();
-      return readyDeffered.promise;
+      return startPromise || start();
     }
 
     function restart() {
@@ -102,7 +100,6 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
     }
 
     function start() {
-      enableChangeState();
 
       // Avoid change state
       disableChangeState();
@@ -134,8 +131,6 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           addListeners();
           startPromise = null;
           started = true;
-          if (readyDeffered) readyDeffered.resolve();
-          readyDeffered = null;
         })
         .catch(function(err) {
           startPromise = null;
@@ -143,8 +138,6 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
           if($state.current.name !== 'app.home') {
             $state.go('app.home', {error: 'peer'});
           }
-          if (readyDeffered) readyDeffered.reject(err);
-          readyDeffered = null;
           throw err;
         });
 
@@ -167,6 +160,7 @@ angular.module('cesium.platform', ['cesium.config', 'cesium.services'])
     }
 
     return  {
+      disableChangeState: disableChangeState,
       isStarted: isStarted,
       ready: ready,
       restart: restart,

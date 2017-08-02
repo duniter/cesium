@@ -137,6 +137,9 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   }
   // endRemoveIf(device)
 
+  // Must be done before any other $stateChangeStart listeners
+  csPlatform.disableChangeState();
+
   // removeIf(android)
   // removeIf(ios)
   // removeIf(firefoxos)
@@ -274,7 +277,7 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
     }
 
     // Make sure platform is started
-    return csPlatform.start();
+    return csPlatform.ready();
   });
 })
 ;

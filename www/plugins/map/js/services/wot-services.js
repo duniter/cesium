@@ -1,7 +1,7 @@
 
 angular.module('cesium.map.wot.services', ['cesium.services'])
 
-.factory('mapWot', function($q, csHttp, esHttp, csWot, BMA) {
+.factory('mapWot', function($q, csHttp, esHttp, csWot, BMA, esGeo) {
   'ngInject';
 
   var
@@ -10,7 +10,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       DEFAULT_LOAD_SIZE: 1000
     },
     fields = {
-      profile: ["title", "geoPoint", "avatar._content_type", "city", "description"]
+      profile: ["title", "geoPoint", "avatar._content_type", "address", "city", "description"]
     };
 
   that.raw = {
@@ -20,29 +20,38 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
   };
 
   function createFilterQuery(options) {
+    options = options || {};
     var query = {
-      bool: {
-        must: [
-          {exists: {field: "geoPoint"}}
-        ]
-      }
+      bool: {}
     };
+
+    // Limit to profile with geo point
+    if (esGeo.google.hasApiKey()) {
+      query.bool.should = [
+        {exists: {field: "geoPoint"}},
+        {exists: {field: "address"}},
+        {exists: {field: "city"}}
+      ];
+    }
+    else {
+      query.bool.must= [
+        {exists: {field: "geoPoint"}}
+      ];
+    }
 
     // Filter on bounding box
     // see https://www.elastic.co/guide/en/elasticsearch/reference/2.4/geo-point.html
-    if (options && options.bounds) {
-
-      query.bool.filter = {
-        "geo_bounding_box" : {
-          "geoPoint" : {
-            "top_left" : {
-              "lat" : Math.max(Math.min(options.bounds.northEast.lat, 90), -90),
-              "lon" : Math.max(Math.min(options.bounds.southWest.lng, 180), -180)
-            },
-            "bottom_right" : {
-              "lat" : Math.max(Math.min(options.bounds.southWest.lat, 90), -90),
-              "lon" : Math.max(Math.min(options.bounds.northEast.lng, 180), -180)
-            }
+    if (options.bounds && options.bounds.northEast && options.bounds.southWest) {
+      query.bool.should = query.bool.should || {};
+      query.bool.should.geo_bounding_box = {
+        "geoPoint" : {
+          "top_left" : {
+            "lat" : Math.max(Math.min(options.bounds.northEast.lat, 90), -90),
+            "lon" : Math.max(Math.min(options.bounds.southWest.lng, 180), -180)
+          },
+          "bottom_right" : {
+            "lat" : Math.max(Math.min(options.bounds.southWest.lat, 90), -90),
+            "lon" : Math.max(Math.min(options.bounds.northEast.lng, 180), -180)
           }
         }
       };
@@ -98,23 +107,32 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
         // Transform profile hits
         var commaRegexp = new RegExp('[,]');
-        res = res.hits.hits.reduce(function(res, hit) {
+        var noPositionItems = [];
+        var items = res.hits.hits.reduce(function(res, hit) {
           var pubkey =  hit._id;
 
           var uid = uids[pubkey];
           var item = uid && {uid: uid} || memberships[pubkey] || {};
           item.pubkey = pubkey;
 
+          // City & address
+          item.city = hit._source.city;
+          item.fullAddress = item.city && ((hit._source.address ? hit._source.address+ ', ' : '') + item.city);
+
           // Set geo point
           item.geoPoint = hit._source.geoPoint;
-          if (!item.geoPoint || !item.geoPoint.lat || !item.geoPoint.lon) return res;
-
-          // Convert lat/lon to float (if need)
-          if (item.geoPoint.lat && typeof item.geoPoint.lat === 'string') {
-            item.geoPoint.lat = parseFloat(item.geoPoint.lat.replace(commaRegexp, '.'));
+          if (!item.geoPoint || !item.geoPoint.lat || !item.geoPoint.lon) {
+            if (!item.fullAddress) return res; // no city: exclude this item
+            noPositionItems.push(item);
           }
-          if (item.geoPoint.lon && typeof item.geoPoint.lon === 'string') {
-            item.geoPoint.lon = parseFloat(item.geoPoint.lon.replace(commaRegexp, '.'));
+          else {
+            // Convert lat/lon to float (if need)
+            if (item.geoPoint.lat && typeof item.geoPoint.lat === 'string') {
+              item.geoPoint.lat = parseFloat(item.geoPoint.lat.replace(commaRegexp, '.'));
+            }
+            if (item.geoPoint.lon && typeof item.geoPoint.lon === 'string') {
+              item.geoPoint.lon = parseFloat(item.geoPoint.lon.replace(commaRegexp, '.'));
+            }
           }
 
           // Avatar
@@ -130,13 +148,33 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           // Description
           item.description = esHttp.util.trustAsHtml(hit._source.description);
 
-          // City
-          item.city = hit._source.city;
-
-          return res.concat(item);
+          return item.geoPoint ? res.concat(item) : res;
         }, []);
 
-        return csWot.extendAll(res, 'pubkey');
+        // Resolve missing positions by addresses (only if google API enable)
+        if (noPositionItems.length && esGeo.google.hasApiKey()) {
+          var now = new Date().getTime();
+          console.log('[map] [wot] Search positions of {0} addresses...'.format(noPositionItems.length));
+          var counter = 0;
+
+          return $q.all(noPositionItems.reduce(function(res, item) {
+            return res.concat(esGeo.google.searchByAddress(item.fullAddress)
+              .then(function(res) {
+                if (!res || !res.length) return;
+                item.geoPoint = res[0];
+                delete item.fullAddress;
+                items.push(item);
+                counter++;
+              })
+              .catch(function() {/*silent*/}));
+            }, []))
+              .then(function(){
+                console.log('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, noPositionItems.length, new Date().getTime()-now));
+                return items;
+              });
+        }
+
+        return items;
       });
   }
 
