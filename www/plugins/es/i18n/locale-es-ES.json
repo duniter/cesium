@@ -19,7 +19,6 @@
     }
   },
   "MENU": {
-    "MARKET": "Anuncios",
     "REGISTRY": "Profesionales",
     "USER_PROFILE": "Mi perfil",
     "MESSAGES": "Mensajes",
@@ -191,8 +190,9 @@
       "TX_SEARCH_FILTER": {
         "MEMBER_FLOWS": "Entradas/salidas de miembros",
         "EXISTING_TRANSACTION": "Con transacciones",
-        "PERIOD": "Calculado entre el {{params[2]|formatDate}} y el {{params[4]|formatDate}}",
-        "PUBKEY": "Calculado por {{params[1]|formatPubkey}}"
+        "PERIOD": "<b class=\"ion-clock\"></b> Entre el <b class=\"gray\">{{params[1]|formatDateShort}}</b> ({{params[1]|formatTime}}) y el <b class=\"gray\">{{params[2]|formatDateShort}}</b> ({{params[2]|formatTime}})",
+        "ISSUER": "<b class=\"ion-android-desktop\"></b> Calculado por <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}",
+        "TX_PUBKEY": "<b class=\"ion-card\"></b> Transacciones que implican <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
       }
     },
     "ERROR": {
@@ -238,68 +238,6 @@
     },
     "ERROR": {
       "SEARCH_GROUPS_FAILED": "Fracaso en la búsqueda de grupos"
-    }
-  },
-  "MARKET": {
-    "COMMON": {
-      "PRICE": "Precio",
-      "BTN_BUY": "Comprar",
-      "BTN_BUY_DOTS": "Comprar…",
-      "BTN_NEW_AD": "Presento un anuncio"
-    },
-    "SEARCH": {
-      "TITLE": "Anuncios",
-      "SEARCH_HELP": "Búsqueda (coche, libro...)",
-      "BTN_ADD": "Nuevo",
-      "BTN_OPTIONS": "Búsqueda avanzada",
-      "BTN_AROUND_ME": "Alrededor de yo",
-      "SHOW_MORE": "Visualizar más",
-      "SHOW_MORE_COUNT": "(límite actual a {{limit}})",
-      "LOCATION": "localización",
-      "LOCATION_HELP": "Ciudad",
-      "LAST_RECORDS": "últimos anuncios :",
-      "RESULTS": "Resultados :",
-      "BTN_OFFERS": "Ofrecimientos",
-      "BTN_NEEDS": "Demandas"
-    },
-    "VIEW": {
-      "TITLE": "Anuncio",
-      "MENU_TITLE": "Opciónes",
-      "POPOVER_SHARE_TITLE": "Anuncio {{title}}",
-      "REMOVE_CONFIRMATION" : "Está usted segura/o querer suprimir este anuncio ?<br/><br/>Esta operación es ireversible."
-    },
-    "TYPE": {
-      "TITLE": "Nuevo anuncio",
-      "SELECT_TYPE": "Tipo de anuncio :",
-      "OFFER": "Ofrecimiento, Venta",
-      "NEED": "Demanda, Búsqueda"
-    },
-    "EDIT": {
-      "TITLE": "Edición",
-      "TITLE_NEW": "Nuevo anuncio",
-      "RECORD_TITLE": "Título",
-      "RECORD_TITLE_HELP": "Título",
-      "RECORD_DESCRIPTION": "Descripción",
-      "RECORD_DESCRIPTION_HELP": "Descripción",
-      "RECORD_LOCATION": "Ciudad",
-      "RECORD_LOCATION_HELP": "Dirección, Ciudad",
-      "RECORD_PRICE": "Precio",
-      "RECORD_PRICE_HELP": "Precio (opcional)",
-      "RECORD_CURRENCY": "Moneda"
-    },
-    "ERROR": {
-      "FAILED_SAVE_RECORD": "Fracaso durante el registro de el anuncio",
-      "FAILED_UPDATE_RECORD": "Fracaso durante la actualización de el anuncio",
-      "LOAD_CATEGORY_FAILED": "Erreur de actualización de las categorías",
-      "LOOKUP_RECORDS_FAILED": "Fracaso durante la ejecución de la búsqueda.",
-      "LOAD_RECORD_FAILED": "Fracaso durante la carga de el anuncio.",
-      "REMOVE_RECORD_FAILED": "Erreur de la supresión de el anuncio",
-      "FAILED_SAVE_COMMENT": "Fracaso durante el respaldo del comentario",
-      "FAILED_REMOVE_COMMENT": "Fracaso durante la supresión del comentario",
-      "RECORD_NOT_EXISTS": "Anuncio inexistente"
-    },
-    "INFO": {
-      "RECORD_REMOVED" : "Anuncio suprimido"
     }
   },
   "REGISTRY": {
@@ -361,7 +299,9 @@
       "LOOKUP_RECORDS_FAILED": "Fracaso durante la ejecución de la búsqueda.",
       "REMOVE_RECORD_FAILED": "Fracaso en la supresión de la página",
       "SAVE_RECORD_FAILED": "Fracaso durante el respaldo",
-      "RECORD_NOT_EXISTS": "Página inexistente"
+      "RECORD_NOT_EXISTS": "Página inexistente",
+      "FAILED_SAVE_COMMENT": "Fracaso durante el respaldo del comentario",
+      "FAILED_REMOVE_COMMENT": "Fracaso durante la supresión del comentario",
     },
     "INFO": {
       "RECORD_REMOVED" : "Página suprimida"
@@ -372,6 +312,9 @@
     "NO_PROFILE_DEFINED": "Ningún perfil Cesium+",
     "BTN_ADD": "Ingresar mi perfil",
     "BTN_EDIT": "Editar mi perfil",
+    "BTN_GEOLOC_ADDRESS": "Actualizar desde la dirección",
+    "BTN_GEOLOC_ME": "localizarme",
+    "BTN_REMOVE_GEOLOC": "Posición de eliminar",
     "UID": "Seudónimo",
     "TITLE": "Nombre, Apellido",
     "TITLE_HELP": "Nombre, Apellido",
@@ -385,6 +328,10 @@
     "GENERAL_DIVIDER": "Informaciónes generales",
     "LOCATION_DIVIDER": "Dirección",
     "SOCIAL_NETWORKS_DIVIDER": "Redes sociales, sitios web",
+    "LATITUDE": "Latitud",
+    "LATITUDE_HELP": "Latitud",
+    "LONGITUDE": "Longitud",
+    "LONGITUDE_HELP": "Longitud",
     "TECHNICAL_DIVIDER": "Informaciónes técnicas",
     "MODAL_AVATAR": {
       "TITLE": "Foto de perfil",
@@ -393,11 +340,17 @@
       "RESIZE_HELP": "<b>Encuadra la imagen</b>, si es necesario. Un clic mantenido sobre la imagen permite desplazarla. Hace un clic sobre la zona abajo a la izquierda para hacer zoom.",
       "RESULT_HELP": "<b>Aquí está el resultado</b> tal como está visible sobre su perfil :"
     },
+    "MODAL_LOCATIONS": {
+      "TITLE": "Validación de direcciones",
+      "RESULT_DIVIDER": "Resultado(s) para <b>{{address}}</b>:"
+    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Fracaso en la carga del perfil usuario.",
       "SAVE_PROFILE_FAILED": "Fracaso durante el respaldo",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Formato no tomado en cuenta : por favor, indica una dirección válida.<br/><br/>Ejemplos :<ul><li>- Una página Facebook (https://www.facebook.com/user)</li><li>- Una página web (http://www.misitio.es)</li><li>- Una dirección email (joe@dalton.com)</li></ul>",
-      "IMAGE_RESIZE_FAILED": "Fracaso durante el redimensionamiento de la imagen"
+      "IMAGE_RESIZE_FAILED": "Fracaso durante el redimensionamiento de la imagen",
+      "GEO_LOCATION_FAILED": "No se puede obtener de su ubicación",
+      "ADDRESS_LOCATION_FAILED": "No se puede recuperar la posición de la dirección"
     },
     "INFO": {
       "PROFILE_SAVED": "Perfil respaldado"
@@ -478,6 +431,8 @@
     "NODE_BMA_UP": "El nodo <b>{{params[0]}}:{{params[1]}}</b> es de nuevo accesible.",
     "MEMBER_JOIN": "Ahora usted está <b>miembro</b> de la moneda <b>{{params[0]}}</b> !",
     "MEMBER_LEAVE": "No está <b>miembro</b> de la moneda <b>{{params[0]}}</b>!",
+    "MEMBER_EXCLUDE": "Usted ya no es un miembro de la moneda <b>{{params[0]}}</b>, la falta de no renovación o la falta de certificaciones.",
+    "MEMBER_REVOKE": "La revocación de su cuenta se ha hecho. Puede que no sea un miembro de la cuenta en moneda <b>{{params[0]}}</b>.",
     "MEMBER_ACTIVE": "Su renovación de adhesión a la moneda <b>{{params[0]}}</b> fue <b>tomado en cuenta</b>.",
     "TX_SENT": "Su <b>pago</b> a <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> fue efectuado.",
     "TX_SENT_MULTI": "Su <b>pago</b> a <b>{{params[1]}}</b> fue efectuado.",
@@ -485,12 +440,6 @@
     "TX_RECEIVED_MULTI": "Ha <b>recibido un pago</b> de <b>{{params[1]}}</b>.",
     "CERT_SENT": "Su <b>certificación</b> a <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> fue efectuada.",
     "CERT_RECEIVED": "Ha <b>recibido una certificación</b> de <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "MARKET": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha comentado su anuncio : <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado su comentario sobre su anuncio : <b>{{params[2]}}</b>",
-      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha contestado a su comentario sobre el anuncio : <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado la repuesta a su comentario sobre el anuncio : <b>{{params[2]}}</b>"
-    },
     "REGISTRY": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha comentado su referencia : <b>{{params[2]}}</b>",
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado su comentario sobre su referencia : <b>{{params[2]}}</b>",

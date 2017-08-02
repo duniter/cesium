@@ -240,68 +240,6 @@
       "SEARCH_GROUPS_FAILED": "Echec de la recherche de groupes"
     }
   },
-  "MARKET": {
-    "COMMON": {
-      "PRICE": "Prix",
-      "BTN_BUY": "Acheter",
-      "BTN_BUY_DOTS": "Acheter...",
-      "BTN_NEW_AD": "je dépose une annonce"
-    },
-    "SEARCH": {
-      "TITLE": "Annonces",
-      "SEARCH_HELP": "Recherche (voiture, livre...)",
-      "BTN_ADD": "Nouveau",
-      "BTN_OPTIONS": "Recherche avancée",
-      "BTN_AROUND_ME": "Autour de moi",
-      "SHOW_MORE": "Afficher plus",
-      "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
-      "LOCATION": "Localisation",
-      "LOCATION_HELP": "Ville",
-      "LAST_RECORDS": "Dernières annonces :",
-      "RESULTS": "Résultats :",
-      "BTN_OFFERS": "Offres",
-      "BTN_NEEDS": "Demandes"
-    },
-    "VIEW": {
-      "TITLE": "Annonce",
-      "MENU_TITLE": "Options",
-      "POPOVER_SHARE_TITLE": "Annonce {{title}}",
-      "REMOVE_CONFIRMATION" : "Êtes-vous sûr de vouloir supprimer cette annonce ?<br/><br/>Cette opération est irréversible."
-    },
-    "TYPE": {
-      "TITLE": "Nouvelle annonce",
-      "SELECT_TYPE": "Type d'annonce :",
-      "OFFER": "Offre, Vente",
-      "NEED": "Demande, Recherche"
-    },
-    "EDIT": {
-      "TITLE": "Edition",
-      "TITLE_NEW": "Nouvelle annonce",
-      "RECORD_TITLE": "Titre",
-      "RECORD_TITLE_HELP": "Titre",
-      "RECORD_DESCRIPTION": "Description",
-      "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Ville",
-      "RECORD_LOCATION_HELP": "Adresse, Ville",
-      "RECORD_PRICE": "Prix",
-      "RECORD_PRICE_HELP": "Prix (optionnel)",
-      "RECORD_CURRENCY": "Monnaie"
-    },
-    "ERROR": {
-      "FAILED_SAVE_RECORD": "Erreur lors de l'enregistrement de l'annonce",
-      "FAILED_UPDATE_RECORD": "Erreur lors de la mise à jour de l'annonce",
-      "LOAD_CATEGORY_FAILED": "Erreur d'initialisation des catégories",
-      "LOOKUP_RECORDS_FAILED": "Erreur lors de l'execution de la recherche.",
-      "LOAD_RECORD_FAILED": "Erreur lors du chargement de l'annonce.",
-      "REMOVE_RECORD_FAILED": "Erreur de la suppression de l'annonce",
-      "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
-      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire",
-      "RECORD_NOT_EXISTS": "Annonce inexistante"
-    },
-    "INFO": {
-      "RECORD_REMOVED" : "Annonce supprimée"
-    }
-  },
   "REGISTRY": {
     "CATEGORY": "Activité principale",
     "GENERAL_DIVIDER": "Informations générales",
@@ -385,7 +323,7 @@
     "ADDRESS": "Rue",
     "ADDRESS_HELP": "Rue, complément d'adresse...",
     "CITY": "Ville",
-    "CITY_HELP": "Ville (optionnel)",
+    "CITY_HELP": "Ville, Pays",
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "Informations générales",
     "LOCATION_DIVIDER": "Adresse",

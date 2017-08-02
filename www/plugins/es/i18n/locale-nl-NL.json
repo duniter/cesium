@@ -19,7 +19,6 @@
     }
   },
   "MENU": {
-    "MARKET": "Advertenties",
     "REGISTRY": "Ondernemingen",
     "USER_PROFILE": "Mijn profiel",
     "MESSAGES": "Berichten"
@@ -110,68 +109,6 @@
       "LOAD_NOTIFICATIONS_FAILED": "Kan niet alle berichtnotificaties laden.",
       "REMOVE_All_MESSAGES_FAILED": "Kan niet alle berichten wissen.",
       "MARK_ALL_AS_READ_FAILED": "Kan berichten niet als gelezen markeren."
-    }
-  },
-  "MARKET": {
-    "COMMON": {
-      "PRICE": "Prijs",
-      "BTN_BUY": "Koop",
-      "BTN_BUY_DOTS": "Koop...",
-      "BTN_NEW_AD": "Nieuwe advertentie"
-    },
-    "SEARCH": {
-      "TITLE": "Markt",
-      "SEARCH_HELP": "Wat, waar: auto, Utrecht, ...",
-      "BTN_ADD": "Nieuw",
-      "BTN_OPTIONS": "Geavanceerd zoeken",
-      "BTN_AROUND_ME": "In mijn omgeving",
-      "SHOW_MORE": "Toon meer",
-      "SHOW_MORE_COUNT": "(huidige limiet op {{limit}})",
-      "LOCATION": "Locatie",
-      "LOCATION_HELP": "Plaats",
-      "LAST_RECORDS": "Nieuwste advertenties:",
-      "RESULTS": "Resultaat:",
-      "BTN_OFFERS": "Aangeboden",
-      "BTN_NEEDS": "Gezocht"
-    },
-    "VIEW": {
-      "TITLE": "Advertentie",
-      "MENU_TITLE": "Opties",
-      "POPOVER_SHARE_TITLE": "Advertentie {{title}}",
-      "REMOVE_CONFIRMATION" : "Weet je zeker dat je deze advertentie wil wissen?<br/><br/>Dit kan niet ongedaan worden gemaakt."
-    },
-    "TYPE": {
-      "TITLE": "Nieuwe advertentie",
-      "SELECT_TYPE": "Soort advertentie:",
-      "OFFER": "Aanbod",
-      "NEED": "Vraag"
-    },
-    "EDIT": {
-      "TITLE": "Bewerk",
-      "TITLE_NEW": "Nieuwe advertentie",
-      "RECORD_TITLE": "Titel",
-      "RECORD_TITLE_HELP": "Titel",
-      "RECORD_DESCRIPTION": "Beschrijving",
-      "RECORD_DESCRIPTION_HELP": "Beschrijving",
-      "RECORD_LOCATION": "Adres",
-      "RECORD_LOCATION_HELP": "Straat, Plaats",
-      "RECORD_PRICE": "Prijs",
-      "RECORD_PRICE_HELP": "Prijs (optioneel)",
-      "RECORD_CURRENCY": "Valuta"
-    },
-    "ERROR": {
-      "FAILED_SAVE_RECORD": "Advertentie opslaan mislukt",
-      "FAILED_UPDATE_RECORD": "Advertentie aanpassen mislukt",
-      "LOAD_CATEGORY_FAILED": "Categorieên laden mislukt",
-      "LOOKUP_RECORDS_FAILED": "Fout tijdens laden van advertenties.",
-      "LOAD_RECORD_FAILED": "Advertentie laden mislukt",
-      "REMOVE_RECORD_FAILED": "Advertentie wissen mislukt",
-      "FAILED_SAVE_COMMENT": "Commentaar opslaan mislukt",
-      "FAILED_REMOVE_COMMENT": "Commentaar wissen mislukt",
-      "RECORD_NOT_EXISTS": "Advertentie niet gevonden"
-    },
-    "INFO": {
-      "RECORD_REMOVED" : "Advertentie succesvol verwijderd"
     }
   },
   "REGISTRY": {
@@ -304,12 +241,6 @@
     "TX_RECEIVED_MULTI": "Je hebt een <b>betaling ontvangen</b> van <b>{{params[1]}}</b>.",
     "CERT_SENT": "Je <b>certificatie</b> van <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> is uitgevoerd.",
     "CERT_RECEIVED": "Je hebt een <b>certificatie ontvangen</b> van <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "MARKET": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft gereageerd op jouw advertentie: <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/aar reactie op jouw advertentie bewerkt: <b>{{params[2]}}</b>",
-      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft gereageerd op jouw commentaar op advertentie: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/haar reactie op jouw commentaar bewerkt, op advertentie: <b>{{params[2]}}</b>"
-    },
     "REGISTRY": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft gereageerd op jouw referentie: <b>{{params[2]}}</b>",
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> heeft zijn/aar reactie op jouw referentie bewerkt: <b>{{params[2]}}</b>",

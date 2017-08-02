@@ -199,68 +199,6 @@
       "SEARCH_BLOCKS_FAILED": "Error while searching blocks."
     }
   },
-  "MARKET": {
-    "COMMON": {
-      "PRICE": "Price",
-      "BTN_BUY": "Buy",
-      "BTN_BUY_DOTS": "Buy...",
-      "BTN_NEW_AD": "New ad"
-    },
-    "SEARCH": {
-      "TITLE": "Market",
-      "SEARCH_HELP": "What, Where: car, Columbia city, ...",
-      "BTN_ADD": "New",
-      "BTN_OPTIONS": "Advanced search",
-      "BTN_AROUND_ME": "Around me",
-      "SHOW_MORE": "Show more",
-      "SHOW_MORE_COUNT": "(current limit to {{limit}})",
-      "LOCATION": "Location",
-      "LOCATION_HELP": "City",
-      "LAST_RECORDS": "Last records:",
-      "RESULTS": "Results:",
-      "BTN_OFFERS": "Offers",
-      "BTN_NEEDS": "Needs"
-    },
-    "VIEW": {
-      "TITLE": "Ad",
-      "MENU_TITLE": "Options",
-      "POPOVER_SHARE_TITLE": "Ad {{title}}",
-      "REMOVE_CONFIRMATION" : "Are you sure you want to delete this ad?<br/><br/> This is irreversible."
-    },
-    "TYPE": {
-      "TITLE": "New ad",
-      "SELECT_TYPE": "Kind of ad:",
-      "OFFER": "Offer",
-      "NEED": "Need"
-    },
-    "EDIT": {
-      "TITLE": "Edit",
-      "TITLE_NEW": "New ad",
-      "RECORD_TITLE": "Title",
-      "RECORD_TITLE_HELP": "Title",
-      "RECORD_DESCRIPTION": "Description",
-      "RECORD_DESCRIPTION_HELP": "Description",
-      "RECORD_LOCATION": "Address",
-      "RECORD_LOCATION_HELP": "Street, City",
-      "RECORD_PRICE": "Price",
-      "RECORD_PRICE_HELP": "Price (optional)",
-      "RECORD_CURRENCY": "Currency"
-    },
-    "ERROR": {
-      "FAILED_SAVE_RECORD": "Saving ad failed",
-      "FAILED_UPDATE_RECORD": "Updating Ad failed",
-      "LOAD_CATEGORY_FAILED": "Loading categories failed",
-      "LOOKUP_RECORDS_FAILED": "Error while loading records.",
-      "LOAD_RECORD_FAILED": "Loading ad failed",
-      "REMOVE_RECORD_FAILED": "Deleting ad failed",
-      "FAILED_SAVE_COMMENT": "Saving comment failed",
-      "FAILED_REMOVE_COMMENT": "Deleting comment failed",
-      "RECORD_NOT_EXISTS": "Ad not found"
-    },
-    "INFO": {
-      "RECORD_REMOVED" : "Ad successfully deleted"
-    }
-  },
   "REGISTRY": {
     "CATEGORY": "Main activity",
     "GENERAL_DIVIDER": "Basic information",
@@ -309,7 +247,7 @@
       "RECORD_ADDRESS": "Address",
       "RECORD_ADDRESS_HELP": "Address: Street, building...",
       "RECORD_CITY": "City",
-      "RECORD_CITY_HELP": "City",
+      "RECORD_CITY_HELP": "City, Country",
       "RECORD_SOCIAL_NETWORKS": "Social networks and web site",
       "RECORD_PUBKEY": "Public key",
       "RECORD_PUBKEY_HELP": "Public key to receive payments"
@@ -461,12 +399,6 @@
     "TX_RECEIVED_MULTI": "You received a payment from <b>{{params[1]}}</b>.",
     "CERT_SENT": "Your <b>certification</b> to <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\" ><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> was executed.",
     "CERT_RECEIVED": "You  have <b>received a certification</b> from <span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span>.",
-    "MARKET": {
-      "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on your ad: <b>{{params[2]}}</b>",
-      "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his/her comment on your ad: <b>{{params[2]}}</b>",
-      "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has replied to your comment on the ad: <b>{{params[2]}}</b>",
-      "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his/her answer to your comment on the ad: <b>{{params[2]}}</b>"
-    },
     "REGISTRY": {
       "NEW_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has commented on your referencing: <b>{{params[2]}}</b>",
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on your referencing: <b>{{params[2]}}</b>",
