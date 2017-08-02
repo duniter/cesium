@@ -83,7 +83,6 @@
   "MENU": {
     "HOME": "Welkom",
     "WOT": "Register",
-    "MARKET": "Marktplaats",
     "CURRENCY": "Valuta",
     "CURRENCIES": "Valuta's",
     "ACCOUNT": "Mijn rekening",
@@ -109,7 +108,6 @@
     "MESSAGE": "Welkom bij de Cesium Applicatie!<br/>Bekijk je <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> portefeilles in real time.",
     "MESSAGE_SHORT": "Bekijk je <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> portefeilles<br/>in real time!",
     "BTN_REGISTRY": "Register",
-    "BTN_MARKET": "Marktplaats",
     "BTN_CURRENCY": "Verken valuta",
     "BTN_ABOUT": "over",
     "BTN_HELP": "Help",
