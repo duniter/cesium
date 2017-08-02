@@ -126,23 +126,23 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         });
     }
 
-    // If no google api key in config: get it from settings
     that.raw.google.apiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey;
-    if (!that.raw.google.apiKey) {
-      csSettings.ready()
-        .then(function() {
+    var hasConfigApiKey = !!that.raw.google.apiKey;
+    csSettings.ready()
+      .then(function() {
 
-          // Listen settings changed
-          function onSettingsChanged(data){
-            that.raw.google.enable = data.plugins && data.plugins.es && data.plugins.es.enableGoogleApi;
-            that.raw.google.apiKey = that.raw.google.enable && data.plugins.es.googleApiKey;
+        // Listen settings changed
+        function onSettingsChanged(data){
+          if (!hasConfigApiKey) {
+            // If no google api key in config, use in settings
+            that.raw.google.apiKey = data.plugins.es.googleApiKey;
           }
-          csSettings.api.data.on.changed($rootScope, onSettingsChanged, this);
+          that.raw.google.enable = that.raw.google.apiKey && data.plugins && data.plugins.es && data.plugins.es.enableGoogleApi;
+        }
+        csSettings.api.data.on.changed($rootScope, onSettingsChanged, this);
 
-          onSettingsChanged(csSettings.data);
-        });
-    }
-
+        onSettingsChanged(csSettings.data);
+      });
 
     return {
       point: {
