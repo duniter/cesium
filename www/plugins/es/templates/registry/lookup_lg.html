@@ -62,7 +62,7 @@
       COMMON.SEARCH_NO_RESULT
     </div>
 
-    <div class="list animate-ripple"
+    <div class="list {{::motion.ionListClass}}"
          ng-if="!search.loading && search.results && search.results.length > 0">
 
       <a ng-repeat="rec in search.results"

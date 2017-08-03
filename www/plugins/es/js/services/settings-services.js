@@ -322,9 +322,6 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             console.debug("[ES] [settings] Enable");
             addListeners();
 
-            // Emit event
-            api.state.raise.changed(enable);
-
             if (csWallet.isLogin()) {
               return onWalletLogin(csWallet.data)
                 .then(function() {

@@ -1,27 +1,25 @@
 <a name="group-{{:rebind:group.hash}}"></a>
-<ion-item id="group-{{:rebind:block.hash}}"
-          class="item item-icon-left item-group {{ionItemClass}}"
+<div id="group-{{:rebind:group.hash}}"
+          class="item item-icon-right item-avatar {{::ionItemClass}} ink"
           ng-click="select(group)">
 
-  <i class="icon ion-cube stable" ng-if=":rebind:(!group.empty && !group.avatar)"></i>
-  <i class="avatar" ng-if=":rebind:!group.empty && group.avatar" style="background-image: url('{{:rebind:block.avatar.src}}')"></i>
+  <i class="item-image avatar" style="background-image: url({{::group.avatar.src}})" ng-if="group.avatar"></i>
+  <i class="item-image icon ion-android-people" ng-if="!group.avatar"></i>
+  <i class="item-image icon-secondary ion-android-lock" ng-if="!group.avatar" style="left: 20px; top: 17px; font-size: 19px; color: #d9d9d9;"></i>
 
-  <div class="row no-padding">
-    <div class="col">
-      <h4 class="dark">
-        <i class="ion-clock"></i>
-        {{:rebind:group.creationTime|formatDate}}
-      </h4>
-      <h4>
-        <!-- membersCount -->
-        <i class="dark ion-person"></i>
-        <span class="dark" ng-if=":rebind:group.membersCount">+{{:rebind:group.membersCount}}</span>
-      </h4>
-    </div>
+  <h2 ng-bind-html=":rebind:group.title"></h2>
 
-    <div class="col col-33 positive hidden-md">
-      <h4><i class="ion-person"></i> <span ng-bind-html=":rebind:group.title"></span></h4>
-    </div>
+  <!-- creation time-->
+  <h4 class="gray pull-right">
+    <i class="ion-clock"></i>
+    {{:rebind:'GROUP.CREATED_TIME'|translate: group }}
+  </h4>
 
-  </div>
-</ion-item>
+  <!-- membersCount -->
+  <h4 class="dark pull-left" ng-if=":rebind:group.membersCount">
+    <i class="dark ion-person"></i>
+    <span class="dark">+{{:rebind:group.membersCount}}</span>
+  </h4>
+
+  <i class="icon ion-ios-arrow-right"></i>
+</div>

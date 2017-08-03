@@ -11,14 +11,14 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
 
   })
 
-.factory('esGroup', function($q, $rootScope, csPlatform, csSettings, esHttp, CryptoUtils, csWot, csWallet, esNotification, esComment) {
+.factory('esGroup', function($q, $rootScope, csPlatform, BMA, csSettings, esHttp, CryptoUtils, csWot, csWallet, esNotification, esComment) {
   'ngInject';
 
   var
     listeners,
     defaultLoadSize = 50,
     fields = {
-      list: ["issuer", "title"],
+      list: ["issuer", "title", "description", "type", "creationTime", "avatar._content_type"],
       commons: ["issuer", "title", "description", "creationTime", "time", "signature"],
       notifications: ["issuer", "time", "hash", "read_signature"]
     },
@@ -87,8 +87,8 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
       record.description = esHttp.util.trustAsHtml(record.description);
     }
 
-    // thumbnail
-    record.thumbnail = esHttp.image.fromHit(hit, 'thumbnail');
+    // avatar
+    record.avatar = esHttp.image.fromHit(hit, 'avatar');
 
     // pictures
     if (hit._source.pictures && hit._source.pictures.reduce) {
@@ -102,24 +102,7 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
 
   exports._internal.search = esHttp.post('/group/record/_search');
 
-  function searchGroups(options) {
-    if (!csWallet.isLogin()) {
-      return $q.when([]);
-    }
-
-    options = options || {};
-    options.from = options.from || 0;
-    options.size = options.size || defaultLoadSize;
-    options._source = options._source || fields.list;
-    var request = {
-      sort: {
-        "time" : "desc"
-      },
-      from: options.from,
-      size: options.size,
-      _source: options._source
-    };
-
+  function _executeSearchRequest(request) {
     return exports._internal.search(request)
       .then(function(res) {
         if (!res || !res.hits || !res.hits.total) {
@@ -131,10 +114,75 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
           return record ? res.concat(record) : res;
         }, []);
 
-        console.debug('[ES] [group] Loading {0} {1} messages'.format(groups.length, options.type));
+        console.debug('[ES] [group] Loading {0} groups'.format(groups.length));
 
         return groups;
       });
+  }
+
+  function getLastGroups(options) {
+    options = options || {};
+
+    /*if (!csWallet.isLogin()) {
+      return $q.when([]);
+    }*/
+
+    var request = {
+      sort: {
+        "time" : "desc"
+      },
+      from: options.from || 0,
+      size: options.size || defaultLoadSize,
+      _source: options._source || fields.list
+    };
+
+    return _executeSearchRequest(request);
+  }
+
+  function searchGroups(options) {
+    options = options || {};
+
+    var text = options.text && options.text.trim();
+    if (!text) return getLastGroups(options);
+
+    var request = {
+      from: options.from || 0,
+      size: options.size || defaultLoadSize,
+      highlight: {fields : {title : {}, tags: {}}},
+      _source: options._source || fields.list
+    };
+
+
+    var matches = [];
+    var filters = [];
+    // pubkey : use a special 'term', because of 'non indexed' field
+    if (BMA.regexp.PUBKEY.test(text /*case sensitive*/)) {
+      filters.push({term : { issuer: text}});
+      filters.push({term : { pubkey: text}});
+    }
+    else {
+      text = text.toLowerCase();
+      var matchFields = ["title", "description"];
+      matches.push({multi_match : { query: text,
+        fields: matchFields,
+        type: "phrase_prefix"
+      }});
+      matches.push({match : { title: text}});
+      matches.push({match : { description: text}});
+    }
+
+    request.query = {bool: {}};
+    if (matches.length > 0) {
+      request.query.bool.should =  matches;
+    }
+    if (filters.length > 0) {
+      request.query.bool.filter =  filters;
+    }
+
+
+
+
+    return _executeSearchRequest(request);
   }
 
   exports._internal.get = esHttp.get('/group/record/:id');
@@ -209,6 +257,7 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
 
   return {
     record: {
+      last: getLastGroups,
       search: searchGroups,
       load: loadData,
       add: esHttp.record.post('/group/record'),

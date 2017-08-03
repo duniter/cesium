@@ -59,7 +59,7 @@ angular.module('cesium.es.group.controllers', ['cesium.es.services'])
 
 ;
 
-function ESGroupListController($scope, UIUtils, $state, csWallet, esGroup, ModalUtils) {
+function ESGroupListController($scope, UIUtils, $state, BMA, csWallet, esGroup, ModalUtils) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -73,6 +73,7 @@ function ESGroupListController($scope, UIUtils, $state, csWallet, esGroup, Modal
     limit: defaultSearchLimit
   };
   $scope.enableFilter = !UIUtils.screen.isSmall();
+  $scope.ionItemClass = 'item-border-large';
 
   $scope.$on('$ionicView.enter', function() {
     if ($scope.search.loading) {
@@ -80,10 +81,27 @@ function ESGroupListController($scope, UIUtils, $state, csWallet, esGroup, Modal
     }
   });
 
+  $scope.doSearchText = function() {
+    var text = $scope.search.text && $scope.search.text.trim();
+    if (!text || !text.length) {
+      return $scope.doSearchLast();
+    }
+    $scope.search.type='text';
+    return $scope.doSearch();
+  };
+
+  $scope.doSearchLast = function() {
+    $scope.search.type = 'last';
+    return $scope.doSearch();
+  };
+
   $scope.doSearch = function(from, size) {
     var options = {};
-    options.from = options.from || from || 0;
-    options.size = options.size || size || defaultSearchLimit;
+    options.from = from || 0;
+    options.size = size || defaultSearchLimit;
+
+    options.text = $scope.search.type == 'text' && $scope.search.text && $scope.search.text.trim();
+
     $scope.search.loading = true;
     return esGroup.record.search(options)
       .then(function(res) {
@@ -411,17 +429,17 @@ function ESGroupEditController($scope, esGroup, UIUtils, $state, $q, Device,
           json.pictures = $scope.pictures.reduce(function(res, pic) {
             return res.concat({file: esHttp.image.toAttachment(pic)});
           }, []);
-          return UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
+          return UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize avatar
             .then(function(imageSrc) {
-              json.thumbnail = esHttp.image.toAttachment({src: imageSrc});
+              json.avatar = esHttp.image.toAttachment({src: imageSrc});
               return json;
             });
         }
         else {
-          if (json.thumbnail) {
+          if (json.avatar) {
             // FIXME: this is a workaround to allow content deletion
             // Is it a bug in the ES attachment-mapper ?
-            json.thumbnail = {
+            json.avatar = {
               _content: '',
               _content_type: ''
             };

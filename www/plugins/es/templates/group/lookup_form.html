@@ -71,11 +71,11 @@
     </div>
   </div>
 
-  <ion-list class="list {{ionListClass}}">
+  <div class="list {{::motion.ionListClass}}" ng-if="!$scope.search.loading">
 
     <ng-include src="'plugins/es/templates/group/items_groups.html'"></ng-include>
 
-  </ion-list>
+  </div>
 
   <ion-infinite-scroll
     ng-if="search.hasMore"

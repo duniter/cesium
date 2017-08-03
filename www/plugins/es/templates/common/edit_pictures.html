@@ -6,19 +6,21 @@
        ng-class="{'in done': picture.isnew}">
     <div>
       <h2 ng-if="picture.title">{{picture.title}}</h2>
-      <img ng-src="{{picture.src}}" ></img>
+      <img ng-src="{{picture.src}}">
     </div>
-    <div class="item in done tabs tabs-secondary tabs-icon-left">
-      <a class="tab-item stable-bg assertive-900" ng-click="removePicture($index)">
-        <i class="icon ion-close"></i>
-        {{'COMMON.BTN_PICTURE_DELETE'|translate}}
-      </a>
+    <div class="item done in tabs tabs-secondary tabs-icon-left">
+      <a class="tab-item stable-bg assertive" ng-click="removePicture($index)"
+         title="{{'COMMON.BTN_PICTURE_DELETE' | translate}}"
+        ><i class="icon ion-trash-a"></i>{{'COMMON.BTN_PICTURE_DELETE'|translate}}</a>
+      <a class="tab-item stable-bg dark"
+         ng-click="rotatePicture($index)"
+         title="{{'COMMON.BTN_PICTURE_ROTATE' | translate}}"
+        ><i class="icon ion-forward"></i>{{'COMMON.BTN_PICTURE_ROTATE'|translate}}</a>
       <a class="tab-item stable-bg"
          ng-click="favoritePicture($index)"
-         ng-class="{'dark': $index !== 0, 'positive-900': $index === 0}">
-        <i class="icon ion-star"></i>
-        {{'COMMON.BTN_PICTURE_FAVORISE'|translate}}
-      </a>
+         ng-class="{'gray': $index !== 0, 'positive': $index === 0}"
+         title="{{'COMMON.BTN_PICTURE_FAVORISE' | translate}}"
+        ><i class="icon ion-star"></i>{{'COMMON.BTN_PICTURE_FAVORISE'|translate}}</a>
     </div>
   </div>
 

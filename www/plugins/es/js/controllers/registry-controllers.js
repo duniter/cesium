@@ -56,6 +56,10 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
           templateUrl: "plugins/es/templates/registry/edit_record.html",
           controller: 'ESRegistryRecordEditCtrl'
         }
+      },
+      data: {
+        auth: true,
+        minData: true
       }
     })
 
@@ -173,7 +177,6 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     if (text.length > 1) {
       // pubkey : use a special 'term', because of 'non indexed' field
       if (BMA.regexp.PUBKEY.test(text /*case sensitive*/)) {
-        matches = [];
         filters.push({term : { issuer: text}});
         filters.push({term : { pubkey: text}});
       }
@@ -441,12 +444,10 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
             }, []);
           }
           // Set Motion
-          $timeout(function(){
-            UIUtils.motion.fadeSlideIn({
-              selector: '.lazy-load .item.card-gallery, .lazy-load .item',
-              startVelocity: 3000
-            });
-          }, 200);
+          $scope.motion.show({
+            selector: '.lazy-load .item.card-gallery, .lazy-load .item',
+            startVelocity: 3000
+          });
         })
         .catch(function() {
           $scope.pictures = [];
@@ -563,7 +564,7 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
         }
         $scope.loading = false;
         UIUtils.loading.hide();
-        UIUtils.motion.ripple();
+        $scope.motion.show();
       }
       // removeIf(device)
       $focus('registry-record-title');
@@ -585,14 +586,10 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
         $scope.loading = false;
         UIUtils.loading.hide();
 
-        $timeout(function(){
-          UIUtils.motion.ripple({
-            selector: '.animate-ripple .item, .card-gallery',
-            startVelocity: 3000
-          });
-          // Set Ink
-          UIUtils.ink();
-        }, 100);
+        $scope.motion.show({
+          selector: '.animate-ripple .item, .card-gallery',
+          startVelocity: 3000
+        });
       })
       .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED'));
   };
@@ -605,8 +602,7 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
     $scope.form.$submitted=true;
     if($scope.saving || // avoid multiple save
        !$scope.form.$valid ||
-       (!$scope.formData.category.id &&
-        ($scope.formData.type === 'shop' || $scope.formData.type === 'company'))) {
+       (($scope.formData.type === 'shop' || $scope.formData.type === 'company') && (!$scope.formData.category || !$scope.formData.category.id))) {
       return;
     }
     $scope.saving = true;

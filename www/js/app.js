@@ -140,10 +140,6 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
   // Must be done before any other $stateChangeStart listeners
   csPlatform.disableChangeState();
 
-  // removeIf(android)
-  // removeIf(ios)
-  // removeIf(firefoxos)
-  // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
   var preventStateChange = false; // usefull to avoid duplicate login, when a first page with auth
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
     if (event.defaultPrevented) return;
@@ -158,14 +154,21 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
 
     var options;
 
-    // Large screen: redirect to specific state
+    // removeIf(android)
+    // removeIf(ios)
+    // removeIf(firefoxos)
+    // -- Automatic redirection to large state (if define) (keep this code for platforms web and ubuntu build)
     if (next.data.large && !UIUtils.screen.isSmall()) {
       event.preventDefault();
       $state.go(next.data.large, nextParams);
+      return;
     }
+    // endRemoveIf(firefoxos)
+    // endRemoveIf(ios)
+    // endRemoveIf(android)
 
     // If state need auth
-    else if (next.data.auth && !csWallet.isAuth()) {
+    if (next.data.auth && !csWallet.isAuth()) {
       event.preventDefault();
       options = next.data.minData ? {minData: true} : undefined;
       preventStateChange = true;
@@ -222,25 +225,14 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
       $state.go('app.home');
     }
   });
-  // endRemoveIf(firefoxos)
-  // endRemoveIf(ios)
-  // endRemoveIf(android)
 
   // Prevent $urlRouter's default handler from firing (don't sync ui router)
   $rootScope.$on('$locationChangeSuccess', function(event, newUrl, oldUrl) {
     if ($state.current.data && $state.current.data.silentLocationChange === true) {
-      var oldPath = oldUrl.split('?')[0];
-      var newPath = newUrl.split('?')[0];
-      if (newPath === oldPath) {
-        console.debug('[app] Skipping state sync (silent location change)');
-
-        event.preventDefault();
-        return;
-      }
+      // Skipping propagation, because same URL, and state configured with 'silentLocationChange' options
+      var sameUrl = oldUrl && (oldUrl.split('?')[0] === newUrl.split('?')[0]);
+      if (sameUrl) event.preventDefault();
     }
-
-    // default action, propagate to ui-router
-    //$urlRouter.sync();
   });
   // Configures $urlRouter's listener *after* the previous listener
   $urlRouter.listen();

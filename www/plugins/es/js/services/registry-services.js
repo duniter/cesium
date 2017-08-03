@@ -1,6 +1,6 @@
 angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 'cesium.es.http.services'])
 
-.factory('esRegistry', function($q, csSettings, esHttp, esComment, esProfile) {
+.factory('esRegistry', function($q, csSettings, esHttp, esComment, csWot) {
   'ngInject';
 
   function EsRegistry() {

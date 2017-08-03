@@ -8,6 +8,7 @@
     "BTN_PUBLISH": "Publier",
     "BTN_PICTURE_DELETE": "Supprimer",
     "BTN_PICTURE_FAVORISE": "Principale",
+    "BTN_PICTURE_ROTATE": "Tourner",
     "BTN_ADD_PICTURE": "Ajouter une photo",
     "NOTIFICATIONS": {
       "TITLE": "Notifications",
@@ -204,6 +205,7 @@
     "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
+    "CREATED_TIME": "Crée {{creationTime|formatFromNow}}",
     "NOTIFICATIONS": {
       "TITLE": "Invitations"
     },

@@ -23,8 +23,7 @@
           </div>
 
           <form name="recordForm" novalidate="" ng-submit="save()">
-            <div class="list"
-                 ng-class="motion.ionListClass"
+            <div class="list {{::motion.ionListClass}}"
                  ng-init="setForm(recordForm)">
 
               <div class="item hidden-xs">
