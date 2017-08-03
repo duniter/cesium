@@ -132,7 +132,7 @@ npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
 Puis pour les dépendances non globales :
 
 ```bash
-npm installion
+npm install
 ```
 
 > Le processus d'installation peut prendre plusieurs minutes. En effet, il faut télécharger toutes les dépendances de Cesium et même en compiler certaines.

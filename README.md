@@ -26,6 +26,7 @@ If you don't already use nodejs (v5), please follow [prerequisite steps](https:/
 ```bash
 git clone https://github.com/duniter/cesium.git
 cd cesium
+npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
 npm install
 npm start
 ```

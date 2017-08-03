@@ -798,9 +798,11 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     var service = new CryptoAbstractService();
 
     var isDevice = true;
-    // removeIf(device)
+    // removeIf(android)
+    // removeIf(ios)
     isDevice = false;
-    // endRemoveIf(device)
+    // endRemoveIf(ios)
+    // endRemoveIf(android)
 
     //console.debug("[crypto] Created CryptotUtils service. device=" + isDevice);
 

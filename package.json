@@ -8,7 +8,7 @@
     },
     "scripts": {
         "postinstall": "bower install",
-        "install-for-mobile": "ionic state restore",
+        "install-platforms": "ionic state restore",
         "start": "ionic serve"
     },
     "keywords": [

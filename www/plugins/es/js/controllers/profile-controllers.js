@@ -279,7 +279,9 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
     if (Device.camera.enable) {
       return Device.camera.getPicture()
         .then(function(imageData) {
+          if (!imageData) return;
           $scope.avatar = {src: "data:image/png;base64," + imageData};
+          $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
           $scope.dirty = true;
         })
         .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
