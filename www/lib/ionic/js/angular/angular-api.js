@@ -118,11 +118,19 @@
                   };
                   deferred.checkFinish = function() {
                     if (deferred.count < listenerCount) return;
+                    deferred.count = 0;
                     if (deferred.errors.length) {
-                        deferred.raw.reject(deferred.errors);
+                        if (deferred.errors.length == 1) {
+                            deferred.raw.reject(deferred.errors[0]);
+                        }
+                        else {
+                            deferred.raw.reject(deferred.errors);
+                        }
+                        deferred.errors = [];
                     }
                     else {
                         deferred.raw.resolve(deferred.results);
+                        deferred.results = [];
                     }
                   };
                   deferred.resolve = function(result) {
