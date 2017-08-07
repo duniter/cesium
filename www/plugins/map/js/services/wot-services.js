@@ -10,7 +10,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       DEFAULT_LOAD_SIZE: 1000
     },
     fields = {
-      profile: ["title", "geoPoint", "avatar._content_type", "address", "city", "description"]
+      profile: ["title", "geoPoint", "avatar._content_type", "address", "city"]
     };
 
   that.raw = {
@@ -64,11 +64,14 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;
     options.searchAddress = esGeo.google.isEnable() && (angular.isDefined(options.searchAddress) ? options.searchAddress : true);
 
+    options.fields = options.fields || {};
+    options.fields.description = angular.isDefined(options.fields.description) ? options.fields.description : true;
+
     var request = {
       query: createFilterQuery(options),
-      from: options.from,
+      from: 0,
       size: options.size,
-      _source: fields.profile
+      _source: options.fields.description ? fields.profile.concat("description") : fields.profile
     };
 
     return $q.all([
@@ -104,85 +107,108 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
           return res;
         }, {});
 
+        var jobs = [
+          processLoadHits(options, uids, memberships, res)
+        ];
 
-        // Transform profile hits
-        var commaRegexp = new RegExp('[,]');
-        var searchAddressItems = [];
-        var items = res.hits.hits.reduce(function(res, hit) {
-          var pubkey =  hit._id;
-
-          var uid = uids[pubkey];
-          var item = uid && {uid: uid} || memberships[pubkey] || {};
-          item.pubkey = pubkey;
-
-          // City & address
-          item.city = hit._source.city;
-
-          // Set geo point
-          item.geoPoint = hit._source.geoPoint;
-          if (!item.geoPoint || !item.geoPoint.lat || !item.geoPoint.lon) {
-            if (!options.searchAddress || !item.city) return res; // no city: exclude this item
-            item.searchAddress = item.city && ((hit._source.address ? hit._source.address+ ', ' : '') + item.city);
-            searchAddressItems.push(item);
-          }
-          else {
-            // Convert lat/lon to float (if need)
-            if (item.geoPoint.lat && typeof item.geoPoint.lat === 'string') {
-              item.geoPoint.lat = parseFloat(item.geoPoint.lat.replace(commaRegexp, '.'));
-            }
-            if (item.geoPoint.lon && typeof item.geoPoint.lon === 'string') {
-              item.geoPoint.lon = parseFloat(item.geoPoint.lon.replace(commaRegexp, '.'));
-            }
-          }
-
-          // Avatar
-          item.avatar = esHttp.image.fromHit(hit, 'avatar');
-
-          // Name
-          item.name = hit._source.title;
-          // Avoid too long name (workaround for #308)
-          if (item.name && item.name.length > 30) {
-            item.name = item.name.substr(0, 27) + '...';
-          }
-
-          // Description
-          item.description = esHttp.util.trustAsHtml(hit._source.description);
-
-          return item.geoPoint ? res.concat(item) : res;
-        }, []);
-
-        // Resolve missing positions by addresses (only if google API enable)
-        if (searchAddressItems.length) {
-          var now = new Date().getTime();
-          console.log('[map] [wot] Search positions of {0} addresses...'.format(searchAddressItems.length));
-          var counter = 0;
-
-          return $q.all(searchAddressItems.reduce(function(res, item) {
-            return !item.searchAddress ? res : res.concat(esGeo.google.searchByAddress(item.searchAddress)
-              .then(function(res) {
-                if (!res || !res.length) return;
-                item.geoPoint = res[0];
-                // If search on city, add a randomized delta to avoid superposition
-                if (item.city == item.searchAddress) {
-                  item.geoPoint.lon += Math.random() / 1000;
-                  item.geoPoint.lat += Math.random() / 1000;
-                }
-                delete item.searchAddress; // not need anymore
-                items.push(item);
-                counter++;
-              })
-              .catch(function() {/*silent*/}));
-            }, []))
-              .then(function(){
-                console.log('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, searchAddressItems.length, new Date().getTime()-now));
-                return items;
-              });
+        // Additional slice requests
+        request.from += request.size;
+        while (request.from < res.hits.total) {
+          jobs.push(that.raw.profile.postSearch(angular.copy(request))
+            .then(function(res) {
+              if (!res.hits || !res.hits.hits.length) return [];
+              return processLoadHits(options, uids, memberships, res);
+            }));
+          request.from += request.size;
         }
-
-        return items;
+        return $q.all(jobs)
+          .then(function(res){
+            return res.reduce(function(res, items) {
+              return res.concat(items);
+            }, []);
+          });
       });
   }
 
+  function processLoadHits(options, uids, memberships, res) {
+
+    // Transform profile hits
+    var commaRegexp = new RegExp('[,]');
+    var searchAddressItems = [];
+    var items = res.hits.hits.reduce(function(res, hit) {
+      var pubkey =  hit._id;
+
+      var uid = uids[pubkey];
+      var item = uid && {uid: uid} || memberships[pubkey] || {};
+      item.pubkey = pubkey;
+
+      // City & address
+      item.city = hit._source.city;
+      item.address = hit._source.address;
+
+      // Set geo point
+      item.geoPoint = hit._source.geoPoint;
+      if (!item.geoPoint || !item.geoPoint.lat || !item.geoPoint.lon) {
+        if (!options.searchAddress || !item.city) return res; // no city: exclude this item
+        item.searchAddress = item.city && ((hit._source.address ? hit._source.address+ ', ' : '') + item.city);
+        searchAddressItems.push(item);
+      }
+      else {
+        // Convert lat/lon to float (if need)
+        if (item.geoPoint.lat && typeof item.geoPoint.lat === 'string') {
+          item.geoPoint.lat = parseFloat(item.geoPoint.lat.replace(commaRegexp, '.'));
+        }
+        if (item.geoPoint.lon && typeof item.geoPoint.lon === 'string') {
+          item.geoPoint.lon = parseFloat(item.geoPoint.lon.replace(commaRegexp, '.'));
+        }
+      }
+
+      // Avatar
+      item.avatar = esHttp.image.fromHit(hit, 'avatar');
+
+      // Name
+      item.name = hit._source.title;
+      // Avoid too long name (workaround for #308)
+      if (item.name && item.name.length > 30) {
+        item.name = item.name.substr(0, 27) + '...';
+      }
+
+      // Description
+      item.description = hit._source.description && esHttp.util.trustAsHtml(hit._source.description);
+
+      return item.geoPoint ? res.concat(item) : res;
+    }, []);
+
+    // Resolve missing positions by addresses (only if google API enable)
+    if (searchAddressItems.length) {
+      var now = new Date().getTime();
+      console.log('[map] [wot] Search positions of {0} addresses...'.format(searchAddressItems.length));
+      var counter = 0;
+
+      return $q.all(searchAddressItems.reduce(function(res, item) {
+        return !item.city ? res : res.concat(esGeo.google.searchByAddress(item.searchAddress)
+          .then(function(res) {
+            if (!res || !res.length) return;
+            item.geoPoint = res[0];
+            // If search on city, add a randomized delta to avoid superposition
+            if (item.city == item.searchAddress) {
+              item.geoPoint.lon += Math.random() / 1000;
+              item.geoPoint.lat += Math.random() / 1000;
+            }
+            delete item.searchAddress; // not need anymore
+            items.push(item);
+            counter++;
+          })
+          .catch(function() {/*silent*/}));
+      }, []))
+        .then(function(){
+          console.log('[map] [wot] Resolved {0}/{1} addresses in {2}ms'.format(counter, searchAddressItems.length, new Date().getTime()-now));
+          return items;
+        });
+    }
+
+    return $q.when(items);
+  }
 
   return {
     load: load

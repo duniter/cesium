@@ -18,8 +18,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
     that.raw = {
       osm: {
-        searchByString: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json&q=:query'),
-        searchByQuery: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json')
+        search: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json')
       },
       google: {
         apiKey: undefined,
@@ -56,31 +55,16 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         });
     }
 
-    function searchPositionByString(address) {
+    function searchPositionByAddress(query) {
+
+      if (typeof query == 'string') {
+        query = {q: query};
+      }
 
       var now = new Date();
-      console.debug('[ES] [geo] Searching position by string query [{0}]...'.format(address));
+      //console.debug('[ES] [geo] Searching position...', query);
 
-      return that.raw.osm.searchByString({query: address})
-        .then(function(res) {
-          console.debug('[ES] [geo] Found {0} address position(s) in {0}ms'.format(res && res.length || 0, new Date().getTime() - now.getTime()));
-          return res;
-        })
-
-        // Fallback service
-        .catch(function(err) {
-          return _fallbackSearchPositionByString(err, address);
-        });
-    }
-
-    function searchhPositionByQuery(query) {
-
-      if (typeof query == 'string') return searchPositionByString(query);
-
-      var now = new Date();
-      console.debug('[ES] [geo] Searching position by query...', query);
-
-      return that.raw.osm.searchByQuery(query)
+      return that.raw.osm.search(query)
         .then(function(res) {
           console.debug('[ES] [geo] Found {0} address position(s) in {0}ms'.format(res && res.length || 0, new Date().getTime() - now.getTime()), res);
           return res;
@@ -88,7 +72,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
         // Fallback service
         .catch(function(err) {
-          var address = (query.street ? query.street +', ' : '') + query.city +  (query.country ? ', '+ query.country : '');
+          var address = query.q ? query.q : ((query.street ? query.street +', ' : '') + query.city +  (query.country ? ', '+ query.country : ''));
           return _fallbackSearchPositionByString(err, address);
         });
     }
@@ -147,7 +131,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
     return {
       point: {
         current: getCurrentPosition,
-        searchByAddress: searchhPositionByQuery,
+        searchByAddress: searchPositionByAddress,
         searchByIP: searchPositionByIP
       },
       google: {

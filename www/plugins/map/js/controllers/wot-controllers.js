@@ -163,8 +163,14 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       // Show loading indicator
       map.fire('dataloading');
 
+      var options = {
+        fields: {
+          description: !UIUtils.screen.isSmall()
+        }
+      };
+
       // Load wot data
-      return mapWot.load()
+      return mapWot.load(options)
 
         .then(function(res) {
           var markers = {};
