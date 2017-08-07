@@ -118,13 +118,27 @@
 
               <!-- lat -->
               <div class="col no-padding">
-                <label class="item item-input item-floating-label">
+                <label class="item item-input item-floating-label"
+                       ng-class="{'item-input-error': form.$submitted && form.latitude.$invalid}">
                   <span class="input-label" translate>PROFILE.LATITUDE</span>
-                  <input class="no-padding-right" type="number" placeholder="{{'PROFILE.LATITUDE_HELP'|translate}}"
+                  <input class="no-padding-right"
+                         name="latitude"
+                         type="number" placeholder="{{'PROFILE.LATITUDE_HELP'|translate}}"
                          ng-model="formData.geoPoint.lat"
                          ng-model-options="{ debounce: 350 }"
-                         ng-change="onGeoPointChanged()">
+                         ng-change="onFormDataChanged()"
+                         min="-90" max="90">
                 </label>
+                <div class="form-errors"
+                     ng-show="form.$submitted && form.latitude.$error"
+                     ng-messages="form.latitude.$error">
+                  <div class="form-error" ng-message="min">
+                    <span translate="ERROR.FIELD_MIN" translate-values="{min: -90}"></span>
+                  </div>
+                  <div class="form-error" ng-message="max">
+                    <span translate="ERROR.FIELD_MAX" translate-values="{max: 90}"></span>
+                  </div>
+                </div>
               </div>
 
               <div class="col-10 no-padding hidden-xs">
@@ -133,13 +147,27 @@
 
               <!-- lon -->
               <div class="col no-padding">
-                <label class="item item-input item-floating-label">
+                <label class="item item-input item-floating-label"
+                       ng-class="{'item-input-error': form.$submitted && form.longitude.$invalid}">
                   <span class="input-label" translate>PROFILE.LONGITUDE</span>
-                  <input class="no-padding-right" type="number" placeholder="{{'PROFILE.LONGITUDE_HELP'|translate}}"
+                  <input class="no-padding-right"
+                         name="longitude"
+                         type="number" placeholder="{{'PROFILE.LONGITUDE_HELP'|translate}}"
                          ng-model="formData.geoPoint.lon"
                          ng-model-options="{ debounce: 350 }"
-                         ng-change="onGeoPointChanged()">
+                         ng-change="onFormDataChanged()"
+                         min="-180" max="180">
                 </label>
+                <div class="form-errors"
+                     ng-show="form.$submitted && form.longitude.$error"
+                     ng-messages="form.longitude.$error">
+                  <div class="form-error" ng-message="min">
+                    <span translate="ERROR.FIELD_MIN" translate-values="{min: -180}"></span>
+                  </div>
+                  <div class="form-error" ng-message="max">
+                    <span translate="ERROR.FIELD_MAX" translate-values="{max: 180}"></span>
+                  </div>
+                </div>
               </div>
 
               <div class="col col-40 no-padding">

@@ -76,15 +76,31 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
           .then(function(confirmSave) {
             $scope.loading = false;
             if (confirmSave) {
-              return $scope.save();
+              $scope.form.$submitted=true;
+              return $scope.save(false/*silent*/, true/*haswait debounce*/)
+                .then(function(saved){
+                  if (saved) {
+                    $scope.dirty = false;
+                  }
+                  return saved; // change state only if not error
+                });
+            }
+            else {
+              $scope.dirty = false;
+              return true; // ok, change state
             }
           })
-          .then(function() {
-            $scope.dirty = false;
-            $ionicHistory.nextViewOptions({
-              historyRoot: true
-            });
-            $state.go(next.name, nextParams);
+          .then(function(confirmGo) {
+            if (confirmGo) {
+              // continue to the order state
+              $ionicHistory.nextViewOptions({
+                historyRoot: true
+              });
+              $state.go(next.name, nextParams);
+            }
+          })
+          .catch(function(err) {
+
           });
       }
     }
@@ -125,6 +141,8 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
     if (profile.avatar) {
       $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
     }
+    $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+
     $scope.motion.show();
     UIUtils.loading.hide();
 
@@ -208,12 +226,12 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       if (formData.position) {
         delete formData.position;
       }
-      if ($scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon) {
-        $scope.formData.geoPoint.lat =  parseFloat($scope.formData.geoPoint.lat);
-        $scope.formData.geoPoint.lon =  parseFloat($scope.formData.geoPoint.lon);
+      if (formData.geoPoint && formData.geoPoint.lat && formData.geoPoint.lon) {
+        formData.geoPoint.lat =  parseFloat(formData.geoPoint.lat);
+        formData.geoPoint.lon =  parseFloat(formData.geoPoint.lon);
       }
       else{
-        $scope.formData.geoPoint = null;
+        formData.geoPoint = null;
       }
 
       if (!$scope.existing) {
@@ -225,6 +243,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
             $scope.dirty = false;
             updateWallet(formData);
             showSuccessToast();
+            return true;
           })
           .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
@@ -236,16 +255,17 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
             $scope.dirty = false;
             updateWallet(formData);
             showSuccessToast();
+            return true;
           })
           .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
-    };
+    }; // end of doFinishSave
 
     if ($scope.avatar && $scope.avatar.src) {
       return UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to thumbnail
         .then(function(imageSrc) {
           $scope.formData.avatar = esHttp.image.toAttachment({src: imageSrc});
-          doFinishSave($scope.formData);
+          return doFinishSave($scope.formData);
         });
     }
     else {
@@ -255,9 +275,9 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
   };
 
   $scope.saveAndClose = function() {
-    $scope.save()
-      .then(function() {
-        $scope.close();
+    return $scope.save()
+      .then(function(saved) {
+        if (saved) $scope.close();
       });
   };
 

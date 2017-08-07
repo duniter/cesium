@@ -571,6 +571,8 @@
     "FIELD_TOO_SHORT_WITH_LENGTH": "This field value is too short.",
     "FIELD_TOO_LONG": "Value is exceeding max length.",
     "FIELD_TOO_LONG_WITH_LENGTH": "Value is too long (max {{maxLength}} characters).",
+    "FIELD_MIN": "Minimum value: {{min}}",
+    "FIELD_MAX": "Maximal value: {{max}}",
     "FIELD_ACCENT": "Commas and accent characters not allowed",
     "FIELD_NOT_NUMBER": "Value is not a number",
     "FIELD_NOT_INT": "Value is not an integer",
