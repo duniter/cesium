@@ -36,12 +36,30 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
       ;;
   esac
 
+  # force nodejs version to 5
+  if [ -d "$NVM_DIR" ]; then
+    . $NVM_DIR/nvm.sh
+    nvm use 5
+  else
+    echo "nvm (Node version manager) not found (directory $NVM_DIR not found). Please install, and retry"
+    exit -1
+  fi
+
   # Update config file
   gulp config --env default_fr
 
+
+  echo "----------------------------------"
+  echo "- Building Android artifact..."
+  echo "----------------------------------"
   # Build assets for mobile device
   ionic build android --release
+
   #ionic build firefoxos --release
+
+  echo "----------------------------------"
+  echo "- Building web artifact..."
+  echo "----------------------------------"
 
   # Update config file
   gulp config --env default
@@ -49,6 +67,10 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   #ionic build ubuntu --release
   #cd platforms/ubuntu/native/cesium; debuild
   cd $DIRNAME
+
+  echo "----------------------------------"
+  echo "- Executing git push, with tag: v$2"
+  echo "----------------------------------"
 
   # Commit
   git reset HEAD
@@ -58,19 +80,50 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git push
 
 
-  echo "**********************************"
-  echo "* Build release succeed !"
-  echo "**********************************"
-
   if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ && "_$5" != "_" ]]; then
+    echo "**********************************"
+    echo "* Uploading artifacts to Github..."
+    echo "**********************************"
+
     ./github.sh $1 $4 "'"$5"'"
+
+    echo "----------------------------------"
+    echo "- Building desktop versions..."
+    echo "----------------------------------"
+
+    git submodule update --init
+    git submodule sync
+    cd platforms/desktop
+
+    # Exclude Windows - TODO FIXME (not enough space in BL directories)
+    EXPECTED_ASSETS="cesium-desktop-v$2-linux-x64.deb
+cesium-desktop-v$2-linux-x64.tar.gz"
+
+    ./release.sh $2
+
+    # back to nodejs version 5
+    cd $DIRNAME
+    nvm use 5
+
+    echo "**********************************"
+    echo "* Build release succeed !"
+    echo "**********************************"
   else
+
+    echo "**********************************"
+    echo "* Build release succeed !"
+    echo "**********************************"
+
     echo " WARN - missing arguments: "
     echo "       user:password 'release_description'"
     echo
     echo "   Binaries files NOT sending to github repository"
     echo "   Please run:"
-    echo "  > ./github.sh pre|rel user:password 'release_description'"
+    echo "   > ./github.sh pre|rel user:password 'release_description'"
+    echo
+    echo "   Desktop artifact are NOT build"
+    echo "   Please run:"
+    echo "   > platforms/desktop/release.sh <version>"
     echo
   fi
 
