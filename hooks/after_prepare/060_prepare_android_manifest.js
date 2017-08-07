@@ -27,15 +27,16 @@ if (rootdir) {
         // Add 'tools' namespace to root tag
         .pipe(replace(/(xmlns:android="http:\/\/schemas.android.com\/apk\/res\/android")\s*>/g, '$1 xmlns:tools="http://schemas.android.com/tools">'))
 
-        // <uses-sdk> : if many, keep only one
-        .pipe(replace(/(<uses-sdk [^>]+>)(:?[\n\r\s\t ]*<uses-sdk [^>]+>)+/mg, '$1'))
+        // remove all <uses-sdk>
+        .pipe(replace(/<uses-sdk [^>]+\/>/g, ''))
 
-        // <uses-sdk> : Replace 'targetSdkversion' and add tools:overrideLibrary
-        .pipe(replace(/android:targetSdkVersion="[0-9]+"( tools:overrideLibrary="org.kaliumjni.lib")?\s*\/>/g, 'android:targetSdkVersion="25" tools:overrideLibrary="org.kaliumjni.lib" />'))
+        // add <uses-sdk> (replace 'targetSdkversion' and add tools:overrideLibrary)
+        .pipe(replace(/(<\/manifest>)/, '    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" tools:overrideLibrary="org.kaliumjni.lib" />\n$1'))
 
         .pipe(gulp.dest(platformPath));
 
       console.log('-----------------------------------------');
+
     }
 
 
