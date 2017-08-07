@@ -5,7 +5,8 @@
 /www/lib/robotodraft
 
 /node_modules/
-/platforms/
+/platforms/*
+!/platforms/desktop
 /plugins/
 .idea/
 /*.iml

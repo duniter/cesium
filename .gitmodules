@@ -1,0 +1,3 @@
+[submodule "platforms/desktop"]
+	path = platforms/desktop
+	url = https://github.com/duniter/cesium-desktop
