@@ -110,6 +110,6 @@
     <plugin name="cordova-plugin-x-toast" spec="^2.6.0" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="phonegap-plugin-barcodescanner" spec="git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value=" " />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value=" QRCode scan" />
     </plugin>
 </widget>

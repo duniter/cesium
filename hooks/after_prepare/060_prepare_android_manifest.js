@@ -31,7 +31,7 @@ if (rootdir) {
         .pipe(replace(/(<uses-sdk [^>]+>)(:?[\n\r\s\t ]*<uses-sdk [^>]+>)+/mg, '$1'))
 
         // <uses-sdk> : Replace 'targetSdkversion' and add tools:overrideLibrary
-        .pipe(replace(/android:targetSdkVersion="[^"]+"\s*\/>/g, 'android:targetSdkVersion="25" tools:overrideLibrary="org.kaliumjni.lib" />'))
+        .pipe(replace(/android:targetSdkVersion="[0-9]+"( tools:overrideLibrary="org.kaliumjni.lib")?\s*\/>/g, 'android:targetSdkVersion="25" tools:overrideLibrary="org.kaliumjni.lib" />'))
 
         .pipe(gulp.dest(platformPath));
 
