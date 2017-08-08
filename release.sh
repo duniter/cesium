@@ -97,6 +97,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
     # Exclude Windows - TODO FIXME (not enough space in BL directories)
     EXPECTED_ASSETS="cesium-desktop-v$2-linux-x64.deb
 cesium-desktop-v$2-linux-x64.tar.gz"
+    export EXPECTED_ASSETS
 
     ./release.sh $2
 
