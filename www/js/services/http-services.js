@@ -127,7 +127,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       return $q(function(resolve, reject) {
         var config = {
           timeout: forcedTimeout || timeout,
-          headers : {'Content-Type' : 'application/json;charset=UTF-8'} // TODO: test using "application/json"
+          headers : {'Content-Type' : 'application/json;charset=UTF-8'}
         };
 
         prepare(url, params, config, function(url, config) {
@@ -136,7 +136,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
               resolve(data);
             })
             .error(function(data, status) {
-              processError(reject, data, status);
+              processError(reject, data, url, status);
             });
         });
       });
