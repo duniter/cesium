@@ -48,11 +48,10 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   # Update config file
   gulp config --env default_fr
 
-
   echo "----------------------------------"
   echo "- Building Android artifact..."
   echo "----------------------------------"
-  # Build assets for mobile device
+  gulp
   ionic build android --release
 
   #ionic build firefoxos --release
