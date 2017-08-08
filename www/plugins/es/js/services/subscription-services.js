@@ -50,6 +50,10 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
         data.subscriptions.count = res && res.hits && res.hits.total;
         console.debug('[ES] [subscription] Loaded count (' + data.subscriptions.count  + ')');
         deferred.resolve(data);
+      })
+      .catch(function(err) {
+        console.error('Error while counting subscription: ' + (err.message ? err.message : err));
+        deferred.resolve(data);
       });
 
     return deferred.promise;

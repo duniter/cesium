@@ -26,14 +26,11 @@
 
 </head>
 </head>
-<body ng-app="cesium" id="cesium" ng-strict-di
-      window-exit-unauth
+<body ng-app="cesium" id="cesium" ng-strict-di="true" window-exit-unauth="true"
       ng-class="{'nobackdrop': $root.tour, 'expert-mode': $root.settings.expertMode}">
 <ion-nav-view>
-  <h3 style="text-align: center; margin-top: 44px;">
-    <b>Cesium</b>
-  </h3>
-  <h4 style="text-align: center; margin-top: 10px;">Chargement / Sobreprima / Loading...</h4>
+  <h3 style="text-align: center; padding-top: 25px; "><b>Cesium</b></h3>
+  <h4 style="text-align: center;">Chargement / Sobreprima / Loading...</h4>
 </ion-nav-view>
 
 <!-- build:js dist_js/vendor.js -->

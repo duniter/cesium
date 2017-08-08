@@ -146,7 +146,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               // Call extend api
               .then(function() {
                 if (needLogin) {
-                  return api.data.raisePromise.login(data);
+                  return api.data.raisePromise.login(data)
+                    .catch(function(err) {
+                      console.warn('Error during extension call [wallet.api.data.on.login]', err);
+                      // continue
+                    });
                 }
               });
           }
