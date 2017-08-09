@@ -875,7 +875,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                   }
                   else {
                     params = {
-                      amount: ($filter('formatInteger')(inputs.amount)),
+                      amount: ($filter('formatDecimal')(inputs.amount/100)),
                       unit: $filter('abbreviate')(currency.name),
                       subUnit: ''
                     };
