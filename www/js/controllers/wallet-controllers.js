@@ -601,12 +601,7 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
       UIUtils.alert.info('INFO.NOT_ENOUGH_CREDIT');
       return;
     }
-    Modals.showTransfer()
-      .then(function(done){
-        if (done) {
-          UIUtils.toast.show('INFO.TRANSFER_SENT');
-        }
-      });
+    return Modals.showTransfer();
   };
 
   $scope.showHelpTip = function(index, isTour) {

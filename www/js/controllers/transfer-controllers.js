@@ -108,7 +108,7 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
   };
 }
 
-function TransferModalController($scope, $q, $translate, $filter, BMA, csWallet, UIUtils, Modals,
+function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA, csWallet, UIUtils, Modals,
                                  csCurrency, csSettings, parameters) {
   'ngInject';
 
@@ -244,11 +244,14 @@ function TransferModalController($scope, $q, $translate, $filter, BMA, csWallet,
             return csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative);
           })
           .then(function() {
+            UIUtils.loading.hide();
             return $scope.closeModal(true);
           })
-          .then(UIUtils.loading.hide)
-          .then(function() {
-            UIUtils.toast.show('INFO.TRANSFER_SENT');
+          .then(function(res) {
+            $timeout(function() {
+              UIUtils.toast.show('INFO.TRANSFER_SENT');
+            }, 500);
+            return res;
           })
           .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
     });
