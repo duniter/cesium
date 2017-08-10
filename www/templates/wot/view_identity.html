@@ -30,14 +30,7 @@
         <ion-spinner icon="android"></ion-spinner>
       </h4>
 
-      <div class="visible-xs visible-sm">
-        <button id="fab-certify-{{:rebind:formData.uid}}"
-                class="button button-fab button-fab-top-left button-fab-hero button-calm spin"
-                ng-if=":rebind:(canCertify && !alreadyCertified)"
-                ng-click="certify()">
-          <i class="icon ion-ribbon-b"></i>
-        </button>
-      </div>
+
     </div>
 
     <!-- button bar-->
@@ -64,6 +57,15 @@
     </div>
 
     <div class="row no-padding" >
+
+      <div class="visible-xs visible-sm">
+        <button id="fab-certify-{{:rebind:formData.uid}}" style="top: 170px;"
+                class="button button-fab button-fab-top-left button-fab-hero button-calm spin"
+                ng-if=":rebind:(canCertify && !alreadyCertified)"
+                ng-click="certify()">
+          <i class="icon ion-ribbon-b"></i>
+        </button>
+      </div>
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
       <div class="col list" ng-class="::motion.ionListClass" bind-notifier="{ rebind:loading}">
