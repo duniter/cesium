@@ -44,6 +44,12 @@ angular.module("cesium.config", [])
 			"port": "443"
 		}
 	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
+		}
+	],
 	"plugins": {
 		"es": {
 			"enable": true,
@@ -60,7 +66,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "0.15.5",
-	"build": "2017-08-08T15:24:29.307Z",
+	"build": "2017-08-09T10:46:18.654Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

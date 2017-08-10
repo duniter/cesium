@@ -108,7 +108,7 @@ angular.module('cesium.utils.services', [])
           cancelText: translations[options.cancelText],
           cancelType: options.cancelType,
           okText: translations[options.okText],
-          okType: options.okType,
+          okType: options.okType
         });
       });
   }

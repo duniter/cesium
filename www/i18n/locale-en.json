@@ -86,9 +86,7 @@
   "MENU": {
     "HOME": "Home",
     "WOT": "Registry",
-    "MARKET": "Market place",
     "CURRENCY": "Currency",
-    "CURRENCIES": "Currencies",
     "ACCOUNT": "My Account",
     "TRANSFER": "Transfer",
     "SCAN": "Scan",
@@ -402,7 +400,7 @@
       "USER": "Personal value",
       "N": "N (Loop):",
       "r": "r (RAM):",
-      "p": "p (CPU):",
+      "p": "p (CPU):"
     },
     "FILE": {
       "DATE" : "Date:",
@@ -649,7 +647,8 @@
     "EXISTING_ACCOUNT": "Your identifiers correspond to an already existing account, whose <a ng-click=\"showHelpModal('pubkey')\">public key</a> is:",
     "EXISTING_ACCOUNT_REQUEST": "Please modify your credentials so that they correspond to an unused account.",
     "GET_LICENSE_FILE_FAILED": "Unable to get license file",
-    "CHECK_NETWORK_CONNECTION": "No peer appears to be accessible.<br/><br/>Please <b>check your Internet connection</b>."
+    "CHECK_NETWORK_CONNECTION": "No peer appears to be accessible.<br/><br/>Please <b>check your Internet connection</b>.",
+    "ISSUE_524_TX_FAILED": "Failed to transfer.<br/><br/>A message has been sent to developers to help solve the problem.<b>Thank you for your help</b>."
   },
   "INFO": {
     "POPUP_TITLE": "Information",
@@ -685,7 +684,8 @@
     "SAVE_BEFORE_LEAVE": "Do you want to <b>save your changes</b> before leaving the page?",
     "SAVE_BEFORE_LEAVE_TITLE": "Changes not saved",
     "LOGOUT": "Are you sure you want to logout?",
-    "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the <b>{{new}}</b> node?"
+    "USE_FALLBACK_NODE": "Peer <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the <b>{{new}}</b> node?",
+    "ISSUE_524_SEND_LOG": "The transaction was rejected because of a known problem (issue #524) but not reproduced.<br/><br/>To help developers correct this error, do you accept <b>the transmission of your logs</b> per message?<br/><small>(No confidential data is sent)</small>"
   },
   "DOWNLOAD": {
     "POPUP_TITLE": "<b>Revocation file</b>",

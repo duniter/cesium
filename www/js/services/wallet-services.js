@@ -841,6 +841,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             sources : []
           };
 
+          var logs = [];
+          logs.push("[wallet] amount=" + amount);
+
           // Get inputs, starting to use current base sources
           var amountBase = 0;
           while (inputs.amount < amount && amountBase <= block.unitbase) {
@@ -851,6 +854,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               amountBase++;
               if (amountBase <= block.unitbase) {
                 amount = truncBase(amount, amountBase);
+                logs.push("[wallet] inputs not found. Retrying with amount =" + amount + " be compatible with amountBase=" + amountBase);
               }
             }
           }
@@ -891,13 +895,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           if (amountBase < inputs.minBase && !isBase(amount, inputs.minBase)) {
             amount = truncBaseOrMinBase(amount, inputs.minBase);
             console.debug("[wallet] Amount has been truncate to " + amount);
+            logs.push("[wallet] Amount has been truncate to " + amount);
           }
           else if (amountBase > 0) {
             console.debug("[wallet] Amount has been truncate to " + amount);
+            logs.push("[wallet] Will use amount truncated to " + amount + " (amountBase="+amountBase+")");
           }
 
           // Send tx
-          return createAndSendTx(currency, block, keypair, destPub, amount, inputs, comments)
+          return createAndSendTx(currency, block, keypair, destPub, amount, inputs, comments, logs)
             .then(function(res) {
               data.balance -= amount;
               _.forEach(inputs.sources, function(source) {
@@ -928,6 +934,35 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                   api.data.raise.balanceChanged(data);
                   api.data.raise.newTx(data);
                 });
+            })
+            .catch(function(err) {
+              if (err && err.ucode === BMA.errorCodes.TX_INPUTS_OUTPUTS_NOT_EQUAL) {
+                // Send log message for debugging - issue #524 - https://github.com/duniter/cesium/issues/524
+                var esEnable = csSettings.data.plugins && csSettings.data.plugins.es && csSettings.data.plugins.es.enable;
+                if (esEnable) {
+                  UIUtils.loading.hide();
+                  return UIUtils.alert.confirm('CONFIRM.ISSUE_524_SEND_LOG', 'ERROR.POPUP_TITLE', {
+                    cssClass: 'warning',
+                    okText: 'COMMON.BTN_OK',
+                    cancelText: 'COMMON.BTN_NO'
+                  })
+                  .then(function(confirm) {
+                    if (confirm) {
+                      api.error.raise.send({
+                        title: 'Issue #524 logs',
+                        content: 'App version: ' +csConfig.version+'\n'+
+                        'App build: ' +csConfig.build+'\n'+
+                        'Logs:\n\n' + logs.join('\n')
+                      });
+                      return $timeout(function() {
+                        throw {message: 'ERROR.ISSUE_524_TX_FAILED'};
+                      }, 1500);
+                    }
+                    throw {message: 'ERROR.SEND_TX_FAILED'};
+                  });
+                }
+              }
+              throw err;
             });
         });
     },
@@ -941,7 +976,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
      * @param comments
      * @return the hash of the sent TX
      */
-    createAndSendTx = function(currency, block, keypair, destPub, amount, inputs, comments) {
+    createAndSendTx = function(currency, block, keypair, destPub, amount, inputs, comments, logs) {
 
       // Make sure a TX in compact mode has no more than 100 lines (fix #118)
       // (If more than 100 lines, send to TX to himself first, then its result as sources for the final TX)
@@ -962,7 +997,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
 
         // Send inputs first slice
-        return createAndSendTx(currency, block, keypair, data.pubkey/*to himself*/, firstSlice.amount, firstSlice) // comment not need
+        return createAndSendTx(currency, block, keypair, data.pubkey/*to himself*/, firstSlice.amount, firstSlice, undefined/*comment not need*/, logs)
           .then(function(res) {
             _.forEach(firstSlice.sources, function(source) {
               source.consumed=true;
@@ -982,7 +1017,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             });
 
             // Send inputs second slice (recursive call)
-            return createAndSendTx(currency, block, keypair, destPub, amount, secondSlice, comments);
+            return createAndSendTx(currency, block, keypair, destPub, amount, secondSlice, comments, logs);
           });
       }
 
@@ -1048,6 +1083,20 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       }
 
       tx += "Comment: "+ (comments||"") + "\n";
+
+      // Append to logs (need to resolve issue #524)
+      if (logs) {
+        if (destPub == data.pubkey) {
+          logs.push('[wallet] Creating new TX, using inputs:\n - minBase: '+inputs.minBase+'\n - maxBase: '+inputs.maxBase);
+        }
+        else {
+          logs.push('[wallet] Creating new TX, using inputs:\n - minBase: '+inputs.minBase+'\n - maxBase: '+inputs.maxBase + '\n - sources (=TX inputs):');
+        }
+        _.forEach(inputs.sources, function(source) {
+          logs.push([source.amount, source.base, source.type, source.identifier,source.noffset].join(':'));
+        });
+        logs.push("\n[wallet] generated TX document (without signature) :\n------ START ------\n" + tx + "------ END ------\n");
+      }
 
       return CryptoUtils.sign(tx, keypair)
         .then(function(signature) {
@@ -1631,6 +1680,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     api.registerEvent('data', 'load');
     api.registerEvent('data', 'logout');
     api.registerEvent('data', 'reset');
+
+    api.registerEvent('error', 'send');
 
     // Data changed : balance changed, new TX
     api.registerEvent('data', 'balanceChanged');

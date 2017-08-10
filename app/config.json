@@ -35,6 +35,9 @@
         "port": "443"
       }
     ],
+    "developers": [
+      {"name": "Benoit Lavenier", "pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"}
+    ],
     "plugins":{
       "es": {
         "enable": true,

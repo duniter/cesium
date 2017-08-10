@@ -11,7 +11,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
   })
 
-.factory('esMessage', function($q, $rootScope, Api, CryptoUtils, csPlatform, csSettings, esHttp, csWallet, esWallet, csWot, esNotification) {
+.factory('esMessage', function($q, $rootScope, $timeout, UIUtils, Api, CryptoUtils,
+                               csPlatform, csConfig, csSettings, esHttp, csWallet, esWallet, csWot, esNotification) {
   'ngInject';
 
   var
@@ -444,6 +445,28 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       });
   }
 
+  // Send message to developers - need for issue #524
+  function onSendError(message) {
+    var developers = csConfig.developers || [{pubkey: '38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE'/*kimamila*/}];
+    if(!message || !message.content || !developers || !developers.length) return;
+
+    console.info("[ES] [message] Sending logs to developers...");
+    message.issuer = csWallet.data.pubkey;
+    message.title = message.title || 'Sending log';
+    message.time = esHttp.date.now();
+
+    csWallet.getKeypair()
+      .then(function(keypair) {
+        return $q.all(developers.reduce(function(res, developer){
+          return !developer.pubkey ? res :
+            res.concat(sendMessage(angular.merge({recipient: developer.pubkey}, message), keypair));
+        }, []));
+      })
+      .then(function(res) {
+        console.info("[ES] [message] Logs sent to {0} developers".format(res.length));
+      });
+  }
+
   function removeListeners() {
     _.forEach(listeners, function(remove){
       remove();
@@ -457,7 +480,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       csWallet.api.data.on.login($rootScope, onWalletLogin, this),
       csWallet.api.data.on.init($rootScope, onWalletInit, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this),
-      esNotification.api.event.on.newMessage($rootScope, onNewMessageEvent, this)
+      esNotification.api.event.on.newMessage($rootScope, onNewMessageEvent, this),
+      // for issue #524
+      csWallet.api.error.on.send($rootScope, onSendError, this)
     ];
   }
 
