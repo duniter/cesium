@@ -14,6 +14,9 @@ angular.module('cesium.network.controllers', ['cesium.services'])
           templateUrl: "templates/network/view_network.html",
           controller: 'NetworkLookupCtrl'
         }
+      },
+      data: {
+        silentLocationChange: true
       }
     })
 
@@ -44,7 +47,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, $window,
+function NetworkLookupController($scope,  $state, $location, $ionicPopover, $window,
                                  BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
   'ngInject';
 
@@ -188,15 +191,8 @@ function NetworkLookupController($scope,  $state, $ionicHistory, $ionicPopover, 
     $scope.search.loading = true;
     $scope.load();
 
-    $ionicHistory.nextViewOptions({
-      disableAnimate: true,
-      disableBack: true,
-      historyRoot: true
-    });
-    $state.go('app.network', {type: $scope.search.type}, {
-      reload: false,
-      inherit: true,
-      notify: false});
+    // Update location href
+    $location.search({type: $scope.search.type}).replace();
 
   };
 
