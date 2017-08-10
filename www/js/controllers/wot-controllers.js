@@ -985,6 +985,7 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
   // Updating data
   $scope.doUpdate = function() {
     console.debug('[wot] TX history reloading...');
+    $scope.formData = {};
     return UIUtils.loading.show()
       .then($scope.load)
       .then(UIUtils.loading.hide)
