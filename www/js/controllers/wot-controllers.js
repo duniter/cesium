@@ -950,7 +950,7 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
 /**
  * Identity tx view controller
  */
-function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csCurrency, csWot, csTx, UIUtils) {
+function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWot, csTx, UIUtils) {
   'ngInject';
 
   $scope.formData= {};
@@ -972,13 +972,11 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csCu
   // Load data
   $scope.load = function(fromTime) {
     return $q.all([
-        csCurrency.get(),
         csWot.extend({pubkey: $scope.pubkey}),
         csTx.load($scope.pubkey, fromTime)
       ])
       .then(function(res) {
-        $scope.currency = res[0];
-        $scope.formData = angular.merge(res[1], res[2]);
+        $scope.formData = angular.merge(res[0], res[1]);
         $scope.loading = false;
         $scope.updateView();
       });

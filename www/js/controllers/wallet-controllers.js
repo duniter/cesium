@@ -27,7 +27,8 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         },
         data: {
-          login: true
+          login: true,
+          silentLocationChange: true
         }
       })
 
@@ -521,7 +522,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxController($scope, $ionicPopover, $state, $timeout,
+function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
                             UIUtils, Modals, BMA, csSettings, csWallet, csTx) {
   'ngInject';
 
@@ -529,26 +530,32 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout,
   $scope.settings = csSettings.data;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    if (!$scope.loading && (!state.stateParams || !state.stateParams.refresh)) {
+    $scope.loading = $scope.loading || (state.stateParams && state.stateParams.refresh);
+    if ($scope.loading) {
+      $scope.loadWallet()
+        .then(function (res) {
+          $scope.formData = res;
+          $scope.loading = false; // very important, to avoid TX to be display before wallet.currentUd is loaded
+          $scope.updateView();
+          $scope.showFab('fab-transfer');
+          $scope.showHelpTip();
+          UIUtils.loading.hide(); // loading could have be open (e.g. new account)
+
+          // remove the stateParams
+          if (state.stateParams && state.stateParams.refresh) {
+            $location.search({}).replace();
+          }
+        })
+        .catch(function (err) {
+          if (err == 'CANCELLED') {
+            $scope.showHome();
+          }
+        });
+    }
+    else {
       // Make sure to display new pending (e.g. sending using another screen button)
       $timeout($scope.updateView, 300);
-      return; // skip loading
     }
-
-    $scope.loadWallet()
-      .then(function(res) {
-        $scope.formData = res;
-        $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
-        $scope.updateView();
-        $scope.showFab('fab-transfer');
-        $scope.showHelpTip();
-        UIUtils.loading.hide(); // loading could have be open (e.g. new account)
-      })
-      .catch(function(err){
-        if (err == 'CANCELLED') {
-          $scope.showHome();
-        }
-      });
   });
 
 
