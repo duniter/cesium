@@ -81,7 +81,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.formData = walletData;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
-        $scope.showQRCode('qrcode', $scope.formData.pubkey, 1100);
+        $scope.showQRCode('qrcode', $scope.formData.pubkey);
         $scope.showHelpTip();
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
@@ -108,7 +108,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   // Clean controller data when logout
   $scope.onWalletLogout = function() {
-    delete $scope.qrcode; // clean QRcode
+    // clean QRcode
+    $scope.hideQRCode('qrcode');
     delete $scope.formData;
     $scope.loading = true;
   };
@@ -444,16 +445,27 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   $scope.showQRCode = function(id, text, timeout) {
-    if (!!$scope.qrcode) {
-      return;
+    if (!$scope.qrcode) {
+      $scope.qrcode = new QRCode(id, {
+        text: text,
+        width: 200,
+        height: 200,
+        correctLevel: QRCode.CorrectLevel.L
+      });
+      UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
     }
-    $scope.qrcode = new QRCode(id, {
-      text: text,
-      width: 200,
-      height: 200,
-      correctLevel: QRCode.CorrectLevel.L
-    });
-    UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
+    else {
+      $scope.qrcode.clear();
+      $scope.qrcode.makeCode(text);
+      UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
+    }
+  };
+
+  $scope.hideQRCode = function(id) {
+    if ($scope.qrcode) {
+      $scope.qrcode.clear();
+      UIUtils.motion.toggleOff({selector: '#wallet #'+id+'.qrcode'});
+    }
   };
 
   $scope.showCertifications = function() {
