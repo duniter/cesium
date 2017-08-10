@@ -521,22 +521,23 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 }
 
 
-function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UIUtils, csWallet,
-                            Modals, csSettings, BMA,csTx) {
+function WalletTxController($scope, $ionicPopover, $state, $timeout,
+                            UIUtils, Modals, BMA, csSettings, csWallet, csTx) {
   'ngInject';
 
   $scope.loading = true;
   $scope.settings = csSettings.data;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    if (!$scope.loading && (!state.stateParams || state.stateParams.refresh != 'true')) {
+    if (!$scope.loading && (!state.stateParams || !state.stateParams.refresh)) {
       // Make sure to display new pending (e.g. sending using another screen button)
-      $scope.updateView();
+      $timeout($scope.updateView, 300);
       return; // skip loading
     }
+
     $scope.loadWallet()
-      .then(function(walletData) {
-        $scope.formData = walletData;
+      .then(function(res) {
+        $scope.formData = res;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
         $scope.showFab('fab-transfer');
@@ -550,30 +551,14 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
       });
   });
 
-  $scope.updateUnit = function() {
-    if (!$scope.formData || $scope.loading) return;
-    $scope.unit = $filter('currencySymbol')($scope.formData.currency, csSettings.data.useRelative);
-    $scope.secondaryUnit = $filter('currencySymbol')($scope.formData.currency, !csSettings.data.useRelative);
-  };
-
-  $scope.onSettingsChanged = function() {
-    $scope.updateUnit();
-  };
-  $scope.$watch('settings.useRelative', $scope.onSettingsChanged);
-
-  // Reload if show UD changed
-  $scope.$watch('settings.showUDHistory', function() {
-    if (!$scope.formData || $scope.loading) return;
-    $scope.doUpdate();
-  }, true);
 
   // Update view
   $scope.updateView = function() {
+    if (!$scope.formData || $scope.loading) return;
     $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
-    $scope.updateUnit();
-    $scope.motion.show({ink: false});
+    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.motion.show({selector: '.view-wallet-tx .item', ink: false});
   };
-  csWallet.api.data.on.balanceChanged($scope, $scope.updateView);
 
   $scope.downloadHistoryFile = function(options) {
     options = options || {};
@@ -591,6 +576,16 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
       .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
+
+  /* -- add listeners -- */
+
+  csWallet.api.data.on.balanceChanged($scope, $scope.updateView);
+  $scope.$watch('settings.useRelative', $scope.updateView);
+  $scope.$watch('settings.showUDHistory', function() {
+    // Reload if show UD changed
+    if (!$scope.formData || $scope.loading) return;
+      $scope.doUpdate();
+    }, true);
 
   /* -- popup / UI -- */
 
@@ -624,7 +619,7 @@ function WalletTxController($scope, $filter, $ionicPopover, $state, $timeout, UI
         // If http rest limitation: wait then retry
         if (err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
           $timeout(function() {
-            return $scope.showMoreTx();
+            return $scope.showMoreTx(fromTime);
           }, 2000);
         }
         else {
@@ -735,11 +730,9 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
   $scope.doUpdate = function() {
     UIUtils.loading.show();
     csWallet.refreshData()
-    .then(function() {
-      $scope.updateView();
-      UIUtils.loading.hide();
-    })
-    .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+      .then(UIUtils.loading.hide)
+      .then($scope.doMotion)
+      .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
   $scope.filterReceivedTx = function(tx){
@@ -978,7 +971,6 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
       })
       .then(function(res) {
         if (!res) return;
-        console.log(res);
         var file = {
           file: _.filter($scope.formData.questions, function (question) {
             return question.checked;

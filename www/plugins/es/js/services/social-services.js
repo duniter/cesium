@@ -49,7 +49,7 @@ angular.module('cesium.es.social.services', ['cesium.es.crypto.services'])
               urlToMatch = url.substring(0, slashPathIndex);
             }
           }
-          console.log("match URI, try to match: " + urlToMatch);
+          //console.debug("[social] match URI, try to match: " + urlToMatch);
           _.keys(regexp.socials).forEach(function(key){
             if (regexp.socials[key].test(urlToMatch)) {
               type = key;
@@ -63,9 +63,7 @@ angular.module('cesium.es.social.services', ['cesium.es.crypto.services'])
         else if (regexp.EMAIL.test(url)) {
           type = 'email';
         }
-        if (!type) {
-            console.log("match type: " + type);
-        }
+        //if (!type) console.debug("[social] match type: " + type);
         return type;
       }
 

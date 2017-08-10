@@ -113,7 +113,6 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   $scope.changeNode= function(node) {
     $scope.showNodePopup(node || $scope.formData.node)
     .then(function(newNode) {
-      console.log(newNode);
       if (newNode.host === $scope.formData.node.host &&
         newNode.port === $scope.formData.node.port &&
         newNode.useSsl === $scope.formData.node.useSsl) {

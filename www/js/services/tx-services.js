@@ -122,7 +122,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         });
       },
 
-      loadTx = function(pubkey, fromTime, existingPendings) {
+      loadTx = function(pubkey, fromTime) {
         return $q(function(resolve, reject) {
           var txHistory = [];
           var udHistory = [];
@@ -138,7 +138,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           var _reduceTx = function(res){
             _reduceTxAndPush(pubkey, res.history.sent, txHistory, processedTxMap);
             _reduceTxAndPush(pubkey, res.history.received, txHistory, processedTxMap);
-            _reduceTxAndPush(pubkey, res.history.sending, txHistory, processedTxMap);
+            _reduceTxAndPush(pubkey, res.history.sending, txPendings, processedTxMap, true /*allow pendings*/);
             _reduceTxAndPush(pubkey, res.history.pending, txPendings, processedTxMap, true /*allow pendings*/);
           };
 

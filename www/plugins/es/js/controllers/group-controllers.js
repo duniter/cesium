@@ -55,11 +55,9 @@ angular.module('cesium.es.group.controllers', ['cesium.es.services'])
 
   .controller('ESGroupEditCtrl', ESGroupEditController)
 
-  .controller('PopoverGroupCtrl', PopoverGroupController)
-
 ;
 
-function ESGroupListController($scope, UIUtils, $state, BMA, csWallet, esGroup, ModalUtils) {
+function ESGroupListController($scope, UIUtils, $state, csWallet, esGroup, ModalUtils) {
   'ngInject';
 
   var defaultSearchLimit = 40;
@@ -179,122 +177,6 @@ function ESGroupListController($scope, UIUtils, $state, BMA, csWallet, esGroup, 
   };
 }
 
-function PopoverGroupController($scope, $timeout, UIUtils, $state, csWallet, esNotification, esGroup, esModals) {
-  'ngInject';
-
-  var defaultSearchLimit = 40;
-
-  $scope.search = {
-    loading : true,
-    results: null,
-    hasMore : false,
-    loadingMore : false,
-    limit: defaultSearchLimit,
-    options: {
-      codes: {
-        includes: esNotification.constants.GROUP_CODES
-      }
-    }
-  };
-
-  $scope.load = function(from, size) {
-    var options = angular.copy($scope.search.options);
-    options.from = options.from || from || 0;
-    options.size = options.size || size || defaultSearchLimit;
-
-    return esNotification.load(csWallet.data.pubkey, options)
-      .then(function(notifications) {
-        if (!from) {
-          $scope.search.results = notifications;
-        }
-        else {
-          $scope.search.results = $scope.search.results.concat(notifications);
-        }
-        $scope.search.loading = false;
-        $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
-        $scope.updateView();
-      })
-      .catch(function(err) {
-        $scope.search.loading = false;
-        if (!from) {
-          $scope.search.results = [];
-        }
-        $scope.search.hasMore = false;
-        UIUtils.onError('MESSAGE.ERROR.LOAD_NOTIFICATIONS_FAILED')(err);
-      });
-  };
-
-  $scope.updateView = function() {
-
-    $timeout(function() {
-      UIUtils.ink({selector: '.popover-notification .item.ink'});
-    }, 100);
-  };
-
-  $scope.showMore = function() {
-    $scope.search.limit = $scope.search.limit || defaultSearchLimit;
-    $scope.search.limit = $scope.search.limit * 2;
-    if ($scope.search.limit < defaultSearchLimit) {
-      $scope.search.limit = defaultSearchLimit;
-    }
-    $scope.search.loadingMore = true;
-    $scope.load(
-      $scope.search.results.length, // from
-      $scope.search.limit)
-      .then(function() {
-        $scope.search.loadingMore = false;
-        $scope.$broadcast('scroll.infiniteScrollComplete');
-      });
-  };
-
-  $scope.onNewNotification = function(notification) {
-    if (!$scope.search.loading && !$scope.search.loadingMore &&  notification.isMessage) {
-      console.debug("[popover] detected new message (from notification service)");
-
-      if (notification.reference) {
-        console.log("[popover] new message has a reference !");
-      }
-      $scope.search.results.splice(0,0,notification);
-      $scope.updateView();
-    }
-  };
-
-  $scope.select = function(notification) {
-    if (!notification.read) notification.read = true;
-    $state.go('app.user_view_message', {id: notification.id});
-    $scope.closePopover(notification);
-  };
-
-  $scope.resetData = function() {
-    if ($scope.search.loading) return;
-    console.debug("[ES] [messages] Resetting data (settings or account may have changed)");
-    $scope.search.hasMore = false;
-    $scope.search.results = [];
-    $scope.search.loading = true;
-    delete $scope.search.limit;
-  };
-
-  csWallet.api.data.on.logout($scope, $scope.resetData);
-
-  /* -- Modals -- */
-
-  $scope.showNewMessageModal = function(parameters) {
-    $scope.closePopover();
-    return esModals.showMessageCompose(parameters)
-      .then(function(sent) {
-        if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
-      });
-  };
-
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
-
-  /* -- default popover action -- */
-  if ($scope.search.loading) {
-    $scope.load();
-  }
-
-}
-
 
 function ESGroupViewController($scope, $state, UIUtils, esGroup, csWallet) {
   'ngInject';
@@ -350,7 +232,7 @@ function ESGroupViewController($scope, $state, UIUtils, esGroup, csWallet) {
 }
 
 function ESGroupEditController($scope, esGroup, UIUtils, $state, $q, Device,
-                               $ionicHistory, ModalUtils, $focus, $timeout, esHttp) {
+                               $ionicHistory, ModalUtils, $focus, esHttp) {
   'ngInject';
 
   $scope.walletData = {};

@@ -617,6 +617,7 @@
     "IDENTITY_EXPIRED": "This identity has expired: this person must re-apply <b>before</b> being certified.",
     "IDENTITY_SANDBOX_FULL": "Could not register, because peer's sandbox is full.<br/><br/>Please retry later or choose another Duniter peer (in <b>Settings</b>).",
     "IDENTITY_NOT_FOUND": "Identity not found",
+    "IDENTITY_TX_FAILED": "Error while getting identity's transactions",
     "WOT_PENDING_INVALID_BLOCK_HASH": "Membership not valid.",
     "WALLET_INVALID_BLOCK_HASH": "Your membership application is no longer valid (because it references a block that network peers are cancelled).<br/>You must <a ng-click=\"doQuickFix('renew')\">renew your application for membership</a> to fix this issue.",
     "WALLET_IDENTITY_EXPIRED": "The publication of your identity <b>has expired</b>.<br/>You must <a ng-click=\"doQuickFix('fixIdentity')\">re-issue your identity</a> to resolve this issue.",

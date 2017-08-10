@@ -8,7 +8,7 @@
 
   <ion-content>
 
-    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+    <div class="hidden-xs hidden-sm padding text-center">
 
       <button class="button button-stable button-small-padding icon ion-loop ink"
               ng-click="doUpdate()"
@@ -37,10 +37,12 @@
         <div class="col">
 
           <!-- the balance -->
-          <div class="item item-divider item-tx">
+          <div class="item item-tx item-divider">
             {{'ACCOUNT.BALANCE_ACCOUNT'|translate}}
-            <div class="badge badge-balanced">
-              {{balance|formatAmount}} <span ng-bind-html="$root.currency.name|currencySymbol"></span>
+            <div class="badge item-note badge-balanced" ng-bind-html=":balance:formData.balance|formatAmount:{currency: $root.currency.name}">
+            </div>
+            <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
+              (<span ng-bind-html=":balance:formData.balance| formatAmount: {useRelative: !$root.settings.useRelative, currency: $root.currency.name} "></span>)
             </div>
           </div>
 
@@ -51,11 +53,11 @@
 
           <!-- iterate on each TX -->
           <div class="item item-tx item-icon-left"
-               ng-repeat="tx in history"
+               ng-repeat="tx in formData.tx.history"
                ng-include="'templates/wallet/item_tx.html'">
           </div>
 
-          <div class="item item-text-wrap text-center" ng-if="tx.fromTime > 0">
+          <div class="item item-text-wrap text-center" ng-if="formData.tx.fromTime > 0">
             <p>
               <a ng-click="showMoreTx()">{{:locale:'ACCOUNT.SHOW_MORE_TX'|translate}}</a>
               <span class="gray" translate="ACCOUNT.TX_FROM_DATE" translate-values="{fromTime: tx.fromTime}"></span>

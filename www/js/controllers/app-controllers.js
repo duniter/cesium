@@ -85,7 +85,7 @@ function PluginExtensionPointController($scope, PluginService) {
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
                        $ionicHistory, $controller, $window, csPlatform,
-                       UIUtils, BMA, csWallet, csCurrency, Device, Modals, csSettings, csConfig
+                       UIUtils, BMA, csWallet, Device, Modals, csConfig
   ) {
   'ngInject';
 

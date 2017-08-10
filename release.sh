@@ -90,6 +90,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
     echo "- Building desktop versions..."
     echo "----------------------------------"
 
+    # Remove old vagrant virtual machines
+    rm -rf ~/.vagrant.d/*
+
     git submodule update --init
     git submodule sync
     cd platforms/desktop

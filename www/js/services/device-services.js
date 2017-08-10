@@ -123,7 +123,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       exports.camera = {
           getPicture : getPicture,
           scan: function(n){
-            console.log('Deprecated use of Device.camera.scan(). Use Device.barcode.scan() instead');
+            console.warn('Deprecated use of Device.camera.scan(). Use Device.barcode.scan() instead');
             return scan(n);
           }
         };

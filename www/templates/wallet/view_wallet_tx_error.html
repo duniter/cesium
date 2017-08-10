@@ -6,23 +6,20 @@
 
   <ion-nav-buttons side="secondary">
 
-    <button class="button button-icon button-clear icon ion-loop" ng-click="doUpdate()">
-    </button>
-    <button class="button button-icon button-clear" ng-click="actionsPopover.show($event)">
-      <i class="icon ion-android-more-vertical"></i>
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm " ng-click="doUpdate()">
     </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true">
 
-    <!-- Buttons bar
-    <div class="hidden-xs hidden-sm padding" style="text-align:center"
-         ng-if="!!convertedBalance">
-      <button class="button button-raised button-energized-900 ink-dark"
-              ng-click="openTransfer()">
-        {{'ACCOUNT.BTN_SEND_MONEY' | translate}}
+    <!-- Buttons bar -->
+    <div class="hidden-xs hidden-sm padding text-center">
+
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="doUpdate()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
       </button>
-    </div>-->
+    </div>
 
     <div class="row no-padding">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;
@@ -44,7 +41,7 @@
         </span>
 
         <div class="item item-pending item-tx item-icon-left"
-             ng-repeat="tx in formData.tx.errors | filter: filterReceivedTx('amount')"
+             ng-repeat="tx in formData.tx.errors | filter: filterReceivedTx"
              ng-init="pending=true;"
              ng-include="'templates/wallet/item_tx.html'">
         </div>
@@ -63,7 +60,7 @@
         </span>
 
         <div class="item item-pending item-tx item-icon-left"
-             ng-repeat="tx in formData.tx.errors | filter: filterSentTx('amount')"
+             ng-repeat="tx in formData.tx.errors | filter: filterSentTx"
              ng-init="error=true;"
              ng-include="'templates/wallet/item_tx.html'">
         </div>

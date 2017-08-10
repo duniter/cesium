@@ -15,14 +15,11 @@
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
         <h1 class="light">
-          <span ng-bind-html=":balance:rebind:formData.balance | formatAmount"></span>
-          <span ng-bind-html=":rebind:unit"></span>
-
+          <span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{currency: $root.currency.name}"></span>
         </h1>
         <h4 ng-if="!loading && $root.settings.expertMode"
                style="font-style: italic;">
-          (<span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{useRelative:!$root.settings.useRelative}"></span>
-          <span ng-bind-html=":rebind:secondaryUnit"></span>)
+          (<span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{useRelative:!$root.settings.useRelative, currency: $root.currency.name}"></span>)
         </h4>
         <div class="helptip-anchor-center">
           <a id="helptip-wallet-balance">&nbsp;</a>

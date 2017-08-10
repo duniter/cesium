@@ -21,7 +21,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       IDTY_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
       MS_VERSION:   csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
       CERT_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
-      REVOKE_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION
+      REVOKE_VERSION: csConfig.compatProtocol_0_80 ? 2 : BMA.constants.PROTOCOL_VERSION,
+      TX_MAX_INPUTS_COUNT: 40 // Allow to get a TX with less than 100 rows (=max row count in Duniter protocol)
     },
     data = {},
     listeners,
@@ -524,6 +525,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     loadTxAndSources = function(fromTime) {
       return csTx.load(data.pubkey, fromTime)
         .then(function(res){
+          resetTxAndSources();
           angular.merge(data, res);
         })
         .catch(function(err) {
@@ -936,8 +938,19 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 });
             })
             .catch(function(err) {
-              if (err && err.ucode === BMA.errorCodes.TX_INPUTS_OUTPUTS_NOT_EQUAL) {
-                // Send log message for debugging - issue #524 - https://github.com/duniter/cesium/issues/524
+
+              // Source already consumed: whould refresh wallet sources
+              if (err && err.ucode === BMA.errorCodes.SOURCE_ALREADY_CONSUMED) {
+                console.debug('[wallet] TX rejected by node with error [{0}]. Reloading sources then retry...'.format(err.message||'Source already consumed'));
+                return $timeout(loadTxAndSources, 500)
+                  .then(function() {
+                    return transfer(destPub, amount, comments, useRelative);
+                  });
+              }
+
+              // Error in generated TX - issue #524
+              else if (err && err.ucode === BMA.errorCodes.TX_INPUTS_OUTPUTS_NOT_EQUAL) {
+                // Ask user to send log to developers
                 var esEnable = csSettings.data.plugins && csSettings.data.plugins.es && csSettings.data.plugins.es.enable;
                 if (esEnable) {
                   UIUtils.loading.hide();
@@ -980,7 +993,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // Make sure a TX in compact mode has no more than 100 lines (fix #118)
       // (If more than 100 lines, send to TX to himself first, then its result as sources for the final TX)
-      if (inputs.sources.length > 40) {
+      if (inputs.sources.length > constants.TX_MAX_INPUTS_COUNT) {
         console.debug("[Wallet] TX has to many sources. Will chain TX...");
 
         // Compute a slice of sources
@@ -988,7 +1001,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           minBase: block.unitbase,
           maxBase: 0,
           amount: 0,
-          sources: inputs.sources.slice(0, 39)
+          sources: inputs.sources.slice(0, constants.TX_MAX_INPUTS_COUNT) /* end index is excluded, so array length=TX_MAX_INPUTS_COUNT - issue #524 */
         };
         _.forEach(firstSlice.sources, function(source) {
           if (source.base < firstSlice.minBase) firstSlice.minBase = source.base;
@@ -1002,13 +1015,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             _.forEach(firstSlice.sources, function(source) {
               source.consumed=true;
             });
-            data.sources.push(res.sources);
+            addSources(res.sources);
 
             var secondSlice = {
               minBase: block.unitbase,
               maxBase: 0,
               amount: 0,
-              sources: inputs.sources.slice(40).concat(res.sources)
+              sources: inputs.sources.slice(constants.TX_MAX_INPUTS_COUNT).concat(res.sources)
             };
             _.forEach(secondSlice.sources, function(source) {
               if (source.base < secondSlice.minBase) secondSlice.minBase = source.base;

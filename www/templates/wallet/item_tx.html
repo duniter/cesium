@@ -35,8 +35,7 @@
 
     <!-- not locked TX -->
     <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0}">
-      <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-      <span ng-bind-html=":rebind:$root.currency.name|currencySymbol"></span>
+      <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </span>
 
     <!-- Locked TX -->
@@ -45,14 +44,11 @@
        ng-class="{'badge-calm': tx.amount > 0}"
        ng-click="showLockedOutputsPopover(tx, $event)">
       <i class="icon ion-locked" ></i>
-      <span ng-bind-html=":rebind:tx.amount| formatAmount"></span>
-      <span ng-bind-html=":rebind:$root.currency.name|currencySymbol"></span>
+      <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </a>
 
     <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
-      (<ng-bind-html ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative}">
-    </ng-bind-html>
-      <span ng-bind-html=":rebind:secondaryUnit"></span>)
+      (<span ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative, currency:$root.currency.name}"></span>)
     </div>
   </div>
 </div>

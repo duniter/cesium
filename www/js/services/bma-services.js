@@ -43,6 +43,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         MEMBERSHIP_ALREADY_SEND: 2007,
         NO_CURRENT_BLOCK: 2010,
         BLOCK_NOT_FOUND: 2011,
+        SOURCE_ALREADY_CONSUMED: 2015,
         TX_INPUTS_OUTPUTS_NOT_EQUAL: 2024,
         TX_OUTPUT_SUM_NOT_EQUALS_PREV_DELTAS: 2025,
         TX_ALREADY_PROCESSED: 2030
@@ -684,8 +685,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         if (exact(regexp.PUBKEY).test(uri)) {
           resolve({
             pubkey: uri
-
-
           });
         }
         else if(uri.startsWith('duniter://')) {
@@ -733,7 +732,6 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
                 });
               })
               .catch(function(err) {
-                console.log(err);
                 reject({message: 'Could not get node parameter. Currency could not be retrieve'});
               });
             }

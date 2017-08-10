@@ -606,7 +606,6 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
     // Need user auth - fix #513
     return csWallet.auth({minData: true})
       .then(function(walletData) {
-        console.log(walletData);
         UIUtils.loading.hide();
 
         if (!csCurrency.data.initPhase && !walletData.isMember) {
@@ -951,36 +950,56 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
 /**
  * Identity tx view controller
  */
-function WotIdentityTxViewController($scope, $timeout, csSettings, $controller, csTx, csWallet, BMA, UIUtils) {
+function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csCurrency, csWot, csTx, UIUtils) {
   'ngInject';
-
-  // Initialize the super class and extend it.
-  angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
 
   $scope.formData= {};
   $scope.loading = true;
   $scope.motion = UIUtils.motion.fadeSlideInRight;
 
   $scope.$on('$ionicView.enter', function(e, state) {
-
-    $scope.pubkey= state.stateParams.pubkey;
-    $scope.uid= state.stateParams.uid;
-
-    // Load account TX data
-    csTx.load($scope.pubkey)
-      .then(function(result) {
-        if (result && result.tx && result.tx.history) {
-          $scope.tx = result.tx;
-          $scope.history = result.tx.history;
-        }
-        $scope.balance = result.balance;
-        $scope.load($scope.pubkey, true, $scope.uid)
-          .then(function(){
-            $scope.motion.show();
-            $scope.loading = false;
-          });
-      });
+    if ($scope.loading) {
+      $scope.pubkey = state.stateParams.pubkey;
+      $scope.uid = state.stateParams.uid;
+      $scope.load();
+    }
+    else {
+      // update view
+      $scope.updateView();
+    }
   });
+
+  // Load data
+  $scope.load = function(fromTime) {
+    return $q.all([
+        csCurrency.get(),
+        csWot.extend({pubkey: $scope.pubkey}),
+        csTx.load($scope.pubkey, fromTime)
+      ])
+      .then(function(res) {
+        $scope.currency = res[0];
+        $scope.formData = angular.merge(res[1], res[2]);
+        $scope.loading = false;
+        $scope.updateView();
+      });
+  };
+
+  // Updating data
+  $scope.doUpdate = function() {
+    console.debug('[wot] TX history reloading...');
+    return UIUtils.loading.show()
+      .then($scope.load)
+      .then(UIUtils.loading.hide)
+      .then($scope.updateView)
+      .catch(UIUtils.onError('ERROR.IDENTITY_TX_FAILED'));
+  };
+
+  // Update view
+  $scope.updateView = function() {
+    $scope.$broadcast('$$rebind::' + 'balance'); // force rebind balance
+    $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+    $scope.motion.show();
+  };
 
   $scope.downloadHistoryFile = function(options) {
     options = options || {};
@@ -988,7 +1007,31 @@ function WotIdentityTxViewController($scope, $timeout, csSettings, $controller, 
     csTx.downloadHistoryFile($scope.pubkey, options);
   };
 
-  //TODO : Manque l'actualisation des transactions + afficher plus/tout + bouton statistiques du compte
+  $scope.showMoreTx = function(fromTime) {
+
+    fromTime = fromTime ||
+      ($scope.formData.tx.fromTime - csSettings.data.walletHistoryTimeSecond) ||
+      (Math.trunc(new Date().getTime() / 1000) - 2 * csSettings.data.walletHistoryTimeSecond);
+
+    UIUtils.loading.show();
+    return csTx.load($scope.pubkey, fromTime)
+      .then(function(res) {
+        angular.merge($scope.formData, res);
+        $scope.updateView();
+        UIUtils.loading.hide();
+      })
+      .catch(function(err) {
+        // If http rest limitation: wait then retry
+        if (err.ucode == BMA.errorCodes.HTTP_LIMITATION) {
+          $timeout(function() {
+            return $scope.showMoreTx(fromTime);
+          }, 2000);
+        }
+        else {
+          UIUtils.onError('ERROR.IDENTITY_TX_FAILED')(err);
+        }
+      });
+  };
 
 }
 

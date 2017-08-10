@@ -444,10 +444,8 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         var naclOptions = {};
         var scryptOptions = {};
         if (ionic.Platform.grade.toLowerCase()!='a') {
-          console.log('Reduce NaCl memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
+          console.info('Reduce NaCl memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
           naclOptions.requested_total_memory = 16 * 1048576; // 16 Mo
-          console.log('Reduce Scrypt memory because plateform grade is not [a] but [' + ionic.Platform.grade + ']');
-          scryptOptions.requested_total_memory = 16 * 1048576; // 16 Mo
         }
         var loadedLib = 0;
         var checkAllLibLoaded = function() {
