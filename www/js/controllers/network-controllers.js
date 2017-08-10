@@ -64,6 +64,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     sort : undefined,
     asc: true
   };
+  $scope.eanbleLocationHref = true; // can be overrided by sub-controler (e.g. popup)
 
   /**
    * Enter in view
@@ -192,8 +193,9 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     $scope.load();
 
     // Update location href
-    $location.search({type: $scope.search.type}).replace();
-
+    if ($scope.eanbleLocationHref) {
+      $location.search({type: $scope.search.type}).replace();
+    }
   };
 
   $scope.toggleSearchEndpoint = function(endpoint){
@@ -324,6 +326,7 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
+  $scope.eanbleLocationHref = false;
 
   $scope.selectPeer = function(peer) {
     $scope.closeModal(peer);
