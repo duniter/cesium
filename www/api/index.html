@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Cesium API</title>
+  <link rel="icon" href="../img/favicon.ico">
+
+  <!-- build:css dist_css/cesium.css -->
+  <link rel="stylesheet" type="text/css" href="../css/ionic.app.min.css">
+  <link rel="stylesheet" type="text/css" href="../css/style.css">
+  <link rel="stylesheet" type="text/css" href="../css/angular-image-crop.css">
+  <!--removeIf(device)-->
+  <link rel="stylesheet" type="text/css" href="../css/style-no-device.css">
+  <!--endRemoveIf(device)-->
+  <!-- endbuild -->
+
+</head>
+</head>
+<body ng-app="cesium-api" id="cesium-api" ng-strict-di="true">
+<ion-nav-view>
+  <h3 style="text-align: center; padding-top: 25px; "><b>Cesium API</b></h3>
+  <h4 style="text-align: center;">Loading...</h4>
+</ion-nav-view>
+
+<!-- build:js dist_js/vendor.js -->
+<!-- vendor js -->
+<script src="../js/vendor/moment.min.js"></script>
+<script src="../js/vendor/moment.fr.js"></script>
+<script src="../js/vendor/moment.nl.js"></script>
+<script src="../js/vendor/moment.es.js"></script>
+<script src="../js/vendor/numeral.js"></script>
+<script src="../js/vendor/numeral.fr.js"></script>
+<script src="../js/vendor/numeral.en.js"></script>
+<script src="../js/vendor/numeral.nl.js"></script>
+<script src="../js/vendor/numeral.es.js"></script>
+<script src="../js/vendor/socket-io.js"></script>
+<script src="../js/vendor/underscore.js"></script>
+
+<!-- ionic/angularjs js -->
+<script src="../lib/ionic/js/ionic.bundle.js"></script>
+<script src="../lib/ionic/js/ionic.material.js"></script>
+<script src="../lib/ionic/js/angular/angular-resource.js"></script>
+<script src="../lib/ionic/js/angular/angular-translate.js"></script>
+<script src="../lib/ionic/js/angular/angular-messages.js"></script>
+<script src="../lib/ionic/js/angular/angular-api.js"></script>
+<script src="../lib/ionic/js/angular/angular-cache.js"></script>
+<script src="../lib/ionic/js/angular/angular-screenmatch.min.js"></script>
+<script src="../lib/ionic/js/angular/angular-bind-notifier.min.js"></script>
+<script src="../lib/ionic/js/angular/angular-file-saver.bundle.js"></script>
+<script src="../lib/ionic/js/angular/angular-idle.js"></script>
+
+  <script src="../js/vendor/base58.js" async></script>
+  <!--removeIf(android)-->
+  <!--removeIf(ios)-->
+  <script src="../js/vendor/nacl_factory.js" async></script>
+  <script src="../js/vendor/scrypt-em.js" async></script>
+  <script src="../js/vendor/base64.js" async></script>
+  <!--endRemoveIf(ios)-->
+  <!--endRemoveIf(android)-->
+  <!--removeIf(no-device)-->
+  <script src="../js/vendor/sha256.min.js" async></script>
+  <script src="../js/vendor/ng-cordova.min.js"></script>
+  <!--endRemoveIf(no-device)-->
+
+<!-- endbuild -->
+
+<!--removeIf(no-device)-->
+<script src="../cordova.js"></script>
+<!--endRemoveIf(no-device)-->
+
+<!-- build:js dist_js/cesium.js -->
+<!-- services -->
+<script src="../dist/dist_js/app/services/settings-services.js"></script>
+<script src="../dist/dist_js/app/services/network-services.js"></script>
+<script src="../dist/dist_js/app/services/crypto-services.js"></script>
+<script src="../dist/dist_js/app/services/utils-services.js"></script>
+<script src="../dist/dist_js/app/services/cache-services.js"></script>
+<script src="../dist/dist_js/app/services/modal-services.js"></script>
+<script src="../dist/dist_js/app/services/http-services.js"></script>
+<script src="../dist/dist_js/app/services/storage-services.js"></script>
+<script src="../dist/dist_js/app/services/device-services.js"></script>
+<script src="../dist/dist_js/app/services/currency-services.js"></script>
+<script src="../dist/dist_js/app/services/bma-services.js"></script>
+<script src="../dist/dist_js/app/services/wot-services.js"></script>
+<script src="../dist/dist_js/app/services/tx-services.js"></script>
+<script src="../dist/dist_js/app/services/wallet-services.js"></script>
+<script src="../dist/dist_js/app/services/plugin-services.js"></script>
+<script src="../dist/dist_js/app/services.js"></script>
+
+<!-- entities -->
+<script src="../dist/dist_js/app/entities/peer.js"></script>
+<script src="../dist/dist_js/app/entities/block.js"></script>
+
+<!-- controllers -->
+<script src="../dist/dist_js/app/controllers/login-controllers.js"></script>
+<script src="../dist/dist_js/app/controllers/help-controllers.js"></script>
+
+<!-- templates -->
+<script src="../dist/dist_js/app/templates.js"></script>
+<script src="../dist/dist_js/app/translations.js"></script>
+
+<!-- App -->
+<script src="../dist/dist_js/app/api/app.js"></script>
+<script src="../dist/dist_js/app/directives.js"></script>
+<script src="../dist/dist_js/app/filters.js"></script>
+<script src="../dist/dist_js/app/platform.js"></script>
+<!-- endbuild -->
+
+<!-- build:js config.js -->
+<!-- config  -->
+<script src="../dist/dist_js/app/config.js"></script>
+<!-- endbuild -->
+</body>
+</html>

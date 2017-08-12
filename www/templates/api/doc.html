@@ -1,0 +1,70 @@
+
+
+  <!-- transfer -->
+  <h2 class="padding" translate>API.DOC.TRANSFER.TITLE</h2>
+
+
+  <div class="list padding no-padding-xs no-padding-top">
+
+    <div class="item item-divider no-border">
+      <p translate>API.DOC.DESCRIPTION_DIVIDER</p>
+    </div>
+
+    <div class="item item-text-wrap">
+      <p translate>API.DOC.TRANSFER.DESCRIPTION</p>
+    </div>
+
+    <div class="item item-divider no-border">
+      <p translate>API.DOC.URL_DIVIDER</p>
+    </div>
+
+    <div class="item item-text-wrap">
+      <p class="gray text-right">
+        {{$root.rootPath}}#/v1/payment/:pubkey?amount=<span class="text-italic" translate>API.DOC.TRANSFER.PARAM_AMOUNT</span>
+      </p>
+    </div>
+
+    <div class="item item-divider no-border">
+      <p translate>API.DOC.PARAMETERS_DIVIDER</p>
+    </div>
+
+    <div class="item item-text-wrap">
+      <p translate>API.DOC.AVAILABLE_PARAMETERS</p>
+      <div class="row">
+        <div class="col col-20 text-italic">amount</div>
+        <div class="col" translate>API.DOC.TRANSFER.PARAM_AMOUNT_HELP</div>
+      </div>
+      <div class="row">
+        <div class="col col-20 text-italic">comment</div>
+        <div class="col" translate>API.DOC.TRANSFER.PARAM_COMMENT_HELP</div>
+      </div>
+      <div class="row">
+        <div class="col col-20 text-italic">name</div>
+        <div class="col" translate>API.DOC.TRANSFER.PARAM_NAME_HELP</div>
+      </div>
+      <div class="row">
+        <div class="col col-20 text-italic">redirect_url</div>
+        <div class="col" translate>API.DOC.TRANSFER.PARAM_REDIRECT_URL_HELP</div>
+      </div>
+      <div class="row">
+        <div class="col col-20 text-italic">cancel_url</div>
+        <div class="col" translate>API.DOC.TRANSFER.PARAM_CANCEL_URL_HELP</div>
+      </div>
+    </div>
+    <div class="item item-button-right">
+      <h2>&nbsp;</h2>
+      <a ui-sref="api.transfer(transferData)" class="button button-raised button-positive" translate>API.DOC.BTN_DEMO</a>
+    </div>
+
+
+    <!-- demo result -->
+    <div class="item item-text-wrap" ng-if="result.type === 'payment' && !result.cancelled">
+      <h2 class="text-right balanced" translate>API.DOC.SUCCEED</h2>
+      <h4 class="gray" translate>API.DOC.RESULT</h4>
+      <p class="balanced-100-bg padding dark"> {{result.content}}</p>
+    </div>
+    <div class="item item-text-wrap" ng-if="result.type === 'payment' && result.cancelled">
+      <h2 class="text-right assertive" translate>API.DOC.CANCELLED</h2>
+    </div>
+
+  </div>

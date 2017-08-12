@@ -85,8 +85,8 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         var deferred = $q.defer();
         cordova.plugins.barcodeScanner.scan(
           function(result) {
-            //console.log('bar code result');
-            //console.log(result);
+            console.log('bar code result');
+            console.log(result);
             if (!result.cancelled) {
               deferred.resolve(result.text); // make sure to convert into String
             }
@@ -94,7 +94,10 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               deferred.resolve();
             }
           },
-          function(err) {deferred.reject(err);},
+          function(err) {
+            console.log('XXX -> ' + err);
+            deferred.reject(err);
+          },
           n);
         return deferred.promise;
       }

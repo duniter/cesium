@@ -1,5 +1,11 @@
 angular.module('cesium.modal.services', [])
 
+// Useful for modal with no controller
+.controller('EmptyModalCtrl', function ($scope, parameters) {
+  'ngInject';
+
+})
+
 .factory('ModalUtils', function($ionicModal, $rootScope, $q, $injector, $controller, $timeout) {
   'ngInject';
 
@@ -156,7 +162,7 @@ angular.module('cesium.modal.services', [])
   }
 
   function showAbout(parameters) {
-    return ModalUtils.show('templates/modal_about.html','AboutCtrl',
+    return ModalUtils.show('templates/modal_about.html','EmptyModalCtrl',
       parameters);
   }
 

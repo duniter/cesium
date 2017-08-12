@@ -3,6 +3,8 @@ angular.module('cesium.login.controllers', ['cesium.services'])
 
   .controller('LoginModalCtrl', LoginModalController)
 
+  .controller('AuthCtrl', AuthController)
+
 ;
 
 function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, UIUtils, BMA, Modals, csSettings, Device, parameters) {
@@ -416,4 +418,16 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     };
     //$scope.form = {$valid:true};
   }, 900);*/
+}
+
+
+function AuthController($scope, $controller){
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('LoginModalCtrl', {$scope: $scope, parameters: {auth: true}}));
+
+  $scope.setForm = function(form) {
+    $scope.form = form;
+  };
+
 }

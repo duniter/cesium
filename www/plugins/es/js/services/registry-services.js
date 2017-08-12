@@ -17,7 +17,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         _internal: {},
       };
 
-    exports._internal.getCategories = esHttp.get('/registry/category/_search?sort=order&from=0&size=1000&_source=name,parent');
+    exports._internal.getCategories = esHttp.get('/page/category/_search?sort=order&from=0&size=1000&_source=name,parent');
 
     function getCategories() {
       if (exports._internal.categories && exports._internal.categories.length) {
@@ -46,7 +46,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         });
     }
 
-    exports._internal.getCategory = esHttp.get('/registry/category/:id');
+    exports._internal.getCategory = esHttp.get('/page/category/:id');
 
     function getCategory(params) {
       return exports._internal.getCategory(params)
@@ -88,10 +88,10 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       return record;
     }
 
-    exports._internal.searchText = esHttp.get('/registry/record/_search?q=:search');
-    exports._internal.search = esHttp.post('/registry/record/_search');
-    exports._internal.get = esHttp.get('/registry/record/:id');
-    exports._internal.getCommons = esHttp.get('/registry/record/:id?_source=' + fields.commons.join(','));
+    exports._internal.searchText = esHttp.get('/page/record/_search?q=:search');
+    exports._internal.search = esHttp.post('/page/record/_search');
+    exports._internal.get = esHttp.get('/page/record/:id');
+    exports._internal.getCommons = esHttp.get('/page/record/:id?_source=' + fields.commons.join(','));
 
     function search(request) {
       request = request || {};
@@ -164,20 +164,20 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     exports.record = {
         search: search,
         load: loadData,
-        add: esHttp.record.post('/registry/record'),
-        update: esHttp.record.post('/registry/record/:id/_update'),
+        add: esHttp.record.post('/page/record'),
+        update: esHttp.record.post('/page/record/:id/_update'),
         remove: esHttp.record.remove('registry', 'record'),
         fields: {
           commons: fields.commons
         },
         picture: {
-          all: esHttp.get('/registry/record/:id?_source=pictures')
+          all: esHttp.get('/page/record/:id?_source=pictures')
         },
         comment: esComment.instance('registry')
       };
     exports.currency = {
-        all: esHttp.get('/registry/currency/_search?_source=currencyName,peers.host,peers.port'),
-        get: esHttp.get('/registry/currency/:id/_source')
+        all: esHttp.get('/currency/record/_search?_source=currencyName,peers.host,peers.port'),
+        get: esHttp.get('/currency/record/:id/_source')
       };
     return exports;
   }

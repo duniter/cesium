@@ -10,8 +10,8 @@
     <div class="list item-wrap-text">
       <div class="item item-complex item-icon-left item-text-wrap">
         <div class="item-content">
-          <span>{{'COMMON.APP_NAME'|translate}}&nbsp;{{'COMMON.APP_VERSION'|translate:config}}</span>
-          <h3 ng-if="config.build" class="gray">{{'COMMON.APP_BUILD'|translate:config}}</h3>
+          <span>{{'COMMON.APP_NAME'|translate}}&nbsp;{{'COMMON.APP_VERSION'|translate:$root.config}}</span>
+          <h3 ng-if="$root.config.build" class="gray">{{'COMMON.APP_BUILD'|translate:$root.config}}</h3>
           <span translate>ABOUT.LICENSE</span>
         </div>
       </div>
@@ -46,7 +46,7 @@
           <h2>{{'ABOUT.DEV_WARNING'|translate}}</h2>
           <span translate>ABOUT.DEV_WARNING_MESSAGE</span>
           <br/>
-          <a href="{{config.newIssueUrl}}"
+          <a href="{{$root.config.newIssueUrl}}"
              target="_system"
              translate>ABOUT.REPORT_ISSUE</a>
         </div>

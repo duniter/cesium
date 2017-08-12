@@ -119,7 +119,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var keepAuth = csSettings.data.keepAuthIdle > 0;
 
       var authData;
-      return Modals.showLogin(options)
+      return (options && options.authData && $q.when(options.authData) ||
+        Modals.showLogin(options))
         .then(function(res){
           if (!res || !res.pubkey ||
              (!needLogin && res.pubkey !== data.pubkey) ||
@@ -184,7 +185,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return keepAuth ? data : angular.merge({}, data, authData);
         })
         .catch(function(err) {
-          if (err == 'RETRY') {
+          if (err == 'RETRY' && (!options || !options.authData)) {
             return $timeout(function(){
               return login(options);
             }, 300);
@@ -1653,7 +1654,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return $timeout(start, 200);
     }
 
-    function start() {
+    function start(options) {
+      options = options || {};
+      options.skipRestore =  angular.isDefined(options.skipRestore) ? options.skipRestore : false;
+
       console.debug('[wallet] Starting...');
       var now = new Date().getTime();
 
@@ -1661,21 +1665,19 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           csSettings.ready(),
           csCurrency.ready(),
           BMA.ready()
-        ])
+        ]);
 
-        // Restore
-        .then(restore)
+      // Restore
+      if (!options.skipRestore) startPromise = startPromise.then(restore);
 
-        // Emit ready event
-        .then(function() {
+      // Emit ready event
+      startPromise.then(function() {
           addListeners();
 
           console.debug('[wallet] Started in ' + (new Date().getTime() - now) + 'ms');
 
           started = true;
           startPromise = null;
-          startLoadOptions = null;
-
         })
         .then(function(){
           return data;

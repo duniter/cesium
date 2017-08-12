@@ -1,0 +1,76 @@
+
+  <form name="loginForm" novalidate="" ng-submit="doLogin()" autocomplete="off">
+
+   <div class="list padding no-padding-xs"
+         ng-init="setForm(loginForm)"
+         ng-switch on="formData.method">
+
+     <div class="item hidden-xs no-padding" ng-if="showMethods">
+       <div class="pull-right">
+          <a class="button button-text button-small-padding icon-right ink"
+             ng-click="showMethodsPopover($event)">
+            <i class="icon ion-wrench"></i>
+            {{'LOGIN.BTN_METHODS'| translate}}
+          </a>&nbsp;
+          <a class="button button-icon positive button-small-padding icon ion-ios-help-outline"
+            style="right: 8px;"
+            ng-click="showHelpModal('login-method')">
+          </a>
+       </div>
+     </div>
+
+      <!-- Form content, depending of the login method -->
+      <div ng-switch-when="SCRYPT_DEFAULT">
+        <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+      </div>
+      <div ng-switch-when="SCRYPT_ADVANCED">
+        <ng-include src="'templates/login/form_scrypt_advanced.html'"></ng-include>
+      </div>
+      <div ng-switch-when="PUBKEY">
+        <ng-include src="'templates/login/form_pubkey.html'"></ng-include>
+      </div>
+      <div ng-switch-when="FILE">
+        <ng-include src="'templates/login/form_file_import.html'"></ng-include>
+      </div>
+      <div ng-switch-default>
+        <ng-include src="'templates/login/form_scrypt.html'"></ng-include>
+      </div>
+    </div>
+
+    <div class="padding hidden-xs text-right">
+      <button class="button button-clear button-dark ink"
+              ng-click="closeModal()" type="button" translate>COMMON.BTN_CANCEL
+      </button>
+      <button class="button button-positive ink" ng-class="{'button-assertive': isAuth, 'button-positive': !isAuth}" type="submit">
+        {{isAuth ? 'AUTH.BTN_AUTH' : 'COMMON.BTN_LOGIN' | translate}}
+      </button>
+    </div>
+
+    <div class="text-center no-padding visible-xs">
+      <br/>
+      <a ng-click="showMethodsPopover($event)">
+        <i class="ion-loop"></i>
+        <span translate>LOGIN.BTN_METHODS_DOTS</span>
+      </a>
+      <br/><br/>
+    </div>
+
+    <!-- Register ? -->
+    <ng-if ng-if="!isAuth">
+      <div class="text-center no-padding">
+        {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
+        <br class="visible-xs"/>
+        <a ng-click="showJoinModal()" translate>
+          LOGIN.CREATE_ACCOUNT
+        </a>
+      </div>
+
+      <br class="visible-xs"/>
+
+      <div class="text-center no-padding">
+        <a ng-click="showAccountSecurityModal()" translate>
+          LOGIN.FORGOTTEN_ID
+        </a>
+      </div>
+    </ng-if>
+  </form>

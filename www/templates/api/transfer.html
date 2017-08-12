@@ -1,0 +1,93 @@
+
+<ion-nav-view class="circle-bg-dark">
+  <ion-nav-title>
+    <h1 class="title" ng-bind-html="'API.TRANSFER.TITLE' | translate">
+    </h1>
+    <span class="visible-xs visible-sm" translate>API.TRANSFER.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="left">
+    <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL
+    </button>
+  </ion-nav-buttons>
+
+  <ion-nav-buttons side="right">
+    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doLogin()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class=" has-header no-padding-xs positive-900-bg text-center">
+
+    <br class="hidden-xs"/>
+
+    <div class="row no-padding-xs">
+      <div class="col col-20 hidden-xs hidden-sm">
+        &nbsp;
+      </div>
+      <div class="col no-padding-xs">
+
+        <div class="light-bg">
+
+          <h2 class="padding-top">
+            <span class="hidden-xs" translate>API.TRANSFER.TITLE</span>
+            <span class="visible-xs" translate>API.TRANSFER.TITLE_SHORT</span>
+          </h2>
+
+          <ng-include src="'templates/login/form_login.html'"></ng-include>
+
+        </div>
+        <br class="hidden-xs"/>
+        <br class="hidden-xs"/>
+        <div class="list padding no-padding-xs light-bg expert-mode">
+          <div class="item">
+            <p translate>API.TRANSFER.SUMMARY</p>
+          </div>
+
+          <div class="item item-icon-left-padding item-tx no-border ">
+            <h2 translate>API.TRANSFER.AMOUNT</h2>
+            <div class="badge item-note badge-calm" ng-bind-html="transferData.amount|formatAmount:{useRelative: false, currency: $root.currency.name}"></div>
+            <div class="badge badge-secondary" ng-bind-html="transferData.amount|formatAmount:{useRelative: true, currency: $root.currency.name}"></div>
+          </div>
+          <div class="item item-icon-left-padding" ng-if="transferData.name">
+            <h2 translate>API.TRANSFER.NAME</h2>
+            <div class="badge item-note">
+              {{transferData.name}}
+            </div>
+          </div>
+          <div class="item item-icon-left-padding item-text-wrap">
+            <h2 translate>API.TRANSFER.PUBKEY</h2>
+            <div class="badge">
+              <br class="visible-xs"/>
+              {{transferData.pubkey}}
+            </div>
+          </div>
+
+          <div class="item item-icon-left-padding">
+            <h2 translate>API.TRANSFER.COMMENT</h2>
+            <div class="badge item-note">
+              {{transferData.comment}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col col-20 hidden-xs hidden-sm text-center" id="home" >
+        <div style="display: block; width: 100%;">
+          <div class="logo text-center"></div>
+          <small class="light padding-top">v{{$root.config.version}}</small>
+        </div>
+      </div>
+    </div>
+
+    <p class="visible-xs visible-sm light padding-top">
+      {{'COMMON.APP_NAME'|translate}}
+      - <a href="#" ng-click="showAboutModal($event)">v{{$root.config.version}}</a>
+    </p>
+
+    <p class="hidden-xs hidden-sm gray padding-top">
+      {{'COMMON.APP_NAME'|translate}} v{{$root.config.version}}
+      - <a href="#" ng-click="showAboutModal($event)" title="{{'HOME.BTN_ABOUT'|translate}}">{{'HOME.BTN_ABOUT'|translate}}</a>
+      - <a ui-sref="app.home" target="_blank" title="{{'API.COMMON.LINK_DOC_HELP'|translate}}">{{'API.COMMON.LINK_DOC'|translate}}</a>
+    </p>
+
+  </ion-content>
+</ion-nav-view>

@@ -11,6 +11,7 @@ angular.module("cesium.config", [])
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
+  "debug": true,
 	"rememberMe": true,
 	"showUDHistory": false,
 	"timeout": 300000,

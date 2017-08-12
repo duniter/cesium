@@ -1,4 +1,4 @@
-angular.module('cesium')
+angular.module('cesium.directives', [])
 
   // Add new compare-to directive (need for form validation)
   .directive("compareTo", function() {

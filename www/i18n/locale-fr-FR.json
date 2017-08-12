@@ -763,5 +763,49 @@
       "END_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Bonne continuation à vous, dans le nouveau monde de l'<b>économie libre</b> !",
       "END_NOT_LOGIN": "Cette visite guidée est <b>terminée</b> !<br/><br/>Si vous souhaitez rejoindre la monnaie {{currency|capitalize}}, il vous suffira de cliquer sur <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> ci-dessous."
     }
+  },
+  "API" :{
+    "COMMON": {
+      "LINK_DOC": "documentation API",
+      "LINK_DOC_HELP": "Documentation pour les développeurs"
+    },
+    "HOME": {
+      "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
+      "MESSAGE": "Bienvenue dans la <b>documentation de l'API</b> {{'COMMON.APP_NAME'|translate}}.<br/>Connecter vos sites web à <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> très simplement !",
+      "MESSAGE_SHORT": "Connecter vos sites à <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> très simplement !",
+      "DOC_HEADER": "Services disponibles :"
+    },
+    "TRANSFER": {
+      "TITLE": "{{'COMMON.APP_NAME'|translate}} - Paiement en ligne",
+      "TITLE_SHORT": "Paiement en ligne",
+      "SUMMARY": "Récapitulatif de la commande :",
+      "AMOUNT": "Montant :",
+      "NAME": "Destinataire :",
+      "PUBKEY": "Clé publique du destinaire :",
+      "COMMENT": "Référence de la commande :",
+      "ERROR": {
+        "TRANSFER_FAILED": "Echec du paiement"
+      }
+    },
+    "DOC": {
+      "BTN_DEMO": "Démo",
+      "DESCRIPTION_DIVIDER": "Description",
+      "URL_DIVIDER": "URL d'accès",
+      "PARAMETERS_DIVIDER": "Options",
+      "AVAILABLE_PARAMETERS": "Voici la liste des options possibles :",
+      "SUCCEED": "<i class=\"icon ion-checkmark\"></i> Succès !",
+      "CANCELLED": "<i class=\"icon ion-close\"></i> Annulé par l'utilisateur",
+      "RESULT": "Résultat retourné par l'appel :",
+      "TRANSFER": {
+        "TITLE": "Paiements",
+        "DESCRIPTION": "Depuis un site (ex: vente en ligne) vous pouvez déléguer le paiement en monnaie libre à Cesium API. Pour cela, il vous suffit de déclencher l'ouveture d'un page sur l'adresse suivante :",
+        "PARAM_AMOUNT": "Montant",
+        "PARAM_AMOUNT_HELP": "Montant de la transaction (obligatoire)",
+        "PARAM_COMMENT_HELP": "Référence ou commentaire. Vous permettra par exemple d'identifier le paiement dans la BlockChain.",
+        "PARAM_NAME_HELP": "Le nom de votre site. Cela peut-etre un nom lisible (\"Mon site en ligne\"), ou encore une pseudo-adresse web (\"MonSite.com\").",
+        "PARAM_REDIRECT_URL_HELP": "URL de redirection",
+        "PARAM_CANCEL_URL_HELP": "URL en cas d'annulation"
+      }
+    }
   }
 }

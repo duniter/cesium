@@ -1,0 +1,38 @@
+<ion-view  class="circle-bg-dark">
+  <ion-nav-title>
+    <span class="title visible-xs visible-sm" translate>API.HOME.TITLE</span>
+  </ion-nav-title>
+
+  <ion-content class=" has-header no-padding-xs positive-900-bg ">
+
+    <br class="hidden-xs"/>
+
+    <div class="light text-center" >
+      <h4 class="hidden-xs" translate>API.HOME.MESSAGE</h4>
+      <h4 class="visible-xs" translate>API.HOME.MESSAGE_SHORT</h4>
+    </div>
+
+    <br class="hidden-xs"/>
+
+    <div class="row no-padding-xs">
+      <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
+      <div class="col ">
+
+        <div class="light-bg no-padding">
+          <!-- include documentation -->
+          <ng-include src="'templates/api/doc.html'"></ng-include>
+        </div>
+      </div>
+
+      <div class="col col-20 hidden-xs hidden-sm text-center" id="home" >
+        <div style="display: block; width: 100%;">
+          <div class="logo"></div>
+          <small class="light padding-top">v{{$root.config.version}}</small>
+        </div>
+      </div>
+    </div>
+
+  </ion-content>
+
+</ion-view>
+

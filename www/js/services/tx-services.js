@@ -30,7 +30,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             var sources = [];
             var lockedOutputs;
             var amount = tx.outputs.reduce(function(sum, output, noffset) {
-              var outputArray = output.split(':',3);
+              // FIXME duniter v1.4.13
+              var outputArray = (typeof output == 'string') ? output.split(':',3) : [output.amount,output.base,output.conditions];
               outputBase = parseInt(outputArray[1]);
               var outputAmount = powBase(parseInt(outputArray[0]), outputBase);
               var outputCondition = outputArray[2];

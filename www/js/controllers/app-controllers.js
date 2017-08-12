@@ -1,14 +1,4 @@
-angular.module('cesium.app.controllers', ['ngIdle', 'cesium.platform', 'cesium.services'])
-
-  .config(function($httpProvider) {
-    'ngInject';
-
-    //Enable cross domain calls
-    $httpProvider.defaults.useXDomain = true;
-
-    //Remove the header used to identify ajax call  that would prevent CORS from working
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-  })
+angular.module('cesium.app.controllers', ['cesium.platform', 'cesium.services'])
 
   .config(function($stateProvider, $urlRouterProvider) {
     'ngInject';
@@ -58,19 +48,9 @@ angular.module('cesium.app.controllers', ['ngIdle', 'cesium.platform', 'cesium.s
 
   .controller('PluginExtensionPointCtrl', PluginExtensionPointController)
 
-  .controller('EmptyModalCtrl', EmptyModalController)
 
-  .controller('AboutCtrl', AboutController)
 
 ;
-
-
-/**
- * Useful for modal with no controller (see Modal service)
- */
-function EmptyModalController($scope, parameters) {
-
-}
 
 /**
  * Useful controller that could be reuse in plugin, using $scope.extensionPoint for condition rendered in templates
@@ -420,12 +400,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   $scope.doMotion = function(options) {
     return $scope.motion.show(options);
   };
-}
-
-
-function AboutController($scope, csConfig) {
-  'ngInject';
-  $scope.config = csConfig;
 }
 
 
