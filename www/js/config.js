@@ -11,7 +11,6 @@ angular.module("cesium.config", [])
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
-  "debug": true,
 	"rememberMe": true,
 	"showUDHistory": false,
 	"timeout": 300000,
@@ -66,8 +65,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.15.7",
-	"build": "2017-08-10T15:30:43.092Z",
+	"version": "0.16.0",
+	"build": "2017-08-12T10:16:30.291Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
