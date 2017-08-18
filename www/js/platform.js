@@ -357,5 +357,3 @@ if (typeof String.prototype.format !== 'function') {
     });
   };
 }
-
-;

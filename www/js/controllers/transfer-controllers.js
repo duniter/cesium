@@ -112,6 +112,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
                                  csCurrency, csSettings, parameters) {
   'ngInject';
 
+  var minQuantitativeAmount = 0.01;
   $scope.convertedBalance = 0;
   $scope.formData = {
     destPub: null,
@@ -121,6 +122,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
     useComment: false
   };
   $scope.udAmount = null;
+  $scope.minAmount = minQuantitativeAmount;
   $scope.commentPattern = BMA.regexp.COMMENT;
   $scope.currency = csCurrency.data.name;
   $scope.loading = true;
@@ -181,19 +183,13 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
     $scope.currency = csCurrency.data.name;
     if ($scope.formData.useRelative) {
       $scope.convertedBalance = csWallet.data.balance / csCurrency.data.currentUD;
-      $scope.udAmount = $scope.amount * csCurrency.data.currentUD;
+      $scope.minAmount = minQuantitativeAmount / (csCurrency.data.currentUD / 100);
     } else {
       $scope.convertedBalance = csWallet.data.balance;
-      // Convert to number
-      $scope.formData.amount = (!!$scope.formData.amount && typeof $scope.formData.amount == "string") ?
-          Math.floor(parseFloat($scope.formData.amount.replace(new RegExp('[,]'), '.'))) :
-          $scope.formData.amount;
-      // Compute UD
-      $scope.udAmount = (!!$scope.formData.amount &&
-        typeof $scope.formData.amount == "number" &&
-        !!csCurrency.data.currentUD &&
-        typeof csCurrency.data.currentUD == "number") ?
-          $scope.formData.amount / csCurrency.data.currentUD :null;
+      $scope.minAmount = minQuantitativeAmount;
+    }
+    if ($scope.form) {
+      $scope.form.$valid = undefined;
     }
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
@@ -209,8 +205,26 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
 
   $scope.doTransfer = function() {
     $scope.form.$submitted=true;
+
     if(!$scope.form.$valid || !$scope.formData.destPub || !$scope.formData.amount) {
       return;
+    }
+    var amount = $scope.formData.amount;
+    if (typeof amount === "string") {
+      amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
+    }
+
+    // Avoid amount less than the minimal - fix #373
+    if (amount < $scope.minAmount) {
+      $scope.form.$valid = false;
+      $scope.form.amount.$invalid = true;
+      $scope.form.amount.$error = $scope.form.amount.$error || {};
+      $scope.form.amount.$error.min = true;
+      return;
+    }
+    else if ($scope.form.amount.$error && $scope.form.amount.$error.min){
+      $scope.form.amount.$invalid = false;
+      delete $scope.form.amount.$error.min;
     }
 
     var currentUD;
@@ -230,10 +244,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
 
         return UIUtils.loading.show()
           .then(function(){
-            var amount = $scope.formData.amount;
-            if (typeof amount === "string") {
-              amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
-            }
             if ($scope.formData.useRelative) {
               amount = currentUD * amount;
             }

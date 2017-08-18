@@ -67,9 +67,13 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
   })
 
   .filter('formatAmount', function(csConfig, csSettings, csCurrency, $filter) {
-    var minValue = 1 / Math.pow(10, csConfig.decimalCount || 4);
-    var format = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+    var pattern = '0,0.0' + Array(csConfig.decimalCount || 4).join('0');
+    var patternBigNumber = '0,0.000 a';
     var currencySymbol = $filter('currencySymbol');
+
+    // Always add one decimal for relative unit
+    var patternRelative = pattern + '0';
+    var minValueRelative = 1 / Math.pow(10, (csConfig.decimalCount || 4) + 1 /*add one decimal in relative*/);
 
     function formatRelative(input, options) {
       var currentUD = options && options.currentUD ? options.currentUD : csCurrency.data.currentUD;
@@ -78,11 +82,11 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
         return;
       }
       var amount = input / currentUD;
-      if (Math.abs(amount) < minValue && input !== 0) {
+      if (Math.abs(input) < minValueRelative && input !== 0) {
         amount = '~ 0';
       }
       else {
-        amount = numeral(amount).format(format);
+        amount = numeral(amount).format(patternRelative);
       }
       if (options && options.currency) {
         return amount + ' ' + currencySymbol(options.currency, true);
@@ -91,7 +95,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     }
 
     function formatQuantitative(input, options) {
-      var amount = numeral(input/100).format((input > -1000000000 && input < 1000000000) ? '0,0.00' : '0,0.000 a');
+      var amount = numeral(input/100).format((input < -1000000000 || input > 1000000000) ? patternBigNumber : pattern);
       if (options && options.currency) {
         return amount + ' ' + currencySymbol(options.currency, false);
       }

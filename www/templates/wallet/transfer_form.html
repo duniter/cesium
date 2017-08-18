@@ -48,7 +48,8 @@
         <input type="text"
                keyboard-attach=""
                name="amount" placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})" ng-model="formData.amount"
-               required number-float>
+               required
+               number-float>
         <a class="button button-stable icon ion-arrow-swap gray ink hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
         </a>
         <a class="button button-icon button-small-padding gray ink visible-xs visible-sm" ng-click="showUnitPopover($event)">
@@ -66,6 +67,9 @@
         </div>
         <div class="form-error" ng-message="numberInt">
           <span translate="ERROR.FIELD_NOT_INT"></span>
+        </div>
+        <div class="form-error" ng-message="min">
+          <span translate="ERROR.FIELD_MIN" translate-values="{min: minAmount}"></span>
         </div>
       </div>
 
