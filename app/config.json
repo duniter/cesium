@@ -13,6 +13,7 @@
     "expertMode": false,
     "decimalCount": 2,
     "httpsMode": false,
+    "shareBaseUrl": "https://g1.duniter.fr",
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -69,6 +70,7 @@
     "expertMode": false,
     "decimalCount": 2,
     "httpsMode": false,
+    "shareBaseUrl": "https://g1.duniter.fr",
     "helptip": {
       "enable": true,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -118,6 +120,7 @@
     "useRelative": false,
     "expertMode": true,
     "decimalCount": 2,
+    "shareBaseUrl": "https://g1.duniter.fr",
     "helptip": {
       "enable": false,
       "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"

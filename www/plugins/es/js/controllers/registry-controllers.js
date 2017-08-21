@@ -372,7 +372,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
 }
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
-                                        $anchorScroll,
+                                        $anchorScroll, csConfig,
                                         csWallet, esRegistry, UIUtils, esHttp) {
   'ngInject';
 
@@ -523,7 +523,8 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
   $scope.showSharePopover = function(event) {
     $scope.hideActionsPopover();
     var title = $scope.formData.title;
-    var url = $rootScope.rootPath + $state.href('app.registry_view_record', {title: title, id: $scope.id});
+    // Use shareBasePath (fix #530) or rootPath (fix #390)
+    var url = (csConfig.shareBaseUrl || $rootScope.rootPath) + $state.href('app.registry_view_record', {title: title, id: $scope.id});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,

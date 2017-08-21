@@ -22,6 +22,7 @@ angular.module("cesium.config", [])
   "expertMode": false,
   "decimalCount": 2,
   "httpsMode": false,
+  "shareBaseUrl": "https://g1.duniter.fr",
   "helptip": {
     "enable": true,
     "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -108,6 +109,7 @@ cacheTimeMs                 | Default network request cache time, in millisecond
 fallbackLanguage            | Default locale, if browser default language not exists in Cesium                               | `en`
 defaultLanguage             | Used to force the default language (ignore browser's language), on user first connection.      | =`fallbackLanguage`
 decimalCount                | Number of decimal to display, on float value (when using relative unit)                        | `4`
+shareBaseUrl                | Used in share buttons, to reference another web site.                                          | not defined (will use navigator's window location) 
 helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node'.                              | URL of [Duniter installation node](https://github.com/duniter/duniter/blob/master/doc/install-a-node.md)
 newIssueUrl                 | Used for link in the About screen, to submit new issue                                         | URL of [Cesium issues on GitHub](https://github.com/duniter/cesium/issues/new?labels=bug)
 timeout                     | Default network request timeout, in millisecond.                                               | `4000`

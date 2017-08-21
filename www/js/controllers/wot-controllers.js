@@ -571,7 +571,7 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
  * @param csWallet
  * @constructor
  */
-function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csCurrency, csWot, csWallet) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csConfig, csCurrency, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {
@@ -862,8 +862,8 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 
   $scope.showSharePopover = function(event) {
     var title = $scope.formData.name || $scope.formData.uid || $scope.formData.pubkey;
-    // Use rootPath (fix #390)
-    var url = $rootScope.rootPath + $state.href('app.wot_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid});
+    // Use shareBasePath (fix #530) or rootPath (fix #390)
+    var url = (csConfig.shareBaseUrl || $rootScope.rootPath) + $state.href('app.wot_identity', {pubkey: $scope.formData.pubkey, uid: $scope.formData.uid});
     UIUtils.popover.share(event, {
       bindings: {
         url: url,
