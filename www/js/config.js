@@ -22,7 +22,7 @@ angular.module("cesium.config", [])
 	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
-  "shareBaseUrl": "https://g1.duniter.fr",
+	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
 		"enable": true,
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
@@ -66,8 +66,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.16.0",
-	"build": "2017-08-12T10:33:56.413Z",
+	"version": "0.16.1",
+	"build": "2017-08-21T16:34:01.720Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
