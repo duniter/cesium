@@ -1,9 +1,9 @@
-﻿ 
-Licence Ğ1 - v0.2
-=================
+﻿
+Licence Ğ1 - v0.2.3
+===================
 
-:date: 2017-04-04 12:59
-:modified: 2017-04-04 12:59
+:date: 2017-08-21 16:59
+:modified: 2017-08-21 16:59
 
 **Licence de la monnaie et engagement de responsabilité.**
 
@@ -16,9 +16,9 @@ Monnaie Ğ1
 
 * 1 DU par personne et par jour
 
-Le montant du DU est identique chaque jour jusqu'au prochain équinoxe, où le DU sera alors réévalué selon la formule :
+Le montant du DU est identique chaque jour jusqu'au prochain équinoxe, où le DU sera alors réévalué selon la formule (avec 1 jour = 86 400 secondes) :
 
-* DUjour(équinoxe suivant) = DUjour(équinoxe) + c² (M/N)(équinoxe) / (15778800 secondes)
+* DUjour(équinoxe suivant) = DUjour(équinoxe) + c² (M/N)(équinoxe) / (182,625 jours)
 
 Avec comme paramètres :
 
@@ -33,7 +33,7 @@ Et comme variables :
 Toile de confiance Ğ1 (TdC Ğ1)
 ------------------------------
 
-**Avertissement :** Certifier n'est pas uniquement s'assurer que vous avez rencontré la personne, c'est assurer à la communauté Ğ1 que vous connaissez suffisamment bien la personne certifiée et que vous saurez repérer un double compte effectué par une personne certifiée par vous-même, ou d'autres types de problèmes (disparition...), en effectuant des recoupements qui permettront de révéler le problème le cas échéant.
+**Avertissement :** Certifier n'est pas uniquement s'assurer que vous avez rencontré la personne, c'est assurer à la communauté Ğ1 que vous connaissez suffisamment bien la personne certifiée et que vous saurez ainsi la contacter facilement, et être en mesure de repérer un double compte effectué par une personne certifiée par vous-même, ou d'autres types de problèmes (disparition...), en effectuant des recoupements qui permettront de révéler le problème le cas échéant.
 
 Lorsque vous êtes membre de la TdC Ğ1 et que vous vous apprêtez à certifier un nouveau compte :
 
@@ -53,7 +53,7 @@ Chaque membre a un stock de 100 certifications possibles, qu'il ne peut émettre
 
 Valable 2 mois, une certification pour un nouveau membre n'est définitivement adoptée que si le certifié possède au moins 4 autres certifications au bout de ces 2 mois, sinon le processus d'entrée devra être relancé.
 
-Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications et ne pas se trouver à une distance > 5 de 80% des membre référent de la TdC.
+Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications est ne pas se trouver à une distance > 5 de 80% des membres référents de la TdC.
 
 Un membre de la TdC Ğ1 est membre référent lorsqu'il a reçu et émis au moins Y[N] certifications où N est le nombre de membres de la TdC et Y[N] = plafond N^(1/5). Exemples :
 
