@@ -37,7 +37,6 @@ function ESPicturesEditController($scope, UIUtils, $q, Device) {
           src: "data:image/png;base64," + imageData,
           isnew: true // use to prevent visibility hidden (if animation)
         });
-        $scope.$apply();
       })
       .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };

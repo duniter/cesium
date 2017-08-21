@@ -669,7 +669,6 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
     Device.camera.getPicture()
     .then(function(imageData) {
       $scope.pictures.push({src: "data:image/png;base64," + imageData});
-      $scope.$apply();
     })
     .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
