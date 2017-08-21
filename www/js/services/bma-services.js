@@ -193,12 +193,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
           // Override close methods (add a usage counter)
           sock._counter = 1;
-          var close = sock.close;
+          var inheritedClose = sock.close;
           sock.close = function() {
             sock._counter--;
             if (sock._counter <= 0) {
-              console.debug('[BMA] Stopping websocket ['+path+']');
-              close();
+              console.debug('[BMA] Closing websocket ['+path+']');
+              inheritedClose();
               delete that.cache.wsByPath[path];
             }
           };

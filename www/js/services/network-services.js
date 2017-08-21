@@ -308,7 +308,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         // Apply filter
         if (!applyPeerFilter(peer)) return $q.when();
 
-        if (!data.filter.online || (data.filter.online === 'all' && peer.status === 'DOWN')) {
+        if (!data.filter.online || (data.filter.online === 'all' && peer.status === 'DOWN') || !peer.getHost() /*fix #537*/) {
           peer.online = false;
           return $q.when(peer);
         }
@@ -337,7 +337,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           return $q.when(peer);
         }
 
-        peer.api = peer.api || BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl());
+        peer.api = peer.api ||  BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl());
 
         // Get current block
         return peer.api.blockchain.current()
