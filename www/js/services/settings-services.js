@@ -225,7 +225,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   getLicenseUrl = function() {
     var locale = data.locale && data.locale.id || csConfig.defaultLanguage || 'en';
     return (csConfig.license) ?
-      (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license) : undefined;
+      (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license[csConfig.defaultLanguage || 'en'] || csConfig.license) : undefined;
   },
 
     // Detect locale sucessuf changes, then apply to vendor libs

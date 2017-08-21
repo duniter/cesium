@@ -16,7 +16,7 @@
       ng-if="licenseUrl && !loading"
       class="padding-left padding-right no-padding-xs iframe-license"
       id="iframe-license"
-      ng-src="{{licenseUrl}}">
+      ng-src="{{licenseUrlHtml||licenseUrl}}">
     </iframe>
 
     <div class="padding hidden-xs text-center">

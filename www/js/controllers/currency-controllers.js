@@ -355,6 +355,11 @@ function CurrencyLicenseModalController($scope, $http, UIUtils, csSettings, File
   $scope.load = function() {
     if ($scope.loading) {
       $scope.licenseUrl = csSettings.getLicenseUrl();
+      // Use HTML in iframe, when original file is markdown (fix #538)
+      if ($scope.licenseUrl && $scope.licenseUrl.substring($scope.licenseUrl.length - 3) != '.txt') {
+        $scope.licenseUrlHtml = $scope.licenseUrl + '.html';
+        $scope.licenseUrl = $scope.licenseUrl +'.txt';
+      }
       $scope.loading = false;
     }
   };
@@ -366,7 +371,7 @@ function CurrencyLicenseModalController($scope, $http, UIUtils, csSettings, File
       .success(function(data){
         var file = new Blob([data], {type: 'text/plain; charset=utf-8'});
         FileSaver.saveAs(file, 'license.txt');
-      }).error(function(data){
+      }).error(function(){
         UIUtils.onError('ERROR.GET_LICENSE_FILE_FAILED')();
       });
 

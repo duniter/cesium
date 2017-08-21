@@ -28,8 +28,8 @@ angular.module("cesium.config", [])
 		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
 	},
 	"license": {
-		"fr-FR": "license/license_g1-fr-FR.txt",
-		"en": "license/license_g1-en.txt"
+		"fr-FR": "license/license_g1-fr-FR",
+		"en": "license/license_g1-en"
 	},
 	"node": {
 		"host": "g1.duniter.org",
@@ -67,7 +67,7 @@ angular.module("cesium.config", [])
 		}
 	},
 	"version": "0.16.1",
-	"build": "2017-08-21T16:34:01.720Z",
+	"build": "2017-08-21T21:55:39.967Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

@@ -16,6 +16,7 @@
     "ng_annotate_plugin",
     "ng_translate_plugin",
     "css_plugin",
+    "license_md",
     "watch"
   ],
   "defaultBrowser": "chrome",

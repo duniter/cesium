@@ -14,6 +14,7 @@ var ngConstant = require('gulp-ng-constant');
 var fs = require("fs");
 var argv = require('yargs').argv;
 var header = require('gulp-header');
+var footer = require('gulp-footer');
 var removeCode = require('gulp-remove-code');
 var removeHtml = require('gulp-html-remove');
 var templateCache = require('gulp-angular-templatecache');
@@ -34,6 +35,7 @@ var htmlmin = require('gulp-htmlmin');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
 var concatCss = require('gulp-concat-css');
+var markdown = require('gulp-markdown');
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -45,11 +47,12 @@ var paths = {
   templatecache_plugin: ['./www/plugins/*/templates/**/*.html'],
   ng_translate_plugin: ['./www/plugins/*/i18n/locale-*.json'],
   ng_annotate_plugin: ['./www/plugins/*/**/*.js', '!./www/plugins/*/js/vendor/*.js'],
-  css_plugin: ['./www/plugins/*/css/**/*.css']
+  css_plugin: ['./www/plugins/*/css/**/*.css'],
+  license_md: ['./www/license/*.md']
 };
 
 gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate',
-  'templatecache_plugin', 'ng_translate_plugin', 'ng_annotate_plugin', 'css_plugin'
+  'templatecache_plugin', 'ng_translate_plugin', 'ng_annotate_plugin', 'css_plugin', 'license_md'
 ]);
 
 gulp.task('sass-images', function (done) {
@@ -113,6 +116,7 @@ gulp.task('watch', function() {
   gulp.watch(paths.ng_annotate_plugin, ['ng_annotate_plugin']);
   gulp.watch(paths.ng_translate_plugin, ['ng_translate_plugin']);
   gulp.watch(paths.css_plugin, ['css_plugin']);
+  gulp.watch(paths.license_md, ['license_md']);
 });
 
 gulp.task('install', ['git-check'], function() {
@@ -192,6 +196,25 @@ gulp.task('ng_translate', function() {
     .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
     .pipe(gulp.dest('www/dist/dist_js/app'));
     //.pipe(gulp.dest('www/js'));
+});
+
+
+gulp.task('license_md', function (done) {
+  es.concat(
+    // Copy license into HTML
+    gulp.src(paths.license_md)
+      .pipe(markdown())
+      .pipe(header('<html><header><meta charset="utf-8"></header><body>'))
+      .pipe(footer('</body></html>'))
+      .pipe(gulp.dest('www/license')),
+
+    // Copy license into txt
+    gulp.src(paths.license_md)
+      .pipe(header('\ufeff')) // Need BOM character for UTF-8 files
+      .pipe(rename({ extname: '.txt' }))
+      .pipe(gulp.dest('www/license'))
+  )
+    .on('end', done);
 });
 
 
@@ -276,7 +299,7 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
 
     // Copy index.html (and remove unused code)
     gulp.src('./www/index.html')
-      .pipe(removeCode({"no-device": true}))
+      .pipe(removeCode({'no-device': true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
       .pipe(htmlmin())
@@ -284,11 +307,27 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
 
     // Copy index.html to debug.html (and remove unused code)
     gulp.src('./www/index.html')
-      .pipe(removeCode({"no-device": true}))
+      .pipe(removeCode({'no-device': true}))
       .pipe(removeHtml('.hidden-no-device'))
       .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
       .pipe(rename("debug.html"))
       .pipe(gulp.dest(tmpPath)),
+
+    // Copy API index.html
+    gulp.src('./www/api/index.html')
+      .pipe(removeCode({'no-device': true}))
+      .pipe(removeHtml('.hidden-no-device'))
+      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
+      .pipe(htmlmin())
+      .pipe(gulp.dest(tmpPath + '/api')),
+
+    // Copy API index.html
+    gulp.src('./www/api/index.html')
+      .pipe(removeCode({'no-device': true}))
+      .pipe(removeHtml('.hidden-no-device'))
+      .pipe(removeHtml('[remove-if][remove-if="no-device"]'))
+      .pipe(rename("debug.html"))
+      .pipe(gulp.dest(tmpPath + '/api')),
 
     // Copy fonts
     gulp.src('./www/fonts/**/*.*')
@@ -315,9 +354,17 @@ gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], functi
     gulp.src('./www/lib/ionic/**/*.*')
       .pipe(gulp.dest(tmpPath + '/lib/ionic')),
 
-    // Copy license
-    gulp.src('./www/license/**/*.txt')
+    // Copy license into HTML
+    gulp.src('./www/license/*.md')
+      .pipe(markdown())
+      .pipe(header('<html><header><meta charset="utf-8"></header><body>'))
+      .pipe(footer('</body></html>'))
+      .pipe(gulp.dest(tmpPath + '/license')),
+
+    // Copy license into txt
+    gulp.src('./www/license/*.md')
       .pipe(header('\ufeff')) // Need BOM character for UTF-8 files
+      .pipe(rename({ extname: '.txt' }))
       .pipe(gulp.dest(tmpPath + '/license'))
 
   )
@@ -382,11 +429,65 @@ gulp.task('ng_annotate-plugin:web', ['templatecache-plugin:web'], function (done
     .on('end', done);
 });
 
-
-gulp.task('debug-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
+gulp.task('debug-api-files:web', ['ng_annotate:web', 'ng_annotate-plugin:web'], function(done) {
   var tmpPath = './platforms/web/www';
+  var debugFilter = filter('**/debug.html', { restore: true });
 
-  gulp.src(tmpPath + '/debug.html')
+  gulp.src(tmpPath + '/*/debug.html')
+    .pipe(useref())             // Concatenate with gulp-useref
+
+    .pipe(debugFilter)
+    .pipe(replace("dist_js", "../dist_js"))
+    .pipe(replace("dist_css", "../dist_css"))
+    .pipe(replace("config.js", "../config.js"))
+    .pipe(debugFilter.restore)
+
+    .pipe(gulp.dest(tmpPath))
+    .on('end', done);
+});
+
+gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
+  var tmpPath = './platforms/web/www';
+  var jsFilter = filter(["**/*.js", '!**/config.js'], { restore: true });
+  var cssFilter = filter("**/*.css", { restore: true });
+  var revFilesFilter = filter(['**/*', '!**/index.html', '!**/config.js'], { restore: true });
+  var indexFilter = filter('**/index.html', { restore: true });
+
+  // Process index.html
+  gulp.src(tmpPath + '/*/index.html')
+    .pipe(useref())             // Concatenate with gulp-useref
+
+    // Process JS
+    .pipe(jsFilter)
+    .pipe(uglify())             // Minify any javascript sources
+    .pipe(jsFilter.restore)
+
+    // Process CSS
+    .pipe(cssFilter)
+    .pipe(csso())               // Minify any CSS sources
+    .pipe(cssFilter.restore)
+
+    // Add revision to filename  (but not index.html and config.js)
+    .pipe(revFilesFilter)
+    .pipe(rev())                // Rename the concatenated files
+    .pipe(revFilesFilter.restore)
+
+    .pipe(revReplace())         // Substitute in new filenames
+
+    .pipe(indexFilter)
+    .pipe(replace("dist_js", "../dist_js"))
+    .pipe(replace("dist_css", "../dist_css"))
+    .pipe(replace("config.js", "../config.js"))
+    .pipe(indexFilter.restore)
+
+    .pipe(gulp.dest(tmpPath))
+    .on('end', done);
+
+});
+
+gulp.task('debug-files:web', ['optimize-api-files:web'], function(done) {
+  var tmpPath = './platforms/web/www';
+  gulp.src(tmpPath + '/*/debug.html')
     .pipe(useref())             // Concatenate with gulp-useref
     .pipe(gulp.dest(tmpPath))
     .on('end', done);
@@ -401,6 +502,7 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
   // Process index.html
   gulp.src(tmpPath + '/index.html')
     .pipe(useref())             // Concatenate with gulp-useref
+
     // Process JS
     .pipe(jsFilter)
     .pipe(uglify())             // Minify any javascript sources
@@ -419,6 +521,7 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
     .pipe(revReplace())         // Substitute in new filenames
     .pipe(gulp.dest(tmpPath))
     .on('end', done);
+
 });
 
 gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {

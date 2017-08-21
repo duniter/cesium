@@ -140,6 +140,10 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
       if ($scope.accountType == 'member') {
         $scope.licenseFileUrl = csSettings.getLicenseUrl();
         if ($scope.licenseFileUrl) {
+          // Use HTML in iframe, when original file is markdown (fix #538)
+          if ( $scope.licenseFileUrl.substring($scope.licenseFileUrl.length - 3) != '.txt') {
+            $scope.licenseFileUrl = $scope.licenseFileUrl + '.html';
+          }
           $scope.startListenLicenseBottom();
         }
       }

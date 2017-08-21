@@ -21,9 +21,12 @@
 /www/js/config.js
 
 # Generated CSS
-
 /www/css/ionic.app.css
 /www/css/ionic.app.min.css
+
+# Generated License files
+/www/license/*.html
+/www/license/*.txt
 
 # Leaflet generated files
 /www/css/leaflet.app.css
