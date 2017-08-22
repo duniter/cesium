@@ -487,7 +487,7 @@ gulp.task('optimize-api-files:web', ['debug-api-files:web'], function(done) {
 
 gulp.task('debug-files:web', ['optimize-api-files:web'], function(done) {
   var tmpPath = './platforms/web/www';
-  gulp.src(tmpPath + '/*/debug.html')
+  gulp.src(tmpPath + '/debug.html')
     .pipe(useref())             // Concatenate with gulp-useref
     .pipe(gulp.dest(tmpPath))
     .on('end', done);

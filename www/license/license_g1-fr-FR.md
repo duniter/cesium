@@ -53,7 +53,7 @@ Chaque membre a un stock de 100 certifications possibles, qu'il ne peut émettre
 
 Valable 2 mois, une certification pour un nouveau membre n'est définitivement adoptée que si le certifié possède au moins 4 autres certifications au bout de ces 2 mois, sinon le processus d'entrée devra être relancé.
 
-Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications est ne pas se trouver à une distance > 5 de 80% des membres référents de la TdC.
+Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications et ne pas se trouver à une distance > 5 de 80% des membres référents de la TdC.
 
 Un membre de la TdC Ğ1 est membre référent lorsqu'il a reçu et émis au moins Y[N] certifications où N est le nombre de membres de la TdC et Y[N] = plafond N^(1/5). Exemples :
 
