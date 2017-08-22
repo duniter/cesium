@@ -31,6 +31,10 @@
     <div class="item item-text-wrap">
       <p translate>API.DOC.AVAILABLE_PARAMETERS</p>
       <div class="row">
+        <div class="col col-20 text-italic">pubkey</div>
+        <div class="col" translate>API.DOC.TRANSFER.PARAM_PUBKEY_HELP</div>
+      </div>
+      <div class="row">
         <div class="col col-20 text-italic">amount</div>
         <div class="col" translate>API.DOC.TRANSFER.PARAM_AMOUNT_HELP</div>
       </div>
@@ -61,7 +65,7 @@
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && !result.cancelled">
       <h2 class="text-right balanced" translate>API.DOC.SUCCEED</h2>
       <h4 class="gray" translate>API.DOC.RESULT</h4>
-      <p class="balanced-100-bg padding dark"> {{result.content}}</p>
+      <p class="balanced-100-bg padding dark text-keep-lines">{{result.content}}</p>
     </div>
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && result.cancelled">
       <h2 class="text-right assertive" translate>API.DOC.CANCELLED</h2>

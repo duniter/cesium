@@ -783,6 +783,20 @@
       "NAME": "Destinataire :",
       "PUBKEY": "Clé publique du destinaire :",
       "COMMENT": "Référence de la commande :",
+
+      "DEMO": {
+        "SALT": "demo",
+        "PASSWORD": "demo",
+        "PUBKEY": "3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1",
+        "HELP": "<b>Mode démonstration</b> : Aucun paiement ne sera réellement envoyé pendant cette simulation.<br/>Veuillez utiliser les identifiants : <b>{{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}</b>",
+        "BAD_CREDENTIALS": "Vérifiez votre saisie.<br/>En mode démonstration, les identifiants sont : {{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}"
+      },
+      "INFO": {
+        "SUCCESS_REDIRECTING_WITH_NAME": "Paiement envoyé.<br/>Redirection vers <b>{{name}}</b>...",
+        "SUCCESS_REDIRECTING": "Paiement envoyé.<br/>Redirection vers le site du vendeur...",
+        "CANCEL_REDIRECTING_WITH_NAME": "Paiement annulé.<br/>Redirection vers <b>{{name}}</b>...",
+        "CANCEL_REDIRECTING": "Paiement annulé.<br/>Redirection vers le site du vendeur..."
+      },
       "ERROR": {
         "TRANSFER_FAILED": "Echec du paiement"
       }
@@ -791,19 +805,20 @@
       "BTN_DEMO": "Démo",
       "DESCRIPTION_DIVIDER": "Description",
       "URL_DIVIDER": "URL d'accès",
-      "PARAMETERS_DIVIDER": "Options",
-      "AVAILABLE_PARAMETERS": "Voici la liste des options possibles :",
+      "PARAMETERS_DIVIDER": "Paramètres",
+      "AVAILABLE_PARAMETERS": "Voici la liste des paramètres et options :",
       "SUCCEED": "<i class=\"icon ion-checkmark\"></i> Succès !",
       "CANCELLED": "<i class=\"icon ion-close\"></i> Annulé par l'utilisateur",
       "RESULT": "Résultat retourné par l'appel :",
       "TRANSFER": {
         "TITLE": "Paiements",
         "DESCRIPTION": "Depuis un site (ex: vente en ligne) vous pouvez déléguer le paiement en monnaie libre à Cesium API. Pour cela, il vous suffit de déclencher l'ouveture d'un page sur l'adresse suivante :",
+        "PARAM_PUBKEY_HELP": "Clé publique du destinataire (obligatoire)",
         "PARAM_AMOUNT": "Montant",
         "PARAM_AMOUNT_HELP": "Montant de la transaction (obligatoire)",
         "PARAM_COMMENT_HELP": "Référence ou commentaire. Vous permettra par exemple d'identifier le paiement dans la BlockChain.",
-        "PARAM_NAME_HELP": "Le nom de votre site. Cela peut-etre un nom lisible (\"Mon site en ligne\"), ou encore une pseudo-adresse web (\"MonSite.com\").",
-        "PARAM_REDIRECT_URL_HELP": "URL de redirection",
+        "PARAM_NAME_HELP": "Le nom de votre site web. Cela peut-etre un nom lisible (\"Mon site en ligne\"), ou encore une pseudo-adresse web (\"MonSite.com\").",
+        "PARAM_REDIRECT_URL_HELP": "URL de redirection. Peut contenir les chaines suivantes, qui seront remplacée par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\" et \"{amount}\".",
         "PARAM_CANCEL_URL_HELP": "URL en cas d'annulation"
       }
     }

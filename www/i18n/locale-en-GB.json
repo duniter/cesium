@@ -763,5 +763,64 @@
       "END_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>Welcome to the <b>free economy</b>!",
       "END_NOT_LOGIN": "This guided visit has <b>ended</b>.<br/><br/>If you wish to join the currency {{currency|capitalize}}, simply click <b>{{'LOGIN.CREATE_ACCOUNT'|translate}}</b> below."
     }
+  },
+  "API" :{
+    "COMMON": {
+      "LINK_DOC": "API documentation",
+      "LINK_DOC_HELP": "API documentation for developers"
+    },
+    "HOME": {
+      "TITLE": "{{'COMMON.APP_NAME'|translate}} API Documentation",
+      "MESSAGE": "Welcome to the {{'COMMON.APP_NAME'|translate}} <b>API documentation </b>.<br/>Connect your web site to <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> very easily!",
+      "MESSAGE_SHORT": "Connect your websites to <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> very easily!",
+      "DOC_HEADER": "Available services:"
+    },
+    "TRANSFER": {
+      "TITLE": "{{'COMMON.APP_NAME'|translate}} - Online payment",
+      "TITLE_SHORT": "Online payment",
+      "SUMMARY": "Order summary:",
+      "AMOUNT": "Amount:",
+      "NAME": "Recipient:",
+      "PUBKEY": "Public key of the recipient:",
+      "COMMENT": "Order reference:",
+
+      "DEMO": {
+        "SALT": "demo",
+        "PASSWORD": "demo",
+        "PUBKEY": "3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1",
+        "HELP": "<b>Demonstration mode</b>: No payment will actually be sent during this simulation.<br/>Please use credentials: <b>{{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}</b>",
+        "BAD_CREDENTIALS": "Invalid credentials.<br/>In demonstration mode, credentials should be: {{'API.TRANSFER.DEMO.SALT'|translate}} / {{'API.TRANSFER.DEMO.PASSWORD'|translate}}"
+      },
+      "INFO": {
+        "SUCCESS_REDIRECTING_WITH_NAME": "Payment sent.<br/>Redirect to <b>{{name}}</b>...",
+        "SUCCESS_REDIRECTING": "Payment sent.<br/>Redirect to the seller's website...",
+        "CANCEL_REDIRECTING_WITH_NAME": "Payment cancelled.<br/>Redirect to <b>{{name}}</b>...",
+        "CANCEL_REDIRECTING": "Payment cancelled.<br/>Redirect to the seller's website..."
+      },
+      "ERROR": {
+        "TRANSFER_FAILED": "Payment failed"
+      }
+    },
+    "DOC": {
+      "BTN_DEMO": "Try",
+      "DESCRIPTION_DIVIDER": "Description",
+      "URL_DIVIDER": "Access URL",
+      "PARAMETERS_DIVIDER": "Parameters",
+      "AVAILABLE_PARAMETERS": "Here is the list of parameters and options:",
+      "SUCCEED": "<i class=\"icon ion-checkmark\"></i> Success!",
+      "CANCELLED": "<i class=\"icon ion-close\"></i> Canceled by user",
+      "RESULT": "Result returned by call:",
+      "TRANSFER": {
+        "TITLE": "Payments",
+        "DESCRIPTION": "From a site (eg online marketplace) you can delegate payment in free currency to Cesium API. To do this, simply open a page at the following address:",
+        "PARAM_PUBKEY_HELP": "Recipient's public key (required)",
+        "PARAM_AMOUNT": "Amount",
+        "PARAM_AMOUNT_HELP": "Transaction amount (required)",
+        "PARAM_COMMENT_HELP": "Reference or comment. You will allow for example to identify the payment in the BlockChain.",
+        "PARAM_NAME_HELP": "The name of your website. This can be a readable name (eg \"My online site\"), or a web address (eg \"www.MySite.com\").",
+        "PARAM_REDIRECT_URL_HELP": "Redirect URL. Can contain the following strings, which will be replaced by the values of the transaction: \"{tx}\", \"{hash}\", \"{comment}\" and \"{amount}\".",
+        "PARAM_CANCEL_URL_HELP": "URL in case of cancellation"
+      }
+    }
   }
 }

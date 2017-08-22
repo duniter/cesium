@@ -42,6 +42,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       })
 
       .state('api.transfer', {
+        cache: false,
         url: "/payment/:pubkey?name&amount&udAmount&comment&redirect_url&cancel_url&demo",
         views: {
           'menuContent': {
@@ -78,8 +79,8 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       comment: 'REF-0111',
       name: 'mon-site.com',
       pubkey: 'G2CBgZBPLe6FSFUgpx2Jf1Aqsgta6iib3vmDRA1yLiqU',
-      redirect_url: $rootScope.rootPath + '#/app/home?result={comment}&service=payment',
-      cancel_url: $rootScope.rootPath + '#/app/home?cancel&service=payment'
+      redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={comment}%0A{hash}%0A{tx}',
+      cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
     };
     $scope.result = {};
 
@@ -100,7 +101,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
   })
 
   .controller('ApiTransferCtrl', function ($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
-                                           BMA, UIUtils, csCurrency, csTx, csWallet){
+                                           BMA, CryptoUtils, UIUtils, csCurrency, csTx, csWallet){
     'ngInject';
 
     // Initialize the super class and extend it.
@@ -141,27 +142,74 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     };
     $scope.$on('$ionicView.enter', $scope.enter);
 
-    function createDemoWallet() {
+    function createDemoWallet(authData) {
+      var demoPubkey = '3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1';
+
       return {
         start: function() {
           return $q.when();
         },
         login: function() {
-          return $q.when({
-            uid: 'Demo',
-            pubkey: 'fakeDemoPublicKey'
-          });
+          var self = this;
+          return $translate('API.TRANSFER.DEMO.PUBKEY')
+            .then(function(pubkey) {
+              if (!authData || authData.pubkey != '3G28bL6deXQBYpPBpLFuECo46d3kfYMJwst7uhdVBnD1') {
+                throw {message: 'API.TRANSFER.DEMO.BAD_CREDENTIALS'};
+              }
+              self.data = {
+                keypair: authData.keypair
+              };
+              return {
+                uid: 'Demo',
+                pubkey: demoPubkey
+              };
+            });
         },
         transfer: function() {
-          return $q.when();
+          var self = this;
+          return BMA.blockchain.current()
+            .then(function(block) {
+              var tx = 'Version: '+ BMA.constants.PROTOCOL_VERSION +'\n' +
+                'Type: Transaction\n' +
+                'Currency: ' + block.currency + '\n' +
+                'Blockstamp: ' + block.number + '-' + block.hash + '\n' +
+                'Locktime: 0\n' + // no lock
+                'Issuers:\n' +
+                demoPubkey + '\n' +
+                'Inputs:\n' +
+                [$scope.transferData.amount, block.unitbase, 'T', 'FakeId27jQMAf3jqL2fr75ckZ6Jgi9TZL9fMf9TR9vBvG', 0].join(':')+ '\n' +
+                'Unlocks:\n' +
+                '0:SIG(0)\n' +
+                'Outputs:\n' +
+                [$scope.transferData.amount, block.unitbase, 'SIG(' + $scope.transferData.pubkey + ')'].join(':')+'\n' +
+                'Comment: '+ ($scope.transferData.comment||'') + '\n';
+
+              return CryptoUtils.sign(tx, self.data.keypair)
+                .then(function(signature) {
+                  var signedTx = tx + signature + "\n";
+                  return CryptoUtils.util.hash(signedTx)
+                    .then(function(txHash) {
+                      return $q.when({
+                        tx: signedTx,
+                        hash: txHash
+                      });
+                    });
+                })
+            });
         }
       };
     }
 
     function onLogin(authData) {
-      if (!authData) return;
 
-      var wallet = $scope.demo ? createDemoWallet() : csWallet.instance('api', BMA);
+      // User cancelled
+      if (!authData) return $scope.onCancel();
+
+      // Avoid multiple click
+      if ($scope.sending) return;
+      $scope.sending = true;
+
+      var wallet = $scope.demo ? createDemoWallet(authData) : csWallet.instance('api', BMA);
 
       UIUtils.loading.show();
 
@@ -177,33 +225,37 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         })
         .then(function(confirm) {
           if (!confirm) return;
+
           // sent transfer
           return UIUtils.loading.show()
             .then(function(){
               var amount = parseInt($scope.transferData.amount); // remove 2 decimals on quantitative mode
               return wallet.transfer($scope.transferData.pubkey, amount, $scope.transferData.comment, false /*always quantitative mode*/);
             })
-            .then(function() {
+            .then(function(txRes) {
+
               UIUtils.loading.hide();
-              return true; // sent
+              return txRes;
             })
-            .catch(UIUtils.onError('API.TRANSFER.ERROR.TRANSFER_FAILED'));
+            .catch(function(err) {
+              UIUtils.onError()(err);
+              return false;
+            });
         })
-        .then(function(sent) {
-          if (sent && $scope.transferData.redirect_url) {
-            return $timeout(function () {
-              // if iframe: send to parent
-              if (window.top && window.top.location) {
-                window.top.location.href = $scope.transferData.redirect_url;
-              }
-              else if (parent && parent.document && parent.document.location) {
-                parent.document.location.href = $scope.transferData.redirect_url;
-              }
-              else {
-                window.location.assign($scope.transferData.redirect_url);
-              }
-            }, 3000);
+        .then(function(txRes) {
+          if (txRes) {
+            return $scope.onSuccess(txRes);
           }
+          else {
+            $scope.sending = false;
+          }
+        })
+        .catch(function(err){
+          if (err && err === 'CANCELLED') {
+            return $scope.onCancel();
+          }
+          $scope.sending = false;
+          UIUtils.onError()(err);
         });
     }
 
@@ -220,6 +272,62 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           });
         })
         .then(UIUtils.alert.confirm);
+    };
+
+    $scope.onSuccess = function(txRes) {
+      if (!$scope.transferData.redirect_url) {
+        return UIUtils.toast.show('INFO.TRANSFER_SENT');
+      }
+
+      return ($scope.transferData.name ? $translate('API.TRANSFER.INFO.SUCCESS_REDIRECTING_WITH_NAME', $scope.transferData) : $translate('API.TRANSFER.INFO.SUCCESS_REDIRECTING'))
+        .then(function(message){
+          return UIUtils.loading.show({template: message});
+        })
+        .then(function() {
+          var url = $scope.transferData.redirect_url;
+          // Make replacements
+          url = url.replace(/\{hash\}/g, txRes.hash||'');
+          url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
+          url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
+          url = url.replace(/\{tx\}/g, encodeURI(txRes.tx));
+
+          return $scope.redirectToUrl(url, 2500);
+        });
+    };
+
+    $scope.onCancel = function() {
+      if (!$scope.transferData.cancel_url) {
+        // TODO: clean form ?
+        $scope.formData.salt = undefined;
+        $scope.formData.password = undefined;
+        return; // nothing to do
+      }
+
+      return ($scope.transferData.name ? $translate('API.TRANSFER.INFO.CANCEL_REDIRECTING_WITH_NAME', $scope.transferData) : $translate('API.TRANSFER.INFO.CANCEL_REDIRECTING'))
+        .then(function(message){
+          return UIUtils.loading.show({template: message});
+        })
+        .then(function() {
+          return $scope.redirectToUrl($scope.transferData.cancel_url, 1500);
+        });
+    };
+
+    $scope.redirectToUrl = function(url, timeout) {
+      if (!url) return;
+
+      return $timeout(function() {
+        // if iframe: send to parent
+        if (window.top && window.top.location) {
+          window.top.location.href = url;
+        }
+        else if (parent && parent.document && parent.document.location) {
+          parent.document.location.href = url;
+        }
+        else {
+          window.location.assign(url);
+        }
+        return UIUtils.loading.hide();
+      }, timeout||0);
     };
 
     /* -- methods need by Login controller -- */

@@ -936,6 +936,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                   // API extension
                   api.data.raise.balanceChanged(data);
                   api.data.raise.newTx(data);
+
+                  // Return TX hash (if chained TXs, return the last tx hash) - required by Cesium-API
+                  return {
+                    hash: res.hash
+                  };
                 });
             })
             .catch(function(err) {
@@ -1133,6 +1138,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 output.pending = true;
               });
               return {
+                tx: signedTx,
                 hash: txHash,
                 sources: newSources
               };

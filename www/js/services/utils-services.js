@@ -129,7 +129,7 @@ angular.module('cesium.utils.services', [])
       return $translate('COMMON.LOADING')
         .then(function(translation){
           loadingTextCache = translation;
-          return showLoading();
+          return showLoading(options);
         });
     }
     options = options || {};

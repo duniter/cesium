@@ -16,7 +16,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content class=" has-header no-padding-xs positive-900-bg text-center">
+  <ion-content class=" has-header no-padding-xs positive-900-bg">
 
     <br class="hidden-xs"/>
 
@@ -28,10 +28,17 @@
 
         <div class="light-bg">
 
-          <h2 class="padding-top">
+          <h2 class="padding-top text-center">
             <span class="hidden-xs" translate>API.TRANSFER.TITLE</span>
             <span class="visible-xs" translate>API.TRANSFER.TITLE_SHORT</span>
           </h2>
+
+          <div class="no-padding energized-100-bg" ng-if="demo">
+            <div class="item item-icon-left item-text-wrap no-border">
+              <i class="icon ion-information-circled positive" ></i>
+              <p translate>API.TRANSFER.DEMO.HELP</p>
+            </div>
+          </div>
 
           <ng-include src="'templates/login/form_login.html'"></ng-include>
 
@@ -78,12 +85,12 @@
       </div>
     </div>
 
-    <p class="visible-xs visible-sm light padding-top">
+    <p class="visible-xs visible-sm light padding-top text-center">
       {{'COMMON.APP_NAME'|translate}}
       - <a href="#" ng-click="showAboutModal($event)">v{{$root.config.version}}</a>
     </p>
 
-    <p class="hidden-xs hidden-sm gray padding-top">
+    <p class="hidden-xs hidden-sm gray padding-top text-center">
       {{'COMMON.APP_NAME'|translate}} v{{$root.config.version}}
       - <a href="#" ng-click="showAboutModal($event)" title="{{'HOME.BTN_ABOUT'|translate}}">{{'HOME.BTN_ABOUT'|translate}}</a>
       - <a ui-sref="app.home" target="_blank" title="{{'API.COMMON.LINK_DOC_HELP'|translate}}">{{'API.COMMON.LINK_DOC'|translate}}</a>
