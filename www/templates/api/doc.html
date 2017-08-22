@@ -32,43 +32,139 @@
       <p translate>API.DOC.AVAILABLE_PARAMETERS</p>
       <div class="row">
         <div class="col col-20 text-italic">pubkey</div>
-        <div class="col" translate>API.DOC.TRANSFER.PARAM_PUBKEY_HELP</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_PUBKEY_HELP</div>
       </div>
-      <div class="row">
-        <div class="col col-20 text-italic">amount</div>
-        <div class="col" translate>API.DOC.TRANSFER.PARAM_AMOUNT_HELP</div>
+      <div class="row stable-bg">
+        <div class="col col-20 text-italic dark">amount</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_AMOUNT_HELP</div>
       </div>
       <div class="row">
         <div class="col col-20 text-italic">comment</div>
-        <div class="col" translate>API.DOC.TRANSFER.PARAM_COMMENT_HELP</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_COMMENT_HELP</div>
       </div>
-      <div class="row">
-        <div class="col col-20 text-italic">name</div>
-        <div class="col" translate>API.DOC.TRANSFER.PARAM_NAME_HELP</div>
+      <div class="row stable-bg">
+        <div class="col col-20 text-italic dark">name</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_NAME_HELP</div>
       </div>
       <div class="row">
         <div class="col col-20 text-italic">redirect_url</div>
-        <div class="col" translate>API.DOC.TRANSFER.PARAM_REDIRECT_URL_HELP</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_REDIRECT_URL_HELP</div>
       </div>
-      <div class="row">
-        <div class="col col-20 text-italic">cancel_url</div>
-        <div class="col" translate>API.DOC.TRANSFER.PARAM_CANCEL_URL_HELP</div>
+      <div class="row stable-bg">
+        <div class="col col-20 text-italic dark">cancel_url</div>
+        <div class="col gray" translate>API.DOC.TRANSFER.PARAM_CANCEL_URL_HELP</div>
       </div>
+    </div>
+
+    <!-- demo -->
+    <div class="item item-divider no-border">
+      <p translate>API.DOC.DEMO_DIVIDER</p>
     </div>
     <div class="item item-button-right">
-      <h2>&nbsp;</h2>
-      <a ui-sref="api.transfer(transferData)" class="button button-raised button-positive" translate>API.DOC.BTN_DEMO</a>
+      <p translate>API.DOC.DEMO_HELP</p>
+      <a href="{{demoUrl}}" class="button button-raised button-positive" translate>API.DOC.BTN_DEMO</a>
     </div>
-
-
-    <!-- demo result -->
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && !result.cancelled">
-      <h2 class="text-right balanced" translate>API.DOC.SUCCEED</h2>
-      <h4 class="gray" translate>API.DOC.RESULT</h4>
+      <h2 class="text-right balanced" translate>API.DOC.DEMO_SUCCEED</h2>
+      <h4 class="gray" translate>API.DOC.DEMO_RESULT</h4>
       <p class="balanced-100-bg padding dark text-keep-lines">{{result.content}}</p>
     </div>
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && result.cancelled">
-      <h2 class="text-right assertive" translate>API.DOC.CANCELLED</h2>
+      <h2 class="text-right assertive" translate>API.DOC.DEMO_CANCELLED</h2>
+    </div>
+
+    <div class="item item-divider no-border">
+      <p translate>API.DOC.INTEGRATE_DIVIDER</p>
+    </div>
+
+
+    <div class="item item-text-wrap">
+      <p translate>API.DOC.TRANSFER.EXAMPLES_HELP</p>
+
+      <div class="row">
+        <div class="col col-20 text-italic">
+          <span translate>API.DOC.TRANSFER.EXAMPLE_BUTTON_CODE</span>
+        </div>
+        <div class="col gray no-border">
+
+          <!-- code -->
+          <p>
+            <i class="icon ion-code"></i>
+            <span translate>API.DOC.INTEGRATE_CODE</span>
+          </p>
+          <div class="item item-input ">
+            <textarea class="gray" select-on-click="" rows="3" cols="80">&lt;a href="{{transferData.url}}"&gt;&ltimg src="{{$root.rootPath}}../img/duniter_button.svg">&lt;/a&gt;</textarea>
+          </div>
+
+          <!-- preview -->
+          <p class="padding-top">
+            <i class="icon ion-eye"></i>
+            <span translate>API.DOC.INTEGRATE_RESULT</span>
+          </p>
+          <p class="padding-left">
+            <a href="{{transferData.url}}" target="_system"><img src="../img/duniter_button.svg"></a>
+          </p>
+
+          <p class="padding-top">
+            <a class="positive" ng-click="transferData.show=!transferData.show">
+              <i class="icon ion-wrench"></i>
+              <span translate>API.DOC.PARAMETERS_DIVIDER</span>
+              <i class="icon" ng-class="{'ion-arrow-down-b': !transferData.show, 'ion-arrow-up-b': transferData.show}"></i>
+            </a>
+          </p>
+
+          <form id="transferForm" ng-if="transferData.show" class="padding-left stable-bg">
+            <p class="padding-top">
+              <i class="icon ion-key"></i>
+              {{'API.DOC.TRANSFER.PARAM_PUBKEY' | translate}} :
+            </p>
+            <label class="item item-input">
+              <input type="text" ng-model="transferData.pubkey" placeholder="{{'API.DOC.TRANSFER.PARAM_PUBKEY_HELP'|translate}}">
+            </label>
+
+            <p class="padding-top">
+              <i class="icon ion-pricetag"></i>
+              {{'API.DOC.TRANSFER.PARAM_AMOUNT' | translate}} :
+            </p>
+            <label class="item item-input">
+              <input type="text" ng-model="transferData.amount" placeholder="{{'API.DOC.TRANSFER.PARAM_AMOUNT_HELP'|translate}}">
+            </label>
+
+            <p class="padding-top">
+              <i class="icon ion-flag"></i>
+              {{'API.DOC.TRANSFER.PARAM_COMMENT' | translate}} :
+            </p>
+            <label class="item item-input">
+              <input type="text" ng-model="transferData.comment" placeholder="{{'API.DOC.TRANSFER.PARAM_COMMENT'|translate}}">
+            </label>
+
+            <p class="padding-top">
+              <i class="icon ion-ios-world-outline"></i>
+              {{'API.DOC.TRANSFER.PARAM_NAME' | translate}} :
+            </p>
+            <label class="item item-input">
+              <input type="text" ng-model="transferData.name" placeholder="{{'API.DOC.TRANSFER.PARAM_NAME'|translate}}">
+            </label>
+
+            <p class="padding-top">
+              <i class="icon ion-arrow-return-left"></i>
+              {{'API.DOC.TRANSFER.PARAM_REDIRECT_URL' | translate}} :
+            </p>
+            <label class="item item-input">
+              <input type="text" ng-model="transferData.redirect_url" placeholder="{{'API.DOC.TRANSFER.PARAM_REDIRECT_URL'|translate}}">
+            </label>
+
+            <p class="padding-top">
+              <i class="icon ion-backspace"></i>
+              {{'API.DOC.TRANSFER.PARAM_CANCEL_URL' | translate}} :
+            </p>
+            <label class="item item-input">
+              <input type="text" ng-model="transferData.cancel_url" placeholder="{{'API.DOC.TRANSFER.PARAM_CANCEL_URL'|translate}}">
+            </label>
+          </form>
+
+        </div>
+      </div>
     </div>
 
   </div>

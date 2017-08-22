@@ -70,19 +70,25 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     };
   })
 
-  .controller('ApiDocCtrl', function ($scope, $rootScope){
+  .controller('ApiDocCtrl', function ($scope, $rootScope, $state, csConfig){
     'ngInject';
 
     $scope.transferData = {
-      demo: true,
-      amount: 100,
-      comment: 'REF-0111',
-      name: 'mon-site.com',
       pubkey: 'G2CBgZBPLe6FSFUgpx2Jf1Aqsgta6iib3vmDRA1yLiqU',
+      amount: 100,
+      comment: 'REFERENCE',
+      name: 'www.domain.com',
+      redirect_url: 'http://www.domain.com/payment?ref={comment}&tx={tx}',
+      cancel_url: 'http://www.domain.com/payment?ref={comment}&cancel',
+      show: true
+    };
+    // Compute URL for transfer demo
+    $scope.demoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
+      demo: true,
       redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={comment}%0A{hash}%0A{tx}',
       cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
-    };
-    $scope.result = {};
+    }));
+    $scope.transferData.url = $rootScope.rootPath + $state.href('api.transfer', $scope.transferData);
 
     $scope.enter = function(e, state) {
       $scope.result = {};
@@ -98,6 +104,12 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     };
     $scope.$on('$ionicView.enter', $scope.enter);
 
+    // watch from update
+    $scope.onTransferDataChanged = function(oldValue, newValue, scope) {
+      // recompute URL
+      $scope.transferData.url = $rootScope.rootPath + $state.href('api.transfer', $scope.transferData);
+    };
+    $scope.$watch('transferData', $scope.onTransferDataChanged, true);
   })
 
   .controller('ApiTransferCtrl', function ($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
@@ -251,8 +263,14 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           }
         })
         .catch(function(err){
+          // when user cancel
           if (err && err === 'CANCELLED') {
             return $scope.onCancel();
+          }
+          // When wallet is empty
+          if (err && err === 'RETRY') {
+            $scope.sending = false;
+            return;
           }
           $scope.sending = false;
           UIUtils.onError()(err);

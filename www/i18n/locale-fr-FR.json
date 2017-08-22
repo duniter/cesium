@@ -780,10 +780,9 @@
       "TITLE_SHORT": "Paiement en ligne",
       "SUMMARY": "Récapitulatif de la commande :",
       "AMOUNT": "Montant :",
-      "NAME": "Destinataire :",
+      "NAME": "Nom :",
       "PUBKEY": "Clé publique du destinaire :",
       "COMMENT": "Référence de la commande :",
-
       "DEMO": {
         "SALT": "demo",
         "PASSWORD": "demo",
@@ -802,24 +801,36 @@
       }
     },
     "DOC": {
-      "BTN_DEMO": "Démo",
       "DESCRIPTION_DIVIDER": "Description",
       "URL_DIVIDER": "URL d'accès",
       "PARAMETERS_DIVIDER": "Paramètres",
       "AVAILABLE_PARAMETERS": "Voici la liste des paramètres et options :",
-      "SUCCEED": "<i class=\"icon ion-checkmark\"></i> Succès !",
-      "CANCELLED": "<i class=\"icon ion-close\"></i> Annulé par l'utilisateur",
-      "RESULT": "Résultat retourné par l'appel :",
+      "DEMO_DIVIDER": "Tester",
+      "DEMO_HELP": "Pour tester ce service, cliquez sur le bouton ci-contre. Le résultat s'affichera en dessous.",
+      "DEMO_RESULT": "Résultat retourné par l'appel :",
+      "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> Succès !",
+      "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Annulé par l'utilisateur",
+      "INTEGRATE_DIVIDER": "Intégrer",
+      "INTEGRATE_CODE": "Code HTML :",
+      "INTEGRATE_RESULT": "Prévisualisation du résultat :",
+      "BTN_DEMO": "Démo",
       "TRANSFER": {
         "TITLE": "Paiements",
         "DESCRIPTION": "Depuis un site (ex: vente en ligne) vous pouvez déléguer le paiement en monnaie libre à Cesium API. Pour cela, il vous suffit de déclencher l'ouveture d'un page sur l'adresse suivante :",
+        "PARAM_PUBKEY": "Clé publique du destinataire",
         "PARAM_PUBKEY_HELP": "Clé publique du destinataire (obligatoire)",
         "PARAM_AMOUNT": "Montant",
         "PARAM_AMOUNT_HELP": "Montant de la transaction (obligatoire)",
+        "PARAM_COMMENT": "Référence (ou commentaire)",
         "PARAM_COMMENT_HELP": "Référence ou commentaire. Vous permettra par exemple d'identifier le paiement dans la BlockChain.",
-        "PARAM_NAME_HELP": "Le nom de votre site web. Cela peut-etre un nom lisible (\"Mon site en ligne\"), ou encore une pseudo-adresse web (\"MonSite.com\").",
-        "PARAM_REDIRECT_URL_HELP": "URL de redirection. Peut contenir les chaines suivantes, qui seront remplacée par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\" et \"{amount}\".",
-        "PARAM_CANCEL_URL_HELP": "URL en cas d'annulation"
+        "PARAM_NAME": "Nom (du destinataire ou du site web)",
+        "PARAM_NAME_HELP": "Le nom du destinataire, ou du site web appellant. Cela peut-etre un nom lisible (\"Mon site en ligne\"), ou encore une pseudo-adresse web (\"MonSite.com\").",
+        "PARAM_REDIRECT_URL": "Adresse web de redirection",
+        "PARAM_REDIRECT_URL_HELP": "Adresse web (URL) de redirection, appellé quand le paiement a été envoyé. Peut contenir les chaines suivantes, qui seront remplacée par les valeurs de la transaction : \"{tx}\", \"{hash}\", \"{comment}\" et \"{amount}\".",
+        "PARAM_CANCEL_URL": "Adresse web d'annulation",
+        "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur",
+        "EXAMPLES_HELP": "Voici des exemples d'intégration :",
+        "EXAMPLE_BUTTON_CODE": "Bouton HTML"
       }
     }
   }

@@ -780,10 +780,9 @@
       "TITLE_SHORT": "Online payment",
       "SUMMARY": "Order summary:",
       "AMOUNT": "Amount:",
-      "NAME": "Recipient:",
+      "NAME": "Name:",
       "PUBKEY": "Public key of the recipient:",
       "COMMENT": "Order reference:",
-
       "DEMO": {
         "SALT": "demo",
         "PASSWORD": "demo",
@@ -802,24 +801,36 @@
       }
     },
     "DOC": {
-      "BTN_DEMO": "Try",
       "DESCRIPTION_DIVIDER": "Description",
       "URL_DIVIDER": "Access URL",
       "PARAMETERS_DIVIDER": "Parameters",
       "AVAILABLE_PARAMETERS": "Here is the list of parameters and options:",
-      "SUCCEED": "<i class=\"icon ion-checkmark\"></i> Success!",
-      "CANCELLED": "<i class=\"icon ion-close\"></i> Canceled by user",
-      "RESULT": "Result returned by call:",
+      "DEMO_DIVIDER": "Try it !",
+      "DEMO_HELP": "To test this service, click on this button. The result content will be display below.",
+      "DEMO_RESULT": "Result returned by call:",
+      "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> Success!",
+      "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Canceled by user",
+      "INTEGRATE_DIVIDER": "To integrate",
+      "INTEGRATE_CODE": "HTML Code:",
+      "INTEGRATE_RESULT": "Result preview:",
+      "BTN_DEMO": "Demo",
       "TRANSFER": {
         "TITLE": "Payments",
         "DESCRIPTION": "From a site (eg online marketplace) you can delegate payment in free currency to Cesium API. To do this, simply open a page at the following address:",
+        "PARAM_PUBKEY": "Recipient's public key",
         "PARAM_PUBKEY_HELP": "Recipient's public key (required)",
         "PARAM_AMOUNT": "Amount",
         "PARAM_AMOUNT_HELP": "Transaction amount (required)",
+        "PARAM_COMMENT": "Reference (or comment)",
         "PARAM_COMMENT_HELP": "Reference or comment. You will allow for example to identify the payment in the BlockChain.",
+        "PARAM_NAME": "Name (of recipient or website)",
         "PARAM_NAME_HELP": "The name of your website. This can be a readable name (eg \"My online site\"), or a web address (eg \"www.MySite.com\").",
-        "PARAM_REDIRECT_URL_HELP": "Redirect URL. Can contain the following strings, which will be replaced by the values of the transaction: \"{tx}\", \"{hash}\", \"{comment}\" and \"{amount}\".",
-        "PARAM_CANCEL_URL_HELP": "URL in case of cancellation"
+        "PARAM_REDIRECT_URL": "URL redirection",
+        "PARAM_REDIRECT_URL_HELP": "URL redirection after sending payment, after the payment has been sent. Can contain the following strings, which will be replaced by the values of the transaction: \"{tx}\", \"{hash}\", \"{comment}\" and \"{amount}\".",
+        "PARAM_CANCEL_URL": "URL if cancelled",
+        "PARAM_CANCEL_URL_HELP": "URL in case of cancellation",
+        "EXAMPLES_HELP": "Examples of integration:",
+        "EXAMPLE_BUTTON_CODE": "HTML Button"
       }
     }
   }
