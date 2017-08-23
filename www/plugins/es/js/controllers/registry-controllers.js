@@ -525,6 +525,10 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
     var title = $scope.formData.title;
     // Use shareBasePath (fix #530) or rootPath (fix #390)
     var url = (csConfig.shareBaseUrl || $rootScope.rootPath) + $state.href('app.registry_view_record', {title: title, id: $scope.id});
+    // Override default position, is small screen - fix #545
+    if (UIUtils.screen.isSmall()) {
+      event = angular.element(document.querySelector('#registry-share-anchor-'+$scope.id)) || event;
+    }
     UIUtils.popover.share(event, {
       bindings: {
         url: url,

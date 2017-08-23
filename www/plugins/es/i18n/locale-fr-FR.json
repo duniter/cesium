@@ -230,6 +230,10 @@
         "MANAGED": "Groupe administré"
       }
     },
+    "VIEW": {
+      "POPOVER_SHARE_TITLE": "{{title}}",
+      "MENU_TITLE": "Options"
+    },
     "EDIT": {
       "TITLE": "Groupe",
       "TITLE_NEW": "Nouveau groupe",

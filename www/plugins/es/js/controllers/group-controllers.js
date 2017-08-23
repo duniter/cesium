@@ -178,7 +178,7 @@ function ESGroupListController($scope, UIUtils, $state, csWallet, esGroup, Modal
 }
 
 
-function ESGroupViewController($scope, $state, UIUtils, esGroup, csWallet) {
+function ESGroupViewController($scope, $state, $ionicPopover, UIUtils, csConfig, esGroup, csWallet) {
   'ngInject';
 
   $scope.formData = {};
@@ -228,6 +228,53 @@ function ESGroupViewController($scope, $state, UIUtils, esGroup, csWallet) {
   $scope.edit = function() {
     UIUtils.loading.show();
     $state.go('app.edit_group', {id: $scope.id});
+  };
+
+  /* -- modals & popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/group/view_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
+
+  $scope.showSharePopover = function(event) {
+    $scope.hideActionsPopover();
+
+    var title = $scope.formData.title;
+    // Use shareBasePath (fix #530) or rootPath (fix #390)
+    var url = (csConfig.shareBaseUrl || $rootScope.rootPath) + $state.href('app.view_group', {id: $scope.id});
+    // Override default position, is small screen - fix #545
+    if (UIUtils.screen.isSmall()) {
+      event = angular.element(document.querySelector('#group-share-anchor-'+$scope.id)) || event;
+    }
+    UIUtils.popover.share(event, {
+      bindings: {
+        url: url,
+        titleKey: 'GROUP.VIEW.POPOVER_SHARE_TITLE',
+        titleValues: {title: title},
+        time: $scope.formData.time,
+        postMessage: title
+      }
+    });
   };
 }
 
