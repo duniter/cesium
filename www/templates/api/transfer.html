@@ -10,6 +10,15 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="right">
+    <!-- locales -->
+    <button class="button button-clear hidden-xs hidden-sm gray icon-left"
+            style="max-width: 450px !important"
+            ng-click="showLocalesPopover($event)">
+      <i class="icon ion-earth" ></i>
+      {{$root.settings.locale.label}}
+      <small class="ion-arrow-down-b"></small>
+    </button>
+
     <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
     </button>
   </ion-nav-buttons>
@@ -59,7 +68,7 @@
           <div class="item item-icon-left-padding item-text-wrap">
             <h2 translate>API.TRANSFER.PUBKEY</h2>
             <div class="badge">
-              <span class="hidden-xs"><i class="icon ion-key"></i>{{transferData.pubkey}}</span>
+              <span class="hidden-xs"><br class="visible-sm visible-md"/><i class="icon ion-key"> </i>{{transferData.pubkey}}</span>
               <span class="visible-xs" copy-on-click="{{transferData.pubkey}}"><br class="visible-xs"/><i class="icon ion-key"></i> {{transferData.pubkey|formatPubkey}}</span>
             </div>
           </div>
@@ -67,7 +76,7 @@
           <div class="item item-icon-left-padding">
             <h2 translate>API.TRANSFER.COMMENT</h2>
             <div class="badge item-note">
-              <span class="hidden-xs">{{transferData.comment}}</span>
+              <span class="hidden-xs"><br class="visible-sm visible-md"/>{{transferData.comment}}</span>
               <span class="visible-xs" copy-on-click="{{transferData.comment}}"><br/>{{transferData.comment}}</span>
             </div>
           </div>

@@ -3,6 +3,17 @@
     <span class="title visible-xs visible-sm" translate>API.HOME.TITLE</span>
   </ion-nav-title>
 
+  <ion-nav-buttons side="right">
+    <!-- locales -->
+    <button class="button button-clear hidden-xs hidden-sm gray icon-left"
+            style="max-width: 450px !important"
+            ng-click="showLocalesPopover($event)">
+      <i class="icon ion-earth" ></i>
+      {{$root.settings.locale.label}}
+      <small class="ion-arrow-down-b"></small>
+    </button>
+  </ion-nav-buttons>
+
   <ion-content class=" has-header no-padding-xs positive-900-bg ">
 
     <br class="hidden-xs"/>

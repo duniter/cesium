@@ -56,7 +56,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     $urlRouterProvider.otherwise('/app/home');
   })
 
-  .controller('ApiCtrl', function ($scope, $state, Modals){
+  .controller('ApiCtrl', function ($scope, $state, $translate, $ionicPopover, Modals, csSettings){
     'ngInject';
 
 
@@ -67,6 +67,41 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
     $scope.showHome = function() {
       $state.go('app.home') ;
+    };
+
+    $scope.changeLanguage = function(langKey) {
+      $translate.use(langKey);
+      $scope.hideLocalesPopover();
+      csSettings.data.locale = _.findWhere($scope.locales, {id: langKey});
+    };
+
+    /* -- show/hide locales popup -- */
+
+    $scope.showLocalesPopover = function(event) {
+      if (!$scope.localesPopover) {
+        // Fill locales
+        $scope.locales = angular.copy(csSettings.locales);
+
+        $ionicPopover.fromTemplateUrl('templates/api/locales_popover.html', {
+          scope: $scope
+        }).then(function(popover) {
+          $scope.localesPopover = popover;
+          //Cleanup the popover when we're done with it!
+          $scope.$on('$destroy', function() {
+            $scope.localesPopover.remove();
+          });
+          $scope.localesPopover.show(event);
+        });
+      }
+      else {
+        $scope.localesPopover.show(event);
+      }
+    };
+
+    $scope.hideLocalesPopover = function() {
+      if ($scope.localesPopover) {
+        $scope.localesPopover.hide();
+      }
     };
   })
 
@@ -112,6 +147,11 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       }
     };
     $scope.transferButton.style.icon = $scope.transferButton.icons[0];
+    $scope.transferDemoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
+        demo: true,
+        redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}',
+        cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
+      }));
 
     $scope.enter = function(e, state) {
       if (!$scope.loading) return; // already enter
@@ -133,12 +173,6 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         })
         .then(function(buttonText) {
           $scope.transferButton.style.text = buttonText;
-          $scope.transferDemoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
-            demo: true,
-            redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}',
-            cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
-          }));
-
           $scope.loading = false;
 
           // compute HTML button

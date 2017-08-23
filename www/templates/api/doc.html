@@ -62,7 +62,11 @@
     </div>
     <div class="item item-button-right item-text-wrap padding-bottom">
       <p class="item-icon-right-padding" translate>API.DOC.DEMO_HELP</p>
-      <a href="{{transferDemoUrl}}" class="button button-raised button-positive icon ion-play"></a>
+      <span class="badge" ng-if="loading">
+        <ion-spinner class="icon" icon="android"></ion-spinner>
+      </span>
+      <a ng-if="!loading"
+         href="{{transferDemoUrl}}" class="button button-raised button-positive icon ion-play"></a>
     </div>
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && !result.cancelled">
       <h2 class="text-right balanced" translate>API.DOC.DEMO_SUCCEED</h2>

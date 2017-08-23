@@ -2023,3 +2023,16 @@ div[dropzone] {
     }
   }
 }
+
+/**********
+   Locales popover (used by cesump API)
+**********/
+
+.popover-locales {
+  height: 284px;
+  width: 200px;
+
+  .item {
+    height: 48px;
+  }
+}
