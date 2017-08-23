@@ -767,7 +767,9 @@
   "API" :{
     "COMMON": {
       "LINK_DOC": "documentation API",
-      "LINK_DOC_HELP": "Documentation pour les développeurs"
+      "LINK_DOC_HELP": "Documentation pour les développeurs",
+      "LINK_STANDARD_APP": "version classique",
+      "LINK_STANDARD_APP_HELP": "Ouvrir la version classique de {{'COMMON.APP_NAME'|translate}}"
     },
     "HOME": {
       "TITLE": "Documentation API {{'COMMON.APP_NAME'|translate}}",
@@ -802,7 +804,7 @@
     },
     "DOC": {
       "DESCRIPTION_DIVIDER": "Description",
-      "URL_DIVIDER": "URL d'accès",
+      "URL_DIVIDER": "Adresse d'appel",
       "PARAMETERS_DIVIDER": "Paramètres",
       "AVAILABLE_PARAMETERS": "Voici la liste des paramètres possibles :",
       "DEMO_DIVIDER": "Tester",

@@ -38,10 +38,21 @@
       <div class="col col-20 hidden-xs hidden-sm text-center" id="home" >
         <div style="display: block; width: 100%;">
           <div class="logo"></div>
-          <small class="light padding-top">v{{$root.config.version}}</small>
+          <small class="gray padding-top">v{{$root.config.version}}</small>
         </div>
       </div>
     </div>
+
+    <p class="visible-xs visible-sm light padding-top text-center">
+      {{'COMMON.APP_NAME'|translate}} API
+      - <a href="#" ng-click="showAboutModal($event)">v{{$root.config.version}}</a>
+    </p>
+
+    <p class="hidden-xs hidden-sm gray padding-top text-center">
+      {{'COMMON.APP_NAME'|translate}} API v{{$root.config.version}}
+      - <a href="#" ng-click="showAboutModal($event)" title="{{'HOME.BTN_ABOUT'|translate}}">{{'HOME.BTN_ABOUT'|translate}}</a>
+      - <a href="../" title="{{'API.COMMON.LINK_STANDARD_APP_HELP'|translate}}">{{'API.COMMON.LINK_STANDARD_APP'|translate}}</a>
+    </p>
 
   </ion-content>
 

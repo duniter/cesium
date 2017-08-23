@@ -767,7 +767,9 @@
   "API" :{
     "COMMON": {
       "LINK_DOC": "API documentation",
-      "LINK_DOC_HELP": "API documentation for developers"
+      "LINK_DOC_HELP": "API documentation for developers",
+      "LINK_STANDARD_APP": "Standard version",
+      "LINK_STANDARD_APP_HELP": "Open standard version of {{'COMMON.APP_NAME'|translate}}"
     },
     "HOME": {
       "TITLE": "{{'COMMON.APP_NAME'|translate}} API Documentation",
@@ -802,7 +804,7 @@
     },
     "DOC": {
       "DESCRIPTION_DIVIDER": "Description",
-      "URL_DIVIDER": "Access URL",
+      "URL_DIVIDER": "Calling address",
       "PARAMETERS_DIVIDER": "Parameters",
       "AVAILABLE_PARAMETERS": "Here is the list of al available parameters:",
       "DEMO_DIVIDER": "Try it !",
@@ -811,7 +813,7 @@
       "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> Success!",
       "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Canceled by user",
       "INTEGRATE_DIVIDER": "Website integration",
-      "INTEGRATE_CODE": "HTML Code:",
+      "INTEGRATE_CODE": "Code:",
       "INTEGRATE_RESULT": "Result preview:",
       "INTEGRATE_PARAMETERS": "Parameters",
       "TRANSFER": {
