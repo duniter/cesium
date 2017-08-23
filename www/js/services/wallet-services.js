@@ -1662,7 +1662,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     function start(options) {
       options = options || {};
-      options.skipRestore =  angular.isDefined(options.skipRestore) ? options.skipRestore : false;
+      // By default, restore if the service is the default object
+      options.restore =  angular.isDefined(options.restore) ? options.restore : (id === 'default');
 
       console.debug('[wallet] Starting...');
       var now = new Date().getTime();
@@ -1674,7 +1675,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         ]);
 
       // Restore
-      if (!options.skipRestore) startPromise = startPromise.then(restore);
+      if (options.restore) startPromise = startPromise.then(restore);
 
       // Emit ready event
       startPromise.then(function() {

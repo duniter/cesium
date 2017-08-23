@@ -1,18 +1,16 @@
-
-<ion-nav-view class="circle-bg-dark">
-  <ion-nav-title>
-    <h1 class="title" ng-bind-html="'API.TRANSFER.TITLE' | translate">
-    </h1>
-    <span class="visible-xs visible-sm" translate>API.TRANSFER.TITLE</span>
-  </ion-nav-title>
+<ion-view  class="circle-bg-dark">
 
   <ion-nav-buttons side="left">
     <button class="button button-clear visible-xs" ng-click="closeModal()" translate>COMMON.BTN_CANCEL
     </button>
   </ion-nav-buttons>
 
+  <ion-nav-title>
+    <span class="title visible-xs" translate>API.TRANSFER.TITLE_SHORT</span>
+  </ion-nav-title>
+
   <ion-nav-buttons side="right">
-    <button class="button button-icon button-clear icon ion-android-send visible-xs" ng-click="doLogin()">
+    <button class="button button-positive button-icon button-clear icon ion-android-done visible-xs" ng-click="doLogin()">
     </button>
   </ion-nav-buttons>
 
@@ -28,10 +26,7 @@
 
         <div class="light-bg">
 
-          <h2 class="padding-top text-center">
-            <span class="hidden-xs" translate>API.TRANSFER.TITLE</span>
-            <span class="visible-xs" translate>API.TRANSFER.TITLE_SHORT</span>
-          </h2>
+          <h2 class="padding-top text-center hidden-xs" translate>API.TRANSFER.TITLE</h2>
 
           <div class="no-padding energized-100-bg" ng-if="demo">
             <div class="item item-icon-left item-text-wrap no-border">
@@ -64,17 +59,20 @@
           <div class="item item-icon-left-padding item-text-wrap">
             <h2 translate>API.TRANSFER.PUBKEY</h2>
             <div class="badge">
-              <br class="visible-xs"/>
-              {{transferData.pubkey}}
+              <span class="hidden-xs"><i class="icon ion-key"></i>{{transferData.pubkey}}</span>
+              <span class="visible-xs" copy-on-click="{{transferData.pubkey}}"><br class="visible-xs"/><i class="icon ion-key"></i> {{transferData.pubkey|formatPubkey}}</span>
             </div>
           </div>
 
           <div class="item item-icon-left-padding">
             <h2 translate>API.TRANSFER.COMMENT</h2>
             <div class="badge item-note">
-              {{transferData.comment}}
+              <span class="hidden-xs">{{transferData.comment}}</span>
+              <span class="visible-xs" copy-on-click="{{transferData.comment}}"><br/>{{transferData.comment}}</span>
             </div>
           </div>
+          <!-- spacer in small screen -->
+          <div class="padding-bottom visible-xs">&nbsp;</div>
         </div>
       </div>
       <div class="col col-20 hidden-xs hidden-sm text-center" id="home" >

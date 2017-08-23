@@ -804,7 +804,7 @@
       "DESCRIPTION_DIVIDER": "Description",
       "URL_DIVIDER": "Access URL",
       "PARAMETERS_DIVIDER": "Parameters",
-      "AVAILABLE_PARAMETERS": "Here is the list of parameters and options:",
+      "AVAILABLE_PARAMETERS": "Here is the list of al available parameters:",
       "DEMO_DIVIDER": "Try it !",
       "DEMO_HELP": "To test this service, click on this button. The result content will be display below.",
       "DEMO_RESULT": "Result returned by call:",
@@ -813,7 +813,7 @@
       "INTEGRATE_DIVIDER": "To integrate",
       "INTEGRATE_CODE": "HTML Code:",
       "INTEGRATE_RESULT": "Result preview:",
-      "BTN_DEMO": "Demo",
+      "INTEGRATE_PARAMETERS": "Parameters",
       "TRANSFER": {
         "TITLE": "Payments",
         "DESCRIPTION": "From a site (eg online marketplace) you can delegate payment in free currency to Cesium API. To do this, simply open a page at the following address:",
@@ -830,7 +830,19 @@
         "PARAM_CANCEL_URL": "URL if cancelled",
         "PARAM_CANCEL_URL_HELP": "URL in case of cancellation",
         "EXAMPLES_HELP": "Examples of integration:",
-        "EXAMPLE_BUTTON_CODE": "HTML Button"
+        "EXAMPLE_BUTTON": "HTML Button",
+        "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pay in {{currency|currencySymbol}}",
+        "EXAMPLE_BUTTON_DEFAULT_STYLE": "Custom style",
+        "EXAMPLE_BUTTON_TEXT_HELP": "Button text",
+        "EXAMPLE_BUTTON_TEXT_COLOR": "Color",
+        "EXAMPLE_BUTTON_TEXT_COLOR_HELP": "eg: #fbc14c, yellow, lightgrey, rgb(180,180,180)",
+        "EXAMPLE_BUTTON_TEXT_ICON": "Icon",
+        "EXAMPLE_BUTTON_TEXT_WIDTH": "Width",
+        "EXAMPLE_BUTTON_TEXT_WIDTH_HELP": "eg: 200px, 50%",
+        "EXAMPLE_BUTTON_ICON_CESIUM": "Cesium logo",
+        "EXAMPLE_BUTTON_ICON_DUNITER": "Duniter logo",
+        "EXAMPLE_BUTTON_ICON_G1_COLOR": "Ğ1 logo",
+        "EXAMPLE_BUTTON_ICON_G1_BLACK": "Ğ1 logo (outline)"
       }
     }
   }

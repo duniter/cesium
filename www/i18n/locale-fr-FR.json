@@ -804,16 +804,16 @@
       "DESCRIPTION_DIVIDER": "Description",
       "URL_DIVIDER": "URL d'accès",
       "PARAMETERS_DIVIDER": "Paramètres",
-      "AVAILABLE_PARAMETERS": "Voici la liste des paramètres et options :",
+      "AVAILABLE_PARAMETERS": "Voici la liste des paramètres possibles :",
       "DEMO_DIVIDER": "Tester",
       "DEMO_HELP": "Pour tester ce service, cliquez sur le bouton ci-contre. Le résultat s'affichera en dessous.",
       "DEMO_RESULT": "Résultat retourné par l'appel :",
       "DEMO_SUCCEED": "<i class=\"icon ion-checkmark\"></i> Succès !",
       "DEMO_CANCELLED": "<i class=\"icon ion-close\"></i> Annulé par l'utilisateur",
       "INTEGRATE_DIVIDER": "Intégrer",
-      "INTEGRATE_CODE": "Code HTML :",
+      "INTEGRATE_CODE": "Code :",
       "INTEGRATE_RESULT": "Prévisualisation du résultat :",
-      "BTN_DEMO": "Démo",
+      "INTEGRATE_PARAMETERS": "Paramètres",
       "TRANSFER": {
         "TITLE": "Paiements",
         "DESCRIPTION": "Depuis un site (ex: vente en ligne) vous pouvez déléguer le paiement en monnaie libre à Cesium API. Pour cela, il vous suffit de déclencher l'ouveture d'un page sur l'adresse suivante :",
@@ -830,7 +830,19 @@
         "PARAM_CANCEL_URL": "Adresse web d'annulation",
         "PARAM_CANCEL_URL_HELP": "Adresse web (URL) en cas d'annulation du paiement, par l'utilisateur",
         "EXAMPLES_HELP": "Voici des exemples d'intégration :",
-        "EXAMPLE_BUTTON_CODE": "Bouton HTML"
+        "EXAMPLE_BUTTON": "Bouton HTML",
+        "EXAMPLE_BUTTON_DEFAULT_TEXT": "Payer en {{currency|currencySymbol}}",
+        "EXAMPLE_BUTTON_DEFAULT_STYLE": "Style personnalisé",
+        "EXAMPLE_BUTTON_TEXT_HELP": "Texte du bouton",
+        "EXAMPLE_BUTTON_TEXT_COLOR": "Couleur",
+        "EXAMPLE_BUTTON_TEXT_COLOR_HELP": "Exemple: #fbc14c, yellow, lightgrey, rgb(180,180,180)",
+        "EXAMPLE_BUTTON_TEXT_ICON": "Icône",
+        "EXAMPLE_BUTTON_TEXT_WIDTH": "Largeur",
+        "EXAMPLE_BUTTON_TEXT_WIDTH_HELP": "Exemple: 200px, 50%",
+        "EXAMPLE_BUTTON_ICON_CESIUM": "Logo Cesium",
+        "EXAMPLE_BUTTON_ICON_DUNITER": "Logo Duniter",
+        "EXAMPLE_BUTTON_ICON_G1_COLOR": "Logo Ğ1",
+        "EXAMPLE_BUTTON_ICON_G1_BLACK": "Logo Ğ1 (noir)"
       }
     }
   }
