@@ -94,7 +94,9 @@
             <span translate>API.DOC.INTEGRATE_CODE</span>
           </p>
           <div class="item item-input ">
-            <textarea class="gray" select-on-click rows="4" ng-model="buttonHtml"></textarea>
+            <textarea class="gray" select-on-click rows="5"
+                      ng-model="buttonHtml"
+                      ng-model-options="{ debounce: 650 }"></textarea>
           </div>
 
           <!-- preview -->
