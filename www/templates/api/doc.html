@@ -62,7 +62,7 @@
     </div>
     <div class="item item-button-right item-text-wrap padding-bottom">
       <p class="item-icon-right-padding" translate>API.DOC.DEMO_HELP</p>
-      <a href="{{demoUrl}}" class="button button-raised button-positive icon ion-play"></a>
+      <a href="{{transferDemoUrl}}" class="button button-raised button-positive icon ion-play"></a>
     </div>
     <div class="item item-text-wrap" ng-if="result.type === 'payment' && !result.cancelled">
       <h2 class="text-right balanced" translate>API.DOC.DEMO_SUCCEED</h2>
@@ -95,7 +95,7 @@
           </p>
           <div class="item item-input ">
             <textarea class="gray" select-on-click rows="5"
-                      ng-model="buttonHtml"
+                      ng-model="transferButton.html"
                       ng-model-options="{ debounce: 650 }"></textarea>
           </div>
 
@@ -104,8 +104,8 @@
             <i class="icon ion-eye"></i>
             <span translate>API.DOC.INTEGRATE_RESULT</span>
           </p>
-          <div class="padding-left">
-            <ng-bind-html ng-bind-html="buttonHtml|trustAsHtml"></ng-bind-html>
+          <div class="padding-left" bind-notifier="{ notifierKey:watchedExpression }">
+            <ng-bind-html  ng-bind-html="transferButton.html|trustAsHtml"></ng-bind-html>
           </div>
         </div>
       </div>
@@ -113,17 +113,17 @@
 
         <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-        <!-- no text on button -->
+        <!-- HTML button parameters -->
         <div class="col gray no-border">
           <p class="padding-top">
-            <a class="positive" ng-click="transferData.show=!transferData.show">
+            <a class="positive" ng-click="transferButton.showParameters=!transferButton.showParameters">
               <i class="icon ion-wrench"></i>
               <span translate>API.DOC.INTEGRATE_PARAMETERS</span>
-              <i class="icon" ng-class="{'ion-arrow-down-b': !transferData.show, 'ion-arrow-up-b': transferData.show}"></i>
+              <i class="icon" ng-class="{'ion-arrow-down-b': !transferButton.showParameters, 'ion-arrow-up-b': transferButton.showParameters}"></i>
             </a>
           </p>
 
-          <div ng-if="transferData.show" class="padding-left">
+          <div ng-if="transferButton.showParameters" class="padding-left">
 
             <form id="transferForm" class="stable-bg padding">
               <p class="padding-top">
@@ -189,25 +189,13 @@
               </label>
 
               <p class="padding-top">
-                <a class="positive" ng-click="transferData.buttonTextEnable=!transferData.buttonTextEnable">
-                  <i class="icon" ng-class="{'ion-android-checkbox-outline': transferData.buttonTextEnable, 'ion-android-checkbox-outline-blank': !transferData.buttonTextEnable}"></i>
+                <a class="positive" ng-click="transferButton.style.enable=!transferButton.style.enable">
+                  <i class="icon" ng-class="{'ion-android-checkbox-outline': transferButton.style.enable, 'ion-android-checkbox-outline-blank': !transferButton.style.enable}"></i>
                   <span translate>API.DOC.TRANSFER.EXAMPLE_BUTTON_DEFAULT_STYLE</span>
                 </a>
               </p>
 
-              <div ng-if="transferData.buttonTextEnable">
-
-                <!-- button color -->
-                <p class="padding-top">
-                  <i class="icon ion-paintbucket"></i>
-                  {{'API.DOC.TRANSFER.EXAMPLE_BUTTON_TEXT_COLOR' | translate}} :
-                </p>
-                <label class="item item-input">
-                  <input type="text"
-                         ng-model="transferData.buttonColor"
-                         ng-model-options="{ debounce: 650 }"
-                         placeholder="{{'API.DOC.TRANSFER.EXAMPLE_BUTTON_TEXT_COLOR_HELP'|translate}}">
-                </label>
+              <div ng-if="transferButton.style.enable">
 
                 <!-- button icon -->
                 <p class="padding-top">
@@ -216,8 +204,8 @@
                 </p>
                 <label class="item item-input item-select">
                   <select class="stable-bg dark"
-                          ng-model="transferData.buttonIcon" style="width: 100%; max-width: 100%;"
-                          ng-options="l as (l.label | translate) for l in buttonIcons track by l.filename">
+                          ng-model="transferButton.style.icon" style="width: 100%; max-width: 100%;"
+                          ng-options="l as (l.label | translate) for l in transferButton.icons track by l.filename">
                   </select>
                 </label>
 
@@ -228,9 +216,34 @@
                 </p>
                 <label class="item item-input">
                   <input type="text"
-                         ng-model="transferData.buttonText"
+                         ng-model="transferButton.style.text"
                          ng-model-options="{ debounce: 650 }"
                          placeholder="{{'API.DOC.TRANSFER.EXAMPLE_BUTTON_TEXT_HELP'|translate}}">
+                </label>
+
+
+                <!-- button bg color -->
+                <p class="padding-top">
+                  <i class="icon ion-paintbucket"></i>
+                  {{'API.DOC.TRANSFER.EXAMPLE_BUTTON_BG_COLOR' | translate}} :
+                </p>
+                <label class="item item-input">
+                  <input type="text"
+                         ng-model="transferButton.style.bgColor"
+                         ng-model-options="{ debounce: 650 }"
+                         placeholder="{{'API.DOC.TRANSFER.EXAMPLE_BUTTON_BG_COLOR_HELP'|translate}}">
+                </label>
+
+                <!-- button font color -->
+                <p class="padding-top">
+                  <i class="icon ion-paintbrush"></i>
+                  {{'API.DOC.TRANSFER.EXAMPLE_BUTTON_FONT_COLOR' | translate}} :
+                </p>
+                <label class="item item-input">
+                  <input type="text"
+                         ng-model="transferButton.style.fontColor"
+                         ng-model-options="{ debounce: 650 }"
+                         placeholder="{{'API.DOC.TRANSFER.EXAMPLE_BUTTON_FONT_COLOR_HELP'|translate}}">
                 </label>
 
                 <!-- button width -->
@@ -240,7 +253,7 @@
                 </p>
                 <label class="item item-input">
                   <input type="text"
-                         ng-model="transferData.buttonWidth"
+                         ng-model="transferButton.style.width"
                          ng-model-options="{ debounce: 650 }"
                          placeholder="{{'API.DOC.TRANSFER.EXAMPLE_BUTTON_TEXT_WIDTH_HELP'|translate}}">
                 </label>

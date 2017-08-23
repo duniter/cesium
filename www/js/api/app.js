@@ -74,49 +74,48 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
     'ngInject';
 
     $scope.loading = true;
-    $scope.buttonIcons = [
-      {
-        label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_DUNITER',
-        filename: '../img/logo_duniter_32px.png'
-      },
-      {
-        label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_CESIUM',
-        filename: '../img/logo_32px.png'
-      },
-      {
-        label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_G1_COLOR',
-        filename: '../img/logo_g1_32px.png'
-      },
-      {
-        label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_G1_BLACK',
-        filename: '../img/logo_g1_32px_black.png'
-      }
-    ];
     $scope.transferData = {
       pubkey: 'G2CBgZBPLe6FSFUgpx2Jf1Aqsgta6iib3vmDRA1yLiqU',
       amount: 100,
       comment: 'REFERENCE',
       name: 'www.domain.com',
       redirect_url: 'http://www.domain.com/payment?ref={comment}&tx={tx}',
-      cancel_url: 'http://www.domain.com/payment?ref={comment}&cancel',
-      show: false, // hide integration parameters, by default
-      buttonText: 'Ğ1 pubkey',
-      buttonIcon: $scope.buttonIcons[0],
-      buttonTextEnable: false,
-      buttonColor: '#fbc14c',
-      buttonWidth: undefined
+      cancel_url: 'http://www.domain.com/payment?ref={comment}&cancel'
     };
-
-
-    // Compute URL for transfer demo
-    $scope.demoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
-      demo: true,
-      redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}',
-      cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
-    }));
-    $scope.transferData.url = $rootScope.rootPath + $state.href('api.transfer', $scope.transferData);
+    $scope.transferButton = {
+      html: undefined,
+      showParameters: false, // hide integration parameters, by default
+      icons: [
+        {
+          label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_DUNITER',
+          filename: '../img/logo_duniter_32px.png'
+        },
+        {
+          label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_CESIUM',
+          filename: '../img/logo_32px.png'
+        },
+        {
+          label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_G1_COLOR',
+          filename: '../img/logo_g1_32px.png'
+        },
+        {
+          label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_G1_BLACK',
+          filename: '../img/logo_g1_32px_black.png'
+        }
+      ],
+      style: {
+        enable: false,
+        text: 'Ğ1 pubkey',
+        bgColor: '#fbc14c',
+        fontColor: 'black',
+        width: undefined
+      }
+    };
+    $scope.transferButton.style.icon = $scope.transferButton.icons[0];
 
     $scope.enter = function(e, state) {
+      if (!$scope.loading) return; // already enter
+
       $scope.result = {};
       if (state.stateParams && state.stateParams.service) {
         $scope.result.type = state.stateParams.service;
@@ -133,43 +132,63 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           return $translate('API.DOC.TRANSFER.EXAMPLE_BUTTON_DEFAULT_TEXT', {currency: currency.name});
         })
         .then(function(buttonText) {
-          $scope.transferData.buttonText = buttonText;
+          $scope.transferButton.style.text = buttonText;
+          $scope.transferDemoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
+            demo: true,
+            redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}',
+            cancel_url: $rootScope.rootPath + '#/app/home?service=payment&cancel'
+          }));
+
           $scope.loading = false;
+
           // compute HTML button
-          $scope.onTransferDataChanged();
+          $scope.computeTransferButtonHtml();
         });
 
     };
     $scope.$on('$ionicView.enter', $scope.enter);
 
     // watch from update
-    $scope.onTransferDataChanged = function() {
+    $scope.computeTransferButtonHtml = function() {
       if ($scope.loading) return; // skip if loading
 
-      // recompute URL
-      var buttonUrl = $rootScope.rootPath + $state.href('api.transfer', $scope.transferData);
+      // Compute URL
+      var url = $rootScope.rootPath + $state.href('api.transfer', $scope.transferData);
 
-      // Button with text
-      if ($scope.transferData.buttonTextEnable) {
-        $scope.buttonHtml = '<a href="'+buttonUrl+'">\n'+
-          '  <div style="background-color: '+$scope.transferData.buttonColor+'; border-radius: 5px; min-height: 42px; text-align: center; padding: 5px; color: black;';
-        if ($scope.transferData.buttonWidth) {
-          $scope.buttonHtml += 'max-width: '+$scope.transferData.buttonWidth+';';
-        }
-        $scope.buttonHtml += '">\n'+
-          '    <img style="vertical-align: middle;" src="'+$rootScope.rootPath + $scope.transferData.buttonIcon.filename+'">\n' +
-          '    ' + $scope.transferData.buttonText + '\n' +
-          '  </div>\n' +
-          '</a>';
-      }
-      // Simple button
-      else {
-        $scope.buttonHtml = '<a href="'+buttonUrl+'">\n'+
+      var html;
+      // Compute HTML: simple button
+      if (!$scope.transferButton.style.enable){
+        html = '<a href="'+url+'">\n'+
           '  <img src="'+$rootScope.rootPath + '../img/duniter_button.svg">\n'+
           '</a>';
       }
+      // Compute HTML: advanced button
+      else {
+        html = '<a href="'+url+'">\n'+
+          '  <div style="border-radius: 5px; min-height: 42px; text-align: center; padding: 5px; ';
+        if ($scope.transferButton.style.width) {
+          html += 'max-width: '+$scope.transferButton.style.width+'; ';
+        }
+        if ($scope.transferButton.style.bgColor) {
+          html += 'background-color: '+$scope.transferButton.style.bgColor+'; ';
+        }
+        if ($scope.transferButton.style.fontColor) {
+          html += 'color: '+$scope.transferButton.style.fontColor+'; ';
+        }
+        html += '">\n'+
+          '    <img style="vertical-align: middle;" src="'+$rootScope.rootPath + $scope.transferButton.style.icon.filename+'">\n' +
+          '    ' + $scope.transferButton.style.text + '\n' +
+          '  </div>\n' +
+          '</a>';
+      }
+
+      if ($scope.transferButton.html != html) {
+        $scope.transferButton.html = html;
+        $scope.$broadcast('$$rebind::transferButton'); // force rebind
+      }
     };
-    $scope.$watch('transferData', $scope.onTransferDataChanged, true);
+    $scope.$watch('transferData', $scope.computeTransferButtonHtml, true);
+    $scope.$watch('transferButton.style', $scope.computeTransferButtonHtml, true);
   })
 
   .controller('ApiTransferCtrl', function ($scope, $rootScope, $timeout, $controller, $state, $q, $translate, $filter,
