@@ -122,6 +122,9 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       showParameters: false, // hide integration parameters, by default
       icons: [
         {
+          label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_NONE'
+        },
+        {
           label: 'API.DOC.TRANSFER.EXAMPLE_BUTTON_ICON_DUNITER',
           filename: '../img/logo_duniter_32px.png'
         },
@@ -146,7 +149,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         width: undefined
       }
     };
-    $scope.transferButton.style.icon = $scope.transferButton.icons[0];
+    $scope.transferButton.style.icon = $scope.transferButton.icons[1/*Duniter icon*/];
     $scope.transferDemoUrl = $rootScope.rootPath + $state.href('api.transfer', angular.merge({}, $scope.transferData, {
         demo: true,
         redirect_url: $rootScope.rootPath + '#/app/home?service=payment&result={tx}',
@@ -199,7 +202,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
       // Compute HTML: advanced button
       else {
         html = '<a href="'+url+'">\n'+
-          '  <div style="border-radius: 5px; min-height: 42px; text-align: center; padding: 5px; ';
+          '  <div style="border-radius: 5px; min-height: 42px; text-align: center; padding: 5px; line-height: 30px; ';
         if ($scope.transferButton.style.width) {
           html += 'max-width: '+$scope.transferButton.style.width+'; ';
         }
@@ -209,9 +212,11 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         if ($scope.transferButton.style.fontColor) {
           html += 'color: '+$scope.transferButton.style.fontColor+'; ';
         }
-        html += '">\n'+
-          '    <img style="vertical-align: middle;" src="'+$rootScope.rootPath + $scope.transferButton.style.icon.filename+'">\n' +
-          '    ' + $scope.transferButton.style.text + '\n' +
+        html += '">\n';
+        if ($scope.transferButton.style.icon && $scope.transferButton.style.icon.filename) {
+          html += '    <img style="vertical-align: middle;" src="'+$rootScope.rootPath + $scope.transferButton.style.icon.filename+'">\n';
+        }
+        html += '    ' + $scope.transferButton.style.text + '\n' +
           '  </div>\n' +
           '</a>';
       }

@@ -843,8 +843,9 @@
         "EXAMPLE_BUTTON_TEXT_ICON": "Icône",
         "EXAMPLE_BUTTON_TEXT_WIDTH": "Largeur",
         "EXAMPLE_BUTTON_TEXT_WIDTH_HELP": "Exemple: 200px, 50%",
-        "EXAMPLE_BUTTON_ICON_CESIUM": "Logo Cesium",
+        "EXAMPLE_BUTTON_ICON_NONE": "Aucune",
         "EXAMPLE_BUTTON_ICON_DUNITER": "Logo Duniter",
+        "EXAMPLE_BUTTON_ICON_CESIUM": "Logo Cesium",
         "EXAMPLE_BUTTON_ICON_G1_COLOR": "Logo Ğ1",
         "EXAMPLE_BUTTON_ICON_G1_BLACK": "Logo Ğ1 (noir)"
       }
