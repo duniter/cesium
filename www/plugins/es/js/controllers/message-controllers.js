@@ -21,7 +21,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
       .state('app.user_new_message', {
         cache: false,
-        url: "/user/message/new?pubkey&uid",
+        url: "/user/message/new?pubkey&uid&title&content",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/message/compose.html",
@@ -241,22 +241,32 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
 }
 
 
-function ESMessageComposeController($scope, $controller, UIUtils, parameters) {
+function ESMessageComposeController($scope, $controller, UIUtils) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('ESMessageComposeModalCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('ESMessageComposeModalCtrl', {$scope: $scope, parameters: {}}));
 
   $scope.$on('$ionicView.enter', function(e, state) {
-    if (!!state.stateParams && !!state.stateParams.pubkey) {
-      $scope.formData.destPub = state.stateParams.pubkey;
-      if (!!$state.stateParams.uid) {
-        $scope.destUid = state.stateParams.uid;
-        $scope.destPub = '';
+    if (state.stateParams) {
+      if (state.stateParams.pubkey) {
+        $scope.formData.destPub = state.stateParams.pubkey;
+        if (state.stateParams.uid) {
+          $scope.destUid = state.stateParams.uid;
+          $scope.destPub = '';
+        }
+        else {
+          $scope.destUid = '';
+          $scope.destPub = $scope.formData.destPub;
+        }
       }
-      else {
-        $scope.destUid = '';
-        $scope.destPub = $scope.formData.destPub;
+
+      if (state.stateParams.title) {
+        $scope.formData.title = state.stateParams.title;
+      }
+
+      if (state.stateParams.content) {
+        $scope.formData.content = state.stateParams.content;
       }
     }
 
@@ -279,7 +289,7 @@ function ESMessageComposeController($scope, $controller, UIUtils, parameters) {
     $scope.form = form;
   };
 
-  $scope.clodeModal = function() {
+  $scope.closeModal = function() {
     $scope.showHome();
   };
 
