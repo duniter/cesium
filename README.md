@@ -2,9 +2,15 @@
 
 # Cesium
 
-[Unhosted webapp](https://unhosted.org) client for [Duniter](https://duniter.org) network.
+[Unhosted webapp](https://unhosted.org) client for any [Duniter](https://duniter.org) crypto-currency.
 
-Demo: http://gtest.duniter.fr
+Manage your wallet, certify your friends, and more ! 
+
+
+## Try it !
+
+ - on Ğ1-test currency: http://g1-test.duniter.fr
+ - on Ğ1 currency (production use): https://g1.duniter.fr
 
 
 ## Installation
