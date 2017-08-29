@@ -375,7 +375,6 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
 
     $scope.onCancel = function() {
       if (!$scope.transferData.cancel_url) {
-        // TODO: clean form ?
         $scope.formData.salt = undefined;
         $scope.formData.password = undefined;
         return; // nothing to do
@@ -386,7 +385,12 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
           return UIUtils.loading.show({template: message});
         })
         .then(function() {
-          return $scope.redirectToUrl($scope.transferData.cancel_url, 1500);
+          var url = $scope.transferData.cancel_url;
+          // Make replacements - fix #548
+          url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
+          url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
+
+          return $scope.redirectToUrl(url, 1500);
         });
     };
 
