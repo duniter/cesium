@@ -364,6 +364,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         .then(function() {
           var url = $scope.transferData.redirect_url;
           // Make replacements
+          url = url.replace(/\{pubkey\}/g, $scope.transferData.pubkey);
           url = url.replace(/\{hash\}/g, txRes.hash||'');
           url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
           url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
@@ -387,6 +388,7 @@ angular.module('cesium-api', ['ionic', 'ionic-material', 'ngMessages', 'pascalpr
         .then(function() {
           var url = $scope.transferData.cancel_url;
           // Make replacements - fix #548
+          url = url.replace(/\{pubkey\}/g, $scope.transferData.pubkey);
           url = url.replace(/\{comment\}/g, $scope.transferData.comment||'');
           url = url.replace(/\{amount\}/g, $scope.transferData.amount.toString());
 
