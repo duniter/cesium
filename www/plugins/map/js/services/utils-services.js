@@ -8,13 +8,13 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
   var
     googleApiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey;
     constants = {
-    locations: {
-      FRANCE: {
-        lat: 46.5588603, lng: 4.229736328124999, zoom: 6
-      }
-    },
-    LOCALIZE_ZOOM: 14
-  };
+      locations: {
+        FRANCE: {
+          lat: 46.5588603, lng: 4.229736328124999, zoom: 6
+        }
+      },
+      LOCALIZE_ZOOM: 15
+    };
   constants.DEFAULT_CENTER = csSettings.data && csSettings.data.plugins && csSettings.data.plugins.map && csSettings.data.plugins.map.center || constants.locations.FRANCE;
 
   function initMap(options){

@@ -85,3 +85,72 @@
   max-width: 70px;
   text-align: start !important;
 }
+
+/* member cluster marker */
+.view-map-wot .marker-cluster-small.member {
+  background-color: rgba(56, 170, 221, 0.6);
+}
+.view-map-wot .marker-cluster-small.member div {
+  background-color: rgba(37, 144, 193, 0.9);
+  color: white;
+}
+.view-map-wot .marker-cluster-medium.member {
+  background-color: rgba(37, 144, 193, 0.6);
+}
+.view-map-wot .marker-cluster-medium.member div {
+  background-color: rgba(18, 121, 167, 0.9);
+  color: white;
+}
+.view-map-wot .marker-cluster-large.member {
+  background-color: rgba(18, 121, 167, 0.6);
+}
+.view-map-wot .marker-cluster-large.member div {
+  background-color: rgba(0, 99, 141, 0.9);
+  color: white;
+}
+
+/* pending cluster marker */
+.view-map-wot .marker-cluster-small.pending {
+  background-color: rgba(187, 249, 112, 0.4);
+}
+.view-map-wot .marker-cluster-small.pending div {
+  background-color: rgba(162, 221, 90, 0.8);
+  color: gray;
+}
+.view-map-wot .marker-cluster-medium.pending {
+  background-color: rgba(162, 221, 90, 0.6);
+}
+.view-map-wot .marker-cluster-medium.pending div {
+  background-color: rgba(136, 192, 69, 0.8);
+  color: white;
+}
+.view-map-wot .marker-cluster-large.pending {
+  background-color: rgba(136, 192, 69, 0.6);
+}
+.view-map-wot .marker-cluster-large.pending div {
+  background-color: rgba(115, 168, 49, 0.8);
+  color: white;
+}
+
+/* wallet cluster marker */
+.view-map-wot .marker-cluster-small.wallet {
+  background-color: rgba(163, 163, 163, 0.6);
+}
+.view-map-wot .marker-cluster-small.wallet div {
+  background-color: rgba(163, 163, 163, 0.9);
+  color: white;
+}
+.view-map-wot .marker-cluster-medium.wallet {
+  background-color: rgba(139, 139, 139, 0.6);
+}
+.view-map-wot .marker-cluster-medium.wallet div {
+  background-color: rgba(139, 139, 139, 0.9);
+  color: white;
+}
+.view-map-wot .marker-cluster-large.wallet {
+  background-color: rgba(116, 116, 116, 0.6);
+}
+.view-map-wot .marker-cluster-large.wallet div {
+  background-color: rgba(116, 116, 116, 0.9);
+  color: white;
+}

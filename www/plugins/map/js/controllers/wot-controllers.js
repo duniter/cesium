@@ -40,7 +40,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
     var
       // Create a  hidden layer, to hold search markers
-      markersSearchLayer = L.layerGroup({visible: false}),
+      markersSearchLayer,
       icons= {
         member: {
           type: 'awesomeMarker',
@@ -76,17 +76,17 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       layers: {
         overlays: {
           member: {
-            type: 'group',
+            type: 'featureGroup',
             name: 'MAP.WOT.VIEW.LAYER.MEMBER',
             visible: true
           },
           pending: {
-            type: 'group',
+            type: 'featureGroup',
             name: 'MAP.WOT.VIEW.LAYER.PENDING',
             visible: true
           },
           wallet: {
-            type: 'group',
+            type: 'featureGroup',
             name: 'MAP.WOT.VIEW.LAYER.WALLET',
             visible: true
           }
@@ -136,15 +136,46 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           .addTo(map);
 
         // Add search control
+        markersSearchLayer = L.layerGroup({visible: false});
         var searchTip = $interpolate($templateCache.get('plugins/map/templates/wot/item_search_tooltip.html'));
-        var searchControl = MapUtils.control.search({
+        MapUtils.control.search({
           layer: markersSearchLayer,
           propertyName: 'title',
           buildTip: function (text, val) {
             return searchTip(val.layer.options);
           }
+        }).addTo(map);
+
+        // Add marker cluster layer
+        var extractMarkerLayer = function(marker) {
+          return marker.options && marker.options.layer;
+        };
+        var markerClusterLayer = L.markerClusterGroup({
+          disableClusteringAtZoom: MapUtils.constants.LOCALIZE_ZOOM,
+          maxClusterRadius: 65,
+          showCoverageOnHover: false,
+          iconCreateFunction: function (cluster) {
+            var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
+            var mainLayer = countByLayer.member ? 'member' : (countByLayer.pending ? 'pending' : 'wallet');
+            var childCount = cluster.getChildCount();
+            var c = ' marker-cluster-';
+            if (childCount < 10) {
+              c += 'small';
+            } else if (childCount < 100) {
+              c += 'medium';
+            } else {
+              c += 'large';
+            }
+            return L.divIcon({ html: '<div><span>' + childCount + '</span></div>', className: mainLayer + ' marker-cluster' + c, iconSize: new L.Point(40, 40) });
+          }
         });
-        searchControl.addTo(map);
+        map.eachLayer(function(layer) {
+          // Add capabilities of 'featureGroup.subgroup', if layer is a group
+          if (layer.addLayer){
+            angular.extend(layer, L.featureGroup.subGroup(markerClusterLayer));
+          }
+        });
+        markerClusterLayer.addTo(map);
 
         $scope.map.loading = false;
         return map;
@@ -174,7 +205,10 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
         .then(function(res) {
           var markers = {};
-          var existingMarkerIds = _.keys($scope.map.markers);
+
+          // Clean search layer
+          markersSearchLayer.clearLayers();
+
           if (res && res.length) {
 
             var formatPubkey = $filter('formatPubkey');
@@ -202,22 +236,20 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
               markers[id] = marker;
 
               // Create a search marker (will be hide)
-              if (!existingMarkerIds[id]) {
-                var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
-                var searchMarker = angular.merge({
-                  type: type,
-                  opacity: 0,
-                  icon: L.divIcon({
-                    className: type + ' ng-hide',
-                    iconSize: L.point(0, 0)
-                  })
-                }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending});
-                markersSearchLayer.addLayer(new L.Marker({
-                    lat: hit.geoPoint.lat,
-                    lng: hit.geoPoint.lon
-                  },
-                  searchMarker));
-              }
+              var searchText = hit.name + ((hit.uid && hit.uid != hit.name) ? (' | ' + hit.uid) : '') + ' | ' + shortPubkey;
+              var searchMarker = angular.merge({
+                type: type,
+                opacity: 0,
+                icon: L.divIcon({
+                  className: type + ' ng-hide',
+                  iconSize: L.point(0, 0)
+                })
+              }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending});
+              markersSearchLayer.addLayer(new L.Marker({
+                  lat: hit.geoPoint.lat,
+                  lng: hit.geoPoint.lon
+                },
+                searchMarker));
             });
           }
           $scope.map.markers = markers;
