@@ -44,8 +44,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     var
       formatPubkey = $filter('formatPubkey'),
       markerMessageTemplate,
-      // Create a  hidden layer, to hold search markers
-      markersSearchLayer = L.layerGroup({visible: false}),
+      markersSearchLayer,
       formatPubkey = $filter('formatPubkey'),
       loadingControl,
       searchControl,
@@ -86,19 +85,19 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         layers: {
           overlays: {
             member: {
-              type: 'group',
+              type: 'featureGroup',
               name: 'MAP.NETWORK.VIEW.LAYER.MEMBER',
               visible: true
             },
             mirror: {
-              type: 'group',
+              type: 'featureGroup',
               name: 'MAP.NETWORK.VIEW.LAYER.MIRROR',
               visible: true
             },
             offline: {
-              type: 'group',
+              type: 'featureGroup',
               name: 'MAP.NETWORK.VIEW.LAYER.OFFLINE',
-              visible: false
+              visible: true
             }
           }
         },
@@ -150,16 +149,64 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         loadingControl.addTo(map);
 
         // Add search control
+        // Create a  hidden layer, to hold search markers
+        markersSearchLayer = L.layerGroup({visible: false});
         var searchTip = $interpolate($templateCache.get('plugins/map/templates/network/item_search_tooltip.html'));
         searchControl = MapUtils.control.search({
           layer: markersSearchLayer,
           propertyName: 'title',
-          zoom: 10,
           buildTip: function (text, val) {
             return searchTip(val.layer.options);
+          },
+          moveToLocation: function(lnglat, title, map) {
+            if(this.options.zoom)
+              this._map.setView(lnglat, this.options.zoom);
+            else
+              this._map.panTo(lnglat);
+            var popupMarkerId = lnglat.layer && lnglat.layer.options && lnglat.layer.options.popupMarkerId;
+            popupMarkerId && $timeout(function(){
+              var popupMarker = _.find(map._layers, function(layer) {
+                  return (layer.options && layer.options.id === popupMarkerId);
+                });
+              popupMarker && popupMarker.openPopup();
+            }, 400);
           }
         });
         searchControl.addTo(map);
+
+        // Add marker cluster layer
+        var _getMarkerColor = function(marker) {
+          return marker.options && marker.options.icon.options.markerColor;
+        };
+        var markerClusterLayer = L.markerClusterGroup({
+          disableClusteringAtZoom: MapUtils.constants.LOCALIZE_ZOOM,
+          maxClusterRadius: 65,
+          showCoverageOnHover: false,
+          iconCreateFunction: function (cluster) {
+            var countByColor = _.countBy(cluster.getAllChildMarkers(), _getMarkerColor);
+            var markerColor = countByColor.green ? 'green' :
+              (countByColor.lightgreen ? 'lightgreen' : (countByColor.lightgray ? 'lightgray' : 'red'));
+            var childCount = cluster.getChildCount();
+            var className = 'marker-cluster ' + markerColor + ' marker-cluster-';
+            if (childCount < 10) {
+              className += 'small';
+            } else if (childCount < 100) {
+              className += 'medium';
+            } else {
+              className += 'large';
+            }
+            return L.divIcon({ html: '<div><span>' + childCount + '</span></div>', className: className, iconSize: new L.Point(40, 40) });
+          }
+        });
+        map.eachLayer(function(layer) {
+          // Add capabilities of 'featureGroup.subgroup', if layer is a group
+          if (layer.addLayer){
+            angular.extend(layer, L.featureGroup.subGroup(markerClusterLayer));
+          }
+        });
+        markerClusterLayer.addTo(map);
+
+        $scope.map.layers.overlays['offline'].visible=false;
 
         $scope.map.loading = false;
         return map;
@@ -194,7 +241,8 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         esGeo.point.searchByIP(address)
 
         // Create the marker
-          .then(function(position){
+          .then(function(position){// Add marker to list
+            markerId = '' + markerCounter++;
             var marker = $scope.updateMarker({
               position: position,
               getMessageScope: function() {
@@ -202,13 +250,13 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
                 scope.peer = peer;
                 return scope;
               },
-              draggable: true,
+              draggable: false,
               focus: false,
-              message: markerMessageTemplate
+              message: markerMessageTemplate,
+              id: markerId
             }, peer);
 
-            // Add marker to list
-            markerId = '' + markerCounter++;
+
             $scope.map.markers[markerId] = marker;
             markerIdByPeerId[peer.id] = markerId;
 
@@ -233,7 +281,8 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
                   iconSize: L.point(0, 0)
                 }),
                 title: searchText,
-                peer: angular.extend({ipv4: searchIp}, peer)
+                peer: angular.extend({ipv4: searchIp}, peer),
+                popupMarkerId: markerId
               }));
           })
           .catch(function(err) {
@@ -260,7 +309,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     $scope.updateMarker = function(marker, peer) {
       marker.layer = !peer.online ? 'offline' : (peer.uid ? 'member' : 'mirror');
       marker.icon = angular.copy(icons[marker.layer]);
-      marker.opacity = peer.online ? 1 : 0.7;
+      marker.opacity = peer.online ? 1 : 1;
       marker.title = peer.dns || peer.server;
       if (peer.online && !peer.hasMainConsensusBlock) {
         marker.icon.markerColor = peer.hasConsensusBlock ? 'lightgreen' : 'lightgray';

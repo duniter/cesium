@@ -143,7 +143,23 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           propertyName: 'title',
           buildTip: function (text, val) {
             return searchTip(val.layer.options);
-          }
+          },
+          moveToLocation: function(lnglat, title, map) {
+            if(this.options.zoom)
+              this._map.setView(lnglat, this.options.zoom);
+            else
+              this._map.panTo(lnglat);
+            var popupMarkerId = lnglat.layer && lnglat.layer.options && lnglat.layer.options.popupMarkerId;
+            $timeout(function(){
+              var popupMarker = popupMarkerId && _.find(map._layers, function(layer) {
+                  return (layer.options && layer.options.id === popupMarkerId);
+                });
+              popupMarker && popupMarker.openPopup();
+            }, 400);
+          },
+          firstTipSubmit: true,
+          tooltipLimit: 50,
+          hideMarkerOnCollapse: true
         }).addTo(map);
 
         // Add marker cluster layer
@@ -156,17 +172,17 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
           showCoverageOnHover: false,
           iconCreateFunction: function (cluster) {
             var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
-            var mainLayer = countByLayer.member ? 'member' : (countByLayer.pending ? 'pending' : 'wallet');
+            var markerColor = countByLayer.member ? 'blue' : (countByLayer.pending ? 'lightgreen' : 'lightgray');
             var childCount = cluster.getChildCount();
-            var c = ' marker-cluster-';
+            var className = 'marker-cluster ' + markerColor + ' marker-cluster-';
             if (childCount < 10) {
-              c += 'small';
+              className += 'small';
             } else if (childCount < 100) {
-              c += 'medium';
+              className += 'medium';
             } else {
-              c += 'large';
+              className += 'large';
             }
-            return L.divIcon({ html: '<div><span>' + childCount + '</span></div>', className: mainLayer + ' marker-cluster' + c, iconSize: new L.Point(40, 40) });
+            return L.divIcon({ html: '<div><span>' + childCount + '</span></div>', className: className, iconSize: new L.Point(40, 40) });
           }
         });
         map.eachLayer(function(layer) {
@@ -217,6 +233,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
             _.forEach(res, function (hit) {
               var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
               var shortPubkey = formatPubkey(hit.pubkey);
+              var id = (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey).replace(/-/g, '_');
               var marker = {
                 layer: type,
                 icon: icons[type],
@@ -230,9 +247,9 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                   return scope;
                 },
                 focus: false,
-                message: markerTemplate
+                message: markerTemplate,
+                id: id
               };
-              var id = (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey).replace(/-/g, '_');
               markers[id] = marker;
 
               // Create a search marker (will be hide)
@@ -244,7 +261,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
                   className: type + ' ng-hide',
                   iconSize: L.point(0, 0)
                 })
-              }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending});
+              }, {title: searchText, pubkey: hit.pubkey, uid: hit.uid, name: hit.name, pending: hit.pending, popupMarkerId: id});
               markersSearchLayer.addLayer(new L.Marker({
                   lat: hit.geoPoint.lat,
                   lng: hit.geoPoint.lon

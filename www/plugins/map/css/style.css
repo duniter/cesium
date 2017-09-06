@@ -59,6 +59,9 @@
   padding-top: 0px;
 }
 
+/**
+ * Network MAP
+ */
 .view-map-network .leaflet-popup-content{
   max-height: 250px
 }
@@ -86,71 +89,122 @@
   text-align: start !important;
 }
 
-/* member cluster marker */
-.view-map-wot .marker-cluster-small.member {
+
+/* blue cluster marker */
+.marker-cluster-small.blue {
   background-color: rgba(56, 170, 221, 0.6);
 }
-.view-map-wot .marker-cluster-small.member div {
+.marker-cluster-small.blue div {
   background-color: rgba(37, 144, 193, 0.9);
   color: white;
 }
-.view-map-wot .marker-cluster-medium.member {
+.marker-cluster-medium.blue {
   background-color: rgba(37, 144, 193, 0.6);
 }
-.view-map-wot .marker-cluster-medium.member div {
+.marker-cluster-medium.blue div {
   background-color: rgba(18, 121, 167, 0.9);
   color: white;
 }
-.view-map-wot .marker-cluster-large.member {
+.marker-cluster-large.blue {
   background-color: rgba(18, 121, 167, 0.6);
 }
-.view-map-wot .marker-cluster-large.member div {
+.marker-cluster-large.blue div {
   background-color: rgba(0, 99, 141, 0.9);
   color: white;
 }
 
-/* pending cluster marker */
-.view-map-wot .marker-cluster-small.pending {
+/* green cluster marker */
+.marker-cluster-small.green {
+  background-color: rgba(110, 170, 37, 0.6);
+}
+.marker-cluster-small.green div {
+  background-color: rgba(92, 150, 19, 0.9);
+  color: white;
+}
+.marker-cluster-medium.green {
+  background-color: rgba(92, 150, 19, 0.6);
+}
+.marker-cluster-medium.green div {
+  background-color: rgba(71, 126, 1, 0.9);
+  color: white;
+}
+.marker-cluster-large.green {
+  background-color: rgba(171, 126, 1, 0.6);
+}
+.marker-cluster-large.green div {
+  background-color: rgba(51, 103, 0, 0.9);
+  color: white;
+}
+
+
+
+/* lightgreen cluster marker */
+.marker-cluster-small.lightgreen {
   background-color: rgba(187, 249, 112, 0.4);
 }
-.view-map-wot .marker-cluster-small.pending div {
+.marker-cluster-small.lightgreen div {
   background-color: rgba(162, 221, 90, 0.8);
   color: gray;
 }
-.view-map-wot .marker-cluster-medium.pending {
+.marker-cluster-medium.lightgreen {
   background-color: rgba(162, 221, 90, 0.6);
 }
-.view-map-wot .marker-cluster-medium.pending div {
+.marker-cluster-medium.lightgreen div {
   background-color: rgba(136, 192, 69, 0.8);
   color: white;
 }
-.view-map-wot .marker-cluster-large.pending {
+.marker-cluster-large.lightgreen {
   background-color: rgba(136, 192, 69, 0.6);
 }
-.view-map-wot .marker-cluster-large.pending div {
+.marker-cluster-large.lightgreen div {
   background-color: rgba(115, 168, 49, 0.8);
   color: white;
 }
 
-/* wallet cluster marker */
-.view-map-wot .marker-cluster-small.wallet {
+
+/* lightgray cluster marker */
+.marker-cluster-small.lightgray {
   background-color: rgba(163, 163, 163, 0.6);
 }
-.view-map-wot .marker-cluster-small.wallet div {
+.marker-cluster-small.lightgray div {
   background-color: rgba(163, 163, 163, 0.9);
   color: white;
 }
-.view-map-wot .marker-cluster-medium.wallet {
+.marker-cluster-medium.lightgray {
   background-color: rgba(139, 139, 139, 0.6);
 }
-.view-map-wot .marker-cluster-medium.wallet div {
+.marker-cluster-medium.lightgray div {
   background-color: rgba(139, 139, 139, 0.9);
   color: white;
 }
-.view-map-wot .marker-cluster-large.wallet {
+.marker-cluster-large.lightgray {
   background-color: rgba(116, 116, 116, 0.6);
 }
-.view-map-wot .marker-cluster-large.wallet div {
+.marker-cluster-large.lightgray div {
   background-color: rgba(116, 116, 116, 0.9);
+  color: white;
+}
+
+
+/* red cluster marker */
+.marker-cluster-small.red {
+  background-color: rgba(212, 62, 42, 0.4);
+}
+.marker-cluster-small.red div {
+  background-color: rgba(186, 42, 23, 0.8);
+  color: white;
+}
+.marker-cluster-medium.red {
+  background-color: rgba(186, 42, 23, 0.6);
+}
+.marker-cluster-medium.red div {
+  background-color: rgba(161, 23, 5, 0.8);
+  color: white;
+}
+.marker-cluster-large.red {
+  background-color: rgba(161, 23, 5, 0.6);
+}
+.marker-cluster-large.red div {
+  background-color: rgba(137, 5, 0, 0.8);
   color: white;
 }
