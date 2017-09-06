@@ -36,6 +36,15 @@
     },
     "ERROR": {
       "LOCALIZE_ME_FAILED": "Unable to retrieve your current position"
+    },
+    "SETTINGS": {
+      "MAP_DIVIDER": "Maps",
+      "ENABLE_GOOGLE_API": "Enable Google API services?",
+      "ENABLE_GOOGLE_API_HELP": "In the <b>members map</b>, allows you to display accounts with an address but without geolocation.",
+      "GOOGLE_API_KEY": "Google API key",
+      "BTN_GOOGLE_API": "Getting a key",
+      "BTN_GOOGLE_API_WARNING": "requires a Google account",
+      "GOOGLE_API_KEY_PLACEHOLDER": "eg: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
     }
   }
 }

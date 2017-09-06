@@ -704,8 +704,8 @@
       "SECTION": "Log in",
       "PUBKEY": "Account public key",
       "PUBKEY_DEF": "The public key of the keychain is generated from the entered identifiers (any), but does not correspond to an account already used.<br/><b>Make sure your public key is the same as your account</b>. Otherwise, you will be logged into an account that is probably never used, as the risk of collision with an existing account is very small.<br/><a href=\"https://en.wikipedia.org/wiki/Elliptic_curve_cryptography\" target=\"_ system\">Learn more about cryptography</a> by public key.",
-      "METHOD": "Méthodes de connexion",
-      "METHOD_DEF": "Plusieurs options sont disponibles pour vous connecter à un portfeuille :<br/> - La connexion <b>par sallage (simple ou avancé)</b> mélange votre mot de passe grâce à l'identifiant secret, pour limiter les tentatives de piratge par force brute (par exemple à partir de mots connus).<br/> - La connexion <b>par clé publique</b> évite de saisir vos identifiants, qui vous seront demandé seulement le moment venu lors d'une opération sur le compte.<br/> - La connexion <b>par fichier de trousseau</b> va lire les clés (publique et privée) du compte, depuis un fichier, sans besoin de saisir d'identifiants. Plusieurs formats de fichier sont possibles."
+      "METHOD": "Connection methods",
+      "METHOD_DEF": "Several options are available to connect to a portfolios: <br/> - The connection <b>with salt (simple or advanced)</b> mixes your password with the secret identifier, to limit the attempts of piracy<br/> - The connection <b>using public key</b> prevents you from entering your credentials, which you will be asked only when an operation need it.<br/> - The connection <b>using keychain file</b> will read the public and private keys of the account from a file without the need to enter credentials. Several file formats are possible."
     },
     "GLOSSARY": {
       "SECTION": "Glossary",
