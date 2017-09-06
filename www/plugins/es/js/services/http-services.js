@@ -15,6 +15,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       },
       regexp = {
         IMAGE_SRC: exact('data:([A-Za-z//]+);base64,(.+)'),
+        URL: match('(www\\.|https?:\/\/(www\\.)?)[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'),
         HASH_TAG: match('(?:^|[\t\n\r\s ])#([\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
         USER_TAG: match('(?:^|[\t\n\r\s ])@('+BMA.constants.regexp.USER_ID+')'),
         ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT)
@@ -172,29 +173,55 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return tags;
     }
 
+    function parseUrlsFromText(value) {
+      var matches = value && regexp.URL.exec(value);
+      var urls;
+      while(matches) {
+        var url = matches[0];
+        urls = urls || [];
+        if (!_.contains(urls, url)) {
+          urls.push(url);
+        }
+        value = value.substr(matches.index + matches[0].length + 1);
+        matches = value && regexp.URL.exec(value);
+      }
+      return urls;
+    }
+
     function escape(text) {
       if (!text) return text;
       return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function trustAsHtml(text) {
+    function trustAsHtml(text, options) {
       var content = text ? escape(text.trim()).replace(/\n/g,'<br>') : undefined;
       if (content) {
+        options = options || {};
+        options.tagState = options.tagState || 'app.wot_lookup';
 
-        // Replace hashtags in description
+        // Replace hashtags
         var hashTags = parseTagsFromText(content);
         _.forEach(hashTags, function(tag){
-          var href = $state.href('app.wot_lookup', {hash: tag});
+          // FIXME https://github.com/duniter/cesium/issues/533
+          var href = $state.href(options.tagState, {hash: tag});
           var link = '<a href=\"{0}">{1}</a>'.format(href, '#'+tag);
           content = content.replace('#'+tag, link);
         });
 
-        // Replace user tags in description
+        // Replace user tags
         var userTags = parseTagsFromText(content, '@');
         _.forEach(userTags, function(tag){
+          // FIXME https://github.com/duniter/cesium/issues/533
           var href = $state.href('app.wot_identity_uid', {uid: tag});
           var link = '<a href=\"{0}">{1}</a>'.format(href, '@'+tag);
           content = content.replace('@'+tag, link);
+        });
+
+        // Replace user tags in description
+        var urls = parseUrlsFromText(content);
+        _.forEach(urls, function(url){
+          var link = '<a href=\"{0}\" target=\"_system\">{1}</a>'.format(url, url);
+          content = content.replace(url, link);
         });
 
         $sce.trustAsHtml(content);

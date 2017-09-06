@@ -227,7 +227,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         // Get encrypted message (with common fields)
         return searchMessages(walletData.pubkey, options)
 
-          // Encrypt content
+          // Decrypt content
           .then(function(messages) {
             return decryptMessages(messages, walletData.keypair, options.summary);
           });
@@ -310,7 +310,12 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
             CryptoUtils.box.open(message.content, nonce, issuerBoxPk, boxKeypair.boxSk)
               .then(function(content) {
                 message.content = content;
-                if (withSummary) fillSummary(message);
+                if (withSummary) {
+                  fillSummary(message);
+                }
+                else if (content){
+                  message.content = esHttp.util.trustAsHtml(content);
+                }
               })
               .catch(function(err){
                 console.error(err);
