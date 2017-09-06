@@ -501,7 +501,7 @@
       "ADD_QUESTION" : "Add custom question",
       "BTN_CLEAN" : "Clean",
       "BTN_RESET" : "Reset",
-      "DOWNLOAD_REVOKE": "Save a recocation file",
+      "DOWNLOAD_REVOKE": "Save a revocation file",
       "DOWNLOAD_REVOKE_HELP" : "Having a revocation file is important, for example in case of loss of identifiers. It allows you to <b>get this account out of the Web Of Trust</b>, thus becoming a simple wallet.",
       "HELP_LEVEL": "Choose <strong> at least {{nb}} questions </strong> :",
       "LEVEL": "Security level",
