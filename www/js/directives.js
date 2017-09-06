@@ -73,7 +73,7 @@ angular.module('cesium.directives', [])
             // copy to clipboard
             Device.clipboard.copy(value)
               .then(function(){
-                UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
+                 UIUtils.toast.show('INFO.COPY_TO_CLIPBOARD_DONE');
               })
               .catch(UIUtils.onError('ERROR.COPY_CLIPBOARD'));
           }

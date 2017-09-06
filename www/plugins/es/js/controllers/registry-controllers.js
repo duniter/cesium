@@ -634,8 +634,8 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
         }
         else {
           if (json.thumbnail) {
-            // FIXME: this is a workaround to allow content deletion
-            // Is it a bug in the ES attachment-mapper ?
+            // Workaround to allow content deletion, because of a bug in the ES attachment-mapper:
+            // get error (in ES node) : MapperParsingException[No content is provided.] - AttachmentMapper.parse(AttachmentMapper.java:471
             json.thumbnail = {
               _content: '',
               _content_type: ''

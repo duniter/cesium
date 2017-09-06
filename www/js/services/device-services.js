@@ -158,13 +158,14 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               exports.camera.enable = !!navigator.camera;
               exports.keyboard.enable = cordova && cordova.plugins && !!cordova.plugins.Keyboard;
               exports.barcode.enable = cordova && cordova.plugins && !!cordova.plugins.barcodeScanner;
+              exports.clipboard.enable = cordova && cordova.plugins && !!cordova.plugins.clipboard;
 
               if (exports.keyboard.enable) {
                 angular.extend(exports.keyboard, cordova.plugins.Keyboard);
               }
 
-              console.debug('[device] Ionic platform ready, with [camera: {0}] [barcode scanner: {1}] [keyboard: {2}]'
-                .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable));
+              console.debug('[device] Ionic platform ready, with [camera: {0}] [barcode scanner: {1}] [keyboard: {2}] [clipboard: {3}]'
+                .format(exports.camera.enable, exports.barcode.enable, exports.keyboard.enable, exports.clipboard.enable));
 
               if (cordova.InAppBrowser) {
                 console.debug('[device] Enabling InAppBrowser');

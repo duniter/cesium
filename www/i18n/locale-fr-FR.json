@@ -656,7 +656,7 @@
     "CERTIFICATION_DONE": "Certification envoyée",
     "NOT_ENOUGH_CREDIT": "Crédit insuffisant",
     "TRANSFER_SENT": "Virement envoyé",
-    "COPY_TO_CLIPBOARD_DONE": "Copie effectuée",
+    "COPY_TO_CLIPBOARD_DONE": "Copié dans le presse-papier",
     "MEMBERSHIP_OUT_SENT": "Résiliation envoyée",
     "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
