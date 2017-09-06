@@ -501,7 +501,7 @@
       "ADD_QUESTION": "Ajouter une question personnalisée ",
       "BTN_CLEAN": "Vider",
       "BTN_RESET": "Réinitialiser",
-      "DOWNLOAD_REVOKE": "Sauvegarder mon fichier de revocation",
+      "DOWNLOAD_REVOKE": "Sauvegarder mon fichier de révocation",
       "DOWNLOAD_REVOKE_HELP": "Disposer d'un fichier de révocation est important, par exemple en cas de perte de vos identifiants. Il vous permet de <b>sortir ce compte de la toile de confiance</b>, en redevenant ainsi un simple portefeuille.",
       "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
       "LEVEL": "Niveau de sécurité",
