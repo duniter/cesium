@@ -8,6 +8,7 @@
     </div>
   </ion-item>
 
+
   <ion-item class="item-icon-left item-text-wrap">
     <i class="icon ion-record"></i>
     <div class="col col-60">
@@ -18,18 +19,6 @@
           ng-if="!loading"
           ng-bind-html=":rebind:formData.M | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}"></span>
   </ion-item>
-
-  <ion-item class="item-icon-left item-text-wrap">
-    <i class="icon ion-arrow-graph-up-right"></i>
-    <div class="col col-60">
-      <span translate>CURRENCY.VIEW.C_ACTUAL</span>
-      <span class="gray">(c<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)</span>
-    </div>
-    <span class="badge badge-stable">{{formData.cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
-  </ion-item>
-
-  <!-- Allow extension here -->
-  <cs-extension-point name="parameters-actual"></cs-extension-point>
 
   <ion-item id="helptip-currency-mass-member" class="item-icon-left item-text-wrap">
     <i class="icon ion-pie-graph"></i>
@@ -43,6 +32,21 @@
           ng-bind-html=":rebind:formData.MoverN | formatAmount:{currency: formData.currency, useRelative: formData.useRelative, currentUD: formData.currentUD}">
     </span>
   </ion-item>
+
+
+  <!-- Allow extension here -->
+  <cs-extension-point name="parameters-actual"></cs-extension-point>
+
+
+  <ion-item class="item-icon-left item-text-wrap">
+    <i class="icon ion-arrow-graph-up-right"></i>
+    <div class="col col-60">
+      <span translate>CURRENCY.VIEW.C_ACTUAL</span>
+      <span class="gray">(c<sub>{{'CURRENCY.VIEW.CURRENT'|translate}}</sub>)</span>
+    </div>
+    <span class="badge badge-stable">{{formData.cactual | formatNumeral: '0,0.00'}} %&nbsp;/&nbsp;{{formData.dt | formatPeriod}}</span>
+  </ion-item>
+
 
   <ion-item class="item-icon-left item-text-wrap">
     <i class="icon ion-load-c"></i>

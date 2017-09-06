@@ -64,6 +64,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     sort : undefined,
     asc: true
   };
+  $scope.helptipPrefix = 'helptip-network';
   $scope.eanbleLocationHref = true; // can be overrided by sub-controler (e.g. popup)
 
   /**
@@ -327,6 +328,7 @@ function NetworkLookupModalController($scope, $controller, parameters) {
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
   $scope.eanbleLocationHref = false;
+  $scope.helptipPrefix = '';
 
   $scope.selectPeer = function(peer) {
     $scope.closeModal(peer);
@@ -357,6 +359,7 @@ function NetworkLookupPopoverController($scope, $controller) {
   $scope.search.endpointFilter = angular.isDefined(parameters.endpointFilter) ? parameters.endpointFilter : $scope.search.endpointFilter;
   $scope.expertMode = angular.isDefined(parameters.expertMode) ? parameters.expertMode : $scope.expertMode;
   $scope.ionItemClass = parameters.ionItemClass || 'item-border-large';
+  $scope.helptipPrefix = '';
 
   $scope.selectPeer = function(peer) {
     $scope.closePopover(peer);

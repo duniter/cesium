@@ -93,7 +93,6 @@
         </ion-item>
 
         <a menu-close
-           id="helptip-menu-btn-currency"
            class="item item-icon-left"
            active-link="active"
            active-link-path-prefix="#/app/currency"
@@ -101,9 +100,9 @@
           <i class="icon ion-ios-world-outline"></i>
           {{:locale:'MENU.CURRENCY'|translate}}
         </a>
+        <a id="helptip-menu-btn-currency"></a>
 
         <a menu-close
-           id="helptip-menu-btn-network"
            class="item item-icon-left hidden-xs hidden-sm"
            active-link="active"
            active-link-path-prefix="#/app/network"
@@ -111,6 +110,7 @@
           <i class="icon ion-cloud"></i>
           {{:locale:'MENU.NETWORK'|translate}}
         </a>
+        <a id="helptip-menu-btn-network"></a>
 
         <!-- Allow extension here -->
         <cs-extension-point name="menu-discover"></cs-extension-point>

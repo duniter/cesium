@@ -328,36 +328,36 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         });
       },
 
-      function () {
-        if (!csSettings.data.useRelative) return true; //skip but continue
-        return $scope.showHelpTip('helptip-currency-change-unit', {
-          bindings: {
-            content: 'HELP.TIP.CURRENCY_CHANGE_UNIT',
-            contentParams: contentParams,
-            icon: {
-              position: UIUtils.screen.isSmall() ? 'right' : undefined
-            }
-          }
-        });
-      },
+      // function () {
+      //   if (!csSettings.data.useRelative) return true; //skip but continue
+      //   $anchorScroll('helptip-currency-change-unit');
+      //   return $scope.showHelpTip('helptip-currency-change-unit', {
+      //     bindings: {
+      //       content: 'HELP.TIP.CURRENCY_CHANGE_UNIT',
+      //       contentParams: contentParams,
+      //       icon: {
+      //         position: UIUtils.screen.isSmall() ? 'right' : undefined
+      //       }
+      //     }
+      //   });
+      // },
+      //
+      // function () {
+      //   if (csSettings.data.useRelative) return true; //skip but continue
+      //   $anchorScroll('helptip-currency-change-unit');
+      //   return $scope.showHelpTip('helptip-currency-change-unit', {
+      //     bindings: {
+      //       content: 'HELP.TIP.CURRENCY_CHANGE_UNIT_TO_RELATIVE',
+      //       contentParams: contentParams,
+      //       icon: {
+      //         position: UIUtils.screen.isSmall() ? 'right' : undefined
+      //       }
+      //     }
+      //   });
+      // },
 
       function () {
-        if (csSettings.data.useRelative) return true; //skip but continue
-        return $scope.showHelpTip('helptip-currency-change-unit', {
-          bindings: {
-            content: 'HELP.TIP.CURRENCY_CHANGE_UNIT_TO_RELATIVE',
-            contentParams: contentParams,
-            icon: {
-              position: UIUtils.screen.isSmall() ? 'right' : undefined
-            }
-          }
-        });
-      },
-
-      function () {
-        if (UIUtils.screen.isSmall()) {
-          $anchorScroll('helptip-currency-rules-anchor');
-        }
+        $anchorScroll('helptip-currency-rules-anchor');
         return $scope.showHelpTip('helptip-currency-rules', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_RULES',
@@ -371,6 +371,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
 
       function () {
         showWotTabIfNeed();
+        $anchorScroll('helptip-currency-newcomers-anchor');
         return $scope.showHelpTip('helptip-currency-newcomers', {
           bindings: {
             content: 'HELP.TIP.CURRENCY_WOT',
