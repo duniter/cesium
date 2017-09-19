@@ -270,7 +270,6 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
     if ($scope.type != 'inbox') return;
     // Add message sent to list
     $scope.loading = true;
-    console.log(notification);
     // Load the the message
     return esMessage.get(notification.id, {type: $scope.type, summary: true})
       .then(function(msg) {
