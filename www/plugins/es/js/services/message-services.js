@@ -111,21 +111,25 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
   function sendMessage(message, keypair) {
     return doSendMessage(message, keypair)
-      .then(function(sendResult){
+      .then(function(res){
         var outbox = (csSettings.data.plugins.es.message &&
           angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
           csSettings.data.plugins.es.message.outbox : true;
 
-        if (!outbox) return sendResult;
+        if (!outbox) return res;
 
         // Send to outbox
         return doSendMessage(message, keypair, '/message/outbox', 'issuer')
           .catch(function(err) {
             console.error("Failed to store message to outbox: " + err);
-          })
-          .then(function() {
-            return sendResult;
+            return res; // the first result
           });
+      })
+      .then(function(res) {
+        // Raise event
+        api.data.raise.sent(res);
+
+        return res;
       });
   }
 
@@ -235,8 +239,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
       // Add avatar
       .then(function(messages){
-        var senderPkField = (options.type == 'inbox') ? 'issuer' : 'recipient';
-        return csWot.extendAll(messages, senderPkField);
+        var avatarField = (options.type == 'inbox') ? 'issuer' : 'recipient';
+        return csWot.extendAll(messages, avatarField);
       })
 
       // Update message count
@@ -248,29 +252,35 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       });
   }
 
-  function getAndDecrypt(params, keypair) {
-    params.type = params.type || 'inbox';
-    var avatarField = (params.type == 'inbox') ? 'issuer' : 'recipient';
-    return raw.getByTypeAndId(params)
-      .then(function(hit) {
-        if (!hit.found) {
-          return;
-        }
-        var msg = hit._source;
-        msg.id = hit._id;
-        msg.read = (params.type == 'outbox') || !!msg.read_signature;
-        delete msg.read_signature; // not need anymore
+  function getAndDecrypt(id, options) {
 
-        // Decrypt message
-        return decryptMessages([msg], keypair, false/*summary not need*/)
-          .then(function(){
-            // Fill avatar
-            return csWot.extendAll([msg], avatarField);
-          })
-          .then(function() {
-            return msg;
+    options = options || {};
+    options.type = options.type || 'inbox';
+    options.summary = angular.isDefined(options.summary) ? options.summary : false/*summary not need by default*/;
+
+    return csWallet.auth()
+      .then(function(walletData) {
+        return raw.getByTypeAndId({id: id, type: options.type})
+          .then(function(hit) {
+            if (!hit.found) {
+              return;
+            }
+            var msg = hit._source;
+            msg.id = hit._id;
+            msg.read = (options.type == 'outbox') || !!msg.read_signature;
+            delete msg.read_signature; // not need anymore
+
+            // Decrypt message
+            return decryptMessages([msg], walletData.keypair, options.summary)
+
+              // Add avatar
+              .then(function(){
+                var avatarField = (options.type == 'inbox') ? 'issuer' : 'recipient';
+                return csWot.extend(msg, avatarField);
+              });
           });
       });
+
   }
 
   function decryptMessages(messages, keypair, withSummary) {
@@ -314,7 +324,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
                   fillSummary(message);
                 }
                 else if (content){
-                  message.content = esHttp.util.trustAsHtml(content);
+                  message.html = esHttp.util.trustAsHtml(content);
                 }
               })
               .catch(function(err){
@@ -351,6 +361,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           csWallet.data.messages = csWallet.data.messages || {};
           csWallet.data.messages.count = csWallet.data.messages.count > 0 ? csWallet.data.messages.count-1 : 0;
         }
+        // Raise event
+        api.data.raise.delete(id);
+
         return res;
       });
   }
@@ -365,18 +378,26 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           .then(function (res) {
             if (!res || !res.length) return;
 
+            var ids = _.pluck(res, 'id');
+
             // Remove each messages
             return $q.all(res.reduce(function (res, msg) {
               return res.concat(esHttp.record.remove('message', type)(msg.id, walletData));
-            }, []));
+            }, []))
+              .then(function() {
+                return ids;
+              });
           })
-          .then(function () {
+          .then(function (ids) {
             // update message count
             if (type == 'inbox') {
               csWallet.data.messages = csWallet.data.messages || {};
               csWallet.data.messages.count = 0;
               csWallet.data.messages.unreadCount = 0;
             }
+
+            // Raise events
+            _.forEach(ids, api.data.raise.delete);
           });
       });
   }
@@ -511,6 +532,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
   // Register extension points
   api.registerEvent('data', 'new');
+  api.registerEvent('data', 'delete');
+  api.registerEvent('data', 'sent');
 
   // Default action
   csPlatform.ready().then(function() {

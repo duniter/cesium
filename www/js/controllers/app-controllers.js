@@ -71,6 +71,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.search = {};
   $scope.login = csWallet.isLogin();
+  $scope.auth = csWallet.isAuth();
   $scope.motion = UIUtils.motion.default;
 
   $scope.showHome = function() {

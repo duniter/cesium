@@ -168,7 +168,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           tags.push(tag);
         }
         value = value.substr(matches.index + matches[1].length + 1);
-        matches = value && reg.exec(value);
+        matches = value.length > 0 && reg.exec(value);
       }
       return tags;
     }
@@ -194,10 +194,22 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     }
 
     function trustAsHtml(text, options) {
-      var content = text ? escape(text.trim()).replace(/\n/g,'<br>') : undefined;
+
+
+      var content = text ? escape(text.trim()) : undefined;
       if (content) {
         options = options || {};
         options.tagState = options.tagState || 'app.wot_lookup';
+        if (options.newLine || !angular.isDefined(options.newLine)) {
+          content = content.replace(/\n/g, '<br>\n');
+        }
+
+        // Replace URL in description
+        var urls = parseUrlsFromText(content);
+        _.forEach(urls, function(url){
+          var link = '<a href=\"{0}\" target=\"_system\">{1}</a>'.format(url, url);
+          content = content.replace(url, link);
+        });
 
         // Replace hashtags
         var hashTags = parseTagsFromText(content);
@@ -215,13 +227,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           var href = $state.href('app.wot_identity_uid', {uid: tag});
           var link = '<a href=\"{0}">{1}</a>'.format(href, '@'+tag);
           content = content.replace('@'+tag, link);
-        });
-
-        // Replace user tags in description
-        var urls = parseUrlsFromText(content);
-        _.forEach(urls, function(url){
-          var link = '<a href=\"{0}\" target=\"_system\">{1}</a>'.format(url, url);
-          content = content.replace(url, link);
         });
 
         $sce.trustAsHtml(content);

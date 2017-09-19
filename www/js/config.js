@@ -10,53 +10,49 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"fallbackLanguage": "en",
+	"fallbackLanguage": "fr-FR",
+	"defaultLanguage": "fr-FR",
 	"rememberMe": true,
 	"showUDHistory": false,
 	"timeout": 300000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
-	"keepAuthIlde": 600,
 	"useLocalStorage": true,
-	"useRelative": false,
-	"expertMode": false,
+	"useRelative": true,
+	"expertMode": true,
 	"decimalCount": 2,
-	"httpsMode": false,
-	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
-		"enable": true,
-		"installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+		"enable": false,
+		"installDocUrl": {
+			"fr-FR": "http://www.le-sou.org/devenir-noeud/",
+			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+		}
 	},
 	"license": {
-		"fr-FR": "license/license_g1-fr-FR",
-		"en": "license/license_g1-en"
+		"fr-FR": "license/license_g1-fr-FR.txt",
+		"en": "license/license_g1-en.txt"
 	},
 	"node": {
-		"host": "g1.duniter.org",
-		"port": "443"
+		"host": "localhost",
+		"port": 9600
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.duniter.fr",
+			"host": "g1.duniter.org",
 			"port": "443"
 		},
 		{
-			"host": "g1.duniter.org",
+			"host": "g1.duniter.fr",
 			"port": "443"
-		}
-	],
-	"developers": [
-		{
-			"name": "Benoit Lavenier",
-			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
 		"es": {
-			"enable": true,
+			"enable": false,
 			"askEnable": false,
-			"host": "g1.data.duniter.fr",
-			"port": "443",
+			"host": "localhost",
+			"port": 9200,
+			"wsPort": 9400,
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,
@@ -64,10 +60,19 @@ angular.module("cesium.config", [])
 				"certReceived": true
 			},
 			"defaultCountry": "France"
+		},
+		"graph": {
+			"enable": true
+		},
+		"neo4j": {
+			"enable": true
+		},
+		"rml9": {
+			"enable": true
 		}
 	},
 	"version": "0.17.2",
-	"build": "2017-08-23T14:48:40.900Z",
+	"build": "2017-09-11T08:35:12.484Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 

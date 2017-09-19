@@ -60,7 +60,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
 ;
 
-function ESMessageListController($scope, $state, $translate, $ionicHistory, $ionicPopover,
+function ESMessageListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout,
                                  esModals, UIUtils, esMessage) {
   'ngInject';
 
@@ -178,8 +178,8 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
       .then(function() {
         UIUtils.loading.hide();
         return esModals.showMessageCompose(parameters)
-          .then(function(sent) {
-            if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+          .then(function(id) {
+            if (id) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
           });
       });
   };
@@ -232,6 +232,57 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
     }
   };
 
+  /* -- watch events (delete, received, sent) -- */
+
+  // Message deletion
+  $scope.onMessageDelete = function(id) {
+    var index = _.findIndex($scope.messages, function(msg) {
+      return msg.id == id;
+    });
+    if (index) {
+      $scope.messages.splice(index,1); // remove from messages array
+    }
+  };
+  esMessage.api.data.on.delete($scope, $scope.onMessageDelete);
+
+  // Watch user sent message
+  $scope.onNewOutboxMessage = function(id) {
+    if ($scope.type != 'outbox') return;
+    // Add message sent to list
+    $scope.loading = true;
+    return $timeout(function() {
+       // Load the message sent
+        return esMessage.get(id, {type: $scope.type, summary: true});
+      }, 500 /*waiting ES propagation*/)
+      .then(function(msg) {
+        $scope.messages.splice(0,0,msg);
+        $scope.loading = false;
+        $scope.motion.show({selector: '.view-messages .list .item'});
+      })
+      .catch(function() {
+        $scope.loading = false;
+      });
+  };
+  esMessage.api.data.on.sent($scope, $scope.onNewOutboxMessage);
+
+  // Watch received message
+  $scope.onNewInboxMessage = function(notification) {
+    if ($scope.type != 'inbox') return;
+    // Add message sent to list
+    $scope.loading = true;
+    console.log(notification);
+    // Load the the message
+    return esMessage.get(notification.id, {type: $scope.type, summary: true})
+      .then(function(msg) {
+        $scope.messages.splice(0,0,msg);
+        $scope.loading = false;
+        $scope.motion.show({selector: '.view-messages .list .item'});
+      })
+      .catch(function() {
+        $scope.loading = false;
+      });
+  };
+  esMessage.api.data.on.new($scope, $scope.onNewInboxMessage);
 
   // for DEV only
   /*$timeout(function() {
@@ -336,7 +387,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
       .then(function(id) {
         $scope.id=id;
         UIUtils.loading.hide();
-        $scope.closeModal(true);
+        $scope.closeModal(id);
       })
       .catch(UIUtils.onError('MESSAGE.ERROR.SEND_MSG_FAILED'));
   };
@@ -432,7 +483,7 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
 
     return $scope.loadWallet({minData: true})
       .then(function() {
-        return esMessage.get({type: type, id: id});
+        return esMessage.get(id, {type: type});
       })
       .catch(UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGE_FAILED'))
       .then(function(message) {
@@ -592,8 +643,8 @@ function PopoverMessageController($scope, UIUtils, $state, csWallet, esHttp, esM
   $scope.showNewMessageModal = function(parameters) {
     $scope.closePopover();
     return esModals.showMessageCompose(parameters)
-      .then(function(sent) {
-        if (sent) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
+      .then(function(id) {
+        if (id) UIUtils.toast.show('MESSAGE.INFO.MESSAGE_SENT');
       });
   };
 

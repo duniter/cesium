@@ -80,8 +80,7 @@
 
           <!-- content -->
           <ion-item>
-            <p>
-              <span class="text-keep-lines" ng-bind-html="formData.content"></span>
+            <p ng-bind-html="formData.html">
             </p>
 
             <div class="padding gray" ng-if="!formData.content" translate>
