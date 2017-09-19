@@ -212,6 +212,9 @@ function ESGroupViewController($scope, $state, $ionicPopover, UIUtils, csConfig,
         $scope.pictures = data.record.pictures || [];
         delete data.record.pictures; // remove, as already stored in $scope.pictures
 
+        // Load other data (from child controller)
+        $scope.$broadcast('$recordView.load', id, esGroup.record.comment);
+
         $scope.loading = false;
         UIUtils.loading.hide();
         $scope.updateView();
