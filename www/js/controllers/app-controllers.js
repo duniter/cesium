@@ -317,6 +317,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .catch(UIUtils.onError());
   };
 
+  // Login and go to a state (or wallet if not)
+  $scope.doAuth = function() {
+    return $scope.loadWallet({auth: true})
+      .then(function() {
+        UIUtils.loading.hide();
+      });
+  };
+
   // If connected and same pubkey
   $scope.isUserPubkey = function(pubkey) {
     return csWallet.isUserPubkey(pubkey);
