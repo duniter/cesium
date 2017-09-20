@@ -26,6 +26,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
               controller: 'MapWotViewCtrl'
             }
           },
+          cache: false,
           data: {
             silentLocationChange: true
           }
@@ -73,6 +74,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     $scope.loading = true;
     $scope.mapId = 'map-wot-' + $scope.$id;
     $scope.map = MapUtils.map({
+      cache: 'map-wot',
       layers: {
         overlays: {
           member: {
@@ -95,7 +97,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       bounds: {},
       markers: {},
       loading: true
-    });
+    }, $scope.mapId);
 
     // [NEW] When opening the view
     $scope.enter = function(e, state) {
@@ -103,7 +105,7 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
         // Load the map (and init if need)
         $scope.loadMap()
-          .then($scope.load);
+          .then($scope.load)
       }
       else {
         // Make sur to have previous center coordinate defined in the location URL
@@ -111,6 +113,14 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
       }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
+
+    // View leave: store map options (center) to cache
+    $scope.leave = function() {
+      if ($scope.map.cache) {
+        MapUtils.cache.save($scope.map);
+      }
+    };
+    $scope.$on('$ionicView.leave', $scope.leave);
 
     $scope.loadMap = function() {
       return leafletData.getMap($scope.mapId).then(function(map) {

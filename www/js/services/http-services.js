@@ -162,9 +162,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         return $q.when(delegate);
       }
       if (delegate.readyState == 3) {
-        return $q.reject('Unable to connect to Websocket ['+delegate.url+']');
+        return $q.reject('Unable to connect to websocket ['+delegate.url+']');
       }
-      console.debug('[http] Waiting websocket ['+path+'] openning...');
+      console.debug('[http] Waiting websocket ['+path+'] opening...');
       return $timeout(_waitOpen, 200);
     }
 

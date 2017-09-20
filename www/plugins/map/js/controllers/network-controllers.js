@@ -26,6 +26,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
               controller: 'MapNetworkViewCtrl'
             }
           },
+          cache: false,
           data: {
             silentLocationChange: true
           }
@@ -82,25 +83,26 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     $scope.helptipPrefix = 'helptip-' + $scope.mapId; // make to override, to avoid error during help tour
 
     $scope.map = MapUtils.map({
-        layers: {
-          overlays: {
-            member: {
-              type: 'featureGroup',
-              name: 'MAP.NETWORK.VIEW.LAYER.MEMBER',
-              visible: true
-            },
-            mirror: {
-              type: 'featureGroup',
-              name: 'MAP.NETWORK.VIEW.LAYER.MIRROR',
-              visible: true
-            },
-            offline: {
-              type: 'featureGroup',
-              name: 'MAP.NETWORK.VIEW.LAYER.OFFLINE',
-              visible: true
-            }
+      cache: 'map-network',
+      layers: {
+        overlays: {
+          member: {
+            type: 'featureGroup',
+            name: 'MAP.NETWORK.VIEW.LAYER.MEMBER',
+            visible: true
+          },
+          mirror: {
+            type: 'featureGroup',
+            name: 'MAP.NETWORK.VIEW.LAYER.MIRROR',
+            visible: true
+          },
+          offline: {
+            type: 'featureGroup',
+            name: 'MAP.NETWORK.VIEW.LAYER.OFFLINE',
+            visible: true
           }
-        },
+        }
+      },
       loading: true,
         markers: {}
       });
@@ -129,6 +131,14 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
+
+    // View leave: store map options (center) to cache
+    $scope.leave = function() {
+      if ($scope.map.cache) {
+        MapUtils.cache.save($scope.map);
+      }
+    };
+    $scope.$on('$ionicView.leave', $scope.leave);
 
     var inheritedComputeOptions = $scope.computeOptions;
     $scope.computeOptions = function() {

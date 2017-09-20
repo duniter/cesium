@@ -6,7 +6,7 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
 
   var
-    googleApiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey;
+    googleApiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey,
     constants = {
       locations: {
         FRANCE: {
@@ -14,12 +14,16 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
         }
       },
       LOCALIZE_ZOOM: 15
+    },
+    data = {
+      cache: {}
     };
   constants.DEFAULT_CENTER = csSettings.data && csSettings.data.plugins && csSettings.data.plugins.map && csSettings.data.plugins.map.center || constants.locations.FRANCE;
 
   function initMap(options){
     options = angular.merge({
       center: angular.copy(constants.DEFAULT_CENTER),
+      cache: false,
       defaults: {
         scrollWheelZoom: true
       },
@@ -51,6 +55,12 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
         custom: []
       }
     }, options || {});
+
+    // Restore existing map options
+    if (options.cache && data.cache[options.cache]) {
+      console.debug("Restoring cache :", data.cache[options.cache]);
+      options = angular.merge(options, data.cache[options.cache]);
+    }
 
     // Translate overlays name, if any
     var overlaysNames;
@@ -115,6 +125,18 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
     return false;
   }
 
+  function saveMapOptions(options) {
+    if (options.cache) {
+      data.cache[options.cache] = {
+        center: options.center,
+        bounds: options.bounds,
+        layers: {
+          baselayers: options.layers.baselayers
+        }
+      };
+    }
+  }
+
   // Create a default serach control, with default options
   function initSearchControl(options) {
 
@@ -166,6 +188,9 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
     control: {
       search: initSearchControl,
       localizeMe: initLocalizeMeControl
+    },
+    cache: {
+      save: saveMapOptions
     },
     constants: constants
   };
