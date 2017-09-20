@@ -24,12 +24,17 @@
         </h4>
       </div>
       <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
-        <div style="min-width: 50px; padding-top: 5px;" >
-          <span ng-if="peer.isSsl()">
-            <i class="ion-locked"></i> <small>SSL</small>
+        <div style="min-width: 50px; padding-top: 5px;" title="SSL">
+          <span ng-if=":rebind:peer.isSsl()">
+            <i class="ion-locked"></i><small class="hidden-md"> SSL</small>
+          </span>
+          <span ng-if=":rebind:peer.hasEndpoint('WS2P')" title="WS2P">
+            <i class="ion-arrow-swap"></i><small class="hidden-md"> WS2P</small>
           </span>
         </div>
-        <div ng-if=":rebind:peer.hasEndpoint('ES_USER_API')" ng-click="showEndpointsPopover($event, peer, 'ES_USER_API')">
+        <div ng-if=":rebind:peer.hasEndpoint('ES_USER_API')"
+             ng-click="showEndpointsPopover($event, peer, 'ES_USER_API')"
+             title="Cesium+">
           <i class="ion-es-user-api"></i>
           <b class="ion-plus dark" style="position: relative; left: -14px; top:-17px; font-size : 16px;"></b>
         </div>

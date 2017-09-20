@@ -29,6 +29,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?",
         BMA_ENDPOINT: "BASIC_MERKLED_API" + REGEX_ENDPOINT_PARAMS,
         BMAS_ENDPOINT: "BMAS" + REGEX_ENDPOINT_PARAMS,
+        WS2P_ENDPOINT: "WS2P ([0-9a-z]+)"+ REGEX_ENDPOINT_PARAMS,
         BMATOR_ENDPOINT: "BMATOR" + "( ([a-z0-9-_.]+.onion))( ([0-9]+))?"
       },
       errorCodes = {
@@ -349,6 +350,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         URI: exact(regexp.URI),
         BMA_ENDPOINT: exact(regexp.BMA_ENDPOINT),
         BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT),
+        WS2P_ENDPOINT: exact(regexp.WS2P_ENDPOINT),
         BMATOR_ENDPOINT: exact(regexp.BMATOR_ENDPOINT),
         // TX output conditions
         TX_OUTPUT_SIG: exact(SIG),
