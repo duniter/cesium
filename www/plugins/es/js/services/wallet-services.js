@@ -85,6 +85,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
             data.name = profile.name;
             data.avatar = profile.avatar;
             data.profile = profile.source;
+            data.profile.description = profile.description;
             console.debug('[ES] [wallet] Loaded full user profile in '+ (new Date().getTime()-now) +'ms');
           }
           deferred.resolve();
