@@ -15,7 +15,7 @@
   <ion-content scroll="true">
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
-        <i class="avatar cion-registry-{{formData.type}}" ng-if="!formData.thumbnail"></i>
+        <i class="avatar cion-page-{{formData.type}}" ng-if="!formData.thumbnail"></i>
         <i class="avatar" style="background-image: url({{::formData.thumbnail.src}})" ng-if="formData.thumbnail"></i>
         <h3 ng-bind-html="formData.title"></h3>
         <h4>&nbsp;</h4>
@@ -91,9 +91,7 @@
         </div>
 
         <ion-item>
-            <h2>
-              <span class="text-keep-lines" ng-bind-html="formData.description"></span>
-            </h2>
+          <h2 ng-bind-html="formData.description"></h2>
         </ion-item>
 
         <ion-item>

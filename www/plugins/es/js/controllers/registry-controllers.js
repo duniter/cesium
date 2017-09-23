@@ -438,16 +438,24 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
       // Load pictures
       esRegistry.record.picture.all({id: id})
         .then(function(hit) {
+          var pictures;
           if (hit._source.pictures) {
-            $scope.pictures = hit._source.pictures.reduce(function(res, pic) {
+            pictures = hit._source.pictures.reduce(function(res, pic) {
               return res.concat(esHttp.image.fromAttachment(pic.file));
             }, []);
+            if (pictures.length > 0) {
+              pictures.splice(0,1); // Remove the avatar
+            }
           }
+          $scope.pictures = pictures;
+
           // Set Motion
-          $scope.motion.show({
-            selector: '.lazy-load .item.card-gallery, .lazy-load .item',
-            startVelocity: 3000
-          });
+          if (pictures.length > 0) {
+            $scope.motion.show({
+              selector: '.lazy-load .item.card-gallery, .lazy-load .item',
+              startVelocity: 3000
+            });
+          }
         })
         .catch(function() {
           $scope.pictures = [];
@@ -543,7 +551,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
 }
 
 function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q, Device,
-  $ionicHistory, ModalUtils, $focus, $timeout, esHttp) {
+  $ionicHistory, ModalUtils, $focus, esHttp) {
   'ngInject';
 
   $scope.walletData = {};
@@ -579,7 +587,7 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
 
   $scope.load = function(id) {
     esRegistry.record.load(id, {
-        fetchPictures: true
+        raw: true
       })
       .then(function (data) {
         $scope.formData = data.record;

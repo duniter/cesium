@@ -128,7 +128,8 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
     function loadData(id, options) {
       options = options || {};
-      options.fecthPictures = options.fetchPictures || false;
+      options.raw = angular.isDefined(options.raw) ? options.raw : false;
+      options.fecthPictures = angular.isDefined(options.fetchPictures) ? options.fetchPictures : options.raw;
 
       return $q.all([
 
@@ -144,6 +145,11 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         var categories = res[0];
         var hit = res[1];
         var record = readRecordFromHit(hit, categories);
+
+        // parse description as Html
+        if (!options.raw) {
+          record.description = esHttp.util.trustAsHtml(record.description);
+        }
 
         // Load issuer (avatar, name, uid, etc.)
         return csWot.extend({pubkey: record.issuer})
@@ -173,7 +179,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         picture: {
           all: esHttp.get('/page/record/:id?_source=pictures')
         },
-        comment: esComment.instance('registry')
+        comment: esComment.instance('page')
       };
     exports.currency = {
         all: esHttp.get('/currency/record/_search?_source=currencyName,peers.host,peers.port'),

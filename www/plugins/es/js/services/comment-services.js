@@ -125,7 +125,10 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
             data.total = res.hits.total;
             data.result = res.hits.hits.reduce(function (result, hit) {
               var comment = new Comment(hit._id, hit._source);
-              data.mapById[comment.id] = comment; // fill map by id
+              // Parse URL and hashtags
+              comment.html = esHttp.util.trustAsHtml(comment.message);
+              // fill map by id
+              data.mapById[comment.id] = comment;
               return result.concat(comment);
             }, data.result);
 
@@ -278,6 +281,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
           entity = data.mapById[id];
           entity.copy(comment);
         }
+        entity.html = esHttp.util.trustAsHtml(entity.message);
 
         // Send add request
         if (!id) {

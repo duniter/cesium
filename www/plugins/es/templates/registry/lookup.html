@@ -50,7 +50,7 @@
 
           <div class="item-text-wrap item-thumbnail-left-padding"
                ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">
-            <i class="item-image icon cion-registry-{{::rec.type}}" ng-if="!rec.thumbnail"></i>
+            <i class="item-image icon cion-page-{{::rec.type}}" ng-if="!rec.thumbnail"></i>
             <i class="item-image" style="background-image: url({{::rec.thumbnail.src}})" ng-if="rec.thumbnail"></i>
             <h2 ng-bind-html="rec.title"></h2>
             <h4 class="gray">
