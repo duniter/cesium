@@ -7,6 +7,7 @@ angular.module('cesium.graph.plugin', [
     'cesium.graph.blockchain.controllers',
     'cesium.graph.network.controllers',
     'cesium.graph.currency.controllers',
-    'cesium.graph.account.controllers'
+    'cesium.graph.account.controllers',
+    'cesium.graph.docstats.controllers',
   ])
 ;

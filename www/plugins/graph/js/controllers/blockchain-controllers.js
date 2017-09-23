@@ -46,11 +46,6 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
       if (!$scope.formData.issuer && state && state.stateParams && state.stateParams.pubkey) { // Currency parameter
         $scope.formData.issuer = state.stateParams.pubkey;
       }
-
-      // get the pubkey
-      if (!$scope.formData.issuer && state && state.stateParams && state.stateParams.pubkey) { // Currency parameter
-        $scope.formData.issuer = state.stateParams.pubkey;
-      }
     }
   };
 
@@ -99,8 +94,7 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
         if ($scope.formData.rangeDuration != 'hour') {
           $scope.data = [
             result.amount,
-            result.count/*,
-            result.avgByBlock*/
+            result.count
           ];
         }
         else {
@@ -143,12 +137,7 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
                 gridLines: {
                   drawOnChartArea: false
                 }
-              }/*,
-              {
-                id: 'y-axis-avg',
-                display: false,
-                position: 'right'
-              }*/
+              }
             ]
           },
           legend: {
@@ -193,19 +182,7 @@ function GpBlockchainTxCountController($scope, $controller, $q, $state, $filter,
             pointHoverBackgroundColor: gpColor.rgba.gray(1),
             pointHoverBorderColor: gpColor.rgba.translucent(),
             pointRadius: 3
-          }/*,
-          {
-            yAxisID: 'y-axis-avg',
-            type: 'line',
-            label: translations['GRAPH.BLOCKCHAIN.TX_AVG_BY_BLOCK'],
-            fill: false,
-            showLine: true,
-            borderColor: 'rgba(0,0,0,0)',
-            pointBackgroundColor: 'rgba(0,0,0,0)',
-            pointBorderColor: 'rgba(0,0,0,0)',
-            pointHoverBackgroundColor: 'rgba(0,0,0,0)',
-            pointHoverBorderColor: 'rgba(0,0,0,0)'
-          }*/
+          }
         ];
       });
   };

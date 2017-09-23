@@ -1,6 +1,6 @@
 angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.http.services'])
 
-  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache, csCurrency) {
+  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache) {
     'ngInject';
 
     var
@@ -9,6 +9,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         node: {},
         wot: {},
         blockchain: {},
+        docstat: {},
         raw: {
           block: {
             search: esHttp.post('/:currency/block/_search')
@@ -21,36 +22,14 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           },
           user: {
             event: esHttp.post('/user/event/_search?pretty')
+          },
+          docstat: {
+            search: esHttp.post('/docstat/record/_search')
           }
         },
         regex: {
         }
       };
-
-      function onCurrencyLoad(data, deferred) {
-        deferred = deferred || $q.defer();
-        var currency = data.currencies[data.currencies.length-1];
-
-        if (currency.firstBlockTime) {
-          deferred.resolve();
-          return deferred.promise;
-        }
-        // Fill first block time value
-        BMA.blockchain.block({block: 0})
-            .then(function(block) {
-              currency.firstBlockTime = block.medianTime;
-              deferred.resolve();
-            })
-            .catch(function(err) {
-              if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND) {
-                currency.firstBlockTime = esHttp.date.now();
-                deferred.resolve();
-              }
-              deferred.reject(err);
-            });
-        return deferred.promise;
-      }
-
 
     function _powBase(amount, base) {
       return base <= 0 ? amount : amount * Math.pow(10, base);
@@ -325,7 +304,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
     };
 
     /**
-     * Graph: "tx count"
+     * Graph: "block count"
      * @param currency
      * @returns {*}
      */
@@ -684,9 +663,117 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         });
     };
 
+    /**
+     * Graph: "statictics on ES documents"
+     * @param currency
+     * @returns {*}
+     */
+    exports.docstat.get = function(options) {
 
-    // register listener
-//    csCurrency.api.data.on.load($rootScope, onCurrencyLoad, this);
+      options = _initRangeOptions(options);
+
+      var jobs = [];
+
+      var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
+      var to = moment.unix(options.endTime).utc().startOf(options.rangeDuration);
+      var ranges = [];
+      while(from.isBefore(to)) {
+
+        ranges.push({
+          from: from.unix(),
+          to: from.add(1, options.rangeDuration).unix()
+        });
+
+        // Flush if max range count, or just before loop condition end (fix #483)
+        var flush = (ranges.length === options.maxRangeSize) || !from.isBefore(to);
+        if (flush) {
+          var request = {
+            size: 0,
+            aggs: {
+              range: {
+                range: {
+                  field: "time",
+                  ranges: ranges
+                },
+                aggs: {
+                  index : {
+                    terms: {
+                      field: "index",
+                      size: 0
+                    },
+                    aggs: {
+                      type: {
+                        terms: {
+                          field: "indexType",
+                          size: 0
+                        },
+                        aggs: {
+                          max: {
+                            max: {
+                              field : "count"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+          };
+
+          // prepare next loop
+          ranges = [];
+          var indices = {};
+
+          if (jobs.length == 10) {
+            console.error('Too many parallel jobs!');
+            from = moment.unix(options.endTime).utc(); // stop while
+          }
+          else {
+            jobs.push(
+              exports.raw.docstat.search(request)
+                .then(function (res) {
+                  var aggs = res.aggregations;
+                  return (aggs.range && aggs.range.buckets || []).reduce(function (res, agg) {
+                    var item = {
+                      from: agg.from,
+                      to: agg.to
+                    };
+                    _.forEach(agg.index && agg.index.buckets || [], function (agg) {
+                      var index = agg.key;
+                      _.forEach(agg.type && agg.type.buckets || [], function (agg) {
+                        var key = (index + '_' + agg.key);
+                        item[key] = agg.max.value;
+                        if (!indices[key]) indices[key] = true;
+                      });
+                    });
+                    return res.concat(item);
+                  }, []);
+                })
+            );
+          }
+        }
+      } // loop
+
+      return $q.all(jobs)
+        .then(function(res) {
+          res = res.reduce(function(res, hits){
+            if (!hits || !hits.length) return res;
+            return res.concat(hits);
+          }, []);
+
+          res = _.sortBy(res, 'from');
+
+          return _.keys(indices).reduce(function(series, index) {
+            series[index] = _.pluck(res, index);
+            return series;
+          }, {
+            times: _.pluck(res, 'from')
+          });
+        });
+    };
 
     return exports;
   })

@@ -46,15 +46,15 @@ angular.module('cesium.graph.color.services', [])
       }
 
       // From [0,1]
-      opacity = opacity>0 && opacity|| '0.55';
+      opacity = opacity>0 && opacity|| 0.55;
 
       var defaultStateSize = Math.round(count / 2.5/*=4 states max*/);
 
       // Start color [r,v,b]
-      var color = startColor ? angular.copy(startColor) : [255, 0, 0]; // Red
+      var color = startColor && startColor.length == 3 ? angular.copy(startColor) : [255, 0, 0]; // Red
 
       // Colors state: 0=keep, 1=decrease, 2=keep, 3=increase
-      var states = startState ? angular.copy(startState) : [0, 2, 3]; // R=keep, V=keep, B=increase
+      var states = startState && startState.length == 3 ? angular.copy(startState) : [0, 2, 3]; // R=keep, V=keep, B=increase
 
       var steps = startColor ? [
         Math.round(255 / defaultStateSize),
@@ -135,6 +135,8 @@ angular.module('cesium.graph.color.services', [])
     exports.rgba.translucent = function() {
       return 'rgb(0,0,0,0)';
     };
+
+    exports.constants = constants;
 
     return exports;
   })

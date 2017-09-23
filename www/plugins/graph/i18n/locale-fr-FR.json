@@ -65,6 +65,30 @@
         "BLOCK_COUNT": "{{count}} blocs",
         "NO_BLOCK": "Aucun bloc"
       }
+    },
+    "DOC_STATS": {
+      "TITLE": "Statistiques de stockage",
+      "USER": {
+        "TITLE": "Nombre de documents liés à un compte",
+        "USER_PROFILE": "Profils utilisateur",
+        "USER_SETTINGS": "Paramètres sauvegardés",
+      },
+      "MESSAGE": {
+        "TITLE": "Nombre de documents lié à la communication",
+        "MESSAGE_INBOX": "Messages en boite de réception",
+        "MESSAGE_OUTBOX": "Messages envoyés sauvegardés",
+        "INVITATION_CERTIFICATION": "Invitations à certifier"
+      },
+      "SOCIAL": {
+        "TITLE": "Nombre de pages ou groupes",
+        "PAGE_COMMENT": "Commentaires",
+        "PAGE_RECORD": "Pages",
+        "GROUP_RECORD": "Groupes",
+      },
+      "OTHER": {
+        "TITLE": "Autres documents",
+        "HISTORY_DELETE": "Suppressions de documents",
+      }
     }
   }
 }

@@ -57,6 +57,30 @@
         "BLOCK_COUNT": "{{count}} blocks",
         "NO_BLOCK": "No block"
       }
+    },
+    "DOC_STATS": {
+      "TITLE": "Data storage statistitics",
+      "USER": {
+        "TITLE": "Number of documents linked to an account",
+        "USER_PROFILE": "User profiles utilisateur",
+        "USER_SETTINGS": "Saved settings",
+      },
+      "MESSAGE": {
+        "TITLE": "Number of documents related to the communication",
+        "MESSAGE_INBOX": "Messages in inbox",
+        "MESSAGE_OUTBOX": "Messages in outbox",
+        "INVITATION_CERTIFICATION": "Invitations to certify"
+      },
+      "SOCIAL": {
+        "TITLE": "Number of page or group",
+        "PAGE_COMMENT": "Comments",
+        "PAGE_RECORD": "Pages",
+        "GROUP_RECORD": "Groups",
+      },
+      "OTHER": {
+        "TITLE": "Other documents",
+        "HISTORY_DELETE": "Deletion of documents",
+      }
     }
   }
 }
