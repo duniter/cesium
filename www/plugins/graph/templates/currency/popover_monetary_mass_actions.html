@@ -5,18 +5,10 @@
   <ion-content scroll="false">
     <div class="list item-text-wrap">
 
-      <!-- scale: linear -->
-      <a class="item item-icon-right ink"
-         ng-click="setScale('linear')">
-        <span ng-bind-html="'GRAPH.COMMON.LINEAR_SCALE' | translate"></span>
-        <i class="icon ion-ios-checkmark-empty" ng-show="scale=='linear'"></i>
-      </a>
-
-      <!-- duration: day -->
-      <a class="item item-icon-right ink"
-         ng-click="setScale('logarithmic')">
+      <a class="item item-icon-left ink"
+         ng-click="toggleScale()">
+        <i class="icon ion-ios-checkmark-empty" ng-show="formData.scale=='logarithmic'"></i>
         <span ng-bind-html="'GRAPH.COMMON.LOGARITHMIC_SCALE' | translate"></span>
-        <i class="icon ion-ios-checkmark-empty" ng-show="scale=='logarithmic'"></i>
       </a>
 
     </div>
