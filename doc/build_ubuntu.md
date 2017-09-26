@@ -1,4 +1,4 @@
-## Ubuntu Builds
+# Ubuntu Builds
 
 Cesium can be build as desktop application for Ubuntu, or as App on Ubuntu phone. Such builds use cross-architecture [click targets](https://developer.ubuntu.com/en/phone/apps/sdk/tutorials/click-targets-and-device-kits/) and the specific Apache Cordova platform `ubuntu`.
 

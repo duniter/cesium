@@ -10,26 +10,6 @@ Cesium can be build as Android App.
 sudo apt-get install build-essential
 ```
 
-### Install libsodium 
-
-[The Sodium crypto library (libsodium)](https://download.libsodium.org/doc/installation/) is a modern, easy-to-use software library for encryption, decryption, signatures, password hashing and more. 
-
-- Get libsodium
-```
-    wget -kL https://github.com/jedisct1/libsodium/releases/download/1.0.11/libsodium-1.0.11.tar.gz
-    tar -xvf libsodium-1.0.11.tar.gz
-```
-
-- Installation:
-```
-    cd libsodium-1.0.11
-    sudo apt-get install build-essential
-    sudo ./configure
-    sudo make && make check
-    sudo make install        
-```
-
-
 ### Install NodeJS 5
 
 Cesium need NodeJS v5. You can install it the [this download page](https://nodejs.org/download/release/v5.12.0/), but we recommand the use of MVN (Node Version Manager). 
@@ -99,11 +79,11 @@ Install the version that it proposes to you.
 
  - Launch Android-studio, then open the menu `File > Project Structure...`
 
-  <img src="./img/04e64b769cbd45b9d275cd5f81002a399a1a7684.png" width="300">
+  <img src="./fr/img/04e64b769cbd45b9d275cd5f81002a399a1a7684.png" width="300">
 
  - A window like this should open: 
 
-  <img src="./img/ceb75301172038e75f5c43b328dd7febd7bedc7e.png" width="450">
+  <img src="./fr/img/ceb75301172038e75f5c43b328dd7febd7bedc7e.png" width="450">
 
  - Fill in the installation path of the NDK.
 
@@ -146,7 +126,7 @@ sdk.dir=/opt/android-sdk
 ndk.dir=/opt/android-ndk
 ```
 
- - In order to sign your Android builds, create a file `release-signing.properties` :
+ - In order to sign your Android builds, create a file `release-signing.properties` (in the directory `platforms/android`):
 ```properties
 storeFile=Cesium.keystore
 keyAlias=Cesium
@@ -156,7 +136,9 @@ keyPassword=YourKeyPassword
  
  > Make sure to put your keystore file in the same path. 
  > To generate a new keystore file, use:
- > `keytool -genkey -v -keystore Cesium.keystore -alias Cesium -keyalg RSA -keysize 2048 -validity 10000`
+ > ```
+    keytool -genkey -v -keystore Cesium.keystore -alias Cesium -keyalg RSA -keysize 2048 -validity 10000`
+   ```
 
 
 ## Generate APK file
@@ -183,7 +165,7 @@ If you get this error:
   Cannot run program "/opt/android-sdk/build-tools/21.1.2/aapt": error=2, No such file or folder
   ```
 
-Install two additional compatibility libraries (workaround found [this post](http://stackoverflow.com/questions/22701405/aapt-ioexception-error-2-no-such-file-or-directory-why-cant-i-build-my-grad)):                            
+Install two additional compatibility libraries (workaround found in [this post](http://stackoverflow.com/questions/22701405/aapt-ioexception-error-2-no-such-file-or-directory-why-cant-i-build-my-grad)):                            
 ```bash
 sudo apt-get install lib32stdc++6 lib32z1
 ```
