@@ -69,7 +69,7 @@ Install the version that it proposes to you.
 
 ### Install Android NDK
 
-> The NDK is used for code execution in C ++, including the NaCL cryptography library.
+> The NDK is used for code execution in C ++, need to build the NaCL cryptography library.
 
 - Download NDK from [this page](https://developer.android.com/ndk/downloads/index.html)
 
