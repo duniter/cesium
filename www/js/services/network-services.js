@@ -322,8 +322,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           var endpointsAsString = peer.getEndpoints();
           if (!endpointsAsString) return []; // no BMA
 
-          var endpoints = endpointsAsString.reduce(function (res, ep) {
-            var ep = BMA.node.parseEndPoint(ep);
+          var endpoints = endpointsAsString.reduce(function (res, epStr) {
+            var ep = BMA.node.parseEndPoint(epStr);
             return ep ? res.concat(ep) : res;
           }, []);
 
