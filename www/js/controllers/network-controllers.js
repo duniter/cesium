@@ -223,7 +223,9 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   };
 
   $scope.selectPeer = function(peer) {
-    if (!peer.online) return; // nothing to do
+    // Skipp offline or WS2P node
+    if (!peer.online || peer.isWs2p()) return;
+
     var stateParams = {server: peer.getServer()};
     if (peer.isSsl()) {
       stateParams.ssl = true;

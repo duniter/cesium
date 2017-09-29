@@ -18,7 +18,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       OUTPUT_FUNCTIONS = OUTPUT_FUNCTION+'([ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_FUNCTION +')*',
       OUTPUT_OBJ = 'OBJ\\(([0-9]+)\\)',
       OUTPUT_OBJ_OPERATOR = OUTPUT_OBJ + '[ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_OBJ,
-      REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_./]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))",
+      REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_./]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( (.+))?",
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
@@ -373,7 +373,11 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           self: get('/network/peering'),
           peers: get('/network/peering/peers')
         },
-        peers: get('/network/peers')
+        peers: get('/network/peers'),
+        ws2p: {
+          info: get('/network/ws2p/info'),
+          heads: get('/network/ws2p/heads')
+        }
       },
       wot: {
         lookup: get('/wot/lookup/:search'),
@@ -527,7 +531,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "ipv4": matches[4] || '',
           "ipv6": matches[6] || '',
           "port": matches[8] || 80,
-          "useSsl": matches[8] && matches[8] == 443
+          "useSsl": matches[8] && matches[8] == 443,
+          "path": matches[10],
+          "useBma": true
         };
       }
       // Try BMAS
@@ -538,7 +544,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "ipv4": matches[4] || '',
           "ipv6": matches[6] || '',
           "port": matches[8] || 80,
-          "useSsl": true
+          "useSsl": true,
+          "path": matches[10],
+          "useBma": true
         };
       }
       // Try BMATOR
@@ -548,7 +556,21 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "dns": matches[2] || '',
           "port": matches[4] || 80,
           "useSsl": false,
-          "useTor": true
+          "useTor": true,
+          "useBma": true
+        };
+      }
+      // Try WS2P
+      matches = exports.regexp.WS2P_ENDPOINT.exec(endpoint);
+      if (matches) {
+        return {
+          "uuid": matches[1] || '',
+          "dns": matches[3] || '',
+          "ipv4": matches[5] || '',
+          "ipv6": matches[7] || '',
+          "port": matches[9] || 80,
+          "useSsl": matches[9] && matches[9] == 443,
+          "useWs2p": true
         };
       }
     };

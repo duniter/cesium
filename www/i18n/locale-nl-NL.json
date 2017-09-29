@@ -5,6 +5,7 @@
     "APP_BUILD": "build {{build}}",
     "PUBKEY": "Publieke sleutel",
     "MEMBER": "Lid",
+    "BLOCK": "Blok",
     "BTN_OK": "OK",
     "BTN_YES": "Ja",
     "BTN_NO": "Nee",
@@ -243,6 +244,7 @@
     "PEERS": "Knopen",
     "SIGNED_ON_BLOCK": "Getekend op blok",
     "MIRROR": "spiegel",
+    "CURRENT_BLOCK": "Blok #",
     "VIEW": {
       "TITLE": "Knoop",
       "OWNER": "Maakt deel uit van",

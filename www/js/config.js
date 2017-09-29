@@ -13,7 +13,7 @@ angular.module("cesium.config", [])
 	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": false,
-	"timeout": 300000,
+	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
 	"keepAuthIlde": 600,

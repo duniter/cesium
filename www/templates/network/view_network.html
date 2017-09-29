@@ -20,7 +20,7 @@
               <span ng-if="enableFilter && search.type=='mirror'" translate>PEER.MIRRORS</span>
               <span ng-if="enableFilter && search.type=='offline'" translate>PEER.OFFLINE</span>
               <span ng-if="!enableFilter || !search.type" translate>PEER.ALL_PEERS</span>
-              <span ng-if="!search.loading">({{search.results.length}})</span>
+              <span ng-if="search.results.length">({{search.results.length}})</span>
               <ion-spinner ng-if="search.loading" class="icon ion-spinner-small" icon="android"></ion-spinner>
             </h4>
           </div>

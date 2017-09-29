@@ -5,6 +5,7 @@
     "APP_BUILD": "date : {{build}}",
     "PUBKEY": "Clé publique",
     "MEMBER": "Membre",
+    "BLOCK" : "Bloc",
     "BTN_OK": "OK",
     "BTN_YES": "Oui",
     "BTN_NO": "Non",

@@ -1,10 +1,10 @@
 <div ng-class="::motion.ionListClass" class="no-padding">
 
-  <div class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom" ng-if="isHttps && expertMode">
+  <div class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom inline text-italic" ng-if="::isHttps && expertMode">
     <small><i class="icon ion-alert-circled"></i> {{'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}</small>
   </div>
 
-  <div class="item row row-header hidden-xs hidden-sm done in" ng-if="expertMode">
+  <div class="item row row-header hidden-xs hidden-sm done in" ng-if="::expertMode">
     <a class="col col-header no-padding dark" ng-click="toggleSort('uid')">
       <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'uid'"></cs-sort-icon>
       {{'COMMON.UID' | translate}} / {{'COMMON.PUBKEY' | translate}}

@@ -148,3 +148,9 @@ Peer.prototype.isTor = function() {
   var bma = this.bma || this.getBMA();
   return bma.useTor;
 };
+
+
+Peer.prototype.isWs2p = function() {
+  var bma = this.bma || this.getBMA();
+  return bma.useWs2p;
+};
