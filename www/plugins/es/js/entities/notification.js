@@ -2,7 +2,6 @@
 function Notification(json, markAsReadCallback) {
 
   var messagePrefixes = {
-    'market': 'EVENT.MARKET.',
     'registry': 'EVENT.REGISTRY.'
   };
 
@@ -62,7 +61,10 @@ function Notification(json, markAsReadCallback) {
     that.avatarIcon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b' : 'ion-ribbon-a';
     that.icon = (json.code == 'CERT_RECEIVED') ? 'ion-ribbon-b balanced' : 'ion-ribbon-a gray';
     that.pubkey = json.params.length > 0 ? json.params[0] : null;
-    that.state = (json.code == 'CERT_RECEIVED') ? 'app.wallet_cert.tab_received' : 'app.wallet_cert.tab_given';
+    that.state = 'app.wallet_cert';
+    that.stateParams = {
+      type: (json.code == 'CERT_RECEIVED') ? 'received' : 'given'
+    };
   }
 
   // Message
@@ -74,28 +76,6 @@ function Notification(json, markAsReadCallback) {
       that.pubkey = pubkeys;
     }
     that.id = json.reference.id; // Do not care about notification ID, because notification screen use message _id
-  }
-
-  // market record
-  else if (json.reference && json.reference.index == 'market') {
-    that.avatarIcon = 'ion-speakerphone';
-    that.pubkey = json.params.length > 0 ? json.params[0] : null;
-    if (json.reference.anchor) {
-      that.icon = 'ion-ios-chatbubble-outline dark';
-      that.state = 'app.market_view_record_anchor';
-      that.stateParams = {
-        id: json.reference.id,
-        title: json.params[2],
-        anchor: _formatHash(json.reference.anchor)
-      };
-    }
-    else {
-      that.icon = 'ion-speakerphone dark';
-      that.state = 'app.market_view_record';
-      that.stateParams = {
-        id: json.reference.id,
-        title: json.params[2]};
-    }
   }
 
   // registry record
