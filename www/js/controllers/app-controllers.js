@@ -393,6 +393,20 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     });
   };
 
+  ////////////////////////////////////////
+  // Link managment (fix issue #)
+  ////////////////////////////////////////
+
+  $scope.openLink = function(event, link, type) {
+    console.log(link);
+
+    // If email, do not try to open, but copy value
+    if (!Device.enable && type && (type == 'email' || type == 'phone')) {
+      return UIUtils.popover.copy(event, link);
+    }
+
+    return UIUtils.link.open(event, link, type);
+  };
 
   ////////////////////////////////////////
   // Layout Methods

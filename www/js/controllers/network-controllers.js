@@ -297,20 +297,23 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   /* -- help tip -- */
 
   // Show help tip
-  $scope.showHelpTip = function() {
-    if (!$scope.isLogin()) return;
-    index = csSettings.data.helptip.currency;
+  $scope.showHelpTip = function(index, isTour) {
+    index = angular.isDefined(index) ? index : csSettings.data.helptip.network;
+    isTour = angular.isDefined(isTour) ? isTour : false;
     if (index < 0) return;
 
     // Create a new scope for the tour controller
     var helptipScope = $scope.createHelptipScope();
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
+    helptipScope.tour = isTour;
 
-    return helptipScope.startCurrencyTour(index, false)
+    return helptipScope.startNetworkTour(index, false)
       .then(function(endIndex) {
         helptipScope.$destroy();
-        csSettings.data.helptip.currency = endIndex;
-        csSettings.store();
+        if (!isTour) {
+          csSettings.data.helptip.network = endIndex;
+          csSettings.store();
+        }
       });
   };
 }

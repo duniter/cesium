@@ -344,24 +344,8 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
   };
 }
 
-function ESSocialsViewController($scope, $window, Device, UIUtils)  {
+function ESSocialsViewController($scope)  {
   'ngInject';
-
-  $scope.open = function(event, social) {
-    if (!social) return;
-
-    // If email, do not try to open, but copy value
-    if (!Device.enable && (social.type == 'email' || social.type == 'phone')) {
-      UIUtils.popover.copy(event, social.url);
-      return;
-    }
-
-    // Open the url
-    // Note: If device is enable, this will use InAppBrowser cordova plugin
-    var url = (social.type == 'email')  ? ('mailto:' + social.url) :
-        ((social.type == 'phone')  ? ('tel:' + social.url) : social.url);
-    $window.open(url, '_system', 'location=yes');
-  };
 
   $scope.filterFn = function(social) {
     return !social.recipient || social.valid;

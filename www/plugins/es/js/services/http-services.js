@@ -160,7 +160,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       prefix = prefix || '#';
       var reg = prefix === '@' ? regexp.USER_TAG : regexp.HASH_TAG;
       var matches = value && reg.exec(value);
-      var tags;
+      var tags = undefined;
       while(matches) {
         var tag = matches[1];
         tags = tags || [];
@@ -175,7 +175,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     function parseUrlsFromText(value) {
       var matches = value && regexp.URL.exec(value);
-      var urls;
+      var urls = undefined;
+
       while(matches) {
         var url = matches[0];
         urls = urls || [];
@@ -200,6 +201,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       if (content) {
         options = options || {};
         options.tagState = options.tagState || 'app.wot_lookup';
+        options.uidState = options.uidState || 'app.wot_identity_uid';
         if (options.newLine || !angular.isDefined(options.newLine)) {
           content = content.replace(/\n/g, '<br>\n');
         }
@@ -207,26 +209,22 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         // Replace URL in description
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
-          var link = '<a href=\"{0}\" target=\"_system\">{1}</a>'.format(url, url);
+          var link = '<a ng-click=\"openLink($event, \'{0}\')\">{1}</a>'.format(url, url);
           content = content.replace(url, link);
         });
 
         // Replace hashtags
         var hashTags = parseTagsFromText(content);
         _.forEach(hashTags, function(tag){
-          // FIXME https://github.com/duniter/cesium/issues/533
-          var href = $state.href(options.tagState, {hash: tag});
-          var link = '<a href=\"{0}">{1}</a>'.format(href, '#'+tag);
+          var link = '<a ui-sref=\"{0}({hash: \'{1}\'})\">#{2}</a>'.format(options.tagState, tag, tag);
           content = content.replace('#'+tag, link);
         });
 
         // Replace user tags
         var userTags = parseTagsFromText(content, '@');
-        _.forEach(userTags, function(tag){
-          // FIXME https://github.com/duniter/cesium/issues/533
-          var href = $state.href('app.wot_identity_uid', {uid: tag});
-          var link = '<a href=\"{0}">{1}</a>'.format(href, '@'+tag);
-          content = content.replace('@'+tag, link);
+        _.forEach(userTags, function(uid){
+          var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, uid, uid);
+          content = content.replace('@'+uid, link);
         });
 
         $sce.trustAsHtml(content);

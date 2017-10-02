@@ -69,7 +69,9 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           profile.avatar = esHttp.image.fromHit(res, 'avatar');
 
           // description
-          profile.description = esHttp.util.trustAsHtml(profile.source.description);
+          if (!options.raw) {
+            profile.description = esHttp.util.trustAsHtml(profile.source.description);
+          }
 
           // Social url must be unique in socials links - Workaround for issue #306:
           if (profile.source.socials && profile.source.socials.length) {
@@ -247,8 +249,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
           if (profile) {
             data.name = profile.name;
             data.avatar = profile.avatar;
-            data.description = profile.description;
             data.profile = profile.source;
+            data.profile.description = profile.description;
           }
           deferred.resolve(data);
         }),

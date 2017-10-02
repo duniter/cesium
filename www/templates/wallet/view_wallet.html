@@ -95,6 +95,16 @@
 
         <div class="list" ng-class="::motion.ionListClass" ng-hide="loading">
 
+          <!-- Public key -->
+          <div id="helptip-wallet-pubkey"
+                class="item item-icon-left item-text-wrap ink"
+                on-hold="copy(formData.pubkey)"
+                copy-on-click="{{:rebind:formData.pubkey}}">
+            <i class="icon ion-key"></i>
+            <span>{{:locale:'COMMON.PUBKEY'|translate}}</span>
+            <h4 id="pubkey" class="dark">{{:rebind:formData.pubkey}}</h4>
+          </div>
+
           <!-- Certifications -->
           <a id="helptip-wallet-certifications"
              class="item item-icon-left item-icon-right item-text-wrap ink"
@@ -153,15 +163,6 @@
             <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
           </span>
 
-          <!-- Public key -->
-          <span id="helptip-wallet-pubkey"
-                class="item item-icon-left item-text-wrap ink"
-                on-hold="copy(formData.pubkey)"
-                copy-on-click="{{:rebind:formData.pubkey}}">
-            <i class="icon ion-key"></i>
-            {{:locale:'COMMON.PUBKEY'|translate}}
-            <h4 id="pubkey" class="dark">{{:rebind:formData.pubkey}}</h4>
-          </span>
        </div>
       </div>
 

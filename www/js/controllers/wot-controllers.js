@@ -435,7 +435,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
   // Show help tip (show only not already shown)
   $scope.showHelpTip = function() {
     if (!$scope.isLogin()) return;
-    var index = angular.isDefined(index) ? index : csSettings.data.helptip.wot;
+    var index = angular.isDefined(index) ? index : csSettings.data.helptip.wotLookup;
     if (index < 0) return;
     if (index === 0) index = 1; // skip first step
 
@@ -443,10 +443,10 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
     var helptipScope = $scope.createHelptipScope();
     if (!helptipScope) return; // could be undefined, if a global tour already is already started
 
-    return helptipScope.startWotTour(index, false)
+    return helptipScope.startWotLookupTour(index, false)
       .then(function(endIndex) {
         helptipScope.$destroy();
-        csSettings.data.helptip.wot = endIndex;
+        csSettings.data.helptip.wotLookup = endIndex;
         csSettings.store();
       });
   };

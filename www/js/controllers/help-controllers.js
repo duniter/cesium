@@ -161,7 +161,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
     $scope.tour = true;
     $scope.continue = true;
 
-    // Currency tour
+    // Currency
     return $scope.startCurrencyTour(0, true)
       .then(function(endIndex){
         if (!endIndex || $scope.cancelled) return false;
@@ -170,7 +170,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         return $scope.continue;
       })
 
-      // Network tour
+      // Network
       .then(function(next){
         if (!next) return false;
         return $scope.startNetworkTour(0, true)
@@ -182,7 +182,19 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
-      // Wot tour
+      // Wot lookup
+      .then(function(next){
+        if (!next) return false;
+        return $scope.startWotLookupTour(0, true)
+          .then(function(endIndex){
+            if (!endIndex || $scope.cancelled) return false;
+            csSettings.data.helptip.wotLookup=endIndex;
+            csSettings.store();
+            return $scope.continue;
+          });
+      })
+
+      // Wot identity
       .then(function(next){
         if (!next) return false;
         return $scope.startWotTour(0, true)
@@ -194,7 +206,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
-      // Identity certifications tour
+      // Identity certifications
       .then(function(next){
         if (!next) return false;
         return $scope.startWotCertTour(0, true)
@@ -206,13 +218,13 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
-      // Wallet tour (if NOT login)
+      // Wallet (if NOT login)
       .then(function(next){
         if (!next) return false;
         return $scope.startWalletNoLoginTour(0, true);
       })
 
-      // Wallet tour (if login)
+      // Wallet (if login)
       .then(function(next){
         if (!next) return false;
         if (!csWallet.isLogin()) return true; // not login: continue
@@ -225,7 +237,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
-      // Wallet certifications tour
+      // Wallet certifications
       .then(function(next){
         if (!next) return false;
         if (!csWallet.isLogin()) return true; // not login: continue
@@ -238,7 +250,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           });
       })
 
-      // TX tour (if login)
+      // My operations (if login)
       .then(function(next){
         if (!next) return false;
         if (!csWallet.isLogin()) return true; // not login: continue
@@ -377,7 +389,8 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
             content: 'HELP.TIP.CURRENCY_WOT',
             icon: {
               position: 'center'
-            }
+            },
+            hasNext: hasNext
           },
           timeout: 1200 // need for Firefox
         });
@@ -504,12 +517,10 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
   };
 
   /**
-   * Features tour on WOT registry
+   * Features tour on WOT lookup
    * @returns {*}
    */
-  $scope.startWotTour = function(startIndex, hasNext) {
-
-    var contentParams;
+  $scope.startWotLookupTour = function(startIndex, hasNext) {
 
     var steps = [
       function() {
@@ -563,12 +574,26 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         });
         return $scope.showHelpTip('helptip-wot-view-certifications', {
           bindings: {
-            content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS'
+            content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS',
+            hasNext: hasNext
           },
           timeout: 2500
         });
-      },
+      }
+    ];
 
+    // Launch steps
+    return $scope.executeStep('wotLookup', steps, startIndex);
+  };
+
+  /**
+   * Features tour on WOT identity
+   * @returns {*}
+   */
+  $scope.startWotTour = function(startIndex, hasNext) {
+    var contentParams;
+
+    var steps = [
       function() {
         return $scope.showHelpTip('helptip-wot-view-certifications', {
           bindings: {
@@ -583,6 +608,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       },
 
       function() {
+        console.log("TOTOTO");
         return $scope.showHelpTip('helptip-wot-view-certifications-count', {
           bindings: {
             content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS_CLICK',
@@ -722,7 +748,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
           bindings: {
             content: 'HELP.TIP.WALLET_PUBKEY',
             icon: {
-              position: 'bottom-center'
+              position: 'center'
             }
           },
           timeout: UIUtils.screen.isSmall() ? 2000 : 500,
@@ -737,11 +763,11 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
             content: UIUtils.screen.isSmall() ? 'HELP.TIP.WALLET_RECEIVED_CERTIFICATIONS': 'HELP.TIP.WALLET_CERTIFICATIONS',
             icon: {
               position: 'center'
-            }
+            },
+            hasNext: hasNext
           },
           timeout: 500,
-          onError: 'continue',
-          hasNext: hasNext
+          onError: 'continue'
         });
       }
     ];

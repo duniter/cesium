@@ -723,6 +723,22 @@ angular.module('cesium.utils.services', [])
     }, timeout || 900);
   }
 
+  /**
+   * Open a link (url, email, phone, ...)
+   * @param event
+   * @param link
+   * @param type
+   */
+  function openLink(event, link, type) {
+    if (!event || !link) return;
+
+    // Open the url
+    // Note: If device is enable, this will use InAppBrowser cordova plugin
+    var url = (type == 'email')  ? ('mailto:' + link) :
+      ((type == 'phone')  ? ('tel:' + link) : link);
+    $window.open(url, '_system', 'location=yes');
+  }
+
   csSettings.api.data.on.changed($rootScope, function(data) {
    setEffects(data.uiEffects);
   });
@@ -740,6 +756,9 @@ angular.module('cesium.utils.services', [])
     },
     toast: {
       show: showToast
+    },
+    link: {
+      open: openLink
     },
     onError: onError,
     screen: {

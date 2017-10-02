@@ -72,6 +72,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       enable: true,
       installDocUrl: "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md",
       currency: 0,
+      network: 0,
+      wotLookup: 0,
       wot: 0,
       wotCerts: 0,
       wallet: 0,

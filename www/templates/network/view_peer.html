@@ -58,14 +58,14 @@
           </h3>
 
           <h3>
-            <a target="_blank"
+            <a target="_system"
                ng-href="{{(node.useSsl ? 'https://' : 'http://') + node.server}}/network/peering">
               <i class="icon ion-share"></i> {{'PEER.VIEW.SHOW_RAW_PEERING'|translate}}
             </a>
 
             <span class="gray" ng-if="!isReachable"> | </span>
             <a ng-if="!isReachable"
-               target="_blank"
+               target="_system"
                ng-href="{{(node.useSsl ? 'https://' : 'http://') + node.server}}/blockchain/current">
               <i class="icon ion-share"></i> <span translate>PEER.VIEW.SHOW_RAW_CURRENT_BLOCK</span>
             </a>
