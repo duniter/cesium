@@ -160,7 +160,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       prefix = prefix || '#';
       var reg = prefix === '@' ? regexp.USER_TAG : regexp.HASH_TAG;
       var matches = value && reg.exec(value);
-      var tags = undefined;
+      var tags;
       while(matches) {
         var tag = matches[1];
         tags = tags || [];
@@ -175,8 +175,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
     function parseUrlsFromText(value) {
       var matches = value && regexp.URL.exec(value);
-      var urls = undefined;
-
+      var urls;
       while(matches) {
         var url = matches[0];
         urls = urls || [];
