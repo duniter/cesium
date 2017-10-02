@@ -285,7 +285,8 @@
       "TITLE": "Nœud",
       "OWNER": "Appartient à",
       "SHOW_RAW_PEERING": "Voir la fiche de pair",
-      "LAST_BLOCKS": "Derniers blocs",
+      "SHOW_RAW_CURRENT_BLOCK": "Voir le dernier bloc (format brut)",
+      "LAST_BLOCKS": "Derniers blocs connus",
       "KNOWN_PEERS": "Nœuds connus :",
       "GENERAL_DIVIDER": "Informations générales",
       "ERROR": {

@@ -21,12 +21,14 @@
           <h2 class="gray">
             <i class="gray icon ion-android-globe"></i>
             {{node.bma.dns || node.server}}
-            <span class="gray" ng-if="node.useSsl">
+            <span class="gray" ng-if="!loading && node.useSsl">
               <i class="gray ion-locked"></i> <small>SSL</small>
             </span>
-            <span class="gray" ng-if="node.useTor">
+            <span class="gray" ng-if="!loading && node.useTor">
               <i class="gray ion-bma-tor-api"></i>
             </span>
+
+            <span class="assertive" ng-if="!loading && !node.uid">({{'PEER.MIRROR'|translate}})</span>
           </h2>
 
           <!-- node owner -->
@@ -43,13 +45,29 @@
                 ({{node.uid}})
               </span>
             </a>
+            <span ng-if="!loading && !node.uid">
+              <a class="gray"
+                 ui-sref="app.wot_identity({pubkey: node.pubkey})">
+                <i class="ion-key"></i>
+                {{node.pubkey|formatPubkey}}
+                <span class="gray" ng-if="node.name">
+                  ({{node.name}})
+                </span>
+              </a>
+            </span>
           </h3>
 
           <h3>
-
             <a target="_blank"
                ng-href="{{(node.useSsl ? 'https://' : 'http://') + node.server}}/network/peering">
               <i class="icon ion-share"></i> {{'PEER.VIEW.SHOW_RAW_PEERING'|translate}}
+            </a>
+
+            <span class="gray" ng-if="!isReachable"> | </span>
+            <a ng-if="!isReachable"
+               target="_blank"
+               ng-href="{{(node.useSsl ? 'https://' : 'http://') + node.server}}/blockchain/current">
+              <i class="icon ion-share"></i> <span translate>PEER.VIEW.SHOW_RAW_CURRENT_BLOCK</span>
             </a>
           </h3>
         </ion-item>
@@ -67,6 +85,7 @@
         </ion-item>
 
         <a class="item item-icon-left item-icon-right item-text-wrap ink"
+           ng-if="isReachable"
            ui-sref="app.view_server_block_hash({server: node.server, ssl: node.useSsl, tor: node.useTor, number: current.number, hash: current.hash})">
           <i class="icon ion-cube"></i>
           <span translate>BLOCKCHAIN.VIEW.TITLE_CURRENT</span>
@@ -77,6 +96,7 @@
         </a>
 
         <a class="item item-icon-left item-icon-right item-text-wrap ink"
+           ng-if="isReachable"
            ui-sref="app.server_blockchain({server: node.server, ssl: node.useSsl, tor: node.useTor})">
           <i class="icon ion-cube" style="font-size: 25px;"></i>
           <i class="icon-secondary ion-clock" style="font-size: 18px; left: 33px; top: -12px;"></i>
@@ -87,25 +107,28 @@
         <!-- Allow extension here -->
         <cs-extension-point name="general"></cs-extension-point>
 
-        <div class="item item-divider" translate>
+        <div class="item item-divider" ng-hide="loading || !isReachable" translate>
           PEER.VIEW.KNOWN_PEERS
         </div>
+
+        <ion-item class="item item-text-wrap no-border done in gray no-padding-top no-padding-bottom inline text-italic"
+                  ng-show="!loading && !isReachable">
+          <small><i class="icon ion-alert-circled"></i> {{'NETWORK.INFO.ONLY_SSL_PEERS'|translate}}</small>
+        </ion-item>
 
         <div class="item center" ng-if="loading">
             <ion-spinner class="icon" icon="android"></ion-spinner>
         </div>
 
-        <div class="list no-padding {{::motion.ionListClass}}">
-          <a class="item-peer item item-icon-left "
-             ng-repeat="peer in peers"
-             ng-class="{ assertive: !peer.online, balanced: peer.online}"
-             ui-sref="app.view_peer({server: peer.getServer(), ssl: peer.isSsl()})">
-              <i class="icon ion-android-desktop"></i>
-              <b class="ion-android-person" ng-if="peer.uid" style="position: absolute; top: 13px; left: 27px;"></b>
-              <h3><span ng-class="{ positive: peer.uid }">{{peer.uid || peer.pubkey.substr(0,8)}}</span> <span class="gray">{{peer.dns && ' | ' + peer.dns}}</span></h3>
-              <h4>{{peer.getServer()}} <span class="gray">| {{'PEER.SIGNED_ON_BLOCK' | translate}}</span> #{{peer.blockNumber}}</h4>
-              <span class="badge" ng-class="{ 'badge-balanced': peer.hasMainConsensusBlock, 'badge-energized': peer.hasConsensusBlock }">{{peer.current.number}}</span>
-          </a>
+        <div class="list no-padding {{::motion.ionListClass}}" ng-if="isReachable">
+
+          <div ng-repeat="peer in :rebind:peers track by peer.id"
+               class="item item-peer item-icon-left ink"
+               ng-class="::ionItemClass"
+               ng-click="selectPeer(peer)"
+               ng-include="'templates/network/item_content_peer.html'">
+          </div>
+
         </div>
       </div>
 

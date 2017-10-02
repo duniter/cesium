@@ -285,6 +285,7 @@
       "TITLE": "Peer",
       "OWNER": "Owned by ",
       "SHOW_RAW_PEERING": "See peering document",
+      "SHOW_RAW_CURRENT_BLOCK": "See current block (raw format)",
       "LAST_BLOCKS": "Last blocks",
       "KNOWN_PEERS": "Known peers :",
       "GENERAL_DIVIDER": "General information",

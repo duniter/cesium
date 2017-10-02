@@ -419,11 +419,13 @@ function PeerInfoPopoverController($scope, csSettings, csCurrency, BMA) {
   $scope.enter();
 }
 
-function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
+function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
   'ngInject';
 
   $scope.node = {};
   $scope.loading = true;
+  $scope.isHttps = ($window.location.protocol === 'https:');
+  $scope.isReachable = true;
 
   $scope.$on('$ionicView.enter', function(e, state) {
     var isDefaultNode = !state.stateParams || !state.stateParams.server;
@@ -460,6 +462,25 @@ function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
         BMA.lightInstance(node.host, node.port, node.useSsl),
       node);
 
+    $scope.isReachable = !$scope.isHttps || useSsl;
+    if (!$scope.isReachable) {
+      // Get node peer info
+      return BMA.network.peers()
+        .then(function(res) {
+          // find the current peer
+          var peer = _.find(res && res.peers || [], function(json) {
+            var peer = new Peer(json);
+            return (peer.getServer() == node.server);
+          });
+
+          if (peer) {
+            $scope.node.pubkey = peer.pubkey;
+            $scope.node.currency = peer.currency;
+            return csWot.extend($scope.node);
+          }
+        });
+    }
+
     return $q.all([
 
       // Get node peer info
@@ -477,6 +498,8 @@ function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
             peer.online = p.status == 'UP';
             peer.blockNumber = peer.block.replace(/-.+$/, '');
             peer.dns = peer.getDns();
+            peer.id = peer.keyID();
+            peer.server = peer.getServer();
             return peer;
           });
 
@@ -502,5 +525,19 @@ function PeerViewController($scope, $q, UIUtils, csWot, BMA) {
           })
       ])
       .catch(UIUtils.onError(useTor ? "PEER.VIEW.ERROR.LOADING_TOR_NODE_ERROR" : "PEER.VIEW.ERROR.LOADING_NODE_ERROR"));
+  };
+
+  $scope.selectPeer = function(peer) {
+    // Skipp offline or WS2P node
+    if (!peer.online || peer.isWs2p()) return;
+
+    var stateParams = {server: peer.getServer()};
+    if (peer.isSsl()) {
+      stateParams.ssl = true;
+    }
+    if (peer.isTor()) {
+      stateParams.tor = true;
+    }
+    $state.go('app.view_peer', stateParams);
   };
 }
