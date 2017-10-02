@@ -398,8 +398,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   ////////////////////////////////////////
 
   $scope.openLink = function(event, link, type) {
-    console.log(link);
-
     // If email, do not try to open, but copy value
     if (!Device.enable && type && (type == 'email' || type == 'phone')) {
       return UIUtils.popover.copy(event, link);
