@@ -152,7 +152,9 @@
 
           <cs-extension-point name="before-technical"></cs-extension-point>
 
-          <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
+          <span class="item item-divider"
+                ng-if=":rebind:formData.uid"
+                translate>WOT.TECHNICAL_DIVIDER</span>
 
           <!-- Uid -->
           <span class="item item-icon-left item-text-wrap ink"

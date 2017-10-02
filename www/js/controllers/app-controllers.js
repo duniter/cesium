@@ -65,7 +65,7 @@ function PluginExtensionPointController($scope, PluginService) {
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
                        $ionicHistory, $controller, $window, csPlatform,
-                       UIUtils, BMA, csWallet, Device, Modals, csConfig
+                       UIUtils, BMA, csWallet, Device, Modals, csConfig, csHttp
   ) {
   'ngInject';
 
@@ -397,13 +397,15 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Link managment (fix issue #)
   ////////////////////////////////////////
 
-  $scope.openLink = function(event, link, type) {
-    // If email, do not try to open, but copy value
-    if (!Device.enable && type && (type == 'email' || type == 'phone')) {
-      return UIUtils.popover.copy(event, link);
-    }
+  $scope.openLink = function(event, uri, options) {
+    options = options || {};
 
-    return UIUtils.link.open(event, link, type);
+    // If unable to open, just copy value
+    options.onError = function() {
+      return UIUtils.popover.copy(event, uri);
+    };
+
+    return csHttp.uri.open(uri, options);
   };
 
   ////////////////////////////////////////

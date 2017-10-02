@@ -1,6 +1,6 @@
 angular.module('cesium.http.services', ['cesium.cache.services'])
 
-.factory('csHttp', function($http, $q, csSettings, csCache, $timeout) {
+.factory('csHttp', function($http, $q, $timeout, $window, csSettings, csCache, Device) {
   'ngInject';
 
   var timeout = csSettings.data.timeout;
@@ -267,7 +267,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       pathname = pathname.substring(1);
     }
 
-    result = {
+    var result = {
       protocol: protocol ? protocol : parser.protocol,
       hostname: parser.hostname,
       host: parser.host,
@@ -280,6 +280,39 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     };
     parser.remove();
     return result;
+  }
+
+  /**
+   * Open a URI (url, email, phone, ...)
+   * @param event
+   * @param link
+   * @param type
+   */
+  function openUri(uri, options) {
+    options = options || {};
+
+    if (!uri.startsWith('http://') && !uri.startsWith('https://')) {
+      var parts = parseUri(uri);
+
+      if (!parts.protocol && options.type) {
+        parts.protocol = (options.type == 'email')  ? 'mailto:' :
+          ((options.type == 'phone') ? 'tel:' : '');
+        uri = parts.protocol + uri;
+      }
+
+      // Check if device is enable, on spcial tel: or mailto: protocole
+      var validProtocol = (parts.protocol == 'mailto:' || parts.protocol == 'tel:') && Device.enable;
+      if (!validProtocol) {
+        if (options.onError && typeof options.onError == 'function') {
+          options.onError(uri);
+        }
+        return;
+      }
+    }
+    // Note: If device is enable, this will use InAppBrowser cordova plugin (=_system)
+    $window.open(uri,
+        (options.target || (Device.enable ? '_system' : '_blank')),
+        'location=yes');
   }
 
   // Get time (UTC)
@@ -309,7 +342,8 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     getUrl : getUrl,
     getServer: getServer,
     uri: {
-      parse: parseUri
+      parse: parseUri,
+      open: openUri
     },
     date: {
       now: getDateNow

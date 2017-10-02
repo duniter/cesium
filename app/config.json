@@ -16,7 +16,10 @@
     "shareBaseUrl": "https://g1.duniter.fr",
     "helptip": {
       "enable": true,
-      "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      "installDocUrl": {
+        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "en": "https://duniter.org/en/wiki/duniter/install/"
+      }
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR",
@@ -73,7 +76,10 @@
     "shareBaseUrl": "https://g1.duniter.fr",
     "helptip": {
       "enable": true,
-      "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      "installDocUrl": {
+        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "en": "https://duniter.org/en/wiki/duniter/install/"
+      }
     },
     "license": {
       "fr-FR": "license/license_g1-fr-FR",
@@ -123,7 +129,10 @@
     "shareBaseUrl": "https://g1.duniter.fr",
     "helptip": {
       "enable": false,
-      "installDocUrl": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      "installDocUrl": {
+        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+      }
     },
     "node": {
       "host": "g1-test.duniter.org",
@@ -168,8 +177,8 @@
     "helptip": {
       "enable": false,
       "installDocUrl": {
-        "fr-FR": "http://www.le-sou.org/devenir-noeud/",
-        "en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+        "fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
+        "en": "https://duniter.org/en/wiki/duniter/install/"
       }
     },
     "license": {

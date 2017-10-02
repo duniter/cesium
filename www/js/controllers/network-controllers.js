@@ -467,19 +467,32 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
 
     $scope.isReachable = !$scope.isHttps || useSsl;
     if (!$scope.isReachable) {
-      // Get node peer info
+      // Get node from the default BMA node
       return BMA.network.peers()
         .then(function(res) {
           // find the current peer
-          var peer = _.find(res && res.peers || [], function(json) {
+          var peers = (res && res.peers || []).reduce(function(res, json) {
             var peer = new Peer(json);
-            return (peer.getServer() == node.server);
-          });
+            return (peer.getEndpoints('BASIC_MERKLED_API') || []).reduce(function(res, ep) {
+              var bma = BMA.node.parseEndPoint(ep);
+              if((bma.dns == node.host || bma.ipv4 == node.host || bma.ipv6 == node.host) && (
+                bma.port == node.port)) {
+                peer.bma = bma;
+                return res.concat(peer);
+              }
+              return res;
+            }, res);
+          }, []);
+          var peer = peers.length && peers[0];
 
+          // Current node found
           if (peer) {
             $scope.node.pubkey = peer.pubkey;
             $scope.node.currency = peer.currency;
             return csWot.extend($scope.node);
+          }
+          else {
+            console.log('Could not get peer from /network/peers');
           }
         });
     }
@@ -542,5 +555,19 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
       stateParams.tor = true;
     }
     $state.go('app.view_peer', stateParams);
+  };
+
+  /* -- manage link to raw document -- */
+
+  $scope.openRawPeering = function(event) {
+    return $scope.openLink(event,
+      ($scope.isHttps ? 'https://' : 'http://') + $scope.node.server + '/network/peering'
+    );
+  };
+
+  $scope.openRawCurrentBlock = function(event) {
+    return $scope.openLink(event,
+      ($scope.isHttps ? 'https://' : 'http://') + $scope.node.server + '/blockchain/current'
+    );
   };
 }

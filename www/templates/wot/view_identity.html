@@ -136,18 +136,18 @@
 
         <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
 
-        <!-- Uid -->
-        <ion-item class="item-icon-left" ng-if=":rebind:formData.uid">
-          <span translate>COMMON.UID</span>
-          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
-        </ion-item>
-
         <!-- Pubkey -->
         <ion-item class="item-icon-left item-text-wrap ink"
                   copy-on-click="{{:rebind:formData.pubkey}}">
           <i class="icon ion-key"></i>
           <span translate>COMMON.PUBKEY</span>
           <h4 id="pubkey" class="dark text-left">{{:rebind:formData.pubkey}}</h4>
+        </ion-item>
+
+        <!-- Uid -->
+        <ion-item class="item-icon-left" ng-if=":rebind:formData.uid">
+          <span translate>COMMON.UID</span>
+          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
         </ion-item>
       </div>
 

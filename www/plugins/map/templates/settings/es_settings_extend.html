@@ -18,7 +18,7 @@
   <div class="input-label col-33">
     <span class="" ng-class="{'gray': !formData.enableGoogleApi}"translate>MAP.SETTINGS.GOOGLE_API_KEY</span>
     <h4>
-      <a href="https://console.developers.google.com/apis/credentials/key" target="_system" translate>MAP.SETTINGS.BTN_GOOGLE_API</a>
+      <a ng-click="openLink($event, 'https://console.developers.google.com/apis/credentials/key')" translate>MAP.SETTINGS.BTN_GOOGLE_API</a>
       <span class="gray"> ({{'MAP.SETTINGS.BTN_GOOGLE_API_WARNING'|translate}})</span>
     </h4>
   </div>
