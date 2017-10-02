@@ -685,7 +685,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   $scope.selectAndCertify = function() {
 
     // Need user auth - fix #513
-    return $scope.auth({minData: true})
+    return csWallet.auth({minData: true})
 
       .then(function(walletData) {
         if (!csCurrency.data.initPhase && !walletData.isMember) {

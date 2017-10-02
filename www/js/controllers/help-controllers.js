@@ -860,7 +860,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
     ];
 
     return csCurrency.parameters().then(function(parameters) {
-      contentParams = parameterss;
+      contentParams = parameters;
       return $scope.executeStep('certs', steps, startIndex);
     });
   };
