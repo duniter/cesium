@@ -608,7 +608,6 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       },
 
       function() {
-        console.log("TOTOTO");
         return $scope.showHelpTip('helptip-wot-view-certifications-count', {
           bindings: {
             content: 'HELP.TIP.WOT_VIEW_CERTIFICATIONS_CLICK',
