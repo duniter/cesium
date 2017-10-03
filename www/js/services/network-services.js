@@ -507,13 +507,17 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         _.forEach(data.peers, function(peer){
           if (peer.buid) {
             var buid = buids[peer.buid];
-            if (!buid) {
+            if (!buid || !buid.medianTime) {
               buid = {
                 buid: peer.buid,
                 count: 0,
                 medianTime: peer.medianTime
               };
               buids[peer.buid] = buid;
+            }
+            // If not already done, try to fill medianTime (need to compute consensusBlockDelta)
+            else if (!buid.medianTime && peer.medianTime) {
+              buid.medianTime = peer.medianTime;
             }
             if (buid.buid != constants.UNKNOWN_BUID) {
               buid.count++;
