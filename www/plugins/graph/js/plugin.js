@@ -9,5 +9,6 @@ angular.module('cesium.graph.plugin', [
     'cesium.graph.currency.controllers',
     'cesium.graph.account.controllers',
     'cesium.graph.docstats.controllers',
+    'cesium.graph.synchro.controllers'
   ])
 ;

@@ -1,0 +1,26 @@
+<ion-view left-buttons="leftButtons"
+          cache-view="false">
+  <ion-nav-title>
+    {{'GRAPH.DOC_STATS.TITLE' | translate}}
+  </ion-nav-title>
+
+  <ion-content scroll="true" class="padding" >
+
+    <div class="list" >
+
+      <!-- Doc stat -->
+      <div class="center padding" ng-if="loading">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+
+      <div class="item no-padding-xs" ng-if="!loading"
+           ng-repeat="chart in charts"
+           ng-include="'plugins/graph/templates/docstats/graph.html'"
+           ng-init="setSize(250, 1000)">
+      </div>
+
+    </div>
+
+  </ion-content>
+
+</ion-view>

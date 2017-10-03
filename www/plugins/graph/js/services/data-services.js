@@ -10,6 +10,9 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
         wot: {},
         blockchain: {},
         docstat: {},
+        synchro: {
+          execution: {}
+        },
         raw: {
           block: {
             search: esHttp.post('/:currency/block/_search')
@@ -25,6 +28,9 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           },
           docstat: {
             search: esHttp.post('/docstat/record/_search')
+          },
+          synchro: {
+            search: esHttp.post('/:currency/synchro/_search')
           }
         },
         regex: {
@@ -772,6 +778,114 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
           }, {
             times: _.pluck(res, 'from')
           });
+        });
+    };
+
+
+    /**
+     * Graph: "statictics on ES documents"
+     * @param currency
+     * @returns {*}
+     */
+    exports.synchro.execution.get = function(options) {
+
+      options = _initRangeOptions(options);
+
+      var jobs = [];
+
+      var from = moment.unix(options.startTime).utc().startOf(options.rangeDuration);
+      var to = moment.unix(options.endTime).utc().startOf(options.rangeDuration);
+      var ranges = [];
+      while(from.isBefore(to)) {
+
+        ranges.push({
+          from: from.unix(),
+          to: from.add(1, options.rangeDuration).unix()
+        });
+
+        // Flush if max range count, or just before loop condition end (fix #483)
+        var flush = (ranges.length === options.maxRangeSize) || !from.isBefore(to);
+        if (flush) {
+          var request = {
+            size: 0,
+            aggs: {
+              range: {
+                range: {
+                  field: "time",
+                  ranges: ranges
+                },
+                aggs: {
+                  result: {
+                    nested: {
+                      path: "result"
+                    },
+                    aggs: {
+                      inserts : {
+                        sum: {
+                          field : "result.inserts"
+                        }
+                      },
+                      updates : {
+                        sum: {
+                          field : "result.updates"
+                        }
+                      },
+                      deletes : {
+                        sum: {
+                          field : "result.deletes"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+          };
+
+          // prepare next loop
+          ranges = [];
+
+          if (jobs.length == 10) {
+            console.error('Too many parallel jobs!');
+            from = moment.unix(options.endTime).utc(); // stop while
+          }
+          else {
+            jobs.push(
+              exports.raw.synchro.search(request, {currency: options.currency})
+                .then(function (res) {
+                  var aggs = res.aggregations;
+
+                  return (aggs.range && aggs.range.buckets || []).reduce(function (res, agg) {
+                    return res.concat({
+                      from: agg.from,
+                      to: agg.to,
+                      inserts: agg.result.inserts.value,
+                      updates: agg.result.inserts.value,
+                      deletes: agg.result.deletes.value
+                    });
+                  }, []);
+                })
+            );
+          }
+        }
+      } // loop
+
+      return $q.all(jobs)
+        .then(function(res) {
+          res = res.reduce(function(res, hits){
+            if (!hits || !hits.length) return res;
+            return res.concat(hits);
+          }, []);
+
+          res = _.sortBy(res, 'from');
+
+          return {
+            times: _.pluck(res, 'from'),
+            inserts: _.pluck(res, 'inserts'),
+            updates: _.pluck(res, 'updates'),
+            deletes: _.pluck(res, 'deletes')
+          };
         });
     };
 

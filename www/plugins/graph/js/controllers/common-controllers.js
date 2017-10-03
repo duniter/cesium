@@ -72,6 +72,7 @@ function GpCurrencyAbstractController($scope, $filter, $ionicPopover, $ionicHist
               console.warn('[graph] currency.firstBlockTime not loaded ! Should have been loaded by currrency service!');
             }
             $scope.formData.currencyAge = _truncDate(esHttp.date.now()) - $scope.formData.firstBlockTime;
+
             return $scope.enter(e, state);
           });
       }

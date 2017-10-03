@@ -1,0 +1,22 @@
+
+  <!-- graphs button bar -->
+  <div class="button-bar-inline "
+       style="top: 33px; margin-top:-33px; position: relative;">
+    <button
+      class="button button-stable button-clear no-padding-xs pull-right"
+      ng-click="showActionsPopover($event)">
+      <i class="icon ion-navicon-round"></i>
+    </button>
+  </div>
+
+  <canvas id="synchro-chart-{{chart.id}}"
+          class="chart-bar"
+          height="{{height}}"
+          width="{{width}}"
+          chart-data="chart.data"
+          chart-labels="labels"
+          chart-dataset-override="chart.datasetOverride"
+          chart-options="chart.options">
+  </canvas>
+
+  <ng-include src="'plugins/graph/templates/common/graph_range_bar.html'"></ng-include>

@@ -89,6 +89,14 @@
         "TITLE": "Autres documents",
         "HISTORY_DELETE": "Suppressions de documents",
       }
+    },
+    "SYNCHRO": {
+      "EXECUTION": {
+        "TITLE": "Synchronisation",
+        "INSERTS": "Insertions",
+        "UPDATES": "Mises à jour",
+        "DELETES": "Suppressions"
+      }
     }
   }
 }

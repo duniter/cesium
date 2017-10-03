@@ -1,16 +1,16 @@
 
-angular.module('cesium.graph.docstats.controllers', ['chart.js', 'cesium.graph.services', 'cesium.graph.common.controllers'])
+angular.module('cesium.graph.synchro.controllers', ['chart.js', 'cesium.graph.services', 'cesium.graph.common.controllers'])
 
   .config(function($stateProvider, PluginServiceProvider, csConfig) {
     'ngInject';
 
     $stateProvider
-      .state('app.doc_stats_lg', {
-        url: "/data/stats?stepUnit&t&hide&scale",
+      .state('app.doc_synchro_lg', {
+        url: "/data/synchro?stepUnit&t&hide&scale",
         views: {
           'menuContent': {
-            templateUrl: "plugins/graph/templates/docstats/view_stats.html",
-            controller: 'GpDocStatsCtrl'
+            templateUrl: "plugins/graph/templates/synchro/view_stats.html",
+            controller: "GpSynchroCtrl"
           }
         }
       });
@@ -22,10 +22,10 @@ angular.module('cesium.graph.docstats.controllers', ['chart.js', 'cesium.graph.s
   })
 
 
-  .controller('GpDocStatsCtrl', GpDocStatsController)
+  .controller('GpSynchroCtrl', GpSynchroController)
 ;
 
-function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpData, $filter) {
+function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpData, $filter) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -38,85 +38,25 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
     // User count
     {
       id: 'user',
-      title: 'GRAPH.DOC_STATS.USER.TITLE',
+      title: 'GRAPH.SYNCHRO.EXECUTION.TITLE',
       series: [
         {
-          key: 'user_profile',
-          label: 'GRAPH.DOC_STATS.USER.USER_PROFILE',
+          key: 'inserts',
+          label: 'GRAPH.SYNCHRO.EXECUTION.INSERTS',
           color: gpColor.rgba.royal(1),
           pointHoverBackgroundColor: gpColor.rgba.royal(1)
         },
         {
-          key: 'user_settings',
-          label: 'GRAPH.DOC_STATS.USER.USER_SETTINGS',
-          color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
-        }
-      ]
-    },
-
-    // Message & Co.
-    {
-      id: 'message',
-      title: 'GRAPH.DOC_STATS.MESSAGE.TITLE',
-      series: [
-        {
-          key: 'message_inbox',
-          label: 'GRAPH.DOC_STATS.MESSAGE.MESSAGE_INBOX',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
-        },
-        {
-          key: 'message_outbox',
-          label: 'GRAPH.DOC_STATS.MESSAGE.MESSAGE_OUTBOX',
+          key: 'updates',
+          label: 'GRAPH.SYNCHRO.EXECUTION.UPDATES',
           color: gpColor.rgba.calm(1),
           pointHoverBackgroundColor: gpColor.rgba.calm(1)
         },
         {
-          key: 'invitation_certification',
-          label: 'GRAPH.DOC_STATS.MESSAGE.INVITATION_CERTIFICATION',
-          color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
-        }
-      ]
-    },
-
-    // Social Page & group
-    {
-      id: 'social',
-      title: 'GRAPH.DOC_STATS.SOCIAL.TITLE',
-      series: [
-        {
-          key: 'page_record',
-          label: 'GRAPH.DOC_STATS.SOCIAL.PAGE_RECORD',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
-        },
-        {
-          key: 'group_record',
-          label: 'GRAPH.DOC_STATS.SOCIAL.GROUP_RECORD',
-          color: gpColor.rgba.calm(1),
-          pointHoverBackgroundColor: gpColor.rgba.calm(1)
-        },
-        {
-          key: 'page_comment',
-          label: 'GRAPH.DOC_STATS.SOCIAL.PAGE_COMMENT',
-          color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
-        }
-      ]
-    },
-
-    // Other: deletion, doc, etc.
-    {
-      id: 'other',
-      title: 'GRAPH.DOC_STATS.OTHER.TITLE',
-      series: [
-        {
-          key: 'history_delete',
-          label: 'GRAPH.DOC_STATS.OTHER.HISTORY_DELETE',
-          color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          key: 'deletes',
+          label: 'GRAPH.SYNCHRO.EXECUTION.DELETES',
+          color: gpColor.rgba.assertive(0.5),
+          pointHoverBackgroundColor: gpColor.rgba.assertive(1)
         }
       ]
     }
@@ -175,7 +115,7 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
       ])),
 
       // get Data
-      gpData.docstat.get($scope.formData)
+      gpData.synchro.execution.get($scope.formData)
     ])
     .then(function(result) {
       var translations = result[0];
@@ -186,6 +126,7 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
       };
 
       result = result[1];
+      console.log("TODO", result);
       if (!result || !result.times) return; // no data
       $scope.times = result.times;
 
@@ -217,7 +158,7 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
         chart.datasetOverride = chart.series.reduce(function(res, serie) {
           return res.concat({
             yAxisID: 'y-axis',
-            type: 'line',
+            type: 'bar',
             label: translations[serie.label],
             fill: true,
             borderColor: serie.color,
