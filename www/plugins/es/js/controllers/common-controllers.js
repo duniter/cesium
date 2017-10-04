@@ -173,14 +173,12 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
         $scope.comments = data;
         $scope.comments.hasMore = (data.total > data.result.length);
         $scope.loading = false;
-        $scope.service.changes.start(id, data);
+        $scope.service.changes.start(id, data, $scope);
 
         // Set Motion
-        $timeout(function() {
-          $scope.motion.show({
-            selector: '.comments .item',
-            ink: false
-          });
+        $scope.motion.show({
+          selector: '.comments .item',
+          ink: false
         });
       });
   };
@@ -214,6 +212,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
         $scope.focusNewComment();
         return $scope.service.save($scope.id, $scope.comments, comment);
       })
+
       .catch(UIUtils.onError('REGISTRY.ERROR.FAILED_SAVE_COMMENT'));
   };
 
@@ -235,7 +234,7 @@ function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils
       bindings: {
         titleKey: 'COMMENTS.POPOVER_SHARE_TITLE',
         titleValues: {number: index ? index + 1 : 1},
-        date: comment.time,
+        date: comment.creationTime,
         value: url,
         postUrl: stateUrl,
         postMessage: comment.message

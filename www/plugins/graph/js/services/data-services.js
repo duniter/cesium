@@ -815,6 +815,24 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
                   ranges: ranges
                 },
                 aggs: {
+                  api: {
+                    terms: {
+                      field: "api",
+                      size: 0
+                    },
+                    aggs: {
+                      peer_count: {
+                        cardinality: {
+                          field: "peer"
+                        }
+                      }
+                    }
+                  },
+                  duration: {
+                    sum: {
+                      field: "executionTime"
+                    }
+                  },
                   result: {
                     nested: {
                       path: "result"
@@ -845,6 +863,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
           // prepare next loop
           ranges = [];
+          var apis = {};
 
           if (jobs.length == 10) {
             console.error('Too many parallel jobs!');
@@ -857,13 +876,20 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
                   var aggs = res.aggregations;
 
                   return (aggs.range && aggs.range.buckets || []).reduce(function (res, agg) {
-                    return res.concat({
+                    var item = {
                       from: agg.from,
                       to: agg.to,
                       inserts: agg.result.inserts.value,
                       updates: agg.result.inserts.value,
-                      deletes: agg.result.deletes.value
+                      deletes: agg.result.deletes.value,
+                      duration: agg.duration.value
+                    };
+                    _.forEach(agg.api && agg.api.buckets || [], function (api) {
+                      item[api.key] = api.peer_count && api.peer_count.value || 0;
+                      if (!apis[api.key]) apis[api.key] = true;
                     });
+
+                    return res.concat(item);
                   }, []);
                 })
             );
@@ -880,12 +906,19 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
           res = _.sortBy(res, 'from');
 
-          return {
+          var series = {
             times: _.pluck(res, 'from'),
             inserts: _.pluck(res, 'inserts'),
             updates: _.pluck(res, 'updates'),
-            deletes: _.pluck(res, 'deletes')
+            deletes: _.pluck(res, 'deletes'),
+            duration: _.pluck(res, 'duration')
           };
+
+          _.keys(apis).forEach(function(api) {
+            series[api] = _.pluck(res, api);
+          });
+
+          return series;
         });
     };
 

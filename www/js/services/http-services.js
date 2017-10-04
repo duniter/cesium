@@ -320,7 +320,6 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     return Math.floor(moment().utc().valueOf() / 1000);
   }
 
-
   function isVersionCompatible(minVersion, actualVersion) {
     // TODO: add implementation
     console.debug('[http] TODO: implement check version [{0}] compatible with [{1}]'.format(actualVersion, minVersion));

@@ -39,7 +39,7 @@
 
     <div class="card-footer gray">
       <small class="underline">
-        <a ng-click="share($event, comment, $index)">{{comment.time | formatFromNow}}</a>
+        <a ng-click="share($event, comment, $index)">{{comment.creationTime | formatFromNow}}</a>
 
         <ng-if ng-if="comment.replyCount">
           | <a class="dark" ng-click="toggleExpandedReplies(comment, $index)">{{'COMMENTS.REPLY_COUNT'|translate:comment}}</a>

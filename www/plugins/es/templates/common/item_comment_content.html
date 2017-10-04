@@ -2,7 +2,7 @@
   <div class="item item-avatar done in">
     <span class="avatar"
           ng-if="::!comment.avatar"
-          ng-class="{'avatar-member': comment.uid, 'avatar-wallet': !comment.uid}"></span>
+          ng-class="::{'avatar-member': comment.uid, 'avatar-wallet': !comment.uid}"></span>
     <span class="avatar"
           ng-if="::comment.avatar"
           style="background-image: url({{::comment.avatar.src}})"></span>
@@ -17,5 +17,5 @@
         {{::comment.issuer|formatPubkey}}
       </span>
     </a>&nbsp;
-    <span class="text-keep-lines" ng-bind-html="comment.html"></span>
+    <span trust-as-html="comment.html"></span>
   </div>

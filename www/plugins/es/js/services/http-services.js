@@ -226,7 +226,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           content = content.replace('@'+uid, link);
         });
 
-        $sce.trustAsHtml(content);
+        //$sce.trustAsHtml(content);
       }
       return content;
     }
@@ -240,14 +240,20 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       });
     }
 
-    function postRecord(path, walletData) {
+    function postRecord(path, options) {
+      options = options || {};
       var postRequest = that.post(path);
       return function(record, params) {
-        return (!walletData ? csWallet.auth() : $q.when(walletData))
+        return csWallet.auth()
           .then(function(walletData) {
-            if (!record.time) {
-              record.time = that.date.now();
+            if (options.creationTime && !record.creationTime) {
+              record.creationTime = that.date.now();
             }
+            // Always update the time - fix #572
+            // Make sure time is always > previous (required by ES node)
+            var now = that.date.now();
+            record.time = (!record.time || record.time < now) ? now : (record.time+1);
+
             var obj = {};
             angular.copy(record, obj);
             delete obj.signature;

@@ -5,8 +5,10 @@ function Comment(id, json) {
 
   that.id = id;
   that.message = null; // set in copyFromJson()
+  that.html = null; // set in copyFromJson()
   that.issuer = null; // set in copyFromJson()
   that.time = null; // set in copyFromJson()
+  that.creationTime = null; // set in copyFromJson()
   that.reply_to = null; // set in copyFromJson()
 
   that.replyCount = 0;
@@ -17,8 +19,10 @@ function Comment(id, json) {
   that.copy = function(otherComment) {
     // Mandatory fields
     that.message = otherComment.message;
+    that.html = otherComment.html;
     that.issuer = otherComment.issuer;
     that.time = otherComment.time;
+    that.creationTime = otherComment.creationTime || that.time; // fill using time, for backward compatibility
 
     // Optional fields
     that.id = otherComment.id || that.id;
@@ -36,6 +40,7 @@ function Comment(id, json) {
     that.message = json.message;
     that.issuer = json.issuer;
     that.time = json.time;
+    that.creationTime = json.creationTime || that.time;
     that.reply_to = json.reply_to;
   };
 

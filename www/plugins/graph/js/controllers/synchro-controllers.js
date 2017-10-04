@@ -35,28 +35,62 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
 
   $scope.charts = [
 
-    // User count
+    // Execution: number of doc
     {
-      id: 'user',
-      title: 'GRAPH.SYNCHRO.EXECUTION.TITLE',
+      id: 'count',
+      title: 'GRAPH.SYNCHRO.COUNT.TITLE',
       series: [
         {
           key: 'inserts',
-          label: 'GRAPH.SYNCHRO.EXECUTION.INSERTS',
+          label: 'GRAPH.SYNCHRO.COUNT.INSERTS',
           color: gpColor.rgba.royal(1),
           pointHoverBackgroundColor: gpColor.rgba.royal(1)
         },
         {
           key: 'updates',
-          label: 'GRAPH.SYNCHRO.EXECUTION.UPDATES',
+          label: 'GRAPH.SYNCHRO.COUNT.UPDATES',
           color: gpColor.rgba.calm(1),
           pointHoverBackgroundColor: gpColor.rgba.calm(1)
         },
         {
           key: 'deletes',
-          label: 'GRAPH.SYNCHRO.EXECUTION.DELETES',
+          label: 'GRAPH.SYNCHRO.COUNT.DELETES',
           color: gpColor.rgba.assertive(0.5),
           pointHoverBackgroundColor: gpColor.rgba.assertive(1)
+        }
+      ]
+    },
+
+    // Execution: number of peers
+    {
+      id: 'peer',
+      title: 'GRAPH.SYNCHRO.PEER.TITLE',
+      series: [
+        {
+          key: 'ES_USER_API',
+          label: 'GRAPH.SYNCHRO.PEER.ES_USER_API',
+          color: gpColor.rgba.royal(1),
+          pointHoverBackgroundColor: gpColor.rgba.royal(1)
+        },
+        {
+          key: 'ES_SUBSCRIPTION_API',
+          label: 'GRAPH.SYNCHRO.PEER.ES_SUBSCRIPTION_API',
+          color: gpColor.rgba.gray(0.5),
+          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+        }
+      ]
+    },
+
+    // Execution: number of peers
+    {
+      id: 'performance',
+      title: 'GRAPH.SYNCHRO.PERFORMANCE.TITLE',
+      series: [
+        {
+          key: 'duration',
+          label: 'GRAPH.SYNCHRO.PERFORMANCE.DURATION',
+          color: gpColor.rgba.gray(0.5),
+          pointHoverBackgroundColor: gpColor.rgba.gray(1)
         }
       ]
     }

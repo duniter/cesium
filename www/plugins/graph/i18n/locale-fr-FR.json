@@ -91,11 +91,21 @@
       }
     },
     "SYNCHRO": {
-      "EXECUTION": {
-        "TITLE": "Synchronisation",
+      "TITLE": "Statistiques de synchronisations",
+      "COUNT": {
+        "TITLE": "Volume synchronisé",
         "INSERTS": "Insertions",
         "UPDATES": "Mises à jour",
         "DELETES": "Suppressions"
+      },
+      "PEER": {
+        "TITLE": "Noeuds requêtés",
+        "ES_USER_API": "Noeuds données utilisateurs",
+        "ES_SUBSCRIPTION_API": "Noeuds services en lignes"
+      },
+      "PERFORMANCE": {
+        "TITLE": "Performances d'execution",
+        "DURATION": "Temps d'execution (ms)"
       }
     }
   }
