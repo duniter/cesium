@@ -50,6 +50,11 @@
       "TITLE": "Demander des certifications",
       "HELP": "Sélectionner les destinataires"
     },
+    "SEARCH": {
+      "DIVIDER_PROFILE": "Comptes",
+      "DIVIDER_PAGE": "Pages",
+      "DIVIDER_GROUP": "Groupes"
+    },
     "CONFIRM": {
       "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
       "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",

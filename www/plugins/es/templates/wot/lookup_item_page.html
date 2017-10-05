@@ -1,0 +1,24 @@
+<i ng-if="::!item.avatar" class="item-image icon ion-person"></i>
+<i ng-if="::item.avatar" class="item-image avatar" style="background-image: url({{::item.avatar.src}})"></i>
+
+<h2 ng-bind-html=":rebind:item.name"></h2>
+
+<h4 class="gray">
+  <span class="gray" ng-if="::item.city">
+    <i class="ion-location"></i>
+    {{::item.city|truncText}}
+  </span>
+</h4>
+<h4 class="dark">
+  <span class="dark" ng-if="::item.description">
+    <i class="ion-quote"></i>
+    {{::item.description|truncText}}
+  </span>
+</h4>
+<h4 ng-if="::item.tags">
+  <span ng-if="::item.tags" class="dark">
+   <ng-repeat ng-repeat="tag in ::item.tags">
+     #<ng-bind-html ng-bind-html="::tag"></ng-bind-html>
+   </ng-repeat>
+  </span>
+</h4>

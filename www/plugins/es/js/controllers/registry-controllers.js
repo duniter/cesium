@@ -28,8 +28,8 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
       }
     })
 
-    .state('app.registry_view_record', {
-      url: "/registry/view/:id/:title?refresh",
+    .state('app.view_page', {
+      url: "/page/:id/:title?refresh",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/view_record.html",
@@ -38,8 +38,8 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
       }
     })
 
-    .state('app.registry_view_record_anchor', {
-      url: "/registry/view/:id/:title/:anchor",
+    .state('app.view_page_anchor', {
+      url: "/page/:id/:title/:anchor",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/view_record.html",
@@ -532,7 +532,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
     $scope.hideActionsPopover();
     var title = $scope.formData.title;
     // Use shareBasePath (fix #530) or rootPath (fix #390)
-    var url = (csConfig.shareBaseUrl || $rootScope.rootPath) + $state.href('app.registry_view_record', {title: title, id: $scope.id});
+    var url = (csConfig.shareBaseUrl || $rootScope.rootPath) + $state.href('app.view_page', {title: title, id: $scope.id});
     // Override default position, is small screen - fix #545
     if (UIUtils.screen.isSmall()) {
       event = angular.element(document.querySelector('#registry-share-anchor-'+$scope.id)) || event;
@@ -668,7 +668,7 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
         $scope.saving = false;
         $ionicHistory.clearCache($ionicHistory.currentView().stateId); // clear current view
         $ionicHistory.nextViewOptions({historyRoot: true});
-        return $state.go('app.registry_view_record', {id: $scope.id, refresh: true});
+        return $state.go('app.view_page', {id: $scope.id, refresh: true});
       })
 
       .catch(function(err) {

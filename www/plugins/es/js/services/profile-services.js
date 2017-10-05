@@ -10,7 +10,7 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
 
   })
 
-.factory('esProfile', function($rootScope, $q, esHttp, SocialUtils, csWot, csWallet, csPlatform) {
+.factory('esProfile', function($rootScope, $q, esHttp, SocialUtils, csWot, csWallet, csPlatform, esSettings) {
   'ngInject';
 
   var
@@ -21,7 +21,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     getFields: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content&_source=:fields'),
     get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content'),
     getAll: esHttp.get('/user/profile/:id'),
-    search: esHttp.post('/user/profile/_search')
+    search: esHttp.post('/user/profile/_search'),
+    mixedSearch: esHttp.post('/user,page,group/profile,record/_search')
   };
 
   function getAvatarAndName(pubkey) {
@@ -101,6 +102,29 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     return onWotSearch(null, datas, pubkeyAtributeName);
   }
 
+  function _fillSearchResultFromHit(data, hit, avatarFieldName) {
+    data.avatar = data.avatar || esHttp.image.fromHit(hit, avatarFieldName||'avatar');
+    // name (basic or highlighted)
+    data.name = hit._source.title;
+    // Avoid too long name (workaround for #308)
+    if (data.name && data.name.length > 30) {
+      data.name = data.name.substr(0, 27) + '...';
+    }
+    data.description = hit._source.description;
+    data.city = hit._source.city;
+
+    if (hit.highlight) {
+      if (hit.highlight.title) {
+        data.name = hit.highlight.title[0];
+      }
+      if (hit.highlight.tags) {
+        data.tags = hit.highlight.tags.reduce(function(res, tag){
+          return res.concat(tag.replace('<em>', '').replace('</em>', ''));
+        },[]);
+      }
+    }
+  }
+
   function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
     deferred = deferred || $q.defer();
     if (!text && (!datas || !datas.length)) {
@@ -119,6 +143,11 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       size: 100,
       _source: ["title", "avatar._content_type"]
     };
+
+    var mixedSearch = esSettings.wot.isMixedSearchEnable();
+    if (mixedSearch) {
+      request._source = request._source.concat(["description", "thumbnail._content_type", "city", "creationTime", "membersCount"]);
+    }
 
     if (datas.length > 0) {
       // collect pubkeys and fill values map
@@ -185,52 +214,90 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       return deferred.promise;
     }
 
+    if (text && mixedSearch) {
+      request.indices_boost = {
+        "user" : 100,
+        "page" : 1,
+        "group" : 0.01
+      };
+    }
+
     var hits;
-    that.raw.search(request)
-    .then(function(res) {
-      hits = res.hits;
-      if (hits.total > 0) {
-        _.forEach(hits.hits, function(hit) {
-          var values = dataByPubkey && dataByPubkey[hit._id];
-          if (!values) {
-            var value = {};
-            value[pubkeyAtributeName] = hit._id;
-            values=[value];
-            datas.push(value);
-          }
-          var avatar = esHttp.image.fromHit(hit, 'avatar');
-          _.forEach(values, function(data) {
-            // name (basic or highlighted)
-            data.name = hit._source.title;
-            // Avoid too long name (workaround for #308)
-            if (data.name && data.name.length > 30) {
-              data.name = data.name.substr(0, 27) + '...';
-            }
-            if (hit.highlight) {
-              if (hit.highlight.title) {
-                  data.name = hit.highlight.title[0];
+
+    var search = mixedSearch ? that.raw.mixedSearch : that.raw.search;
+    search(request)
+      .then(function(res) {
+        hits = res.hits;
+        if (hits.total > 0) {
+          var indices = {};
+          var values;
+          _.forEach(hits.hits, function(hit) {
+
+            var avatarFieldName = 'avatar';
+            // User profile
+            if (hit._index == "user") {
+              values = dataByPubkey && dataByPubkey[hit._id];
+              if (!values) {
+                var value = {};
+                value[pubkeyAtributeName] = hit._id;
+                values=[value];
+                datas.push(value);
               }
-              if (hit.highlight.tags) {
-                data.tags = hit.highlight.tags.reduce(function(res, tag){
-                  return res.concat(tag.replace('<em>', '').replace('</em>', ''));
-                },[]);
-              }
+
+              avatar = esHttp.image.fromHit(hit, 'avatar');
             }
-            // avatar
-            data.avatar=avatar;
+
+            // Page or group
+            else if (hit._index != "user") {
+              if (!indices[hit._index]) {
+                indices[hit._index] = true;
+                // add a separator
+                datas.push({
+                  id: 'divider-' + hit._index,
+                  divider: true,
+                  index: hit._index
+                });
+              }
+              var item = {
+                id: hit._index + '-' + hit._id, // unique id in list
+                index: hit._index,
+                templateUrl: 'plugins/es/templates/wot/lookup_item_{0}.html'.format(hit._index),
+                state: 'app.view_{0}'.format(hit._index),
+                stateParams: {id: hit._id, title: hit._source.title},
+                creationTime: hit._source.creationTime,
+                memberCount: hit._source.memberCount
+              };
+              values=[item];
+              datas.push(item);
+              avatarFieldName = 'thumbnail';
+            }
+
+            avatar = esHttp.image.fromHit(hit, avatarFieldName);
+            _.forEach(values, function(data) {
+              data.avatar= avatar;
+              _fillSearchResultFromHit(data, hit);
+            });
           });
-        });
-      }
-      deferred.resolve(datas);
-    })
-    .catch(function(err){
-      if (err && err.ucode && err.ucode == 404) {
+
+          // Add divider on top
+          if (_.keys(indices).length) {
+            datas.splice(0,0, {
+              id: 'divider-identities',
+              divider: true,
+              index: 'profile'
+            });
+          }
+        }
         deferred.resolve(datas);
-      }
-      else {
-        deferred.reject(err);
-      }
-    });
+      })
+      .catch(function(err){
+        if (err && err.ucode && err.ucode == 404) {
+          deferred.resolve(datas);
+        }
+        else {
+          deferred.reject(err);
+        }
+      });
 
     return deferred.promise;
   }

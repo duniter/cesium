@@ -345,17 +345,19 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
       });
   };
 
-  $scope.select = function(identity) {
-    // identity = self -> open the user wallet
-    if (csWallet.isUserPubkey(identity.pubkey)) {
-      $state.go('app.view_wallet');
+  $scope.select = function(item) {
+    var state = item.state;
+
+    //  Identity
+    if (!state && item.pubkey) {
+      // identity = self -> open the user wallet
+      state = csWallet.isUserPubkey(item.pubkey)
+        ? 'app.view_wallet'
+        : 'app.wot_identity';
     }
-    // Open identity view
-    else {
-      $state.go('app.wot_identity', {
-        pubkey: identity.pubkey,
-        uid: identity.uid
-      });
+
+    if (state) {
+      $state.go(state, item.stateParams||item);
     }
   };
 

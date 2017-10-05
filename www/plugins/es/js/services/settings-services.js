@@ -43,7 +43,10 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             },
             defaultCountry: undefined,
             enableGoogleApi: false,
-            googleApiKey: undefined
+            googleApiKey: undefined,
+            wot: {
+              enableMixedSearch: true
+            }
           }
         }
     }, {plugins: {es: csConfig.plugins && csConfig.plugins.es || {}}}),
@@ -64,6 +67,16 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       csSettings.data.plugins.es &&
       csSettings.data.plugins.es.enable &&
       !!csSettings.data.plugins.es.host;
+  };
+
+  that.wot = {};
+  that.wot.isMixedSearchEnable = function() {
+    return csSettings.data.plugins &&
+      csSettings.data.plugins.es &&
+      csSettings.data.plugins.es.enable &&
+      (angular.isDefined(csSettings.data.plugins.es.wot && csSettings.data.plugins.es.wot.enableMixedSearch)
+        ? csSettings.data.plugins.es.wot.enableMixedSearch
+        : true);
   };
 
   function copyUsingSpec(data, copySpec) {

@@ -103,19 +103,23 @@
     <!-- simple selection + device -->
     <!--removeIf(no-device)-->
     <ion-list
-      ng-if="!allowMultiple && $root.device.enable"
+      ng-if="::!allowMultiple && $root.device.enable"
       class="{{::motion.ionListClass}}"
       can-swipe="true">
 
       <ion-item
         ng-repeat="identity in search.results track by identity.id"
         id="helptip-wot-search-result-{{$index}}"
-        class="item item-border-large item-avatar item-icon-right ink" ng-click="::select(identity)">
+        ng-class="::{'item-avatar item-icon-right ink': !identity.divider, 'item-divider': identity.divider}"
+        class="item item-border-large " ng-click="::select(identity)">
 
-        <ng-include src="'templates/wot/identity.html'"></ng-include>
+        <ng-include ng-if="identity.divider || identity.type" src="'templates/wot/lookup_item.html'"></ng-include>
+        <ng-include ng-if="!identity.divider && !identity.type" src="'templates/wot/identity.html'"></ng-include>
 
         <i class="icon ion-ios-arrow-right "></i>
-        <ion-option-button class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
+        <ion-option-button
+          ng-if="identity.pubkey"
+          class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
       </ion-item>
 
     </ion-list>
@@ -130,11 +134,15 @@
       <div
         ng-repeat="identity in search.results track by identity.id"
         id="helptip-wot-search-result-{{$index}}"
-        class="item item-border-large item-avatar item-icon-right ink" ng-click="::select(identity)">
+        ng-class="::{'item-avatar item-icon-right ink': !identity.divider, 'item-divider ': identity.divider}"
+        class="item item-border-large {{::identity.ionItemClass}}" ng-click="::select(identity)">
 
-        <ng-include src="'templates/wot/identity.html'"></ng-include>
+        <!-- divider -->
+        <span ng-if="identity.divider">{{::('WOT.SEARCH.DIVIDER_' + identity.index)|upper|translate}}</span>
+        <ng-include ng-if="identity.templateUrl" src="identity.templateUrl" ng-init="item=identity"></ng-include>
+        <ng-include ng-if="!identity.templateUrl && !identity.divider" src="'templates/wot/identity.html'"></ng-include>
 
-        <i class="icon ion-ios-arrow-right "></i>
+        <i ng-if="!identity.divider" class="icon ion-ios-arrow-right "></i>
       </div>
     </div>
     <!--endRemoveIf(device)-->

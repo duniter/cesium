@@ -65,37 +65,11 @@
     <div class="list {{::motion.ionListClass}}"
          ng-if="!search.loading && search.results && search.results.length > 0">
 
-      <a ng-repeat="rec in search.results"
+      <a ng-repeat="item in search.results"
          class="item ink padding-xs"
-         ui-sref="app.registry_view_record({id: rec.id, title: rec.urlTitle})">
+         ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
 
-        <div class="row row-record ">
-          <div class="col item-text-wrap item-thumbnail-left-padding"
-               ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">
-            <i class="item-image icon cion-page-{{::rec.type}}" ng-if="!rec.thumbnail"></i>
-            <i class="item-image avatar" style="background-image: url({{::rec.thumbnail.src}})" ng-if="rec.thumbnail"></i>
-            <h2 ng-bind-html="rec.title"></h2>
-            <h4 class="gray">
-              <i class="icon ion-location" ng-if="rec.city"></i>
-              <span ng-bind-html="rec.city"></span>
-            </h4>
-            <h4 class="gray" ng-if="rec.time">
-              <i class="icon ion-clock" ></i>
-              {{::rec.time | formatFromNow}}
-            </h4>
-            <span  ng-if="rec.picturesCount > 1"
-                   class="badge badge-balanced badge-picture-count">{{::rec.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
-          </div>
-          <div class="col col-20 hidden-xs">
-            <h3 class="gray">
-              <ng-if ng-if="rec.category">{{::rec.category.name}}</ng-if>
-              <!--ng-if ng-if="!rec.category">{{'REGISTRY.TYPE.ENUM.'+rec.type|translate}}</ng-if-->
-            </h3>
-          </div>
-          <div class="col">
-            <h3 class="gray text-wrap" ng-bind-html="rec.description" ng-if="rec.description"></h3>
-          </div>
-        </div>
+        <ng-include src="'plugins/es/templates/registry/lookup_item.html'"></ng-include>
       </a>
     </div>
 

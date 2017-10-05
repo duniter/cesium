@@ -46,7 +46,7 @@
 
         <a ng-repeat="rec in search.results"
            class="item item-record ink padding-xs item-icon-right"
-           ui-sref="app.registry_view_record({id: rec.id, title: rec.urlTitle})">
+           ui-sref="app.view_page({id: rec.id, title: rec.urlTitle})">
 
           <div class="item-text-wrap item-thumbnail-left-padding"
                ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">

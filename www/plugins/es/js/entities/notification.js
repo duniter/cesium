@@ -78,12 +78,12 @@ function Notification(json, markAsReadCallback) {
     that.id = json.reference.id; // Do not care about notification ID, because notification screen use message _id
   }
 
-  // registry record
-  else if (json.reference && json.reference.index == 'registry') {
+  // page record
+  else if (json.reference && json.reference.index == 'page') {
     that.avatarIcon = 'ion-ios-book';
     if (json.reference.anchor) {
       that.icon = 'ion-ios-chatbubble-outline dark';
-      that.state = 'app.registry_view_record_anchor';
+      that.state = 'app.view_page_anchor';
       that.stateParams = {
         id: json.reference.id,
         title: json.params[1],
@@ -92,7 +92,7 @@ function Notification(json, markAsReadCallback) {
     }
     else {
       that.icon = 'ion-ios-book dark';
-      that.state = 'app.registry_view_record';
+      that.state = 'app.view_page';
       that.stateParams = {
         id: json.reference.id,
         title: json.params[1]};

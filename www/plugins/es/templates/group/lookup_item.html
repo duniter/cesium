@@ -1,0 +1,18 @@
+
+  <i class="item-image avatar" style="background-image: url({{::item.avatar.src}})" ng-if="item.avatar"></i>
+  <i class="item-image icon ion-android-people" ng-if="!item.avatar"></i>
+  <i class="item-image icon-secondary ion-android-lock" ng-if="!item.avatar" style="left: 20px; top: 17px; font-size: 19px; color: #d9d9d9;"></i>
+
+  <h2 ng-bind-html=":rebind:item.title"></h2>
+
+  <!-- creation time-->
+  <h4 class="gray pull-right">
+    <i class="ion-clock"></i>
+    {{:rebind:'GROUP.CREATED_TIME'|translate: item }}
+  </h4>
+
+  <!-- membersCount -->
+  <h4 class="dark pull-left" ng-if=":rebind:item.membersCount">
+    <i class="dark ion-person"></i>
+    <span class="dark">+{{:rebind:item.membersCount}}</span>
+  </h4>

@@ -15,7 +15,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       _addUniqueIds = function(idties) {
         var idtyKeys = {};
         return idties.reduce(function(res, idty) {
-          idty.id = idty.uid + '-' + idty.pubkey;
+          idty.id = idty.id || idty.uid + '-' + idty.pubkey;
           if (!idtyKeys[idty.id]) {
             idtyKeys[idty.id] = true;
             return res.concat(idty);
