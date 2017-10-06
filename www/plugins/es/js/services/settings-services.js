@@ -107,29 +107,25 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
   }
 
   // Load settings
-  function loadSettings(pubkey, keypair) {
+  function loadSettings(pubkey, boxKeypair) {
     var now = new Date().getTime();
-    return $q.all([
-        CryptoUtils.box.keypair.fromSignKeypair(keypair),
-        that.get({id: pubkey})
-          .catch(function(err){
-            if (err && err.ucode && err.ucode == 404) {
-              return null; // not found
-            }
-            else {
-              throw err;
-            }
-          })])
+    return that.get({id: pubkey})
+        .catch(function(err){
+          if (err && err.ucode && err.ucode == 404) {
+            return null; // not found
+          }
+          else {
+            throw err;
+          }
+        })
       .then(function(res) {
-        var boxKeypair = res[0];
-        res = res[1];
         if (!res || !res._source) {
           return;
         }
         var record = res._source;
         // Do not apply if same version
         if (record.time === csSettings.data.time) {
-          console.debug('[ES] [settings] Loaded user settings in '+ (new Date().getTime()-now) +'ms (no update need)');
+          console.debug('[ES] [settings] Loaded in '+ (new Date().getTime()-now) +'ms, but already up to date');
           return;
         }
         var nonce = CryptoUtils.util.decode_base58(record.nonce);
@@ -138,13 +134,12 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           .then(function(json) {
             var settings = JSON.parse(json || '{}');
             settings.time = record.time;
-            console.debug('[ES] [settings] Loaded user settings in '+ (new Date().getTime()-now) +'ms');
-            console.debug(settings);
+            console.debug('[ES] [settings] Loaded and decrypted in '+ (new Date().getTime()-now) +'ms');
             return settings;
           })
           // if error: skip stored content
           .catch(function(err){
-            console.error('[ES] [settings] Could not read stored settings: ' + (err && err.message || 'decryption error'));
+            console.error('[ES] [settings] Could not load remote settings: ' + (err && err.message || 'decryption error'));
             // make sure to remove time, to be able to save it again
             delete csSettings.data.time;
             return null;
@@ -159,19 +154,11 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     return deferred.promise;
   }
 
-  function onWalletLogin(data, deferred) {
+  function onWalletAuth(data, deferred) {
     deferred = deferred || $q.defer();
-    if (!data || !data.pubkey || !data.keypair || !data.keypair.signSk) {
+    if (!data || !data.pubkey || !data.keypair || !data.keypair.signSk || !data.keypair.boxSk) {
       deferred.resolve();
       return deferred.promise;
-    }
-
-    // Waiting to load crypto libs
-    if (!CryptoUtils.isLoaded()) {
-      console.debug('[ES] [settings] Waiting crypto lib loading...');
-      return $timeout(function() {
-        return onWalletLogin(data, deferred);
-      }, 50);
     }
 
     console.debug('[ES] [settings] Loading user settings...');
@@ -185,7 +172,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         // Remember for comparison
         previousRemoteData = settings;
 
-        console.debug('[ES] [settings] Successfully load settings from ES');
+        console.debug('[ES] [settings] Applied');
         return storeSettingsLocally();
       })
     .then(function() {
@@ -211,7 +198,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     if (csWallet.isAuth()) {
       if (!wasEnable && isEnable) {
 
-        onWalletLogin(csWallet.data);
+        onWalletAuth(csWallet.data);
       }
       else {
         storeSettingsRemotely(data);
@@ -233,26 +220,16 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
   }
 
   function storeSettingsRemotely(data) {
-    if (!csWallet.isLogin()) return $q.when();
-
     var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
     if (previousRemoteData && angular.equals(filteredData, previousRemoteData)) {
       return $q.when();
     }
 
-    // Waiting to load crypto libs
-    if (!CryptoUtils.isLoaded()) {
-      console.debug('[ES] [settings] Waiting crypto lib loading...');
-      return $timeout(function() {
-        return storeSettingsRemotely();
-      }, 50);
-    }
-
-    var time = esHttp.date.now();
+    var time = esHttp.date.now(); // always update time
     console.debug('[ES] [settings] Saving user settings... at time ' + time);
 
     return $q.all([
-        CryptoUtils.box.keypair.fromSignKeypair(csWallet.data.keypair),
+        csWallet.getKeypair(), // same result as esWallet.box.getKeypair(), because box keypair computed on auth
         CryptoUtils.util.random_nonce()
       ])
       .then(function(res) {
@@ -303,7 +280,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     // Extend csWallet.login()
     listeners = [
       csSettings.api.data.on.reset($rootScope, onSettingsReset, this),
-      csWallet.api.data.on.login($rootScope, onWalletLogin, this)
+      csWallet.api.data.on.auth($rootScope, onWalletAuth, this)
     ];
   }
 
@@ -335,8 +312,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             console.debug("[ES] [settings] Enable");
             addListeners();
 
-            if (csWallet.isLogin()) {
-              return onWalletLogin(csWallet.data)
+            if (csWallet.isAuth()) {
+              return onWalletAuth(csWallet.data)
                 .then(function() {
                   // Emit event
                   api.state.raise.changed(enable);

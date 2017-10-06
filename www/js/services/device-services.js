@@ -94,7 +94,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
             }
           },
           function(err) {
-            console.log('XXX -> ' + err);
+            console.error('[device] Error while using barcode scanner -> ' + err);
             deferred.reject(err);
           },
           n);

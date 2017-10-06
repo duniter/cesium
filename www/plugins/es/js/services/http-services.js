@@ -193,8 +193,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
-    function trustAsHtml(text, options) {
-
+    function parseAsHtml(text, options) {
 
       var content = text ? escape(text.trim()) : undefined;
       if (content) {
@@ -208,6 +207,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         // Replace URL in description
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
+          // Redirect URL to the function 'openLink', to open a new window if need (e.g. desktop app)
           var link = '<a ng-click=\"openLink($event, \'{0}\')\">{1}</a>'.format(url, url);
           content = content.replace(url, link);
         });
@@ -225,8 +225,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           var link = '<a ui-sref=\"{0}({uid: \'{1}\'})\">@{2}</a>'.format(options.uidState, uid, uid);
           content = content.replace('@'+uid, link);
         });
-
-        //$sce.trustAsHtml(content);
       }
       return content;
     }
@@ -234,10 +232,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     function fillRecordTags(record, fieldNames) {
       fieldNames = fieldNames || ['title', 'description'];
 
-      _.forEach(fieldNames, function(fieldName) {
+      record.tags = fieldNames.reduce(function(res, fieldName) {
         var value = record[fieldName];
-        record.tags = parseTagsFromText(value);
-      });
+        var tags = value && parseTagsFromText(value);
+        return tags ? res.concat(tags) : res;
+      }, []);
     }
 
     function postRecord(path, options) {
@@ -261,7 +260,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             obj.issuer = walletData.pubkey;
 
             // Fill tags
-            fillRecordTags(obj);
+            if (options.tagFields) {
+              fillRecordTags(obj, options.tagFields);
+            }
 
             var str = JSON.stringify(obj);
 
@@ -421,7 +422,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       },
       util: {
         parseTags: parseTagsFromText,
-        trustAsHtml: trustAsHtml
+        parseAsHtml: parseAsHtml
       },
       constants: constants
     };

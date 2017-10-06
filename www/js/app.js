@@ -103,6 +103,8 @@ angular.module('cesium', ['ionic', 'ionic-material', 'ngMessages', 'pascalprecht
         options = next.data.minData ? {minData: true} : undefined;
         if (!csWallet.isDataLoaded(options)) {
           event.preventDefault();
+          // Show loading message, when full load
+          if (!options || !options.minData) UIUtils.loading.show();
           return csWallet.loadData(options)
             .then(function() {
               preventStateChange = false;

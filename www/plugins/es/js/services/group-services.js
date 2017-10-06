@@ -84,7 +84,7 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
 
     // description
     if (html) {
-      record.description = esHttp.util.trustAsHtml(record.description);
+      record.description = esHttp.util.parseAsHtml(record.description);
     }
 
     // avatar
@@ -260,8 +260,8 @@ angular.module('cesium.es.group.services', ['cesium.platform', 'cesium.es.http.s
       last: getLastGroups,
       search: searchGroups,
       load: loadData,
-      add: esHttp.record.post('/group/record'),
-      update: esHttp.record.post('/group/record/:id/_update'),
+      add: esHttp.record.post('/group/record', {tagFields: ['title', 'description']}),
+      update: esHttp.record.post('/group/record/:id/_update', {tagFields: ['title', 'description']}),
       remove: esHttp.record.remove('group', 'record'),
       fields: {
         commons: fields.commons

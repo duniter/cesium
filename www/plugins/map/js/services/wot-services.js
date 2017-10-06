@@ -174,7 +174,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       }
 
       // Description
-      item.description = hit._source.description && esHttp.util.trustAsHtml(hit._source.description);
+      item.description = hit._source.description && esHttp.util.parseAsHtml(hit._source.description);
 
       return item.geoPoint ? res.concat(item) : res;
     }, []);

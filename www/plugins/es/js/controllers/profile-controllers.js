@@ -197,7 +197,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
         }
 
         $scope.walletData.profile = angular.copy(formData);
-        $scope.walletData.profile.description = esHttp.util.trustAsHtml(formData.description);
+        $scope.walletData.profile.description = esHttp.util.parseAsHtml(formData.description);
       }
     };
 

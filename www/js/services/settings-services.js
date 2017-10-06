@@ -163,7 +163,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     return promise
       .then(function() {
         if (data.useLocalStorage) {
-          console.debug('[setting] Saved');
+          console.debug('[setting] Saved locally');
         }
 
         // Emit event on store

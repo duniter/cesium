@@ -57,13 +57,17 @@
     </div>
     <a class="button button-icon positive button-small-padding icon ion-ios-help-outline animate-show-hide "
        ng-click="showHelpModal('login-pubkey')"
+       ng-if="!expectedPubkey"
        ng-show="showPubkey">
     </a>
+    <span class="button button-icon balanced button-small-padding icon ion-checkmark animate-show-hide"
+       ng-if="expectedPubkey"
+       ng-show="showPubkey && !computing && !pubkeyError">
+    </span>
   </div>
-  <div class="form-errors"
-       ng-show="pubkeyError">
-    <div class="form-error" >
-      <span translate="ERROR.AUTH_INVALID_PUBKEY"></span>
+  <div class="form-errors" ng-if="expectedPubkey">
+    <div class="form-error" ng-show="pubkeyError">
+      <span trust-as-html="::'ERROR.AUTH_INVALID_PUBKEY'|translate:{pubkey: expectedPubkey}"></span>
     </div>
   </div>
 

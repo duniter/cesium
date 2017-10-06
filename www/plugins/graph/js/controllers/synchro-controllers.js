@@ -160,7 +160,6 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
       };
 
       result = result[1];
-      console.log("TODO", result);
       if (!result || !result.times) return; // no data
       $scope.times = result.times;
 

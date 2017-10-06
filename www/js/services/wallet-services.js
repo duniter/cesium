@@ -166,18 +166,21 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           // Send auth event (if need)
           if (needAuth || isAuth()) {
-            api.data.raise.auth();
-
             // Check if need to start/stop auth idle
             checkAuthIdle(true);
-          }
 
-          // Load data
-          if (!data.loaded) {
-            var loadOptions = options && angular.isDefined(options.minData) ? {minData: true} : undefined;
-            return loadData(loadOptions);
+            return api.data.raisePromise.auth(keepAuth ? data : authData);
           }
         }).then(function() {
+          // Load data if need
+          // If user just login, force data full load (even if min data asked)
+          // because the user can wait (after the login modal)
+          var loadOptions = !needLogin && options && options.minData ? {minData: true} : undefined;
+          if (!isDataLoaded(loadOptions)) {
+            return loadData(loadOptions);
+          }
+        })
+        .then(function() {
           if (options && options.silent) {
             UIUtils.loading.hide();
           }
@@ -327,7 +330,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           jobs.push(localStorage.put(constants.OLD_STORAGE_KEY, null));
 
           return $q.all(jobs).then(function() {
-            console.debug('[wallet] saved');
+            console.debug('[wallet] Saved locally');
           });
         }
         else {

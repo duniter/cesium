@@ -406,6 +406,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     }
   };
 
+
+
   // Default action
   $scope.init();
 

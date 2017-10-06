@@ -324,7 +324,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
                   fillSummary(message);
                 }
                 else if (content){
-                  message.html = esHttp.util.trustAsHtml(content);
+                  message.html = esHttp.util.parseAsHtml(content);
                 }
               })
               .catch(function(err){

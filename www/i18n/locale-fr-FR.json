@@ -626,7 +626,7 @@
     "WALLET_REVOKED": "Votre identité a été <b>révoquée</b> : ni votre pseudonyme ni votre clef publique ne pourront être utilisés à l'avenir pour un compte membre.",
     "WALLET_HAS_NO_SELF": "Votre identité doit d'abord avoir été publiée, et ne pas être expirée.",
     "AUTH_REQUIRED": "Authentification requise.",
-    "AUTH_INVALID_PUBKEY": "La clé publique ne correspond pas au compte connecté.",
+    "AUTH_INVALID_PUBKEY": "La clef attendue est <i class=\"ion-key\"></i> {{pubkey|formatPubkey}}...",
     "AUTH_INVALID_SCRYPT": "Identifiant ou mot de passe invalide.",
     "AUTH_INVALID_FILE": "Fichier de trousseau invalide.",
     "AUTH_FILE_ERROR": "Echec de l'ouverture du fichier de trousseau",

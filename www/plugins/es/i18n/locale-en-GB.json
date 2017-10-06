@@ -8,6 +8,7 @@
     "BTN_PUBLISH": "Publish",
     "BTN_PICTURE_DELETE": "Delete",
     "BTN_PICTURE_FAVORISE": "Default",
+    "BTN_PICTURE_ROTATE": "Rotate",
     "BTN_ADD_PICTURE": "Add picture",
     "NOTIFICATIONS": {
       "TITLE": "Notifications",
@@ -48,6 +49,11 @@
     "ASK_CERTIFICATIONS_MODAL": {
       "TITLE": "Ask certifications",
       "HELP": "Select recipients"
+    },
+    "SEARCH": {
+      "DIVIDER_PROFILE": "Accounts",
+      "DIVIDER_PAGE": "Pages",
+      "DIVIDER_GROUP": "Groups"
     },
     "CONFIRM": {
       "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",

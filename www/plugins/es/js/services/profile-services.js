@@ -71,7 +71,7 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
 
           // description
           if (!options.raw) {
-            profile.description = esHttp.util.trustAsHtml(profile.source.description);
+            profile.description = esHttp.util.parseAsHtml(profile.source.description);
           }
 
           // Social url must be unique in socials links - Workaround for issue #306:
@@ -125,6 +125,44 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
     }
   }
 
+  function onWalletLogin(data, deferred) {
+    deferred = deferred || $q.defer();
+    if (!data || !data.pubkey || !data.keypair) {
+      deferred.resolve();
+      return deferred.promise;
+    }
+
+    // Waiting to load crypto libs
+    if (!CryptoUtils.isLoaded()) {
+      console.debug('[ES] [wallet] Waiting crypto lib loading...');
+      return $timeout(function() {
+        return onWalletLogin(data, deferred);
+      }, 50);
+    }
+
+    console.debug('[ES] [wallet] Loading user avatar+name...');
+    var now = new Date().getTime();
+
+    esProfile.getAvatarAndName(data.pubkey)
+      .then(function(profile) {
+        if (profile) {
+          data.name = profile.name;
+          data.avatarStyle = profile.avatarStyle;
+          data.avatar = profile.avatar;
+          console.debug('[ES] [profile] Loaded user avatar+name in '+ (new Date().getTime()-now) +'ms');
+        }
+        else {
+          console.debug('[ES] [profil] No user avatar+name found');
+        }
+        deferred.resolve(data);
+      })
+      .catch(function(err){
+        deferred.reject(err);
+      });
+
+    return deferred.promise;
+  }
+
   function onWotSearch(text, datas, pubkeyAtributeName, deferred) {
     deferred = deferred || $q.defer();
     if (!text && (!datas || !datas.length)) {
@@ -144,9 +182,10 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       _source: ["title", "avatar._content_type"]
     };
 
-    var mixedSearch = esSettings.wot.isMixedSearchEnable();
+    var mixedSearch = text && esSettings.wot.isMixedSearchEnable();
     if (mixedSearch) {
       request._source = request._source.concat(["description", "thumbnail._content_type", "city", "creationTime", "membersCount"]);
+      console.debug("[ES] [profile] Mixed search: enable");
     }
 
     if (datas.length > 0) {
@@ -373,8 +412,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
   return {
     getAvatarAndName: getAvatarAndName,
     get: getProfile,
-    add: esHttp.record.post('/user/profile'),
-    update: esHttp.record.post('/user/profile/:id/_update'),
+    add: esHttp.record.post('/user/profile', {tagFields: ['title', 'description']}),
+    update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description']}),
     avatar: esHttp.get('/user/profile/:id?_source=avatar'),
     fillAvatars: fillAvatars
   };

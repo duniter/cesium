@@ -178,7 +178,8 @@ function ESGroupListController($scope, UIUtils, $state, csWallet, esGroup, Modal
 }
 
 
-function ESGroupViewController($scope, $state, $ionicPopover, UIUtils, csConfig, esGroup, csWallet) {
+function ESGroupViewController($scope, $state, $ionicPopover, $ionicHistory, $translate,
+                               UIUtils, csConfig, esGroup, csWallet) {
   'ngInject';
 
   $scope.formData = {};
@@ -231,6 +232,31 @@ function ESGroupViewController($scope, $state, $ionicPopover, UIUtils, csConfig,
   $scope.edit = function() {
     UIUtils.loading.show();
     $state.go('app.edit_group', {id: $scope.id});
+  };
+
+  $scope.delete = function() {
+    $scope.hideActionsPopover();
+
+    // translate
+    var translations;
+    $translate(['GROUP.VIEW.REMOVE_CONFIRMATION', 'GROUP.INFO.RECORD_REMOVED'])
+      .then(function(res) {
+        translations = res;
+        return UIUtils.alert.confirm(res['GROUP.VIEW.REMOVE_CONFIRMATION']);
+      })
+      .then(function(confirm) {
+        if (confirm) {
+          esGroup.record.remove($scope.id)
+            .then(function () {
+              $ionicHistory.nextViewOptions({
+                historyRoot: true
+              });
+              $state.go('app.groups');
+              UIUtils.toast.show(translations['GROUP.INFO.RECORD_REMOVED']);
+            })
+            .catch(UIUtils.onError('GROUP.ERROR.REMOVE_RECORD_FAILED'));
+        }
+      });
   };
 
   /* -- modals & popover -- */

@@ -18,6 +18,20 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       }
     }
 
+    function onWalletAuth(data, deferred) {
+      deferred = deferred || $q.defer();
+
+      // Generate box keypair
+      esCrypto.box.getKeypair(data.keypair)
+        .then(function(res) {
+          csWallet.data.keypair.boxSk = res.boxSk;
+          csWallet.data.keypair.boxPk = res.boxPk;
+          console.debug("[ES] [wallet] Box keypair successfully computed");
+          deferred.resolve();
+        });
+      return deferred.promise;
+    }
+
     function onWalletUnauth(data) {
       data = data || csWallet.data;
       if (data.keypair) {
@@ -95,11 +109,11 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
     }
 
     function getBoxKeypair() {
-      if (!csWallet.isLogin()) {
-        throw new Error('Unable to get box keypair: user not connected !');
+      if (!csWallet.isAuth()) {
+        throw new Error('Unable to get box keypair: user not authenticated !');
       }
 
-      return csWallet.getKeypair()
+      return csWallet.getKeypair({silent: true})
         .then(function(keypair) {
           if (keypair && keypair.boxPk && keypair.boxSk) {
             return $q.when(csWallet.data.keypair);
@@ -109,7 +123,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
         .then(function(res) {
           csWallet.data.keypair.boxSk = res.boxSk;
           csWallet.data.keypair.boxPk = res.boxPk;
-          console.debug("[ES] [wallet] Secret box keypair successfully computed");
+          console.debug("[ES] [wallet] Box keypair successfully computed");
           return csWallet.data.keypair;
         });
     }
@@ -121,7 +135,8 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
         csWallet.api.data.on.load($rootScope, onWalletLoad, this),
         csWallet.api.data.on.init($rootScope, onWalletReset, this),
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
-        csWallet.api.data.on.unauth($rootScope, onWalletUnauth, this)
+        csWallet.api.data.on.unauth($rootScope, onWalletUnauth, this),
+        csWallet.api.data.on.auth($rootScope, onWalletAuth, this)
       ];
     }
 

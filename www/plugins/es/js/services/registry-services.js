@@ -148,7 +148,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
         // parse description as Html
         if (!options.raw) {
-          record.description = esHttp.util.trustAsHtml(record.description);
+          record.description = esHttp.util.parseAsHtml(record.description);
         }
 
         // Load issuer (avatar, name, uid, etc.)
@@ -170,8 +170,8 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     exports.record = {
         search: search,
         load: loadData,
-        add: esHttp.record.post('/page/record'),
-        update: esHttp.record.post('/page/record/:id/_update'),
+        add: esHttp.record.post('/page/record', {tagFields: ['title', 'description']}),
+        update: esHttp.record.post('/page/record/:id/_update', {tagFields: ['title', 'description']}),
         remove: esHttp.record.remove('registry', 'record'),
         fields: {
           commons: fields.commons

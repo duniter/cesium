@@ -83,7 +83,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
               var comment = data.mapById[hit._id];
               comment.copyFromJson(hit._source);
               // Parse URL and hashtags
-              comment.html = esHttp.util.trustAsHtml(comment.message);
+              comment.html = esHttp.util.parseAsHtml(comment.message);
               delete incompleteCommentIdByParentIds[comment.id];
             });
 
@@ -132,7 +132,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
             data.result = res.hits.hits.reduce(function (result, hit) {
               var comment = new Comment(hit._id, hit._source);
               // Parse URL and hashtags
-              comment.html = esHttp.util.trustAsHtml(comment.message);
+              comment.html = esHttp.util.parseAsHtml(comment.message);
               // fill map by id
               data.mapById[comment.id] = comment;
               return result.concat(comment);
@@ -218,7 +218,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
                   if (comment) {
                     comment.copyFromJson(change._source);
                     // Parse URL and hashtags
-                    comment.html = esHttp.util.trustAsHtml(comment.message);
+                    comment.html = esHttp.util.parseAsHtml(comment.message);
                     exports.raw.refreshTreeLinks(data);
                   }
                   // create (if not in pending comment)
@@ -227,7 +227,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
                     comment.addOnRemoveListener(onRemoveListener);
                     comment.isnew = true;
                     // Parse URL and hashtags
-                    comment.html = esHttp.util.trustAsHtml(comment.message);
+                    comment.html = esHttp.util.parseAsHtml(comment.message);
                     // fill map by id
                     data.mapById[change._id] = comment;
                     exports.raw.refreshTreeLinks(data)
@@ -298,7 +298,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
         }
 
         // Parse URL and hashtags
-        entity.html = esHttp.util.trustAsHtml(entity.message);
+        entity.html = esHttp.util.parseAsHtml(entity.message);
 
         // Send add request
         if (!id) {

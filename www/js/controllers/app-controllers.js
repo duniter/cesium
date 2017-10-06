@@ -209,15 +209,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     if (options.auth && !csWallet.isAuth()) {
       return csWallet.auth(options)
         .then(function (walletData) {
-          if (walletData) {
-            // Force full load, even if min data asked
-            // Because user can wait when just filled login (by modal)
-            if (options && options.minData) options.minData = false;
-            return $scope.loadWalletData(options);
-          }
-          else { // failed to auth
-            throw 'CANCELLED';
-          }
+          if (walletData) return walletData;
+          // failed to auth
+          throw 'CANCELLED';
         });
     }
 
@@ -225,15 +219,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     else if (!csWallet.isLogin()) {
       return csWallet.login(options)
         .then(function (walletData) {
-          if (walletData) {
-            // Force full load, even if min data asked
-            // Because user can wait when just filled login (by modal)
-            if (options && options.minData) options.minData = false;
-            return $scope.loadWalletData(options);
-          }
-          else { // failed to login
-            throw 'CANCELLED';
-          }
+          if (walletData) return walletData;
+          // failed to login
+          throw 'CANCELLED';
         });
     }
 
@@ -341,8 +329,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     $scope.login = false;
     $rootScope.walletData = {};
   });
-  csWallet.api.data.on.auth($scope, function() {
+  csWallet.api.data.on.auth($scope, function(data, deferred) {
+    deferred = deferred || $q.defer();
     $scope.auth = true;
+    deferred.resolve();
+    return deferred.promise;
   });
   csWallet.api.data.on.unauth($scope, function() {
     $scope.auth = false;

@@ -237,7 +237,8 @@
     },
     "VIEW": {
       "POPOVER_SHARE_TITLE": "{{title}}",
-      "MENU_TITLE": "Options"
+      "MENU_TITLE": "Options",
+      "REMOVE_CONFIRMATION" : "Êtes-vous sûr de vouloir supprimer ce groupe ?<br/><br/>Cette opération est irréversible."
     },
     "EDIT": {
       "TITLE": "Groupe",
@@ -248,7 +249,11 @@
       "RECORD_DESCRIPTION_HELP": "Description"
     },
     "ERROR": {
-      "SEARCH_GROUPS_FAILED": "Echec de la recherche de groupes"
+      "SEARCH_GROUPS_FAILED": "Echec de la recherche de groupes",
+      "REMOVE_RECORD_FAILED": "Erreur de la suppression du groupe"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Group supprimé"
     }
   },
   "REGISTRY": {
