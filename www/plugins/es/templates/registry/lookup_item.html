@@ -18,7 +18,7 @@
   <div class="col col-20 hidden-xs">
     <h3 class="gray">
       <ng-if ng-if="item.category">{{::item.category.name}}</ng-if>
-      <!--ng-if ng-if="!item.category">{{'REGISTRY.TYPE.ENUM.'+item.type|translate}}</ng-if-->
+      <ng-if ng-if="!item.category">{{'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}</ng-if>
     </h3>
   </div>
   <div class="col">
