@@ -39,7 +39,7 @@
             </a>
             <span ng-if="formData.city && formData.type">&nbsp;|&nbsp;</span>
             <a ng-if="formData.type" ui-sref="app.registry_lookup({type:formData.type})">
-              <i class="icon ion-flag"></i>
+              <i class="cion-page-{{formData.type}}"></i>
               {{'REGISTRY.TYPE.ENUM.'+formData.type|upper|translate}}
             </a>
           </h2>
@@ -91,7 +91,7 @@
         </div>
 
         <ion-item>
-          <h2 ng-bind-html="formData.description"></h2>
+          <h2 trust-as-html="formData.description"></h2>
         </ion-item>
 
         <ion-item>

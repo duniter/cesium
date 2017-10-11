@@ -8,6 +8,11 @@
     <i class="ion-location"></i>
     {{::item.city|truncText}}
   </span>
+  <span ng-if="::item.city && item.type">|</span>
+  <span ng-if="item.type">
+    <i class="cion-page-{{item.type}}"></i>
+    {{::'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}
+  </span>
 </h4>
 <h4 class="dark">
   <span class="dark" ng-if="::item.description">
