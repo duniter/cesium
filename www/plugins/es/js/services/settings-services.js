@@ -236,6 +236,10 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         var boxKeypair = res[0];
         var nonce = res[1];
 
+        // Make sure user has not disconnect
+        // This can occur, when auth + disabling ES plugin in settings
+        if (!boxKeypair.boxPk || !boxKeypair.boxSk) return;
+
         var record = {
           issuer: csWallet.data.pubkey,
           nonce: CryptoUtils.util.encode_base58(nonce),
@@ -243,7 +247,6 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         };
 
         //console.debug("Will store settings remotely: ", filteredData);
-
         var json = JSON.stringify(filteredData);
 
         return CryptoUtils.box.pack(json, nonce, boxKeypair.boxPk, boxKeypair.boxSk)
@@ -253,9 +256,13 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             return !data.time ?
               that.add(record) :
               that.update(record, {id: record.issuer});
+          })
+          .then(function() {
+            return true;
           });
       })
-      .then(function() {
+      .then(function(saved) {
+        if (!saved) return;
         // Update settings version, then store (on local store only)
         csSettings.data.time = time;
         previousRemoteData = filteredData;

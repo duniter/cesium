@@ -63,7 +63,6 @@ function Invitation(json) {
       that.uid = identity.uid;
     }
 
-
   }
 
 }

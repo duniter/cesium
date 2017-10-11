@@ -94,6 +94,15 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
   function onNewInvitationEvent(event) {
     console.debug("[ES] [invitation] detected new invitation (from notification service)");
 
+    // If user not auth: simply increment counter
+    if (!csWallet.isAuth()) {
+      $rootScope.$apply(function() {
+        csWallet.data.invitations = csWallet.data.invitations || {};
+        csWallet.data.invitations.unreadCount++;
+      });
+      return;
+    }
+
     getInvitationById(event.reference.id, event.reference.type)
       .then(function(invitation){
         csWallet.data.invitations = csWallet.data.invitations || {};

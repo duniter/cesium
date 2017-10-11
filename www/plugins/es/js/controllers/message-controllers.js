@@ -61,7 +61,7 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 ;
 
 function ESMessageListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout,
-                                 esModals, UIUtils, esMessage) {
+                                 csWallet, esModals, UIUtils, esMessage) {
   'ngInject';
 
   $scope.loading = true;
@@ -267,7 +267,7 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
 
   // Watch received message
   $scope.onNewInboxMessage = function(notification) {
-    if ($scope.type != 'inbox') return;
+    if ($scope.type != 'inbox' || !$scope.entered) return;
     // Add message sent to list
     $scope.loading = true;
     // Load the the message
@@ -282,6 +282,15 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
       });
   };
   esMessage.api.data.on.new($scope, $scope.onNewInboxMessage);
+
+  // Watch unauth
+  $scope.onUnauth = function() {
+    // Reset all data
+    $scope.messages = undefined;
+    $scope.loading = false;
+    $scope.entered = false;
+  };
+  csWallet.api.data.on.unauth($scope, $scope.onUnauth);
 
   // for DEV only
   /*$timeout(function() {

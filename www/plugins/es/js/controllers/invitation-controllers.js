@@ -194,6 +194,11 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   $scope.showNewInvitationModal = function() {
     $scope.hideActionsPopover();
 
+    // Not allow for non-member - issue #561
+    if (!csWallet.data.isMember) {
+      return UIUtils.alert.error('ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION');
+    }
+
     esModals.showNewInvitation({});
   };
 

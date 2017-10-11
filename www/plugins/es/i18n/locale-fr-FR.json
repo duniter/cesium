@@ -99,7 +99,7 @@
       "REMOVE_INVITATION_FAILED": "Erreur lors de la suppression de l'invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Erreur lors de la suppression des invitations",
       "SEND_INVITATION_FAILED": "Erreur lors de l'envoi de l'invitation",
-      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation illisible (format inconnu)</span> - envoyée par <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a>"
+      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation illisible (format inconnu)</span> - envoyée par <a ui-sref=\"app.wot_identity({pubkey: '{{::pubkey}}', uid: '{{::uid}}' })\">{{::name||uid}}</a>"
     }
   },
   "COMMENTS": {

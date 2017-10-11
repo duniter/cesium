@@ -99,7 +99,7 @@
       "REMOVE_INVITATION_FAILED": "Error while deleting the invitation",
       "REMOVE_ALL_INVITATIONS_FAILED": "Error while deleting invitations",
       "SEND_INVITATION_FAILED": "Error while sending invitation",
-      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid||pubkey}}</a>"
+      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invitation unreadable (format unknown)</span> - sent by <a ui-sref=\"app.wot_identity({pubkey: '{{::pubkey}}', uid: '{{::uid}}' })\">{{::name||uid}}</a>"
     }
   },
   "COMMENTS": {

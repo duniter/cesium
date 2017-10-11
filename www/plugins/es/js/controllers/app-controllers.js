@@ -125,8 +125,6 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
           popover.scope.closePopover();
         });
       }
-    })
-      .then(function() {
     });
   };
 
