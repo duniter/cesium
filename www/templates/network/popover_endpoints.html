@@ -1,14 +1,14 @@
-<ion-popover-view class="popover-endpoints" style="height: {{(titleKey?44:0)+((!endpoints || endpoints.length &lt;= 1) ? 50 : endpoints.length*22)}}px">
-  <ion-content scroll="false">
-    <div class="bar bar-header" ng-if="titleKey">
-      <h1 class="title">
-        {{titleKey | translate:titleValues }}
-      </h1>
+<ion-popover-view class="popover-endpoints popover-light" style="height: {{(titleKey?30:0)+((!items || items.length &lt;= 1) ? 55 : 3+items.length*52)}}px">
+  <ion-header-bar class="bar bar-header stable-bg" ng-if="titleKey">
+    <div class="title">
+      {{titleKey | translate:titleValues }}
     </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
     <div class="list" ng-class="{'has-header': titleKey}">
-      <div class="item item-input" ng-repeat="endpoint in endpoints">
-        <span class="input-label" ng-if="valueKey">{{valueKey | translate}}</span>
-        <div id="endpoint_{{$index}}" class="item-note text-right">{{endpoint}}</span>
+      <div class="item item-text-wrap" ng-repeat="item in items">
+        <div class="item-label" ng-if="item.label">{{item.label | translate}}</div>
+        <div id="endpoint_{{$index}}" class="badge item-note dark">{{item.value}}</span>
       </div>
     </div>
   </ion-content>

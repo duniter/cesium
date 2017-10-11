@@ -564,7 +564,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       matches = exports.regexp.WS2P_ENDPOINT.exec(endpoint);
       if (matches) {
         return {
-          "uuid": matches[1] || '',
+          "ws2pid": matches[1] || '',
           "dns": matches[3] || '',
           "ipv4": matches[5] || '',
           "ipv6": matches[7] || '',

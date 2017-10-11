@@ -277,7 +277,10 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     endpoints = (endpoints||[]).reduce(function(res, ep) {
         var parts = ep.split(' ');
         if (parts[0] == endpointFilter) {
-          return res.concat(parts[1] + (parts[2] != 80 ? (':'+parts[2]) : ''));
+          return res.concat({
+            label: 'NETWORK.VIEW.NODE_ADDRESS',
+            value: parts[1] + (parts[2] != 80 ? (':'+parts[2]) : '')
+          });
         }
         return res;
       }, []);
@@ -287,12 +290,33 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
       templateUrl: 'templates/network/popover_endpoints.html',
       bindings: {
         titleKey: 'NETWORK.VIEW.ENDPOINTS.' + endpointFilter,
-        valueKey: 'NETWORK.VIEW.NODE_ADDRESS',
-        endpoints: endpoints
+        items: endpoints
       }
     });
     $event.stopPropagation();
   };
+
+  $scope.showWs2pPopover = function($event, peer) {
+    UIUtils.popover.show($event, {
+      templateUrl: 'templates/network/popover_endpoints.html',
+      bindings: {
+        titleKey: 'NETWORK.VIEW.ENDPOINTS.WS2P',
+        valueKey: 'NETWORK.VIEW.NODE_ADDRESS',
+        items: [
+          {
+            label: 'NETWORK.VIEW.WS2PID',
+            value: peer.bma.ws2pid
+          },
+          {
+            label: 'NETWORK.VIEW.POW_PREFIX',
+            value: peer.powPrefix
+          }]
+      }
+    });
+    $event.stopPropagation();
+  };
+
+
 
   /* -- help tip -- */
 

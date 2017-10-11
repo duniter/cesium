@@ -256,10 +256,13 @@
     "VIEW": {
       "MEDIAN_TIME": "Blockchain time",
       "LOADING_PEERS": "Loading peers...",
-      "NODE_ADDRESS": "Peer address",
+      "NODE_ADDRESS": "Peer address:",
+      "WS2PID": "Identitifer:",
+      "POW_PREFIX": "Proof of work prefix:",
       "ENDPOINTS": {
         "BMAS": "Secure endpoint (SSL)",
         "BMATOR": "TOR endpoint",
+        "WS2P": "WS2P endpoint",
         "ES_USER_API": "Cesium+ data node"
       }
     },

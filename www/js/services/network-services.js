@@ -92,8 +92,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           .then(function (res) {
             data.ws2pHeads = res.heads ? res.heads.reduce(function (res, hit) {
               if (hit.message && hit.sig) {
-                var head = hit.message.split(':');
-                res[head[2]/*pubkey*/] = head[3]/*buid*/;
+                var head = new Ws2pMessage(hit.message);
+                res[[head.pubkey, head.ws2pid].join('-')] = head;
               }
               return res;
             }, {}) : {};
@@ -357,10 +357,14 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         }
 
         if (peer.bma.useWs2p && data.ws2pHeads) {
-          peer.buid = data.ws2pHeads[peer.pubkey];
+          var head = data.ws2pHeads[[peer.pubkey, peer.bma.ws2pid].join('-')];
+          if (head) {
+            peer.buid = head.buid;
+            peer.currentNumber=peer.buid && peer.buid.split('-')[0];
+            peer.version = head.version;
+            peer.powPrefix = head.powPrefix;
+          }
           peer.online = !!peer.buid;
-          peer.currentNumber=peer.buid && peer.buid.split('-')[0];
-          delete peer.version;
 
           if (peer.uid && data.expertMode && data.difficulties) {
             peer.difficulty = data.difficulties[peer.uid];

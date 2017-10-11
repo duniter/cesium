@@ -28,7 +28,9 @@
           <span ng-if=":rebind:peer.isSsl()">
             <i class="ion-locked"></i><small class="hidden-md"> SSL</small>
           </span>
-          <span ng-if=":rebind:peer.isWs2p()" title="WS2P">
+          <span ng-if=":rebind:peer.isWs2p()"
+                ng-click="showWs2pPopover($event, peer)"
+                title="WS2P">
             <i class="ion-arrow-swap"></i><small class="hidden-md"> WS2P</small>
           </span>
         </div>
