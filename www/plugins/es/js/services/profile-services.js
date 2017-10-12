@@ -182,9 +182,11 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       _source: ["title", "avatar._content_type"]
     };
 
-    var mixedSearch = text && esSettings.wot.isMixedSearchEnable();
+    // TODO: uncomment
+    //var mixedSearch = text && esSettings.wot.isMixedSearchEnable();
+    var mixedSearch = false;
     if (mixedSearch) {
-      request._source = request._source.concat(["description", "thumbnail._content_type", "city", "creationTime", "membersCount", "type"]);
+      request._source = request._source.concat(["description", "city", "creationTime", "membersCount", "type"]);
       console.debug("[ES] [profile] Mixed search: enable");
     }
 
