@@ -301,7 +301,7 @@
   "WOT": {
     "SEARCH_HELP": "Search (member or public key)",
     "SEARCH_INIT_PHASE_WARNING": "During the pre-registration phase, the search for pending registrations <b>may be long</b>. Please wait ...",
-    "REGISTERED_SINCE": "Registration",
+    "REGISTERED_SINCE": "Registered on",
     "REGISTERED_SINCE_BLOCK": "Registered since block #",
     "NO_CERTIFICATION": "No validated certification",
     "NO_GIVEN_CERTIFICATION": "No given certification",

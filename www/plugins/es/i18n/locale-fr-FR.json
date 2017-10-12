@@ -253,7 +253,7 @@
       "REMOVE_RECORD_FAILED": "Erreur de la suppression du groupe"
     },
     "INFO": {
-      "RECORD_REMOVED" : "Group supprimé"
+      "RECORD_REMOVED" : "Groupe supprimé"
     }
   },
   "REGISTRY": {
@@ -326,6 +326,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Profil Cesium+",
+    "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, stockées en dehors du réseau de la monnaie.",
     "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
@@ -373,7 +374,7 @@
       "PROFILE_SAVED": "Profil sauvegardé"
     },
     "HELP": {
-      "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>."
+      "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>.<br/>{{'PROFILE.PROFILE_DIVIDER_HELP'|translate}}"
     }
   },
   "SUBSCRIPTION": {

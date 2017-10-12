@@ -8,6 +8,7 @@
     "BTN_PUBLISH": "Publicar",
     "BTN_PICTURE_DELETE": "Suprimir",
     "BTN_PICTURE_FAVORISE": "Principal",
+    "BTN_PICTURE_ROTATE": "Girar",
     "BTN_ADD_PICTURE": "Añadir una foto",
     "NOTIFICATIONS": {
       "TITLE": "Notificaciónes",
@@ -48,6 +49,11 @@
     "ASK_CERTIFICATIONS_MODAL": {
       "TITLE": "Solicitar certificaciónes",
       "HELP": "Selectionar los destinatarios"
+    },
+    "SEARCH": {
+      "DIVIDER_PROFILE": "Cuentas",
+      "DIVIDER_PAGE": "Páginas",
+      "DIVIDER_GROUP": "Grupos"
     },
     "CONFIRM": {
       "SUGGEST_CERTIFICATIONS": "Está usted segura/o querer <b>mandar estas sugerencia de certificatión</b> ?",
@@ -204,6 +210,7 @@
     "LOCATION_DIVIDER": "Dirección",
     "SOCIAL_NETWORKS_DIVIDER": "Redes sociales y sitio web",
     "TECHNICAL_DIVIDER": "Informaciónes técnicas",
+    "CREATED_TIME": "Creada {{creationTime|formatFromNow}}",
     "NOTIFICATIONS": {
       "TITLE": "Invitaciónes"
     },
@@ -227,6 +234,10 @@
         "OPEN": "Grupo abierto",
         "MANAGED": "Grupo administrado"
       }
+    },
+    "VIEW": {
+      "POPOVER_SHARE_TITLE": "{{title}}",
+      "MENU_TITLE": "Opciones"
     },
     "EDIT": {
       "TITLE": "Grupo",
@@ -304,11 +315,13 @@
       "FAILED_REMOVE_COMMENT": "Fracaso durante la supresión del comentario",
     },
     "INFO": {
-      "RECORD_REMOVED" : "Página suprimida"
+      "RECORD_REMOVED" : "Página suprimida",
+      "RECORD_SAVED": "Página guardada"
     }
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Perfil Cesium+",
+    "PROFILE_DIVIDER_HELP": "Estos son datos auxiliares, almacenados fuera de la red monetaria.",
     "NO_PROFILE_DEFINED": "Ningún perfil Cesium+",
     "BTN_ADD": "Ingresar mi perfil",
     "BTN_EDIT": "Editar mi perfil",
@@ -356,7 +369,7 @@
       "PROFILE_SAVED": "Perfil respaldado"
     },
     "HELP": {
-      "WARNING_PUBLIC_DATA": "Las informaciónes informadas en su perfil <b>están públicas</b> : visibles también por personas <b>no conectadas</b>."
+      "WARNING_PUBLIC_DATA": "Las informaciónes informadas en su perfil <b>están públicas</b> : visibles también por personas <b>no conectadas</b>.<br/>{{'PROFILE.PROFILE_DIVIDER_HELP'|translate}}"
     }
   },
   "SUBSCRIPTION": {

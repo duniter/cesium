@@ -275,6 +275,7 @@
   },
   "PROFILE": {
     "PROFILE_DIVIDER": "Cesium+ profile",
+    "PROFILE_DIVIDER_HELP": "These are ancillary data, stored outside the currency network.",
     "NO_PROFILE_DEFINED": "No Cesium+ profile",
     "BTN_ADD": "Create my profile",
     "BTN_EDIT": "Edit my profile",
@@ -322,7 +323,7 @@
       "PROFILE_SAVED": "Profile saved"
     },
     "HELP": {
-      "WARNING_PUBLIC_DATA": "Please note that the information published here <b>is public</b>: visible including by <b>not logged in people</b>."
+      "WARNING_PUBLIC_DATA": "Please note that the information published here <b>is public</b>: visible including by <b>not logged in people</b>.<br/>{{'PROFILE.PROFILE_DIVIDER_HELP'|translate}}"
     }
   },
   "SUBSCRIPTION": {

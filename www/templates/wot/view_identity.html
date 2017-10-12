@@ -20,7 +20,7 @@
           <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
         </ng-if>
         <h4 class="assertive">
-          <ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && !revoked" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if>
+          <!--<ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && !revoked" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if>-->
           <ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</ng-if>
           <ng-if ng-if="::(formData.name || formData.uid) && formData.isMember && revoked" translate>WOT.MEMBER_PENDING_REVOCATION_PARENTHESIS</ng-if>
         </h4>
@@ -73,12 +73,31 @@
 
         <span class="item item-divider" translate>WOT.GENERAL_DIVIDER</span>
 
+        <!-- Pubkey -->
+        <ion-item class="item-icon-left item-text-wrap ink"
+                  copy-on-click="{{:rebind:formData.pubkey}}">
+          <i class="icon ion-key"></i>
+          <span translate>COMMON.PUBKEY</span>
+          <h4 id="pubkey" class="dark text-left">{{:rebind:formData.pubkey}}</h4>
+        </ion-item>
+
         <div class="item item-icon-left item-text-wrap"
               ng-if=":rebind:!formData.hasSelf">
-          <i class="icon ion-card"></i>
+          <i class="icon ion-ios-help-outline positive"></i>
           <span translate>WOT.NOT_MEMBER_ACCOUNT</span>
           <h4 class="gray" translate>WOT.NOT_MEMBER_ACCOUNT_HELP</h4>
         </div>
+
+        <!-- Uid + Registration date -->
+        <ion-item class="item-icon-left" ng-if=":rebind:formData.sigDate||formData.uid">
+          <i class="icon ion-calendar"></i>
+          <span translate>COMMON.UID</span>
+          <h5 class="dark" ng-if=":rebind:formData.sigDate">
+            <span translate>WOT.REGISTERED_SINCE</span>
+            {{:rebind:formData.sigDate | formatDate}}
+          </h5>
+          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
+        </ion-item>
 
         <!-- Received certifications count -->
         <a id="helptip-wot-view-certifications"
@@ -108,14 +127,6 @@
           <i class="gray icon ion-ios-arrow-right"></i>
         </a>
 
-        <!-- Registration date -->
-        <ion-item class="item-icon-left" ng-if=":rebind:formData.sigDate">
-          <i class="icon ion-calendar"></i>
-          <span>{{'WOT.REGISTERED_SINCE' | translate}}</span>
-          <h5 class="dark">{{:rebind:formData.sigDate | formatDate}}</h5>
-          <span class="badge badge-balanced">{{:rebind:formData.sigDate | formatFromNow}}</span>
-        </ion-item>
-
         <!-- Account transaction -->
         <a class="item item-icon-left item-icon-right ink"
            ng-if="!loading"
@@ -134,21 +145,6 @@
 
         <cs-extension-point name="general"></cs-extension-point>
 
-        <span class="item item-divider" translate>WOT.TECHNICAL_DIVIDER</span>
-
-        <!-- Pubkey -->
-        <ion-item class="item-icon-left item-text-wrap ink"
-                  copy-on-click="{{:rebind:formData.pubkey}}">
-          <i class="icon ion-key"></i>
-          <span translate>COMMON.PUBKEY</span>
-          <h4 id="pubkey" class="dark text-left">{{:rebind:formData.pubkey}}</h4>
-        </ion-item>
-
-        <!-- Uid -->
-        <ion-item class="item-icon-left" ng-if=":rebind:formData.uid">
-          <span translate>COMMON.UID</span>
-          <span class="badge badge-stable">{{:rebind:formData.uid}}</span>
-        </ion-item>
       </div>
 
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>

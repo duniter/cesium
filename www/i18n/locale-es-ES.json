@@ -294,7 +294,7 @@
   "WOT": {
     "SEARCH_HELP": "Búsqueda (seudónimo o llave publica)",
     "SEARCH_INIT_PHASE_WARNING": "Durante la etapa de preinscripción, la búsqueda de las inscripciónes en espera <b>puede ser largo</b>. Gracias por su paciencia...",
-    "REGISTERED_SINCE": "Inscripción",
+    "REGISTERED_SINCE": "Registrado en",
     "REGISTERED_SINCE_BLOCK": "Registrado al bloque #",
     "NO_CERTIFICATION": "Ninguna certificación validada",
     "NO_GIVEN_CERTIFICATION": "Ninguna certificación emitida",

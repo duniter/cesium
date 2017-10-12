@@ -301,7 +301,7 @@
   "WOT": {
     "SEARCH_HELP": "Recherche (pseudo ou clé publique)",
     "SEARCH_INIT_PHASE_WARNING": "Durant la phase de pré-inscription, la recherche des inscriptions en attente <b>peut-être longue</b>. Merci de patienter...",
-    "REGISTERED_SINCE": "Inscription",
+    "REGISTERED_SINCE": "Inscrit le",
     "REGISTERED_SINCE_BLOCK": "Inscrit au block #",
     "NO_CERTIFICATION": "Aucune certification validée",
     "NO_GIVEN_CERTIFICATION": "Aucune certification émise",
