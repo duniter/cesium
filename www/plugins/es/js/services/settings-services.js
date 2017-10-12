@@ -74,9 +74,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     return csSettings.data.plugins &&
       csSettings.data.plugins.es &&
       csSettings.data.plugins.es.enable &&
-      (angular.isDefined(csSettings.data.plugins.es.wot && csSettings.data.plugins.es.wot.enableMixedSearch)
-        ? csSettings.data.plugins.es.wot.enableMixedSearch
-        : true);
+      (angular.isDefined(csSettings.data.plugins.es.wot && csSettings.data.plugins.es.wot.enableMixedSearch) ?
+        csSettings.data.plugins.es.wot.enableMixedSearch : true);
   };
 
   function copyUsingSpec(data, copySpec) {

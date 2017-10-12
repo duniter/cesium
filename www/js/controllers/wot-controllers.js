@@ -351,9 +351,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
     //  Identity
     if (!state && item.pubkey) {
       // identity = self -> open the user wallet
-      state = csWallet.isUserPubkey(item.pubkey)
-        ? 'app.view_wallet'
-        : 'app.wot_identity';
+      state = csWallet.isUserPubkey(item.pubkey) ? 'app.view_wallet' : 'app.wot_identity';
     }
 
     if (state) {
