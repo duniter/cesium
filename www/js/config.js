@@ -10,9 +10,9 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"fallbackLanguage": "fr-FR",
-	"defaultLanguage": "fr-FR",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
+	"showUDHistory": false,
 	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
@@ -22,11 +22,11 @@ angular.module("cesium.config", [])
 	"expertMode": false,
 	"decimalCount": 2,
 	"httpsMode": false,
-	"shareBaseUrl": "https://g1.le-sou.org",
+	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
 		"enable": true,
 		"installDocUrl": {
-			"fr-FR": "https://www.le-sou.org/devenir-noeud/",
+			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
 			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
@@ -35,28 +35,30 @@ angular.module("cesium.config", [])
 		"en": "license/license_g1-en"
 	},
 	"node": {
-		"host": "g1.le-sou.org",
+		"host": "g1.duniter.org",
 		"port": "443"
 	},
 	"fallbackNodes": [
-		{
-			"host": "g1.duniter.org",
-			"port": "443"
-		},
 		{
 			"host": "g1.duniter.fr",
 			"port": "443"
 		},
 		{
-			"host": "g1.le-sou.org",
+			"host": "g1.duniter.org",
 			"port": "443"
+		}
+	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
 		"es": {
 			"enable": true,
 			"askEnable": false,
-			"host": "g1.data.le-sou.org",
+			"host": "g1.data.duniter.fr",
 			"port": "443",
 			"notifications": {
 				"txSent": true,
@@ -67,8 +69,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.17.6",
-	"build": "2017-10-03T21:22:44.315Z",
+	"version": "0.18.0",
+	"build": "2017-10-12T14:42:36.097Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
