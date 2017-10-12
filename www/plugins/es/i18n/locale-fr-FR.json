@@ -320,7 +320,8 @@
       "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
     },
     "INFO": {
-      "RECORD_REMOVED" : "Page supprimée"
+      "RECORD_REMOVED" : "Page supprimée",
+      "RECORD_SAVED": "Page sauvegardée"
     }
   },
   "PROFILE": {

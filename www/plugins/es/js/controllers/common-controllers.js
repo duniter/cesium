@@ -12,6 +12,10 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 
  .controller('ESCategoryModalCtrl', ESCategoryModalController)
 
+ .controller('ESAvatarModalCtrl', ESAvatarModalController)
+
+ .controller('ESPositionEditCtrl', ESPositionEditController)
+
 ;
 
 
@@ -355,6 +359,200 @@ function ESSocialsViewController($scope)  {
 
   $scope.filterFn = function(social) {
     return !social.recipient || social.valid;
+  };
+
+}
+
+
+
+function ESAvatarModalController($scope) {
+
+  $scope.formData = {
+    initCrop: false,
+    imageCropStep: 0,
+    imgSrc: undefined,
+    result: undefined,
+    resultBlob: undefined
+  };
+
+  $scope.openFileSelector = function() {
+    var fileInput = angular.element(document.querySelector('.modal-avatar #fileInput'));
+    if (fileInput && fileInput.length > 0) {
+      fileInput[0].click();
+    }
+  };
+
+  $scope.fileChanged = function(e) {
+
+    var files = e.target.files;
+    var fileReader = new FileReader();
+    fileReader.readAsDataURL(files[0]);
+
+    fileReader.onload = function(e) {
+      $scope.formData.imgSrc = this.result;
+      $scope.$apply();
+    };
+  };
+
+  $scope.doNext = function() {
+    if ($scope.formData.imageCropStep == 2) {
+      $scope.doCrop();
+    }
+    else if ($scope.formData.imageCropStep == 3) {
+      $scope.closeModal($scope.formData.result);
+    }
+  };
+
+  $scope.doCrop = function() {
+    $scope.formData.initCrop = true;
+  };
+
+  $scope.clear = function() {
+    $scope.formData = {
+      initCrop: false,
+      imageCropStep: 1,
+      imgSrc: undefined,
+      result: undefined,
+      resultBlob: undefined
+    };
+  };
+
+}
+
+
+function ESPositionEditController($scope, $q, $translate,
+                                  csConfig, UIUtils, esGeo, ModalUtils) {
+  'ngInject';
+
+  // The default country used for address localisation
+  var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
+
+  //$scope.formData = $scope.formData || {};
+  //$scope.formData.geoPoint = $scope.formData.geoPoint || {};
+
+  $scope.localizeByAddress = function() {
+
+    return UIUtils.loading.show()
+      .then($scope.searchPositions)
+      .then(function(res) {
+        UIUtils.loading.hide();
+
+        if (!res) return; // no result, or city value just changed
+        if (res.length == 1) {
+          return res[0];
+        }
+
+        return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
+          {
+            categories : res,
+            title: 'PROFILE.MODAL_LOCATIONS.TITLE'
+          },
+          {focusFirstInput: true}
+        );
+      })
+      .then(function(res) {
+        if (res && res.lat && res.lon) {
+          $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+          $scope.formData.geoPoint.lat =  parseFloat(res.lat);
+          $scope.formData.geoPoint.lon =  parseFloat(res.lon);
+        }
+      })
+      .catch(UIUtils.onError('PROFILE.ERROR.ADDRESS_LOCATION_FAILED'));
+  };
+
+  $scope.searchPositions = function(query) {
+
+    // Build the query
+    if (!query) {
+      if (!$scope.formData.city) {
+        return $q.when(); // nothing to search
+      }
+
+      var cityPart = $scope.formData.city.split(',');
+      var city = cityPart[0];
+
+      var country = cityPart.length > 1 ? cityPart[1].trim() : defaultCountry;
+      var street = $scope.formData.address ? angular.copy($scope.formData.address.trim()) : undefined;
+      if (street) {
+        // Search with AND without street
+        return $q.all([
+          $scope.searchPositions({
+            street: street,
+            city: city,
+            country: country
+          }),
+          $scope.searchPositions({
+            city: city,
+            country: country
+          })
+        ])
+          .then(function(res){
+            return res[0].concat(res[1]);
+          });
+      }
+      else {
+        return $scope.searchPositions({
+          city: city,
+          country: country
+        });
+      }
+    }
+
+    var queryString = (query.street ? query.street + ', ' : '') +
+      query.city +
+      (query.country ? ', ' + query.country : '');
+    // Execute the given query
+    return $q.all([
+      $translate('PROFILE.MODAL_LOCATIONS.RESULT_DIVIDER', {address: queryString}),
+      esGeo.point.searchByAddress(query)
+    ])
+      .then(function(res) {
+        var dividerText = res[0];
+        res = res[1];
+        if (!res) return $q.when(); // no result
+
+        // Ask user to choose
+        var parent = {name: dividerText};
+        var hits = res.reduce(function(res, hit){
+          if (hit.class == 'waterway') return res;
+          return res.concat({
+            name: hit.display_name,
+            parent: parent,
+            lat: hit.lat,
+            lon: hit.lon
+          });
+        }, [parent]);
+
+        if (hits.length == 1) return $q.when(); // no result (after filtering)
+
+        return hits;
+      });
+  };
+
+  $scope.localizeMe = function() {
+    return esGeo.point.current()
+      .then(function(position) {
+        if (!position || !position.lat || !position.lon) return;
+        $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+        $scope.formData.geoPoint.lat =  parseFloat(position.lat);
+        $scope.formData.geoPoint.lon =  parseFloat(position.lon);
+      })
+      .catch(UIUtils.onError('PROFILE.ERROR.GEO_LOCATION_FAILED'));
+  };
+
+  $scope.removeLocalisation = function() {
+    if ($scope.formData.geoPoint) {
+      $scope.formData.geoPoint.lat = null;
+      $scope.formData.geoPoint.lon = null;
+    }
+  };
+
+  $scope.onCityChanged = function() {
+    if ($scope.loading) return;
+    var hasGeoPoint = $scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon;
+    if (!hasGeoPoint) {
+      return $scope.localizeByAddress();
+    }
   };
 
 }

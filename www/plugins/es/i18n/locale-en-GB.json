@@ -269,7 +269,8 @@
       "FAILED_REMOVE_COMMENT": "Deleting comment failed"
     },
     "INFO": {
-      "RECORD_REMOVED" : "Reference successfully deleted"
+      "RECORD_REMOVED" : "Page successfully deleted",
+      "RECORD_SAVED": "Page successfully saved"
     }
   },
   "PROFILE": {

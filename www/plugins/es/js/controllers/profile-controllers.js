@@ -20,26 +20,25 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 
  .controller('ESViewEditProfileCtrl', ESViewEditProfileController)
 
- .controller('ESAvatarModalCtrl', ESAvatarModalController)
 
 ;
 
-function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $ionicHistory,
-                           csConfig, UIUtils, esHttp, esProfile, esGeo, ModalUtils, Device) {
+function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $controller, $ionicHistory,
+                                     UIUtils, esHttp, esProfile, ModalUtils, Device) {
   'ngInject';
 
-  // The default country used for address localisation
-  var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
 
-  $scope.loading = true;
-  $scope.dirty = false;
-  $scope.walletData = null;
   $scope.formData = {
     title: null,
     description: null,
     socials: [],
     geoPoint: {}
   };
+  $scope.loading = true;
+  $scope.dirty = false;
+  $scope.walletData = null;
   $scope.avatar = null;
   $scope.existing = false;
   $scope.socialData = {
@@ -100,7 +99,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
             }
           })
           .catch(function(err) {
-
+            // Silent
           });
       }
     }
@@ -108,7 +107,9 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
 
   $scope.load = function(walletData) {
     $scope.loading = true; // to avoid the call of doSave()
-    return esProfile.get(walletData.pubkey, {raw: true})
+    return esProfile.get(walletData.pubkey, {
+        raw: true
+      })
       .then(function(profile) {
         if (profile) {
           $scope.avatar = esHttp.image.fromAttachment(profile.source.avatar);
@@ -336,164 +337,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       });
   };
 
-  $scope.localizeByAddress = function() {
-
-    return UIUtils.loading.show()
-      .then($scope.searchPositions)
-      .then(function(res) {
-        UIUtils.loading.hide();
-
-        if (!res) return; // no result, or city value just changed
-        if (res.length == 1) {
-          return res[0];
-        }
-
-        return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-          {
-            categories : res,
-            title: 'PROFILE.MODAL_LOCATIONS.TITLE'
-          },
-          {focusFirstInput: true}
-        );
-      })
-      .then(function(res) {
-        if (res && res.lat && res.lon) {
-          $scope.formData.geoPoint = $scope.formData.geoPoint || {};
-          $scope.formData.geoPoint.lat =  parseFloat(res.lat);
-          $scope.formData.geoPoint.lon =  parseFloat(res.lon);
-        }
-      })
-      .catch(UIUtils.onError('PROFILE.ERROR.ADDRESS_LOCATION_FAILED'));
-  };
-
-  $scope.searchPositions = function(query) {
-
-    // Build the query
-    if (!query) {
-      if (!$scope.formData.city) {
-        return $q.when(); // nothing to search
-      }
-
-      var cityPart = $scope.formData.city.split(',');
-      var city = cityPart[0];
-
-      var country = cityPart.length > 1 ? cityPart[1].trim() : defaultCountry;
-      var street = $scope.formData.address ? angular.copy($scope.formData.address.trim()) : undefined;
-      if (street) {
-        // Search with AND without street
-        return $q.all([
-          $scope.searchPositions({
-            street: street,
-            city: city,
-            country: country
-          }),
-          $scope.searchPositions({
-            city: city,
-            country: country
-          })
-        ])
-        .then(function(res){
-          return res[0].concat(res[1]);
-        });
-      }
-      else {
-        return $scope.searchPositions({
-          city: city,
-          country: country
-        });
-      }
-    }
-
-    var queryString = (query.street ? query.street + ', ' : '') +
-      query.city +
-      (query.country ? ', ' + query.country : '');
-    // Execute the given query
-    return $q.all([
-      $translate('PROFILE.MODAL_LOCATIONS.RESULT_DIVIDER', {address: queryString}),
-      esGeo.point.searchByAddress(query)
-    ])
-      .then(function(res) {
-        var dividerText = res[0];
-        res = res[1];
-        if (!res) return $q.when(); // no result
-
-        // Ask user to choose
-        var parent = {name: dividerText};
-        var hits = res.reduce(function(res, hit){
-          if (hit.class == 'waterway') return res;
-          return res.concat({
-            name: hit.display_name,
-            parent: parent,
-            lat: hit.lat,
-            lon: hit.lon
-          });
-        }, [parent]);
-
-        if (hits.length == 1) return $q.when(); // no result (after filtering)
-
-        return hits;
-      });
-  };
-
-  $scope.localizeMe = function() {
-    return esGeo.point.current()
-      .then(function(position) {
-        if (!position || !position.lat || !position.lon) return;
-        $scope.formData.geoPoint = $scope.formData.geoPoint || {};
-        $scope.formData.geoPoint.lat =  parseFloat(position.lat);
-        $scope.formData.geoPoint.lon =  parseFloat(position.lon);
-      })
-      .catch(UIUtils.onError('PROFILE.ERROR.GEO_LOCATION_FAILED'));
-  };
-
-  $scope.removeLocalisation = function() {
-    if ($scope.formData.geoPoint) {
-      $scope.formData.geoPoint.lat = null;
-      $scope.formData.geoPoint.lon = null;
-    }
-  };
-
-  $scope.onCityChanged = function() {
-    if ($scope.loading) return;
-    var hasGeoPoint = $scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon;
-    if (!hasGeoPoint) {
-      return $scope.localizeByAddress();
-    }
-  };
 
 }
 
 
-function ESAvatarModalController($scope) {
-
-  $scope.openFileSelector = function() {
-    var fileInput = angular.element(document.querySelector('.modal-avatar #fileInput'));
-    if (fileInput && fileInput.length > 0) {
-      fileInput[0].click();
-    }
-  };
-
-  $scope.fileChanged = function(e) {
-
-    var files = e.target.files;
-    var fileReader = new FileReader();
-    fileReader.readAsDataURL(files[0]);
-
-    fileReader.onload = function(e) {
-      $scope.imgSrc = this.result;
-      $scope.$apply();
-    };
-  };
-
-  $scope.doCrop = function() {
-    $scope.initCrop = true;
-  };
-
-  $scope.clear = function() {
-    $scope.imageCropStep = 1;
-    delete $scope.imgSrc;
-    delete $scope.result;
-    delete $scope.resultBlob;
-  };
-
-}

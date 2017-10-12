@@ -1,28 +1,27 @@
 <ion-modal-view>
   <ion-header-bar class="bar-positive">
     <button class="button button-clear visible-xs visible-sm" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+
     <h1 class="title" translate>PROFILE.MODAL_AVATAR.TITLE</h1>
 
-    <div class="buttons buttons-right">
-      <div class="secondary-buttons">
-        <button class="button button-icon button-clear ion-ios-arrow-right visible-xs visible-sm"
-                ng-if="imageCropStep == 2"
-                ng-click="doCrop()">
-        </button>
-        <button class="button button-icon button-clear ion-android-done visible-xs visible-sm"
-                ng-if="imageCropStep == 3"
-                ng-click="closeModal(result)">
-        </button>
-      </div>
-    </div>
-
-
+    <button class="button button-clear icon-right visible-xs"
+            ng-click="doCrop()"
+            ng-disabled="formData.imageCropStep == 1"
+            ng-if="formData.imageCropStep <= 2">
+      <span translate>COMMON.BTN_NEXT</span>
+      <i class="icon ion-ios-arrow-right"></i>
+    </button>
+    <button class="button button-clear icon-right visible-xs"
+            ng-click="closeModal(formData.result)"
+            ng-if="formData.imageCropStep == 3">
+      <i class="icon ion-android-done"></i>
+    </button>
   </ion-header-bar>
 
   <ion-content class="modal-avatar padding">
 
 
-    <div ng-show="imageCropStep == 1">
+    <div ng-show="formData.imageCropStep == 1">
       <p translate>PROFILE.MODAL_AVATAR.SELECT_FILE_HELP</p>
 
       <!-- Add picture button -->
@@ -37,7 +36,7 @@
              style="visibility:hidden; position:absolute;"/>
     </div>
 
-    <div ng-show="imageCropStep == 2">
+    <div ng-show="formData.imageCropStep == 2">
       <p translate>PROFILE.MODAL_AVATAR.RESIZE_HELP</p>
 
       <!-- <image-crop
@@ -58,23 +57,23 @@
           data-height="100"
           data-width="100"
           data-shape="circle"
-          data-step="imageCropStep"
-          src="imgSrc"
-          data-result="result"
-          data-result-blob="resultBlob"
-          crop="initCrop"
+          data-step="formData.imageCropStep"
+          src="formData.imgSrc"
+          data-result="formData.result"
+          data-result-blob="formData.resultBlob"
+          crop="formData.initCrop"
           padding="150"
-          max-size="1024"
-        ></image-crop>
+          max-size="1024">
+        </image-crop>
       </div>
     </div>
 
-    <div ng-show="imageCropStep == 3">
+    <div ng-show="formData.imageCropStep == 3">
       <p translate>PROFILE.MODAL_AVATAR.RESULT_HELP</p>
 
       <div class="item card padding hero" style="height: 110px;">
         <div class="content">
-          <img class="avatar" ng-src="{{result}}" style="height: 88px; width: 88px;">
+          <img class="avatar" ng-src="{{formData.result}}" style="height: 88px; width: 88px;">
         </div>
       </div>
     </div>
@@ -85,12 +84,12 @@
         COMMON.BTN_CANCEL
       </button>
       <button class="button button-calm icon-right ion-chevron-right ink" ng-click="doCrop()" translate
-              ng-disabled="imageCropStep == 1"
-              ng-if="imageCropStep <= 2">
+              ng-disabled="formData.imageCropStep == 1"
+              ng-if="formData.imageCropStep <= 2">
         COMMON.BTN_NEXT
       </button>
-      <button class="button button-positive ink" ng-click="closeModal(result)" translate
-              ng-if="imageCropStep == 3">
+      <button class="button button-positive ink" ng-click="closeModal(formData.result)" translate
+              ng-if="formData.imageCropStep == 3">
         COMMON.BTN_CONTINUE
       </button>
     </div>

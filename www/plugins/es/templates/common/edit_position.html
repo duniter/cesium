@@ -1,0 +1,102 @@
+<div class="item item-divider" translate>REGISTRY.LOCATION_DIVIDER</div>
+
+<!-- address -->
+<ion-item class="item-input item-floating-label item-button-right">
+  <span class="input-label">{{'PROFILE.ADDRESS' | translate}}</span>
+  <textarea placeholder="{{'PROFILE.ADDRESS_HELP' | translate}}"
+            ng-model="formData.address"
+            ng-model-options="{ debounce: 350 }"
+            rows="4" cols="10">
+              </textarea>
+</ion-item>
+
+<!-- city -->
+<div class="item item-input item-floating-label">
+  <span class="input-label" translate>PROFILE.CITY</span>
+  <input type="text" placeholder="{{'PROFILE.CITY_HELP'|translate}}"
+         ng-model="formData.city"
+         ng-model-options="{ updateOn: 'blur' }"
+         ng-change="onCityChanged()">
+</div>
+
+<!-- Position (lat/lon) -->
+<div class="row responsive-md responsive-sm no-padding">
+
+  <!-- lat -->
+  <div class="col no-padding">
+    <label class="item item-input item-floating-label"
+           ng-class="{'item-input-error': form.$submitted && form.latitude.$invalid}">
+      <span class="input-label" translate>PROFILE.LATITUDE</span>
+      <input class="no-padding-right"
+             name="latitude"
+             type="number" placeholder="{{'PROFILE.LATITUDE_HELP'|translate}}"
+             ng-model="formData.geoPoint.lat"
+             ng-model-options="{ debounce: 350 }"
+             ng-change="onFormDataChanged()"
+             min="-90" max="90">
+    </label>
+    <div class="form-errors"
+         ng-show="form.$submitted && form.latitude.$error"
+         ng-messages="form.latitude.$error">
+      <div class="form-error" ng-message="min">
+        <span translate="ERROR.FIELD_MIN" translate-values="{min: -90}"></span>
+      </div>
+      <div class="form-error" ng-message="max">
+        <span translate="ERROR.FIELD_MAX" translate-values="{max: 90}"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-10 no-padding hidden-xs">
+    &nbsp;
+  </div>
+
+  <!-- lon -->
+  <div class="col no-padding">
+    <label class="item item-input item-floating-label"
+           ng-class="{'item-input-error': form.$submitted && form.longitude.$invalid}">
+      <span class="input-label" translate>PROFILE.LONGITUDE</span>
+      <input class="no-padding-right"
+             name="longitude"
+             type="number" placeholder="{{'PROFILE.LONGITUDE_HELP'|translate}}"
+             ng-model="formData.geoPoint.lon"
+             ng-model-options="{ debounce: 350 }"
+             ng-change="onFormDataChanged()"
+             min="-180" max="180">
+    </label>
+    <div class="form-errors"
+         ng-show="form.$submitted && form.longitude.$error"
+         ng-messages="form.longitude.$error">
+      <div class="form-error" ng-message="min">
+        <span translate="ERROR.FIELD_MIN" translate-values="{min: -180}"></span>
+      </div>
+      <div class="form-error" ng-message="max">
+        <span translate="ERROR.FIELD_MAX" translate-values="{max: 180}"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col col-40">
+    <div class="row text-center">
+
+      <a class="col button  button-stable button-small-padding icon ion-refresh"
+         title="{{'PROFILE.BTN_GEOLOC_ADDRESS'|translate}}"
+         ng-disabled="!formData.city"
+         ng-click="localizeByAddress()">
+      </a>
+
+      <a class="col button button-stable button-small-padding icon ion-android-locate"
+         title="{{'PROFILE.BTN_GEOLOC_ME'|translate}}"
+         ng-click="localizeMe()">
+      </a>
+
+      <a class="col button button-stable button-small-padding icon ion-close"
+         title="{{'PROFILE.BTN_REMOVE_GEOLOC'|translate}}"
+         ng-disabled="!formData.geoPoint || (!formData.geoPoint.lat && !formData.geoPoint.lon)"
+         ng-click="removeLocalisation()">
+      </a>
+    </div>
+  </div>
+</div>
+
+<cs-extension-point name="after-position"></cs-extension-point>

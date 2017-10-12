@@ -15,8 +15,8 @@
   <ion-content scroll="true">
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
-        <i class="avatar cion-page-{{formData.type}}" ng-if="!formData.thumbnail"></i>
-        <i class="avatar" style="background-image: url({{::formData.thumbnail.src}})" ng-if="formData.thumbnail"></i>
+        <i class="avatar cion-page-{{formData.type}}" ng-if="!formData.avatar"></i>
+        <i class="avatar" ng-style="{{avatarStyle}}" ng-if="formData.avatar"></i>
         <h3 ng-bind-html="formData.title"></h3>
         <h4>&nbsp;</h4>
       </div>

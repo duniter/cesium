@@ -7,10 +7,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
     var
       fields = {
-        commons: ["category", "title", "description", "issuer", "time", "address", "city", "thumbnail._content_type", "picturesCount", "type", "socials", "pubkey"],
-        comment: {
-          commons: ["issuer", "time", "message"],
-        }
+        commons: ["title", "description", "issuer", "time", "address", "city", "creationTime", "avatar._content_type", "picturesCount", "type", "category", "socials", "pubkey"]
       };
     var
       exports = {
@@ -76,7 +73,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       }
 
       // thumbnail
-      record.thumbnail = esHttp.image.fromHit(hit, 'thumbnail');
+      record.avatar = esHttp.image.fromHit(hit, 'avatar');
 
       // pictures
       if (hit._source.pictures && hit._source.pictures.reduce) {
@@ -170,9 +167,9 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     exports.record = {
         search: search,
         load: loadData,
-        add: esHttp.record.post('/page/record', {tagFields: ['title', 'description']}),
+        add: esHttp.record.post('/page/record', {tagFields: ['title', 'description'], creationTime: true}),
         update: esHttp.record.post('/page/record/:id/_update', {tagFields: ['title', 'description']}),
-        remove: esHttp.record.remove('registry', 'record'),
+        remove: esHttp.record.remove('page', 'record'),
         fields: {
           commons: fields.commons
         },

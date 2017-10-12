@@ -12,24 +12,44 @@
   </ion-nav-buttons>
 
   <ion-content scroll="true">
+
+    <div class="positive-900-bg hero">
+      <div class="content">
+        <i class="avatar"
+           ng-class="avatarClass"
+           ng-style="avatarStyle">
+          <button class="button button-positive button-large button-clear flat icon ion-camera visible-xs visible-sm"
+                  style="display: inline-block;"
+                  ng-click="showAvatarModal()"></button>
+          <button ng-if="avatar.src"
+                  class="button button-positive button-large button-clear flat  visible-xs visible-sm"
+                  style="display: inline-block; left: 85px; bottom:15px;"
+                  ng-click="rotateAvatar()">
+            <i class="icon-secondary ion-image" style="left: 24px; top: 3px; font-size: 24px;"></i>
+            <i class="icon-secondary ion-forward" style="left: 26px; top: -13px;"></i>
+          </button>
+          <button class="button button-positive button-large button-clear icon ion-camera hidden-xs hidden-sm"
+                  ng-click="showAvatarModal()"></button>
+        </i>
+        <h3 class="light">
+          <span ng-if="!loading && formData.title">{{formData.title}}</span>
+          <span ng-if="!loading && !id && !formData.title" translate>REGISTRY.EDIT.TITLE_NEW</span>
+        </h3>
+        <h4 class="light">
+          <ion-spinner ng-if="loading" icon="android"></ion-spinner>
+        </h4>
+      </div>
+    </div>
+
       <div class="row no-padding">
 
         <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
         <div class="col">
-          <!-- loading -->
-          <div class="center padding" ng-if="loading">
-            <ion-spinner icon="android"></ion-spinner>
-          </div>
 
           <form name="recordForm" novalidate="" ng-submit="save()">
             <div class="list {{::motion.ionListClass}}"
                  ng-init="setForm(recordForm)">
-
-              <div class="item hidden-xs">
-                <h1 ng-if="id" ng-bind-html="formData.title"></h1>
-                <h1 ng-if="!id" translate>REGISTRY.EDIT.TITLE_NEW</h1>
-              </div>
               <div class="item" ng-if="id">
                 <h4 class="gray">
                   <i class="icon ion-calendar"></i>
@@ -94,34 +114,11 @@
 
               <div class="item item-divider" translate>REGISTRY.LOCATION_DIVIDER</div>
 
-              <!-- address -->
-              <div class="item item-floating-label" ng-if="location.enable">
-                <span class="input-label" translate>REGISTRY.EDIT.RECORD_ADDRESS</span>
-                <div class="item-input-inset">
-                  <label class="item-input-wrapper">
-                    <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_ADDRESS_HELP'|translate}}" ng-model="formData.address">
-                  </label>
-                  <button class="button button-small button-positive" ng-click="localize()" ng-if="location.enable">
-                    <i class="icon ion-android-locate"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="item item-input item-floating-label" ng-if="!location.enable">
-                <span class="input-label" translate>REGISTRY.EDIT.RECORD_ADDRESS</span>
-                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_ADDRESS_HELP' | translate}}"
-                          ng-model="formData.address"
-                          ng-model-options="{ debounce: 350 }"
-                          rows="4" cols="10">
-                </textarea>
-              </div>
-
-              <div class="item item-input item-floating-label">
-                <span class="input-label" translate>REGISTRY.EDIT.RECORD_CITY</span>
-                <textarea placeholder="{{'REGISTRY.EDIT.RECORD_CITY_HELP'|translate}}" ng-model="formData.city"></textarea>
-              </div>
+              <!-- position -->
+              <ng-include src="'plugins/es/templates/common/edit_position.html'"></ng-include>
 
               <!-- social networks -->
-              <ng-include src="'plugins/es/templates/common/edit_socials.html'"></ng-include>
+              <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
 
               <div class="item item-divider" translate>REGISTRY.TECHNICAL_DIVIDER</div>
 

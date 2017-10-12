@@ -6,7 +6,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     $stateProvider
 
     .state('app.registry_lookup', {
-      url: "/registry?q&category&location&type&reload",
+      url: "/page?q&category&location&type&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup.html",
@@ -19,7 +19,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.registry_lookup_lg', {
-      url: "/registry/lg?q&category&location&type&reload",
+      url: "/page/lg?q&category&location&type&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup_lg.html",
@@ -29,7 +29,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.view_page', {
-      url: "/page/:id/:title?refresh",
+      url: "/page/view/:id/:title?refresh",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/view_record.html",
@@ -39,7 +39,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.view_page_anchor', {
-      url: "/page/:id/:title/:anchor",
+      url: "/page/view/:id/:title/:anchor",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/view_record.html",
@@ -50,7 +50,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
     .state('app.registry_add_record', {
       cache: false,
-      url: "/registry/add/:type",
+      url: "/page/add/:type",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/edit_record.html",
@@ -65,7 +65,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
     .state('app.registry_edit_record', {
       cache: false,
-      url: "/registry/edit/:id/:title",
+      url: "/page/edit/:id/:title",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/edit_record.html",
@@ -408,6 +408,10 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
         $scope.formData = data.record;
         $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
         $scope.issuer = data.issuer;
+        // avatar
+        $scope.avatar = $scope.formData.avatar;
+        $scope.avatarStyle= $scope.formData.avatar && {'background-image':'url("'+$scope.avatar.src+'")'};
+
         UIUtils.loading.hide();
         $scope.loading = false;
         // Set Motion (only direct children, to exclude .lazy-load children)
@@ -438,19 +442,13 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
       // Load pictures
       esRegistry.record.picture.all({id: id})
         .then(function(hit) {
-          var pictures;
-          if (hit._source.pictures) {
-            pictures = hit._source.pictures.reduce(function(res, pic) {
+
+          $scope.pictures = hit._source.pictures && hit._source.pictures.reduce(function(res, pic) {
               return res.concat(esHttp.image.fromAttachment(pic.file));
             }, []);
-            if (pictures.length > 0) {
-              pictures.splice(0,1); // Remove the avatar
-            }
-          }
-          $scope.pictures = pictures;
 
           // Set Motion
-          if (pictures.length > 0) {
+          if ($scope.pictures.length > 0) {
             $scope.motion.show({
               selector: '.lazy-load .item.card-gallery, .lazy-load .item',
               startVelocity: 3000
@@ -550,15 +548,25 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
 
 }
 
-function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q, Device,
-  $ionicHistory, ModalUtils, $focus, esHttp) {
+function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHistory, $focus, $translate, $controller,
+                                        Device, UIUtils, ModalUtils, esHttp, esRegistry) {
   'ngInject';
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
 
-  $scope.walletData = {};
-  $scope.formData = {};
-  $scope.id = null;
-  $scope.pictures = [];
+  $scope.formData = {
+    title: null,
+    description: null,
+    socials: [],
+    geoPoint: {}
+  };
+
   $scope.loading = true;
+  $scope.dirty = false;
+  $scope.walletData = null;
+  $scope.id = null;
+  $scope.avatar = null;
+  $scope.pictures = [];
 
   $scope.setForm =  function(form) {
     $scope.form = form;
@@ -573,11 +581,12 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
       }
       else {
         if (state.stateParams && state.stateParams.type) {
-          $scope.formData.type=state.stateParams.type;
+          $scope.updateView({
+            record: {
+              type: state.stateParams.type
+            }
+          });
         }
-        $scope.loading = false;
-        UIUtils.loading.hide();
-        $scope.motion.show();
       }
       // removeIf(device)
       $focus('registry-record-title');
@@ -585,42 +594,158 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
     });
   });
 
+  $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+    if ($scope.dirty && !$scope.saving) {
+
+      // stop the change state action
+      event.preventDefault();
+
+      if (!$scope.loading) {
+        $scope.loading = true;
+        return UIUtils.alert.confirm('CONFIRM.SAVE_BEFORE_LEAVE',
+          'CONFIRM.SAVE_BEFORE_LEAVE_TITLE', {
+            cancelText: 'COMMON.BTN_NO',
+            okText: 'COMMON.BTN_YES_SAVE'
+          })
+          .then(function(confirmSave) {
+            $scope.loading = false;
+            if (confirmSave) {
+              $scope.form.$submitted=true;
+              return $scope.save(false/*silent*/, true/*haswait debounce*/)
+                .then(function(saved){
+                  if (saved) {
+                    $scope.dirty = false;
+                  }
+                  return saved; // change state only if not error
+                });
+            }
+            else {
+              $scope.dirty = false;
+              return true; // ok, change state
+            }
+          })
+          .then(function(confirmGo) {
+            if (confirmGo) {
+              // continue to the order state
+              $ionicHistory.nextViewOptions({
+                historyRoot: true
+              });
+              $state.go(next.name, nextParams);
+            }
+          })
+          .catch(function(err) {
+            // Silent
+          });
+      }
+    }
+  });
+
   $scope.load = function(id) {
+    $scope.loading = true;
     esRegistry.record.load(id, {
         raw: true
       })
       .then(function (data) {
-        $scope.formData = data.record;
-        $scope.id= data.id;
-
-        $scope.pictures = data.record.pictures || [];
-        delete data.record.pictures; // remove, as already stored in $scope.pictures
-
-        $scope.loading = false;
-        UIUtils.loading.hide();
-
-        $scope.motion.show({
-          selector: '.animate-ripple .item, .card-gallery',
-          startVelocity: 3000
-        });
+        if (data && data.record) {
+          $scope.updateView(data);
+        }
+        else {
+          $scope.updateView({record: {}});
+        }
       })
-      .catch(UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED'));
+      .catch(function(err) {
+        UIUtils.loading.hide(10);
+        $scope.loading = false;
+        UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);
+      });
   };
+
+  $scope.updateView = function(data) {
+    $scope.formData = data.record || {};
+    $scope.id= data.id;
+
+    // avatar
+    $scope.avatar = $scope.formData.avatar;
+    if ($scope.avatar) {
+      $scope.avatarStyle = $scope.avatar && {'background-image':'url("'+$scope.avatar.src+'")'};
+      $scope.avatarClass = {};
+    }
+    else {
+      $scope.avatarStyle = undefined;
+      $scope.avatarClass = {};
+      $scope.avatarClass['cion-page-' +  $scope.formData.type] = !$scope.avatar;
+    }
+
+    // geo point
+    $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+
+    // pictures
+    $scope.pictures = data.record && data.record.pictures || [];
+    delete data.record.pictures; // remove, as already stored in $scope.pictures
+
+    $scope.motion.show({
+      selector: '.animate-ripple .item, .card-gallery',
+      startVelocity: 3000
+    });
+    UIUtils.loading.hide();
+
+    // Update loading - done with a delay, to avoid trigger onFormDataChanged()
+    $timeout(function() {
+      $scope.loading = false;
+    }, 1000);
+  };
+
+  $scope.onFormDataChanged = function() {
+    if ($scope.loading) return;
+    $scope.dirty = true;
+  };
+  $scope.$watch('formData', $scope.onFormDataChanged, true);
+
+
 
   $scope.needCategory = function() {
     return $scope.formData.type && ($scope.formData.type=='company' || $scope.formData.type=='shop');
   };
 
-  $scope.save = function() {
+  $scope.save = function(silent, hasWaitDebounce) {
     $scope.form.$submitted=true;
     if($scope.saving || // avoid multiple save
        !$scope.form.$valid ||
        (($scope.formData.type === 'shop' || $scope.formData.type === 'company') && (!$scope.formData.category || !$scope.formData.category.id))) {
-      return;
+      return $q.reject();
     }
-    $scope.saving = true;
-    return UIUtils.loading.show()
 
+    if (!hasWaitDebounce) {
+      console.debug('[ES] [page] Waiting debounce end, before saving...');
+      return $timeout(function() {
+        return $scope.save(silent, true);
+      }, 650);
+    }
+
+    $scope.saving = true;
+    console.debug('[ES] [page] Saving record...');
+
+    var showSuccessToast = function() {
+      if (!silent) {
+        // removeIf(no-device)
+        UIUtils.loading.hide();
+        // endRemoveIf(no-device)
+
+        return $translate('REGISTRY.INFO.RECORD_SAVED')
+          .then(function(message){
+            UIUtils.toast.show(message);
+          });
+      }
+    };
+
+    var promise = $q.when();
+    // removeIf(no-device)
+    if (!silent) {
+      promise = UIUtils.loading.show();
+    }
+    // endRemoveIf(no-device)
+
+    return promise
       .then(function(){
         var json = $scope.formData;
         if (!$scope.needCategory()) {
@@ -628,35 +753,54 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
         }
         json.time = esHttp.date.now();
 
-        // Resize pictures
+        // geo point
+        if (json.geoPoint && json.geoPoint.lat && json.geoPoint.lon) {
+          json.geoPoint.lat =  parseFloat(json.geoPoint.lat);
+          json.geoPoint.lon =  parseFloat(json.geoPoint.lon);
+        }
+        else{
+          json.geoPoint = null;
+        }
+
+        // Social url must be unique in socials links - Fix #306:
+        if (json.socials && json.socials.length) {
+          json.socials = _.uniq(json.socials, false, function(social) {
+            return social.url;
+          });
+        }
+
+        // Pictures
         json.picturesCount = $scope.pictures.length;
         if (json.picturesCount > 0) {
-          json.pictures = $scope.pictures.reduce(function(res, pic) {
+          json.pictures = $scope.pictures.reduce(function (res, pic) {
             return res.concat({file: esHttp.image.toAttachment(pic)});
           }, []);
-          return UIUtils.image.resizeSrc($scope.pictures[0].src, true) // resize thumbnail
+        }
+        else {
+          json.pictures = [];
+        }
+
+        // Avatar
+        if ($scope.avatar && $scope.avatar.src) {
+          return UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to thumbnail
             .then(function(imageSrc) {
-              json.thumbnail = esHttp.image.toAttachment({src: imageSrc});
+              json.avatar = esHttp.image.toAttachment({src: imageSrc});
               return json;
             });
         }
         else {
-          if (json.thumbnail) {
-            // Workaround to allow content deletion, because of a bug in the ES attachment-mapper:
-            // get error (in ES node) : MapperParsingException[No content is provided.] - AttachmentMapper.parse(AttachmentMapper.java:471
-            json.thumbnail = {
-              _content: '',
-              _content_type: ''
-            };
-          }
-          json.pictures = [];
+          // Workaround to allow content deletion, because of a bug in the ES attachment-mapper:
+          // get error (in ES node) : MapperParsingException[No content is provided.] - AttachmentMapper.parse(AttachmentMapper.java:471
+          json.avatar = {
+            _content: '',
+            _content_type: ''
+          };
           return json;
         }
       })
       .then(function(json){
         // Create
         if (!$scope.id) {
-          json.creationTime = esHttp.date.now();
           return esRegistry.record.add(json);
         }
         // Update
@@ -664,8 +808,13 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
       })
 
       .then(function(id) {
+        console.info("[ES] [page] Record successfully saved.");
         $scope.id = $scope.id || id;
         $scope.saving = false;
+        $scope.dirty = false;
+
+        showSuccessToast();
+
         $ionicHistory.clearCache($ionicHistory.currentView().stateId); // clear current view
         $ionicHistory.nextViewOptions({historyRoot: true});
         return $state.go('app.view_page', {id: $scope.id, refresh: true});
@@ -683,6 +832,26 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
       $scope.pictures.push({src: "data:image/png;base64," + imageData});
     })
     .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
+  };
+
+
+
+  $scope.rotateAvatar = function(){
+    if (!$scope.avatar || !$scope.avatar.src || $scope.rotating) return;
+
+    $scope.rotating = true;
+
+    return UIUtils.image.rotateSrc($scope.avatar.src)
+      .then(function(imageData){
+        $scope.avatar.src = imageData;
+        $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
+        $scope.dirty = true;
+        $scope.rotating = false;
+      })
+      .catch(function(err) {
+        console.error(err);
+        $scope.rotating = false;
+      });
   };
 
   $scope.fileChanged = function(event) {
@@ -715,11 +884,39 @@ function ESRegistryRecordEditController($scope, esRegistry, UIUtils, $state, $q,
   };
 
   /* -- modals -- */
+  $scope.showAvatarModal = function() {
+    if (Device.camera.enable) {
+      return Device.camera.getPicture()
+        .then(function(imageData) {
+          if (!imageData) return;
+          $scope.avatar = {src: "data:image/png;base64," + imageData};
+          $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
+          $scope.dirty = true;
+          $scope.avatarClass = {};
+        })
+        .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
+    }
+    else {
+      return ModalUtils.show('plugins/es/templates/user/modal_edit_avatar.html','ESAvatarModalCtrl',
+        {})
+        .then(function(imageData) {
+          if (!imageData) return;
+          $scope.avatar = {src: imageData};
+          $scope.avatarStyle={'background-image':'url("'+imageData+'")'};
+          $scope.dirty = true;
+          $scope.avatarClass = {};
+        });
+    }
+  };
+
   $scope.showRecordTypeModal = function() {
     ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
     .then(function(type){
       if (type) {
         $scope.formData.type = type;
+        if (!$scope.avatar) {
+          $scope.avatarClass['cion-page-' + type] = true;
+        }
       }
     });
   };

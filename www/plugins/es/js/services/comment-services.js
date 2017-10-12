@@ -168,8 +168,8 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
           data.result.splice(index, 1);
           delete data.mapById[comment.id];
           // Send deletion request
-          if (comment.issuer === csWallet.data.pubkey) {
-            exports.raw.remove(comment.id, csWallet.data.keypair)
+          if (csWallet.isUserPubkey(comment.issuer)) {
+            exports.raw.remove(comment.id)
               .catch(function(err){
                 console.error(err);
                 throw new Error('MARKET.ERROR.FAILED_REMOVE_COMMENT');
