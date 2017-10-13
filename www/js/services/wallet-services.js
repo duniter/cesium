@@ -294,12 +294,19 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     isNeverUsed = function() {
       if (!data.loaded) return undefined; // undefined if not full loaded
-      return !data.pubkey ||
-        (!data.isMember &&
+      return !data.pubkey || (
+         // Check registration
+         !data.isMember &&
          !data.requirements.pendingMembership &&
          !data.requirements.wasMember &&
+
+         // Check TX history
          !data.tx.history.length &&
-         !data.tx.pendings.length);
+         !data.tx.pendings.length &&
+
+         // Check extended data (name+avatar)
+         !data.name && !data.avatar
+        );
     },
 
     isNew = function() {return !!data.isNew;},
@@ -616,7 +623,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         // Warn if wallet has been never used - see #167
         .then(function() {
-          var showAlert = alertIfUnusedWallet && !isNew() && isNeverUsed();
+          var unused = isNeverUsed();
+          var showAlert = alertIfUnusedWallet && !isNew() && angular.isDefined(unused) && unused;
           if (!showAlert) return true;
           return UIUtils.loading.hide()
             .then(function() {
@@ -1713,6 +1721,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     api.registerEvent('data', 'newTx');
 
     api.registerEvent('action', 'certify');
+
 
     // init data
     resetData(true);
