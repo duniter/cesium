@@ -1,0 +1,23 @@
+<i class="icon item-image ion-arrow-up-c energized"></i>
+
+<div class="row no-padding">
+  <div class="col no-padding">
+    <span class="energized" translate>COMMON.UNIVERSAL_DIVIDEND</span>
+    <h4>
+      <a class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
+        {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
+      </a>
+    </h4>
+  </div>
+  <div class="col col-10 no-padding">
+
+    <span class="badge item-note badge-energized">
+      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
+      <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
+    </span>
+
+    <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
+      (<span ng-bind-html=":rebind:tx.amount| formatAmount:{useRelative: !$root.settings.useRelative, currency:$root.currency.name}"></span>)
+    </div>
+  </div>
+</div>

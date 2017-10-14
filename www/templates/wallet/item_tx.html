@@ -21,9 +21,9 @@
       {{::tx.comment}}<br/>
     </p>
     <h4>
-      <span class="gray" >
+      <a class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
         {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
-      </span>
+      </a>
     </h4>
   </div>
   <div class="col col-50 no-padding" ng-if="::tx.comment">
@@ -35,6 +35,7 @@
 
     <!-- not locked TX -->
     <span ng-if="::!tx.lockedOutputs" class="badge item-note" ng-class="{'badge-calm': tx.amount > 0}">
+      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </span>
 
@@ -44,6 +45,7 @@
        ng-class="{'badge-calm': tx.amount > 0}"
        ng-click="showLockedOutputsPopover(tx, $event)">
       <i class="icon ion-locked" ></i>
+      <!--<span class="hidden-xs" ng-if=":rebind:tx.amount>0">+</span>-->
       <span ng-bind-html=":rebind:tx.amount| formatAmount:{currency:$root.currency.name}"></span>
     </a>
 

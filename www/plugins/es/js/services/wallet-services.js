@@ -129,7 +129,7 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
     }
 
     function addListeners() {
-      // Extend csWallet events
+      // Extend API events
       listeners = [
         csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.load($rootScope, onWalletLoad, this),

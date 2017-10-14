@@ -1,6 +1,6 @@
-angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.http.services'])
+angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.http.services', 'cesium.es.wot.services'])
 
-  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache) {
+  .factory('gpData', function($rootScope, $q, $timeout, esHttp, BMA, csWot, csCache, esWot) {
     'ngInject';
 
     var
@@ -155,7 +155,7 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
       };
 
       var promise = $q.all([
-        // Get the current block is need
+        // Get the current block (if need)
         options.withCurrent ?
           BMA.blockchain.current()
           .catch(function(err) {
@@ -450,9 +450,10 @@ angular.module('cesium.graph.data.services', ['cesium.wot.services', 'cesium.es.
 
       // If need and missing: load membership periods
       if (options.withUD && !options.memberships) {
-        return exports.wot.memberships(options)
+        return esWot.memberships(options.pubkey)
           .then(function(res) {
             options.memberships = res || [];
+            // loop, with membership filled
             return exports.blockchain.movement(currency, options);
           });
       }

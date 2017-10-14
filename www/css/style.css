@@ -258,6 +258,10 @@
 }
 
 
+/**********
+   Drop zone component
+**********/
+
 .dropzone {
   cursor: pointer;
 }

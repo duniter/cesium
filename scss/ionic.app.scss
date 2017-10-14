@@ -1006,6 +1006,20 @@ $screen-menu:                     845px;
   }
 }
 
+/******
+* TX view (wallet or identity)
+*******/
+
+.item-tx .badge-energized {
+  background-color: rgba(255,201,0,0.3);
+  color: #888 !important;
+}
+
+/******
+* Cards
+*******/
+
+
 .card .card-header,
 .card .card-header{
   font-size: 90%;

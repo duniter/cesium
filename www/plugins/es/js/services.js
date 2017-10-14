@@ -16,6 +16,8 @@ angular.module('cesium.es.services', [
     'cesium.es.wallet.services',
     'cesium.es.invitation.services',
     'cesium.es.subscription.services',
+    'cesium.es.wot.services',
+    'cesium.es.tx.services',
     'cesium.es.geo.services'
   ])
 ;

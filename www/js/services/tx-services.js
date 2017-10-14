@@ -2,7 +2,8 @@
 angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
   'cesium.settings.services', 'cesium.wot.services' ])
 
-.factory('csTx', function($q, $timeout, $filter, $translate, UIUtils, BMA, Api, csConfig, csSettings, csWot, FileSaver) {
+.factory('csTx', function($q, $timeout, $filter, $translate, FileSaver, UIUtils, BMA, Api,
+                          csConfig, csSettings, csWot, csCurrency) {
   'ngInject';
 
   function factory(id, BMA) {
@@ -152,7 +153,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           // get TX history since
           if (fromTime !== -1) {
             var sliceTime = csSettings.data.walletHistorySliceSecond;
-            for(var i = fromTime - (fromTime % sliceTime); i - sliceTime < nowInSec; i += sliceTime)  {
+            fromTime = fromTime - (fromTime % sliceTime);
+            for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
+              var startTime = Math.max(i, fromTime);
               jobs.push(BMA.tx.history.times({pubkey: pubkey, from: i, to: i+sliceTime-1})
                 .then(_reduceTx)
               );
@@ -170,10 +173,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           }
 
           // get UD history
-          // FIXME issue#232
-          /*
           if (csSettings.data.showUDHistory) {
-            jobs.push(
+            /*jobs.push(
               BMA.ud.history({pubkey: pubkey})
                 .then(function(res){
                   udHistory = !res.history || !res.history.history ? [] :
@@ -187,9 +188,26 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                         block_number: ud.block_number
                       });
                     }, []);
-                }));
+                }));*/
+            // API extension
+            jobs.push(
+              api.data.raisePromise.loadUDs({
+                pubkey: pubkey,
+                fromTime: fromTime
+              })
+                .then(function(res) {
+                  if (!res || !res.length) return;
+                  udHistory = res.reduce(function(res, hits) {
+                    return res.concat(hits);
+                  }, udHistory);
+                })
+
+                .catch(function(err) {
+                  console.debug('Error while loading UDs history, on extension point.');
+                  console.error(err);
+                })
+              );
           }
-          */
 
           // Execute jobs
           $q.all(jobs)
@@ -353,10 +371,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         $translate(['ACCOUNT.HEADERS.TIME',
           'COMMON.UID',
           'COMMON.PUBKEY',
+          'COMMON.UNIVERSAL_DIVIDEND',
           'ACCOUNT.HEADERS.AMOUNT',
           'ACCOUNT.HEADERS.COMMENT']),
-        //TODO : Utiliser plutôt csCurency pour avoir le bloc courant
-        BMA.blockchain.current(),
+        csCurrency.blockchain.current(true/*withCache*/),
         loadData(pubkey, options.fromTime)
       ])
         .then(function(result){
@@ -396,7 +414,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                     tx.uid,
                     tx.pubkey,
                     formatDecimal(tx.amount/100),
-                    '"' + tx.comment + '"'
+                    '"' + (tx.isUD ? translations['COMMON.UNIVERSAL_DIVIDEND'] : tx.comment) + '"'
                   ].join(';') + '\n');
               }, [headers.join(';') + '\n']);
 
@@ -406,6 +424,8 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
         });
     };
 
+    // Register extension points
+    api.registerEvent('data', 'loadUDs');
 
     return {
       id: id,
