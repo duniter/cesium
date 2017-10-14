@@ -12,7 +12,7 @@ angular.module("cesium.config", [])
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
 	"rememberMe": true,
-	"showUDHistory": false,
+	"showUDHistory": true,
 	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
@@ -69,8 +69,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.18.1",
-	"build": "2017-10-14T08:34:48.232Z",
+	"version": "0.18.2",
+	"build": "2017-10-14T08:49:05.524Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
