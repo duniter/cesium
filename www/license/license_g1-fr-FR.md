@@ -1,50 +1,43 @@
-﻿Licence Ğ1 - v0.2.3
+﻿Licence Ğ1 - v0.2.4
 ===================
 
-:date: 2017-08-21 16:59
-:modified: 2017-08-22 14:28
+:date: 2017-04-04 12:59
+:modified: 2017-10-14 10:23
 
 **Licence de la monnaie et engagement de responsabilité.**
 
 Toute opération de certification d'un nouveau membre de Ğ1 doit préalablement s'accompagner de la transmission de cette licence de la monnaie Ğ1 dont le certificateur doit s'assurer qu'elle a été étudiée, comprise et acceptée par la personne qui sera certifiée.
 
-Monnaie Ğ1
-----------
-
-Ğ1 se produit via un Dividende Universel (DU) pour tout être humain membre de la Toile de Confiance Ğ1, qui est de la forme :
-
-* 1 DU par personne et par jour
-
-Le montant du DU est identique chaque jour jusqu'au prochain équinoxe, où le DU sera alors réévalué selon la formule (avec 1 jour = 86 400 secondes) :
-
-* DUjour(équinoxe suivant) = DUjour(équinoxe) + c² (M/N)(équinoxe) / (182,625 jours)
-
-Avec comme paramètres :
-
-* c = 4,88% / équinoxe
-* UD(0) = 10,00 Ğ1
-
-Et comme variables :
-
-* *M* la masse monétaire totale à l'équinoxe
-* *N* le nombre de membres à l'équinoxe
+Tout événement de rencontre concernant Ğ1 devrait s'accompagner de la transmission de cette licence, qui peut être lue à haute voix, et transmise par tout moyen.
 
 Toile de confiance Ğ1 (TdC Ğ1)
 ------------------------------
 
 **Avertissement :** Certifier n'est pas uniquement s'assurer que vous avez rencontré la personne, c'est assurer à la communauté Ğ1 que vous connaissez suffisamment bien la personne certifiée et que vous saurez ainsi la contacter facilement, et être en mesure de repérer un double compte effectué par une personne certifiée par vous-même, ou d'autres types de problèmes (disparition...), en effectuant des recoupements qui permettront de révéler le problème le cas échéant.
 
+**Conseils fortement recommandés**
+
+Ne certifiez jamais seul, mais accompagné d'au moins un autre membre de la TdC Ğ1 afin d'éviter toute erreur de manipulation. En cas d'erreur, prévenez immédiatement d'autres membres de la TdC Ğ1.
+
+Avant toute certification, assurez vous de vérifier si son compte (qu'il soit en cours de validation ou déjà membre) a déjà reçu une ou plusieurs certifications. Le cas échéant demandez des informations pour entrer en contact avec ces autres certifieurs afin de vérifier ensemble que vous connaissez bien la personne concernée par la création du nouveau compte, ainsi que la clé publique correspondante.
+
+Vérifiez que vos contacts ont bien étudié et compris la licence Ğ1 à jour.
+
+Si vous vous rendez compte qu'un certifieur effectif ou potentiel du compte concerné ne connaît pas la personne concernée, alertez immédiatement des experts du sujet au sein de vos connaissance de la TdC Ğ1, afin que la procédure de validation soit vérifiée par la TdC Ğ1.
+
 Lorsque vous êtes membre de la TdC Ğ1 et que vous vous apprêtez à certifier un nouveau compte :
 
 **Vous êtes vous assuré :**
 
-1°) De suffisamment bien connaître (pas seulement de la connaître "de visu") la personne qui déclare gérer cette clé publique (nouveau compte) et d'avoir personnellement vérifié avec elle qu'il s'agit bien de cette clé publique que vous vous apprêtez à certifier.
+1°) D'avoir bien vérifié avec la personne concernée qu'elle a bien généré son document Duniter de révocation de compte, qui lui permettra le cas échéant de pouvoir annuler son compte (cas d'un vol de compte, d'un changement de ID, d'un compte créé à tort etc.).
 
-2a°) De la rencontrer physiquement pour vous assurer que c'est bien cette personne que vous connaissez qui gère cette clé publique.
+2°) De suffisamment bien connaître (pas seulement de la connaître "de visu") la personne qui déclare gérer cette clé publique (nouveau compte) et d'avoir personnellement vérifié avec elle qu'il s'agit bien de cette clé publique que vous vous apprêtez à certifier (voir les conseils fortement recommandés ci-dessus pour s'assurer de "bien connaître").
 
-2b°) Ou bien de vérifer à distance le lien personne / clé publique en contactant la personne par plusieurs moyens de communication différents, comme réseau social + forum + mail + vidéo conférence + téléphone (reconnaître la voix). Car si l'on peut pirater un compte mail ou un compte forum, il sera bien plus difficile d'imaginer pirater quatre moyens de communication distincts, et imiter l'apparence (vidéo) ainsi que la voix de la personne en plus. Le 2a°) restant toutefois préférable au 2b°), tandis que le 1°) est toujours indispensable dans tous les cas.
+3a°) De la rencontrer physiquement pour vous assurer que c'est bien cette personne que vous connaissez qui gère cette clé publique.
 
-3°) D'avoir bien vérifié avec la personne concernée qu'elle a bien généré son document Duniter de révocation de compte, qui lui permettra le cas échéant de pouvoir annuler son compte (cas d'un vol de compte, d'un changement de ID, d'un compte créé à tort etc.).
+3b°) Ou bien de vérifer à distance le lien personne / clé publique en contactant la personne par plusieurs moyens de communication différents, comme réseau social + forum + mail + vidéo conférence + téléphone (reconnaître la voix). Car si l'on peut pirater un compte mail ou un compte forum, il sera bien plus difficile d'imaginer pirater quatre moyens de communication distincts, et imiter l'apparence (vidéo) ainsi que la voix de la personne en plus.
+
+Le 3a°) restant toutefois préférable au 3b°), tandis que le 1°) et 2°) est toujours indispensable dans tous les cas.
 
 **Règles abrégées de la TdC :**
 
@@ -63,6 +56,29 @@ Un membre de la TdC Ğ1 est membre référent lorsqu'il a reçu et émis au moin
 Une fois que le nouveau membre est partie prenante de la TdC Ğ1 ses certifications restent valables 2 ans.
 
 Pour rester membre il faut renouveler son accord régulièrement avec sa clé privée (tous les 12 mois) et s'assurer d'avoir toujours au moins 5 certifications valides au delà des 2 ans.
+
+Monnaie Ğ1
+----------
+
+Ğ1 se produit via un Dividende Universel (DU) pour tout être humain membre de la Toile de Confiance Ğ1, qui est de la forme :
+
+* 1 DU par personne et par jour
+
+**Code de la monnaie Ğ1**
+
+Le montant en Ğ1 du DU est identique chaque jour jusqu'au prochain équinoxe où le DU sera alors réévalué selon la formule (avec 1 jour = 86 400 secondes) :
+
+* DUjour(équinoxe suivant) = DUjour(équinoxe) + c² (M/N)(équinoxe) / (182,625 jours)
+
+Avec comme paramètres :
+
+* c = 4,88% / équinoxe
+* DU(0) = 10,00 Ğ1
+
+Et comme variables :
+
+* *M* la masse monétaire totale à l'équinoxe
+* *N* le nombre de membres à l'équinoxe
 
 Logiciels Ğ1 et licence Ğ1
 --------------------------
