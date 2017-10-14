@@ -127,7 +127,7 @@
     "USE_LOCAL_STORAGE_HELP": "Allows you to save your settings",
     "ENABLE_HELPTIP": "Enable contextual help tips",
     "ENABLE_UI_EFFECTS": "Enable visual effects",
-    "HISTORY_SETTINGS": "My Account",
+    "HISTORY_SETTINGS": "Account operations",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "KEEP_AUTH": "Expiration of authentication",
