@@ -52,9 +52,9 @@
           </span>
 
           <!-- iterate on each TX -->
-          <div class="item item-tx item-icon-left"
-               ng-repeat="tx in formData.tx.history"
-               ng-include="'templates/wallet/item_tx.html'">
+          <div ng-repeat="tx in formData.tx.history"
+               class="item item-tx item-icon-left"
+               ng-include="::!tx.isUD ? 'templates/wallet/item_tx.html' : 'templates/wallet/item_ud.html'">
           </div>
 
           <div class="item item-text-wrap text-center" ng-if="formData.tx.fromTime > 0">

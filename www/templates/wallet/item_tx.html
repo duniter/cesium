@@ -5,7 +5,7 @@
 
 <div class="row no-padding">
   <div class="col no-padding">
-    <b class="ion-clock" ng-if="pending"> </b>
+    <b class="ion-clock" ng-if="::pending"> </b>
     <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="tx.uid">
       {{::tx.name||tx.uid}}
     </a>
@@ -21,9 +21,12 @@
       {{::tx.comment}}<br/>
     </p>
     <h4>
-      <a class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
+      <a ng-if="::!pending" class="gray underline" ui-sref="app.view_block({number: tx.block_number})">
         {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
       </a>
+      <span ng-if="::pending" class="gray">
+        {{::tx.time | formatFromNow}} | {{::tx.time | formatDate}}
+      </span>
     </h4>
   </div>
   <div class="col col-50 no-padding" ng-if="::tx.comment">
