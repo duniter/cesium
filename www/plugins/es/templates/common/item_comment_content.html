@@ -1,11 +1,11 @@
 
-  <div class="item item-avatar done in">
+<div class="item item-avatar done in">
     <span class="avatar"
           ng-if="::!comment.avatar"
           ng-class="::{'avatar-member': comment.uid, 'avatar-wallet': !comment.uid}"></span>
-    <span class="avatar"
-          ng-if="::comment.avatar"
-          style="background-image: url({{::comment.avatar.src}})"></span>
+  <span class="avatar"
+        ng-if="::comment.avatar"
+        style="background-image: url({{::comment.avatar.src}})"></span>
 
     <a class="pull-left"
        ui-sref="app.wot_identity({pubkey:comment.issuer, uid: comment.uid})">
@@ -14,8 +14,8 @@
       </span>
       <span ng-if="::!comment.uid" class="gray">
         <i class="icon ion-key gray"></i>
-        {{::comment.issuer|formatPubkey}}
+        {{::comment.name || (comment.issuer|formatPubkey)}}
       </span>
-    </a>&nbsp;
-    <span trust-as-html="comment.html"></span>
-  </div>
+  </a>&nbsp;
+  <span trust-as-html="comment.html"></span>
+</div>

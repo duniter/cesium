@@ -66,7 +66,7 @@ function PluginExtensionPointController($scope, PluginService) {
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
                        $ionicHistory, $controller, $window, csPlatform,
                        UIUtils, BMA, csWallet, Device, Modals, csConfig, csHttp
-  ) {
+) {
   'ngInject';
 
   $scope.search = {};
@@ -91,26 +91,26 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       return;
     }
     Device.barcode.scan()
-    .then(function(uri) {
-      if (!uri) {
-        return;
-      }
-      BMA.uri.parse(uri)
-      .then(function(result){
-        // If pubkey
-        if (result && result.pubkey) {
-          $state.go('app.wot_identity', {
-            pubkey: result.pubkey,
-            node: result.host ? result.host: null}
-          );
+      .then(function(uri) {
+        if (!uri) {
+          return;
         }
-        else {
-          UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
-        }
+        BMA.uri.parse(uri)
+          .then(function(result){
+            // If pubkey
+            if (result && result.pubkey) {
+              $state.go('app.wot_identity', {
+                pubkey: result.pubkey,
+                node: result.host ? result.host: null}
+              );
+            }
+            else {
+              UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
+            }
+          })
+          .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
       })
-      .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
-    })
-    .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
+      .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
 
   ////////////////////////////////////////
@@ -141,13 +141,13 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     var helptipScope = $scope.createHelptipScope(true);
     return helptipScope.startHelpTour()
-    .then(function() {
-      helptipScope.$destroy();
-      delete $rootScope.tour;
-    })
-    .catch(function(err){
-      delete $rootScope.tour;
-    });
+      .then(function() {
+        helptipScope.$destroy();
+        delete $rootScope.tour;
+      })
+      .catch(function(err){
+        delete $rootScope.tour;
+      });
   };
 
   ////////////////////////////////////////
@@ -295,7 +295,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     UIUtils.loading.show();
     return csWallet.logout()
       .then(function() {
-        $ionicSideMenuDelegate.toggleLeft();
+        // Close left menu if open
+        if ($ionicSideMenuDelegate.isOpenLeft()) {
+          $ionicSideMenuDelegate.toggleLeft();
+        }
         $ionicHistory.clearHistory();
 
         return $ionicHistory.clearCache()
@@ -425,7 +428,7 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
   $scope.enter = function(e, state) {
     if (state && state.stateParams && state.stateParams.error) { // Query parameter
       $scope.error = state.stateParams.error;
-      $scope.node =  csCurrency.data.node;
+      $scope.node = csCurrency.data.node;
       $scope.loading = false;
       $ionicHistory.nextViewOptions({
         disableAnimate: true,
@@ -474,6 +477,6 @@ function HomeController($scope, $state, $timeout, $ionicHistory, csPlatform, csC
 
   // For DEV ONLY
   /*$timeout(function() {
-    $scope.loginAndGo();
-  }, 500);*/
+   $scope.loginAndGo();
+   }, 500);*/
 }

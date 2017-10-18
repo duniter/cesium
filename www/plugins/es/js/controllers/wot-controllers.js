@@ -9,7 +9,7 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
         .extendStates(['app.wot_identity', 'app.wot_identity_uid'], {
           points: {
-            'general': {
+            'after-general': {
               templateUrl: "plugins/es/templates/wot/view_identity_extend.html",
               controller: 'ESWotIdentityViewCtrl'
             },

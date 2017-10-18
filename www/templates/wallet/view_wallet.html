@@ -142,6 +142,15 @@
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>
 
+          <!-- Account transaction -->
+          <a class="item item-icon-left item-icon-right ink"
+             ng-if="!loading"
+             ui-sref="app.view_wallet_tx">
+            <i class="icon ion-card"></i>
+            <span translate>WOT.ACCOUNT_OPERATIONS</span>
+            <i class="gray icon ion-ios-arrow-right"></i>
+          </a>
+
           <!-- Events -->
           <span class="item item-divider" ng-if="formData.events.length">
             {{:locale:'ACCOUNT.EVENTS' | translate}}
@@ -155,16 +164,10 @@
             <span trust-as-html="event.message | translate:event.messageParams"></span>
           </div>
 
-          <!-- Account transaction -->
-          <a class="item item-icon-left item-icon-right ink"
-             ng-if="!loading"
-             ui-sref="app.view_wallet_tx">
-            <i class="icon ion-card"></i>
-            <span translate>WOT.ACCOUNT_OPERATIONS</span>
-            <i class="gray icon ion-ios-arrow-right"></i>
-          </a>
 
-          <cs-extension-point name="before-technical"></cs-extension-point>
+          <cs-extension-point name="general"></cs-extension-point>
+
+          <cs-extension-point name="after-general"></cs-extension-point>
 
 
        </div>

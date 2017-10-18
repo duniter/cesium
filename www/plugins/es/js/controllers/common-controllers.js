@@ -330,7 +330,7 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
 
     // Set Motion
     $scope.motion.show({
-      selector: '#social-' + $filter('formatSlug')(url),
+      selector: '#social-' + $filter('formatSlug')(social.url),
       startVelocity: 10000
     });
   };

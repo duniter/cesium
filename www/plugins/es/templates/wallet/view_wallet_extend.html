@@ -1,7 +1,7 @@
 <ng-if ng-if="enable">
   <!-- profile -->
   <div class="item item-divider item-divider-top-border">
-    {{'PROFILE.PROFILE_DIVIDER' | translate}}
+    <span ng-bind-html="'PROFILE.PROFILE_DIVIDER' | translate"></span>
     <a class="badge button button-text button-small button-small-padding "
        ui-sref="app.user_edit_profile">
       <i class="icon ion-edit"></i>

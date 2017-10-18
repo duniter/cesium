@@ -897,7 +897,7 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
         .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
     }
     else {
-      return ModalUtils.show('plugins/es/templates/user/modal_edit_avatar.html','ESAvatarModalCtrl',
+      return ModalUtils.show('plugins/es/templates/common/modal_edit_avatar.html','ESAvatarModalCtrl',
         {})
         .then(function(imageData) {
           if (!imageData) return;
