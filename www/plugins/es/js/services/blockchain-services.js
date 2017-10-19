@@ -64,7 +64,7 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
       options.cleanData = angular.isDefined(options.cleanData) ? options.cleanData : true;
 
       var hasExcludedCurrent = false;
-      var hits = res && res.hits ? res.hits.hits.reduce(function(res, hit) {
+      var hits = (res && res.hits && res.hits.hits || []).reduce(function(res, hit) {
         if (hit._id == 'current' && options.excludeCurrent) {
           hasExcludedCurrent = true;
           return res;
@@ -75,15 +75,13 @@ angular.module('cesium.es.blockchain.services', ['cesium.services', 'cesium.es.h
           block.cleanData(); // release data's arrays
         }
         return res.concat(block);
-      }, []) : [];
-      var result = {
+      }, []);
+      return {
         hits: hits,
         took: res.took,
         total: res && res.hits && res.hits.total ? (
           hasExcludedCurrent ? res.hits.total-1 : res.hits.total) : 0
       };
-
-      return result;
     };
 
     exports.block.search = function(currency, options) {

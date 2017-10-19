@@ -91,6 +91,9 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
   // Load unread notifications count
   function loadUnreadNotificationsCount(pubkey, options) {
+    if (!pubkey) {
+      return $q.reject('[ES] [notification] Unable to load - missing pubkey');
+    }
     var request = {
       query: createFilterQuery(pubkey, options)
     };
@@ -104,6 +107,9 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
   // Load user notifications
   function loadNotifications(pubkey, options) {
+    if (!pubkey) {
+      return $q.reject('[ES] [notification] Unable to load - missing pubkey');
+    }
     options = options || {};
     options.from = options.from || 0;
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;

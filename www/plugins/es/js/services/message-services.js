@@ -25,6 +25,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       },
       raw = {
         postSearch: esHttp.post('/message/inbox/_search'),
+        postSearchByType: esHttp.post('/message/:type/_search'),
         getByTypeAndId : esHttp.get('/message/:type/:id'),
         postReadById: esHttp.post('/message/inbox/:id/_read')
       },
@@ -200,7 +201,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         request.query = {bool: {filter: {term: {issuer: pubkey}}}};
       }
 
-      return esHttp.post('/message/:type/_search')(request, {type: options.type})
+      return raw.postSearchByType(request, {type: options.type})
         .then(function(res) {
           if (!res || !res.hits || !res.hits.total) {
             return [];

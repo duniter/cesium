@@ -413,6 +413,36 @@
       "PROVIDER": "Prestataire du service :"
     }
   },
+  "DOCUMENT": {
+    "HASH": "Hash: ",
+    "LOOKUP": {
+      "TITLE": "Recherche de documents",
+      "BTN_ACTIONS": "Actions",
+      "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS": "Derniers documents :",
+      "SHOW_QUERY": "Voir la requête",
+      "HIDE_QUERY": "Masquer la requête",
+      "HEADER_TIME": "Date/Heure",
+      "HEADER_ISSUER": "Emetteur",
+      "HEADER_RECIPIENT": "Destinataire",
+      "READ": "Lu",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Actions",
+        "REMOVE_ALL": "Supprimer ces documents..."
+      }
+    },
+    "INFO": {
+      "REMOVED": "Document supprimé"
+    },
+    "CONFIRM": {
+      "REMOVE": "Etes-vous sûr de vouloir <b>supprimer ce document</b> ?",
+      "REMOVE_ALL": "Etes-vous sûr de vouloir <b>supprimer ces documents</b> ?"
+    },
+    "ERROR": {
+      "REMOVE_FAILED": "Erreur lors de la suppression du document",
+      "REMOVE_ALL_FAILED": "Erreur lors de la suppression des documents"
+    }
+  },
   "ES_SETTINGS": {
     "PLUGIN_NAME": "Cesium+",
     "PLUGIN_NAME_HELP": "Profils, notifications, messages privés",

@@ -1,0 +1,31 @@
+
+<div class="item row row-header done in hidden-xs hidden-sm">
+
+  <a class="no-padding dark col col-header"
+     ng-if=":rebind:expertMode"
+     ng-click="toggleSort('time')">
+    <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'time'"></cs-sort-icon>
+    {{'DOCUMENT.LOOKUP.HEADER_TIME' | translate}}
+  </a>
+  <a class="no-padding dark col col-header"
+     ng-if=":rebind:expertMode"
+     ng-click="toggleSort('issuer')">
+    <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'issuer'"></cs-sort-icon>
+    {{'DOCUMENT.LOOKUP.HEADER_ISSUER' | translate}}
+  </a>
+  <a class="no-padding dark col col-header"
+     ng-if=":rebind:expertMode"
+     ng-click="toggleSort('recipient')">
+    <cs-sort-icon asc="search.asc" sort="search.sort" toggle="'recipient'"></cs-sort-icon>
+    {{'DOCUMENT.LOOKUP.HEADER_RECIPIENT' | translate}}
+  </a>
+</div>
+
+<div class="padding gray" ng-if=":rebind:!search.loading && !search.results.length" translate>
+  COMMON.SEARCH_NO_RESULT
+</div>
+
+<!-- for each doc -->
+<ng-repeat ng-repeat="doc in :rebind:search.results track by doc.id"
+           ng-include="'plugins/es/templates/document/item_document.html'">
+</ng-repeat>

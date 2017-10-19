@@ -9,14 +9,15 @@
     </button>
   </div>
 
-  <canvas id="docstats-chart-{{chart.id}}"
+  <canvas id="{{::chartIdPrefix}}{{chart.id}}"
           class="chart-line"
           height="{{height}}"
           width="{{width}}"
           chart-data="chart.data"
           chart-labels="labels"
           chart-dataset-override="chart.datasetOverride"
-          chart-options="chart.options">
+          chart-options="chart.options"
+          chart-click="onChartClick">
   </canvas>
 
   <ng-include src="'plugins/graph/templates/common/graph_range_bar.html'"></ng-include>

@@ -1,0 +1,49 @@
+<ion-item id="doc-{{::doc.id}}"
+          class="item item-document item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
+          ng-class="{{::ionItemClass}}"
+          ng-click="selectDocument(doc)">
+
+  <i class="icon ion-document stable" ng-if=":rebind:!doc.avatar"></i>
+  <i class="avatar" ng-if=":rebind:doc.avatar" style="background-image: url('{{:rebind:doc.avatar.src}}')"></i>
+
+  <div class="row no-padding">
+    <div class="col">
+      <h3 class="dark">
+        <i class="ion-locked" ng-if=":rebind:doc.nonce"></i>
+        {{:rebind:doc.time|formatDate}}</h3>
+      <h4 class="gray">{{:rebind:'DOCUMENT.HASH'|translate}} {{:rebind:doc.hash|formatHash}}</h4>
+    </div>
+
+    <div class="col">
+      <h3>
+        <a ui-sref="app.wot_identity({pubkey: doc.pubkey, uid: doc.uid})">
+          <span class="gray">
+            <i class="ion-key"></i> {{:rebind:doc.pubkey|formatPubkey}}
+          </span>
+          <span class="positive" ng-if=":rebind:doc.uid">
+            <i class="ion-person"></i> {{:rebind:doc.name||doc.uid}}
+          </span>
+        </a>
+      </h3>
+    </div>
+
+    <div class="col">
+      <h3 ng-if=":rebind:doc.recipient">
+          <a ui-sref="app.wot_identity({pubkey: doc.recipient.pubkey, uid: doc.recipient.uid})">
+          <span class="gray">
+            <i class="ion-key"></i> {{:rebind:doc.recipient.pubkey|formatPubkey}}
+          </span>
+            <span class="positive" ng-if=":rebind:doc.recipient.uid">
+            <i class="ion-person"></i> {{:rebind:doc.recipient.name||doc.recipient.uid}}
+          </span>
+          </a>
+      </h3>
+      <h4 class="gray" ng-if=":rebind:doc.read_signature">
+        <i class="ion-checkmark"></i>
+        <span translate>DOCUMENT.LOOKUP.READ</span>
+      </h4>
+
+    </div>
+
+  </div>
+</ion-item>

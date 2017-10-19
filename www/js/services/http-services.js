@@ -147,65 +147,76 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     };
   }
 
-  function ws(host, port, path, useSsl) {
+  function ws(host, port, path, useSsl, timeout) {
     if (!path) {
       console.error('calling csHttp.ws without path argument');
       throw 'calling csHttp.ws without path argument';
     }
     var uri = getWsUrl(host, port, path, useSsl);
-    var delegate = null;
-    var callbacks = [];
+    timeout = timeout || csSettings.data.timeout;
 
-    function _waitOpen() {
-      if (!delegate) throw new Error('Websocket not opened');
-      if (delegate.readyState == 1) {
-        return $q.when(delegate);
+    function _waitOpen(self) {
+      if (!self.delegate) throw new Error('Websocket not opened');
+      if (self.delegate.readyState == 1) {
+        return $q.when(self.delegate);
       }
-      if (delegate.readyState == 3) {
-        return $q.reject('Unable to connect to websocket ['+delegate.url+']');
+      if (self.delegate.readyState == 3) {
+        return $q.reject('Unable to connect to websocket ['+self.delegate.url+']');
       }
-      console.debug('[http] Waiting websocket ['+path+'] opening...');
-      return $timeout(_waitOpen, 200);
+      console.debug('[http] Waiting websocket ['+self.path+'] opening...');
+
+      if (self.waitDuration >= timeout) {
+        console.debug("[http] Will retry openning websocket later...");
+        self.waitRetryDelay = 2000; // 2 seconds
+      }
+
+      return $timeout(function(){
+        self.waitDuration += self.waitRetryDelay;
+        return _waitOpen(self);
+      }, self.waitRetryDelay);
     }
 
     function _open(self, callback, params) {
-      if (!delegate) {
+      if (!self.delegate) {
         self.path = path;
+        self.callbacks = [];
+        self.waitDuration = 0;
+        self.waitRetryDelay = 200;
 
         prepare(uri, params, {}, function(uri) {
-          delegate = new WebSocket(uri);
-          delegate.onerror = function(e) {
-            delegate.readyState=3;
+          self.delegate = new WebSocket(uri);
+          self.delegate.onerror = function(e) {
+            self.delegate.readyState=3;
           };
-          delegate.onmessage = function(e) {
+          self.delegate.onmessage = function(e) {
             var obj = JSON.parse(e.data);
-            _.forEach(callbacks, function(callback) {
+            _.forEach(self.callbacks, function(callback) {
               callback(obj);
             });
           };
-          delegate.onopen = function(e) {
-            console.debug('[http] Listening on websocket ['+path+']...');
+          self.delegate.onopen = function(e) {
+            console.debug('[http] Listening on websocket ['+self.path+']...');
             sockets.push(self);
-            delegate.openTime = new Date().getTime();
+            self.delegate.openTime = new Date().getTime();
           };
-          delegate.onclose = function() {
+          self.delegate.onclose = function() {
 
             // Remove from sockets arrays
-            var index = _.findIndex(sockets, function(socket){return socket.path === path;});
+            var index = _.findIndex(sockets, function(socket){return socket.path === self.path;});
             if (index >= 0) {
               sockets.splice(index,1);
             }
 
             // If close event comes from Cesium
-            if (delegate.closing) {
-              delegate = null;
+            if (self.delegate.closing) {
+              self.delegate = null;
             }
 
             // If unexpected close event, reopen the socket (fix #535)
             else {
-              console.debug('[http] Unexpected close of websocket ['+path+'] (open '+ (new Date().getTime() - delegate.openTime) +'ms ago): re-opening...');
+              console.debug('[http] Unexpected close of websocket ['+path+'] (open '+ (new Date().getTime() - self.delegate.openTime) +'ms ago): re-opening...');
 
-              delegate = null;
+              self.delegate = null;
 
               // Loop, but without the already registered callback
               _open(self, null, params);
@@ -213,8 +224,8 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           };
         });
       }
-      if (callback) callbacks.push(callback);
-      return _waitOpen();
+      if (callback) self.callbacks.push(callback);
+      return _waitOpen(self);
     }
 
     return {
@@ -225,17 +236,19 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         return _open(this, callback, params);
       },
       send: function(data) {
-        return _waitOpen()
+        var self = this;
+        return _waitOpen(self)
           .then(function(){
-            delegate.send(data);
+            self.delegate.send(data);
           });
       },
       close: function() {
-        if (delegate) {
-          delegate.closing = true;
-          console.debug('[http] Closing websocket ['+path+']...');
-          delegate.close();
-          callbacks = [];
+        var self = this;
+        if (self.delegate) {
+          self.delegate.closing = true;
+          console.debug('[http] Closing websocket ['+self.path+']...');
+          self.delegate.close();
+          self.callbacks = [];
         }
       }
     };

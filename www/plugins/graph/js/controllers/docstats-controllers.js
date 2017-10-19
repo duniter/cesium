@@ -25,7 +25,7 @@ angular.module('cesium.graph.docstats.controllers', ['chart.js', 'cesium.graph.s
   .controller('GpDocStatsCtrl', GpDocStatsController)
 ;
 
-function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpData, $filter) {
+function GpDocStatsController($scope, $state, $controller, $q, $translate, gpColor, gpData, $filter) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -33,6 +33,7 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
 
   $scope.hiddenDatasets = [];
 
+  $scope.chartIdPrefix = 'docstats-chart-';
   $scope.charts = [
 
     // User count
@@ -44,13 +45,21 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
           key: 'user_profile',
           label: 'GRAPH.DOC_STATS.USER.USER_PROFILE',
           color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
+          pointHoverBackgroundColor: gpColor.rgba.royal(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'user', type: 'profile'}
+          }
         },
         {
           key: 'user_settings',
           label: 'GRAPH.DOC_STATS.USER.USER_SETTINGS',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'user', type: 'settings'}
+          }
         }
       ]
     },
@@ -64,19 +73,31 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
           key: 'message_inbox',
           label: 'GRAPH.DOC_STATS.MESSAGE.MESSAGE_INBOX',
           color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
+          pointHoverBackgroundColor: gpColor.rgba.royal(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'message', type: 'inbox'}
+          }
         },
         {
           key: 'message_outbox',
           label: 'GRAPH.DOC_STATS.MESSAGE.MESSAGE_OUTBOX',
           color: gpColor.rgba.calm(1),
-          pointHoverBackgroundColor: gpColor.rgba.calm(1)
+          pointHoverBackgroundColor: gpColor.rgba.calm(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'message', type: 'outbox'}
+          }
         },
         {
           key: 'invitation_certification',
           label: 'GRAPH.DOC_STATS.MESSAGE.INVITATION_CERTIFICATION',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'invitation', type: 'certification'}
+          }
         }
       ]
     },
@@ -90,19 +111,31 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
           key: 'page_record',
           label: 'GRAPH.DOC_STATS.SOCIAL.PAGE_RECORD',
           color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
+          pointHoverBackgroundColor: gpColor.rgba.royal(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'page', type: 'record'}
+          }
         },
         {
           key: 'group_record',
           label: 'GRAPH.DOC_STATS.SOCIAL.GROUP_RECORD',
           color: gpColor.rgba.calm(1),
-          pointHoverBackgroundColor: gpColor.rgba.calm(1)
+          pointHoverBackgroundColor: gpColor.rgba.calm(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'group', type: 'record'}
+          }
         },
         {
           key: 'page_comment',
           label: 'GRAPH.DOC_STATS.SOCIAL.PAGE_COMMENT',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'page', type: 'comment'}
+          }
         }
       ]
     },
@@ -116,7 +149,11 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
           key: 'history_delete',
           label: 'GRAPH.DOC_STATS.OTHER.HISTORY_DELETE',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          clickState: {
+            name: 'app.document_search',
+            params: {index:'history', type: 'delete'}
+          }
         }
       ]
     }
@@ -237,9 +274,25 @@ function GpDocStatsController($scope, $controller, $q, $translate, gpColor, gpDa
 
   $scope.onChartClick = function(data, e, item) {
     if (!item) return;
-    console.log('Click on item index='+ item._index);
-    var from = $scope.times[item._index];
-    var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
+    var chart = _.find($scope.charts , function(chart) {
+      return ($scope.chartIdPrefix  + chart.id) == item._chart.canvas.id;
+    });
+
+    var serie = chart.series[item._datasetIndex];
+
+    if (serie && serie.clickState && serie.clickState.name) {
+      var stateParams = serie.clickState.params ? angular.copy(serie.clickState.params) : {};
+
+      // Compute query
+      var from = $scope.times[item._index];
+      var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
+      stateParams.q = 'time:>={0} AND time:<{1}'.format(from, to);
+
+      return $state.go(serie.clickState.name, stateParams);
+    }
+    else {
+      console.debug('Click on item index={0} on range [{1},{2}]'.format(item._index, from, to));
+    }
   };
 
 

@@ -1,0 +1,17 @@
+<ion-view>
+  <ion-nav-title>
+    <span translate>DOCUMENT.LOOKUP.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showActionsPopover($event)">
+    </button>
+
+  </ion-nav-buttons>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <ng-include src="'plugins/es/templates/document/lookup_form.html'"></ng-include>
+  </ion-content>
+</ion-view>
