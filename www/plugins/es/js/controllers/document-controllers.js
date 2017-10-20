@@ -76,9 +76,9 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
 
     $scope.search.loading = true;
 
-    var searchFn =  $scope.search.last
-      ? esDocument.search(options)
-      : esDocument.searchText($scope.search.text||'', options);
+    var searchFn =  $scope.search.last ?
+      esDocument.search(options) :
+      esDocument.searchText($scope.search.text||'', options);
     return searchFn
       .then(function(res) {
         $scope.search.results = res.hits;
