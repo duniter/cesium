@@ -168,12 +168,15 @@
                        ng-change="formDataChanged()"
                        ng-model="formData.username"
                        ng-minlength="8"
+                       different-to="formData.pseudo"
                        required>
+                <!-- different-to="formData.pseudo" -->
                 <input ng-if="showUsername"
                        name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                        ng-change="formDataChanged()"
                        ng-model="formData.username"
                        ng-minlength="8"
+                       different-to="formData.pseudo"
                        required>
               </div>
               <div class="form-errors"
@@ -184,6 +187,9 @@
                 </div>
                 <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
+                </div>
+                <div class="form-error" ng-message="differentTo">
+                  <span translate="ERROR.EQUALS_TO_PSEUDO"></span>
                 </div>
               </div>
 
@@ -256,12 +262,14 @@
                        ng-model="formData.password"
                        ng-change="formDataChanged()"
                        ng-minlength="8"
+                       different-to="formData.username"
                        required>
                 <input ng-if="showPassword"
                        name="text" type="text" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                        ng-model="formData.password"
                        ng-change="formDataChanged()"
                        ng-minlength="8"
+                       different-to="formData.username"
                        required>
               </div>
               <div class="form-errors"
@@ -272,6 +280,9 @@
                 </div>
                 <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
+                </div>
+                <div class="form-error" ng-message="differentTo">
+                  <span translate="ERROR.EQUALS_TO_SALT"></span>
                 </div>
               </div>
 

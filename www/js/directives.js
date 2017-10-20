@@ -18,6 +18,24 @@ angular.module('cesium.directives', [])
       };
   })
 
+  // Add new different-to directive (need for form validation)
+  .directive("differentTo", function() {
+    return {
+      require: "?ngModel",
+      link: function(scope, element, attributes, ngModel) {
+        if (ngModel && attributes.differentTo) {
+          ngModel.$validators.differentTo = function(modelValue) {
+            return modelValue != scope.$eval(attributes.differentTo);
+          };
+
+          scope.$watch(attributes.differentTo, function() {
+            ngModel.$validate();
+          });
+        }
+      }
+    };
+  })
+
   .directive('numberFloat', function() {
     var NUMBER_REGEXP = new RegExp('^[0-9]+([.,][0-9]+)?$');
 
