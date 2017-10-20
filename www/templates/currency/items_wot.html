@@ -44,17 +44,23 @@
     </ion-item>
 
     <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
-      <i class="icon ion-ribbon-a"></i>
-      <span class="col col-75" translate>CURRENCY.VIEW.SIG_STOCK</span>
-      <span class="badge badge-stable" ng-if="!loading">{{formData.sigStock}}</span>
-    </ion-item>
-
-
-    <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
       <i class="icon ion-ribbon-b"></i>
       <b class="ion-clock icon-secondary" style="font-size: 18px; left: 33px; top: -12px;"></b>
       <span class="col col-60" translate>CURRENCY.VIEW.SIG_WINDOW</span>
       <span class="badge badge-stable" ng-if="!loading">{{formData.sigWindow | formatDuration}}</span>
+    </ion-item>
+
+    <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
+      <i class="icon ion-ribbon-b"></i>
+      <b class="ion-calendar icon-secondary" style="font-size: 18px; left: 33px; top: -12px;"></b>
+      <span class="col col-60" translate>CURRENCY.VIEW.SIG_VALIDITY</span>
+      <span class="badge badge-balanced" ng-if="!loading">{{formData.sigValidity | formatDuration}}</span>
+    </ion-item>
+
+    <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
+      <i class="icon ion-ribbon-a"></i>
+      <span class="col col-75" translate>CURRENCY.VIEW.SIG_STOCK</span>
+      <span class="badge badge-stable" ng-if="!loading">{{formData.sigStock}}</span>
     </ion-item>
 
     <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
