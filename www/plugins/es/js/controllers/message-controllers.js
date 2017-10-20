@@ -391,7 +391,7 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
       time: esHttp.date.now()
     };
 
-    esMessage.send(data, csWallet.data.keypair)
+    esMessage.send(data)
       .then(function(id) {
         $scope.id=id;
         UIUtils.loading.hide();

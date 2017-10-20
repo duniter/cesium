@@ -110,27 +110,30 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         });
     }
 
-    function sendMessage(message, keypair) {
-      return doSendMessage(message, keypair)
-        .then(function(res){
-          var outbox = (csSettings.data.plugins.es.message &&
-          angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
-            csSettings.data.plugins.es.message.outbox : true;
+    function sendMessage(message) {
+      return csWallet.getKeypair()
+        .then(function(keypair) {
+          return doSendMessage(message, keypair)
+            .then(function (res) {
+              var outbox = (csSettings.data.plugins.es.message &&
+              angular.isDefined(csSettings.data.plugins.es.message.outbox)) ?
+                csSettings.data.plugins.es.message.outbox : true;
 
-          if (!outbox) return res;
+              if (!outbox) return res;
 
-          // Send to outbox
-          return doSendMessage(message, keypair, '/message/outbox', 'issuer')
-            .catch(function(err) {
-              console.error("Failed to store message to outbox: " + err);
-              return res; // the first result
+              // Send to outbox
+              return doSendMessage(message, keypair, '/message/outbox', 'issuer')
+                .catch(function (err) {
+                  console.error("Failed to store message to outbox: " + err);
+                  return res; // the first result
+                });
+            })
+            .then(function (res) {
+              // Raise event
+              api.data.raise.sent(res);
+
+              return res;
             });
-        })
-        .then(function(res) {
-          // Raise event
-          api.data.raise.sent(res);
-
-          return res;
         });
     }
 
@@ -482,7 +485,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         .then(function(keypair) {
           return $q.all(developers.reduce(function(res, developer){
             return !developer.pubkey ? res :
-              res.concat(sendMessage(angular.merge({recipient: developer.pubkey}, message), keypair));
+              res.concat(doSendMessage(angular.merge({recipient: developer.pubkey}, message), keypair));
           }, []));
         })
         .then(function(res) {
