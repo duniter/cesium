@@ -838,7 +838,7 @@
         "PARAM_CANCEL_URL_HELP": "URL in case of cancellation.  Can contain the following strings, which will be replaced: \"{comment}\", \"{amount}\" and \"{pubkey}\".",
         "EXAMPLES_HELP": "Examples of integration:",
         "EXAMPLE_BUTTON": "HTML Button",
-        "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pay in {{currency|currencySymbol}}",
+        "EXAMPLE_BUTTON_DEFAULT_TEXT": "Pay in {{currency|abbreviate}}",
         "EXAMPLE_BUTTON_DEFAULT_STYLE": "Custom style",
         "EXAMPLE_BUTTON_TEXT_HELP": "Button text",
         "EXAMPLE_BUTTON_BG_COLOR": "Background color",
