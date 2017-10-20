@@ -141,6 +141,10 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         }
       };
 
+      exports.isIOS = function() {
+        return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || ionic.Platform.isIOS();
+      };
+
       exports.ready = function() {
         if (started) return $q.when();
         return startPromise || exports.start();

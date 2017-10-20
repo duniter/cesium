@@ -105,7 +105,7 @@ function JoinChooseAccountTypeModalController($scope, $state, Modals, UIUtils, c
 }
 
 
-function JoinModalController($scope, $state, $interval, $timeout, UIUtils, CryptoUtils, csSettings, Modals, csWallet, BMA, parameters) {
+function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtils, CryptoUtils, csSettings, Modals, csWallet, BMA, parameters) {
   'ngInject';
 
   $scope.formData = {
@@ -122,8 +122,7 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
   $scope.slideBehavior = {};
   $scope.loading = true;
 
-
-  $scope.isLicenseRead = false;
+  $scope.isLicenseRead = Device.isIOS(); // always enable the button, on IOS  fix #554
   $scope.showUsername = false;
   $scope.showPassword = false;
   $scope.formData.computing=false;
@@ -144,7 +143,9 @@ function JoinModalController($scope, $state, $interval, $timeout, UIUtils, Crypt
           if ( $scope.licenseFileUrl.substring($scope.licenseFileUrl.length - 3) != '.txt') {
             $scope.licenseFileUrl = $scope.licenseFileUrl + '.html';
           }
-          $scope.startListenLicenseBottom();
+          if (!$scope.isLicenseRead) {
+            $scope.startListenLicenseBottom();
+          }
         }
       }
 
