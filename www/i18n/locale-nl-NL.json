@@ -106,8 +106,8 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "MESSAGE": "Welkom bij de Cesium Applicatie!<br/>Bekijk je <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> portefeilles in real time.",
-    "MESSAGE_SHORT": "Bekijk je <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> portefeilles<br/>in real time!",
+    "WELCOME": "Welkom bij de Cesium Applicatie!",
+    "MESSAGE": "Bekijk je {{currency|abbreviate}} portefeilles in real time.",
     "BTN_REGISTRY": "Register",
     "BTN_CURRENCY": "Verken valuta",
     "BTN_ABOUT": "over",

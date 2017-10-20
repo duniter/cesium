@@ -3,11 +3,15 @@
 
   </ion-nav-title>
 
-  <ion-content class="has-header text-center padding-xs positive-900-bg">
+  <ion-content
+    class="has-header text-center padding-xs positive-900-bg">
 
     <div id="helptip-home-logo" class="logo"></div>
-    <h4 class="hidden-xs" translate>HOME.MESSAGE</h4>
-    <h4 class="visible-xs" translate>HOME.MESSAGE_SHORT</h4>
+
+    <h4>
+      <span class="hidden-xs" translate>HOME.WELCOME</span>
+      <span ng-show="!loading" translate-values=":currency:{currency: $root.currency.name}" translate>HOME.MESSAGE</span>
+    </h4>
 
     <div class="center padding" >
 

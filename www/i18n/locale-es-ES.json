@@ -108,8 +108,8 @@
   },
   "HOME": {
     "TITLE": "Cesium",
-    "MESSAGE": "Bienvenida en la aplicación Cesium !<br/>Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_system\">Duniter</a> en tiempo real.",
-    "MESSAGE_SHORT": "Sigue sus cuentas <a href=\"http://duniter.org\" target=\"_system\">Duniter</a><br/>en tiempo real !",
+    "WELCOME": "Bienvenida en la aplicación Cesium !",
+    "MESSAGE": "Sigue sus cuentas de {{currency|abbreviate}} con facilidad",
     "BTN_CURRENCY": "Explorar la moneda",
     "BTN_ABOUT": "A propósito",
     "BTN_HELP": "Ayuda en línea",

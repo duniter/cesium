@@ -53,7 +53,7 @@
     <ion-header-bar>
       <h1 class="title dark hidden-sm hidden-xs" >
         <span class="animate-fade-in animate-show-hide ng-hide" ng-show="$root.currency.name">
-          {{:locale:'COMMON.APP_NAME'|translate}} {{$root.currency.name|currencySymbol:false }}
+          {{:locale:'COMMON.APP_NAME'|translate}} {{$root.currency.name|abbreviate}}
         </span>
       </h1>
 
