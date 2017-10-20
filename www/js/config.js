@@ -12,37 +12,54 @@ angular.module("cesium.config", [])
 	"cacheTimeMs": 300000,
 	"fallbackLanguage": "en",
 	"rememberMe": true,
-	"timeout": 300000,
+	"showUDHistory": true,
+	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
+	"keepAuthIlde": 600,
 	"useLocalStorage": true,
 	"useRelative": false,
-	"expertMode": true,
+	"expertMode": false,
 	"decimalCount": 2,
+	"httpsMode": false,
 	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
-		"enable": false,
+		"enable": true,
 		"installDocUrl": {
 			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
-			"en": "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md"
+			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
+	"license": {
+		"fr-FR": "license/license_g1-fr-FR",
+		"en": "license/license_g1-en"
+	},
 	"node": {
-		"host": "g1-test.duniter.org",
-		"port": 443
+		"host": "g1.duniter.org",
+		"port": "443"
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1-test.cgeek.fr",
-			"port": 443
+			"host": "g1.duniter.fr",
+			"port": "443"
+		},
+		{
+			"host": "g1.duniter.org",
+			"port": "443"
+		}
+	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
 		"es": {
 			"enable": true,
 			"askEnable": false,
-			"host": "g1-test.data.duniter.fr",
-			"port": 443,
+			"host": "g1.data.duniter.fr",
+			"port": "443",
 			"notifications": {
 				"txSent": true,
 				"txReceived": true,
@@ -52,8 +69,8 @@ angular.module("cesium.config", [])
 			"defaultCountry": "France"
 		}
 	},
-	"version": "0.18.2",
-	"build": "2017-10-20T16:07:02.760Z",
+	"version": "0.18.3",
+	"build": "2017-10-20T17:44:25.876Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
