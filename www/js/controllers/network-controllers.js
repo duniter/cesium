@@ -275,14 +275,11 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.showEndpointsPopover = function($event, peer, endpointFilter) {
     var endpoints = peer.getEndpoints(endpointFilter);
     endpoints = (endpoints||[]).reduce(function(res, ep) {
-        var parts = ep.split(' ');
-        if (parts[0] == endpointFilter) {
-          return res.concat({
-            label: 'NETWORK.VIEW.NODE_ADDRESS',
-            value: parts[1] + (parts[2] != 80 ? (':'+parts[2]) : '')
-          });
-        }
-        return res;
+        var bma = BMA.node.parseEndPoint(ep);
+        return res.concat({
+          label: 'NETWORK.VIEW.NODE_ADDRESS',
+          value: peer.getServer() + (bma.path||'')
+        });
       }, []);
     if (!endpoints.length) return;
 
@@ -297,12 +294,17 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   };
 
   $scope.showWs2pPopover = function($event, peer) {
+
     UIUtils.popover.show($event, {
       templateUrl: 'templates/network/popover_endpoints.html',
       bindings: {
         titleKey: 'NETWORK.VIEW.ENDPOINTS.WS2P',
         valueKey: 'NETWORK.VIEW.NODE_ADDRESS',
         items: [
+          {
+            label: 'NETWORK.VIEW.NODE_ADDRESS',
+            value: peer.getServer() + (peer.bma.path||'')
+          },
           {
             label: 'NETWORK.VIEW.WS2PID',
             value: peer.bma.ws2pid

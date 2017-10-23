@@ -570,6 +570,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "ipv6": matches[7] || '',
           "port": matches[9] || 80,
           "useSsl": matches[9] && matches[9] == 443,
+          "path": matches[11] || '',
           "useWs2p": true
         };
       }

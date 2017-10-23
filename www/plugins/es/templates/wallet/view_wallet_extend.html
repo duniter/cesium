@@ -1,7 +1,13 @@
 <ng-if ng-if="enable">
   <!-- profile -->
   <div class="item item-divider item-divider-top-border">
-    <span ng-bind-html="'PROFILE.PROFILE_DIVIDER' | translate"></span>
+    <span>
+      {{'PROFILE.PROFILE_DIVIDER' | translate}}
+      <i style="font-size: 12pt; cursor: pointer;"
+         ng-click="showProfileHelp=!showProfileHelp"
+         class="icon positive ion-ios-help-outline"
+         title="{{'PROFILE.PROFILE_DIVIDER_HELP' | translate}}"></i>
+    </span>
     <a class="badge button button-text button-small button-small-padding "
        ui-sref="app.user_edit_profile">
       <i class="icon ion-edit"></i>
@@ -10,7 +16,7 @@
     </a>
   </div>
 
-  <div class="item item-text-wrap positive item-small-height">
+  <div class="item item-text-wrap positive item-small-height" ng-show="showProfileHelp">
     <small translate>PROFILE.PROFILE_DIVIDER_HELP</small>
   </div>
 
@@ -20,13 +26,24 @@
 
   <!-- subscriptions -->
   <div class="item item-divider item-divider-top-border">
-    {{'SUBSCRIPTION.SUBSCRIPTION_DIVIDER' | translate}}
+    <span>
+      {{'SUBSCRIPTION.SUBSCRIPTION_DIVIDER' | translate}}
+      <i style="font-size: 12pt; cursor: pointer;"
+         ng-click="showSubscriptionHelp=!showSubscriptionHelp"
+         class="icon positive ion-ios-help-outline"
+         title="{{'SUBSCRIPTION.SUBSCRIPTION_DIVIDER_HELP' | translate}}"></i>
+    <span>
+
     <a class="badge button button-text button-small button-small-padding "
        ng-if="!formData.subscriptions.count"
        ui-sref="app.edit_subscriptions">
       <i class="icon ion-edit"></i>
       <span translate>SUBSCRIPTION.BTN_ADD</span>
     </a>
+  </div>
+
+  <div class="item item-text-wrap positive item-small-height" ng-show="showSubscriptionHelp">
+    <small translate>SUBSCRIPTION.SUBSCRIPTION_DIVIDER_HELP</small>
   </div>
 
   <div class="double-padding-x padding-bottom">

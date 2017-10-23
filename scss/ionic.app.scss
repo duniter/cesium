@@ -577,10 +577,19 @@ $screen-menu:                     845px;
 
 .popover-invitation,
 .popover-network,
-.popover-peer-info{
+.popover-peer-info {
   width: 420px;
 }
 
+/**********
+   Network
+**********/
+.popover-peer-info,
+.popover-endpoints {
+  .item .badge {
+    right: 16px;
+  }
+}
 
 /**********
    Unit popover

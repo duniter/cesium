@@ -6,8 +6,8 @@
   <h4 class="gray">
     {{'SUBSCRIPTION.EDIT.PROVIDER'|translate}}
     <a ui-sref="app.wot_identity({pubkey: subscriptions.recipient, uid: subscriptions.uid})">
-      <span class="positive" ng-if="subscriptions.uid">
-        <i class="ion-person"></i>
+      <span ng-class="{'positive': subscriptions.uid, 'dark': !subscriptions.uid}" ng-if="subscriptions.name||subscriptions.uid">
+        <i class="ion-person" ng-if="subscriptions.uid"></i>
         {{subscriptions.name||subscriptions.uid}}
       </span>
       <span class="gray" ng-if="!subscriptions.uid">
@@ -19,8 +19,8 @@
   <div class="item-note text-right">
     <span ng-repeat="item in subscriptions.items">
       {{item.content.email}}
-      <a class="icon ion-close assertive padding-left" ng-click="deleteSubscription(item)"></a>
-      <a class="icon ion-edit gray padding-left" ng-click="editSubscription(item)"></a>
+      <a class="ion-trash-a assertive padding-left" ng-click="deleteSubscription(item)"></a>
+      <a class="ion-edit gray padding-left" ng-click="editSubscription(item)"></a>
       <br/>
     </span>
   </div>

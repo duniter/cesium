@@ -379,6 +379,7 @@
   },
   "SUBSCRIPTION": {
     "SUBSCRIPTION_DIVIDER": "Services en ligne",
+    "SUBSCRIPTION_DIVIDER_HELP": "Les services en ligne offrent des services supplémentaires optionnels, délégués à un tiers.",
     "BTN_ADD": "Ajouter un service",
     "BTN_EDIT": "Gérer mes services",
     "NO_SUBSCRIPTION": "Aucun service utilisé",

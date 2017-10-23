@@ -20,7 +20,7 @@
           <span class="positive" ng-if=":rebind:peer.uid">
             <i class="ion-person"></i> {{:rebind:peer.name || peer.uid}}
           </span>
-          <span class="gray">{{:rebind:peer.dns && (' | ' + peer.server)}}</span>
+          <span class="gray">{{:rebind:peer.dns && (' | ' + peer.server) + (peer.bma.path||'') }}</span>
         </h4>
       </div>
       <div class="col col-15 no-padding text-center hidden-xs hidden-sm" ng-if="::expertMode">
