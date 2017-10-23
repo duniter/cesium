@@ -225,7 +225,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
 
       // Workaround for old data
       if (formData.position) {
-        delete formData.position;
+        formData.position = null;
       }
       if (formData.geoPoint && formData.geoPoint.lat && formData.geoPoint.lon) {
         formData.geoPoint.lat =  parseFloat(formData.geoPoint.lat);

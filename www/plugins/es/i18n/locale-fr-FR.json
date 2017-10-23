@@ -426,6 +426,7 @@
       "HEADER_ISSUER": "Emetteur",
       "HEADER_RECIPIENT": "Destinataire",
       "READ": "Lu",
+      "BTN_REMOVE": "Supprimer ce document",
       "POPOVER_ACTIONS": {
         "TITLE": "Actions",
         "REMOVE_ALL": "Supprimer ces documents..."

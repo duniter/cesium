@@ -28,6 +28,13 @@
     </div>
 
     <div class="col">
+      <a
+        ng-if=":rebind:login && doc.pubkey==$root.walletData.pubkey"
+        ng-click="remove($index)"
+        class="gray pull-right"
+         title="{{'DOCUMENT.LOOKUP.BTN_REMOVE'|translate}}">
+        <i class="ion-trash-a"></i>
+      </a>
       <h3 ng-if=":rebind:doc.recipient">
           <a ui-sref="app.wot_identity({pubkey: doc.recipient.pubkey, uid: doc.recipient.uid})">
           <span class="gray">

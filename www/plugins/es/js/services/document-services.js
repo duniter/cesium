@@ -20,7 +20,8 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
       },
       fields = {
         commons: ["issuer", "pubkey", "hash", "time", "recipient", "nonce", "read_signature"],
-        peer: ["*"]
+        peer: ["*"],
+        movement: ["*"]
       },
       raw = {
         search: esHttp.post('/:index/:type/_search'),
@@ -64,7 +65,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
     function search(options) {
       options = options || {};
 
-      if (options.type == 'peer') {
+      if (options.type == 'movement') {
         if (!options.sort) {
           options.sort = 'stats.medianTime:desc';
         }
@@ -80,10 +81,32 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
           ];
           options._source = fields.peer;
           options.getTimeFunction = function(doc) {
-            return doc.stats && doc.stats.medianTime;
+            doc.time = doc.stats && doc.stats.medianTime;
+            return doc.time;
           };
         }
       }
+      else if (options.type == 'movement') {
+        if (!options.sort) {
+          options.sort = 'medianTime:desc';
+        }
+        else {
+          var sortParts = options.sort.split(':');
+          var side = sortParts.length > 1 ? sortParts[1] : 'desc';
+
+          options.sort = [
+            {'medianTime': {
+              order: side
+            }}
+          ];
+          options._source = fields.movement;
+          options.getTimeFunction = function(doc) {
+            doc.time = doc.medianTime;
+            return doc.time;
+          };
+        }
+      }
+
 
       if (!options || !options.index || !options.type) throw new Error('Missing mandatory options [index, type]');
       var request = {
@@ -141,7 +164,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
     }
 
     function remove(document) {
-      if (document || !document.index || !document.type || !document.id) return;
+      if (!document || !document.index || !document.type || !document.id) return $q.reject('Could not remove document: missing mandatory fields');
       return esHttp.record.remove(document.index, document.type)(document.id);
     }
 

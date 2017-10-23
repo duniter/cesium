@@ -126,10 +126,17 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
 
     return UIUtils.alert.confirm('DOCUMENT.CONFIRM.REMOVE_ALL')
       .then(function(confirm) {
-        if (confirm) {
-          return esDocument.removeAll($scope.search.results)
-            .catch(UIUtils.onError('DOCUMENT.ERROR.REMOVE_ALL_FAILED'));
-        }
+        if (!confirm) return;
+        UIUtils.loading.show();
+        return esDocument.removeAll($scope.search.results)
+          .then(function() {
+            $scope.search.loading = false;
+            return $timeout(function() {
+              UIUtils.toast.show('DOCUMENT.INFO.REMOVED'); // toast
+              return $scope.load();
+            }, 1000 /*waiting propagation*/);
+          })
+          .catch(UIUtils.onError('DOCUMENT.ERROR.REMOVE_ALL_FAILED'));
       });
   };
 
@@ -139,14 +146,14 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
 
     UIUtils.alert.confirm('DOCUMENT.CONFIRM.REMOVE')
       .then(function(confirm) {
-        if (confirm) {
-          esDocument.remove(doc)
-            .then(function () {
-              $scope.search.results.splice(index,1); // remove from messages array
-              UIUtils.toast.show('DOCUMENT.INFO.REMOVED');
-            })
-            .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_FAILED'));
-        }
+        if (!confirm) return;
+        return esDocument.remove(doc)
+          .then(function () {
+            $scope.search.results.splice(index,1); // remove from messages array
+            $scope.$broadcast('$$rebind::rebind'); // notify binder
+            UIUtils.toast.show('DOCUMENT.INFO.REMOVED'); // toast
+          })
+          .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_FAILED'));
       });
   };
 

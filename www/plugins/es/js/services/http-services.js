@@ -258,6 +258,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             delete obj.signature;
             delete obj.hash;
             obj.issuer = walletData.pubkey;
+            if (!obj.version) {
+              obj.version = 2;
+            }
 
             // Fill tags
             if (options.tagFields) {
@@ -268,11 +271,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
             return CryptoUtils.util.hash(str)
               .then(function(hash) {
-                return CryptoUtils.sign(str, walletData.keypair)
+                return CryptoUtils.sign(hash, walletData.keypair)
                   .then(function(signature) {
                     obj.hash = hash;
                     obj.signature = signature;
-                    return postRequest(obj, params)
+                    str = '{"hash":"' + hash + '","signature":"' + signature + '",'
+                      + str.substring(1);
+                    return postRequest(str, params)
                       .then(function (id){
                         return id;
                       });
@@ -288,6 +293,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           .then(function(walletData) {
 
             var obj = {
+              version: 2,
               index: index,
               type: type,
               id: id,
@@ -297,7 +303,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             var str = JSON.stringify(obj);
             return CryptoUtils.util.hash(str)
               .then(function (hash) {
-                return CryptoUtils.sign(str, walletData.keypair)
+                return CryptoUtils.sign(hash, walletData.keypair)
                   .then(function (signature) {
                     obj.hash = hash;
                     obj.signature = signature;
