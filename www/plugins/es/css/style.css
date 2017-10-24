@@ -150,9 +150,9 @@
   line-height: 88px;
 }
 
-/**
-* Message screen
-*/
+/**********
+   Message screen
+**********/
 
 #composeMessage .list .item {
   border-bottom: solid 1px #ccc;
@@ -177,9 +177,23 @@
   padding-bottom: 8px;
 }
 
-/**
-* Add specific Icons
-*/
+/**********
+   Message screen
+**********/
+
+.modal-search-location .bar-footer {
+  height: 30px;
+}
+.modal-search-location .bar-footer .copyright {
+  font-size: 12px;
+  line-height: 30px;
+}
+
+
+/**********
+   Add specific Icons
+**********/
+
 
 /* Association */
 .cion-page-association:before {

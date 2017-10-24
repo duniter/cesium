@@ -16,6 +16,9 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 
  .controller('ESPositionEditCtrl', ESPositionEditController)
 
+  .controller('ESSearchPositionModalCtrl', ESSearchPositionModalController)
+
+
 ;
 
 
@@ -136,7 +139,7 @@ function ESCategoryModalController($scope, UIUtils, $timeout, parameters) {
 
 
 
-function ESCommentsController($scope, $timeout, $filter, $state, $focus, UIUtils) {
+function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
   'ngInject';
 
   $scope.loading = true;
@@ -420,139 +423,211 @@ function ESAvatarModalController($scope) {
 }
 
 
-function ESPositionEditController($scope, $q, $translate,
-                                  csConfig, UIUtils, esGeo, ModalUtils) {
+function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils) {
   'ngInject';
 
   // The default country used for address localisation
   var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
 
-  //$scope.formData = $scope.formData || {};
-  //$scope.formData.geoPoint = $scope.formData.geoPoint || {};
+  var loadingCurrentPosition = false;
+  $scope.loadingPosition = false;
 
-  $scope.localizeByAddress = function() {
+  $scope.tryToLocalize = function() {
+    if ($scope.loadingPosition || loadingCurrentPosition) return;
 
-    return UIUtils.loading.show()
-      .then($scope.searchPositions)
-      .then(function(res) {
-        UIUtils.loading.hide();
+    var searchText = $scope.getAddressToSearch();
 
-        if (!res) return; // no result, or city value just changed
-        if (res.length == 1) {
-          return res[0];
-        }
-
-        return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-          {
-            categories : res,
-            title: 'PROFILE.MODAL_LOCATIONS.TITLE'
-          },
-          {focusFirstInput: true}
-        );
-      })
-      .then(function(res) {
-        if (res && res.lat && res.lon) {
-          $scope.formData.geoPoint = $scope.formData.geoPoint || {};
-          $scope.formData.geoPoint.lat =  parseFloat(res.lat);
-          $scope.formData.geoPoint.lon =  parseFloat(res.lon);
-        }
-      })
-      .catch(UIUtils.onError('PROFILE.ERROR.ADDRESS_LOCATION_FAILED'));
-  };
-
-  $scope.searchPositions = function(query) {
-
-    // Build the query
-    if (!query) {
-      if (!$scope.formData.city) {
-        return $q.when(); // nothing to search
-      }
-
-      var cityPart = $scope.formData.city.split(',');
-      var city = cityPart[0];
-
-      var country = cityPart.length > 1 ? cityPart[1].trim() : defaultCountry;
-      var street = $scope.formData.address ? angular.copy($scope.formData.address.trim()) : undefined;
-      if (street) {
-        // Search with AND without street
-        return $q.all([
-          $scope.searchPositions({
-            street: street,
-            city: city,
-            country: country
-          }),
-          $scope.searchPositions({
-            city: city,
-            country: country
-          })
-        ])
-          .then(function(res){
-            return res[0].concat(res[1]);
-          });
-      }
-      else {
-        return $scope.searchPositions({
-          city: city,
-          country: country
+    // No address, so try to localize by device
+    if (!searchText) {
+      loadingCurrentPosition = true;
+      return esGeo.point.current()
+        .then($scope.updateGeoPoint)
+        .then(function() {
+          loadingCurrentPosition = false;
+        })
+        .catch(function(err) {
+          console.error(err); // Silent
+          loadingCurrentPosition = false;
+          $scope.form.geoPoint.$setValidity('required', false);
         });
-      }
     }
 
-    var queryString = (query.street ? query.street + ', ' : '') +
-      query.city +
-      (query.country ? ', ' + query.country : '');
-    // Execute the given query
-    return $q.all([
-      $translate('PROFILE.MODAL_LOCATIONS.RESULT_DIVIDER', {address: queryString}),
-      esGeo.point.searchByAddress(query)
-    ])
+    $scope.loadingPosition = true;
+    return esGeo.point.searchByAddress(searchText)
       .then(function(res) {
-        var dividerText = res[0];
-        res = res[1];
-        if (!res) return $q.when(); // no result
-
-        // Ask user to choose
-        var parent = {name: dividerText};
-        var hits = res.reduce(function(res, hit){
-          if (hit.class == 'waterway') return res;
-          return res.concat({
-            name: hit.display_name,
-            parent: parent,
-            lat: hit.lat,
-            lon: hit.lon
-          });
-        }, [parent]);
-
-        if (hits.length == 1) return $q.when(); // no result (after filtering)
-
-        return hits;
-      });
-  };
-
-  $scope.localizeMe = function() {
-    return esGeo.point.current()
-      .then(function(position) {
-        if (!position || !position.lat || !position.lon) return;
-        $scope.formData.geoPoint = $scope.formData.geoPoint || {};
-        $scope.formData.geoPoint.lat =  parseFloat(position.lat);
-        $scope.formData.geoPoint.lon =  parseFloat(position.lon);
+        if (res && res.length == 1) {
+          return $scope.updateGeoPoint(res[0]);
+        }
+        return $scope.openSearchLocationModal({
+          text: searchText,
+          results: res||[],
+          forceFallback: !res || !res.length // force fallback search first
+        });
       })
-      .catch(UIUtils.onError('PROFILE.ERROR.GEO_LOCATION_FAILED'));
-  };
-
-  $scope.removeLocalisation = function() {
-    if ($scope.formData.geoPoint) {
-      $scope.formData.geoPoint.lat = null;
-      $scope.formData.geoPoint.lon = null;
-    }
+      .then(function() {
+        $scope.loadingPosition = false;
+      })
+      .catch(function(err) {
+        console.error(err); // Silent
+        $scope.loadingPosition = false;
+      });
   };
 
   $scope.onCityChanged = function() {
     if ($scope.loading) return;
-    var hasGeoPoint = $scope.formData.geoPoint && $scope.formData.geoPoint.lat && $scope.formData.geoPoint.lon;
-    if (!hasGeoPoint) {
-      return $scope.localizeByAddress();
+    if ($scope.form) {
+      $scope.form.$valid = undefined;
     }
+    if ($scope.formData.enableGeoPoint) {
+      return $scope.tryToLocalize();
+    }
+  };
+
+  $scope.onUseGeopointChanged = function() {
+    if ($scope.loading) return;
+    if (!$scope.formData.enableGeoPoint) {
+      if ($scope.formData.geoPoint) {
+        $scope.formData.geoPoint.lat = null;
+        $scope.formData.geoPoint.lon = null;
+        $scope.form.geoPoint.$setValidity('required', true);
+        $scope.dirty = true;
+      }
+    }
+    else {
+      $scope.tryToLocalize();
+    }
+  };
+
+  $scope.onGeopointChanged = function() {
+    if ($scope.loading) {
+      $scope.formData.enableGeoPoint = $scope.formData.geoPoint && !!$scope.formData.geoPoint.lat && !!$scope.formData.geoPoint.lon;
+    }
+  };
+  $scope.$watch('formData.geoPoint', $scope.onGeopointChanged);
+
+  $scope.getAddressToSearch = function() {
+    return $scope.formData.address && $scope.formData.city ?
+      [$scope.formData.address.trim(), $scope.formData.city.trim()].join(', ') :
+    $scope.formData.city || $scope.formData.address;
+  };
+
+  $scope.updateGeoPoint = function(res) {
+    // user cancel
+    if (!res || !res.lat || !res.lon) {
+      // Force use GeoPoint as invalid (if not already a position)
+      if ($scope.formData.enableGeoPoint && (!$scope.formData.geoPoint || !$scope.formData.geoPoint.lat)) {
+        $scope.form.geoPoint.$setValidity('required', false);
+      }
+      return;
+    }
+
+    $scope.dirty = true;
+    $scope.formData.geoPoint = $scope.formData.geoPoint || {};
+    $scope.formData.geoPoint.lat =  parseFloat(res.lat);
+    $scope.formData.geoPoint.lon =  parseFloat(res.lon);
+    $scope.form.geoPoint.$setValidity('required', true);
+
+    if (res.address && res.address.city) {
+      var cityParts = [res.address.city];
+      if (res.address.postcode) {
+        cityParts.push(res.address.postcode);
+      }
+      if (res.address.country != defaultCountry) {
+        cityParts.push(res.address.country);
+      }
+      $scope.formData.city = cityParts.join(', ');
+    }
+  };
+
+  /* -- modal -- */
+
+  $scope.openSearchLocationModal = function(options) {
+
+    options = options || {};
+
+    var parameters = {
+      text: options.text || $scope.getAddressToSearch(),
+      results: options.results,
+      fallbackText: options.fallbackText || $scope.formData.city,
+      forceFallback: angular.isDefined(options.forceFallback) ? options.forceFallback : undefined
+    };
+
+    return ModalUtils.show(
+        'plugins/es/templates/common/modal_location.html',
+        'ESSearchPositionModalCtrl',
+        parameters,
+        {
+          focusFirstInput: true
+          //,scope: $scope
+        }
+      )
+      .then($scope.updateGeoPoint);
+  };
+}
+
+function ESSearchPositionModalController($scope, $q, $translate, esGeo, parameters) {
+  'ngInject';
+
+  $scope.search = {
+    text: parameters.text || '',
+    fallbackText: parameters.fallbackText || undefined,
+    forceFallback: angular.isDefined(parameters.forceFallback) ? parameters.forceFallback : false,
+    loading: false,
+    results: parameters.results || undefined
+  };
+
+  $scope.$on('modal.shown', function() {
+    // Load search
+    $scope.doSearch(true/*first search*/);
+  });
+
+  $scope.doSearch = function(firstSearch) {
+
+    var text = $scope.search.text && $scope.search.text.trim();
+    if (!text) {
+      return $q.when(); // nothing to search
+    }
+
+    $scope.search.loading = true;
+
+    // Compute alternative query text
+    var fallbackText = firstSearch && $scope.search.fallbackText && $scope.search.fallbackText.trim();
+    fallbackText = fallbackText && fallbackText != text ? fallbackText : undefined;
+
+    // Execute the given query
+    return ((firstSearch && $scope.search.forceFallback && $scope.search.results) ?
+      $q.when($scope.search.results) :
+      esGeo.point.searchByAddress(text)
+    )
+      .then(function(res) {
+        if (res && res.length || !fallbackText) return res;
+
+        // Fallback search
+        return $q.all([
+          $translate('PROFILE.MODAL_LOCATION.ALTERNATIVE_RESULT_DIVIDER', {address: fallbackText}),
+          esGeo.point.searchByAddress(fallbackText)
+        ])
+          .then(function (res) {
+            var dividerText = res[0];
+            var res = res[1];
+            if (!res || !res.length) return res;
+
+            return [{name: dividerText}].concat(res);
+          });
+      })
+      .then(function(res) {
+        $scope.search.loading = false;
+        $scope.search.results = res||[];
+
+        $scope.license = res && res.length && res[0].license;
+      })
+      .catch(function(err) {
+        $scope.search.loading = false;
+        $scope.search.results = [];
+        $scope.license = undefined;
+        throw err;
+      })
+      ;
   };
 
 }

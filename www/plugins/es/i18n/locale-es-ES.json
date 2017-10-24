@@ -17,6 +17,10 @@
       "SETTINGS": "configuraciónes",
       "SHOW_ALL": "Ver todo",
       "LOAD_NOTIFICATIONS_FAILED": "Fracaso en la carga de las notificaciónes"
+    },
+    "ERROR": {
+      "REQUIRED_FOR_LOCATION": "Campo obligatorio para aparecer en el mapa",
+      "INVALID_FOR_LOCATION": "Dirección desconocida"
     }
   },
   "MENU": {
@@ -237,7 +241,8 @@
     },
     "VIEW": {
       "POPOVER_SHARE_TITLE": "{{title}}",
-      "MENU_TITLE": "Opciones"
+      "MENU_TITLE": "Opciones",
+      "REMOVE_CONFIRMATION" : "Seguro que quieres eliminar este grupo?<br/><br/>Esta operación es irreversible."
     },
     "EDIT": {
       "TITLE": "Grupo",
@@ -249,6 +254,10 @@
     },
     "ERROR": {
       "SEARCH_GROUPS_FAILED": "Fracaso en la búsqueda de grupos"
+      "REMOVE_RECORD_FAILED": "Error al eliminar el grupo"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Grupo eliminado"
     }
   },
   "REGISTRY": {
@@ -326,8 +335,8 @@
     "BTN_ADD": "Ingresar mi perfil",
     "BTN_EDIT": "Editar mi perfil",
     "BTN_GEOLOC_ADDRESS": "Actualizar desde la dirección",
-    "BTN_GEOLOC_ME": "localizarme",
-    "BTN_REMOVE_GEOLOC": "Posición de eliminar",
+    "USE_GEO_POINT": "Aparecer en la tarjeta de membresía?",
+    "LOADING_LOCATION": "Encontrar la dirección ...",
     "UID": "Seudónimo",
     "TITLE": "Nombre, Apellido",
     "TITLE_HELP": "Nombre, Apellido",
@@ -336,7 +345,7 @@
     "ADDRESS": "Calle",
     "ADDRESS_HELP": "Calle, complemento de dirección...",
     "CITY": "Ciudad",
-    "CITY_HELP": "Ciudad (opcional)",
+    "CITY_HELP": "Ciudad, País",
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "Informaciónes generales",
     "LOCATION_DIVIDER": "Dirección",
@@ -353,9 +362,11 @@
       "RESIZE_HELP": "<b>Encuadra la imagen</b>, si es necesario. Un clic mantenido sobre la imagen permite desplazarla. Hace un clic sobre la zona abajo a la izquierda para hacer zoom.",
       "RESULT_HELP": "<b>Aquí está el resultado</b> tal como está visible sobre su perfil :"
     },
-    "MODAL_LOCATIONS": {
-      "TITLE": "Validación de direcciones",
-      "RESULT_DIVIDER": "Resultado(s) para <b>{{address}}</b>:"
+    "MODAL_LOCATION": {
+      "TITLE": "Búsqueda de dirección",
+      "SEARCH_HELP": "Ciudad, País",
+      "ALTERNATIVE_RESULT_DIVIDER": "Resultados alternativos para <b>{{address}}</b> :",
+      "POSITION": "Latitud/Longitud : {{lat}}  {{lon}}"
     },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Fracaso en la carga del perfil usuario.",
@@ -374,6 +385,7 @@
   },
   "SUBSCRIPTION": {
     "SUBSCRIPTION_DIVIDER": "Servicios en línea",
+    "SUBSCRIPTION_DIVIDER_HELP": "Los servicios en línea ofrecen servicios adicionales opcionales, delegados a un tercero.",
     "BTN_ADD": "Agregar un servicio",
     "BTN_EDIT": "Administrar mis servicios",
     "NO_SUBSCRIPTION": "Ningún servicio definido",
@@ -399,7 +411,7 @@
     },
     "MODAL_EMAIL": {
       "TITLE" : "Notificación por correo electrónico",
-      "HELP" : "Rellene este formulario para <b> ser notificado por correo electrónico </ b> de los eventos de su cuenta. <br/> Su dirección de correo electrónico se cifrará únicamente para que sea visible para el proveedor de servicios.",
+      "HELP" : "Rellene este formulario para <b>ser notificado por correo electrónico</b> de los eventos de su cuenta. <br/> Su dirección de correo electrónico se cifrará únicamente para que sea visible para el proveedor de servicios.",
       "EMAIL_LABEL" : "Tu correo electrónico :",
       "EMAIL_HELP": "carlos@dominio.com",
       "FREQUENCY_LABEL": "Frecuencia de las notificaciones :",

@@ -26,7 +26,10 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       center: angular.copy(constants.DEFAULT_CENTER),
       cache: false,
       defaults: {
-        scrollWheelZoom: true
+        scrollWheelZoom: true,
+        tileLayerOptions: {
+          attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }
       },
       layers: {
         baselayers: {

@@ -30,11 +30,6 @@ angular.module('cesium.map.user.controllers', ['cesium.services', 'cesium.map.se
       markers: {},
       center: {
         zoom: 13
-      },
-      defaults: {
-        tileLayerOptions: {
-          attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }
       }
     });
     $scope.loading = true;

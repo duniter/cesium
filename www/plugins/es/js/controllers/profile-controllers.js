@@ -171,6 +171,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       }, 650);
     }
 
+
     $scope.saving = true;
     console.debug('[ES] [profile] Saving user profile...');
 

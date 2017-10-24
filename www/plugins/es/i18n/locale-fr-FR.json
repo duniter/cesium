@@ -17,6 +17,10 @@
       "SETTINGS": "Paramètres",
       "SHOW_ALL": "Voir tout",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
+    },
+    "ERROR": {
+      "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",
+      "INVALID_FOR_LOCATION": "Adresse inconnue"
     }
   },
   "MENU": {
@@ -330,9 +334,9 @@
     "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
-    "BTN_GEOLOC_ADDRESS": "Mettre à jour à partir de l'adresse",
-    "BTN_GEOLOC_ME": "Me localiser",
-    "BTN_REMOVE_GEOLOC": "Supprimer la position",
+    "BTN_GEOLOC_ADDRESS": "Trouver mon adresse sur la carte",
+    "USE_GEO_POINT": "Apparaître sur la carte des membres ?",
+    "LOADING_LOCATION": "Recherche de l'adresse...",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",
     "TITLE_HELP": "Nom, Prénom",
@@ -358,16 +362,18 @@
       "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
-    "MODAL_LOCATIONS": {
-      "TITLE": "Validation de l'addresse",
-      "RESULT_DIVIDER": "Résultat(s) pour <b>{{address}}</b> :"
+    "MODAL_LOCATION": {
+      "TITLE": "Recherche de l'adresse",
+      "SEARCH_HELP": "Ville, Pays",
+      "ALTERNATIVE_RESULT_DIVIDER": "Résultats alternatifs pour <b>{{address}}</b> :",
+      "POSITION": "Latitude/Longitude : {{lat}}  {{lon}}"
     },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image",
-      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position actuelle",
+      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position. Veuillez utiliser le bouton de recherche.",
       "ADDRESS_LOCATION_FAILED": "Impossible de récupérer la position à partir de l'adresse"
     },
     "INFO": {

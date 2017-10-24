@@ -17,6 +17,10 @@
       "SETTINGS": "Paramètres",
       "SHOW_ALL": "Show all",
       "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
+    },
+    "ERROR": {
+      "REQUIRED_FOR_LOCATION": "Required field to appear on the map",
+      "INVALID_FOR_LOCATION": "Unknown address"
     }
   },
   "MENU": {
@@ -279,9 +283,9 @@
     "NO_PROFILE_DEFINED": "No Cesium+ profile",
     "BTN_ADD": "Create my profile",
     "BTN_EDIT": "Edit my profile",
-    "BTN_GEOLOC_ADDRESS": "Update position from address",
-    "BTN_GEOLOC_ME": "Localize me",
-    "BTN_REMOVE_GEOLOC": "Remove position",
+    "BTN_GEOLOC_ADDRESS": "Find my address on the map",
+    "USE_GEO_POINT": "Appear on the members map?",
+    "LOADING_LOCATION": "Searching address...",
     "UID": "Pseudonym",
     "TITLE": "Lastname, FirstName",
     "TITLE_HELP": "Name",
@@ -290,7 +294,7 @@
     "ADDRESS": "Address",
     "ADDRESS_HELP": "Address (optional)",
     "CITY": "City",
-    "CITY_HELP": "City (optional)",
+    "CITY_HELP": "City, Country",
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "General data",
     "LOCATION_DIVIDER": "Localisation",
@@ -307,16 +311,18 @@
       "RESIZE_HELP": "<b>Re-crop the image</b> if necessary. A click on the image allows to move it. Click on the area at the bottom left to zoom in.",
       "RESULT_HELP": "<b>Here is the result</b> as seen on your profile:"
     },
-    "MODAL_LOCATIONS": {
-      "TITLE": "Validation de l'adresse",
-      "RESULT_DIVIDER": "Résultat(s) pour <b>{{address}}</b> :"
+    "MODAL_LOCATION": {
+      "TITLE": "Search position",
+      "SEARCH_HELP": "City, Country",
+      "ALTERNATIVE_RESULT_DIVIDER": "Alternative results for <b>{{address}}</b>:",
+      "POSITION": "lat/lon : {{lat}} {{lon}}"
     },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Could not load user profile.",
       "SAVE_PROFILE_FAILED": "Saving profile failed",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Invalid format: please fill a valid Internet address.<br/><br/>Examples :<ul><li>- A Facebook page (https://www.facebook.com/user)</li><li>- A web page (http://www.domain.com)</li><li>- An email address (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Error while resizing picture",
-      "GEO_LOCATION_FAILED": "Unable to retrieve your current position",
+      "GEO_LOCATION_FAILED": "Unable to retrieve your current position. Please use the search button.",
       "ADDRESS_LOCATION_FAILED": "Unable to retrieve the address position"
     },
     "INFO": {
@@ -328,6 +334,7 @@
   },
   "SUBSCRIPTION": {
     "SUBSCRIPTION_DIVIDER": "Online services",
+    "SUBSCRIPTION_DIVIDER_HELP": "Online services offer optional additional services, delegated to a third party.",
     "BTN_ADD": "Add a service",
     "BTN_EDIT": "Manage my services",
     "NO_SUBSCRIPTION": "No service defined",

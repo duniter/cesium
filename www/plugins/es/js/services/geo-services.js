@@ -18,7 +18,11 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
     that.raw = {
       osm: {
-        search: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json')
+        search: csHttp.get('nominatim.openstreetmap.org', 443, '/search.php?format=json'),
+        license: {
+          name: 'OpenStreetMap',
+          url: 'https://www.openstreetmap.org/copyright'
+        }
       },
       google: {
         apiKey: undefined,
@@ -26,6 +30,16 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
       },
       searchByIP: csHttp.get('freegeoip.net', 443, '/json/:ip')
     };
+
+    function _normalizeAddressString(text) {
+      // Remove line break
+      var searchText = text.trim().replace(/\n/g, ',');
+      // Remove zip code
+      searchText = searchText.replace(/(?:^|[\t\n\r\s ])([A−Z09-]+)(?:$|[\t\n\r\s ])/g, '');
+      // Remove redundant comma
+      searchText = searchText.replace(/,[ ,]+/g, ', ');
+      return searchText;
+    }
 
     function googleSearchPositionByString(address) {
 
@@ -61,13 +75,44 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         query = {q: query};
       }
 
+      // Normalize query string
+      if (query.q) {
+        query.q = _normalizeAddressString(query.q);
+      }
+
+      query.addressdetails = 1; // need address field
+
       var now = new Date();
       //console.debug('[ES] [geo] Searching position...', query);
 
       return that.raw.osm.search(query)
         .then(function(res) {
-          console.debug('[ES] [geo] Found {0} address position(s) in {0}ms'.format(res && res.length || 0, new Date().getTime() - now.getTime()), res);
-          return res;
+          //console.debug('[ES] [geo] Received {0} results from OSM'.format(res && res.length || 0), res);
+          if (!res) return; // no result
+
+          // Filter on city/town/village
+          res = res.reduce(function(res, hit){
+            if (hit.class == 'waterway' || !hit.address) return res;
+            hit.address.city =  hit.address.city || hit.address.village || hit.address.town || hit.address.postcode;
+            hit.address.road =  hit.address.road || hit.address.suburb || hit.address.hamlet;
+            if (hit.address.postcode && hit.address.city == hit.address.postcode) {
+              delete hit.address.postcode;
+            }
+            if (!hit.address.city) return res;
+            return res.concat({
+              id: hit.place_id,
+              name: hit.display_name,
+              address: hit.address,
+              lat: hit.lat,
+              lon: hit.lon,
+              class: hit.class,
+              license: that.raw.osm.license
+            });
+          }, []);
+
+          console.debug('[ES] [geo] Found {0} address position(s)'.format(res && res.length || 0, new Date().getTime() - now.getTime()), res);
+
+          return res.length ? res : undefined;
         })
 
         // Fallback service

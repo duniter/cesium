@@ -1,0 +1,90 @@
+<ion-modal-view class="modal-full-height modal-search-location">
+  <ion-header-bar class="bar-positive">
+      <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+      <h1 class="title" translate>PROFILE.MODAL_LOCATION.TITLE</h1>
+  </ion-header-bar>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+
+    <!-- search text -->
+    <div class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+
+      <input type="text"
+             class="visible-xs visible-sm"
+             placeholder="{{'PROFILE.MODAL_LOCATION.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             ng-model-options="{ debounce: 650 }"
+             ng-change="doSearch()">
+      <input type="text"
+             class="hidden-xs hidden-sm"
+              placeholder="{{'PROFILE.MODAL_LOCATION.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             on-return="doSearch()">
+    </div>
+
+    <div class="padding-top padding-xs" style="display: block; height: 60px;">
+      <div class="pull-left" ng-if="!search.loading && search.results">
+        <h4 translate>COMMON.RESULTS_LIST</h4>
+      </div>
+
+      <div class="pull-right hidden-xs hidden-sm">
+        <button class="button button-small button-stable ink"
+                ng-click="doSearch()">
+          {{'COMMON.BTN_SEARCH' | translate}}
+        </button>
+      </div>
+
+    </div>
+
+    <div class="text-center" ng-if="search.loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div ng-if="!search.loading && search.results && (!search.results.length || !search.results[0].address)"
+         class="assertive padding">
+      <span translate>COMMON.SEARCH_NO_RESULT</span>
+    </div>
+
+    <ion-list ng-if="!search.loading"
+              class="padding-top {{::motion.ionListClass}}">
+      <div ng-repeat="res in search.results"
+         class="item item-border-large  item-text-wrap  ink"
+         ng-class="::{'item-divider': !res.address, 'item-icon-left item-icon-right': res.address}"
+         ng-click="res.address ? closeModal(res) : false">
+
+        <!-- if divider -->
+        <h4 class="text-italic" ng-if="::!res.address" ng-bind-html="res.name"></h4>
+
+        <!-- if divider -->
+        <ng-if ng-if="::res.address">
+
+          <i class="icon ion-location"></i>
+
+          <h2 ng-if="res.address.road">
+            {{::res.address.road}}
+          </h2>
+          <h3>
+            <span ng-if="res.address.postcode">{{::res.address.postcode}}</span>
+            {{::res.address.city||res.address.village}}
+            <span class="gray">| {{::res.address.country}}</span>
+          </h3>
+          <h5 class="gray">
+             {{'PROFILE.MODAL_LOCATION.POSITION'|translate:res }}
+          </h5>
+
+          <i class="icon ion-ios-arrow-right"></i>
+        </ng-if>
+
+      </div>
+    </ion-list>
+  </ion-content>
+
+  <ion-footer-bar class="stable-bg padding-left padding-right block" ng-if="license">
+    <div class="pull-right copyright">
+      <span class="dark">© </span>
+      <a class="positive" href="{{license.url}}" target="_blank">{{license.name}}</a>
+    </div>
+  </ion-footer-bar>
+</ion-modal-view>

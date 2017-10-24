@@ -43,8 +43,8 @@ angular.module('cesium.directives', [])
       require: '?ngModel',
       link: function(scope, element, attributes, ngModel) {
         if (ngModel) {
-          ngModel.$validators.numberFloat = function(modelValue) {
-            return ngModel.$isEmpty(modelValue) || NUMBER_REGEXP.test(modelValue);
+          ngModel.$validators.numberFloat = function(value) {
+            return ngModel.$isEmpty(value) || NUMBER_REGEXP.test(value);
           };
         }
       }
@@ -73,6 +73,19 @@ angular.module('cesium.directives', [])
         if (ngModel) {
           ngModel.$validators.email = function (value) {
             return ngModel.$isEmpty(value) || EMAIL_REGEXP.test(value);
+          };
+        }
+      }
+    };
+  })
+
+  .directive('geoPointRequired', function() {
+    return {
+      require: '?ngModel',
+      link: function(scope, element, attributes, ngModel) {
+        if (ngModel) {
+          ngModel.$validators.required = function(value) {
+            return ngModel.$isEmpty(value) || !value.lat || !value.lon ;
           };
         }
       }
