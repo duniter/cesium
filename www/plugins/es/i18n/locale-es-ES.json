@@ -253,7 +253,7 @@
       "RECORD_DESCRIPTION_HELP": "Descripción"
     },
     "ERROR": {
-      "SEARCH_GROUPS_FAILED": "Fracaso en la búsqueda de grupos"
+      "SEARCH_GROUPS_FAILED": "Fracaso en la búsqueda de grupos",
       "REMOVE_RECORD_FAILED": "Error al eliminar el grupo"
     },
     "INFO": {
