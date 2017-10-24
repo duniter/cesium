@@ -40,18 +40,16 @@
   <div class="padding-top padding-xs" style="display: block; height: 60px;"
     ng-class="::{'hidden-xs': !showResultLabel}">
     <div class="pull-left" ng-if="!search.loading && showResultLabel">
-      <h4
-        ng-if="search.type=='newcomers'" translate>
+      <h4 ng-if="search.type=='newcomers'" translate>
         WOT.LOOKUP.NEWCOMERS
       </h4>
-      <h4
-        ng-if="search.type=='pending'" translate>
+      <h4 ng-if="search.type=='pending'" translate>
         WOT.LOOKUP.PENDING
       </h4>
-      <h4
-        ng-if="search.type=='text'" translate>
+      <h4 ng-if="search.type=='text'" translate>
         COMMON.RESULTS_LIST
       </h4>
+      <h5 ng-if="search.total" class="dark">{{'COMMON.RESULTS_COUNT'|translate:{count: search.total} }}</h5>
     </div>
 
     <div class="pull-right hidden-xs hidden-sm">

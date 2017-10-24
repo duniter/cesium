@@ -694,8 +694,16 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       getNewcomers = function(offset, size) {
         offset = offset || 0;
         size = size || 20;
-        return BMA.blockchain.stats.newcomers()
+        var total;
+        return $q.all([
+            csCurrency.blockchain.current(true)
+              .then(function(block) {
+                total = block.membersCount;
+              }),
+            BMA.blockchain.stats.newcomers()
+          ])
           .then(function(res) {
+            res = res[1];
             if (!res.result.blocks || !res.result.blocks.length) {
               return null;
             }
@@ -712,7 +720,14 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
 
             // Extension point
             return extendAll(idties, 'pubkey', true/*skipAddUid*/);
-          });
+          })
+            .then(function(idties) {
+              return {
+                hits: idties,
+                total: total
+              };
+            })
+          ;
       },
 
 
@@ -771,6 +786,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
       getPending = function(offset, size) {
         offset = offset || 0;
         size = size || 20;
+        var now = new Date().getTime();
         return $q.all([
           BMA.wot.member.uids(),
           BMA.wot.member.pending()
@@ -817,7 +833,11 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
                 }
               }
             });
-            var idties = _sortAndSliceIdentities(_.values(idtiesByPubkey), offset, size);
+
+            var idties = _.values(idtiesByPubkey);
+            var total = idties.length; // get total BEFORE slice
+
+            idties = _sortAndSliceIdentities(idties, offset, size);
             var blocks = idties.reduce(function(res, aidty) {
               return res.concat(aidty.block);
             }, []);
@@ -842,7 +862,11 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               extendAll(idties, 'pubkey', true/*skipAddUid*/)
             ])
             .then(function() {
-              return idties;
+              console.debug("[ES] [wot] Loaded {0}/{1} pending identities in {2} ms".format(idties && idties.length || 0, total, new Date().getTime() - now));
+              return {
+                hits: idties,
+                total: total
+              };
             });
           });
       },
@@ -851,10 +875,14 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','u','v','w','x','y','z'];
         return getAllRecursive(letters, 0, BMA.constants.LIMIT_REQUEST_COUNT)
           .then(function(idties) {
-            return extendAll(idties, 'pubkey', true/*skipAddUid*/)
-              .then(function() {
-                return _addUniqueIds(idties);
-              });
+            return extendAll(idties, 'pubkey', true/*skipAddUid*/);
+          })
+          .then(_addUniqueIds)
+          .then(function() {
+            return {
+              hits: idties,
+              total: idties.length
+            };
           });
       },
 

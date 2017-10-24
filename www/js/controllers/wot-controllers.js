@@ -124,7 +124,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $location,
+function WotLookupController($scope, $state, $q, $timeout, $focus, $ionicPopover, $location,
                              UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
@@ -274,16 +274,17 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
       $scope.doRefreshLocationHref();
     }
 
-    return csWot.newcomers(offset, size)
-      .then(function(idties){
+    return  csWot.newcomers(offset, size)
+      .then(function(res){
         if ($scope.search.type != 'newcomers') return false; // could have change
-        $scope.doDisplayResult(idties, offset, size);
+        $scope.doDisplayResult(res && res.hits, offset, size, res && res.total);
         return true;
       })
       .catch(function(err) {
         $scope.search.loading = false;
         $scope.search.results = (offset > 0) ? $scope.search.results : [];
         $scope.search.hasMore = false;
+        $scope.search.total = undefined;
         UIUtils.onError('ERROR.LOAD_NEWCOMERS_FAILED')(err);
       });
   };
@@ -307,9 +308,9 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
     }
 
     return searchFunction(offset, size)
-      .then(function(idties){
+      .then(function(res){
         if ($scope.search.type != 'pending') return false; // could have change
-        $scope.doDisplayResult(idties, offset, size);
+        $scope.doDisplayResult(res && res.hits, offset, size, res && res.total);
         // Always disable "more" on initphase
         $scope.search.hasMore = !csCurrency.data.initPhase && $scope.search.hasMore;
         return true;
@@ -317,6 +318,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
       .catch(function(err) {
         $scope.search.loading = false;
         $scope.search.results = (offset > 0) ? $scope.search.results : [];
+        $scope.search.total = undefined;
         $scope.search.hasMore = false;
         UIUtils.onError('ERROR.LOAD_PENDING_FAILED')(err);
       });
@@ -451,7 +453,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
       });
   };
 
-  $scope.doDisplayResult = function(res, offset, size) {
+  $scope.doDisplayResult = function(res, offset, size, total) {
     res = res || [];
 
     // pre-check result if already in selection
@@ -470,6 +472,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
     else {
         $scope.search.results = $scope.search.results.concat(res);
     }
+    $scope.search.total = angular.isDefined(total) ? total : undefined;
     $scope.search.loading = false;
     $scope.search.hasMore = $scope.search.results.length >= offset + size;
 
