@@ -480,12 +480,12 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
   };
 
   $scope.showHelpTip = function() {
-
+    // TODO
   };
 }
 
 
-function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurrency, csWot, csSettings) {
+function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurrency, csWot) {
   'ngInject';
 
   $scope.loading = true;
@@ -721,21 +721,8 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
   /* -- help tip -- */
 
   // Show help tip
-  $scope.showHelpTip = function() {
-    if (!$scope.isLogin()) return;
-    index = csSettings.data.helptip.block;
-    if (index < 0) return;
-
-    // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope();
-    if (!helptipScope) return; // could be undefined, if a global tour already is already started
-
-    /*return helptipScope.startBlockTour(index, false)
-     .then(function(endIndex) {
-     helptipScope.$destroy();
-     csSettings.data.helptip.block = endIndex;
-     csSettings.store();
-     });*/
+  $scope.showHelpTip = function(index) {
+    // No helptip here (done in network controller)
   };
 }
 

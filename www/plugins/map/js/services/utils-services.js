@@ -141,6 +141,26 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
     }
   }
 
+  // Set the id of a control (set the attribute 'id' of the HTML container)
+  function setControlId(control, id) {
+    if (!control || !id) throw 'Illegal arguments';
+
+    // Control already added to map
+    if (control._container) {
+      control._container.id = id;
+    }
+    // Control not already added to the map (HTML element not exists yet)
+    else {
+      // Override onAdd() function
+      var superOnAdd = control.onAdd;
+      control.onAdd = function (map) {
+        var container = superOnAdd.call(this, map);
+        container.id = id;
+        return container;
+      };
+    }
+  }
+
   // Create a default serach control, with default options
   function initSearchControl(options) {
 
@@ -158,27 +178,47 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       // Simulate an addTo function, but wait for end of translations job
       addTo: function (map) {
         translatePromise.then(function (translations) {
-          L.control.search(angular.merge(options, {
+          var control = L.control.search(angular.merge(options, {
             textPlaceholder: translations['MAP.COMMON.SEARCH_DOTS'],
             textErr: translations['COMMON.SEARCH_NO_RESULT']
-          })).addTo(map);
+          }));
+
+          // Set the HTML element id
+          if (options.id) {
+            setControlId(control, options.id);
+          }
+          control.addTo(map);
         });
       }
     };
   }
 
-  function initLocalizeMeControl() {
-    return L.easyButton('icon ion-android-locate', function(btn, map){
-      return esGeo.point.current()
-        .then(function(res) {
-          map.invalidateSize();
-          map._resetView({
-            lat: res.lat,
-            lng: res.lon
-          }, constants.LOCALIZE_ZOOM, true);
-        })
-        .catch(UIUtils.onError('MAP.ERROR.LOCALIZE_ME_FAILED'));
-    });
+  function initLocalizeMeControl(options) {
+    options = options || {};
+    return L.easyButton({
+        position: 'topleft',      // inherited from L.Control -- the corner it goes in
+        type: 'replace',          // set to animate when you're comfy with css
+        leafletClasses: true,     // use leaflet classes to style the button?
+        states:[{                 // specify different icons and responses for your button
+          stateName: 'locate-me',
+          onClick: function(btn, map){
+            return esGeo.point.current()
+              .then(function(res) {
+                map.invalidateSize();
+                map._resetView({
+                  lat: res.lat,
+                  lng: res.lon
+                }, constants.LOCALIZE_ZOOM, true);
+              })
+              .catch(function(err) {
+                console.error(err);
+                UIUtils.alert.error('MAP.ERROR.LOCALIZE_ME_FAILED');
+              });
+          },
+          title: options.title,
+          icon: 'icon ion-android-locate'
+        }]
+      });
   }
 
   return {
@@ -191,7 +231,8 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
     updateCenter: updateMapCenter,
     control: {
       search: initSearchControl,
-      localizeMe: initLocalizeMeControl
+      localizeMe: initLocalizeMeControl,
+      setId: setControlId
     },
     cache: {
       save: saveMapOptions

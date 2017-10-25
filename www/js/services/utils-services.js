@@ -500,7 +500,10 @@ angular.module('cesium.utils.services', [])
   }
 
   function showHelptip(id, options) {
-    var element = (typeof id == 'string') ? $window.document.getElementById(id) : id;
+    var element = (typeof id == 'string') && id ? $window.document.getElementById(id) : id;
+    if (!id && !element && options.selector) {
+      element = $window.document.querySelector(options.selector);
+    }
 
     options = options || {};
     var deferred = options.deferred || $q.defer();

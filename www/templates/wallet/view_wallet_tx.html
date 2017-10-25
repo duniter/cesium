@@ -6,12 +6,14 @@
 
   <ion-nav-buttons side="secondary">
     <cs-extension-point name="nav-buttons"></cs-extension-point>
-
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
-    </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate(true)">
+    </ion-refresher>
+
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
         <h1 class="light">
@@ -59,6 +61,8 @@
       <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
 
       <div class="col">
+
+
 
         <div class="list" ng-class="::motion.ionListClass">
 

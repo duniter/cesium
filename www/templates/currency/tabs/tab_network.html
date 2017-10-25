@@ -1,12 +1,14 @@
 <ion-view>
   <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="refreshPeers()">
-    </button>
     <button class="button button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm" ng-click="showExtendActionsPopover($event)">
     </button>
   </ion-nav-buttons>
 
   <ion-content>
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="refreshPeers()">
+    </ion-refresher>
+
     <div class="list">
       <ng-include src="'templates/currency/items_network.html'"></ng-include>
     </div>

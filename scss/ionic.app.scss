@@ -1686,6 +1686,14 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
     height: 25px;
     font-size: 18.2px;
   }
+
+  a,
+  a:active,
+  a:hover {
+    text-decoration: underline;
+    //font-weight: bold;
+    //color: $positive !important;
+  }
 }
 
 // Empeche les clignotement du backdrop, pendant le feature tour

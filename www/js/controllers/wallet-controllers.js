@@ -275,18 +275,15 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   };
 
   // Updating wallet data
-  $scope.doUpdate = function() {
+  $scope.doUpdate = function(silent) {
     console.debug('[wallet] TX history reloading...');
-    return UIUtils.loading.show()
-      .then(function() {
-        return csWallet.refreshData();
-      })
-      .then(function() {
-        return UIUtils.loading.hide();
-      })
-      .then(function() {
-        $scope.updateView();
-      })
+    return (silent ?
+        csWallet.refreshData() :
+        UIUtils.loading.show()
+          .then(csWallet.refreshData)
+          .then(UIUtils.loading.hide)
+      )
+      .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
 
@@ -427,7 +424,8 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.showHelpTip = function(index, isTour) {
     index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
     isTour = angular.isDefined(isTour) ? isTour : false;
-    if (index < 0) return;
+
+    if (index < 0 || index > 3/*max step*/) return;
 
     // Create a new scope for the tour controller
     var helptipScope = $scope.createHelptipScope(isTour);
@@ -593,11 +591,14 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   };
 
   // Updating wallet data
-  $scope.doUpdate = function() {
+  $scope.doUpdate = function(silent) {
     console.debug('[wallet] TX history reloading...');
-    return UIUtils.loading.show()
-      .then(csWallet.refreshData)
-      .then(UIUtils.loading.hide)
+    return (silent ?
+        csWallet.refreshData() :
+        UIUtils.loading.show()
+          .then(csWallet.refreshData)
+          .then(UIUtils.loading.hide)
+      )
       .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };
@@ -752,10 +753,14 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
   });
 
   // Updating wallet data
-  $scope.doUpdate = function() {
-    UIUtils.loading.show();
-    csWallet.refreshData()
-      .then(UIUtils.loading.hide)
+  $scope.doUpdate = function(silent) {
+
+    return (silent ?
+        csWallet.refreshData() :
+        UIUtils.loading.show()
+          .then(csWallet.refreshData)
+          .then(UIUtils.loading.hide)
+      )
       .then($scope.doMotion)
       .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
   };

@@ -254,6 +254,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $ionicPopover
           }
           else {
             $scope.doDisplayResult(idties);
+            $scope.search.total = idties && idties.length;
           }
         })
         .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
@@ -435,9 +436,9 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $ionicPopover
   };
 
   // Show help tip (show only not already shown)
-  $scope.showHelpTip = function() {
+  $scope.showHelpTip = function(index) {
     if (!$scope.isLogin()) return;
-    var index = angular.isDefined(index) ? index : csSettings.data.helptip.wotLookup;
+    index = angular.isDefined(index) ? index : csSettings.data.helptip.wotLookup;
     if (index < 0) return;
     if (index === 0) index = 1; // skip first step
 
@@ -990,12 +991,15 @@ function WotIdentityTxViewController($scope, $timeout, $q, BMA, csSettings, csWo
   };
 
   // Updating data
-  $scope.doUpdate = function() {
+  $scope.doUpdate = function(silent) {
     console.debug('[wot] TX history reloading...');
     $scope.formData = {};
-    return UIUtils.loading.show()
-      .then($scope.load)
-      .then(UIUtils.loading.hide)
+    return (silent ?
+        $scope.load() :
+        UIUtils.loading.show()
+          .then($scope.load)
+          .then(UIUtils.loading.hide)
+      )
       .then($scope.updateView)
       .catch(UIUtils.onError('ERROR.IDENTITY_TX_FAILED'));
   };

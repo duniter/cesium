@@ -252,7 +252,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
     UIUtils.loading.show();
 
     // Load data
-    $scope.load()
+    return $scope.load()
       .then(function() {
         // Notify extensions
         $scope.$broadcast('csView.action.refresh', 'currency');
@@ -261,6 +261,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
 
   $scope.refreshPeers = function() {
     $scope.$broadcast('csView.action.refresh', 'peers');
+    return $q.when(); // need by 'ion-refresher'
   };
 
   $scope.showExtendActionsPopover = function(event) {

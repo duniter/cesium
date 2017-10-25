@@ -61,7 +61,11 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
     }
   });
 
-  $scope.load = function(from, size) {
+  $scope.refresh = function(silent) {
+    return $scope.load(undefined, undefined, silent);
+  };
+
+  $scope.load = function(from, size, silent) {
     if (!csWallet.data.pubkey) {
       $scope.search.loading = true;
       return;
@@ -70,7 +74,7 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
     var options = angular.copy($scope.search.options);
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
-    $scope.search.loading = true;
+    $scope.search.loading = !silent;
     return esNotification.load(csWallet.data.pubkey, options)
       .then(function(res) {
         if (!from) {

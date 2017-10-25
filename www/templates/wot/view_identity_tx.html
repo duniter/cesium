@@ -6,7 +6,11 @@
           translate="WOT.OPERATIONS.TITLE" translate-values="{uid: formData.name || formData.uid}"></span>
   </ion-nav-title>
 
-  <ion-content>
+  <ion-content scroll="true">
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate(true)">
+    </ion-refresher>
 
     <div class="hidden-xs hidden-sm padding text-center">
 

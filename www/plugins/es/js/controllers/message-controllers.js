@@ -89,13 +89,17 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
     });
   });
 
-  $scope.load = function(size, offset) {
+  $scope.refresh = function(silent) {
+    return $scope.load(undefined, undefined, silent);
+  };
+
+  $scope.load = function(size, offset, silent) {
     var options  = {};
     options.from = offset || 0;
     options.size = size || 20;
     options.type = $scope.type;
 
-    $scope.loading = true;
+    $scope.loading = !silent;
     return esMessage.load(options)
       .then(function(messages) {
         $scope.messages = messages;

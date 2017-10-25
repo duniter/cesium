@@ -7,7 +7,8 @@ angular.module('cesium.map.plugin', [
     'cesium.map.wot.controllers',
     'cesium.map.network.controllers',
     'cesium.map.user.controllers',
-    'cesium.map.settings.controllers'
+    'cesium.map.settings.controllers',
+    'cesium.map.help.controllers'
   ])
 
   // Configure plugin

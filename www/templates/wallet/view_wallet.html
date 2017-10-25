@@ -6,9 +6,6 @@
 
   <ion-nav-buttons side="secondary">
 
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
-    </button>
-
     <cs-extension-point name="nav-buttons"></cs-extension-point>
 
     <button class="button button-icon button-clear visible-xs visible-sm"
@@ -19,6 +16,11 @@
   </ion-nav-buttons>
 
   <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:$root.settings.locale.id}">
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate(true)">
+    </ion-refresher>
+
     <div class="positive-900-bg hero"  id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">

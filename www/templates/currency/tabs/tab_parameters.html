@@ -6,6 +6,10 @@
   </ion-nav-buttons>
 
   <ion-content>
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="refresh()">
+    </ion-refresher>
+
     <div class="list">
       <ng-include src="'templates/currency/items_parameters.html'"></ng-include>
     </div>

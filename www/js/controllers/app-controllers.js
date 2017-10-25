@@ -117,29 +117,29 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Show Help tour
   ////////////////////////////////////////
 
-  $scope.createHelptipScope = function(isTour) {
+  $scope.createHelptipScope = function(isTour, helpController) {
     if (!isTour && ($rootScope.tour || !$rootScope.settings.helptip.enable || UIUtils.screen.isSmall())) {
       return; // avoid other helptip to be launched (e.g. csWallet)
     }
     // Create a new scope for the tour controller
     var helptipScope = $scope.$new();
-    $controller('HelpTipCtrl', { '$scope': helptipScope});
+    $controller(helpController||'HelpTipCtrl', { '$scope': helptipScope});
     return helptipScope;
   };
 
-  $scope.startHelpTour = function(skipClearCache) {
+  $scope.startHelpTour = function(helpController, skipClearCache) {
     $rootScope.tour = true; // to avoid other helptip to be launched (e.g. csWallet)
 
-    //
+    // Clear cache history
     if (!skipClearCache) {
       $ionicHistory.clearHistory();
       return $ionicHistory.clearCache()
         .then(function() {
-          $scope.startHelpTour(true/*continue*/);
+          $scope.startHelpTour(helpController, true/*continue*/);
         });
     }
 
-    var helptipScope = $scope.createHelptipScope(true);
+    var helptipScope = $scope.createHelptipScope(true/*is tour*/, helpController);
     return helptipScope.startHelpTour()
       .then(function() {
         helptipScope.$destroy();
