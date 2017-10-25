@@ -11,6 +11,7 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
           controller: 'ESViewEditProfileCtrl'
         }
       },
+      cache: false,
       data: {
         auth: true
       }

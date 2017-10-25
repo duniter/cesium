@@ -33,6 +33,7 @@ angular.module('cesium.map.user.controllers', ['cesium.services', 'cesium.map.se
       }
     });
     $scope.loading = true;
+    $scope.mapId = 'map-profile-' + $scope.$id;
 
     $scope.enter = function(e, state) {
 
