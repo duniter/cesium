@@ -78,6 +78,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
   $scope.loading = true;
   $scope.mapId = 'map-wot-' + $scope.$id;
+
   $scope.map = MapUtils.map({
     cache: 'map-wot',
     layers: {
@@ -227,9 +228,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
             popupMarker && popupMarker.openPopup();
           }, 400);
         },
-        //firstTipSubmit: true,
-        tooltipLimit: 50/*,
-        hideMarkerOnCollapse: true*/
+        firstTipSubmit: true,
+        tooltipLimit: 50
       }).addTo(map);
 
       // Add marker cluster layer
@@ -353,7 +353,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       });
   };
 
-
+  // Update the browser location, to be able to refresh the page
   $scope.updateLocationHref = function(centerHash) {
     // removeIf(device)
     var params = $location.search() || {};

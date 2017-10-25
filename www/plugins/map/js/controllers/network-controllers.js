@@ -26,7 +26,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
               controller: 'MapNetworkViewCtrl'
             }
           },
-          cache: false,
           data: {
             silentLocationChange: true
           }
@@ -46,9 +45,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       formatPubkey = $filter('formatPubkey'),
       markerMessageTemplate,
       markersSearchLayer,
-      formatPubkey = $filter('formatPubkey'),
-      loadingControl,
-      searchControl,
       icons= {
         member: {
           type: 'awesomeMarker',
@@ -79,8 +75,9 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     markerMessageTemplate += '</div>';
     markerMessageTemplate = markerMessageTemplate.replace(/[:]rebind[:]|[:][:]/g, ''); // remove binding limitation
 
+    $scope.loading = true;
     $scope.mapId = 'map-network-' + $scope.$id;
-    $scope.helptipPrefix = 'helptip-' + $scope.mapId; // make to override, to avoid error during help tour
+    $scope.helptipPrefix = 'helptip-' + $scope.mapId; //Override value from super controller (avoid error during help tour)
 
     $scope.map = MapUtils.map({
       cache: 'map-network',
@@ -99,27 +96,43 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
           offline: {
             type: 'featureGroup',
             name: 'MAP.NETWORK.VIEW.LAYER.OFFLINE',
-            visible: true
+            visible: false
           }
         }
       },
+      bounds: {},
       loading: true,
-        markers: {}
-      });
+      markers: {}
+    });
 
     var inheritedEnter = $scope.enter;
     $scope.enter = function(e, state) {
-      if ($scope.map.loading) {
+      if ($scope.loading) {
+        if (state.stateParams && state.stateParams.c) {
+          var cPart = state.stateParams.c.split(':');
+          $scope.map.center.lat = parseFloat(cPart[0]);
+          $scope.map.center.lng = parseFloat(cPart[1]);
+          $scope.map.center.zoom = parseInt(cPart[2]);
+        }
+
+        $scope.$watch("map.center", function() {
+          if (!$scope.map.loading) {
+            return $timeout(function() {
+              $scope.updateLocationHref();
+            }, 300);
+          }
+        }, true);
 
         // Load the map (and init if need)
-        $scope.loadMap().then(function(map){
+        $scope.loadMap()
+          .then(function(map){
 
-          // Load indicator
-          map.fire('dataloading');
+            // Load indicator
+            map.fire('dataloading');
 
-          // inherited
-          return inheritedEnter(e, state); // will call inherited load()
-        });
+            // inherited
+            return inheritedEnter(e, state); // will call inherited load()
+          });
       }
 
       else {
@@ -131,14 +144,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       }
     };
     $scope.$on('$ionicView.enter', $scope.enter);
-
-    // View leave: store map options (center) to cache
-    $scope.leave = function() {
-      if ($scope.map.cache) {
-        MapUtils.cache.save($scope.map);
-      }
-    };
-    $scope.$on('$ionicView.leave', $scope.leave);
 
     var inheritedComputeOptions = $scope.computeOptions;
     $scope.computeOptions = function() {
@@ -152,17 +157,16 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         if (!$scope.map.loading) return map; // already loaded
 
         // Add loading control
-        loadingControl = L.Control.loading({
+        L.Control.loading({
           position: 'topright',
           separate: true
-        });
-        loadingControl.addTo(map);
+        }).addTo(map);
 
         // Add search control
         // Create a  hidden layer, to hold search markers
         markersSearchLayer = L.layerGroup({visible: false});
         var searchTip = $interpolate($templateCache.get('plugins/map/templates/network/item_search_tooltip.html'));
-        searchControl = MapUtils.control.search({
+        MapUtils.control.search({
           layer: markersSearchLayer,
           propertyName: 'title',
           buildTip: function (text, val) {
@@ -180,9 +184,11 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
                 });
               popupMarker && popupMarker.openPopup();
             }, 400);
-          }
-        });
-        searchControl.addTo(map);
+          },
+          firstTipSubmit: true,
+          tooltipLimit: 50
+        })
+        .addTo(map);
 
         // Add marker cluster layer
         var _getMarkerColor = function(marker) {
@@ -216,7 +222,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         });
         markerClusterLayer.addTo(map);
 
-        $scope.map.layers.overlays['offline'].visible=false;
+        //$scope.map.layers.overlays['offline'].visible=false;
 
         $scope.map.loading = false;
         return map;
@@ -310,7 +316,9 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
 
       // Hide loading indicator, when finished
       if (!$scope.search.loading) {
-        leafletData.getMap($scope.mapId).then(function (map) {
+        leafletData.getMap($scope.mapId)
+          .then(function (map) {
+            $scope.loading = false;
             map.fire('dataload');
           });
       }
@@ -333,9 +341,6 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
       return marker;
     };
 
-    $scope.showHelpTip = function() {
-      // override subclass
-    };
 
     // Update the browser location, to be able to refresh the page
     $scope.updateLocationHref = function(centerHash) {
@@ -350,6 +355,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
 
     // removeIf(device)
     // Update the browser location, to be able to refresh the page
+    // FIXME: not need, should be removed
     $scope.$on("centerUrlHash", function(event, centerHash) {
       if (!$scope.loading) {
         return $timeout(function() {
@@ -359,5 +365,9 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
     });
     // endRemoveIf(device)
 
+    /* -- help tip -- */
 
+    $scope.showHelpTip = function() {
+      // override subclass
+    };
   });
