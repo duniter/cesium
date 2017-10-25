@@ -1,7 +1,8 @@
 {
   "MAP": {
     "COMMON": {
-      "SEARCH_DOTS": "Search..."
+      "SEARCH_DOTS": "Search...",
+      "BTN_LOCALIZE_ME": "Localize me"
     },
     "NETWORK": {
       "LOOKUP": {
@@ -45,6 +46,13 @@
       "BTN_GOOGLE_API": "Getting a key",
       "BTN_GOOGLE_API_WARNING": "requires a Google account",
       "GOOGLE_API_KEY_PLACEHOLDER": "eg: AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
+    },
+    "HELP": {
+      "TIP": {
+        "WOT": "This map displays <b>profiles with a position</b>, whether they are member accounts or not.<br/><br/>Only profiles with the option &quot;appear on the map&quot; has been activated.",
+        "WOT_BTN_LAYERS": "<b>Filter the displayed data</b>: members, pending registrations, simple portfolios, etc.",
+        "WOT_BTN_SEARCH": "You can <b>search</b> by name, public key, or member pseudonym."
+      }
     }
   }
 }

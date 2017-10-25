@@ -50,7 +50,7 @@
     "HELP": {
       "TIP": {
         "WOT": "Cette carte affiche <b>les profils ayant une position</b>, qu'ils correspondent à des comptes membre ou non.<br/><br/>Seuls sont visibles les profils dont l'option &quot;apparaitre sur le carte&quot; a été activée.",
-        "WOT_BTN_LAYERS": "<b>Filtrez ici les données</b> affichées : membres, inscriptions en attente, simples portefeuilles, etc.",
+        "WOT_BTN_LAYERS": "<b>Filtrez ici les données affichées</b>: membres, inscriptions en attente, simples portefeuilles, etc.",
         "WOT_BTN_SEARCH": "Vous pouvez <b>effectuer une recherche</b> par nom, clef publique ou pseudonyme de membre."
       }
     }

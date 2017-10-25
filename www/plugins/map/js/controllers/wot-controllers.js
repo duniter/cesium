@@ -26,7 +26,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
               controller: 'MapWotViewCtrl'
             }
           },
-          cache: false,
+          // Seems to works without cache ??
+          //cache: false,
           data: {
             silentLocationChange: true
           }
@@ -103,9 +104,26 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     loading: true
   }, $scope.mapId);
 
+
   // [NEW] When opening the view
   $scope.enter = function(e, state) {
+
+
     if ($scope.loading) {
+      if (state.stateParams && state.stateParams.c) {
+        var cPart = state.stateParams.c.split(':');
+        $scope.map.center.lat = parseFloat(cPart[0]);
+        $scope.map.center.lng = parseFloat(cPart[1]);
+        $scope.map.center.zoom = parseInt(cPart[2]);
+      }
+
+      $scope.$watch("map.center", function() {
+        if (!$scope.loading) {
+          return $timeout(function() {
+            $scope.updateLocationHref();
+          }, 300);
+        }
+      }, true);
 
       // Load the map (and init if need)
       $scope.loadMap()
@@ -117,7 +135,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         });
     }
     else {
-      // Make sur to have previous center coordinate defined in the location URL
+      // Make sure to have previous center coordinate defined in the location URL
       $scope.updateLocationHref();
       if (csWallet.isLogin()) {
         $scope.showHelpTip();
@@ -128,9 +146,9 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
   // View leave: store map options (center) to cache
   $scope.leave = function() {
-    if ($scope.map.cache) {
+    /*if ($scope.map.cache) {
       MapUtils.cache.save($scope.map);
-    }
+    }*/
   };
   $scope.$on('$ionicView.leave', $scope.leave);
 
@@ -209,9 +227,9 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
             popupMarker && popupMarker.openPopup();
           }, 400);
         },
-        firstTipSubmit: true,
-        tooltipLimit: 50,
-        hideMarkerOnCollapse: true
+        //firstTipSubmit: true,
+        tooltipLimit: 50/*,
+        hideMarkerOnCollapse: true*/
       }).addTo(map);
 
       // Add marker cluster layer
@@ -245,6 +263,10 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       });
       markerClusterLayer.addTo(map);
 
+      // Bind map with options (e.g. to received overlays visibility updates)
+      // Cache no more need, as view is not cached
+      //MapUtils.cache.bind($scope, $scope.mapId, $scope.map);
+
       $scope.map.loading = false;
       return map;
     });
@@ -253,9 +275,9 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
   // Load markers data
   $scope.load = function(map) {
     if (!map) {
-      return leafletData.getMap($scope.mapId).then(function(map) {
-        return $scope.load(map); // loop with the map object
-      });
+      return leafletData.getMap($scope.mapId)
+      // loop with the map object
+        .then($scope.load);
     }
 
     $scope.loading = true;
@@ -268,7 +290,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       }
     };
 
-    // Load wot data
+    // Load wot data, from service
     return mapWot.load(options)
 
       .then(function(res) {
@@ -321,7 +343,9 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
               searchMarker));
           });
         }
+
         $scope.map.markers = markers;
+
         $scope.loading = false;
 
         // hide loading indicator
@@ -335,13 +359,14 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     var params = $location.search() || {};
     if (!params.c || !MapUtils.center.isDefault($scope.map.center)) {
       centerHash = centerHash || '{0}:{1}:{2}'.format($scope.map.center.lat.toFixed(4), $scope.map.center.lng.toFixed(4), $scope.map.center.zoom);
-      $location.search({ c:  centerHash}).replace();
+      $location.search({c: centerHash}).replace();
     }
     // endRemoveIf(device)
   };
 
   // removeIf(device)
   // Update the browser location, to be able to refresh the page
+  // FIXME: not need, should be removed
   $scope.$on("centerUrlHash", function(event, centerHash) {
     if (!$scope.loading) {
 
@@ -355,8 +380,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
   /* -- help tip -- */
 
+  // Show help tour
   $scope.startHelpTour = function() {
-    //$scope.hideActionsPopover();
     return $scope.showHelpTip(0, true);
   };
 

@@ -43,7 +43,7 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
               continuousWorld: true
             }
           },
-          cycle: {
+          google: {
             name: "Google map",
             type: "xyz",
             url: (isHttps ? 'https' : 'http' ) + '://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key='+googleApiKey,
@@ -62,7 +62,7 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
     // Restore existing map options
     if (options.cache && data.cache[options.cache]) {
-      console.debug("Restoring cache :", data.cache[options.cache]);
+      console.debug("[map] Restoring map from cache :", data.cache[options.cache]);
       options = angular.merge(options, data.cache[options.cache]);
     }
 
@@ -92,6 +92,50 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       map._resetView(center, center.zoom, true);
     }, 300);
   }
+
+  function bindMapOptions(scope, mapId, options) {
+    options = options || {};
+    if (!mapId || !options.layers || !scope) throw 'Illegal arguments';
+    if (!options.cache) return; // no cache, so bind not need
+
+    // Bind overlays visibility
+    if (options.layers.overlays) {
+      var overlayNames = _.keys(options.layers.overlays);
+
+      // Init the cache if need
+      if (!data.cache[options.cache]) {
+        data.cache[options.cache] = {
+            center: options.center,
+            bounds: options.bounds,
+            layers: angular.copy(options.layers)
+          };
+      }
+
+      // Listen for changes
+      leafletData.getMap(mapId)
+        .then(function() {
+          _($window.document.querySelectorAll('#{0} .leaflet-control-layers-overlays input[type=checkbox]'.format(mapId)))
+            .forEach(function (element, index) {
+              var overlayName = overlayNames[index];
+              var state = options.layers.overlays[overlayName].visible;
+              element.addEventListener('change', function (e) {
+                state = !state; // update state
+                // update cache
+                data.cache[options.cache].layers.overlays[overlayName].visible = state;
+              });
+            });
+        });
+    }
+
+    // Refresh center and bound, when leaving the view
+    scope.$on('$ionicView.leave', function() {
+      // update center and bounds
+      data.cache[options.cache].center = options.center;
+      data.cache[options.cache].bounds = options.bounds;
+    });
+
+  }
+
 
   function getCenter(options) {
     if (!options) return;
@@ -127,18 +171,6 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       return true;
     }
     return false;
-  }
-
-  function saveMapOptions(options) {
-    if (options.cache) {
-      data.cache[options.cache] = {
-        center: options.center,
-        bounds: options.bounds,
-        layers: {
-          baselayers: options.layers.baselayers
-        }
-      };
-    }
   }
 
   // Set the id of a control (set the attribute 'id' of the HTML container)
@@ -202,13 +234,12 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
         states:[{                 // specify different icons and responses for your button
           stateName: 'locate-me',
           onClick: function(btn, map){
-            return esGeo.point.current()
+            esGeo.point.current()
               .then(function(res) {
-                map.invalidateSize();
-                map._resetView({
+                map.setView({
                   lat: res.lat,
                   lng: res.lon
-                }, constants.LOCALIZE_ZOOM, true);
+                }, constants.LOCALIZE_ZOOM);
               })
               .catch(function(err) {
                 console.error(err);
@@ -223,19 +254,19 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
   return {
     map: initMap,
+    updateCenter: updateMapCenter,
     center: {
       get: getCenter,
       isSame: isSameCenter,
       isDefault: isDefaultCenter
     },
-    updateCenter: updateMapCenter,
     control: {
       search: initSearchControl,
       localizeMe: initLocalizeMeControl,
       setId: setControlId
     },
     cache: {
-      save: saveMapOptions
+      bind: bindMapOptions
     },
     constants: constants
   };
