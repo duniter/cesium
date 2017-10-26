@@ -201,7 +201,6 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       // pubkey : use a special 'term', because of 'non indexed' field
       if (BMA.regexp.PUBKEY.test(text /*case sensitive*/)) {
         filters.push({term : { issuer: text}});
-        filters.push({term : { pubkey: text}});
       }
       else {
         text = text.toLowerCase();
@@ -411,6 +410,14 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
       }
     }
   };
+
+  $scope.doUpdate = function() {
+    if (!csWallet.isLogin()) return;
+    $scope.search.text = csWallet.data.pubkey;
+    $scope.search.type = 'text';
+    return $scope.doSearch();
+  };
+
 }
 
 
@@ -598,8 +605,9 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
 function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHistory, $focus, $translate, $controller,
                                         Device, UIUtils, ModalUtils, csWallet, esHttp, esRegistry) {
   'ngInject';
+
   // Initialize the super class and extend it.
-  //angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
 
   $scope.formData = {
     title: null,

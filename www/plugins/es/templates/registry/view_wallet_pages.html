@@ -20,6 +20,11 @@
     <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm padding text-center">
 
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="doUpdate()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
+      </button>
+
       <button class="button button-raised icon-left ion-plus ink"
               ng-click="showNewPageModal()">
         {{'REGISTRY.BTN_NEW' | translate}}

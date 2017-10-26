@@ -13,8 +13,7 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
       },
       cache: false,
       data: {
-        //auth: true
-        login: true
+        auth: true
       }
     });
 
