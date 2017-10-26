@@ -335,7 +335,7 @@
     "BTN_ADD": "Ingresar mi perfil",
     "BTN_EDIT": "Editar mi perfil",
     "BTN_GEOLOC_ADDRESS": "Actualizar desde la dirección",
-    "USE_GEO_POINT": "Aparecer en la tarjeta de membresía?",
+    "USE_GEO_POINT": "Aparecer en la tarjeta {{'COMMON.APP_NAME'|translate}} ?",
     "LOADING_LOCATION": "Encontrar la dirección ...",
     "UID": "Seudónimo",
     "TITLE": "Nombre, Apellido",

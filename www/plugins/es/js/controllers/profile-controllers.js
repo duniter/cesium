@@ -13,7 +13,8 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
       },
       cache: false,
       data: {
-        auth: true
+        //auth: true
+        login: true
       }
     });
 
@@ -35,7 +36,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
     title: null,
     description: null,
     socials: [],
-    geoPoint: {}
+    geoPoint: null
   };
   $scope.loading = true;
   $scope.dirty = false;
@@ -143,7 +144,6 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
     if (profile.avatar) {
       $scope.avatarStyle={'background-image':'url("'+$scope.avatar.src+'")'};
     }
-    $scope.formData.geoPoint = $scope.formData.geoPoint || {};
 
     $scope.motion.show();
     UIUtils.loading.hide();
@@ -161,19 +161,17 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
   $scope.$watch('formData', $scope.onFormDataChanged, true);
 
   $scope.save = function(silent, hasWaitDebounce) {
-    if(!$scope.form.$valid || !$rootScope.walletData || $scope.saving) {
+    if($scope.form.$invalid || !$rootScope.walletData || ($scope.saving && !hasWaitDebounce)) {
       return $q.reject();
     }
 
     if (!hasWaitDebounce) {
-      console.debug('[ES] [profile] Waiting debounce end, before saving...');
+      $scope.saving = true;
       return $timeout(function() {
         return $scope.save(silent, true);
       }, 650);
     }
 
-
-    $scope.saving = true;
     console.debug('[ES] [profile] Saving user profile...');
 
     // removeIf(no-device)
@@ -229,12 +227,14 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       if (formData.position) {
         formData.position = null;
       }
+
+      // Make sure to convert lat/lon to float
       if (formData.geoPoint && formData.geoPoint.lat && formData.geoPoint.lon) {
         formData.geoPoint.lat =  parseFloat(formData.geoPoint.lat);
         formData.geoPoint.lon =  parseFloat(formData.geoPoint.lon);
       }
       else{
-        formData.geoPoint = null;
+        formData.geoPoint = null; // force to null, need by ES update request
       }
 
       if (!$scope.existing) {

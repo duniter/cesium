@@ -1,8 +1,8 @@
 <div class="row row-record ">
-  <div class="col item-text-wrap item-thumbnail-left-padding"
-       ng-class="{'item-thumbnail-left': item.thumbnail || item.type}">
-    <i class="item-image icon cion-page-{{::item.type}}" ng-if="!item.thumbnail"></i>
-    <i class="item-image avatar" style="background-image: url({{::item.thumbnail.src}})" ng-if="item.thumbnail"></i>
+  <div class="col item-text-wrap item-avatar-left-padding"
+       ng-class="{'item-avatar': item.avatar || item.type}">
+    <i class="item-image icon cion-page-{{::item.type}}" ng-if="!item.avatar"></i>
+    <i class="item-image avatar" style="background-image: url({{::item.avatar.src}})" ng-if="item.avatar"></i>
     <h2 ng-bind-html="item.title"></h2>
     <h4 class="gray">
       <i class="icon ion-location" ng-if="item.city"></i>

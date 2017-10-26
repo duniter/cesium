@@ -423,17 +423,20 @@ function ESAvatarModalController($scope) {
 }
 
 
-function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils) {
+function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
   'ngInject';
 
   // The default country used for address localisation
   var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
 
   var loadingCurrentPosition = false;
-  $scope.loadingPosition = false;
+  $scope.formPosition = {
+    loading: false,
+    enable: undefined
+  };
 
   $scope.tryToLocalize = function() {
-    if ($scope.loadingPosition || loadingCurrentPosition) return;
+    if ($scope.formPosition.loading || loadingCurrentPosition) return;
 
     var searchText = $scope.getAddressToSearch();
 
@@ -448,11 +451,11 @@ function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils)
         .catch(function(err) {
           console.error(err); // Silent
           loadingCurrentPosition = false;
-          $scope.form.geoPoint.$setValidity('required', false);
+          //$scope.form.geoPoint.$setValidity('required', false);
         });
     }
 
-    $scope.loadingPosition = true;
+    $scope.formPosition.loading = true;
     return esGeo.point.searchByAddress(searchText)
       .then(function(res) {
         if (res && res.length == 1) {
@@ -465,11 +468,11 @@ function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils)
         });
       })
       .then(function() {
-        $scope.loadingPosition = false;
+        $scope.formPosition.loading = false;
       })
       .catch(function(err) {
         console.error(err); // Silent
-        $scope.loadingPosition = false;
+        $scope.formPosition.loading = false;
       });
   };
 
@@ -478,18 +481,17 @@ function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils)
     if ($scope.form) {
       $scope.form.$valid = undefined;
     }
-    if ($scope.formData.enableGeoPoint) {
+    if ($scope.formPosition.enable) {
       return $scope.tryToLocalize();
     }
   };
 
   $scope.onUseGeopointChanged = function() {
     if ($scope.loading) return;
-    if (!$scope.formData.enableGeoPoint) {
+    if (!$scope.formPosition.enable) {
       if ($scope.formData.geoPoint) {
-        $scope.formData.geoPoint.lat = null;
-        $scope.formData.geoPoint.lon = null;
-        $scope.form.geoPoint.$setValidity('required', true);
+        $scope.formData.geoPoint = null;
+        //$scope.form.geoPoint.$setValidity('required', true);
         $scope.dirty = true;
       }
     }
@@ -500,7 +502,7 @@ function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils)
 
   $scope.onGeopointChanged = function() {
     if ($scope.loading) {
-      $scope.formData.enableGeoPoint = $scope.formData.geoPoint && !!$scope.formData.geoPoint.lat && !!$scope.formData.geoPoint.lon;
+      $scope.formPosition.enable = $scope.formData.geoPoint && !!$scope.formData.geoPoint.lat && !!$scope.formData.geoPoint.lon;
     }
   };
   $scope.$watch('formData.geoPoint', $scope.onGeopointChanged);
@@ -514,10 +516,7 @@ function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils)
   $scope.updateGeoPoint = function(res) {
     // user cancel
     if (!res || !res.lat || !res.lon) {
-      // Force use GeoPoint as invalid (if not already a position)
-      if ($scope.formData.enableGeoPoint && (!$scope.formData.geoPoint || !$scope.formData.geoPoint.lat)) {
-        $scope.form.geoPoint.$setValidity('required', false);
-      }
+      // nothing to do
       return;
     }
 
@@ -525,7 +524,6 @@ function ESPositionEditController($scope, $timeout, csConfig, esGeo, ModalUtils)
     $scope.formData.geoPoint = $scope.formData.geoPoint || {};
     $scope.formData.geoPoint.lat =  parseFloat(res.lat);
     $scope.formData.geoPoint.lon =  parseFloat(res.lon);
-    $scope.form.geoPoint.$setValidity('required', true);
 
     if (res.address && res.address.city) {
       var cityParts = [res.address.city];

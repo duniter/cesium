@@ -1,4 +1,4 @@
-<i ng-if="::!item.avatar" class="item-image icon ion-person"></i>
+<i ng-if="::!item.avatar" class="item-image icon cion-page-{{item.type}}"></i>
 <i ng-if="::item.avatar" class="item-image avatar" style="background-image: url({{::item.avatar.src}})"></i>
 
 <h2 ng-bind-html=":rebind:item.name"></h2>

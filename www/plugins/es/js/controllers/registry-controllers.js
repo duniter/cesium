@@ -28,6 +28,20 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
       }
     })
 
+    .state('app.wallet_pages', {
+      url: "/wallet/pages?refresh",
+      views: {
+        'menuContent': {
+          templateUrl: "plugins/es/templates/registry/view_wallet_pages.html",
+          controller: 'ESWalletPagesCtrl'
+        }
+      },
+      data: {
+        login: true,
+        minData: true
+      }
+    })
+
     .state('app.view_page', {
       url: "/page/view/:id/:title?refresh",
       views: {
@@ -82,13 +96,16 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
  .controller('ESRegistryLookupCtrl', ESRegistryLookupController)
 
+ .controller('ESWalletPagesCtrl', ESWalletPagesController)
+
  .controller('ESRegistryRecordViewCtrl', ESRegistryRecordViewController)
 
  .controller('ESRegistryRecordEditCtrl', ESRegistryRecordEditController)
 
 ;
 
-function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry, UIUtils, ModalUtils, $filter, BMA) {
+function ESRegistryLookupController($scope, $focus, $timeout, $filter,
+                                    UIUtils, ModalUtils, BMA, esModals, esRegistry) {
   'ngInject';
 
   var defaultSearchLimit = 10;
@@ -103,8 +120,9 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     location: null,
     options: null
   };
+  $scope.searchTextId = 'registrySearchText';
 
-  $scope.$on('$ionicView.enter', function(e, state) {
+  $scope.enter = function(e, state) {
     if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
       var hasOptions = false;
       var runSearch = false;
@@ -122,7 +140,9 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
         }
         // removeIf(device)
         // Focus on search text (only if NOT device, to avoid keyboard opening)
-        $focus('registrySearchText');
+        if ($scope.searchTextId) {
+          $focus($scope.searchTextId);
+        }
         // endRemoveIf(device)
 
         $scope.entered = true;
@@ -162,6 +182,9 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     }
     $scope.showFab('fab-add-registry-record');
 
+  };
+  $scope.$on('$ionicView.enter', function(e, state) {
+    return $scope.enter(e, state); // can be override by sub controller
   });
 
   $scope.doSearch = function(from) {
@@ -323,6 +346,7 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   };
 
   /* -- modals -- */
+
   $scope.showRecordTypeModal = function() {
     ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
     .then(function(type){
@@ -349,18 +373,8 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
     });
   };
 
-  $scope.showNewRecordModal = function() {
-    $scope.loadWallet({minData: true})
-      .then(function(walletData) {
-        UIUtils.loading.hide();
-        $scope.walletData = walletData;
-        ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
-        .then(function(type){
-          if (type) {
-            $state.go('app.registry_add_record', {type: type});
-          }
-        });
-    });
+  $scope.showNewPageModal = function() {
+    return esModals.showNewPage();
   };
 
  // TODO: remove auto add account when done
@@ -370,6 +384,35 @@ function ESRegistryLookupController($scope, $state, $focus, $timeout, esRegistry
   }, 400);
   */
 }
+
+
+function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWallet) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESRegistryLookupCtrl', {$scope: $scope}));
+
+  $scope.searchTextId = undefined; // avoid focus
+
+  var enter = $scope.enter;
+  $scope.enter = function(e, state) {
+    if (!$scope.entered) {
+      return csWallet.login({minData: true})
+        .then(function(walletData) {
+          UIUtils.loading.hide();
+          $scope.search.text = walletData.pubkey;
+          return enter(e, state);
+        });
+    }
+    else {
+      // Asking refresh
+      if (state.stateParams && state.stateParams.refresh) {
+        return $timeout($scope.doSearch, 500 /*waiting for propagation, if deletion*/);
+      }
+    }
+  };
+}
+
 
 function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
                                         $anchorScroll, csConfig,
@@ -489,10 +532,13 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
       if (confirm) {
         esRegistry.record.remove($scope.id)
         .then(function () {
+          if (csWallet.data.pages && csWallet.data.pages.count) {
+            csWallet.data.pages.count--;
+          }
           $ionicHistory.nextViewOptions({
             historyRoot: true
           });
-          $state.go('app.registry_lookup');
+          $state.go('app.wallet_pages', {refresh: true});
           UIUtils.toast.show(translations['REGISTRY.INFO.RECORD_REMOVED']);
         })
         .catch(UIUtils.onError('REGISTRY.ERROR.REMOVE_RECORD_FAILED'));
@@ -549,7 +595,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
 }
 
 function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHistory, $focus, $translate, $controller,
-                                        Device, UIUtils, ModalUtils, esHttp, esRegistry) {
+                                        Device, UIUtils, ModalUtils, csWallet, esHttp, esRegistry) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
@@ -782,7 +828,7 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
 
         // Avatar
         if ($scope.avatar && $scope.avatar.src) {
-          return UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to thumbnail
+          return UIUtils.image.resizeSrc($scope.avatar.src, true) // resize to avatar
             .then(function(imageSrc) {
               json.avatar = esHttp.image.toAttachment({src: imageSrc});
               return json;
@@ -809,6 +855,9 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
 
       .then(function(id) {
         console.info("[ES] [page] Record successfully saved.");
+        if (!$scope.id && csWallet.data.pages && csWallet.data.pages.count) {
+          csWallet.data.pages.count++;
+        }
         $scope.id = $scope.id || id;
         $scope.saving = false;
         $scope.dirty = false;

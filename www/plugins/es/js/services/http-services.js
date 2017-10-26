@@ -253,8 +253,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             var now = that.date.now();
             record.time = (!record.time || record.time < now) ? now : (record.time+1);
 
-            var obj = {};
-            angular.copy(record, obj);
+            var obj = angular.copy(record);
             delete obj.signature;
             delete obj.hash;
             obj.issuer = walletData.pubkey;
@@ -267,16 +266,16 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               fillRecordTags(obj, options.tagFields);
             }
 
+            console.debug("Will send obj: ", obj);
             var str = JSON.stringify(obj);
 
             return CryptoUtils.util.hash(str)
               .then(function(hash) {
                 return CryptoUtils.sign(hash, walletData.keypair)
                   .then(function(signature) {
-                    obj.hash = hash;
-                    obj.signature = signature;
-                    str = '{"hash":"' + hash + '","signature":"' + signature + '",'
-                      + str.substring(1);
+                    // Prepend hash+signature
+                    str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
+                    // Send data
                     return postRequest(str, params)
                       .then(function (id){
                         return id;
@@ -305,9 +304,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               .then(function (hash) {
                 return CryptoUtils.sign(hash, walletData.keypair)
                   .then(function (signature) {
-                    obj.hash = hash;
-                    obj.signature = signature;
-                    return that.post('/history/delete')(obj)
+                    // Prepend hash+signature
+                    str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);
+                    // Send data
+                    return that.post('/history/delete')(str)
                       .then(function (id) {
                         return id;
                       });

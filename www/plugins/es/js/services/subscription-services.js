@@ -34,7 +34,7 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
     data.subscriptions = null;
   }
 
-  function onWalletLogin(data, deferred) {
+  function onWalletLoad(data, deferred) {
     deferred = deferred || $q.defer();
     if (!data || !data.pubkey || !data.keypair) {
       deferred.resolve();
@@ -52,7 +52,7 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
         deferred.resolve(data);
       })
       .catch(function(err) {
-        console.error('Error while counting subscription: ' + (err.message ? err.message : err));
+        console.error('[ES] [subscription] Error while counting subscription: ' + (err.message ? err.message : err));
         deferred.resolve(data);
       });
 
@@ -192,7 +192,7 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
   function addListeners() {
     // Extend
     listeners = [
-      csWallet.api.data.on.login($rootScope, onWalletLogin, this),
+      csWallet.api.data.on.load($rootScope, onWalletLoad, this),
       csWallet.api.data.on.init($rootScope, onWalletReset, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this)
     ];
@@ -211,7 +211,7 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
       console.debug("[ES] [subscription] Enable");
       addListeners();
       if (csWallet.isLogin()) {
-        return onWalletLogin(csWallet.data);
+        return onWalletLoad(csWallet.data);
       }
     }
   }

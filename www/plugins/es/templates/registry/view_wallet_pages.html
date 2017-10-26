@@ -1,0 +1,50 @@
+<ion-view left-buttons="leftButtons"
+          class="view-notification">
+  <ion-nav-title>
+    {{'REGISTRY.MY_PAGES' | translate}}
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
+    </button>
+
+    <button class="button button-icon button-clear visible-xs visible-sm"
+            ng-click="showActionsPopover($event)">
+      <i class="icon ion-android-more-vertical"></i>
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="padding no-padding-xs" scroll="true">
+
+    <!-- Buttons bar -->
+    <div class="hidden-xs hidden-sm padding text-center">
+
+      <button class="button button-raised icon-left ion-plus ink"
+              ng-click="showNewPageModal()">
+        {{'REGISTRY.BTN_NEW' | translate}}
+      </button>
+    </div>
+
+    <div class="center padding" ng-if="search.loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="center padding gray" ng-if="!search.loading && !search.results.length" translate>
+      REGISTRY.NO_PAGE
+    </div>
+
+    <div class="list {{::motion.ionListClass}}">
+
+      <a ng-repeat="item in search.results"
+         class="item ink padding-xs"
+         ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
+
+        <ng-include src="'plugins/es/templates/registry/lookup_item.html'"></ng-include>
+      </a>
+
+    </div>
+
+  </ion-content>
+
+</ion-view>

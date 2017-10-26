@@ -284,7 +284,7 @@
     "BTN_ADD": "Create my profile",
     "BTN_EDIT": "Edit my profile",
     "BTN_GEOLOC_ADDRESS": "Find my address on the map",
-    "USE_GEO_POINT": "Appear on the members map?",
+    "USE_GEO_POINT": "Appear on {{'COMMON.APP_NAME'|translate}} maps?",
     "LOADING_LOCATION": "Searching address...",
     "UID": "Pseudonym",
     "TITLE": "Lastname, FirstName",

@@ -22,11 +22,16 @@
 <input type="hidden"
        name="geoPoint"
        ng-model="formData.geoPoint"
-       geo-point-required>
+       required-if="formPosition.enable"
+       geo-point>
 <div class="form-errors"
      ng-show="form.$submitted && form.geoPoint.$error"
      ng-messages="form.geoPoint.$error">
   <div class="form-error" ng-message="required">
+    <span translate="COMMON.ERROR.REQUIRED_FOR_LOCATION" ng-if="!formData.city"></span>
+    <span translate="COMMON.ERROR.INVALID_FOR_LOCATION" ng-if="formData.city"></span>
+  </div>
+  <div class="form-error" ng-message="geoPoint">
     <span translate="COMMON.ERROR.REQUIRED_FOR_LOCATION" ng-if="!formData.city"></span>
     <span translate="COMMON.ERROR.INVALID_FOR_LOCATION" ng-if="formData.city"></span>
   </div>
@@ -39,12 +44,12 @@
   <div class="col no-padding">
 
     <!-- appear on map ? -->
-    <ion-checkbox ng-model="formData.enableGeoPoint"
+    <ion-checkbox ng-model="formPosition.enable"
                   ng-change="onUseGeopointChanged()"
                   class="item item-border-large done in">
       <div class="item-content">
         <span translate>PROFILE.USE_GEO_POINT</span>
-        <h4 class="gray" ng-if="loadingPosition">
+        <h4 class="gray" ng-if="formPosition.loading">
           <ion-spinner class="icon ion-spinner-small" icon="android"></ion-spinner>
           {{'PROFILE.LOADING_LOCATION'|translate}}
         </h4>
@@ -57,7 +62,7 @@
 
       <a class="button button-stable button-small-padding"
          title="{{'PROFILE.BTN_GEOLOC_ADDRESS'|translate}}"
-         ng-disabled="!formData.enableGeoPoint"
+         ng-disabled="!formPosition.enable"
          ng-click="openSearchLocationModal()">
         <i class=" icon ion-home" style="left: 15px;"></i>
         <b class=" icon-secondary ion-search" style="top: -9px; left:32px; font-size: 18px;"></b>

@@ -267,6 +267,8 @@
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_NEW": "Créer une page",
+    "MY_PAGES": "Mes pages",
+    "NO_PAGE": "Aucune page",
     "SEARCH": {
       "TITLE": "Pages",
       "TITLE_SMALL_DEVICE": "Pages",
@@ -313,6 +315,10 @@
       "RECORD_PUBKEY": "Clé publique",
       "RECORD_PUBKEY_HELP": "Clé publique de réception des paiements"
     },
+    "WALLET": {
+      "REGISTRY_DIVIDER": "Pages",
+      "REGISTRY_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, association, institution."
+    },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",
       "LOAD_RECORD_FAILED": "Erreur lors du chargement de la page",
@@ -335,7 +341,7 @@
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
     "BTN_GEOLOC_ADDRESS": "Trouver mon adresse sur la carte",
-    "USE_GEO_POINT": "Apparaître sur la carte des membres ?",
+    "USE_GEO_POINT": "Apparaître sur les cartes {{'COMMON.APP_NAME'|translate}} ?",
     "LOADING_LOCATION": "Recherche de l'adresse...",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",

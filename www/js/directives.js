@@ -79,13 +79,30 @@ angular.module('cesium.directives', [])
     };
   })
 
-  .directive('geoPointRequired', function() {
+  .directive('requiredIf', function() {
+    return {
+      require: '?ngModel',
+      link: function(scope, element, attributes, ngModel) {
+        if (ngModel && attributes.requiredIf) {
+          ngModel.$validators.required = function(value) {
+            return !(scope.$eval(attributes.requiredIf)) || !ngModel.$isEmpty(value);
+          };
+
+          scope.$watch(attributes.requiredIf, function() {
+            ngModel.$validate();
+          });
+        }
+      }
+    };
+  })
+
+  .directive('geoPoint', function() {
     return {
       require: '?ngModel',
       link: function(scope, element, attributes, ngModel) {
         if (ngModel) {
-          ngModel.$validators.required = function(value) {
-            return ngModel.$isEmpty(value) || !value.lat || !value.lon ;
+          ngModel.$validators.geoPoint = function(value) {
+            return ngModel.$isEmpty(value) || (angular.isDefined(value.lat) && angular.isDefined(value.lon));
           };
         }
       }

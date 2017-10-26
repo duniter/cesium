@@ -158,8 +158,8 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       };
 
       // TODO: uncomment
-      //var mixedSearch = text && esSettings.wot.isMixedSearchEnable();
-      var mixedSearch = false;
+      var mixedSearch = text && esSettings.wot.isMixedSearchEnable();
+      //var mixedSearch = false;
       if (mixedSearch) {
         request._source = request._source.concat(["description", "city", "creationTime", "membersCount", "type"]);
         console.debug("[ES] [profile] Mixed search: enable");
@@ -259,8 +259,6 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
                   values=[value];
                   datas.push(value);
                 }
-
-                avatar = esHttp.image.fromHit(hit, 'avatar');
               }
 
               // Page or group
@@ -286,10 +284,10 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
                 };
                 values=[item];
                 datas.push(item);
-                avatarFieldName = 'thumbnail';
+                avatarFieldName = 'avatar';
               }
 
-              avatar = esHttp.image.fromHit(hit, avatarFieldName);
+              var avatar = esHttp.image.fromHit(hit, avatarFieldName);
               _.forEach(values, function(data) {
                 data.avatar= avatar;
                 _fillSearchResultFromHit(data, hit);

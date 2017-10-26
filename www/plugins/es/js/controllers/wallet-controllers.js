@@ -9,7 +9,7 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
           points: {
             'after-general': {
               templateUrl: "plugins/es/templates/wallet/view_wallet_extend.html",
-              controller: 'ESWotIdentityViewCtrl'
+              controller: 'ESWalletCtrl'
             }
           }
         })
@@ -18,5 +18,21 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
 
   })
 
+
+  .controller('ESWalletCtrl', ESWalletController)
+
 ;
+
+function ESWalletController($scope, $controller, esModals) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESWotIdentityViewCtrl', {$scope: $scope}));
+
+  /* -- modals -- */
+
+  $scope.showNewPageModal = function() {
+    return esModals.showNewPage();
+  };
+}
 

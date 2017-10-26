@@ -61,4 +61,42 @@
       <i class="gray icon ion-ios-arrow-right"></i>
     </a>
   </div>
+
+  <!-- page -->
+  <div class="item item-divider item-divider-top-border">
+    <span>
+      {{'REGISTRY.WALLET.REGISTRY_DIVIDER' | translate}}
+      <i style="font-size: 12pt; cursor: pointer;"
+         ng-click="showPagesHelp=!showPagesHelp"
+         class="icon positive ion-ios-help-outline"
+         title="{{'REGISTRY.WALLET.REGISTRY_HELP' | translate}}"></i>
+    <span>
+
+    <a class="badge button button-text button-small button-small-padding "
+       ng-if="!formData.pages.count"
+       ng-click="showNewPageModal()">
+      <i class="icon ion-plus"></i>
+      <span translate>REGISTRY.BTN_NEW</span>
+    </a>
+  </div>
+
+  <div class="item item-text-wrap positive item-small-height" ng-show="showPagesHelp">
+    <small translate>REGISTRY.WALLET.REGISTRY_HELP</small>
+  </div>
+
+  <div class="double-padding-x padding-bottom">
+
+    <div ng-if="!formData.pages.count"
+         class="item gray" translate>REGISTRY.NO_PAGE</div>
+
+    <a class="item item-icon-left item-text-wrap item-icon-right ink"
+       ng-if="formData.pages.count"
+       ui-sref="app.wallet_pages">
+      <i class="icon ion-social-buffer"></i>
+      <span translate>REGISTRY.MY_PAGES</span>
+      <span class="badge badge-positive">{{formData.pages.count}}</span>
+
+      <i class="gray icon ion-ios-arrow-right"></i>
+    </a>
+  </div>
 </ng-if>
