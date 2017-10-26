@@ -34,7 +34,6 @@
   },
   "COMMENTS": {
     "DIVIDER": "Commentaren",
-    "DIVIDER_WITH_TOTAL": "Commentaren ({{total}})",
     "SHOW_MORE_COMMENTS": "Toon eerder commentaren",
     "COMMENT_HELP": "Jouw commentaar, vraag...",
     "COMMENT_HELP_REPLY_TO": "Jouw antwoord...",

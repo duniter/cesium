@@ -201,6 +201,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       // pubkey : use a special 'term', because of 'non indexed' field
       if (BMA.regexp.PUBKEY.test(text /*case sensitive*/)) {
         filters.push({term : { issuer: text}});
+        filters.push({term : { pubkey: text}});
       }
       else {
         text = text.toLowerCase();

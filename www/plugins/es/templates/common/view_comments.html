@@ -3,8 +3,8 @@
 
   <div class="item item-divider">
     <i class="icon ion-chatboxes"></i>
-    <span ng-if="!comments.result.length">{{'COMMENTS.DIVIDER' | translate}}</span>
-    <span ng-if="comments.result.length">{{'COMMENTS.DIVIDER_WITH_TOTAL' | translate:comments}}</span>
+    <span translate>COMMENTS.DIVIDER</span>
+    <span class="gray" ng-if="comments.total">({{comments.total}})</span>
   </div>
 
   <span class="item item-more-comments"

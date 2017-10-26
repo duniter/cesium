@@ -108,7 +108,6 @@
   },
   "COMMENTS": {
     "DIVIDER": "Comentarios",
-    "DIVIDER_WITH_TOTAL": "Comentarios ({{total}})",
     "SHOW_MORE_COMMENTS": "Visualizar los comentarios anteriores",
     "COMMENT_HELP": "Su comentario, preguntas, etc.",
     "COMMENT_HELP_REPLY_TO": "Su repuesta…",
