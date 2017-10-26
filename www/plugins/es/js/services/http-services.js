@@ -266,7 +266,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
               fillRecordTags(obj, options.tagFields);
             }
 
-            console.debug("Will send obj: ", obj);
+            //console.debug("Will send obj: ", obj);
             var str = JSON.stringify(obj);
 
             return CryptoUtils.util.hash(str)

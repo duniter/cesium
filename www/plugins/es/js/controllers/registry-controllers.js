@@ -449,6 +449,7 @@ function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopo
       .then(function (data) {
         $scope.id= data.id;
         $scope.formData = data.record;
+        console.log($scope.formData);
         $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
         $scope.issuer = data.issuer;
         // avatar
@@ -598,13 +599,13 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
                                         Device, UIUtils, ModalUtils, csWallet, esHttp, esRegistry) {
   'ngInject';
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
+  //angular.extend(this, $controller('ESPositionEditCtrl', {$scope: $scope}));
 
   $scope.formData = {
     title: null,
     description: null,
     socials: [],
-    geoPoint: {}
+    geoPoint: null
   };
 
   $scope.loading = true;
@@ -721,9 +722,6 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
       $scope.avatarClass = {};
       $scope.avatarClass['cion-page-' +  $scope.formData.type] = !$scope.avatar;
     }
-
-    // geo point
-    $scope.formData.geoPoint = $scope.formData.geoPoint || {};
 
     // pictures
     $scope.pictures = data.record && data.record.pictures || [];

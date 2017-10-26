@@ -143,7 +143,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
     return $q.all([
         // load categories
-        that.raw.category.all(),
+        getCategories(),
         // Do search
         that.raw.search(request)
       ])
@@ -170,7 +170,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
     return $q.all([
 
       // load categories
-      that.raw.category.all(),
+      getCategories(),
 
       // Do get source
       options.fecthPictures ?

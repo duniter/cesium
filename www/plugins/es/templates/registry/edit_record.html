@@ -105,15 +105,17 @@
                 <span class="badge badge-royal">{{formData.category.name | formatCategory}}</span>&nbsp;
                 <i class="gray icon ion-ios-arrow-right"></i>
               </div>
+              <input type="hidden" name="category" ng-model="formData.category.id" required-if="formData.type=='company' || formData.type=='shop'">
               <div class="form-errors"
-                   ng-show="form.$submitted && (formData.type=='company' || formData.type=='shop') && !formData.category.id">
-                <div class="form-error">
+                   ng-if="form.$submitted && form.category.$error"
+                   ng-messages="form.category.$error">
+                <div class="form-error" ng-message="required">
                   <span translate="ERROR.FIELD_REQUIRED"></span>
                 </div>
               </div>
 
               <!-- position -->
-              <ng-include src="'plugins/es/templates/common/edit_position.html'"></ng-include>
+              <ng-include src="'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl"></ng-include>
 
               <!-- social networks -->
               <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
@@ -123,7 +125,7 @@
               <!-- pubkey  -->
               <div class="item item-input item-floating-label">
                 <span class="input-label" translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
-                <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_PUBKEY_HELP'|translate}}" ng-model="formData.pubkey"></input>
+                <input type="text" placeholder="{{'REGISTRY.EDIT.RECORD_PUBKEY_HELP'|translate}}" ng-model="formData.pubkey"/>
               </div>
 
             </div>

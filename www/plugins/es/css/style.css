@@ -23,20 +23,24 @@
 **********/
 
 .item-record {
-  height: 100px !important;
+  height: 80px !important;
   padding-top: 5px !important;
 }
 
 .row-record {
   border-bottom: solid 1px #ccc !important;
   padding: 0 !important;
-  height: 84px !important;
+  height: 80px !important;
   overflow: hidden;
 }
 
 .row-record .col {
   padding-top: 5px;
   padding-bottom: 0px;
+}
+
+.row-record .item-avatar i.item-image {
+  font-size: 34px !important;
 }
 
 .card-record .badge-picture-count,
