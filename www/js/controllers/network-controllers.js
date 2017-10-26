@@ -586,14 +586,10 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
   /* -- manage link to raw document -- */
 
   $scope.openRawPeering = function(event) {
-    return $scope.openLink(event,
-      ($scope.isHttps ? 'https://' : 'http://') + $scope.node.server + '/network/peering'
-    );
+    return $scope.openLink(event, $scope.node.url + '/network/peering');
   };
 
   $scope.openRawCurrentBlock = function(event) {
-    return $scope.openLink(event,
-      ($scope.isHttps ? 'https://' : 'http://') + $scope.node.server + '/blockchain/current'
-    );
+    return $scope.openLink(event, $scope.node.url + '/blockchain/current');
   };
 }

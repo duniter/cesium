@@ -718,6 +718,12 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
     $state.go(stateName, stateParams);
   };
 
+  /* -- manage link to raw document -- */
+
+  $scope.openRawBlock = function(event) {
+    return $scope.openLink(event, $scope.node.url + '/blockchain/block/' + $scope.formData.number);
+  };
+
   /* -- help tip -- */
 
   // Show help tip

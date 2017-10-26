@@ -50,8 +50,7 @@
             </h3>
 
             <h3>
-              <a target="_system"
-                 ng-href="{{node.url}}/blockchain/block/{{formData.number}}">
+              <a ng-click="openRawBlock($event)">
                 <i class="icon ion-share"></i> {{'BLOCKCHAIN.VIEW.SHOW_RAW'|translate}}
               </a>
             </h3>

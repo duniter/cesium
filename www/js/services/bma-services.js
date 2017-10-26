@@ -834,6 +834,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       host: host,
       port: port,
       useSsl: useSsl,
+      url: csHttp.getUrl(host, port, ''/*path*/, useSsl),
       node: {
         summary: csHttp.getWithCache(host, port, '/node/summary', useSsl, csHttp.cache.LONG, false, timeout)
       },
