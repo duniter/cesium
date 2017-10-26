@@ -6,7 +6,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     $stateProvider
 
     .state('app.registry_lookup', {
-      url: "/page?q&category&location&type&reload",
+      url: "/page?q&category&location&type&issuer&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup.html",
@@ -19,7 +19,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.registry_lookup_lg', {
-      url: "/page/lg?q&category&location&type&reload",
+      url: "/page/lg?q&category&location&type&issuer&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup_lg.html",
@@ -118,7 +118,8 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
     type: null,
     category: null,
     location: null,
-    options: null
+    options: null,
+    issuer: null
   };
   $scope.searchTextId = 'registrySearchText';
 
@@ -163,6 +164,12 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       // Search on location
       if (state.stateParams && state.stateParams.location) {
         $scope.search.location = state.stateParams.location;
+        hasOptions = runSearch = true;
+      }
+
+      // Search on issuer
+      if (state.stateParams && state.stateParams.issuer) {
+        $scope.search.issuer = state.stateParams.issuer;
         hasOptions = runSearch = true;
       }
 
@@ -226,6 +233,10 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
           }
         });
       }
+    }
+    // pubkey : use a special 'term', because of 'non indexed' field
+    else if ($scope.search.options && $scope.search.issuer) {
+      filters.push({term : { issuer: $scope.search.issuer}});
     }
     if ($scope.search.options && $scope.search.type) {
       filters.push({term: { type: $scope.search.type}});
@@ -400,7 +411,8 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
       return csWallet.login({minData: true})
         .then(function(walletData) {
           UIUtils.loading.hide();
-          $scope.search.text = walletData.pubkey;
+          $scope.search.issuer = walletData.pubkey;
+          $scope.search.options = true;
           return enter(e, state);
         });
     }
@@ -414,8 +426,8 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
 
   $scope.doUpdate = function() {
     if (!csWallet.isLogin()) return;
-    $scope.search.text = csWallet.data.pubkey;
-    $scope.search.type = 'text';
+    $scope.search.issuer = csWallet.data.pubkey;
+    $scope.search.options = true;
     return $scope.doSearch();
   };
 

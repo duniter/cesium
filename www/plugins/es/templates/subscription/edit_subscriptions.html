@@ -20,7 +20,12 @@
     <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm padding text-center">
 
-      <button class="button button-raised icon-left ion-plus ink"
+      <button class="button button-stable button-small-padding icon ion-loop ink"
+              ng-click="load()"
+              title="{{'COMMON.BTN_REFRESH' | translate}}">
+      </button>
+
+      <button class="button button-calm ink"
               ng-click="addSubscription()">
         {{'SUBSCRIPTION.BTN_ADD' | translate}}
       </button>
