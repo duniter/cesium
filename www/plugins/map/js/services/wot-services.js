@@ -1,7 +1,7 @@
 
 angular.module('cesium.map.wot.services', ['cesium.services'])
 
-.factory('mapWot', function($q, csHttp, esHttp, csWot, BMA, esGeo) {
+.factory('mapWot', function($q, csHttp, esHttp, esSettings, csWot, BMA, esGeo) {
   'ngInject';
 
   var
@@ -15,7 +15,9 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
 
   that.raw = {
     profile: {
-      postSearch: esHttp.post('/user/profile/_search')
+      search: esHttp.post('/user/profile/_search'),
+      mixedSearch: esHttp.post('/user,page,group/profile,record/_search')
+      //FOR DEV ONLY mixedSearch: esHttp.post('/page/record/_search')
     }
   };
 
@@ -74,8 +76,17 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       _source: options.fields.description ? fields.profile.concat("description") : fields.profile
     };
 
+    var mixedSearch = esSettings.wot.isMixedSearchEnable();
+    if (mixedSearch) {
+      // add special fields for page and group
+      request._source = request._source.concat(["type", "pubkey", "issuer", "category"]);
+      console.debug("[ES] [map] Mixed search: enable");
+    }
+
+    var search = mixedSearch ? that.raw.profile.mixedSearch : that.raw.profile.search;
+
     return $q.all([
-        that.raw.profile.postSearch(request),
+        search(request),
         BMA.wot.member.uids(),
         BMA.wot.member.pending()
           .then(function(res) {
@@ -114,7 +125,7 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
         // Additional slice requests
         request.from += request.size;
         while (request.from < res.hits.total) {
-          jobs.push(that.raw.profile.postSearch(angular.copy(request))
+          jobs.push(search(angular.copy(request))
             .then(function(res) {
               if (!res.hits || !res.hits.hits.length) return [];
               return processLoadHits(options, uids, memberships, res);
@@ -136,11 +147,28 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     var commaRegexp = new RegExp('[,]');
     var searchAddressItems = [];
     var items = res.hits.hits.reduce(function(res, hit) {
-      var pubkey =  hit._id;
-
-      var uid = uids[pubkey];
-      var item = uid && {uid: uid} || memberships[pubkey] || {};
-      item.pubkey = pubkey;
+      var item;
+      if (hit._index == "user") {
+        var pubkey =  hit._id;
+        var uid = uids[pubkey];
+        item = uid && {uid: uid} || memberships[pubkey] || {};
+        item.pubkey = pubkey;
+        item.index = hit._index;
+      }
+      else {
+        var pubkey =  hit._source.issuer;
+        var uid = uids[pubkey];
+        item = uid && {uid: uid} || memberships[pubkey] || {};
+        item.issuer = pubkey;
+        item.pubkey = hit._source.pubkey||item.issuer;
+        item.id = hit._id;
+        item.index = hit._index;
+        item.type = hit._source.type;
+        item.category = hit._source.category;
+        if (item.category) {
+          delete item.category.parent; // parent not need
+        }
+      }
 
       // City & address
       item.city = hit._source.city;

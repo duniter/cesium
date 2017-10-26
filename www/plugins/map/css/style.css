@@ -89,6 +89,24 @@
   text-align: start !important;
 }
 
+/**
+ * WOT MAP
+ */
+.view-map-wot .leaflet-popup-content{
+  min-width: 200px;
+}
+
+.view-map-wot .leaflet-popup-content .item-avatar .item-image {
+  left: 0px;
+}
+.view-map-wot .leaflet-popup-content .item-avatar .item-content {
+  padding-left: 70px;
+}
+
+
+/**
+ * Marker colors
+ */
 
 /* blue cluster marker */
 .marker-cluster-small.blue {

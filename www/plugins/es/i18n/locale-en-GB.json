@@ -239,7 +239,7 @@
       "TITLE": "New reference",
       "SELECT_TYPE": "Kind of organization:",
       "ENUM": {
-        "SHOP": "local shops",
+        "SHOP": "Local shops",
         "COMPANY": "Company",
         "ASSOCIATION": "Association",
         "INSTITUTION": "Institution"
@@ -260,6 +260,10 @@
       "RECORD_SOCIAL_NETWORKS": "Social networks and web site",
       "RECORD_PUBKEY": "Public key",
       "RECORD_PUBKEY_HELP": "Public key to receive payments"
+    },
+    "WALLET": {
+      "REGISTRY_DIVIDER": "Pages",
+      "REGISTRY_HELP": "Pages refer to activities accepting money or promoting it: local shops, companies, associations, institutions."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Loading main activities failed",

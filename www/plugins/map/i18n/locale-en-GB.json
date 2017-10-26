@@ -26,9 +26,13 @@
       "VIEW": {
         "TITLE": "Members map",
         "LAYER": {
-          "MEMBER": "Members",
-          "PENDING": "Pending registrations",
-          "WALLET": "Simple wallets"
+          "MEMBER": "<i class=\"icon ion-person positive\"></i> Members",
+          "PENDING": "<i class=\"icon ion-clock energized\"></i> Pending registrations",
+          "WALLET": "<i class=\"icon ion-card gray\"></i> Simple wallets",
+          "SHOP": "<i class=\"icon ion-page-shop balanced\"></i> Local shops",
+          "COMPANY": "<i class=\"icon ion-page-company balanced\"></i> Companies",
+          "ASSOCIATION": "<i class=\"icon ion-page-association balanced\"></i> Associations",
+          "INSTITUTION": "<i class=\"icon ion-page-institution balanced\"></i> Institutions"
         }
       }
     },

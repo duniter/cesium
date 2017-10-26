@@ -69,10 +69,25 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
           icon: 'person-stalker',
           markerColor: 'green'
       },
-      registry: {
+      shop: {
         type: 'awesomeMarker',
-          icon: 'person-stalker', // TODO
-          markerColor: 'green' // TODO
+        icon: 'page-shop',
+        markerColor: 'green'
+      },
+      association: {
+        type: 'awesomeMarker',
+        icon: 'page-association',
+        markerColor: 'green'
+      },
+      company: {
+        type: 'awesomeMarker',
+        icon: 'page-company',
+        markerColor: 'green'
+      },
+      institution: {
+        type: 'awesomeMarker',
+        icon: 'page-institution',
+        markerColor: 'green'
       }
     };
 
@@ -83,6 +98,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     cache: 'map-wot',
     layers: {
       overlays: {
+
+        // User profile
         member: {
           type: 'featureGroup',
           name: 'MAP.WOT.VIEW.LAYER.MEMBER',
@@ -96,6 +113,28 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         wallet: {
           type: 'featureGroup',
           name: 'MAP.WOT.VIEW.LAYER.WALLET',
+          visible: true
+        },
+
+        // Pages
+        shop: {
+          type: 'featureGroup',
+          name: 'MAP.WOT.VIEW.LAYER.SHOP',
+          visible: true
+        },
+        association: {
+          type: 'featureGroup',
+          name: 'MAP.WOT.VIEW.LAYER.ASSOCIATION',
+          visible: true
+        },
+        company: {
+          type: 'featureGroup',
+          name: 'MAP.WOT.VIEW.LAYER.COMPANY',
+          visible: true
+        },
+        institution: {
+          type: 'featureGroup',
+          name: 'MAP.WOT.VIEW.LAYER.INSTITUTION',
           visible: true
         }
       }
@@ -144,14 +183,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     }
   };
   $scope.$on('$ionicView.enter', $scope.enter);
-
-  // View leave: store map options (center) to cache
-  $scope.leave = function() {
-    /*if ($scope.map.cache) {
-      MapUtils.cache.save($scope.map);
-    }*/
-  };
-  $scope.$on('$ionicView.leave', $scope.leave);
 
   $scope.loadMap = function() {
     return $q.all([
@@ -302,16 +333,17 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         if (res && res.length) {
 
           var formatPubkey = $filter('formatPubkey');
-          var markerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
+          var userMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_marker.html');
+          var pageMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_page_marker.html');
 
           _.forEach(res, function (hit) {
-            var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
+            var type = hit.type || (hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet'));
             var shortPubkey = formatPubkey(hit.pubkey);
-            var id = (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey).replace(/-/g, '_');
+            var id = hit.index + '_' + (hit.id || (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey)).replace(/-/g, '_');
             var marker = {
               layer: type,
               icon: icons[type],
-              opacity: hit.uid ? 1 : 0.7,
+              opacity: hit.uid || hit.type ? 1 : 0.7,
               title: hit.name + ' | ' + shortPubkey,
               lat: hit.geoPoint.lat,
               lng: hit.geoPoint.lon,
@@ -321,7 +353,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
                 return scope;
               },
               focus: false,
-              message: markerTemplate,
+              message: hit.type ? pageMarkerTemplate : userMarkerTemplate,
               id: id
             };
             markers[id] = marker;

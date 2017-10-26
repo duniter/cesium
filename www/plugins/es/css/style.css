@@ -204,9 +204,16 @@
   font-family: "Ionicons";
   content: "\f212";
 }
-
+.ion-page-association:before {
+  font-family: "Ionicons";
+  content: "\f212";
+}
 /* institution */
 .cion-page-company:before {
+  font-family: "Cesiumicons";
+  content: "\e903";
+}
+.ion-page-company:before {
   font-family: "Cesiumicons";
   content: "\e903";
 }
@@ -216,9 +223,17 @@
   font-family: "Cesiumicons";
   content: "\e921";
 }
+.ion-page-institution:before {
+  font-family: "Cesiumicons";
+  content: "\e921";
+}
 
 /* shop */
 .cion-page-shop:before {
+  font-family: "Ionicons";
+  content: "\f110";
+}
+.ion-page-shop:before {
   font-family: "Ionicons";
   content: "\f110";
 }

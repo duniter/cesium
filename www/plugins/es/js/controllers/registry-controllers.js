@@ -234,7 +234,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
         });
       }
     }
-    // pubkey : use a special 'term', because of 'non indexed' field
+    // issuer: use only on filter
     else if ($scope.search.options && $scope.search.issuer) {
       filters.push({term : { issuer: $scope.search.issuer}});
     }
@@ -405,7 +405,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
 
   $scope.searchTextId = undefined; // avoid focus
 
-  var enter = $scope.enter;
+  // Override the default enter
   $scope.enter = function(e, state) {
     if (!$scope.entered) {
       return csWallet.login({minData: true})
@@ -413,13 +413,13 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
           UIUtils.loading.hide();
           $scope.search.issuer = walletData.pubkey;
           $scope.search.options = true;
-          return enter(e, state);
+          $timeout($scope.doSearch, 100);
         });
     }
     else {
       // Asking refresh
       if (state.stateParams && state.stateParams.refresh) {
-        return $timeout($scope.doSearch, 500 /*waiting for propagation, if deletion*/);
+        return $timeout($scope.doSearch, 2000 /*waiting for propagation, if deletion*/);
       }
     }
   };

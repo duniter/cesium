@@ -266,6 +266,8 @@
     "SOCIAL_NETWORKS_DIVIDER": "Redes sociales y sitio web",
     "TECHNICAL_DIVIDER": "Informaciónes técnicas",
     "BTN_NEW": "Creer una página",
+    "MY_PAGES": "Mis páginas",
+    "NO_PAGE": "Sin página",
     "SEARCH": {
       "TITLE": "Páginas",
       "TITLE_SMALL_DEVICE": "Páginas",
@@ -311,6 +313,10 @@
       "RECORD_SOCIAL_NETWORKS": "Redes sociales y sitio web",
       "RECORD_PUBKEY": "Llave pública" ,
       "RECORD_PUBKEY_HELP": "Llave pública de recepción de los pagos"
+    },
+    "WALLET": {
+      "REGISTRY_DIVIDER": "Páginas",
+      "REGISTRY_HELP": "Las páginas se refieren a actividades que aceptan dinero o lo favorecen: empresas, negocios, asociaciones, instituciones."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Fracaso en la carga de la lista de actividades",
