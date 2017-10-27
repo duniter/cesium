@@ -393,8 +393,8 @@
       "ENABLE_CERT_RECEIVED": "Notify the validation of <b>received certifications</b>?"
     },
     "CONFIRM": {
-      "ASK_ENABLE_TITLE": "New features",
-      "ASK_ENABLE": "Some new features are available: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> user profiles</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/>They have been <b>disabled</b> in your settings.<br/><br/><b>Do you want to enable</b> these features?"
+      "ASK_ENABLE_TITLE": "Optional features",
+      "ASK_ENABLE": "Cesium+ extension is <b>disabled</b> in your settings, making some features inactive: <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> user profiles</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Private messages</b>.</ul><br/><br/><b>Do you want to enable</b> the extension?"
     }
   },
   "ES_WALLET": {
