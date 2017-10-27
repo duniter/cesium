@@ -10,49 +10,56 @@ angular.module("cesium.config", [])
 
 .constant("csConfig", {
 	"cacheTimeMs": 300000,
-	"fallbackLanguage": "fr-FR",
-	"defaultLanguage": "fr-FR",
+	"fallbackLanguage": "en",
 	"rememberMe": true,
 	"showUDHistory": true,
-	"timeout": 300000,
+	"timeout": 30000,
 	"timeWarningExpireMembership": 5184000,
 	"timeWarningExpire": 7776000,
+	"keepAuthIlde": 600,
 	"useLocalStorage": true,
-	"useRelative": true,
-	"expertMode": true,
+	"useRelative": false,
+	"expertMode": false,
 	"decimalCount": 2,
+	"httpsMode": false,
+	"shareBaseUrl": "https://g1.duniter.fr",
 	"helptip": {
-		"enable": false,
+		"enable": true,
 		"installDocUrl": {
 			"fr-FR": "https://duniter.org/fr/wiki/duniter/installer/",
 			"en": "https://duniter.org/en/wiki/duniter/install/"
 		}
 	},
 	"license": {
-		"fr-FR": "license/license_g1-fr-FR.txt",
-		"en": "license/license_g1-en.txt"
+		"fr-FR": "license/license_g1-fr-FR",
+		"en": "license/license_g1-en"
 	},
 	"node": {
-		"host": "localhost",
-		"port": 9600
+		"host": "g1.duniter.org",
+		"port": "443"
 	},
 	"fallbackNodes": [
 		{
-			"host": "g1.duniter.org",
+			"host": "g1.duniter.fr",
 			"port": "443"
 		},
 		{
-			"host": "g1.duniter.fr",
+			"host": "g1.duniter.org",
 			"port": "443"
+		}
+	],
+	"developers": [
+		{
+			"name": "Benoit Lavenier",
+			"pubkey": "38MEAZN68Pz1DTvT3tqgxx4yQP6snJCQhPqEFxbDk4aE"
 		}
 	],
 	"plugins": {
 		"es": {
-			"enable": false,
-			"askEnable": false,
-			"host": "localhost",
-			"port": 9200,
-			"wsPort": 9400,
+			"enable": true,
+			"askEnable": true,
+			"host": "g1.data.duniter.fr",
+			"port": "443",
 			"fallbackNodes": [
 				{
 					"host": "g1.data.le-sou.org",
@@ -70,19 +77,10 @@ angular.module("cesium.config", [])
 				"certReceived": true
 			},
 			"defaultCountry": "France"
-		},
-		"graph": {
-			"enable": true
-		},
-		"neo4j": {
-			"enable": true
-		},
-		"rml9": {
-			"enable": true
 		}
 	},
-	"version": "0.18.3",
-	"build": "2017-10-27T17:48:55.410Z",
+	"version": "0.19.0",
+	"build": "2017-10-27T18:10:53.795Z",
 	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
 })
 
