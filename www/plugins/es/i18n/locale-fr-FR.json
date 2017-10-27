@@ -477,8 +477,8 @@
       "ENABLE_CERT_RECEIVED": "Notifier les <b>certifications reçues</b> ?"
     },
     "CONFIRM": {
-      "ASK_ENABLE_TITLE": "Nouvelles fonctionnalités",
-      "ASK_ENABLE": "De nouvelles fonctionnalités sont disponibles : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.</ul><br/>Elles ont été <b>désactivées</b> dans vos paramètres.<br/><br/><b>Souhaitez-vous les activer</b> ?"
+      "ASK_ENABLE_TITLE": "Fonctionnalités optionnelles",
+      "ASK_ENABLE": "L'extension Cesium+ est <b>désactivée</b> dans vos paramètres, rendant inactives les fonctionnalités : <ul><li>&nbsp;&nbsp;<b><i class=\"icon ion-person\"></i> Profils Cesium+</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-android-notifications\"></i> Notifications</b>;<li>&nbsp;&nbsp;<b><i class=\"icon ion-email\"></i> Messages privés</b>.<li>&nbsp;&nbsp;<b><i class=\"icon ion-location\"></i> Cartes, etc.</b>.</ul><br/><b>Souhaitez-vous la ré-activer</b> l'extension ?"
     }
   },
   "ES_WALLET": {
@@ -507,5 +507,12 @@
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a répondu à votre commentaire sur le référencement : <b>{{params[2]}}</b>",
       "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> a modifié sa réponse à votre commentaire sur le référencement : <b>{{params[2]}}</b>"
     }
+  },
+  "CONFIRM": {
+    "ES_USE_FALLBACK_NODE": "Nœud de données <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud de données <b>{{new}}</b> ?"
+  },
+  "ERROR": {
+    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connection Internet, ou changer de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>."
   }
+
 }

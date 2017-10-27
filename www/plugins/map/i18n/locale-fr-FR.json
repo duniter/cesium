@@ -34,6 +34,9 @@
           "ASSOCIATION": "<i class=\"icon ion-page-association balanced\"></i> Associations",
           "INSTITUTION": "<i class=\"icon ion-page-institution balanced\"></i> Institutions"
         }
+      },
+      "ERROR": {
+        "LOAD_POSITION_FAILED": "Impossible de récupérer les positions à afficher."
       }
     },
     "PROFILE": {

@@ -12,7 +12,8 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
         .extendState('app.wot_lookup', {
           points: {
             'filter-buttons': {
-              templateUrl: "plugins/map/templates/wot/lookup_extend.html"
+              templateUrl: "plugins/map/templates/wot/lookup_extend.html",
+              controller: "ESExtensionCtrl"
             }
           }
         });
@@ -35,10 +36,11 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
     }
   })
 
-  // [NEW] Manage events from the page #/app/wot/map
+  // Map view of the WOT
   .controller('MapWotViewCtrl', MapWotViewController)
 
 ;
+
 
 function MapWotViewController($scope, $filter, $templateCache, $interpolate, $timeout, $location, $translate, $q,
                               leafletData, UIUtils, csSettings, csWallet, MapUtils, mapWot) {
@@ -382,6 +384,11 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
         // hide loading indicator
         map.fire('dataload');
+      })
+      .catch(function(err) {
+        $scope.map.markers = {};
+        $scope.loading = false;
+        UIUtils.onError('MAP.WOT.ERROR.LOAD_POSITION_FAILED')(err);
       });
   };
 

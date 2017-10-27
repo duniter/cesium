@@ -20,7 +20,17 @@
       <div class="input-label" ng-class="{'gray': !formData.enable}">
       {{'ES_SETTINGS.PEER' | translate}}
       </div>
-      <span class="item-note" ng-class="{'dark': formData.enable}">{{getServer()}}</span>
+
+      <!-- node temporary changed -->
+      <ng-if ng-if="temporary">
+        <h4 class="gray text-wrap assertive" >
+          <i class="icon ion-alert-circled"></i>
+          <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+        </h4>
+        <div class="item-note assertive text-italic">{{server}}</div>
+      </ng-if>
+
+      <span ng-if="!temporary" class="item-note" ng-class="{'dark': formData.enable}">{{server}}</span>
     </div>
 
     <span class="item item-divider" translate>ES_SETTINGS.NOTIFICATIONS.DIVIDER</span>

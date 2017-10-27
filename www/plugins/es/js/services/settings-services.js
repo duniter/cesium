@@ -20,7 +20,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       excludes: ['time'],
       plugins: {
         es: {
-          excludes: ['enable', 'host', 'port', 'wsPort']
+          excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes']
         }
       },
       helptip: {
@@ -71,9 +71,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   that.wot = {};
   that.wot.isMixedSearchEnable = function() {
-    return csSettings.data.plugins &&
-      csSettings.data.plugins.es &&
-      csSettings.data.plugins.es.enable &&
+    return that.isEnable() &&
       (angular.isDefined(csSettings.data.plugins.es.wot && csSettings.data.plugins.es.wot.enableMixedSearch) ?
         csSettings.data.plugins.es.wot.enableMixedSearch : true);
   };
@@ -191,12 +189,16 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
     var wasEnable = listeners && listeners.length > 0;
 
+    // Force to stop & restart, if ES node has changed
+    if (esHttp.isStarted() && !esHttp.node.isTemporary() && !esHttp.node.sameAsSettings(data)) {
+      stop();
+    }
+
     refreshState();
 
     var isEnable = that.isEnable();
-    if (csWallet.isAuth()) {
-      if (!wasEnable && isEnable) {
-
+    if (isEnable && csWallet.isAuth()) {
+      if (!wasEnable) {
         onWalletAuth(csWallet.data);
       }
       else {
@@ -290,6 +292,11 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     ];
   }
 
+  function stop() {
+    removeListeners();
+    esHttp.stop();
+  }
+
   function refreshState() {
     var enable = that.isEnable();
 
@@ -309,26 +316,29 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     // Enable
     else if (enable && (!listeners || listeners.length === 0)) {
       return esHttp.start()
-        .then(function(started) {
-          if (!started) {
-            // TODO : alert user ?
-            console.error('[ES] node could not be started !!');
+        .then(function(alive) {
+          if (!alive) {
+            csSettings.data.plugins.es.enable = false;
+            // Will ask user to enable ES plugins (WARN: is config.js allow it)
+            csSettings.data.plugins.es.askEnable = true;
+
+            api.state.raise.changed(false);
+            console.error('[ES] [settings] Disable, has ES node could not be started');
+            return;
+          }
+          console.debug("[ES] [settings] Enable");
+          addListeners();
+
+          if (csWallet.isAuth()) {
+            return onWalletAuth(csWallet.data)
+              .then(function() {
+                // Emit event
+                api.state.raise.changed(enable);
+              });
           }
           else {
-            console.debug("[ES] [settings] Enable");
-            addListeners();
-
-            if (csWallet.isAuth()) {
-              return onWalletAuth(csWallet.data)
-                .then(function() {
-                  // Emit event
-                  api.state.raise.changed(enable);
-                });
-            }
-            else {
-              // Emit event
-              api.state.raise.changed(enable);
-            }
+            // Emit event
+            api.state.raise.changed(enable);
           }
         });
     }

@@ -98,7 +98,7 @@ function HelpModalController($scope, $timeout, $anchorScroll, csSettings, parame
 *  Help Tip
 * ---------------------------- */
 function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $timeout, $q, $anchorScroll,
-                           UIUtils, csConfig, csSettings, csCurrency, Device, csWallet) {
+                           UIUtils, csConfig, csSettings, csCurrency, csHelpConstants, Device, csWallet) {
 
   $scope.tour = false; // Is a tour or a helptip ?
   $scope.continue = true;
@@ -706,6 +706,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
   $scope.startWalletTour = function(startIndex, hasNext) {
     if (!csWallet.isLogin()) return $q.when(true); // skip if not login
 
+    var hasCertificationsItem = csWallet.data.isMember||(csWallet.data.requirements && csWallet.data.requirements.pendingMembership);
     var contentParams;
 
     var steps = [
@@ -748,7 +749,8 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
             content: 'HELP.TIP.WALLET_PUBKEY',
             icon: {
               position: 'center'
-            }
+            },
+            hasNext: !hasCertificationsItem && hasNext
           },
           timeout: UIUtils.screen.isSmall() ? 2000 : 500,
           retry: 10
@@ -756,6 +758,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
       },
 
       function () {
+        if (!hasCertificationsItem) return hasNext;
         $anchorScroll('helptip-wallet-certifications');
         return $scope.showHelpTip('helptip-wallet-certifications', {
           bindings: {
@@ -766,10 +769,15 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
             hasNext: hasNext
           },
           timeout: 500,
-          onError: 'continue'
+          onError: 'continue' // if simple wallet: no certification item, so continue
         });
       }
     ];
+
+    // Check that constants are well configured
+    if (steps.length != csHelpConstants.wallet.stepCount) {
+      console.error("[help] Invalid value of 'csHelpConstants.wallet.stepCount'. Please update to {0}".format(steps.length));
+    }
 
     // Get currency parameters, with currentUD
     return csCurrency.get()

@@ -58,8 +58,8 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 
 ;
 
-function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
-                          UIUtils, csConfig, csWallet, $translate, $ionicPopover, Modals, csSettings) {
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $translate, $ionicPopover,
+                          UIUtils, Modals, csConfig, csSettings, csWallet, csHelp) {
   'ngInject';
 
   $scope.loading = true;
@@ -418,14 +418,16 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.startWalletTour = function() {
     $scope.hideActionsPopover();
-    return $scope.showHelpTip(0, true);
+    return csHelp.wallet.tour();
+    //return $scope.showHelpTip(0, true);
   };
 
   $scope.showHelpTip = function(index, isTour) {
-    index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
+    return csHelp.wallet.helptip();
+    /*index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
     isTour = angular.isDefined(isTour) ? isTour : false;
 
-    if (index < 0 || index > 3/*max step*/) return;
+    if (index < 0 || index > 3/!*max step*!/) return;
 
     // Create a new scope for the tour controller
     var helptipScope = $scope.createHelptipScope(isTour);
@@ -439,7 +441,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
           csSettings.data.helptip.wallet = endIndex;
           csSettings.store();
         }
-      });
+      });*/
   };
 
   $scope.showQRCode = function(id, text, timeout) {

@@ -12,6 +12,7 @@ angular.module('cesium.services', [
   'cesium.wot.services',
   'cesium.tx.services',
   'cesium.wallet.services',
+  'cesium.help.services',
   'cesium.plugin.services'
   ])
 ;

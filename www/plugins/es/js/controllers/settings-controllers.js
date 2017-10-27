@@ -48,25 +48,44 @@ function ESExtendSettingsController ($scope, PluginService) {
 /*
  * Settings extend controller
  */
-function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esHttp) {
+function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUtils, Modals, csHttp, csSettings, esHttp, esSettings) {
   'ngInject';
 
   $scope.formData = {};
   $scope.popupData = {}; // need for the node popup
   $scope.loading = true;
 
-  $scope.onEnter = function() {
+  $scope.enter= function(e, state) {
+    $scope.load();
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
+
+  $scope.load = function(keepEnableState) {
     $scope.loading = true;
+
+    var wasEnable = $scope.formData.enable;
     $scope.formData = csSettings.data.plugins && csSettings.data.plugins.es ?
       angular.copy(csSettings.data.plugins.es) : {
       enable: false,
-      host: null,
-      port: null,
-      wsPort: null
+      host: undefined,
+      port: undefined
     };
+    if (keepEnableState && wasEnable) {
+      $scope.formData.enable = wasEnable;
+    }
+
+    $scope.temporary = $scope.formData.enable && esHttp.node.isTemporary();
+    $scope.server = $scope.getServer(esHttp);
+
     $scope.loading = false;
   };
-  $scope.$on('$ionicView.enter', $scope.onEnter);
+
+  esSettings.api.state.on.changed($scope, function(enable) {
+    $scope.load(true);
+    /*$scope.formData.enable = enable;
+    $scope.temporary = enable && esHttp.node.isTemporary();
+    $scope.server = esHttp.server;*/
+  });
 
   $scope.setPopupForm = function(popupForm) {
     $scope.popupForm = popupForm;
@@ -74,17 +93,27 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
   // Change ESnode
   $scope.changeEsNode= function(node) {
-    $scope.showNodePopup(node || $scope.formData)
+    node = node || {
+        host: $scope.formData.host,
+        port: $scope.formData.port && $scope.formData.port != 80 && $scope.formData.port != 443 ? $scope.formData.port : undefined,
+        wsPort: $scope.formData.wsPort && $scope.formData.wsPort != $scope.formData.port ? $scope.formData.wsPort : undefined,
+        useSsl: angular.isDefined($scope.formData.useSsl) ?
+          $scope.formData.useSsl :
+          ($scope.formData.port == 443)
+      };
+
+    $scope.showNodePopup(node)
     .then(function(newNode) {
       if (newNode.host == $scope.formData.host &&
         newNode.port == $scope.formData.port &&
-        newNode.wsPort == $scope.formData.wsPort) {
+        newNode.wsPort == $scope.formData.wsPort &&
+        newNode.useSsl == $scope.formData.useSsl) {
         UIUtils.loading.hide();
         return; // same node = nothing to do
       }
       UIUtils.loading.show();
 
-      var newEsNode = esHttp.instance(newNode.host, newNode.port);
+      var newEsNode = esHttp.instance(newNode.host, newNode.port, newNode.wsPort, newNode.useSsl);
       return newEsNode.isAlive() // ping the node
         .then(function(alive) {
           if (!alive) {
@@ -95,12 +124,17 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
               });
           }
 
-          UIUtils.loading.hide();
-          $scope.formData.host = newNode.host;
-          $scope.formData.port = newNode.port;
-          $scope.formData.wsPort = newNode.wsPort;
+          $scope.formData.host = newEsNode.host;
+          $scope.formData.port = newEsNode.port;
+          $scope.formData.wsPort = newEsNode.wsPort;
+          $scope.formData.useSsl = newEsNode.useSsl;
 
-          esHttp.copy(newEsNode);
+          return esHttp.copy(newEsNode);
+        })
+        .then(function() {
+          $scope.server = $scope.getServer(esHttp);
+          $scope.temporary = false;
+          UIUtils.loading.hide();
         });
     });
   };
@@ -117,6 +151,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
         parts.push(node.port);
       }
       $scope.popupData.newNode = parts.join(':');
+      $scope.popupData.useSsl = angular.isDefined(node.useSsl) ? node.useSsl : (node.port == 443);
       if (!!$scope.popupForm) {
         $scope.popupForm.$setPristine();
       }
@@ -151,10 +186,12 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
               return;
             }
             var parts = node.split(':');
+            var useSsl = $scope.popupData.useSsl || (parts[1] == 443);
             resolve({
               host: parts[0],
-              port: parts[1] || 80,
-              wsPort: parts[2] || parts[1] || 80
+              port: parts[1] || (useSsl ? 443 : 80),
+              wsPort: parts[2] || parts[1] || (useSsl ? 443 : 80),
+              useSsl: useSsl
             });
           });
         });
@@ -209,8 +246,10 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
   };
   $scope.$watch('formData', $scope.onFormChanged, true);
 
-  $scope.getServer = function() {
-    var server = csHttp.getServer($scope.formData.host, $scope.formData.port != 80 ? $scope.formData.port : undefined);
-    return server + ($scope.formData.wsPort && $scope.formData.wsPort != $scope.formData.port ? ':' + $scope.formData.wsPort : '');
+  $scope.getServer = function(node) {
+    node = node || $scope.formData;
+    if (!node.host) return undefined;
+    var server = csHttp.getServer(node.host, node.port);
+    return server + (node.wsPort && node.wsPort != node.port ? ':' + node.wsPort : '');
   };
 }

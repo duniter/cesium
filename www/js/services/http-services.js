@@ -15,7 +15,8 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
   }
 
   function getServer(host, port) {
-    return  !host ? null : (host + (port ? ':' + port : ''));
+    // Remove port if 80 or 443
+    return  !host ? null : (host + (port && port != 80 && port != 443 ? ':' + port : ''));
   }
 
   function getUrl(host, port, path, useSsl) {
@@ -34,10 +35,10 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
     }
     else {
       if (status == 404) {
-        reject({ucode: 404, message: 'Resource not found ' + (url ? ' ('+url+')' : '')});
+        reject({ucode: 404, message: 'Resource not found' + (url ? ' ('+url+')' : '')});
       }
-      if (url) {
-        reject('Error from node (' + url + ')');
+      else if (url) {
+        reject('Error while requesting [' + url + ']');
       }
       else {
         reject('Unknown error from node');
@@ -131,7 +132,27 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       return $q(function(resolve, reject) {
         var config = {
           timeout: forcedTimeout || timeout,
-          headers : {'Content-Type' : 'application/json;charset=UTF-8'}
+          headers : {'Content-Type' : 'application/json;charset=UTF-8'},
+          eventHandlers: {
+            readystatechange: function(event) {
+              if(event.currentTarget.readyState === 4) {
+                console.log("readyState=4: Server has finished extra work!");
+              }
+            }
+          },
+
+          uploadEventHandlers: {
+            progress: function(e) {
+              if (e.lengthComputable) {
+                progress = Math.round(e.loaded * 100 / e.total);
+                console.log("progress: " + progress + "%");
+                if (e.loaded == e.total) {
+                  console.log("File upload finished!");
+                  console.log("Server will perform extra work now...");
+                }
+              }
+            }
+          }
         };
 
         prepare(url, params, config, function(url, config) {

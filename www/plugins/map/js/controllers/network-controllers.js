@@ -12,7 +12,8 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         .extendState('app.network', {
           points: {
             'filter-buttons': {
-              templateUrl: "plugins/map/templates/network/lookup_extend.html"
+              templateUrl: "plugins/map/templates/network/lookup_extend.html",
+              controller: "ESExtensionCtrl"
             }
           }
         });

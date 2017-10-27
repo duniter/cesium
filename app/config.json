@@ -45,9 +45,19 @@
     "plugins":{
       "es": {
         "enable": true,
-        "askEnable": false,
+        "askEnable": true,
         "host": "g1.data.duniter.fr",
         "port": "443",
+        "fallbackNodes": [
+          {
+            "host": "g1.data.le-sou.org",
+            "port": "443"
+          },
+          {
+            "host": "g1.data.duniter.fr",
+            "port": "443"
+          }
+        ],
         "notifications": {
           "txSent": true,
           "txReceived": true,
@@ -101,9 +111,19 @@
     "plugins":{
       "es": {
         "enable": true,
-        "askEnable": false,
+        "askEnable": true,
         "host": "g1.data.duniter.fr",
         "port": "443",
+        "fallbackNodes": [
+          {
+            "host": "g1.data.le-sou.org",
+            "port": "443"
+          },
+          {
+            "host": "g1.data.duniter.fr",
+            "port": "443"
+          }
+        ],
         "notifications": {
           "txSent": true,
           "txReceived": true,
@@ -162,9 +182,19 @@
     "plugins":{
       "es": {
         "enable": true,
-        "askEnable": false,
+        "askEnable": true,
         "host": "g1.data.le-sou.org",
         "port": "443",
+        "fallbackNodes": [
+          {
+            "host": "g1.data.le-sou.org",
+            "port": "443"
+          },
+          {
+            "host": "g1.data.duniter.fr",
+            "port": "443"
+          }
+        ],
         "notifications": {
           "txSent": true,
           "txReceived": true,
@@ -209,7 +239,7 @@
     "plugins":{
       "es": {
         "enable": true,
-        "askEnable": false,
+        "askEnable": true,
         "host": "g1-test.data.duniter.fr",
         "port": 443,
         "notifications": {
@@ -267,6 +297,16 @@
         "host": "localhost",
         "port": 9200,
         "wsPort": 9400,
+        "fallbackNodes": [
+          {
+            "host": "g1.data.le-sou.org",
+            "port": "443"
+          },
+          {
+            "host": "g1.data.duniter.fr",
+            "port": "443"
+          }
+        ],
         "notifications": {
           "txSent": true,
           "txReceived": true,

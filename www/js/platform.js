@@ -144,7 +144,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         .then(function (confirm) {
           if (!confirm) return;
 
+          // FIXME: should not change settings, but only tha BMA content
+          // in UI, display data form BMA object
           csSettings.data.node = fallbackNode;
+
           csSettings.data.node.temporary = true;
           csHttp.cache.clear();
 

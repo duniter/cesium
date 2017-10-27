@@ -31,24 +31,10 @@ angular.module('cesium.es.app.controllers', ['ngResource', 'cesium.es.services']
           }
         }
       });
-
-      // New account extension points
-      /*PluginServiceProvider.extendState('app', {
-        points: {
-          'select-account-type': {
-            templateUrl: "plugins/es/templates/join/modal_join_extend.html",
-            controller: "ESJoinCtrl"
-          },
-          'last-slide': {
-            templateUrl: "plugins/es/templates/join/modal_join_extend.html",
-            controller: "ESJoinCtrl"
-          },
-        }
-      });*/
     }
   })
 
- .controller('ESJoinCtrl', ESJoinController)
+ .controller('ESExtensionCtrl', ESExtensionController)
 
  .controller('ESMenuExtendCtrl', ESMenuExtendController)
 
@@ -59,9 +45,9 @@ angular.module('cesium.es.app.controllers', ['ngResource', 'cesium.es.services']
 
 
 /**
- * Control new account wizard extend view
+ * Generic controller, that enable/disable depending on esSettings enable/disable
  */
-function ESJoinController($scope, esSettings, PluginService) {
+function ESExtensionController($scope, esSettings, PluginService) {
   'ngInject';
   $scope.extensionPoint = PluginService.extensions.points.current.get();
   $scope.enable = esSettings.isEnable();
@@ -138,14 +124,11 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
 /**
  * Control profile popover extension
  */
-function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) {
+function ESProfilePopoverExtendController($scope, $q, $state, esSettings, csWallet) {
   'ngInject';
 
   $scope.updateView = function() {
-    $scope.enable = csWallet.isLogin() && (
-        (csSettings.data.plugins && csSettings.data.plugins.es) ?
-          csSettings.data.plugins.es.enable :
-          !!csSettings.data.plugins.host);
+    $scope.enable = csWallet.isLogin() && esSettings.isEnable();
   };
 
   $scope.showEditUserProfile = function() {
@@ -153,13 +136,14 @@ function ESProfilePopoverExtendController($scope, $state, csSettings, csWallet) 
     $state.go('app.user_edit_profile');
   };
 
-  csSettings.api.data.on.changed($scope, $scope.updateView);
-  csSettings.api.data.on.ready($scope, $scope.updateView);
+  esSettings.api.state.on.changed($scope, $scope.updateView);
   csWallet.api.data.on.login($scope, function(data, deferred){
-    $scope.updateView();
+    $scope.enable = esSettings.isEnable();
     return deferred && deferred.resolve() || $q.when();
   });
-  csWallet.api.data.on.logout($scope, $scope.updateView);
+  csWallet.api.data.on.logout($scope, function() {
+    $scope.enable = false;
+  });
 
   // Default action
   $scope.updateView();

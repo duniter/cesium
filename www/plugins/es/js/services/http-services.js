@@ -3,8 +3,16 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, CryptoUtils, csHttp, csConfig, csSettings, BMA, csWallet, csPlatform, Api) {
+.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, $translate, $window,
+                            CryptoUtils, UIUtils, csHttp, csConfig, csSettings, BMA, csWallet, csPlatform, Api) {
   'ngInject';
+
+  // Allow to force SSL connection with port different from 443
+  var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
+  ($window.location && $window.location.protocol === 'https:') ? true : false;
+  if (forceUseSsl) {
+    console.debug('[ES] [https] Enable SSL (forced by config or detected in URL)');
+  }
 
   function Factory(host, port, wsPort, useSsl) {
 
@@ -19,29 +27,58 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         HASH_TAG: match('(?:^|[\t\n\r\s ])#([\\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+)'),
         USER_TAG: match('(?:^|[\t\n\r\s ])@('+BMA.constants.regexp.USER_ID+')'),
         ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT)
-      };
+      },
+      fallbackNodeIndex = 0,
+      defaultSettingsNode;
 
     that.cache = _emptyCache();
     that.api = new Api(this, "esHttp");
+    that.started = false;
     that.init = init;
 
     init(host, port, wsPort, useSsl);
 
     function init(host, port, wsPort, useSsl) {
       // Use settings as default
-      if (csSettings.data) {
+      if (!host && csSettings.data) {
         host = host || (csSettings.data.plugins && csSettings.data.plugins.es ? csSettings.data.plugins.es.host : null);
         port = port || (host ? csSettings.data.plugins.es.port : null);
         wsPort = wsPort || (host ? csSettings.data.plugins.es.wsPort : null);
+        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.plugins.es.useSsl || forceUseSsl);
       }
 
       that.alive = false;
       that.host = host;
-      that.port = port || 80;
-      that.wsPort = wsPort || port || 80;
-      that.useSsl = angular.isDefined(useSsl) ? useSsl : false;
+      that.port = port || ((useSsl || forceUseSsl) ? 443 : 80);
+      that.wsPort = wsPort || that.port;
+      that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || forceUseSsl);
       that.server = csHttp.getServer(host, port);
     }
+
+    function isSameNodeAsSettings(data) {
+      data = data || csSettings.data;
+      if (!data.plugins || !data.plugins.es) return false;
+
+      var host = data.plugins.es.host;
+      var useSsl = data.plugins.es.port == 443 || data.plugins.es.useSsl || forceUseSsl;
+      var port = data.plugins.es.port || (useSsl ? 443 : 80);
+      var wsPort = data.plugins.es.wsPort || port;
+
+      return isSameNode(host, port, wsPort, useSsl);
+    }
+
+    function isSameNode(host, port, wsPort, useSsl) {
+      return (that.host == host) &&
+        (that.port == port) &&
+        (!wsPort || that.wsPort == wsPort) &&
+        (angular.isUndefined(useSsl) || useSsl == that.useSsl);
+    }
+
+    // Say if the ES node is a fallback node or the configured node
+    function isTemporaryNode() {
+      return !!that.temporary;
+    }
+
 
     function exact(regexpContent) {
       return new RegExp('^' + regexpContent + '$');
@@ -67,9 +104,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       that.cache = _emptyCache();
     };
 
-    that.copy = function(otherNode) {
-      that.init(otherNode.host, otherNode.port, otherNode.wsPort, otherNode.useSsl);
-      return that.restart();
+    that.copy = function(otherNode, skipStart) {
+      if (that.started) that.stop();
+      that.init(otherNode.host, otherNode.port, otherNode.wsPort, otherNode.useSsl || otherNode.port == 443);
+      return skipStart ? $q.when() : that.start(true /*skipInit*/);
     };
 
     // Get time (UTC)
@@ -80,7 +118,18 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.get = function (path) {
-      return function(params) {
+
+      var getRequest = function(params) {
+        if (!that.started) {
+          if (!that._startPromise) {
+            console.error('[ES] [http] Trying to get [{0}] before start()...'.format(path));
+          }
+          return that.ready().then(function() {
+            if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
+            return getRequest(params); // loop
+          });
+        }
+
         var request = that.cache.getByPath[path];
         if (!request) {
           request =  csHttp.get(that.host, that.port, path, that.useSsl);
@@ -88,17 +137,30 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         }
         return request(params);
       };
+
+      return getRequest;
     };
 
     that.post = function(path) {
-      return function(obj, params) {
+      var postRequest = function(obj, params) {
+        if (!that.started) {
+          if (!that._startPromise) {
+            console.error('[ES] [http] Trying to post [{0}] before start()...'.format(path));
+          }
+          return that.ready().then(function(start) {
+            if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
+            return postRequest(obj, params); // loop
+          });
+        }
+
         var request = that.cache.postByPath[path];
         if (!request) {
           request =  csHttp.post(that.host, that.port, path, that.useSsl);
-        that.cache.postByPath[path] = request;
+          that.cache.postByPath[path] = request;
         }
         return request(obj, params);
       };
+      return postRequest;
     };
 
     that.ws = function(path) {
@@ -113,41 +175,119 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     };
 
     that.isAlive = function() {
-      return that.node.summary()
+      return csHttp.get(that.host, that.port, '/node/summary', that.useSsl)()
         .then(function(json) {
-          return json && json.duniter && json.duniter.software == 'duniter4j-elasticsearch';
+          var software = json && json.duniter && json.duniter.software || 'unknown';
+          if (software == 'duniter4j-elasticsearch') return true;
+          console.error("[ES] [http] Not a Duniter4j ES node, but a {0} node".format(software));
+          return false;
         })
         .catch(function() {
           return false;
         });
     };
 
-    that.start = function() {
+    // Alert user if node not reached - fix issue #
+    that.checkNodeAlive = function(alive) {
+      if (alive) {
+        return true;
+      }
+      if (angular.isUndefined(alive)) {
+        return that.isAlive().then(that.checkNodeAlive);
+      }
 
-      return csPlatform.ready()
-        .then(that.init)
+      var settings = csSettings.data.plugins && csSettings.data.plugins.es || {};
+
+      // Remember the default node
+      defaultSettingsNode = defaultSettingsNode || {
+        host: settings.host,
+        port: settings.port,
+        wsPort: settings.wsPort
+      };
+
+      var fallbackNode = settings.fallbackNodes && fallbackNodeIndex < settings.fallbackNodes.length && settings.fallbackNodes[fallbackNodeIndex++];
+      if (!fallbackNode) {
+        $translate('ERROR.ES_CONNECTION_ERROR', {server: that.server})
+          .then(UIUtils.alert.info);
+        return false; // stop the loop
+      }
+      var newServer = csHttp.getServer(fallbackNode.host, fallbackNode.port);
+      return $translate('CONFIRM.ES_USE_FALLBACK_NODE', {old: that.server, new: newServer})
+        .then(UIUtils.alert.confirm)
+        .then(function (confirm) {
+          if (!confirm) return false; // stop the loop
+
+          that.temporary = fallbackNode;
+
+          that.cleanCache();
+
+          that.copy(fallbackNode, true/*skip start*/);
+
+          // loop
+          return that.checkNodeAlive(); // loop
+        });
+    };
+
+    that.isStarted = function() {
+      return that.started;
+    };
+
+    that.ready = function() {
+      if (that.started) return $q.when(true);
+      return that._startPromise || that.start();
+    };
+
+    that.start = function(skipInit) {
+      if (that._startPromise) return that._startPromise;
+      if (that.started) return $q.when(that.alive);
+
+      that._startPromise = csPlatform.ready()
         .then(function() {
-          console.debug('[ES] [http] Starting on [{0}]...'.format(that.server));
+          if (!skipInit) that.init(); // Init with defaults settings
+        })
+        .then(function() {
+          console.debug('[ES] [http] Starting on [{0}]{1}...'.format(
+            that.server,
+            (that.useSsl ? ' (SSL on)' : '')
+          ));
           var now = new Date().getTime();
+
           return that.isAlive()
+            .then(that.checkNodeAlive)
             .then(function(alive) {
               that.alive = alive;
               if (!alive) {
                 console.error('[ES] [http] Could not start [{0}]: node unreachable'.format(that.server));
+                that.started = true;
+                delete that._startPromise;
+                fallbackNodeIndex = 0; // reset the fallback node counter
                 return false;
               }
               console.debug('[ES] [http] Started in '+(new Date().getTime()-now)+'ms');
               that.api.node.raise.start();
+              that.started = true;
+              delete that._startPromise;
+              fallbackNodeIndex = 0; // reset the fallback node counter
               return true;
             });
         });
+      return that._startPromise;
     };
 
     that.stop = function() {
       console.debug('[ES] [http] Stopping...');
-      that.alive = false;
-      that.cleanCache();
-      that.api.node.raise.stop();
+
+      delete that.temporary;
+      delete that._startPromise;
+      if (that.alive) {
+        that.cleanCache();
+        that.alive = false;
+        that.started = false;
+        that.api.node.raise.stop();
+      }
+      else {
+        that.started = false;
+      }
       return $q.when();
     };
 
@@ -413,7 +553,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       getServer: csHttp.getServer,
       node: {
         summary: that.get('/node/summary'),
-        parseEndPoint: parseEndPoint
+        parseEndPoint: parseEndPoint,
+        same: isSameNode,
+        sameAsSettings: isSameNodeAsSettings,
+        isTemporary: isTemporaryNode
       },
       record: {
         post: postRecord,
@@ -439,8 +582,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
   var service = new Factory();
 
-  service.instance = function(host, port, wsPort) {
-    return new Factory(host, port, wsPort);
+  service.instance = function(host, port, wsPort, useSsl) {
+    return new Factory(host, port, wsPort, useSsl);
   };
 
   return service;

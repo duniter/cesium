@@ -140,11 +140,17 @@
         <div class="input-label">
         {{'SETTINGS.PEER' | translate}}
         </div>
-        <h4 class="gray text-wrap assertive" ng-if="formData.node.temporary">
-          <i class="icon ion-alert-circled"></i>
-          <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
-        </h4>
-        <div class="item-note " ng-class="{'assertive text-italic': formData.node.temporary, 'dark': !formData.node.temporary}">{{bma.server}}</div>
+
+        <!-- node temporary changed -->
+        <ng-if ng-if="formData.node.temporary">
+          <h4 class="gray text-wrap assertive" >
+            <i class="icon ion-alert-circled"></i>
+            <span ng-bind-html="'SETTINGS.PEER_CHANGED_TEMPORARY' | translate "></span>
+          </h4>
+          <div class="item-note assertive text-italic">{{bma.server}}</div>
+        </ng-if>
+
+        <div class="item-note dark" ng-if="!formData.node.temporary">{{bma.server}}</div>
       </div>
 
       <div class="item item-text-wrap item-toggle dark hidden-xs hidden-sm">

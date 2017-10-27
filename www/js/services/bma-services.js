@@ -165,7 +165,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     };
 
     post = function(path) {
-      postRequest = function(obj, params) {
+      var postRequest = function(obj, params) {
         if (!that.started) {
           if (!that._startPromise) {
             console.error('[BMA] Trying to post [{0}] before start()...'.format(path));
