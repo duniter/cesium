@@ -479,7 +479,7 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
   };
 
   // TODO: remove auto add account when done
-  $timeout(function() {
+  /*$timeout(function() {
     //$scope.selectCurrency('g1');
     //$scope.selectAccountType('member');
     $scope.formData.username="azertypoi";
@@ -489,6 +489,6 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
     $scope.formData.pseudo="azertypoi";
     //$scope.doNext();
     //$scope.doNext();
-  }, 400);
+  }, 400);*/
 }
 
