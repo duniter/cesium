@@ -63,7 +63,6 @@ angular.module('cesium.es.modal.services', ['cesium.modal.services', 'cesium.es.
             }
           });
       });
-   ;
   }
 
   return {

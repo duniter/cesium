@@ -607,7 +607,7 @@ function ESSearchPositionModalController($scope, $q, $translate, esGeo, paramete
         ])
           .then(function (res) {
             var dividerText = res[0];
-            var res = res[1];
+            res = res[1];
             if (!res || !res.length) return res;
 
             return [{name: dividerText}].concat(res);

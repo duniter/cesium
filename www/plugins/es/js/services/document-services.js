@@ -65,13 +65,14 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
     function search(options) {
       options = options || {};
 
+      var sortParts, side;
       if (options.type == 'movement') {
         if (!options.sort) {
           options.sort = 'stats.medianTime:desc';
         }
         else {
-          var sortParts = options.sort.split(':');
-          var side = sortParts.length > 1 ? sortParts[1] : 'desc';
+          sortParts = options.sort.split(':');
+          side = sortParts.length > 1 ? sortParts[1] : 'desc';
 
           options.sort = [
             {'stats.medianTime': {
@@ -91,8 +92,8 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
           options.sort = 'medianTime:desc';
         }
         else {
-          var sortParts = options.sort.split(':');
-          var side = sortParts.length > 1 ? sortParts[1] : 'desc';
+          sortParts = options.sort.split(':');
+          side = sortParts.length > 1 ? sortParts[1] : 'desc';
 
           options.sort = [
             {'medianTime': {
