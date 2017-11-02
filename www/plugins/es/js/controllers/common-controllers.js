@@ -219,7 +219,9 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
         $scope.focusNewComment();
         return $scope.service.save($scope.id, $scope.comments, comment);
       })
-
+      .then(function() {
+        $scope.comments.total++;
+      })
       .catch(UIUtils.onError('REGISTRY.ERROR.FAILED_SAVE_COMMENT'));
   };
 
@@ -259,6 +261,7 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
   $scope.remove = function(comment) {
     if (!comment) {return;}
     comment.remove();
+    $scope.comments.total--;
   };
 
   $scope.reply = function(parent) {

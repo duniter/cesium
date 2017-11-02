@@ -169,11 +169,14 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
           delete data.mapById[comment.id];
           // Send deletion request
           if (csWallet.isUserPubkey(comment.issuer)) {
-            exports.raw.remove(comment.id)
+            return exports.raw.remove(comment.id)
               .catch(function(err){
                 console.error(err);
                 throw new Error('MARKET.ERROR.FAILED_REMOVE_COMMENT');
               });
+          }
+          else {
+            return $q.reject("User is not the comment issuer");
           }
         };
       };

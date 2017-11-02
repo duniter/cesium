@@ -465,44 +465,44 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
 
   $scope.load = function(id, anchor) {
     $scope.loading = true;
-    esRegistry.record.load(id)
-      .then(function (data) {
-        $scope.id= data.id;
-        $scope.formData = data.record;
-        console.log($scope.formData);
-        $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
-        $scope.issuer = data.issuer;
-        // avatar
-        $scope.avatar = $scope.formData.avatar;
-        $scope.avatarStyle= $scope.formData.avatar && {'background-image':'url("'+$scope.avatar.src+'")'};
 
-        UIUtils.loading.hide();
-        $scope.loading = false;
-        // Set Motion (only direct children, to exclude .lazy-load children)
-        $scope.motion.show({selector: '.list > .item, .list > ng-if > .item'});
-      })
-      .catch(function(err) {
-        // Retry (ES could have error)
-        if (!$scope.secondTry) {
-          $scope.secondTry = true;
-          $q(function() {
-            $scope.load(id);
-          }, 100);
-        }
-        else {
+    return $q.all([
+      esRegistry.record.load(id)
+        .then(function (data) {
+          $scope.id= data.id;
+          $scope.formData = data.record;
+          console.log($scope.formData);
+          $scope.canEdit = csWallet.isUserPubkey($scope.formData.issuer);
+          $scope.issuer = data.issuer;
+          // avatar
+          $scope.avatar = $scope.formData.avatar;
+          $scope.avatarStyle= $scope.formData.avatar && {'background-image':'url("'+$scope.avatar.src+'")'};
+
+          UIUtils.loading.hide();
           $scope.loading = false;
-          if (err && err.ucode === 404) {
-            UIUtils.toast.show('REGISTRY.ERROR.RECORD_NOT_EXISTS');
-            $state.go('app.registry_lookup');
+          // Set Motion (only direct children, to exclude .lazy-load children)
+          $scope.motion.show({selector: '.list > .item, .list > ng-if > .item'});
+        })
+        .catch(function(err) {
+          // Retry (ES could have error)
+          if (!$scope.secondTry) {
+            $scope.secondTry = true;
+            $q(function() {
+              $scope.load(id);
+            }, 100);
           }
           else {
-            UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);
+            $scope.loading = false;
+            if (err && err.ucode === 404) {
+              UIUtils.toast.show('REGISTRY.ERROR.RECORD_NOT_EXISTS');
+              $state.go('app.registry_lookup');
+            }
+            else {
+              UIUtils.onError('REGISTRY.ERROR.LOAD_RECORD_FAILED')(err);
+            }
           }
-        }
-      });
+        }),
 
-    // Continue loading other data
-    $timeout(function() {
       // Load pictures
       esRegistry.record.picture.all({id: id})
         .then(function(hit) {
@@ -514,17 +514,26 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
           // Set Motion
           if ($scope.pictures.length > 0) {
             $scope.motion.show({
-              selector: '.lazy-load .item.card-gallery, .lazy-load .item',
+              selector: '.lazy-load .item.card-gallery',
               startVelocity: 3000
             });
           }
         })
         .catch(function() {
           $scope.pictures = [];
-        });
+        }),
 
       // Load other data (from child controller)
-      $scope.$broadcast('$recordView.load', id, esRegistry.record.comment);
+      $timeout(function() {
+        return $scope.$broadcast('$recordView.load', id, esRegistry.record.comment);
+      })
+    ])
+    .then(function() {
+      // Display items in technical parts
+      $scope.motion.show({
+        selector: '.lazy-load .item',
+        startVelocity: 3000
+      });
 
       // scroll (if comment anchor)
       if (anchor) $timeout(function() {

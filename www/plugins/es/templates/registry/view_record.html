@@ -94,7 +94,7 @@
           <h2 trust-as-html="formData.description"></h2>
         </ion-item>
 
-        <ion-item>
+        <ion-item ng-if="formData.category || formData.address">
           <h4 ng-if="formData.category">
             <span class="gray" translate>REGISTRY.VIEW.CATEGORY</span>
             <a class="positive" ng-if="formData.category" ui-sref="app.registry_lookup({category:formData.category.id})">
@@ -126,24 +126,19 @@
           </ion-item>
         </ng-if>
 
+        <!-- pubkey -->
+        <div class="item item-icon-left item-text-wrap ink"
+             ng-if="formData.pubkey"
+             copy-on-click="{{::formData.pubkey}}">
+          <i class="icon ion-key"></i>
+          <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
+          <h4 class="dark">{{::formData.pubkey}}</h4>
+        </div>
+
         <div class="lazy-load">
 
           <!-- pictures -->
           <ng-include src="'plugins/es/templates/common/view_pictures.html'"></ng-include>
-
-
-          <span class="item item-divider" ng-if="formData.pubkey">
-            <span translate>REGISTRY.TECHNICAL_DIVIDER</span>
-          </span>
-
-          <!-- pubkey -->
-          <div class="item item-icon-left item-text-wrap ink"
-                    ng-if="formData.pubkey"
-                    copy-on-click="{{::formData.pubkey}}">
-            <i class="icon ion-key"></i>
-            <span translate>REGISTRY.EDIT.RECORD_PUBKEY</span>
-            <h4 class="dark">{{::formData.pubkey}}</h4>
-          </div>
 
           <!-- comments -->
           <ng-include src="'plugins/es/templates/common/view_comments.html'"></ng-include>
