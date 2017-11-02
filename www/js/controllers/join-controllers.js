@@ -144,7 +144,14 @@ function JoinModalController($scope, $state, $interval, $timeout, Device, UIUtil
             $scope.licenseFileUrl = $scope.licenseFileUrl + '.html';
           }
           if (!$scope.isLicenseRead) {
-            $scope.startListenLicenseBottom();
+            //$scope.startListenLicenseBottom();
+
+            // Make sure to enable the next button when error occured - Fix issue #592
+            $timeout(function() {
+              if (!$scope.isLicenseRead) {
+                $scope.isLicenseRead = true;
+              }
+            }, 5000);
           }
         }
       }

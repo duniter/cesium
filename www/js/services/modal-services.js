@@ -173,7 +173,13 @@ angular.module('cesium.modal.services', [])
 
   function showJoin(parameters) {
     return ModalUtils.show('templates/join/modal_choose_account_type.html','JoinChooseAccountTypeModalCtrl',
-      parameters);
+      parameters)
+      .then(function(res){
+        if (!res) return;
+        return (res.accountType == 'member') ?
+          showJoinMember(res) :
+          showJoinWallet(res);
+      });
   }
 
   function showJoinMember(parameters) {

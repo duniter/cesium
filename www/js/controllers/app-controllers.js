@@ -357,13 +357,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   $scope.showJoinModal = function() {
     $scope.closeProfilePopover();
-    return Modals.showJoin()
-      .then(function(res){
-        if (!res) return;
-        return (res.accountType == 'member') ?
-          Modals.showJoinMember(res) :
-          Modals.showJoinWallet(res);
-      });
+    return Modals.showJoin();
   };
 
   $scope.showSettings = function() {
