@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api, csCurrency) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api) {
   'ngInject';
 
   factory = function(id) {
@@ -601,7 +601,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
               $timeout(function() {
                 console.debug('[network] new block received by WS: will refresh peers');
                 loadPeers();
-              }, 2000);
+              }, 2000, false /*invokeApply*/);
             }
           }
         });

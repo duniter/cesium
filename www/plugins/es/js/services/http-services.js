@@ -248,7 +248,6 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         .then(function (confirm) {
           if (!confirm) return false; // stop the loop
 
-          UIUtils.loading.show();
           that.cleanCache();
 
           that.init(fallbackNode.host, fallbackNode.port, fallbackNode.wsPort, fallbackNode.useSsl || fallbackNode.port == 443);

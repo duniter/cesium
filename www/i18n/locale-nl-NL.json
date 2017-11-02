@@ -229,7 +229,7 @@
     "VIEW": {
       "MEDIAN_TIME": "Blockchain tijd",
       "LOADING_PEERS": "Even geduld...",
-      "NODE_ADDRESS": "knooppunt adres",
+      "NODE_ADDRESS": "Adres :",
       "ENDPOINTS": {
         "BMAS": "Endpoint (SSL)",
         "BMATOR": "Endpoint TOR",

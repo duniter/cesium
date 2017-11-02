@@ -43,6 +43,9 @@
         <div ng-if=":rebind:!peer.isWs2p()&&peer.isTor()" ng-click="showEndpointsPopover($event, peer, 'BMATOR')">
           <i class="ion-bma-tor-api"></i>
         </div>
+        <div ng-if=":rebind:peer.isWs2p()&&peer.isTor()" ng-click="showWs2pPopover($event, peer)">
+          <i class="ion-bma-tor-api"></i>
+        </div>
       </div>
       <div class="col col-20 no-padding text-center" ng-if="::expertMode && search.type != 'offline'">
         <h3 class="hidden-sm hidden-xs gray">

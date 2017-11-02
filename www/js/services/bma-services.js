@@ -29,8 +29,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?",
         BMA_ENDPOINT: "BASIC_MERKLED_API" + REGEX_ENDPOINT_PARAMS,
         BMAS_ENDPOINT: "BMAS" + REGEX_ENDPOINT_PARAMS,
-        WS2P_ENDPOINT: "WS2P ([0-9a-z]+)"+ REGEX_ENDPOINT_PARAMS,
-        BMATOR_ENDPOINT: "BMATOR" + "( ([a-z0-9-_.]+.onion))( ([0-9]+))?"
+        WS2P_ENDPOINT: "WS2P ([a-f0-9]{8})"+ REGEX_ENDPOINT_PARAMS,
+        BMATOR_ENDPOINT: "BMATOR ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?",
+        WS2PTOR_ENDPOINT: "WS2PTOR ([a-f0-9]{8}) ([a-z0-9-_.]*|[0-9.]+|[0-9a-f:]+.onion)(?: ([0-9]+))?(?: (.+))?"
       },
       errorCodes = {
         REVOCATION_ALREADY_REGISTERED: 1002,
@@ -352,6 +353,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         BMAS_ENDPOINT: exact(regexp.BMAS_ENDPOINT),
         WS2P_ENDPOINT: exact(regexp.WS2P_ENDPOINT),
         BMATOR_ENDPOINT: exact(regexp.BMATOR_ENDPOINT),
+        WS2PTOR_ENDPOINT: exact(regexp.WS2PTOR_ENDPOINT),
         // TX output conditions
         TX_OUTPUT_SIG: exact(SIG),
         TX_OUTPUT_FUNCTION: test(OUTPUT_FUNCTION),
@@ -553,8 +555,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       matches = exports.regexp.BMATOR_ENDPOINT.exec(endpoint);
       if (matches) {
         return {
-          "dns": matches[2] || '',
-          "port": matches[4] || 80,
+          "dns": matches[1] || '',
+          "port": matches[2] || 80,
           "useSsl": false,
           "useTor": true,
           "useBma": true
@@ -571,6 +573,19 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           "port": matches[9] || 80,
           "useSsl": matches[9] && matches[9] == 443,
           "path": matches[11] || '',
+          "useWs2p": true
+        };
+      }
+      // Try WS2PTOR
+      matches = exports.regexp.WS2PTOR_ENDPOINT.exec(endpoint);
+      if (matches) {
+        return {
+          "ws2pid": matches[1] || '',
+          "dns": matches[2] || '',
+          "port": matches[3] || 80,
+          "path": matches[4] || '',
+          "useSsl": false,
+          "useTor": true,
           "useWs2p": true
         };
       }

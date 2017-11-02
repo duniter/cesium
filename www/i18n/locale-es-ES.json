@@ -257,7 +257,7 @@
     "VIEW": {
       "MEDIAN_TIME": "Hora de la blockchain",
       "LOADING_PEERS": "Carga de los nodos...",
-      "NODE_ADDRESS": "Dirección del nodo",
+      "NODE_ADDRESS": "Dirección :",
       "WS2PID": "ID :",
       "POW_PREFIX": "Préfixe de preuve de travail :",
       "ENDPOINTS": {

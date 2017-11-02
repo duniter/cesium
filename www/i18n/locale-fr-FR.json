@@ -257,7 +257,7 @@
     "VIEW": {
       "MEDIAN_TIME": "Heure de la blockchain",
       "LOADING_PEERS": "Chargement des noeuds...",
-      "NODE_ADDRESS": "Adresse du noeud :",
+      "NODE_ADDRESS": "Adresse :",
       "WS2PID": "Identifiant :",
       "POW_PREFIX": "Préfixe de preuve de travail :",
       "ENDPOINTS": {

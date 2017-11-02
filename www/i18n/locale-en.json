@@ -257,7 +257,7 @@
     "VIEW": {
       "MEDIAN_TIME": "Blockchain time",
       "LOADING_PEERS": "Loading peers...",
-      "NODE_ADDRESS": "Peer address:",
+      "NODE_ADDRESS": "Address:",
       "WS2PID": "Identitifer:",
       "POW_PREFIX": "Proof of work prefix:",
       "ENDPOINTS": {
