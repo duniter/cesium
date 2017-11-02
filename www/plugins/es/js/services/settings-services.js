@@ -54,7 +54,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     api = new Api('esSettings'),
     previousRemoteData,
     listeners,
-    ignoreSettingsChanged = false
+    ignoreSettingsChanged = false,
+    failEnable = false
   ;
 
   that.api = api;
@@ -147,6 +148,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
   function onSettingsReset(data, deferred) {
     deferred = deferred || $q.defer();
     angular.merge(data, defaultSettings);
+    failEnable = false;
     deferred.resolve(data);
     return deferred.promise;
   }
@@ -190,7 +192,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     var wasEnable = listeners && listeners.length > 0;
 
     // Force to stop & restart, if ES node has changed
-    if (esHttp.isStarted() && !esHttp.node.isTemporary() && !esHttp.node.sameAsSettings(data)) {
+    if (esHttp.isStarted() && !esHttp.node.isFallback() && !esHttp.node.sameAsSettings(data)) {
       stop();
     }
 
@@ -314,13 +316,14 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     }
 
     // Enable
-    else if (enable && (!listeners || listeners.length === 0)) {
+    else if (enable && (!listeners || listeners.length === 0 || !esHttp.isStarted()) ) {
       return esHttp.start()
         .then(function(alive) {
           if (!alive) {
             csSettings.data.plugins.es.enable = false;
-            // Will ask user to enable ES plugins (WARN: is config.js allow it)
+            // Will ask user to enable ES plugins (WARN: if config.js allow it)
             csSettings.data.plugins.es.askEnable = true;
+            failEnable = true;
 
             api.state.raise.changed(false);
             console.error('[ES] [settings] Disable, has ES node could not be started');
@@ -357,10 +360,12 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   .then(function() {
     // Ask (once) user to enable ES plugin
-    if (csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.askEnable && // if config ask enable
-      csSettings.data.plugins.es && !csSettings.data.plugins.es.enable && // AND user settings has disable plugin
+    if (!failEnable && // If NOT trying to start just before
+      csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.askEnable && // AND if config ask enable
+      !that.isEnable() && // AND user settings has disable plugin
       csSettings.data.plugins.es.askEnable // AND user has not yet answer 'NO'
     ) {
+
       return UIUtils.alert.confirm('ES_SETTINGS.CONFIRM.ASK_ENABLE', 'ES_SETTINGS.CONFIRM.ASK_ENABLE_TITLE',
         {
           cancelText: 'COMMON.BTN_NO',

@@ -278,8 +278,8 @@
       "en": "license/license_g1-en.txt"
     },
     "node": {
-      "host": "localhost",
-      "port": 9600
+      "host": "g1.duniter.fr",
+      "port": 443
     },
     "fallbackNodes": [{
         "host": "g1.duniter.org",
@@ -292,7 +292,7 @@
     ],
     "plugins":{
       "es": {
-        "enable": false,
+        "enable": true,
         "askEnable": false,
         "host": "localhost",
         "port": 9200,

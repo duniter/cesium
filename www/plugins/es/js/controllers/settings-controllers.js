@@ -74,7 +74,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
       $scope.formData.enable = wasEnable;
     }
 
-    $scope.temporary = $scope.formData.enable && esHttp.node.isTemporary();
+    $scope.isFallbackNode = $scope.formData.enable && esHttp.node.isFallback();
     $scope.server = $scope.getServer(esHttp);
 
     $scope.loading = false;
@@ -82,9 +82,6 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
 
   esSettings.api.state.on.changed($scope, function(enable) {
     $scope.load(true);
-    /*$scope.formData.enable = enable;
-    $scope.temporary = enable && esHttp.node.isTemporary();
-    $scope.server = esHttp.server;*/
   });
 
   $scope.setPopupForm = function(popupForm) {
@@ -133,7 +130,7 @@ function ESPluginSettingsController ($scope, $q,  $translate, $ionicPopup, UIUti
         })
         .then(function() {
           $scope.server = $scope.getServer(esHttp);
-          $scope.temporary = false;
+          $scope.isFallbackNode = false;
           UIUtils.loading.hide();
         });
     });

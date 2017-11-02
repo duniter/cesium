@@ -29,8 +29,12 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         ES_USER_API_ENDPOINT: exact(constants.ES_USER_API_ENDPOINT)
       },
       fallbackNodeIndex = 0,
+      listeners,
       defaultSettingsNode;
 
+    that.data = {
+      isFallback: false
+    };
     that.cache = _emptyCache();
     that.api = new Api(this, "esHttp");
     that.started = false;
@@ -75,10 +79,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     }
 
     // Say if the ES node is a fallback node or the configured node
-    function isTemporaryNode() {
-      return !!that.temporary;
+    function isFallbackNode() {
+      return that.data.isFallback;
     }
 
+    // Set fallback flag (e.g. called by ES settings, when resetting settings)
+    function setIsFallbackNode(isFallback) {
+      that.data.isFallback = isFallback;
+    }
 
     function exact(regexpContent) {
       return new RegExp('^' + regexpContent + '$');
@@ -95,6 +103,24 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
     }
 
+    function onSettingsReset(data, deferred) {
+      deferred = deferred || $q.defer();
+
+      if (that.data.isFallback) {
+        // Force a restart
+        if (that.started) {
+          that.stop();
+        }
+      }
+
+      // Reset to default values
+      that.data.isFallback = false;
+      defaultSettingsNode = null;
+
+      deferred.resolve(data);
+      return deferred.promise;
+    }
+
     that.cleanCache = function() {
       console.debug('[ES] [http] Cleaning requests cache...');
       _.keys(that.cache.wsByPath).forEach(function(key) {
@@ -104,11 +130,14 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       that.cache = _emptyCache();
     };
 
-    that.copy = function(otherNode, skipStart) {
+    that.copy = function(otherNode) {
       if (that.started) that.stop();
       that.init(otherNode.host, otherNode.port, otherNode.wsPort, otherNode.useSsl || otherNode.port == 443);
-      return skipStart ? $q.when() : that.start(true /*skipInit*/);
+      that.data.isTemporary = false; // reset temporary flag
+      return that.start(true /*skipInit*/);
     };
+
+
 
     // Get time (UTC)
     that.date = { now : csHttp.date.now };
@@ -190,6 +219,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     // Alert user if node not reached - fix issue #
     that.checkNodeAlive = function(alive) {
       if (alive) {
+        setIsFallbackNode(!isSameNodeAsSettings());
         return true;
       }
       if (angular.isUndefined(alive)) {
@@ -217,14 +247,12 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         .then(function (confirm) {
           if (!confirm) return false; // stop the loop
 
-          that.temporary = fallbackNode;
-
           that.cleanCache();
 
-          that.copy(fallbackNode, true/*skip start*/);
+          that.init(fallbackNode.host, fallbackNode.port, fallbackNode.wsPort, fallbackNode.useSsl || fallbackNode.port == 443);
 
-          // loop
-          return that.checkNodeAlive(); // loop
+          // check is alive then loop
+          return that.isAlive().then(that.checkNodeAlive);
         });
     };
 
@@ -243,7 +271,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
       that._startPromise = csPlatform.ready()
         .then(function() {
-          if (!skipInit) that.init(); // Init with defaults settings
+
+          if (!skipInit) {
+            // Init with defaults settings
+            that.init();
+          }
         })
         .then(function() {
           console.debug('[ES] [http] Starting on [{0}]{1}...'.format(
@@ -252,8 +284,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           ));
           var now = new Date().getTime();
 
-          return that.isAlive()
-            .then(that.checkNodeAlive)
+          return that.checkNodeAlive()
             .then(function(alive) {
               that.alive = alive;
               if (!alive) {
@@ -263,11 +294,19 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
                 fallbackNodeIndex = 0; // reset the fallback node counter
                 return false;
               }
+
+              // Add listeners
+              addListeners();
+
               console.debug('[ES] [http] Started in '+(new Date().getTime()-now)+'ms');
               that.api.node.raise.start();
+
+
               that.started = true;
               delete that._startPromise;
               fallbackNodeIndex = 0; // reset the fallback node counter
+
+
               return true;
             });
         });
@@ -277,7 +316,9 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     that.stop = function() {
       console.debug('[ES] [http] Stopping...');
 
-      delete that.temporary;
+      removeListeners();
+
+      setIsFallbackNode(false); // will be re-computed during start phase
       delete that._startPromise;
       if (that.alive) {
         that.cleanCache();
@@ -546,6 +587,21 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       };
     }
 
+    function addListeners() {
+      // Watch some service events
+      listeners = [
+        csSettings.api.data.on.reset($rootScope, onSettingsReset, that)
+      ];
+    }
+
+    function removeListeners() {
+      _.forEach(listeners, function(remove){
+        remove();
+      });
+      listeners = [];
+    }
+
+    // Define events
     that.api.registerEvent('node', 'start');
     that.api.registerEvent('node', 'stop');
 
@@ -556,7 +612,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         parseEndPoint: parseEndPoint,
         same: isSameNode,
         sameAsSettings: isSameNodeAsSettings,
-        isTemporary: isTemporaryNode
+        isFallback: isFallbackNode
       },
       record: {
         post: postRecord,
