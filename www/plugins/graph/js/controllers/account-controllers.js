@@ -206,6 +206,9 @@ function GpAccountBalanceController($scope, $controller, $q, $state, $filter, $t
             text: title
           },
           scales: {
+            xAxes: [{
+              stacked: true
+            }],
             yAxes: [
               {
                 id: 'y-axis-left',

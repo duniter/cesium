@@ -42,21 +42,24 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
       series: [
         {
           key: 'inserts',
+          type: 'bar',
           label: 'GRAPH.SYNCHRO.COUNT.INSERTS',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
+          color: gpColor.rgba.royal(),
+          pointHoverBackgroundColor: gpColor.rgba.royal()
         },
         {
           key: 'updates',
+          type: 'bar',
           label: 'GRAPH.SYNCHRO.COUNT.UPDATES',
-          color: gpColor.rgba.calm(1),
-          pointHoverBackgroundColor: gpColor.rgba.calm(1)
+          color: gpColor.rgba.calm(),
+          pointHoverBackgroundColor: gpColor.rgba.calm()
         },
         {
           key: 'deletes',
+          type: 'bar',
           label: 'GRAPH.SYNCHRO.COUNT.DELETES',
           color: gpColor.rgba.assertive(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.assertive(1)
+          pointHoverBackgroundColor: gpColor.rgba.assertive()
         }
       ]
     },
@@ -69,14 +72,14 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
         {
           key: 'ES_USER_API',
           label: 'GRAPH.SYNCHRO.PEER.ES_USER_API',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1)
+          color: gpColor.rgba.royal(),
+          pointHoverBackgroundColor: gpColor.rgba.royal()
         },
         {
           key: 'ES_SUBSCRIPTION_API',
           label: 'GRAPH.SYNCHRO.PEER.ES_SUBSCRIPTION_API',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          pointHoverBackgroundColor: gpColor.rgba.gray()
         }
       ]
     },
@@ -88,9 +91,10 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
       series: [
         {
           key: 'duration',
+          type: 'bar',
           label: 'GRAPH.SYNCHRO.PERFORMANCE.DURATION',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1)
+          pointHoverBackgroundColor: gpColor.rgba.gray()
         }
       ]
     }
@@ -109,6 +113,9 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
       onClick: $scope.onLegendClick
     },
     scales: {
+      xAxes: [{
+        stacked: true
+      }],
       yAxes: [
         {
           stacked: true,
@@ -191,17 +198,19 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
         chart.datasetOverride = chart.series.reduce(function(res, serie) {
           return res.concat({
             yAxisID: 'y-axis',
-            type: 'bar',
+            type: serie.type || 'line',
             label: translations[serie.label],
             fill: true,
-            borderColor: serie.color,
             borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 4,
+            pointHoverRadius: 3,
+            borderColor: serie.color,
             backgroundColor: serie.color,
             pointBackgroundColor: serie.color,
-            pointBorderColor: gpColor.rgba.white(),
+            pointBorderColor: serie.color,
             pointHoverBackgroundColor: serie.pointHoverBackgroundColor||serie.color,
-            pointHoverBorderColor: gpColor.rgba.translucent(),
-            pointRadius: 3
+            pointHoverBorderColor: serie.pointHoverBorderColor||gpColor.rgba.white()
           });
         }, []);
       });

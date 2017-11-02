@@ -44,8 +44,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         {
           key: 'user_profile',
           label: 'GRAPH.DOC_STATS.USER.USER_PROFILE',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1),
+          color: gpColor.rgba.royal(),
+          pointHoverBackgroundColor: gpColor.rgba.royal(),
           clickState: {
             name: 'app.document_search',
             params: {index:'user', type: 'profile'}
@@ -55,7 +55,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
           key: 'user_settings',
           label: 'GRAPH.DOC_STATS.USER.USER_SETTINGS',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          pointHoverBackgroundColor: gpColor.rgba.gray(),
           clickState: {
             name: 'app.document_search',
             params: {index:'user', type: 'settings'}
@@ -72,8 +72,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         {
           key: 'message_inbox',
           label: 'GRAPH.DOC_STATS.MESSAGE.MESSAGE_INBOX',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1),
+          color: gpColor.rgba.royal(),
+          pointHoverBackgroundColor: gpColor.rgba.royal(),
           clickState: {
             name: 'app.document_search',
             params: {index:'message', type: 'inbox'}
@@ -82,8 +82,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         {
           key: 'message_outbox',
           label: 'GRAPH.DOC_STATS.MESSAGE.MESSAGE_OUTBOX',
-          color: gpColor.rgba.calm(1),
-          pointHoverBackgroundColor: gpColor.rgba.calm(1),
+          color: gpColor.rgba.calm(),
+          pointHoverBackgroundColor: gpColor.rgba.calm(),
           clickState: {
             name: 'app.document_search',
             params: {index:'message', type: 'outbox'}
@@ -93,7 +93,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
           key: 'invitation_certification',
           label: 'GRAPH.DOC_STATS.MESSAGE.INVITATION_CERTIFICATION',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          pointHoverBackgroundColor: gpColor.rgba.gray(),
           clickState: {
             name: 'app.document_search',
             params: {index:'invitation', type: 'certification'}
@@ -110,8 +110,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         {
           key: 'page_record',
           label: 'GRAPH.DOC_STATS.SOCIAL.PAGE_RECORD',
-          color: gpColor.rgba.royal(1),
-          pointHoverBackgroundColor: gpColor.rgba.royal(1),
+          color: gpColor.rgba.royal(),
+          pointHoverBackgroundColor: gpColor.rgba.royal(),
           clickState: {
             name: 'app.document_search',
             params: {index:'page', type: 'record'}
@@ -120,8 +120,8 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         {
           key: 'group_record',
           label: 'GRAPH.DOC_STATS.SOCIAL.GROUP_RECORD',
-          color: gpColor.rgba.calm(1),
-          pointHoverBackgroundColor: gpColor.rgba.calm(1),
+          color: gpColor.rgba.calm(),
+          pointHoverBackgroundColor: gpColor.rgba.calm(),
           clickState: {
             name: 'app.document_search',
             params: {index:'group', type: 'record'}
@@ -131,7 +131,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
           key: 'page_comment',
           label: 'GRAPH.DOC_STATS.SOCIAL.PAGE_COMMENT',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          pointHoverBackgroundColor: gpColor.rgba.gray(),
           clickState: {
             name: 'app.document_search',
             params: {index:'page', type: 'comment'}
@@ -149,7 +149,7 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
           key: 'history_delete',
           label: 'GRAPH.DOC_STATS.OTHER.HISTORY_DELETE',
           color: gpColor.rgba.gray(0.5),
-          pointHoverBackgroundColor: gpColor.rgba.gray(1),
+          pointHoverBackgroundColor: gpColor.rgba.gray(),
           clickState: {
             name: 'app.document_search',
             params: {index:'history', type: 'delete'}
@@ -172,6 +172,9 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
       onClick: $scope.onLegendClick
     },
     scales: {
+      xAxes: [{
+        stacked: true
+      }],
       yAxes: [
         {
           stacked: true,
@@ -254,17 +257,19 @@ function GpDocStatsController($scope, $state, $controller, $q, $translate, gpCol
         chart.datasetOverride = chart.series.reduce(function(res, serie) {
           return res.concat({
             yAxisID: 'y-axis',
-            type: 'line',
+            type: serie.type || 'line',
             label: translations[serie.label],
             fill: true,
-            borderColor: serie.color,
             borderWidth: 2,
+            pointRadius: 0,
+            pointHitRadius: 4,
+            pointHoverRadius: 3,
+            borderColor: serie.color,
             backgroundColor: serie.color,
             pointBackgroundColor: serie.color,
-            pointBorderColor: gpColor.rgba.white(),
+            pointBorderColor: serie.color,
             pointHoverBackgroundColor: serie.pointHoverBackgroundColor||serie.color,
-            pointHoverBorderColor: gpColor.rgba.translucent(),
-            pointRadius: 3
+            pointHoverBorderColor: serie.pointHoverBorderColor||gpColor.rgba.white()
           });
         }, []);
       });
