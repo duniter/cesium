@@ -434,7 +434,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
 }
 
 
-function ESRegistryRecordViewController($scope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
+function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
                                         $anchorScroll, csConfig,
                                         csWallet, esRegistry, UIUtils, esHttp) {
   'ngInject';
