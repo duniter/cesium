@@ -153,7 +153,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
           if (!that._startPromise) {
             console.error('[ES] [http] Trying to get [{0}] before start()...'.format(path));
           }
-          return that.ready().then(function() {
+          return that.ready().then(function(start) {
             if (!start) return $q.reject('ERROR.ES_CONNECTION_ERROR');
             return getRequest(params); // loop
           });
@@ -242,11 +242,13 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         return false; // stop the loop
       }
       var newServer = csHttp.getServer(fallbackNode.host, fallbackNode.port);
+      UIUtils.loading.hide();
       return $translate('CONFIRM.ES_USE_FALLBACK_NODE', {old: that.server, new: newServer})
         .then(UIUtils.alert.confirm)
         .then(function (confirm) {
           if (!confirm) return false; // stop the loop
 
+          UIUtils.loading.show();
           that.cleanCache();
 
           that.init(fallbackNode.host, fallbackNode.port, fallbackNode.wsPort, fallbackNode.useSsl || fallbackNode.port == 443);
