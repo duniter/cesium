@@ -16,9 +16,9 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 
  .controller('ESPositionEditCtrl', ESPositionEditController)
 
-  .controller('ESSearchPositionModalCtrl', ESSearchPositionModalController)
+ .controller('ESLookupPositionCtrl', ESLookupPositionController)
 
-
+ .controller('ESSearchPositionModalCtrl', ESSearchPositionModalController)
 ;
 
 
@@ -513,7 +513,7 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
   $scope.getAddressToSearch = function() {
     return $scope.formData.address && $scope.formData.city ?
       [$scope.formData.address.trim(), $scope.formData.city.trim()].join(', ') :
-    $scope.formData.city || $scope.formData.address;
+    $scope.formData.city || $scope.formData.address || $scope.formData.location ;
   };
 
   $scope.updateGeoPoint = function(res) {
@@ -565,6 +565,140 @@ function ESPositionEditController($scope, csConfig, esGeo, ModalUtils) {
       .then($scope.updateGeoPoint);
   };
 }
+
+
+function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
+  'ngInject';
+
+  // The default country used for address localisation
+  var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
+  var loadingPosition = false;
+
+  $scope.geoDistanceLabels = {
+    "5km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 5}
+    },
+    "10km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 10}
+    },
+    "20km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 20}
+    },
+    "30km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 30}
+    },
+    "50km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 50}
+    },
+    "100km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 100}
+    },
+    "250km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 250}
+    },
+    "500km": {
+      labelKey: 'COMMON.GEO.DISTANCE_OPTION',
+      labelParams: {value: 500}
+    }
+  };
+  $scope.geoDistances = _.keys($scope.geoDistanceLabels);
+
+  $scope.searchPosition = function(searchText) {
+    if (loadingPosition) return $q.when();
+
+    loadingPosition = true;
+
+    // No address, so try to localize by device
+    if (!searchText) {
+      return esGeo.point.current()
+        .then($scope.updateGeoPoint)
+        .then(function() {
+          loadingPosition = false;
+        })
+        .catch(function(err) {
+          console.error(err); // Silent
+          loadingPosition = false;
+        });
+    }
+
+    return esGeo.point.searchByAddress(searchText)
+      .then(function(res) {
+        if (res && res.length == 1) {
+          return res[0];
+        }
+        return $scope.openSearchLocationModal({
+          text: searchText,
+          results: res||[],
+          forceFallback: !res || !res.length // force fallback search first
+        })
+        .then(function(res) {
+          // Compute point name
+          if (res && res.address && res.address.city) {
+            var cityParts = [res.address.city];
+            if (res.address.postcode) {
+              cityParts.push(res.address.postcode);
+            }
+            if (res.address.country != defaultCountry) {
+              cityParts.push(res.address.country);
+            }
+            res.shortName = cityParts.join(', ');
+          }
+          return res;
+        });
+    })
+    .then(function(res) {
+
+      loadingPosition = false;
+
+      // user cancel
+      if (!res || !res.lat || !res.lon) return;
+
+      return {
+        lat: parseFloat(res.lat),
+        lon: parseFloat(res.lon),
+        name: res.shortName
+      };
+
+    })
+    .catch(function(err) {
+      console.error(err); // Silent
+      loadingPosition = false;
+    });
+  };
+
+
+  /* -- modal -- */
+
+  $scope.openSearchLocationModal = function(options) {
+
+    options = options || {};
+
+    var parameters = {
+      text: options.text || $scope.getAddressToSearch(),
+      results: options.results,
+      fallbackText: options.fallbackText || $scope.search.location,
+      forceFallback: angular.isDefined(options.forceFallback) ? options.forceFallback : undefined
+    };
+
+    return ModalUtils.show(
+      'plugins/es/templates/common/modal_location.html',
+      'ESSearchPositionModalCtrl',
+      parameters,
+      {
+        focusFirstInput: true
+        //,scope: $scope
+      }
+    );
+  };
+}
+
 
 function ESSearchPositionModalController($scope, $q, $translate, esGeo, parameters) {
   'ngInject';

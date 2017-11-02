@@ -1,0 +1,8 @@
+<a href="#" class="{{type}}">
+  <i class="{{pending ? 'ion-clock': (type ? 'cion-page-' + type : '')}}"></i>
+  {{name != uid ? name +' ' : ''}}
+  <span class="{{uid ? 'positive' : 'gray'}}">
+    <i class="{{uid ? 'ion-person' : 'ion-key'}}"></i>
+    {{uid ? uid : (pubkey|formatPubkey) }}
+  </span>
+</a>

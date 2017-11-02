@@ -1,37 +1,44 @@
 
-    <div class="item item-toggle dark" ng-if="!search.lastRecords">
-        <span translate>REGISTRY.SEARCH.BTN_OPTIONS</span>
-        <label class="toggle toggle-royal">
-            <input type="checkbox" ng-model="search.options">
-            <div class="track">
-                <div class="handle"></div>
-            </div>
-        </label>
+  <div class="item item-input item-select" ng-if="search.advanced">
+    <div class="input-label">
+      <span class="input-label" translate>COMMON.GEO.DISTANCE</span>
     </div>
 
-    <div class="item item-icon-right" ng-if="search.options" ng-click="showRecordTypeModal()">
-      <span translate>REGISTRY.SEARCH.TYPE</span>
-      <span class="badge badge-balanced" ng-if="search.type">
-         <i class="cion-page-{{search.type}}"></i>
-        {{'REGISTRY.TYPE.ENUM.'+search.type|uppercase|translate}}
-      </span>
+    <label>
+      <select ng-model="search.geoDistance"
+              ng-options="i as (geoDistanceLabels[i].labelKey | translate:geoDistanceLabels[i].labelParams ) for i in geoDistances track by i">
+      </select>
+    </label>
+  </div>
+
+  <div class="item item-icon-right" ng-if="search.advanced" ng-click="showRecordTypeModal($event)">
+    <span translate>REGISTRY.SEARCH.TYPE</span>
+    <div class="badge badge-balanced" ng-if="search.type">
+       <i class="cion-page-{{search.type}}"></i>
+      {{'REGISTRY.TYPE.ENUM.'+search.type|uppercase|translate}}
+      <i class="ion-close" ng-click="removeType($event)">&nbsp;&nbsp;</i>
+    </div>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </div>
+
+  <div class="item item-icon-right" ng-click="showCategoryModal($event)" ng-if="search.advanced">
+      <span translate>REGISTRY.CATEGORY</span>
+      <div class="badge badge-royal badge-text-wrap"  ng-if="search.category">
+        <span ng-bind-html="search.category.name"></span>
+        <i class="ion-close" ng-click="removeCategory($event)">&nbsp;&nbsp;</i>
+      </div>&nbsp;
       <i class="gray icon ion-ios-arrow-right"></i>
+  </span>
+
+  <div class="item item-input item-select" ng-if="search.advanced && options.location.show">
+    <div class="input-label">
+      <span class="input-label" translate>MARKET.SEARCH.GEO_DISTANCE</span>
     </div>
 
-    <span class="item item-icon-right" ng-click="showCategoryModal()" ng-if="search.options">
-        <span translate>REGISTRY.CATEGORY</span>
-        <span class="badge badge-royal badge-text-wrap" ng-bind-html="search.category.name"></span>&nbsp;
-        <i class="gray icon ion-ios-arrow-right"></i>
-    </span>
+    <label>
+      <select ng-model="search.geoDistance"
+              ng-options="i as (geoDistanceLabels[i].labelKey | translate:geoDistanceLabels[i].labelParams ) for i in geoDistances track by i">
+      </select>
+    </label>
+  </div>
 
-    <span class="item item-button-right" ng-if="(search.options) && !location.enable ">
-        <span translate>REGISTRY.SEARCH.LOCATION</span>
-        <div class="item-input-inset">
-            <label class="item-input-wrapper">
-                <input type="text" placeholder="{{'REGISTRY.SEARCH.LOCATION_HELP'|translate}}"
-                       ng-model="search.location"
-                       ng-model-options="{ debounce: 350 }"
-                       ng-change="doSearch()"/>
-            </label>
-        </div>
-    </span>

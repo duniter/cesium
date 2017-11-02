@@ -1,5 +1,8 @@
 <div class="lookupForm">
 
+  <!-- Allow extension here -->
+  <cs-extension-point name="top"></cs-extension-point>
+
   <div class="item no-padding">
 
     <div class="double-padding-x padding-top-xs item-text-wrap" ng-if="::allowMultiple"
@@ -53,6 +56,7 @@
         <small class="gray" ng-if="search.total">({{search.total}})</small>
       </h4>
     </div>
+
 
     <div class="pull-right hidden-xs hidden-sm">
       <a ng-if="enableFilter"

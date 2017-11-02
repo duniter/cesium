@@ -39,6 +39,15 @@
         "LOAD_POSITION_FAILED": "Impossible de récupérer les positions à afficher."
       }
     },
+    "REGISTRY": {
+      "LOOKUP": {
+        "BTN_MAP": "Carte",
+        "BTN_MAP_HELP": "Ouvrir la carte des pages"
+      },
+      "VIEW": {
+        "TITLE": "Carte des pages"
+      }
+    },
     "PROFILE": {
       "MARKER_HELP": "<b>Glissez-déposez</b> ce marqueur pour <b>mettre<br/>à jour votre position</b> sur la carte, ou utilisez le bouton<br/>de recherche au dessus de la carte."
     },

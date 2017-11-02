@@ -237,3 +237,7 @@
   font-family: "Ionicons";
   content: "\f110";
 }
+
+.yellow-bg {
+  background-color: #ffeb00;
+}

@@ -1,12 +1,23 @@
 angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.es.common.controllers'])
 
-  .config(function($stateProvider) {
+  .config(function(PluginServiceProvider, $stateProvider) {
     'ngInject';
+
+    PluginServiceProvider
+
+      .extendState('app.wot_lookup', {
+        points: {
+          'top': {
+            templateUrl: "plugins/es/templates/registry/wot_lookup_extend.html",
+            controller: "ESExtensionCtrl"
+          }
+        }
+      });
 
     $stateProvider
 
     .state('app.registry_lookup', {
-      url: "/page?q&category&location&type&issuer&reload",
+      url: "/wot/page?q&category&location&type&issuer&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup.html",
@@ -19,12 +30,15 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.registry_lookup_lg', {
-      url: "/page/lg?q&category&location&type&issuer&reload",
+      url: "/wot/page/lg?q&category&location&type&issuer&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup_lg.html",
           controller: 'ESRegistryLookupCtrl'
         }
+      },
+      data: {
+        silentLocationChange: true
       }
     })
 
@@ -104,9 +118,12 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
 ;
 
-function ESRegistryLookupController($scope, $focus, $timeout, $filter,
-                                    UIUtils, ModalUtils, BMA, esModals, esRegistry) {
+function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controller, $location,
+                                    UIUtils, ModalUtils, BMA, csSettings, esModals, esRegistry) {
   'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESLookupPositionCtrl', {$scope: $scope}));
 
   var defaultSearchLimit = 10;
 
@@ -118,17 +135,18 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
     type: null,
     category: null,
     location: null,
-    options: null,
-    issuer: null
+    advanced: null,
+    issuer: null,
+    geoDistance: csSettings.data.plugins.es.geoDistance || "20km"
   };
   $scope.searchTextId = 'registrySearchText';
 
   $scope.enter = function(e, state) {
     if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
-      var hasOptions = false;
+      var showAdvanced = false;
       var runSearch = false;
       var finishEntered = function() {
-        $scope.search.options = hasOptions ? true : $scope.search.options; // keep null if first call
+        $scope.search.advanced = showAdvanced ? true : $scope.search.advanced; // keep null if first call
         if (runSearch) {
           $timeout(function() {
             $scope.doSearch();
@@ -155,22 +173,22 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
         runSearch = true;
       }
 
-      // Search on type
-      if (state.stateParams && state.stateParams.type) {
-        $scope.search.type = state.stateParams.type;
-        hasOptions = runSearch = true;
-      }
-
       // Search on location
       if (state.stateParams && state.stateParams.location) {
         $scope.search.location = state.stateParams.location;
-        hasOptions = runSearch = true;
+        runSearch = true;
+      }
+
+      // Search on type
+      if (state.stateParams && state.stateParams.type) {
+        $scope.search.type = state.stateParams.type;
+        showAdvanced = runSearch = true;
       }
 
       // Search on issuer
       if (state.stateParams && state.stateParams.issuer) {
         $scope.search.issuer = state.stateParams.issuer;
-        hasOptions = runSearch = true;
+        showAdvanced = runSearch = true;
       }
 
       // Search on category
@@ -178,7 +196,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
         esRegistry.category.get({id: state.stateParams.category})
         .then(function(cat) {
           $scope.search.category = cat;
-          hasOptions = runSearch = true;
+          showAdvanced = runSearch = true;
           finishEntered();
         })
         .catch(UIUtils.onError("REGISTRY.ERROR.LOAD_CATEGORY_FAILED"));
@@ -194,11 +212,39 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
     return $scope.enter(e, state); // can be override by sub controller
   });
 
+  $scope.onLocationChanged = function() {
+    if ($scope.search.loadingPosition) return;
+    return $scope.search.geoPoint = undefined; // reset geo point
+  };
+  $scope.$watch('search.location', $scope.onLocationChanged);
+
   $scope.doSearch = function(from) {
     $scope.search.loading = !from;
     $scope.search.lastRecords = false;
-    if (!$scope.search.options) {
-      $scope.search.options = false;
+    if (!$scope.search.advanced) {
+      $scope.search.advanced = false;
+    }
+
+    if ($scope.search.location && !$scope.search.geoPoint) {
+      $scope.search.loadingPosition = true;
+      return $scope.searchPosition($scope.search.location)
+        .then(function(res) {
+          if (!res) {
+            $scope.search.loading = false;
+            $scope.search.loadingPosition = false;
+            return UIUtils.alert.error('REGISTRY.ERROR.GEO_LOCATION_NOT_FOUND');
+          }
+          $scope.search.geoPoint = res;
+          if (res.name) {
+            $scope.search.location = res.name;
+          }
+
+          console.debug('[page] Search near position:', res);
+          $scope.search.loadingPosition = false;
+
+          // Loop
+          return $scope.doSearch(from);
+        });
     }
 
     var text = $scope.search.text.trim();
@@ -235,13 +281,13 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       }
     }
     // issuer: use only on filter
-    else if ($scope.search.options && $scope.search.issuer) {
+    else if ($scope.search.advanced && $scope.search.issuer) {
       filters.push({term : { issuer: $scope.search.issuer}});
     }
-    if ($scope.search.options && $scope.search.type) {
+    if ($scope.search.advanced && $scope.search.type) {
       filters.push({term: { type: $scope.search.type}});
     }
-    if ($scope.search.options && $scope.search.category) {
+    if ($scope.search.advanced && $scope.search.category) {
       filters.push({
         nested: {
           path: "category",
@@ -255,8 +301,24 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
         }
       });
     }
-    if ($scope.search.options && $scope.search.location && $scope.search.location.length > 0) {
-      filters.push({match_phrase: { city: $scope.search.location}});
+
+    if ($scope.search.geoPoint && $scope.search.geoPoint.lat && $scope.search.geoPoint.lon) {
+
+      // text match
+      if ($scope.search.location && $scope.search.location.trim().length > 0) {
+        //matches.push({match: {location: $scope.search.location}});
+        //matches.push({prefix: {location: $scope.search.location}});
+        matches.push({match_phrase: { city: $scope.search.location}});
+      }
+
+      /*matches.push({
+        geo_distance: {
+          distance: $scope.search.geoDistance,
+          geoPoint: {
+            lat: $scope.search.geoPoint.lat,
+            lon: $scope.search.geoPoint.lon
+          }
+        }});*/
     }
 
     if (matches.length === 0 && filters.length === 0) {
@@ -272,6 +334,10 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       query.bool.filter =  filters;
     }
 
+    // Update location href
+    $scope.updateLocationHref(from);
+
+    // Execute the request
     $scope.doRequest({query: query, from: from});
   };
 
@@ -280,7 +346,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       $scope.doSearch();
     }
   };
-  $scope.$watch('search.options', $scope.onToggleOptions, true);
+  $scope.$watch('search.advanced', $scope.onToggleOptions, true);
 
   $scope.doGetLastRecord = function(from) {
     $scope.search.lastRecords = true;
@@ -356,32 +422,72 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter,
       });
   };
 
-  /* -- modals -- */
+  $scope.removeType = function(event) {
+    $scope.search.type = null;
+    event.preventDefault();
+    $scope.doSearch();
+  };
 
-  $scope.showRecordTypeModal = function() {
-    ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
-    .then(function(type){
-      if (type) {
-        $scope.search.type = type;
-        $scope.doSearch();
-      }
+  $scope.removeCategory = function(event) {
+    $scope.search.category = null;
+    $scope.category = null;
+    event.preventDefault();
+    $scope.doSearch();
+  };
+
+  // Update location href
+  $scope.updateLocationHref = function(from) {
+    // Skip when "show more"
+    if (from) return;
+
+    $timeout(function() {
+      var text = $scope.search.text.trim();
+      var location = $scope.search.location.trim();
+      var stateParams = {
+        q: text && text.length ? text : undefined,
+        location: location && location.length ? location : undefined,
+        category: $scope.search.category ? $scope.search.category.id : undefined,
+        type: $scope.search.type ? $scope.search.type : undefined,
+      };
+
+      $location.search(stateParams).replace();
     });
   };
 
-  $scope.showCategoryModal = function() {
-    // load categories
-    esRegistry.category.all()
-    .then(function(categories){
-      // open modal
-      return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
-             {categories: categories}, {focusFirstInput: true});
-    })
-    .then(function(cat){
-      if (cat && cat.parent) {
-        $scope.search.category = cat;
-        $scope.doSearch();
-      }
-    });
+  /* -- modals -- */
+
+  $scope.showRecordTypeModal = function(event) {
+    $timeout(function() {
+      if (event.isDefaultPrevented()) return;
+
+      ModalUtils.show('plugins/es/templates/registry/modal_record_type.html')
+        .then(function(type){
+          if (type) {
+            $scope.search.type = type;
+            $scope.doSearch();
+          }
+        });
+    }, 350); // use timeout to allow event to be prevented in removeType()
+  };
+
+  $scope.showCategoryModal = function(event) {
+    $timeout(function() {
+      if (event.isDefaultPrevented()) return;
+
+      // load categories
+      esRegistry.category.all()
+        .then(function (categories) {
+          // open modal
+          return ModalUtils.show('plugins/es/templates/common/modal_category.html', 'ESCategoryModalCtrl as ctrl',
+            {categories: categories}, {focusFirstInput: true});
+        })
+        .then(function (cat) {
+          if (cat && cat.parent) {
+            $scope.search.category = cat;
+            $scope.doSearch();
+          }
+        });
+    }, 350); // use timeout to allow event to be prevented in removeCategory()
   };
 
   $scope.showNewPageModal = function() {
@@ -412,7 +518,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
         .then(function(walletData) {
           UIUtils.loading.hide();
           $scope.search.issuer = walletData.pubkey;
-          $scope.search.options = true;
+          $scope.search.advanced = true;
           $timeout($scope.doSearch, 100);
         });
     }
@@ -427,7 +533,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
   $scope.doUpdate = function() {
     if (!csWallet.isLogin()) return;
     $scope.search.issuer = csWallet.data.pubkey;
-    $scope.search.options = true;
+    $scope.search.advanced = true;
     return $scope.doSearch();
   };
 

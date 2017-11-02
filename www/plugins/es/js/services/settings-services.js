@@ -46,7 +46,8 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             googleApiKey: undefined,
             wot: {
               enableMixedSearch: true
-            }
+            },
+            geoDistance: '20km'
           }
         }
     }, {plugins: {es: csConfig.plugins && csConfig.plugins.es || {}}}),

@@ -27,7 +27,7 @@
             REGISTRY.SEARCH.LAST_RECORDS
           </h4>
           <h4
-            ng-if="!search.loading && !search.lastRecords && (search.text.length || search.options != null)" translate>
+            ng-if="!search.loading && !search.lastRecords && (search.text.length || search.advanced != null)" translate>
             COMMON.RESULTS_LIST
           </h4>
         </div>
@@ -37,7 +37,7 @@
         <ion-spinner icon="android"></ion-spinner>
       </div>
 
-      <div class="padding assertive" ng-if="!search.loading && search.results.length===0 && search.options != null" translate>
+      <div class="padding assertive" ng-if="!search.loading && search.results.length===0 && search.advanced != null" translate>
         COMMON.SEARCH_NO_RESULT
       </div>
 

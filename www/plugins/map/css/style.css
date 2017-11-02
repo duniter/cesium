@@ -90,7 +90,7 @@
 }
 
 /**
- * WOT MAP
+ * WOT map
  */
 .view-map-wot .leaflet-popup-content{
   min-width: 200px;
@@ -103,6 +103,19 @@
   padding-left: 70px;
 }
 
+/**
+ * registry map
+ */
+.view-map-registry .leaflet-popup-content{
+  min-width: 200px;
+}
+
+.view-map-registry .leaflet-popup-content .item-avatar .item-image {
+  left: 0px;
+}
+.view-map-registry .leaflet-popup-content .item-avatar .item-content {
+  padding-left: 70px;
+}
 
 /**
  * Marker colors

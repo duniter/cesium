@@ -18,6 +18,10 @@
       "SHOW_ALL": "Voir tout",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
     },
+    "GEO": {
+      "DISTANCE": "Distance maximale autour de la ville",
+      "DISTANCE_OPTION": "{{value}} km"
+    },
     "ERROR": {
       "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",
       "INVALID_FOR_LOCATION": "Adresse inconnue"
@@ -265,6 +269,10 @@
     "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
+    "BTN_SHOW_WOT": "Annuaire",
+    "BTN_SHOW_WOT_HELP": "Rechercher dans l'annuaire",
+    "BTN_SHOW_PAGES": "Pages",
+    "BTN_SHOW_PAGES_HELP": "Rechercher dans les pages",
     "BTN_NEW": "Créer une page",
     "MY_PAGES": "Mes pages",
     "NO_PAGE": "Aucune page",
@@ -275,8 +283,8 @@
       "BTN_ADD": "Nouveau",
       "BTN_OPTIONS": "Recherche avancée",
       "TYPE": "Type de page",
-      "LOCATION": "Localisation",
-      "LOCATION_HELP": "Ville",
+      "LOCATION": "Ville",
+      "LOCATION_HELP": "Ville, Code postal",
       "LAST_RECORDS": "Derniers enregistrements :",
       "RESULTS": "Résultats :"
     },
@@ -326,7 +334,8 @@
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Page inexistante",
       "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
-      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
+      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire",
+      "GEO_LOCATION_NOT_FOUND": "Ville ou code postal non trouvé"
     },
     "INFO": {
       "RECORD_REMOVED" : "Page supprimée",

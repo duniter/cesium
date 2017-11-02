@@ -1,0 +1,21 @@
+<ion-view left-buttons="leftButtons" class="view-map-registry">
+  <ion-nav-title>
+    <span class="hidden-xs" translate>MAP.REGISTRY.VIEW.TITLE</span>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="load()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content data-tap-disabled="true">
+    <a id="helptip-map-registry" style="left: 150px; top: 50px; position: relative;"></a>
+    <leaflet id="{{::mapId}}"
+             height="100%"
+             layers="map.layers"
+             markers="map.markers"
+             lf-center="map.center"
+             bounds="map.bounds">
+    </leaflet>
+  </ion-content>
+</ion-view>
