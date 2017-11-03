@@ -6,33 +6,7 @@
 
   <ion-content class="lookupForm padding no-padding-xs">
 
-    <div class="buttons-tabs">
-
-      <div class="pull-right">
-        <div
-          class="button button-tab dark"
-          title="{{'REGISTRY.BTN_SHOW_WOT_HELP' | translate}}"
-          ng-click="openWotLookup()">
-          <i class="icon ion-person-stalker"></i>
-          {{'REGISTRY.BTN_SHOW_WOT' | translate}}
-        </div>
-        <div
-          class="button button-tab ink yellow-bg dark active"
-          title="{{'REGISTRY.BTN_SHOW_PAGES_HELP' | translate}}"
-          >
-          <i class="icon ion-social-buffer"></i>
-          {{'REGISTRY.BTN_SHOW_PAGES' | translate}}
-        </div>
-      </div>
-      <div class="pull-right">
-        <button class="button button-small button-positive button-small-padding button-clear ink hidden-sm hidden-xs"
-                ng-click="showNewPageModal()">
-          <i class="icon ion-plus"></i>
-          {{'REGISTRY.BTN_NEW' | translate}}
-        </button>
-        &nbsp;
-      </div>
-    </div>
+    <ng-include src="'plugins/es/templates/registry/lookup_tabs.html'" ng-init="showNewPageButton=true;"></ng-include>
 
     <form ng-submit="doSearch()"/>
       <label class="item item-input">

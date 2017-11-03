@@ -20,7 +20,7 @@ angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.ma
 
       $stateProvider
         .state('app.view_registry_map', {
-          url: "/wot/pagemap?c&center",
+          url: "/page/map?c&center",
           views: {
             'menuContent': {
               templateUrl: "plugins/map/templates/registry/view_map.html",

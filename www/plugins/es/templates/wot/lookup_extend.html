@@ -1,17 +1,1 @@
-<div class="buttons-tabs" ng-if="enable">
-  <div class="pull-right">
-    <div
-      class="button button-tab dark active"
-      title="{{'REGISTRY.BTN_SHOW_WOT_HELP' | translate}}">
-      <i class="icon ion-person-stalker"></i>
-      {{'REGISTRY.BTN_SHOW_WOT' | translate}}
-    </div>
-    <div
-       class="button button-tab ink yellow-bg dark"
-       title="{{'REGISTRY.BTN_SHOW_PAGES_HELP' | translate}}"
-       ng-click="openRegistryLookup()">
-      <i class="icon ion-social-buffer"></i>
-      {{'REGISTRY.BTN_SHOW_PAGES' | translate}}
-    </div>
-  </div>
-</div>
+<ng-include ng-if="enable" src="'plugins/es/templates/registry/lookup_tabs.html'"></ng-include>

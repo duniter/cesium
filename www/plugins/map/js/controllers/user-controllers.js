@@ -38,7 +38,7 @@ angular.module('cesium.map.user.controllers', ['cesium.services', 'cesium.map.se
     $scope.enter = function(e, state) {
 
       // Wait parent controller load the profile
-      if (!$scope.formData || !$scope.formData.title) {
+      if (!$scope.formData || (!$scope.formData.title && !$scope.formData.geoPoint)) {
         return $timeout($scope.enter, 500);
       }
 
@@ -66,7 +66,6 @@ angular.module('cesium.map.user.controllers', ['cesium.services', 'cesium.map.se
 
         return $translate('MAP.PROFILE.MARKER_HELP')
           .then(function(helpText) {
-
 
             $scope.map.markers.geoPoint = {
               message: helpText,

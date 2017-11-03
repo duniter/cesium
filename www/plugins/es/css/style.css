@@ -238,12 +238,19 @@
   content: "\f110";
 }
 
+
 .yellow-bg {
   background-color: #ffeb00;
 }
 .yellow-bg.active {
-  /*background-color: #e9d700 !important;*/
-  background-color: #ffeb00 !important;
+  background-color: #f3e000 !important;
+}
+
+.yellow-100-bg {
+  background-color: #fff580;
+}
+.yellow-100-bg.active {
+  background-color: #ffeb00;
 }
 
 .buttons-block {

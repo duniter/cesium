@@ -39,16 +39,16 @@
       REGISTRY.NO_PAGE
     </div>
 
-    <div class="list {{::motion.ionListClass}}">
+    <ion-list class="{{::motion.ionListClass}}">
 
       <a ng-repeat="item in search.results"
-         class="item ink padding-xs"
+         class="item item-record item-border-large ink padding-xs"
          ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
 
         <ng-include src="'plugins/es/templates/registry/lookup_item.html'"></ng-include>
       </a>
 
-    </div>
+    </ion-list>
 
   </ion-content>
 

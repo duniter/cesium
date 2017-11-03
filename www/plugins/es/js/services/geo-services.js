@@ -92,7 +92,7 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
 
           // Filter on city/town/village
           res = res.reduce(function(res, hit){
-            if (hit.class == 'waterway' || !hit.address) return res;
+            if (hit.class == 'waterway' || hit.class == 'railway' ||!hit.address) return res;
             hit.address.city =  hit.address.city || hit.address.village || hit.address.town || hit.address.postcode;
             hit.address.road =  hit.address.road || hit.address.suburb || hit.address.hamlet;
             if (hit.address.postcode && hit.address.city == hit.address.postcode) {

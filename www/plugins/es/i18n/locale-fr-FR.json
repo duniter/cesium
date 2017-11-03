@@ -270,9 +270,9 @@
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux et site web",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "BTN_SHOW_WOT": "Personnes",
-    "BTN_SHOW_WOT_HELP": "Rechercher dans l'annuaire",
+    "BTN_SHOW_WOT_HELP": "Rechercher des personnes",
     "BTN_SHOW_PAGES": "Pages",
-    "BTN_SHOW_PAGES_HELP": "Rechercher dans les pages",
+    "BTN_SHOW_PAGES_HELP": "Rechercher des pages",
     "BTN_NEW": "Créer une page",
     "MY_PAGES": "Mes pages",
     "NO_PAGE": "Aucune page",
@@ -324,7 +324,7 @@
     },
     "WALLET": {
       "REGISTRY_DIVIDER": "Pages",
-      "REGISTRY_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, association, institution."
+      "REGISTRY_HELP": "Les pages référencent des activités acceptant la monnaie ou la favorisant : commerces, entreprises, associations, institutions."
     },
     "ERROR": {
       "LOAD_CATEGORY_FAILED": "Erreur de chargement de la liste des activités",

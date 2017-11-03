@@ -13,14 +13,14 @@
   </ion-nav-buttons>
 
   <ion-content scroll="true">
-    <div class="positive-900-bg hero">
+    <div class="stable-bg hero">
       <div class="content" ng-if="!loading">
         <i class="avatar cion-page-{{formData.type}}" ng-if="!formData.avatar"></i>
         <i class="avatar" ng-style="{{avatarStyle}}" ng-if="formData.avatar"></i>
-        <h3 ng-bind-html="formData.title"></h3>
+        <h3><span class="dark" ng-bind-html="formData.title"></span></h3>
         <h4>&nbsp;</h4>
       </div>
-      <h4 class="content light" ng-if="loading">
+      <h4 class="content dark" ng-if="loading">
         <ion-spinner icon="android"></ion-spinner>
       </h4>
     </div>
