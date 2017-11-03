@@ -65,31 +65,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
         type: 'awesomeMarker',
           icon: 'key',
           markerColor: 'lightgray'
-      },
-      group: {
-        type: 'awesomeMarker',
-          icon: 'person-stalker',
-          markerColor: 'green'
-      },
-      shop: {
-        type: 'awesomeMarker',
-        icon: 'page-shop',
-        markerColor: 'green'
-      },
-      association: {
-        type: 'awesomeMarker',
-        icon: 'page-association',
-        markerColor: 'green'
-      },
-      company: {
-        type: 'awesomeMarker',
-        icon: 'page-company',
-        markerColor: 'green'
-      },
-      institution: {
-        type: 'awesomeMarker',
-        icon: 'page-institution',
-        markerColor: 'green'
       }
     };
 
@@ -116,28 +91,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
           type: 'featureGroup',
           name: 'MAP.WOT.VIEW.LAYER.WALLET',
           visible: true
-        },
-
-        // Pages
-        shop: {
-          type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.SHOP',
-          visible: true
-        },
-        association: {
-          type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.ASSOCIATION',
-          visible: true
-        },
-        company: {
-          type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.COMPANY',
-          visible: true
-        },
-        institution: {
-          type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.INSTITUTION',
-          visible: true
         }
       }
     },
@@ -149,7 +102,6 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
   // [NEW] When opening the view
   $scope.enter = function(e, state) {
-
 
     if ($scope.loading) {
       if (state.stateParams && state.stateParams.c) {
@@ -339,7 +291,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
           var pageMarkerTemplate = $templateCache.get('plugins/map/templates/wot/popup_page_marker.html');
 
           _.forEach(res, function (hit) {
-            var type = hit.type || (hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet'));
+            var type = hit.pending ? 'pending' : (hit.uid ? 'member' : 'wallet');
             var shortPubkey = formatPubkey(hit.pubkey);
             var id = hit.index + '_' + (hit.id || (hit.uid ? (hit.uid + ':' + hit.pubkey) : hit.pubkey)).replace(/-/g, '_');
             var marker = {

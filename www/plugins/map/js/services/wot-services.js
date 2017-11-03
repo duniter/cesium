@@ -76,12 +76,13 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
       _source: options.fields.description ? fields.profile.concat("description") : fields.profile
     };
 
-    var mixedSearch = esSettings.wot.isMixedSearchEnable();
+    var mixedSearch = false;
+    /*var mixedSearch = esSettings.wot.isMixedSearchEnable();
     if (mixedSearch) {
       // add special fields for page and group
       request._source = request._source.concat(["type", "pubkey", "issuer", "category"]);
       console.debug("[ES] [map] Mixed search: enable");
-    }
+    }*/
 
     var search = mixedSearch ? that.raw.profile.mixedSearch : that.raw.profile.search;
 
@@ -147,28 +148,11 @@ angular.module('cesium.map.wot.services', ['cesium.services'])
     var commaRegexp = new RegExp('[,]');
     var searchAddressItems = [];
     var items = res.hits.hits.reduce(function(res, hit) {
-      var item;
-      if (hit._index == "user") {
-        var pubkey =  hit._id;
-        var uid = uids[pubkey];
-        item = uid && {uid: uid} || memberships[pubkey] || {};
-        item.pubkey = pubkey;
-        item.index = hit._index;
-      }
-      else {
-        var pubkey =  hit._source.issuer;
-        var uid = uids[pubkey];
-        item = uid && {uid: uid} || memberships[pubkey] || {};
-        item.issuer = pubkey;
-        item.pubkey = hit._source.pubkey||item.issuer;
-        item.id = hit._id;
-        item.index = hit._index;
-        item.type = hit._source.type;
-        item.category = hit._source.category;
-        if (item.category) {
-          delete item.category.parent; // parent not need
-        }
-      }
+      var pubkey =  hit._id;
+      var uid = uids[pubkey];
+      var item = uid && {uid: uid} || memberships[pubkey] || {};
+      item.pubkey = pubkey;
+      item.index = hit._index;
 
       // City & address
       item.city = hit._source.city;

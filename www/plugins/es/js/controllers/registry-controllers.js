@@ -1,18 +1,7 @@
 angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.es.common.controllers'])
 
-  .config(function(PluginServiceProvider, $stateProvider) {
+  .config(function($stateProvider) {
     'ngInject';
-
-    PluginServiceProvider
-
-      .extendState('app.wot_lookup', {
-        points: {
-          'top': {
-            templateUrl: "plugins/es/templates/registry/wot_lookup_extend.html",
-            controller: "ESExtensionCtrl"
-          }
-        }
-      });
 
     $stateProvider
 
@@ -118,7 +107,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
 ;
 
-function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controller, $location,
+function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controller, $location, $state,
                                     UIUtils, ModalUtils, BMA, csSettings, esModals, esRegistry) {
   'ngInject';
 
@@ -311,14 +300,14 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
         matches.push({match_phrase: { city: $scope.search.location}});
       }
 
-      /*matches.push({
+      matches.push({
         geo_distance: {
           distance: $scope.search.geoDistance,
           geoPoint: {
             lat: $scope.search.geoPoint.lat,
             lon: $scope.search.geoPoint.lon
           }
-        }});*/
+        }});
     }
 
     if (matches.length === 0 && filters.length === 0) {
@@ -389,7 +378,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
         $scope.search.loading = false;
 
         if (records.length > 0) {
-          $scope.motion.show();
+          $scope.motion.show({selector: '.lookupForm .list .item', ink: true});
         }
       })
       .catch(function(err) {
@@ -441,8 +430,8 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
     if (from) return;
 
     $timeout(function() {
-      var text = $scope.search.text.trim();
-      var location = $scope.search.location.trim();
+      var text = $scope.search.text && $scope.search.text.trim();
+      var location = $scope.search.location && $scope.search.location.trim();
       var stateParams = {
         q: text && text.length ? text : undefined,
         location: location && location.length ? location : undefined,
@@ -452,6 +441,20 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 
       $location.search(stateParams).replace();
     });
+  };
+
+  /* -- open views -- */
+
+  $scope.openWotLookup = function() {
+
+    var text = $scope.search.text && $scope.search.text.trim() || '';
+    var location = $scope.search.location && $scope.search.location.trim() || '';
+    var stateParams = {
+      q: text.length ? text : undefined,
+      location: location.length ? location : undefined
+    };
+
+    $state.go('app.wot_lookup', stateParams);
   };
 
   /* -- modals -- */
@@ -493,6 +496,8 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
   $scope.showNewPageModal = function() {
     return esModals.showNewPage();
   };
+
+
 
  // TODO: remove auto add account when done
  /* $timeout(function() {

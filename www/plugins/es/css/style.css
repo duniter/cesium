@@ -241,3 +241,14 @@
 .yellow-bg {
   background-color: #ffeb00;
 }
+.yellow-bg.active {
+  /*background-color: #e9d700 !important;*/
+  background-color: #ffeb00 !important;
+}
+
+.buttons-block {
+  display: block;
+  height: 57px;
+}
+
+

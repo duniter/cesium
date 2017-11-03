@@ -6,28 +6,31 @@
 
   <ion-content class="lookupForm padding no-padding-xs">
 
-    <div class="item no-border " style="display: block; height: 60px;">
+    <div class="buttons-tabs">
 
       <div class="pull-right">
-        <button class="button button-small button-positive button-clear ink hidden-sm hidden-xs"
-                ng-click="showNewPageModal()">
-          <i class="icon ion-plus"></i>
-          {{'REGISTRY.BTN_NEW' | translate}}
-        </button>
         <div
-          class="button dark"
+          class="button button-tab dark"
           title="{{'REGISTRY.BTN_SHOW_WOT_HELP' | translate}}"
-          ui-sref="app.wot_lookup">
+          ng-click="openWotLookup()">
           <i class="icon ion-person-stalker"></i>
           {{'REGISTRY.BTN_SHOW_WOT' | translate}}
         </div>
         <div
-          class="button ink yellow-bg dark"
+          class="button button-tab ink yellow-bg dark active"
           title="{{'REGISTRY.BTN_SHOW_PAGES_HELP' | translate}}"
           >
           <i class="icon ion-social-buffer"></i>
           {{'REGISTRY.BTN_SHOW_PAGES' | translate}}
         </div>
+      </div>
+      <div class="pull-right">
+        <button class="button button-small button-positive button-small-padding button-clear ink hidden-sm hidden-xs"
+                ng-click="showNewPageModal()">
+          <i class="icon ion-plus"></i>
+          {{'REGISTRY.BTN_NEW' | translate}}
+        </button>
+        &nbsp;
       </div>
     </div>
 
@@ -71,7 +74,7 @@
       <ng-include src="'plugins/es/templates/registry/lookup_options.html'"></ng-include>
     </form>
 
-    <div class="padding-top padding-xs" style="display: block; height: 60px;">
+    <div class="buttons-block padding-top padding-xs">
 
       <div class="hidden-xs hidden-sm pull-left" >
 
@@ -88,13 +91,6 @@
       </div>
 
       <div class="hidden-xs hidden-sm pull-right">
-
-        <a class="button button-text button-small ink hidden-sm hidden-xs"
-           title="{{'MAP.REGISTRY.LOOKUP.BTN_MAP_HELP' | translate}}"
-           ui-sref="app.view_registry_map">
-          <i class="icon ion-ios-location"></i>
-          {{'MAP.REGISTRY.LOOKUP.BTN_MAP' | translate}}
-        </a>
 
         <!-- Allow extension here -->
         <cs-extension-point name="filter-buttons"></cs-extension-point>
@@ -129,16 +125,16 @@
       COMMON.SEARCH_NO_RESULT
     </div>
 
-    <div class="list {{::motion.ionListClass}}"
+    <ion-list class="{{::motion.ionListClass}}"
          ng-if="!search.loading && search.results && search.results.length > 0">
 
       <a ng-repeat="item in search.results"
-         class="item ink padding-xs"
+         class="item item-record item-border-large padding-xs ink"
          ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
 
         <ng-include src="'plugins/es/templates/registry/lookup_item.html'"></ng-include>
       </a>
-    </div>
+    </ion-list>
 
     <ion-infinite-scroll
       ng-if="!search.loading && search.hasMore"

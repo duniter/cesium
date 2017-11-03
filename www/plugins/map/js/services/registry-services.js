@@ -84,41 +84,12 @@ angular.module('cesium.map.registry.services', ['cesium.services'])
 
     var search = mixedSearch ? that.raw.profile.mixedSearch : that.raw.profile.search;
 
-    return $q.all([
-      search(request),
-      BMA.wot.member.uids(),
-      BMA.wot.member.pending()
-        .then(function(res) {
-          return (res.memberships && res.memberships.length) ? res.memberships : [];
-        })
-    ])
+    return search(request)
       .then(function(res) {
-        var uids = res[1];
-        var memberships = res[2];
-        var res = res[0];
         if (!res.hits || !res.hits.total) return [];
 
-        // Transform pending MS into a map by pubkey
-        memberships = memberships.reduce(function(res, ms){
-          if (ms.membership == 'IN' && !uids[ms.pubkey]) {
-            var idty = {
-              uid: ms.uid,
-              pubkey: ms.pubkey,
-              block: ms.blockNumber,
-              blockHash: ms.blockHash,
-              pending: true
-            };
-            var otherIdtySamePubkey = res[ms.pubkey];
-            if (otherIdtySamePubkey && idty.block > otherIdtySamePubkey.block) {
-              return res; // skip
-            }
-            res[idty.pubkey] = idty;
-          }
-          return res;
-        }, {});
-
         var jobs = [
-          processLoadHits(options, uids, memberships, res)
+          processLoadHits(options, res)
         ];
 
         // Additional slice requests
@@ -127,7 +98,7 @@ angular.module('cesium.map.registry.services', ['cesium.services'])
           jobs.push(search(angular.copy(request))
             .then(function(res) {
               if (!res.hits || !res.hits.hits.length) return [];
-              return processLoadHits(options, uids, memberships, res);
+              return processLoadHits(options, res);
             }));
           request.from += request.size;
         }
@@ -140,33 +111,22 @@ angular.module('cesium.map.registry.services', ['cesium.services'])
       });
   }
 
-  function processLoadHits(options, uids, memberships, res) {
+  function processLoadHits(options, res) {
 
-    // Transform profile hits
+    // Transform hits
     var commaRegexp = new RegExp('[,]');
     var searchAddressItems = [];
     var items = res.hits.hits.reduce(function(res, hit) {
-      var item;
-      if (hit._index == "user") {
-        var pubkey =  hit._id;
-        var uid = uids[pubkey];
-        item = uid && {uid: uid} || memberships[pubkey] || {};
-        item.pubkey = pubkey;
-        item.index = hit._index;
-      }
-      else {
-        var pubkey =  hit._source.issuer;
-        var uid = uids[pubkey];
-        item = uid && {uid: uid} || memberships[pubkey] || {};
-        item.issuer = pubkey;
-        item.pubkey = hit._source.pubkey||item.issuer;
-        item.id = hit._id;
-        item.index = hit._index;
-        item.type = hit._source.type;
-        item.category = hit._source.category;
-        if (item.category) {
-          delete item.category.parent; // parent not need
-        }
+      var pubkey =  hit._source.issuer;
+      var item = {};
+      item.issuer = pubkey;
+      item.pubkey = hit._source.pubkey||item.issuer;
+      item.id = hit._id;
+      item.index = hit._index;
+      item.type = hit._source.type;
+      item.category = hit._source.category;
+      if (item.category) {
+        delete item.category.parent; // parent not need
       }
 
       // City & address

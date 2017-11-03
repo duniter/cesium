@@ -7,6 +7,15 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
     if (enable) {
       PluginServiceProvider
 
+        .extendState('app.wot_lookup', {
+          points: {
+            'top': {
+              templateUrl: "plugins/es/templates/wot/lookup_extend.html",
+              controller: "ESWotLookupExtendCtrl"
+            }
+          }
+        })
+
         .extendStates(['app.wot_identity', 'app.wot_identity_uid'], {
           points: {
             'after-general': {
@@ -37,9 +46,31 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
   })
 
+
+ .controller('ESWotLookupExtendCtrl', ESWotLookupExtendController)
+
  .controller('ESWotIdentityViewCtrl', ESWotIdentityViewController)
 
 ;
+
+function ESWotLookupExtendController($scope, $controller, $state) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
+
+  $scope.openRegistryLookup = function() {
+
+    var text = $scope.search.text && $scope.search.text.trim() || '';
+    var location = $scope.search.location && $scope.search.location.trim() || '';
+    var stateParams = {
+      q: text.length ? text : undefined,
+      location: location.length ? location : undefined
+    };
+
+    $state.go('app.registry_lookup', stateParams);
+  };
+}
 
 function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, esSettings, PluginService,
                                      esModals, esHttp, esWallet, esInvitation) {

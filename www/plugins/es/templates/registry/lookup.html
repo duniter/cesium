@@ -6,6 +6,25 @@
 
     <ion-content class="lookupForm padding no-padding-xs">
 
+      <div class="buttons-tabs">
+
+        <div class="pull-right">
+          <div
+            class="button button-tab dark"
+            title="{{'REGISTRY.BTN_SHOW_WOT_HELP' | translate}}"
+            ng-click="openWotLookup()">
+            <i class="icon ion-person-stalker"></i>
+            {{'REGISTRY.BTN_SHOW_WOT' | translate}}
+          </div>
+          <div
+            class="button button-tab ink yellow-bg dark active"
+            title="{{'REGISTRY.BTN_SHOW_PAGES_HELP' | translate}}">
+            <i class="icon ion-social-buffer"></i>
+            {{'REGISTRY.BTN_SHOW_PAGES' | translate}}
+          </div>
+        </div>
+      </div>
+
       <form ng-submit="doSearch()"/>
         <label class="item item-input">
             <i class="icon ion-search placeholder-icon"></i>
@@ -41,30 +60,28 @@
         COMMON.SEARCH_NO_RESULT
       </div>
 
-      <div class="list animate-ripple"
+      <ion-list class="{{::motion.ionListClass}}"
            ng-if="!search.loading && search.results && search.results.length > 0">
 
-        <a ng-repeat="rec in search.results"
-           class="item item-record ink padding-xs item-icon-right"
+        <ion-item ng-repeat="rec in search.results"
+           class="item item-avatar item-text-wrap item-icon-right ink"
            ui-sref="app.view_page({id: rec.id, title: rec.urlTitle})">
 
-          <div class="item-text-wrap item-thumbnail-left-padding"
-               ng-class="{'item-thumbnail-left': rec.thumbnail || rec.type}">
-            <i class="item-image icon cion-page-{{::rec.type}}" ng-if="!rec.thumbnail"></i>
-            <i class="item-image" style="background-image: url({{::rec.thumbnail.src}})" ng-if="rec.thumbnail"></i>
-            <h2 ng-bind-html="rec.title"></h2>
-            <h4 class="gray">
-              <span ng-if="rec.city">
-                <i class="ion-location"></i>
-                <span ng-bind-html="rec.city"></span>
-                |
-              </span>
-              <span class="item-text-wrap" ng-show="rec.description" ng-bind-html="rec.description">
-              </span>
-            </h4>
-          </div>
-        </a>
-      </div>
+          <i class="item-image icon cion-page-{{::rec.type}}" ng-if="!rec.avatar"></i>
+          <i class="item-image avatar" style="background-image: url({{::rec.avatar.src}})" ng-if="rec.avatar"></i>
+          <h2 ng-bind-html="rec.title"></h2>
+          <h4 class="gray">
+            <span ng-if="rec.city">
+              <i class="ion-location"></i>
+              <span ng-bind-html="rec.city"></span>
+              |
+            </span>
+            <span class="item-text-wrap" ng-show="rec.description" ng-bind-html="rec.description">
+            </span>
+          </h4>
+          <i class="icon ion-ios-arrow-right "></i>
+        </ion-item>
+      </ion-list>
 
       <ion-infinite-scroll
         ng-if="!search.loading && search.hasMore"

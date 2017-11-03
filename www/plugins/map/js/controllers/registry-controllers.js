@@ -9,7 +9,7 @@ angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.ma
 
       PluginServiceProvider
 
-        .extendState('app.registry_lookup', {
+        .extendState('app.registry_lookup_lg', {
           points: {
             'filter-buttons': {
               templateUrl: "plugins/map/templates/registry/lookup_extend.html",
