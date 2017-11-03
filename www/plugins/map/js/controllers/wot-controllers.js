@@ -52,8 +52,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
     icons= {
       member: {
         type: 'awesomeMarker',
-          icon: 'person',
-          markerColor: 'blue'
+        icon: 'person',
+        markerColor: 'blue'
       },
       pending: {
         type: 'awesomeMarker',
@@ -63,8 +63,8 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
       },
       wallet: {
         type: 'awesomeMarker',
-          icon: 'key',
-          markerColor: 'lightgray'
+        icon: 'key',
+        markerColor: 'lightgray'
       }
     };
 

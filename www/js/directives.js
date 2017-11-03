@@ -165,12 +165,23 @@ angular.module('cesium.directives', [])
       restrict: 'A',
       link: function(scope, element, attrs, controller) {
         var clazz = attrs.activeLink;
-        var path = attrs.activeLinkPathPrefix ? attrs.activeLinkPathPrefix : attrs.href;
-        if (path) {
-          path = path.substring(1); //hack because path does not return including hashbang
+        var path;
+        if (attrs.activeLinkPathPrefix) {
+          path = attrs.activeLinkPathPrefix.substring(1); //hack because path does not return including hashbang
           scope.location = $location;
           scope.$watch('location.path()', function (newPath) {
             if (newPath && newPath.indexOf(path) === 0) {
+              element.addClass(clazz);
+            } else {
+              element.removeClass(clazz);
+            }
+          });
+        }
+        else if (attrs.href) {
+          path = attrs.href.substring(1); //hack because path does not return including hashbang
+          scope.location = $location;
+          scope.$watch('location.path()', function (newPath) {
+            if (newPath && newPath == path) {
               element.addClass(clazz);
             } else {
               element.removeClass(clazz);

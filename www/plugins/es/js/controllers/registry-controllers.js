@@ -6,7 +6,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     $stateProvider
 
     .state('app.registry_lookup', {
-      url: "/page?q&category&location&type&issuer&reload",
+      url: "/wot/page?q&category&location&type&issuer&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup.html",
@@ -19,7 +19,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.registry_lookup_lg', {
-      url: "/page/lg?q&category&location&type&issuer&reload",
+      url: "/wot/page/lg?q&category&location&type&issuer&reload",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup_lg.html",

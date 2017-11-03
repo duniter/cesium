@@ -28,11 +28,7 @@
         "LAYER": {
           "MEMBER": "<i class=\"icon ion-person positive\"></i> Membres",
           "PENDING": "<i class=\"icon ion-clock energized\"></i> Inscriptions en attente",
-          "WALLET": "<i class=\"icon ion-card gray\"></i> Simples portefeuilles",
-          "SHOP": "<i class=\"icon ion-page-shop balanced\"></i> Commerces locaux",
-          "COMPANY": "<i class=\"icon ion-page-company balanced\"></i> Entreprises",
-          "ASSOCIATION": "<i class=\"icon ion-page-association balanced\"></i> Associations",
-          "INSTITUTION": "<i class=\"icon ion-page-institution balanced\"></i> Institutions"
+          "WALLET": "<i class=\"icon ion-card gray\"></i> Simples portefeuilles"
         }
       },
       "ERROR": {
@@ -45,7 +41,13 @@
         "BTN_MAP_HELP": "Ouvrir la carte des pages"
       },
       "VIEW": {
-        "TITLE": "Carte des pages"
+        "TITLE": "Carte des pages",
+        "LAYER": {
+          "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Commerces locaux",
+          "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Entreprises",
+          "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Associations",
+          "INSTITUTION": "<i class=\"icon ion-page-institution gray\"></i> Institutions"
+        }
       }
     },
     "PROFILE": {

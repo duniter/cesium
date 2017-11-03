@@ -28,11 +28,25 @@
         "LAYER": {
           "MEMBER": "<i class=\"icon ion-person positive\"></i> Members",
           "PENDING": "<i class=\"icon ion-clock energized\"></i> Pending registrations",
-          "WALLET": "<i class=\"icon ion-card gray\"></i> Simple wallets",
-          "SHOP": "<i class=\"icon ion-page-shop balanced\"></i> Local shops",
-          "COMPANY": "<i class=\"icon ion-page-company balanced\"></i> Companies",
-          "ASSOCIATION": "<i class=\"icon ion-page-association balanced\"></i> Associations",
-          "INSTITUTION": "<i class=\"icon ion-page-institution balanced\"></i> Institutions"
+          "WALLET": "<i class=\"icon ion-card gray\"></i> Simple wallets"
+        }
+      },
+      "ERROR": {
+        "LOAD_POSITION_FAILED": "Can not retrieve the positions to display."
+      }
+    },
+    "REGISTRY": {
+      "LOOKUP": {
+        "BTN_MAP": "Map",
+        "BTN_MAP_HELP": "Open the map of the pages"
+      },
+      "VIEW": {
+        "TITLE": "Map of pages",
+        "LAYER": {
+          "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Local shops",
+          "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Companies",
+          "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Associations",
+          "INSTITUTION": "<i class=\"icon ion-page-institution gray\"></i> Institutions"
         }
       }
     },

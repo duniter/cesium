@@ -50,30 +50,26 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
     // Create a  hidden layer, to hold search markers
     markersSearchLayer,
     icons= {
-      group: {
-        type: 'awesomeMarker',
-          icon: 'person-stalker',
-          markerColor: 'green'
-      },
       shop: {
         type: 'awesomeMarker',
         icon: 'page-shop',
-        markerColor: 'green'
-      },
-      association: {
-        type: 'awesomeMarker',
-        icon: 'page-association',
-        markerColor: 'green'
+        markerColor: 'blue'
       },
       company: {
         type: 'awesomeMarker',
         icon: 'page-company',
-        markerColor: 'green'
+        markerColor: 'blue'
+      },
+      association: {
+        type: 'awesomeMarker',
+        icon: 'page-association',
+        markerColor: 'lightgreen',
+        iconColor: 'gray'
       },
       institution: {
         type: 'awesomeMarker',
         icon: 'page-institution',
-        markerColor: 'green'
+        markerColor: 'lightgray'
       }
     };
 
@@ -87,22 +83,22 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
         // Pages
         shop: {
           type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.SHOP',
-          visible: true
-        },
-        association: {
-          type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.ASSOCIATION',
+          name: 'MAP.REGISTRY.VIEW.LAYER.SHOP',
           visible: true
         },
         company: {
           type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.COMPANY',
+          name: 'MAP.REGISTRY.VIEW.LAYER.COMPANY',
+          visible: true
+        },
+        association: {
+          type: 'featureGroup',
+          name: 'MAP.REGISTRY.VIEW.LAYER.ASSOCIATION',
           visible: true
         },
         institution: {
           type: 'featureGroup',
-          name: 'MAP.WOT.VIEW.LAYER.INSTITUTION',
+          name: 'MAP.REGISTRY.VIEW.LAYER.INSTITUTION',
           visible: true
         }
       }
@@ -240,7 +236,7 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
         showCoverageOnHover: false,
         iconCreateFunction: function (cluster) {
           var countByLayer = _.countBy(cluster.getAllChildMarkers(), extractMarkerLayer);
-          var markerColor = countByLayer.member ? 'blue' : (countByLayer.pending ? 'lightgreen' : 'lightgray');
+          var markerColor = countByLayer.shop||countByLayer.company ? 'blue' : (countByLayer.association ? 'lightgreen' : 'lightgray');
           var childCount = cluster.getChildCount();
           var className = 'marker-cluster ' + markerColor + ' marker-cluster-';
           if (childCount < 10) {
