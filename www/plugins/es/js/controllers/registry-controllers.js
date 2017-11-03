@@ -203,7 +203,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 
   $scope.onLocationChanged = function() {
     if ($scope.search.loadingPosition) return;
-    return $scope.search.geoPoint = undefined; // reset geo point
+    $scope.search.geoPoint = undefined; // reset geo point
   };
   $scope.$watch('search.location', $scope.onLocationChanged);
 
