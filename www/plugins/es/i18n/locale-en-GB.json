@@ -14,9 +14,12 @@
       "TITLE": "Notifications",
       "MARK_ALL_AS_READ": "Mark all as read",
       "NO_RESULT": "No notification",
-      "SETTINGS": "Paramètres",
       "SHOW_ALL": "Show all",
       "LOAD_NOTIFICATIONS_FAILED": "Could not load notifications"
+    },
+    "GEO": {
+      "DISTANCE": "Maximum distance around the city",
+      "DISTANCE_OPTION": "{{value}} km"
     },
     "ERROR": {
       "REQUIRED_FOR_LOCATION": "Required field to appear on the map",
@@ -60,9 +63,9 @@
       "DIVIDER_GROUP": "Groups"
     },
     "CONFIRM": {
-      "SUGGEST_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer ces suggestions de certification</b> ?",
-      "ASK_CERTIFICATION": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> ?",
-      "ASK_CERTIFICATIONS": "Etes-vous sûr de vouloir <b>envoyer une demande de certification</b> à ces personnes ?"
+      "SUGGEST_CERTIFICATIONS": "Are you sure you want <b>to send these certification suggestions</b>?",
+      "ASK_CERTIFICATION": "Are you sure you want to <b>send a certification request</b>?",
+      "ASK_CERTIFICATIONS": "Are you sure you want to <b>send a certification request</b> to these people?"
     }
   },
   "INVITATION": {
@@ -214,7 +217,13 @@
     "LOCATION_DIVIDER": "Address",
     "SOCIAL_NETWORKS_DIVIDER": "Social networks, web sites",
     "TECHNICAL_DIVIDER": "Technical data",
-    "BTN_NEW": "Add",
+    "BTN_SHOW_WOT": "People",
+    "BTN_SHOW_WOT_HELP": "Search for people",
+    "BTN_SHOW_PAGES": "Pages",
+    "BTN_SHOW_PAGES_HELP": "Search for pages",
+    "BTN_NEW": "New page",
+    "MY_PAGES": "My pages",
+    "NO_PAGE": "No page",
     "SEARCH": {
       "TITLE": "Professional Directory",
       "TITLE_SMALL_DEVICE": "Pro Directory",
@@ -273,7 +282,8 @@
       "SAVE_RECORD_FAILED": "Saving failed",
       "RECORD_NOT_EXISTS": "Record not found",
       "FAILED_SAVE_COMMENT": "Saving comment failed",
-      "FAILED_REMOVE_COMMENT": "Deleting comment failed"
+      "FAILED_REMOVE_COMMENT": "Deleting comment failed",
+      "GEO_LOCATION_NOT_FOUND": "City or zip code not found"
     },
     "INFO": {
       "RECORD_REMOVED" : "Page successfully deleted",
@@ -422,6 +432,12 @@
       "UPDATE_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his comment on your referencing: <b>{{params[2]}}</b>",
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has replied to your comment on the referencing: <b>{{params[2]}}</b>",
       "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> has modified his answer to your comment, on the referencing: <b>{{params[2]}}</b>"
+    },
+    "CONFIRM": {
+      "ES_USE_FALLBACK_NODE": "Data node <b>{{old}}</b> unreachable or invalid address.<br/><br/>Do you want to temporarily use the data node <b>{{new}}</b>?"
+    },
+    "ERROR": {
+      "ES_CONNECTION_ERROR": "Data node <b>{{server}}</b> unreachable or invalid address.<br/><br/>Cesium will continue to work, <b>without the Cesium+</b> extension (user profiles, private messages, maps and graphics).<br/><br/>Check your Internet connection, or change data node in <a class=\"positive\" ng-click=\"doQuickFix('settings')\">extension settings</a>."
     }
   }
 }
