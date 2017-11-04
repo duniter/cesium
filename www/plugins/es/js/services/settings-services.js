@@ -17,7 +17,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
   var
     SETTINGS_SAVE_SPEC = {
       includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode', 'logoutIdle'],
-      excludes: ['time'],
+      excludes: ['timeout', 'cacheTimeMs', 'time', 'login', 'build'],
       plugins: {
         es: {
           excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes']

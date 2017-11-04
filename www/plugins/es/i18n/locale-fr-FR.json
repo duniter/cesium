@@ -16,14 +16,6 @@
       "NO_RESULT": "Aucune notification",
       "SHOW_ALL": "Voir tout",
       "LOAD_NOTIFICATIONS_FAILED": "Erreur de chargement des notifications"
-    },
-    "GEO": {
-      "DISTANCE": "Distance maximale autour de la ville",
-      "DISTANCE_OPTION": "{{value}} km"
-    },
-    "ERROR": {
-      "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",
-      "INVALID_FOR_LOCATION": "Adresse inconnue"
     }
   },
   "MENU": {
@@ -121,7 +113,11 @@
     "REPLY_TO_LINK": "En réponse à ",
     "REPLY_TO_DELETED_COMMENT": "En réponse à un commentaire supprimé",
     "REPLY_COUNT": "{{replyCount}} réponses",
-    "DELETED_COMMENT": "Commentaire supprimé"
+    "DELETED_COMMENT": "Commentaire supprimé",
+    "ERROR": {
+      "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
+      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire"
+    }
   },
   "MESSAGE": {
     "REPLY_TITLE_PREFIX": "Rep: ",
@@ -332,8 +328,6 @@
       "REMOVE_RECORD_FAILED": "Erreur de la suppression de la page",
       "SAVE_RECORD_FAILED": "Erreur lors de la sauvegarde",
       "RECORD_NOT_EXISTS": "Page inexistante",
-      "FAILED_SAVE_COMMENT": "Erreur lors de la sauvegarde du commentaire",
-      "FAILED_REMOVE_COMMENT": "Erreur lors de la suppression du commentaire",
       "GEO_LOCATION_NOT_FOUND": "Ville ou code postal non trouvé"
     },
     "INFO": {
@@ -347,26 +341,14 @@
     "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
-    "BTN_GEOLOC_ADDRESS": "Trouver mon adresse sur la carte",
-    "USE_GEO_POINT": "Apparaître sur les cartes {{'COMMON.APP_NAME'|translate}} ?",
-    "LOADING_LOCATION": "Recherche de l'adresse...",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",
     "TITLE_HELP": "Nom, Prénom",
     "DESCRIPTION": "A propos de moi",
     "DESCRIPTION_HELP": "A propos de moi...",
-    "ADDRESS": "Rue",
-    "ADDRESS_HELP": "Rue, complément d'adresse...",
-    "CITY": "Ville",
-    "CITY_HELP": "Ville, Pays",
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "Informations générales",
-    "LOCATION_DIVIDER": "Adresse",
     "SOCIAL_NETWORKS_DIVIDER": "Réseaux sociaux, sites web",
-    "LATITUDE": "Latitude",
-    "LATITUDE_HELP": "Latitude",
-    "LONGITUDE": "Longitude",
-    "LONGITUDE_HELP": "Longitude",
     "TECHNICAL_DIVIDER": "Informations techniques",
     "MODAL_AVATAR": {
       "TITLE": "Photo de profil",
@@ -375,25 +357,41 @@
       "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
-    "MODAL_LOCATION": {
-      "TITLE": "Recherche de l'adresse",
-      "SEARCH_HELP": "Ville, Pays",
-      "ALTERNATIVE_RESULT_DIVIDER": "Résultats alternatifs pour <b>{{address}}</b> :",
-      "POSITION": "Latitude/Longitude : {{lat}}  {{lon}}"
-    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
-      "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image",
-      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position. Veuillez utiliser le bouton de recherche.",
-      "ADDRESS_LOCATION_FAILED": "Impossible de récupérer la position à partir de l'adresse"
+      "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
     "INFO": {
       "PROFILE_SAVED": "Profil sauvegardé"
     },
     "HELP": {
       "WARNING_PUBLIC_DATA": "Les informations renseignées dans votre profil <b>sont publiques</b> : visibles y compris par des personnes <b>non connectées</b>.<br/>{{'PROFILE.PROFILE_DIVIDER_HELP'|translate}}"
+    }
+  },
+  "LOCATION": {
+    "BTN_GEOLOC_ADDRESS": "Trouver mon adresse sur la carte",
+    "USE_GEO_POINT": "Apparaître sur les cartes {{'COMMON.APP_NAME'|translate}} ?",
+    "LOADING_LOCATION": "Recherche de l'adresse...",
+    "LOCATION_DIVIDER": "Adresse",
+    "ADDRESS": "Rue",
+    "ADDRESS_HELP": "Rue, complément d'adresse...",
+    "CITY": "Ville",
+    "CITY_HELP": "Ville, Pays",
+    "DISTANCE": "Distance maximale autour de la ville",
+    "DISTANCE_OPTION": "{{value}} km",
+    "MODAL": {
+      "TITLE": "Recherche de l'adresse",
+      "SEARCH_HELP": "Ville, Pays",
+      "ALTERNATIVE_RESULT_DIVIDER": "Résultats alternatifs pour <b>{{address}}</b> :",
+      "POSITION": "Latitude/Longitude : {{lat}}  {{lon}}"
+    },
+    "ERROR": {
+      "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",
+      "INVALID_FOR_LOCATION": "Adresse inconnue",
+      "GEO_LOCATION_FAILED": "Impossible de récupérer votre position. Veuillez utiliser le bouton de recherche.",
+      "ADDRESS_LOCATION_FAILED": "Impossible de récupérer la position à partir de l'adresse"
     }
   },
   "SUBSCRIPTION": {

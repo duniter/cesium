@@ -16,10 +16,6 @@
       "NO_RESULT": "Ningúna notificación",
       "SHOW_ALL": "Ver todo",
       "LOAD_NOTIFICATIONS_FAILED": "Fracaso en la carga de las notificaciónes"
-    },
-    "ERROR": {
-      "REQUIRED_FOR_LOCATION": "Campo obligatorio para aparecer en el mapa",
-      "INVALID_FOR_LOCATION": "Dirección desconocida"
     }
   },
   "MENU": {
@@ -117,7 +113,11 @@
     "REPLY_TO_LINK": "En repuesta a ",
     "REPLY_TO_DELETED_COMMENT": "En repuesta a un comentario suprimido",
     "REPLY_COUNT": "{{replyCount}} repuestas",
-    "DELETED_COMMENT": "Comentario suprimido"
+    "DELETED_COMMENT": "Comentario suprimido",
+    "ERROR": {
+      "FAILED_SAVE_COMMENT": "Fracaso durante el respaldo del comentario",
+      "FAILED_REMOVE_COMMENT": "Fracaso durante la supresión del comentario"
+    }
   },
   "MESSAGE": {
     "REPLY_TITLE_PREFIX": "Rep: ",
@@ -264,6 +264,10 @@
     "LOCATION_DIVIDER": "Dirección",
     "SOCIAL_NETWORKS_DIVIDER": "Redes sociales y sitio web",
     "TECHNICAL_DIVIDER": "Informaciónes técnicas",
+    "BTN_SHOW_WOT": "Personas",
+    "BTN_SHOW_WOT_HELP": "Buscar personas",
+    "BTN_SHOW_PAGES": "Páginas",
+    "BTN_SHOW_PAGES_HELP": "Búsqueda de páginas",
     "BTN_NEW": "Creer una página",
     "MY_PAGES": "Mis páginas",
     "NO_PAGE": "Sin página",
@@ -324,8 +328,7 @@
       "REMOVE_RECORD_FAILED": "Fracaso en la supresión de la página",
       "SAVE_RECORD_FAILED": "Fracaso durante el respaldo",
       "RECORD_NOT_EXISTS": "Página inexistente",
-      "FAILED_SAVE_COMMENT": "Fracaso durante el respaldo del comentario",
-      "FAILED_REMOVE_COMMENT": "Fracaso durante la supresión del comentario",
+      "GEO_LOCATION_NOT_FOUND": "Ciudad o código postal no encontrado"
     },
     "INFO": {
       "RECORD_REMOVED" : "Página suprimida",
@@ -338,26 +341,14 @@
     "NO_PROFILE_DEFINED": "Ningún perfil Cesium+",
     "BTN_ADD": "Ingresar mi perfil",
     "BTN_EDIT": "Editar mi perfil",
-    "BTN_GEOLOC_ADDRESS": "Actualizar desde la dirección",
-    "USE_GEO_POINT": "Aparecer en la tarjeta {{'COMMON.APP_NAME'|translate}} ?",
-    "LOADING_LOCATION": "Encontrar la dirección ...",
     "UID": "Seudónimo",
     "TITLE": "Nombre, Apellido",
     "TITLE_HELP": "Nombre, Apellido",
     "DESCRIPTION": "A propósito de yo",
     "DESCRIPTION_HELP": "A propósito de yo...",
-    "ADDRESS": "Calle",
-    "ADDRESS_HELP": "Calle, complemento de dirección...",
-    "CITY": "Ciudad",
-    "CITY_HELP": "Ciudad, País",
     "SOCIAL_HELP": "http://...",
     "GENERAL_DIVIDER": "Informaciónes generales",
-    "LOCATION_DIVIDER": "Dirección",
     "SOCIAL_NETWORKS_DIVIDER": "Redes sociales, sitios web",
-    "LATITUDE": "Latitud",
-    "LATITUDE_HELP": "Latitud",
-    "LONGITUDE": "Longitud",
-    "LONGITUDE_HELP": "Longitud",
     "TECHNICAL_DIVIDER": "Informaciónes técnicas",
     "MODAL_AVATAR": {
       "TITLE": "Foto de perfil",
@@ -366,25 +357,41 @@
       "RESIZE_HELP": "<b>Encuadra la imagen</b>, si es necesario. Un clic mantenido sobre la imagen permite desplazarla. Hace un clic sobre la zona abajo a la izquierda para hacer zoom.",
       "RESULT_HELP": "<b>Aquí está el resultado</b> tal como está visible sobre su perfil :"
     },
-    "MODAL_LOCATION": {
-      "TITLE": "Búsqueda de dirección",
-      "SEARCH_HELP": "Ciudad, País",
-      "ALTERNATIVE_RESULT_DIVIDER": "Resultados alternativos para <b>{{address}}</b> :",
-      "POSITION": "Latitud/Longitud : {{lat}}  {{lon}}"
-    },
     "ERROR": {
       "LOAD_PROFILE_FAILED": "Fracaso en la carga del perfil usuario.",
       "SAVE_PROFILE_FAILED": "Fracaso durante el respaldo",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Formato no tomado en cuenta : por favor, indica una dirección válida.<br/><br/>Ejemplos :<ul><li>- Una página Facebook (https://www.facebook.com/user)</li><li>- Una página web (http://www.misitio.es)</li><li>- Una dirección email (joe@dalton.com)</li></ul>",
-      "IMAGE_RESIZE_FAILED": "Fracaso durante el redimensionamiento de la imagen",
-      "GEO_LOCATION_FAILED": "No se puede obtener de su ubicación",
-      "ADDRESS_LOCATION_FAILED": "No se puede recuperar la posición de la dirección"
+      "IMAGE_RESIZE_FAILED": "Fracaso durante el redimensionamiento de la imagen"
     },
     "INFO": {
       "PROFILE_SAVED": "Perfil respaldado"
     },
     "HELP": {
       "WARNING_PUBLIC_DATA": "Las informaciónes informadas en su perfil <b>están públicas</b> : visibles también por personas <b>no conectadas</b>.<br/>{{'PROFILE.PROFILE_DIVIDER_HELP'|translate}}"
+    }
+  },
+  "LOCATION": {
+    "BTN_GEOLOC_ADDRESS": "Actualizar desde la dirección",
+    "USE_GEO_POINT": "Aparecer en la tarjeta {{'COMMON.APP_NAME'|translate}} ?",
+    "LOADING_LOCATION": "Encontrar la dirección ...",
+    "LOCATION_DIVIDER": "Dirección",
+    "ADDRESS": "Calle",
+    "ADDRESS_HELP": "Calle, complemento de dirección...",
+    "CITY": "Ciudad",
+    "CITY_HELP": "Ciudad, País",
+    "DISTANCE": "Distancia máxima alrededor de la ciudad",
+    "DISTANCE_OPTION": "{{value}} km",
+    "MODAL": {
+      "TITLE": "Búsqueda de dirección",
+      "SEARCH_HELP": "Ciudad, País",
+      "ALTERNATIVE_RESULT_DIVIDER": "Resultados alternativos para <b>{{address}}</b> :",
+      "POSITION": "Latitud/Longitud : {{lat}}  {{lon}}"
+    },
+    "ERROR": {
+      "REQUIRED_FOR_LOCATION": "Campo obligatorio para aparecer en el mapa",
+      "INVALID_FOR_LOCATION": "Dirección desconocida",
+      "GEO_LOCATION_FAILED": "No se puede recuperar su ubicación Por favor usa el botón de búsqueda.",
+      "ADDRESS_LOCATION_FAILED": "No se puede recuperar la posición de la dirección."
     }
   },
   "SUBSCRIPTION": {
