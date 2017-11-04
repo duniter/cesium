@@ -1,10 +1,10 @@
 <ion-view>
-  <ion-nav-title class="visible-xs visible-sm">
-    <span ng-if="number=='current'">{{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}</span>
-    <span ng-if="!loading && number!='current'">{{'BLOCKCHAIN.VIEW.HEADER_TITLE'|translate:formData}}</span>
+  <ion-nav-title>
+    <span class="title visible-xs visible-sm" ng-if="number=='current'">{{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}</span>
+    <span class="title visible-xs visible-sm" ng-if="number!='current'">{{'BLOCKCHAIN.VIEW.TITLE'|translate:formData}}</span>
   </ion-nav-title>
 
-  <ion-content scroll="true">
+  <ion-content class="no-padding-xs" scroll="true">
 
     <div class="row no-padding">
       <div class="col col-15 hidden-xs hidden-sm">&nbsp;</div>
@@ -21,7 +21,10 @@
           <!-- header -->
           <div class="item item-text-wrap" >
 
-            <h1 class="padding-top hidden-xs hidden-sm">{{'BLOCKCHAIN.VIEW.TITLE'|translate:formData}}</h1>
+            <h1 class="padding-top hidden-xs hidden-sm">
+              <span ng-if="number!='current'">{{'BLOCKCHAIN.VIEW.TITLE'|translate:formData}}</span>
+              <span ng-if="number=='current'">{{'BLOCKCHAIN.VIEW.TITLE_CURRENT'|translate}}</span>
+            </h1>
 
             <h3>
               <span class="dark">
@@ -110,7 +113,9 @@
             </h5>
           </ion-item>
 
-          <ion-item></ion-item>
+          <!-- spacer -->
+          <ion-item class="hidden-sm hidden-xs"></ion-item>
+
           <span class="item item-divider">
             {{'BLOCKCHAIN.VIEW.DATA_DIVIDER' | translate}}
           </span>
