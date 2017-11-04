@@ -1,10 +1,10 @@
 angular.module('cesium.help.services', [])
 
-  .constant('csHelpConstants', {
-    wallet: {
-      stepCount: 4
-    }
-  })
+.constant('csHelpConstants', {
+  wallet: {
+    stepCount: 4
+  }
+})
 
 .factory('csHelp', function($rootScope, csSettings, UIUtils, csHelpConstants, $controller) {
   'ngInject';
