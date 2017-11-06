@@ -2088,7 +2088,7 @@ div[dropzone] {
   }
 
   .button.button-tab.active {
-    border-bottom: 11px solid $active;
+    background-color: #b2e0ff;
   }
 }
 
@@ -2098,10 +2098,6 @@ div[dropzone] {
 
     .button.button-tab {
       padding: 2px 10px 0 10px !important;
-    }
-
-    .button.button-tab.active {
-      border-bottom: 6px solid #AAA;
     }
   }
 }

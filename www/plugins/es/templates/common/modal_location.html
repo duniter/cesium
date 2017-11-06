@@ -1,7 +1,7 @@
 <ion-modal-view class="modal-full-height modal-search-location">
   <ion-header-bar class="bar-positive">
       <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
-      <h1 class="title" translate>PROFILE.MODAL_LOCATION.TITLE</h1>
+      <h1 class="title" translate>LOCATION.MODAL.TITLE</h1>
   </ion-header-bar>
 
   <ion-content class="padding no-padding-xs" scroll="true">
@@ -13,13 +13,13 @@
 
       <input type="text"
              class="visible-xs visible-sm"
-             placeholder="{{'PROFILE.MODAL_LOCATION.SEARCH_HELP'|translate}}"
+             placeholder="{{'LOCATION.MODAL.SEARCH_HELP'|translate}}"
              ng-model="search.text"
              ng-model-options="{ debounce: 650 }"
              ng-change="doSearch()">
       <input type="text"
              class="hidden-xs hidden-sm"
-              placeholder="{{'PROFILE.MODAL_LOCATION.SEARCH_HELP'|translate}}"
+              placeholder="{{'LOCATION.MODAL.SEARCH_HELP'|translate}}"
              ng-model="search.text"
              on-return="doSearch()">
     </div>
@@ -71,7 +71,7 @@
             <span class="gray">| {{::res.address.country}}</span>
           </h3>
           <h5 class="gray">
-             {{'PROFILE.MODAL_LOCATION.POSITION'|translate:res }}
+             {{'LOCATION.MODAL.POSITION'|translate:res }}
           </h5>
 
           <i class="icon ion-ios-arrow-right"></i>

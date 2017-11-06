@@ -385,7 +385,7 @@
       "TITLE": "Búsqueda de dirección",
       "SEARCH_HELP": "Ciudad, País",
       "ALTERNATIVE_RESULT_DIVIDER": "Resultados alternativos para <b>{{address}}</b> :",
-      "POSITION": "Latitud/Longitud : {{lat}}  {{lon}}"
+      "POSITION": "Latitud/Longitud : {{lat}} / {{lon}}"
     },
     "ERROR": {
       "REQUIRED_FOR_LOCATION": "Campo obligatorio para aparecer en el mapa",

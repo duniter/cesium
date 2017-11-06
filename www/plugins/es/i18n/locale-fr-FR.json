@@ -385,7 +385,7 @@
       "TITLE": "Recherche de l'adresse",
       "SEARCH_HELP": "Ville, Pays",
       "ALTERNATIVE_RESULT_DIVIDER": "Résultats alternatifs pour <b>{{address}}</b> :",
-      "POSITION": "Latitude/Longitude : {{lat}}  {{lon}}"
+      "POSITION": "Latitude/Longitude : {{lat}} / {{lon}}"
     },
     "ERROR": {
       "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",

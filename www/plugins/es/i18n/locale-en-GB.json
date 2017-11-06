@@ -334,7 +334,7 @@
       "TITLE": "Search address",
       "SEARCH_HELP": "City, Country",
       "ALTERNATIVE_RESULT_DIVIDER": "Alternative results for <b>{{address}}</b>:",
-      "POSITION": "lat/lon : {{lat}} {{lon}}"
+      "POSITION": "lat/lon : {{lat}} / {{lon}}"
     },
     "ERROR": {
       "REQUIRED_FOR_LOCATION": "Required field to appear on the map",
