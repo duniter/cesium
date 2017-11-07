@@ -222,15 +222,19 @@
     "NO_PAGE": "No page",
     "SEARCH": {
       "TITLE": "Professional Directory",
-      "TITLE_SMALL_DEVICE": "Pro Directory",
       "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
+      "BTN_LAST_RECORDS": "Recent pages",
       "BTN_OPTIONS": "Advanced search",
       "TYPE": "Kind of organization",
-      "LOCATION": "Location",
-      "LOCATION_HELP": "City",
-      "LAST_RECORDS": "Latest references:",
-      "RESULTS": "Results:"
+      "LOCATION": "City",
+      "LOCATION_HELP": "City, Country",
+      "RESULTS": "Results",
+      "RESULT_COUNT_LOCATION": "{{count}} result(s), near {{location}}",
+      "RESULT_COUNT": "{{count}} result(s)",
+      "LAST_RECORDS": "Recents pages",
+      "LAST_RECORD_COUNT_LOCATION": "{{count}} recent(s) page(s), near {{location}}",
+      "LAST_RECORD_COUNT": "{{count}} recent(s) page(s)"
     },
     "VIEW": {
       "TITLE": "Registry",
@@ -329,7 +333,8 @@
     "CITY": "City",
     "CITY_HELP": "City, Country",
     "DISTANCE": "Maximum distance around the city",
-    "DISTANCE_OPTION": "{{value}} km",
+    "DISTANCE_UNIT": "mi",
+    "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
     "MODAL": {
       "TITLE": "Search address",
       "SEARCH_HELP": "City, Country",

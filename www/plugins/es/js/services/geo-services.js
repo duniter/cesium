@@ -155,6 +155,25 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         });
     }
 
+    // Source: http://www.geodatasource.com/developers/javascript
+    // Unit: 'M' is statute miles (default),  'Km' is kilometers, 'N' is nautical miles
+    function getDistance(lat1, lon1, lat2, lon2, unit) {
+      var radlat1 = Math.PI * lat1/180;
+      var radlat2 = Math.PI * lat2/180;
+      var theta = lon1-lon2;
+      var radtheta = Math.PI * theta/180;
+      var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      dist = Math.acos(dist);
+      dist = dist * 180/Math.PI;
+      dist = dist * 60 * 1.1515;
+      // nautical miles
+      if (unit == "km") { return dist * 1.609344; }
+      // nautical miles
+      if (unit == "N") return dist * 0.8684;
+      // statute miles
+      return dist;
+    }
+
     that.raw.google.apiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey;
     var hasConfigApiKey = !!that.raw.google.apiKey;
     csSettings.ready()
@@ -177,7 +196,8 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
       point: {
         current: getCurrentPosition,
         searchByAddress: searchPositionByAddress,
-        searchByIP: searchPositionByIP
+        searchByIP: searchPositionByIP,
+        distance: getDistance
       },
       google: {
         isEnable: function() {

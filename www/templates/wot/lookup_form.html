@@ -45,15 +45,15 @@
     <div class="pull-left" ng-if="!search.loading && showResultLabel">
       <ng-if ng-if="search.type=='newcomers'">
         <h4 translate>WOT.LOOKUP.NEWCOMERS</h4>
-        <span class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.NEWCOMERS_COUNT'|translate:{count: search.total} }}</span>
+        <h5 class="dark no-padding" ng-if="search.total">{{'WOT.LOOKUP.NEWCOMERS_COUNT'|translate:{count: search.total} }}</h5>
       </ng-if>
       <ng-if ng-if="search.type=='pending'">
         <h4 translate>WOT.LOOKUP.PENDING</h4>
-        <span class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.PENDING_COUNT'|translate:{count: search.total} }}</span>
+        <h5 class="dark no-padding" ng-if="search.total">{{'WOT.LOOKUP.PENDING_COUNT'|translate:{count: search.total} }}</h5>
       </ng-if>
       <h4 ng-if="search.type=='text'">
         <span translate>COMMON.RESULTS_LIST</span>
-        <small class="gray" ng-if="search.total">({{search.total}})</small>
+        <span ng-if="search.total">({{search.total}})</span>
       </h4>
     </div>
 
@@ -111,20 +111,24 @@
       class="{{::motion.ionListClass}}"
       can-swipe="true">
 
-      <ion-item
-        ng-repeat="identity in search.results track by identity.id"
-        id="helptip-wot-search-result-{{$index}}"
-        ng-class="::{'item-avatar item-icon-right ink': !identity.divider, 'item-divider': identity.divider}"
-        class="item item-border-large " ng-click="::select(identity)">
+      <ng-repeat ng-repeat="identity in search.results track by identity.id">
+        <div ng-if="::identity.divider"
+             class="item item-divider"
+             id="helptip-wot-search-result-{{$index}}">{{::('WOT.SEARCH.DIVIDER_' + identity.index)|upper|translate}}</div>
+        <ion-item
+          ng-if="::!identity.divider"
+          id="helptip-wot-search-result-{{$index}}"
+          class="item item-border-large item-avatar item-icon-right ink"
+          ng-click="::select(identity)">
 
-        <ng-include ng-if="identity.divider || identity.type" src="'templates/wot/lookup_item.html'"></ng-include>
-        <ng-include ng-if="!identity.divider && !identity.type" src="'templates/wot/identity.html'"></ng-include>
+          <ng-include ng-if="::identity.templateUrl" src="identity.templateUrl" ng-init="item=identity"></ng-include>
+          <ng-include ng-if="::!identity.templateUrl && !identity.divider" src="'templates/wot/identity.html'"></ng-include>
 
-        <i class="icon ion-ios-arrow-right "></i>
-        <ion-option-button
-          ng-if="identity.pubkey"
-          class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
-      </ion-item>
+          <i class="icon ion-ios-arrow-right "></i>
+          <ion-option-button
+            class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
+        </ion-item>
+      </ng-repeat>
 
     </ion-list>
     <!--endRemoveIf(no-device)-->
@@ -142,11 +146,11 @@
         class="item item-border-large {{::identity.ionItemClass}}" ng-click="::select(identity)">
 
         <!-- divider -->
-        <span ng-if="identity.divider">{{::('WOT.SEARCH.DIVIDER_' + identity.index)|upper|translate}}</span>
-        <ng-include ng-if="identity.templateUrl" src="identity.templateUrl" ng-init="item=identity"></ng-include>
-        <ng-include ng-if="!identity.templateUrl && !identity.divider" src="'templates/wot/identity.html'"></ng-include>
+        <span ng-if="::identity.divider">{{::('WOT.SEARCH.DIVIDER_' + identity.index)|upper|translate}}</span>
+        <ng-include ng-if="::identity.templateUrl" src="identity.templateUrl" ng-init="item=identity"></ng-include>
+        <ng-include ng-if="::!identity.templateUrl && !identity.divider" src="'templates/wot/identity.html'"></ng-include>
 
-        <i ng-if="!identity.divider" class="icon ion-ios-arrow-right "></i>
+        <i ng-if="::!identity.divider" class="icon ion-ios-arrow-right "></i>
       </div>
     </div>
     <!--endRemoveIf(device)-->

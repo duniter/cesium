@@ -47,6 +47,12 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             wot: {
               enableMixedSearch: true
             },
+            registry: {
+              defaultSearch: {
+                location: null,
+                geoPoint: null
+              }
+            },
             geoDistance: '20km'
           }
         }
@@ -149,6 +155,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
   function onSettingsReset(data, deferred) {
     deferred = deferred || $q.defer();
     angular.merge(data, defaultSettings);
+
     failEnable = false;
     deferred.resolve(data);
     return deferred.promise;

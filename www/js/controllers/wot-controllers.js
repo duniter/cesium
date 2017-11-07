@@ -8,7 +8,29 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
         url: "/wot?q&type&hash",
         views: {
           'menuContent': {
-            templateUrl: "templates/wot/lookup.html",
+            templateUrl: "templates/wot/lookup.html"
+          }
+        },
+        data: {
+          large: 'app.wot_lookup_lg'
+        }
+      })
+
+      .state('app.wot_lookup.tab', {
+        url: "/registry",
+        views: {
+          'tab': {
+            templateUrl: "templates/wot/tabs/tab_lookup.html",
+            controller: 'WotLookupCtrl'
+          }
+        }
+      })
+
+      .state('app.wot_lookup_lg', {
+        url: "/wot?q&type&hash",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/wot/lookup_lg.html",
             controller: 'WotLookupCtrl'
           }
         },
@@ -16,6 +38,8 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
           silentLocationChange: true
         }
       })
+
+
 
       .state('app.wot_identity', {
         url: "/wot/:pubkey/:uid?action",
@@ -242,29 +266,29 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
       $scope.search.loading = false;
       $scope.search.type = 'none';
       $scope.search.total = undefined;
+      return $q.when();
     }
-    else {
-      $scope.search.type = 'text';
-      csWot.search(text)
-        .then(function(idties){
-          if ($scope.search.type != 'text') return; // could have change
-          if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
-          if ((!idties || !idties.length) && BMA.regexp.PUBKEY.test(text)) {
-            $scope.doDisplayResult([{pubkey: text}]);
-          }
-          else {
-            $scope.doDisplayResult(idties);
+    $scope.search.type = 'text';
+    return csWot.search(text)
+      .then(function(idties){
+        if ($scope.search.type != 'text') return; // could have change
+        if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
-            // count, skipping divider
-            var countBy = _.countBy(idties, function(hit) {
-              return hit.divider && 'divider' || 'results';
-            });
-            $scope.search.total = countBy && countBy.results || 0;
-          }
-        })
-        .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
-    }
+        if ((!idties || !idties.length) && BMA.regexp.PUBKEY.test(text)) {
+          $scope.doDisplayResult([{pubkey: text}]);
+        }
+        else {
+          $scope.doDisplayResult(idties);
+
+          // count, skipping divider
+          var countBy = _.countBy(idties, function(hit) {
+            return hit.divider && 'divider' || 'results';
+          });
+          $scope.search.total = countBy && countBy.results || 0;
+        }
+      })
+      .catch(UIUtils.onError('ERROR.WOT_LOOKUP_FAILED'));
   };
 
   $scope.doGetNewcomers = function(offset, size, skipLocationUpdate) {

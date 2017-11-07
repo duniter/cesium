@@ -18,6 +18,8 @@ angular.module('cesium.es.common.controllers', ['ngResource', 'cesium.es.service
 
   .controller('ESLookupPositionCtrl', ESLookupPositionController)
 
+  .controller('ESSearchPositionItemCtrl', ESSearchPositionItemController)
+
   .controller('ESSearchPositionModalCtrl', ESSearchPositionModalController)
 ;
 
@@ -574,40 +576,13 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
   var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
   var loadingPosition = false;
 
-  $scope.geoDistanceLabels = {
-    "5km": {
+  $scope.geoDistanceLabels = [5,10,20,50,100,250,500].reduce(function(res, distance){
+    res[distance] = {
       labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 5}
-    },
-    "10km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 10}
-    },
-    "20km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 20}
-    },
-    "30km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 30}
-    },
-    "50km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 50}
-    },
-    "100km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 100}
-    },
-    "250km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 250}
-    },
-    "500km": {
-      labelKey: 'LOCATION.DISTANCE_OPTION',
-      labelParams: {value: 500}
-    }
-  };
+      labelParams: {value: distance}
+    };
+    return res;
+  }, {});
   $scope.geoDistances = _.keys($scope.geoDistanceLabels);
 
   $scope.searchPosition = function(searchText) {
@@ -621,6 +596,7 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
       esGeo.point.searchByAddress(searchText)
       .then(function(res) {
         if (res && res.length == 1) {
+          res[0].exact = true;
           return res[0];
         }
         return $scope.openSearchLocationModal({
@@ -655,7 +631,8 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
         return {
           lat: parseFloat(res.lat),
           lon: parseFloat(res.lon),
-          name: res.shortName
+          name: res.shortName,
+          exact: res.exact
         };
 
       })
@@ -693,6 +670,184 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
   };
 }
 
+function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, UIUtils, csConfig, esGeo) {
+  'ngInject';
+
+  // The default country used for address localisation
+  var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
+  $scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
+
+  var loadingPosition = false;
+  var minLength = 3;
+  $scope.locations = undefined;
+  $scope.selectLocationIndex = -1;
+
+  $scope.onKeydown = function(e) {
+
+    switch(e.keyCode)
+    {
+      case 27://Esc
+        $scope.hideDropdown();
+        break;
+      case 13://Enter
+        if($scope.locations && $scope.locations.length)
+          $scope.onEnter();
+        break;
+      case 38://Up
+        $scope.onArrowUpOrDown(-1);
+        e.preventDefault();
+        break;
+      case 40://Down
+        $scope.onArrowUpOrDown(1);
+        e.preventDefault();
+        break;
+      case  8://Backspace
+      case 45://Insert
+      case 46://Delete
+        break;
+      case 37://Left
+      case 39://Right
+      case 16://Shift
+      case 17://Ctrl
+      case 35://End
+      case 36://Home
+        break;
+      default://All keys
+        $scope.showDropdown();
+    }
+  };
+
+  $scope.onEnter = function() {
+    if ($scope.selectLocationIndex > -1) {
+      $scope.selectLocation($scope.locations[$scope.selectLocationIndex]);
+    }
+    else {
+      $scope.selectLocation($scope.locations[0]);
+    }
+  };
+
+  $scope.onArrowUpOrDown = function(velocity) {
+    if (!$scope.locations) return;
+
+    $scope.selectLocationIndex+=velocity;
+    if ($scope.selectLocationIndex >= $scope.locations.length) {
+      $scope.selectLocationIndex = 0;
+    }
+    if ($scope.selectLocationIndex < 0) {
+      $scope.selectLocationIndex = $scope.locations.length-1;
+    }
+
+    _.forEach($scope.locations||[], function(item, index) {
+      item.selected = (index == $scope.selectLocationIndex);
+    });
+
+    // TODO: scroll to item ?
+  };
+
+  $scope.onLocationChanged = function() {
+    if (loadingPosition || $scope.search.loading) return;
+    $scope.search.geoPoint = undefined; // reset geo point
+
+    if ($scope.smallscreen) {
+      $timeout($scope.openSearchLocationModal, 500);
+    }
+    else {
+      $scope.showDropdown();
+    }
+  };
+
+  $scope.showDropdown = function() {
+    var text = $scope.search.location && $scope.search.location.trim();
+    if (!text || text.length < minLength) {
+      $scope.locations = undefined;
+      return $q.when(); // nothing to search
+    }
+
+    loadingPosition = true;
+
+    // Execute the given query
+    return esGeo.point.searchByAddress(text)
+      .then(function(res) {
+        loadingPosition = false;
+        $scope.locations = res||[];
+        $scope.license = res && res.length && res[0].license;
+      })
+      .catch(function(err) {
+        $scope.hideDropdown();
+        throw err;
+      });
+  };
+
+  $scope.hideDropdown = function(force) {
+    if (force) {
+      $scope.locations = undefined;
+      $scope.selectLocationIndex = -1;
+      $scope.license = undefined;
+      loadingPosition = false;
+      return;
+    }
+
+    return $timeout(function() {
+      if (loadingPosition) return;
+      $scope.locations = undefined;
+      $scope.license = undefined;
+      loadingPosition = false;
+    }, 500);
+  };
+
+  $scope.selectLocation = function(res, exactMatch) {
+    loadingPosition = true; // avoid event
+    if (res) {
+      // Update position
+      $scope.search.geoPoint = $scope.search.geoPoint || {};
+      $scope.search.geoPoint.lat =  parseFloat(res.lat);
+      $scope.search.geoPoint.lon =  parseFloat(res.lon);
+
+      if (exactMatch) {
+        $scope.search.geoPoint.exact = true;
+      }
+      else {
+        // Update location name
+        if (res && res.address && res.address.city) {
+          var cityParts = [res.address.city];
+          if (res.address.postcode) {
+            cityParts.push(res.address.postcode);
+          }
+          if (res.address.country != defaultCountry) {
+            cityParts.push(res.address.country);
+          }
+          $scope.search.location = cityParts.join(', ');
+        }
+      }
+    }
+
+    $scope.hideDropdown(true);
+  };
+
+  /* -- modal -- */
+
+  $scope.openSearchLocationModal = function(options) {
+
+    options = options || {
+      text: $scope.search.location
+    };
+
+    var parameters = {
+      text: options.text || $scope.search.location
+    };
+
+    return ModalUtils.show(
+        'plugins/es/templates/common/modal_location.html',
+        'ESSearchPositionModalCtrl',
+        parameters,
+        {
+          focusFirstInput: true
+        }
+      )
+      .then($scope.selectLocation);
+  };
+
+}
 
 function ESSearchPositionModalController($scope, $q, $translate, esGeo, parameters) {
   'ngInject';

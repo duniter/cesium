@@ -1,6 +1,6 @@
 angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
-  .config(function(PluginServiceProvider, csConfig) {
+  .config(function($stateProvider, PluginServiceProvider, csConfig) {
     'ngInject';
 
     var enable = csConfig.plugins && csConfig.plugins.es;
@@ -9,8 +9,16 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
 
         .extendState('app.wot_lookup', {
           points: {
+            'tabs': {
+              templateUrl: "plugins/es/templates/wot/lookup_extend.html"
+            }
+          }
+        })
+
+        .extendState('app.wot_lookup_lg', {
+          points: {
             'top': {
-              templateUrl: "plugins/es/templates/wot/lookup_extend.html",
+              templateUrl: "plugins/es/templates/wot/lookup_lg_extend.html",
               controller: "ESWotLookupExtendCtrl"
             }
           }
@@ -42,6 +50,8 @@ angular.module('cesium.es.wot.controllers', ['cesium.es.services'])
           }
         })
       ;
+
+
     }
 
   })

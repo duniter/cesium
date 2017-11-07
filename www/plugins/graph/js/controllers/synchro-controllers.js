@@ -215,15 +215,5 @@ function GpSynchroController($scope, $controller, $q, $translate, gpColor, gpDat
         }, []);
       });
     });
-
   };
-
-  $scope.onChartClick = function(data, e, item) {
-    if (!item) return;
-    console.log('Click on item index='+ item._index);
-    var from = $scope.times[item._index];
-    var to = moment.unix(from).utc().add(1, $scope.formData.rangeDuration).unix();
-  };
-
-
 }

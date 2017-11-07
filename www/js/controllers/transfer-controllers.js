@@ -44,7 +44,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
+function TransferController($scope, $controller, Device, UIUtils, csWot, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -108,7 +108,7 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
   };
 }
 
-function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA, csWallet, UIUtils, Modals,
+function TransferModalController($scope, $q, $translate, $timeout, $filter, Device, BMA, csWallet, UIUtils, Modals,
                                  csCurrency, csSettings, parameters) {
   'ngInject';
 
@@ -126,6 +126,19 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
   $scope.commentPattern = BMA.regexp.COMMENT;
   $scope.currency = csCurrency.data.name;
   $scope.loading = true;
+
+  // Define keyboard settings, to bind with model (If small screen AND mobile devices)
+  if (UIUtils.screen.isSmall() || Device.enable) {
+    $scope.digitKeyboardSettings = $scope.digitKeyboardSettings || Device.keyboard.digit.settings.bindModel(
+        $scope,
+        'formData.amount',
+        {
+          decimal: true,
+          decimalSeparator: '.',
+          resizeContent: true
+        });
+    $scope.digitKeyboardvisible = false;
+  }
 
   $scope.setParameters = function(parameters) {
     if (!parameters) return;
@@ -255,6 +268,10 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
           })
           .then(function() {
             UIUtils.loading.hide();
+
+            // Hide numerical keyboard
+            $scope.hideNumericalKeyboard();
+
             return $scope.closeModal(true);
           })
           .then(function(res) {
@@ -283,6 +300,9 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
 
   /* -- modals -- */
   $scope.showWotLookupModal = function() {
+    // Hide numerical keyboard
+    $scope.hideDigitKeyboard();
+
     Modals.showWotLookup()
       .then(function(result){
         if (result) {
@@ -311,6 +331,21 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, BMA,
     });
   };
 
+  /* -- keyboard -- */
+  $scope.showDigitKeyboard = function() {
+    // Hide device keyboard
+    if (Device.enable) {
+      Device.keyboard.hide();
+    }
 
+    // Open the keyboard
+    $timeout(function() {
+      $scope.digitKeyboardVisible = true;
+    }, 100);
+  };
+
+  $scope.hideDigitKeyboard = function() {
+    $scope.digitKeyboardVisible = false;
+  };
 }
 

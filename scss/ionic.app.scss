@@ -49,6 +49,9 @@ $RobotoDraftFontVersion: "1.1.0";
 $cesiumicons-font-path: "../fonts" !default;
 @import "./icons/cesiumicons";
 
+// Include ion-digit-keyboard
+@import "www/lib/ion-digit-keyboard/src/ion-digit-keyboard";
+
 // --------------------------------------------------
 // Responsive: Utility classes
 // --------------------------------------------------
@@ -1187,7 +1190,7 @@ a.underline:hover,
     min-height: 80px !important;
 
     .item-content {
-      min-height: 46px;
+      //min-height: 46px;
     }
   }
 
@@ -2088,7 +2091,7 @@ div[dropzone] {
   }
 
   .button.button-tab.active {
-    background-color: #b2e0ff;
+    background-color: $active;
   }
 }
 

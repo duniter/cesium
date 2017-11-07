@@ -1,0 +1,18 @@
+<ion-view>
+  <ion-nav-buttons side="secondary">
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
+  </ion-nav-buttons>
+
+  <ion-content>
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doSearch()">
+    </ion-refresher>
+
+    <cs-extension-point name="buttons"></cs-extension-point>
+
+    <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
+  </ion-content>
+</ion-view>

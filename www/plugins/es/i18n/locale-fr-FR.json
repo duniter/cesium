@@ -273,15 +273,19 @@
     "NO_PAGE": "Aucune page",
     "SEARCH": {
       "TITLE": "Pages",
-      "TITLE_SMALL_DEVICE": "Pages",
       "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
       "BTN_ADD": "Nouveau",
+      "BTN_LAST_RECORDS": "Pages récentes",
       "BTN_OPTIONS": "Recherche avancée",
       "TYPE": "Type de page",
       "LOCATION": "Ville",
       "LOCATION_HELP": "Ville, Code postal",
-      "LAST_RECORDS": "Derniers enregistrements :",
-      "RESULTS": "Résultats :"
+      "RESULTS": "Résultats",
+      "RESULT_COUNT_LOCATION": "{{count}} résultat(s), près de {{location}}",
+      "RESULT_COUNT": "{{count}} résultat(s)",
+      "LAST_RECORDS": "Pages récentes",
+      "LAST_RECORD_COUNT_LOCATION": "{{count}} page(s) récente(s), près de {{location}}",
+      "LAST_RECORD_COUNT": "{{count}} page(s) récente(s)"
     },
     "VIEW": {
       "TITLE": "Annuaire",
@@ -380,12 +384,14 @@
     "CITY": "Ville",
     "CITY_HELP": "Ville, Pays",
     "DISTANCE": "Distance maximale autour de la ville",
-    "DISTANCE_OPTION": "{{value}} km",
+    "DISTANCE_UNIT": "km",
+    "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
+    "SEARCH_HELP": "Ville, Code postal",
     "MODAL": {
       "TITLE": "Recherche de l'adresse",
-      "SEARCH_HELP": "Ville, Pays",
+      "SEARCH_HELP": "Ville, Code postal, Pays",
       "ALTERNATIVE_RESULT_DIVIDER": "Résultats alternatifs pour <b>{{address}}</b> :",
-      "POSITION": "Latitude/Longitude : {{lat}} / {{lon}}"
+      "POSITION": "Lat/Lon : {{lat}}/{{lon}}"
     },
     "ERROR": {
       "REQUIRED_FOR_LOCATION": "Champ obligatoire pour apparaître sur la carte",

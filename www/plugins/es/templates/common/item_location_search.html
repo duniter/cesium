@@ -1,0 +1,52 @@
+  <!-- search text -->
+  <div class="item no-padding">
+    <div class="item-input ">
+      <i class="icon ion-location placeholder-icon"></i>
+      <input type="text"
+             placeholder="{{(options.location.help||'LOCATION.SEARCH_HELP')|translate}}"
+             ng-model-options="{ debounce: 350 }"
+             ng-model="search.location"
+             ng-keydown="onKeydown($event)"
+
+             ng-change="onLocationChanged()">
+      <!-- ng-blur="hideDropdown()" -->
+    </div>
+  </div>
+
+  <!-- dropdown -->
+  <ul class="item no-padding list dropdown-list" ng-if="locations" scroll="true">
+
+    <div ng-if="!locations.length"
+         class="item padding assertive">
+      <span translate>COMMON.SEARCH_NO_RESULT</span>
+    </div>
+
+    <a ng-repeat="res in locations"
+         class="item item-border-large item-text-wrap  ink done in {{res.selected && 'active' || ''}}"
+         ng-class="::{'item-divider': !res.address, 'item-icon-left': res.address}"
+         ng-click="::res.address ? selectLocation(res) : false">
+
+      <!-- if divider -->
+      <h4 class="text-italic" ng-if="::!res.address" ng-bind-html="res.name"></h4>
+
+      <!-- if divider -->
+      <ng-if ng-if="::res.address">
+
+        <i class="icon ion-location"></i>
+
+        <h3 ng-if="res.address.road">
+          {{::res.address.road}}
+        </h3>
+        <h3>
+          <span ng-if="res.address.postcode">{{::res.address.postcode}}</span>
+          {{::res.address.city||res.address.village}}
+          <span class="gray">| {{::res.address.country}}</span>
+        </h3>
+        <h5 class="gray">
+          {{'LOCATION.MODAL.POSITION'|translate:res }}
+        </h5>
+      </ng-if>
+
+    </a>
+
+  </ul>

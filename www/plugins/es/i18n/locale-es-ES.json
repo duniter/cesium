@@ -273,15 +273,19 @@
     "NO_PAGE": "Sin página",
     "SEARCH": {
       "TITLE": "Páginas",
-      "TITLE_SMALL_DEVICE": "Páginas",
       "SEARCH_HELP": "Qué, Quién : restaurante, Con Marcel, ...",
       "BTN_ADD": "Nuevo",
+      "BTN_LAST_RECORDS": "Páginas recientes",
       "BTN_OPTIONS": "Búsqueda avanzada",
       "TYPE": "Tipo de página",
       "LOCATION": "Localización",
       "LOCATION_HELP": "Ciudad",
-      "LAST_RECORDS": "últimos registrados :",
-      "RESULTS": "Resultados :"
+      "RESULTS": "Resultados",
+      "RESULT_COUNT_LOCATION": "{{count}} Resultados, cerca de {{location}}",
+      "RESULT_COUNT": "{{count}} resultados",
+      "LAST_RECORDS": "Páginas recientes",
+      "LAST_RECORD_COUNT_LOCATION": "{{count}} página(s) reciente(s), cerca de {{location}}",
+      "LAST_RECORD_COUNT": "{{count}} página(s) reciente(s)"
     },
     "VIEW": {
       "TITLE": "Anuario",
@@ -380,7 +384,9 @@
     "CITY": "Ciudad",
     "CITY_HELP": "Ciudad, País",
     "DISTANCE": "Distancia máxima alrededor de la ciudad",
-    "DISTANCE_OPTION": "{{value}} km",
+    "DISTANCE_UNIT": "km",
+    "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
+    "SEARCH_HELP": "Ciudad, País",
     "MODAL": {
       "TITLE": "Búsqueda de dirección",
       "SEARCH_HELP": "Ciudad, País",

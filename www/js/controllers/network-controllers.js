@@ -518,7 +518,7 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
             return csWot.extend($scope.node);
           }
           else {
-            console.log('Could not get peer from /network/peers');
+            console.warn('Could not get peer from /network/peers');
           }
         });
     }

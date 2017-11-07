@@ -1,0 +1,92 @@
+<form ng-submit="doSearch()"/>
+  <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="text"
+           class="visible-xs visible-sm"
+           placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+           ng-model="search.text"
+           ng-model-options="{ debounce: 350 }"
+           ng-change="doSearch()">
+    <input type="text"
+           class="hidden-xs hidden-sm"
+           placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+           id="registrySearchText"
+           ng-model="search.text"
+           on-return="doSearch()">
+  </label>
+
+  <!-- location -->
+  <ng-include src="'plugins/es/templates/common/item_location_search.html'" ng-controller="ESSearchPositionItemCtrl"></ng-include>
+
+  <!-- options -->
+  <ng-include src="'plugins/es/templates/registry/lookup_form_options.html'"></ng-include>
+
+</form>
+
+<div class="buttons-block padding-top hidden-xs hidden-sm">
+
+  <div class="pull-left" >
+
+    <a class="button button-text button-small ink "
+       ng-class="{'button-text-stable': !search.advanced, 'button-text-positive': search.advanced}"
+       ng-click="search.advanced=!search.advanced">
+      <i class="icon ion-ios-gear"></i>
+      {{'REGISTRY.SEARCH.BTN_OPTIONS' | translate}}
+      <i class="icon" ng-class="{'ion-arrow-down-b': !search.advanced, 'ion-arrow-up-b': search.advanced}"></i>
+    </a>
+
+    &nbsp;
+
+  </div>
+
+  <div class="pull-right">
+
+    <a ng-if="enableFilter"
+       class="button button-text button-small ink"
+       ng-class="{'button-text-positive': search.lastRecords}"
+       ng-click="doGetLastRecord()">
+      <i class="icon ion-clock"></i>
+      {{'REGISTRY.SEARCH.BTN_LAST_RECORDS' | translate}}
+    </a>
+    &nbsp;
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="filter-buttons"></cs-extension-point>
+
+    &nbsp;
+
+    <button class="button button-small button-stable ink"
+            ng-click="doSearch()">
+      {{'COMMON.BTN_SEARCH' | translate}}
+    </button>
+  </div>
+</div>
+
+<div class="padding-xs" style="display: block; height: 60px;">
+  <div class="pull-left ng-hide" ng-show="!search.loading && search.results">
+    <ng-if ng-if="search.lastRecords">
+      <h4  translate>REGISTRY.SEARCH.LAST_RECORDS</h4>
+      <h5 class="dark no-padding" ng-if="search.total">
+        <span ng-if="search.geoPoint && search.total">{{'REGISTRY.SEARCH.LAST_RECORD_COUNT_LOCATION'|translate:{count: search.total, location: search.location} }}</span>
+        <span ng-if="!search.geoPoint && search.total">{{'REGISTRY.SEARCH.LAST_RECORD_COUNT'|translate:{count: search.total} }}</span>
+      </h5>
+    </ng-if>
+
+    <ng-if ng-if="!search.lastRecords">
+      <h4 translate>COMMON.RESULTS_LIST</h4>
+      <h5 class="dark no-padding" ng-if="search.total">
+        <span ng-if="search.geoPoint && search.total">{{'REGISTRY.SEARCH.RESULT_COUNT_LOCATION'|translate:{count: search.total, location: search.location} }}</span>
+        <span ng-if="!search.geoPoint && search.total">{{'REGISTRY.SEARCH.RESULT_COUNT'|translate:{count: search.total} }}</span>
+      </h5>
+    </ng-if>
+
+  </div>
+</div>
+
+<div class="center" ng-if="search.loading">
+  <ion-spinner icon="android"></ion-spinner>
+</div>
+
+<div class="padding assertive" ng-if="!search.loading && search.results.length===0" translate>
+  COMMON.SEARCH_NO_RESULT
+</div>

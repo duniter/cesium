@@ -10,12 +10,15 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
 })
 
-.factory('esRegistry', function($rootScope, $q, csPlatform, csSettings, csWallet, esHttp, esComment, csWot) {
+.factory('esRegistry', function($rootScope, $q, csPlatform, csSettings, csWallet, csWot, esHttp, esComment, esGeo) {
   'ngInject';
 
   var
     fields = {
-      commons: ["title", "description", "issuer", "time", "address", "city", "creationTime", "avatar._content_type", "picturesCount", "type", "category", "socials", "pubkey"]
+      commons: ["title", "description", "issuer", "time", "address", "city", "creationTime", "avatar._content_type",
+        "picturesCount", "type", "category", "socials", "pubkey",
+        "geoPoint"
+      ]
     },
     that = this,
     listeners;
@@ -113,6 +116,11 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
       if (hit.highlight.location) {
         record.location = hit.highlight.location[0];
       }
+      if (hit.highlight.tags) {
+        record.tags = hit.highlight.tags.reduce(function(res, tag){
+          return res.concat(tag.replace('<em>', '').replace('</em>', ''));
+        },[]);
+      }
     }
 
     // avatar
@@ -154,11 +162,33 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         if (!res || !res.hits || !res.hits.total) {
           return [];
         }
-        return res.hits.hits.reduce(function(result, hit) {
+
+        // Get geo_distance filter
+        var geoDistanceFilter = _.findWhere(request.query && request.query.bool && request.query.bool.filter || [], function(res) {
+          return !!res.geo_distance;
+        });
+
+        var geoPoint = geoDistanceFilter && geoDistanceFilter.geo_distance && geoDistanceFilter.geo_distance.geoPoint;
+        var distanceUnit = 'km'; // TODO: get unit from geoDistanceFilter.geo_distance.distance
+
+        var hits = res.hits.hits.reduce(function(result, hit) {
           var record = readRecordFromHit(hit, categories);
           record.id = hit._id;
+
+          // Add distance to point
+          if (geoPoint && record.geoPoint) {
+            record.distance = esGeo.point.distance(
+              geoPoint.lat, geoPoint.lon,
+              record.geoPoint.lat, record.geoPoint.lon,
+              distanceUnit
+            );
+          }
           return result.concat(record);
         }, []);
+        return {
+          total: res.hits.total,
+          hits: hits
+        };
       });
   }
 
@@ -184,7 +214,9 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
 
       // parse description as Html
       if (!options.raw) {
-        record.description = esHttp.util.parseAsHtml(record.description);
+        record.description = esHttp.util.parseAsHtml(record.description, {
+          tagState: 'app.wot_lookup.tab_registry'
+        });
       }
 
       // Load issuer (avatar, name, uid, etc.)

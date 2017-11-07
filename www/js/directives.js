@@ -365,7 +365,7 @@ angular.module('cesium.directives', [])
     };
   })
 
-  .directive("dropzone", function($parse) {
+.directive("dropzone", function($parse) {
     return {
       restrict: 'A',
       scope: false,

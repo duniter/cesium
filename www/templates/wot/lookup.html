@@ -1,20 +1,17 @@
-<ion-view>
-  <ion-nav-title>
-    {{'WOT.LOOKUP.TITLE' | translate}}
-  </ion-nav-title>
+<ion-view
+    left-buttons="leftButtons"
+    cache-view="false"
+    >
 
-  <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear icon ion-qr-scanner hidden-no-device"
-            ng-if="$root.device.barcode.enable"
-            ng-click="scanQrCode()">
-    </button>
-    <button class="button button-icon button-clear visible-xs visible-sm"
-            ng-click="showActionsPopover($event)">
-      <i class="icon ion-android-funnel"></i>
-    </button>
-  </ion-nav-buttons>
+  <ion-tabs class="tabs-positive tabs-icon-top">
 
-  <ion-content class="padding no-padding-xs" scroll="true">
-    <ng-include src="'templates/wot/lookup_form.html'"></ng-include>
-  </ion-content>
+    <ion-tab title="{{'MENU.WOT'|translate}}" icon="ion-person-stalker"
+      ui-sref="app.wot_lookup.tab">
+      <ion-nav-view name="tab"></ion-nav-view>
+    </ion-tab>
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="tabs"></cs-extension-point>
+
+  </ion-tabs>
 </ion-view>

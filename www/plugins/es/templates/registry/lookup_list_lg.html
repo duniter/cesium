@@ -1,0 +1,68 @@
+
+
+<div class="list {{::motion.ionListClass}}"
+          ng-if="!search.loading && search.results && search.results.length > 0">
+
+  <a ng-repeat="item in search.results"
+     class="item item-record item-border-large ink padding-xs"
+     ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
+
+    <div class="row row-record">
+      <div class="col item-text-wrap item-avatar-left-padding"
+           ng-class="::{'item-avatar': item.avatar || item.type}">
+        <i class="item-image icon cion-page-{{::item.type}}" ng-if="::!item.avatar"></i>
+        <i class="item-image avatar" style="background-image: url({{::item.avatar.src}})" ng-if="::item.avatar"></i>
+        <h2 ng-bind-html="::item.title"></h2>
+        <h4>
+          <span class="dark" ng-if="::item.city">
+            <b class="ion-location"></b>
+            <span ng-bind-html="::item.city"></span>
+          </span>
+          <span class="gray" ng-if="::item.distance">
+            ({{::item.distance|formatDecimal}} {{::geoUnit}})
+          </span>
+        </h4>
+        <h4>
+          <span class="gray" ng-if="::item.time && search.lastRecords">
+            <b class="ion-clock" ></b>
+            {{::item.time | formatFromNow}}
+          </span>
+          <span ng-if="::item.tags" class="dark">
+           <ng-repeat ng-repeat="tag in ::item.tags">
+             #<ng-bind-html ng-bind-html="::tag"></ng-bind-html>
+           </ng-repeat>
+          </span>
+        </h4>
+        <span  ng-if="::item.picturesCount > 1"
+               class="badge badge-balanced badge-picture-count">{{::item.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
+      </div>
+      <div class="col col-20 hidden-xs hidden-sm">
+        <h3 class="gray">
+          <ng-if ng-if="::item.category">{{::item.category.name}}</ng-if>
+          <ng-if ng-if="::!item.category">{{::'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}</ng-if>
+        </h3>
+      </div>
+      <div class="col hidden-xs">
+        <h4 class="text-wrap">
+          <span class="visible-sm">
+            <b class="ion-flag" ></b>
+            <ng-if ng-if="::item.category">{{::item.category.name|truncText:50}}</ng-if>
+            <ng-if ng-if="::!item.category">{{::'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}</ng-if>
+          </span>
+          <span class="gray text-italic" ng-if="::item.description">
+            <b class="ion-quote" ></b>
+            <span ng-bind-html="::item.description|truncText:500" ng-if="::item.description"></span>
+          </span>
+        </h4>
+      </div>
+    </div>
+
+  </a>
+</div>
+
+<ion-infinite-scroll
+  ng-if="!search.loading && search.hasMore"
+  spinner="android"
+  on-infinite="showMore()"
+  distance="10%">
+</ion-infinite-scroll>
