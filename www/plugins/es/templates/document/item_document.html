@@ -1,6 +1,6 @@
 <ion-item id="doc-{{::doc.id}}"
           class="item item-document item-icon-left ink {{::ionItemClass}} no-padding-top no-padding-bottom"
-          ng-click="selectDocument(doc)">
+          ng-click="selectDocument($event, doc)">
 
   <i class="icon ion-document stable" ng-if=":rebind:!doc.avatar"></i>
   <i class="avatar" ng-if=":rebind:doc.avatar" style="background-image: url('{{:rebind:doc.avatar.src}}')"></i>

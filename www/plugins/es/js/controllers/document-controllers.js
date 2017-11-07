@@ -25,7 +25,7 @@ angular.module('cesium.es.document.controllers', ['cesium.es.services'])
 ;
 
 function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
-                                    csSettings, csWallet, UIUtils, esDocument) {
+                                    csSettings, csWallet, UIUtils, esHttp, esDocument) {
   'ngInject';
 
   $scope.search = {
@@ -157,8 +157,11 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
       });
   };
 
-  $scope.selectDocument = function(doc) {
-    console.debug("Selected document: ", doc);
+  $scope.selectDocument = function(event, doc) {
+    console.debug("Selected document: ", doc, esHttp);
+
+    var url = esHttp.getUrl('/{0}/{1}/_search?pretty&q=_id:{2}'.format(doc.index, doc.type, doc.id));
+    return $scope.openLink(event, url);
   };
 
   $scope.toggleSort = function(sort){
