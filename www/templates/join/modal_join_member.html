@@ -89,6 +89,7 @@
                 <span class="input-label" translate>ACCOUNT.NEW.PSEUDO</span>
                 <input id="pseudo" name="pseudo" type="text" placeholder="{{'ACCOUNT.NEW.PSEUDO_HELP' | translate}}"
                        ng-model="formData.pseudo"
+                       autocomplete="off"
                        ng-minlength="3"
                        ng-maxlength="100"
                        ng-pattern="userIdPattern"
@@ -167,6 +168,7 @@
                        name="username" type="password" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                        ng-change="formDataChanged()"
                        ng-model="formData.username"
+                       autocomplete="off"
                        ng-minlength="8"
                        different-to="formData.pseudo"
                        required>
@@ -175,6 +177,7 @@
                        name="username" type="text" placeholder="{{'LOGIN.SALT_HELP' | translate}}"
                        ng-change="formDataChanged()"
                        ng-model="formData.username"
+                       autocomplete="off"
                        ng-minlength="8"
                        different-to="formData.pseudo"
                        required>
@@ -201,11 +204,13 @@
                        name="confirmUsername" type="password"
                        placeholder="{{'ACCOUNT.NEW.SALT_CONFIRM_HELP' | translate}}"
                        ng-model="formData.confirmUsername"
+                       autocomplete="off"
                        compare-to="formData.username">
                 <input ng-if="showUsername"
                        name="confirmUsername" type="text"
                        placeholder="{{'ACCOUNT.NEW.SALT_CONFIRM_HELP' | translate}}"
                        ng-model="formData.confirmUsername"
+                       autocomplete="off"
                        compare-to="formData.username">
               </div>
               <div class="form-errors"
@@ -260,6 +265,7 @@
                 <input ng-if="!showPassword"
                        name="password" type="password" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                        ng-model="formData.password"
+                       autocomplete="off"
                        ng-change="formDataChanged()"
                        ng-minlength="8"
                        different-to="formData.username"
@@ -267,6 +273,7 @@
                 <input ng-if="showPassword"
                        name="text" type="text" placeholder="{{'LOGIN.PASSWORD_HELP' | translate}}"
                        ng-model="formData.password"
+                       autocomplete="off"
                        ng-change="formDataChanged()"
                        ng-minlength="8"
                        different-to="formData.username"
@@ -294,11 +301,13 @@
                        name="confirmPassword" type="password"
                        placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}"
                        ng-model="formData.confirmPassword"
+                       autocomplete="off"
                        compare-to="formData.password">
                 <input ng-if="showPassword"
                        name="confirmPassword" type="text"
                        placeholder="{{'ACCOUNT.NEW.PASSWORD_CONFIRM_HELP' | translate}}"
                        ng-model="formData.confirmPassword"
+                       autocomplete="off"
                        compare-to="formData.password">
               </div>
               <div class="form-errors"

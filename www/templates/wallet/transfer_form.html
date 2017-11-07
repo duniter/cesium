@@ -47,7 +47,9 @@
         </div>
         <input type="text"
                keyboard-attach=""
-               name="amount" placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})" ng-model="formData.amount"
+               name="amount" placeholder="{{::'TRANSFER.AMOUNT_HELP' | translate}} ({{$root.currency.name | currencySymbolNoHtml:formData.useRelative}})"
+               ng-model="formData.amount"
+               ng-focus="showDigitKeyboard()"
                required
                number-float>
         <a class="button button-stable icon ion-arrow-swap gray ink hidden-xs hidden-sm" ng-click="showUnitPopover($event)">
@@ -103,7 +105,8 @@
                   name="comment"
                   ng-model="formData.comment"
                   ng-maxlength="255"
-                  ng-pattern="commentPattern">
+                  ng-pattern="commentPattern"
+                  ng-focus="hideDigitKeyboard()">
         </textarea>
       </label>
       <div class="form-errors"
@@ -128,4 +131,5 @@
       </button>
     </div>
   </form>
+
 

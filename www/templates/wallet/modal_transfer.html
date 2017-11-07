@@ -10,4 +10,7 @@
   <ion-content scroll="true">
       <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>
   </ion-content>
+
+  <!-- Digit keyboard - fix #30 -->
+  <ion-digit-keyboard class="ng-hide" settings="digitKeyboardSettings" ng-show="digitKeyboardVisible"></ion-digit-keyboard>
 </ion-modal-view>
