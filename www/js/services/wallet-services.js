@@ -28,6 +28,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     listeners,
     started,
     startPromise,
+    loadPromise,
     enableAuthIdle = false,
     api = new Api(this, 'csWallet-' + id),
 
@@ -605,21 +606,27 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     loadData = function(options) {
 
-      var promise;
       var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) &&
         !data.loaded && (!options || !options.minData);
-      if (options && options.minData) {
-        promise = loadMinData(options);
+
+      // Make to load once
+      if (loadPromise) {
+        return loadPromise.then(function() {
+          return isDataLoaded(options) ? data : refreshData(options);
+        });
       }
 
+      if (options && options.minData) {
+        loadPromise = loadMinData(options);
+      }
       else if (options || data.loaded) {
-        promise = refreshData(options);
+        loadPromise = refreshData(options);
       }
       else  {
-        promise = loadFullData();
+        loadPromise = loadFullData();
       }
 
-      return promise
+      return loadPromise
 
         // Warn if wallet has been never used - see #167
         .then(function() {
@@ -645,10 +652,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
         // Return wallet data
         .then(function(confirm) {
+          loadPromise = null;
           if (confirm) {
             return data;
           }
           else { // cancel
+
             throw 'CANCELLED';
           }
         });
