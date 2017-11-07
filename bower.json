@@ -23,7 +23,8 @@
     "leaflet.loading": "Leaflet.loading#^0.1.24",
     "ui-leaflet": "^2.0.0",
     "leaflet.markercluster": "0.5",
-    "Leaflet.FeatureGroup.SubGroup": "0.1.2"
+    "Leaflet.FeatureGroup.SubGroup": "0.1.2",
+    "ion-digit-keyboard": "skol-pro/ion-digit-keyboard"
   },
   "resolutions": {
     "angular-sanitize": "1.5.3",

@@ -2,7 +2,7 @@
 angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.settings.services'])
 
   .factory('Device',
-    function($translate, $ionicPopup, $q,
+    function($rootScope, $translate, $ionicPopup, $q,
       // removeIf(no-device)
       $cordovaClipboard, $cordovaBarcodeScanner, $cordovaCamera,
       // endRemoveIf(no-device)
@@ -138,6 +138,63 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         close: function() {
           if (!exports.keyboard.enable) return;
           cordova.plugins.Keyboard.close();
+        }
+      };
+
+      // Numerical keyboard - fix #30
+      exports.keyboard.digit = {
+        settings: {
+          bindModel: function(modelScope, modelPath, settings) {
+            settings = settings || {};
+            modelScope = modelScope || $rootScope;
+            var getModelValue = function() {
+              return (modelPath||'').split('.').reduce(function(res, path) {
+                return res ? res[path] : undefined;
+              }, modelScope);
+            };
+            var setModelValue = function(value) {
+              var paths = (modelPath||'').split('.');
+              var property = paths.length && paths[paths.length-1];
+              paths.reduce(function(res, path) {
+                if (path == property) {
+                  res[property] = value;
+                  return;
+                }
+                return res[path];
+              }, modelScope);
+            };
+
+            settings.action = settings.action || function(number) {
+                setModelValue((getModelValue() ||'') + number);
+              };
+            if (settings.decimal) {
+              settings.decimalSeparator = settings.decimalSeparator || '.';
+              settings.leftButton = settings.leftButton = {
+                html: '<span>.</span>',
+                action: function () {
+                  var text = getModelValue() || '';
+                  // only one '.' allowed
+                  if (text.indexOf(settings.decimalSeparator) >= 0) return;
+                  // Auto add zero when started with '.'
+                  if (!text.trim().length) {
+                    text = '0';
+                  }
+                  setModelValue(text + settings.decimalSeparator);
+                }
+              };
+            }
+            settings.rightButton = settings.rightButton || {
+                html: '<i class="icon ion-backspace-outline"></i>',
+                action: function() {
+                  var text = getModelValue();
+                  if (text && text.length) {
+                    text = text.slice(0, -1);
+                    setModelValue(text);
+                  }
+                }
+              };
+            return settings;
+          }
         }
       };
 

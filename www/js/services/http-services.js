@@ -132,27 +132,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       return $q(function(resolve, reject) {
         var config = {
           timeout: forcedTimeout || timeout,
-          headers : {'Content-Type' : 'application/json;charset=UTF-8'},
-          eventHandlers: {
-            readystatechange: function(event) {
-              if(event.currentTarget.readyState === 4) {
-                console.log("readyState=4: Server has finished extra work!");
-              }
-            }
-          },
-
-          uploadEventHandlers: {
-            progress: function(e) {
-              if (e.lengthComputable) {
-                progress = Math.round(e.loaded * 100 / e.total);
-                console.log("progress: " + progress + "%");
-                if (e.loaded == e.total) {
-                  console.log("File upload finished!");
-                  console.log("Server will perform extra work now...");
-                }
-              }
-            }
-          }
+          headers : {'Content-Type' : 'application/json;charset=UTF-8'}
         };
 
         prepare(url, params, config, function(url, config) {
