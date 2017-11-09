@@ -181,6 +181,26 @@
 }
 
 /**********
+   Page view
+**********/
+
+
+/* set 'ion-refresher' background color */
+.view-page ion-content.refresher-top-bg:before {
+  background-color: #f8f8f8 !important;
+  height: 200px;
+}
+
+.view-page .hero {
+  background-color: #f8f8f8 !important;
+}
+
+.view-page .hero .content i.avatar {
+  border: 1px solid grey;
+  color: grey !important;
+}
+
+/**********
    Location search modal
 **********/
 

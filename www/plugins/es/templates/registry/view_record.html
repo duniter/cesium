@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="view-page">
   <ion-nav-title>
 
   </ion-nav-title>
@@ -12,13 +12,13 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true">
+  <ion-content scroll="true" class="refresher-top-bg">
 
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="load()">
     </ion-refresher>
 
-    <div class="stable-bg hero">
+    <div class="hero">
       <div class="content" ng-if="!loading">
         <i class="avatar cion-page-{{formData.type}}" ng-if="!formData.avatar"></i>
         <i class="avatar" ng-style="{{avatarStyle}}" ng-if="formData.avatar"></i>

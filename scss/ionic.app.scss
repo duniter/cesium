@@ -23,10 +23,11 @@ $dark:                            #444 !default;
 //$assertive:                       #94c11f !default;
 //$balanced:                        #94c11f !default;
 
-$active: #b2e0ff !default;
-$stable-900-bg: #e0e0e0 !default;
-$positive-900-bg: #1A237E !default;
-$dark-100-bg: #555 !default;
+$light:                           #fff !default;
+$active:                          #b2e0ff !default;
+$stable-900-bg:                   #e0e0e0 !default;
+$positive-900-bg:                 #1A237E !default;
+$dark-100-bg:                     #555 !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -761,13 +762,12 @@ $screen-menu:                     845px;
 
 
 @media screen and (min-width: $screen-md) {
+
   .circle-bg-dark {
-    ion-content.scroll-content {
-      background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
-      background-repeat: no-repeat;
-      background-position: -725px -145px;
-      background-size: 1024px 1024px;
-    }
+    background-image: url('../../resources/logo/svg/white/logo.large.empty.transparent.svg');
+    background-repeat: no-repeat;
+    background-position: -725px -145px;
+    background-size: 1024px 1024px;
   }
 
   .menu.menu-left {
@@ -900,9 +900,47 @@ $screen-menu:                     845px;
 }
 
 /******
+* 'ion-refresher'
+*******/
+
+// Workaround to control background of 'ion-refresher'
+.refresher-top-bg:before {
+  position: absolute;
+  display: block;
+  top: 0;
+  width: 100%;
+  height: 100px;
+  z-index: -10;
+  content: " ";
+}
+.refresher-top-bg .scroll-refresher {
+  z-index: 50;
+}
+// Set refresher color (icon and text)
+.refresher-light .scroll-refresher {
+  .ionic-refresher-content {
+    color: $light;
+  }
+  .spinner {
+    stroke: $light;
+    fill: $light;
+  }
+}
+
+/******
 * Wallet view
 *******/
-#wallet {
+.view-wallet {
+
+  /* set 'ion-refresher' background color */
+  .refresher-top-bg {
+    @extend .refresher-light;
+  }
+  .refresher-top-bg:before {
+    @extend .positive-900-bg;
+    height: 200px;
+  }
+
   .qrcode {
     position: absolute;
     top: 30px;
@@ -971,12 +1009,9 @@ $screen-menu:                     845px;
 
 }
 
-.popover-wallet-actions {
-  height: 400px;
-}
 
 @media screen and (max-width: $screen-sm-max) {
-  #wallet {
+  .view-wallet {
     .qrcode {
       top: 8px;
       width: 60px;
@@ -995,11 +1030,24 @@ $screen-menu:                     845px;
   }
 }
 
+
+.popover-wallet-actions {
+  height: 400px;
+}
+
 /******
 * Wallet TX view
 *******/
 .view-wallet-tx {
   .hero {
+    height: 100px;
+  }
+  /* set 'ion-refresher' background color */
+  .refresher-top-bg {
+    @extend .refresher-light;
+  }
+  .refresher-top-bg:before {
+    @extend .positive-900-bg;
     height: 100px;
   }
 
@@ -1022,6 +1070,8 @@ $screen-menu:                     845px;
   .item-divider .badge {
     top:16px !important;
   }
+
+
 }
 
 /******
@@ -1031,6 +1081,26 @@ $screen-menu:                     845px;
 .item-tx .badge-energized {
   background-color: rgba(255,201,0,0.3);
   color: #888 !important;
+}
+
+/******
+* Identity view
+*******/
+
+.view-identity {
+  .hero,
+  .refresher-top-bg:before {
+    @extend .dark-bg;
+    height: 200px;
+  }
+  .member .hero,
+  .member.refresher-top-bg:before {
+    @extend .positive-900-bg;
+  }
+  .refresher-top-bg {
+    @extend .refresher-light;
+  }
+
 }
 
 /******
@@ -1630,7 +1700,9 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
 }
 
 
-
+.hero.stable-bg {
+  background-color: #f8f8f8 !important;
+}
 
 /**********
    Screen - identity Certifications

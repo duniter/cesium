@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons">
+<ion-view left-buttons="leftButtons" class="view-page">
   <ion-nav-title>
     <span class="visible-xs" ng-if="id" ng-bind-html="formData.title"></span>
     <span class="visible-xs" ng-if="!loading && !id" translate>REGISTRY.EDIT.TITLE_NEW</span>
@@ -13,7 +13,7 @@
 
   <ion-content scroll="true">
 
-    <div class="positive-900-bg hero">
+    <div class="hero">
       <div class="content">
         <i class="avatar"
            ng-class="avatarClass"
@@ -31,11 +31,11 @@
           <button class="button button-positive button-large button-clear icon ion-camera hidden-xs hidden-sm"
                   ng-click="showAvatarModal()"></button>
         </i>
-        <h3 class="light">
+        <h3 class="dark">
           <span ng-if="!loading && formData.title">{{formData.title}}</span>
           <span ng-if="!loading && !id && !formData.title" translate>REGISTRY.EDIT.TITLE_NEW</span>
         </h3>
-        <h4 class="light">
+        <h4 class="dark">
           <ion-spinner ng-if="loading" icon="android"></ion-spinner>
         </h4>
       </div>
@@ -45,7 +45,7 @@
 
         <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
 
-        <div class="col">
+        <div class="col no-padding-xs">
 
           <form name="recordForm" novalidate="" ng-submit="save()">
             <div class="list {{::motion.ionListClass}}"

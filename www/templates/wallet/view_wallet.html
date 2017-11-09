@@ -1,4 +1,4 @@
-<ion-view left-buttons="leftButtons"
+<ion-view left-buttons="leftButtons" class="view-wallet"
           id="wallet">
   <ion-nav-title>
     <!-- no title-->
@@ -15,13 +15,14 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scroll="true" bind-notifier="{ rebind:settings.useRelative, locale:$root.settings.locale.id}">
+  <ion-content scroll="true" class="refresher-top-bg refresher-light"
+               bind-notifier="{ rebind:settings.useRelative, locale:$root.settings.locale.id}">
 
     <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate(true)">
     </ion-refresher>
 
-    <div class="positive-900-bg hero"  id="wallet-header"
+    <div class="positive-900-bg hero" id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
         <i class="avatar"
@@ -50,7 +51,7 @@
 
     <!-- Buttons bar-->
     <a id="wallet-share-anchor"></a>
-    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading">
+    <div class="hidden-xs hidden-sm padding text-center" ng-if="!loading" style="background-color: white;">
 
       <button class="button button-stable button-small-padding icon ion-android-share-alt ink"
               ng-click="showSharePopover($event)"

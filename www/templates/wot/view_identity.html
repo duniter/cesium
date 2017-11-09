@@ -2,9 +2,15 @@
   <ion-nav-title>
   </ion-nav-title>
 
-  <ion-content scroll="true">
+  <ion-content scroll="true"
+               class="refresher-top-bg"
+               ng-class="{'member': !loading && formData.isMember}">
 
-    <div class="hero dark-bg" ng-class="{'positive-900-bg': !loading && formData.isMember}">
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate(true)">
+    </ion-refresher>
+
+    <div class="hero">
       <div class="content" ng-if="!loading">
         <i class="avatar"
            ng-if="::!formData.avatar"
@@ -20,7 +26,6 @@
           <h3 class="light" ng-if="::!formData.uid"><i class="ion-key"></i> {{::formData.pubkey | formatPubkey}}</h3>
         </ng-if>
         <h4 class="assertive">
-          <!--<ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && !revoked" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if>-->
           <ng-if ng-if="::(formData.name || formData.uid) && !formData.isMember && revoked" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</ng-if>
           <ng-if ng-if="::(formData.name || formData.uid) && formData.isMember && revoked" translate>WOT.MEMBER_PENDING_REVOCATION_PARENTHESIS</ng-if>
         </h4>

@@ -7,7 +7,8 @@
            ng-model="search.text"
            ng-model-options="{ debounce: 650 }"
            ng-change="doSearch()"
-           on-return="doSearchText()">
+           on-return="doSearchText()"
+           select-on-click>
     <input type="text"
            class="hidden-xs hidden-sm"
            placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"

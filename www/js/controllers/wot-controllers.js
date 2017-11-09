@@ -639,6 +639,16 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
       });
   };
 
+
+  $scope.doUpdate = function(silent) {
+    if (!silent) {
+      $scope.loading = true;
+      UIUtils.loading.show();
+    }
+    return $scope.load($scope.formData.pubkey, false/*no cache*/, $scope.formData.uid)
+      .then(UIUtils.loading.hide);
+  };
+
   // Certify the current identity
   $scope.certify = function() {
 
@@ -986,8 +996,6 @@ function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UI
       $scope.showFab('fab-certify-' + $scope.formData.uid);
     }
   };
-
-
 }
 
 /**
