@@ -410,7 +410,8 @@
     "COMMENT": "Opmerking",
     "COMMENT_HELP": "Opmerking (optioneel)",
     "BTN_SEND": "Verzenden",
-    "BTN_ADD_COMMENT": "Opmerking toevoegen?",
+    "BTN_ADD_COMMENT": "Opmerking toevoegen",
+    "WARN_COMMENT_IS_PUBLIC": "Houd er rekening mee dat <b>reacties openbaar zijn </b> (niet-versleuteld).",
     "MODAL": {
       "TITLE": "Overboeking"
     }

@@ -10,9 +10,9 @@
   </ion-nav-buttons>
 
   <ion-content scroll="true">
-    <div class="row">
+    <div class="row no-padding-xs">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
-      <div class="col">
+      <div class="col no-padding-xs">
         <h2 class="hidden-xs hidden-sm">
           {{'TRANSFER.SUB_TITLE'|translate}}
         </h2>
@@ -24,5 +24,5 @@
   </ion-content>
 
   <!-- Digit keyboard - fix #30 -->
-  <ion-digit-keyboard class="ng-hide" settings="digitKeyboardSettings" ng-show="digitKeyboardVisible"></ion-digit-keyboard>
+  <ion-digit-keyboard settings="digitKeyboardSettings" ng-if="digitKeyboardVisible"></ion-digit-keyboard>
 </ion-view>

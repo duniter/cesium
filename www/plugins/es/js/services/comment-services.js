@@ -211,7 +211,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
             console.debug("[ES] [comment] Websocket opened in {0} ms".format(new Date().getTime() - time));
             wsChanges.on(function(change) {
               if (!change) return;
-              scope.$apply(function() {
+              scope.$applyAsync(function() {
                 var comment = data.mapById[change._id];
                 if (change._operation === 'DELETE') {
                   if (comment) comment.remove();

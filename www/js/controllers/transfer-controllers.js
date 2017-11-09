@@ -108,7 +108,7 @@ function TransferController($scope, $controller, Device, UIUtils, csWot, csWalle
   };
 }
 
-function TransferModalController($scope, $q, $translate, $timeout, $filter, Device, BMA, csWallet, UIUtils, Modals,
+function TransferModalController($scope, $q, $translate, $timeout, $filter, $focus, Device, BMA, csWallet, UIUtils, Modals,
                                  csCurrency, csSettings, parameters) {
   'ngInject';
 
@@ -126,9 +126,11 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
   $scope.commentPattern = BMA.regexp.COMMENT;
   $scope.currency = csCurrency.data.name;
   $scope.loading = true;
+  $scope.commentInputId = 'transferComment-' + $scope.$id;
 
   // Define keyboard settings, to bind with model (If small screen AND mobile devices)
-  if (UIUtils.screen.isSmall() || Device.enable) {
+  $scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
+  if ($scope.smallscreen || Device.enable) {
     $scope.digitKeyboardSettings = $scope.digitKeyboardSettings || Device.keyboard.digit.settings.bindModel(
         $scope,
         'formData.amount',
@@ -137,7 +139,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
           decimalSeparator: '.',
           resizeContent: true
         });
-    $scope.digitKeyboardvisible = false;
+    $scope.digitKeyboardVisible = false;
   }
 
   $scope.setParameters = function(parameters) {
@@ -170,8 +172,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
   $scope.setParameters(parameters);
 
   $scope.enter = function() {
-    UIUtils.ink({selector: '.modal-transfer .ink'});
-
     // Make to sure to load full wallet data (balance)
     return csWallet.login({sources: true, silent: true})
       .then(function(data) {
@@ -198,7 +198,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
       $scope.convertedBalance = csWallet.data.balance / csCurrency.data.currentUD;
       $scope.minAmount = minQuantitativeAmount / (csCurrency.data.currentUD / 100);
     } else {
-      $scope.convertedBalance = csWallet.data.balance;
+      $scope.convertedBalance = csWallet.data.balance / 100;
       $scope.minAmount = minQuantitativeAmount;
     }
     if ($scope.form) {
@@ -207,14 +207,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
   $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
-
-  // When changing use comment
-  $scope.onUseCommentChanged = function() {
-    if (!$scope.formData.useComment) {
-      $scope.formData.comment = null; // reset comment only when disable
-    }
-  };
-  $scope.$watch('formData.useComment', $scope.onUseCommentChanged, true);
 
   $scope.doTransfer = function() {
     $scope.form.$submitted=true;
@@ -249,7 +241,10 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
         csCurrency.currentUD()
           .then(function(res) {
             currentUD = res;
-          })
+          }),
+
+        // Hide digit keyboard
+        $scope.hideDigitKeyboard(0)
        ])
       .then($scope.askTransferConfirm)
       .then(function(confirm){
@@ -257,6 +252,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
 
         return UIUtils.loading.show()
           .then(function(){
+            // convert amount
             if ($scope.formData.useRelative) {
               amount = currentUD * amount;
             }
@@ -264,13 +260,16 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
               amount = amount.toFixed(2) * 100; // remove 2 decimals on quantitative mode
             }
 
-            return csWallet.transfer($scope.formData.destPub, amount, $scope.formData.comment, $scope.formData.useRelative);
+            // convert comment: trim, then null if empty
+            var comment = $scope.formData.comment && $scope.formData.comment.trim();
+            if (comment && !comment.length) {
+              comment = null;
+            }
+
+            return csWallet.transfer($scope.formData.destPub, amount, comment, $scope.formData.useRelative);
           })
           .then(function() {
             UIUtils.loading.hide();
-
-            // Hide numerical keyboard
-            $scope.hideNumericalKeyboard();
 
             return $scope.closeModal(true);
           })
@@ -298,12 +297,22 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
       .then(UIUtils.alert.confirm);
   };
 
+  $scope.addComment = function() {
+    $scope.formData.useComment = true;
+    // Focus on comment field
+    if ($scope.commentInputId) {
+      $timeout(function() {
+        $focus($scope.commentInputId);
+      }, 200);
+    }
+  };
+
   /* -- modals -- */
   $scope.showWotLookupModal = function() {
     // Hide numerical keyboard
-    $scope.hideDigitKeyboard();
+    $scope.hideDigitKeyboard(0);
 
-    Modals.showWotLookup()
+    return Modals.showWotLookup()
       .then(function(result){
         if (result) {
           if (result.uid) {
@@ -333,19 +342,33 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, Devi
 
   /* -- keyboard -- */
   $scope.showDigitKeyboard = function() {
-    // Hide device keyboard
+    // No keyboard settings, or already visible: skip
+    if (!$scope.digitKeyboardSettings || $scope.digitKeyboardVisible) return;
+
+    // Device enable: hide OS keyboard
     if (Device.enable) {
-      Device.keyboard.hide();
+
+      console.log(_.keys(Device.keyboard));
+
+      // Hide device keyboard
+      Device.keyboard.close();
+
+      // Open the digit keyboard (with a delay)
+      return $timeout(function() {
+        $scope.digitKeyboardVisible = true;
+      }, 200);
     }
 
-    // Open the keyboard
-    $timeout(function() {
-      $scope.digitKeyboardVisible = true;
-    }, 100);
+    // Open the digit keyboard
+    $scope.digitKeyboardVisible = true;
+    return $q.when();
   };
 
-  $scope.hideDigitKeyboard = function() {
+
+  $scope.hideDigitKeyboard = function(timeout) {
+    if (!$scope.digitKeyboardVisible) return $q.when();
     $scope.digitKeyboardVisible = false;
+    return $timeout(function() {}, timeout||200);
   };
 }
 

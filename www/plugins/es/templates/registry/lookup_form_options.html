@@ -1,31 +1,27 @@
 
-  <div class="item item-input item-select" ng-if="search.advanced">
-    <div class="input-label">
-      <span class="input-label" translate>LOCATION.DISTANCE</span>
-    </div>
+  <label class="item item-input item-select" ng-if="search.advanced">
+    <h3 class="input-label" translate>LOCATION.DISTANCE</h3>
 
-    <label>
-      <select ng-model="search.geoDistance"
-              ng-options="i as (geoDistanceLabels[i].labelKey | translate:geoDistanceLabels[i].labelParams ) for i in geoDistances track by i">
-      </select>
-    </label>
-  </div>
+    <select ng-model="search.geoDistance"
+            ng-options="i as (geoDistanceLabels[i].labelKey | translate:geoDistanceLabels[i].labelParams ) for i in geoDistances track by i">
+    </select>
+  </label>
 
   <div class="item item-icon-right" ng-if="search.advanced" ng-click="showRecordTypeModal($event)">
     <span translate>REGISTRY.SEARCH.TYPE</span>
-    <div class="badge badge-balanced" ng-if="search.type">
+    <div class="badge badge-balanced" ng-if="search.type" ng-click="removeType($event)">
        <i class="cion-page-{{search.type}}"></i>
       {{'REGISTRY.TYPE.ENUM.'+search.type|uppercase|translate}}
-      <i class="ion-close" ng-click="removeType($event)">&nbsp;&nbsp;</i>
+      <i class="ion-close" >&nbsp;&nbsp;</i>
     </div>
     <i class="gray icon ion-ios-arrow-right"></i>
   </div>
 
   <div class="item item-icon-right" ng-click="showCategoryModal($event)" ng-if="search.advanced">
       <span translate>REGISTRY.CATEGORY</span>
-      <div class="badge badge-royal badge-text-wrap"  ng-if="search.category">
+      <div class="badge badge-royal badge-text-wrap"  ng-if="search.category" ng-click="removeCategory($event)">
         <span ng-bind-html="search.category.name"></span>
-        <i class="ion-close" ng-click="removeCategory($event)">&nbsp;&nbsp;</i>
+        <i class="ion-close" >&nbsp;&nbsp;</i>
       </div>&nbsp;
       <i class="gray icon ion-ios-arrow-right"></i>
   </span>

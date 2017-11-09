@@ -5,18 +5,19 @@
            class="visible-xs visible-sm"
            placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
            ng-model="search.text"
-           ng-model-options="{ debounce: 350 }"
-           ng-change="doSearch()">
+           ng-model-options="{ debounce: 650 }"
+           ng-change="doSearch()"
+           on-return="doSearchText()">
     <input type="text"
            class="hidden-xs hidden-sm"
            placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
            id="registrySearchText"
            ng-model="search.text"
-           on-return="doSearch()">
+           on-return="doSearchText()">
   </label>
 
   <!-- location -->
-  <ng-include src="'plugins/es/templates/common/item_location_search.html'" ng-controller="ESSearchPositionItemCtrl"></ng-include>
+  <ng-include src="'plugins/es/templates/common/item_location_search.html'" ng-controller="ESSearchPositionItemCtrl" ng-init=""></ng-include>
 
   <!-- options -->
   <ng-include src="'plugins/es/templates/registry/lookup_form_options.html'"></ng-include>
@@ -31,7 +32,7 @@
        ng-class="{'button-text-stable': !search.advanced, 'button-text-positive': search.advanced}"
        ng-click="search.advanced=!search.advanced">
       <i class="icon ion-ios-gear"></i>
-      {{'REGISTRY.SEARCH.BTN_OPTIONS' | translate}}
+      {{'REGISTRY.SEARCH.BTN_ADVANCED_SEARCH' | translate}}
       <i class="icon" ng-class="{'ion-arrow-down-b': !search.advanced, 'ion-arrow-up-b': search.advanced}"></i>
     </a>
 
@@ -44,7 +45,7 @@
     <a ng-if="enableFilter"
        class="button button-text button-small ink"
        ng-class="{'button-text-positive': search.lastRecords}"
-       ng-click="doGetLastRecord()">
+       ng-click="doGetLastRecords()">
       <i class="icon ion-clock"></i>
       {{'REGISTRY.SEARCH.BTN_LAST_RECORDS' | translate}}
     </a>
@@ -56,7 +57,7 @@
     &nbsp;
 
     <button class="button button-small button-stable ink"
-            ng-click="doSearch()">
+            ng-click="doSearchText()">
       {{'COMMON.BTN_SEARCH' | translate}}
     </button>
   </div>
@@ -83,7 +84,7 @@
   </div>
 </div>
 
-<div class="center" ng-if="search.loading">
+<div class="center padding" ng-if="search.loading">
   <ion-spinner icon="android"></ion-spinner>
 </div>
 

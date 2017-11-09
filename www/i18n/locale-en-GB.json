@@ -562,7 +562,8 @@
     "COMMENT": "Comment",
     "COMMENT_HELP": "Comment (optional)",
     "BTN_SEND": "Send",
-    "BTN_ADD_COMMENT": "Add comment?",
+    "BTN_ADD_COMMENT": "Add a comment",
+    "WARN_COMMENT_IS_PUBLIC": "Please note that <b>comments are public</b> (not encrypted).",
     "MODAL": {
       "TITLE": "Transfer"
     }

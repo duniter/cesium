@@ -195,7 +195,13 @@ $screen-lg:                       1200px;
       display: flex !important;
     }
     .button.hidden-sm {
-      display: inline-block;
+      display: flex;
+    }
+    .pull-right,
+    .pull-left {
+      .button.hidden-sm {
+        display: inline-block;
+      }
     }
 }
 @media screen and (max-width: $screen-xs-max) {
@@ -1378,10 +1384,13 @@ a.underline:hover,
     padding-right: 100px;
   }
 
-  .button,
-  button {
+  .button {
     top: inherit;
     bottom: 6px;
+  }
+
+  .button-icon {
+    height: inherit;
   }
 }
 

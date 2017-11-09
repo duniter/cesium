@@ -5,7 +5,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
     $stateProvider
 
       .state('app.wot_lookup', {
-        url: "/wot?q&type&hash",
+        url: "/wot?q&hash",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup.html"
@@ -228,7 +228,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
   };
 
   $scope.updateLocationHref = function() {
-
+    // removeIf(device)
     var stateParams = {
       q: undefined,
       hash: undefined,
@@ -250,12 +250,17 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
 
     // Update location href
     $location.search(stateParams).replace();
+    // endRemoveIf(device)
   };
 
   $scope.doSearchText = function() {
 
     $scope.doSearch();
     $scope.updateLocationHref();
+
+    // removeIf(no-device)
+    Device.keyboard.close();
+    // endRemoveIf(no-device)
   };
 
   $scope.doSearch = function() {

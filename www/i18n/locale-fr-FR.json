@@ -564,7 +564,8 @@
     "COMMENT": "Commentaire",
     "COMMENT_HELP": "Commentaire",
     "BTN_SEND": "Envoyer",
-    "BTN_ADD_COMMENT": "Saisir un commentaire ?",
+    "BTN_ADD_COMMENT": "Ajouter un commentaire",
+    "WARN_COMMENT_IS_PUBLIC": "Veuillez noter que <b>les commentaires sont publiques</b> (non chiffré).",
     "MODAL": {
       "TITLE": "Virement"
     }

@@ -157,7 +157,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     return csWot.extendAll([notification])
       .then(function() {
         if (!$rootScope.$$phase) {
-          $rootScope.$apply(function() {
+          $rootScope.$applyAsync(function() {
             addNewNotification(notification);
           });
         }

@@ -4,29 +4,31 @@
 
   <ion-item ng-repeat="item in search.results"
             class="item item-border-large item-avatar item-icon-right ink"
-            ng-class="{'item-icon-left': !smallscreen}"
+            ng-class="::{'item-icon-left': !smallscreen}"
             ui-sref="app.view_page({id: item.id, title: item.urlTitle})">
 
     <i ng-if="::!item.avatar" class="item-image icon cion-page-{{::item.type}}"></i>
     <i ng-if="::item.avatar" class="item-image avatar" style="background-image: url({{::item.avatar.src}})"></i>
 
-    <h2 ng-bind-html="item.title"></h2>
-    <h4 class="gray">
-      <b class="ion-location" ng-if="item.city"></b>
-      <span ng-bind-html="item.city"></span>
+    <h2 ng-bind-html="::item.title"></h2>
+    <h4>
+      <span class="dark" ng-if="::item.city">
+        <b class="ion-location"></b>
+        <span ng-bind-html="::item.city"></span>
+      </span>
+      <span class="gray" ng-if="::item.distance">
+        ({{::item.distance|formatDecimal}} {{::geoUnit}})
+      </span>
     </h4>
-    <h4 class="gray" ng-if="item.time && search.lastRecords">
-      <b class="ion-clock" ></b>
+    <h4 class="gray" ng-if="::item.time && search.lastRecords">
+      <i class="ion-clock" ></i>
       {{::item.time | formatFromNow}}
     </h4>
     <h4 class="gray" ng-if="!search.lastRecords">
-      <b class="cion-page-{{::item.type}}" ></b>
-      <ng-if ng-if="item.category">{{::item.category.name}}</ng-if>
-      <ng-if ng-if="!item.category">{{'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}</ng-if>
+      <i class="cion-page-{{::item.type}}"></i>
+      <span ng-if="item.category">{{::item.category.name}}</span>
+      <span ng-if="!item.category">{{::'REGISTRY.TYPE.ENUM.'+item.type|uppercase|translate}}</span>
     </h4>
-    <span  ng-if="item.picturesCount > 1"
-           class="badge badge-balanced badge-picture-count">{{::item.picturesCount}}&nbsp;<i class="icon ion-camera"></i></span>
-
     <i class="icon ion-ios-arrow-right "></i>
   </ion-item>
 </ion-list>

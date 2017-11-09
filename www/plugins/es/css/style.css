@@ -52,6 +52,14 @@
   top: inherit !important;
 }
 
+.card-record .badge-picture-count {
+  left: 67px !important;
+  bottom: 15px !important;
+}
+.row-record .badge-picture-count {
+  left: 54px !important;
+  bottom: 13px !important;
+}
 
 .card-record .item-thumbnail-left {
   padding-left: 150px;

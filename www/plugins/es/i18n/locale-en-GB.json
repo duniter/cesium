@@ -225,16 +225,19 @@
       "SEARCH_HELP": "What, Who: hairdresser, Lili's restaurant, ...",
       "BTN_ADD": "New",
       "BTN_LAST_RECORDS": "Recent pages",
+      "BTN_ADVANCED_SEARCH": "Advanced search",
       "BTN_OPTIONS": "Advanced search",
       "TYPE": "Kind of organization",
-      "LOCATION": "City",
-      "LOCATION_HELP": "City, Country",
+      "LOCATION_HELP": "Where: City, Country",
       "RESULTS": "Results",
-      "RESULT_COUNT_LOCATION": "{{count}} result(s), near {{location}}",
-      "RESULT_COUNT": "{{count}} result(s)",
+      "RESULT_COUNT_LOCATION": "{{count}} result{{count>0?'s':''}}, near {{location}}",
+      "RESULT_COUNT": "{{count}} result{{count>0?'s':''}}",
       "LAST_RECORDS": "Recents pages",
-      "LAST_RECORD_COUNT_LOCATION": "{{count}} recent(s) page(s), near {{location}}",
-      "LAST_RECORD_COUNT": "{{count}} recent(s) page(s)"
+      "LAST_RECORD_COUNT_LOCATION": "{{count}} recent{{count>0?'s':''}} page{{count>0?'s':''}}, near {{location}}",
+      "LAST_RECORD_COUNT": "{{count}} recent{{count>0?'s':''}} page{{count>0?'s':''}}",
+      "POPOVER_FILTERS": {
+        "BTN_ADVANCED_SEARCH": "Advanced options?"
+      }
     },
     "VIEW": {
       "TITLE": "Registry",
@@ -335,6 +338,7 @@
     "DISTANCE": "Maximum distance around the city",
     "DISTANCE_UNIT": "mi",
     "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
+    "SEARCH_HELP": "Ville, Country",
     "MODAL": {
       "TITLE": "Search address",
       "SEARCH_HELP": "City, Country",
@@ -383,6 +387,37 @@
       "FREQUENCY_DAILY": "Daily",
       "FREQUENCY_WEEKLY": "Weekly",
       "PROVIDER": "Service Provider:"
+    }
+  },
+  "DOCUMENT": {
+    "HASH": "Hash: ",
+    "LOOKUP": {
+      "TITLE": "Document search",
+      "BTN_ACTIONS": "Actions",
+      "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS": "Last documents",
+      "SHOW_QUERY": "Show query",
+      "HIDE_QUERY": "Hide query",
+      "HEADER_TIME": "Time/Hour",
+      "HEADER_ISSUER": "Issuer",
+      "HEADER_RECIPIENT": "Recipient",
+      "READ": "Read",
+      "BTN_REMOVE": "Delete this document",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Actions",
+        "REMOVE_ALL": "Delete these documents..."
+      }
+    },
+    "INFO": {
+      "REMOVED": "Deleted document"
+    },
+    "CONFIRM": {
+      "REMOVE": "Are you sure you want to <b>delete this document</b>?",
+      "REMOVE_ALL": "Are you sure you want to <b>delete these documents</b>?"
+    },
+    "ERROR": {
+      "REMOVE_FAILED": "Error deleting the document",
+      "REMOVE_ALL_FAILED": "Error deleting documents"
     }
   },
   "ES_SETTINGS": {

@@ -1,0 +1,24 @@
+<ion-popover-view class="fit has-header ">
+  <ion-header-bar>
+    <h1 class="title" translate>COMMON.POPOVER_FILTER_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <!-- new page -->
+      <a class="item item-icon-left ink"
+         ng-click="doGetLastRecords()">
+        <i class="icon ion-clock"></i>
+        {{'REGISTRY.SEARCH.BTN_LAST_RECORDS' | translate}}
+      </a>
+
+      <!-- advanced options -->
+      <a class="item item-icon-left ink"
+         ng-click="toggleAdvanced();">
+        <i class="icon ion-android-checkbox-outline-blank" ng-show="!search.advanced"></i>
+        <i class="icon ion-android-checkbox-outline" ng-show="search.advanced"></i>
+        <span translate>REGISTRY.SEARCH.POPOVER_FILTERS.BTN_ADVANCED_SEARCH</span>
+      </a>
+    </div>
+  </ion-content>
+</ion-popover-view>

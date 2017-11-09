@@ -195,6 +195,7 @@ angular.module('cesium.directives', [])
 
   // All this does is allow the message
   // to be sent when you tap return
+  // TODO: to remove ? Seems not to be used
   .directive('input', function($timeout) {
     return {
       restrict: 'E',
@@ -351,7 +352,7 @@ angular.module('cesium.directives', [])
           };
 
           reader.onload = function(onLoadEvent) {
-            scope.$apply(function() {
+            scope.$applyAsync(function() {
               fn(scope, {
                 file: {
                   fileContent: onLoadEvent.target.result,

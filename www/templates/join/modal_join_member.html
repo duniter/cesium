@@ -8,7 +8,7 @@
     </button>
     <button class="button button-icon button-clear icon ion-ios-arrow-back buttons header-item"
             ng-click="slidePrev()"
-            ng-if="slideBehavior.hasPreviousButton">
+            ng-if="slides.slider.activeIndex && slideBehavior.hasPreviousButton">
     </button>
     <button class="button button-icon button-clear icon ion-ios-help-outline visible-xs"
             ng-if="slideBehavior.helpAnchor"
@@ -48,7 +48,7 @@
         <ion-content class="has-header" scroll="false">
             <div class="padding" translate>ACCOUNT.NEW.INFO_LICENSE</div>
 
-            <div ng-if="loading" class="text-center">
+            <div class="center padding" ng-if="loading">
               <ion-spinner class="icon" icon="android"></ion-spinner>
             </div>
 
@@ -351,7 +351,7 @@
         <ion-content class="has-header" scroll="false">
 
           <!-- Computing -->
-          <div class="padding text-center" ng-if="formData.computing">
+          <div class="center padding" ng-if="formData.computing">
             <ion-spinner icon="android"></ion-spinner>
           </div>
 

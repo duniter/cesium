@@ -5,6 +5,11 @@
   </ion-header-bar>
 
   <ion-content class="categoryModal">
+
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
     <div class="list">
       <label class="item item-input">
           <i class="icon ion-search placeholder-icon"></i>
@@ -14,9 +19,6 @@
                  ng-change="ctrl.doSearch()">
       </label>
 
-      <label class="item center" ng-if="loading">
-          <ion-spinner icon="android"></ion-spinner>
-      </label>
 
       <div ng-repeat="cat in categories"
          class="item item-category item-text-wrap"

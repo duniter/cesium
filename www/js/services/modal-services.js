@@ -131,13 +131,15 @@ angular.module('cesium.modal.services', [])
   };
 })
 
-.factory('Modals', function(ModalUtils) {
+.factory('Modals', function(ModalUtils, UIUtils) {
   'ngInject';
 
-
   function showTransfer(parameters) {
+    var useDigitKeyboard = UIUtils.screen.isSmall();
     return ModalUtils.show('templates/wallet/modal_transfer.html','TransferModalCtrl',
-      parameters, {focusFirstInput: true});
+      parameters, {
+        focusFirstInput: !useDigitKeyboard
+      });
   }
 
   function showLogin(parameters) {

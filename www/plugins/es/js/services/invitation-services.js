@@ -96,7 +96,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
 
     // If user not auth: simply increment counter
     if (!csWallet.isAuth()) {
-      $rootScope.$apply(function() {
+      $rootScope.$applyAsync(function() {
         csWallet.data.invitations = csWallet.data.invitations || {};
         csWallet.data.invitations.unreadCount++;
       });

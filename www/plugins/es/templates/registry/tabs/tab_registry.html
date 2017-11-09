@@ -3,6 +3,15 @@
 
     <!-- Allow extension here -->
     <cs-extension-point name="nav-buttons"></cs-extension-point>
+
+    <button class="button button-icon button-clear"
+            ng-click="showFiltersPopover($event)">
+      <i class="icon ion-android-funnel"></i>
+    </button>
+
+    <button class="button button-icon button-clear icon ion-android-more-vertical"
+            ng-click="showActionsPopover($event)">
+    </button>
   </ion-nav-buttons>
 
   <ion-content>
@@ -13,8 +22,9 @@
 
     <cs-extension-point name="buttons"></cs-extension-point>
 
-    <ng-include src="'plugins/es/templates/registry/lookup_form.html'"></ng-include>
+    <ng-include src="::'plugins/es/templates/registry/lookup_form.html'"></ng-include>
 
-    <ng-include src="'plugins/es/templates/registry/lookup_list.html'"></ng-include>
+    <ng-include src="::'plugins/es/templates/registry/lookup_list.html'"></ng-include>
   </ion-content>
+
 </ion-view>

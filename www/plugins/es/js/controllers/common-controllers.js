@@ -397,8 +397,10 @@ function ESAvatarModalController($scope) {
     fileReader.readAsDataURL(files[0]);
 
     fileReader.onload = function(e) {
-      $scope.formData.imgSrc = this.result;
-      $scope.$apply();
+      var res = this.result;
+      $scope.$applyAsync(function() {
+        $scope.formData.imgSrc = res;
+      });
     };
   };
 
@@ -675,7 +677,7 @@ function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, UIUtil
 
   // The default country used for address localisation
   var defaultCountry = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.defaultCountry;
-  $scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
+  //$scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
 
   var loadingPosition = false;
   var minLength = 3;
@@ -748,12 +750,7 @@ function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, UIUtil
     if (loadingPosition || $scope.search.loading) return;
     $scope.search.geoPoint = undefined; // reset geo point
 
-    if ($scope.smallscreen) {
-      $timeout($scope.openSearchLocationModal, 500);
-    }
-    else {
-      $scope.showDropdown();
-    }
+    $scope.showDropdown();
   };
 
   $scope.showDropdown = function() {

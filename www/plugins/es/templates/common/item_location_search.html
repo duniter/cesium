@@ -1,15 +1,14 @@
   <!-- search text -->
   <div class="item no-padding">
-    <div class="item-input ">
+    <div class="item-input">
       <i class="icon ion-location placeholder-icon"></i>
       <input type="text"
              placeholder="{{(options.location.help||'LOCATION.SEARCH_HELP')|translate}}"
              ng-model-options="{ debounce: 350 }"
              ng-model="search.location"
              ng-keydown="onKeydown($event)"
-
-             ng-change="onLocationChanged()">
-      <!-- ng-blur="hideDropdown()" -->
+             ng-change="onLocationChanged()"
+             ng-blur="hideDropdown()">
     </div>
   </div>
 

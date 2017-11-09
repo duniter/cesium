@@ -276,16 +276,19 @@
       "SEARCH_HELP": "Quoi, Qui : restaurant, Chez Marcel, ...",
       "BTN_ADD": "Nouveau",
       "BTN_LAST_RECORDS": "Pages récentes",
+      "BTN_ADVANCED_SEARCH": "Recherche avancée",
       "BTN_OPTIONS": "Recherche avancée",
       "TYPE": "Type de page",
-      "LOCATION": "Ville",
-      "LOCATION_HELP": "Ville, Code postal",
+      "LOCATION_HELP": "Où : Ville, Code postal",
       "RESULTS": "Résultats",
-      "RESULT_COUNT_LOCATION": "{{count}} résultat(s), près de {{location}}",
-      "RESULT_COUNT": "{{count}} résultat(s)",
+      "RESULT_COUNT_LOCATION": "{{count}} résultat{{count>0?'s':''}}, près de {{location}}",
+      "RESULT_COUNT": "{{count}} résultat{{count>0?'s':''}}",
       "LAST_RECORDS": "Pages récentes",
-      "LAST_RECORD_COUNT_LOCATION": "{{count}} page(s) récente(s), près de {{location}}",
-      "LAST_RECORD_COUNT": "{{count}} page(s) récente(s)"
+      "LAST_RECORD_COUNT_LOCATION": "{{count}} page{{count>0?'s':''}} récente{{count>0?'s':''}}, près de {{location}}",
+      "LAST_RECORD_COUNT": "{{count}} page{{count>0?'s':''}} récente{{count>0?'s':''}}",
+      "POPOVER_FILTERS": {
+        "BTN_ADVANCED_SEARCH": "Options avancées ?"
+      }
     },
     "VIEW": {
       "TITLE": "Annuaire",
@@ -296,7 +299,7 @@
       "REMOVE_CONFIRMATION" : "Êtes-vous sûr de vouloir supprimer cette page ?<br/><br/>Cette opération est irréversible."
     },
     "TYPE": {
-      "TITLE": "Nouvelle page",
+      "TITLE": "Types",
       "SELECT_TYPE": "Type de page :",
       "ENUM": {
         "SHOP": "Commerce local",
@@ -443,7 +446,7 @@
       "TITLE": "Recherche de documents",
       "BTN_ACTIONS": "Actions",
       "SEARCH_HELP": "issuer:AAA*, time:1508406169",
-      "LAST_DOCUMENTS": "Derniers documents :",
+      "LAST_DOCUMENTS": "Derniers documents",
       "SHOW_QUERY": "Voir la requête",
       "HIDE_QUERY": "Masquer la requête",
       "HEADER_TIME": "Date/Heure",
