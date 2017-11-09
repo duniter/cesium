@@ -9,11 +9,18 @@ angular.module('cesium.map.registry.controllers', ['cesium.services', 'cesium.ma
 
       PluginServiceProvider
 
+        .extendState('app.wot_lookup.tab_registry', {
+          points: {
+            'nav-buttons': {
+              template: '<button class="button button-icon button-clear" ui-sref="app.view_registry_map"><i class="icon ion-ios-location"></i></button>'
+            }
+          }
+        })
+
         .extendState('app.registry_lookup_lg', {
           points: {
             'filter-buttons': {
-              templateUrl: "plugins/map/templates/registry/lookup_extend.html",
-              controller: "ESExtensionCtrl"
+              templateUrl: "plugins/map/templates/registry/lookup_lg_extend.html"
             }
           }
         });
@@ -109,7 +116,11 @@ function MapRegistryViewController($scope, $filter, $templateCache, $interpolate
   }, $scope.mapId);
 
 
-  // [NEW] When opening the view
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall();
+  });
+
   $scope.enter = function(e, state) {
 
     if ($scope.loading) {

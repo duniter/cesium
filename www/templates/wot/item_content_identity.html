@@ -1,0 +1,42 @@
+<i ng-if="::!item.avatar" class="item-image icon ion-person"></i>
+<i ng-if="::item.avatar" class="item-image avatar" style="background-image: url({{::item.avatar.src}})"></i>
+
+<h2>
+  <ng-if ng-if="::item.name||item.uid" ng-bind-html="::item.name||item.uid"></ng-if>
+  <ng-if ng-if="::!item.name && !item.uid">{{::item.pubkey|formatPubkey}}</ng-if>
+</h2>
+
+<h4 class="gray"
+    ng-class="{'pull-right': !smallscreen}"
+    ng-if="::item.sigDate">
+  <i class="ion-clock"></i>
+  {{::'WOT.LOOKUP.REGISTERED' | translate:identity}}
+</h4>
+<h4 class="gray"
+    ng-class="{'pull-right': !smallscreen}"
+    ng-if="item.memberDate">
+  <i class="ion-clock"></i>
+  {{::'WOT.LOOKUP.MEMBER_FROM' | translate:identity}}
+</h4>
+<h4 class="gray">
+  <span class="positive" ng-if="::item.name && item.uid">
+    <i class="ion-person"></i>
+    {{::item.uid}}&nbsp;
+  </span>
+  <b class="ion-key"></b>
+  {{::item.pubkey | formatPubkey}}
+  <span ng-if="::!item.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+  <span ng-if="::item.revoked" class="assertive" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</span>
+</h4>
+<h4 ng-if="::item.events||item.tags">
+  <span ng-repeat="event in ::item.events"
+      class="assertive">
+    <i class="ion-alert-circled " ng-if="::!item.valid"></i>
+    <span ng-bind-html="::event.message|translate:event.messageParams"></span>
+  </span>
+  <span ng-if="::item.tags" class="dark">
+   <ng-repeat ng-repeat="tag in ::item.tags">
+     #<ng-bind-html ng-bind-html="::tag"></ng-bind-html>
+   </ng-repeat>
+  </span>
+</h4>

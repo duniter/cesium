@@ -192,7 +192,6 @@ angular.module('cesium.directives', [])
     };
   })
 
-
   // All this does is allow the message
   // to be sent when you tap return
   // TODO: to remove ? Seems not to be used

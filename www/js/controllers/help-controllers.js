@@ -540,7 +540,7 @@ function HelpTipController($scope, $state, $window, $ionicSideMenuDelegate, $tim
         if ($ionicSideMenuDelegate.isOpen()) {
           $ionicSideMenuDelegate.toggleLeft(false);
         }
-        return $state.go('app.wot_lookup')
+        return $state.go(UIUtils.screen.isSmall() ? 'app.wot_lookup.tab_search' : 'app.wot_lookup_lg')
           .then(function(){
             return $scope.showHelpTip('helptip-wot-search-text', {
               bindings: {

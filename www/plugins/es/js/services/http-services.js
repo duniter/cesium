@@ -380,7 +380,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       var content = text ? escape(text.trim()) : undefined;
       if (content) {
         options = options || {};
-        options.tagState = options.tagState || 'app.wot_lookup';
+        options.tagState = options.tagState || 'app.wot_lookup.tab_search';
         options.uidState = options.uidState || 'app.wot_identity_uid';
         if (options.newLine || !angular.isDefined(options.newLine)) {
           content = content.replace(/\n/g, '<br>\n');

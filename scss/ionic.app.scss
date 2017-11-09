@@ -642,6 +642,7 @@ $screen-menu:                     845px;
   .button.button-clear.button-icon.ion-android-more-vertical,
   .button.button-clear.button-icon i.ion-android-more-vertical {
     padding-left: 8px;
+    padding-right: 8px;
   }
 
   .buttons .secondary-buttons >
@@ -667,8 +668,6 @@ $screen-menu:                     845px;
 .bar .title + .buttons.buttons-right {
   right: 5px;
 }
-
-
 
 .button-icon {
   border-color: transparent;

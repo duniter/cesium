@@ -5,29 +5,32 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
     $stateProvider
 
       .state('app.wot_lookup', {
-        url: "/wot?q&hash",
+        url: "/wot",
+        abstract: true,
+        enableBack: false, // Workaround need for navigation outside tabs (enableBack is forced to 'true' in ViewXXXCtrl)
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup.html"
           }
-        },
-        data: {
-          large: 'app.wot_lookup_lg'
         }
       })
 
-      .state('app.wot_lookup.tab', {
-        url: "/registry",
+      .state('app.wot_lookup.tab_search', {
+        url: "/search?q&type&hash",
         views: {
           'tab': {
             templateUrl: "templates/wot/tabs/tab_lookup.html",
             controller: 'WotLookupCtrl'
           }
+        },
+        data: {
+          silentLocationChange: true,
+          large: 'app.wot_lookup_lg'
         }
       })
 
       .state('app.wot_lookup_lg', {
-        url: "/wot?q&type&hash",
+        url: "/wot/lg?q&type&hash",
         views: {
           'menuContent': {
             templateUrl: "templates/wot/lookup_lg.html",
@@ -38,8 +41,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
           silentLocationChange: true
         }
       })
-
-
 
       .state('app.wot_identity', {
         url: "/wot/:pubkey/:uid?action",
@@ -148,7 +149,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $location,
+function WotLookupController($scope, $state, $timeout, $focus, $location, $ionicPopover, $ionicHistory,
                              UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
@@ -393,6 +394,13 @@ function WotLookupController($scope, $state, $timeout, $focus, $ionicPopover, $l
     }
 
     if (state) {
+      // Need to have a back button outside tabs
+      $ionicHistory.nextViewOptions({
+        historyRoot: false,
+        disableAnimate: false,
+        expire: 300
+      });
+
       $state.go(state, item.stateParams||item);
     }
   };
@@ -610,7 +618,8 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
  * @param csWallet
  * @constructor
  */
-function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory, UIUtils, Modals, csConfig, csCurrency, csWot, csWallet) {
+function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $ionicHistory,
+                                       UIUtils, Modals, csConfig, csCurrency, csWot, csWallet) {
   'ngInject';
 
   $scope.formData = {
@@ -618,6 +627,11 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
   };
   $scope.disableCertifyButton = true;
   $scope.loading = true;
+
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall();
+  });
 
   $scope.load = function(pubkey, withCache, uid) {
     return csWot.load(pubkey, withCache, uid)

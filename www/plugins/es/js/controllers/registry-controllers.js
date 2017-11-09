@@ -629,20 +629,6 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
     $timeout($scope.hidePopovers, 200);
   };
 
-  /* -- open views -- */
-
-  $scope.openWotLookup = function() {
-
-    var text = $scope.search.text && $scope.search.text.trim() || '';
-    var location = $scope.search.location && $scope.search.location.trim() || '';
-    var stateParams = {
-      q: text.length ? text : undefined,
-      location: location.length ? location : undefined
-    };
-
-    $state.go('app.wot_lookup', stateParams);
-  };
-
   /* -- modals -- */
 
   $scope.showRecordTypeModal = function(event) {
@@ -789,8 +775,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
 
 
 function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout, $ionicPopover, $ionicHistory, $translate,
-                                        $anchorScroll, csConfig,
-                                        csWallet, esRegistry, UIUtils, esHttp) {
+                                        $anchorScroll, csConfig, csWallet, esRegistry, UIUtils, esHttp) {
   'ngInject';
 
   $scope.formData = {};
@@ -800,6 +785,11 @@ function ESRegistryRecordViewController($scope, $rootScope, $state, $q, $timeout
   $scope.canEdit = false;
   $scope.loading = true;
   $scope.motion = UIUtils.motion.fadeSlideIn;
+
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall();
+  });
 
   $scope.$on('$ionicView.enter', function(e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id

@@ -16,8 +16,9 @@
                 ng-if="$root.settings.expertMode"
                 style="max-width: 450px !important;"
                 ng-click="showNodeListPopover($event)">
-          <small class="ion-locked" ng-if="$root.currency.node.useSsl"></small>
+          <small class="ion-locked" ng-if="$root.currency.node.useSsl">&nbsp;</small>
           {{$root.currency.node.host}}{{$root.currency.node.port != 80 && $root.currency.node.port != 443 ? ':'+$root.currency.node.port : ''}}
+          <small>&nbsp;</small>
           <small class="ion-arrow-down-b"></small>
         </button>
 
@@ -121,7 +122,7 @@
         <a menu-close class="item item-icon-left"
            active-link="active"
            active-link-path-prefix="#/app/wot"
-           ui-sref="app.wot_lookup">
+           ui-sref="app.wot_lookup.tab_search">
           <i class="icon ion-person-stalker"></i>
           {{:locale:'MENU.WOT'|translate}}
         </a>

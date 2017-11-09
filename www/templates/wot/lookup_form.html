@@ -1,8 +1,5 @@
 <div class="lookupForm">
 
-  <!-- Allow extension here -->
-  <cs-extension-point name="top"></cs-extension-point>
-
   <div class="item no-padding">
 
     <div class="double-padding-x padding-top-xs item-text-wrap" ng-if="::allowMultiple"
@@ -113,22 +110,21 @@
       class="{{::motion.ionListClass}}"
       can-swipe="true">
 
-      <ng-repeat ng-repeat="identity in search.results track by identity.id">
-        <div ng-if="::identity.divider"
+      <ng-repeat ng-repeat="item in search.results track by item.id">
+        <div ng-if="::item.divider"
              class="item item-divider"
-             id="helptip-wot-search-result-{{$index}}">{{::('WOT.SEARCH.DIVIDER_' + identity.index)|upper|translate}}</div>
+             id="helptip-wot-search-result-{{$index}}">{{::('WOT.SEARCH.DIVIDER_' + item.index)|upper|translate}}</div>
         <ion-item
-          ng-if="::!identity.divider"
+          ng-if="::!item.divider"
           id="helptip-wot-search-result-{{$index}}"
           class="item item-border-large item-avatar item-icon-right ink"
-          ng-click="::select(identity)">
+          ng-click="::select(item)">
 
-          <ng-include ng-if="::identity.templateUrl" src="identity.templateUrl" ng-init="item=identity"></ng-include>
-          <ng-include ng-if="::!identity.templateUrl && !identity.divider" src="'templates/wot/identity.html'"></ng-include>
+          <ng-include src="item.templateUrl || 'templates/wot/item_content_identity.html'"></ng-include>
 
           <i class="icon ion-ios-arrow-right "></i>
           <ion-option-button
-            class="button-positive" ng-click="showTransferModal({pubkey: identity.pubkey, uid: identity.name ||identity.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
+            class="button-positive" ng-click="showTransferModal({pubkey: item.pubkey, uid: item.name ||item.uid})" translate>COMMON.BTN_SEND_MONEY_SHORT</ion-option-button>
         </ion-item>
       </ng-repeat>
 
@@ -138,21 +134,22 @@
     <!-- simple selection + no device -->
     <!--removeIf(device)-->
     <div
-      ng-if="!allowMultiple"
+      ng-if="::!allowMultiple"
       class="list {{::motion.ionListClass}}">
 
       <div
-        ng-repeat="identity in search.results track by identity.id"
+        ng-repeat="item in search.results track by item.id"
         id="helptip-wot-search-result-{{$index}}"
-        ng-class="::{'item-avatar item-icon-right ink': !identity.divider, 'item-divider ': identity.divider}"
-        class="item item-border-large {{::identity.ionItemClass}}" ng-click="::select(identity)">
+        ng-class="::{'item-avatar item-icon-right ink': !item.divider, 'item-divider ': item.divider}"
+        class="item item-border-large {{::item.ionItemClass}}" ng-click="::select(item)">
 
         <!-- divider -->
-        <span ng-if="::identity.divider">{{::('WOT.SEARCH.DIVIDER_' + identity.index)|upper|translate}}</span>
-        <ng-include ng-if="::identity.templateUrl" src="identity.templateUrl" ng-init="item=identity"></ng-include>
-        <ng-include ng-if="::!identity.templateUrl && !identity.divider" src="'templates/wot/identity.html'"></ng-include>
+        <span ng-if="::item.divider">{{::('WOT.SEARCH.DIVIDER_' + item.index)|upper|translate}}</span>
 
-        <i ng-if="::!identity.divider" class="icon ion-ios-arrow-right "></i>
+        <!-- item -->
+        <ng-include ng-if="::!item.divider" src="item.templateUrl || 'templates/wot/item_content_identity.html'"></ng-include>
+
+        <i ng-if="::!item.divider" class="icon ion-ios-arrow-right "></i>
       </div>
     </div>
     <!--endRemoveIf(device)-->
@@ -163,11 +160,11 @@
       class="list {{::motion.ionListClass}}">
 
       <ion-checkbox
-        ng-repeat="identity in search.results track by identity.id"
-        ng-model="identity.checked"
+        ng-repeat="item in search.results track by item.id"
+        ng-model="item.checked"
         class="item item-border-large item-avatar ink"
         ng-click="toggleCheck($index, $event)">
-        <ng-include src="'templates/wot/identity.html'"></ng-include>
+        <ng-include src="'templates/wot/item_content_identity.html'"></ng-include>
       </ion-checkbox>
     </div>
 

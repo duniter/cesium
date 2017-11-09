@@ -9,10 +9,18 @@ angular.module('cesium.map.wot.controllers', ['cesium.services', 'cesium.map.ser
 
       PluginServiceProvider
 
-        .extendState('app.wot_lookup', {
+        .extendState('app.wot_lookup.tab_search', {
+          points: {
+            'nav-buttons': {
+              template: '<button class="button button-icon button-clear" ui-sref="app.view_wot_map"><i class="icon ion-ios-location"></i></button>'
+            }
+          }
+        })
+
+        .extendState('app.wot_lookup_lg', {
           points: {
             'filter-buttons': {
-              templateUrl: "plugins/map/templates/wot/lookup_extend.html",
+              templateUrl: "plugins/map/templates/wot/lookup_lg_extend.html",
               controller: "ESExtensionCtrl"
             }
           }
@@ -100,7 +108,11 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
   }, $scope.mapId);
 
 
-  // [NEW] When opening the view
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall();
+  });
+
   $scope.enter = function(e, state) {
 
     if ($scope.loading) {
