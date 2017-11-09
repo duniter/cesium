@@ -110,7 +110,7 @@ function MapWotViewController($scope, $filter, $templateCache, $interpolate, $ti
 
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
-    viewData.enableBack = UIUtils.screen.isSmall();
+    viewData.enableBack = UIUtils.screen.isSmall() ? true : viewData.enableBack;
   });
 
   $scope.enter = function(e, state) {
