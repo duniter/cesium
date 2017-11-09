@@ -7,14 +7,15 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm" ng-click="doUpdate()">
-    </button>
-
     <!-- Allow extension here -->
     <cs-extension-point name="nav-buttons"></cs-extension-point>
   </ion-nav-buttons>
 
   <ion-content class="certifications certifications-lg">
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate()">
+    </ion-refresher>
 
     <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm text-center padding">
