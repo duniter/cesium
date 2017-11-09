@@ -327,7 +327,7 @@
       "POPOVER_SHARE_TITLE": "Identité {{title}}"
     },
     "LOOKUP": {
-      "TITLE": "Annuaire",
+      "TITLE": "Toile de confiance",
       "NEWCOMERS": "Nouveaux membres",
       "NEWCOMERS_COUNT": "{{count}} membres",
       "PENDING": "Inscriptions en attente",
@@ -340,6 +340,9 @@
       "SHOW_MORE_COUNT": "(limite actuelle à {{limit}})",
       "NO_PENDING": "Aucune inscription en attente.",
       "NO_NEWCOMERS": "Aucun membre."
+    },
+    "CONTACTS": {
+      "TITLE": "Contacts"
     },
     "MODAL": {
       "TITLE": "Recherche"

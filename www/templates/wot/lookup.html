@@ -2,10 +2,18 @@
 
   <ion-tabs class="tabs-positive tabs-icon-top">
 
-    <ion-tab title="{{'MENU.WOT'|translate}}" icon="ion-person-stalker"
+    <!--ion-tab title="{{'WOT.CONTACTS.TITLE'|translate}}" icon="ion-person"
+             ui-sref="app.wot_lookup.tab_contacts">
+      <i class="ion-person"></i>
+      <ion-nav-view name="tab"></ion-nav-view>
+    </ion-tab-->
+
+
+    <ion-tab title="{{'WOT.LOOKUP.TITLE'|translate}}" icon="ion-person-stalker"
       ui-sref="app.wot_lookup.tab_search">
       <ion-nav-view name="tab"></ion-nav-view>
     </ion-tab>
+
 
     <!-- Allow extension here -->
     <cs-extension-point name="tabs"></cs-extension-point>

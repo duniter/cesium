@@ -492,6 +492,11 @@ function BlockViewController($scope, $ionicPopover, $state, UIUtils, BMA, csCurr
   $scope.formData = {};
   $scope.compactMode = true; // TODO change to true
 
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall() ? true : viewData.enableBack;
+  });
+
   /**
    * Enter on view
    */

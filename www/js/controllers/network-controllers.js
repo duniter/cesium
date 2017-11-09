@@ -456,6 +456,11 @@ function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {
   $scope.isHttps = ($window.location.protocol === 'https:');
   $scope.isReachable = true;
 
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall() ? true : viewData.enableBack;
+  });
+
   $scope.$on('$ionicView.enter', function(e, state) {
     var isDefaultNode = !state.stateParams || !state.stateParams.server;
     var server = state.stateParams && state.stateParams.server || BMA.server;
