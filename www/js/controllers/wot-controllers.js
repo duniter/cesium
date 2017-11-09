@@ -407,7 +407,7 @@ function WotLookupController($scope, $state, $timeout, $focus, $location, $ionic
 
   $scope.next = function() {
     // This method should be override by sub controller (e.g. modal controller)
-    console.log('Selected identities:', $scope.selection);
+    console.warn('Selected identities (should be override):', $scope.selection);
   };
 
   $scope.toggleCheck = function(index, e) {
