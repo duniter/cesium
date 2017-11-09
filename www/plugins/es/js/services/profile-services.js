@@ -91,9 +91,10 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
             // decrypt socials (if login)
             return SocialUtils.open(profile.source.socials, pubkey)
               .then(function(){
-                //console.log(profile.source.socials);
                 // Exclude invalid decrypted socials
+                //console.debug(profile.source.socials);
                 //profile.source.socials = _.where(profile.source.socials, {valid: true});
+
                 return profile;
               });
           }

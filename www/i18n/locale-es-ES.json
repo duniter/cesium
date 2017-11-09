@@ -514,7 +514,7 @@
     "COMMENT": "Comentario",
     "COMMENT_HELP": "Comentario",
     "BTN_SEND": "Mandar",
-    "BTN_ADD_COMMENT": "Añadir un comentario",,
+    "BTN_ADD_COMMENT": "Añadir un comentario",
     "WARN_COMMENT_IS_PUBLIC": "Tenga en cuenta que los <b>comentarios son públicos</b> (sin encriptar).",
     "MODAL": {
       "TITLE": "Transferencia"

@@ -109,7 +109,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 ;
 
 function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controller, $location, $state, $translate, $ionicPopover,
-                                    UIUtils, ModalUtils, BMA, csSettings, csWallet, esModals, esRegistry, esHttp) {
+                                    Device, UIUtils, ModalUtils, BMA, csSettings, csWallet, esModals, esRegistry, esHttp) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -1261,12 +1261,12 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
   $scope.openPicturePopup = function() {
     Device.camera.getPicture()
     .then(function(imageData) {
-      $scope.pictures.push({src: "data:image/png;base64," + imageData});
+      if (imageData) {
+        $scope.pictures.push({src: "data:image/png;base64," + imageData});
+      }
     })
     .catch(UIUtils.onError('ERROR.TAKE_PICTURE_FAILED'));
   };
-
-
 
   $scope.rotateAvatar = function(){
     if (!$scope.avatar || !$scope.avatar.src || $scope.rotating) return;

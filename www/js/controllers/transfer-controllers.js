@@ -232,6 +232,10 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       delete $scope.form.amount.$error.min;
     }
 
+    // Avoid multiple call
+    if ($scope.sending) return;
+    $scope.sending = true;
+
     var currentUD;
     return $q.all([
         // Make sure user is auth
@@ -244,11 +248,14 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
           }),
 
         // Hide digit keyboard
-        $scope.hideDigitKeyboard(0)
+        $scope.hideDigitKeyboard(300)
        ])
       .then($scope.askTransferConfirm)
       .then(function(confirm){
-        if (!confirm) return;
+        if (!confirm) {
+          $scope.sending = false;
+          return;
+        }
 
         return UIUtils.loading.show()
           .then(function(){
@@ -269,8 +276,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             return csWallet.transfer($scope.formData.destPub, amount, comment, $scope.formData.useRelative);
           })
           .then(function() {
+            $scope.sending = false;
             UIUtils.loading.hide();
-
             return $scope.closeModal(true);
           })
           .then(function(res) {
@@ -279,7 +286,10 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             }, 500);
             return res;
           })
-          .catch(UIUtils.onError('ERROR.SEND_TX_FAILED'));
+          .catch(function(err) {
+            $scope.sending = false;
+            UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
+          });
     });
   };
 
@@ -347,8 +357,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
 
     // Device enable: hide OS keyboard
     if (Device.enable) {
-
-      console.log(_.keys(Device.keyboard));
 
       // Hide device keyboard
       Device.keyboard.close();
