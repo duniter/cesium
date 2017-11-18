@@ -82,7 +82,7 @@ function ESWotLookupExtendController($scope, $controller, $state) {
   };
 }
 
-function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, esSettings, PluginService,
+function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, esSettings, PluginService, csWallet,
                                      esModals, esHttp, esWallet, esInvitation) {
   'ngInject';
 
@@ -128,14 +128,17 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
 
     $scope.hideCertificationActionsPopover();
 
-    var walletData;
     var identities;
 
-    return $scope.loadWallet({minData: true})
-      .then(function(data) {
+    return csWallet.auth({minData: true})
+      .then(function(walletData) {
         UIUtils.loading.hide();
 
-        walletData = data;
+        // Not allow for non-member - issue #561
+        if (!walletData.isMember) {
+          return UIUtils.alert.error('ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION');
+        }
+
         return Modals.showWotLookup({
           allowMultiple: true,
           enableFilter: true,
@@ -143,56 +146,58 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
           help: 'WOT.SUGGEST_CERTIFICATIONS_MODAL.HELP',
           okText: 'COMMON.BTN_NEXT',
           okType: 'button-positive'
-        });
-      })
+        })
+        .then(function(res) {
+          if (!res || !res.length) return; // user cancelled
+          identities = res;
 
-      .then(function(res) {
-        if (!res || !res.length) return; // user cancelled
-        identities = res;
-
-        return $q.all([
+          return $q.all([
             // Get keypair only once (if not done here, certification.send() with compute it many times)
             esWallet.box.getKeypair(walletData.keypair),
             // Ask confirmation
             UIUtils.alert.confirm('WOT.CONFIRM.SUGGEST_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
           ])
-          .then(function(res) {
-            if (!res) return;
-            var keypair = res[0];
-            var confirm = res[1];
-            if (!confirm) return;
-            var time = esHttp.date.now(); // use same date for each invitation
-            return $q.all(
-              identities.reduce(function(res, identity){
-                return res.concat(
-                  esInvitation.send({
-                    issuer: walletData.pubkey,
-                    recipient: $scope.formData.pubkey,
-                    time: time,
-                    content: [identity.uid, identity.pubkey].join('-')
-                  }, keypair, 'certification')
-                );
-              }, [])
-            );
-          })
-          .then(function() {
-            UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
-          })
-          .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
-      })
-      ;
+            .then(function(res) {
+              if (!res) return;
+              var keypair = res[0];
+              var confirm = res[1];
+              if (!confirm) return;
+              var time = esHttp.date.now(); // use same date for each invitation
+              return $q.all(
+                identities.reduce(function(res, identity){
+                  return res.concat(
+                    esInvitation.send({
+                      issuer: walletData.pubkey,
+                      recipient: $scope.formData.pubkey,
+                      time: time,
+                      content: [identity.uid, identity.pubkey].join('-')
+                    }, keypair, 'certification')
+                  );
+                }, [])
+              );
+            })
+            .then(function() {
+              UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+            })
+            .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
+        })
+          ;
+      });
   };
 
   $scope.showAskCertificationModal = function() {
 
     $scope.hideCertificationActionsPopover();
 
-    var walletData;
     var identities;
-    return $scope.loadWallet({minData: true})
-      .then(function(data) {
+    return csWallet.auth({minData: true})
+      .then(function(walletData) {
         UIUtils.loading.hide();
-        walletData = data;
+
+        // Not allow for non-member - issue #561
+        if (!walletData.isMember) {
+          return UIUtils.alert.error('ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION');
+        }
 
         return Modals.showWotLookup({
           allowMultiple: true,
@@ -201,38 +206,38 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
           help: 'WOT.ASK_CERTIFICATIONS_MODAL.HELP',
           okText: 'COMMON.BTN_NEXT',
           okType: 'button-positive'
-        });
-      })
-      .then(function(res) {
-        if (!res || !res.length) return; // user cancelled
-        identities = res;
+        })
+        .then(function(res) {
+          if (!res || !res.length) return; // user cancelled
+          identities = res;
 
-        return $q.all([
+          return $q.all([
             // Get keypair only once (if not done here, certification.send() with compute it many times)
             esWallet.box.getKeypair(walletData.keypair),
             // Ask confirmation
             UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
           ])
-          .then(function(res) {
-            if (!res) return;
-            var keypair = res[0];
-            var confirm = res[1];
-            if (!confirm) return;
-            var time = esHttp.date.now(); // use same date for each invitation
-            return $q.all(identities.reduce(function(res, identity){
-                  return res.concat(
-                    esInvitation.send({
-                      issuer: walletData.pubkey,
-                      recipient: identity.pubkey,
-                      time: time,
-                      content: [walletData.uid, walletData.pubkey].join('-')
-                    }, keypair, 'certification')
-                  );
-                }, []))
-              .then(function() {
-                UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
-              })
-              .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
+            .then(function(res) {
+              if (!res) return;
+              var keypair = res[0];
+              var confirm = res[1];
+              if (!confirm) return;
+              var time = esHttp.date.now(); // use same date for each invitation
+              return $q.all(identities.reduce(function(res, identity){
+                return res.concat(
+                  esInvitation.send({
+                    issuer: walletData.pubkey,
+                    recipient: identity.pubkey,
+                    time: time,
+                    content: [walletData.uid, walletData.pubkey].join('-')
+                  }, keypair, 'certification')
+                );
+              }, []))
+                .then(function() {
+                  UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+                })
+                .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
+            });
           });
       });
   };
@@ -240,9 +245,14 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
   $scope.askCertification = function() {
     $scope.hideCertificationActionsPopover();
 
-    $scope.loadWallet({minData: true})
+    return csWallet.auth({minData: true})
       .then(function(walletData) {
         UIUtils.loading.hide();
+
+        // Not allow for non-member - issue #561
+        if (!walletData.isMember) {
+          return UIUtils.alert.error('ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION');
+        }
 
         return UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATION', undefined, {
             okText: 'COMMON.BTN_SEND'

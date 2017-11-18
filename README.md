@@ -38,7 +38,7 @@ npm start
 ```
 Answer asked questions.
 
-Your cesium instance is now reacheable on : [http://localhost:8100/](http://localhost:8100/) or an other ip if your listen on an other interface.
+Your Cesium instance is now reacheable on : [http://localhost:8100/](http://localhost:8100/) or an other ip if your listen on an other interface.
 
 #### Installation script
 
