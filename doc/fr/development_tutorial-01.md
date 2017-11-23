@@ -89,7 +89,7 @@ Installer Node.js est devenu extrêmement simple pour ces OS : un outil vous per
 Vous pouvez installer nvm avec la commande suivante :
 
 ```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash
 ```
 
 Fermez puis rouvrez votre terminal, comme indiqué. Puis, installez Node.js (choisissez la version 5) : 
