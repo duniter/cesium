@@ -89,7 +89,7 @@ Il ne reste plus qu'à afficher dynamiquement la valeur de notre paramètre `ste
 Ouvrez le controlleur `CurrencyViewController` présent dans le fichier `www/js/controllers/currency-controllers.js`
 Ce controlleur fait déjà un appel à l'API Duniter [`/blockchain/parameters`](http://cgeek.fr:9330/blockchain/parameters).
 
-Identifiez la fonction `loadParameters()`.
+Identifiez la fonction `load()`.
 Modifiez le code de retour de l'appel `/blockchain/parameters`, pour stocker la valeur `stepMax` dans le `$scope` : 
 
 ```
@@ -99,22 +99,20 @@ function CurrencyViewController($scope, $q, $translate, $timeout, BMA, UIUtils, 
   $scope.stepMax = 0;
   (...)
 
-  $scope.loadParameter = function() {
-    if (!$scope.node) {
-      return;
-    }
-    var M;
+  $scope.load = function() {
+    (...)
+    
     return $q.all([
 
-    // Appel de /blockchain/parameters sur le noeud Duniter
-        $scope.node.blockchain.parameters() 
-         .then(function(json){
-            $scope.currency = json.currency;
-            (...)
-            // Mise à jour dela valeur, à partir du résultat que renvoi le noeud Duniter
-            $scope.stepMax = json.stepMax;
-          }),
+      // Get the currency parameters
+      BMA.node.blockchain.parameters() 
+       .then(function(json){
+          $scope.currency = json.currency;
           (...)
+          // Mise à jour de la valeur, à partir du résultat que renvoi le noeud Duniter
+          $scope.stepMax = json.stepMax;
+        }),
+      (...)
 ```
 
 > L'objet '$scope' sert à manipuler des valeurs partagées entre le controlleur et le template.
@@ -170,4 +168,4 @@ Vous trouverez leur définition dans la [documentation du protocole Duniter](htt
 
 Vous pouvez maintenant poursuivre avec les niveaux qui suivent. Nous y verrons comment compiler et déployer Cesium sur Android, puis comment ajouter un plugin, et même ajouter un graphique dynamique !
 
-[Voir la suite ici >>](./development_tutorial-03.md)
+[Voir la suite ici >>](./development_tutorial-03-android.md)
