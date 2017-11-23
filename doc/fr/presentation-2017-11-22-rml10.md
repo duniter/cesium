@@ -54,12 +54,12 @@ Nouveautés (depuis les RML9 du Havre).
 
 - Avatar sur les nœuds mirroir 
 - Optimisation des perfs d'affichage
-- Cartes des nœuds 
+- [Cartes des nœuds](https://g1.duniter.fr/#/app/network/map)
   * localisation des IP via [freegeoip.net](http://freegeoip.net)
 
 ### Annuaire > Toile de conficance
  
-- Carte des profiles (membres, inscriptions en attente, simples portefeuilles)
+- [Carte des profiles](https://g1.duniter.fr/#/app/wot/map) (membres, inscriptions en attente, simples portefeuilles)
 - Fonction de recherche
 - Visite guidée
  
@@ -68,11 +68,12 @@ Nouveautés (depuis les RML9 du Havre).
 - Page = Identification d'un simple portefeuille
 - Type de page : association, entreprise (dont commerce local), institution
 - Clef associée != Clef du rédacteur de la page
-- Carte : séparée des profiles
+- [Carte des pages](https://g1.duniter.fr/#/app/wot/pagemap) : séparée des profiles
 
 ### Profiles
 
-- Localisation `Apparaitre sur les cartes Cesium`
+- Localisation 
+  * Cocher la case : `Apparaitre sur les cartes Cesium ?`
   * Résolution de l'adresse via un web service OpenStreetMap
   * Nécessaire pour apparaitre dans la carte (sans utiliser des services privateurs)
 
