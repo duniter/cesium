@@ -51,9 +51,17 @@ var paths = {
   license_md: ['./www/license/*.md']
 };
 
-gulp.task('default', ['sass', 'config', 'templatecache', 'ng_translate', 'ng_annotate',
-  'templatecache_plugin', 'ng_translate_plugin', 'ng_annotate_plugin', 'css_plugin', 'license_md'
-]);
+gulp.task('serve:before', ["sass",
+  "templatecache",
+  "ng_annotate",
+  "ng_translate",
+  "templatecache_plugin",
+  "ng_annotate_plugin",
+  "ng_translate_plugin",
+  "css_plugin",
+  "license_md"]);
+
+gulp.task('default', ['config', 'serve:before']);
 
 gulp.task('sass-images', function (done) {
   gulp.src('./scss/leaflet/images/**/*.*')
@@ -191,11 +199,11 @@ gulp.task('ng_annotate', function (done) {
     .on('end', done);
 });
 
-gulp.task('ng_translate', function() {
-  return gulp.src('www/i18n/locale-*.json')
+gulp.task('ng_translate', function(done) {
+  gulp.src('www/i18n/locale-*.json')
     .pipe(ngTranslate({standalone:true, module: 'cesium.translations'}))
-    .pipe(gulp.dest('www/dist/dist_js/app'));
-    //.pipe(gulp.dest('www/js'));
+    .pipe(gulp.dest('www/dist/dist_js/app'))
+    .on('end', done);
 });
 
 
@@ -218,7 +226,7 @@ gulp.task('license_md', function (done) {
 });
 
 
-gulp.task('debug_file', function() {
+gulp.task('debug_file', function(done) {
   gutil.log(gutil.colors.green("Building `www/debug.html`..."));
 
   return gulp.src(['www/index.html'])
@@ -231,7 +239,8 @@ gulp.task('debug_file', function() {
     .pipe(replace('plugins/translations.js', 'dist/dist_js/plugins/translations.js'))
     .pipe(replace('ng-strict-di', ''))
     .pipe(rename('debug.html'))
-    .pipe(gulp.dest('www'));
+    .pipe(gulp.dest('www'))
+    .on('end', done);
 });
 
 /* -- Plugins -- */
@@ -254,10 +263,11 @@ gulp.task('ng_annotate_plugin', function (done) {
     .on('end', done);
 });
 
-gulp.task('ng_translate_plugin', function() {
-  return gulp.src(paths.ng_translate_plugin)
+gulp.task('ng_translate_plugin', function(done) {
+  gulp.src(paths.ng_translate_plugin)
     .pipe(ngTranslate({standalone:true, module: 'cesium.plugins.translations'}))
-    .pipe(gulp.dest('www/dist/dist_js/plugins'));
+    .pipe(gulp.dest('www/dist/dist_js/plugins'))
+    .on('end', done);
 });
 
 gulp.task('css_plugin', function (done) {
@@ -268,16 +278,14 @@ gulp.task('css_plugin', function (done) {
 
 /* -- Web dist build -- */
 gulp.task('clean:tmp', function(done) {
-  return del([
-      './tmp'
-    ]);
+  del(['tmp'], done);
 });
 
 gulp.task('clean:web', function(done) {
-  return del([
+  del([
       './platforms/web/www',
       './platforms/web/build'
-    ]);
+    ], done);
 });
 
 gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
@@ -539,7 +547,7 @@ gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
 
 gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function(done) {
   var tmpPath = './platforms/web/www';
-  return del([
+  del([
     tmpPath + '/css',
     tmpPath + '/templates',
     tmpPath + '/js',
@@ -548,7 +556,7 @@ gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function(d
     tmpPath + '/lib/ionic/css',
     tmpPath + '/lib/ionic/js',
     tmpPath + '/lib/ionic/version.json'
-  ]);
+  ], done);
 });
 
 gulp.task('zip:web', ['clean-unused-directories:web'], function(done) {
@@ -572,9 +580,7 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function(done) {
 gulp.task('build:web', ['git-check', 'zip:web'], function(done) {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-web-" + version + ".zip'"));
-  return del([
-      './tmp'
-    ]);
+  del(['tmp'], done);
 });
 
 gulp.task('deploy:android', function (done) {

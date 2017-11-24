@@ -5,18 +5,10 @@
     "www/**/*",
     "!www/dist/**/*",
     "!www/lib/**/*",
-    "!www/css/ionic.app**"
+    "!www/css/*.app.css"
   ],
   "gulpStartupTasks": [
-    "sass",
-    "templatecache",
-    "ng_annotate",
-    "ng_translate",
-    "templatecache_plugin",
-    "ng_annotate_plugin",
-    "ng_translate_plugin",
-    "css_plugin",
-    "license_md",
+    "serve:before",
     "watch"
   ],
   "defaultBrowser": "chrome",
