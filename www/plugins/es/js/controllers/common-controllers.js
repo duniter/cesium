@@ -885,7 +885,7 @@ function ESSearchPositionModalController($scope, $q, $translate, esGeo, paramete
 
         // Fallback search
         return $q.all([
-          $translate('PROFILE.MODAL_LOCATION.ALTERNATIVE_RESULT_DIVIDER', {address: fallbackText}),
+          $translate('LOCATION.MODAL.ALTERNATIVE_RESULT_DIVIDER', {address: fallbackText}),
           esGeo.point.searchByAddress(fallbackText)
         ])
           .then(function (res) {
