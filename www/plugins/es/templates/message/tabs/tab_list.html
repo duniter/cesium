@@ -1,0 +1,35 @@
+<ion-view>
+  <ion-nav-buttons side="secondary">
+
+    <!-- Allow extension here -->
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
+
+    <button class="button button-icon button-clear icon ion-android-more-vertical"
+            ng-click="showActionsPopover($event)">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content>
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="refresh()">
+    </ion-refresher>
+
+    <cs-extension-point name="buttons"></cs-extension-point>
+
+    <!-- list -->
+    <ng-include src="'plugins/es/templates/message/list.html'"></ng-include>
+  </ion-content>
+
+
+  <!-- fab button -->
+  <div class="visible-xs visible-sm" >
+    <button ng-if="fabButtonNewMessageId"
+            id="{{::fabButtonNewMessageId}}"
+            class="button button-fab button-fab-bottom-right button-assertive spin has-footer"
+            ng-click="showNewMessageModal()">
+      <i class="icon ion-compose"></i>
+    </button>
+  </div>
+
+</ion-view>

@@ -3,12 +3,10 @@
     <span translate>MESSAGE.VIEW.TITLE</span>
   </ion-nav-title>
 
-  <ion-nav-buttons side="secondary">
-    <!--<button class="button button-bar button-icon button-clear visible-xs visible-sm" ng-click="edit()" ng-if="canEdit">
-      <i class="icon ion-android-create"></i>
-    </button>-->
-    <button class="button button-bar button-icon button-clear icon ion-android-more-vertical visible-xs visible-sm"
-            ng-click="actionsPopover.show($event)">
+  <ion-nav-buttons side="secondary" class="visible-xs visible-sm">
+
+    <button class="button button-icon button-clear icon ion-android-more-vertical "
+            ng-click="showActionsPopover($event)">
     </button>
   </ion-nav-buttons>
 

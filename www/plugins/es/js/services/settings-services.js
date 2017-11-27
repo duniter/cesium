@@ -264,7 +264,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
           .then(function(cypherText) {
             record.content = cypherText;
             // create or update
-            return !data.time ?
+            return angular.isUndefined(data.time) ?
               that.add(record) :
               that.update(record, {id: record.issuer});
           })
@@ -275,7 +275,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
       .then(function(saved) {
         if (!saved) return;
         // Update settings version, then store (on local store only)
-        csSettings.data.time = time;
+        data.time = time;
         previousRemoteData = filteredData;
         console.debug('[ES] [settings] Saved user settings in ' + (esHttp.date.now() - time) + 'ms');
         return storeSettingsLocally();

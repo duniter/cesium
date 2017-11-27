@@ -6,11 +6,64 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
     $stateProvider
 
       .state('app.user_message', {
-        url: "/user/message?type",
+        url: "/user/message",
         views: {
           'menuContent': {
-            templateUrl: "plugins/es/templates/message/list.html",
-            controller: 'ESMessageListCtrl'
+            templateUrl: "plugins/es/templates/message/lookup.html"
+          }
+        }
+      })
+
+      .state('app.user_message.tab_inbox', {
+        url: "/inbox",
+        views: {
+          'tab_inbox': {
+            controller: 'ESMessageInboxListCtrl',
+            templateUrl: "plugins/es/templates/message/tabs/tab_list.html"
+          }
+        },
+        data: {
+          auth: true,
+          minData: true,
+          large: 'app.user_messages_lg_inbox'
+        }
+      })
+
+      .state('app.user_message.tab_outbox', {
+        url: "/outbox",
+        views: {
+          'tab_outbox': {
+            controller: 'ESMessageOutboxListCtrl',
+            templateUrl: "plugins/es/templates/message/tabs/tab_list.html"
+          }
+        },
+        data: {
+          auth: true,
+          minData: true,
+          large: 'app.user_messages_lg_outbox'
+        }
+      })
+
+      .state('app.user_messages_lg_inbox', {
+        url: "/user/message/lg/inbox",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/message/lookup_lg.html",
+            controller: 'ESMessageInboxListCtrl'
+          }
+        },
+        data: {
+          auth: true,
+          minData: true
+        }
+      })
+
+      .state('app.user_messages_lg_outbox', {
+        url: "/user/message/lg/outbox",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/message/lookup_lg.html",
+            controller: 'ESMessageOutboxListCtrl'
           }
         },
         data: {
@@ -48,7 +101,11 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
     ;
   })
 
-  .controller('ESMessageListCtrl', ESMessageListController)
+  .controller('ESMessageAbstractListCtrl', ESMessageAbstractListController)
+
+  .controller('ESMessageInboxListCtrl', ESMessageInboxListController)
+
+  .controller('ESMessageOutboxListCtrl', ESMessageOutboxListController)
 
   .controller('ESMessageComposeCtrl', ESMessageComposeController)
 
@@ -60,12 +117,14 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
 ;
 
-function ESMessageListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout,
+function ESMessageAbstractListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout,
                                  csWallet, esModals, UIUtils, esMessage) {
   'ngInject';
 
   $scope.loading = true;
   $scope.messages = [];
+
+  $scope.fabButtonNewMessageId = undefined;
 
   $scope.$on('$ionicView.enter', function(e, state) {
 
@@ -73,11 +132,13 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
       .then(function() {
         if (!$scope.entered) {
           $scope.entered = true;
-          $scope.type = state.stateParams && state.stateParams.type || 'inbox';
+          $scope.type = $scope.type || state.stateParams && state.stateParams.type || 'inbox';
           $scope.load();
         }
 
-        $scope.showFab('fab-add-message-record');
+        if ($scope.fabButtonNewMessageId) {
+          $scope.showFab($scope.fabButtonNewMessageId);
+        }
       })
       .catch(function(err) {
         if ('CANCELLED' === err) {
@@ -303,6 +364,27 @@ function ESMessageListController($scope, $state, $translate, $ionicHistory, $ion
    */
 }
 
+function ESMessageInboxListController($scope, $controller) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESMessageAbstractListCtrl', {$scope: $scope}));
+
+  $scope.type = 'inbox';
+  $scope.fabButtonNewMessageId = 'fab-add-message-record-inbox';
+
+}
+
+
+function ESMessageOutboxListController($scope, $controller) {
+  'ngInject';
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESMessageAbstractListCtrl', {$scope: $scope}));
+
+  $scope.type = 'outbox';
+  $scope.fabButtonNewMessageId = 'fab-add-message-record-outbox';
+}
 
 function ESMessageComposeController($scope, $controller, UIUtils) {
   'ngInject';
@@ -445,12 +527,18 @@ function ESMessageComposeModalController($scope, Modals, UIUtils, csWallet, esHt
 }
 
 
-function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHistory, UIUtils, esModals, esMessage) {
+function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHistory, $ionicPopover,
+                                 UIUtils, esModals, esMessage) {
   'ngInject';
 
   $scope.formData = {};
   $scope.id = null;
   $scope.loading = true;
+
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    // Enable back button (workaround need for navigation outside tabs - https://stackoverflow.com/a/35064602)
+    viewData.enableBack = UIUtils.screen.isSmall() ? true : viewData.enableBack;
+  });
 
   $scope.$on('$ionicView.enter', function (e, state) {
     if (state.stateParams && state.stateParams.id) { // Load by id
@@ -518,17 +606,45 @@ function ESMessageViewController($scope, $state, $timeout, $translate, $ionicHis
     UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE')
       .then(function(confirm) {
         if (confirm) {
-          esMessage.remove($scope.id, $scope.type)
+          return esMessage.remove($scope.id, $scope.type)
             .then(function () {
               $ionicHistory.nextViewOptions({
                 historyRoot: true
               });
-              $state.go('app.user_message', {type: $scope.type});
+              $state.go($scope.type == 'inbox' ? 'app.user_message.tab_inbox' : 'app.user_message.tab_outbox',
+                {type: $scope.type}
+              );
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));
         }
       });
+  };
+
+  /* -- Popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/message/view_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
   };
 
   /* -- Modals -- */

@@ -1,109 +1,49 @@
-<ion-view left-buttons="leftButtons" class="view-messages">
-  <ion-nav-title>
-    <span translate>MESSAGE.LIST.TITLE</span>
-  </ion-nav-title>
 
-  <ion-nav-buttons side="secondary">
-    <button class="button button-icon button-clear visible-xs visible-sm"
-            ng-click="showActionsPopover($event)">
-      <i class="icon ion-android-more-vertical"></i>
-    </button>
-  </ion-nav-buttons>
 
-  <ion-content class="padding no-padding-xs">
-    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
-                   on-refresh="refresh(true)">
-    </ion-refresher>
+<ion-list class="{{::motion.ionListClass}}"
+          can-swipe="$root.device.enable"
+          >
 
-    <!-- Buttons bar-->
-    <ion-list>
-      <div class="item large-button-bar hidden-xs hidden-sm">
+  <div class="padding gray" ng-if="!messages.length">
+    <span ng-if="type=='inbox'" translate>MESSAGE.NO_MESSAGE_INBOX</span>
+    <span ng-if="type=='outbox'" translate>MESSAGE.NO_MESSAGE_OUTBOX</span>
+  </div>
 
-        <button class="button button-stable button-small-padding icon ion-loop" ng-click="load()">
-        </button>
+  <ion-item
+    class="item item-border-large item-avatar item-icon-right ink"
+    ng-repeat="msg in messages"
+    ui-sref="app.user_view_message({type:type, id:msg.id})">
 
-        <button class="button button-calm icon ion-compose"
-                ng-click="showNewMessageModal()">
-          {{'MESSAGE.BTN_COMPOSE' | translate}}
-        </button>
+    <i ng-if="::!msg.avatar" class="item-image icon" ng-class="{'ion-person': msg.uid, 'ion-email': !msg.uid}"></i>
+    <i ng-if="::msg.avatar" class="item-image avatar" style="background-image: url({{::msg.avatar.src}})"></i>
 
-        <button class="button button-stable icon-right ink"
-                ng-click="showActionsPopover($event)">
-          &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
-          {{'COMMON.BTN_OPTIONS' | translate}}
-        </button>
-      </div>
+    <h4 class="pull-right hidden-xs hidden-sm">
+      <span class="dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</span>
+      <span class="gray ">| {{::msg.time|formatDate}}</span>
+    </h4>
+    <h4 class="pull-right visible-xs visible-sm dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</h4>
+    <h3>
+      <a class="positive"
+         ng-if="::msg.name||msg.uid"
+         ui-sref="app.wot_identity({pubkey:msg.issuer, uid:msg.name||msg.uid})">
+        <i class="ion-person"></i>
+        {{::msg.name||msg.uid}}
+      </a>
+      <a class="gray" ng-if="::!msg.name && !msg.uid"
+         ui-sref="app.wot_identity({pubkey:msg.issuer})">
+        <i class="ion-key"></i>
+        {{::msg.issuer|formatPubkey}}
+      </a>
+    </h3>
+    <h2 ng-class="{'unread': !msg.read}">{{::msg.title}}</h2>
+    <p>{{::msg.summary||msg.content}}</p>
+    <i class="icon ion-ios-arrow-right "></i>
+    <ion-option-button class="button-stable"
+                       ng-click="showReplyModal($index)"
+                       translate>MESSAGE.BTN_REPLY</ion-option-button>
+    <ion-option-button class="button-assertive"
+                       ng-click="delete($index)"
+                       translate>COMMON.BTN_DELETE</ion-option-button>
 
-      <div class="pull-right hidden-xs hidden-sm">
-        <a class="button button-text button-small ink icon ion-archive"
-           ng-class="{'button-text-positive': type=='inbox'}"
-           ng-click="setType('inbox')">
-          {{'MESSAGE.LIST.INBOX' | translate}}
-        </a>
-        &nbsp;
-        <a class="button button-text button-small ink icon ion-paper-airplane"
-           ng-class="{'button-text-positive': type=='outbox'}"
-           ng-click="setType('outbox')" class="badge-balanced">
-          {{'MESSAGE.LIST.OUTBOX' | translate}}
-        </a>
-      </div>
-
-      <div class="center padding" ng-if="loading">
-        <ion-spinner icon="android"></ion-spinner>
-      </div>
-    </ion-list>
-
-    <ion-list class="{{::motion.ionListClass}}"
-              can-swipe="$root.device.enable"
-              ng-hide="loading">
-
-      <div class="padding gray" ng-if="!messages.length">
-        <span ng-if="type=='inbox'" translate>MESSAGE.NO_MESSAGE_INBOX</span>
-        <span ng-if="type=='outbox'" translate>MESSAGE.NO_MESSAGE_OUTBOX</span>
-      </div>
-
-      <ion-item
-        class="item item-border-large item-avatar item-icon-right ink"
-        ng-repeat="msg in messages"
-        ui-sref="app.user_view_message({type:type, id:msg.id})">
-
-        <i ng-if="::!msg.avatar" class="item-image icon" ng-class="{'ion-person': msg.uid, 'ion-email': !msg.uid}"></i>
-        <i ng-if="::msg.avatar" class="item-image avatar" style="background-image: url({{::msg.avatar.src}})"></i>
-
-        <h4 class="pull-right hidden-xs hidden-sm">
-          <span class="dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</span>
-          <span class="gray ">| {{::msg.time|formatDate}}</span>
-        </h4>
-        <h4 class="pull-right visible-xs visible-sm dark"><i class="ion-clock"></i> {{::msg.time|formatFromNow}}</h4>
-        <h3>
-          <a class="positive"
-             ng-if="::msg.name||msg.uid"
-             ui-sref="app.wot_identity({pubkey:msg.issuer, uid:msg.name||msg.uid})">
-            <i class="ion-person"></i>
-            {{::msg.name||msg.uid}}
-          </a>
-          <a class="gray" ng-if="::!msg.name && !msg.uid"
-             ui-sref="app.wot_identity({pubkey:msg.issuer})">
-            <i class="ion-key"></i>
-            {{::msg.issuer|formatPubkey}}
-          </a>
-        </h3>
-        <h2 ng-class="{'unread': !msg.read}">{{::msg.title}}</h2>
-        <p>{{::msg.summary||msg.content}}</p>
-        <i class="icon ion-ios-arrow-right "></i>
-        <ion-option-button class="button-stable"
-                           ng-click="showReplyModal($index)"
-                           translate>MESSAGE.BTN_REPLY</ion-option-button>
-        <ion-option-button class="button-assertive"
-                           ng-click="delete($index)"
-                           translate>COMMON.BTN_DELETE</ion-option-button>
-
-      </ion-item>
-    </ion-list>
-  </ion-content>
-
-  <button id="fab-add-message-record"
-          class="button button-fab button-fab-bottom-right button-assertive icon ion-compose visible-xs visible-sm spin"
-          ng-click="showNewMessageModal()">
-  </button>
-</ion-view>
+  </ion-item>
+</ion-list>

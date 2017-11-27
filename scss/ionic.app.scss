@@ -2182,6 +2182,10 @@ div[dropzone] {
   }
 }
 
+.buttons-tabs.border-bottom {
+  border-bottom: solid 1px #ccc !important;
+}
+
 @media screen and (max-width: $screen-xs-max) {
   .buttons-tabs {
     padding: 10px 10px 0 10px;
