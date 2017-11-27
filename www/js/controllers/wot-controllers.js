@@ -149,7 +149,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
 ;
 
-function WotLookupController($scope, $state, $timeout, $focus, $location, $ionicPopover, $ionicHistory,
+function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $ionicPopover, $ionicHistory,
                              UIUtils, csConfig, csCurrency, csSettings, Device, BMA, csWallet, csWot) {
   'ngInject';
 
