@@ -417,15 +417,10 @@
     }
   },
   "AUTH": {
-    "TITLE": "<i class=\"icon ion-locked\"></i> Authentification",
-    "METHOD_LABEL": "Méthode d'authentification",
-    "BTN_AUTH": "S'authentifier",
-    "SCRYPT_FORM_HELP": "Veuillez vous authentifier :",
-    "ERROR": {
-      "SCRYPT_DEFAULT": "Sallage simple (par défaut)",
-      "SCRYPT_ADVANCED": "Sallage avancé",
-      "FILE": "Fichier de trousseau"
-    }
+    "TITLE": "<i class=\"icon ion-locked\"></i> Authentication",
+    "METHOD_LABEL": "Authentication method",
+    "BTN_AUTH": "Authenticate",
+    "SCRYPT_FORM_HELP": "Please authenticate yourself:"
   },
   "ACCOUNT": {
     "TITLE": "My Account",

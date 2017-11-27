@@ -156,7 +156,8 @@
       "TITLE": "Message",
       "SENDER": "Envoyé par",
       "RECIPIENT": "Envoyé à",
-      "NO_CONTENT": "Message vide"
+      "NO_CONTENT": "Message vide",
+      "DELETE": "Supprimer le message"
     },
     "CONFIRM": {
       "REMOVE": "Êtes-vous sûr de vouloir <b>supprimer ce message</b> ?<br/><br/>Cette opération est irréversible.",
@@ -317,7 +318,7 @@
       "RECORD_DESCRIPTION": "Description",
       "RECORD_DESCRIPTION_HELP": "Description de l'activité",
       "RECORD_ADDRESS": "Rue",
-      "RECORD_ADDRESS_HELP": "Adresse : rue, batiment...",
+      "RECORD_ADDRESS_HELP": "Rue, batiment...",
       "RECORD_CITY": "Ville",
       "RECORD_CITY_HELP": "Ville",
       "RECORD_SOCIAL_NETWORKS": "Réseaux sociaux et site web",

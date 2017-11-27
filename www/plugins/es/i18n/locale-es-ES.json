@@ -314,7 +314,7 @@
       "RECORD_DESCRIPTION": "Descripción",
       "RECORD_DESCRIPTION_HELP": "Descripción de la actividad",
       "RECORD_ADDRESS": "Calle",
-      "RECORD_ADDRESS_HELP": "Dirección : calle, edificio...",
+      "RECORD_ADDRESS_HELP": "Calle, edificio...",
       "RECORD_CITY": "Ciudad",
       "RECORD_CITY_HELP": "Ciudad",
       "RECORD_SOCIAL_NETWORKS": "Redes sociales y sitio web",
