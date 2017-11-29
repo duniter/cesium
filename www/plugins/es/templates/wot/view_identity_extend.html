@@ -9,9 +9,17 @@
 <!-- General section -->
 <ng-if ng-if="enable && extensionPoint === 'after-general'">
 
-  <span class="item item-divider item-divider-top-border" translate>PROFILE.PROFILE_DIVIDER</span>
+  <span class="item item-divider item-divider-top-border">
+    <span>
+      {{'PROFILE.PROFILE_DIVIDER' | translate}}
+      <a style="font-size: 12pt; cursor: pointer;"
+         ng-click="showProfileHelp=!showProfileHelp"
+         class="icon positive ion-ios-help-outline ink"
+         title="{{'PROFILE.PROFILE_DIVIDER_HELP' | translate}}"></a>
+    </span>
+  </span>
 
-  <div class="item item-text-wrap positive item-small-height">
+  <div class="item item-text-wrap positive item-small-height" ng-show="showProfileHelp">
     <small translate>PROFILE.PROFILE_DIVIDER_HELP</small>
   </div>
 
