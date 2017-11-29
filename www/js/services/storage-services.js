@@ -6,7 +6,7 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
     var
       exports = {
-        storage: $window.sessionStorage
+        storage: $window.sessionStorage || {}
       };
 
     exports.put = function(key, value) {
@@ -124,7 +124,8 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     };
 
     function initStandardStorage() {
-      if (!$window.localStorage) {
+      // use local browser storage
+      if ($window.localStorage) {
         console.debug('[storage] Starting {local} storage...');
         exports.standard.storage = $window.localStorage;
         // Set standard storage as default
@@ -132,6 +133,8 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
           exports[key] = exports.standard[key];
         });
       }
+
+      // Fallback to session storage (locaStorage could have been disabled on some browser)
       else {
         console.debug('[storage] Starting {session} storage...');
         // Set standard storage as default
