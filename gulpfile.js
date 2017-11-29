@@ -571,14 +571,14 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function() {
     .pipe(header('\ufeff'))
     .pipe(txtFilter.restore)
 
-    .pipe(zip('cesium-web-'+version+'.zip'))
+    .pipe(zip('cesium-v'+version+'-web.zip'))
 
     .pipe(gulp.dest('./platforms/web/build'));
 });
 
 gulp.task('build:web', ['git-check', 'zip:web'], function() {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-  gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-web-" + version + ".zip'"));
+  gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-v" + version + "-web.zip'"));
   return del(['tmp']);
 });
 

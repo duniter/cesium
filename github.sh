@@ -53,10 +53,10 @@ case "$1" in
       ###  Sending files
       echo "Uploading files to GitHub..."
       dirname=`pwd`
-      curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/web/build/cesium-web-$current.zip $upload_url?name=cesium-v$current-web.zip
-      curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/firefoxos/build/package.zip $upload_url?name=cesium-v$current-firefoxos.zip
+      curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/web/build/cesium-v$current-web.zip $upload_url?name=cesium-v$current-web.zip
       curl -i -u $2 -H 'Content-Type: application/vnd.android.package-archive' -T $dirname/platforms/android/build/outputs/apk/android-release.apk $upload_url?name=cesium-v$current-android.apk
-      curl -i -u $2 -H 'Content-Type: application/x-debian-package' -T $dirname/platforms/ubuntu/native/cesium_${current}_amd64.deb $upload_url?name=cesium-v${current}-ubuntu-amd64.deb
+      # curl -i -u $2 -H 'Content-Type: application/zip' -T $dirname/platforms/firefoxos/build/package.zip $upload_url?name=cesium-v$current-firefoxos.zip
+      # curl -i -u $2 -H 'Content-Type: application/x-debian-package' -T $dirname/platforms/ubuntu/native/cesium_${current}_amd64.deb $upload_url?name=cesium-v${current}-ubuntu-amd64.deb
 
       echo "Successfully uploading files"
       release_url=`echo "$result" | grep -P "\"url\": \"[^\"]+"  | grep -oP "https://api.github.com/repos/[a-z0-9/.]+"`
