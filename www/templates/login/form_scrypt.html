@@ -62,7 +62,7 @@
     </a>
     <span class="button button-icon balanced button-small-padding icon ion-checkmark animate-show-hide"
        ng-if="expectedPubkey"
-       ng-show="showPubkey && !computing && !pubkeyError">
+       ng-show="showPubkey && !showComputePubkeyButton && !computing && !pubkeyError">
     </span>
   </div>
   <div class="form-errors" ng-if="expectedPubkey">
