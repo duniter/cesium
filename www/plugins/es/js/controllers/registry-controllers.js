@@ -108,7 +108,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
 
 ;
 
-function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controller, $location, $state, $translate, $ionicPopover,
+function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controller, $location, $translate, $ionicPopover,
                                     Device, UIUtils, ModalUtils, BMA, csSettings, csWallet, esModals, esRegistry, esHttp) {
   'ngInject';
 

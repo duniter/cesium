@@ -164,7 +164,7 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         }
 
         // Get geo_distance filter
-        var geoDistanceFilter = _.findWhere(request.query && request.query.bool && request.query.bool.filter || [], function(res) {
+        var geoDistanceFilter = _.find(request.query && request.query.bool && request.query.bool.filter || [], function(res) {
           return !!res.geo_distance;
         });
 
