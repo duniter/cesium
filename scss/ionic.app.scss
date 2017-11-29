@@ -125,7 +125,7 @@ $screen-lg:                       1200px;
     .button.hidden-xs {
       display: inline-block;
     }
-  .item-toggle .toggle {
+    .item-toggle .toggle {
       right: 32px;
     }
 }
@@ -133,6 +133,9 @@ $screen-lg:                       1200px;
     .visible-xs {
         display: inherit !important;
         visibility: visible !important;
+    }
+    .button.visible-xs {
+      display: block !important;
     }
 }
 @media screen and (min-width: $screen-sm) {
@@ -216,6 +219,9 @@ $screen-lg:                       1200px;
     .visible-sm {
         display: inherit !important;
         visibility: visible !important;
+    }
+    .button.visible-sm {
+      display: block !important;
     }
 }
 @media screen and (min-width: $screen-md) {
@@ -644,11 +650,6 @@ $screen-menu:                     845px;
   .button.button-clear.button-icon i.ion-android-more-vertical {
     padding-left: 8px;
     padding-right: 8px;
-  }
-
-  .buttons .secondary-buttons >
-  .button.button-clear.button-icon.ion-android-more-vertical:first-child {
-    padding-left: 0px !important;
   }
 }
 
