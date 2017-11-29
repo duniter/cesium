@@ -403,7 +403,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
 
           data.pubkey = pubkey;
-          data.uid = uid;
+          data.uid = uid && uid != 'null' ? uid : undefined;
           data.keypair = keypair || {signPk: undefined, signSk: undefined};
 
           console.debug('[wallet] Restore \'{0}\' from local storage.'.format(pubkey.substring(0,8)));

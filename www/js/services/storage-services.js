@@ -1,6 +1,36 @@
 angular.module('cesium.storage.services', [ 'cesium.config'])
 
-  .factory('localStorage', function($window, $q) {
+
+  .factory('sessionStorage', function($window, $q) {
+    'ngInject';
+
+    var
+      exports = {
+        storage: $window.sessionStorage
+      };
+
+    exports.put = function(key, value) {
+      exports.storage[key] = value;
+      return $q.when();
+    };
+
+    exports.get = function(key, defaultValue) {
+      return $q.when(exports.storage[key] || defaultValue);
+    };
+
+    exports.setObject = function(key, value) {
+      exports.storage[key] = JSON.stringify(value);
+      return $q.when();
+    };
+
+    exports.getObject = function(key) {
+      return $q.when(JSON.parse(exports.storage[key] || '{}'));
+    };
+
+    return exports;
+  })
+
+  .factory('localStorage', function($window, $q, sessionStorage) {
     'ngInject';
 
     var
@@ -94,18 +124,26 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     };
 
     function initStandardStorage() {
-      console.debug('[storage] Starting [standard mode]...');
-      exports.standard.storage = $window.localStorage;
-      // Set standard storage as default
-      _.forEach(_.keys(exports.standard), function(key) {
-        exports[key] = exports.standard[key];
-      });
-
+      if (!$window.localStorage) {
+        console.debug('[storage] Starting {local} storage...');
+        exports.standard.storage = $window.localStorage;
+        // Set standard storage as default
+        _.forEach(_.keys(exports.standard), function(key) {
+          exports[key] = exports.standard[key];
+        });
+      }
+      else {
+        console.debug('[storage] Starting {session} storage...');
+        // Set standard storage as default
+        _.forEach(_.keys(sessionStorage), function(key) {
+          exports[key] = sessionStorage[key];
+        });
+      }
       return $q.when();
     }
 
     function initSecureStorage() {
-      console.debug('[storage] Starting [secure mode]...');
+      console.debug('[storage] Starting {secure} storage...');
       // Set secure storage as default
       _.forEach(_.keys(exports.secure), function(key) {
         exports[key] = exports.secure[key];
@@ -115,7 +153,6 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
 
       // No secure storage plugin: fall back to standard storage
       if (!cordova.plugins || !cordova.plugins.SecureStorage) {
-        console.debug('[storage] No cordova plugin. Will use standard....');
         initStandardStorage();
         deferred.resolve();
       }
@@ -175,32 +212,4 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
   })
 
 
-  .factory('sessionStorage', function($window, $q) {
-    'ngInject';
-
-    var
-      exports = {
-        storage: $window.sessionStorage
-      };
-
-    exports.put = function(key, value) {
-      exports.storage[key] = value;
-      return $q.when();
-    };
-
-    exports.get = function(key, defaultValue) {
-      return $q.when(exports.storage[key] || defaultValue);
-    };
-
-    exports.setObject = function(key, value) {
-      exports.storage[key] = JSON.stringify(value);
-      return $q.when();
-    };
-
-    exports.getObject = function(key) {
-      return $q.when(JSON.parse(exports.storage[key] || '{}'));
-    };
-
-    return exports;
-  })
 ;
