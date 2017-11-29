@@ -146,6 +146,7 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
 
   .controller('WotCertificationsViewCtrl', WotCertificationsViewController)
 
+  .controller('WotSelectPubkeyIdentityModalCtrl', WotSelectPubkeyIdentityModalController)
 
 ;
 
@@ -945,7 +946,7 @@ function WotIdentityAbstractController($scope, $rootScope, $state, $translate, $
 /**
  * Identity view controller - should extend WotIdentityAbstractCtrl
  */
-function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UIUtils, csWallet, csTx) {
+function WotIdentityViewController($scope, $rootScope, $controller, $timeout, UIUtils, csWallet) {
   'ngInject';
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WotIdentityAbstractCtrl', {$scope: $scope}));
@@ -1264,3 +1265,46 @@ function WotCertificationsViewController($scope, $rootScope, $controller, csSett
 }
 
 
+/**
+ * Select identities from a pubkey (yusfull when many self on the same pubkey)
+ * @param $scope
+ * @param $q
+ * @param csWot
+ * @param parameters
+ * @constructor
+ */
+function WotSelectPubkeyIdentityModalController($scope, $q, csWot, parameters) {
+
+  $scope.loading = true;
+
+  $scope.load = function() {
+    // If list of identities given by parameters: use it
+    if (parameters && parameters.identities) {
+      $scope.identities = parameters.identities;
+      $scope.pubkey = $scope.identities[0].pubkey;
+      $scope.loading = false;
+      return $q.when();
+    }
+
+    // Or load from pubkey
+    $scope.pubkey = parameters && parameters.pubkey;
+    if (!pubkey) {
+      return $q.reject('Missing parameters: [pubkey] or [identities]');
+    }
+
+    return csWot.loadRequirements({pubkey: pubkey, uid: uid})
+      .then(function(data) {
+        if (data && data.requirements) {
+          $scope.identities = data.requirements;
+          if (data.requirements.alternatives) {
+            $scope.identities = [data.requirements].concat(data.requirements.alternatives);
+          }
+          else {
+            $scope.identities = [data.requirements];
+          }
+        }
+        $scope.loading = false;
+      });
+  };
+  $scope.$on('modal.shown', $scope.load);
+}

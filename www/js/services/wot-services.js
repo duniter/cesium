@@ -56,11 +56,85 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
         return certifications;
       },
 
-      loadRequirements = function(pubkey, uid) {
-        if (!pubkey) return $q.when({});
-        // Get requirements
-        return BMA.wot.requirements({pubkey: pubkey})
+      _resetRequirements = function(data) {
+        data.requirements = {
+          needSelf: true,
+          needMembership: true,
+          canMembershipOut: false,
+          needRenew: false,
+          pendingMembership: false,
+          wasMember: false,
+          certificationCount: 0,
+          needCertifications: false,
+          needCertificationCount: 0,
+          willNeedCertificationCount: 0,
+          alternatives: undefined
+        };
+        data.blockUid = null;
+        data.isMember = false;
+        data.sigDate = null;
+      },
+
+      _fillRequirements = function(requirements, currencyParameters) {
+        // Add useful custom fields
+        requirements.hasSelf = true;
+        requirements.needSelf = false;
+        requirements.wasMember = angular.isDefined(requirements.wasMember) ? requirements.wasMember : false; // Compat with Duniter 0.9
+        requirements.needMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn <= 0 && !requirements.wasMember);
+        requirements.needRenew = (!requirements.needMembership &&
+          requirements.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
+          requirements.membershipPendingExpiresIn <= 0) ||
+          (requirements.wasMember && requirements.membershipExpiresIn === 0 &&
+          requirements.membershipPendingExpiresIn === 0);
+        requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
+        requirements.pendingMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
+        requirements.isMember = (requirements.membershipExpiresIn > 0);
+        requirements.blockUid = requirements.meta.timestamp;
+        // Force certification count to 0, is not a member yet - fix #269
+        requirements.certificationCount = (requirements.isMember && requirements.certifications) ? requirements.certifications.length : 0;
+        requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
+          return count + (cert.expiresIn <= csSettings.data.timeWarningExpire ? 1 : 0);
+        }, 0) : 0;
+        requirements.willExpire = requirements.willExpireCertificationCount > 0;
+        requirements.pendingRevocation = !requirements.revoked && !!requirements.revocation_sig;
+
+        // Fix pending certifications count - Fix #624
+        if (!requirements.isMember && !requirements.wasMember) {
+          var certifiers = _.union(
+            _.pluck(requirements.pendingCerts || [], 'from'),
+            _.pluck(requirements.certifications || [], 'from')
+          );
+          requirements.pendingCertificationCount = _.size(certifiers);
+        }
+        else {
+          requirements.pendingCertificationCount = angular.isDefined(requirements.pendingCerts) ? requirements.pendingCerts.length : 0 ;
+        }
+
+        // Compute
+        requirements.needCertificationCount = (!requirements.needSelf && (requirements.certificationCount < currencyParameters.sigQty)) ?
+          (currencyParameters.sigQty - requirements.certificationCount) : 0;
+        requirements.willNeedCertificationCount = (!requirements.needMembership && !requirements.needCertificationCount &&
+        (requirements.certificationCount - requirements.willExpireCertificationCount) < currencyParameters.sigQty) ?
+          (currencyParameters.sigQty - requirements.certificationCount + requirements.willExpireCertificationCount) : 0;
+
+
+        return requirements;
+      },
+
+      loadRequirements = function(data) {
+        if (!data || (!data.pubkey && !data.uid)) return $q.when(data);
+
+        return $q.all([
+          // Get currency
+          csCurrency.get(),
+          // Get requirements
+          BMA.wot.requirements({pubkey: data.pubkey||data.uid})
+        ])
           .then(function(res){
+            var currency = res[0];
+
+            res = res[1];
+
             if (!res.identities || !res.identities.length)  return;
 
             // Sort to select the best identity
@@ -77,60 +151,53 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               //      max(membershipPendingExpiresIn) = must recent membership
               res.identities = _.sortBy(res.identities, function(idty) {
                 var score = 0;
-                score += (10000000000 * ((uid && idty.uid === uid) ? 1 : 0));
+                score += (10000000000 * ((data.uid && idty.uid === data.uid) ? 1 : 0));
+                score += (10000000000 * ((data.blockUid && idty.meta && idty.meta.timestamp === data.blockUid) ? 1 : 0));
                 score += (1000000000  * (idty.membershipExpiresIn > 0 ? 1 : 0));
                 score += (100000000   * (idty.membershipPendingExpiresIn > 0 ? 1 : 0));
                 score += (10000000    * (!idty.expired ? 1 : 0));
                 score += (1000000     * (!idty.outdistanced ? 1 : 0));
+                score += (100000      * (idty.wasMember ? 1 : 0));
                 var certCount = !idty.expired && idty.certifications ? idty.certifications.length : 0;
                 score += (1         * (certCount ? certCount : 0));
                 score += (1         * (!certCount && idty.membershipPendingExpiresIn > 0 ? idty.membershipPendingExpiresIn/1000 : 0));
                 return -score;
               });
-              console.debug('Found {0} identities. Will selected the best one'.format(res.identities.length));
+              console.debug('[wot] Found {0} identities. Will selected the best one'.format(res.identities.length));
             }
-            var requirements = res.identities[0];
-            // Add useful custom fields
-            requirements.hasSelf = true;
-            requirements.needMembership = (requirements.membershipExpiresIn <= 0 &&
-                                           requirements.membershipPendingExpiresIn <= 0 );
-            requirements.needRenew = (!requirements.needMembership &&
-                                      requirements.membershipExpiresIn <= csSettings.data.timeWarningExpire &&
-                                      requirements.membershipPendingExpiresIn <= 0 );
-            requirements.canMembershipOut = (requirements.membershipExpiresIn > 0);
-            requirements.pendingMembership = (requirements.membershipExpiresIn <= 0 && requirements.membershipPendingExpiresIn > 0);
-            requirements.isMember = (requirements.membershipExpiresIn > 0);
-            // Force certification count to 0, is not a member yet - fix #269
-            requirements.certificationCount = (requirements.isMember && requirements.certifications) ? requirements.certifications.length : 0;
-            requirements.willExpireCertificationCount = requirements.certifications ? requirements.certifications.reduce(function(count, cert){
-              if (cert.expiresIn <= csSettings.data.timeWarningExpire) {
-                cert.willExpire = true;
-                return count + 1;
-              }
-              return count;
-            }, 0) : 0;
-            requirements.pendingRevocation = !requirements.revoked && !!requirements.revocation_sig;
 
-            return requirements;
+            // Select the first identity
+            var requirements = _fillRequirements(res.identities[0], currency.parameters);
+
+            data.requirements = requirements;
+            data.pubkey = requirements.pubkey;
+            data.uid = requirements.uid;
+            data.isMember =  requirements.isMember;
+            data.blockUid =  requirements.blockUid;
+
+            // Prepare alternatives identities if any
+            if (!requirements.isMember && !requirements.wasMember && res.identities.length > 1) {
+              requirements.alternatives = res.identities.splice(1);
+              _.forEach(requirements.alternatives, function(requirements) {
+                _fillRequirements(requirements, currency.parameters);
+              });
+            }
+
+            // TODO : get sigDate from blockUid ??
+
+            return data;
           })
           .catch(function(err) {
+            _resetRequirements(data);
             // If not a member: continue
             if (!!err &&
                 (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
                  err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
-              return {
-                hasSelf: false,
-                needMembership: true,
-                canMembershipOut: false,
-                needRenew: false,
-                pendingMembership: false,
-                needCertifications: false,
-                needCertificationCount: 0,
-                willNeedCertificationCount: 0
-              };
+              return data;
             }
             throw err;
-          });
+          })
+          ;
       },
 
       loadIdentityByLookup = function(pubkey, uid) {
@@ -177,6 +244,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               return res.uids.reduce(function(certsMap, idty) {
                 var idtyFullKey = idty.uid + '-' + (idty.meta ? idty.meta.timestamp : '');
                 certsMap[idtyFullKey] = idty.others.reduce(function(certs, cert) {
+                  var certFullKey = idtyFullKey + '-' + cert.pubkey;
                   var result = {
                     pubkey: cert.pubkey,
                     uid: cert.uids[0],
@@ -187,12 +255,12 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
                     isMember: cert.isMember,
                     wasMember: cert.wasMember,
                   };
-                  if (!certPubkeys[cert.pubkey]) {
-                    certPubkeys[cert.pubkey] = result;
+                  if (!certPubkeys[certFullKey]) {
+                    certPubkeys[certFullKey] = result;
                   }
                   else { // if duplicated cert: keep the most recent
-                    if (result.cert_time.block > certPubkeys[cert.pubkey].cert_time.block) {
-                      certPubkeys[cert.pubkey] = result;
+                    if (result.cert_time.block > certPubkeys[certFullKey].cert_time.block) {
+                      certPubkeys[certFullKey] = result;
                       certs.splice(_.findIndex(certs, {pubkey: cert.pubkey}), 1, result);
                       return certs;
                     }
@@ -451,18 +519,9 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           ;
       },
 
-      finishLoadRequirements = function(data) {
-        data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < data.sigQty)) ?
-          (data.sigQty - data.requirements.certificationCount) : 0;
-        data.requirements.willNeedCertificationCount = (!data.requirements.needMembership && !data.requirements.needCertificationCount &&
-          (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < data.sigQty) ?
-          (data.sigQty - data.requirements.certificationCount + data.requirements.willExpireCertificationCount) : 0;
-        data.requirements.pendingCertificationCount = data.received_cert_pending ? data.received_cert_pending.length : 0;
+      // Add events on given account
+      addEvents = function(data) {
 
-        // Use /wot/lookup.revoked when requirements not filled
-        data.requirements.revoked = angular.isDefined(data.requirements.revoked) ? data.requirements.revoked : data.revoked;
-
-        // Add events
         if (data.requirements.revoked) {
           delete data.hasBadSelfBlock;
           addEvent(data, {type: 'error', message: 'ERROR.IDENTITY_REVOKED', messageParams: {revocationTime: data.revocationTime}});
@@ -487,6 +546,10 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
           addEvent(data, {type: 'error', message: 'INFO.IDENTITY_WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements});
           console.debug("[wot] Identity {0} will need {1} certification(s)".format(data.uid, data.requirements.willNeedCertificationCount));
         }
+        else if (!data.requirements.needSelf && data.requirements.needMembership) {
+          addEvent(data, {type: 'error', message: 'INFO.IDENTITY_NEED_MEMBERSHIP'});
+          console.debug("[wot] Identity {0} has a self but no membership".format(data.uid));
+        }
       },
 
       loadData = function(pubkey, withCache, uid, force) {
@@ -510,11 +573,16 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             return $q.when(data);
           }
           console.debug("[wot] Loading identity " + pubkey.substring(0, 8) + "...");
-          data = {pubkey: pubkey};
+          data = {
+            pubkey: pubkey,
+            uid: uid
+          };
         }
         else {
           console.debug("[wot] Loading identity from uid " + uid);
-          data = {};
+          data = {
+            uid: uid
+          };
         }
 
         var now = new Date().getTime();
@@ -527,8 +595,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             BMA.blockchain.parameters()
               .then(function(res) {
                 parameters = res;
-                data.sigQty =  parameters.sigQty;
-                data.sigStock =  parameters.sigStock;
+
               }),
             // Get current time
             BMA.blockchain.current()
@@ -546,11 +613,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
               }),
 
             // Get requirements
-            loadRequirements(pubkey, uid)
-              .then(function (requirements) {
-                data.requirements = requirements;
-                data.isMember = requirements.isMember;
-              }),
+            loadRequirements(data),
 
             // Get identity using lookup
             loadIdentityByLookup(pubkey, uid)
@@ -582,8 +645,14 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
             ]);
           })
           .then(function() {
+
             // Add compute some additional requirements (that required all data like certifications)
-            finishLoadRequirements(data);
+            data.requirements.pendingCertificationCount = data.received_cert_pending ? data.received_cert_pending.length : data.requirements.pendingCertificationCount;
+            // Use /wot/lookup.revoked when requirements not filled
+            data.requirements.revoked = angular.isDefined(data.requirements.revoked) ? data.requirements.revoked : data.revoked;
+
+            // Add account events
+            addEvents(data);
 
             // API extension
             return api.data.raisePromise.load(data)
@@ -1005,6 +1074,7 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
     return {
       id: id,
       load: loadData,
+      loadRequirements: loadRequirements,
       search: search,
       newcomers: getNewcomers,
       pending: getPending,

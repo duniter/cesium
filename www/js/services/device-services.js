@@ -157,7 +157,6 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
               var property = paths.length && paths[paths.length-1];
               paths.reduce(function(res, path) {
                 if (path == property) {
-                  console.log("setting value");
                   res[property] = value;
                   return;
                 }

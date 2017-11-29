@@ -1,0 +1,48 @@
+<ion-modal-view id="transfer" class="modal-full-height modal-transfer">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>ACCOUNT.SELECT_IDENTITY_MODAL.TITLE</h1>
+  </ion-header-bar>
+
+  <ion-content scroll="true">
+
+    <div class="padding">
+      <p trust-as-html="'ACCOUNT.SELECT_IDENTITY_MODAL.HELP'|translate:{pubkey: pubkey}"></p>
+    </div>
+
+    <ion-list>
+      <ion-item
+        class="item-avatar item-icon-right"
+        ng-repeat="item in identities"
+        ng-click="closeModal(item)">
+
+        <i class="item-image icon ion-person"></i>
+
+        <h2>{{item.uid}}</h2>
+
+        <h4 class="gray">
+          <b class="ion-key"></b>
+          {{::item.pubkey | formatPubkey}}
+          <span ng-if="::!item.revoked && !item.pendingRevocation && !item.isMember" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
+          <span ng-if="::item.revoked || item.pendingRevocation" class="assertive bold" translate>WOT.IDENTITY_REVOKED_PARENTHESIS</span>
+        </h4>
+
+        <ng-if ng-if="::!item.revoked && !item.pendingRevocation && (item.certificationCount || item.pendingCertificationCount)">
+
+          <!-- certification count -->
+          <cs-badge-certification requirements="item"
+                                  parameters="$root.currency.parameters"></cs-badge-certification>
+
+          <!-- certification label -->
+          <div class="gray badge badge-secondary" >
+            <span translate>ACCOUNT.CERTIFICATION_COUNT</span>
+          </div>
+        </ng-if>
+
+        <i class="icon ion-ios-arrow-right "></i>
+      </ion-item>
+    </ion-list>
+
+  </ion-content>
+
+</ion-modal-view>

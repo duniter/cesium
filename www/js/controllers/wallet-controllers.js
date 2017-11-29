@@ -55,11 +55,10 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('WalletTxErrorCtrl', WalletTxErrorController)
 
   .controller('WalletSecurityModalCtrl', WalletSecurityModalController)
-
 ;
 
 function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $translate, $ionicPopover,
-                          UIUtils, Modals, csConfig, csSettings, csWallet, csHelp) {
+                          UIUtils, Modals, BMA, csConfig, csSettings, csCurrency, csWallet, csHelp) {
   'ngInject';
 
   $scope.loading = true;
@@ -71,6 +70,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     }
     else {
       // update view (to refresh avatar + plugin data, such as profile, subscriptions...)
+      UIUtils.loading.hide();
       $timeout($scope.updateView, 300);
     }
   });
@@ -186,56 +186,64 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         UIUtils.loading.hide();
       })
       .catch(function(err) {
+        if (err == 'CANCELLED') throw err;
+        if (err && err.ucode != BMA.errorCodes.MEMBERSHIP_ALREADY_SEND) return;
         if (!retryCount || retryCount <= 2) {
-          $timeout(function() {
+          return $timeout(function() {
             $scope.doMembershipIn(retryCount ? retryCount+1 : 1);
           }, 1000);
         }
-        else {
-          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err)
-            .then(function() {
-              $scope.membershipIn(); // loop
-            });
-        }
+        throw err;
       });
   };
 
 
   // Send membership IN
-  $scope.membershipIn = function() {
+  $scope.membershipIn = function(keepSelf) {
     $scope.hideActionsPopover();
 
-    if ($scope.formData.isMember) {
+    if (csWallet.isMember()) {
       return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
     }
 
-    return $scope.showUidPopup()
-    .then(function (uid) {
-      UIUtils.loading.show();
-      // If uid changed, or self blockUid not retrieve : do self() first
-      if (!$scope.formData.blockUid || uid != $scope.formData.uid) {
-        $scope.formData.blockUid = null;
-        $scope.formData.uid = uid;
-        csWallet.self(uid, false/*do NOT load membership here*/)
-        .then(function() {
-          $scope.doMembershipIn();
-        })
-        .catch(function(err){
-          UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err)
-            .then(function() {
-              $scope.membershipIn(); // loop
-            });
-        });
-      }
-      else {
-        $scope.doMembershipIn();
-      }
-    })
-    .catch(function(err){
-       UIUtils.loading.hide();
-       UIUtils.alert.info(err);
-       $scope.membershipIn(); // loop
-    });
+    // Select uid (or reuse it)
+    return ((keepSelf && !!$scope.formData.blockUid) ?
+        $q.when($scope.formData.uid) :
+        $scope.showUidPopup())
+
+      // Ask user confirmation
+      .then(function(uid) {
+        return UIUtils.alert.confirm("CONFIRM.MEMBERSHIP")
+          .then(function(confirm) {
+            if (!confirm) throw 'CANCELLED';
+            return uid;
+          });
+      })
+
+      // Send self (identity) - if need
+      .then(function (uid) {
+        UIUtils.loading.show();
+
+        // If uid changed, or self blockUid not retrieve : do self() first
+        if (!$scope.formData.blockUid || uid != $scope.formData.uid) {
+          $scope.formData.blockUid = null;
+          $scope.formData.uid = uid;
+
+          return csWallet.self(uid, false/*do NOT load membership here*/);
+        }
+      })
+
+      // Send membership
+      .then($scope.doMembershipIn)
+      .catch(function(err) {
+        if (err == 'CANCELLED') return;
+        if (!csWallet.data.uid) {
+          UIUtils.onError('ERROR.SEND_IDENTITY_FAILED')(err);
+        }
+        else {
+          UIUtils.onError('ERROR.SEND_MEMBERSHIP_IN_FAILED')(err);
+        }
+      });
   };
 
   // Send membership OUT
@@ -319,9 +327,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       .catch(function(err){
         if (err == 'CANCELLED') return;
         UIUtils.loading.hide();
-        UIUtils.alert.error(err)
-          // loop
-          .then($scope.renewMembership);
+        UIUtils.alert.error(err);
       });
   };
 
@@ -332,27 +338,27 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.fixIdentity = function() {
     if (!$scope.formData.uid) return;
 
-    return $translate('CONFIRM.FIX_IDENTITY', {uid: $scope.formData.uid})
-      .then(function(message) {
-        return UIUtils.alert.confirm(message);
+    return $q.all([
+      csWallet.auth(),
+      $translate('CONFIRM.FIX_IDENTITY', {uid: $scope.formData.uid})
+    ])
+      .then(function(res) {
+        return UIUtils.alert.confirm(res[1]);
       })
       .then(function(confirm) {
         if (!confirm) return;
         UIUtils.loading.show();
-        // Reset membership data
+        // Reset self data
         $scope.formData.blockUid = null;
+        // Reset membership data
         $scope.formData.sigDate = null;
         return csWallet.self($scope.formData.uid);
       })
-      .then(function() {
-        return $scope.doMembershipIn();
-      })
+      .then($scope.doMembershipIn)
       .catch(function(err){
+        if (err == 'CANCELLED') return;
         UIUtils.loading.hide();
-        UIUtils.alert.error(err)
-          .then(function() {
-            $scope.fixIdentity(); // loop
-          });
+        UIUtils.alert.error(err);
       });
   };
 
@@ -362,22 +368,28 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.fixMembership = function() {
     if (!$scope.formData.uid) return;
 
-    return UIUtils.alert.confirm("CONFIRM.FIX_MEMBERSHIP")
+    if (csWallet.isMember()) {
+      return UIUtils.alert.info("INFO.NOT_NEED_MEMBERSHIP");
+    }
+
+    return csWallet.auth()
+      .then(function() {
+        UIUtils.alert.confirm("CONFIRM.FIX_MEMBERSHIP");
+      })
       .then(function(confirm) {
         if (!confirm) return;
         UIUtils.loading.show();
-        // Reset membership data
+        // Reset self data
         $scope.formData.blockUid = null;
+        // Reset membership data
         $scope.formData.sigDate = null;
-        return Wallet.self($scope.formData.uid, false/*do NOT load membership here*/);
+        return csWallet.self($scope.formData.uid, false/*do NOT load membership here*/);
       })
-      .then(function() {
-        return $scope.doMembershipIn();
-      })
+      .then($scope.doMembershipIn)
       .catch(function(err){
+        if (err == 'CANCELLED') return;
         UIUtils.loading.hide();
-        UIUtils.alert.info(err);
-        $scope.fixMembership(); // loop
+        UIUtils.alert.error(err);
       });
   };
 
@@ -388,6 +400,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.doQuickFix = function(event) {
     if (event == 'renew') {
       $scope.renewMembership();
+    }
+    else if (event == 'membership') {
+      $scope.membershipIn(true/*keep self*/);
     }
     else if (event == 'fixMembership') {
       $scope.fixMembership();
@@ -419,29 +434,10 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
   $scope.startWalletTour = function() {
     $scope.hideActionsPopover();
     return csHelp.wallet.tour();
-    //return $scope.showHelpTip(0, true);
   };
 
-  $scope.showHelpTip = function(index, isTour) {
+  $scope.showHelpTip = function() {
     return csHelp.wallet.helptip();
-    /*index = angular.isDefined(index) ? index : csSettings.data.helptip.wallet;
-    isTour = angular.isDefined(isTour) ? isTour : false;
-
-    if (index < 0 || index > 3/!*max step*!/) return;
-
-    // Create a new scope for the tour controller
-    var helptipScope = $scope.createHelptipScope(isTour);
-    if (!helptipScope) return; // could be undefined, if a global tour already is already started
-    helptipScope.tour = isTour;
-
-    return helptipScope.startWalletTour(index, false)
-      .then(function(endIndex) {
-        helptipScope.$destroy();
-        if (!isTour) {
-          csSettings.data.helptip.wallet = endIndex;
-          csSettings.store();
-        }
-      });*/
   };
 
   $scope.showQRCode = function(id, text, timeout) {
@@ -534,7 +530,28 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.showSecurityModal = function(){
     $scope.hideActionsPopover();
-    Modals.showAccountSecurity();
+    return Modals.showAccountSecurity();
+  };
+
+  $scope.showSelectIdentitiesModal = function(){
+    $scope.hideActionsPopover();
+
+    return Modals.showSelectPubkeyIdentity({
+        identities: [$scope.formData.requirements].concat($scope.formData.requirements.alternatives)
+      })
+      .then(function(idty) {
+        if (!idty || !idty.uid) return;
+
+        $scope.loading = true;
+
+        // Set self (= uid + blockUid)
+        return csWallet.setSelf(idty.uid, idty.blockUid)
+          .then(function() {
+            $scope.loading=false;
+            $scope.updateView();
+            UIUtils.loading.hide();
+          });
+      });
   };
 
 }
@@ -777,7 +794,7 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
 
 }
 
-function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, CryptoUtils){
+function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
 
   $scope.slides = {
     slider: null,
@@ -1132,3 +1149,5 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate, Cr
   };
 
 }
+
+

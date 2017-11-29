@@ -329,7 +329,9 @@
     "LOOKUP": {
       "TITLE": "Registry",
       "NEWCOMERS": "New members:",
+      "NEWCOMERS_COUNT": "{{count}} members",
       "PENDING": "Pending registrations:",
+      "PENDING_COUNT": "{{count}} pending registrations",
       "REGISTERED": "Registered {{sigDate | formatFromNow}}",
       "MEMBER_FROM": "Member since {{memberDate|formatFromNowShort}}",
       "BTN_NEWCOMERS": "Latest members",
@@ -436,15 +438,17 @@
     "ERROR_TX_SENT": "Sent transactions",
     "PENDING_TX_RECEIVED": "Transactions awaiting receipt",
     "EVENTS": "Events",
-    "WAITING_MEMBERSHIP": "Membership request sent. Waiting validation.",
+    "WAITING_MEMBERSHIP": "Membership application sent. Waiting validation.",
     "WAITING_CERTIFICATIONS": "You need {{needCertificationCount}} certification(s) to become a member",
     "WILL_MISSING_CERTIFICATIONS": "You will <b>lack certifications</b> soon (at least {{willNeedCertificationCount}} more are needed)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Your membership <b>will expire {{membershipExpiresIn|formatDurationTo}}</b>. Remember to <a ng-click=\"doQuickFix('renew')\">renew your membership</a> before then.",
     "NEED_RENEW_MEMBERSHIP": "You are no longer a member because your membership <b>has expired</b>. Remember to <a ng-click=\"doQuickFix('renew')\">renew your membership</a>.",
+    "NO_WAITING_MEMBERSHIP": "No membership application pending. If you'd like to <b>become a member</ b>, please <a ng-click=\"doQuickFix('membership')\">send the membership application</a>.",
     "CERTIFICATION_COUNT": "Received certifications",
     "CERTIFICATION_COUNT_SHORT": "Certifications",
     "SIG_STOCK": "Stock of certifications to give",
     "BTN_RECEIVE_MONEY": "Receive",
+    "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Switch to another identity...",
     "BTN_MEMBERSHIP_IN_DOTS": "Register as member...",
     "BTN_MEMBERSHIP_RENEW": "Renew membership",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renew membership...",
@@ -497,6 +501,10 @@
     "POPUP_REGISTER": {
       "TITLE": "Enter a pseudonym",
       "HELP": "A pseudonym is needed to let other members find you."
+    },
+    "SELECT_IDENTITY_MODAL": {
+      "TITLE": "Identity selection",
+      "HELP": "Several <b>different identities</b> have been sent, for the public key <span class=\"gray\"> <i class=\"ion-key\"></i> {{pubkey | formatPubkey}}</span>.<br/>Please select the identity to use:"
     },
     "SECURITY":{
       "ADD_QUESTION" : "Add custom question",
@@ -665,6 +673,7 @@
     "MEMBERSHIP_OUT_SENT": "Membership revocation sent",
     "NOT_NEED_MEMBERSHIP": "Already a member.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "This identity will soon lack certification (at least {{willNeedCertificationCount}}).",
+    "IDENTITY_NEED_MEMBERSHIP": "This identity did not send a membership request. She will have to if she wishes to become a member.",
     "REVOCATION_SENT": "Revocation sent successfully",
     "REVOCATION_SENT_WAITING_PROCESS": "Revocation <b>has been sent successfully</b>. It is awaiting processing.",
     "FEATURES_NOT_IMPLEMENTED": "This features is not implemented yet.<br/><br/>Why not to contribute to get it faster? ;)",
@@ -683,6 +692,7 @@
     "LOGIN_UNUSED_WALLET": "The account seems to be <b>inactive</b>.<br/><br/>It's probably a <b>typing error</b> when sign in. Please try again, checking that <b>public key is yours<b/>.",
     "FIX_IDENTITY": "The pseudonym <b>{{uid}}</b> will be published again, replacing the old publication that has expired.<br/></br/><b>Are you sure</b> you want to continue?",
     "FIX_MEMBERSHIP": "Your application for membership will be sent.<br/></br/><b>Are you sure?</b>",
+    "MEMBERSHIP": "Your membership request will be sent. <br/></br/><b>Are you sure?</b>",
     "RENEW_MEMBERSHIP": "Your membership will be renewed.<br/></br/><b>Are you sure?</b>",
     "REVOKE_IDENTITY": "You will <b>definitely revoke this identity</b>.<br/><br/>The public key and the associated pseudonym <b>will never be used again</b> (for a member account).<br/></br/><b>Are you sure</b> you want to revoke this identity?",
     "REVOKE_IDENTITY_2": "This operation is <b>irreversible</b>!<br/><br/>Are you sure you want to <b>revoke this identity</b>?",

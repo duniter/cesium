@@ -131,7 +131,7 @@ angular.module('cesium.modal.services', [])
   };
 })
 
-.factory('Modals', function(ModalUtils, UIUtils) {
+.factory('Modals', function($rootScope, ModalUtils, UIUtils) {
   'ngInject';
 
   function showTransfer(parameters) {
@@ -204,6 +204,11 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+  function showSelectPubkeyIdentity(parameters) {
+    return ModalUtils.show('templates/wot/modal_select_pubkey_identity.html', 'WotSelectPubkeyIdentityModalCtrl',
+      parameters);
+  }
+
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
@@ -216,7 +221,8 @@ angular.module('cesium.modal.services', [])
     showJoinWallet: showJoinWallet,
     showHelp: showHelp,
     showAccountSecurity: showAccountSecurity,
-    showLicense: showLicense
+    showLicense: showLicense,
+    showSelectPubkeyIdentity: showSelectPubkeyIdentity
   };
 
 });

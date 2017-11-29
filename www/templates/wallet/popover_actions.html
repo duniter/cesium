@@ -11,6 +11,16 @@
         {{'COMMON.BTN_SHARE' | translate}}
       </a>
 
+
+      <!-- alternatives identities -->
+      <a class="item item-icon-left ink"
+         ng-if="walletData.requirements.alternatives"
+         ng-click="showSelectIdentitiesModal()">
+        <i class="icon ion-person"></i>
+        <b class="icon-secondary ion-loop" style="margin-top: 4px; left: 15px;"></b>
+        {{'ACCOUNT.BTN_SELECT_ALTERNATIVES_IDENTITIES' | translate}}
+      </a>
+
       <!-- identity -->
       <a class="item item-icon-left ink"
          ng-if="walletData.requirements.needSelf"

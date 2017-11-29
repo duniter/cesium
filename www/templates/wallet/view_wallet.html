@@ -124,13 +124,13 @@
           <!-- Certifications -->
           <a id="helptip-wallet-certifications"
              class="item item-icon-left item-icon-right item-text-wrap ink"
-             ng-if="formData.isMember||formData.requirements.pendingMembership"
+             ng-if="formData.isMember||formData.requirements.pendingMembership||!formData.requirements.needSelf"
              ng-click="showCertifications()">
             <i class="icon ion-ribbon-b"></i>
             <b ng-if="formData.requirements.isSentry" class="ion-star icon-secondary" style="color: yellow; font-size: 16px; left: 25px; top: -7px;"></b>
             {{:locale:'ACCOUNT.CERTIFICATION_COUNT'|translate}}
             <cs-badge-certification requirements="formData.requirements"
-                                    parameters="{sigQty: formData.parameters.sigQty}">
+                                    parameters="::currency.parameters">
             </cs-badge-certification>
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>

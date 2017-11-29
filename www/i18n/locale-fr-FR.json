@@ -446,10 +446,12 @@
     "WILL_MISSING_CERTIFICATIONS": "Vous allez bientôt <b>manquer de certification</b> (au moins {{willNeedCertificationCount}} sont requises)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Votre adhésion comme membre <b>va expirer {{membershipExpiresIn|formatDurationTo}}</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renouveler votre adhésion</a> d'ici là.",
     "NEED_RENEW_MEMBERSHIP": "Vous n'êtes plus membre, car votre adhésion <b>a expiré</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renouveler votre adhésion</a>.",
+    "NO_WAITING_MEMBERSHIP": "Aucune demande d'adhésion en attente. Si vous souhaitez <b>devenir membre</b>, pensez à <a ng-click=\"doQuickFix('membership')\">envoyer la demande d'adhésion</a>.",
     "CERTIFICATION_COUNT": "Certifications reçues",
     "CERTIFICATION_COUNT_SHORT": "Certifications",
     "SIG_STOCK": "Certifications envoyées",
     "BTN_RECEIVE_MONEY": "Encaisser",
+    "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Basculer vers une autre identité...",
     "BTN_MEMBERSHIP_IN_DOTS": "Devenir membre...",
     "BTN_MEMBERSHIP_RENEW": "Renouveler l'adhésion",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renouveler l'adhésion...",
@@ -502,6 +504,10 @@
     "POPUP_REGISTER": {
       "TITLE": "Choisissez un pseudonyme",
       "HELP": "Un pseudonyme est obligatoire pour devenir membre."
+    },
+    "SELECT_IDENTITY_MODAL": {
+      "TITLE": "Sélection de l'identité",
+      "HELP": "Plusieurs <b>identités différentes</b> ont été envoyées, pour la clé publique <span class=\"gray\"><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</span>.<br/>Veuillez sélectionner le dossier à utiliser :"
     },
     "SECURITY": {
       "ADD_QUESTION": "Ajouter une question personnalisée ",
@@ -670,6 +676,7 @@
     "MEMBERSHIP_OUT_SENT": "Résiliation envoyée",
     "NOT_NEED_MEMBERSHIP": "Vous êtes déjà membre.",
     "IDENTITY_WILL_MISSING_CERTIFICATIONS": "Cette identité va bientôt manquer de certification (au moins {{willNeedCertificationCount}}).",
+    "IDENTITY_NEED_MEMBERSHIP": "Cette identité n'a pas envoyée de demande d'adhésion. Elle devra si elle souhaite devenir membre.",
     "REVOCATION_SENT": "Revocation envoyée",
     "REVOCATION_SENT_WAITING_PROCESS": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement.",
     "FEATURES_NOT_IMPLEMENTED": "Cette fonctionnalité est encore en cours de développement.<br/>Pourquoi ne pas <b>contribuer à Cesium</b>, pour l'obtenir plus rapidement ? ;)",
@@ -688,6 +695,7 @@
     "LOGIN_UNUSED_WALLET": "Le compte connecté semble <b>inactif</b>.<br/><br/>Il s'agit probablement d'une <b>erreur de saisie</b> dans vos identifiants de connexion. Veuillez recommencer, en vérifiant que <b>la clé publique est celle de votre compte</b>.",
     "FIX_IDENTITY": "Le pseudonyme <b>{{uid}}</b> va être publiée à nouveau, en remplacement de l'ancienne publication qui a expirée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
     "FIX_MEMBERSHIP": "Votre demande d'adhésion comme membre va être renvoyée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
+    "MEMBERSHIP": "Votre demande d'adhésion comme membre va être envoyée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
     "RENEW_MEMBERSHIP": "Votre adhésion comme membre va être renouvellée.<br/></br/><b>Etes-vous sûr</b> de vouloir continuer ?",
     "REVOKE_IDENTITY": "Vous allez <b>revoquer définitivement cette identité</b>.<br/><br/>La clé publique et le pseudonyme associés <b>ne pourront plus jamais être utilisés</b> (pour un compte membre). <br/></br/><b>Etes-vous sûr</b> de vouloir révoquer définitivement ce compte ?",
     "REVOKE_IDENTITY_2": "Cette opération est <b>irreversible</b> !<br/><br/>Etes-vous vraiment sûr de vouloir <b>révoquer définitivement</b> ce compte ?",

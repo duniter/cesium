@@ -15,6 +15,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       // @Deprecated
       OLD_STORAGE_KEY: 'CESIUM_DATA',
       STORAGE_PUBKEY: 'pubkey',
+      STORAGE_UID: 'uid',
       STORAGE_SECKEY: 'seckey',
       /* Need for compat with old currencies (test_net and sou) */
       TX_VERSION:   csConfig.compatProtocol_0_80 ? 3 : BMA.constants.PROTOCOL_VERSION,
@@ -72,8 +73,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     resetTxAndSources = function(){
       // reset sources data
-      data.sources = [];
-      data.sourcesIndexByKey = {};
+      data.sources = undefined;
+      data.sourcesIndexByKey = undefined;
       data.balance = 0;
       // reset TX data
       data.tx = data.tx || {};
@@ -93,6 +94,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     addSources = function(sources) {
+      data.sources = data.sources || [];
+      data.sourcesIndexByKey = data.sourcesIndexByKey || {};
       _(sources).forEach(function(src) {
         addSource(src, data.sources, data.sourcesIndexByKey);
       });
@@ -176,7 +179,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // Load data if need
           // If user just login, force data full load (even if min data asked)
           // because the user can wait (after the login modal)
-          var loadOptions = !needLogin && options && options.minData ? {minData: true} : undefined;
+          var loadOptions = !needLogin && options && options.minData ? {minData: true} : undefined/*=load all*/;
           if (!isDataLoaded(loadOptions)) {
             return loadData(loadOptions);
           }
@@ -264,7 +267,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return !!(data.pubkey && data.keypair && data.keypair.signSk);
     },
 
-
     getKeypair = function(options) {
       if (!started) {
         return (startPromise || start())
@@ -295,18 +297,20 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     isNeverUsed = function() {
       if (!data.loaded) return undefined; // undefined if not full loaded
-      return !data.pubkey || (
+      return !data.pubkey || !(
          // Check registration
-         !data.isMember &&
-         !data.requirements.pendingMembership &&
-         !data.requirements.wasMember &&
+         data.isMember ||
+         data.requirements.pendingMembership ||
+         !data.requirements.needSelf ||
+         data.requirements.wasMember ||
 
          // Check TX history
-         !data.tx.history.length &&
-         !data.tx.pendings.length &&
+         data.tx.history.length ||
+         data.tx.pendings.length ||
 
          // Check extended data (name+avatar)
-         !data.name && !data.avatar
+         data.name ||
+         data.avatar
         );
     },
 
@@ -334,6 +338,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           // Use local storage for pubkey
           jobs.push(localStorage.put(constants.STORAGE_PUBKEY, data.pubkey));
+
+          // Use local storage for uid - fix #625
+          if (data.uid) {
+            jobs.push(localStorage.put(constants.STORAGE_UID, data.uid));
+          }
+          else {
+            jobs.push(localStorage.put(constants.STORAGE_UID, null));
+          }
+
           // Clean old storage
           jobs.push(localStorage.put(constants.OLD_STORAGE_KEY, null));
 
@@ -345,6 +358,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return $q.all([
             sessionStorage.put(constants.STORAGE_SECKEY, null),
             localStorage.put(constants.STORAGE_PUBKEY, null),
+            localStorage.put(constants.STORAGE_UID, null),
             // Clean old storage
             localStorage.put(constants.OLD_STORAGE_KEY, null)
           ]);
@@ -354,6 +368,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         return $q.all([
           sessionStorage.put(constants.STORAGE_SECKEY, null),
           localStorage.put(constants.STORAGE_PUBKEY, null),
+          localStorage.put(constants.STORAGE_UID, null),
           // Clean old storage
           localStorage.put(constants.OLD_STORAGE_KEY, null)
         ]);
@@ -364,11 +379,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     restore = function() {
       return  $q.all([
           sessionStorage.get(constants.STORAGE_SECKEY),
-          localStorage.get(constants.STORAGE_PUBKEY)
+          localStorage.get(constants.STORAGE_PUBKEY),
+          localStorage.get(constants.STORAGE_UID)
         ])
         .then(function(res) {
           var seckey = res[0];
           var pubkey = res[1];
+          var uid = res[2];
           if (!pubkey || pubkey == 'null') return;
 
           var keypair;
@@ -386,6 +403,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
 
           data.pubkey = pubkey;
+          data.uid = uid;
           data.keypair = keypair || {signPk: undefined, signSk: undefined};
 
           console.debug('[wallet] Restore \'{0}\' from local storage.'.format(pubkey.substring(0,8)));
@@ -402,93 +420,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return data;
     },
 
-    resetRequirements = function() {
-      data.requirements = {
-        needSelf: true,
-        needMembership: true,
-        canMembershipOut: false,
-        needRenew: false,
-        pendingMembership: false,
-        wasMember: false,
-        certificationCount: 0,
-        needCertifications: false,
-        needCertificationCount: 0,
-        willNeedCertificationCount: 0
-      };
-      data.blockUid = null;
-      data.isMember = false;
-      data.sigDate = null;
-      cleanEventsByContext('requirements');
-    },
-
     loadRequirements = function() {
-      return $q(function(resolve, reject) {
+      // Clean existing events
+      cleanEventsByContext('requirements');
 
-        // Clean existing events
-        cleanEventsByContext('requirements');
+      // Get requirements
+      return csWot.loadRequirements(data)
+        .then(function(){
 
-        // Get requirements
-        BMA.wot.requirements({pubkey: data.pubkey})
-        .then(function(res){
-          if (!res.identities || res.identities.length === 0) {
-            resetRequirements();
-            resolve();
-            return;
-          }
-          // Sort to select the best identity
-          if (res.identities.length > 1) {
-            // Select the best identity, by sorting using this order
-            //  - same wallet uid
-            //  - is member
-            //  - has a pending membership
-            //  - is not expired (in sandbox)
-            //  - is not outdistanced
-            //  - if has certifications
-            //      max(count(certification)
-            //    else
-            //      max(membershipPendingExpiresIn) = must recent membership
-            res.identities = _.sortBy(res.identities, function(idty) {
-              var score = 0;
-              score += (10000000000 * ((data.uid && idty.uid === data.uid) ? 1 : 0));
-              score += (1000000000  * (idty.membershipExpiresIn > 0 ? 1 : 0));
-              score += (100000000   * (idty.membershipPendingExpiresIn > 0 ? 1 : 0));
-              score += (10000000    * (!idty.expired ? 1 : 0));
-              score += (1000000     * (!idty.outdistanced ? 1 : 0));
-              score += (100000      * (idty.wasMember ? 1 : 0));
-              var certCount = !idty.expired && idty.certifications ? idty.certifications.length : 0;
-              score += (1         * (certCount ? certCount : 0));
-              score += (1         * (!certCount && idty.membershipPendingExpiresIn > 0 ? idty.membershipPendingExpiresIn/1000 : 0));
-              return -score;
-            });
-            console.debug('Found {0} identities. Will selected the best one'.format(res.identities.length));
-          }
+          if (!data.requirements.uid) return;
 
-          // Select the first identity
-          var idty = res.identities[0];
-
-          // Compute useful fields
-          idty.needSelf = false;
-          idty.wasMember = angular.isDefined(idty.wasMember) ? idty.wasMember : false; // Compat with Duniter 0.9
-          idty.needMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn <= 0 && !idty.wasMember);
-          idty.needRenew = (!idty.needMembership &&
-                            idty.membershipExpiresIn <= csSettings.data.timeWarningExpireMembership &&
-                            idty.membershipPendingExpiresIn <= 0) ||
-                           (idty.wasMember && idty.membershipExpiresIn === 0 &&
-                            idty.membershipPendingExpiresIn === 0);
-          idty.canMembershipOut = (idty.membershipExpiresIn > 0);
-          idty.pendingMembership = (idty.membershipExpiresIn <= 0 && idty.membershipPendingExpiresIn > 0);
-          idty.certificationCount = (idty.certifications) ? idty.certifications.length : 0;
-          idty.willExpireCertificationCount = idty.certifications ? idty.certifications.reduce(function(count, cert){
-            return count + (cert.expiresIn <= csSettings.data.timeWarningExpire ? 1 : 0);
-          }, 0) : 0;
-          idty.pendingRevocation = !idty.revoked && !!idty.revocation_sig;
-
-          data.requirements = idty;
-          data.uid = idty.uid;
-          data.blockUid = idty.meta.timestamp;
-          data.isMember = (idty.membershipExpiresIn > 0);
-
-          var blockParts = idty.meta.timestamp.split('-', 2);
+          // Get sigDate
+          var blockParts = data.requirements.blockUid.split('-', 2);
           var blockNumber = parseInt(blockParts[0]);
           var blockHash = blockParts[1];
           // Retrieve registration date
@@ -506,32 +449,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 addEvent({type: 'error', message: 'ERROR.WALLET_IDENTITY_EXPIRED', context: 'requirements'});
                 console.debug("Identity expired for uid={0}.".format(data.uid));
               }
-              resolve();
             })
             .catch(function(err){
               // Special case for currency init (root block not exists): use now
               if (err && err.ucode == BMA.errorCodes.BLOCK_NOT_FOUND && blockNumber === 0) {
                 data.sigDate = Math.trunc(new Date().getTime() / 1000);
-                resolve();
               }
               else {
-                reject(err);
+                throw err;
               }
             });
-        })
-        .catch(function(err) {
-          resetRequirements();
-          // If not a member: continue
-          if (!!err &&
-              (err.ucode == BMA.errorCodes.NO_MATCHING_MEMBER ||
-               err.ucode == BMA.errorCodes.NO_IDTY_MATCHING_PUB_OR_UID)) {
-            resolve();
-          }
-          else {
-            reject(err);
-          }
         });
-      });
     },
 
     loadTxAndSources = function(fromTime) {
@@ -546,15 +474,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
     },
 
-    // Must be call after loadCurrency() and loadRequirements()
-    finishLoadRequirements = function(currency) {
-      currency = currency || csCurrency.data;
-      data.requirements.needCertificationCount = (!data.requirements.needMembership && (data.requirements.certificationCount < currency.parameters.sigQty)) ?
-          (currency.parameters.sigQty - data.requirements.certificationCount) : 0;
-      data.requirements.willNeedCertificationCount = (!data.requirements.needMembership &&
-          data.requirements.needCertificationCount === 0 && (data.requirements.certificationCount - data.requirements.willExpireCertificationCount) < currency.parameters.sigQty) ?
-          (currency.parameters.sigQty - data.requirements.certificationCount + data.requirements.willExpireCertificationCount) : 0;
-      data.requirements.pendingCertificationCount = 0 ; // init to 0, because not loaded here (see wot-service.js)
+    // Generate events from requirements
+    addEvents = function() {
 
       // Add user events
       if (data.requirements.revoked) {
@@ -566,6 +487,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       else {
         if (data.requirements.pendingMembership) {
           addEvent({type:'pending', message: 'ACCOUNT.WAITING_MEMBERSHIP', context: 'requirements'});
+        }
+        // If user has send a SELF, ask for membership - fix #625
+        else if (!data.requirements.needSelf && data.requirements.needMembership){
+          addEvent({type:'warn', message: 'ACCOUNT.NO_WAITING_MEMBERSHIP', context: 'requirements'});
         }
         if (data.requirements.needCertificationCount > 0) {
           addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
@@ -609,7 +534,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) &&
         !data.loaded && (!options || !options.minData);
 
-      // Make to load once
+      // Make sure to load once at a time
       if (loadPromise) {
         return loadPromise.then(function() {
           return isDataLoaded(options) ? data : refreshData(options);
@@ -668,9 +593,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       return $q.all([
 
-          // Get currency
-          csCurrency.get(),
-
           // Get requirements
           loadRequirements(),
 
@@ -680,9 +602,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // Load sigStock
           loadSigStock()
         ])
-        .then(function(res) {
-          var currency = res[0];
-          finishLoadRequirements(currency); // must be call after csCurrency.get() and loadRequirements()
+        .then(function() {
+
+          // Load wallet events
+          addEvents();
 
           // API extension
           return api.data.raisePromise.load(data)
@@ -731,19 +654,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       var jobs = [];
 
-      // Reset events
-      cleanEventsByContext('requirements');
-
       // Get requirements
       if (options.requirements) {
-        jobs.push($q.all([
-            csCurrency.get(),
-            loadRequirements()
-          ])
-          .then(function(res) {
-            var currency = res[0];
-            finishLoadRequirements(currency);
-          }));
+        // Reset events
+        cleanEventsByContext('requirements');
+
+        jobs.push(
+          loadRequirements()
+
+            // Add wallet events
+            .then(addEvents)
+        );
       }
 
       if (options.sources || (options.tx && options.tx.enable)) {
@@ -762,6 +683,30 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       .then(function(){
         return data;
       });
+    },
+
+    setSelf = function(uid, blockUid){
+      // Skip if same self
+      if (data.uid == uid && (!blockUid || data.blockUid == blockUid)) return $q.when();
+
+      // Data not loaded
+      if (!data.loaded) {
+        return !loadPromise ?
+          // If no pending load: ok
+          $q.when() :
+          // If a load is running: force a reload
+          loadPromise.then(function() {
+            return setSelf(uid, blockUid); // loop
+          });
+      }
+
+      data.uid = uid;
+      data.blockUid = blockUid;
+
+      // Refresh requirements
+      return refreshData({requirements: true, sigStock: true})
+        // Store (to remember the new uid)
+        .then(store);
     },
 
     isBase = function(amount, base) {
@@ -1270,9 +1215,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               return loadRequirements();
             }, 1000); // waiting for node to process membership doc
           })
-          .then(function() {
-            finishLoadRequirements();
-          });
+
+          // Add wallet events
+          .then(addEvents);
       };
     },
 
@@ -1488,9 +1433,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }, 1000); // waiting for node to process membership doc
         })
 
-        .then(function() {
-          finishLoadRequirements();
-        })
+        // Add wallet events
+        .then(addEvents)
+
         .catch(function(err) {
           if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
             // Already registered by node: just add an event
@@ -1505,19 +1450,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     revokeWithFile = function(revocation){
       return $q.all([
-          csCurrency.get(),
           BMA.wot.revoke({revocation: revocation})
         ])
         // Reload requirements
         .then(function(res) {
-          var currency = res[0];
           if (isLogin()) {
             return $timeout(function () {
               return loadRequirements();
             }, 1000) // waiting for node to process membership doc
-            .then(function () {
-              finishLoadRequirements(currency);
-            })
+
+             // Add wallet events
+            .then(addEvents)
+
             .catch(function (err) {
               if (err && err.ucode == BMA.errorCodes.REVOCATION_ALREADY_REGISTERED) {
                 // Already registered by node: just add an event
@@ -1750,6 +1694,10 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       isAuth: isAuth,
       getKeypair: getKeypair,
       hasSelf: hasSelf,
+      setSelf: setSelf,
+      isMember: function() {
+        return data.isMember;
+      },
       isDataLoaded : isDataLoaded,
       isNeverUsed: isNeverUsed,
       isNew: isNew,
