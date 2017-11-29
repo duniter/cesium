@@ -67,10 +67,10 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     decimalCount: 4,
     uiEffects: true,
     minVersion: '1.1.0',
-    newIssueUrl: "https://github.com/duniter/cesium/issues/new?labels=bug",
+    newIssueUrl: "https://git.duniter.org/clients/cesium/cesium/issues/new",
     helptip: {
       enable: true,
-      installDocUrl: "https://github.com/duniter/duniter/blob/master/doc/install-a-node.md",
+      installDocUrl: "https://duniter.org/en/wiki/duniter/install/",
       currency: 0,
       network: 0,
       wotLookup: 0,
