@@ -45,14 +45,14 @@
   <div class="item item-icon-right item-text-wrap"
        ng-class="{ 'item-input-error': pubkeyError, 'item-input': showPubkey}">
     <span class="input-label hidden-xs animate-show-hide ng-hide" ng-show="showPubkey" translate>COMMON.PUBKEY</span>
-    <div class="item-content">
+    <div class="item-content text-wrap">
       <a class="positive ink animate-show-hide ng-hide"
-         ng-show="showComputePubkeyButton"
+         ng-show="showComputePubkeyButton && !pubkey"
          ng-click="computePubkey()">
         <i class="ion-eye"></i>
         {{'COMMON.BTN_SHOW_PUBKEY' | translate}}
       </a>
-      <span class="gray animate-show-hide text-wrap" ng-show="!computing">{{pubkey}}</span>
+      <span class="gray animate-show-hide" ng-show="!computing && pubkey">{{pubkey}}</span>
       <ion-spinner class="ion-spinner-small" icon="android" ng-if="computing"></ion-spinner>
     </div>
     <a class="button button-icon positive button-small-padding icon ion-ios-help-outline animate-show-hide "
