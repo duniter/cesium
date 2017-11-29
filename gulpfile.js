@@ -277,15 +277,15 @@ gulp.task('css_plugin', function (done) {
 });
 
 /* -- Web dist build -- */
-gulp.task('clean:tmp', function(done) {
-  del(['tmp'], done);
+gulp.task('clean:tmp', function() {
+  return del(['tmp']);
 });
 
-gulp.task('clean:web', function(done) {
-  del([
+gulp.task('clean:web', function() {
+  return del([
       './platforms/web/www',
       './platforms/web/build'
-    ], done);
+    ]);
 });
 
 gulp.task('copy-files:web', ['clean:tmp', 'clean:web', 'sass', 'config'], function(done) {
@@ -545,9 +545,9 @@ gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
   .on ('end', done);
 });
 
-gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function(done) {
+gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function() {
   var tmpPath = './platforms/web/www';
-  del([
+  return del([
     tmpPath + '/css',
     tmpPath + '/templates',
     tmpPath + '/js',
@@ -556,15 +556,15 @@ gulp.task('clean-unused-directories:web', ['clean-unused-files:web'], function(d
     tmpPath + '/lib/ionic/css',
     tmpPath + '/lib/ionic/js',
     tmpPath + '/lib/ionic/version.json'
-  ], done);
+  ]);
 });
 
-gulp.task('zip:web', ['clean-unused-directories:web'], function(done) {
+gulp.task('zip:web', ['clean-unused-directories:web'], function() {
   var tmpPath = './platforms/web/www';
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   var txtFilter = filter(["**/*.txt"], { restore: true });
 
-  gulp.src(tmpPath + '/**/*.*')
+  return gulp.src(tmpPath + '/**/*.*')
 
     // Process TXT files: Add the UTF-8 BOM character
     .pipe(txtFilter)
@@ -573,45 +573,12 @@ gulp.task('zip:web', ['clean-unused-directories:web'], function(done) {
 
     .pipe(zip('cesium-web-'+version+'.zip'))
 
-    .pipe(gulp.dest('./platforms/web/build'))
-    .on('end', done);
+    .pipe(gulp.dest('./platforms/web/build'));
 });
 
-gulp.task('build:web', ['git-check', 'zip:web'], function(done) {
+gulp.task('build:web', ['git-check', 'zip:web'], function() {
   var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
   gutil.log(gutil.colors.green("Build for web created at: 'plateforms/web/build/cesium-web-" + version + ".zip'"));
-  del(['tmp'], done);
+  return del(['tmp']);
 });
 
-gulp.task('deploy:android', function (done) {
-  var config = require('./hooks/playstore-config.json');
-
-  if(!config) {
-    gutil.log(gutil.colors.red("ERROR => Could not load `./hooks/playstore-config.json` file!"));
-    return done();
-  }
-  if(!config.client_email || !config.private_key) {
-    gutil.log(gutil.colors.red("ERROR => Could not found 'client_email' or 'private_key' in 'hooks/playstore-config.json' file."));
-    return done();
-  }
-
-  var publisher = require('playup')(config);
-
-  var apkFileLocation = path.join('.', 'platforms', 'android', 'build', 'outputs', 'apk', 'android-release.apk');
-  console.log('Publishing APK file [' + apkFileLocation + '] to playstore...');
-
-  publisher.upload(apkFileLocation, {
-    track: 'production',
-    recentChanges: {
-      'fr-FR': 'New stable release'
-    }
-  })
-  .then(function (data) {
-    console.log(' > APK has been deployed to playstore !');
-    done();
-  })
-  .catch(function(err){
-    console.log(err);
-    done();
-  });
-});
