@@ -19,30 +19,25 @@ Manage your wallet, certify your friends, and more !
  
  To use Cesium from your desktop computer :
  
- - Download the [latest release](https://github.com/duniter/cesium/releases/latest). Choose the web packaging (`cesium-vX.Y.Z-we.zip`); 
- - Unpack in a empty directory;
- - Open the `index.html` file in a web browser.
-
+ - Debian or Windows: 
+    * Download the [latest release](https://github.com/duniter/cesium/releases/latest).
+    * Choose the desktop packaging (`cesium-desktop-vX.Y.Z-*`)
+    * Execute the downloaded file, and follow installation steps;
+ - Other operating systems: 
+    * Choose the web packaging (`cesium-vX.Y.Z-web.zip`);
+    * Unpack the archive into a empty folder;
+    * Open the file `index.html` in your web browser;
+  
 ### On web server
 
-Cesium can be easily installed on most web server.
+Cesium can be easily installed on most web server : 
 
-#### Minimal install from source
-If you don't already use nodejs (v5), please follow [prerequisite steps](https://github.com/duniter/cesium#prerequisite).
-```bash
-git clone https://github.com/duniter/cesium.git
-cd cesium
-npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
-npm install
-npm start
-```
-Answer asked questions.
+ - Download the [latest release](https://github.com/duniter/cesium/releases/latest). Choose the web packaging (`cesium-vX.Y.Z-web.zip`); 
+ - Unpack in a empty directory;
+ - Configure a virtual host, to use previous directory as root. Check the file `index.html` exist in the root directory.
 
-Your Cesium instance is now reacheable on : [http://localhost:8100/](http://localhost:8100/) or an other ip if your listen on an other interface.
 
-#### Installation script
-
-For Linux distribution, a installation script could be used to:
+For Linux distribution, a installation script could also be used to:
 
  - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
  - Unpack archive into the directory `./cesium`. Existing files will be override.  
@@ -64,9 +59,10 @@ wget -qO- https://raw.githubusercontent.com/duniter/cesium/master/install.sh | b
 
 There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
 
-## Configuration
 
-To change default configuration:
+#### Configuration
+
+To change default configuration, on a web server installation:
 
   - Edit the file `config.js`, and set default properties:
   
@@ -132,7 +128,7 @@ To build Cesium, you will have to:
   wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
 ```
 
-> Il faut ensuite recharger votre terminal, par exemple en lançant la commande `bash`
+> Then reload your terminal, for instance by executing the commande `bash`
 
   - Configure NodeJS to use a version 8:
 ```
@@ -144,7 +140,7 @@ To build Cesium, you will have to:
    npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
 ```
    
-### Source code
+### Get the source code
    
   - Getting source and installing project dependencies:    
 ```
@@ -152,6 +148,7 @@ To build Cesium, you will have to:
   cd cesium
   npm install
 ```
+
   - Installing Cordova plugins (need for platforms specific builds)   
 ```
   ionic state restore
@@ -159,7 +156,7 @@ To build Cesium, you will have to:
 ```
 
 
-### Build environment
+### Prepare environment, then compile and launch
 
  - To configure your build environment :
  
@@ -171,20 +168,16 @@ To build Cesium, you will have to:
   gulp config --env <your_env_name> 
 ```
 
- This will update the configuration file used by cesium, at `www/js/config.json`.
+> This will update the configuration file used by cesium, at `www/js/config.json`.
  
-### Compile and launch
-
   - Compiling and running Cesium:
 ```
   npm start
 ```
-or 
-```
-  ionic serve
-```
+ 
+> or alternative: `ionic serve` 
 
-### Best pratices
+### Best pratices for development
 
  Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
  before starting to contribute.
