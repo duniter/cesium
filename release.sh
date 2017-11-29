@@ -22,11 +22,15 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   echo "new build android version: $3"
   case "$1" in
     rel|pre)
-    # Change the version in package.json and test file
-    sed -i "s/version\": \"$current\"/version\": \"$2\"/g" package.json
+      # Change the version in files: 'package.json' and 'config.xml'
+      sed -i "s/version\": \"$current\"/version\": \"$2\"/g" package.json
       currentConfigXmlVersion=`grep -oP "version=\"\d+.\d+.\d+((a|b)[0-9]+)?\"" config.xml | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
-    sed -i "s/ version=\"$currentConfigXmlVersion\"/ version=\"$2\"/g" config.xml
-    sed -i "s/ android-versionCode=\"$currentAndroid\"/ android-versionCode=\"$3\"/g" config.xml
+      sed -i "s/ version=\"$currentConfigXmlVersion\"/ version=\"$2\"/g" config.xml
+      sed -i "s/ android-versionCode=\"$currentAndroid\"/ android-versionCode=\"$3\"/g" config.xml
+
+      # Change version in file: 'www/manifest.json'
+      currentManifestJsonVersion=`grep -oP "version\": \"\d+.\d+.\d+((a|b)[0-9]+)?\"" www/manifest.json | grep -oP "\d+.\d+.\d+((a|b)[0-9]+)?"`
+      sed -i "s/version\": \"$currentManifestJsonVersion\"/version\": \"$2\"/g" www/manifest.json
 
       # Bump the install.sh
       sed -i "s/echo \"v.*\" #lastest/echo \"v$2\" #lastest/g" install.sh
@@ -77,7 +81,7 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
 
   # Commit
   git reset HEAD
-  git add package.json config.xml install.sh www/js/config.js
+  git add package.json config.xml install.sh www/js/config.js www/manifest.json
   git commit -m "v$2"
   git tag "v$2"
   git push

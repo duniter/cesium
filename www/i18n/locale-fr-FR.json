@@ -102,8 +102,8 @@
     "DEVELOPERS": "Développé par :",
     "FORUM": "Forum :",
     "DEV_WARNING": "Avertissement",
-    "DEV_WARNING_MESSAGE": "Cette application n'est pas encore stabilisée (développement en cours).<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
-    "DEV_WARNING_MESSAGE_SHORT": "Cette App n'est pas encore stabilisée (développement en cours).",
+    "DEV_WARNING_MESSAGE": "Cette application est encore en plein développement.<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
+    "DEV_WARNING_MESSAGE_SHORT": "Cette App est en plein développement.",
     "REPORT_ISSUE": "Remonter un problème"
   },
   "HOME": {

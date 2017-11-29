@@ -1,6 +1,10 @@
 {
   "short_name": "Cesium",
   "name": "Cesium",
+  "manifest_version": 1,
+  "version": "1.0.1",
+  "default_locale": "fr",
+  "description": "Manage your Duniter Wallet on a libre currency, like Ğ1",
   "icons": [
     {
       "src": "img/logo_96px.png",
