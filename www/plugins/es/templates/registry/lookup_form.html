@@ -64,22 +64,23 @@
   </div>
 </div>
 
+
 <div class="padding-xs" style="display: block; height: 60px;">
   <div class="pull-left ng-hide" ng-show="!search.loading && search.results">
     <ng-if ng-if="search.lastRecords">
       <h4  translate>REGISTRY.SEARCH.LAST_RECORDS</h4>
-      <h5 class="dark no-padding" ng-if="search.total">
+      <small class="gray no-padding" ng-if="search.total">
         <span ng-if="search.geoPoint && search.total">{{'REGISTRY.SEARCH.LAST_RECORD_COUNT_LOCATION'|translate:{count: search.total, location: search.location} }}</span>
         <span ng-if="!search.geoPoint && search.total">{{'REGISTRY.SEARCH.LAST_RECORD_COUNT'|translate:{count: search.total} }}</span>
-      </h5>
+      </small>
     </ng-if>
 
     <ng-if ng-if="!search.lastRecords">
       <h4 translate>COMMON.RESULTS_LIST</h4>
-      <h5 class="dark no-padding" ng-if="search.total">
+      <small class="gray no-padding" ng-if="search.total">
         <span ng-if="search.geoPoint && search.total">{{'REGISTRY.SEARCH.RESULT_COUNT_LOCATION'|translate:{count: search.total, location: search.location} }}</span>
         <span ng-if="!search.geoPoint && search.total">{{'REGISTRY.SEARCH.RESULT_COUNT'|translate:{count: search.total} }}</span>
-      </h5>
+      </small>
     </ng-if>
 
   </div>
