@@ -51,15 +51,15 @@ var paths = {
   license_md: ['./www/license/*.md']
 };
 
-gulp.task('serve:before', ["sass",
-  "templatecache",
-  "ng_annotate",
-  "ng_translate",
-  "templatecache_plugin",
-  "ng_annotate_plugin",
-  "ng_translate_plugin",
-  "css_plugin",
-  "license_md"]);
+gulp.task('serve:before', ['sass',
+  'templatecache',
+  'ng_annotate',
+  'ng_translate',
+  'templatecache_plugin',
+  'ng_annotate_plugin',
+  'ng_translate_plugin',
+  'css_plugin',
+  'license_md']);
 
 gulp.task('default', ['config', 'serve:before']);
 
@@ -187,7 +187,6 @@ gulp.task('templatecache', function (done) {
       module:"cesium.templates",
       root: "templates/"
      }))
-    //.pipe(gulp.dest('www/js'))
     .pipe(gulp.dest('./www/dist/dist_js/app'))
     .on('end', done);
 });
@@ -529,7 +528,6 @@ gulp.task('optimize-files:web', ['debug-files:web'], function(done) {
     .pipe(revReplace())         // Substitute in new filenames
     .pipe(gulp.dest(tmpPath))
     .on('end', done);
-
 });
 
 gulp.task('clean-unused-files:web', ['optimize-files:web'], function(done) {
