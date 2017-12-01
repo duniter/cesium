@@ -44,15 +44,15 @@
     <div class="pull-left" ng-if="!search.loading && showResultLabel">
       <ng-if ng-if="search.type=='newcomers'">
         <h4 translate>WOT.LOOKUP.NEWCOMERS</h4>
-        <h5 class="dark no-padding" ng-if="search.total">{{'WOT.LOOKUP.NEWCOMERS_COUNT'|translate:{count: search.total} }}</h5>
+        <small class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.NEWCOMERS_COUNT'|translate:{count: search.total} }}</small>
       </ng-if>
       <ng-if ng-if="search.type=='pending'">
         <h4 translate>WOT.LOOKUP.PENDING</h4>
-        <h5 class="dark no-padding" ng-if="search.total">{{'WOT.LOOKUP.PENDING_COUNT'|translate:{count: search.total} }}</h5>
+        <small class="gray no-padding" ng-if="search.total">{{'WOT.LOOKUP.PENDING_COUNT'|translate:{count: search.total} }}</small>
       </ng-if>
       <h4 ng-if="search.type=='text'">
         <span translate>COMMON.RESULTS_LIST</span>
-        <span ng-if="search.total">({{search.total}})</span>
+        <small class="gray" ng-if="search.total">({{search.total}})</small>
       </h4>
     </div>
 

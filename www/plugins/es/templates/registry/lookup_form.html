@@ -1,27 +1,73 @@
+
+<!-- selected location
+<a
+     class="button button-small button-text button-stable button-icon-event stable-900-bg"
+     style="margin-right: 10px;">
+  &nbsp;<i class="icon ion-location"></i>
+  {{search.location}}
+  <i class="icon ion-close" ng-click="removeLocation2()">&nbsp;&nbsp;</i>
+</a>-->
 <form ng-submit="doSearch()"/>
-  <label class="item item-input">
-    <i class="icon ion-search placeholder-icon"></i>
-    <input type="text"
-           class="visible-xs visible-sm"
-           placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
-           ng-model="search.text"
-           ng-model-options="{ debounce: 650 }"
-           ng-change="doSearch()"
-           on-return="doSearchText()"
-           select-on-click>
-    <input type="text"
-           class="hidden-xs hidden-sm"
-           placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
-           id="registrySearchText"
-           ng-model="search.text"
-           on-return="doSearchText()">
-  </label>
+  <div class="item no-padding">
+
+    <div class="item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="text"
+             class="visible-xs visible-sm"
+             placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+             ng-model="search.text"
+             ng-model-options="{ debounce: 650 }"
+             ng-change="doSearch()"
+             on-return="doSearchText()"
+             select-on-click>
+      <input type="text"
+             class="hidden-xs hidden-sm"
+             placeholder="{{'REGISTRY.SEARCH.SEARCH_HELP'|translate}}"
+             id="registrySearchText"
+             ng-model="search.text"
+             on-return="doSearchText()">
+    </div>
+
+    <div class="row double-padding-x item-text-wrap animate-show-hide ng-hide hidden-xs hidden-sm"
+         ng-show="entered"
+         ng-if="search.geoPoint || search.type || search.category" >
+
+      <!-- selected location -->
+      <div ng-show="search.geoPoint"
+           class="button button-small button-text button-stable button-icon-event stable-900-bg"
+           style="margin-right: 10px;">
+        &nbsp;<i class="icon ion-location"></i>
+        <span ng-bind-html="search.location"></span>
+        <i class="icon ion-close" ng-click="removeLocation()">&nbsp;&nbsp;</i>
+      </div>
+
+      <!-- selected type -->
+      <div ng-show="search.type"
+           class="button button-small button-text button-stable button-icon-event stable-900-bg"
+           style="margin-right: 10px;" >
+        &nbsp;<i class="icon cion-page-{{search.type}}"></i>
+        <span>{{'REGISTRY.TYPE.ENUM.'+search.type|uppercase|translate}}</span>
+        <i class="icon ion-close" ng-click="removeType($event)">&nbsp;&nbsp;</i>
+      </div>
+
+      <!-- selected category -->
+      <div ng-show="search.category.name"
+           class="button button-small button-text button-stable button-icon-event stable-900-bg"
+           style="margin-right: 10px;">
+        &nbsp;<i class="icon ion-flag"></i>
+        <span>{{search.category.name|truncText:40}}</span>
+        <i class="icon ion-close" ng-click="removeCategory()">&nbsp;&nbsp;</i>
+      </div>
+    </div>
+  </div>
 
   <!-- location -->
-  <ng-include src="'plugins/es/templates/common/item_location_search.html'" ng-controller="ESSearchPositionItemCtrl" ng-init=""></ng-include>
+  <ng-include src="::'plugins/es/templates/common/item_location_search.html'"
+              ng-if="entered && options.location.show && (!search.geoPoint || smallscreen)"
+              ng-controller="ESSearchPositionItemCtrl"></ng-include>
 
   <!-- options -->
-  <ng-include src="'plugins/es/templates/registry/lookup_form_options.html'"></ng-include>
+  <ng-include src="::'plugins/es/templates/registry/lookup_form_options.html'"></ng-include>
 
 </form>
 

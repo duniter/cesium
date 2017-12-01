@@ -1,40 +1,32 @@
 
-  <label class="item item-input item-select" ng-if="search.advanced">
-    <h3 class="input-label" translate>LOCATION.DISTANCE</h3>
+  <!-- removeIf(device) -->
+  <div class="item item-icon-left item-icon-right item-input stable-bg"
+       remove-if="device"
+       ng-click="showRecordTypeModal($event)"
+       ng-if="!smallscreen && search.advanced && !search.type">
+    <b class="icon-secondary ion-help gray" style="left:10px; top: -8px;"></b>
+    <b class="icon-secondary cion-page-association gray" style="left:14px; top: 2px;"></b>
+    <b class="icon-secondary cion-page-company gray" style="left:28px; top: -6px;"></b>
 
-    <select ng-model="search.geoDistance"
-            ng-options="i as (geoDistanceLabels[i].labelKey | translate:geoDistanceLabels[i].labelParams ) for i in geoDistances track by i">
-    </select>
-  </label>
-
-  <div class="item item-icon-right" ng-if="search.advanced" ng-click="showRecordTypeModal($event)">
-    <span translate>REGISTRY.SEARCH.TYPE</span>
-    <div class="badge badge-balanced" ng-if="search.type" ng-click="removeType($event)">
-       <i class="cion-page-{{search.type}}"></i>
-      {{'REGISTRY.TYPE.ENUM.'+search.type|uppercase|translate}}
-      <i class="ion-close" >&nbsp;&nbsp;</i>
-    </div>
+    <span class="input-label item-icon-left-padding" translate>REGISTRY.SEARCH.TYPE</span>
     <i class="gray icon ion-ios-arrow-right"></i>
   </div>
 
-  <div class="item item-icon-right" ng-click="showCategoryModal($event)" ng-if="search.advanced">
-      <span translate>REGISTRY.CATEGORY</span>
-      <div class="badge badge-royal badge-text-wrap"  ng-if="search.category" ng-click="removeCategory($event)">
-        <span ng-bind-html="search.category.name"></span>
-        <i class="ion-close" >&nbsp;&nbsp;</i>
-      </div>&nbsp;
-      <i class="gray icon ion-ios-arrow-right"></i>
-  </span>
+  <div class="item item-icon-left item-icon-right item-input stable-bg"
+       remove-if="device"
+       ng-click="showCategoryModal($event)"
+       ng-if="!smallscreen && search.advanced && !search.category">
+    <i class="icon ion-flag gray"></i>
+    <span class="input-label item-icon-left-padding" translate>REGISTRY.CATEGORY</span>
+    <i class="gray icon ion-ios-arrow-right"></i>
+  </div>
 
-  <div class="item item-input item-select" ng-if="search.advanced && options.location.show">
-    <div class="input-label">
-      <span class="input-label" translate>MARKET.SEARCH.GEO_DISTANCE</span>
-    </div>
-
+  <div class="item item-icon-left item-input item-select stable-bg" ng-if="search.advanced && options.location.show">
+    <i class="icon ion-arrow-resize gray"></i>
+    <span class="input-label item-icon-left-padding " translate>LOCATION.DISTANCE</span>
     <label>
-      <select ng-model="search.geoDistance"
+      <select ng-model="search.geoDistance" class="col-border-left"
               ng-options="i as (geoDistanceLabels[i].labelKey | translate:geoDistanceLabels[i].labelParams ) for i in geoDistances track by i">
       </select>
     </label>
   </div>
-

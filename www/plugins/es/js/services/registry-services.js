@@ -160,31 +160,32 @@ angular.module('cesium.es.registry.services', ['ngResource', 'cesium.services', 
         res = res[1];
 
         if (!res || !res.hits || !res.hits.total) {
-          return [];
+          return {
+            total: 0,
+            hits: []
+          };
         }
 
         // Get geo_distance filter
-        var geoDistanceFilter = _.find(request.query && request.query.bool && request.query.bool.filter || [], function(res) {
-          return !!res.geo_distance;
-        });
-
-        var geoPoint = geoDistanceFilter && geoDistanceFilter.geo_distance && geoDistanceFilter.geo_distance.geoPoint;
-        var distanceUnit = 'km'; // TODO: get unit from geoDistanceFilter.geo_distance.distance
+        var geoDistanceObj = esHttp.util.findObjectInTree(request.query, 'geo_distance');
+        var geoPoint = geoDistanceObj && geoDistanceObj.geoPoint;
+        var geoDistanceUnit = geoDistanceObj && geoDistanceObj.distance && geoDistanceObj.distance.replace(new RegExp("[0-9 ]+", "gm"), '');
 
         var hits = res.hits.hits.reduce(function(result, hit) {
           var record = readRecordFromHit(hit, categories);
           record.id = hit._id;
 
           // Add distance to point
-          if (geoPoint && record.geoPoint) {
+          if (geoPoint && record.geoPoint && geoDistanceUnit) {
             record.distance = esGeo.point.distance(
               geoPoint.lat, geoPoint.lon,
               record.geoPoint.lat, record.geoPoint.lon,
-              distanceUnit
+              geoDistanceUnit
             );
           }
           return result.concat(record);
         }, []);
+
         return {
           total: res.hits.total,
           hits: hits

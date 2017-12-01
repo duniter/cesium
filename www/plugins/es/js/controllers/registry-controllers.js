@@ -6,7 +6,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     $stateProvider
 
     .state('app.wot_lookup.tab_registry', {
-      url: "/page?q&type&hash&category&location&issuer&reload&lat&lon&",
+      url: "/page?q&type&hash&category&location&issuer&reload&lat&lon&d&last",
       views: {
         'tab_registry': {
           templateUrl: "plugins/es/templates/registry/tabs/tab_registry.html",
@@ -20,7 +20,7 @@ angular.module('cesium.es.registry.controllers', ['cesium.es.services', 'cesium.
     })
 
     .state('app.registry_lookup_lg', {
-      url: "/wot/page/lg?q&type&hash&category&location&issuer&reload&lat&lon&d",
+      url: "/wot/page/lg?q&type&hash&category&location&issuer&reload&lat&lon&d&last",
       views: {
         'menuContent': {
           templateUrl: "plugins/es/templates/registry/lookup_lg.html",
@@ -135,14 +135,13 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 
   $scope.options = angular.merge($scope.options||{}, {
     location: {
+      show: true,
       help: 'REGISTRY.SEARCH.LOCATION_HELP'
     }
   });
 
   $scope.enter = function(e, state) {
     if (!$scope.entered || !$scope.search.results || $scope.search.results.length === 0) {
-      var showAdvanced = false;
-      var runSearch = false;
 
       // Resolve distance unit
       if (!$scope.geoUnit) {
@@ -154,18 +153,6 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
       }
 
       var finishEntered = function() {
-        $scope.search.advanced = showAdvanced ? true : $scope.search.advanced; // keep null if first call
-        $scope.search.lastRecords = !showAdvanced && !$scope.search.text;
-        if (runSearch) {
-          $timeout(function() {
-            return $scope.search.lastRecords ? $scope.doGetLastRecords() : $scope.doSearch();
-          }, 100);
-        }
-        else { // By default : get last record
-          $timeout(function() {
-            $scope.doGetLastRecords();
-          }, 100);
-        }
         // removeIf(device)
         // Focus on search text (only if NOT device, to avoid keyboard opening)
         if ($scope.searchTextId) {
@@ -174,17 +161,17 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
         // endRemoveIf(device)
 
         $scope.entered = true;
+
+        $scope.doSearch();
       };
 
       // Search by text
       if (state.stateParams && state.stateParams.q && (typeof state.stateParams.q == 'string')) {
         $scope.search.text=state.stateParams.q;
-        runSearch = true;
       }
 
       if (state.stateParams && state.stateParams.hash) { // hash tag parameter
         $scope.search.text = '#' + state.stateParams.hash;
-        runSearch = true;
       }
 
       // Search on location
@@ -199,13 +186,17 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
         if (state.stateParams.d) {
           $scope.search.geoDistance = state.stateParams.d;
         }
-        runSearch = true;
       }
       else {
         var defaultSearch = csSettings.data.plugins.es.registry && csSettings.data.plugins.es.registry.defaultSearch;
         // Apply defaults from settings
         if (defaultSearch) {
-          angular.merge($scope.search, csSettings.data.plugins.es.registry.defaultSearch);
+          if (defaultSearch.location){
+            angular.merge($scope.search, csSettings.data.plugins.es.registry.defaultSearch);
+          }
+          else {
+            defaultSearch = undefined; // invalid
+          }
         }
         // First time calling this view: apply profile location (if loaded)
         if (!defaultSearch && csWallet.isLogin() && csWallet.data.profile) {
@@ -223,22 +214,22 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
       }
 
       // Search on type
-      if (state.stateParams && state.stateParams.type) {
-        if (state.stateParams.type == 'last') {
+      if (state.stateParams && (state.stateParams.type || state.stateParams.last)) {
+        if (state.stateParams.last || state.stateParams.type == 'last') {
           $scope.search.lastRecords = true;
           $scope.search.type = undefined;
-          runSearch = true;
         }
         else {
           $scope.search.type = state.stateParams.type;
-          showAdvanced = runSearch = true;
         }
+      }
+      else {
+        $scope.search.lastRecords = false;
       }
 
       // Search on issuer
       if (state.stateParams && state.stateParams.issuer) {
         $scope.search.issuer = state.stateParams.issuer;
-        showAdvanced = runSearch = true;
       }
 
       // Search on category
@@ -246,7 +237,6 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
         esRegistry.category.get({id: state.stateParams.category})
         .then(function(cat) {
           $scope.search.category = cat;
-          showAdvanced = runSearch = true;
           finishEntered();
         })
         .catch(UIUtils.onError("REGISTRY.ERROR.LOAD_CATEGORY_FAILED"));
@@ -307,6 +297,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 
     if ($scope.search.geoPoint && $scope.search.geoPoint.lat && $scope.search.geoPoint.lon && !$scope.search.geoPoint.exact) {
       $scope.doSearch();
+      $scope.updateLocationHref();
     }
   };
   $scope.$watch('search.geoPoint', $scope.onGeoPointChanged, true);
@@ -336,47 +327,12 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
   $scope.doGetLastRecords = function(from) {
     $scope.hidePopovers();
 
-    $scope.search.lastRecords = true;
-
-    if ($scope.search.location && !$scope.search.geoPoint) {
-      return $scope.resolveLocationPosition()
-        .then(function() {
-          return $scope.doGetLastRecords(from); // Loop
-        });
-    }
-
-    var request = {
-      sort: {
-        "creationTime" : "desc"
-      },
-      from: from
-    };
-
-    if ($scope.search.geoPoint && $scope.search.geoPoint.lat && $scope.search.geoPoint.lon) {
-      request.query = {
-        bool: {
-          filter: {
-            geo_distance: {
-              distance: $scope.search.geoDistance + $scope.geoUnit,
-              geoPoint: {
-                lat: $scope.search.geoPoint.lat,
-                lon: $scope.search.geoPoint.lon
-              }
-            }}
-        }
-      };
-    }
-    var isSameRequest = function() {
-      return $scope.search.lastRecords;
-    };
-
-    $scope.doRequest(request, isSameRequest);
-    $scope.updateLocationHref(from);
+    $scope.search.text = undefined;
+    return $scope.doSearch(from);
   };
 
   $scope.doSearchText = function() {
     $scope.doSearch();
-    $scope.updateLocationHref();
 
     // removeIf(no-device)
     Device.keyboard.close();
@@ -385,7 +341,6 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 
   $scope.doSearch = function(from) {
     $scope.search.loading = !from;
-    $scope.search.lastRecords = false;
 
     // Resolve location position
     if ($scope.search.location && $scope.search.location.length >= 3 && !$scope.search.geoPoint) {
@@ -396,9 +351,10 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
     }
 
     var text = $scope.search.text && $scope.search.text.trim() || '';
+    $scope.search.lastRecords = !text || !text.length;
     var matches = [];
     var filters = [];
-    if (text.length >= 2) {
+    if (text && text.length) {
       // pubkey : use a special 'term', because of 'non indexed' field
       if (BMA.regexp.PUBKEY.test(text /*case sensitive*/)) {
         filters.push({term : { pubkey: text}});
@@ -411,9 +367,9 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
           fields: matchFields,
           type: "phrase_prefix"
         }});
-        matches.push({match : { title: text}});
+        matches.push({match : { title: {query: text, boost: 2}}});
+        matches.push({prefix: {title: text}});
         matches.push({match : { description: text}});
-        matches.push({prefix : { city: text}});
         matches.push({
           nested: {
             path: "category",
@@ -432,13 +388,13 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
       }
     }
     // issuer: use only on filter
-    else if ($scope.search.advanced && $scope.search.issuer) {
+    else if ($scope.search.issuer) {
       filters.push({term : { issuer: $scope.search.issuer}});
     }
-    if ($scope.search.advanced && $scope.search.type) {
+    if ($scope.search.type) {
       filters.push({term: { type: $scope.search.type}});
     }
-    if ($scope.search.advanced && $scope.search.category) {
+    if ($scope.search.category) {
       filters.push({
         nested: {
           path: "category",
@@ -456,49 +412,70 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
     var location = $scope.search.location && $scope.search.location.trim().toLowerCase();
     if ($scope.search.geoPoint && $scope.search.geoPoint.lat && $scope.search.geoPoint.lon) {
 
-      // text match
+      // match location OR geo distance
       if (location && location.length) {
-        matches.push({match_phrase: { city: location}});
+        var locationCity = location.split(',')[0];
+        filters.push({
+          or : [
+            // No position defined
+            {
+              and: [
+                {not: {exists: { field : "geoPoint" }}},
+                {match_phrase: { city: locationCity }}
+              ]
+            },
+            // Has position
+            {geo_distance: {
+              distance: $scope.search.geoDistance + $scope.geoUnit,
+              geoPoint: {
+                lat: $scope.search.geoPoint.lat,
+                lon: $scope.search.geoPoint.lon
+              }
+            }}
+          ]
+        });
       }
 
-      filters.push({
-        geo_distance: {
-          distance: $scope.search.geoDistance + $scope.geoUnit,
-          geoPoint: {
-            lat: $scope.search.geoPoint.lat,
-            lon: $scope.search.geoPoint.lon
-          }
-        }});
+      else {
+        filters.push(
+          {geo_distance: {
+            distance: $scope.search.geoDistance + $scope.geoUnit,
+            geoPoint: {
+              lat: $scope.search.geoPoint.lat,
+              lon: $scope.search.geoPoint.lon
+            }
+          }});
+      }
     }
 
-    if (matches.length === 0 && filters.length === 0) {
-      $scope.search.loading = false;
-      $scope.search.results = undefined;
-      return;
-    }
-
-    var query = {bool: {}};
-    if (matches.length > 0) {
-      query.bool.should =  matches;
-      // Exclude result with score=0 (e.g. same city, but does not match any text search)
-      query.bool.minimum_should_match = 1;
-    }
-    if (filters.length > 0) {
-      query.bool.filter =  filters;
-    }
-
-    // Execute the request
     var request = {
-      query: query,
       highlight: {fields : {title : {}, description: {}, tags: {}}},
       from: from
     };
+    if (matches.length > 0) {
+      request.query = request.query || {bool: {}};
+      request.query.bool.should =  matches;
+      // Exclude result with score=0
+      request.query.bool.minimum_should_match = 1;
+    }
+    if (filters.length > 0) {
+      request.query = request.query || {bool: {}};
+      request.query.bool.filter =  filters;
+    }
+    if ($scope.search.lastRecords) {
+      request.sort = {creationTime : "desc"};
+    }
+
+    var queryId = ($scope.queryId && $scope.queryId + 1) || 0;
+    $scope.queryId = queryId;
     var isSameRequest = function() {
-      var newText = $scope.search.text && $scope.search.text.trim().toLowerCase();
-      var newLocation = $scope.search.location && $scope.search.location.trim().toLowerCase();
-      return (text.toLowerCase() === newText) && (location === newLocation);
+      return $scope.queryId == queryId;
     };
 
+    // Update href location
+    $scope.updateLocationHref();
+
+    // Execute the request
     return $scope.doRequest(request, isSameRequest);
   };
 
@@ -534,7 +511,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
         else {
           $scope.search.results = $scope.search.results.concat(res.hits);
         }
-        $scope.search.hasMore = $scope.search.results.length >= options.from + options.size;
+        $scope.search.hasMore = $scope.search.results.length < res.total;
         $scope.search.loading = false;
 
         $scope.motion.show({selector: '.list .item', ink: true});
@@ -572,7 +549,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
 
   $scope.removeType = function(event) {
     $scope.search.type = null;
-    event.preventDefault();
+    event && event.preventDefault();
     $scope.doSearch();
     $scope.updateLocationHref();
   };
@@ -580,7 +557,14 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
   $scope.removeCategory = function(event) {
     $scope.search.category = null;
     $scope.category = null;
-    event.preventDefault();
+    event && event.preventDefault();
+    $scope.doSearch();
+    $scope.updateLocationHref();
+  };
+
+  $scope.removeLocation = function() {
+    $scope.search.location = null;
+    $scope.search.geoPoint = null;
     $scope.doSearch();
     $scope.updateLocationHref();
   };
@@ -597,12 +581,12 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
       var stateParams = {
         location: location && location.length ? location : undefined,
         category: $scope.search.category ? $scope.search.category.id : undefined,
-        type: $scope.search.lastRecords ? 'last' : ($scope.search.type ? $scope.search.type : undefined),
+        last: $scope.search.lastRecords ? true : undefined,
+        type: $scope.search.type ? $scope.search.type : undefined,
         lat: $scope.search.geoPoint && $scope.search.geoPoint.lat || undefined,
         lon: $scope.search.geoPoint && $scope.search.geoPoint.lon || undefined,
         d: $scope.search.geoPoint && $scope.search.geoDistance || undefined
       };
-
       if (text && text.match(/^#\w+$/)) {
         stateParams.hash = text.substr(1);
       }
@@ -642,6 +626,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
           if (type) {
             $scope.search.type = type;
             $scope.doSearch();
+            $scope.updateLocationHref();
           }
         });
     }, 350); // use timeout to allow event to be prevented in removeType()
@@ -662,6 +647,7 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
           if (cat && cat.parent) {
             $scope.search.category = cat;
             $scope.doSearch();
+            $scope.updateLocationHref();
           }
         });
     }, 350); // use timeout to allow event to be prevented in removeCategory()
@@ -996,24 +982,24 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
 
   $scope.$on('$ionicView.enter', function(e, state) {
     $scope.loadWallet({minData: true})
-    .then(function(walletData) {
-      $scope.walletData = walletData;
-      if (state.stateParams && state.stateParams.id) { // Load by id
-        $scope.load(state.stateParams.id);
-      }
-      else {
-        if (state.stateParams && state.stateParams.type) {
-          $scope.updateView({
-            record: {
-              type: state.stateParams.type
-            }
-          });
+      .then(function(walletData) {
+        $scope.walletData = walletData;
+        if (state.stateParams && state.stateParams.id) { // Load by id
+          $scope.load(state.stateParams.id);
         }
-      }
-      // removeIf(device)
-      $focus('registry-record-title');
-      // endRemoveIf(device)
-    });
+        else {
+          if (state.stateParams && state.stateParams.type) {
+            $scope.updateView({
+              record: {
+                type: state.stateParams.type
+              }
+            });
+          }
+        }
+        // removeIf(device)
+        $focus('registry-record-title');
+        // endRemoveIf(device)
+      });
   });
 
   $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
@@ -1339,6 +1325,8 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
         if (!$scope.avatar) {
           $scope.avatarClass['cion-page-' + type] = true;
         }
+        $scope.doSearch();
+        $scope.updateLocationHref();
       }
     });
   };
@@ -1354,6 +1342,8 @@ function ESRegistryRecordEditController($scope, $timeout,  $state, $q, $ionicHis
     .then(function(cat){
       if (cat && cat.parent) {
         $scope.formData.category = cat;
+        $scope.doSearch();
+        $scope.updateLocationHref();
       }
     });
   };
