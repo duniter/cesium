@@ -547,17 +547,15 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
       });
   };
 
-  $scope.removeType = function(event) {
+  $scope.removeType = function() {
     $scope.search.type = null;
-    event && event.preventDefault();
     $scope.doSearch();
     $scope.updateLocationHref();
   };
 
-  $scope.removeCategory = function(event) {
+  $scope.removeCategory = function() {
     $scope.search.category = null;
     $scope.category = null;
-    event && event.preventDefault();
     $scope.doSearch();
     $scope.updateLocationHref();
   };
