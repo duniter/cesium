@@ -18,7 +18,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       OUTPUT_FUNCTIONS = OUTPUT_FUNCTION+'([ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_FUNCTION +')*',
       OUTPUT_OBJ = 'OBJ\\(([0-9]+)\\)',
       OUTPUT_OBJ_OPERATOR = OUTPUT_OBJ + '[ ]*' + OUTPUT_OPERATOR + '[ ]*' + OUTPUT_OBJ,
-      REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_./]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( (.+))?",
+      REGEX_ENDPOINT_PARAMS = "( ([a-z_][a-z0-9-_.ğĞ]*))?( ([0-9.]+))?( ([0-9a-f:]+))?( ([0-9]+))( (.+))?",
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
