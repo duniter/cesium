@@ -7,7 +7,6 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
 
   var
     googleApiKey = csConfig.plugins && csConfig.plugins.es && csConfig.plugins.es.googleApiKey,
-    isHttps = ($window.location.protocol === 'https:'),
     constants = {
       locations: {
         FRANCE: {
@@ -28,7 +27,7 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       defaults: {
         scrollWheelZoom: true,
         tileLayerOptions: {
-          attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }
       },
       layers: {
@@ -36,20 +35,20 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
           osm: {
             name: 'OpenStreetMap',
             type: 'xyz',
-            url: (isHttps ? 'https' : 'http' ) + '://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             layerOptions: {
               subdomains: ["a", "b", "c"],
-              attribution: "&copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+              attribution: "&copy; <a target=\"_blank\" href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
               continuousWorld: true
             }
           },
           google: {
             name: "Google map",
             type: "xyz",
-            url: (isHttps ? 'https' : 'http' ) + '://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key='+googleApiKey,
+            url: ('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key='+googleApiKey),
             layerOptions: {
               subdomains: ['mt0','mt1','mt2','mt3'],
-              attribution: "&copy; <a target=\"_blank\"  href=\"http://google.com/copyright\">Google</a>",
+              attribution: "&copy; <a target=\"_blank\"  href=\"https://www.google.com/intl/fr_fr/help/terms_maps.html\">Google</a>",
               continuousWorld: true
             }
           }
