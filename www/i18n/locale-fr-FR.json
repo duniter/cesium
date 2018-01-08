@@ -235,6 +235,7 @@
       "SIG_WINDOW": "Délai limite de prise en compte d'une certification",
       "SIG_VALIDITY": "Durée de vie d'une certification qui a été prise en compte",
       "MS_WINDOW": "Délai limite de prise en compte d'une demande d'adhésion comme membre",
+      "MS_VALIDITY": "Durée de vie d'une adhésion qui a été prise en compte",
       "STEP_MAX": "Distance maximale, par les certifications, entre un nouvel entrant et les membres référents",
       "WOT_RULES_DIVIDER": "Règles de la toile de confiance",
       "SENTRIES": "Nombre de certifications (émises <b>et</b> reçues) pour devenir membre référent",

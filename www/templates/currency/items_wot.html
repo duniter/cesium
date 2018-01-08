@@ -43,6 +43,13 @@
       <span class="badge badge-assertive" ng-if="!loading">{{formData.msWindow | formatDuration}}</span>
     </ion-item>
 
+    <ion-item class="item-icon-left item-text-wrap">
+      <i class="icon ion-person"></i>
+      <b class="ion-calendar icon-secondary" style="font-size: 18px; left: 33px; top: -12px;"></b>
+      <span class="col col-60" translate>CURRENCY.VIEW.MS_VALIDITY</span>
+      <span class="badge badge-balanced" ng-if="!loading">{{formData.msValidity | formatDuration}}</span>
+    </ion-item>
+
     <ion-item class="item-icon-left item-text-wrap" ng-if="formData.allWotRules">
       <i class="icon ion-ribbon-b"></i>
       <b class="ion-clock icon-secondary" style="font-size: 18px; left: 33px; top: -12px;"></b>

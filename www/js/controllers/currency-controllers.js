@@ -90,6 +90,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
     sigQty: 0,
     sigStock: 0,
     msWindow: 0,
+    msValidity: 0,
     sigWindow: 0,
     sigValidity: 0,
     sigPeriod: 0,
@@ -154,6 +155,7 @@ function CurrencyViewController($scope, $q, $timeout, $ionicPopover, Modals, BMA
           data.sigQty = json.sigQty;
           data.sigStock = json.sigStock;
           data.msWindow = json.msWindow;
+          data.msValidity = json.msValidity;
           data.sigWindow = json.sigWindow;
           data.sigValidity = json.sigValidity;
           data.sigPeriod = json.sigPeriod;

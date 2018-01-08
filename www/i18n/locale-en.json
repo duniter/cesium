@@ -235,6 +235,7 @@
       "SIG_WINDOW": "Maximum delay before a certification will be treated",
       "SIG_VALIDITY": "Lifetime of a certification that has been treated",
       "MS_WINDOW": "Maximum delay before a pending membership will be treated",
+      "MS_VALIDITY": "Lifetime of a membership that has been treated",
       "STEP_MAX": "Maximum distance between a newcomer and each referring members.",
       "WOT_RULES_DIVIDER": "Rules for web of trust",
       "SENTRIES": "Required number of certifications (given <b>and</b> received) to become a referring member",
