@@ -25,6 +25,7 @@ $dark:                            #444 !default;
 
 $light:                           #fff !default;
 $active:                          #b2e0ff !default;
+$stable-100-bg:                   #f2f2f2 !default;
 $stable-900-bg:                   #e0e0e0 !default;
 $positive-900-bg:                 #1A237E !default;
 $dark-100-bg:                     #555 !default;
@@ -700,6 +701,9 @@ $screen-menu:                     845px;
 .button-text-stable {
   color: #b2b2b2 !important;
 }
+.button-text-dark {
+  @extend .dark;
+}
 .popup-buttons .button.icon-right,
 .popup-buttons .button.icon-left {
   padding-left: 32px !important;
@@ -1071,8 +1075,10 @@ $screen-menu:                     845px;
   .item-divider .badge {
     top:16px !important;
   }
+}
 
-
+.stable-100-bg{
+  background-color: $stable-100-bg !important;
 }
 
 /******
@@ -1496,7 +1502,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
-
 /**********
    Modals
 **********/
@@ -1775,8 +1780,6 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   a:active,
   a:hover {
     text-decoration: underline;
-    //font-weight: bold;
-    //color: $positive !important;
   }
 }
 

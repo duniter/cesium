@@ -488,5 +488,9 @@
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha contestado a su comentario sobre el referencia : <b>{{params[2]}}</b>",
       "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado la repuesta a su comentario sobre el referencia : <b>{{params[2]}}</b>"
     }
+  },
+  "ERROR": {
+    "ES_CONNECTION_ERROR": "Nodo de datos <b>{{server}}</b> dirección inalcanzable o no válida.<br/><br/>Cesium continuará funcionando, <b>sin la extensión Cesium+</b> (perfiles de usuario, mensajes privados), mapas y gráficos).<br/><br/>Verifique su conexión a Internet, o cambie el nodo de datos en <a class=\"positive\" ng-click=\"doQuickFix('settings')\"> configuración de extensión </a>.",
+    "ES_MAX_UPLOAD_BODY_SIZE": "El volumen de datos a enviar excede el límite establecido por el servidor.<br/><br/>Por favor, inténtelo de nuevo después, por ejemplo, borrando fotos."
   }
 }

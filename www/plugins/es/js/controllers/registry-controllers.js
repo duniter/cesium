@@ -466,29 +466,26 @@ function ESRegistryLookupController($scope, $focus, $timeout, $filter, $controll
       request.sort = {creationTime : "desc"};
     }
 
-    var queryId = ($scope.queryId && $scope.queryId + 1) || 0;
-    $scope.queryId = queryId;
-    var isSameRequest = function() {
-      return $scope.queryId == queryId;
-    };
-
     // Update href location
     $scope.updateLocationHref();
 
     // Execute the request
-    return $scope.doRequest(request, isSameRequest);
+    return $scope.doRequest(request);
   };
 
-  $scope.doRequest = function(options, isSameRequestFn) {
+  $scope.doRequest = function(options) {
     options = options || {};
     options.from = options.from || 0;
     options.size = options.size || defaultSearchLimit;
     if (options.size < defaultSearchLimit) options.size = defaultSearchLimit;
     $scope.search.loading = (options.from === 0);
 
+    var requestId = ($scope.requestId && $scope.requestId + 1) || 1;
+    $scope.requestId = requestId;
+
     return esRegistry.record.search(options)
       .then(function(res) {
-        if (isSameRequestFn && !isSameRequestFn()) return; // Skip apply if not same request:
+        if ($scope.requestId != requestId) return; // Skip apply if not same request:
 
         if (!res || !res.hits || !res.hits.length) {
           $scope.search.results = (options.from > 0) ? $scope.search.results : [];

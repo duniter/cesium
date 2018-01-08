@@ -346,7 +346,7 @@
   "PROFILE": {
     "PROFILE_DIVIDER": "Profil Cesium+",
     "PROFILE_DIVIDER_HELP": "Il s'agit de données annexes, stockées en dehors du réseau de la monnaie.",
-    "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
+    "NO_PROFILE_DEFINED": "Aucun profil saisi",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
     "UID": "Pseudonyme",
@@ -528,6 +528,7 @@
     "ES_USE_FALLBACK_NODE": "Nœud de données <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud de données <b>{{new}}</b> ?"
   },
   "ERROR": {
-    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connection Internet, ou changer de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>."
+    "ES_CONNECTION_ERROR": "Nœud de données <b>{{server}}</b> injoignable ou adresse invalide.<br/><br/>Cesium va continuer à fonctionner, <b>sans l'extension Cesium+</b> (profils utilisateur, messages privés, cartes et graphiques)<br/><br/>Vérifiez votre connection Internet, ou changer de nœud de données dans les <a class=\"positive\" ng-click=\"doQuickFix('settings')\">paramètres de l'extension</a>.",
+    "ES_MAX_UPLOAD_BODY_SIZE": "Le volume des données à envoyer dépasse la limite fixée par le serveur.<br/>Veuillez ré-essayer après avoir, par exemple, supprimer des photos."
   }
 }

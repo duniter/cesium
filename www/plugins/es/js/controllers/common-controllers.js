@@ -194,6 +194,10 @@ function ESCommentsController($scope, $filter, $state, $focus, UIUtils) {
 
   $scope.$on('$recordView.beforeLeave', function(){
     if ($scope.comments) {
+      if (!$scope.service) {
+        console.error('[comment] Comment controller has no service ! Unable to listen changes...');
+        return;
+      }
       $scope.service.changes.stop($scope.comments);
     }
   });
@@ -672,7 +676,7 @@ function ESLookupPositionController($scope, $q, csConfig, esGeo, ModalUtils) {
   };
 }
 
-function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, UIUtils, csConfig, esGeo) {
+function ESSearchPositionItemController($scope, $q, $timeout, ModalUtils, csConfig, esGeo) {
   'ngInject';
 
   // The default country used for address localisation
