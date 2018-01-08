@@ -239,7 +239,7 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
 
     if ($scope.search.type == 'text') {
       var text = $scope.search.text.trim();
-      if (text.match(/^#\w+$/)) {
+      if (text.match(/^#[\wḡĞǦğàáâãäåçèéêëìíîïðòóôõöùúûüýÿ]+$/)) {
         stateParams.hash = text.substr(1);
       }
       else {

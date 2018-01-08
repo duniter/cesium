@@ -180,8 +180,7 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals,
               UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
             })
             .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
-        })
-          ;
+        });
       });
   };
 
