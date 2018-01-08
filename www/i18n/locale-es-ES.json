@@ -330,7 +330,9 @@
     "LOOKUP": {
       "TITLE": "Anuario",
       "NEWCOMERS": "Nuevos miembros :",
+      "NEWCOMERS_COUNT": "{{count}} miembros",
       "PENDING": "Inscripciónes en espera :",
+      "PENDING_COUNT": "{{count}} inscripciónes en espera",
       "REGISTERED": "Inscrito {{sigDate | formatFromNow}}",
       "MEMBER_FROM": "Miembro desde {{memberDate|formatFromNowShort}}",
       "BTN_NEWCOMERS": "Nuevos miembros",
@@ -409,10 +411,12 @@
     "WILL_MISSING_CERTIFICATIONS": "Pronto, va a <b>faltar certificación</b> (al menos {{willNeedCertificationCount}} es necesario)",
     "WILL_NEED_RENEW_MEMBERSHIP": "Su adhesión como miembro <b>va a expirar {{membershipExpiresIn|formatDurationTo}}</b>. Piensa a <a ng-click=\"doQuickFix('renew')\">renovar su adhesión</a> mientras tanto.",
     "NEED_RENEW_MEMBERSHIP": "No esta miembro, porque su adhesión <b>ha expirado</b>. Pensez à <a ng-click=\"doQuickFix('renew')\">renovar su adhesión</a>.",
+    "NO_WAITING_MEMBERSHIP": "No hay adhesión como miembro en espera. Si desea <b>convertirse en miembro</b>, por favor <a ng-click=\"doQuickFix('membership')\">envíe su adhesión como miembro</a>.",
     "CERTIFICATION_COUNT": "Certificacións recibidas",
     "CERTIFICATION_COUNT_SHORT": "Certificacións",
     "SIG_STOCK": "Certificacións mandadas",
     "BTN_RECEIVE_MONEY": "Cobrar",
+    "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Cambiar a otra identidad ...",
     "BTN_MEMBERSHIP_IN_DOTS": "Estar miembro...",
     "BTN_MEMBERSHIP_RENEW": "Renovar la adhesión",
     "BTN_MEMBERSHIP_RENEW_DOTS": "Renovar la adhesión...",
@@ -465,6 +469,10 @@
     "POPUP_REGISTER": {
       "TITLE": "Elige un seudónimo",
       "HELP": "Un seudónimo es obligatorio para estar membre."
+    },
+    "SELECT_IDENTITY_MODAL": {
+      "TITLE": "Selección de identidad",
+      "HELP": "Se han enviado varias <b>identidades diferentes</b> para la clave pública <span class=\"gray\"><i class=\"ion-key\"></i>{{pubkey | formatPubkey}}</span>.<br/>Por favor, selecciona la carpeta para usar:"
     },
     "SECURITY": {
       "ADD_QUESTION": "Añadir una pregunta personalizada ",
