@@ -92,8 +92,14 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           .then(function (res) {
             data.ws2pHeads = res.heads ? res.heads.reduce(function (res, hit) {
               if (hit.message && hit.sig) {
-                var head = new Ws2pMessage(hit.message);
-                res[[head.pubkey, head.ws2pid].join('-')] = head;
+                try {
+                  var head = new Ws2pMessage(hit.message);
+                  res[[head.pubkey, head.ws2pid].join('-')] = head;
+                }
+                catch(err) {
+                  // just log, then ignore
+                  console.error('[network] Ignoring WS2P head.', err && err.message || err);
+                }
               }
               return res;
             }, {}) : {};

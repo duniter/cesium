@@ -6,13 +6,13 @@ function Ws2pMessage(message) {
 
   var parts = message.split(':');
   if (parts.length < 3 || parts[0] != 'WS2P') {
-    throw Error('Invalid format found in WS2P message: ' + message);
+    throw Error('Invalid format: ' + message);
   }
 
   // Head message
   if (parts[1] == 'HEAD') {
     if (parts.length < 4) {
-      throw Error('Invalid format found in a WS2P message: ' + message);
+      throw Error('Invalid format: ' + message);
     }
     // Duniter version < 1.6.9
     if (parts.length == 4) {
