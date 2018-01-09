@@ -98,12 +98,12 @@
   "ABOUT": {
     "TITLE": "About",
     "LICENSE": "<b>Free/libre software</b> (License GNU GPLv3).",
+    "LATEST_RELEASE": "There is a <b>newer version</ b> of {{'COMMON.APP_NAME' | translate}} (<b>v{{version}}</b>)",
+    "PLEASE_UPDATE": "Please update {{'COMMON.APP_NAME' | translate}} (latest version: <b>v{{version}}</b>)",
     "CODE": "Source code:",
     "DEVELOPERS": "Developers:",
     "FORUM": "Forum:",
-    "DEV_WARNING": "Warning",
-    "DEV_WARNING_MESSAGE": "This application is still in active development.<br/>Please report any issue to us!",
-    "DEV_WARNING_MESSAGE_SHORT": "This App is still unstable (still under development).",
+    "PLEASE_REPORT_ISSUE": "Please report any issue to us!",
     "REPORT_ISSUE": "Report an issue"
   },
   "HOME": {
@@ -341,6 +341,9 @@
       "SHOW_MORE_COUNT": "(current limit to {{limit}})",
       "NO_PENDING": "No pending registrations.",
       "NO_NEWCOMERS": "No members."
+    },
+    "CONTACTS": {
+      "TITLE": "Contacts"
     },
     "MODAL": {
       "TITLE": "Search"

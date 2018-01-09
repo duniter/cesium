@@ -161,6 +161,30 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       return started;
     }
 
+
+    function getLatestRelease() {
+      var latestRelease = csSettings.data.latestReleaseUrl && csHttp.uri.parse(csSettings.data.latestReleaseUrl);
+      if (latestRelease) {
+        return csHttp.get(latestRelease.host, latestRelease.port, "/" + latestRelease.pathname)()
+          .then(function (json) {
+            //console.debug(json);
+            if (json && json.name && json.tag_name && json.html_url) {
+              return {
+                version: json.name,
+                url: json.html_url,
+                isNewer: (csHttp.version.compare(csConfig.version, json.name) < 0)
+              };
+            }
+          })
+          .catch(function(err) {
+            // silent (just log it)
+            console.error('[platform] Failed to get latest version', err);
+          })
+          ;
+      }
+      return $q.when();
+    }
+
     function addListeners() {
       listeners = [
         // Listen if node changed
@@ -254,7 +278,10 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       ready: ready,
       restart: restart,
       start: start,
-      stop: stop
+      stop: stop,
+      version: {
+        latest: getLatestRelease
+      }
     };
   })
 
@@ -317,6 +344,18 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
         // org.apache.cordova.statusbar required
         StatusBar.styleDefault();
       }
+
+      // Get latest release
+      csPlatform.version.latest()
+        .then(function(release) {
+          if (release.isNewer) {
+            console.info('[app] New release detected: {0}'.format(release.version));
+            $rootScope.newRelease = release;
+          }
+          else {
+            console.info('[app] Already use latest release {0}'.format(csConfig.version));
+          }
+        });
 
       // Make sure platform is started
       return csPlatform.ready();

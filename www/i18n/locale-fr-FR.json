@@ -98,12 +98,12 @@
   "ABOUT": {
     "TITLE": "À propos",
     "LICENSE": "Application <b>libre</b> (licence GNU GPLv3).",
+    "LATEST_RELEASE": "Il existe une <b>version plus récente</b> de {{'COMMON.APP_NAME'|translate}} (<b>v{{version}}</b>)",
+    "PLEASE_UPDATE": "Veuillez mettre à jour {{'COMMON.APP_NAME'|translate}} (dernière version : <b>v{{version}}</b>)",
     "CODE": "Code source :",
     "DEVELOPERS": "Développé par :",
     "FORUM": "Forum :",
-    "DEV_WARNING": "Avertissement",
-    "DEV_WARNING_MESSAGE": "Cette application est encore en plein développement.<br/>N'hésitez pas à nous remonter les anomalies rencontrées !",
-    "DEV_WARNING_MESSAGE_SHORT": "Cette App est en plein développement.",
+    "PLEASE_REPORT_ISSUE": "N'hésitez pas à nous remonter les anomalies rencontrées",
     "REPORT_ISSUE": "Remonter un problème"
   },
   "HOME": {

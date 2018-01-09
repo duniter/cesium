@@ -7,50 +7,61 @@
 
   <ion-content class="text-center" scroll="true">
 
-    <div class="list item-wrap-text">
-      <div class="item item-complex item-icon-left item-text-wrap">
-        <div class="item-content">
-          <span>{{'COMMON.APP_NAME'|translate}}&nbsp;{{'COMMON.APP_VERSION'|translate:$root.config}}</span>
-          <h3 ng-if="$root.config.build" class="gray">{{'COMMON.APP_BUILD'|translate:$root.config}}</h3>
-          <span translate>ABOUT.LICENSE</span>
-        </div>
-      </div>
-      <div class="item item-complex item-icon-left">
-        <div class="item-content">
-          <i class="item-image icon ion-social-github"></i>
-          {{'ABOUT.CODE' | translate}}
-          <h3><a href="https://git.duniter.org/clients/cesium/cesium" target="_system">https://git.duniter.org/clients/cesium/cesium</a></h3>
-        </div>
-      </div>
-      <div class="item item-complex item-icon-left">
-        <div class="item-content">
-          <i class="item-image icon ion-chatbubbles"></i>
-          {{'ABOUT.FORUM' | translate}}
-          <h3><a href="https://forum.duniter.org" target="_system">https://forum.duniter.org</a>
-        </div>
-      </div>
-      <div class="item item-complex item-icon-left">
-        <div class="item-content">
-          <i class="item-image icon ion-chatbubbles"></i>
-          {{'ABOUT.DEVELOPERS' | translate}}
-          <h3>
-            <a href="https://github.com/c-geek" target="_system">cgeek</a>,
-            <a href="https://github.com/devingfx" target="_system">DiG</a>,
-            <a href="https://github.com/blavenie" target="_system">Benoit Lavenier</a>
-          </h3>
-        </div>
-      </div>
-      <div class="item item-complex item-icon-left item-text-wrap">
-        <div class="item-content">
-          <i class="item-image icon ion-bug"></i>
-          <h2>{{'ABOUT.DEV_WARNING'|translate}}</h2>
-          <span translate>ABOUT.DEV_WARNING_MESSAGE</span>
-          <br/>
-          <a href="{{$root.config.newIssueUrl}}"
-             target="_system"
-             translate>ABOUT.REPORT_ISSUE</a>
-        </div>
-      </div>
+    <ion-list class="item-wrap-text">
+      <ion-item class="item-icon-left item-text-wrap">
+        {{'COMMON.APP_NAME'|translate}}&nbsp;<b>{{'COMMON.APP_VERSION'|translate:$root.config}}</b>
+        <i ng-if="$root.newRelease" class="assertive ion-alert-circled"></i>
+        <h3 ng-if="$root.config.build" class="gray">{{'COMMON.APP_BUILD'|translate:$root.config}}</h3>
+        <span translate>ABOUT.LICENSE</span>
+      </ion-item>
+
+      <!-- new version -->
+      <ion-item class="item-icon-left" ng-if="$root.newRelease">
+        <i class="item-image icon ion-alert-circled assertive"></i>
+
+        <span ng-if="!$root.device.isWeb()" ng-bind-html="'ABOUT.PLEASE_UPDATE' | translate:$root.newRelease "></span>
+        <span ng-if="$root.device.isWeb()" ng-bind-html="'ABOUT.LATEST_RELEASE' | translate:$root.newRelease "></span>
+
+        <!-- link to release page -->
+        <h3 ng-if="!$root.device.enable">
+          <a ng-click="openLink($event, $root.newRelease.url)" translate>{{$root.newRelease.url}}</a>
+        </h3>
+      </ion-item>
+
+      <!-- report issue -->
+      <ion-item class="item-icon-left item-text-wrap">
+        <i class="item-image icon ion-bug"></i>
+        <span translate>ABOUT.PLEASE_REPORT_ISSUE</span>
+        <h3>
+          <a ng-click="openLink($event, $root.config.newIssueUrl)" translate>ABOUT.REPORT_ISSUE</a>
+        </h3>
+      </ion-item>
+
+
+      <!-- source code -->
+      <ion-item class="item-icon-left">
+        <i class="item-image icon ion-network"></i>
+        {{'ABOUT.CODE' | translate}}
+        <h3><a ng-click="openLink($event, 'https://git.duniter.org/clients/cesium/cesium')">https://git.duniter.org/clients/cesium/cesium</a></h3>
+      </ion-item>
+
+      <!-- forum -->
+      <ion-item class="item-icon-left">
+        <i class="item-image icon ion-chatbubbles"></i>
+        {{'ABOUT.FORUM' | translate}}
+        <h3><a ng-click="openLink($event, 'https://forum.duniter.org')">https://forum.duniter.org</a></h3>
+      </ion-item>
+
+      <!-- team -->
+      <ion-item class="item-icon-left">
+        <i class="item-image icon ion-person-stalker"></i>
+        {{'ABOUT.DEVELOPERS' | translate}}
+        <h3>
+          <a href="https://github.com/c-geek" target="_system">cgeek</a>,
+          <a href="https://github.com/devingfx" target="_system">DiG</a>,
+          <a href="https://github.com/blavenie" target="_system">Benoit Lavenier</a>
+        </h3>
+      </ion-item>
 
       <div class="padding hidden-xs text-center">
         <button class="button button-positive ink" type="submit"

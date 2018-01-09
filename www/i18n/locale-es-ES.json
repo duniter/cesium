@@ -98,12 +98,12 @@
   "ABOUT": {
     "TITLE": "A propósito ",
     "LICENSE": "Aplicación <b>libre</b> (licencia GNU GPLv3).",
+    "LATEST_RELEASE": "Hay una <b>versión más nueva</b> de {{'COMMON.APP_NAME' | translate}} (<b>v{{version}}</b>)",
+    "PLEASE_UPDATE": "Por favor actualice {{'COMMON.APP_NAME' | translate}} (última versión: <b>v{{version}}</b>)",
     "CODE": "Codigo fuente :",
     "DEVELOPERS": "Desarrollado por :",
     "FORUM": "Foro :",
-    "DEV_WARNING": "Advertencia",
-    "DEV_WARNING_MESSAGE": "Esta applicación ya no es estabilizada (Desarrollo en proceso).<br/>No duda a informarnos de las anomalías encontradas !",
-    "DEV_WARNING_MESSAGE_SHORT": "Esta Ap ya no es estabilizada (Desarrollo en proceso).",
+    "PLEASE_REPORT_ISSUE": "No duda a informarnos de las anomalías encontradas",
     "REPORT_ISSUE": "Informar de un problema"
   },
   "HOME": {
@@ -341,6 +341,9 @@
       "SHOW_MORE_COUNT": "(límite actual a {{limit}})",
       "NO_PENDING": "Ninguna inscripción en espera.",
       "NO_NEWCOMERS": "Ningun miembro."
+    },
+    "CONTACTS": {
+      "TITLE": "Contactos"
     },
     "MODAL": {
       "TITLE": "Búsqueda"

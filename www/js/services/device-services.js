@@ -19,6 +19,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
           // workaround to quickly no is device or not (even before the ready() event)
           enable: true
         },
+        cache = {},
         started = false,
         startPromise;
 
@@ -204,12 +205,19 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
       };
 
       exports.isDesktop = function() {
-        try {
-          // Has NodeJs + NW ?
-          return !!process && !!App;
-        } catch (err) {
-          return false;
+        if (!angular.isDefined(cache.isDesktop)) {
+          try {
+            // Should have NodeJs and NW
+            cache.isDesktop = !exports.enable && !!process && !!App;
+          } catch (err) {
+            cache.isDesktop = false;
+          }
         }
+        return cache.isDesktop;
+      };
+
+      exports.isWeb = function() {
+        return !exports.enable && !exports.isDesktop();
       };
 
       exports.ready = function() {
