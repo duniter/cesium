@@ -59,6 +59,8 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
   });
 
   $scope.load = function(size, offset) {
+    if ($scope.search.error) return;
+
     var options  = {
       index: $scope.search.index,
       type: $scope.search.type,
@@ -68,10 +70,11 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
 
     // add sort
     if ($scope.search.sort) {
-      options.sort = $scope.search.sort + ':' + (!$scope.search.asc ? "desc" : "asc");
+      options.sort = {};
+      options.sort[$scope.search.sort] = (!$scope.search.asc ? "desc" : "asc");
     }
     else { // default sort
-      options.sort = "time:desc";
+      options.sort = {time:'desc'};
     }
 
     $scope.search.loading = true;
@@ -99,9 +102,13 @@ function ESDocumentLookupController($scope, $ionicPopover, $location, $timeout,
         $scope.$broadcast('$$rebind::rebind'); // notify binder
       })
       .catch(function(err) {
-        UIUtils.onError('DOCUMENT.ERROR.LOAD_DOCUMENTS_FAILED')(err);
         $scope.search.results = [];
         $scope.search.loading = false;
+        $scope.search.error = true;
+        UIUtils.onError('DOCUMENT.ERROR.LOAD_DOCUMENTS_FAILED')(err)
+          .then(function() {
+            $scope.search.error = false;
+          });
       });
   };
 

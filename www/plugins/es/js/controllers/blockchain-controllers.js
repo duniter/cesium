@@ -76,6 +76,8 @@ function ESBlockLookupController($scope, $controller, $ionicPopover, $location, 
 
   // This method override the base class method
   $scope.doSearch = function(from) {
+    if ($scope.search.error) return;
+
     from = angular.isDefined(from) ? from : 0;
     var promise;
     var request = {};
@@ -151,8 +153,12 @@ function ESBlockLookupController($scope, $controller, $ionicPopover, $location, 
         $scope.search.loading = false;
       })
       .catch(function(err) {
-        UIUtils.onError('BLOCKCHAIN.ERROR.SEARCH_BLOCKS_FAILED')(err);
+        $scope.search.error = true;
         $scope.search.loading = false;
+        UIUtils.onError('BLOCKCHAIN.ERROR.SEARCH_BLOCKS_FAILED')(err)
+          .then(function() {
+            $scope.search.error = false;
+          });
       });
   };
 

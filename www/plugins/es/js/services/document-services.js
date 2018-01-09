@@ -113,7 +113,7 @@ angular.module('cesium.es.document.services', ['ngResource', 'cesium.platform', 
       var request = {
         from: options.from || 0,
         size: options.size || constants.DEFAULT_LOAD_SIZE,
-        sort: options.sort || 'time:desc',
+        sort: options.sort || {time:'desc'},
         _source: options._source || fields.commons
       };
       if (options.query) {

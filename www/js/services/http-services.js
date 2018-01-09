@@ -323,10 +323,22 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         return;
       }
     }
-    // Note: If device is enable, this will use InAppBrowser cordova plugin (=_system)
-    $window.open(uri,
-        (options.target || (Device.enable ? '_system' : '_blank')),
-        'location=yes');
+
+    // Note: If device enable, then target=_system will use InAppBrowser cordova plugin
+    var openTarget = (options.target || (Device.enable ? '_system' : '_blank'));
+    var openOptions;
+    // If desktop, should always open in new window (no tabs)
+    if (openTarget == '_blank' && Device.isDesktop() && $window.screen && $window.screen.width && $window.screen.height) {
+      openOptions= "width={0},height={1},location=1,menubar=1,toolbar=1,resizable=1,scrollbars=1".format($window.screen.width/2, $window.screen.height/2);
+    }
+    var win = $window.open(uri,
+      openTarget,
+      openOptions);
+    if (openOptions) {
+      win.moveTo($window.screen.width/2/2, $window.screen.height/2/2);
+      win.focus();
+    }
+
   }
 
   // Get time (UTC)

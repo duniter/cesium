@@ -156,7 +156,8 @@
       "TITLE": "Message",
       "SENDER": "Sent by",
       "RECIPIENT": "Sent to",
-      "NO_CONTENT": "Empty message"
+      "NO_CONTENT": "Empty message",
+      "DELETE": "Delete the message"
     },
     "CONFIRM": {
       "REMOVE": "Are you sure you want to <b>delete this message</b>?<br/><br/> This operation is irreversible.",
@@ -416,6 +417,7 @@
       "REMOVE_ALL": "Are you sure you want to <b>delete these documents</b>?"
     },
     "ERROR": {
+      "LOAD_DOCUMENTS_FAILED": "Error searching documents",
       "REMOVE_FAILED": "Error deleting the document",
       "REMOVE_ALL_FAILED": "Error deleting documents"
     }

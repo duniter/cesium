@@ -468,6 +468,7 @@
       "REMOVE_ALL": "Etes-vous sûr de vouloir <b>supprimer ces documents</b> ?"
     },
     "ERROR": {
+      "LOAD_DOCUMENTS_FAILED": "Erreur lors de la recherche de documents",
       "REMOVE_FAILED": "Erreur lors de la suppression du document",
       "REMOVE_ALL_FAILED": "Erreur lors de la suppression des documents"
     }

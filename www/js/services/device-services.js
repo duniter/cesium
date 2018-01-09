@@ -1,3 +1,4 @@
+var App;
 
 angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.settings.services'])
 
@@ -200,6 +201,15 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
       exports.isIOS = function() {
         return !!navigator.userAgent.match(/iPhone | iPad | iPod/i) || ionic.Platform.isIOS();
+      };
+
+      exports.isDesktop = function() {
+        try {
+          // Has NodeJs + NW ?
+          return !!process && !!App;
+        } catch (err) {
+          return false;
+        }
       };
 
       exports.ready = function() {
