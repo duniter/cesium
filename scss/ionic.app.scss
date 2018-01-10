@@ -607,7 +607,13 @@ $screen-menu:                     845px;
   .item .badge {
     right: 16px;
   }
+
+  .item .badge.badge-secondary {
+    top: 35px !important;
+  }
 }
+
+
 
 /**********
    Unit popover

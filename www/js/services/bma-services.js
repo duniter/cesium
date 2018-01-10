@@ -368,7 +368,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         summary: get('/node/summary', csHttp.cache.LONG),
         same: function(host2, port2) {
           return host2 == that.host && ((!that.port && !port2) || (that.port == port2||80));
-        }
+        },
       },
       network: {
         peering: {
@@ -423,9 +423,8 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         history: get('/ud/history/:pubkey')
       },
       uri: {},
-      raw: {
-
-      }
+      version: {},
+      raw: {}
     };
     exports.regex = exports.regexp; // deprecated
 
@@ -823,7 +822,45 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       });
     };
 
+    // raw get latest release
+    var latestRelease = csSettings.data.duniterLatestReleaseUrl && csHttp.uri.parse(csSettings.data.duniterLatestReleaseUrl);
+    if (latestRelease) {
+      var useSsl = latestRelease.protocol == 'https:';
+      exports.raw.getLatestRelease = csHttp.getWithCache(latestRelease.host,
+        latestRelease.port,
+        "/" + latestRelease.pathname,
+        useSsl,
+        csHttp.cache.LONG
+      );
+    }
+    else {
+      exports.raw.getLatestRelease = function() {
+        return $q.when();
+      }
+    }
 
+    exports.version.latest = function() {
+      return exports.raw.getLatestRelease()
+        .then(function (json) {
+          if (!json) return;
+          if (json.name && json.html_url) {
+            return {
+              version: json.name,
+              url: json.html_url
+            };
+          }
+          if (json.tag_name && json.html_url) {
+            return {
+              version: json.tag_name.substring(1),
+              url: json.html_url
+            };
+          }
+        })
+        .catch(function(err) {
+          // silent (just log it)
+          console.error('[platform] Failed to get latest version', err);
+        });
+    }
 
     exports.websocket = {
         block: ws('/ws/block'),

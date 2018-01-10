@@ -259,6 +259,9 @@
       "MEDIAN_TIME": "Hora de la blockchain",
       "LOADING_PEERS": "Carga de los nodos...",
       "NODE_ADDRESS": "Dirección :",
+      "SOFTWARE": "Software :",
+      "WARN_PRE_RELEASE": "prelanzamiento (última versión estable : <b>{{version}}</b>)",
+      "WARN_NEW_RELEASE": "Versión <b>{{version}}</b> disponible",
       "WS2PID": "ID :",
       "POW_PREFIX": "Préfixe de preuve de travail :",
       "ENDPOINTS": {

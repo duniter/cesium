@@ -407,19 +407,68 @@ function NetworkLookupPopoverController($scope, $controller) {
   $scope.enter();
 }
 
-function PeerInfoPopoverController($scope, csSettings, csCurrency, BMA) {
+function PeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp, BMA) {
   'ngInject';
 
   $scope.loading = true;
   $scope.formData = {};
 
-  $scope.enter = function() {
-    csCurrency.blockchain.current()
-      .then(function(block) {
-        $scope.formData = angular.copy(block);
-        $scope.formData.useSsl = BMA.useSsl;
-      })
+  $scope.load = function() {
+
+    $scope.loading = true;
+    $scope.formData = {};
+
+    return $q.all([
+      // get current block
+      csCurrency.blockchain.current()
+        .then(function(block) {
+          $scope.formData.number = block.number;
+          $scope.formData.medianTime = block.medianTime;
+          $scope.formData.powMin = block.powMin;
+          $scope.formData.useSsl = BMA.useSsl;
+        })
+        .catch(function() {
+          delete $scope.formData.number;
+          delete $scope.formData.medianTime;
+          delete $scope.formData.powMin;
+          delete $scope.formData.useSsl;
+          // continue
+        }),
+
+      // Get node current version
+      BMA.node.summary()
+        .then(function(res){
+          console.log(res);
+          $scope.formData.version = res && res.duniter && res.duniter.version;
+          $scope.formData.software = res && res.duniter && res.duniter.software;
+        })
+        .catch(function() {
+          delete $scope.formData.version;
+          delete $scope.formData.software;
+          // continue
+        }),
+
+      // Get duniter latest version
+      BMA.version.latest()
+        .then(function(latestRelease){
+          $scope.formData.latestRelease = latestRelease;
+        })
+        .catch(function() {
+          delete $scope.formData.latestRelease;
+          // continue
+        })
+      ])
       .then(function() {
+        // Compare, to check if newer
+        if ($scope.formData.latestRelease && $scope.formData.software == 'duniter') {
+          var compare = csHttp.version.compare($scope.formData.version, $scope.formData.latestRelease.version);
+          $scope.formData.isPreRelease = compare > 0;
+          $scope.formData.hasNewRelease = compare < 0;
+        }
+        else {
+          $scope.formData.isPreRelease = false;
+          $scope.formData.hasNewRelease = false;
+        }
         $scope.loading = false;
         $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
       });
@@ -428,24 +477,19 @@ function PeerInfoPopoverController($scope, csSettings, csCurrency, BMA) {
   // Update UI on new block
   csCurrency.api.data.on.newBlock($scope, function(block) {
     if ($scope.loading) return;
-    $scope.formData = angular.copy(block);
-    $scope.formData.useSsl = BMA.useSsl;
-    console.debug("[peer info] Received new block ", block);
-    $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
+    console.debug("[peer info] Received new block. Reload content");
+    $scope.load();
   });
 
   // Update UI on settings changed
   csSettings.api.data.on.changed($scope, function(data) {
     if ($scope.loading) return;
-    if ($scope.formData.useSsl != BMA.useSsl) {
-      console.debug("[peer info] Peer settings changed");
-      $scope.formData.useSsl = BMA.useSsl;
-      $scope.$broadcast('$$rebind::' + 'rebind'); // force data binding
-    }
+    console.debug("[peer info] Peer settings changed. Reload content");
+    $scope.load();
   });
 
-  // Enter the popover
-  $scope.enter();
+  // Load data when enter
+  $scope.load();
 }
 
 function PeerViewController($scope, $q, $window, $state, UIUtils, csWot, BMA) {

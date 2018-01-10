@@ -259,7 +259,10 @@
       "MEDIAN_TIME": "Blockchain time",
       "LOADING_PEERS": "Loading peers...",
       "NODE_ADDRESS": "Address:",
-      "WS2PID": "Identitifer:",
+      "SOFTWARE": "Software:",
+      "WARN_PRE_RELEASE": "Pre-release (latest stable: <b>{{version}}</b>)",
+      "WARN_NEW_RELEASE": "Version <b>{{version}}</b> available",
+      "WS2PID": "Identifier:",
       "POW_PREFIX": "Proof of work prefix:",
       "ENDPOINTS": {
         "BMAS": "Secure endpoint (SSL)",
@@ -341,6 +344,9 @@
       "SHOW_MORE_COUNT": "(current limit to {{limit}})",
       "NO_PENDING": "No pending registrations.",
       "NO_NEWCOMERS": "No members."
+    },
+    "CONTACTS": {
+      "TITLE": "Contacts"
     },
     "MODAL": {
       "TITLE": "Search"

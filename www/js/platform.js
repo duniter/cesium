@@ -165,7 +165,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
     function getLatestRelease() {
       var latestRelease = csSettings.data.latestReleaseUrl && csHttp.uri.parse(csSettings.data.latestReleaseUrl);
       if (latestRelease) {
-        return csHttp.get(latestRelease.host, latestRelease.port, "/" + latestRelease.pathname)()
+        return csHttp.get(latestRelease.host, latestRelease.protocol == 'https:' ? 443 : latestRelease.port, "/" + latestRelease.pathname)()
           .then(function (json) {
             //console.debug(json);
             if (json && json.name && json.tag_name && json.html_url) {

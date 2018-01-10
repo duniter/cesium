@@ -69,6 +69,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     minVersion: '1.1.0',
     newIssueUrl: "https://git.duniter.org/clients/cesium/cesium/issues/new",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
+    duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
     helptip: {
       enable: true,
       installDocUrl: "https://duniter.org/en/wiki/duniter/install/",
@@ -194,6 +195,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     data.timeout = defaultSettings.timeout;
     data.minVersion = defaultSettings.minVersion;
     data.latestReleaseUrl = defaultSettings.latestReleaseUrl;
+    data.duniterLatestReleaseUrl = defaultSettings.duniterLatestReleaseUrl;
 
     // Apply the new locale (only if need)
     if (localeChanged) {
