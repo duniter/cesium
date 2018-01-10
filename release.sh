@@ -86,6 +86,9 @@ if [[ $2 =~ ^[0-9]+.[0-9]+.[0-9]+((a|b)[0-9]+)?$ && $3 =~ ^[0-9]+$ ]]; then
   git tag "v$2"
   git push
 
+  # Pause (wait propagation to from git.duniter.org to github)
+  echo " Waiting 30s, for propagation to github..."
+  sleep 30s
 
   if [[ $4 =~ ^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$ && "_$5" != "_" ]]; then
     echo "**********************************"
