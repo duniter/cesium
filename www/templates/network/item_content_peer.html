@@ -10,9 +10,8 @@
 
     <div class="row no-padding">
       <div class="col no-padding">
-        <h3 class="dark">
-          {{peer.dns || peer.server}}
-        </h3>
+        <h3 class="dark" ng-if=":rebind:!peer.bma.private">{{:rebind:peer.dns || peer.server}}</h3>
+        <h3 class="gray" ng-if=":rebind:peer.bma.private"><i class="ion-flash"></i> {{'NETWORK.VIEW.PRIVATE_ACCESS'|translate}}</h3>
         <h4>
           <span class="gray" ng-if=":rebind:!peer.uid">
             <i class="ion-key"></i> {{:rebind:peer.pubkey|formatPubkey}}

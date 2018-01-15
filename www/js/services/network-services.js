@@ -168,7 +168,12 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           data.bma.wot.member.uids()
             .then(function(uids) {
               data.uidsByPubkeys = uids;
+            })
+            .catch(function(err) {
+              data.uidsByPubkeys = {};
+              //throw err;
             }),
+
           // Load WS2P heads
           loadW2spHeads()
         ];
@@ -214,6 +219,35 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                 });
                 if (jobs.length) return $q.all(jobs);
               });
+          })
+
+          // Get private WS2P endpoints
+          .then(function(){
+            if (data.ws2pHeads) {
+              console.debug("[http] Found WS2P endpoints without endpoint:", data.ws2pHeads);
+              _.forEach(_.values(data.ws2pHeads), function(head) {
+                var peer = new Peer({});
+                peer.buid = head.buid;
+                peer.currentNumber=peer.buid && peer.buid.split('-')[0];
+                peer.pubkey = head.pubkey;
+                peer.version = head.version;
+                peer.powPrefix = head.powPrefix;
+                peer.online = true;
+                peer.uid = data.uidsByPubkeys[peer.pubkey];
+                peer.id = peer.keyID();
+                peer.bma = {
+                  useWs2p: true,
+                  private: true,
+                  ws2pid: head.ws2pid
+                };
+                if (peer.uid && data.expertMode && data.difficulties) {
+                  peer.difficulty = data.difficulties[peer.uid];
+                }
+                if (applyPeerFilter(peer)) {
+                  newPeers.push(peer);
+                }
+              });
+            }
           })
 
           .then(function(){
@@ -363,7 +397,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         }
 
         if (peer.bma.useWs2p && data.ws2pHeads) {
-          var head = data.ws2pHeads[[peer.pubkey, peer.bma.ws2pid].join('-')];
+          var ws2pHeadKey = [peer.pubkey, peer.bma.ws2pid].join('-');
+          var head = data.ws2pHeads[ws2pHeadKey];
+          delete data.ws2pHeads[ws2pHeadKey];
           if (head) {
             peer.buid = head.buid;
             peer.currentNumber=peer.buid && peer.buid.split('-')[0];
@@ -380,7 +416,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         }
 
         // Cesium running in SSL: Do not try to access not SSL node,
-        if (isHttpsMode && !peer.bma.useSsl) {
+        if (!peer.bma.useWs2p && isHttpsMode && !peer.bma.useSsl) {
           peer.online = (peer.status === 'UP');
           peer.buid = constants.UNKNOWN_BUID;
           delete peer.version;

@@ -263,6 +263,7 @@
       "WARN_PRE_RELEASE": "Pré-version (dernière version stable : <b>{{version}}</b>)",
       "WARN_NEW_RELEASE": "Version <b>{{version}}</b> disponible",
       "WS2PID": "Identifiant :",
+      "PRIVATE_ACCESS": "Accès privé",
       "POW_PREFIX": "Préfixe de preuve de travail :",
       "ENDPOINTS": {
         "BMAS": "Interface sécurisée (SSL)",

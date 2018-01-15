@@ -81,7 +81,7 @@ Peer.prototype.getEndpoints = function(regex) {
 
 Peer.prototype.hasEndpoint = function(endpoint){
   //console.debug('testing if hasEndpoint:' + endpoint);
-  var regExp = this.regex[endpoint] || new RegExp('^' + endpoint);
+  var regExp = this.regexp[endpoint] || new RegExp('^' + endpoint);
   var endpoints = this.getEndpoints(regExp);
   if (!endpoints.length) return false;
   else return true;
@@ -132,7 +132,7 @@ Peer.prototype.getServer = function() {
 Peer.prototype.hasValid4 = function(bma) {
   return bma.ipv4 &&
     /* exclude private address - see https://fr.wikipedia.org/wiki/Adresse_IP */
-    !bma.ipv4.match(this.regex.LOCAL_IP_ADDRESS) ?
+    !bma.ipv4.match(this.regexp.LOCAL_IP_ADDRESS) ?
     true : false;
 };
 

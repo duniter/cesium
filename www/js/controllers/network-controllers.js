@@ -47,7 +47,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
 ;
 
-function NetworkLookupController($scope,  $state, $location, $ionicPopover, $window,
+function NetworkLookupController($scope,  $state, $location, $ionicPopover, $window, $translate,
                                  BMA, UIUtils, csSettings, csCurrency, csNetwork, csWot) {
   'ngInject';
 
@@ -295,26 +295,30 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
   $scope.showWs2pPopover = function($event, peer) {
 
-    UIUtils.popover.show($event, {
-      templateUrl: 'templates/network/popover_endpoints.html',
-      bindings: {
-        titleKey: 'NETWORK.VIEW.ENDPOINTS.WS2P',
-        valueKey: 'NETWORK.VIEW.NODE_ADDRESS',
-        items: [
-          {
-            label: 'NETWORK.VIEW.NODE_ADDRESS',
-            value: peer.getServer() + (peer.bma.path||'')
-          },
-          {
-            label: 'NETWORK.VIEW.WS2PID',
-            value: peer.bma.ws2pid
-          },
-          {
-            label: 'NETWORK.VIEW.POW_PREFIX',
-            value: peer.powPrefix
-          }]
-      }
-    });
+    return $translate('NETWORK.VIEW.PRIVATE_ACCESS')
+      .then(function(privateAccessMessage) {
+        UIUtils.popover.show($event, {
+          templateUrl: 'templates/network/popover_endpoints.html',
+          bindings: {
+            titleKey: 'NETWORK.VIEW.ENDPOINTS.WS2P',
+            valueKey: 'NETWORK.VIEW.NODE_ADDRESS',
+            items: [
+              {
+                label: 'NETWORK.VIEW.NODE_ADDRESS',
+                value: !peer.bma.private ? (peer.getServer() + (peer.bma.path||'')) : privateAccessMessage
+              },
+              {
+                label: 'NETWORK.VIEW.WS2PID',
+                value: peer.bma.ws2pid
+              },
+              {
+                label: 'NETWORK.VIEW.POW_PREFIX',
+                value: peer.powPrefix
+              }]
+            }
+          });
+      });
+
     $event.stopPropagation();
   };
 

@@ -348,7 +348,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       // Get latest release
       csPlatform.version.latest()
         .then(function(release) {
-          if (release.isNewer) {
+          if (release && release.isNewer) {
             console.info('[app] New release detected: {0}'.format(release.version));
             $rootScope.newRelease = release;
           }
