@@ -227,7 +227,7 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
 
       exports.start = function() {
 
-        var startPromise = ionicReady()
+        startPromise = ionicReady()
           .then(function(){
 
             exports.enable = window.cordova && cordova && cordova.plugins;
