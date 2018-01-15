@@ -31,12 +31,12 @@ function Ws2pMessage(message) {
           }
 
           // Private options
-          var options = matches[1];
-          if (options) {
+          var privateOptions = matches[1];
+          if (privateOptions) {
             that.private = {
-              useTor: options.startsWith('T')
+              useTor: privateOptions.startsWith('T')
             };
-            var mode = options.substring(1);
+            var mode = privateOptions.substring(1);
             if (mode == 'A') {
               that.private.mode = 'all';
             }
@@ -49,28 +49,19 @@ function Ws2pMessage(message) {
           }
 
           // Public options
-          options = matches[2];
-          if (options) {
+          var publicOptions = matches[2];
+          if (publicOptions) {
             that.public = {
               mode: 'all',
-              useTor: options.startsWith('T')
+              useTor: publicOptions.startsWith('T')
             };
           }
 
-          /*console.debug('[http] private {0}, public {1}'.format(
-            (that.private.useTor ? 'TOR ' : '' ) + (that.private.mode || 'false'),
-            (that.public.useTor ? 'TOR ' : '' ) + (that.public.mode || 'false')
-          ), prefix);*/
-        }
-
-        // default options
-        else {
-          /*that.private = {
-            mode: 'all'
-          };
-          that.public = {
-            mode: 'all'
-          };*/
+          // For DEBUG only:
+          //console.debug('[http] private {0}, public {1}'.format(
+          // (that.private.useTor ? 'TOR ' : '' ) + (that.private.mode || 'false'),
+          //  (that.public.useTor ? 'TOR ' : '' ) + (that.public.mode || 'false')
+          //), prefix);
         }
 
         that.pubkey=parts[3];
