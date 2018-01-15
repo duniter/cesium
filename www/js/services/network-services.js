@@ -500,7 +500,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                 peer.version = res && res.duniter && res.duniter.version;
               })
               .catch(function() {
-                peer.version = 'v?'; // continue
+                peer.version = '?'; // continue
               }));
 
             return $q.all(jobs)
