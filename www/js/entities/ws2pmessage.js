@@ -52,16 +52,16 @@ function Ws2pMessage(message) {
           var publicOptions = matches[2];
           if (publicOptions) {
             that.public = {
-              mode: 'all',
-              useTor: publicOptions.startsWith('T')
+              useTor: publicOptions.startsWith('T'),
+              mode: 'all'
             };
           }
 
           // For DEBUG only:
-          //console.debug('[http] private {0}, public {1}'.format(
-          // (that.private.useTor ? 'TOR ' : '' ) + (that.private.mode || 'false'),
-          //  (that.public.useTor ? 'TOR ' : '' ) + (that.public.mode || 'false')
-          //), prefix);
+          console.log('[http] private {0}, public {1}'.format(
+           (that.private.useTor ? 'TOR ' : '' ) + (that.private.mode || 'false'),
+            (that.public.useTor ? 'TOR ' : '' ) + (that.public.mode || 'false')
+          ), prefix);
         }
 
         that.pubkey=parts[3];

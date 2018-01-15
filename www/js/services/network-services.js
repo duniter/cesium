@@ -1,7 +1,7 @@
 
 angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesium.http.services'])
 
-.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, BMA, csHttp, Api) {
+.factory('csNetwork', function($rootScope, $q, $interval, $timeout, $window, csConfig, BMA, csHttp, Api) {
   'ngInject';
 
   factory = function(id) {
@@ -37,7 +37,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         uidsByPubkeys: null,
         searchingPeersOnNetwork: false,
         difficulties: null,
-        ws2pHeads: null
+        ws2pHeads: null,
+        timeout: csConfig.timeout
       },
 
       // Return the block uid
@@ -68,6 +69,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         data.searchingPeersOnNetwork = false;
         data.difficulties = null;
         data.ws2pHeads = null;
+        data.timeout = csConfig.timeout;
       },
 
       hasPeers = function() {
@@ -202,9 +204,65 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                   _.forEach(res.peers, function(json) {
                     if (json.status == 'UP') {
                       jobs.push(addOrRefreshPeerFromJson(json, newPeers));
+
+                      // Mark WS2P
+                      _.forEach(json.endpoints||[], function(ep) {
+                        if (ep.startsWith('WS2P')) {
+                          var key = json.pubkey + '-' + ep.split(' ')[1];
+                          if (data.ws2pHeads[key]) {
+                            data.ws2pHeads[key].hasEndpoint = true;
+                          }
+                        }
+                      });
                     }
                   });
+
+                  // Add private WS2P endpoints
+                  var privateWs2pHeads = _.values(data.ws2pHeads);
+                  if (privateWs2pHeads && privateWs2pHeads.length) {
+                    var privateEPCount = 0;
+                    //console.debug("[http] Found WS2P endpoints without endpoint:", data.ws2pHeads);
+                    _.forEach(privateWs2pHeads, function(head) {
+                      if (!head.hasEndPoint) {
+                        var peer = new Peer({
+                          buid: head.buid,
+                          currentNumber: head.buid && head.buid.split('-')[0],
+                          pubkey: head.pubkey,
+                          version: head.version,
+                          powPrefix: head.powPrefix,
+                          online: true,
+                          uid: data.uidsByPubkeys[head.pubkey],
+                          bma: {
+                            useWs2p: true,
+                            private: true,
+                            ws2pid: head.ws2pid
+                          },
+                          endpoints: [
+                            // fake endpoint
+                            'WS2P ' + head.ws2pid
+                          ]
+                        });
+                        peer.id = peer.keyID();
+                        if (peer.uid && data.expertMode && data.difficulties) {
+                          peer.difficulty = data.difficulties[peer.uid];
+                        }
+                        if (applyPeerFilter(peer)) {
+                          newPeers.push(peer);
+                          privateEPCount++;
+                        }
+                      }
+                    });
+
+                    if (privateEPCount) {
+                      console.debug("[http] Found {0} WS2P endpoints without endpoint (private ?)".format(privateEPCount));
+                    }
+                  }
+
                   if (jobs.length) return $q.all(jobs);
+                })
+                .catch(function(err) {
+                  // Log and continue
+                  console.error(err);
                 });
             }
 
@@ -219,35 +277,6 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                 });
                 if (jobs.length) return $q.all(jobs);
               });
-          })
-
-          // Get private WS2P endpoints
-          .then(function(){
-            if (data.ws2pHeads) {
-              console.debug("[http] Found WS2P endpoints without endpoint:", data.ws2pHeads);
-              _.forEach(_.values(data.ws2pHeads), function(head) {
-                var peer = new Peer({});
-                peer.buid = head.buid;
-                peer.currentNumber=peer.buid && peer.buid.split('-')[0];
-                peer.pubkey = head.pubkey;
-                peer.version = head.version;
-                peer.powPrefix = head.powPrefix;
-                peer.online = true;
-                peer.uid = data.uidsByPubkeys[peer.pubkey];
-                peer.id = peer.keyID();
-                peer.bma = {
-                  useWs2p: true,
-                  private: true,
-                  ws2pid: head.ws2pid
-                };
-                if (peer.uid && data.expertMode && data.difficulties) {
-                  peer.difficulty = data.difficulties[peer.uid];
-                }
-                if (applyPeerFilter(peer)) {
-                  newPeers.push(peer);
-                }
-              });
-            }
           })
 
           .then(function(){
@@ -440,7 +469,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
           return $q.when(peer);
         }
 
-        peer.api = peer.api ||  BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl());
+        peer.api = peer.api ||  BMA.lightInstance(peer.getHost(), peer.getPort(), peer.isSsl(), data.timeout);
 
         // Get current block
         return peer.api.blockchain.current()
@@ -682,7 +711,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
             data.bma = bma ? bma : BMA;
             data.filter = options.filter ? angular.merge(data.filter, options.filter) : data.filter;
             data.sort = options.sort ? angular.merge(data.sort, options.sort) : data.sort;
-            data.expertMode = angular.isDefined(options.expertMode) ?options.expertMode : data.expertMode;
+            data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
+            data.timeout = angular.isDefined(options.timeout) ? options.timeout : csConfig.timeout;
             console.info('[network] Starting network from [{0}]'.format(bma.server));
             var now = new Date();
 

@@ -26,7 +26,10 @@ Peer.prototype.regex = Peer.prototype.regexp; // for backward compat
 
 Peer.prototype.keyID = function () {
   var bma = this.bma || this.getBMA();
-  return [this.pubkey || "Unknown", bma.dns, bma.ipv4, bma.ipv6, bma.port, bma.useSsl].join('-');
+  if (bma.useBma) {
+    return [this.pubkey || "Unknown", bma.dns, bma.ipv4, bma.ipv6, bma.port, bma.useSsl, bma.path].join('-');
+  }
+  return [this.pubkey || "Unknown", bma.ws2pid, bma.path].join('-');
 };
 
 Peer.prototype.copyValues = function(to) {
