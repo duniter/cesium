@@ -27,7 +27,7 @@ angular.module('cesium.map.utils.services', ['cesium.services', 'ui-leaflet'])
       defaults: {
         scrollWheelZoom: true,
         tileLayerOptions: {
-          attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          attribution: '© <a target=\"_blank\" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }
       },
       layers: {
