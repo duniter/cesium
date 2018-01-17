@@ -66,6 +66,14 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     that.started = false;
     that.init = init;
 
+    // Allow to force SSL connection with port different from 443
+    that.forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
+    ($window.location && $window.location.protocol === 'https:') ? true : false;
+    if (that.forceUseSsl) {
+      console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
+    }
+
+
     if (host) {
       init(host, port, useSsl, useCache);
     }
@@ -76,18 +84,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       that.alive = false;
       that.cache = _emptyCache();
 
-      // Allow to force SSL connection with port different from 443
-      var forceUseSsl = (csConfig.httpsMode === 'true' || csConfig.httpsMode === true || csConfig.httpsMode === 'force') ||
-        ($window.location && $window.location.protocol === 'https:') ? true : false;
-      if (forceUseSsl) {
-        console.debug('[BMA] Enable SSL (forced by config or detected in URL)');
-      }
       // Use settings as default, if exists
       if (csSettings.data && csSettings.data.node) {
         host = host || csSettings.data.node.host;
         port = port || csSettings.data.node.port;
 
-        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.node.useSsl || forceUseSsl);
+        useSsl = angular.isDefined(useSsl) ? useSsl : (port == 443 || csSettings.data.node.useSsl || that.forceUseSsl);
         useCache =  angular.isDefined(useCache) ? useCache : true;
       }
 
@@ -96,7 +98,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       }
       that.host = host;
       that.port = port || 80;
-      that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || forceUseSsl);
+      that.useSsl = angular.isDefined(useSsl) ? useSsl : (that.port == 443 || that.forceUseSsl);
       that.useCache = angular.isDefined(useCache) ? useCache : false;
       that.server = csHttp.getServer(host, port);
       that.url = csHttp.getUrl(host, port, ''/*path*/, useSsl);
@@ -822,22 +824,19 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       });
     };
 
-    // raw get latest release
-    var latestRelease = csSettings.data.duniterLatestReleaseUrl && csHttp.uri.parse(csSettings.data.duniterLatestReleaseUrl);
-    if (latestRelease) {
-      var useSsl = latestRelease.protocol == 'https:';
-      exports.raw.getLatestRelease = csHttp.getWithCache(latestRelease.host,
-        latestRelease.port,
-        "/" + latestRelease.pathname,
-        useSsl,
+    // Define get latest release (or fake function is no URL defined)
+    var duniterLatestReleaseUrl = csSettings.data.duniterLatestReleaseUrl && csHttp.uri.parse(csSettings.data.duniterLatestReleaseUrl);
+    exports.raw.getLatestRelease = duniterLatestReleaseUrl ?
+      csHttp.getWithCache(duniterLatestReleaseUrl.host,
+        duniterLatestReleaseUrl.port,
+        "/" + duniterLatestReleaseUrl.pathname,
+        /*useSsl*/ (duniterLatestReleaseUrl.port == 443 || duniterLatestReleaseUrl.protocol == 'https:' || that.forceUseSsl),
         csHttp.cache.LONG
-      );
-    }
-    else {
-      exports.raw.getLatestRelease = function() {
+      ) :
+      // No URL define: use a fake function
+      function() {
         return $q.when();
-      }
-    }
+      };
 
     exports.version.latest = function() {
       return exports.raw.getLatestRelease()
@@ -858,9 +857,9 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         })
         .catch(function(err) {
           // silent (just log it)
-          console.error('[platform] Failed to get latest version', err);
+          console.error('[BMA] Failed to get Duniter latest version', err);
         });
-    }
+    };
 
     exports.websocket = {
         block: ws('/ws/block'),

@@ -167,7 +167,6 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       if (latestRelease) {
         return csHttp.get(latestRelease.host, latestRelease.protocol == 'https:' ? 443 : latestRelease.port, "/" + latestRelease.pathname)()
           .then(function (json) {
-            //console.debug(json);
             if (json && json.name && json.tag_name && json.html_url) {
               return {
                 version: json.name,
@@ -178,7 +177,7 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
           })
           .catch(function(err) {
             // silent (just log it)
-            console.error('[platform] Failed to get latest version', err);
+            console.error('[platform] Failed to get Cesium latest version', err);
           })
           ;
       }
@@ -349,11 +348,11 @@ angular.module('cesium.platform', ['ngIdle', 'cesium.config', 'cesium.services']
       csPlatform.version.latest()
         .then(function(release) {
           if (release && release.isNewer) {
-            console.info('[app] New release detected: {0}'.format(release.version));
+            console.info('[app] New release detected [{0}]'.format(release.version));
             $rootScope.newRelease = release;
           }
           else {
-            console.info('[app] Already use latest release {0}'.format(csConfig.version));
+            console.info('[app] Current version [{0}] is the latest release'.format(csConfig.version));
           }
         });
 

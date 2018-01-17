@@ -296,6 +296,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   };
 
   $scope.showWs2pPopover = function($event, peer) {
+    $event.stopPropagation();
 
     return $translate('NETWORK.VIEW.PRIVATE_ACCESS')
       .then(function(privateAccessMessage) {
@@ -320,8 +321,6 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
             }
           });
       });
-
-    $event.stopPropagation();
   };
 
 
