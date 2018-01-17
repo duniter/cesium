@@ -362,8 +362,9 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
 function ESSocialsViewController($scope)  {
   'ngInject';
 
-  $scope.openSocial = function(event, social) {
-    return $scope.openLink(event, social.url, {
+  $scope.openSocial = function($event, social) {
+    $event.stopPropagation();
+    return $scope.openLink($event, social.url, {
       type: social.type
     });
   };

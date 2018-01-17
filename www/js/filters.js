@@ -374,6 +374,14 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
+  .filter('truncUrl', function() {
+    return function(input, size) {
+      size = size || 25;
+      var startIndex = input.startsWith('http://') ? 7 : (input.startsWith('https://') ? 8 : 0);
+      return !input || (input.length-startIndex) <= size ? input.substr(startIndex) : (input.substr(startIndex, size) + '...');
+    };
+  })
+
   .filter('trustAsHtml', function($sce) {
     return function(html) {
       return $sce.trustAsHtml(html);

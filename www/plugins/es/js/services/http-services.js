@@ -3,7 +3,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 /**
  * Elastic Search Http
  */
-.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, $translate, $window,
+.factory('esHttp', function($q, $timeout, $rootScope, $state, $sce, $translate, $window, $filter,
                             CryptoUtils, UIUtils, csHttp, csConfig, csSettings, BMA, csWallet, csPlatform, Api) {
   'ngInject';
 
@@ -30,7 +30,8 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       },
       fallbackNodeIndex = 0,
       listeners,
-      defaultSettingsNode;
+      defaultSettingsNode,
+      truncUrlFilter = $filter('truncUrl');
 
     that.data = {
       isFallback: false
@@ -390,7 +391,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
         var urls = parseUrlsFromText(content);
         _.forEach(urls, function(url){
           // Redirect URL to the function 'openLink', to open a new window if need (e.g. desktop app)
-          var link = '<a ng-click=\"openLink($event, \'{0}\')\">{1}</a>'.format(url, url);
+          var link = '<a on-tap=\"openLink($event, \'{0}\')\" href=\"{1}\" target="_blank">{2}</a>'.format(url, url, truncUrlFilter(url));
           content = content.replace(url, link);
         });
 

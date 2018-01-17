@@ -385,14 +385,15 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Link managment (fix issue #)
   ////////////////////////////////////////
 
-  $scope.openLink = function(event, uri, options) {
+  $scope.openLink = function($event, uri, options) {
     options = options || {};
 
     // If unable to open, just copy value
     options.onError = function() {
-      return UIUtils.popover.copy(event, uri);
+      return UIUtils.popover.copy($event, uri);
     };
 
+    $event.stopPropagation();
     return csHttp.uri.open(uri, options);
   };
 

@@ -30,7 +30,8 @@
     <ion-item ng-repeat="social in formData.profile.socials | filter:filterFn track by social.url "
               id="social-{{::social.url|formatSlug}}"
               class="item-icon-left item-text-wrap no-padding-bottom ink"
-              ng-click="openSocial($event, social)">
+              on-tap="openSocial($event, social)"
+              >
       <i class="icon ion-social-{{social.type}}"
          ng-class="{'ion-bookmark': social.type == 'other', 'ion-link': social.type == 'web', 'ion-email': social.type == 'email', 'ion-iphone': social.type == 'phone'}"></i>
       <p ng-if="social.type && social.type != 'web'">
@@ -38,7 +39,7 @@
         <i class="ion-locked" ng-if="social.recipient"></i>
       </p>
       <h4>
-        <a>{{::social.url}}</a>
+        <a on-tap="openSocial($event, social)" href="{{::social.url}}" target="_blank">{{::social.url}}</a>
       </h4>
     </ion-item>
   </div>
