@@ -144,7 +144,7 @@ To build Cesium, you will have to:
    
   - Getting source and installing project dependencies:    
 ```
-  git clone https://github.com/duniter/cesium.git
+  git clone https://git.duniter.org/clients/cesium/cesium.git
   cd cesium
   npm install
 ```
