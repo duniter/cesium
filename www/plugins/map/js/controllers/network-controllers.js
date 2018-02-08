@@ -221,6 +221,13 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
             angular.extend(layer, L.featureGroup.subGroup(markerClusterLayer));
           }
         });
+        if (esGeo.point.ip.license) {
+          markerClusterLayer.getAttribution = function() {
+            return '<a target=\"_blank\" href="{0}">{1}</a>'.format(
+              esGeo.point.ip.license.url,
+              esGeo.point.ip.license.name);
+          };
+        }
         markerClusterLayer.addTo(map);
 
         //$scope.map.layers.overlays['offline'].visible=false;
@@ -255,7 +262,7 @@ angular.module('cesium.map.network.controllers', ['cesium.services', 'cesium.map
         // Get position by IP
         var bma = peer.bma;
         var address = peer.hasValid4(bma) ? bma.ipv4 : (bma.dns || bma.ipv6);
-        esGeo.point.searchByIP(address)
+        esGeo.point.ip.search(address)
 
         // Create the marker
           .then(function(position){// Add marker to list

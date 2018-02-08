@@ -28,7 +28,13 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
         apiKey: undefined,
         search: csHttp.get('maps.google.com', 443, '/maps/api/geocode/json')
       },
-      searchByIP: csHttp.get('freegeoip.net', 443, '/json/:ip')
+      freegeoip: {
+        search: csHttp.get('freegeoip.net', 443, '/json/:ip'),
+        license: {
+          name: 'freegeoip',
+          url: 'https://freegeoip.net'
+        }
+      }
     };
 
     function _normalizeAddressString(text) {
@@ -148,10 +154,13 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
       //var now = new Date();
       //console.debug('[ES] [geo] Searching IP position [{0}]...'.format(ip));
 
-      return that.raw.searchByIP({ip: ip})
+      return that.raw.freegeoip.search({ip: ip})
         .then(function(res) {
           //console.debug('[ES] [geo] Found IP {0} position in {0}ms'.format(res ? 1 : 0, new Date().getTime() - now.getTime()));
-          return res ? {lat: res.latitude,lng: res.longitude} : undefined;
+          return res ? {
+            lat: res.latitude,
+            lng: res.longitude
+          } : undefined;
         });
     }
 
@@ -196,8 +205,11 @@ angular.module('cesium.es.geo.services', ['cesium.services', 'cesium.es.http.ser
       point: {
         current: getCurrentPosition,
         searchByAddress: searchPositionByAddress,
-        searchByIP: searchPositionByIP,
-        distance: getDistance
+        distance: getDistance,
+        ip: {
+          search: searchPositionByIP,
+          license: that.raw.freegeoip.license
+        }
       },
       google: {
         isEnable: function() {
