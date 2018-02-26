@@ -46,7 +46,8 @@ angular.module("cesium.config", [])
 	},
 	"version": "...",
 	"build": "...",
-	"newIssueUrl": "https://github.com/duniter/cesium/issues/new?labels=bug"
+	"newIssueUrl": "https://git.duniter.org/clients/cesium/cesium/issues/new",
+  "userForumUrl": "https://forum.duniter.org"
 });
 ```
 
@@ -59,11 +60,11 @@ Because of default options values (see details below), the minimal configuration
   angular.module("cesium.config", [])
   .constant("csConfig", {
   	"node": {
-  		"host": "gtest.duniter.fr",
+  		"host": "g1-test.duniter.org",
   		"port": "10900"
   	},
-  	"version": "0.9.18",
-  	"build": "2017-01-31T14:19:31.296Z"
+  	"version": "...",
+  	"build": "..."
   });
   ```
 
@@ -72,7 +73,7 @@ Because of default options values (see details below), the minimal configuration
     angular.module("cesium.config", [])
     .constant("csConfig", {
     	"node": {
-    		"host": "g1-test.duniter.fr",
+    		"host": "g1-test.duniter.org",
     		"port": 10900
     	},
     	"plugins": {
@@ -81,8 +82,8 @@ Because of default options values (see details below), the minimal configuration
            "port": 443
          }
       },
-    	"version": "0.9.18",
-    	"build": "2017-01-31T14:19:31.296Z"
+    	"version": "...",
+    	"build": "..."
     });
     ```
   
@@ -110,8 +111,9 @@ fallbackLanguage            | Default locale, if browser default language not ex
 defaultLanguage             | Used to force the default language (ignore browser's language), on user first connection.      | =`fallbackLanguage`
 decimalCount                | Number of decimal to display, on float value (when using relative unit)                        | `4`
 shareBaseUrl                | Used in share buttons, to reference another web site.                                          | not defined (will use navigator's window location) 
-helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node'.                              | URL of [Duniter installation node](https://github.com/duniter/duniter/blob/master/doc/install-a-node.md)
-newIssueUrl                 | Used for link in the About screen, to submit new issue                                         | URL of [Cesium issues on GitHub](https://github.com/duniter/cesium/issues/new?labels=bug)
+helptip.installDocUrl       | Used in features tour, for the link 'How-to install my own node'.                              | URL of [Duniter installation node](https://duniter.org/en/wiki/duniter/install/)
+newIssueUrl                 | Used for link in the About screen, to submit new issue                                         | URL of [Cesium issues](https://git.duniter.org/clients/cesium/cesium/issues/new)
+userForumUrl                | Link to the user forum, show in the About screen                                               | URL of [forum.monnaie-libre.fr](forum.monnaie-libre.fr)
 timeout                     | Default network request timeout, in millisecond.                                               | `4000`
 timeWarningExpire           | Delay (in second) before expiration of certifications, use to warn the user that there will soon be a lack of certifications | `5184000` (2 mois)
 timeWarningExpireMembership | Delay (in second) before membership expiration, use to warns user that he should renew his membership.  | `7776000` (3 mois)

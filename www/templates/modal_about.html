@@ -24,7 +24,7 @@
 
         <!-- link to release page -->
         <h3 ng-if="!$root.device.enable">
-          <a ng-click="openLink($event, $root.newRelease.url)" translate>{{$root.newRelease.url}}</a>
+          <a ng-click="openLink($event, $root.newRelease.url)" translate>{{::$root.newRelease.url}}</a>
         </h3>
       </ion-item>
 
@@ -33,7 +33,7 @@
         <i class="item-image icon ion-bug"></i>
         <span translate>ABOUT.PLEASE_REPORT_ISSUE</span>
         <h3>
-          <a ng-click="openLink($event, $root.config.newIssueUrl)" translate>ABOUT.REPORT_ISSUE</a>
+          <a ng-click="openLink($event, $root.settings.newIssueUrl)" translate>ABOUT.REPORT_ISSUE</a>
         </h3>
       </ion-item>
 
@@ -49,7 +49,7 @@
       <ion-item class="item-icon-left">
         <i class="item-image icon ion-chatbubbles"></i>
         {{'ABOUT.FORUM' | translate}}
-        <h3><a ng-click="openLink($event, 'https://forum.duniter.org')">https://forum.duniter.org</a></h3>
+        <h3><a ng-click="openLink($event, $root.settings.userForumUrl)">{{::$root.settings.userForumUrl}}</a></h3>
       </ion-item>
 
       <!-- team -->

@@ -68,6 +68,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     uiEffects: true,
     minVersion: '1.1.0',
     newIssueUrl: "https://git.duniter.org/clients/cesium/cesium/issues/new",
+    userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
     duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
     helptip: {
@@ -196,6 +197,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     data.minVersion = defaultSettings.minVersion;
     data.latestReleaseUrl = defaultSettings.latestReleaseUrl;
     data.duniterLatestReleaseUrl = defaultSettings.duniterLatestReleaseUrl;
+    data.newIssueUrl = defaultSettings.newIssueUrl;
+    data.userForumUrl = defaultSettings.userForumUrl;
 
     // Apply the new locale (only if need)
     if (localeChanged) {
