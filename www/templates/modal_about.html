@@ -64,6 +64,13 @@
       </ion-item>
 
       <div class="padding hidden-xs text-center">
+        <button class="button button-stable icon-left ink" type="submit"
+                ng-click="closeModal()"
+                ui-sref="app.help">
+          <i class="icon ion-ios-help-outline"></i>
+          {{'HOME.BTN_HELP' | translate}}
+        </button>
+
         <button class="button button-positive ink" type="submit"
                 ng-click="closeModal()">
           {{'COMMON.BTN_CLOSE' | translate}}
