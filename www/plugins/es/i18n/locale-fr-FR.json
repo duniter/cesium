@@ -349,6 +349,7 @@
     "NO_PROFILE_DEFINED": "Aucun profil Cesium+",
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
+    "BTN_DELETE": "Supprimer mon profil",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",
     "TITLE_HELP": "Nom, Prénom",
@@ -365,13 +366,18 @@
       "RESIZE_HELP": "<b>Recadrez l'image</b>, si besoin. Un clic maintenu sur l'image permet de la déplacer. Cliquez sur la zone en bas à gauche pour zoomer.",
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
+    "CONFIRM": {
+      "DELETE": "Etes-vous sur de vouloir <b>supprimer votre profif cesium+ ?</b><br/><br/>Cette opération est irréversible."
+    },
     "ERROR": {
+      "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
       "LOAD_PROFILE_FAILED": "Erreur de chargement du profil utilisateur.",
       "SAVE_PROFILE_FAILED": "Erreur lors de la sauvegarde",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Format non pris en compte : veuillez indiquer une adresse valide.<br/><br/>Exemples :<ul><li>- Une page Facebook (https://www.facebook.com/user)</li><li>- Une page web (http://www.monsite.fr)</li><li>- Une adresse email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Erreur lors du redimensionnement de l'image"
     },
     "INFO": {
+      "PROFILE_REMOVED": "Profil supprimé",
       "PROFILE_SAVED": "Profil sauvegardé"
     },
     "HELP": {
