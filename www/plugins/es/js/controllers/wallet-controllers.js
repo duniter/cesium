@@ -42,7 +42,7 @@ function ESWalletController($scope, $controller, esModals,csWallet,UIUtils,esPro
        UIUtils.alert.confirm('PROFILE.CONFIRM.DELETE')
          .then(function(confirm) {
               if (confirm){ 
-                  esProfile.delete(walletData.pubkey)
+                  esProfile.remove(walletData.pubkey)
                   .then(function () {
                     $scope.formData.name=null;
                     $scope.formData.profile = null;

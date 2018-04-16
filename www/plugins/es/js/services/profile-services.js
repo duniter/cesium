@@ -1,4 +1,4 @@
-angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http.services', 'cesium.crypto.services'])
+angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http.services'])
   .config(function(PluginServiceProvider, csConfig) {
     'ngInject';
 
@@ -22,8 +22,7 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       get: esHttp.get('/user/profile/:id?&_source_exclude=avatar._content'),
       getAll: esHttp.get('/user/profile/:id'),
       search: esHttp.post('/user/profile/_search'),
-      mixedSearch: esHttp.post('/user,page,group/profile,record/_search'),
-      delete: esHttp.post('/user/profile/_delete/:id')
+      mixedSearch: esHttp.post('/user,page,group/profile,record/_search')
     };
 
     function getAvatarAndName(pubkey) {
@@ -47,13 +46,6 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
             throw err;
           }
         });
-    }
-
-    function deleteProfile(pubkey) {
-      var id = pubkey;
-      return esHttp.record.remove("user","profile")(id).then(function(res) {
-          return res;
-      });
     }
 
     function getProfile(pubkey, options) {
@@ -399,7 +391,7 @@ angular.module('cesium.es.profile.services', ['cesium.services', 'cesium.es.http
       update: esHttp.record.post('/user/profile/:id/_update', {tagFields: ['title', 'description']}),
       avatar: esHttp.get('/user/profile/:id?_source=avatar'),
       fillAvatars: fillAvatars,
-      delete: deleteProfile
+      remove: esHttp.record.remove("user","profile")
     };
   })
 ;
