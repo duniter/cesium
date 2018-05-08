@@ -571,6 +571,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                   throw 'RETRY';
                 });
               }
+              else {
+                // Remembering to not ask for confirmation
+                if (csSettings.data.wallet.alertIfUnusedWallet) {
+                  csSettings.data.wallet.alertIfUnusedWallet = false;
+                  csSettings.store();
+                }
+              }
               return true;
             });
         })

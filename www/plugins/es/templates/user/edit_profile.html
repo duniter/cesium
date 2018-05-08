@@ -4,8 +4,13 @@
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-      <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="submitAndSaveAndClose()">
-      </button>
+    <!-- remove button -->
+    <button class="button button-icon button-clear button-assertive ion-trash-a visible-xs visible-sm" ng-click="removeProfile()"
+            ng-if="existing">
+    </button>
+    <!-- save button -->
+    <button class="button button-icon button-clear ion-android-done visible-xs visible-sm" ng-click="submitAndSaveAndClose()">
+    </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true">
@@ -45,10 +50,24 @@
       </div>
 
       <div class="col">
+
+        <!-- Buttons bar-->
+        <div class="hidden-xs hidden-sm padding text-center" ng-if="existing && !saving">
+
+          <button class="button button-stable icon-right ink"
+                  ng-click="showActionsPopover($event)">
+            &nbsp; <i class="icon ion-android-more-vertical"></i>&nbsp;
+            {{'COMMON.BTN_OPTIONS' | translate}}
+          </button>
+        </div>
+
         <form name="profileForm" novalidate="" ng-submit="saveAndClose()">
 
           <div class="list item-text-wrap {{::motion.ionListClass}}"
                     ng-init="setForm(profileForm)">
+
+
+
 
             <!-- Public info -->
             <div class="item item-icon-left item-text-wrap">
@@ -95,8 +114,12 @@
             <!-- position -->
             <ng-include src="'plugins/es/templates/common/edit_position.html'" ng-controller="ESPositionEditCtrl as ctrl"></ng-include>
 
-            <!-- social networks -->
-            <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
+          </div>
+
+          <!-- social networks -->
+          <ng-include src="'plugins/es/templates/common/edit_socials.html'" ng-controller="ESSocialsEditCtrl"></ng-include>
+
+          <div class="list item-text-wrap {{::motion.ionListClass}}">
 
             <div class="item item-divider">
               {{'PROFILE.TECHNICAL_DIVIDER' | translate}}

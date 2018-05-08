@@ -299,6 +299,7 @@
     "BTN_ADD": "Create my profile",
     "BTN_EDIT": "Edit my profile",
     "BTN_DELETE": "Delete my profile",
+    "BTN_REORDER": "Reorder",
     "UID": "Pseudonym",
     "TITLE": "Lastname, FirstName",
     "TITLE_HELP": "Name",
@@ -316,7 +317,7 @@
       "RESULT_HELP": "<b>Here is the result</b> as seen on your profile:"
     },
     "CONFIRM": {
-      "DELETE": "Are you sure you want to <b>delete your cesium+ profile ?</b><br/><br/>This operation is irreversible."
+      "DELETE": "Are you sure you want to <b>delete your Cesium+ profile ?</b><br/><br/>This operation is irreversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Deleting profile failed",

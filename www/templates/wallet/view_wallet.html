@@ -44,7 +44,8 @@
       </h4>
     </div>
 
-    <div id="qrcode" class="qrcode spin"
+    <div ng-attr-id="{{ qrcodeId }}"
+         class="qrcode spin"
          ng-class="{'active': toggleQRCode}"
          ng-click="toggleQRCode = !toggleQRCode"></div>
 

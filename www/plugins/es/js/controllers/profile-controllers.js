@@ -23,8 +23,9 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 
 ;
 
-function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $controller, $ionicHistory,
-                                     UIUtils, esHttp, esProfile, ModalUtils, Device) {
+function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $controller,
+                                     $ionicHistory, $ionicPopover,
+                                     UIUtils, csWallet, esHttp, esProfile, ModalUtils, Device) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -44,6 +45,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
   $scope.socialData = {
     url: null
   };
+  $scope.socialReorder = true;
 
   $scope.$on('$ionicView.enter', function(e) {
     $scope.loadWallet()
@@ -238,7 +240,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       if (!$scope.existing) {
         return esProfile.add(formData)
           .then(function() {
-            console.info("[ES] [profile] successfully created.");
+            console.info("[ES] [profile] Successfully created.");
             $scope.existing = true;
             $scope.saving = false;
             $scope.dirty = false;
@@ -337,7 +339,67 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       });
   };
 
+  $scope.removeProfile = function(){
+    // Hide popover if need
+    $scope.hideActionsPopover();
 
+    return $scope.existing && csWallet.auth({minData: true})
+        .then(function(walletData) {
+
+          UIUtils.loading.hide();
+          UIUtils.alert.confirm('PROFILE.CONFIRM.DELETE', undefined, {okText: 'COMMON.BTN_DELETE'})
+            .then(function(confirm) {
+              if (confirm){
+
+                console.debug('[ES] [profile] Deleting user profile...');
+                // removeIf(no-device)
+                UIUtils.loading.show();
+                // endRemoveIf(no-device)
+                return esProfile.remove(walletData.pubkey)
+                  .then(function () {
+                    walletData.name=null;
+                    walletData.profile = null;
+                    walletData.avatar = null;
+                    console.debug('[ES] [profile] Successfully deleted');
+                    $scope.dirty = false;
+                    return $scope.close();
+                  })
+                  .then(function() {
+                    return $timeout(function() {
+                      UIUtils.toast.show('PROFILE.INFO.PROFILE_REMOVED');
+                    }, 750);
+                  })
+                  .catch(UIUtils.onError('PROFILE.ERROR.REMOVE_PROFILE_FAILED'));
+              }
+            });
+        });
+  };
+
+  /* -- Popover -- */
+
+  $scope.showActionsPopover = function(event) {
+    if (!$scope.actionsPopover) {
+      $ionicPopover.fromTemplateUrl('plugins/es/templates/user/edit_popover_actions.html', {
+        scope: $scope
+      }).then(function(popover) {
+        $scope.actionsPopover = popover;
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+          $scope.actionsPopover.remove();
+        });
+        $scope.actionsPopover.show(event);
+      });
+    }
+    else {
+      $scope.actionsPopover.show(event);
+    }
+  };
+
+  $scope.hideActionsPopover = function() {
+    if ($scope.actionsPopover) {
+      $scope.actionsPopover.hide();
+    }
+  };
 }
 
 

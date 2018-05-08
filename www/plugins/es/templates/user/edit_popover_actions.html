@@ -1,0 +1,17 @@
+<ion-popover-view class="fit has-header">
+  <ion-header-bar>
+    <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <!-- delete profile -->
+      <a class="item item-icon-left assertive ink"
+         ng-click="removeProfile()">
+        <i class="icon ion-trash-a"></i>
+        {{'PROFILE.BTN_DELETE' | translate}}
+      </a>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

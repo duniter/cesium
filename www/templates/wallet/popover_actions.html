@@ -21,36 +21,16 @@
         {{'ACCOUNT.BTN_SELECT_ALTERNATIVES_IDENTITIES' | translate}}
       </a>
 
-      <!-- identity -->
-      <a class="item item-icon-left ink"
-         ng-if="walletData.requirements.needSelf"
-         ng-click="self()">
-        <i class="icon ion-flag"></i>
-        {{'ACCOUNT.BTN_SEND_IDENTITY_DOTS' | translate}}
-      </a>
-
-      <!-- membership in -->
-      <a class="item item-icon-left ink visible-xs visible-sm"
-         ng-if="walletData.requirements.needMembership"
-         ng-click="membershipIn()">
-        <i class="icon ion-person"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_IN_DOTS' | translate}}
-      </a>
-      <a class="item item-icon-left ink hidden-xs hidden-sm"
-              ng-class="{'gray':!walletData.requirements.needMembership}"
-              ng-click="membershipIn()">
-        <i class="icon ion-person"></i>
-        {{'ACCOUNT.BTN_MEMBERSHIP_IN_DOTS' | translate}}
-      </a>
-
       <!-- renew membership -->
+      <!-- (show only if a SELF has been sent - fix #673) -->
       <a class="item item-icon-left ink visible-xs visible-sm"
-         ng-if="walletData.requirements.needRenew"
+         ng-if="!walletData.requirements.needSelf && walletData.requirements.needRenew"
          ng-click="renewMembership()">
         <i class="icon ion-loop"></i>
         {{'ACCOUNT.BTN_MEMBERSHIP_RENEW_DOTS' | translate}}
       </a>
       <a class="item item-icon-left ink hidden-xs hidden-sm"
+         ng-if="!walletData.requirements.needSelf"
          ng-class="{'gray':!walletData.requirements.needRenew}"
          ng-click="renewMembership()">
         <i class="icon ion-loop"></i>

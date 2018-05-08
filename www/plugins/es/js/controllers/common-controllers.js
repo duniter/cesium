@@ -315,13 +315,15 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
   'ngInject';
 
   $scope.socialData = {
-    url: null
+    url: null,
+    reorder: false
   };
 
   $scope.addSocialNetwork = function() {
     if (!$scope.socialData.url || $scope.socialData.url.trim().length === 0) {
       return;
     }
+
     $scope.formData.socials = $scope.formData.socials || [];
     var url = $scope.socialData.url.trim();
 
@@ -345,6 +347,8 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
       selector: '#social-' + $filter('formatSlug')(social.url),
       startVelocity: 10000
     });
+
+
   };
 
   $scope.editSocialNetwork = function(index) {
@@ -352,6 +356,13 @@ function ESSocialsEditController($scope, $focus, $filter, UIUtils, SocialUtils) 
     $scope.formData.socials.splice(index, 1);
     $scope.socialData.url = social.url;
     $focus('socialUrl');
+  };
+
+
+  $scope.reorderSocialNetwork = function(social, fromIndex, toIndex) {
+    if (!social || fromIndex == toIndex) return; // no changes
+    $scope.formData.socials.splice(fromIndex, 1);
+    $scope.formData.socials.splice(toIndex, 0, social);
   };
 
   $scope.filterFn = function(social) {

@@ -350,6 +350,7 @@
     "BTN_ADD": "Saisir mon profil",
     "BTN_EDIT": "Editer mon profil",
     "BTN_DELETE": "Supprimer mon profil",
+    "BTN_REORDER": "Réordonner",
     "UID": "Pseudonyme",
     "TITLE": "Nom, Prénom",
     "TITLE_HELP": "Nom, Prénom",
@@ -367,7 +368,7 @@
       "RESULT_HELP": "<b>Voici le résultat</b> tel que visible sur votre profil :"
     },
     "CONFIRM": {
-      "DELETE": "Etes-vous sur de vouloir <b>supprimer votre profif cesium+ ?</b><br/><br/>Cette opération est irréversible."
+      "DELETE": "Etes-vous sur de vouloir <b>supprimer votre profif Cesium+ ?</b><br/><br/>Cette opération est irréversible."
     },
     "ERROR": {
       "REMOVE_PROFILE_FAILED": "Erreur de suppression du profil",
