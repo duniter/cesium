@@ -58,13 +58,15 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
 ;
 
 function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $translate, $ionicPopover,
-                          UIUtils, Modals, BMA, csConfig, csSettings, csCurrency, csWallet, csHelp) {
+                          UIUtils, Modals, BMA, csConfig, csSettings, csWallet, csHelp) {
   'ngInject';
 
   $scope.loading = true;
   $scope.settings = csSettings.data;
+  $scope.qrcodeId = 'qrcode-wallet-' + $scope.$id;
 
-  $scope.$on('$ionicView.enter', function() {
+  $scope.$on('$ionicView.enter', function(e, state) {
+    $scope.loading = $scope.loading || (state.stateParams && state.stateParams.refresh);
     if ($scope.loading) { // load once
       return $scope.load();
     }
@@ -81,7 +83,7 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
         $scope.formData = walletData;
         $scope.loading=false; // very important, to avoid TX to be display before wallet.currentUd is loaded
         $scope.updateView();
-        $scope.showQRCode('qrcode', $scope.formData.pubkey);
+        $scope.showQRCode();
         $scope.showHelpTip();
         UIUtils.loading.hide(); // loading could have be open (e.g. new account)
       })
@@ -440,27 +442,29 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
     return csHelp.wallet.helptip();
   };
 
-  $scope.showQRCode = function(id, text, timeout) {
+  $scope.showQRCode = function(timeout) {
     if (!$scope.qrcode) {
-      $scope.qrcode = new QRCode(id, {
-        text: text,
-        width: 200,
-        height: 200,
-        correctLevel: QRCode.CorrectLevel.L
-      });
-      UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
+      $scope.qrcode = new QRCode(
+        $scope.qrcodeId,
+        {
+          text: $scope.formData.pubkey,
+          width: 200,
+          height: 200,
+          correctLevel: QRCode.CorrectLevel.L
+        });
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
     }
     else {
       $scope.qrcode.clear();
-      $scope.qrcode.makeCode(text);
-      UIUtils.motion.toggleOn({selector: '#wallet #'+id+'.qrcode'}, timeout || 1100);
+      $scope.qrcode.makeCode($scope.formData.pubkey);
+      UIUtils.motion.toggleOn({selector: '#'+$scope.qrcodeId}, timeout || 1100);
     }
   };
 
   $scope.hideQRCode = function(id) {
     if ($scope.qrcode) {
       $scope.qrcode.clear();
-      UIUtils.motion.toggleOff({selector: '#wallet #'+id+'.qrcode'});
+      UIUtils.motion.toggleOff({selector: '#'+$scope.qrcodeId});
     }
   };
 
@@ -530,7 +534,17 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
   $scope.showSecurityModal = function(){
     $scope.hideActionsPopover();
-    return Modals.showAccountSecurity();
+    return Modals.showAccountSecurity()
+      .then(function(res) {
+        if (!res) return;
+
+        if (res === 'self') {
+          return $scope.self();
+        }
+        else if (res === 'membershipIn') {
+          return $scope.membershipIn();
+        }
+      });
   };
 
   $scope.showSelectIdentitiesModal = function(){
@@ -812,6 +826,8 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
 
   $scope.isLogin = csWallet.isLogin();
   $scope.hasSelf = csWallet.hasSelf();
+  $scope.needSelf = $scope.isLogin && csWallet.data.requirements.needSelf;
+  $scope.needMembership = $scope.isLogin && csWallet.data.requirements.needMembership;
   $scope.option = $scope.isLogin ? 'saveID' : 'recoverID';
 
   $scope.formData = {
@@ -1146,6 +1162,21 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
         return UIUtils.loading.hide();
       })
       .catch(UIUtils.onError('ERROR.REVOCATION_FAILED'));
+  };
+
+
+  /**
+   * Ask self (= send identity)
+   */
+  $scope.self = function () {
+    return $scope.closeModal('self');
+  };
+
+  /**
+   * Ask membership in
+   */
+  $scope.membershipIn = function () {
+    return $scope.closeModal('membershipIn');
   };
 
 }
