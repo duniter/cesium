@@ -707,7 +707,7 @@
     "NOT_NEED_RENEW_MEMBERSHIP": "Votre adhésion n'a pas besoin d'être renouvellée (elle n'expirera que dans {{membershipExpiresIn|formatDuration}}).<br/></br/><b>Etes-vous sûr</b> de vouloir renouveler votre adhésion ?",
     "SAVE_BEFORE_LEAVE": "Voulez-vous <b>sauvegarder vos modifications</b> avant de quitter la page ?",
     "SAVE_BEFORE_LEAVE_TITLE": "Modifications non enregistrées",
-    "LOGOUT": "Etes-vous de vouloir vous déconnecter ?",
+    "LOGOUT": "Etes-vous sûr de vouloir vous déconnecter ?",
     "USE_FALLBACK_NODE": "Nœud <b>{{old}}</b> injoignable ou adresse invalide.<br/><br/>Voulez-vous temporairement utiliser le nœud <b>{{new}}</b> ?",
     "ISSUE_524_SEND_LOG": "La transaction a été rejettée, à cause d'une anomalie connue (ticket #524) mais <b>non reproduite</b>.<br/><br/>Pour nous aider les développeurs à corriger cette erreur, <b>acceptez-vous la transmission de vos logs</b> par message ?<br/><small>(Aucune donnée confidentielle n'est envoyée)</small>."
   },
