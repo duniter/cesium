@@ -177,7 +177,7 @@ To build Cesium, you will have to:
  
 > or alternative: `ionic serve` 
 
-### Best pratices for development
+### Best practices for development
 
  Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
  before starting to contribute.

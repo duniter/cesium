@@ -54,7 +54,9 @@
     "ionic": "^1.7.16",
     "ionic-plugin-keyboard": "^2.2.1",
     "node-sass": "^3.3.3",
-    "phonegap-plugin-barcodescanner": "git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git"
+    "phonegap-plugin-barcodescanner": "git+https://github.com/phonegap/phonegap-plugin-barcodescanner.git",
+    "moment": "~2.19.3",
+    "numeral": "1.5.3"
   },
   "devDependencies": {
     "cordova-uglify": "^0.2.3",

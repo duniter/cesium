@@ -84,7 +84,10 @@
 
       <button type="button"
               class="button button-block button-calm button-raised icon icon-left ion-wand ink-dark visible-xs visible-sm"
-              ng-click="showJoinModal()" ng-show="!login" translate>LOGIN.CREATE_ACCOUNT</button>
+              ng-click="showJoinModal()" ng-if="!login" translate>LOGIN.CREATE_ACCOUNT</button>
+      <button type="button"
+              class="button button-block button-assertive button-raised icon icon-left ion-wand ink-dark visible-xs visible-sm"
+              ng-click="logout()" ng-if="login" translate>COMMON.BTN_LOGOUT</button>
 
 
       <div class="text-center no-padding visible-xs stable">
