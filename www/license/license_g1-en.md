@@ -1,9 +1,8 @@
-﻿
-License Ğ1 - v0.2.3
+﻿License Ğ1 - v0.2.5
 ===================
 
 :date: 2017-08-21 16:59
-:modified: 2017-08-21 16:59
+:modified: 2018-01-24 19:20
 
 **Money licensing and liability commitment.**
 
@@ -57,7 +56,7 @@ Each member has a stock of 100 possible certifications, which can only be issued
 
 Valid for 2 months, certification for a new member is definitively adopted only if the certified has at least 4 other certifications after these 2 months, otherwise the entry process will have to be relaunched.
 
-To become a new member of WoT Ğ1 therefore 5 certifications must be obtained at a distance> 5 of 80% of the WoT sentinels.
+To become a new member of WoT Ğ1 therefore 5 certifications must be obtained at a distance < 5 of 80% of the WoT sentinels.
 
 A member of the TdC Ğ1 is sentinel when he has received and issued at least Y [N] certifications where N is the number of members of the TdC and Y [N] = ceiling N ^ (1/5). Examples:
 

@@ -1,8 +1,8 @@
-﻿Licence Ğ1 - v0.2.4
+﻿Licence Ğ1 - v0.2.8
 ===================
 
 :date: 2017-04-04 12:59
-:modified: 2017-10-14 10:23
+:modified: 2018-02-24 09:30
 
 **Licence de la monnaie et engagement de responsabilité.**
 
@@ -17,9 +17,13 @@ Toile de confiance Ğ1 (TdC Ğ1)
 
 **Conseils fortement recommandés**
 
+Bien connaître une personne suppose que vous êtes en mesure de la contacter par plusieurs moyens différents (physique, électronique, autre...) mais aussi que vous connaissez aussi plusieurs personnes qui la connaissent tout aussi bien et sont donc aussi en mesure de la contacter de même. Notamment si vous ne connaissez pas bien aucun de ses autres certifieurs c'est une indication forte que vous ne connaissez pas bien la personne et une certification de ce type déclenche une alerte vers toute la communauté Ğ1. En cas de connaissance insuffisante il convient de ne surtout pas certifier.
+
 Ne certifiez jamais seul, mais accompagné d'au moins un autre membre de la TdC Ğ1 afin d'éviter toute erreur de manipulation. En cas d'erreur, prévenez immédiatement d'autres membres de la TdC Ğ1.
 
 Avant toute certification, assurez vous de vérifier si son compte (qu'il soit en cours de validation ou déjà membre) a déjà reçu une ou plusieurs certifications. Le cas échéant demandez des informations pour entrer en contact avec ces autres certifieurs afin de vérifier ensemble que vous connaissez bien la personne concernée par la création du nouveau compte, ainsi que la clé publique correspondante.
+
+Vérifiez que le futur certifié maîtrise bien son compte : un bon moyen de vérifier cela est de transférer quelques Ğ1 vers le compte cible, et de demander ensuite un renvoi vers votre propre compte, cela assure de la bonne maîtrise par le futur certifié de sa clé privée.
 
 Vérifiez que vos contacts ont bien étudié et compris la licence Ğ1 à jour.
 
@@ -27,17 +31,20 @@ Si vous vous rendez compte qu'un certifieur effectif ou potentiel du compte conc
 
 Lorsque vous êtes membre de la TdC Ğ1 et que vous vous apprêtez à certifier un nouveau compte :
 
+
 **Vous êtes vous assuré :**
 
-1°) D'avoir bien vérifié avec la personne concernée qu'elle a bien généré son document Duniter de révocation de compte, qui lui permettra le cas échéant de pouvoir annuler son compte (cas d'un vol de compte, d'un changement de ID, d'un compte créé à tort etc.).
+1°) De suffisamment bien connaître (pas seulement de la connaître "de visu") la personne qui déclare gérer cette clé publique (nouveau compte). Voir les conseils fortement recommandés ci-dessus pour s'assurer de "bien connaître".
 
-2°) De suffisamment bien connaître (pas seulement de la connaître "de visu") la personne qui déclare gérer cette clé publique (nouveau compte) et d'avoir personnellement vérifié avec elle qu'il s'agit bien de cette clé publique que vous vous apprêtez à certifier (voir les conseils fortement recommandés ci-dessus pour s'assurer de "bien connaître").
+2°) D'avoir personnellement vérifié avec elle qu'il s'agit bien de cette clé publique que vous vous apprêtez à certifier (voir conseils ci-dessus).
 
-3a°) De la rencontrer physiquement pour vous assurer que c'est bien cette personne que vous connaissez qui gère cette clé publique.
+3°) D'avoir bien vérifié avec la personne concernée qu'elle a bien généré son document Duniter de révocation de compte qui lui permettra le cas échéant de pouvoir désactiver son statut de membre (cas d'un vol de compte, d'un changement de ID, d'un compte créé à tort etc.).
 
-3b°) Ou bien de vérifer à distance le lien personne / clé publique en contactant la personne par plusieurs moyens de communication différents, comme réseau social + forum + mail + vidéo conférence + téléphone (reconnaître la voix). Car si l'on peut pirater un compte mail ou un compte forum, il sera bien plus difficile d'imaginer pirater quatre moyens de communication distincts, et imiter l'apparence (vidéo) ainsi que la voix de la personne en plus.
+4a°) De rencontrer la personne physiquement pour vous assurer que c'est bien elle que vous connaissez bien et qui gère cette clé publique.
 
-Le 3a°) restant toutefois préférable au 3b°), tandis que le 1°) et 2°) est toujours indispensable dans tous les cas.
+4b°) Ou bien de vérifer à distance le lien personne / clé publique en contactant la personne par plusieurs moyens de communication différents, comme courrier papier + réseau social + forum + mail + vidéo conférence + téléphone (reconnaître la voix). Car si l'on peut pirater un compte mail ou un compte forum, il sera bien plus difficile d'imaginer pirater quatre moyens de communication distincts, et imiter l'apparence (vidéo) ainsi que la voix de la personne en plus.
+
+Le 4a°) restant toutefois préférable au 4b°), tandis que les points 1°) 2°) et 3°) sont préalablement indispensables.
 
 **Règles abrégées de la TdC :**
 
@@ -45,7 +52,7 @@ Chaque membre a un stock de 100 certifications possibles, qu'il ne peut émettre
 
 Valable 2 mois, une certification pour un nouveau membre n'est définitivement adoptée que si le certifié possède au moins 4 autres certifications au bout de ces 2 mois, sinon le processus d'entrée devra être relancé.
 
-Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications et ne pas se trouver à une distance > 5 de 80% des membres référents de la TdC.
+Pour devenir un nouveau membre de la TdC Ğ1 il faut donc obtenir 5 certifications et ne pas se trouver à une distance < 5 de 80% des membres référents de la TdC.
 
 Un membre de la TdC Ğ1 est membre référent lorsqu'il a reçu et émis au moins Y[N] certifications où N est le nombre de membres de la TdC et Y[N] = plafond N^(1/5). Exemples :
 
@@ -83,7 +90,7 @@ Et comme variables :
 Logiciels Ğ1 et licence Ğ1
 --------------------------
 
-Les logiciels Ğ1 permettant aux utilisateurs de gérer leur utilisation de Ğ1 doivent transmettre cette licence avec le logiciel ainsi que l'ensemble des paramètres techniques de la monnaie Ğ1 et de la TdC Ğ1 qui sont inscrits dans le bloc 0 de Ğ1.
+Les logiciels Ğ1 permettant aux utilisateurs de gérer leur utilisation de Ğ1 doivent transmettre cette licence avec le logiciel ainsi que l'ensemble des paramètres techniques de la monnaie Ğ1 et de la TdC Ğ1 qui sont inscrits dans le bloc 0 de Ğ1. Un logiciel qui ne remplirait pas ces obigations de la licence n'est pas compatible Ğ1.
 
 Pour plus de précisions dans les détails techniques il est possible de consulter directement le code de Duniter qui est un logiciel libre ansi que les données de la blockchain Ğ1 en la récupérant via une instance (ou noeud) Duniter Ğ1.
 
