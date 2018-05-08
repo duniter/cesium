@@ -58,10 +58,11 @@ function Ws2pMessage(message) {
           }
 
           // For DEBUG only:
+          /*
           console.log('[http] private {0}, public {1}'.format(
-           (that.private.useTor ? 'TOR ' : '' ) + (that.private.mode || 'false'),
-            (that.public.useTor ? 'TOR ' : '' ) + (that.public.mode || 'false')
-          ), prefix);
+           (that.private && (that.private.useTor ? 'TOR ' : '' ) + (that.private.mode || 'false')) || 'false',
+            that.public && ((that.public.useTor ? 'TOR ' : '' ) + (that.public.mode || 'false')) || 'false'
+          ), prefix);*/
         }
 
         that.pubkey=parts[3];
