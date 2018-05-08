@@ -111,6 +111,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
                 return data.currentUD;
               })
               .catch(function(err) {
+                console.error("[currency] Unable to load last block with UD, with number {0}".format(lastBlockWithUD));
                 data.currentUD = null;
                 throw err;
               });
