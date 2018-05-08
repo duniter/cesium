@@ -9,7 +9,7 @@ Manage your wallet, certify your friends, and more !
 
 ## Try it !
 
- - on Ğ1-test currency: http://g1-test.duniter.fr
+ - on Ğ1-test currency: https://g1-test.duniter.fr
  - on Ğ1 currency (production use): https://g1.duniter.fr
 
 
