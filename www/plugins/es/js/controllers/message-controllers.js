@@ -117,12 +117,23 @@ angular.module('cesium.es.message.controllers', ['cesium.es.services'])
 
 ;
 
-function ESMessageAbstractListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout,
+function ESMessageAbstractListController($scope, $state, $translate, $ionicHistory, $ionicPopover, $timeout, $filter,
                                  csWallet, esModals, UIUtils, esMessage) {
   'ngInject';
 
-  $scope.loading = true;
-  $scope.messages = [];
+  var defaultSearchLimit = 40;
+
+  $scope.search = {
+    loading: true,
+    results: [],
+    hasMore : false,
+    loadingMore : false,
+    limit: defaultSearchLimit,
+    type: 'last',
+    text: null,
+    options: {
+    }
+  };
 
   $scope.fabButtonNewMessageId = undefined;
 
@@ -154,28 +165,39 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     return $scope.load(undefined, undefined, silent);
   };
 
-  $scope.load = function(size, offset, silent) {
-    var options  = {};
-    options.from = offset || 0;
-    options.size = size || 20;
-    options.type = $scope.type;
+  $scope.load = function(from, size, silent) {
 
-    $scope.loading = !silent;
+    var options = angular.copy($scope.search.options);
+    options.from = options.from || from || 0;
+    options.size = options.size || size || defaultSearchLimit;
+    options.type = $scope.type;
+    options.summary = false;
+    options.filter = ($scope.search.type == 'text' && $scope.search.text && $scope.search.text.trim().length > 0) ?
+      $scope.search.text : undefined;
+
+    $scope.search.loading = !silent;
     return esMessage.load(options)
-      .then(function(messages) {
-        $scope.messages = messages;
+      .then(function(res) {
+
+        if (!options.from) {
+          $scope.search.results = res || [];
+        }
+        else if (res){
+          $scope.search.results = $scope.search.results.concat(res);
+        }
 
         UIUtils.loading.hide();
-        $scope.loading = false;
-
-        if (messages.length > 0) {
-          $scope.motion.show({selector: '.view-messages .list .item'});
-        }
+        $scope.search.loading = false;
+        $scope.search.hasMore = ($scope.search.results && $scope.search.results.length >= $scope.search.limit);
+        $scope.updateView();
       })
       .catch(function(err) {
+        $scope.search.loading = false;
+        if (!options.from) {
+          $scope.search.results = [];
+        }
+        $scope.search.hasMore = false;
         UIUtils.onError('MESSAGE.ERROR.LOAD_MESSAGES_FAILED')(err);
-        $scope.messages = [];
-        $scope.loading = false;
       });
   };
 
@@ -184,16 +206,39 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     $scope.load();
   };
 
+  $scope.updateView = function() {
+    if ($scope.motion && $scope.motion.ionListClass && $scope.search.results.length) {
+      $scope.motion.show({selector: '.view-messages .list .item'});
+    }
+  };
+
+  $scope.showMore = function() {
+    $scope.search.limit = $scope.search.limit || defaultSearchLimit;
+    $scope.search.limit += defaultSearchLimit;
+    if ($scope.search.limit < defaultSearchLimit) {
+      $scope.search.limit = defaultSearchLimit;
+    }
+    $scope.search.loadingMore = true;
+    $scope.load(
+      $scope.search.results.length, // from
+      $scope.search.limit,
+      true /*silent*/)
+      .then(function() {
+        $scope.search.loadingMore = false;
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+      });
+  };
+
   $scope.markAllAsRead = function() {
     $scope.hideActionsPopover();
-    if (!$scope.messages || !$scope.messages.length) return;
+    if (!$scope.search.results || !$scope.search.results.length) return;
 
     UIUtils.alert.confirm('MESSAGE.CONFIRM.MARK_ALL_AS_READ')
       .then(function(confirm) {
         if (confirm) {
           esMessage.markAllAsRead()
             .then(function () {
-              _.forEach($scope.messages, function(msg){
+              _.forEach($scope.search.results, function(msg){
                 msg.read = true;
               });
             })
@@ -203,7 +248,7 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
   };
 
   $scope.delete = function(index) {
-    var message = $scope.messages[index];
+    var message = $scope.search.results[index];
     if (!message) return;
 
     UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE')
@@ -211,7 +256,7 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
         if (confirm) {
           esMessage.remove(message.id, $scope.type)
             .then(function () {
-              $scope.messages.splice(index,1); // remove from messages array
+              $scope.search.results.splice(index,1); // remove from messages array
               UIUtils.toast.show('MESSAGE.INFO.MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_MESSAGE_FAILED'));
@@ -221,19 +266,39 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
 
   $scope.deleteAll = function() {
     $scope.hideActionsPopover();
-    if (!$scope.messages || !$scope.messages.length) return;
+    if (!$scope.search.results || !$scope.search.results.length) return;
 
     UIUtils.alert.confirm('MESSAGE.CONFIRM.REMOVE_ALL')
       .then(function(confirm) {
         if (confirm) {
           esMessage.removeAll($scope.type)
             .then(function () {
-              $scope.messages.splice(0,$scope.messages.length); // reset array
+              $scope.search.results.splice(0,$scope.search.results.length); // reset array
               UIUtils.toast.show('MESSAGE.INFO.All_MESSAGE_REMOVED');
             })
             .catch(UIUtils.onError('MESSAGE.ERROR.REMOVE_All_MESSAGES_FAILED'));
         }
       });
+  };
+
+  $scope.doSearchLast = function() {
+    $scope.search.type='last';
+    $scope.search.loadingMore=false;
+    $scope.search.limit = defaultSearchLimit;
+    return $scope.load();
+  };
+
+  $scope.doSearch = function() {
+    if (!$scope.search.text || $scope.search.text.length < 3) {
+      return;
+    }
+    $scope.search.type='text';
+    $scope.search.loadingMore=false;
+    $scope.search.results = [];
+    $scope.search.limit = defaultSearchLimit;
+
+    console.debug('[message] [{0}] Searching for: {1}'.format($scope.type, $scope.search.text));
+    return $scope.load();
   };
 
   /* -- Modals -- */
@@ -250,7 +315,7 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
   };
 
   $scope.showReplyModal = function(index) {
-    var message = $scope.messages[index];
+    var message = $scope.search.results[index];
     if (!message) return;
 
     $translate('MESSAGE.REPLY_TITLE_PREFIX')
@@ -301,11 +366,11 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
 
   // Message deletion
   $scope.onMessageDelete = function(id) {
-    var index = _.findIndex($scope.messages, function(msg) {
+    var index = _.findIndex($scope.search.results, function(msg) {
       return msg.id == id;
     });
     if (index) {
-      $scope.messages.splice(index,1); // remove from messages array
+      $scope.search.results.splice(index,1); // remove from messages array
     }
   };
   esMessage.api.data.on.delete($scope, $scope.onMessageDelete);
@@ -320,7 +385,7 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
         return esMessage.get(id, {type: $scope.type, summary: true});
       }, 500 /*waiting ES propagation*/)
       .then(function(msg) {
-        $scope.messages.splice(0,0,msg);
+        $scope.search.results.splice(0,0,msg);
         $scope.loading = false;
         $scope.motion.show({selector: '.view-messages .list .item'});
       })
@@ -338,12 +403,12 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
     // Load the the message
     return esMessage.get(notification.id, {type: $scope.type, summary: true})
       .then(function(msg) {
-        $scope.messages.splice(0,0,msg);
-        $scope.loading = false;
+        $scope.search.results.splice(0,0,msg);
+        $scope.search.loading = false;
         $scope.motion.show({selector: '.view-messages .list .item'});
       })
       .catch(function() {
-        $scope.loading = false;
+        $scope.search.loading = false;
       });
   };
   esMessage.api.data.on.new($scope, $scope.onNewInboxMessage);
@@ -351,8 +416,8 @@ function ESMessageAbstractListController($scope, $state, $translate, $ionicHisto
   // Watch unauth
   $scope.onUnauth = function() {
     // Reset all data
-    $scope.messages = undefined;
-    $scope.loading = false;
+    $scope.search.results = undefined;
+    $scope.search.loading = false;
     $scope.entered = false;
   };
   csWallet.api.data.on.unauth($scope, $scope.onUnauth);

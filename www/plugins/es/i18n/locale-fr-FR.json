@@ -134,7 +134,11 @@
     "LIST": {
       "INBOX": "Boite de réception",
       "OUTBOX": "Messages envoyés",
+      "LAST_INBOX": "Nouveaux messages",
+      "LAST_OUTBOX": "Messages envoyés",
+      "BTN_LAST_MESSAGES": "Messages récents",
       "TITLE": "Messages",
+      "SEARCH_HELP": "Recherche dans les messages",
       "POPOVER_ACTIONS": {
         "TITLE": "Options",
         "DELETE_ALL": "Supprimer tous les messages"

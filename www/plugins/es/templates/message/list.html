@@ -1,17 +1,14 @@
-
+<div class="padding gray" ng-if="!search.loading && !search.results.length">
+  <span ng-if="search.type=='last'">{{ ('MESSAGE.NO_MESSAGE_' + type) | upper | translate }}</span>
+  <span ng-if="search.type=='text'" translate>COMMON.SEARCH_NO_RESULT</span>
+</div>
 
 <ion-list class="{{::motion.ionListClass}}"
-          can-swipe="$root.device.enable"
-          >
-
-  <div class="padding gray" ng-if="!messages.length">
-    <span ng-if="type=='inbox'" translate>MESSAGE.NO_MESSAGE_INBOX</span>
-    <span ng-if="type=='outbox'" translate>MESSAGE.NO_MESSAGE_OUTBOX</span>
-  </div>
+          can-swipe="$root.device.enable">
 
   <ion-item
     class="item item-border-large item-avatar item-icon-right ink"
-    ng-repeat="msg in messages"
+    ng-repeat="msg in search.results"
     ui-sref="app.user_view_message({type:type, id:msg.id})">
 
     <i ng-if="::!msg.avatar" class="item-image icon" ng-class="{'ion-person': msg.uid, 'ion-email': !msg.uid}"></i>
@@ -35,8 +32,8 @@
         {{::msg.issuer|formatPubkey}}
       </a>
     </h3>
-    <h2 ng-class="{'unread': !msg.read}">{{::msg.title}}</h2>
-    <p>{{::msg.summary||msg.content}}</p>
+    <h2 ng-class="{'unread': !msg.read}" ng-bind-html="::msg.title"></h2>
+    <p ng-bind-html="::msg.summary||msg.content"></p>
     <i class="icon ion-ios-arrow-right "></i>
     <ion-option-button class="button-stable"
                        ng-click="showReplyModal($index)"
@@ -47,3 +44,10 @@
 
   </ion-item>
 </ion-list>
+
+<ion-infinite-scroll
+  ng-if="!search.loading && search.hasMore"
+  icon="ion-loading-c"
+  on-infinite="showMore()"
+  distance="10%">
+</ion-infinite-scroll>

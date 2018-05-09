@@ -134,7 +134,11 @@
     "LIST": {
       "INBOX": "Bandeja de entrada",
       "OUTBOX": "Mensajes mandados",
+      "LAST_INBOX": "Nuevos mensajes",
+      "LAST_OUTBOX": "Mensajes enviados",
+      "BTN_LAST_MESSAGES": "Mensajes recientes",
       "TITLE": "Mensajes",
+      "SEARCH_HELP": "Buscar en mensajes",
       "POPOVER_ACTIONS": {
         "TITLE": "Opciónes",
         "DELETE_ALL": "Suprimir todos los mensajes"
@@ -156,7 +160,8 @@
       "TITLE": "Mensaje",
       "SENDER": "Mandado por",
       "RECIPIENT": "Mandado a",
-      "NO_CONTENT": "Mensaje vacío"
+      "NO_CONTENT": "Mensaje vacío",
+      "DELETE": "Eliminar el mensaje"
     },
     "CONFIRM": {
       "REMOVE": "Está usted segura/o querer <b>suprimir este mensaje</b> ?<br/><br/>Esta operación es ireversible.",
@@ -279,14 +284,16 @@
       "BTN_ADVANCED_SEARCH": "búsqueda avanzada",
       "BTN_OPTIONS": "Búsqueda avanzada",
       "TYPE": "Tipo de página",
-      "LOCATION": "Localización",
       "LOCATION_HELP": "Ciudad",
       "RESULTS": "Resultados",
       "RESULT_COUNT_LOCATION": "{{count}} Resultado{{count>0?'s':''}}, cerca de {{location}}",
       "RESULT_COUNT": "{{count}} resultado{{count>0?'s':''}}",
       "LAST_RECORDS": "Páginas recientes",
       "LAST_RECORD_COUNT_LOCATION": "{{count}} página{{count>0?'s':''}} reciente{{count>0?'s':''}}, cerca de {{location}}",
-      "LAST_RECORD_COUNT": "{{count}} página{{count>0?'s':''}} reciente{{count>0?'s':''}}"
+      "LAST_RECORD_COUNT": "{{count}} página{{count>0?'s':''}} reciente{{count>0?'s':''}}",
+      "POPOVER_FILTERS": {
+        "BTN_ADVANCED_SEARCH": "Opciones avanzadas?"
+      }
     },
     "VIEW": {
       "TITLE": "Anuario",
@@ -346,6 +353,8 @@
     "NO_PROFILE_DEFINED": "Ningún perfil Cesium+",
     "BTN_ADD": "Ingresar mi perfil",
     "BTN_EDIT": "Editar mi perfil",
+    "BTN_DELETE": "Eliminar mi perfil",
+    "BTN_REORDER": "Reordenar",
     "UID": "Seudónimo",
     "TITLE": "Nombre, Apellido",
     "TITLE_HELP": "Nombre, Apellido",
@@ -362,13 +371,18 @@
       "RESIZE_HELP": "<b>Encuadra la imagen</b>, si es necesario. Un clic mantenido sobre la imagen permite desplazarla. Hace un clic sobre la zona abajo a la izquierda para hacer zoom.",
       "RESULT_HELP": "<b>Aquí está el resultado</b> tal como está visible sobre su perfil :"
     },
+    "CONFIRM": {
+      "DELETE": "¿Estás seguro de que quieres <b>eliminar tu perfil Cesium+?</b><br/><br/>Esta operación es irreversible."
+    },
     "ERROR": {
+      "REMOVE_PROFILE_FAILED": "Error de eliminación de perfil",
       "LOAD_PROFILE_FAILED": "Fracaso en la carga del perfil usuario.",
       "SAVE_PROFILE_FAILED": "Fracaso durante el respaldo",
       "INVALID_SOCIAL_NETWORK_FORMAT": "Formato no tomado en cuenta : por favor, indica una dirección válida.<br/><br/>Ejemplos :<ul><li>- Una página Facebook (https://www.facebook.com/user)</li><li>- Una página web (http://www.misitio.es)</li><li>- Una dirección email (joe@dalton.com)</li></ul>",
       "IMAGE_RESIZE_FAILED": "Fracaso durante el redimensionamiento de la imagen"
     },
     "INFO": {
+      "PROFILE_REMOVED": "Perfil eliminado",
       "PROFILE_SAVED": "Perfil respaldado"
     },
     "HELP": {
@@ -489,6 +503,9 @@
       "NEW_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid}\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha contestado a su comentario sobre el referencia : <b>{{params[2]}}</b>",
       "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificado la repuesta a su comentario sobre el referencia : <b>{{params[2]}}</b>"
     }
+  },
+  "CONFIRM": {
+    "ES_USE_FALLBACK_NODE": "Nodo de datos <b> {{old}} </ b> dirección inalcanzable o no válida.<br/><br/>¿Desea utilizar temporalmente el nodo de datos <b>{{new}}</b>?"
   },
   "ERROR": {
     "ES_CONNECTION_ERROR": "Nodo de datos <b>{{server}}</b> dirección inalcanzable o no válida.<br/><br/>Cesium continuará funcionando, <b>sin la extensión Cesium+</b> (perfiles de usuario, mensajes privados), mapas y gráficos).<br/><br/>Verifique su conexión a Internet, o cambie el nodo de datos en <a class=\"positive\" ng-click=\"doQuickFix('settings')\"> configuración de extensión </a>.",

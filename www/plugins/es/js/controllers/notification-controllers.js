@@ -77,7 +77,7 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
     $scope.search.loading = !silent;
     return esNotification.load(csWallet.data.pubkey, options)
       .then(function(res) {
-        if (!from) {
+        if (!options.from) {
           $scope.search.results = res || [];
         }
         else if (res){
@@ -89,7 +89,7 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
       })
       .catch(function(err) {
         $scope.search.loading = false;
-        if (!from) {
+        if (!options.from) {
           $scope.search.results = [];
         }
         $scope.search.hasMore = false;

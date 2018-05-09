@@ -228,8 +228,10 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       options.type = options.type || 'inbox';
       options._source = fields.commons;
       options.summary = angular.isDefined(options.summary) ? options.summary : true;
+      options.filter = angular.isDefined(options.filter) ? options.filter : undefined;
+      options.from = options.from || 0;
 
-      return csWallet.auth()
+      var promise = csWallet.auth()
         .then(function(walletData) {
 
           // Get encrypted message (with common fields)
@@ -249,11 +251,35 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
         // Update message count
         .then(function(messages){
-          csWallet.data.messages = csWallet.data.messages || {};
-          csWallet.data.messages.count = messages.length;
+          if (messages.length && options.filter){
+            var filteredMessages = filterMessages(messages, options.filter);
+
+            // Recursive loop, if need more
+            if (filteredMessages.length < messages.length) {
+              options = angular.copy(options);
+              options.from += options.size;
+              options.size = messages.length - filteredMessages.length;
+              return loadMessages(options)
+                .then(function(messages) {
+                  return filteredMessages.concat(messages);
+                });
+            }
+          }
+
+          if (options.from === 0 && !options.filter) {
+            csWallet.data.messages = csWallet.data.messages || {};
+            csWallet.data.messages.count = messages.length;
+          }
 
           return messages;
         });
+
+      // If filter, apply sorting (only once)
+      if (options.from === 0 && options.filter) {
+        promise.then(sortFilteredMessages);
+      }
+
+      return promise;
     }
 
     function getAndDecrypt(id, options) {
@@ -469,6 +495,75 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
               csWallet.data.messages.unreadCount = 0;
             });
         });
+    }
+
+    // Filter messages (after decryption) searching on [title, content]
+    function filterMessages(messages, filter) {
+      if (filter && !filter.trim().length) return messages;
+
+      // Init summary, removing reply content (lines starting with '>')
+      messages.forEach(function(msg) {
+        if (msg.content) {
+          msg.summary = msg.content.replace(/(^|[\n\r]+)\s*>[^\n\r]*/g, '').trim() || '';
+        }
+      });
+
+      // For each search words
+      var words = filter.trim().split(' ');
+      words.forEach(function(word) {
+        var regexp = new RegExp(word, 'gi');
+        messages.forEach(function(msg) {
+
+          // Search on title
+          var matches = regexp.exec(msg.title);
+          if (matches) {
+            msg.title = msg.title.replace(regexp, '<b>$&</b>');
+            msg.titleMatch = (msg.titleMatch || 0) + 1;
+            while(true) {
+              matches = regexp.exec(msg.title.substring(matches.index + word.length));
+              if (!matches || msg.titleMatch >= 10) break;
+              msg.titleMatch = msg.titleMatch + 1;
+            }
+            return;
+          }
+
+          // Search on summary
+          matches = regexp.exec(msg.summary);
+          if (matches) {
+            if (matches.index > 140) {
+              msg.summary = '...' + msg.summary.substring(matches.index - 20);
+            }
+            msg.summary = msg.summary.replace(regexp, '<b>$&</b>');
+            msg.contentMatch = (msg.contentMatch || 0) + 1;
+            while(true) {
+              matches = regexp.exec(msg.summary.substring(matches.index + word.length));
+              if (!matches || msg.contentMatch >= 10) break;
+              msg.contentMatch++;
+            }
+            if (msg.summary.length > 140) {
+              msg.summary = msg.summary.substr(0, 137) + '...';
+            }
+          }
+        });
+      });
+
+      // Keep only matches
+      messages = _.filter(messages, function(msg) {
+        return msg.titleMatch || msg.contentMatch;
+      });
+
+      return messages;
+    }
+
+    // Sort filtered messages by matches
+    function sortFilteredMessages(messages) {
+      // Sort by matches
+      return _.sortBy(messages, function(msg) {
+        return -1 * (
+          1000 * (msg.titleMatch || 0) +
+          100 * (msg.contentMatch || 0) +
+          (msg.time / 10000000000));
+      });
     }
 
     // Send message to developers - need for issue #524
