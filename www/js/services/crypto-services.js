@@ -141,6 +141,11 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
     CryptoAbstractService.prototype.readKeyFile = function(file, withSecret) {
       var that = this;
+
+      if (file && file.content) {
+        return  that.parseKeyFileContent(file.content, withSecret);
+      }
+
       return $q(function(resolve, reject) {
         if (!file) {
           return reject('Argument [file] is missing');
@@ -149,8 +154,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         console.debug('[crypto] [keypair] reading file: ', file);
         var reader = new FileReader();
         reader.onload = function (event) {
-          var res = that.parseKeyFileContent(event.target.result, withSecret);
-          res
+          that.parseKeyFileContent(event.target.result, withSecret)
             .then(function (res) {
               resolve(res);
             })

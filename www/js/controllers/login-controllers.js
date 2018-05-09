@@ -337,9 +337,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
     $scope.formData.file = {
       name: file.fileData.name,
-      size: file.fileData.size
+      size: file.fileData.size,
+      content: file.fileContent
     };
-    return CryptoUtils.parseKeyFileContent(file.fileContent, false/*withSecret*/)
+    return CryptoUtils.readKeyFile($scope.formData.file, false/*withSecret*/)
       .then(function(keypair) {
         if (!keypair || !keypair.signPk) {
           $scope.formData.file.valid = false;
