@@ -89,6 +89,14 @@
         <i class="icon ion-log-out"></i>
         {{'COMMON.BTN_LOGOUT' | translate}}
       </button>
+      <div ng-if="formData.requirements.needRenew">
+        <br/>
+        <button class="button button-raised button-stable button-small-padding ink"
+                ng-click="renewMembership()">
+          <i class="icon ion-loop assertive"></i>
+          <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
+        </button>
+      </div>
     </div>
 
     <div class="row no-padding">
