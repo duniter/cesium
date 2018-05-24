@@ -45,6 +45,7 @@ build:
   image: node:5
   script:
     - npm install
+    - npm run postinstall
 #    - node ./node_modules/gulp/bin/gulp config --env default_fr
     - node ./node_modules/gulp/bin/gulp build:web
   artifacts:
