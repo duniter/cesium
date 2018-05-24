@@ -1,5 +1,7 @@
 stages:
     - github-sync
+    - build
+    - publish
 
 push_to_github:
     stage: github-sync
@@ -37,3 +39,30 @@ enforce_readme:
       - mv README.md.new README.md
       - git commit -am "Enforce github readme"
       - git push origin master
+      
+build:
+  stage: build
+  image: node:5
+  script:
+    - npm install
+#    - node ./node_modules/gulp/bin/gulp config --env default_fr
+    - node ./node_modules/gulp/bin/gulp build:web
+  artifacts:
+    untracked: true
+    paths:
+      - platforms/web
+    expire_in: 60 minutes
+  only:
+    - master
+
+pages:
+  stage: publish
+  script:
+    - mv platforms/web/www public
+  artifacts:
+    untracked: true
+    paths:
+      - public
+  only:
+    - master
+
