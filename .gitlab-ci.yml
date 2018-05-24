@@ -21,7 +21,7 @@ push_to_github:
         - mv packed-refs-new packed-refs
         - bash -c "git push --force --mirror github 2>&1 | grep -v duniter-gitlab; echo $?"
 
-enforce_readme:
+.enforce_readme:
     stage: github-sync
     variables:
         GIT_STRATEGY: none
