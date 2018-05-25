@@ -7,7 +7,7 @@
     "url": "git@git.duniter.org:clients/cesium/cesium.git"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "bower install --allow-root",
     "install-platforms": "ionic state restore",
     "start": "ionic serve"
   },
