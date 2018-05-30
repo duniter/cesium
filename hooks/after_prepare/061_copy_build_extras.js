@@ -19,57 +19,34 @@ if (rootdir) {
       if (platform == 'android') {
         var build_dir = rootdir + '/resources/android/build';
         var android_dir = rootdir + '/platforms/android';
+        var build_files = build_dir + '/**/*.*';
 
-        /*
-        var gradle_file = build_dir + '/build-extras.gradle';
-        var dest_gradle_file = android_dir + '/build-extras.gradle';
-
-        if (fs.existsSync(android_dir) && fs.existsSync(gradle_file)) {
-          console.log('-----------------------------------------');
-          console.log(' Copy ' + gradle_file + ' to ' + android_dir);
-          console.log('-----------------------------------------');
-          fs.createReadStream(gradle_file).pipe(fs.createWriteStream(dest_gradle_file));
-        } else {
-          console.log('-----------------------------------------');
-          console.log( ' File ' + gradle_file + ' not found. Skipping copy to /platforms/android');
-          console.log('-----------------------------------------');
-        }
-
-        var signing_file = build_dir + '/release-signing.properties';
-        var dest_signing_file = android_dir + '/release-signing.properties';
-
-        if (fs.existsSync(android_dir) && fs.existsSync(signing_file)) {
-          console.log('-----------------------------------------');
-          console.log(' Copy ' + signing_file + ' to ' + android_dir);
-          console.log('-----------------------------------------');
-          fs.createReadStream(signing_file).pipe(fs.createWriteStream(dest_signing_file));
-        } else {
-          console.log('-----------------------------------------');
-          console.log( ' File ' + signing_file + ' not found. Skipping copy to /platforms/android');
-          console.warn( ' WARNING: release APK files will not be signed ! ');
-          console.log('-----------------------------------------');
-        }*/
-
-        var build_files = build_dir + '/*.*';
-
+        console.log('-----------------------------------------');
         if (fs.existsSync(android_dir) && fs.existsSync(build_dir)) {
           glob(build_files, null, function(er, files) {
-            console.log('-----------------------------------------');
-
             files.forEach(function(file) {
               console.log(' Copy ' + file + ' to ' + android_dir);
-              var dest_file = android_dir + '/' + path.basename(file);
+              var dest_file = file.replace(build_dir, android_dir);
               fs.createReadStream(file).pipe(fs.createWriteStream(dest_file));
             });
-            console.log('-----------------------------------------');
           });
 
-        } else {
-            console.log('-----------------------------------------');
-            console.log( ' Directory ' + build_dir + ' not found. Skipping copy to /platforms/android');
-            console.log('-----------------------------------------');
+          var gradle_file = build_dir + '/build-extras.gradle';
+          if (!fs.existsSync(gradle_file)) {
+            console.log( ' File ' + gradle_file + ' not found. Skipping copy to /platforms/android');
           }
+
+          var signing_file = build_dir + '/release-signing.properties';
+          if (!fs.existsSync(signing_file)) {
+            console.log( ' File ' + signing_file + ' not found. Skipping copy to /platforms/android');
+            console.log( '   WARNING: Release APK files will not be signed !');
+          }
+
+        } else {
+            console.log( ' Directory ' + build_dir + ' not found. Skipping copy to /platforms/android');
         }
+        console.log('-----------------------------------------');
+      }
     } catch (e) {
       process.stdout.write(e);
     }
