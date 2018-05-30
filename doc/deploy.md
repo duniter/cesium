@@ -34,7 +34,7 @@ cd $BASEDIR
 
 echo "Installing cesium into '$BASEDIR/cesium'..."
 
-wget -qO- https://raw.githubusercontent.com/duniter/cesium/master/install.sh | bash
+wget -qO- https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
 
 export VERSION=`sed -rn "s/\s*\"version\": \"([^\"]*)\",\s*/\1/p" cesium/config.js`
 export BUILD=`sed -rn "s/\s*\"build\": \"([^\"]*)\",\s*/\1/p" cesium/config.js`

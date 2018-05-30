@@ -6,27 +6,11 @@ Cesium use [Ionic Framework v1.7.16](http://ionicframework.com/docs/v1/) with so
 
 ## Prerequisites
 
-### Install build tools
+### Install the development environment
 
-```
-sudo apt-get install build-essential
-```
+Follow all the steps defined in the [Development guide](./development_guide.md).
 
-### Install NodeJS 5
-
-Cesium need NodeJS v5. You can install it the [this download page](https://nodejs.org/download/release/v5.12.0/), but we recommand the use of MVN (Node Version Manager). 
-MV? help you to manage many versions of NodeJS. 
-
- - Install [MVN](https://github.com/creationix/nvm):  
-```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.1/install.sh | bash
-```
-
- - Open a new terminal (to reload environment), then install NodeJS 5 : 
-```bash
-nvm install 5
-```
-
+After that you should be able to start the application using `npm start`, and to test it.
 
 ### Install JDK (Java Development Kit)
 
@@ -88,31 +72,6 @@ Install the version that it proposes to you.
   <img src="./fr/img/ceb75301172038e75f5c43b328dd7febd7bedc7e.png" width="450">
 
 - Fill in the installation path of the NDK.
-
-## Get source and dependencies
-
-- Get Cesium sources:
-```bash
-git clone https://github.com/duniter/cesium.git
-cd cesium
-```
-
-- Install dependencies (global then project's dependencies):
-```bash
-npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
-npm install
-```
-
-- Install Cordova plugins:
-```
-ionic state restore
-```
-
-- This should create a new directory `platforms/android`
-
-> To remind: check that your command line is configured:
-> - You must place yourself in the directory of the application: `cd cesium`
-> - and be configured for NodeJs v5: `nvm use 5` (please chek using the command `node --version`)
 
 ## Android configuration
 

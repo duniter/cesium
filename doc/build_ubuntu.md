@@ -2,6 +2,14 @@
 
 Cesium can be build as desktop application for Ubuntu, or as App on Ubuntu phone. Such builds use cross-architecture [click targets](https://developer.ubuntu.com/en/phone/apps/sdk/tutorials/click-targets-and-device-kits/) and the specific Apache Cordova platform `ubuntu`.
 
+## Prerequisites
+
+### Install the development environment
+
+Follow all the steps defined in the [Development guide](./development_guide.md).
+
+After that you should be able to start the application using `npm start`, and to test it.
+
 ## Install Ubuntu SDK 
 
 Source documentation [here](https://developer.ubuntu.com/en/phone/platform/sdk/installing-the-sdk/) and [here](https://cordova.apache.org/docs/en/latest/guide/platforms/ubuntu/index.html)

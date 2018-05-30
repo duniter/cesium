@@ -15,7 +15,7 @@ Manage your wallet, certify your friends, and more !
 
 ## Installation
 
-### On desktop computer
+### On a desktop computer
  
  To use Cesium from your desktop computer :
  
@@ -27,8 +27,14 @@ Manage your wallet, certify your friends, and more !
     * Choose the web packaging (`cesium-vX.Y.Z-web.zip`);
     * Unpack the archive into a empty folder;
     * Open the file `index.html` in your web browser;
-  
-### On web server
+
+### On a Yunohost installation
+
+There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
+
+### On a web server
+
+#### Installation
 
 Cesium can be easily installed on most web server : 
 
@@ -36,29 +42,22 @@ Cesium can be easily installed on most web server :
  - Unpack in a empty directory;
  - Configure a virtual host, to use previous directory as root. Check the file `index.html` exist in the root directory.
 
-
 For Linux distribution, a installation script could also be used to:
 
  - Download the [latest release](https://github.com/duniter/cesium/releases/latest)
  - Unpack archive into the directory `./cesium`. Existing files will be override.  
 
 ```
-curl -kL https://raw.githubusercontent.com/duniter/cesium/master/install.sh | bash
+curl -kL https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
 ```
 or:
 
 ```
-wget -qO- https://raw.githubusercontent.com/duniter/cesium/master/install.sh | bash
+wget -qO- https://git.duniter.org/clients/cesium-grp/cesium/raw/master/install.sh | bash
 ```
 
 
 **Note**: You may need root permission to write files. If so just replace `| bash` with `| sudo bash`.
-
-
-#### Yunohost package
-
-There is a [package](https://github.com/duniter/cesium_ynh) for [YunoHost self-hosting distribution](https://yunohost.org).
-
 
 #### Configuration
 
@@ -108,77 +107,16 @@ angular.module("cesium.config", [])
    
 To learn more about configuration options, see the [detailed documentation](doc/configuration.md).
  
+## Developement
+
+Wants to compile Cesium ? or contribute ?
+
+A [Development Guide](doc/development_guide.md) is available to learn :
+ - How to install your development environment.
+ - Development best practices.
+ 
+A [development tutorial](doc/fr/development_tutorial-01.md) (in French) is also available.
+
 ## License
 
 This software is distributed under [GNU GPLv3](https://raw.github.com/duniter/cesium/master/LICENSE).
-
-## Development Guide
-
-### Prerequisite  
-
-To build Cesium, you will have to: 
- 
-  - Installing build tools:
-```
- sudo apt-get install build-essential
-```
-
-  - Installing [nvm](https://github.com/creationix/nvm)
-```
-  wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
-```
-
-> Then reload your terminal, for instance by executing the commande `bash`
-
-  - Configure NodeJS to use a version 8:
-```
-  nvm install 5
-```
-      
-  - Installing node.js build tools:
-```
-   npm install -g gulp bower@1.8.0 cordova@6.5.0 ionic@1.7.16
-```
-   
-### Get the source code
-   
-  - Getting source and installing project dependencies:    
-```
-  git clone https://github.com/duniter/cesium.git
-  cd cesium
-  npm install
-```
-
-  - Installing Cordova plugins (need for platforms specific builds)   
-```
-  ionic state restore
-  ionic browser add crosswalk@12.41.296.5
-```
-
-
-### Prepare environment, then compile and launch
-
- - To configure your build environment :
- 
-    * Add your environment config into `app/config.json`
-   
-    * Update default configuration, using the command:
-    
-```
-  gulp config --env <your_env_name> 
-```
-
-> This will update the configuration file used by cesium, at `www/js/config.json`.
- 
-  - Compiling and running Cesium:
-```
-  npm start
-```
- 
-> or alternative: `ionic serve` 
-
-### Best practices for development
-
- Cesium could be run on phone devices. Please read [performance tips on AgularJS + Ionic ](http://julienrenaux.fr/2015/08/24/ultimate-angularjs-and-ionic-performance-cheat-sheet/)
- before starting to contribute.
- Read also [Angular performance for large applicatoins](https://www.airpair.com/angularjs/posts/angularjs-performance-large-applications). 

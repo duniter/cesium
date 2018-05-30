@@ -10,29 +10,30 @@ A vos claviers !
 
 Ce premier niveau consiste à créer *votre propre version* des sources du logiciel et de récupérer cette copie sur votre ordinateur. Vous y produirez : 
 
-* votre propre compte *GitHub*
+* votre propre compte sur le [GitLab de Duniter](https://git.duniter.org)
 * votre propre version du logiciel, votre *fork*
 * une copie locale des fichiers de code source provenant de votre *fork*
 
-### Créez un compte GitHub
+### Créez un compte GitLab Duniter
 
-> Si vous disposez déjà d'un compte GitHub, vous pouvez passer cette étape.
+> Si vous disposez déjà d'un compte GitLab, vous pouvez passer cette étape.
 
-Rendez-vous sur https://github.com (site en anglais). Renseigner les 3 champs proposés :
+Rendez-vous sur [https://git.duniter.org](https://git.duniter.org/users/sign_in?redirect_to_referer=yes) (site en anglais).
 
+Dans `Register` Renseigner les 3 champs proposés :
+
+* Nom complet
 * Nom d'utilisateur
 * E-mail
 * Mot de passe
 
-<img src="./img/13ade346327b73bbf1acc97027af147eeb4e9089.png" width="346" height="325">
-
-Vous recevrez probablement un e-mail de confirmation qu'il vous faudra valider. Une fois cette étape passée, vous devriez disposer d'un compte GitHub .
+Vous recevrez probablement un e-mail de confirmation qu'il vous faudra valider. Une fois cette étape passée, vous devriez disposer d'un compte sur le GitLab Duniter.
 
 ### Forkez le dépôt principal
 
-Rendez-vous à l'adresse https://github.com/duniter/cesium. Cliquez sur le bouton « Fork » en dans le coin supérieur droit de la page :
+Rendez-vous à l'adresse https://git.duniter.org/clients/cesium-grp/cesium.
 
-<img src="./img/3b9228c664520496d6a7e86e3f9c4c438f111914.png" width="388" height="98">
+Cliquez sur le bouton « Fourcher » (ou « Fork ») en haut de la page (sous le logo).
 
 ### Installer Git
 
@@ -60,10 +61,10 @@ Vous n'avez plus qu'à retourner dans votre console Git et saisir :
 
     git clone <coller l'URL copiée>
 
-ce qui donne dans mon cas : 
+ce qui donne **dans mon cas** : 
 
 ```
-git clone https://github.com/blavenie/cesium.git
+git clone git@git.duniter.org:blavenie/cesium.git
 Cloning into 'cesium'...
  (...)
 Checking connectivity... done.
@@ -161,10 +162,10 @@ user1@~$
 
 > Il se peut que vous obteniez des messages `npm WARN [...]`. Rien de grave : comme le nom du message l'indique, il s'agit simplement d'un avertissement non bloquant pour la suite des événements.
 
-Puis installer les dépendences via bower :
+Puis installer les dépendences restantes (via bower) :
 
 ```bash
-bower install
+npm run postintall
 ```
 
 ### Installer un IDE
@@ -172,7 +173,9 @@ bower install
 Pour développer sous NodeJS, vous pouvez utiliser l'IDE de votre choix :
 
  * Par exemple Sublime Text (non libre) : https://www.sublimetext.com/
- * Autre possibilité : WebStorm (non libre mais fonctionnement très avancé).
+ * Autres possibilités : 
+    * VS Code (libre).
+    * WebStorm (non libre mais fonctionnement très avancé).
 
 ### Installer Chrome et/ou Firefox
 
@@ -287,7 +290,7 @@ Pour activer cette configuration, lancez maintenant la commande :
 ```
 
 ```bash
-[17:32:34] Using gulpfile ~/git/duniter/cesium/gulpfile.js
+[17:32:34] Using gulpfile (...)/cesium/gulpfile.js
 [17:32:34] Starting 'config'...
 [17:32:34] Building `www/js/config.js` for `dev` environment...
 [17:32:36] Finished 'config' after 10 μs
@@ -304,8 +307,10 @@ Il ne vous reste plus qu'à lancer l'application (en mode web) pour savoir si to
 Lancez la commande suivante : 
 
 ```bash
-ionic serve
+npm start
 ```
+
+ > Alternative : `ionic serve`
 
 Une fois terminée, la commande affiche : 
 
@@ -353,7 +358,7 @@ Chercher et répérer dans le code :
 
 Cesium s'appuie sur AngularJS. D'excellentes documentations sont présentes sur le web.
 
-__Note :__ La version d'AngularJS utilisée est une 1.x : la 2.x change complètement l'approche du code... La suite nous dira si Cesium passera à la version 2.
+__Note :__ La version d'AngularJS utilisée est une 1.x. Les 2.x et supérieure changent complètement et impose une refonte complète... Cette refonte est prévue d'ici 2019, dans une version 2 de Cesium.
 
 ## Niveau V : Debuggage
 
