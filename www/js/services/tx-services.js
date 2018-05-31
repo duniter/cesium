@@ -6,8 +6,11 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
                           csConfig, csSettings, csWot, csCurrency) {
   'ngInject';
 
+  var defaultBMA = BMA;
+
   function factory(id, BMA) {
 
+    BMA = BMA || defaultBMA;
     var
       api = new Api(this, "csTx-" + id),
 

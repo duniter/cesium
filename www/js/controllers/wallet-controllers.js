@@ -865,20 +865,35 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
 
   $scope.doNext = function(formName) {
     if (!formName) {
-      formName = $scope.slides.slider.activeIndex === 1 && $scope.option == "saveID" ? 'questionsForm' :
-        ($scope.slides.slider.activeIndex === 2 && $scope.option === "recoverID" ? 'recoverForm' :
-          ($scope.slides.slider.activeIndex === 2 && $scope.option === "saveID" ? 'answersForm' : formName));
+      switch ($scope.slides.slider.activeIndex) {
+        case 1:
+          switch ($scope.option) {
+            case "saveID":
+              formName = "questionsForm";
+              break;
+            case "recoverID":
+              if ($scope.isValidFile) {
+                $scope.slideNext();
+                $scope.hasContent = false;
+                $scope.fileData = '';
 
-      if ($scope.slides.slider.activeIndex === 1 && $scope.option === "recoverID") {
-        if ($scope.isValidFile) {
-          $scope.slideNext();
-          $scope.hasContent = false;
-          $scope.fileData = '';
+              }
+              else {
+                UIUtils.alert.error("ERROR.NOT_VALID_SAVE_ID_FILE", "ERROR.LOAD_FILE_FAILED");
+              }
+              break;
+          }
+          break;
 
-        }
-        else {
-          UIUtils.alert.error("ERROR.NOT_VALID_SAVE_ID_FILE", "ERROR.LOAD_FILE_FAILED");
-        }
+        case 2:
+          switch ($scope.option) {
+            case "recoverID":
+              formName = "recoverForm";
+              break;
+            case "saveID":
+              formName = "answersForm";
+              break;
+          }
       }
     }
 
@@ -887,14 +902,15 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
       if (!$scope[formName].$valid) {
         return;
       }
-      if(formName === 'recoverForm'){
-        $scope.recoverId();
-      }
-      else if(formName === 'answersForm'){
-        $scope.downloadSaveIDFile();
-      }
-      else {
-        $scope.slideNext();
+      switch (formName) {
+        case "recoverForm":
+          $scope.recoverId();
+          break;
+        case "answersForm":
+          $scope.downloadSaveIDFile();
+          break;
+        default:
+          $scope.slideNext();
       }
     }
   };
@@ -1177,6 +1193,30 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
    */
   $scope.membershipIn = function () {
     return $scope.closeModal('membershipIn');
+  };
+
+  /**
+   * Generate keyfile
+   */
+  $scope.downloadKeyFile = function (format) {
+    // Force re-authentication
+    return csWallet.auth({forceAuth: true})
+
+    // Download file
+      .then(function() {
+        return csWallet.downloadKeyFile(format);
+      })
+
+      .then(function() {
+        UIUtils.loading.hide();
+        return $scope.closeModal();
+      })
+
+      .catch(function(err){
+        if (err && err == 'CANCELLED') return;
+        UIUtils.onError('ERROR.DOWNLOAD_KEYFILE_FAILED')(err);
+      })
+      ;
   };
 
 }

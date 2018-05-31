@@ -12,7 +12,7 @@
          ng-pattern="pubkeyPattern"
          required >
   <a class="button button-stable icon ion-android-search ink"
-          ng-click="showWotLookupModal()">
+          ng-click="showWotLookupModal(form.pubkey.$viewValue)">
   </a>
 </div>
 <div class="form-errors"
@@ -23,6 +23,9 @@
   </div>
   <div class="form-error" ng-message="pattern">
     <span translate="ERROR.INVALID_PUBKEY"></span>
+  </div>
+  <div class="form-error" ng-message="checksum">
+    <span translate="ERROR.INVALID_PUBKEY_CHECKSUM"></span>
   </div>
 </div>
 

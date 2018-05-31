@@ -146,7 +146,7 @@ angular.module('cesium.modal.services', [])
   };
 })
 
-.factory('Modals', function($rootScope, ModalUtils, UIUtils) {
+.factory('Modals', function($rootScope, $translate, $ionicPopup, ModalUtils, UIUtils) {
   'ngInject';
 
   function showTransfer(parameters) {
@@ -224,6 +224,47 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+  function showPassword(options) {
+    options = options || {};
+    options.title = options.title || 'COMMON.SET_PASSWORD_TITLE';
+    options.subTitle = options.subTitle || 'COMMON.SET_PASSWORD_SUBTITLE';
+    var scope = options.scope ? options.scope.$new() : $rootScope.$new();
+    scope.formData = {password: undefined};
+    scope.setForm = function(form) {
+      scope.form=form;
+    };
+    scope.submit = function(e) {
+      scope.form.$submitted=true;
+      if(!scope.form.$valid || !scope.formData.password) {
+        //don't allow the user to close unless he enters a uid
+        if (e && e.preventDefault) e.preventDefault();
+      } else {
+        options.popup.close(scope.formData.password);
+      }
+    };
+
+    // Choose password popup
+    return $translate([options.title, options.subTitle, 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+      .then(function (translations) {
+        options.popup = $ionicPopup.show({
+          templateUrl: 'templates/common/popup_password.html',
+          title: translations[options.title],
+          subTitle: translations[options.subTitle],
+          scope: scope,
+          buttons: [
+            { text: translations['COMMON.BTN_CANCEL'] },
+            { text: translations['COMMON.BTN_OK'],
+              type: 'button-positive',
+              onTap: scope.submit
+            }
+          ]
+        });
+        return options.popup;
+      });
+
+  }
+
+
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
@@ -237,7 +278,8 @@ angular.module('cesium.modal.services', [])
     showHelp: showHelp,
     showAccountSecurity: showAccountSecurity,
     showLicense: showLicense,
-    showSelectPubkeyIdentity: showSelectPubkeyIdentity
+    showSelectPubkeyIdentity: showSelectPubkeyIdentity,
+    showPassword: showPassword
   };
 
 });

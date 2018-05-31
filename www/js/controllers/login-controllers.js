@@ -7,7 +7,8 @@ angular.module('cesium.login.controllers', ['cesium.services'])
 
 ;
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, UIUtils, BMA, Modals, csSettings, Device, parameters) {
+function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
+                              UIUtils, BMA, Modals, csSettings, Device, parameters) {
   'ngInject';
 
   parameters = parameters || {};
@@ -18,7 +19,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.showPubkey = false;
   $scope.showComputePubkeyButton = false;
   $scope.autoComputePubkey = false;
-  $scope.pubkeyPattern = '^' + BMA.constants.regexp.PUBKEY + '$';
+  $scope.pubkeyPattern = '^(:?{0}|{1})$'.format(BMA.constants.regexp.PUBKEY, BMA.constants.regexp.PUBKEY_WITH_CHECKSUM);
 
   $scope.isAuth = parameters.auth;
   $scope.showMethods = angular.isDefined(parameters.showMethods) ? parameters.showMethods : true;
@@ -116,8 +117,13 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       // If checkbox keep auth checked: set idle time to session
       keepAuthIdle = ($scope.formData.keepAuth && csSettings.constants.KEEP_AUTH_IDLE_SESSION) || keepAuthIdle;
 
-        UIUtils.loading.show();
-      promise = CryptoUtils.readKeyFile($scope.formData.file, $scope.isAuth||$scope.formData.keepAuth/*withSecret*/)
+      promise =
+        UIUtils.loading.show()
+        .then(function() {
+          return $scope.readKeyFile($scope.formData.file, {
+            withSecret: ($scope.isAuth || $scope.formData.keepAuth)
+          });
+        })
         .then(function(keypair) {
           if (!keypair) return UIUtils.loading.hide(10);
           var pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
@@ -127,6 +133,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
             $scope.formData.file.valid = false;
             return UIUtils.loading.hide(10);
           }
+
+          // TODO: if WIF, force redirection to a transfer modal, using a temporary wallet:
+          // var wallet = csWallet.instance('WIF');
+          // return wallet.login(...)
 
           $scope.pubkeyError = false;
 
@@ -141,9 +151,26 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     // Pubkey
     else if (method === 'PUBKEY') {
       if (!$scope.formData.pubkey) return;
-      promise = $q.when({
-        pubkey: $scope.formData.pubkey
-      });
+      var matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec($scope.formData.pubkey);
+      // Check checksum
+      if (matches) {
+        var pubkey = matches[1];
+        var checksum = matches[2];
+        var expectedChecksum = CryptoUtils.pkChecksum(pubkey);
+        if (checksum != expectedChecksum) {
+          $scope.form.pubkey.$error = {checksum: true};
+        }
+        else {
+          promise = $q.when({
+            pubkey: pubkey
+          });
+        }
+      }
+      else {
+        promise = $q.when({
+          pubkey: $scope.formData.pubkey.trim()
+        });
+      }
     }
 
     if (!promise) {
@@ -294,6 +321,32 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
     $scope.onScryptFormChanged();
   };
 
+  $scope.readKeyFile = function(file, options) {
+    options = options || {};
+
+    options.password = options.password || $scope.formData.file.password || function() {
+        $scope.formData.file.password = undefined;
+      return Modals.showPassword({
+            title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
+            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP'
+          })
+          .then(function (password) {
+            // Remember password (for validation)
+            $scope.formData.file.password = password;
+            return password;
+          });
+      };
+
+    return CryptoUtils.readKeyFile($scope.formData.file, options)
+      .catch(function(err) {
+        if (err && err == 'CANCELLED') return;
+        if (err && err == 'BAD_PASSWORD') {
+          return $scope.readKeyFile($scope.formData.file, options); // Loop (ask the password again)
+        }
+        throw err;
+      });
+  };
+
   $scope.fileChanged = function(event) {
     $scope.validatingFile = true;
     $scope.formData.file = event && event.target && event.target.files && event.target.files.length && event.target.files[0];
@@ -306,7 +359,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       console.debug("[login] key file changed: ", $scope.formData.file);
       $scope.validatingFile = true;
 
-      return CryptoUtils.readKeyFile($scope.formData.file, false/*withSecret*/)
+      return $scope.readKeyFile($scope.formData.file, {withSecret: false, password: $scope.formData.file.password})
         .then(function(keypair) {
           if (!keypair || !keypair.signPk) {
             $scope.formData.file.valid = false;
@@ -320,6 +373,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
         })
         .catch(function(err) {
+          if (err && err == 'CANCELLED') {
+            $scope.removeKeyFile();
+            return;
+          }
           $scope.validatingFile = false;
           $scope.formData.file.valid = false;
           $scope.formData.file.pubkey = undefined;
@@ -329,9 +386,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   };
 
   /**
-   * Recover Id
+   * On file drop
    */
-
   $scope.onKeyFileDrop = function(file) {
     if (!file || !file.fileData) return;
 
@@ -340,25 +396,28 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
       size: file.fileData.size,
       content: file.fileContent
     };
-    return CryptoUtils.readKeyFile($scope.formData.file, false/*withSecret*/)
-      .then(function(keypair) {
-        if (!keypair || !keypair.signPk) {
+    $scope.validatingFile = true;
+    $timeout(function() {
+      return $scope.readKeyFile($scope.formData.file, {withSecret: false})
+        .then(function (keypair) {
+          if (!keypair || !keypair.signPk) {
+            $scope.formData.file.valid = false;
+            $scope.formData.file.pubkey = undefined;
+          }
+          else {
+            $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
+            $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
+            $scope.validatingFile = false;
+          }
+
+        })
+        .catch(function (err) {
+          $scope.validatingFile = false;
           $scope.formData.file.valid = false;
           $scope.formData.file.pubkey = undefined;
-        }
-        else {
-          $scope.formData.file.pubkey = CryptoUtils.util.encode_base58(keypair.signPk);
-          $scope.formData.file.valid = !$scope.expectedPubkey || $scope.expectedPubkey == $scope.formData.file.pubkey;
-          $scope.validatingFile = false;
-        }
-
-      })
-      .catch(function(err) {
-        $scope.validatingFile = false;
-        $scope.formData.file.valid = false;
-        $scope.formData.file.pubkey = undefined;
-        UIUtils.onError('ERROR.AUTH_FILE_ERROR')(err);
-      });
+          UIUtils.onError('ERROR.AUTH_FILE_ERROR')(err);
+        });
+    });
   };
 
   $scope.removeKeyFile = function() {
@@ -367,8 +426,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
   /* -- modals -- */
 
-  $scope.showWotLookupModal = function() {
-    return Modals.showWotLookup()
+  $scope.showWotLookupModal = function(searchText) {
+    return Modals.showWotLookup({q: searchText})
       .then(function(res){
         if (res && res.pubkey) {
           $scope.formData.pubkey = res.pubkey;

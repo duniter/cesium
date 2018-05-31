@@ -69,6 +69,17 @@
               </div>
             </div>
 
+            <div class="item item-complex card stable-bg item-icon-left item-icon-right ink"
+                 ng-click="selectOption('generateKeyfile')" ng-if="isLogin">
+              <div class="item-content item-text-wrap">
+                <i class="item-image dark icon ion-document-text"></i>
+                <b class="ion-key icon-secondary dark" style="top: -8px; left: 42px; font-size: 12px;"></b>
+                <h2 translate>ACCOUNT.SECURITY.GENERATE_KEYFILE</h2>
+                <h4 class="gray" translate>ACCOUNT.SECURITY.GENERATE_KEYFILE_HELP</h4>
+                <i class="icon dark ion-ios-arrow-right"></i>
+              </div>
+            </div>
+
             <div class="item item-complex card stable-bg item-icon-left item-icon-right ink hidden-xs hidden-sm"
                  ng-click="downloadRevokeFile()" ng-if="isLogin && hasSelf">
               <div class="item-content item-text-wrap">
@@ -139,6 +150,10 @@
       </ion-slide-page>
       <ion-slide-page ng-if="option == 'recoverID'">
         <ng-include src="'templates/wallet/slides/slides_recoverID_3.html'"></ng-include>
+      </ion-slide-page>
+
+      <ion-slide-page ng-if="isLogin && option == 'generateKeyfile'">
+        <ng-include src="'templates/wallet/slides/slides_generate_keyfile.html'"></ng-include>
       </ion-slide-page>
 
     </ion-slides>

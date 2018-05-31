@@ -1,7 +1,7 @@
 
 angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
-.factory('csCurrency', function($rootScope, $q, $timeout, BMA, Api) {
+.factory('csCurrency', function($rootScope, $q, $timeout, BMA, Api, csSettings) {
   'ngInject';
 
   function factory(id, BMA) {
@@ -266,6 +266,17 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         });
     }
 
+    function getLastValidBlock() {
+      if (csSettings.data.wallet.txBlockReferenceCount > 0) {
+        return getCurrent(true)
+          .then(function(current) {
+            var number = current.number - csSettings.data.wallet.txBlockReferenceCount;
+            return (number > 0) ? BMA.blockchain.get(number) : current;
+          })
+      }
+      return getCurrent(true);
+    }
+
     // TODO register new block event, to get new UD value
 
     // Register extension points
@@ -289,7 +300,8 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       parameters: getDataField('parameters'),
       currentUD: getDataField('currentUD'),
       blockchain: {
-        current: getCurrent
+        current: getCurrent,
+        lastValid: getLastValidBlock
       },
       // api extension
       api: api,

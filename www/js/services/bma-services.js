@@ -2,11 +2,12 @@
 
 angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, $window, $rootScope, $timeout, Api, Device, csConfig, csSettings, csHttp) {
+.factory('BMA', function($q, $window, $rootScope, $timeout, CryptoUtils, Api, Device, csConfig, csSettings, csHttp) {
   'ngInject';
 
   function BMA(host, port, useSsl, useCache) {
 
+    var pubkey = "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}";
     var
       // TX output conditions
       SIG = "SIG\\(([0-9a-zA-Z]{43,44})\\)",
@@ -22,11 +23,12 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
       regexp = {
         USER_ID: "[A-Za-z0-9_-]+",
         CURRENCY: "[A-Za-z0-9_-]+",
-        PUBKEY: "[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}",
+        PUBKEY: pubkey,
+        PUBKEY_WITH_CHECKSUM: "(" + pubkey +")" + ":([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{3})",
         COMMENT: "[ a-zA-Z0-9-_:/;*\\[\\]()?!^\\+=@&~#{}|\\\\<>%.]*",
         // duniter://[uid]:[pubkey]@[host]:[port]
-        URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
-        URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})(?:/([A-Za-z0-9_-]+))?",
+        URI_WITH_AT: "duniter://(?:([A-Za-z0-9_-]+):)?("+pubkey+"@([a-zA-Z0-9-.]+.[ a-zA-Z0-9-_:/;*?!^\\+=@&~#|<>%.]+)",
+        URI_WITH_PATH: "duniter://([a-zA-Z0-9-.]+.[a-zA-Z0-9-_:.]+)/("+pubkey+")(?:/([A-Za-z0-9_-]+))?",
         BMA_ENDPOINT: "BASIC_MERKLED_API" + REGEX_ENDPOINT_PARAMS,
         BMAS_ENDPOINT: "BMAS" + REGEX_ENDPOINT_PARAMS,
         WS2P_ENDPOINT: "WS2P ([a-f0-9]{8})"+ REGEX_ENDPOINT_PARAMS,
@@ -349,6 +351,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
         USER_ID: exact(regexp.USER_ID),
         COMMENT: exact(regexp.COMMENT),
         PUBKEY: exact(regexp.PUBKEY),
+        PUBKEY_WITH_CHECKSUM: exact(regexp.PUBKEY_WITH_CHECKSUM),
         CURRENCY: exact(regexp.CURRENCY),
         URI: exact(regexp.URI),
         BMA_ENDPOINT: exact(regexp.BMA_ENDPOINT),
@@ -722,15 +725,26 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
 
     exports.uri.parse = function(uri) {
       return $q(function(resolve, reject) {
+        var pubkey;
         // If pubkey: not need to parse
         if (exact(regexp.PUBKEY).test(uri)) {
           resolve({
             pubkey: uri
           });
         }
+        // If pubkey+checksum
+        else if (exact(regexp.PUBKEY_WITH_CHECKSUM).test(uri)) {
+          var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
+          pubkey = matches[1];
+          var checksum = matches[2];
+          var expectedChecksum = CryptoUtils.pkChecksum(pubkey);
+          if (checksum != expectedChecksum) throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
+          resolve({
+            pubkey: pubkey
+          });
+        }
         else if(uri.startsWith('duniter://')) {
           var parser = csHttp.uri.parse(uri),
-            pubkey,
             uid,
             currency = parser.host.indexOf('.') === -1 ? parser.host : null,
             host = parser.host.indexOf('.') !== -1 ? parser.host : null;
@@ -805,7 +819,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           }
         }
         else {
-          throw {message: 'Bad URI format: ' + uri};
+          reject( {message: 'ERROR.UNKNOWN_URI_FORMAT'});
         }
       })
 

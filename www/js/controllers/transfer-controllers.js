@@ -44,7 +44,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $controller, Device, UIUtils, csWot, csWallet) {
+function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.

@@ -170,16 +170,17 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
   $scope.showResultLabel = true;
   $scope.parameters = {}; // override in the modal controller
 
-  $scope.$on('$ionicView.enter', function(e, state) {
+  $scope.enter = function(e, state) {
     if (!$scope.entered) {
-      if (state.stateParams && state.stateParams.q) { // Query parameter
-        $scope.search.text = state.stateParams.q;
+      var params = angular.merge({}, $scope.parameters, state && state.stateParams);
+      if (params && params.q) { // Query parameter
+        $scope.search.text = params.q;
         $timeout(function() {
           $scope.doSearch();
         }, 100);
       }
-      else if (state.stateParams && state.stateParams.hash) { // hash tag parameter
-        $scope.search.text = '#' + state.stateParams.hash;
+      else if (params && params.hash) { // hash tag parameter
+        $scope.search.text = '#' + params.hash;
         $timeout(function() {
           $scope.doSearch();
         }, 100);
@@ -187,14 +188,14 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
       else {
         $timeout(function() {
           // Init phase
-          if (csCurrency.data.initPhase && !state.stateParams.type) {
+          if (csCurrency.data.initPhase && !params.type) {
             $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
           }
           // get new comers
-          else if (state.stateParams.type == 'newcomers' || (!csConfig.initPhase && !state.stateParams.type)) {
+          else if (params.type == 'newcomers' || (!csConfig.initPhase && !params.type)) {
             $scope.doGetNewcomers(0, undefined, true/*skipLocationUpdate*/);
           }
-          else if (state.stateParams.type == 'pending') {
+          else if (params.type == 'pending') {
             $scope.doGetPending(0, undefined, true/*skipLocationUpdate*/);
           }
 
@@ -218,7 +219,8 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
         $scope.motion.show({selector: '.lookupForm .list .item', ink: true});
       }
     }
-  });
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.resetWotSearch = function() {
     $scope.search = {
@@ -282,8 +284,11 @@ function WotLookupController($scope, $state, $q, $timeout, $focus, $location, $i
         if ($scope.search.type != 'text') return; // could have change
         if ($scope.search.text.trim() !== text) return; // search text has changed before received response
 
-        if ((!idties || !idties.length) && BMA.regexp.PUBKEY.test(text)) {
-          $scope.doDisplayResult([{pubkey: text}]);
+        if ((!idties || !idties.length) && (BMA.regexp.PUBKEY.test(text) || BMA.regexp.PUBKEY_WITH_CHECKSUM.test(text))) {
+          return BMA.uri.parse(text)
+            .then(function(data) {
+              $scope.doDisplayResult([data]);
+            });
         }
         else {
           $scope.doDisplayResult(idties);
@@ -577,6 +582,17 @@ function WotLookupModalController($scope, $controller, $focus, parameters){
   if ($scope.allowMultiple && parameters.selection) {
     $scope.selection = parameters.selection;
   }
+
+  var superEnter = $scope.enter;
+  $scope.enter = function(e) {
+    if ($scope.parameters && $scope.parameters.q) {
+      $scope.search.text=$scope.parameters.q;
+      if ($scope.parameters.q.trim().length > 2) {
+        superEnter(e); // call enter, that launch the search
+      }
+    }
+  };
+  $scope.$on('modal.shown', $scope.enter);
 
   $scope.cancel = function(){
     $scope.closeModal();

@@ -5,6 +5,22 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
   .factory('CryptoUtils', function($q, $timeout, ionicReady) {
     'ngInject';
 
+    function xor(a, b) {
+      var length = Math.max(a.length, b.length);
+      var buffer = new Uint8Array(length);
+      for (var i = 0; i < length; ++i) {
+        buffer[i] = a[i] ^ b[i];
+      }
+      return buffer;
+    }
+
+    function concat_Uint8Array( buffer1, buffer2 ) {
+      var tmp = new Uint8Array( buffer1.byteLength + buffer2.byteLength );
+      tmp.set( new Uint8Array( buffer1 ), 0 );
+      tmp.set( new Uint8Array( buffer2 ), buffer1.byteLength );
+      return tmp;
+    }
+
     function test(regexpContent) {
       return new RegExp(regexpContent);
     }
@@ -83,13 +99,28 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           memory: -1 // default
         }
       },
+      WIF: {
+        DATA_LENGTH: 35
+      },
+      EWIF: {
+        SALT_LENGTH: 4,
+        DERIVED_HALF_LENGTH: 16,
+        DATA_LENGTH: 39,
+        SCRYPT_PARAMS: {
+          N: 16384,
+          r: 8,
+          p: 8
+        }
+      },
       REGEXP: {
         PUBKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44}',
         SECKEY: '[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88}',
         FILE: {
           TYPE_LINE: '^Type: ([a-zA-Z0-9]+)\n',
-          PUB: '\npub: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})\n',
-          SEC: '\nsec: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88})\n?$'
+          VERSION: 'Version: ([0-9]+)\n',
+          PUB: '[Pp]ub: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{43,44})\n',
+          SEC: '[Ss]ec: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{86,88})(\n|$)',
+          DATA: '[Dd]ata: ([123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]+)(\n|$)'
         }
       }
     };
@@ -97,8 +128,10 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
     CryptoAbstractService.prototype.regexp = {
       FILE: {
         TYPE_LINE: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.TYPE_LINE),
+        VERSION: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.VERSION),
         PUB: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.PUB),
-        SEC: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.SEC)
+        SEC: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.SEC),
+        DATA: test(CryptoAbstractService.prototype.constants.REGEXP.FILE.DATA)
       }
     };
 
@@ -136,14 +169,11 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       else {$timeout(function(){that.async_load_sha256(on_ready);}, 100);}
     };
 
-    // TODO pub file in file.* functions
-    //CryptoAbstractService.prototype.file = {};
-
-    CryptoAbstractService.prototype.readKeyFile = function(file, withSecret) {
+    CryptoAbstractService.prototype.readKeyFile = function(file, options) {
       var that = this;
 
       if (file && file.content) {
-        return  that.parseKeyFileContent(file.content, withSecret);
+        return that.parseKeyFileContent(file.content, options);
       }
 
       return $q(function(resolve, reject) {
@@ -154,63 +184,313 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         console.debug('[crypto] [keypair] reading file: ', file);
         var reader = new FileReader();
         reader.onload = function (event) {
-          that.parseKeyFileContent(event.target.result, withSecret)
-            .then(function (res) {
-              resolve(res);
-            })
-            .catch(function (err) {
-              reject(err);
-            });
+          that.parseKeyFileContent(event.target.result, options)
+            .then(resolve)
+            .catch(reject);
         };
         reader.readAsText(file, 'utf8');
       });
     };
 
-    CryptoAbstractService.prototype.parseKeyFileContent = function(content, withSecret, defaultType) {
+    CryptoAbstractService.prototype.parseKeyFileContent = function(content, options) {
+
+      if (!content) return $q.reject('Argument [content] is missing');
+
+      options = options || {};
+      options.withSecret = angular.isDefined(options.withSecret) ? options.withSecret : false;
+      options.defaultType = options.defaultType || 'PubSec';
+
+      var that = this,
+        matches;
+
+      var typeMatch = that.regexp.FILE.TYPE_LINE.exec(content);
+
+      // If no Type field: add default type
+      var type = typeMatch && typeMatch[1];
+      if (!type && options.defaultType) {
+        return that.parseKeyFileContent('Type: {0}\n{1}'.format(options.defaultType, content), options);
+      }
+
+      // Type: PubSec
+      if (type == 'PubSec') {
+
+        // Read Pub field
+        matches = that.regexp.FILE.PUB.exec(content);
+        if (!matches) return $q.reject('Missing [pub] field in file, or invalid public key value');
+        var signKeypair = {
+          signPk: that.base58.decode(matches[1])
+        };
+        if (!options.withSecret) return $q.resolve(signKeypair);
+
+        // Read Sec field
+        matches= that.regexp.FILE.SEC.exec(content);
+        if (!matches) return $q.reject('Missing [sec] field in file, or invalid secret key value');
+        signKeypair.signSk = that.base58.decode(matches[1]);
+        return $q.resolve(signKeypair);
+      }
+
+      // Type: WIF or EWIF
+      else if (type == 'WIF' || type == 'EWIF') {
+        matches = that.regexp.FILE.DATA.exec(content);
+        if (!matches) {
+          return $q.reject('Missing [Data] field in file. This is required for WIF or EWIF format');
+        }
+        return that.readWif(matches[1], {
+            type: type,
+            password: options.password
+          })
+          .then(function(signKeypair) {
+            return signKeypair && !options.withSecret ? {signPk: signKeypair.signPk} : signKeypair;
+          });
+      }
+
+      // Type: unknown
+      if (options.defaultType) {
+        return $q.reject('Bad file format: missing Type field');
+      }
+      else {
+        return $q.reject('Bad file format, unknown type [' + type + ']');
+      }
+    };
+
+    CryptoAbstractService.prototype.readWif_v1 = function(wif_base58) {
+      var that = this,
+        wif_int8 = that.util.decode_base58(wif_base58);
+
+      // Check identifier byte = 0x01
+      if (wif_int8[0] != 1) {
+        return $q.reject({message: 'Invalid WIF v1 format: expected [0x01] as first byte'});
+      }
+
+      // Check length
+      if (wif_int8.length != that.constants.WIF.DATA_LENGTH) {
+        return $q.reject({message: 'Invalid WIF v1 format: Data must be a '+that.constants.WIF.DATA_LENGTH+' bytes array, encoded in base 58.'});
+      }
+
+      var wif_int8_no_checksum = wif_int8.slice(0, -2),
+        seed = wif_int8.slice(1, -2),
+        checksum =  wif_int8.slice(-2);
+
+      // Compute expected checksum
+      var expectedChecksum = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(wif_int8_no_checksum)).slice(0,2);
+      if (that.util.encode_base58(checksum) != that.util.encode_base58(expectedChecksum)) {
+        $q.reject({message: 'Invalid WIF format: bad checksum'});
+      }
+
+      // Generate keypair from seed
+      return that.seedKeypair(seed);
+    };
+
+    CryptoAbstractService.prototype.readEwif_v1 = function(ewif_base58, password) {
+      var that = this,
+        ewif_int8 = that.util.decode_base58(ewif_base58);
+
+      // Check identifier byte = 0x02
+      if (ewif_int8[0] != 2) {
+        return $q.reject({message: 'Invalid EWIF v1 format: Expected [0x02] as first byte'});
+      }
+
+      // Check length
+      if (ewif_int8.length != that.constants.EWIF.DATA_LENGTH) {
+        return $q.reject({message: 'Invalid EWIF v1 format: Expected {0} bytes, encoded in base 58.'.format(that.constants.EWIF.DATA_LENGTH)});
+      }
+
+      var ewif_int8_no_checksum = ewif_int8.slice(0,-2);
+      var checksum = ewif_int8.slice(-2);
+      var salt = ewif_int8.slice(1,5);
+      var encryptedhalf1 = ewif_int8.slice(5,21);
+      var encryptedhalf2 = ewif_int8.slice(21,37);
+
+      // Retrieve the scrypt_seed
+      return that.util.crypto_scrypt(
+        that.util.encode_utf8(password),
+        salt,
+        that.constants.EWIF.SCRYPT_PARAMS.N,
+        that.constants.EWIF.SCRYPT_PARAMS.r,
+        that.constants.EWIF.SCRYPT_PARAMS.p,
+        64)
+
+        // Compute the final seed
+        .then(function(scrypt_seed) {
+
+          var derivedhalf1 = scrypt_seed.slice(0, 32);
+          var derivedhalf2 = scrypt_seed.slice(32, 64);
+
+          //AES
+          var aesEcb = new aesjs.ModeOfOperation.ecb(derivedhalf2);
+          var decryptedhalf1 = aesEcb.decrypt(encryptedhalf1);
+          var decryptedhalf2 = aesEcb.decrypt(encryptedhalf2);
+
+          decryptedhalf1 = new Uint8Array(decryptedhalf1);
+          decryptedhalf2 = new Uint8Array(decryptedhalf2);
+
+          //xor
+          var seed1 = xor(decryptedhalf1, derivedhalf1.slice(0, 16));
+          var seed2 = xor(decryptedhalf2, derivedhalf1.slice(16, 32));
+          var seed = concat_Uint8Array(seed1, seed2);
+
+          return seed;
+        })
+
+        // Get the keypair, from the seed
+        .then(that.seedKeypair)
+
+        // Do some controls
+        .then(function(keypair) {
+
+          // Check salt
+          var expectedSalt = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(keypair.signPk)).slice(0,4);
+          if(that.util.encode_base58(salt) !== that.util.encode_base58(expectedSalt)) {
+            throw 'BAD_PASSWORD';
+          }
+
+          // Check checksum
+          var expectedChecksum = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(ewif_int8_no_checksum)).slice(0,2);
+          if (that.util.encode_base58(checksum) != that.util.encode_base58(expectedChecksum)) {
+            throw {message: "Invalid EWIF format: bad checksum"};
+          }
+
+          return keypair;
+        });
+
+    };
+
+    /**
+     *
+     * @param data_base58
+     * @param options
+     * @returns {*}
+     */
+    CryptoAbstractService.prototype.readWif = function(data_base58, options) {
       var that = this;
-      return $q(function(resolve, reject) {
-        if (!content) {
-          return reject('Argument [content] is missing');
+      options = options || {};
+
+      // Check has password options, if EWIF or autodetect format
+      if ((!options.type || options.type === "EWIF") && !options.password) {
+        $q.reject("Missing options.password or options.passwordCallback");
+      }
+
+      var data_int8 = that.base58.decode(data_base58);
+      if (data_int8.length != that.constants.EWIF.DATA_LENGTH && data_int8.length != that.constants.WIF.DATA_LENGTH) {
+        return $q.reject('Invalid WIF or EWIF format (invalid bytes count).');
+      }
+
+      // Detect the type from the first byte
+      options.type = options.type || (data_int8[0] == 1 && 'WIF') || (data_int8[0] == 2 && 'EWIF');
+
+      // Type: WIF
+      if (options.type == 'WIF') {
+        return that.readWif_v1(data_base58);
+      }
+
+      // Type: EWIF
+      if (options.type == 'EWIF') {
+
+        // If not set, resolve password using the given callback
+        if (typeof options.password == "function") {
+          console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
+          options.password = options.password();
+          if (!options.password) {
+            return $q.reject({message: "Invalid callback result for 'options.password()': must return a promise or a string."});
+          }
         }
-        var typeMatch = that.regexp.FILE.TYPE_LINE.exec(content);
 
-        // no Type (first line)
-        if (!typeMatch) {
-          // Add default type then retry
-          return resolve(that.parseKeyFileContent('Type: PubSec\n' + content, withSecret, true));
-        }
-
-        var type = typeMatch[1];
-
-        // Type: PubSec
-        if (type == 'PubSec') {
-          var pubMatch = that.regexp.FILE.PUB.exec(content);
-          if (!pubMatch) {
-            return reject('Missing [pub] field in file, or invalid public key value');
-          }
-          if (!withSecret) {
-            return resolve({
-              signPk: that.base58.decode(pubMatch[1])
-            });
-          }
-          var secMatch = that.regexp.FILE.SEC.exec(content);
-          if (!secMatch) {
-            return reject('Missing [sec] field in file, or invalid secret key value');
-          }
-          return resolve({
-            signPk: that.base58.decode(pubMatch[1]),
-            signSk: that.base58.decode(secMatch[1])
+        // If password is a promise, get the result then read data
+        if (typeof options.password == "object" && options.password.then) {
+          return options.password.then(function(password) {
+            if (!password) throw 'CANCELLED';
+            return that.readEwif_v1(data_base58, password);
           });
         }
-        else {
-          if (defaultType) {
-            return reject('Bad file format: missing Type field');
-          }
-          else {
-            return reject('Bad file format, unknown type [' + type + ']');
-          }
+
+        // If password is a valid string, read data
+        if (typeof options.password == "string") {
+          return that.readEwif_v1(data_base58, options.password);
         }
-      });
+
+        return $q.reject({message: 'Invalid EWIF options.password. Waiting a callback function, a promise or a string.'});
+      }
+
+      // Unknown type
+      return $q.reject({message: 'Invalid WIF or EWIF format: unknown first byte identifier.'});
+    };
+
+
+    CryptoAbstractService.prototype.pkChecksum = function(pubkey) {
+      var signPk_int8 = this.util.decode_base58(pubkey);
+      return this.util.encode_base58(this.util.crypto_hash_sha256(this.util.crypto_hash_sha256(signPk_int8))).substring(0,3);
+    };
+
+    CryptoAbstractService.prototype.seed_from_signSk = function(signSk) {
+      var that = this;
+      var seed = new Uint8Array(that.constants.SEED_LENGTH);
+      for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
+      return seed;
+    };
+
+    CryptoAbstractService.prototype.wif_v1_from_keypair = function(keypair) {
+
+      var that = this;
+
+      var seed = that.seed_from_signSk(keypair.signSk);
+      if (!seed || seed.byteLength !== that.constants.SEED_LENGTH)
+        throw "Bad see format. Expected {0} bytes".format(that.constants.SEED_LENGTH);
+
+      var fi = new Uint8Array(1);
+      fi[0] = 0x01;
+      var seed_fi = concat_Uint8Array(fi, seed);
+
+      // checksum
+      var checksum = that.nacl.crypto_hash_sha256(that.nacl.crypto_hash_sha256(seed_fi)).slice(0,2);
+
+      var wif_int8 = concat_Uint8Array(seed_fi, checksum);
+      return that.util.encode_base58(wif_int8);
+    };
+
+    CryptoAbstractService.prototype.ewif_v1_from_keypair = function(keypair, password) {
+
+      var that = this;
+
+      var seed = that.seed_from_signSk(keypair.signSk);
+      if (!seed || seed.byteLength !== that.constants.SEED_LENGTH)
+        throw "Bad see format. Expected {0} bytes".format(that.constants.SEED_LENGTH);
+
+      // salt
+      var salt = that.nacl.crypto_hash_sha256(that.nacl.crypto_hash_sha256(keypair.signPk)).slice(0,4);
+
+      // scrypt_seed
+      var scrypt_seed = that.util.crypto_scrypt(
+        that.util.encode_utf8(password),
+        salt,
+        that.constants.EWIF.SCRYPT_PARAMS.N,
+        that.constants.EWIF.SCRYPT_PARAMS.r,
+        that.constants.EWIF.SCRYPT_PARAMS.p,
+        64);
+      var derivedhalf1 = scrypt_seed.slice(0,32);
+      var derivedhalf2 = scrypt_seed.slice(32,64);
+
+      //XOR & AES
+      var seed1_xor_derivedhalf1_1 = xor(seed.slice(0,16), derivedhalf1.slice(0,16));
+      var seed2_xor_derivedhalf1_2 = xor(seed.slice(16,32), derivedhalf1.slice(16,32));
+
+      var aesEcb = new aesjs.ModeOfOperation.ecb(derivedhalf2);
+      var encryptedhalf1 = aesEcb.encrypt(seed1_xor_derivedhalf1_1);
+      var encryptedhalf2 = aesEcb.encrypt(seed2_xor_derivedhalf1_2);
+
+      encryptedhalf1 = new Uint8Array(encryptedhalf1);
+      encryptedhalf2 = new Uint8Array(encryptedhalf2);
+
+      // concatenate ewif
+      var ewif_int8 = new Uint8Array(1);
+      ewif_int8[0] = 0x02;
+      ewif_int8 = concat_Uint8Array(ewif_int8,salt);
+      ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf1);
+      ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf2);
+
+      var checksum = that.nacl.crypto_hash_sha256(that.nacl.crypto_hash_sha256(ewif_int8)).slice(0,2);
+      ewif_int8 = concat_Uint8Array(ewif_int8,checksum);
+
+      return that.util.encode_base58(ewif_int8);
     };
 
     // Web crypto API - see https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API
@@ -287,6 +567,26 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         else {
           return $q.when(that.nacl.crypto_box_random_nonce());
         }
+      };
+      this.util.crypto_hash_sha256 = function(msg_int8) {
+        return that.nacl.crypto_hash_sha256(msg_int8);
+      };
+      this.util.crypto_scrypt = function(password, salt, N, r, p, seedLength) {
+        return $q(function(resolve, reject) {
+          try {
+            var seed = that.scrypt.crypto_scrypt(
+              password,
+              salt,
+              N,
+              r,
+              p,
+              seedLength);
+            resolve(seed);
+          }
+          catch(err) {
+            reject(err);
+          }
+        });
       };
 
       /**
@@ -376,6 +676,22 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
             scryptParams && scryptParams.r || that.constants.SCRYPT_PARAMS.DEFAULT.r,
             scryptParams && scryptParams.p || that.constants.SCRYPT_PARAMS.DEFAULT.p,
             that.constants.SEED_LENGTH);
+          var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
+          var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
+          resolve({
+            signPk: signKeypair.signPk,
+            signSk: signKeypair.signSk,
+            boxPk: boxKeypair.boxPk,
+            boxSk: boxKeypair.boxSk
+          });
+        });
+      };
+
+      /**
+       * Create key pairs from a seed
+       */
+      this.seedKeypair = function(seed) {
+        return $q(function(resolve, reject) {
           var signKeypair = that.nacl.crypto_sign_seed_keypair(seed);
           var boxKeypair = that.nacl.crypto_box_seed_keypair(seed);
           resolve({
@@ -542,6 +858,26 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         that.crypto.getRandomValues(nonce);
         return $q.when(nonce);
       };
+      this.util.crypto_hash_sha256 = function (message) {
+        return that.nacl.from_hex(that.sha256(message));
+      };
+
+      this.util.crypto_scrypt = function(password, salt, N, r, p, seedLength) {
+        var deferred = $q.defer();
+        that.nacl.crypto_pwhash_scryptsalsa208sha256_ll(
+          password,
+          salt,
+          N,
+          r,
+          p,
+          seedLength,
+          function (err, seed) {
+            if (err) { deferred.reject(err); return;}
+            deferred.resolve(seed);
+          }
+        );
+        return deferred.promise;
+      };
 
       /**
        * Create key pairs (sign and box), from salt+password (Scrypt), using cordova
@@ -581,6 +917,23 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
         return deferred.promise;
       };
+
+      /**
+       * Create key pairs from a seed
+       */
+      this.seedKeypair = function(seed) {
+        var deferred = $q.defer();
+
+        that.nacl.crypto_sign_seed_keypair(seed, function (err, signKeypair) {
+          if (err) { deferred.reject(err); return;}
+          deferred.resolve({
+            signPk: signKeypair.pk,
+            signSk: signKeypair.sk
+          });
+        });
+        return deferred.promise;
+      };
+
 
       /**
        * Get sign PK from salt+password (Scrypt), using cordova
@@ -757,6 +1110,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         }
         else {
           that.nacl = window.plugins.MiniSodium;
+
           var loadedLib = 0;
           var checkAllLibLoaded = function() {
             loadedLib++;

@@ -64,7 +64,7 @@ function PluginExtensionPointController($scope, PluginService) {
  * Abstract controller (inherited by other controllers)
  */
 function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $timeout,
-                       $ionicHistory, $controller, $window, csPlatform,
+                       $ionicHistory, $controller, $window, csPlatform, CryptoUtils,
                        UIUtils, BMA, csWallet, Device, Modals, csConfig, csHttp
 ) {
   'ngInject';
@@ -86,29 +86,74 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Device Methods
   ////////////////////////////////////////
 
+  function parseWif(data) {
+    return CryptoUtils.readWif(data, {
+        password: function() {
+          return Modals.showPassword({
+            title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
+            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP'
+          })
+          .then(function(password) {
+            UIUtils.loading.show();
+            return password;
+          });
+        }
+      })
+      .catch(function(err) {
+        if (err && err == 'CANCELLED') return;
+        if (err && err == 'BAD_PASSWORD') return parseWif(); // recursive call
+        console.error("[app] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
+        throw err; // rethrow
+      });
+  }
+
   $scope.scanQrCodeAndGo = function() {
     if (!Device.barcode.enable) {
       return;
     }
     Device.barcode.scan()
-      .then(function(uri) {
-        if (!uri) {
-          return;
-        }
-        BMA.uri.parse(uri)
-          .then(function(result){
-            // If pubkey
-            if (result && result.pubkey) {
-              $state.go('app.wot_identity', {
-                pubkey: result.pubkey,
-                node: result.host ? result.host: null}
-              );
-            }
-            else {
-              UIUtils.alert.error(result, 'ERROR.SCAN_UNKNOWN_FORMAT');
-            }
+      .then(function(data) {
+        if (!data) return;
+
+        // Parse as an URI
+        BMA.uri.parse(data)
+          .then(function(res){
+            if (!res || res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
+            // If pubkey: open the identity
+            return $state.go('app.wot_identity', {
+              pubkey: res.pubkey,
+              node: res.host ? res.host: null}
+            );
           })
-          .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
+
+          // Not an URI: try WIF or EWIF format
+          .catch(function(err) {
+            console.debug(err && err.message || err);
+
+            // Try to read as WIF format
+            return parseWif(data)
+              .then(function(keypair) {
+                if (!keypair || !keypair.signPk || !keypair.signSk) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
+                var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+                return csWallet.login({
+                    forceAuth: true,
+                    minData: false,
+                    authData: {
+                      pubkey: pubkey,
+                      keypair: keypair
+                    }
+                  })
+                  .then(function () {
+                    return $state.go('app.view_wallet');
+                  });
+
+                // TODO: if WIF, force redirection to a transfer modal, using a temporary wallet:
+                // var wallet = csWallet.instance('WIF');
+                // return wallet.login(...)
+              })
+              // Unknown format (nor URI, nor WIF/EWIF)
+              .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));
+          });
       })
       .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };

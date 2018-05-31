@@ -87,16 +87,17 @@ angular.module('cesium.device.services', ['cesium.utils.services', 'cesium.setti
         var deferred = $q.defer();
         cordova.plugins.barcodeScanner.scan(
           function(result) {
-            console.debug('[device] bar code result', result);
             if (!result.cancelled) {
+              console.debug('[device] barcode scanner scan: ' + result.text);
               deferred.resolve(result.text); // make sure to convert into String
             }
             else {
+              console.debug('[device] barcode scanner scan: CANCELLED');
               deferred.resolve();
             }
           },
           function(err) {
-            console.error('[device] Error while using barcode scanner -> ' + err);
+            console.error('[device] Error while using barcode scanner: ' + err);
             deferred.reject(err);
           },
           n);

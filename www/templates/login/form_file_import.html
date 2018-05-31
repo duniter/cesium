@@ -12,7 +12,7 @@
   <div ng-if="!formData.file"
        onclick="angular.element(document.querySelector('#loginImportFile'))[0].click();">
     <h2 class="gray" translate>COMMON.CHOOSE_FILE</h2>
-    <input type="file" id="loginImportFile" accept=".yml"
+    <input type="file" id="loginImportFile" accept=".dunikey,.yml"
            style="visibility:hidden; position:absolute;"
            onchange="angular.element(this).scope().fileChanged(event)"/>
   </div>
@@ -36,10 +36,9 @@
       <div class="col">
         <h3>
           <span class="gray" translate>COMMON.PUBKEY</span>
-          <ion-spinner class="ion-spinner-small" icon="android" ng-if="validatingFile"></ion-spinner>
         </h3>
+        <h3 ng-if="validatingFile" translate>LOGIN.FILE.VALIDATING</h3>
         <h3 ng-if="!validatingFile">
-
           <span class="dark animate-show-hide ng-hide" ng-show="formData.file.pubkey">{{formData.file.pubkey}}</span>
           <span class="assertive animate-show-hide ng-hide" ng-show="!formData.file.valid"><br/>
             <i class="ion-close-circled assertive"></i>

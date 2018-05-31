@@ -8,8 +8,11 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                               CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csTx, csCurrency) {
   'ngInject';
 
+  var defaultBMA = BMA;
+
   function factory(id, BMA) {
 
+    BMA = BMA || defaultBMA;
     var
     constants = {
       // @Deprecated
@@ -163,10 +166,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
 
         .then(function() {
-          // store wallet if need
-          if (csSettings.data.useLocalStorage) {
-            store();
-          }
+          // store wallet
+          store();
 
           // Send auth event (if need)
           if (needAuth || isAuth()) {
@@ -532,7 +533,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     loadData = function(options) {
 
       var alertIfUnusedWallet = !csCurrency.data.initPhase && (!csSettings.data.wallet || csSettings.data.wallet.alertIfUnusedWallet) &&
-        !data.loaded && (!options || !options.minData);
+        !data.loaded && (!options || !options.minData || !options.silent);
 
       // Make sure to load once at a time
       if (loadPromise) {
@@ -782,16 +783,16 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     /**
     * Send a new transaction
     */
-    transfer = function(destPub, amount, comments, useRelative) {
+    transfer = function(destPub, amount, comments, useRelative, restPub, block) {
       return $q.all([
           getKeypair(),
           csCurrency.get(),
-          csCurrency.blockchain.current()
+          block && $q.when(block) || csCurrency.blockchain.lastValid()
         ])
         .then(function(res) {
           var keypair = res[0];
           var currency = res[1];
-          var block = res[2];
+          block = res[2];
           if (!BMA.regexp.PUBKEY.test(destPub)){
             throw {message:'ERROR.INVALID_PUBKEY'};
           }
@@ -878,7 +879,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           }
 
           // Send tx
-          return createAndSendTx(currency, block, keypair, destPub, amount, inputs, comments, logs)
+          return createAndSendTx(currency, block, keypair, destPub, amount, inputs, comments, restPub||data.pubkey, logs)
             .then(function(res) {
               data.balance -= amount;
               _.forEach(inputs.sources, function(source) {
@@ -959,6 +960,33 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     /**
+     * Send a WIF wallet
+     */
+    transferWif = function(destPub, amount, comments, useRelative, restPub) {
+      if (!isLogin()) return $q.reject('User not login !');
+
+      if (!restPub || destPub == restPub) {
+        return $q.reject({message: "Could not have same pubkey for 'destPub' and 'restPub'"})
+      }
+
+      // TODO: find the last block in sources, to avoid error causing by fork
+      var lastSourcesBlock;
+      console.log("TODO: get last sources block, to avoid using current block as TX reference (bad idea, because of network fork)");
+      //data.sources.forEach(function(src) {
+      //  console.log(src);
+      //});
+
+      return transfer(destPub, amount, comments, useRelative, restPub, lastSourcesBlock)
+        .then(function() {
+          // If more money: transfer all to restPub
+          if (data.balance > 0 && restPub) {
+            console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,6)));
+            return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/);
+          }
+        });
+    },
+
+    /**
      * Create TX doc and send it
      * @param block the current block
      * @param destPub
@@ -967,7 +995,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
      * @param comments
      * @return the hash of the sent TX
      */
-    createAndSendTx = function(currency, block, keypair, destPub, amount, inputs, comments, logs) {
+    createAndSendTx = function(currency, block, keypair, destPub, amount, inputs, comments, restPub, logs) {
 
       // Make sure a TX in compact mode has no more than 100 lines (fix #118)
       // (If more than 100 lines, send to TX to himself first, then its result as sources for the final TX)
@@ -988,7 +1016,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         });
 
         // Send inputs first slice
-        return createAndSendTx(currency, block, keypair, data.pubkey/*to himself*/, firstSlice.amount, firstSlice, undefined/*comment not need*/, logs)
+        return createAndSendTx(currency, block, keypair, data.pubkey/*to himself*/,  firstSlice.amount, firstSlice, undefined/*comment not need*/, data.pubkey/*rest to himself*/, logs)
           .then(function(res) {
             _.forEach(firstSlice.sources, function(source) {
               source.consumed=true;
@@ -1008,7 +1036,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             });
 
             // Send inputs second slice (recursive call)
-            return createAndSendTx(currency, block, keypair, destPub, amount, secondSlice, comments, logs);
+            return createAndSendTx(currency, block, keypair, destPub, amount, secondSlice, comments, restPub, logs);
           });
       }
 
@@ -1055,19 +1083,22 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         rest = inputs.amount - amount;
         outputBase = inputs.maxBase;
       }
-      // Outputs to himself
+      // Outputs to restPub
       while(rest > 0) {
         outputAmount = truncBase(rest, outputBase);
         rest -= outputAmount;
         if (outputAmount > 0) {
           outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
-          tx += outputAmount +':'+outputBase+':SIG('+data.pubkey+')\n';
-          newSources.push({
-            type: 'T',
-            noffset: outputOffset,
-            amount: outputAmount,
-            base: outputBase
-          });
+          tx += outputAmount +':'+outputBase+':SIG('+restPub+')\n';
+          // If source to himself: add new sources
+          if (data.pubkey === restPub) {
+            newSources.push({
+              type: 'T',
+              noffset: outputOffset,
+              amount: outputAmount,
+              base: outputBase
+            });
+          }
           outputOffset++;
         }
         outputBase--;
@@ -1373,7 +1404,59 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return getSaveIDDocument(record)
         .then(function(saveId) {
           var saveIdFile = new Blob([saveId], {type: 'text/plain; charset=utf-8'});
-          FileSaver.saveAs(saveIdFile, 'saveID.txt');
+          FileSaver.saveAs(saveIdFile, 'saveID-{0}.txt'.format(data.pubkey.substring(0,6)));
+        });
+
+    },
+
+    getKeyFileDocument =function(format) {
+
+      var document;
+      switch(format) {
+        case "PubSec" :
+          document = "Type: PubSec\n" +
+            "Version: 1\n" +
+            "pub: " + data.pubkey + "\n" +
+            "sec: " + CryptoUtils.base58.encode(data.keypair.signSk) + "\n";
+          break;
+        case "WIF" :
+          document = "Type: WIF\n" +
+            "Version: 1\n" +
+            "Data: " + CryptoUtils.wif_v1_from_keypair(data.keypair)+ "\n";
+          break;
+        case "EWIF" :
+          document = "Type: EWIF\n" +
+            "Version: 1\n" +
+            "Data: " + CryptoUtils.ewif_v1_from_keypair(data.keypair, "bonjour") + "\n";
+          break;
+        default:
+          return $q.reject("Unknown keyfile format: " + format);
+      }
+
+      if (document) {
+        return $q.resolve(document);
+      }
+    },
+
+    downloadKeyFile = function(format){
+      if (!isAuth()) return $q.reject('user not authenticated');
+
+      return $q.all([
+          csCurrency.get(),
+          getKeyFileDocument(format)
+        ])
+        .then(function(res) {
+          var currency = res[0];
+          var document = res[1];
+          return $translate('ACCOUNT.SECURITY.KEYFILE_FILENAME', {
+              currency: currency.name,
+              pubkey: data.pubkey,
+              format: format,
+            })
+            .then(function(filename){
+              var file = new Blob([document], {type: 'text/plain; charset=utf-8'});
+              FileSaver.saveAs(file, filename);
+            });
         });
 
     },
@@ -1686,6 +1769,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     // init data
     resetData(true);
 
+    // Override default store/restore function,  when not the 'default' wallet
+    if (id !== "default") {
+      store = function(){};
+      restore = function(){
+        return $q.when();
+      };
+    }
+
     return {
       id: id,
       data: data,
@@ -1722,6 +1813,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       getCryptedId: getCryptedId,
       recoverId: recoverId,
       downloadRevocation: downloadRevocation,
+      downloadKeyFile: downloadKeyFile,
       membership: {
         inside: membership(true),
         out: membership(false)

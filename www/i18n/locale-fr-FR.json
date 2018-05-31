@@ -422,7 +422,7 @@
       "DATE" : "Date :",
       "TYPE" : "Type :",
       "SIZE": "Taille :",
-      "VALIDATING": "Validation...",
+      "VALIDATING": "Validation en cours...",
       "HELP": "Format de fichier attendu : <b>.dunikey</b> (type PubSec). D'autres formats sont en cours de développement (EWIF, WIF)."
     }
   },
@@ -518,6 +518,9 @@
       "BTN_RESET": "Réinitialiser",
       "DOWNLOAD_REVOKE": "Sauvegarder mon fichier de révocation",
       "DOWNLOAD_REVOKE_HELP": "Disposer d'un fichier de révocation est important, par exemple en cas de perte de vos identifiants. Il vous permet de <b>sortir ce compte de la toile de confiance</b>, en redevenant ainsi un simple portefeuille.",
+      "GENERATE_KEYFILE": "Générer mon fichier de trousseau...",
+      "GENERATE_KEYFILE_HELP": "Génère un fichier permettant de vous authentifier sans saisir vos identifiants.<br/><b>Attention :</b> ce fichier contiendra votre clef secrète : il est donc très important de le mettre en lieu sûr !",
+      "KEYFILE_FILENAME": "trousseau-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Transformer en compte membre...",
       "MEMBERSHIP_IN_HELP": "Permet de <b>transformer</b> un compte simple portefeuille <b>en compte membre</b>, en envoyant une demande d'adhésion. Utile uniquement si vous n'avez pas déjà une autre compte membre.",
       "SEND_IDENTITY": "Publier son identité...",
@@ -556,7 +559,20 @@
       "SAVE_ID": "Sauvegarder mes identifiants...",
       "SAVE_ID_HELP": "Création d'un fichier de sauvegarde, pour <b>retrouver votre mot de passe</b> (et l'identifiant secret) <b>en cas de d'oubli</b>. Le fichier est <b>sécurisé</b> (chiffré) à l'aide de questions personnelles.",
       "STRONG_LEVEL": "Fort <span class=\"hidden-xs \">(6 questions minimum)</span>",
-      "TITLE": "Compte et sécurité"
+      "TITLE": "Compte et sécurité",
+      "KEYFILE": {
+        "PUBSEC_FORMAT": "Format PubSec.",
+        "PUBSEC_FORMAT_HELP": "Ce format de fichier est compatible notamment avec Cesium et gannonce.",
+        "WIF_FORMAT": "Format WIF",
+        "WIF_FORMAT_HELP": "Ce format permet notamment la génération de portefeuilles papier (Paper Wallet).",
+        "EWIF_FORMAT": "Format EWIF",
+        "EWIF_FORMAT_HELP": "Ce format protège le trousseau par un mot de passe. Il permet notamment la génération de portefeuilles papier (Paper Wallet).",
+        "PASSWORD_POPUP": {
+          "TITLE": "Fichier de trousseau chiffré",
+          "HELP": "Veuillez indiquer le mot de passe:",
+          "PASSWORD_HELP": "Mot de passe"
+        }
+      }
     },
     "FILE_NAME": "{{currency}} - Relevé du compte {{pubkey|formatPubkey}} au {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
@@ -582,9 +598,12 @@
     }
   },
   "ERROR": {
+    "UNKNOWN_URI_FORMAT": "Format d'URI inconnu",
+    "PUBKEY_INVALID_CHECKSUM": "Clé publique invalide (bad checksum).",
     "POPUP_TITLE": "Erreur",
     "UNKNOWN_ERROR": "Erreur inconnue",
     "CRYPTO_UNKNOWN_ERROR": "Votre navigateur ne semble pas compatible avec les fonctionnalités de cryptographie.",
+    "DOWNLOAD_KEYFILE_FAILED": "Echec de le génération du fichier de trousseau.",
     "EQUALS_TO_PSEUDO": "Doit être différent du pseudonyme",
     "EQUALS_TO_SALT": "Doit être différent de l'identifiant secret",
     "FIELD_REQUIRED": "Champ obligatoire.",
@@ -634,6 +653,7 @@
     "INVALID_USER_ID": "Le pseudonyme ne doit contenir ni espace ni caractère spécial ou accentué.",
     "INVALID_COMMENT": "Le champ 'référence' ne doit pas contenir de caractères accentués.",
     "INVALID_PUBKEY": "La clé publique n'a pas le format attendu.",
+    "INVALID_PUBKEY_CHECKSUM": "Somme de contrôle invalide.",
     "IDENTITY_REVOKED": "Cette identité <b>a été révoquée {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). Elle ne peut plus devenir membre.",
     "IDENTITY_PENDING_REVOCATION": "La <b>révocation de cette identité</b> a été demandée et est en attente de traitement. La certification est donc désactivée.",
     "IDENTITY_INVALID_BLOCK_HASH": "Cette demande d'adhésion n'est plus valide (car elle référence un bloc que les nœuds du réseau ont annulé) : cette personne doit renouveler sa demande d'adhésion <b>avant</b> d'être certifiée.",
