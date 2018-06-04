@@ -8,7 +8,7 @@
   <i class="avatar" ng-if=":rebind:!block.empty && block.avatar" style="background-image: url('{{:rebind:block.avatar.src}}')"></i>
 
   <div class="row no-padding" ng-if=":rebind:!block.compacted || !compactMode">
-    <div class="col">
+    <div class="col" style="min-width: 110px; max-width: 130px;">
       <h4 ng-class="{'gray': block.compacted, 'dark': !block.compacted}">
         <i class="ion-clock"></i>
         {{:rebind:block.medianTime|formatDate}}
@@ -28,7 +28,7 @@
       </h4>
     </div>
 
-    <div class="col col-33 positive hidden-md">
+    <div class="col positive hidden-md">
       <h4><i class="ion-person"></i> {{:rebind:block.name||block.uid}}</h4>
     </div>
 
