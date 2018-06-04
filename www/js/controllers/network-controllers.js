@@ -443,7 +443,6 @@ function PeerInfoPopoverController($scope, $q, csSettings, csCurrency, csHttp, B
       // Get node current version
       BMA.node.summary()
         .then(function(res){
-          console.log(res);
           $scope.formData.version = res && res.duniter && res.duniter.version;
           $scope.formData.software = res && res.duniter && res.duniter.software;
         })
