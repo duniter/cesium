@@ -423,7 +423,7 @@
       "TYPE" : "Type :",
       "SIZE": "Taille :",
       "VALIDATING": "Validation en cours...",
-      "HELP": "Format de fichier attendu : <b>.dunikey</b> (type PubSec). D'autres formats sont en cours de développement (EWIF, WIF)."
+      "HELP": "Format de fichier attendu : <b>.yml</b> ou <b>.dunikey</b> (type PubSec, WIF ou EWIF)."
     }
   },
   "AUTH": {
@@ -519,7 +519,7 @@
       "DOWNLOAD_REVOKE": "Sauvegarder mon fichier de révocation",
       "DOWNLOAD_REVOKE_HELP": "Disposer d'un fichier de révocation est important, par exemple en cas de perte de vos identifiants. Il vous permet de <b>sortir ce compte de la toile de confiance</b>, en redevenant ainsi un simple portefeuille.",
       "GENERATE_KEYFILE": "Générer mon fichier de trousseau...",
-      "GENERATE_KEYFILE_HELP": "Génère un fichier permettant de vous authentifier sans saisir vos identifiants.<br/><b>Attention :</b> ce fichier contiendra votre clef secrète : il est donc très important de le mettre en lieu sûr !",
+      "GENERATE_KEYFILE_HELP": "Génère un fichier permettant de vous authentifier sans saisir vos identifiants.<br/><b>Attention :</b> ce fichier contiendra votre trousseau de compte (clefs publique et secrète) ; Il est donc très important de le mettre en lieu sûr !",
       "KEYFILE_FILENAME": "trousseau-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Transformer en compte membre...",
       "MEMBERSHIP_IN_HELP": "Permet de <b>transformer</b> un compte simple portefeuille <b>en compte membre</b>, en envoyant une demande d'adhésion. Utile uniquement si vous n'avez pas déjà une autre compte membre.",
@@ -562,15 +562,18 @@
       "TITLE": "Compte et sécurité",
       "KEYFILE": {
         "PUBSEC_FORMAT": "Format PubSec.",
-        "PUBSEC_FORMAT_HELP": "Ce format de fichier est compatible notamment avec Cesium et gannonce.",
-        "WIF_FORMAT": "Format WIF",
-        "WIF_FORMAT_HELP": "Ce format permet notamment la génération de portefeuilles papier (Paper Wallet).",
-        "EWIF_FORMAT": "Format EWIF",
-        "EWIF_FORMAT_HELP": "Ce format protège le trousseau par un mot de passe. Il permet notamment la génération de portefeuilles papier (Paper Wallet).",
+        "PUBSEC_FORMAT_HELP": "Ce format votre stocke votre trousseau de manière très simple. Il est compatible notamment avec Cesium, ğannonce et Duniter.<br/><b>Attention:</b>Le fichier <b>n'est pas chiffré</b> (la clef secrète y apparait en clair); Veuillez donc le stocker en lieu sûr !",
+        "WIF_FORMAT": "Format WIF (Wallet Import Format) - v1",
+        "WIF_FORMAT_HELP": "Ce format stocke votre votre trousseau, en y intégrant une somme de contrôle pour vérifier l'intégrité du fichier. Il est compatible notamment avec les portefeuilles papier (Duniter paper wallet).<br/><b>Attention:</b>Le fichier <b>n'est pas chiffré</b> (la clef secrète y apparait en clair); Veuillez donc le stocker en lieu sûr !",
+        "EWIF_FORMAT": "Format EWIF (Encrypted Wallet Import Format) - v1",
+        "EWIF_FORMAT_HELP": "Ce format stocke votre trouseau <b>de manière chiffré</b> à partir d'une phrase secrète de votre choix. Il intègre aussi une somme de contrôle pour vérifier l'intégrité du fichier.<br/><b>Attention:</b> Veuillez à toujours vous rappeller de votre phrase secrète !",
         "PASSWORD_POPUP": {
           "TITLE": "Fichier de trousseau chiffré",
-          "HELP": "Veuillez indiquer le mot de passe:",
-          "PASSWORD_HELP": "Mot de passe"
+          "HELP": "Veuillez indiquer la phrase secrète:",
+          "PASSWORD_HELP": "Phrase secrète"
+        },
+        "ERROR": {
+          "BAD_PASSWORD": "Phrase secrète incorrecte"
         }
       }
     },

@@ -135,6 +135,11 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       }
     };
 
+    CryptoAbstractService.prototype.errorCodes = {
+      BAD_PASSWORD: 3001,
+      BAD_CHECKSUM: 3002
+    };
+
     CryptoAbstractService.prototype.async_load_base58 = function(on_ready) {
       var that = this;
       if (Base58 !== null){return on_ready(Base58);}
@@ -235,7 +240,8 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         if (!matches) {
           return $q.reject('Missing [Data] field in file. This is required for WIF or EWIF format');
         }
-        return that.readWif(matches[1], {
+
+        return that.parseWIF_or_EWIF(matches[1], {
             type: type,
             password: options.password
           })
@@ -253,7 +259,64 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       }
     };
 
-    CryptoAbstractService.prototype.readWif_v1 = function(wif_base58) {
+
+    /**
+     *
+     * @param data_base58
+     * @param options
+     * @returns {*}
+     */
+    CryptoAbstractService.prototype.parseWIF_or_EWIF = function(data_base58, options) {
+      var that = this;
+      options = options || {};
+
+      var data_int8 = that.base58.decode(data_base58);
+      if (data_int8.length != that.constants.EWIF.DATA_LENGTH && data_int8.length != that.constants.WIF.DATA_LENGTH) {
+        return $q.reject('Invalid WIF or EWIF format (invalid bytes count).');
+      }
+
+      // Detect the type from the first byte
+      options.type = options.type || (data_int8[0] == 1 && 'WIF') || (data_int8[0] == 2 && 'EWIF');
+
+      // Type: WIF
+      if (options.type == 'WIF') {
+        return that.parseWIF_v1(data_base58);
+      }
+
+      // Type: EWIF
+      if (options.type == 'EWIF') {
+
+        // If not set, resolve password using the given callback
+        if (typeof options.password == "function") {
+          console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
+          options.password = options.password();
+          if (!options.password) {
+            return $q.reject({message: "Invalid callback result for 'options.password()': must return a promise or a string."});
+          }
+        }
+
+        // If password is a promise, get the result then read data
+        if (typeof options.password == "object" && options.password.then) {
+          return options.password.then(function(password) {
+            if (!password) throw 'CANCELLED';
+            return that.parseEWIF_v1(data_base58, password);
+          });
+        }
+
+        // If password is a valid string, read data
+        if (typeof options.password == "string") {
+          return that.parseEWIF_v1(data_base58, options.password);
+        }
+
+        return $q.reject({message: 'Invalid EWIF options.password. Waiting a callback function, a promise or a string.'});
+      }
+
+      // Unknown type
+      return $q.reject({message: 'Invalid WIF or EWIF format: unknown first byte identifier.'});
+    };
+
+
+    CryptoAbstractService.prototype.parseWIF_v1 = function(wif_base58) {
       var that = this,
         wif_int8 = that.util.decode_base58(wif_base58);
 
@@ -281,7 +344,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       return that.seedKeypair(seed);
     };
 
-    CryptoAbstractService.prototype.readEwif_v1 = function(ewif_base58, password) {
+    CryptoAbstractService.prototype.parseEWIF_v1 = function(ewif_base58, password) {
       var that = this,
         ewif_int8 = that.util.decode_base58(ewif_base58);
 
@@ -341,80 +404,19 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           // Check salt
           var expectedSalt = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(keypair.signPk)).slice(0,4);
           if(that.util.encode_base58(salt) !== that.util.encode_base58(expectedSalt)) {
-            throw 'BAD_PASSWORD';
+            throw {ucode: that.errorCodes.BAD_PASSWORD, message: 'ERROR.BAD_PASSWORD'};
           }
 
           // Check checksum
           var expectedChecksum = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(ewif_int8_no_checksum)).slice(0,2);
           if (that.util.encode_base58(checksum) != that.util.encode_base58(expectedChecksum)) {
-            throw {message: "Invalid EWIF format: bad checksum"};
+            throw {ucode: that.errorCodes.BAD_CHECKSUM, message: 'ERROR.BAD_CHECKSUM'};
           }
 
           return keypair;
         });
 
     };
-
-    /**
-     *
-     * @param data_base58
-     * @param options
-     * @returns {*}
-     */
-    CryptoAbstractService.prototype.readWif = function(data_base58, options) {
-      var that = this;
-      options = options || {};
-
-      // Check has password options, if EWIF or autodetect format
-      if ((!options.type || options.type === "EWIF") && !options.password) {
-        $q.reject("Missing options.password or options.passwordCallback");
-      }
-
-      var data_int8 = that.base58.decode(data_base58);
-      if (data_int8.length != that.constants.EWIF.DATA_LENGTH && data_int8.length != that.constants.WIF.DATA_LENGTH) {
-        return $q.reject('Invalid WIF or EWIF format (invalid bytes count).');
-      }
-
-      // Detect the type from the first byte
-      options.type = options.type || (data_int8[0] == 1 && 'WIF') || (data_int8[0] == 2 && 'EWIF');
-
-      // Type: WIF
-      if (options.type == 'WIF') {
-        return that.readWif_v1(data_base58);
-      }
-
-      // Type: EWIF
-      if (options.type == 'EWIF') {
-
-        // If not set, resolve password using the given callback
-        if (typeof options.password == "function") {
-          console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
-          options.password = options.password();
-          if (!options.password) {
-            return $q.reject({message: "Invalid callback result for 'options.password()': must return a promise or a string."});
-          }
-        }
-
-        // If password is a promise, get the result then read data
-        if (typeof options.password == "object" && options.password.then) {
-          return options.password.then(function(password) {
-            if (!password) throw 'CANCELLED';
-            return that.readEwif_v1(data_base58, password);
-          });
-        }
-
-        // If password is a valid string, read data
-        if (typeof options.password == "string") {
-          return that.readEwif_v1(data_base58, options.password);
-        }
-
-        return $q.reject({message: 'Invalid EWIF options.password. Waiting a callback function, a promise or a string.'});
-      }
-
-      // Unknown type
-      return $q.reject({message: 'Invalid WIF or EWIF format: unknown first byte identifier.'});
-    };
-
 
     CryptoAbstractService.prototype.pkChecksum = function(pubkey) {
       var signPk_int8 = this.util.decode_base58(pubkey);
@@ -426,6 +428,70 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
       var seed = new Uint8Array(that.constants.SEED_LENGTH);
       for (var i = 0; i < seed.length; i++) seed[i] = signSk[i];
       return seed;
+    };
+
+    CryptoAbstractService.prototype.generateKeyFileContent = function(keypair, options) {
+      var that = this;
+      options = options || {};
+      options.type = options.type || "PubSec";
+
+      switch(options.type) {
+
+        // PubSec
+        case "PubSec" :
+          return $q.resolve(
+            "Type: PubSec\n" +
+            "Version: 1\n" +
+            "pub: " + that.base58.encode(keypair.signPk) + "\n" +
+            "sec: " + that.base58.encode(keypair.signSk) + "\n");
+
+        // WIF - v1
+        case "WIF" :
+          return that.wif_v1_from_keypair(keypair)
+            .then(function(data) {
+              return "Type: WIF\n" +
+                "Version: 1\n" +
+                "Data: " + data + "\n";
+            });
+
+        // EWIF - v1
+        case "EWIF" :
+
+          if (!options.password) return $q.reject({message: 'Missing EWIF options.password.'});
+
+          // If not set, resolve password using the given callback
+          if (options.password && typeof options.password == "function") {
+            console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
+            options.password = options.password();
+            if (!options.password) {
+              return $q.reject({message: "Invalid callback result for 'options.password()': must return a promise or a string."});
+            }
+          }
+
+          // If password is a promise, get the result then read data
+          if (options.password && typeof options.password == "object" && options.password.then) {
+            return options.password.then(function(password) {
+              if (!password) throw 'CANCELLED';
+              // Recursive call, with the string password in options
+              return that.generateKeyFileContent(keypair, angular.merge({}, options, {password: password}));
+            });
+          }
+
+          // If password is a valid string, read data
+          if (options.password && typeof options.password == "string") {
+            return that.ewif_v1_from_keypair(keypair, options.password)
+              .then(function(data) {
+                return "Type: EWIF\n" +
+                  "Version: 1\n" +
+                  "Data: " + data + "\n";
+              });
+          }
+
+          return $q.reject({message: 'Invalid EWIF options.password. Waiting a callback function, a promise or a string.'});
+
+        default:
+          return $q.reject({message: "Unknown keyfile format: " + options.type});
+      }
     };
 
     CryptoAbstractService.prototype.wif_v1_from_keypair = function(keypair) {
@@ -453,44 +519,47 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
       var seed = that.seed_from_signSk(keypair.signSk);
       if (!seed || seed.byteLength !== that.constants.SEED_LENGTH)
-        throw "Bad see format. Expected {0} bytes".format(that.constants.SEED_LENGTH);
+        return $q.reject({message: "Bad see format. Expected {0} bytes".format(that.constants.SEED_LENGTH)});
 
       // salt
-      var salt = that.nacl.crypto_hash_sha256(that.nacl.crypto_hash_sha256(keypair.signPk)).slice(0,4);
+      var salt = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(keypair.signPk)).slice(0,4);
 
       // scrypt_seed
-      var scrypt_seed = that.util.crypto_scrypt(
+      return that.util.crypto_scrypt(
         that.util.encode_utf8(password),
         salt,
         that.constants.EWIF.SCRYPT_PARAMS.N,
         that.constants.EWIF.SCRYPT_PARAMS.r,
         that.constants.EWIF.SCRYPT_PARAMS.p,
-        64);
-      var derivedhalf1 = scrypt_seed.slice(0,32);
-      var derivedhalf2 = scrypt_seed.slice(32,64);
+        64)
+        .then(function(scrypt_seed) {
+          var derivedhalf1 = scrypt_seed.slice(0,32);
+          var derivedhalf2 = scrypt_seed.slice(32,64);
 
-      //XOR & AES
-      var seed1_xor_derivedhalf1_1 = xor(seed.slice(0,16), derivedhalf1.slice(0,16));
-      var seed2_xor_derivedhalf1_2 = xor(seed.slice(16,32), derivedhalf1.slice(16,32));
+          //XOR & AES
+          var seed1_xor_derivedhalf1_1 = xor(seed.slice(0,16), derivedhalf1.slice(0,16));
+          var seed2_xor_derivedhalf1_2 = xor(seed.slice(16,32), derivedhalf1.slice(16,32));
 
-      var aesEcb = new aesjs.ModeOfOperation.ecb(derivedhalf2);
-      var encryptedhalf1 = aesEcb.encrypt(seed1_xor_derivedhalf1_1);
-      var encryptedhalf2 = aesEcb.encrypt(seed2_xor_derivedhalf1_2);
+          var aesEcb = new aesjs.ModeOfOperation.ecb(derivedhalf2);
+          var encryptedhalf1 = aesEcb.encrypt(seed1_xor_derivedhalf1_1);
+          var encryptedhalf2 = aesEcb.encrypt(seed2_xor_derivedhalf1_2);
 
-      encryptedhalf1 = new Uint8Array(encryptedhalf1);
-      encryptedhalf2 = new Uint8Array(encryptedhalf2);
+          encryptedhalf1 = new Uint8Array(encryptedhalf1);
+          encryptedhalf2 = new Uint8Array(encryptedhalf2);
 
-      // concatenate ewif
-      var ewif_int8 = new Uint8Array(1);
-      ewif_int8[0] = 0x02;
-      ewif_int8 = concat_Uint8Array(ewif_int8,salt);
-      ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf1);
-      ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf2);
+          // concatenate ewif
+          var ewif_int8 = new Uint8Array(1);
+          ewif_int8[0] = 0x02;
+          ewif_int8 = concat_Uint8Array(ewif_int8,salt);
+          ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf1);
+          ewif_int8 = concat_Uint8Array(ewif_int8,encryptedhalf2);
 
-      var checksum = that.nacl.crypto_hash_sha256(that.nacl.crypto_hash_sha256(ewif_int8)).slice(0,2);
-      ewif_int8 = concat_Uint8Array(ewif_int8,checksum);
+          var checksum = that.util.crypto_hash_sha256(that.util.crypto_hash_sha256(ewif_int8)).slice(0,2);
+          ewif_int8 = concat_Uint8Array(ewif_int8,checksum);
 
-      return that.util.encode_base58(ewif_int8);
+          return that.util.encode_base58(ewif_int8);
+      });
+
     };
 
     // Web crypto API - see https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API

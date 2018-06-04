@@ -86,37 +86,44 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Device Methods
   ////////////////////////////////////////
 
-  function parseWif(data) {
-    return CryptoUtils.readWif(data, {
-        password: function() {
-          return Modals.showPassword({
+  function parseWIF(data, options) {
+    options = options || {};
+    options.withSecret = angular.isDefined(options.withSecret) && options.withSecret || true;
+    options.password = function() {
+        return Modals.showPassword({
             title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
-            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP'
+            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
+            error: options.error
           })
           .then(function(password) {
-            UIUtils.loading.show();
+            if (password) UIUtils.loading.show();
             return password;
           });
-        }
-      })
+      };
+
+    return CryptoUtils.parseWIF_or_EWIF(data, options)
       .catch(function(err) {
         if (err && err == 'CANCELLED') return;
-        if (err && err == 'BAD_PASSWORD') return parseWif(); // recursive call
+        if (err && err.ucode == CryptoUtils.errorCodes.BAD_PASSWORD) {
+          // recursive call
+          return parseWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
+        }
         console.error("[app] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
         throw err; // rethrow
       });
   }
 
   $scope.scanQrCodeAndGo = function() {
-    if (!Device.barcode.enable) {
-      return;
-    }
-    Device.barcode.scan()
+
+    if (!Device.barcode.enable) return;
+
+    // Run scan cordova plugin, on device
+    return Device.barcode.scan()
       .then(function(data) {
         if (!data) return;
 
-        // Parse as an URI
-        BMA.uri.parse(data)
+        // Try to parse as an URI
+        return BMA.uri.parse(data)
           .then(function(res){
             if (!res || res.pubkey) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
             // If pubkey: open the identity
@@ -131,15 +138,14 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             console.debug(err && err.message || err);
 
             // Try to read as WIF format
-            return parseWif(data)
+            return parseWIF(data)
               .then(function(keypair) {
-                if (!keypair || !keypair.signPk || !keypair.signSk) throw {message: 'ERROR.SCAN_UNKNOWN_FORMAT'};
-                var pubkey = CryptoUtils.base58.encode(keypair.signPk);
+                if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error
                 return csWallet.login({
                     forceAuth: true,
                     minData: false,
                     authData: {
-                      pubkey: pubkey,
+                      pubkey: CryptoUtils.base58.encode(keypair.signPk),
                       keypair: keypair
                     }
                   })

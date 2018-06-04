@@ -325,10 +325,11 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
     options = options || {};
 
     options.password = options.password || $scope.formData.file.password || function() {
-        $scope.formData.file.password = undefined;
+      $scope.formData.file.password = undefined;
       return Modals.showPassword({
             title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
-            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP'
+            subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
+            error: options.error
           })
           .then(function (password) {
             // Remember password (for validation)
@@ -339,9 +340,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
 
     return CryptoUtils.readKeyFile($scope.formData.file, options)
       .catch(function(err) {
-        if (err && err == 'CANCELLED') return;
-        if (err && err == 'BAD_PASSWORD') {
-          return $scope.readKeyFile($scope.formData.file, options); // Loop (ask the password again)
+        $scope.formData.file.password = undefined;
+        if (err && err.ucode == CryptoUtils.errorCodes.BAD_PASSWORD) {
+          // Recursive call
+          return $scope.readKeyFile($scope.formData.file, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
         }
         throw err;
       });

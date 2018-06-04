@@ -1409,41 +1409,30 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     },
 
-    getKeyFileDocument =function(format) {
 
-      var document;
-      switch(format) {
-        case "PubSec" :
-          document = "Type: PubSec\n" +
-            "Version: 1\n" +
-            "pub: " + data.pubkey + "\n" +
-            "sec: " + CryptoUtils.base58.encode(data.keypair.signSk) + "\n";
-          break;
-        case "WIF" :
-          document = "Type: WIF\n" +
-            "Version: 1\n" +
-            "Data: " + CryptoUtils.wif_v1_from_keypair(data.keypair)+ "\n";
-          break;
-        case "EWIF" :
-          document = "Type: EWIF\n" +
-            "Version: 1\n" +
-            "Data: " + CryptoUtils.ewif_v1_from_keypair(data.keypair, "bonjour") + "\n";
-          break;
-        default:
-          return $q.reject("Unknown keyfile format: " + format);
-      }
-
-      if (document) {
-        return $q.resolve(document);
-      }
-    },
 
     downloadKeyFile = function(format){
       if (!isAuth()) return $q.reject('user not authenticated');
 
       return $q.all([
           csCurrency.get(),
-          getKeyFileDocument(format)
+          CryptoUtils.generateKeyFileContent(data.keypair,
+            {
+              type: format,
+              password: function() {
+                UIUtils.loading.hide();
+                return Modals.showPassword({
+                    title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
+                    subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP'
+                  })
+                  .then(function(password) {
+                    return UIUtils.loading.show(10)
+                      .then(function(){
+                        return password;
+                    });
+                  });
+              }
+          })
         ])
         .then(function(res) {
           var currency = res[0];

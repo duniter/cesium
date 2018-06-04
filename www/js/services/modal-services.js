@@ -146,7 +146,7 @@ angular.module('cesium.modal.services', [])
   };
 })
 
-.factory('Modals', function($rootScope, $translate, $ionicPopup, ModalUtils, UIUtils) {
+.factory('Modals', function($rootScope, $translate, $ionicPopup, $timeout, ModalUtils, UIUtils) {
   'ngInject';
 
   function showTransfer(parameters) {
@@ -235,13 +235,13 @@ angular.module('cesium.modal.services', [])
     };
     scope.submit = function(e) {
       scope.form.$submitted=true;
-      if(!scope.form.$valid || !scope.formData.password) {
-        //don't allow the user to close unless he enters a uid
-        if (e && e.preventDefault) e.preventDefault();
-      } else {
+      if (e && e.preventDefault) e.preventDefault();
+      if(scope.form.$valid && scope.formData.password) {
         options.popup.close(scope.formData.password);
       }
     };
+
+    scope.error = options.error || undefined;
 
     // Choose password popup
     return $translate([options.title, options.subTitle, 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])

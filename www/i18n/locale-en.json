@@ -518,6 +518,9 @@
       "BTN_RESET" : "Reset",
       "DOWNLOAD_REVOKE": "Save a revocation file",
       "DOWNLOAD_REVOKE_HELP" : "Having a revocation file is important, for example in case of loss of identifiers. It allows you to <b>get this account out of the Web Of Trust</b>, thus becoming a simple wallet.",
+      "GENERATE_KEYFILE": "Generate my keychain file ...",
+      "GENERATE_KEYFILE_HELP": "Generate a file allowing you to authenticate without entering your identifiers.<br/><b>Warning:</b> this file will contain your secret key; It is therefore very important to put it in a safe place!",
+      "KEYFILE_FILENAME": "keychain-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Register as member...",
       "MEMBERSHIP_IN_HELP": "Allows you to <b>transform </b> a simple wallet account <b>into a member account</b>, by sending a membership request. Useful only if you do not already have another member account.",
       "SEND_IDENTITY": "Publish identity...",
@@ -556,7 +559,23 @@
       "SAVE_ID": "Save my credentials...",
       "SAVE_ID_HELP": "Creating a backup file, to <b>retrieve your password</b> (and the secret identifier) <b> in case of forgetting</b>. The file is <b>secured</ b> (encrypted) using personal questions.",
       "STRONG_LEVEL": "Strong <span class=\"hidden-xs \">(6 questions minimum)</span>",
-      "TITLE": "Account and security"
+      "TITLE": "Account and security",
+      "KEYFILE": {
+        "PUBSEC_FORMAT": "PubSec format.",
+        "PUBSEC_FORMAT_HELP": "This file format is compatible in particular with Cesium and Gannonce. Your keychain is stored <b>without encryption</b>: anyone with a copy of this file will be able to empty your account.",
+        "WIF_FORMAT": "Wallet Import Format (WIF)",
+        "WIF_FORMAT_HELP": "This format is used in particular by paper wallets. Your keychain is stored <b>without encryption</b>: anyone with a copy of this file will be able to empty your account.",
+        "EWIF_FORMAT": "Encrypted Wallet Import Format (WIF)",
+        "EWIF_FORMAT_HELP": "This format is used in particular by paper wallets. However, <b>the keychain is encrypted</b> from a passphrase of your choice.",
+        "PASSWORD_POPUP": {
+          "TITLE": "Keychain file encrypted",
+          "HELP": "Please enter the passphrase:",
+          "PASSWORD_HELP": "Passphrase"
+        },
+        "ERROR": {
+          "BAD_PASSWORD": "Bad passphrase"
+        }
+      }
     },
     "FILE_NAME": "{{currency}} - Account statement {{pubkey|formatPubkey}} to {{currentTime|formatDateForFile}}.csv",
     "HEADERS": {
@@ -582,9 +601,12 @@
     }
   },
   "ERROR": {
+    "UNKNOWN_URI_FORMAT": "Unknown URI format",
+    "PUBKEY_INVALID_CHECKSUM": "Invalid public key (bad checksum).",
     "POPUP_TITLE": "Error",
     "UNKNOWN_ERROR": "Unknown error",
     "CRYPTO_UNKNOWN_ERROR": "Your browser is not compatible with cryptographic features.",
+    "DOWNLOAD_KEYFILE_FAILED": "Failed to generate the keychain file.",
     "EQUALS_TO_PSEUDO": "Must be different from pseudonym",
     "EQUALS_TO_SALT": "Must be different from secret identifier",
     "FIELD_REQUIRED": "This field is required.",
@@ -634,6 +656,7 @@
     "INVALID_USER_ID": "Field 'pseudonym' must not contains spaces or special characters.",
     "INVALID_COMMENT": "Field 'reference' has a bad format.",
     "INVALID_PUBKEY": "Public key has a bad format.",
+    "INVALID_PUBKEY_CHECKSUM": "Invalid checksum.",
     "IDENTITY_REVOKED": "This identity <b>has been revoked {{revocationTime|formatFromNow}}</b> ({{revocationTime|formatDate}}). It can no longer become a member.",
     "IDENTITY_PENDING_REVOCATION": "The <b>revocation of this identity</b> has been requested and is awaiting processing. Certification is therefore disabled.",
     "IDENTITY_INVALID_BLOCK_HASH": "This membership application is no longer valid (because it references a block that network peers are cancelled): the person must renew its application for membership <b>before</b> being certified.",
