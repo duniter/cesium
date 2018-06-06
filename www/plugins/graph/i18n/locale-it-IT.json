@@ -1,0 +1,113 @@
+{
+   "NETWORK": {
+     "VIEW": {
+       "BTN_GRAPH": "Statistiche"
+     }
+   },
+   "GRAPH": {
+     "COMMON": {
+       "LINEAR_SCALE" : "Scala lineare",
+       "LOGARITHMIC_SCALE" : "Scala logaritmica",
+       "BTN_SHOW_STATS": "Vedere le statistiche",
+       "BTN_SHOW_DETAILED_STATS": "Statistiche dettagliate"
+     },
+     "ACCOUNT": {
+       "TITLE": "Statistiche",
+       "BTN_SHOW_STATS": "Visualizzare le statistiche del conto",
+       "BALANCE_DIVIDER": "Situazione del conto",
+       "BALANCE_TITLE": "Evoluzione del conto {{pubkey|formatPubkey}}",
+       "TX_RECEIVED_LABEL": "Incassi",
+       "TX_SENT_LABEL": "Spese",
+       "TX_ACCUMULATION_LABEL": "Bilancio delle transazioni",
+       "UD_LABEL": "DU",
+       "UD_ACCUMULATION_LABEL": "Bilancio dei DU",
+       "BALANCE_LABEL": "Saldo",
+       "WOT_DIVIDER": "Tela di fiducia",
+       "CERTIFICATION_TITLE": "Numero di certificazioni - {{pubkey|formatPubkey}}",
+       "RECEIVED_CERT_LABEL": "Totale ricevute",
+       "RECEIVED_CERT_DELTA_LABEL": "Variazione ricevute",
+       "GIVEN_CERT_LABEL": "Totale inviate",
+       "GIVEN_CERT_DELTA_LABEL": "Variazione inviate",
+       "INPUT_CHART_TITLE": "Somma dei flussi in entrata, par emittente :",
+       "OUTPUT_CHART_TITLE": "Somma dei flussi in uscita, per destinatario :"
+     },
+     "BLOCKCHAIN": {
+       "TITLE": "Statistiche",
+       "BLOCKS_ISSUERS_DIVIDER": "Analisi della ripartizione del calcolo",
+       "BLOCKS_ISSUERS_HELP": "<b>{{issuerCount|formatInteger}} membri</b> hanno calcolato <b>{{blockCount|formatInteger}} blocchi</b>",
+       "BLOCKS_ISSUERS_TITLE": "Numero di blocchi calcolati a membro",
+       "BLOCKS_ISSUERS_LABEL": "Numero di blocchi",
+       "TX_DIVIDER": "Analisi delle transazioni",
+       "TX_AMOUNT_TITLE": "Volume delle transazioni",
+       "TX_AMOUNT_PUBKEY_TITLE": "Volume delle transazioni calcolato da {{issuer | formatPubkey}}",
+       "TX_AMOUNT_LABEL": "Volume scambiato",
+       "TX_COUNT_TITLE": "Numero di transazioni scritte",
+       "TX_COUNT_LABEL": "Numero di transazioni",
+       "TX_AVG_BY_BLOCK": "Numero medio di transazioni / blocco",
+       "TX_RANGE_DURATION_DIVIDER": "Unità di tempo :",
+       "TX_RANGE_DURATION": {
+         "HOUR": "Ora",
+         "DAY": "Giorno",
+         "MONTH": "Mese"
+       }
+     },
+     "CURRENCY": {
+       "MONETARY_MASS_TITLE": "Evoluzione della massa monetaria",
+       "MONETARY_MASS_LABEL": "Massa monetaria",
+       "MONETARY_MASS_SHARE_LABEL": "Media a membro",
+       "UD_TITLE": "Evoluzione del Dividendo Universale",
+       "MEMBERS_COUNT_TITLE": "Evoluzione del numero di membri",
+       "MEMBERS_COUNT_LABEL": "Numero di membri"
+     },
+     "PEER": {
+       "VIEW": {
+         "BLOCK_COUNT_LABEL": "Numero di blocchi calcolati",
+         "BLOCK_COUNT": "{{count}} blocchi",
+         "NO_BLOCK": "Nessun blocco"
+       }
+     },
+     "DOC_STATS": {
+       "TITLE": "Statistiche di stoccaggio",
+       "USER": {
+         "TITLE": "Numero di documenti legati ad un conto",
+         "USER_PROFILE": "Profili dell'utente",
+         "USER_SETTINGS": "Impostazioni salvate",
+       },
+       "MESSAGE": {
+         "TITLE": "Numero di documenti legati alla conversazione",
+         "MESSAGE_INBOX": "Messaggi in arrivo",
+         "MESSAGE_OUTBOX": "Messaggi inviati salvati",
+         "INVITATION_CERTIFICATION": "Invitazioni da certificare"
+       },
+       "SOCIAL": {
+         "TITLE": "Numero di pagine o gruppi",
+         "PAGE_COMMENT": "Commenti",
+         "PAGE_RECORD": "Pagine",
+         "GROUP_RECORD": "Gruppi",
+       },
+       "OTHER": {
+         "TITLE": "Altri documenti",
+         "HISTORY_DELETE": "Cronologia eliminazione documenti",
+       }
+     },
+     "SYNCHRO": {
+       "TITLE": "Statistiche di sincronizzazioni",
+       "COUNT": {
+         "TITLE": "Volume sincronizzato",
+         "INSERTS": "Inserimenti",
+         "UPDATES": "Aggiornamenti",
+         "DELETES": "Eliminazioni"
+       },
+       "PEER": {
+         "TITLE": "Nodi interrogati",
+         "ES_USER_API": "Nodi dati utenti",
+         "ES_SUBSCRIPTION_API": "Noeuds servizi online"
+       },
+       "PERFORMANCE": {
+         "TITLE": "Prestazioni (performance) di esecuzione",
+         "DURATION": "Tempo di esecuzione (ms)"
+       }
+     }
+   }
+ }
+ 

@@ -1,7 +1,6 @@
 {
    "COMMON": {
      "CATEGORY": "Categoria",
-     "CATEGORY_SELECT_HELP": "Selezionare",
      "CATEGORIES": "Categorie",
      "CATEGORY_SEARCH_HELP": "Ricerca",
      "LAST_MODIFICATION_DATE": "Aggiornato il ",
@@ -50,12 +49,58 @@
        "TITLE": "Chiedere delle certificazioni",
        "HELP": "Selezionare un ricevente"
      },
+     "SEARCH": {
+      "DIVIDER_PROFILE": "Conti",
+      "DIVIDER_PAGE": "Pagine",
+      "DIVIDER_GROUP": "Gruppi"
+    },
      "CONFIRM": {
        "SUGGEST_CERTIFICATIONS": "E’ sicuro(a) di voler <b>suggerire queste certificazioni</b> ?",
        "ASK_CERTIFICATION": " E’ sicuro(a) di voler  <b>chiedere una certificazione</b> ?",
        "ASK_CERTIFICATIONS": " E’ sicuro(a) di voler <b>chiedere una certificazione</b> a questi membri ?"
-     }
+     },
    },
+  "INVITATION": {
+    "TITLE": "Invitazioni",
+    "NO_RESULT": "Nessun invito ricevuto",
+    "BTN_DELETE_ALL": "Cancellare tutti gli inviti",
+    "BTN_DELETE": "Cancellare l'invito",
+    "BTN_NEW_INVITATION": "Nuovo invito",
+    "ASK_CERTIFICATION": "<a href=\"#/app/wot/{{pubkey}}/{{::uid}}\">{{::name||uid}}</a> ti ha chiesto una certificazione",
+    "SUGGESTION_CERTIFICATION": "<a href=\"#/app/wot/{{::pubkey}}/{{::uid}}\">{{::name||uid}}</a> è proposto per ricevere una certificazione",
+    "SUGGESTED_BY": "Suggerimento inviato da by <a class=\"positive\" href=\"#/app/wot/{{::issuer.pubkey}}/{{::issuer.uid}}\">{{::issuer.name||issuer.uid}}</a>",
+    "NOTIFICATIONS": {
+      "TITLE": "Inviti"
+    },
+    "LIST": {
+      "TITLE": "Inviti"
+    },
+    "NEW": {
+      "TITLE": "Nuovo invito",
+      "RECIPIENTS": "A",
+      "RECIPIENTS_HELP": "Riceventi dell'invito",
+      "RECIPIENTS_MODAL_TITLE": "Riceventi",
+      "RECIPIENTS_MODAL_HELP": "Scegliere riceventi:",
+      "SUGGESTION_IDENTITIES": "Suggerimenti di identità da certificare",
+      "SUGGESTION_IDENTITIES_HELP": "Suggerimenti di certificazioni",
+      "SUGGESTION_IDENTITIES_MODAL_TITLE": "Suggerimenti",
+      "SUGGESTION_IDENTITIES_MODAL_HELP": "Scegli tuoi sugerimenti:"
+    },
+    "CONFIRM": {
+      "DELETE_ALL_CONFIRMATION": "Cancellare degli inviti è <b>una operazione irreversibile</b>.<br/><br/><b>Sei sicuro/a</b> di voler proseguire",
+      "SEND_INVITATIONS_TO_CERTIFY": "<b>Sei sicuro/a</b> di voler <b>inviare questo suggerimento di certificazione</b> ?"
+    },
+    "INFO": {
+      "INVITATION_SENT": "Invito inviato"
+    },
+    "ERROR": {
+      "LOAD_INVITATIONS_FAILED": "Errore nel caricare gli inviti",
+      "REMOVE_INVITATION_FAILED": "Errore nel cancellare gli inviti",
+      "REMOVE_ALL_INVITATIONS_FAILED": "Errore nel cancellare inviti",
+      "SEND_INVITATION_FAILED": "Errore nel invio degli inviti",
+      "BAD_INVITATION_FORMAT": "<span class=\"assertive\"><i class=\"ion-close-circled\"></i> Invito illegibile (formatto sconosciuto)</span> - inviato da <a ui-sref=\"app.wot_identity({pubkey: '{{::pubkey}}', uid: '{{::uid}}' })\">{{::name||uid}}</a>"
+    }
+  },
    "COMMENTS": {
      "DIVIDER": "Commenti",
      "SHOW_MORE_COMMENTS": "Mostrare commenti precedenti",
@@ -111,7 +156,8 @@
        "TITLE": "Messaggio",
        "SENDER": "Inviato da",
        "RECIPIENT": "Inviato a",
-       "NO_CONTENT": "Messaggio vuoto"
+       "NO_CONTENT": "Messaggio vuoto",
+       "DELETE": "Cancellare il messaggio"
      },
      "CONFIRM": {
        "REMOVE": "E’ sicuro/a di voler <b>eliminare il messaggio</b>?<br/><br/> Questa operazione è irreversibile.",
@@ -140,27 +186,113 @@
        "RECIPIENT_IS_MANDATORY": "Destinatario obbligatorio"
      }
    },
+   "BLOCKCHAIN": {
+    "LOOKUP": {
+      "SEARCH_HELP": "Numero di blocco, hash...",
+      "POPOVER_FILTER_TITLE": "Filtro",
+      "HEADER_MEDIAN_TIME": "Data / Ora",
+      "HEADER_BLOCK": "Blocco #",
+      "HEADER_ISSUER": "Peer proprietario",
+      "BTN_LAST": "Ultimi blocchi",
+      "DISPLAY_QUERY": "Visualizzare query",
+      "HIDE_QUERY": "Nascondere query",
+      "TX_SEARCH_FILTER": {
+        "MEMBER_FLOWS": "<b class=\"ion-person\"></b> Input/output Membri",
+        "EXISTING_TRANSACTION": "<b class=\"ion-card\"></b> hanno transazioni",
+        "PERIOD": "<b class=\"ion-clock\"></b> Tra <b class=\"gray\">{{params[1]|formatDateShort}}</b> ({{params[1]|formatTime}}) e <b class=\"gray\">{{params[2]|formatDateShort}}</b> ({{params[2]|formatTime}})",
+        "ISSUER": "<b class=\"ion-android-desktop\"></b> Calcolato da {{params[1]|formatPubkey}}",
+        "TX_PUBKEY": "<b class=\"ion-card\"></b> Transazioni legate a  <b class=\"ion-key\"></b> {{params[1]|formatPubkey}}"
+      }
+    },
+    "ERROR": {
+      "SEARCH_BLOCKS_FAILED": "Errore durante la ricerca dei blocchi."
+    }
+  },
+  "GROUP": {
+    "GENERAL_DIVIDER": "Informazioni generali",
+    "LOCATION_DIVIDER": "Indirizzo",
+    "SOCIAL_NETWORKS_DIVIDER": "Presenza sui social e/o sito web",
+    "TECHNICAL_DIVIDER": "Dati tecnici",
+    "CREATED_TIME": "Creato {{creationTime|formatFromNow}}",
+    "NOTIFICATIONS": {
+      "TITLE": "Inviti"
+    },
+    "LOOKUP": {
+      "TITLE": "Gruppi",
+      "SEARCH_HELP": "Nome del grupo, parole chiavi, luogo, etc.",
+      "LAST_RESULTS_LIST": "Nuovi gruppi :",
+      "OPEN_RESULTS_LIST": "Gruppi aperti :",
+      "MANAGED_RESULTS_LIST": "Gruppi chiusi :",
+      "BTN_LAST": "Nuovi gruppi",
+      "BTN_NEW": "Aggiungo un grupo!"
+    },
+    "TYPE": {
+      "TITLE": "Nuovo gruppo",
+      "SELECT_TYPE": "Tipo di gruppo :",
+      "OPEN_GROUP": "Gruppo aperto",
+      "OPEN_GROUP_HELP": "Un gruppo aperto è accessibile da qualsiasi membro della moneta.",
+      "MANAGED_GROUP": "Gruppo amministrato",
+      "MANAGED_GROUP_HELP": "un gruppo amministrato è gestito da amministratori e moderatori, che possono accetare, rifiutare o escludere membri del gruppo.",
+      "ENUM": {
+        "OPEN": "Gruppo aperto",
+        "MANAGED": "Gruppo amministrato"
+      }
+    },
+    "VIEW": {
+      "POPOVER_SHARE_TITLE": "{{title}}",
+      "MENU_TITLE": "Opzioni",
+      "REMOVE_CONFIRMATION" : "Sei sicuro/a di voler chiudere questo gruppo ?<br/><br/>Questa operazione è irreversibile."
+    },
+    "EDIT": {
+      "TITLE": "Gruppo",
+      "TITLE_NEW": "Nuovo gruppo",
+      "RECORD_TITLE": "Titolo",
+      "RECORD_TITLE_HELP": "Titolo",
+      "RECORD_DESCRIPTION": "Descrizione",
+      "RECORD_DESCRIPTION_HELP": "Descrizione"
+    },
+    "ERROR": {
+      "SEARCH_GROUPS_FAILED": "Errore nella ricerca di gruppi",
+      "REMOVE_RECORD_FAILED": "Errore nel chiudere il gruppo"
+    },
+    "INFO": {
+      "RECORD_REMOVED" : "Gruppo eliminato"
+    }
+  },
    "REGISTRY": {
      "CATEGORY": "Attività principale",
      "GENERAL_DIVIDER": "Informazioni di base",
      "LOCATION_DIVIDER": "Indirizzo",
      "SOCIAL_NETWORKS_DIVIDER": "Presenza sui social, sito web",
      "TECHNICAL_DIVIDER": "Dati tecnici",
+     "BTN_SHOW_WOT": "Persone",
+     "BTN_SHOW_WOT_HELP": "Cercare persone",
+     "BTN_SHOW_PAGES": "Pagine",
+     "BTN_SHOW_PAGES_HELP": "Cercare pagine",
      "BTN_NEW": "Aggiungere",
+     "MY_PAGES": "Mie pagine",
+     "NO_PAGE": "Nessuna pagina",
      "SEARCH": {
-         "TITLE": "Annuario dei professionisti",
-         "TITLE_SMALL_DEVICE": "Annuario Pro",
+         "TITLE": "Pagine",
          "SEARCH_HELP": "Che, chi: parrucchiere, Pizza Efisio, ...",
          "BTN_ADD": "Nuovo",
+         "BTN_LAST_RECORDS": "Pagine recenti",
+         "BTN_ADVANCED_SEARCH": "Ricerca avanzata",
          "BTN_OPTIONS": "Ricerca avanzata",
          "TYPE": "Tipo di ente",
-         "LOCATION": "Dove?",
          "LOCATION_HELP": "Città",
-         "LAST_RECORDS": "Ultimi riferimenti:",
-         "RESULTS": "Risultati:"
+         "RESULTS": "Risultati",
+         "RESULT_COUNT_LOCATION": "{{count}} risultato{{count>0?'i':''}}, vicino a {{location}}",
+         "RESULT_COUNT": "{{count}} risultato{{count>0?'i':''}}",
+         "LAST_RECORDS": "Pagine recenti:",
+         "LAST_RECORD_COUNT_LOCATION": "{{count}} pagina{{count>0?'e':''}} recente{{count>0?'i':''}}, vicino a{{location}}",
+         "LAST_RECORD_COUNT": "{{count}} pagina{{count>0?'e':''}} recente{{count>0?'i':''}}",
+         "POPOVER_FILTERS": {
+           "BTN_ADVANCED_SEARCH": "Opzioni avanzate ?"
+         }
      },
      "VIEW": {
-       "TITLE": "Registro",
+       "TITLE": "Annuario",
        "CATEGORY": "Attività principale:",
        "LOCATION": "Indirizzo:",
        "MENU_TITLE": "Impostazioni",
@@ -193,6 +325,10 @@
        "RECORD_PUBKEY": "Chiave pubblica",
        "RECORD_PUBKEY_HELP": "Chiave pubblica per ricevere pagamenti"
      },
+     "WALLET": {
+      "REGISTRY_DIVIDER": "Pagine",
+      "REGISTRY_HELP": "Le pagine sono un elenco dei profesionisti che accettano o favoriscono: negozi, aziende, associazioni, istituti..."
+    },
      "ERROR": {
        "LOAD_CATEGORY_FAILED": "Errore nel caricamento delle attività principali",
        "LOAD_RECORD_FAILED": "Caricamento fallito",
@@ -203,11 +339,13 @@
        "GEO_LOCATION_NOT_FOUND": "Città o CAP inesistente"
      },
      "INFO": {
-       "RECORD_REMOVED" : "Riferimento eliminato con successo. Reference successfully deleted"
+       "RECORD_REMOVED" : "Pagina eliminata con successo.",
+       "RECORD_SAVED": "Pagina salvata"
      }
    },
    "PROFILE": {
      "PROFILE_DIVIDER": "Profilo Cesium+",
+     "PROFILE_DIVIDER_HELP": "Si tratta qui di data esterni, salvati fuori della rete della moneta.",
      "NO_PROFILE_DEFINED": "Nessun profilo Cesium+",
      "BTN_ADD": "Creare mio profilo",
      "BTN_EDIT": "Modificare mio profilo",
@@ -241,7 +379,7 @@
      }
    },
    "LOCATION": {
-     "BTN_GEOLOC_ADDRESS": "Trovare mio indirizzo sulla pianta",
+     "BTN_GEOLOC_ADDRESS": "Trovare mio indirizzo sulla mappa",
      "USE_GEO_POINT": "Geo-localizzare (raccomandato)?",
      "LOADING_LOCATION": "Cercando indirizzo...",
      "LOCATION_DIVIDER": "Posizione",
@@ -250,7 +388,9 @@
      "CITY": "Città",
      "CITY_HELP": "Città, Paese",
      "DISTANCE": "Distanza massimale intorno alla città",
-     "DISTANCE_OPTION": "{{value}} km",
+     "DISTANCE_UNIT": "km",
+     "DISTANCE_OPTION": "{{value}} {{'LOCATION.DISTANCE_UNIT'|translate}}",
+     "SEARCH_HELP": "Città, CAP",
      "MODAL": {
        "TITLE": "Cercare indirizzo",
        "SEARCH_HELP": "Città, Paese",
@@ -258,16 +398,86 @@
        "POSITION": "lat/lon : {{lat}} {{lon}}"
      },
      "ERROR": {
-       "REQUIRED_FOR_LOCATION": "Campo obbligatorio per apparire sulla pianta",
+       "REQUIRED_FOR_LOCATION": "Campo obbligatorio per apparire sulla mappa",
        "INVALID_FOR_LOCATION": "Indirizzo sconosciuto",
        "GEO_LOCATION_FAILED": "Impossibile trovare sua posizione. Utilizzi il bottone di ricerca.",
        "ADDRESS_LOCATION_FAILED": "Indirizzo non trovato"
      }
    },
+   "SUBSCRIPTION": {
+    "SUBSCRIPTION_DIVIDER": "Servizi online",
+    "SUBSCRIPTION_DIVIDER_HELP": "I servizi online offrono servizi addizionali opzionali, delegati ad terzi.",
+    "BTN_ADD": "Aggiungere un servizio",
+    "BTN_EDIT": "Gestire miei servizi",
+    "NO_SUBSCRIPTION": "Nessun servizio utilizzato",
+    "SUBSCRIPTION_COUNT": "Servizi/ Abbonamenti",
+    "EDIT": {
+      "TITLE": "Servizi online",
+      "HELP_TEXT": "Qui si possono gestire gli abbonamenti e/o altri servizi online",
+      "PROVIDER": "Prestatore :"
+    },
+    "TYPE": {
+      "ENUM": {
+        "EMAIL": "Ricevere notifiche per posta elettronica"
+      }
+    },
+    "CONFIRM": {
+      "DELETE_SUBSCRIPTION": "Sei sicuro/a di voler <b>cancellare questo abbonamento</b> ?"
+    },
+    "ERROR": {
+      "LOAD_SUBSCRIPTIONS_FAILED": "Errore nel caricamento dei servizi online",
+      "ADD_SUBSCRIPTION_FAILED": "Errore nel invio dell' abbonamento",
+      "UPDATE_SUBSCRIPTION_FAILED": "Errore nel aggiornamento dell' abbonamento",
+      "DELETE_SUBSCRIPTION_FAILED": "Errore nella cancellazine dell' abbonamento"
+    },
+    "MODAL_EMAIL": {
+      "TITLE" : "Notifiche per posta elettronica",
+      "HELP" : "Riempi questo formulario per <b>essere notificato/a per e-mail</b> degli eventi che avvengono sul tuo conto.<br/>Tuo indizzo mail sarà cifrato e solo il prestatore del servizio lo potrà vedere.",
+      "EMAIL_LABEL" : "Tuo indirizzo mail :",
+      "EMAIL_HELP": "cristiana.leonardi@dominio.com",
+      "FREQUENCY_LABEL": "Frequenza delle notifiche :",
+      "FREQUENCY_DAILY": "Quotidiano",
+      "FREQUENCY_WEEKLY": "Settimanale",
+      "PROVIDER": "Prestatore del servizio :"
+    }
+  },
+  "DOCUMENT": {
+    "HASH": "Hash: ",
+    "LOOKUP": {
+      "TITLE": "Ricerca di documenti",
+      "BTN_ACTIONS": "Azioni",
+      "SEARCH_HELP": "issuer:AAA*, time:1508406169",
+      "LAST_DOCUMENTS": "Ultimi documenti",
+      "SHOW_QUERY": "Visualizzare la richiesta",
+      "HIDE_QUERY": "Nacondere la richiesta",
+      "HEADER_TIME": "Data/Ora",
+      "HEADER_ISSUER": "Emittente",
+      "HEADER_RECIPIENT": "Destinatario",
+      "READ": "Letto",
+      "BTN_REMOVE": "Eliminare questo documento",
+      "POPOVER_ACTIONS": {
+        "TITLE": "Azioni",
+        "REMOVE_ALL": "Eliminare questi documenti..."
+      }
+    },
+    "INFO": {
+      "REMOVED": "Documento eliminato"
+    },
+    "CONFIRM": {
+      "REMOVE": "Sei sicuro/a di voler <b>eliminare questo documento</b> ?",
+      "REMOVE_ALL": "Si sicuro/a di voler <b>eliminare questi documenti</b> ?"
+    },
+    "ERROR": {
+      "LOAD_DOCUMENTS_FAILED": "Errore nella ricerca dei documenti",
+      "REMOVE_FAILED": "Errore nell'eliminazione del documento",
+      "REMOVE_ALL_FAILED": "Errore nell'eliminazione dei documenti"
+    }
+  },
    "ES_SETTINGS": {
      "PLUGIN_NAME": "Cesium+",
      "PLUGIN_NAME_HELP": "Profili di utenti, notifiche, messaggi privati",
-     "ENABLE_MESSAGE_TOGGLE": "Abilitare messaggi?",
+     "ENABLE_TOGGLE": "Abilitare l'estensione ?",
+     "ENABLE_MESSAGE_TOGGLE": "Abilitare i messaggi? privati",
      "ENABLE_SETTINGS_TOGGLE": "Abilitare stoccaggio su dispositivi esterni per le impostazioni?",
      "PEER": "Indirizzo di data peers",
      "POPUP_PEER": {
@@ -290,7 +500,7 @@
    },
    "ES_WALLET": {
      "ERROR": {
-       "RECIPIENT_IS_MANDATORY": "Un ricevente è necessario per il criptaggio."
+       "RECIPIENT_IS_MANDATORY": "Un destinatario è necessario per il criptaggio."
      }
    },
    "EVENT": {
@@ -315,8 +525,12 @@
        "UPDATE_REPLY_COMMENT": "<span ng-class=\"{'gray': !notification.uid, 'positive':notification.uid }\"><i class=\"icon\" ng-class=\"{'ion-person': notification.uid, 'ion-key': !notification.uid}\"></i>&thinsp;{{name||uid||params[1]}}</span> ha modificato sua risposta sul suo commento a proposito del riferimento: <b>{{params[2]}}</b>"
      }
    },
+   "CONFIRM": {
+    "ES_USE_FALLBACK_NODE": "Nodo<b>{{old}}</b> irraggiungibile o indirizzo sbagliato.<br/><br/>Vuoi utilizzare temporaneamente il nodo di dati <b>{{new}}</b> ?"
+  },
    "ERROR": {
-     "ES_MAX_UPLOAD_BODY_SIZE": "Il volume di data da inviare supera il limite imposto dal server. The volume of data to be sent exceeds the limit set by the server.<br/><br/>Suggeriamo di riprovare dopo aver eliminato delle foto, ad esempio."
+    "ES_CONNECTION_ERROR": "Nodo di dati<b>{{server}}</b>  irraggiungibile o indirizzo sbagliato.<br/><br/>Cesium continuerà a funzionare <b>senza l'estensione Cesium+</b> (profili utenti, messaggi privati, mappe e grafici)<br/><br/>Verifica tua connessione o cambia nodo <a class=\"positive\" ng-click=\"doQuickFix('settings')\">impostazioni dell'estensione</a>.",     
+     "ES_MAX_UPLOAD_BODY_SIZE": "Il volume di data da inviare supera il limite imposto dal server.<br/><br/>Suggeriamo di riprovare dopo aver eliminato delle foto, per esempio."
    }
  }
  

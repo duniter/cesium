@@ -1,0 +1,77 @@
+{
+   "MAP": {
+     "COMMON": {
+       "SEARCH_DOTS": "Ricerca...",
+       "BTN_LOCALIZE_ME": "Trovami"
+     },
+     "NETWORK": {
+       "LOOKUP": {
+         "BTN_MAP": "Mappa dei peers",
+         "BTN_MAP_HELP": "Aprire mappa dei peers"
+       },
+       "VIEW": {
+         "TITLE": "Mappa dei peers",
+         "LAYER": {
+           "MEMBER": "Peers membri",
+           "MIRROR": "Peers specchi",
+           "OFFLINE": "Peers offline"
+         }
+       }
+     },
+     "WOT": {
+       "LOOKUP": {
+         "BTN_MAP": "Mappa dei membri",
+         "BTN_MAP_HELP": "Aprire mappa dei membri"
+       },
+       "VIEW": {
+         "TITLE": "Mappa membri",
+         "LAYER": {
+           "MEMBER": "<i class=\"icon ion-person positive\"></i> Membri",
+           "PENDING": "<i class=\"icon ion-clock energized\"></i> Registrazione pendenti",
+           "WALLET": "<i class=\"icon ion-card gray\"></i> Portafogli osservatori"
+         }
+       },
+       "ERROR": {
+         "LOAD_POSITION_FAILED": "Errore nel caricamento delle posizioni."
+       }
+     },
+     "REGISTRY": {
+       "LOOKUP": {
+         "BTN_MAP": "Mappa",
+         "BTN_MAP_HELP": "Aprire la mappa delle pagine pro"
+       },
+       "VIEW": {
+         "TITLE": "Mappa delle pagine pro",
+         "LAYER": {
+           "SHOP": "<i class=\"icon ion-page-shop positive\"></i> Negozi locali",
+           "COMPANY": "<i class=\"icon ion-page-company positive\"></i> Aziende",
+           "ASSOCIATION": "<i class=\"icon ion-page-association energized\"></i> Associazioni",
+           "INSTITUTION": "<i class=\"icon ion-page-institution gray\"></i> Instituti"
+         }
+       }
+     },
+     "PROFILE": {
+       "MARKER_HELP": "<b>Drag and drop</b> questo indicatore per <b>aggiornare<br/>tua posizione</b>, o usa i bottoni <br/>sopra la mappa."
+     },
+     "ERROR": {
+       "LOCALIZE_ME_FAILED": "Impossible trovare tua posizione attuale"
+     },
+     "SETTINGS": {
+       "MAP_DIVIDER": "Mappe",
+       "ENABLE_GOOGLE_API": "Abilitare i servizi Google API ?",
+       "ENABLE_GOOGLE_API_HELP": "Sulla <b>mappa dei membri</b>, ti permette di visualizzare i conti con un indirizzo ma senza geolocalizzazione.",
+       "GOOGLE_API_KEY": "Chiave Google API",
+       "BTN_GOOGLE_API": "Ottenere una chiave",
+       "BTN_GOOGLE_API_WARNING": "necessita un conto Google",
+       "GOOGLE_API_KEY_PLACEHOLDER": "per es. : AIzaqyAgszvWm0tM81x1sMK_ipDHBI7EowLqR7I"
+     },
+     "HELP": {
+       "TIP": {
+         "WOT": "Questa mappa mostra <b>profili che hanno fornito una posizione</b>, che siano conti membri o no.<br/><br/>Solo i profili che hanno attivato l'opzione &quot;apparire sulla mappa&quot; sono stati attivati.",
+         "WOT_BTN_LAYERS": "<b>Filtrare i dati visibili</b>: membri, registrazioni pendenti, portafogli osservatori, etc.",
+         "WOT_BTN_SEARCH": "Puoi <b>cercare</b> per nome, chiave pubblica, o pseudonimo del membro."
+       }
+     }
+   }
+ }
+ 
