@@ -279,7 +279,7 @@
     },
     "node": {
       "host": "g1.duniter.fr",
-      "port": 443
+      "port": 9220
     },
     "fallbackNodes": [{
         "host": "g1.duniter.org",
@@ -292,7 +292,7 @@
     ],
     "plugins":{
       "es": {
-        "enable": true,
+        "enable": false,
         "askEnable": false,
         "host": "localhost",
         "port": 9200,
