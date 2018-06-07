@@ -5,6 +5,7 @@
      "APP_BUILD": "build {{build}}",
      "PUBKEY": "Chiave privata",
      "MEMBER": "Membro",
+     "BLOCK" : "Blocco",
      "BTN_OK": "OK",
      "BTN_YES": "Si",
      "BTN_NO": "No",
@@ -122,7 +123,7 @@
      "TITLE": "Impostazioni",
      "NETWORK_SETTINGS": "Rete",
      "PEER": "Indirizzo peer Duniter",
-     "PEER_CHANGED_TEMPORARY": "Indirizzo usato per un tempo determinato", 
+     "PEER_CHANGED_TEMPORARY": "Indirizzo usato per un tempo determinato",
      "USE_LOCAL_STORAGE": "Abilitare local storage",
      "USE_LOCAL_STORAGE_HELP": "Permette di salvare tue impostazioni",
      "ENABLE_HELPTIP": "Abilitare consigli dinamici",
@@ -167,7 +168,7 @@
        "VERSION": "Versione di formatto",
        "HASH": "Hash calcolato",
        "UNIVERSAL_DIVIDEND_HELP": "Moneta co-prodotta da ciasciun dei {{membersCount}} membri",
-       "EMPTY": "Nessun dati in questo blocco", 
+       "EMPTY": "Nessun dati in questo blocco",
        "POW_MIN": "Difficoltà minimale",
        "POW_MIN_HELP": "Difficoltà imposta nel calcolo del hash",
        "DATA_DIVIDER": "Dati",
@@ -178,7 +179,7 @@
        "LEAVERS_COUNT": "",
        "LEAVERS_COUNT_HELP": "Membri che si sono fatti escludere dalla rete",
        "EXCLUDED_COUNT": "Membri esclusi",
-       "EXCLUDED_COUNT_HELP": "Vecchi membri, esclusi per certificazione non rinnovata o soglia di certificazioni non raggiunta.", 
+       "EXCLUDED_COUNT_HELP": "Vecchi membri, esclusi per certificazione non rinnovata o soglia di certificazioni non raggiunta.",
        "REVOKED_COUNT": "Identità revocate",
        "REVOKED_COUNT_HELP": "Può essere che questi conti non siano più attivi",
        "TX_COUNT": "Transazioni",
@@ -217,7 +218,7 @@
        "MEMBERS_VARIATION": "Variazione da {{duration|formatDuration}} (dall' ultimo UD)",
        "MONEY_DIVIDER": "Moneta",
        "MASS": "Massa monetaria",
-       "SHARE": "Quantità a testa", 
+       "SHARE": "Quantità a testa",
        "UD": "Dividendo universale",
        "C_ACTUAL": "Crescita attuale",
        "MEDIAN_TIME": "Current blockchain time",
@@ -235,7 +236,7 @@
        "SIG_WINDOW": "Periodo massimo prima che una certificazione venga studiata",
        "SIG_VALIDITY": "Durata di vita di una certificazione che è state presa in conto",
        "MS_WINDOW": "Periodo massimo prima che una certificazione pendente sia validata",
-       "MS_VALIDITY": "Durata di vita di un'adesione che è state presa in conto",      
+       "MS_VALIDITY": "Durata di vita di un'adesione che è state presa in conto",
        "STEP_MAX": "Distanza massima tra un nuovo membro e ogni membro referente.",
        "WOT_RULES_DIVIDER": "Regole della Web of Trust",
        "SENTRIES": "Numero di certificazioni (date <b>e</b> ricevute) per diventare membro referente ",
@@ -273,7 +274,7 @@
        }
      },
      "INFO": {
-       "ONLY_SSL_PEERS": "I nodi non-SSL hanno un display semplificato perche Cesium funziona in modalità HTTPS." 
+       "ONLY_SSL_PEERS": "I nodi non-SSL hanno un display semplificato perche Cesium funziona in modalità HTTPS."
      }
    },
    "PEER": {
@@ -294,12 +295,12 @@
        "TITLE": "Peer",
        "OWNER": "Proprietà di ",
        "SHOW_RAW_PEERING": "Vedere il documento di peering",
-      "SHOW_RAW_CURRENT_BLOCK": "Vedere l'utimo blocco (formatto grezzo)",       
-       "LAST_BLOCKS": "Ultimi blocchi",,
+      "SHOW_RAW_CURRENT_BLOCK": "Vedere l'utimo blocco (formatto grezzo)",
+       "LAST_BLOCKS": "Ultimi blocchi",
        "KNOWN_PEERS": "Peers conosciuti :",
        "GENERAL_DIVIDER": "Informazioni generali",
        "ERROR": {
-         "LOADING_TOR_NODE_ERROR": "Impossibile ottenere i dati del peer, periodo di attesa scaduto.", 
+         "LOADING_TOR_NODE_ERROR": "Impossibile ottenere i dati del peer, periodo di attesa scaduto.",
          "LOADING_NODE_ERROR": "Impossibile ottenere i dati del peer"
        }
      }
@@ -307,8 +308,8 @@
    "WOT": {
      "SEARCH_HELP": "Cercare (membro o chiave pubblica)",
      "SEARCH_INIT_PHASE_WARNING": "La ricerca per le certificazioni pendenti <b>può essere lunga</b> durante la fase di pre-certificazione. La preghiamo di attendere...",
-     "REGISTERED_SINCE": "Certificato/a dal", 
-     "REGISTERED_SINCE_BLOCK": "Certificato/a dal blocco #", 
+     "REGISTERED_SINCE": "Certificato/a dal",
+     "REGISTERED_SINCE_BLOCK": "Certificato/a dal blocco #",
      "NO_CERTIFICATION": "Nessuna certificazione valida",
      "NO_GIVEN_CERTIFICATION": "Nessuna certificazione data",
      "NOT_MEMBER_PARENTHESIS": "(non-membro)",
@@ -322,7 +323,7 @@
      "WRITTEN_ON_BLOCK": "Scritta nel blocco #{{block}}",
      "GENERAL_DIVIDER": "Informazioni generali",
      "NOT_MEMBER_ACCOUNT": "Conto non-membro",
-     "NOT_MEMBER_ACCOUNT_HELP": "Questo è un semplice portafoglio osservatore, senza richiesta di certificazione emessa.", 
+     "NOT_MEMBER_ACCOUNT_HELP": "Questo è un semplice portafoglio osservatore, senza richiesta di certificazione emessa.",
      "TECHNICAL_DIVIDER": "Dati tecnici",
      "BTN_CERTIFY": "Certificare",
      "BTN_YES_CERTIFY": "Si, certificare",
@@ -333,14 +334,14 @@
      },
      "LOOKUP": {
        "TITLE": "Annuario",
-       "NEWCOMERS": "Nuovi membri:", 
+       "NEWCOMERS": "Nuovi membri:",
        "NEWCOMERS_COUNT": "{{count}} membri",
-       "PENDING": "Registrazioni pendenti", 
+       "PENDING": "Registrazioni pendenti",
        "PENDING_COUNT": "{{count}} inscrizioni pendenti",
        "REGISTERED": "Registrato {{sigDate | formatFromNow}}",
        "MEMBER_FROM": "Membro dal {{memberDate|formatFromNowShort}}",
-       "BTN_NEWCOMERS": "Ultimi membri", 
-       "BTN_PENDING": "Registrazioni pendenti", 
+       "BTN_NEWCOMERS": "Ultimi membri",
+       "BTN_PENDING": "Registrazioni pendenti",
        "SHOW_MORE": "Vedere di più",
        "SHOW_MORE_COUNT": "(limite attuale di {{limit}})",
        "NO_PENDING": "Nessuna certificazione pendente.",
@@ -353,7 +354,7 @@
        "TITLE": "Ricerca"
      },
      "CERTIFICATIONS": {
-       "TITLE": "{{uid}} - Certificazioni",  
+       "TITLE": "{{uid}} - Certificazioni",
        "SUMMARY": "Certificazioni ricevute",
        "LIST": "Dettagli delle certificazioni ricevute",
        "PENDING_LIST": "Certificazioni pendenti",
@@ -446,17 +447,17 @@
      "ERROR_TX_SENT": "Transazioni inviate",
      "PENDING_TX_RECEIVED": "Transazioni in attesa di recezione",
      "EVENTS": "Eventi",
-     "WAITING_MEMBERSHIP": "Richiesta di certificazione inviata. In attesa di validazione.", 
+     "WAITING_MEMBERSHIP": "Richiesta di certificazione inviata. In attesa di validazione.",
      "WAITING_CERTIFICATIONS": "Hai bisogno di {{needCertificationCount}} certificazione(i) per diventare membro.",
      "WILL_MISSING_CERTIFICATIONS": "Mancherai a breve <b>di certificazioni</b> (occorrono almeno {{willNeedCertificationCount}} altre certificazioni)",
      "WILL_NEED_RENEW_MEMBERSHIP": "Tua certificazione <b>scaderà{{membershipExpiresIn|formatDurationTo}}</b>. Ricordati di <a ng-click=\"doQuickFix('renew')\">rinnovarla</a> prima.",
      "NEED_RENEW_MEMBERSHIP": "You are no longer a member because your membership <b>has expired</b>. Remember to <a ng-click=\"doQuickFix('renew')\">renew your membership</a>.",
-     "NO_WAITING_MEMBERSHIP": "Nessuna domanda di adesione pendente. Se desideri <b>diventare membro</b>, ricordati di <a ng-click=\"doQuickFix('membership')\">inviare tua domanda di adesione</a>.",     
+     "NO_WAITING_MEMBERSHIP": "Nessuna domanda di adesione pendente. Se desideri <b>diventare membro</b>, ricordati di <a ng-click=\"doQuickFix('membership')\">inviare tua domanda di adesione</a>.",
      "CERTIFICATION_COUNT": "Certificazioni ricevute",
      "CERTIFICATION_COUNT_SHORT": "Certificazioni",
      "SIG_STOCK": "Stock di certificazioni da inviare",
      "BTN_RECEIVE_MONEY": "Ricevere",
-     "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Usare un'altra identità..",     
+     "BTN_SELECT_ALTERNATIVES_IDENTITIES": "Usare un'altra identità..",
      "BTN_MEMBERSHIP_IN_DOTS": "Registrati come membro..",
      "BTN_MEMBERSHIP_RENEW": "Rinnovare certificazione",
      "BTN_MEMBERSHIP_RENEW_DOTS": "Rinnovare certificazione ...",
@@ -546,7 +547,7 @@
        "RECOVER_ID": "Ricuperare mia password...",
        "RECOVER_ID_HELP": "Se hai un<b<file di backup dei tuoi credenziali</b>, li puoi trovare rispondendo correttamente alle tue domande personalizzate.",
        "REVOCATION_WITH_FILE" : "Revocare il mio conto membro...",
-      "REVOCATION_WITH_FILE_DESCRIPTION": "Se pensi di aver perso <b>definitivamente tuoi credenziali</b> di conto membro (o che la sicurezza del tuo conto è compromessa), puoi usare <b>il file di revoca</b> del conto <b>per forzare la sua uscita permanente dalla Tela di Fiducia</b>.",       
+      "REVOCATION_WITH_FILE_DESCRIPTION": "Se pensi di aver perso <b>definitivamente tuoi credenziali</b> di conto membro (o che la sicurezza del tuo conto è compromessa), puoi usare <b>il file di revoca</b> del conto <b>per forzare la sua uscita permanente dalla Tela di Fiducia</b>.",
        "REVOCATION_WITH_FILE_HELP": "Se hai <b>definitivamente perso tuoi credenziali (o se la sicurezza del tuo conto è compromessa), puoi usare <b>il file di revoca</b> del conto <b>per uscire dalla Web Of Trust</b>.",
        "REVOCATION_WALLET": "Revocare questo conto subito",
        "REVOCATION_WALLET_HELP": "Richiedere la cancellazione dell'identità <b>revocherà la tua adesione alla tua rete</ b> (con certezza per il pseudonimo e la chiave pubblica associata). Il conto non potrà più produrre il Dividendo Universale.<br/>Nonostante ciò, puoi ancora usare il conto come semplice portafoglio.",
@@ -574,7 +575,7 @@
      "COMMENT_HELP": "Commenti",
      "BTN_SEND": "Inviare",
      "BTN_ADD_COMMENT": "Scrivere un comento ?",
-     "WARN_COMMENT_IS_PUBLIC": "Ti avvertiamo <b>che i commenti sono pubblici</b> (non cifrati).",     
+     "WARN_COMMENT_IS_PUBLIC": "Ti avvertiamo <b>che i commenti sono pubblici</b> (non cifrati).",
      "MODAL": {
        "TITLE": "Bonifico"
      }
@@ -608,7 +609,7 @@
      "LOAD_IDENTITY_FAILED": "Impossibile caricare la tua identità.",
      "LOAD_REQUIREMENTS_FAILED": "Impossibile caricare i prerequisiti dell'identità.",
      "SEND_MEMBERSHIP_IN_FAILED": "Ingresso nella WOT fallito.",
-     "SEND_MEMBERSHIP_OUT_FAILED": "Errore nel invio della revocazione.", 
+     "SEND_MEMBERSHIP_OUT_FAILED": "Errore nel invio della revocazione.",
      "REFRESH_WALLET_DATA": "Impossibile aggiornare il portafoglio.",
      "GET_CURRENCY_PARAMETER": "Impossibile ricuperare i parametri della moneta.",
      "GET_CURRENCY_FAILED": "Impossibile caricare la moneta. Riprovare più tardi.",
@@ -627,7 +628,7 @@
      "NEED_LOGIN_FIRST": "Accedi al tuo conto prima.",
      "AMOUNT_REQUIRED": "Importo necessario.",
      "AMOUNT_NEGATIVE": "Importo negativo non consentito.",
-     "NOT_ENOUGH_CREDIT": "Saldo insufficiente", 
+     "NOT_ENOUGH_CREDIT": "Saldo insufficiente",
      "INVALID_NODE_SUMMARY": "Impossibile comunicare col peer o indirizzo non valido",
      "INVALID_USER_ID": "Il campo del 'pseudonimo' non deve avere spazi vuoti o caratteri speciali.",
      "INVALID_COMMENT": "Il formato del campo 'reference' è errato.",
@@ -638,7 +639,7 @@
      "IDENTITY_EXPIRED": "Questa identità è scaduta: la persona deve fare una nuova domanda di certificazione <b>prima di</b> essere certificata.",
      "IDENTITY_SANDBOX_FULL": "Il nodo Duniter utilizzato da Cesium non puo ricevere altre domande di certificazione per ora, la lista d'attesa è piena.<br/><br/>Riprova più tardi o scegli un'altro peer Duniter (nelle <b>Impostazioni</b>).",
      "IDENTITY_NOT_FOUND": "Identità non trovata",
-     "IDENTITY_TX_FAILED": "Impossibile caricare le operazioni",     
+     "IDENTITY_TX_FAILED": "Impossibile caricare le operazioni",
      "WOT_PENDING_INVALID_BLOCK_HASH": "Adesione non valida.",
      "WALLET_INVALID_BLOCK_HASH": "Tua domanda di certificazione non è più valida (perche si riferisce ad un blocco che è stato eliminato dai peers).<br/>Devi <a ng-click=\"doQuickFix('renew')\">rinnvoare la tua richiesta di adesione alla WOT</a> per risolvere il problema.",
      "WALLET_IDENTITY_EXPIRED": "La pubblicazione della tua identità <b>è scaduta</b>.<br/>Devi <a ng-click=\"doQuickFix('fixIdentity')\">ripubblicare la tua identità</a> per risolvere il problema.",
@@ -684,7 +685,7 @@
      "REVOCATION_SENT": "Revoca dell'identità inviata",
      "REVOCATION_SENT_WAITING_PROCESS": "Cancellazione dell'identità <b>inviata con successo</b>. In attesa di validazione.",
      "FEATURES_NOT_IMPLEMENTED": "Questa funzionalità non è ancora disponibile.<br/><br/>Vuoi contribuire per velocizzarne la disponibilità? ;)",
-     "EMPTY_TX_HISTORY": "Nessuna operazione da esportare",
+     "EMPTY_TX_HISTORY": "Nessuna operazione da esportare"
    },
    "CONFIRM": {
      "POPUP_TITLE": "<b>Conferma</b>",
@@ -717,7 +718,7 @@
    "HELP": {
      "TITLE": "Aiuto online",
      "JOIN": {
-       "SECTION": "Entrare nella rete", 
+       "SECTION": "Entrare nella rete",
        "SALT": "Il tuo identificativo segreto è molto importante. E utilizzato per cryptare tua password che permette poi di calcolare tua <span class=\"text-italic\">chiave pubblica</span> (suo numero) è la chiave privata che ne consenta l'accesso.<br/><b>Ricordati bene di questo identificativo</b>, perche non ti potrà aiutare nessuno se lo perdi.<br/>Tra l'altro, non puo essere cambiato senza dover creare un conto nuovo.<br/><br/>Raccomandiamo che sia abbastanza lungo (8 caratteri almeno) è il più originale possibile. (buona entropia)",
        "PASSWORD": "La password è molto importante, è utilizzata per calcolare tuo numero di conto (tua chiave pubblica) e la chiave privata che ne consento l'accesso.<br/><b>Ricordatila bene</b>, perche non ti potrà aiutare nessuno se lo perdi.<br/>Tra l'altro, non puo essere cambiata senza dover creare un conto nuovo.<br/><br/>Una buona password (preferibilmente) è composta da almeno 8 caratteri, con almeno una maiuscola e un numero.",
        "PSEUDO": "Un pseudonimo è utilizzato quando ti iscrivi come <span class=\"text-italic\">membro</span>. E sempre associato ad un portafoglio (con sua <span class=\"text-italic\">chiave pubblica</span>).<br/>E pubblicato sulla rete perche gli altri membri possino identificarla, certificarla o invarle soldi. <br/> Lo pseudonimo deve essere unico nella rete (tra quelli utilizzati adesso e in passato)."
@@ -726,7 +727,7 @@
        "SECTION": "Accedi",
        "PUBKEY": "Chiave pubblica del conto",
        "PUBKEY_DEF": "La chiave pubblica del portachiavi è generata dai credenziali, ma non corrispode ad un conto già utilizzato.<br/><b>Accertati che tua chiave pubblica corrisponda al tuo conto</b>. Nel caso contrario, sarai conesso/a ad un conto probabilmente mai usato, datto che il rischio di collisione con un conto esistente è molto ridotto.<br/><a href=\"https://en.wikipedia.org/wiki/Elliptic_curve_cryptography\" target=\"_ system\">Saperne di più sulla cryptografia </a> con chiave pubblica.",
-       "METHOD": "Metodi di connessione", 
+       "METHOD": "Metodi di connessione",
        "METHOD_DEF": "Hai diverse opzioni per accedere ad un portafoglio:<br/> - Accedendo con <b>salatura (leggera o sicura)</b> tua password sarà cryptata dal tuo identificativo segreto per scoraggiare tentativi di attachi di 'brute force' (per esempio con passwords conosciute).<br/> - Accedendo con la <b>chiave pubblica</b> ti evita di dover digitare tuoi credenziali che ti saranno chiesti solo quando vorrai fare una operazione col conto.<br/> - Accedendo <b>con un portachiavi</b> che leggerà tue chiave pubbliche e private da un file esterno, senza che tu li debba entrare."
      },
      "GLOSSARY": {
@@ -742,7 +743,7 @@
      },
      "TIP": {
        "MENU_BTN_CURRENCY": "Menu <b>{{'MENU.CURRENCY'|translate}}</b> permette la scoperta dei <b>parametri della moneta</b> e la sua condizione presente.",
-       "CURRENCY_WOT": "Il <b>numero di membri</b> mostra <b>le dimensioni della WoT e la sua evoluzione </b>.", 
+       "CURRENCY_WOT": "Il <b>numero di membri</b> mostra <b>le dimensioni della WoT e la sua evoluzione </b>.",
        "CURRENCY_MASS": "In evidenza qui è <b>l'importo totale</b> attualmente in circolazione e la sua <b> ripartizione media </b> a testa.<br/><br/>Questa cifra permette di avere un'idea <b>del valore di qualsiasi importo</b>, in base a quello <b>hanno gli altri</b> sul loro conto (in media).",
        "CURRENCY_UNIT_RELATIVE": "L'unità usata qui (&ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;) significa che gli importi in {{currency|capitalize}} sono stati divisi dal <b>Dividendo Universale</b> (DU).<br/><br/><small>Questa unità relativa <b>ha senso</b> perche è stabile in contrasto con la massa monetaria che cresce costantemente.</small>",
        "CURRENCY_CHANGE_UNIT": "Questa opzione <b>{{'COMMON.BTN_RELATIVE_UNIT'|translate}}</b> permette di <b>permutare unità</b> per vedere gli importi in <b>{{currency|capitalize}}</b>, non divisi dal Dividendo Universale (piuttosto che in &ldquo;<b>{{'COMMON.UD'|translate}}<sub>{{currency|abbreviate}}</sub></b>&rdquo;).",
@@ -874,5 +875,3 @@
     }
   }
 }
-
- 

@@ -10,7 +10,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     {id:'en-GB', label:'English (UK)'},
     {id:'fr-FR', label:'Français'},
     {id:'nl-NL', label:'Nederlands'},
-    {id:'es-ES', label:'Spanish'}
+    {id:'es-ES', label:'Spanish'},
+    {id:'it-IT', label:'Italiano'}
   ];
   var fallbackLocale = csConfig.fallbackLanguage ? fixLocale(csConfig.fallbackLanguage) : 'en';
 
@@ -21,7 +22,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     // exists in app locales: use it
     if (_.findWhere(locales, {id: locale})) return locale;
 
-    // not exists: reiterate with the root(e.g. 'fr-XX' -> 'fr')
+    // not exists: reiterate with the root (e.g. 'fr-XX' -> 'fr')
     var localeParts = locale.split('-');
     if (localeParts.length > 1) {
       return fixLocale(localeParts[0]);

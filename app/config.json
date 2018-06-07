@@ -27,16 +27,16 @@
     },
     "node": {
       "host": "g1.duniter.org",
-      "port": "443"
+      "port": 443
     },
     "fallbackNodes": [
       {
         "host": "g1.duniter.fr",
-        "port": "443"
+        "port": 443
       },
       {
         "host": "g1.duniter.org",
-        "port": "443"
+        "port": 443
       }
     ],
     "developers": [
@@ -47,15 +47,15 @@
         "enable": true,
         "askEnable": true,
         "host": "g1.data.duniter.fr",
-        "port": "443",
+        "port": 443,
         "fallbackNodes": [
           {
             "host": "g1.data.le-sou.org",
-            "port": "443"
+            "port": 443
           },
           {
             "host": "g1.data.duniter.fr",
-            "port": "443"
+            "port": 443
           }
         ],
         "notifications": {
@@ -97,15 +97,15 @@
     },
     "node": {
       "host": "g1.duniter.fr",
-      "port": "443"
+      "port": 443
     },
     "fallbackNodes": [{
         "host": "g1.duniter.org",
-        "port": "443"
+        "port": 443
       },
       {
         "host": "g1.duniter.fr",
-        "port": "443"
+        "port": 443
       }
     ],
     "plugins":{
@@ -113,15 +113,15 @@
         "enable": true,
         "askEnable": true,
         "host": "g1.data.duniter.fr",
-        "port": "443",
+        "port": 443,
         "fallbackNodes": [
           {
             "host": "g1.data.le-sou.org",
-            "port": "443"
+            "port": 443
           },
           {
             "host": "g1.data.duniter.fr",
-            "port": "443"
+            "port": 443
           }
         ],
         "notifications": {
@@ -163,20 +163,20 @@
     },
     "node": {
       "host": "g1.le-sou.org",
-      "port": "443"
+      "port": 443
     },
     "fallbackNodes": [
       {
         "host": "g1.duniter.org",
-        "port": "443"
+        "port": 443
       },
       {
         "host": "g1.duniter.fr",
-        "port": "443"
+        "port": 443
       },
       {
         "host": "g1.le-sou.org",
-        "port": "443"
+        "port": 443
       }
     ],
     "plugins":{
@@ -184,15 +184,15 @@
         "enable": true,
         "askEnable": true,
         "host": "g1.data.le-sou.org",
-        "port": "443",
+        "port": 443,
         "fallbackNodes": [
           {
             "host": "g1.data.le-sou.org",
-            "port": "443"
+            "port": 443
           },
           {
             "host": "g1.data.duniter.fr",
-            "port": "443"
+            "port": 443
           }
         ],
         "notifications": {
@@ -279,15 +279,15 @@
     },
     "node": {
       "host": "g1.duniter.fr",
-      "port": 9220
+      "port": 443
     },
     "fallbackNodes": [{
         "host": "g1.duniter.org",
-        "port": "443"
+        "port": 443
       },
       {
         "host": "g1.duniter.fr",
-        "port": "443"
+        "port": 443
       }
     ],
     "plugins":{
@@ -300,11 +300,11 @@
         "fallbackNodes": [
           {
             "host": "g1.data.le-sou.org",
-            "port": "443"
+            "port": 443
           },
           {
             "host": "g1.data.duniter.fr",
-            "port": "443"
+            "port": 443
           }
         ],
         "notifications": {
@@ -351,7 +351,7 @@
     },
     "node": {
       "host": "g1.duniter.org",
-      "port": "443"
+      "port": 443
     },
     "plugins":{
       "es": {
