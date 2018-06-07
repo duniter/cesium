@@ -23,10 +23,22 @@ if (rootdir) {
 
         console.log('-----------------------------------------');
         if (fs.existsSync(android_dir) && fs.existsSync(build_dir)) {
+
+          var mkdirp = function(dir) {
+            var parent = path.dirname(dir);
+            if (!fs.existsSync(parent)){
+              mkdirp(parent);
+            }
+            if (!fs.existsSync(dir)){
+              fs.mkdirSync(dir);
+            }
+          };
+
           glob(build_files, null, function(er, files) {
             files.forEach(function(file) {
               console.log(' Copy ' + file + ' to ' + android_dir);
               var dest_file = file.replace(build_dir, android_dir);
+              mkdirp(path.dirname(dest_file));
               fs.createReadStream(file).pipe(fs.createWriteStream(dest_file));
             });
           });

@@ -73,6 +73,12 @@ Install the version that it proposes to you.
 
 - Fill in the installation path of the NDK.
 
+### Install Gradle
+
+- Download [Gradle 4.1](wget https://services.gradle.org/distributions/gradle-4.1-bin.zip)
+
+- Uncompress the archive (e.g in `/opt/gradle`).
+
 ## Android configuration
 
 Android need some configuration, to be able to build Cesium.
@@ -102,6 +108,7 @@ storePassword=YourStorePassword
 keyPassword=YourKeyPassword
 ```
 
+- Open Android Studio, then open the menu `File > Settings...`. Set `Gradle Home` to your fresh Gradle installation directory (e.g. `/opt/gradle`).
 
 ## Generate APK file
 
@@ -123,11 +130,11 @@ Generated APK files should be in the directory `platforms/android/build/outputs/
 
 If you get this error:
 
-  ```
-  Cannot run program "/opt/android-sdk/build-tools/21.1.2/aapt": error=2, No such file or folder
-  ```
+```
+Cannot run program "/opt/android-sdk/build-tools/21.1.2/aapt": error=2, No such file or folder
+```
 
-Install two additional compatibility libraries (workaround found in [this post](http://stackoverflow.com/questions/22701405/aapt-ioexception-error-2-no-such-file-or-directory-why-cant-i-build-my-grad)):                            
+Then install two additional compatibility libraries (workaround found in [this post](http://stackoverflow.com/questions/22701405/aapt-ioexception-error-2-no-such-file-or-directory-why-cant-i-build-my-grad)):                            
 ```bash
 sudo apt-get install lib32stdc++6 lib32z1
 ```
