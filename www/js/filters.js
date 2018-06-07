@@ -2,13 +2,15 @@
 angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalprecht.translate', 'cesium.translations'
 ])
 
-  .factory('filterTranslations', function($rootScope, csPlatform, csSettings, $translate) {
+  .factory('filterTranslations', function($rootScope, csPlatform, csSettings, csCurrency, $translate) {
     'ngInject';
 
     var
       started = false,
       startPromise,
       that = this;
+
+    that.MEDIAN_TIME_OFFSET = 3600 /*G1 default value*/;
 
     // Update some translations, when locale changed
     function onLocaleChange() {
@@ -38,6 +40,12 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
         });
     }
 
+    // Update some translations, when locale changed
+    function onCurrencyChange() {
+      console.debug('[filter] Computing constants from currency parameters');
+      that.MEDIAN_TIME_OFFSET = csCurrency.data.medianTimeOffset || that.MEDIAN_TIME_OFFSET;
+    }
+
     that.ready = function() {
       if (started) return $q.when(data);
       return startPromise || that.start();
@@ -47,9 +55,11 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
       startPromise = csPlatform.ready()
         .then(onLocaleChange)
         .then(function() {
+          onCurrencyChange();
           started = true;
 
           csSettings.api.locale.on.changed($rootScope, onLocaleChange, this);
+          csCurrency.api.data.on.ready($rootScope, onCurrencyChange, this);
         });
       return startPromise;
     };
@@ -199,13 +209,13 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
 
   .filter('formatDate', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
+      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_PATTERN || 'YYYY-MM-DD HH:mm') : '';
     };
   })
 
   .filter('formatDateShort', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
+      return input ? moment.unix(parseInt(input) + filterTranslations.MEDIAN_TIME_OFFSET).local().format(filterTranslations.DATE_SHORT_PATTERN || 'YYYY-MM-DD') : '';
     };
   })
 
@@ -221,15 +231,16 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-  .filter('formatTime', function() {
+  .filter('formatTime', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).local().format('HH:mm') : '';
+      console.log("Format time:", input);
+      return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).local().format('HH:mm') : '';
     };
   })
 
-  .filter('formatFromNow', function() {
+  .filter('formatFromNow', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).fromNow() : '';
+      return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).fromNow() : '';
     };
   })
 
@@ -279,9 +290,9 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     };
   })
 
-  .filter('formatFromNowShort', function() {
+  .filter('formatFromNowShort', function(filterTranslations) {
     return function(input) {
-      return input ? moment.unix(parseInt(input)).fromNow(true) : '';
+      return input ? moment.unix(parseInt(input)+filterTranslations.MEDIAN_TIME_OFFSET).fromNow(true) : '';
     };
   })
 

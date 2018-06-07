@@ -10,7 +10,8 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         // Avoid to many call on well known currencies
         WELL_KNOWN_CURRENCIES: {
           g1: {
-            firstBlockTime: 1488987127
+            firstBlockTime: 1488987127,
+            medianTimeOffset: 3600
           }
         }
       },
@@ -33,6 +34,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       data.cache = {};
       data.node = BMA;
       data.currentUD = null;
+      data.medianTimeOffset = 0;
       started = false;
       startPromise = undefined;
       api.data.raise.reset(data);
@@ -67,6 +69,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         .then(function(res){
           data.name = res.currency;
           data.parameters = res;
+          data.medianTimeOffset = res.avgGenTime * res.medianTimeBlocks / 2;
           return res;
         });
     }
@@ -267,12 +270,12 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
     }
 
     function getLastValidBlock() {
-      if (csSettings.data.wallet.txBlockReferenceCount > 0) {
+      if (csSettings.data.blockValidityWindow > 0) {
         return getCurrent(true)
           .then(function(current) {
-            var number = current.number - csSettings.data.wallet.txBlockReferenceCount;
+            var number = current.number - csSettings.data.blockValidityWindow;
             return (number > 0) ? BMA.blockchain.get(number) : current;
-          })
+          });
       }
       return getCurrent(true);
     }
@@ -299,6 +302,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       get: getData,
       parameters: getDataField('parameters'),
       currentUD: getDataField('currentUD'),
+      medianTimeOffset: getDataField('medianTimeOffset'),
       blockchain: {
         current: getCurrent,
         lastValid: getLastValidBlock

@@ -966,7 +966,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!isLogin()) return $q.reject('User not login !');
 
       if (!restPub || destPub == restPub) {
-        return $q.reject({message: "Could not have same pubkey for 'destPub' and 'restPub'"})
+        return $q.reject({message: "Could not have same pubkey for 'destPub' and 'restPub'"});
       }
 
       // TODO: find the last block in sources, to avoid error causing by fork
