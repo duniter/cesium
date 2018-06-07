@@ -522,7 +522,7 @@
       "GENERATE_KEYFILE_HELP": "Génère un fichier permettant de vous authentifier sans saisir vos identifiants.<br/><b>Attention :</b> ce fichier contiendra votre trousseau de compte (clefs publique et secrète) ; Il est donc très important de le mettre en lieu sûr !",
       "KEYFILE_FILENAME": "trousseau-{{pubkey|formatPubkey}}-{{currency}}-{{format}}.dunikey",
       "MEMBERSHIP_IN": "Transformer en compte membre...",
-      "MEMBERSHIP_IN_HELP": "Permet de <b>transformer</b> un compte simple portefeuille <b>en compte membre</b>, en envoyant une demande d'adhésion. Utile uniquement si vous n'avez pas déjà une autre compte membre.",
+      "MEMBERSHIP_IN_HELP": "Permet de <b>transformer</b> un compte simple portefeuille <b>en compte membre</b>, en envoyant une demande d'adhésion. Utile uniquement si vous n'avez pas déjà un autre compte membre.",
       "SEND_IDENTITY": "Publier son identité...",
       "SEND_IDENTITY_HELP": "Permet d'associer un pseudonyme à ce compte, mais <b>sans faire de demande d'adhésion</b> pour devenir membre. Cette association n'est généralement pas utile, car la validité de cette association de pseudonyme est limitée dans le temps.",
       "HELP_LEVEL": "Pour générer un fichier de sauvegarde de vos identifiants, choisissez <strong> au moins {{nb}} questions :</strong>",
