@@ -69,10 +69,13 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
       if (state.stateParams.comment) {
         parameters.comment = state.stateParams.comment;
       }
+      if (state.stateParams.restPub) {
+        parameters.restPub = state.stateParams.restPub;
+      }
     }
 
     // Make sure wallet is loaded
-    csWallet.login({sources: true})
+    return csWallet.login({sources: true})
 
       // If pubkey, get the uid (+ name, avatar)
       .then(function(data) {
@@ -119,7 +122,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     amount: null,
     comment: null,
     useRelative: csSettings.data.useRelative,
-    useComment: false
+    useComment: false,
+    restPub: null
   };
   $scope.udAmount = null;
   $scope.minAmount = minQuantitativeAmount;
@@ -166,6 +170,9 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     if (parameters.comment) {
       $scope.formData.useComment=true;
       $scope.formData.comment = parameters.comment;
+    }
+    if (parameters.restPub) {
+      $scope.formData.restPub = parameters.restPub;
     }
   };
   // Read default parameters

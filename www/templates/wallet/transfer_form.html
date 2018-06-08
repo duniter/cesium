@@ -118,13 +118,14 @@
                   id="{{commentInputId}}"
                   name="comment"
                   ng-model="formData.comment"
+                  ng-model-options="{ debounce: 650 }"
                   ng-maxlength="255"
                   ng-pattern="commentPattern"
                   ng-focus="hideDigitKeyboard()">
         </textarea>
       </label>
       <div class="form-errors"
-           ng-show="form.$submitted && form.comment.$error"
+           ng-show="form.comment.$error"
            ng-messages="form.comment.$error">
         <div class="form-error" ng-message="maxlength">
           <span translate="ERROR.FIELD_TOO_LONG"></span>
@@ -135,17 +136,17 @@
       </div>
 
       <!-- Warn comment is public -->
-      <div class="item item-icon-left item-text-wrap hidden-xs hidden-sm">
-        <i class="icon ion-ios-information-outline positive"></i>
-        <h4 class="positive" translate>TRANSFER.WARN_COMMENT_IS_PUBLIC</h4>
+      <div class="item item-icon-left item-text-wrap item-no-border hidden-xs hidden-sm">
+        <div class=" animate-fade-in animate-show-hide ng-hide" ng-show="formData.comment && formData.comment.length || form.comment.$invalid">
+          <i class="icon ion-android-alert positive"></i>
+          <h4 class="positive" translate>TRANSFER.WARN_COMMENT_IS_PUBLIC</h4>
+        </div>
       </div>
-      <div class="item item-icon-left item-text-wrap visible-xs visible-sm" ng-if="formData.useComment">
-        <i class="icon ion-ios-information-outline positive"></i>
+      <div class="item item-icon-left item-text-wrap item-no-border visible-xs visible-sm" ng-if="formData.useComment">
+        <i class="icon ion-android-alert positive"></i>
         <h4 class="positive" translate>TRANSFER.WARN_COMMENT_IS_PUBLIC</h4>
       </div>
     </div>
-
-
 
     <div class="padding hidden-xs text-right">
       <button class="button button-clear button-dark ink"
