@@ -84,8 +84,8 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       // Reset events
       csWallet.events.cleanByContext('esWallet');
 
-      // If membership pending, but not enough certifications: suggest to fill user profile
-      if (!data.name && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
+      // If membership pending and not revocated, but not enough certifications: suggest to fill user profile
+      if (!data.name && !data.requirements.revoked && data.requirements.pendingMembership && data.requirements.needCertificationCount > 0) {
         csWallet.events.add({type:'info', message: 'ACCOUNT.EVENT.MEMBER_WITHOUT_PROFILE', context: 'esWallet'});
       }
 

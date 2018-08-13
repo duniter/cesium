@@ -6,7 +6,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer', {
         cache: false,
-        url: "/transfer?amount&udAmount&comment",
+        url: "/transfer?amount&udAmount&comment&restPub&useRest",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -17,7 +17,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey_uid', {
         cache: false,
-        url: "/transfer/:pubkey/:uid?amount&udAmount&comment",
+        url: "/transfer/:pubkey/:uid?amount&udAmount&comment&restPub&useRest",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -28,7 +28,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey', {
         cache: false,
-        url: "/transfer/:pubkey?amount&udAmount&comment",
+        url: "/transfer/:pubkey?amount&udAmount&comment&restPub&useRest",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -72,28 +72,31 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
       if (state.stateParams.restPub) {
         parameters.restPub = state.stateParams.restPub;
       }
+      else if (state.stateParams.useRest) {
+        parameters.useRest = state.stateParams.useRest;
+      }
     }
 
     // Make sure wallet is loaded
-    return csWallet.login({sources: true})
+    csWallet.login({sources: true})
 
       // If pubkey, get the uid (+ name, avatar)
       .then(function(data) {
         $scope.walletData = data;
-        if (parameters.pubkey) {
-          return csWot.extend({pubkey: parameters.pubkey})
-            .then(function(dest) {
-              if (dest && dest.uid) {
-                parameters.uid = dest.name || dest.uid;
-              }
-            });
-        }
+        if (!parameters.pubkey) return;
+        return csWot.extend({pubkey: parameters.pubkey})
+          .then(function(dest) {
+            if (dest && dest.uid) {
+              parameters.uid = dest.name || dest.uid;
+            }
+          });
       })
 
       // Apply parameters, then recompute relative amount
       .then(function() {
         $scope.setParameters(parameters);
         $scope.onUseRelativeChanged();
+        $scope.onAmountChanged();
         UIUtils.loading.hide();
         $scope.loading = false;
         UIUtils.ink({selector: '.modal-transfer .ink'});
@@ -123,7 +126,9 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     comment: null,
     useRelative: csSettings.data.useRelative,
     useComment: false,
-    restPub: null
+    useRest: false,
+    restPub: null,
+    restAmount: null
   };
   $scope.udAmount = null;
   $scope.minAmount = minQuantitativeAmount;
@@ -171,8 +176,16 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.formData.useComment=true;
       $scope.formData.comment = parameters.comment;
     }
-    if (parameters.restPub) {
+    if (parameters.restPub || parameters.useRest) {
+      $scope.restUid = '';
+      $scope.restPub = parameters.restPub;
       $scope.formData.restPub = parameters.restPub;
+      $scope.formData.useRest = true;
+      $scope.$watch('walletData.balance', $scope.onAmountChanged, true);
+      $scope.$watch('formData.amount', $scope.onAmountChanged, true);
+    }
+    else {
+      $scope.formData.useRest = false;
     }
   };
   // Read default parameters
@@ -184,6 +197,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       .then(function(data) {
           $scope.walletData = data;
           $scope.onUseRelativeChanged();
+          $scope.onAmountChanged();
           $scope.loading = false;
           UIUtils.ink({selector: '.modal-transfer .ink'});
         })
@@ -214,6 +228,25 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
   $scope.$watch('formData.useRelative', $scope.onUseRelativeChanged, true);
   $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
+
+  $scope.onAmountChanged = function() {
+    if (!$scope.formData.useRest || !$scope.formData.amount) {
+      $scope.formData.restAmount = undefined;
+      return;
+    }
+    var amount = $scope.formData.amount;
+    if (typeof amount === "string") {
+      amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
+    }
+    if ($scope.formData.useRelative) {
+      $scope.formData.restAmount = csWallet.data.balance - amount * csCurrency.data.currentUD;
+      if ($scope.formData.restAmount < minQuantitativeAmount) {
+        $scope.formData.restAmount = 0;
+      }
+    } else {
+      $scope.formData.restAmount  = csWallet.data.balance - amount * 100;
+    }
+  };
 
   $scope.doTransfer = function() {
     $scope.form.$submitted=true;
@@ -280,7 +313,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
               comment = null;
             }
 
-            return csWallet.transfer($scope.formData.destPub, amount, comment, $scope.formData.useRelative);
+            if ($scope.formData.useRest) {
+              return csWallet.transferAll($scope.formData.destPub, amount, comment, $scope.formData.useRelative, $scope.formData.restPub);
+            }
+            else {
+              return csWallet.transfer($scope.formData.destPub, amount, comment, $scope.formData.useRelative);
+            }
           })
           .then(function() {
             $scope.sending = false;
@@ -325,22 +363,26 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   };
 
   /* -- modals -- */
-  $scope.showWotLookupModal = function() {
+  $scope.showWotLookupModal = function(formDataField) {
+
+    formDataField = formDataField || 'destPub';
+
     // Hide numerical keyboard
     $scope.hideDigitKeyboard(0);
 
     return Modals.showWotLookup()
       .then(function(result){
         if (result) {
-          if (result.uid) {
+          if (formDataField == 'destPub') {
             $scope.destUid = result.uid;
-            $scope.destPub = '';
+            $scope.destPub = result.uid ? '' : result.pubkey;
+            $scope.formData.destPub = result.pubkey;
           }
-          else {
-            $scope.destUid = '';
-            $scope.destPub = result.pubkey;
+          else if (formDataField == 'restPub') {
+            $scope.restUid = result.uid;
+            $scope.restPub = result.uid ? '' : result.pubkey;
+            $scope.formData.restPub = result.pubkey;
           }
-          $scope.formData.destPub = result.pubkey;
         }
       });
   };

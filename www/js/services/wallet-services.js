@@ -888,6 +888,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
               // Add new sources
               if (res && res.sources.length) {
+                //console.log("TODO: detected new source after the TX: ", res.sources);
                 addSources(res.sources);
               }
 
@@ -962,28 +963,33 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     /**
      * Send a WIF wallet
      */
-    transferWif = function(destPub, amount, comments, useRelative, restPub) {
+    transferAll = function(destPub, amount, comments, useRelative, restPub) {
       if (!isLogin()) return $q.reject('User not login !');
 
       if (!restPub || destPub == restPub) {
         return $q.reject({message: "Could not have same pubkey for 'destPub' and 'restPub'"});
       }
 
-      // TODO: find the last block in sources, to avoid error causing by fork
-      var lastSourcesBlock;
-      console.log("TODO: get last sources block, to avoid using current block as TX reference (bad idea, because of network fork)");
-      //data.sources.forEach(function(src) {
-      //  console.log(src);
-      //});
+      return csCurrency.blockchain.lastValid()
+        .then(function(block) {
+          console.debug("[wallet] Using last valid block as TX reference (to avoid network fork): ", block);
 
-      return transfer(destPub, amount, comments, useRelative, restPub, lastSourcesBlock)
-        .then(function() {
-          // If more money: transfer all to restPub
-          if (data.balance > 0 && restPub) {
-            console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,6)));
-            return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/);
-          }
-        });
+          data.sources.forEach(function(src) {
+            console.log(src);
+          });
+
+          return transfer(destPub, amount, comments, useRelative, restPub, block)
+            .then(function() {
+              // If more money: transfer all to restPub
+              if (data.balance > 0 && restPub) {
+                console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,6)));
+                return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/, block);
+              }
+            });
+
+        })
+
+
     },
 
     /**
@@ -1794,6 +1800,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       refreshData: refreshData,
       // operations
       transfer: transfer,
+      transferAll: transferAll,
       self: self,
       revoke: revoke,
       revokeWithFile: revokeWithFile,

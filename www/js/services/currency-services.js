@@ -270,14 +270,15 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
     }
 
     function getLastValidBlock() {
-      if (csSettings.data.blockValidityWindow > 0) {
-        return getCurrent(true)
-          .then(function(current) {
-            var number = current.number - csSettings.data.blockValidityWindow;
-            return (number > 0) ? BMA.blockchain.get(number) : current;
-          });
+      if (csSettings.data.blockValidityWindow <= 0) {
+        return getCurrent(true);
       }
-      return getCurrent(true);
+
+      return getCurrent(true)
+        .then(function(current) {
+          var number = current.number - csSettings.data.blockValidityWindow;
+          return (number > 0) ? BMA.blockchain.block({block: number}) : current;
+        });
     }
 
     // TODO register new block event, to get new UD value

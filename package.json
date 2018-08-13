@@ -26,8 +26,8 @@
   "license": "GPL-3.0",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://git.duniter.org/clients/cesium/cesium/issues",
-    "new": "https://git.duniter.org/clients/cesium/cesium/issues/new"
+    "url": "https://git.duniter.org/clients/cesium-grp/cesium/issues",
+    "new": "https://git.duniter.org/clients/cesium-grp/cesium/issues/new"
   },
   "dependencies": {
     "cordova": "^6.5.0",

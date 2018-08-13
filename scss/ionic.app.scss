@@ -345,10 +345,16 @@ $screen-lg:                       1200px;
 
 @media screen and (min-width: $screen-md) {
   html, body, .scroll, .disable-user-behavior {
-    -webkit-user-selectuser-select: auto !important;
+    -webkit-user-select: auto !important;
     -moz-user-select: auto !important;
     -ms-user-select: auto !important;
     user-select: auto !important;
+    -webkit-touch-callout: default !important;
+    -webkit-tap-highlight-color: $positive;
+    -webkit-user-drag: none !important;
+    touch-action: auto !important;
+    -ms-touch-action: auto !important;
+    -ms-content-zooming: none !important;
   }
 }
 

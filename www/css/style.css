@@ -60,6 +60,9 @@
 #transfer .list .item {
   border-bottom: solid 1px #ccc;
 }
+#transfer .list .item.item-no-border {
+  border-bottom: 0;
+}
 
 #transfer .item.item-icon-right input {
   padding-right: 50px !important;
