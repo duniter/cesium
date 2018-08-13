@@ -333,6 +333,12 @@ angular.module('cesium.wot.services', ['ngApi', 'cesium.bma.services', 'cesium.c
                   return identity;
                 }
                 else {
+                  // FIXME workaround for issue #1304 ?
+                  /*
+                  if (identity.revocationNumber) {
+                    identity.revocationTime = identity.revocationNumber;
+                    return identity;
+                  }*/
                   throw err;
                 }
               });

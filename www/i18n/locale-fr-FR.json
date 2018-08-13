@@ -729,6 +729,7 @@
     "CERTIFY_RULES_TITLE_UID": "Certifier {{uid}}",
     "CERTIFY_RULES": "<b class=\"assertive\">Ne PAS certifier</b> un compte si vous pensez que :<br/><br/><ul><li>1.) il ne correspond pas à une personne <b>physique et vivante</b>.<li>2.) son propriétaire <b>possède un autre compte</b> déjà certifié.<li>3.) son propriétaire viole (volontairement ou non) la règle 1 ou 2 (par exemple en certifiant des comptes factices ou en double).</ul><br/><b>Etes-vous sûr</b> de vouloir néanmoins certifier cette identité ?",
     "TRANSFER": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>",
+    "TRANSFER_ALL": "<b>Récapitulatif du virement</b> :<br/><br/><ul><li> - De : {{from}}</li><li> - A : <b>{{to}}</b></li><li> - Montant : <b>{{amount}} {{unit}}</b></li><li> - Commentaire : <i>{{comment}}</i></li><br/><li> - Reste : <b>{{restAmount}} {{unit}}</b> à <b>{{restTo}}</b></li></ul><br/><b>Etes-vous sûr de vouloir effectuer ce virement ?</b>",
     "MEMBERSHIP_OUT": "Cette opération est <b>irréversible</b>.<br/></br/>Etes-vous sûr de vouloir <b>résilier votre compte membre</b> ?",
     "MEMBERSHIP_OUT_2": "Cette opération est <b>irreversible</b> !<br/><br/>Etes-vous vraiment sûr de vouloir <b>résilier votre adhésion</b> comme membre ?",
     "LOGIN_UNUSED_WALLET_TITLE": "Erreur de saisie ?",

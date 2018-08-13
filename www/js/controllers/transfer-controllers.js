@@ -6,7 +6,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer', {
         cache: false,
-        url: "/transfer?amount&udAmount&comment&restPub&useRest",
+        url: "/transfer?amount&udAmount&comment&restPub&all",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -17,7 +17,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey_uid', {
         cache: false,
-        url: "/transfer/:pubkey/:uid?amount&udAmount&comment&restPub&useRest",
+        url: "/transfer/:pubkey/:uid?amount&udAmount&comment&restPub&all",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -28,7 +28,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
 
       .state('app.new_transfer_pubkey', {
         cache: false,
-        url: "/transfer/:pubkey?amount&udAmount&comment&restPub&useRest",
+        url: "/transfer/:pubkey?amount&udAmount&comment&restPub&all",
         views: {
           'menuContent': {
             templateUrl: "templates/wallet/new_transfer.html",
@@ -72,8 +72,8 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
       if (state.stateParams.restPub) {
         parameters.restPub = state.stateParams.restPub;
       }
-      else if (state.stateParams.useRest) {
-        parameters.useRest = state.stateParams.useRest;
+      else if (state.stateParams.all) {
+        parameters.all = state.stateParams.all;
       }
     }
 
@@ -126,7 +126,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     comment: null,
     useRelative: csSettings.data.useRelative,
     useComment: false,
-    useRest: false,
+    all: false,
     restPub: null,
     restAmount: null
   };
@@ -176,16 +176,16 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       $scope.formData.useComment=true;
       $scope.formData.comment = parameters.comment;
     }
-    if (parameters.restPub || parameters.useRest) {
+    if (parameters.restPub || parameters.all) {
       $scope.restUid = '';
       $scope.restPub = parameters.restPub;
       $scope.formData.restPub = parameters.restPub;
-      $scope.formData.useRest = true;
+      $scope.formData.all = true;
       $scope.$watch('walletData.balance', $scope.onAmountChanged, true);
       $scope.$watch('formData.amount', $scope.onAmountChanged, true);
     }
     else {
-      $scope.formData.useRest = false;
+      $scope.formData.all = false;
     }
   };
   // Read default parameters
@@ -230,7 +230,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   $scope.$watch('walletData.balance', $scope.onUseRelativeChanged, true);
 
   $scope.onAmountChanged = function() {
-    if (!$scope.formData.useRest || !$scope.formData.amount) {
+    if (!$scope.formData.all || !$scope.formData.amount) {
       $scope.formData.restAmount = undefined;
       return;
     }
@@ -313,7 +313,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
               comment = null;
             }
 
-            if ($scope.formData.useRest) {
+            if ($scope.formData.all) {
               return csWallet.transferAll($scope.formData.destPub, amount, comment, $scope.formData.useRelative, $scope.formData.restPub);
             }
             else {
@@ -341,12 +341,14 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   $scope.askTransferConfirm = function() {
     return $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
       .then(function(translations) {
-        return $translate('CONFIRM.TRANSFER', {
+        return $translate($scope.formData.all ? 'CONFIRM.TRANSFER_ALL' : 'CONFIRM.TRANSFER', {
           from: csWallet.data.isMember ? csWallet.data.uid : $filter('formatPubkey')(csWallet.data.pubkey),
-          to: $scope.destUid ? $scope.destUid : $scope.destPub,
+          to: $scope.destUid || $scope.destPub,
           amount: $scope.formData.amount,
           unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.currency),
-          comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment
+          comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment,
+          restAmount: $scope.formData.all && $filter('formatAmount')($scope.formData.restAmount, {useRelative: $scope.formData.useRelative}),
+          restTo: ($scope.restUid || $scope.restPub)
         });
       })
       .then(UIUtils.alert.confirm);

@@ -96,7 +96,7 @@
       <a class="item item-icon-right gray ink"
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal('restPub')"
-         ng-if="formData.useRest && formData.restAmount > 0">
+         ng-if="formData.all && formData.restAmount > 0">
         <span class="gray">
           <i translate>TRANSFER.REST</i>
           <ng-if ng-if="formData.restAmount">(<i ng-bind-html="formData.restAmount|formatAmount:{useRelative: formData.useRelative, currency:currency}"></i>)</ng-if>
@@ -111,7 +111,7 @@
         <i class="gray icon ion-ios-arrow-right"></i>
       </a>
       <div class="form-errors"
-           ng-if="form.$submitted && formData.useRest && !formData.restPub && formData.restAmount">
+           ng-if="form.$submitted && formData.all && !formData.restPub && formData.restAmount &gt; 0">
         <div class="form-error">
           <span translate="ERROR.FIELD_REQUIRED"></span>
         </div>

@@ -523,6 +523,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
               data.sigStock = 0;
               resolve(); // not found
             }
+            /*FIXME: workaround for Duniter issue #1309 */
+            else if (!!err && err.ucode == 1002) {
+              console.warn("[wallet-service] Detecting Duniter issue #1309 ! Applying workaround... ");
+              data.sigStock = 0;
+              resolve(); // not found
+            }
             else {
               reject(err);
             }
