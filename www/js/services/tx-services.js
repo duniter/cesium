@@ -136,9 +136,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           var nowInSec = Math.trunc(new Date().getTime() / 1000); // TODO test to replace using moment().utc().unix()
           fromTime = fromTime || (nowInSec - csSettings.data.walletHistoryTimeSecond);
           var processedTxMap = {};
-          var tx = {
-            pendings: []
-          };
+          var tx = {};
 
           var _reduceTx = function(res){
             _reduceTxAndPush(pubkey, res.history.sent, txHistory, processedTxMap);
@@ -148,6 +146,9 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           };
 
           var jobs = [
+            // get current block
+            csCurrency.blockchain.current(true),
+
             // get pendings history
             BMA.tx.history.pending({pubkey: pubkey})
               .then(_reduceTx)
@@ -214,16 +215,21 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
           // Execute jobs
           $q.all(jobs)
-            .then(function(){
+            .then(function(res){
+              var current = res[0];
+
               // sort by time desc
-              tx.history  = txHistory.concat(udHistory).sort(function(tx1, tx2) {
+              txHistory = txHistory.concat(udHistory).sort(function(tx1, tx2) {
                 return (tx2.time - tx1.time);
               });
-              tx.pendings = txPendings;
+              tx.validating = txHistory.filter(function(tx) {
+                return (tx.block_number > current.number - csSettings.data.blockValidityWindow);
+              });
+              tx.history = (!tx.validating.length) ? txHistory : txHistory.slice(tx.validating.length);
 
+              tx.pendings = txPendings;
               tx.fromTime = fromTime;
               tx.toTime = tx.history.length ? tx.history[0].time /*=max(tx.time)*/: fromTime;
-
 
               resolve(tx);
             })
@@ -280,6 +286,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
 
         var data = {};
         return $q.all([
+
             // Load Sources
             loadSourcesAndBalance(pubkey),
 

@@ -146,6 +146,13 @@
     "BTN_RESET": "Restaurer les valeurs par défaut",
     "EXPERT_MODE": "Activer le mode expert",
     "EXPERT_MODE_HELP": "Permet un affichage plus détaillé",
+    "BLOCK_VALIDITY_WINDOW": "Délai d'incertitude des blocs",
+    "BLOCK_VALIDITY_WINDOW_SHORT": "Délai d'incertitude",
+    "BLOCK_VALIDITY_WINDOW_HELP": "Nombre de blocs à attentre, avant de considérer qu'une information est validée",
+    "BLOCK_VALIDITY_OPTION": {
+      "NONE": "Aucun délai",
+      "N": "{{time | formatDuration}} ({{count}} blocs)"
+    },
     "POPUP_PEER": {
       "TITLE" : "Nœud Duniter",
       "HOST" : "Adresse",
@@ -442,6 +449,7 @@
     "SHOW_ALL_TX": "Afficher tout",
     "TX_FROM_DATE": "(limite actuelle à {{fromTime|formatFromNowShort}})",
     "PENDING_TX": "Transactions en cours de traitement",
+    "VALIDATING_TX": "Transactions en cours de validation",
     "ERROR_TX": "Transactions non executées",
     "ERROR_TX_SENT": "Transactions envoyées en échec",
     "PENDING_TX_RECEIVED": "Transactions en attente de réception",
@@ -595,6 +603,8 @@
     "COMMENT_HELP": "Commentaire",
     "BTN_SEND": "Envoyer",
     "BTN_ADD_COMMENT": "Ajouter un commentaire",
+    "REST": "Reste du compte",
+    "REST_TO": "à",
     "WARN_COMMENT_IS_PUBLIC": "Veuillez noter que <b>les commentaires sont publics</b> (non chiffrés).",
     "MODAL": {
       "TITLE": "Virement"

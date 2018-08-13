@@ -20,8 +20,8 @@ angular.module('cesium.settings.controllers', ['cesium.services', 'cesium.curren
   .controller('SettingsCtrl', SettingsController)
 ;
 
-function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, csHttp,
-  UIUtils, BMA, csSettings, csPlatform, $ionicPopover, Modals) {
+function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $translate, $ionicPopover,
+                            UIUtils, Modals, BMA, csHttp, csCurrency, csSettings, csPlatform) {
   'ngInject';
 
   $scope.formData = angular.copy(csSettings.data);
@@ -61,8 +61,39 @@ function SettingsController($scope, $q, $ionicHistory, $ionicPopup, $timeout, $t
   };
   $scope.keepAuthIdles = _.keys($scope.keepAuthIdleLabels);
 
+  $scope.blockValidityWindowLabels = {
+    0: {
+      labelKey: 'SETTINGS.BLOCK_VALIDITY_OPTION.NONE'
+    },
+    6: {
+      labelKey: 'SETTINGS.BLOCK_VALIDITY_OPTION.N',
+      labelParams: {count: 6, time: undefined /*defined in enter*/}
+    },
+    12: {
+      labelKey: 'SETTINGS.BLOCK_VALIDITY_OPTION.N',
+      labelParams: {count: 12, time: undefined /*defined in enter*/}
+    },
+    24: {
+      labelKey: 'SETTINGS.BLOCK_VALIDITY_OPTION.N',
+      labelParams: {count: 24, time: undefined /*defined in enter*/}
+    }
+  };
+  $scope.blockValidityWindows = _.keys($scope.blockValidityWindowLabels);
+
   $scope.$on('$ionicView.enter', function() {
-    csSettings.ready().then($scope.load);
+    $q.all([
+      csSettings.ready(),
+      csCurrency.parameters()
+        .then(function(parameters) {
+          _.each($scope.blockValidityWindows, function(blockCount) {
+            if (blockCount > 0) {
+              $scope.blockValidityWindowLabels[blockCount].labelParams.time=parameters.avgGenTime * blockCount;
+            }
+          });
+        })
+    ])
+      .then($scope.load)
+    ;
   });
 
   $scope.setPopupForm = function(popupForm) {

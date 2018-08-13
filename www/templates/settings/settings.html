@@ -121,7 +121,7 @@
       <span class="item item-divider" translate>SETTINGS.HISTORY_SETTINGS</span>
 
       <div class="item item-toggle dark">
-        <div class="col col-75 input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
+        <div class="input-label" translate>SETTINGS.DISPLAY_UD_HISTORY</div>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.showUDHistory" >
           <div class="track">
@@ -162,6 +162,19 @@
           </div>
         </label>
       </div>
+
+      <ion-item class="item-input item-select">
+        <div class="input-label">
+          <div class="input-label hidden-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW</div>
+          <div class="input-label visible-xs" translate>SETTINGS.BLOCK_VALIDITY_WINDOW_SHORT</div>
+          <h4 class="gray " ng-bind-html="'SETTINGS.BLOCK_VALIDITY_WINDOW_HELP' | translate"></h4>
+        </div>
+        <label>
+          <select ng-model="formData.blockValidityWindow"
+                  ng-options="i as (blockValidityWindowLabels[i].labelKey | translate:blockValidityWindowLabels[i].labelParams ) for i in blockValidityWindows track by i">
+          </select>
+        </label>
+      </ion-item>
 
       <!-- Allow extension here -->
       <cs-extension-point name="network"></cs-extension-point>

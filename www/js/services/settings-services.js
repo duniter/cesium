@@ -72,6 +72,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
     duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
+    blockValidityWindow: 0,
     helptip: {
       enable: true,
       installDocUrl: "https://duniter.org/en/wiki/duniter/install/",
@@ -92,8 +93,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     wallet: {
       showPubkey: true,
       alertIfUnusedWallet: true,
-      notificationReadTime: 0,
-      txBlockReferenceCount: 6
+      notificationReadTime: 0
     },
     locale: {
       id: fixLocaleWithLog(csConfig.defaultLanguage || $translate.use()) // use config locale if set, or browser default
