@@ -370,23 +370,22 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
   $scope.addListeners = function() {
     if ($scope.listeners.length) return; // already started
 
-
     console.debug("[block] Starting listeners");
     if ($scope.node === BMA) {
-      $scope.listeners.push(
+      $scope.listeners = [
         csCurrency.api.data.on.newBlock($scope, $scope.onBlock)
-      );
+      ];
     }
     else {
-      var wsBlock = $scope.node.websocket.block();
-      wsBlock.on(function(json) {
-        // Skip if WS closed (after leave view - should never happen) or invalid json
-        if (!json) return;
-        var block = new Block(json);
-        block.cleanData(); // Remove unused content (arrays...)
-        $scope.onBlock(block);
-      });
-      $scope.listeners.push(wsBlock.close);
+      $scope.listeners = [
+        $scope.node.websocket.block().onListener(function(json) {
+          // Skip if WS closed (after leave view - should never happen) or invalid json
+          if (!json) return;
+          var block = new Block(json);
+          block.cleanData(); // Remove unused content (arrays...)
+          $scope.onBlock(block);
+        })
+      ];
     }
   };
 

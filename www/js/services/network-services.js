@@ -662,8 +662,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
       },
 
       addListeners = function() {
-        // Listen for new block
-        data.listeners.push(
+        data.listeners = [
+
+          // Listen for new block
           data.bma.websocket.block().onListener(function(block) {
             if (!block || data.loading) return;
             var buid = [block.number, block.hash].join('-');
@@ -681,10 +682,9 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                 }, 2000, false /*invokeApply*/);
               }
             }
-          })
-        );
-        // Listen for new peer
-        data.listeners.push(
+          }),
+
+          // Listen for new peer
           data.bma.websocket.peer().onListener(function(json) {
             if (!json || data.loading) return;
             var newPeers = [];
@@ -700,7 +700,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
                 }
               });
           })
-        );
+        ];
       },
 
       sort = function(options) {
