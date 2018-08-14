@@ -296,7 +296,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
         }
 
         // If password is a promise, get the result then read data
-        if (typeof options.password == "object" && options.password.then) {
+        if (typeof options.password === "object" && options.password.then) {
           return options.password.then(function(password) {
             if (!password) throw 'CANCELLED';
             return that.parseEWIF_v1(data_base58, password);

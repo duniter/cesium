@@ -1,16 +1,20 @@
 <ion-view left-buttons="leftButtons"
-          id="wallet">
+          class="view-wallet-tx-error">
   <ion-nav-title>
     <!-- no title-->
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
-
-    <button class="button button-icon button-clear icon ion-loop visible-xs visible-sm " ng-click="doUpdate()">
-    </button>
+    <cs-extension-point name="nav-buttons"></cs-extension-point>
   </ion-nav-buttons>
 
-  <ion-content scroll="true">
+  <ion-content scroll="true"
+               class="refresher-top-bg"
+               bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
+
+    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+                   on-refresh="doUpdate(true)">
+    </ion-refresher>
 
     <!-- Buttons bar -->
     <div class="hidden-xs hidden-sm padding text-center">
@@ -36,9 +40,10 @@
           </div>
         </span>
 
-        <span class="item" ng-if="!formData.tx.errors.length">
-          <h3 translate>ACCOUNT.NO_TX</h3>
+        <span class="item padding" ng-if="!loading && !hasReceivedTx()">
+            <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
         </span>
+
 
         <div class="item item-pending item-tx item-icon-left"
              ng-repeat="tx in formData.tx.errors | filter: filterReceivedTx"
@@ -55,8 +60,8 @@
           </div>
         </span>
 
-        <span class="item" ng-if="!formData.tx.errors.length">
-          <h3 translate>ACCOUNT.NO_TX</h3>
+        <span class="item padding" ng-if="!loading && !hasSentTx()">
+            <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
         </span>
 
         <div class="item item-pending item-tx item-icon-left"

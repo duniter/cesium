@@ -158,7 +158,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       console.debug('[currency] Received new block [' + block.number + '-' + block.hash + ']');
 
       data.currentBlock = block;
-      data.currentBlock.receivedAt = new Date().getTime() / 1000;
+      data.currentBlock.receivedAt = Math.trunc(new Date().getTime() / 1000);
 
       data.medianTime = block.medianTime;
       data.membersCount = block.membersCount;
@@ -242,15 +242,19 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       return currentBlockField()
 
         .then(function(currentBlock) {
+
+          var now = Math.trunc(new Date().getTime() / 1000);
+
           if (cache) {
-            var now = new Date().getTime() / 1000;
-            if (currentBlock && (currentBlock.receivedAt - now) < 60/*1min*/) {
-              console.debug('[currency] find current block in cache: use it');
+            if (currentBlock && (now - currentBlock.receivedAt) < 60/*1min*/) {
+              console.debug('[currency] Use current block #'+ currentBlock.number +' from cache (age='+ (now - currentBlock.receivedAt) + 's)');
               return currentBlock;
             }
 
-            // TODO : Should never occured if block event listener works !
-            console.warn('[currency] No current block in cache: get it from network');
+            if (!currentBlock) {
+              // Should never occur, if websocket /ws/block works !
+              console.warn('[currency] No current block in cache: get it from network. Websocket [/ws/block] may not be started ?');
+            }
           }
 
           return BMA.blockchain.current()

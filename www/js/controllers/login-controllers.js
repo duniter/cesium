@@ -54,6 +54,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
 
   // modal enter
   $scope.enter = function() {
+    console.log("Will enter !", arguments);
     UIUtils.loading.hide();
     // Ink effect
     UIUtils.ink({selector: '.modal-login .ink'});
@@ -62,6 +63,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
 
   // modal leave
   $scope.leave = function() {
+    console.log("Will hide !", arguments);
     $scope.formData = {};
     $scope.computing = false;
     $scope.pubkey = null;
@@ -134,10 +136,6 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
             return UIUtils.loading.hide(10);
           }
 
-          // TODO: if WIF, force redirection to a transfer modal, using a temporary wallet:
-          // var wallet = csWallet.instance('WIF');
-          // return wallet.login(...)
-
           $scope.pubkeyError = false;
 
           return {
@@ -206,6 +204,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
       }
 
       // Return result then close
+      console.log("Will close login modal !!", res);
       return $scope.closeModal(res);
     });
   };
@@ -329,12 +328,16 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
       return Modals.showPassword({
             title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
             subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
-            error: options.error
+            error: options.error,
+            scope: $scope
           })
           .then(function (password) {
             // Remember password (for validation)
             $scope.formData.file.password = password;
-            return password;
+            // Timeout is need to force popup to be hide
+            return $timeout(function() {
+              return password;
+            }, 150);
           });
       };
 

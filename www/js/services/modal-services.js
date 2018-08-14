@@ -159,14 +159,8 @@ angular.module('cesium.modal.services', [])
 
   function showLogin(parameters) {
     return ModalUtils.show('templates/login/modal_login.html','LoginModalCtrl',
-      parameters, {focusFirstInput: true});
+      parameters, {focusFirstInput: true, backdropClickToClose: false});
   }
-
-  function showAdvancedLogin(parameters) {
-    return ModalUtils.show('templates/login/modal_advanced_login.html','LoginModalCtrl',
-      parameters, {focusFirstInput: true});
-  }
-
 
   function showWotLookup(parameters) {
     return ModalUtils.show('templates/wot/modal_lookup.html','WotLookupModalCtrl',
@@ -268,7 +262,6 @@ angular.module('cesium.modal.services', [])
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
-    showAdvancedLogin: showAdvancedLogin,
     showWotLookup: showWotLookup,
     showNetworkLookup: showNetworkLookup,
     showAbout: showAbout,

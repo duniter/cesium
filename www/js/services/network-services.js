@@ -16,7 +16,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
 
       data = {
         bma: null,
-        websockets: [],
+        listeners: [],
         loading: true,
         peers: [],
         filter: {
@@ -48,7 +48,7 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
 
       resetData = function() {
         data.bma = null;
-        data.websockets = [];
+        data.listeners = [];
         data.peers.splice(0);
         data.filter = {
           member: true,
@@ -654,46 +654,53 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
         api.data.raise.changed(data); // raise event
       },
 
-      startListeningOnSocket = function() {
+      removeListeners = function() {
+        _.forEach(data.listeners, function(remove){
+          remove();
+        });
+        data.listeners = [];
+      },
+
+      addListeners = function() {
         // Listen for new block
-        var wsBlock = data.bma.websocket.block();
-        data.websockets.push(wsBlock);
-        wsBlock.on(function(block) {
-          if (!block || data.loading) return;
-          var buid = [block.number, block.hash].join('-');
-          if (data.knownBlocks.indexOf(buid) === -1) {
-            console.debug('[network] Receiving block: ' + buid.substring(0, 20));
-            data.knownBlocks.push(buid);
-            // If first block: do NOT refresh peers (will be done in start() method)
-            var skipRefreshPeers = data.knownBlocks.length === 1;
-            if (!skipRefreshPeers) {
-              data.loading = true;
-              // We wait 2s when a new block is received, just to wait for network propagation
-              $timeout(function() {
-                console.debug('[network] new block received by WS: will refresh peers');
-                loadPeers();
-              }, 2000, false /*invokeApply*/);
+        data.listeners.push(
+          data.bma.websocket.block().onListener(function(block) {
+            if (!block || data.loading) return;
+            var buid = [block.number, block.hash].join('-');
+            if (data.knownBlocks.indexOf(buid) === -1) {
+              console.debug('[network] Receiving block: ' + buid.substring(0, 20));
+              data.knownBlocks.push(buid);
+              // If first block: do NOT refresh peers (will be done in start() method)
+              var skipRefreshPeers = data.knownBlocks.length === 1;
+              if (!skipRefreshPeers) {
+                data.loading = true;
+                // We wait 2s when a new block is received, just to wait for network propagation
+                $timeout(function() {
+                  console.debug('[network] new block received by WS: will refresh peers');
+                  loadPeers();
+                }, 2000, false /*invokeApply*/);
+              }
             }
-          }
-        });
+          })
+        );
         // Listen for new peer
-        var wsPeer = data.bma.websocket.peer();
-        data.websockets.push(wsPeer);
-        wsPeer.on(function(json) {
-          if (!json || data.loading) return;
-          var newPeers = [];
-          addOrRefreshPeerFromJson(json, newPeers)
-            .then(function(hasUpdates) {
-              if (!hasUpdates) return;
-              if (newPeers.length>0) {
-                flushNewPeersAndSort(newPeers, true);
-              }
-              else {
-                console.debug('[network] [ws] Peers updated received');
-                sortPeers(true);
-              }
-            });
-        });
+        data.listeners.push(
+          data.bma.websocket.peer().onListener(function(json) {
+            if (!json || data.loading) return;
+            var newPeers = [];
+            addOrRefreshPeerFromJson(json, newPeers)
+              .then(function(hasUpdates) {
+                if (!hasUpdates) return;
+                if (newPeers.length>0) {
+                  flushNewPeersAndSort(newPeers, true);
+                }
+                else {
+                  console.debug('[network] [ws] Peers updated received');
+                  sortPeers(true);
+                }
+              });
+          })
+        );
       },
 
       sort = function(options) {
@@ -714,13 +721,13 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
             data.expertMode = angular.isDefined(options.expertMode) ? options.expertMode : data.expertMode;
             data.timeout = angular.isDefined(options.timeout) ? options.timeout : csConfig.timeout;
             console.info('[network] Starting network from [{0}]'.format(bma.server));
-            var now = new Date();
+            var now = new Date().getTime();
 
-            startListeningOnSocket();
+            addListeners();
 
             return loadPeers()
               .then(function(peers){
-                console.debug('[network] Started in '+(new Date().getTime() - now.getTime())+'ms');
+                console.debug('[network] Started in '+(new Date().getTime() - now)+'ms');
                 return peers;
               });
           });
@@ -728,11 +735,8 @@ angular.module('cesium.network.services', ['ngApi', 'cesium.bma.services', 'cesi
 
       close = function() {
         if (data.bma) {
-          console.info('[network] Stopping');
-
-          _.forEach(data.websockets, function(ws){
-            ws.close();
-          });
+          console.info('[network-service] Stopping...');
+          removeListeners();
           resetData();
         }
       },

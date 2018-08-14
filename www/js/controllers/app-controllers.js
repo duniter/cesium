@@ -86,18 +86,22 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   // Device Methods
   ////////////////////////////////////////
 
-  function parseWIF(data, options) {
+  function parseWIF_or_EWIF(data, options) {
     options = options || {};
     options.withSecret = angular.isDefined(options.withSecret) && options.withSecret || true;
     options.password = function() {
         return Modals.showPassword({
             title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
             subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
-            error: options.error
+            error: options.error,
+            scope: $scope
           })
           .then(function(password) {
             if (password) UIUtils.loading.show();
-            return password;
+            // Timeout is need to force popup to be hide
+            return $timeout(function() {
+              return password;
+            }, 150);
           });
       };
 
@@ -106,7 +110,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
         if (err && err == 'CANCELLED') return;
         if (err && err.ucode == CryptoUtils.errorCodes.BAD_PASSWORD) {
           // recursive call
-          return parseWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
+          return parseWIF_or_EWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
         }
         console.error("[app] Unable to parse as WIF or EWIF format: " + (err && err.message || err));
         throw err; // rethrow
@@ -135,12 +139,17 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
           // Not an URI: try WIF or EWIF format
           .catch(function(err) {
-            console.debug(err && err.message || err);
+            console.debug("[app] Scan data is not an URI (get error: " + (err && err.message || err) + "). Trying to decode as a WIF or EWIF format...");
 
             // Try to read as WIF format
-            return parseWIF(data)
+            return parseWIF_or_EWIF(data)
               .then(function(keypair) {
-                if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error
+                if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
+
+                // TODO: Use a temporary wallet ?
+                // var wallet = csWallet.instance('WIF');
+                // return wallet.login(...)
+
                 return csWallet.login({
                     forceAuth: true,
                     minData: false,
@@ -150,12 +159,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
                     }
                   })
                   .then(function () {
-                    return $state.go('app.view_wallet');
+                    // Transfer all wallet
+                    return $state.go('app.new_transfer', {all: true});
                   });
 
-                // TODO: if WIF, force redirection to a transfer modal, using a temporary wallet:
-                // var wallet = csWallet.instance('WIF');
-                // return wallet.login(...)
               })
               // Unknown format (nor URI, nor WIF/EWIF)
               .catch(UIUtils.onError('ERROR.SCAN_UNKNOWN_FORMAT'));

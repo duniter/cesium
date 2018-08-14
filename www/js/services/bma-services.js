@@ -195,25 +195,15 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
     ws = function(path) {
       return function() {
         var sock = that.cache.wsByPath[path];
-        if (!sock) {
+        if (!sock || sock.isClosed()) {
           sock =  csHttp.ws(that.host, that.port, path, that.useSsl);
 
-          // Override close methods (add a usage counter)
-          sock._counter = 1;
-          var inheritedClose = sock.close;
-          sock.close = function() {
-            sock._counter--;
-            if (sock._counter <= 0) {
-              console.debug('[BMA] Closing websocket ['+path+']');
-              inheritedClose();
-              delete that.cache.wsByPath[path];
-            }
+          // When close, remove from cache
+          sock.onclose = function() {
+            delete that.cache.wsByPath[path];
           };
 
           that.cache.wsByPath[path] = sock;
-        }
-        else {
-          sock._counter++;
         }
         return sock;
       };

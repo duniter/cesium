@@ -225,8 +225,28 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
           };
         });
       }
+
       if (callback) self.callbacks.push(callback);
       return _waitOpen(self);
+    }
+
+    function _close(self) {
+      if (self.delegate) {
+        self.delegate.closing = true;
+        console.debug('[http] Closing websocket ['+self.path+']...');
+        self.delegate.close();
+        self.callbacks = [];
+        if (self.onclose) self.onclose();
+      }
+    }
+
+    function _remove(self, callback) {
+      self.callbacks = _.reject(self.callbacks, function(item) {
+        return item === callback;
+      });
+      if (!self.callbacks.length) {
+        _close(self);
+      }
     }
 
     return {
@@ -236,21 +256,27 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
       on: function(callback, params) {
         return _open(this, callback, params);
       },
+      onListener: function(callback, params) {
+        var self = this;
+        _open(self, callback, params);
+        return function() {
+          _remove(self, callback);
+        };
+      },
       send: function(data) {
         var self = this;
         return _waitOpen(self)
           .then(function(){
-            self.delegate.send(data);
+            self.delegate && self.delegate.send(data);
           });
       },
       close: function() {
         var self = this;
-        if (self.delegate) {
-          self.delegate.closing = true;
-          console.debug('[http] Closing websocket ['+self.path+']...');
-          self.delegate.close();
-          self.callbacks = [];
-        }
+        _close(self);
+      },
+      isClosed: function() {
+        var self = this;
+        return !self.delegate || self.delegate.closing;
       }
     };
   }

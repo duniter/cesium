@@ -312,8 +312,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             if (comment && !comment.length) {
               comment = null;
             }
-
-            if ($scope.formData.all) {
+            var hasRest = $scope.formData.all  && $scope.formData.restAmount > 0;
+            if (hasRest) {
               return csWallet.transferAll($scope.formData.destPub, amount, comment, $scope.formData.useRelative, $scope.formData.restPub);
             }
             else {
@@ -338,17 +338,18 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     });
   };
 
-  $scope.askTransferConfirm = function() {
+  $scope.askTransferConfirm = function(confirmationMessage) {
     return $translate(['COMMON.UD', 'COMMON.EMPTY_PARENTHESIS'])
       .then(function(translations) {
-        return $translate($scope.formData.all ? 'CONFIRM.TRANSFER_ALL' : 'CONFIRM.TRANSFER', {
+        var hasRest = $scope.formData.all  && $scope.formData.restAmount > 0;
+        return $translate(hasRest ? 'CONFIRM.TRANSFER_ALL' : 'CONFIRM.TRANSFER', {
           from: csWallet.data.isMember ? csWallet.data.uid : $filter('formatPubkey')(csWallet.data.pubkey),
           to: $scope.destUid || $scope.destPub,
           amount: $scope.formData.amount,
           unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.currency),
           comment: (!$scope.formData.comment || $scope.formData.comment.trim().length === 0) ? translations['COMMON.EMPTY_PARENTHESIS'] : $scope.formData.comment,
-          restAmount: $scope.formData.all && $filter('formatAmount')($scope.formData.restAmount, {useRelative: $scope.formData.useRelative}),
-          restTo: ($scope.restUid || $scope.restPub)
+          restAmount: hasRest && $filter('formatAmount')($scope.formData.restAmount, {useRelative: $scope.formData.useRelative}),
+          restTo: hasRest && ($scope.restUid || $scope.restPub)
         });
       })
       .then(UIUtils.alert.confirm);

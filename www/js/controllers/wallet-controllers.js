@@ -770,15 +770,18 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   };
 }
 
-function WalletTxErrorController($scope, UIUtils, csWallet) {
+function WalletTxErrorController($scope, UIUtils, csSettings, csWallet) {
   'ngInject';
 
+  $scope.settings = csSettings.data;
+  $scope.loading = true;
   $scope.formData = {};
 
   $scope.$on('$ionicView.enter', function(e) {
     $scope.loadWallet()
       .then(function(walletData) {
         $scope.formData = walletData;
+        $scope.loading = false;
         $scope.doMotion();
         $scope.showFab('fab-redo-transfer');
         UIUtils.loading.hide();
@@ -788,14 +791,21 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
   // Updating wallet data
   $scope.doUpdate = function(silent) {
 
+    $scope.loading = true;
     return (silent ?
         csWallet.refreshData() :
         UIUtils.loading.show()
           .then(csWallet.refreshData)
           .then(UIUtils.loading.hide)
       )
-      .then($scope.doMotion)
-      .catch(UIUtils.onError('ERROR.REFRESH_WALLET_DATA'));
+      .then(function() {
+        $scope.doMotion();
+        $scope.loading = false;
+      })
+      .catch(function(err) {
+        UIUtils.onError('ERROR.REFRESH_WALLET_DATA')(err);
+        $scope.loading = false;
+      });
   };
 
   $scope.filterReceivedTx = function(tx){
@@ -804,6 +814,14 @@ function WalletTxErrorController($scope, UIUtils, csWallet) {
 
   $scope.filterSentTx = function(tx){
     return tx.amount && tx.amount < 0;
+  };
+
+  $scope.hasReceivedTx = function(){
+    return $scope.formData.tx && !!_($scope.formData.tx.errors || []).find($scope.filterReceivedTx);
+  };
+
+  $scope.hasSentTx = function(){
+    return $scope.formData.tx && !!_($scope.formData.tx.errors || []).find($scope.filterSentTx);
   };
 
 }

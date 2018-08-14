@@ -8,7 +8,7 @@ angular.module('cesium.network.controllers', ['cesium.services'])
 
     .state('app.network', {
       url: "/network?type&expert",
-      cache: false,
+      cache: true,
       views: {
         'menuContent': {
           templateUrl: "templates/network/view_network.html",
@@ -64,8 +64,19 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
     sort : undefined,
     asc: true
   };
+  $scope.listeners = [];
   $scope.helptipPrefix = 'helptip-network';
   $scope.eanbleLocationHref = true; // can be overrided by sub-controler (e.g. popup)
+
+  $scope.removeListeners = function() {
+    if ($scope.listeners.length) {
+      console.debug("[network] Closing listeners");
+      _.forEach($scope.listeners, function(remove){
+        remove();
+      });
+      $scope.listeners = [];
+    }
+  };
 
   /**
    * Enter in view
@@ -102,6 +113,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
    */
   $scope.leave = function() {
     if (!$scope.networkStarted) return;
+    $scope.removeListeners();
     csNetwork.close();
     $scope.networkStarted = false;
     $scope.search.loading = true;
@@ -109,6 +121,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
   $scope.$on('$ionicView.beforeLeave', $scope.leave);
   $scope.$on('$ionicParentView.beforeLeave', $scope.leave);
   $scope.$on('$destroy', $scope.leave);
+
 
   $scope.computeOptions = function() {
     var options = {
@@ -136,7 +149,8 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
 
       // Catch event on new peers
       $scope.refreshing = false;
-      csNetwork.api.data.on.changed($scope, function(data){
+      $scope.listeners.push(
+        csNetwork.api.data.on.changed($scope, function(data){
         if (!$scope.refreshing) {
           $scope.refreshing = true;
           csWot.extendAll(data.peers)
@@ -148,7 +162,7 @@ function NetworkLookupController($scope,  $state, $location, $ionicPopover, $win
               $scope.refreshing = false;
             });
         }
-      });
+      }));
     }
 
     // Show help tip
@@ -409,6 +423,7 @@ function NetworkLookupPopoverController($scope, $controller) {
   $scope.showHelpTip = function() {};
 
   // Enter the popover
+  console.log("Will enter the popover !");
   $scope.enter();
 }
 

@@ -107,6 +107,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
   $scope.ionItemClass = 'item-border-large';
   $scope.defaultSizeLimit = UIUtils.screen.isSmall() ? 50 : 100;
   $scope.helptipPrefix = 'helptip-network';
+  $scope.listeners = [];
 
   /**
    * Enter into the view
@@ -185,14 +186,14 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       }
       // endRemoveIf(device)
 
-      $scope.startListenBlock();
+      $scope.addListeners();
 
       $scope.entered = true;
 
       $scope.showHelpTip();
     }
     else {
-      $scope.startListenBlock();
+      $scope.addListeners();
     }
   };
   //$scope.$on('$ionicView.enter', $scope.enter);
@@ -205,11 +206,7 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
    * @param state
    */
   $scope.leave = function() {
-    if ($scope.wsBlock) {
-      console.debug('[block] Stopping websocket [/ws/block]');
-      $scope.wsBlock.close();
-      delete $scope.wsBlock;
-    }
+    $scope.removeListeners();
   };
   //$scope.$on('$ionicView.leave', $scope.leave);
   $scope.$on('$ionicParentView.leave', $scope.leave);
@@ -360,22 +357,36 @@ function BlockLookupController($scope, $timeout, $focus, $filter, $state, $ancho
       });
   };
 
-  $scope.startListenBlock = function() {
-    if (!$scope.wsBlock) {
-      if ($scope.node == BMA) {
-        csCurrency.api.data.on.newBlock($scope, $scope.onBlock);
-      }
-      else {
-        console.debug('[block] Listening on websocket [/ws/block]');
-        $scope.wsBlock = $scope.node.websocket.block();
-        $scope.wsBlock.on(function(json) {
-          // Skip if WS closed (after leave view - should never happen) or invalid json
-          if (!$scope.wsBlock || !json) return;
-          var block = new Block(json);
-          block.cleanData(); // Remove unused content (arrays...)
-          $scope.onBlock(block);
-        });
-      }
+  $scope.removeListeners = function() {
+    if ($scope.listeners.length) {
+      console.debug("[block] Closing listeners");
+      _.forEach($scope.listeners, function(remove){
+        remove();
+      });
+      $scope.listeners = [];
+    }
+  };
+
+  $scope.addListeners = function() {
+    if ($scope.listeners.length) return; // already started
+
+
+    console.debug("[block] Starting listeners");
+    if ($scope.node === BMA) {
+      $scope.listeners.push(
+        csCurrency.api.data.on.newBlock($scope, $scope.onBlock)
+      );
+    }
+    else {
+      var wsBlock = $scope.node.websocket.block();
+      wsBlock.on(function(json) {
+        // Skip if WS closed (after leave view - should never happen) or invalid json
+        if (!json) return;
+        var block = new Block(json);
+        block.cleanData(); // Remove unused content (arrays...)
+        $scope.onBlock(block);
+      });
+      $scope.listeners.push(wsBlock.close);
     }
   };
 

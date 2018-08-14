@@ -793,7 +793,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return $q.all([
           getKeypair(),
           csCurrency.get(),
-          block && $q.when(block) || csCurrency.blockchain.lastValid()
+          block && $q.when(block) || csCurrency.blockchain.current()
         ])
         .then(function(res) {
           var keypair = res[0];
@@ -887,14 +887,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           // Send tx
           return createAndSendTx(currency, block, keypair, destPub, amount, inputs, comments, restPub||data.pubkey, logs)
             .then(function(res) {
-              data.balance -= amount;
+              data.balance -= res.amount;
               _.forEach(inputs.sources, function(source) {
                 source.consumed=true;
               });
 
               // Add new sources
               if (res && res.sources.length) {
-                //console.log("TODO: detected new source after the TX: ", res.sources);
+                console.log("[wallet-service] New sources to be add after the TX: ", res.sources);
                 addSources(res.sources);
               }
 
@@ -930,7 +930,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 console.debug('[wallet] TX rejected by node with error [{0}]. Reloading sources then retry...'.format(err.message||'Source already consumed'));
                 return $timeout(loadTxAndSources, 500)
                   .then(function() {
-                    return transfer(destPub, amount, comments, useRelative);
+                    return transfer(destPub, amount, comments, useRelative, restPub, block);
                   });
               }
 
@@ -986,10 +986,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
           return transfer(destPub, amount, comments, useRelative, restPub, block)
             .then(function() {
+
+
               // If more money: transfer all to restPub
               if (data.balance > 0 && restPub) {
+
+                console.debug("Sending the rest amount to {" + restPub + '}...');
+                data.sources.forEach(function(src) {
+                  console.debug(src);
+                });
+
                 console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,6)));
-                return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/, block);
+                return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/, restPub, block);
               }
             });
 
@@ -1102,7 +1110,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         if (outputAmount > 0) {
           outputAmount = outputBase === 0 ? outputAmount : outputAmount / Math.pow(10, outputBase);
           tx += outputAmount +':'+outputBase+':SIG('+restPub+')\n';
-          // If source to himself: add new sources
+          // If rest to himself: add new sources
           if (data.pubkey === restPub) {
             newSources.push({
               type: 'T',
@@ -1153,6 +1161,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
                 output.pending = true;
               });
               return {
+                amount: (data.pubkey === destPub) ? 0 : ((data.pubkey === restPub) ? amount : inputs.amount),
                 tx: signedTx,
                 hash: txHash,
                 sources: newSources
