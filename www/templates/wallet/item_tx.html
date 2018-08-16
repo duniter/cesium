@@ -5,7 +5,8 @@
 
 <div class="row no-padding">
   <div class="col no-padding">
-    <b class="ion-clock" ng-if="::(pending||validating)"> </b>
+    <b class="ion-clock" ng-if="::pending"> </b>
+    <b class="ion-clock" ng-if="::validating"> </b>
     <a class="" ui-sref="app.wot_identity({pubkey:tx.pubkey, uid:tx.uid})" ng-if="tx.uid">
       {{::tx.name||tx.uid}}
     </a>

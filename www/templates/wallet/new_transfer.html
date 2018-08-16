@@ -13,8 +13,8 @@
     <div class="row no-padding-xs">
       <div class="col col-20 hidden-xs hidden-sm">&nbsp;</div>
       <div class="col no-padding-xs">
-        <h2 class="hidden-xs hidden-sm">
-          {{'TRANSFER.SUB_TITLE'|translate}}
+        <h2 class="hidden-xs hidden-sm" ng-if="formData">
+          {{(formData.all ? 'TRANSFER.SUB_TITLE_ALL' : 'TRANSFER.SUB_TITLE')|translate}}
         </h2>
         <h4 class="hidden-xs hidden-sm">&nbsp;</h4>
         <ng-include src="'templates/wallet/transfer_form.html'"></ng-include>

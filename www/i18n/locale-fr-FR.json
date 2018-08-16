@@ -129,6 +129,8 @@
     "ENABLE_UI_EFFECTS": "Activer les effets visuels",
     "HISTORY_SETTINGS": "Liste des opérations",
     "DISPLAY_UD_HISTORY": "Afficher les dividendes produits ?",
+    "TX_HISTORY_AUTO_REFRESH": "Activer le rafraichissement automatique ?",
+    "TX_HISTORY_AUTO_REFRESH_HELP": "Met à jour la liste des opérations à chaque nouveau bloc.",
     "AUTHENTICATION_SETTINGS": "Authentification",
     "KEEP_AUTH": "Expiration de l'authentification",
     "KEEP_AUTH_HELP": "Défini le moment où l'authentification est nettoyée de la mémoire",
@@ -148,7 +150,7 @@
     "EXPERT_MODE_HELP": "Permet un affichage plus détaillé",
     "BLOCK_VALIDITY_WINDOW": "Délai d'incertitude des blocs",
     "BLOCK_VALIDITY_WINDOW_SHORT": "Délai d'incertitude",
-    "BLOCK_VALIDITY_WINDOW_HELP": "Nombre de blocs à attentre, avant de considérer qu'une information est validée",
+    "BLOCK_VALIDITY_WINDOW_HELP": "Délai avant de considérer qu'une information est validée",
     "BLOCK_VALIDITY_OPTION": {
       "NONE": "Aucun délai",
       "N": "{{time | formatDuration}} ({{count}} blocs)"
@@ -595,6 +597,7 @@
   "TRANSFER": {
     "TITLE": "Virement",
     "SUB_TITLE": "Faire un virement",
+    "SUB_TITLE_ALL": "Vider le compte",
     "FROM": "De",
     "TO": "À",
     "AMOUNT": "Montant",

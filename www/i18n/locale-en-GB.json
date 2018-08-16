@@ -146,6 +146,13 @@
     "BTN_RESET": "Restore default values",
     "EXPERT_MODE": "Enable expert mode",
     "EXPERT_MODE_HELP": "Allow to see more details",
+    "BLOCK_VALIDITY_WINDOW": "Block uncertainty time",
+    "BLOCK_VALIDITY_WINDOW_SHORT": "Time of uncertainty",
+    "BLOCK_VALIDITY_WINDOW_HELP": "Time to wait before considering an information is validated",
+    "BLOCK_VALIDITY_OPTION": {
+      "NONE": "No delay",
+      "N": "{{time | formatDuration}} ({{count}} blocks)"
+    },
     "POPUP_PEER": {
       "TITLE" : "Duniter peer",
       "HOST" : "Address",
@@ -442,6 +449,7 @@
     "SHOW_ALL_TX": "Show all",
     "TX_FROM_DATE": "(current limit to {{fromTime|formatFromNowShort}})",
     "PENDING_TX": "Pending transactions",
+    "VALIDATING_TX": "Transactions being validated",
     "ERROR_TX": "Transaction not executed",
     "ERROR_TX_SENT": "Sent transactions",
     "PENDING_TX_RECEIVED": "Transactions awaiting receipt",
@@ -595,6 +603,8 @@
     "COMMENT_HELP": "Comment (optional)",
     "BTN_SEND": "Send",
     "BTN_ADD_COMMENT": "Add a comment",
+    "REST": "Rest of account",
+    "REST_TO": "to",
     "WARN_COMMENT_IS_PUBLIC": "Please note that <b>comments are public</b> (not encrypted).",
     "MODAL": {
       "TITLE": "Transfer"
@@ -719,6 +729,7 @@
     "CERTIFY_RULES_TITLE_UID": "Certify {{uid}}",
     "CERTIFY_RULES": "<b class=\"assertive\">Don't certify an account</b> if you believe that: <ul><li>1.) the issuers identity might be faked.<li>2.) the issuer already has another certified account.<li>3.) the issuer purposely or carelessly violates rule 1 or 2 (he certifies faked or double accounts).</ul></small><br/>Are you sure you want to certify this identity?",
     "TRANSFER": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
+    "TRANSFER_ALL": "<b>Transfer summary:</b><br/><br/><ul><li> - From: <b>{{from}}</b></li><li> - To: <b>{{to}}</b></li><li> - Amount: <b>{{amount}} {{unit}}</b></li><li> - Comment: <i>{{comment}}</i></li><br/><li> - Rest : <b>{{restAmount}} {{unit}}</b> to <b>{{restTo}}</b></li></ul><br/><b>Are-you sure you want to do this transfer?</b>",
     "MEMBERSHIP_OUT": "This operation is <b>irreversible</b>.<br/></br/><b>Are you sure you want to terminate your membership?</b>",
     "MEMBERSHIP_OUT_2": "This operation is <b>irreversible</b>!<br/><br/>Are you sure you want to <b>terminate your membership</b>?",
     "LOGIN_UNUSED_WALLET_TITLE": "Typing error?",

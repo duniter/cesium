@@ -1,6 +1,6 @@
 {
    "COMMON": {
-     "APP_NAME": "ğ<b>change</b>",
+     "APP_NAME": "Cesium",
      "APP_VERSION": "v{{version}}",
      "APP_BUILD": "build {{build}}",
      "PUBKEY": "Chiave privata",

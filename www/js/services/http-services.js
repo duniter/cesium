@@ -267,7 +267,7 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
         var self = this;
         return _waitOpen(self)
           .then(function(){
-            self.delegate && self.delegate.send(data);
+            if (self.delegate) self.delegate.send(data);
           });
       },
       close: function() {

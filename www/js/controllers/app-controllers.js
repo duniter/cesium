@@ -90,6 +90,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     options = options || {};
     options.withSecret = angular.isDefined(options.withSecret) && options.withSecret || true;
     options.password = function() {
+        UIUtils.loading.hide();
         return Modals.showPassword({
             title: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.TITLE',
             subTitle: 'ACCOUNT.SECURITY.KEYFILE.PASSWORD_POPUP.HELP',
@@ -97,13 +98,15 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
             scope: $scope
           })
           .then(function(password) {
-            if (password) UIUtils.loading.show();
             // Timeout is need to force popup to be hide
             return $timeout(function() {
+              if (password) UIUtils.loading.show();
               return password;
             }, 150);
           });
       };
+
+    UIUtils.loading.show();
 
     return CryptoUtils.parseWIF_or_EWIF(data, options)
       .catch(function(err) {

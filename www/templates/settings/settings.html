@@ -130,6 +130,16 @@
         </label>
       </div>
 
+      <div class="item item-toggle dark">
+        <div class="input-label" translate>SETTINGS.TX_HISTORY_AUTO_REFRESH</div>
+        <label class="toggle toggle-royal">
+          <input type="checkbox" ng-model="formData.walletHistoryAutoRefresh" >
+          <div class="track">
+            <div class="handle"></div>
+          </div>
+        </label>
+      </div>
+
       <!-- Allow extension here -->
       <cs-extension-point name="history"></cs-extension-point>
 

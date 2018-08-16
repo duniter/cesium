@@ -74,6 +74,7 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
       }
       else if (state.stateParams.all) {
         parameters.all = state.stateParams.all;
+        $scope.formData.all = state.stateParams.all;
       }
     }
 

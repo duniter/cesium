@@ -60,6 +60,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     useLocalStorage: true, // override to false if no device
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
+    walletHistoryAutoRefresh: true,
     rememberMe: true,
     keepAuthIdle: 10 * 60, // 10min - override to false if no device
     showUDHistory: true,
@@ -72,7 +73,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     userForumUrl: "https://forum.monnaie-libre.fr",
     latestReleaseUrl: "https://api.github.com/repos/duniter/cesium/releases/latest",
     duniterLatestReleaseUrl: "https://api.github.com/repos/duniter/duniter/releases/latest",
-    blockValidityWindow: 0,
+    blockValidityWindow: 6,
     helptip: {
       enable: true,
       installDocUrl: "https://duniter.org/en/wiki/duniter/install/",

@@ -96,7 +96,7 @@
       <a class="item item-icon-right gray ink"
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal('restPub')"
-         ng-if="formData.all && formData.restAmount > 0">
+         ng-if="formData.all && formData.restAmount">
         <span class="gray">
           <i translate>TRANSFER.REST</i>
           <ng-if ng-if="formData.restAmount">(<i ng-bind-html="formData.restAmount|formatAmount:{useRelative: formData.useRelative, currency:currency}"></i>)</ng-if>
@@ -181,8 +181,10 @@
       <button class="button button-clear button-dark ink"
               ng-click="cancel()" type="button" translate>COMMON.BTN_CANCEL
       </button>
-      <button class="button button-positive ink" type="submit">
-        {{'TRANSFER.BTN_SEND' | translate}}
+      <button class="button ink"
+              ng-class="{'button-assertive': formData.all, 'button-positive': !formData.all}"
+              type="submit" translate>
+        TRANSFER.BTN_SEND
       </button>
     </div>
   </form>

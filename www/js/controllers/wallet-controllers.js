@@ -572,11 +572,38 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
 
 function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
-                            UIUtils, Modals, BMA, csSettings, csWallet, csTx) {
+                            UIUtils, Modals, BMA, csSettings, csCurrency, csWallet, csTx) {
   'ngInject';
 
   $scope.loading = true;
   $scope.settings = csSettings.data;
+  $scope.listeners = [];
+
+  $scope.addListeners = function() {
+    if ($scope.settings.walletHistoryAutoRefresh) {
+
+      $scope.listeners = [
+        // Update on new block
+        csCurrency.api.data.on.newBlock($scope, function(block) {
+          if ($scope.loading) return;
+          console.debug("[wallet] Received new block. Will reload history.");
+          $timeout(function() {
+            $scope.doUpdate(true);
+          }, 300/*waiting for node cache propagation*/);
+        })
+      ];
+    }
+    else {
+      $scope.listeners = [];
+    }
+  };
+
+  $scope.removeListeners = function() {
+    _.forEach($scope.listeners, function(remove){
+      remove();
+    });
+    $scope.listeners = [];
+  };
 
   $scope.$on('$ionicView.enter', function(e, state) {
     $scope.loading = $scope.loading || (state.stateParams && state.stateParams.refresh);
@@ -588,6 +615,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
           $scope.updateView();
           $scope.showFab('fab-transfer');
           $scope.showHelpTip();
+          $scope.addListeners();
           UIUtils.loading.hide(); // loading could have be open (e.g. new account)
 
           // remove the stateParams
@@ -627,7 +655,9 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
   $scope.doUpdate = function(silent) {
     console.debug('[wallet] TX history reloading...');
     return (silent ?
+        // If silent: just refresh
         csWallet.refreshData() :
+        // If not silent: show/hide loading indicator
         UIUtils.loading.show()
           .then(csWallet.refreshData)
           .then(UIUtils.loading.hide)

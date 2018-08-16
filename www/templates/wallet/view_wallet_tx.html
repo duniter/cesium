@@ -96,6 +96,7 @@
 
           <div class="item item-pending item-tx item-icon-left"
                ng-repeat="tx in formData.tx.validating"
+               ng-init="validating=true;"
                ng-include="'templates/wallet/item_tx.html'">
           </div>
 
@@ -108,8 +109,6 @@
           <span class="item padding" ng-if="!loading && !formData.tx.history.length">
             <span class="gray">{{:locale:'ACCOUNT.NO_TX'|translate}}</span>
           </span>
-
-
 
           <div ng-repeat="tx in formData.tx.history"
              class="item item-tx item-icon-left"

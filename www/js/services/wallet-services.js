@@ -980,29 +980,16 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         .then(function(block) {
           console.debug("[wallet] Using last valid block as TX reference (to avoid network fork): ", block);
 
-          data.sources.forEach(function(src) {
-            console.log(src);
-          });
-
           return transfer(destPub, amount, comments, useRelative, restPub, block)
             .then(function() {
-
-
               // If more money: transfer all to restPub
               if (data.balance > 0 && restPub) {
-
-                console.debug("Sending the rest amount to {" + restPub + '}...');
-                data.sources.forEach(function(src) {
-                  console.debug(src);
-                });
-
                 console.debug("[wallet] Wallet has some more money: transfering fund to [{0}]".format(restPub.substring(0,6)));
                 return transfer(restPub, data.balance, undefined/*comments*/, false/*useRelative*/, restPub, block);
               }
             });
 
-        })
-
+        });
 
     },
 
