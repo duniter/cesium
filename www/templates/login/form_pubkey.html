@@ -9,7 +9,6 @@
   <input name="pubkey" type="text" placeholder="{{'LOGIN.PUBKEY_HELP' | translate}}"
          ng-model="formData.pubkey"
          ng-model-options="{ debounce: 650 }"
-         ng-pattern="pubkeyPattern"
          required >
   <a class="button button-stable icon ion-android-search ink"
           ng-click="showWotLookupModal(form.pubkey.$viewValue)">
@@ -20,9 +19,6 @@
      ng-messages="form.pubkey.$error">
   <div class="form-error" ng-message="required">
     <span translate="ERROR.FIELD_REQUIRED"></span>
-  </div>
-  <div class="form-error" ng-message="pattern">
-    <span translate="ERROR.INVALID_PUBKEY"></span>
   </div>
   <div class="form-error" ng-message="checksum">
     <span translate="ERROR.INVALID_PUBKEY_CHECKSUM"></span>

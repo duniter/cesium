@@ -1,4 +1,5 @@
-<ion-tab title="{{'MENU.REGISTRY'|translate}}" icon="ion-social-buffer"
+<ion-tab ng-if=":state:enable"
+         title="{{'MENU.REGISTRY'|translate}}" icon="ion-social-buffer"
          ui-sref="app.wot_lookup.tab_registry">
   <ion-nav-view name="tab_registry"></ion-nav-view>
 </ion-tab>

@@ -24,8 +24,8 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       // Generate box keypair
       esCrypto.box.getKeypair(data.keypair)
         .then(function(res) {
-          csWallet.data.keypair.boxSk = res.boxSk;
-          csWallet.data.keypair.boxPk = res.boxPk;
+          data.keypair.boxSk = res.boxSk;
+          data.keypair.boxPk = res.boxPk;
           console.debug("[ES] [wallet] Box keypair successfully computed");
           deferred.resolve();
         });
@@ -108,23 +108,23 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       return deferred.promise;
     }
 
-    function getBoxKeypair() {
-      if (!csWallet.isAuth()) {
+    function getBoxKeypair(keypair) {
+      if (!keypair && !csWallet.isAuth()) {
         throw new Error('Unable to get box keypair: user not authenticated !');
       }
 
-      return csWallet.getKeypair({silent: true})
+      return (keypair ? $q.when(keypair) : csWallet.getKeypair({silent: true}))
         .then(function(keypair) {
           if (keypair && keypair.boxPk && keypair.boxSk) {
-            return $q.when(csWallet.data.keypair);
+            return $q.when(keypair);
           }
           return esCrypto.box.getKeypair(keypair);
         })
         .then(function(res) {
-          csWallet.data.keypair.boxSk = res.boxSk;
-          csWallet.data.keypair.boxPk = res.boxPk;
+          keypair.boxSk = res.boxSk;
+          keypair.boxPk = res.boxPk;
           console.debug("[ES] [wallet] Box keypair successfully computed");
-          return csWallet.data.keypair;
+          return keypair;
         });
     }
 
@@ -177,15 +177,15 @@ angular.module('cesium.es.wallet.services', ['ngResource', 'cesium.platform', 'c
       getKeypair: getBoxKeypair,
       record: {
         pack: function(record, keypair, recipientFieldName, cypherFieldNames, nonce) {
-          return getBoxKeypair()
-            .then(function(keypair) {
-              return esCrypto.box.pack(record, keypair, recipientFieldName, cypherFieldNames, nonce);
+          return getBoxKeypair(keypair)
+            .then(function(fullKeypair) {
+              return esCrypto.box.pack(record, fullKeypair, recipientFieldName, cypherFieldNames, nonce);
             });
         },
         open: function(records, keypair, issuerFieldName, cypherFieldNames) {
-          return getBoxKeypair()
-            .then(function(keypair) {
-              return esCrypto.box.open(records, keypair, issuerFieldName, cypherFieldNames);
+          return getBoxKeypair(keypair)
+            .then(function(fullKeypair) {
+              return esCrypto.box.open(records, fullKeypair, issuerFieldName, cypherFieldNames);
             });
         }
       }

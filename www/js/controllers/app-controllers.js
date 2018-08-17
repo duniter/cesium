@@ -82,8 +82,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       .then(UIUtils.loading.hide);
   };
 
+  // removeIf(no-device)
   ////////////////////////////////////////
-  // Device Methods
+  // Device only methods
+  // (code removed when NO device)
   ////////////////////////////////////////
 
   function parseWIF_or_EWIF(data, options) {
@@ -120,6 +122,7 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       });
   }
 
+
   $scope.scanQrCodeAndGo = function() {
 
     if (!Device.barcode.enable) return;
@@ -149,6 +152,27 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
               .then(function(keypair) {
                 if (!keypair || !keypair.signPk || !keypair.signSk) throw err; // rethrow the first error (e.g. Bad URI)
 
+                // User already logged
+                if (csWallet.isLogin()) {
+                  // Open a temporary wallet
+                  var wallet = csWallet.instance('WIF');
+                  csWallet.children.add(wallet);
+                  return wallet.login({
+                    forceAuth: true,
+                    minData: false,
+                    authData: {
+                      pubkey: CryptoUtils.base58.encode(keypair.signPk),
+                      keypair: keypair
+                    }
+                  })
+                  .then(function () {
+                    // Transfer all wallet
+                    return $state.go('app.new_transfer', {
+                      all: true,
+                      wallet: wallet.id
+                    });
+                  });
+                }
                 // TODO: Use a temporary wallet ?
                 // var wallet = csWallet.instance('WIF');
                 // return wallet.login(...)
@@ -173,6 +197,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
       })
       .catch(UIUtils.onError('ERROR.SCAN_FAILED'));
   };
+
+  ////////////////////////////////////////
+  // End of device only methods
+  ////////////////////////////////////////
+  // endRemoveIf(no-device)
 
   ////////////////////////////////////////
   // Show Help tour
@@ -241,7 +270,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Load wallet data (after login)
   $scope.loadWalletData = function(options) {
-    return csWallet.loadData(options)
+    options = options || {};
+    var wallet = options.wallet || csWallet;
+    return wallet.loadData(options)
 
       .then(function(walletData) {
         if (walletData) {
@@ -266,9 +297,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     options = options || {};
 
+    var wallet = options.wallet || csWallet;
+
     // If need auth
-    if (options.auth && !csWallet.isAuth()) {
-      return csWallet.auth(options)
+    if (options.auth && !wallet.isAuth()) {
+      return wallet.auth(options)
         .then(function (walletData) {
           if (walletData) return walletData;
           // failed to auth
@@ -277,8 +310,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     }
 
     // If need login
-    else if (!csWallet.isLogin()) {
-      return csWallet.login(options)
+    else if (!wallet.isLogin()) {
+      return wallet.login(options)
         .then(function (walletData) {
           if (walletData) return walletData;
           // failed to login
@@ -287,11 +320,11 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     }
 
     // Already login or auth
-    else if (!csWallet.isDataLoaded(options)) {
+    else if (!wallet.isDataLoaded(options)) {
       return $scope.loadWalletData(options);
     }
     else {
-      return $q.when(csWallet.data);
+      return $q.when(wallet.data);
     }
   };
 

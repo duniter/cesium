@@ -2,20 +2,36 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 
   .config(function($stateProvider) {
 
-    $stateProvider.state('app.edit_subscriptions', {
-      cache: false,
-      url: "/wallet/subscriptions",
-      views: {
-        'menuContent': {
-          templateUrl: "plugins/es/templates/subscription/edit_subscriptions.html",
-          controller: 'ViewSubscriptionsCtrl'
+    $stateProvider
+      .state('app.edit_subscriptions', {
+        cache: false,
+        url: "/wallet/subscriptions",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/subscription/edit_subscriptions.html",
+            controller: 'ViewSubscriptionsCtrl'
+          }
+        },
+        data: {
+          auth: true,
+          minData: true
         }
-      },
-      data: {
-        auth: true,
-        minData: true
-      }
-    });
+      })
+
+      .state('app.edit_subscriptions_by_id', {
+        cache: false,
+        url: "/wallet/list/:id/subscriptions",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/subscription/edit_subscriptions.html",
+            controller: 'ViewSubscriptionsCtrl'
+          }
+        },
+        data: {
+          login: true,
+          minData: true
+        }
+      });
 
   })
 
@@ -25,9 +41,10 @@ angular.module('cesium.es.subscription.controllers', ['cesium.es.services'])
 
 ;
 
-function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, ModalUtils, esSubscription) {
+function ViewSubscriptionsController($scope, $q, $ionicHistory, csWot, csWallet, UIUtils, ModalUtils, esSubscription) {
   'ngInject';
 
+  $scope.loading = true;
   $scope.popupData = {}; // need for the node popup
   $scope.search = {
     results: [],
@@ -38,25 +55,44 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
     {id: "weekly", label: "weekly"}
   ];
 
-  $scope.onEnter = function() {
-    $scope.loading = true;
-    $scope.loadWallet({minData: true})
-      .then(function() {
-        UIUtils.loading.hide();
-        return $scope.load();
+  var wallet;
+
+  $scope.enter = function(e, state) {
+
+    // First load
+    if ($scope.loading) {
+
+      wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
+      }
+
+      $scope.loadWallet({
+        wallet: wallet,
+        auth: true,
+        minData: true
       })
-      .catch(function(err){
-        if (err == 'CANCELLED') {
-          return UIUtils.loading.hide();
-        }
-        UIUtils.onError('SUBSCRIPTION.ERROR.LOAD_SUBSCRIPTIONS_FAILED')(err);
-      });
+        .then(function() {
+          UIUtils.loading.hide();
+          return $scope.load();
+        })
+        .catch(function(err){
+          if (err == 'CANCELLED') {
+            UIUtils.loading.hide(10);
+            $ionicHistory.goBack();
+            return
+          }
+          UIUtils.onError('SUBSCRIPTION.ERROR.LOAD_SUBSCRIPTIONS_FAILED')(err);
+        });
+    }
+
   };
-  $scope.$on('$ionicView.enter', $scope.onEnter);
+  $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.load = function() {
     $scope.loading = true; // to avoid the call of doSave()
-    return esSubscription.record.load($rootScope.walletData.pubkey, $rootScope.walletData.keypair)
+    return esSubscription.record.load(wallet.data.pubkey, wallet.data.keypair)
       .then(function(results) {
         // Group by type
         var groups = _.groupBy((results || []), function (record) {
@@ -74,10 +110,8 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
       .then(function(results) {
         return csWot.extendAll(results, 'recipient');
       })
-      .then(function(results) {
-        // Display result
-        $scope.updateView(results);
-      })
+      // Display result
+      .then($scope.updateView)
       .catch(function(err){
         UIUtils.loading.hide(10);
         if (err && err.ucode == 404) {
@@ -118,11 +152,11 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
       .then(function(record) {
         if (!record) return;
         UIUtils.loading.show();
-        esSubscription.record.add(record)
+        esSubscription.record.add(record, wallet)
           .then($scope.addToUI)
           .then(function() {
-            $rootScope.walletData.subscriptions = $rootScope.walletData.subscriptions || {count: 0};
-            $rootScope.walletData.subscriptions.count++;
+            $scope.wallet.data.subscriptions = $scope.wallet.data.subscriptions || {count: 0};
+            $scope.wallet.data.subscriptions.count++;
             UIUtils.loading.hide();
             $scope.updateView();
           })
@@ -140,11 +174,11 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
     }
     if (!promise) return;
     return promise
-      .then(function() {
-        if (!record) return;
+      .then(function(res) {
+        if (!res) return;
         UIUtils.loading.show();
         record.id = oldRecord.id;
-        return esSubscription.record.update(record)
+        return esSubscription.record.update(record, wallet)
           .then(function() {
             // If recipient change, update in results
             if (oldRecord.type != record.type ||
@@ -174,8 +208,8 @@ function ViewSubscriptionsController($scope, $rootScope, $q, csWot, UIUtils, Mod
     UIUtils.loading.show();
     esSubscription.record.remove(record.id)
       .then(function() {
-        $rootScope.walletData.subscriptions = $rootScope.walletData.subscriptions || {count: 1};
-        $rootScope.walletData.subscriptions.count--;
+        $scope.wallet.data.subscriptions = $scope.wallet.data.subscriptions || {count: 1};
+        $scope.wallet.data.subscriptions.count--;
         $scope.removeFromUI(record);
         UIUtils.loading.hide();
       })

@@ -5,7 +5,8 @@ angular.module('cesium.es.wallet.controllers', ['cesium.es.services'])
 
     var enable = csConfig.plugins && csConfig.plugins.es;
     if (enable) {
-      PluginServiceProvider.extendState('app.view_wallet', {
+      PluginServiceProvider
+        .extendStates(['app.view_wallet', 'app.view_wallet_by_id'], {
           points: {
             'after-general': {
               templateUrl: "plugins/es/templates/wallet/view_wallet_extend.html",
@@ -27,7 +28,7 @@ function ESWalletController($scope, $controller, esModals) {
   'ngInject';
 
   // Initialize the super class and extend it.
-  angular.extend(this, $controller('ESWotIdentityViewCtrl', {$scope: $scope}));
+  angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
   $scope.showProfileHelp = false;
 

@@ -244,7 +244,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
 
           if (cache) {
             if (currentBlock && (now - currentBlock.receivedAt) < 60/*1min*/) {
-              console.debug('[currency] Use current block #'+ currentBlock.number +' from cache (age='+ (now - currentBlock.receivedAt) + 's)');
+              //console.debug('[currency] Use current block #'+ currentBlock.number +' from cache (age='+ (now - currentBlock.receivedAt) + 's)');
               return currentBlock;
             }
 

@@ -735,6 +735,7 @@ function ESWalletPagesController($scope, $controller, $timeout, UIUtils, csWalle
           $scope.search.issuer = walletData.pubkey;
           $scope.search.advanced = true;
           $timeout($scope.doSearch, 100);
+          $scope.showFab('fab-wallet-add-registry-record');
         });
     }
     else {

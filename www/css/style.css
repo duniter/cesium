@@ -271,3 +271,11 @@
 .dropzone.hover {
   background: lawngreen;
 }
+
+/**********
+   List of wallet
+**********/
+
+.list .item.item-wallet .badge{
+  top: 28px !important;
+}

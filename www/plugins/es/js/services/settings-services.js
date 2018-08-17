@@ -237,7 +237,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     }
 
     var time = esHttp.date.now(); // always update time
-    console.debug('[ES] [settings] Saving user settings... at time ' + time);
+    console.debug('[ES] [settings] Saving user settings remotely...');
 
     return $q.all([
         csWallet.getKeypair(), // same result as esWallet.box.getKeypair(), because box keypair computed on auth

@@ -53,16 +53,18 @@ function ESExtensionController($scope, esSettings, PluginService) {
   $scope.enable = esSettings.isEnable();
   esSettings.api.state.on.changed($scope, function(enable) {
     $scope.enable = enable;
+    $scope.$broadcast('$$rebind::state');
   });
 }
 
 /**
  * Control menu extension
  */
-function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUtils, csWallet) {
+function ESMenuExtendController($scope, $state, $controller, UIUtils, csWallet) {
   'ngInject';
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-  $scope.enable = esSettings.isEnable();
+
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
   $scope.showRegistryLookupView = function() {
     $state.go(UIUtils.screen.isSmall() ? 'app.registry_lookup': 'app.registry_lookup_lg');
@@ -113,12 +115,6 @@ function ESMenuExtendController($scope, $state, PluginService, esSettings, UIUti
       }
     });
   };
-
-  esSettings.api.state.on.changed($scope, function(enable) {
-    $scope.enable = enable;
-  });
-
-
 }
 
 /**
@@ -133,7 +129,7 @@ function ESProfilePopoverExtendController($scope, $q, $state, esSettings, csWall
 
   $scope.showEditUserProfile = function() {
     $scope.closeProfilePopover();
-    $state.go('app.user_edit_profile');
+    $state.go('app.edit_profile');
   };
 
   esSettings.api.state.on.changed($scope, $scope.updateView);

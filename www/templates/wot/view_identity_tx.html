@@ -43,7 +43,9 @@
           <!-- the balance -->
           <div class="item item-tx item-divider">
             {{'ACCOUNT.BALANCE_ACCOUNT'|translate}}
-            <div class="badge item-note badge-balanced" ng-bind-html=":balance:formData.balance|formatAmount:{currency: $root.currency.name}">
+            <div class="badge item-note"
+                 ng-class=":balance:{'badge-assertive': formData.balance <= 0, 'badge-balanced': formData.balance > 0 }"
+                 ng-bind-html=":balance:formData.balance|formatAmount:{currency: $root.currency.name}">
             </div>
             <div class="badge badge-secondary" ng-if="$root.settings.expertMode">
               (<span ng-bind-html=":balance:formData.balance| formatAmount: {useRelative: !$root.settings.useRelative, currency: $root.currency.name} "></span>)

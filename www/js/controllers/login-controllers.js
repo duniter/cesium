@@ -22,7 +22,9 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
   $scope.pubkeyPattern = '^(:?{0}|{1})$'.format(BMA.constants.regexp.PUBKEY, BMA.constants.regexp.PUBKEY_WITH_CHECKSUM);
 
   $scope.isAuth = parameters.auth;
+  $scope.title = parameters.title || ($scope.isAuth ? 'AUTH.TITLE' : 'LOGIN.TITLE');
   $scope.showMethods = angular.isDefined(parameters.showMethods) ? parameters.showMethods : true;
+  $scope.showNewAccountLink = angular.isDefined(parameters.showNewAccountLink) ? parameters.showNewAccountLink : true;
   $scope.expectedPubkey = parameters.expectedPubkey;
 
   $scope.scryptParamsValues = _.keys(CryptoUtils.constants.SCRYPT_PARAMS)
@@ -54,7 +56,6 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
 
   // modal enter
   $scope.enter = function() {
-    console.log("Will enter !", arguments);
     UIUtils.loading.hide();
     // Ink effect
     UIUtils.ink({selector: '.modal-login .ink'});
@@ -63,7 +64,6 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
 
   // modal leave
   $scope.leave = function() {
-    console.log("Will hide !", arguments);
     $scope.formData = {};
     $scope.computing = false;
     $scope.pubkey = null;
@@ -148,26 +148,38 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
 
     // Pubkey
     else if (method === 'PUBKEY') {
-      if (!$scope.formData.pubkey) return;
-      var matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec($scope.formData.pubkey);
-      // Check checksum
+      var pubkey = $scope.formData.pubkey && $scope.formData.pubkey.trim();
+      if (!pubkey) return;
+      var matches = BMA.regexp.PUBKEY.exec(pubkey);
+      // valid pubkey: use it
       if (matches) {
-        var pubkey = matches[1];
-        var checksum = matches[2];
-        var expectedChecksum = CryptoUtils.pkChecksum(pubkey);
-        if (checksum != expectedChecksum) {
-          $scope.form.pubkey.$error = {checksum: true};
-        }
-        else {
-          promise = $q.when({
-            pubkey: pubkey
-          });
-        }
-      }
-      else {
         promise = $q.when({
-          pubkey: $scope.formData.pubkey.trim()
+          pubkey: pubkey
         });
+      }
+
+      // Check checksum
+      else {
+
+        matches = BMA.regexp.PUBKEY_WITH_CHECKSUM.exec(pubkey);
+        if (matches) {
+
+          pubkey = matches[1];
+          var checksum = matches[2];
+          var expectedChecksum = CryptoUtils.pkChecksum(pubkey);
+          if (checksum != expectedChecksum) {
+            $scope.form.pubkey.$error = {checksum: true};
+          }
+          else {
+            promise = $q.when({
+              pubkey: pubkey
+            });
+          }
+        }
+        // Not a pubkey: launch search on
+        else {
+          return $scope.showWotLookupModal(pubkey)
+        }
       }
     }
 
@@ -204,7 +216,6 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
       }
 
       // Return result then close
-      console.log("Will close login modal !!", res);
       return $scope.closeModal(res);
     });
   };
@@ -436,6 +447,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
       .then(function(res){
         if (res && res.pubkey) {
           $scope.formData.pubkey = res.pubkey;
+          return $timeout($scope.doLogin, 300);
         }
       });
   };

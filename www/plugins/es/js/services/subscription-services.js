@@ -81,12 +81,13 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
       });
   }
 
-  function addRecord(record) {
+  function addRecord(record, wallet) {
     if (!record || !record.type || !record.content || !record.recipient) {
       return $q.reject("Missing arguments 'record' or 'record.type' or 'record.content' or 'record.recipient'");
     }
 
-    var issuer = csWallet.data.pubkey;
+    wallet = wallet || csWallet;
+    var issuer = wallet.data.pubkey;
 
     var contentStr = JSON.stringify(record.content);
 
@@ -95,8 +96,8 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
       // Encrypt contents
       .then(function(nonce) {
         return $q.all([
-          esWallet.box.record.pack({issuer: issuer, issuerContent: contentStr}, csWallet.data.keypair, 'issuer', 'issuerContent', nonce),
-          esWallet.box.record.pack({recipient: record.recipient, recipientContent: contentStr}, csWallet.data.keypair, 'recipient', 'recipientContent', nonce)
+          esWallet.box.record.pack({issuer: issuer, issuerContent: contentStr}, wallet.data.keypair, 'issuer', 'issuerContent', nonce),
+          esWallet.box.record.pack({recipient: record.recipient, recipientContent: contentStr}, wallet.data.keypair, 'recipient', 'recipientContent', nonce)
         ]);
       })
       // Merge encrypted record
@@ -105,7 +106,7 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
         encryptedRecord.type = record.type;
 
         // Post subscription
-        return that.raw.add(encryptedRecord)
+        return that.raw.add(encryptedRecord, {wallet: wallet})
           .then(function(id) {
             record.id = id;
             return record;
@@ -114,12 +115,13 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
       ;
   }
 
-  function updateRecord(record) {
+  function updateRecord(record, wallet) {
     if (!record || !record.content || !record.recipient) {
       return $q.reject("Missing arguments 'record' or 'record.content', or 'record.recipient'");
     }
 
-    var issuer = csWallet.data.pubkey;
+    wallet = wallet || csWallet;
+    var issuer = wallet.data.pubkey;
     var contentStr = JSON.stringify(record.content);
 
     // Get a unique nonce
@@ -127,8 +129,8 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
     // Encrypt contents
       .then(function(nonce) {
         return $q.all([
-          esWallet.box.record.pack({issuer: issuer, issuerContent: contentStr}, csWallet.data.keypair, 'issuer', 'issuerContent', nonce),
-          esWallet.box.record.pack({recipient: record.recipient, recipientContent: contentStr}, csWallet.data.keypair, 'recipient', 'recipientContent', nonce)
+          esWallet.box.record.pack({issuer: issuer, issuerContent: contentStr}, wallet.data.keypair, 'issuer', 'issuerContent', nonce),
+          esWallet.box.record.pack({recipient: record.recipient, recipientContent: contentStr}, wallet.data.keypair, 'recipient', 'recipientContent', nonce)
         ]);
       })
       // Merge encrypted record
@@ -137,7 +139,7 @@ angular.module('cesium.es.subscription.services', ['cesium.platform', 'cesium.es
         encryptedRecord.type = record.type;
 
         // Post subscription
-        return that.raw.update(encryptedRecord, {id:record.id})
+        return that.raw.update(encryptedRecord, {id:record.id, wallet: wallet})
           .then(function() {
             return record; // return original record
           });

@@ -56,7 +56,7 @@
     </div>
 
     <!-- Register ? -->
-    <ng-if ng-if="!isAuth">
+    <ng-if ng-if="!isAuth && showNewAccountLink">
       <div class="text-center no-padding">
         {{'LOGIN.NO_ACCOUNT_QUESTION'|translate}}
         <br class="visible-xs"/>

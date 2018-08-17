@@ -218,6 +218,11 @@ angular.module('cesium.modal.services', [])
       parameters);
   }
 
+  function showSelectWallet(parameters) {
+    return ModalUtils.show('templates/wallet/list/modal_wallets.html','WalletSelectModalCtrl',
+      parameters);
+  }
+
   function showPassword(options) {
     options = options || {};
     options.title = options.title || 'COMMON.SET_PASSWORD_TITLE';
@@ -258,7 +263,6 @@ angular.module('cesium.modal.services', [])
 
   }
 
-
   return {
     showTransfer: showTransfer,
     showLogin: showLogin,
@@ -272,6 +276,7 @@ angular.module('cesium.modal.services', [])
     showAccountSecurity: showAccountSecurity,
     showLicense: showLicense,
     showSelectPubkeyIdentity: showSelectPubkeyIdentity,
+    showSelectWallet: showSelectWallet,
     showPassword: showPassword
   };
 

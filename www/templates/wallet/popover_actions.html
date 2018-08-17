@@ -55,6 +55,7 @@
 
       <!-- help tour -->
       <a class="item item-icon-left ink hidden-sm hidden-xs"
+         ng-if="isDefaultWallet"
          ng-click="startWalletTour()">
         <i class="icon ion-easel"></i>
         {{'COMMON.BTN_HELP_TOUR_SCREEN' | translate}}

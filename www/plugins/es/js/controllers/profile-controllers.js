@@ -2,19 +2,34 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 
   .config(function($stateProvider) {
 
-    $stateProvider.state('app.user_edit_profile', {
-      url: "/wallet/profile/edit",
-      views: {
-        'menuContent': {
-          templateUrl: "plugins/es/templates/user/edit_profile.html",
-          controller: 'ESViewEditProfileCtrl'
+    $stateProvider
+      .state('app.edit_profile', {
+        url: "/wallet/profile/edit",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/user/edit_profile.html",
+            controller: 'ESViewEditProfileCtrl'
+          }
+        },
+        cache: false,
+        data: {
+          auth: true
         }
-      },
-      cache: false,
-      data: {
-        auth: true
-      }
-    });
+      })
+
+      .state('app.edit_profile_by_id', {
+        url: "/wallet/list/:id/profile/edit",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/user/edit_profile.html",
+            controller: 'ESViewEditProfileCtrl'
+          }
+        },
+        cache: false,
+        data: {
+          login: true
+        }
+      });
 
   })
 
@@ -23,7 +38,7 @@ angular.module('cesium.es.profile.controllers', ['cesium.es.services'])
 
 ;
 
-function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $focus, $translate, $controller,
+function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $translate, $controller,
                                      $ionicHistory, $ionicPopover,
                                      UIUtils, csWallet, esHttp, esProfile, ModalUtils, Device) {
   'ngInject';
@@ -47,11 +62,22 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
   };
   $scope.socialReorder = true;
 
-  $scope.$on('$ionicView.enter', function(e) {
-    $scope.loadWallet()
-      .then(function(walletData) {
-        return $scope.load(walletData);
-      })
+  var wallet;
+
+  $scope.enter = function(e, state) {
+
+    wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+    if (!wallet) {
+      UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+      return $scope.showHome();
+    }
+
+    $scope.loadWallet({
+      wallet: wallet,
+      auth: true,
+      minData: true
+    })
+      .then($scope.load)
       .catch(function(err){
         if (err == 'CANCELLED') {
           return $scope.close()
@@ -59,7 +85,8 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
         }
         UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
       });
-  });
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
 
   $scope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
     if ($scope.dirty && !$scope.saving) {
@@ -161,7 +188,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
   $scope.$watch('formData', $scope.onFormDataChanged, true);
 
   $scope.save = function(silent, hasWaitDebounce) {
-    if($scope.form.$invalid || !$rootScope.walletData || ($scope.saving && !hasWaitDebounce)) {
+    if($scope.form.$invalid || !$scope.walletData || ($scope.saving && !hasWaitDebounce)) {
       return $q.reject();
     }
 
@@ -238,7 +265,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
       }
 
       if (!$scope.existing) {
-        return esProfile.add(formData)
+        return esProfile.add(formData, {wallet: wallet})
           .then(function() {
             console.info("[ES] [profile] Successfully created.");
             $scope.existing = true;
@@ -251,7 +278,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
           .catch(onError('PROFILE.ERROR.SAVE_PROFILE_FAILED'));
       }
       else {
-        return esProfile.update(formData, {id: $rootScope.walletData.pubkey})
+        return esProfile.update(formData, {id: $scope.walletData.pubkey, wallet: wallet})
           .then(function() {
             console.info("[ES] Profile successfully updated.");
             $scope.saving = false;
@@ -295,7 +322,12 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
   };
 
   $scope.close = function() {
-    return $state.go('app.view_wallet', {refresh: true});
+    if (wallet.isDefault()) {
+      return $state.go('app.view_wallet', {refresh: true});
+    }
+    else {
+      return $state.go('app.view_wallet_by_id', {refresh: true, id: wallet.id});
+    }
   };
 
   $scope.showAvatarModal = function() {
@@ -343,7 +375,7 @@ function ESViewEditProfileController($scope, $rootScope, $q, $timeout, $state, $
     // Hide popover if need
     $scope.hideActionsPopover();
 
-    return $scope.existing && csWallet.auth({minData: true})
+    return $scope.existing && wallet.auth({minData: true})
         .then(function(walletData) {
 
           UIUtils.loading.hide();

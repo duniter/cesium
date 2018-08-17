@@ -48,7 +48,8 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   var
   constants = {
-    STORAGE_KEY: 'CESIUM_SETTINGS',
+    OLD_STORAGE_KEY: 'CESIUM_SETTINGS',
+    STORAGE_KEY: 'settings',
     KEEP_AUTH_IDLE_SESSION: 9999
   },
   defaultSettings = angular.merge({
@@ -212,19 +213,21 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
 
   restore = function() {
     var now = new Date().getTime();
-    return localStorage.getObject(constants.STORAGE_KEY)
-        .then(function(storedData) {
+
+    return $q.all([
+        localStorage.getObject(constants.OLD_STORAGE_KEY),
+        localStorage.getObject(constants.STORAGE_KEY)
+      ])
+        .then(function(res) {
+          // Clean old storage
+          localStorage.put(constants.OLD_STORAGE_KEY, null);
+          var storedData = res[1] || res[0];
           // No settings stored
           if (!storedData) {
             console.debug("[settings] No settings in local storage. Using defaults.");
             applyData(defaultSettings);
             emitChangedEvent();
             return;
-          }
-
-          // Workaround, to turn on 'rememberMe', but only once (at version 0.13.2)
-          if (!storedData.rememberMe && (!storedData.login || !storedData.login.method)) {
-            storedData.rememberMe = true;
           }
 
           // Apply stored data
@@ -241,7 +244,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
       (csConfig.license[locale] ? csConfig.license[locale] : csConfig.license[csConfig.defaultLanguage || 'en'] || csConfig.license) : undefined;
   },
 
-    // Detect locale sucessuf changes, then apply to vendor libs
+  // Detect locale successful changes, then apply to vendor libs
   onLocaleChange = function() {
     var locale = $translate.use();
     console.debug('[settings] Locale ['+locale+']');

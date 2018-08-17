@@ -118,9 +118,9 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
 
     UIUtils.loading.show()
       .then(function() {
-        $rootScope.walletData.notifications.unreadCount = 0;
+        csWallet.data.notifications.unreadCount = 0;
         var lastNotification = $scope.search.results[0];
-        $rootScope.walletData.notifications.readTime = lastNotification ? lastNotification.time : 0;
+        csWallet.data.notifications.readTime = lastNotification ? lastNotification.time : 0;
         _.forEach($scope.search.results, function (item) {
           if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
         });

@@ -1,0 +1,19 @@
+<ion-popover-view class="fit has-header">
+  <ion-header-bar>
+    <h1 class="title" translate>COMMON.POPOVER_ACTIONS_TITLE</h1>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list item-text-wrap">
+
+      <!-- delete some wallets -->
+      <button class="item item-icon-left ink"
+              ng-class="{'gray': loading || !wallets.length, 'assertive': !loading && wallets.length}"
+         ng-disabled="loading || !wallets.length"
+         ng-click="selectAndRemoveWallet()">
+        <i class="icon ion-trash-a"></i>
+        {{'ACCOUNT.WALLET_LIST.BTN_DELETE' | translate}}
+      </button>
+
+    </div>
+  </ion-content>
+</ion-popover-view>

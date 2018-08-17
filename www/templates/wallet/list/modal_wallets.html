@@ -1,0 +1,13 @@
+<ion-modal-view id="transfer" class="modal-full-height">
+  <ion-header-bar class="bar-positive">
+    <button class="button button-clear" ng-click="closeModal()" translate>COMMON.BTN_CANCEL</button>
+    <h1 class="title" translate>ACCOUNT.SELECT_WALLET_MODAL.TITLE</h1>
+  </ion-header-bar>
+
+  <ion-content scroll="true">
+
+    <ng-include src="'templates/wallet/list/wallets.html'"></ng-include>
+
+  </ion-content>
+
+</ion-modal-view>

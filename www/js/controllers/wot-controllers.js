@@ -68,19 +68,6 @@ angular.module('cesium.wot.controllers', ['cesium.services'])
           'menuContent': {
             templateUrl: "templates/wot/view_identity_tx.html",
             controller: 'WotIdentityTxViewCtrl'
-          },
-          data: {
-            large: 'app.wot_identity_tx_uid_lg'
-          }
-        }
-      })
-
-      .state('app.wot_identity_tx_uid_lg', {
-        url: "/wot/tx/lg/:pubkey/:uid?action",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/wot/view_identity_tx.html",
-            controller: 'WotIdentityTxViewCtrl'
           }
         }
       })

@@ -55,7 +55,12 @@ angular.module('cesium.storage.services', [ 'cesium.config'])
     /* -- Use standard browser implementation -- */
 
     exports.standard.put = function(key, value) {
-      exports.standard.storage[key] = value;
+      if (angular.isDefined(value) && value != null) {
+        exports.standard.storage[key] = value;
+      }
+      else {
+        exports.standard.storage.removeItem(key);
+      }
       return $q.when();
     };
 

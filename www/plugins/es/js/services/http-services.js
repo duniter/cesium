@@ -441,7 +441,10 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       options = options || {};
       var postRequest = that.post(path);
       return function(record, params) {
-        return csWallet.auth()
+
+        var wallet = (params && params.wallet || csWallet);
+        delete params.wallet;
+        return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function(walletData) {
             if (options.creationTime && !record.creationTime) {
               record.creationTime = that.date.now();
@@ -485,8 +488,11 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
     }
 
     function removeRecord(index, type) {
-      return function(id) {
-        return (csWallet.isAuth() ? $q.when(csWallet.data) : csWallet.auth({silent: true, minData: true}))
+      return function(id, options) {
+        options = options || {};
+        var wallet = (options && options.wallet || csWallet);
+        delete options.wallet;
+        return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
           .then(function(walletData) {
 
             var obj = {

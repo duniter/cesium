@@ -45,6 +45,8 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
 
     function onWalletLogin(data, deferred) {
       deferred = deferred || $q.defer();
+
+      console.log("MESSAGE login on ", data);
       if (!data || !data.pubkey) {
         deferred.resolve();
         return deferred.promise;

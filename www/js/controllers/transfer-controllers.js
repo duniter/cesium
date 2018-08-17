@@ -44,7 +44,7 @@ angular.module('cesium.transfer.controllers', ['cesium.services', 'cesium.curren
   .controller('TransferModalCtrl', TransferModalController)
 ;
 
-function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
+function TransferController($scope, $controller, UIUtils) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -52,7 +52,7 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
 
   $scope.enter = function(e, state) {
 
-    // Compute parameters
+    // Compute parameters from state
     var parameters = {};
     if (state && state.stateParams) {
       if (state.stateParams.pubkey) {
@@ -72,36 +72,19 @@ function TransferController($scope, $controller, UIUtils, csWot, csWallet) {
       if (state.stateParams.restPub) {
         parameters.restPub = state.stateParams.restPub;
       }
-      else if (state.stateParams.all) {
+      if (state.stateParams.all) {
         parameters.all = state.stateParams.all;
         $scope.formData.all = state.stateParams.all;
       }
+      if (state.stateParams.wallet) {
+        parameters.wallet = state.stateParams.wallet;
+      }
     }
+    // Apply parameters
+    $scope.setParameters(parameters);
 
-    // Make sure wallet is loaded
-    csWallet.login({sources: true})
-
-      // If pubkey, get the uid (+ name, avatar)
-      .then(function(data) {
-        $scope.walletData = data;
-        if (!parameters.pubkey) return;
-        return csWot.extend({pubkey: parameters.pubkey})
-          .then(function(dest) {
-            if (dest && dest.uid) {
-              parameters.uid = dest.name || dest.uid;
-            }
-          });
-      })
-
-      // Apply parameters, then recompute relative amount
-      .then(function() {
-        $scope.setParameters(parameters);
-        $scope.onUseRelativeChanged();
-        $scope.onAmountChanged();
-        UIUtils.loading.hide();
-        $scope.loading = false;
-        UIUtils.ink({selector: '.modal-transfer .ink'});
-      });
+    return $scope.load()
+      .then(UIUtils.loading.hide);
   };
   $scope.$on('$ionicView.enter', $scope.enter);
 
@@ -129,7 +112,8 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     useComment: false,
     all: false,
     restPub: null,
-    restAmount: null
+    restAmount: null,
+    walletId: null
   };
   $scope.udAmount = null;
   $scope.minAmount = minQuantitativeAmount;
@@ -137,6 +121,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   $scope.currency = csCurrency.data.name;
   $scope.loading = true;
   $scope.commentInputId = 'transferComment-' + $scope.$id;
+  $scope.enableSelectWallet = true;
 
   // Define keyboard settings, to bind with model (If small screen AND mobile devices)
   $scope.smallscreen = angular.isDefined($scope.smallscreen) ? $scope.smallscreen : UIUtils.screen.isSmall();
@@ -188,26 +173,54 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     else {
       $scope.formData.all = false;
     }
+    if (!parameters.wallet || parameters.wallet === "default") {
+      $scope.formData.walletId = csWallet.id;
+    }
+    else {
+      $scope.formData.walletId = parameters.wallet;
+    }
   };
   // Read default parameters
   $scope.setParameters(parameters);
 
-  $scope.enter = function() {
+  $scope.load = function() {
+    $scope.enableSelectWallet = csWallet.children.count() > 0;
+
+    var wallet = $scope.enableSelectWallet && ($scope.formData.walletId ? csWallet.children.get($scope.formData.walletId) : csWallet) || csWallet;
+    if (wallet.id !== "default") {
+      console.debug("[transfer] Using {" + wallet.id + "} wallet");
+    }
     // Make to sure to load full wallet data (balance)
-    return csWallet.login({sources: true, silent: true})
+    return wallet.login({sources: true, silent: true})
       .then(function(data) {
-          $scope.walletData = data;
-          $scope.onUseRelativeChanged();
-          $scope.onAmountChanged();
+        $scope.wallet = wallet;
+        $scope.walletData = data;
+        $scope.formData.walletId = wallet.id;
+        $scope.onUseRelativeChanged();
+        $scope.onAmountChanged();
+        UIUtils.ink({selector: '.modal-transfer .ink'});
+
+        if (!$scope.destPub || $scope.destUid) {
           $scope.loading = false;
-          UIUtils.ink({selector: '.modal-transfer .ink'});
-        })
-        .catch(function(err){
-          if (err == 'CANCELLED') return $scope.cancel(); // close the modal
-          UIUtils.onError('ERROR.LOGIN_FAILED')(err);
-        });
+        }
+        else {
+          // Fill the uid from the pubkey
+          return csWot.extend({pubkey: $scope.destPub})
+            .then(function(res) {
+              $scope.destUid = res && (res.name || res.uid);
+              if ($scope.destUid) {
+                $scope.destPub = '';
+              }
+              $scope.loading = false;
+            });
+        }
+      })
+      .catch(function(err){
+        if (err == 'CANCELLED') return $scope.cancel(); // close the modal
+        UIUtils.onError('ERROR.LOGIN_FAILED')(err);
+      });
   };
-  $scope.$on('modal.shown', $scope.enter);
+  $scope.$on('modal.shown', $scope.load);
 
   $scope.cancel = function() {
     $scope.closeModal();
@@ -217,10 +230,10 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
   $scope.onUseRelativeChanged = function() {
     $scope.currency = csCurrency.data.name;
     if ($scope.formData.useRelative) {
-      $scope.convertedBalance = csWallet.data.balance / csCurrency.data.currentUD;
+      $scope.convertedBalance = $scope.walletData.balance / csCurrency.data.currentUD;
       $scope.minAmount = minQuantitativeAmount / (csCurrency.data.currentUD / 100);
     } else {
-      $scope.convertedBalance = csWallet.data.balance / 100;
+      $scope.convertedBalance = $scope.walletData.balance / 100;
       $scope.minAmount = minQuantitativeAmount;
     }
     if ($scope.form) {
@@ -240,12 +253,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       amount = parseFloat(amount.replace(new RegExp('[.,]'), '.'));
     }
     if ($scope.formData.useRelative) {
-      $scope.formData.restAmount = csWallet.data.balance - amount * csCurrency.data.currentUD;
+      $scope.formData.restAmount = $scope.walletData.balance - amount * csCurrency.data.currentUD;
       if ($scope.formData.restAmount < minQuantitativeAmount) {
         $scope.formData.restAmount = 0;
       }
     } else {
-      $scope.formData.restAmount  = csWallet.data.balance - amount * 100;
+      $scope.formData.restAmount  = $scope.walletData.balance - amount * 100;
     }
   };
 
@@ -280,7 +293,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     var currentUD;
     return $q.all([
         // Make sure user is auth
-        csWallet.auth({silent: true}),
+        $scope.wallet.auth({silent: true}),
 
         // Get current UD
         csCurrency.currentUD()
@@ -315,10 +328,10 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
             }
             var hasRest = $scope.formData.all  && $scope.formData.restAmount > 0;
             if (hasRest) {
-              return csWallet.transferAll($scope.formData.destPub, amount, comment, $scope.formData.useRelative, $scope.formData.restPub);
+              return $scope.wallet.transferAll($scope.formData.destPub, amount, comment, $scope.formData.useRelative, $scope.formData.restPub);
             }
             else {
-              return csWallet.transfer($scope.formData.destPub, amount, comment, $scope.formData.useRelative);
+              return $scope.wallet.transfer($scope.formData.destPub, amount, comment, $scope.formData.useRelative);
             }
           })
           .then(function() {
@@ -344,7 +357,7 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       .then(function(translations) {
         var hasRest = $scope.formData.all  && $scope.formData.restAmount > 0;
         return $translate(hasRest ? 'CONFIRM.TRANSFER_ALL' : 'CONFIRM.TRANSFER', {
-          from: csWallet.data.isMember ? csWallet.data.uid : $filter('formatPubkey')(csWallet.data.pubkey),
+          from: $scope.walletData.isMember ? $scope.walletData.uid : $filter('formatPubkey')($scope.walletData.pubkey),
           to: $scope.destUid || $scope.destPub,
           amount: $scope.formData.amount,
           unit: $scope.formData.useRelative ? translations['COMMON.UD'] : $filter('abbreviate')($scope.currency),
@@ -391,6 +404,22 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
       });
   };
 
+  $scope.showSelectWalletModal = function() {
+    if (!$scope.enableSelectWallet) return;
+
+    return Modals.showSelectWallet({
+      useRelative: $scope.formData.useRelative
+    })
+      .then(function(wallet) {
+        if (!wallet || $scope.formData.walletId === wallet.id) return;
+        console.debug("[transfer] Using {" + wallet.id + "} wallet");
+        $scope.wallet = wallet;
+        $scope.walletData = wallet.data;
+        $scope.formData.walletId = wallet.id;
+        $scope.onAmountChanged();
+      });
+  };
+
   /* -- popover -- */
 
   $scope.showUnitPopover = function($event) {
@@ -424,7 +453,6 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     $scope.digitKeyboardVisible = true;
     return $q.when();
   };
-
 
   $scope.hideDigitKeyboard = function(timeout) {
     if (!$scope.digitKeyboardVisible) return $q.when();

@@ -1,5 +1,5 @@
 <!-- Buttons section -->
-<ng-if ng-if="enable && extensionPoint === 'buttons'">
+<ng-if ng-if=":state:enable && extensionPoint === 'buttons'">
   <button class="button button-stable button-small-padding icon ion-compose"
           ng-click="showNewMessageModal()"
           title="{{'MESSAGE.BTN_WRITE' | translate}}">
@@ -7,7 +7,7 @@
 </ng-if>
 
 <!-- General section -->
-<ng-if ng-if="enable && extensionPoint === 'after-general'">
+<ng-if ng-if=":state:enable && extensionPoint === 'after-general'">
 
   <span class="item item-divider item-divider-top-border">
     <span>

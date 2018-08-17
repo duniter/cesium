@@ -4,7 +4,7 @@
     <div class="list no-padding-xs" ng-init="setForm(transferForm)">
 
       <!-- dest -->
-      <a class="item item-icon-right gray ink"
+      <ion-item class="item-icon-right gray ink"
          ng-class="{'item-input-error': form.$submitted && !formData.destPub}"
          ng-click="showWotLookupModal()">
           <span class="gray" translate>TRANSFER.TO</span>
@@ -15,7 +15,7 @@
             <i class="ion-key"></i> {{formData.destPub | formatPubkey}}
           </span>
         <i class="gray icon ion-ios-arrow-right"></i>
-      </a>
+      </ion-item>
       <div class="form-errors"
            ng-if="form.$submitted && !formData.destPub">
         <div class="form-error">
@@ -23,21 +23,25 @@
         </div>
       </div>
 
-      <span class="item item-text-wrap">
-          <span class="gray" translate>TRANSFER.FROM</span>
-          <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
-              ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
-              <ion-spinner icon="android" ng-show="!walletData.pubkey"></ion-spinner>
-              <span ng-if="walletData.pubkey && !walletData.isMember">
-                <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
-              </span>
-              <span ng-if="walletData.isMember">
-                <i class="ion-person"></i> {{walletData.name||walletData.uid}}&nbsp;&nbsp;
-              </span>
-              <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
-          </span>
+      <!-- from -->
+      <ion-item class="item-text-wrap ink"
+                ng-class="{'item-icon-right': enableSelectWallet}"
+                ng-click="showSelectWalletModal()">
+        <span class="gray" translate>TRANSFER.FROM</span>
+        <span class="badge animate-fade-in animate-show-hide ng-hide" ng-show="!loading"
+            ng-class="{'badge-assertive': (convertedBalance <= 0 || (formData.amount && convertedBalance < formData.amount)), 'badge-balanced': (convertedBalance > 0 && (!formData.amount || convertedBalance >= formData.amount)) }">
+            <ion-spinner icon="android" ng-show="!walletData.pubkey"></ion-spinner>
+            <span ng-if="walletData.pubkey && !walletData.isMember">
+              <i class="ion-key"></i> {{walletData.pubkey| formatPubkey}}&nbsp;&nbsp;
+            </span>
+            <span ng-if="walletData.isMember">
+              <i class="ion-person"></i> {{walletData.name||walletData.uid}}&nbsp;&nbsp;
+            </span>
+            <span ng-bind-html="walletData.balance|formatAmount:{useRelative: formData.useRelative, currency:currency}"></span>
+        </span>
 
-      </span>
+        <i class="gray icon ion-ios-arrow-right" ng-if="enableSelectWallet"></i>
+      </ion-item>
 
       <!-- Amount -->
       <ion-item class="item-input item-floating-label item-button-right"

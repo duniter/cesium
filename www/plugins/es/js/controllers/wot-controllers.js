@@ -82,15 +82,12 @@ function ESWotLookupExtendController($scope, $controller, $state) {
   };
 }
 
-function ESWotIdentityViewController($scope, $ionicPopover, $q, UIUtils, Modals, esSettings, PluginService, csWallet,
+function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIUtils, Modals, csWallet,
                                      esModals, esHttp, esWallet, esInvitation) {
   'ngInject';
 
-  $scope.extensionPoint = PluginService.extensions.points.current.get();
-  $scope.enable = esSettings.isEnable();
-  esSettings.api.state.on.changed($scope, function(enable) {
-    $scope.enable = enable;
-  });
+  // Initialize the super class and extend it.
+  angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
   /* -- modals -- */
 

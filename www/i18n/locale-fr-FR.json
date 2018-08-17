@@ -522,6 +522,15 @@
       "TITLE": "Sélection de l'identité",
       "HELP": "Plusieurs <b>identités différentes</b> ont été envoyées, pour la clé publique <span class=\"gray\"><i class=\"ion-key\"></i> {{pubkey|formatPubkey}}</span>.<br/>Veuillez sélectionner le dossier à utiliser :"
     },
+    "SELECT_WALLET_MODAL": {
+      "TITLE": "Sélection du compte"
+    },
+    "WALLET_LIST": {
+      "TITLE": "Comptes secondaires",
+      "BTN_NEW": "Ajouter un compte",
+      "NO_WALLET": "Aucun compte secondaire",
+      "BTN_DELETE": "Retirer un compte secondaire..."
+    },
     "SECURITY": {
       "ADD_QUESTION": "Ajouter une question personnalisée ",
       "BTN_CLEAN": "Vider",
@@ -708,7 +717,12 @@
     "EXISTING_ACCOUNT_REQUEST": "Veuillez modifier vos identifiants afin qu'ils correspondent à un compte non utilisé.",
     "GET_LICENSE_FILE_FAILED": "Récupérer du fichier de licence impossible",
     "CHECK_NETWORK_CONNECTION": "Aucun nœud ne semble accessible.<br/><br/>Veuillez <b>vérifier votre connection Internet</b>.",
-    "ISSUE_524_TX_FAILED": "Echec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>."
+    "ISSUE_524_TX_FAILED": "Echec du virement.<br/><br/>Un message a été envoyé aux développeurs pour faciliter la résolution du problème. <b>Merci de votre aide</b>.",
+    "ADD_SECONDARY_WALLET_FAILED": "Echec de l'ajout du portefeuille seconcdaire",
+    "UPDATE_WALLET_LIST_FAILED": "Echec du rafraichissement des portefeuilles secondaires",
+    "LOAD_WALLET_LIST_FAILED": "Echec du chargement des portefeuilles secondaires",
+    "COULD_NOT_ADD_MAIN_WALLET": "Le portefeuille à ajouter <b>doit être différent du compte principal</b> avec lequel vous êtes connecté.",
+    "UNKNOWN_WALLET_ID": "Portefeuille secondaire inconnu."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

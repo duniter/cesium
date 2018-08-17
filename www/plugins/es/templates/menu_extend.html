@@ -1,7 +1,6 @@
 
 <!-- Top header: Main section -->
-<div
-  ng-if="enable && extensionPoint === 'nav-buttons-right'" class="hidden-xs hidden-sm">
+<div ng-if=":state:enable && extensionPoint === 'nav-buttons-right'" class="hidden-xs hidden-sm">
 
 
   <!-- invitation event -->
@@ -39,7 +38,7 @@
 </div>
 
 <!-- Left menu: User section -->
-<div ng-if="enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
+<div ng-if=":state:enable && extensionPoint === 'menu-user'" class="visible-xs visible-sm">
 
   <a menu-close class="item item-icon-left" active-link="active"
        active-link-path-prefix="#/app/invitations"

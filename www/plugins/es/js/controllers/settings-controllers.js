@@ -11,7 +11,7 @@ angular.module('cesium.es.settings.controllers', ['cesium.es.services'])
         points: {
           'plugins': {
             templateUrl: "plugins/es/templates/settings/settings_extend.html",
-            controller: "ESExtendSettingsCtrl"
+            controller: "ESExtensionCtrl"
           }
         }
       });
