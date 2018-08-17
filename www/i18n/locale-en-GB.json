@@ -129,6 +129,8 @@
     "ENABLE_UI_EFFECTS": "Enable visual effects",
     "HISTORY_SETTINGS": "Account operations",
     "DISPLAY_UD_HISTORY": "Display produced dividends?",
+    "TX_HISTORY_AUTO_REFRESH": "Enable automatic refresh?",
+    "TX_HISTORY_AUTO_REFRESH_HELP": "Updates the list of operations to each new block.",
     "AUTHENTICATION_SETTINGS": "Authentication",
     "KEEP_AUTH": "Expiration of authentication",
     "KEEP_AUTH_HELP": "Define when authentication is cleared from memory",
@@ -520,6 +522,15 @@
       "TITLE": "Identity selection",
       "HELP": "Several <b>different identities</b> have been sent, for the public key <span class=\"gray\"> <i class=\"ion-key\"></i> {{pubkey | formatPubkey}}</span>.<br/>Please select the identity to use:"
     },
+    "SELECT_WALLET_MODAL": {
+      "TITLE": "Wallet selection"
+    },
+    "WALLET_LIST": {
+      "TITLE": "secondary wallets",
+      "BTN_NEW": "Add a wallet",
+      "NO_WALLET": "No secondary wallet",
+      "BTN_DELETE": "Remove a secondary wallet..."
+    },
     "SECURITY":{
       "ADD_QUESTION" : "Add custom question",
       "BTN_CLEAN" : "Clean",
@@ -595,6 +606,7 @@
   "TRANSFER": {
     "TITLE": "Transfer",
     "SUB_TITLE": "Transfer money",
+    "SUB_TITLE_ALL": "Empty the account",
     "FROM": "From",
     "TO": "To",
     "AMOUNT": "Amount",
@@ -705,7 +717,12 @@
     "EXISTING_ACCOUNT_REQUEST": "Please modify your credentials so that they correspond to an unused account.",
     "GET_LICENSE_FILE_FAILED": "Unable to get license file",
     "CHECK_NETWORK_CONNECTION": "No peer appears to be accessible.<br/><br/>Please <b>check your Internet connection</b>.",
-    "ISSUE_524_TX_FAILED": "Failed to transfer.<br/><br/>A message has been sent to developers to help solve the problem.<b>Thank you for your help</b>."
+    "ISSUE_524_TX_FAILED": "Failed to transfer.<br/><br/>A message has been sent to developers to help solve the problem.<b>Thank you for your help</b>.",
+    "ADD_SECONDARY_WALLET_FAILED": "Unable to add secondary wallet.",
+    "UPDATE_WALLET_LIST_FAILED": "Unable to refresh the list of wallets.",
+    "LOAD_WALLET_LIST_FAILED": "Unable to load the list of wallets.",
+    "COULD_NOT_ADD_MAIN_WALLET": "The wallet to add <b>must be different from the main account</b> with which you are connected.",
+    "UNKNOWN_WALLET_ID": "Unknown secondary wallet."
   },
   "INFO": {
     "POPUP_TITLE": "Information",

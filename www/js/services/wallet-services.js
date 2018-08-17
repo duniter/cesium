@@ -1667,16 +1667,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       // Store (store children locally)
       var finishFn = (!options || angular.isUndefined(options.store) || options.store) ? store : $q.when;
-
-      // if already login
-      if (wallet.isLogin()) {
-        // Raise login event
-        return api.data.raisePromise.login(wallet.data)
-          .then(finishFn);
-      }
-      else {
-        return finishFn();
-      }
+      return finishFn();
     },
 
     removeChildWalletById = function(id) {
