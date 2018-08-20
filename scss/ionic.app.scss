@@ -1289,8 +1289,11 @@ a.underline:hover,
     }
   }
 
+  // checkbox
   .item.item-avatar.item-checkbox .item-content {
     padding-left: 47px;
+    min-height: auto !important;
+    height: auto !important;
   }
 }
 
