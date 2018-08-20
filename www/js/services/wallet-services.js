@@ -518,7 +518,6 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     // Generate events from requirements
     addEvents = function() {
-
       // Add user events
       if (data.requirements.revoked) {
         addEvent({type:'warn', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
@@ -534,17 +533,25 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         else if (!data.requirements.needSelf && data.requirements.needMembership){
           addEvent({type:'warn', message: 'ACCOUNT.NO_WAITING_MEMBERSHIP', context: 'requirements'});
         }
-        if (data.requirements.needCertificationCount > 0) {
-          addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
-        }
-        if (data.requirements.willNeedCertificationCount > 0) {
-          addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
-        }
         if (data.requirements.needRenew) {
-          addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+          if (data.requirements.membershipExpiresIn > 0) {
+            addEvent({type:'warn', message: 'ACCOUNT.WILL_NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+          }
+          else {
+            addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+          }
         }
-        else if (data.requirements.wasMember && data.requirements.needMembership) {
-          addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+        else
+        {
+          if (data.requirements.needCertificationCount > 0) {
+            addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+          }
+          if (data.requirements.willNeedCertificationCount > 0) {
+            addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+          }
+          if (data.requirements.wasMember && data.requirements.needMembership) {
+            addEvent({type:'warn', message: 'ACCOUNT.NEED_RENEW_MEMBERSHIP', messageParams: data.requirements, context: 'requirements'});
+          }
         }
       }
     },
