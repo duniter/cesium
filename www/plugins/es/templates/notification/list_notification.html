@@ -1,15 +1,15 @@
 <ion-list class="{{::motion.ionListClass}}">
 
   <ion-item
-    ng-repeat="notification in search.results"
+    ng-repeat="notification in search.results track by notification.id"
     class="item-border-large item-text-wrap ink item-avatar"
     ng-class="{'unread': !notification.read}"
-    ng-click="select(notification)">
+    ng-click="select($event, notification)">
 
     <i ng-if="!notification.avatar" class="item-image icon {{::notification.avatarIcon}}"></i>
     <i ng-if="notification.avatar" class="item-image avatar" style="background-image: url({{::notification.avatar.src}})"></i>
 
-    <h3 trust-as-html="notification.message | translate:notification"></h3>
+    <h3 trust-as-html="notification.message | translate:(notification.messageParams||notification)"></h3>
     <h4>
       <i class="icon {{notification.icon}}"></i>&thinsp;<span class="dark">{{notification.time|formatFromNow}}</span>
       <span class="gray">| {{notification.time|formatDate}}</span>

@@ -39,6 +39,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
   function onWalletInit(data) {
     data.invitations = data.invitations || {};
     data.invitations.unreadCount = null;
+    data.invitations.time = null;
   }
 
   function onWalletReset(data) {
@@ -47,21 +48,32 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
     }
   }
 
-  function onWalletLogin(data, deferred) {
+  function onWalletLoad(data, deferred) {
     deferred = deferred || $q.defer();
     if (!data || !data.pubkey) {
       deferred.resolve();
       return deferred.promise;
     }
 
-    console.debug('[ES] [invitations] Loading count...');
     var now = new Date().getTime();
+    var time = Math.trunc(now / 1000);
 
-    // Count unread messages
+    // Skip if loaded less than 1 min ago
+    // (This is need to avoid reload on login AND load phases)
+    if (data.invitations && data.invitations.time && (time - data.invitations.time < 30 /*=30s*/)) {
+      console.debug('[ES] [invitation] Skipping load (loaded '+(time - data.invitations.time)+'s ago)');
+      deferred.resolve();
+      return deferred.promise;
+    }
+
+    console.debug('[ES] [invitation] Loading count...');
+
+    // Count unread invitations
     countUnreadInvitations(data.pubkey)
       .then(function(unreadCount){
         data.invitations = data.invitations || {};
         data.invitations.unreadCount = unreadCount;
+        data.invitations.time = time;
         console.debug('[ES] [invitation] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
         deferred.resolve(data);
       })
@@ -142,11 +154,13 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       });
   }
 
-  function sendInvitation(record, keypair, type) {
-    type = type || 'certification';
+  function sendInvitation(record, options) {
+    options = options || {};
+    options.type = options.type || 'certification';
+    var keypair = options.keypair || (options.wallet && options.wallet.data.keypair);
     return esWallet.box.record.pack(record, keypair, 'recipient', ['content', 'comment'])
       .then(function(record) {
-        return that.raw[type].add(record);
+        return that.raw[options.type].add(record, options);
       });
   }
 
@@ -180,16 +194,18 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       });
   }
 
-  function loadInvitations(options) {
+  function loadInvitations(options, keypair) {
     if (!csWallet.isLogin()) return $q.when([]); // Should never happen
     options = options || {};
     options.from = options.from || 0;
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;
+
+    var issuer = options.issuer || csWallet.data.pubkey;
     var request = {
       sort: {
         "time" : "desc"
       },
-      query: {bool: {filter: {term: {recipient: csWallet.data.pubkey}}}},
+      query: {bool: {filter: {term: {recipient: issuer}}}},
       from: options.from,
       size: options.size,
       _source: fields.commons
@@ -200,13 +216,8 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       query.bool.must = [{range: {time: {gt: options.readTime}}}];
     }
 
-    return $q.all([
-      esWallet.box.getKeypair(),
-      that.raw.certification.postSearch(request)
-    ])
+    return that.raw.certification.postSearch(request)
       .then(function(res) {
-        var keypair = res[0];
-        res = res[1];
         if (!res || !res.hits || !res.hits.total) return [];
 
         var invitations = res.hits.hits.reduce(function (result, hit) {
@@ -342,8 +353,9 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
   function addListeners() {
     // Extend csWallet events
     listeners = [
-      csWallet.api.data.on.login($rootScope, onWalletLogin, this),
       csWallet.api.data.on.init($rootScope, onWalletInit, this),
+      csWallet.api.data.on.login($rootScope, onWalletLoad, this),
+      csWallet.api.data.on.load($rootScope, onWalletLoad, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this),
       csWallet.api.action.on.certify($rootScope, onWalletCertify, this),
       esNotification.api.event.on.newInvitation($rootScope, onNewInvitationEvent, this)
@@ -363,7 +375,7 @@ angular.module('cesium.es.invitation.services', ['cesium.platform',
       console.debug("[ES] [invitations] Enable");
       addListeners();
       if (csWallet.isLogin()) {
-        onWalletLogin(csWallet.data);
+        onWalletLoad(csWallet.data);
       }
     }
   }

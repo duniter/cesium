@@ -302,6 +302,7 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       stop: stop,
       data: data,
       get: getData,
+      name: getDataField('name'),
       parameters: getDataField('parameters'),
       currentUD: getDataField('currentUD'),
       medianTimeOffset: getDataField('medianTimeOffset'),

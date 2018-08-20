@@ -155,7 +155,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           ];
 
           // get TX history since
-          if (fromTime !== -1) {
+          if (fromTime > 0) {
             var sliceTime = csSettings.data.walletHistorySliceSecond;
             fromTime = fromTime - (fromTime % sliceTime);
             for(var i = fromTime; i - sliceTime < nowInSec; i += sliceTime)  {
@@ -170,14 +170,14 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
           }
 
           // get all TX
-          else {
+          else if (fromTime !== 'pending') {
             jobs.push(BMA.tx.history.all({pubkey: pubkey})
               .then(_reduceTx)
             );
           }
 
           // get UD history
-          if (csSettings.data.showUDHistory) {
+          if (csSettings.data.showUDHistory && fromTime > 0) {
             /*jobs.push(
               BMA.ud.history({pubkey: pubkey})
                 .then(function(res){
@@ -367,6 +367,10 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
             console.debug('[tx] TX and sources loaded in '+ (new Date().getTime()-now) +'ms');
             return data;
           });
+      },
+
+      loadSources = function(pubkey) {
+        return loadData(pubkey, 'pending');
       };
 
     // Download TX history file
@@ -440,6 +444,7 @@ angular.module('cesium.tx.services', ['ngApi', 'cesium.bma.services',
     return {
       id: id,
       load: loadData,
+      loadSources: loadSources,
       downloadHistoryFile: downloadHistoryFile,
       // api extension
       api: api

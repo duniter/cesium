@@ -35,6 +35,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     function onWalletInit(data) {
       data.messages = data.messages || {};
       data.messages.unreadCount = null;
+      data.messages.time = null;
     }
 
     function onWalletReset(data) {
@@ -43,23 +44,33 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
       }
     }
 
-    function onWalletLogin(data, deferred) {
+    function onWalletLoad(data, deferred) {
       deferred = deferred || $q.defer();
 
-      console.log("MESSAGE login on ", data);
       if (!data || !data.pubkey) {
         deferred.resolve();
         return deferred.promise;
       }
 
-      console.debug('[ES] [message] Loading count...');
       var now = new Date().getTime();
+      var time = Math.trunc(now / 1000);
+
+      // Skip if loaded less than 1 min ago
+      // (This is need to avoid reload on login AND load phases)
+      if (data.messages && data.messages.time && (time - data.messages.time < 30 /*=30s*/)) {
+        console.debug('[ES] [message] Skipping load (loaded '+(time - data.messages.time)+'s ago)');
+        deferred.resolve();
+        return deferred.promise;
+      }
+
+      console.debug('[ES] [message] Loading count...');
 
       // Count unread messages
       countUnreadMessages(data.pubkey)
         .then(function(unreadCount){
           data.messages = data.messages || {};
           data.messages.unreadCount = unreadCount;
+          data.messages.time = time;
           console.debug('[ES] [message] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
           deferred.resolve(data);
         })
@@ -600,8 +611,9 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
     function addListeners() {
       // Extend csWallet events
       listeners = [
-        csWallet.api.data.on.login($rootScope, onWalletLogin, this),
         csWallet.api.data.on.init($rootScope, onWalletInit, this),
+        csWallet.api.data.on.login($rootScope, onWalletLoad, this),
+        csWallet.api.data.on.load($rootScope, onWalletLoad, this), // need for secondary wallets
         csWallet.api.data.on.reset($rootScope, onWalletReset, this),
         esNotification.api.event.on.newMessage($rootScope, onNewMessageEvent, this),
         // for issue #524
@@ -622,7 +634,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
         console.debug("[ES] [message] Enable");
         addListeners();
         if (csWallet.isLogin()) {
-          onWalletLogin(csWallet.data);
+          onWalletLoad(csWallet.data);
         }
       }
     }

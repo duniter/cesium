@@ -10,7 +10,9 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
 
   })
 
-.factory('esNotification', function($rootScope, $q, $timeout, esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, BMA, CryptoUtils, csPlatform, Api) {
+.factory('esNotification', function($rootScope, $q, $timeout,
+                                    esHttp, csConfig, csSettings, csWallet, csWot, UIUtils, filterTranslations,
+                                    BMA, CryptoUtils, csPlatform, Api) {
   'ngInject';
 
   var
@@ -106,15 +108,16 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
   }
 
   // Load user notifications
-  function loadNotifications(pubkey, options) {
-    if (!pubkey) {
-      return $q.reject('[ES] [notification] Unable to load - missing pubkey');
-    }
+  function loadNotifications(options) {
     options = options || {};
+    if (!options.pubkey) {
+      return $q.reject('[ES] [notification] Unable to load - missing options.pubkey');
+    }
     options.from = options.from || 0;
     options.size = options.size || constants.DEFAULT_LOAD_SIZE;
+    var wallet = options.wallet || csWallet;
     var request = {
-      query: createFilterQuery(pubkey, options),
+      query: createFilterQuery(options.pubkey, options),
       sort : [
         { "time" : {"order" : "desc"}}
       ],
@@ -126,11 +129,38 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     return that.raw.postSearch(request)
       .then(function(res) {
         if (!res.hits || !res.hits.total) return [];
+        var events;
+
+        // Add wallet events as notifications
+        if (wallet.data.events && wallet.data.events.length) {
+          var time = moment().utc().unix() - filterTranslations.MEDIAN_TIME_OFFSET;
+          events = (wallet.data.events || []).reduce(function(res, event) {
+            if (event.type != "warn") return res;
+            var notification = new Notification({}, function(self) {
+              if (!self.read) {
+                self.read = true;
+                if (wallet.data.notifications && wallet.data.notifications.warnCount > 0) {
+                  wallet.data.notifications.warnCount--;
+                }
+              }
+            });
+            notification.id=event.code;
+            notification.read = false;
+            notification.state = 'app.view_wallet';
+            notification.avatarIcon = 'ion-alert-circled';
+            notification.icon = 'ion-alert-circled assertive';
+            notification.time = time;
+            notification.message = event.message;
+            notification.messageParams = event.messageParams;
+            return res.concat(notification);
+          }, []);
+        }
+
         var notifications = res.hits.hits.reduce(function(res, hit) {
           var item = new Notification(hit._source, markNotificationAsRead);
           item.id = hit._id;
           return res.concat(item);
-        }, []);
+        }, events || []);
 
         return csWot.extendAll(notifications);
       });
@@ -202,19 +232,34 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
   function onWalletReset(data) {
     data.notifications = data.notifications || {};
     data.notifications.unreadCount = null;
+    data.notifications.warnCount = null;
+    data.notifications.time = null;
     // Stop listening notification
     that.raw.ws.getUserEvent().close();
   }
 
-  function onWalletLogin(data, deferred) {
+  function onWalletLoad(data, deferred) {
     deferred = deferred || $q.defer();
     if (!data || !data.pubkey || !data.keypair) {
       deferred.resolve();
       return deferred.promise;
     }
 
-    console.debug('[ES] [notification] Loading count...');
     var now = new Date().getTime();
+    var time = Math.trunc(now / 1000);
+
+    // Skip if loaded less than 1 min ago
+    // (This is need to avoid reload on login AND load phases)
+    if (data.notifications && data.notifications.time && (time - data.notifications.time < 30 /*=30s*/)) {
+      // update warn count
+      data.notifications.warnCount = countWarnEvents(data);
+
+      console.debug('[ES] [notification] Skipping load (loaded '+(time - data.notifications.time)+'s ago)');
+      deferred.resolve();
+      return deferred.promise;
+    }
+
+    console.debug('[ES] [notification] Loading count...');
 
     // Load unread notifications count
     loadUnreadNotificationsCount(
@@ -225,6 +270,8 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       .then(function(unreadCount) {
         data.notifications = data.notifications || {};
         data.notifications.unreadCount = unreadCount;
+        data.notifications.warnCount = countWarnEvents(data);
+
         console.debug('[ES] [notification] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
         deferred.resolve(data);
       })
@@ -252,10 +299,18 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     return deferred.promise;
   }
 
+  function countWarnEvents(data){
+    if (!data.events) return 0;
+    return data.events.reduce(function(counter, event) {
+      return (event.type == "warn") ? counter+1 : counter;
+    }, 0);
+  }
+
   function addListeners() {
     // Listen some events
     listeners = [
-      csWallet.api.data.on.login($rootScope, onWalletLogin, this),
+      csWallet.api.data.on.login($rootScope, onWalletLoad, this),
+      csWallet.api.data.on.load($rootScope, onWalletLoad, this),
       csWallet.api.data.on.init($rootScope, onWalletReset, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this)
     ];
@@ -281,7 +336,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       console.debug("[ES] [notification] Enable");
       addListeners();
       if (csWallet.isLogin()) {
-        return onWalletLogin(csWallet.data);
+        return onWalletLoad(csWallet.data);
       }
     }
   }

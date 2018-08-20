@@ -5,13 +5,13 @@
   <i ng-if="::!walletData.avatar" class="item-image icon"
      ng-class=":rebind:{'ion-card': !walletData.isMember, 'ion-persion': walletData.isMember}"></i>
   <i ng-if="::walletData.avatar" class="item-image avatar" style="background-image: url({{::walletData.avatar.src}})"></i>
-
-  <h2 class="text-editable" ng-click="editWallet($event, wallet)"
-    title="{{'ACCOUNT.WALLET_LIST.BTN_RENAME'|translate}}">
-    <ng-if ng-if=":rebind:walletData.name||walletData.uid" ng-bind-html="::walletData.name||walletData.uid"></ng-if>
-    <ng-if ng-if=":rebind:!walletData.name && !walletData.uid">{{::walletData.pubkey|formatPubkey}}</ng-if>
+  <i ng-hide=":rebind:wallet.isAuth()" class="icon-secondary assertive ion-locked" style="top: -16px; left: 66px; font-size: 20px;"></i>
+  <h2>
+    <span class="text-editable" ng-click="editWallet($event, wallet)" title="{{'ACCOUNT.WALLET_LIST.BTN_RENAME'|translate}}">
+      <ng-if ng-if=":rebind:walletData.name||walletData.uid" ng-bind-html="::walletData.name||walletData.uid"></ng-if>
+      <ng-if ng-if=":rebind:!walletData.name && !walletData.uid">{{::walletData.pubkey|formatPubkey}}</ng-if>
+    </span>
   </h2>
-
   <h4 class="gray">
     <span class="positive" ng-if="::walletData.name && walletData.uid">
       <i class="ion-person"></i>
@@ -22,7 +22,22 @@
     <span ng-if="::!walletData.uid" class="assertive" translate>WOT.NOT_MEMBER_PARENTHESIS</span>
   </h4>
 
-  <span class="badge"
+  <h4 class="dark">
+    <span ng-if="walletData.invitations.unreadCount">
+      <i class="dark ion-person-stalker"></i>
+      {{walletData.invitations.unreadCount}}
+    </span>
+      <span ng-if="walletData.messages.unreadCount">
+      <i class="dark ion-email"></i>
+      {{walletData.messages.unreadCount}}
+    </span>
+    <span ng-if="walletData.notifications.unreadCount">
+      <i class="dark ion-android-notifications"></i>
+      {{walletData.notifications.unreadCount}}
+    </span>
+  </h4>
+
+  <span class="badge" ng-if="formData.displayBalance"
         ng-class=":rebind:{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">
       <span ng-bind-html=":rebind:walletData.balance|formatAmount:{useRelative: true, currency: currency}"></span>
   </span>

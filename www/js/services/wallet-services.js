@@ -78,11 +78,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       };
     },
 
-    resetTxAndSources = function(){
+    resetSources = function(){
       // reset sources data
       data.sources = undefined;
       data.sourcesIndexByKey = undefined;
       data.balance = 0;
+    },
+
+    resetTx = function(){
       // reset TX data
       data.tx = data.tx || {};
       data.tx.history = [];
@@ -90,6 +93,13 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.tx.errors = [];
       delete data.tx.fromTime;
       delete data.tx.toTime;
+    },
+
+    resetTxAndSources = function(){
+      // reset sources data
+      resetSources();
+      // reset TX data
+      resetTx();
     },
 
     addSource = function(src, sources, sourcesIndexByKey) {
@@ -299,7 +309,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (options) {
         if (options.minData) return data.loaded;
         if (options.requirements && !data.requirements) return false;
-        if (options.tx && options.tx.enable && !data.tx.fromTime) return false;
+        if (options.tx && options.tx.enable && (!data.tx.fromTime || data.tx.fromTime == 'pending')) return false;
         if (options.sigStock && !data.sigStock) return false;
       }
       return data.loaded && data.sources;
@@ -512,6 +522,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         })
         .catch(function(err) {
           resetTxAndSources();
+          throw err;
+        });
+    },
+
+    loadSources = function() {
+      return csTx.loadSources(data.pubkey)
+        .then(function(res){
+          resetSources();
+          angular.merge(data, res);
+        })
+        .catch(function(err) {
+          resetSources();
           throw err;
         });
     },
@@ -729,9 +751,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         );
       }
 
-      if (options.sources || (options.tx && options.tx.enable)) {
+      if (options.sources && (!options.tx || options.tx.enable)) {
         // Get TX and sources
         jobs.push(loadTxAndSources(options.tx ? options.tx.fromTime: undefined));
+      }
+
+      else if (options.sources && (options.tx && !options.tx.enable)) {
+        // Get sources (no TX)
+        jobs.push(loadSources());
       }
 
       // Load sigStock

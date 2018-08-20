@@ -6,7 +6,7 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
     $stateProvider
 
       .state('app.view_invitations', {
-        url: "/invitations",
+        url: "/invitations?id",
         views: {
           'menuContent': {
             templateUrl: "plugins/es/templates/invitation/view_invitations.html",
@@ -15,6 +15,19 @@ angular.module('cesium.es.invitation.controllers', ['cesium.es.services'])
         },
         data: {
           auth: true
+        }
+      })
+
+      .state('app.view_invitations_by_id', {
+        url: "/wallet/list/:id/invitations",
+        views: {
+          'menuContent': {
+            templateUrl: "plugins/es/templates/invitation/view_invitations.html",
+            controller: 'InvitationsCtrl'
+          }
+        },
+        data: {
+          login: true
         }
       })
     ;
@@ -46,16 +59,37 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     }
   };
 
-  $scope.$on('$ionicView.enter', function() {
-    if ($scope.search.loading) {
-      if (esHttp.isAlive()) {
-        $scope.load();
+  var wallet;
 
-        // Reset unread counter
-        $scope.resetUnreadCount();
+  $scope.setWallet = function(aWallet) {
+    wallet = aWallet;
+  };
+
+  $scope.$on('$ionicView.enter', function(e, state) {
+    if ($scope.search.loading) {
+      wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
       }
 
-      $scope.showFab('fab-new-invitation');
+      $scope.loadWallet({
+        wallet: wallet,
+        minData: true
+      })
+      .then(function() {
+
+        $scope.addListeners();
+
+        if (esHttp.isAlive()) {
+          $scope.load();
+
+          // Reset unread counter
+          $scope.resetUnreadCount();
+
+          $scope.showFab('fab-new-invitation');
+        }
+      });
     }
   });
 
@@ -64,7 +98,10 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
 
-    return esInvitation.load(options)
+    // Make sure wallet is init (need by PopoverInvitationCtrl)
+    wallet = wallet || csWallet;
+
+    return esInvitation.load(options, wallet.data.keypair)
       .then(function(invitations) {
         $scope.search.results = invitations;
         $scope.search.loading = false;
@@ -129,12 +166,12 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
   };
 
   $scope.resetUnreadCount = function() {
-    if ($scope.search.loading || !csWallet.data.invitations) {
+    if ($scope.search.loading || !wallet.data.invitations) {
       return $timeout($scope.resetUnreadCount, 2000);
     }
-    if (!csWallet.data.invitations.unreadCount) return;
+    if (!wallet.data.invitations.unreadCount) return;
     console.debug('[ES] [invitation] Resetting unread count');
-    csWallet.data.invitations.unreadCount = 0;
+    wallet.data.invitations.unreadCount = 0;
     if (!$scope.search.results || !$scope.search.results.length) return;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
@@ -158,7 +195,7 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
 
     return $q.all([
         UIUtils.loading.show(),
-        esInvitation.deleteAll(csWallet.data.pubkey)
+        esInvitation.deleteAll(wallet.data.pubkey)
       ])
       .then(function() {
         $scope.search.results.splice(0, $scope.search.results.length); // update list
@@ -225,14 +262,25 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
 
 
   // Listeners
-  csWallet.api.data.on.logout($scope, $scope.resetData);
-  esHttp.api.node.on.stop($scope, $scope.resetData);
-  esHttp.api.node.on.start($scope, $scope.load);
-  esInvitation.api.data.on.new($scope, $scope.onNewInvitation);
+  $scope.addListeners = function() {
+    if (!wallet) throw "Controller wallet not set !";
 
+    $scope.listeners = [
+      esHttp.api.node.on.stop($scope, $scope.resetData),
+      esHttp.api.node.on.start($scope, $scope.load),
+      wallet.api.data.on.logout($scope, $scope.resetData)
+    ];
+
+    if (wallet.isDefault()) {
+      // Subscribe to new invitation
+      $scope.listeners.push(
+        esInvitation.api.data.on.new($scope, $scope.onNewInvitation)
+      );
+    }
+  }
 }
 
-function PopoverInvitationController($scope, $controller) {
+function PopoverInvitationController($scope, $controller, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -241,8 +289,14 @@ function PopoverInvitationController($scope, $controller) {
   // Disable list effects
   $scope.motion = null;
 
+  // Set the wallet to use
+  $scope.setWallet(csWallet);
+
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {
+
+      $scope.addListeners();
+
       $scope.load();
     }
   });
@@ -263,14 +317,71 @@ function PopoverInvitationController($scope, $controller) {
 }
 
 
-function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esHttp, esWallet, esInvitation) {
+function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esHttp, esWallet, esInvitation, parameters) {
   'ngInject';
 
+  // Controller var
+  var wallet;
+
+  // Scope var
   $scope.recipients = [];
   $scope.suggestions = [];
   $scope.formData = {
-    useComment: false
+    useComment: false,
+    walletId: null
   };
+  $scope.enableSelectWallet = true;
+
+  /* -- scope functions -- */
+
+  $scope.setParameters = function(parameters) {
+    if (!parameters) return;
+    if (!parameters.wallet || parameters.wallet === "default") {
+      $scope.formData.walletId = csWallet.id;
+    }
+    else {
+      $scope.formData.walletId = parameters.wallet;
+    }
+  };
+  // Read default parameters
+  $scope.setParameters(parameters);
+
+  $scope.load = function() {
+    $scope.enableSelectWallet = csWallet.children.count() > 0;
+
+    wallet = $scope.enableSelectWallet && ($scope.formData.walletId ? csWallet.children.get($scope.formData.walletId) : csWallet) || csWallet;
+    $scope.formData.walletId = wallet.id; // update the walletId (could have changed)
+    if (!wallet.isDefault()) {
+      console.debug("[transfer] Using {" + wallet.id + "} wallet");
+    }
+
+    // Make to sure to load full wallet data (balance)
+    return wallet.login({sources: true, silent: true})
+      .then(function(data) {
+        $scope.walletData = data;
+        UIUtils.ink({selector: '.modal-invitation .ink'});
+
+        if (!$scope.destPub || $scope.destUid) {
+          $scope.loading = false;
+        }
+        else {
+          // Fill the uid from the pubkey
+          return csWot.extend({pubkey: $scope.destPub})
+            .then(function(res) {
+              $scope.destUid = res && (res.name || res.uid);
+              if ($scope.destUid) {
+                $scope.destPub = '';
+              }
+              $scope.loading = false;
+            });
+        }
+      })
+      .catch(function(err){
+        if (err == 'CANCELLED') return $scope.cancel(); // close the modal
+        UIUtils.onError('ERROR.LOGIN_FAILED')(err);
+      });
+  };
+  $scope.$on('modal.shown', $scope.load);
 
   // When changing use comment
   $scope.onUseCommentChanged = function() {
@@ -301,19 +412,22 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
       return;
     }
 
-    if (!csWallet.isLogin()) return $scope.closeModal(); // should never happen
+    if (!wallet.isLogin()) return $scope.closeModal(); // should never happen
 
-    return  $q.all([
-        // Get keypair only once (if not done here, certification.send() with compute it many times)
-        esWallet.box.getKeypair(csWallet.data.keypair),
-        // Ask confirmation
-        UIUtils.alert.confirm('INVITATION.CONFIRM.SEND_INVITATIONS_TO_CERTIFY', undefined, {okText: 'COMMON.BTN_SEND'})
-      ])
+    // Make sure user is still authenticated
+    return wallet.auth({silent: true})
+      .then(function() {
+        return $q.all([
+          // Get keypair only once (if not done here, esInvitation.send() with compute it many times)
+          esWallet.box.getKeypair(wallet.data.keypair),
+          // Ask confirmation
+          UIUtils.alert.confirm('INVITATION.CONFIRM.SEND_INVITATIONS_TO_CERTIFY', undefined, {okText: 'COMMON.BTN_SEND'})
+        ]);
+      })
       .then(function(res) {
-        if (!res) return;
-        var keypair = res[0];
-        var confirm = res[1];
-        if (!confirm) return;
+        var keypair = res && res[0];
+        var confirm = res && res[1];
+        if (!keypair || !confirm) return;
         UIUtils.loading.show();
         var time = esHttp.date.now(); // use same date for each invitation
         var comment = $scope.formData.useComment && $scope.formData.comment && $scope.formData.comment.trim();
@@ -325,14 +439,17 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
                 return res;
               }
               var invitation = {
-                issuer: csWallet.data.pubkey,
+                issuer: wallet.data.pubkey,
                 recipient: recipient.pubkey,
                 time: time,
                 content: [identity.uid, identity.pubkey].join('-'),
                 comment: comment
               };
               return res.concat(
-                esInvitation.send(invitation, keypair, 'certification'));
+                esInvitation.send(invitation, {
+                  wallet: wallet,
+                  type: 'certification'
+                }));
             }, []));
           }, []))
           .then(function() {
@@ -382,6 +499,21 @@ function NewInvitationModalController($scope, $q, Modals, UIUtils, csWallet, esH
       .then(function(res) {
         if (!res) return; // user cancel
         $scope.suggestions = res;
+      });
+  };
+
+
+  $scope.showSelectWalletModal = function() {
+    if (!$scope.enableSelectWallet) return;
+
+    return Modals.showSelectWallet()
+      .then(function(wallet) {
+        if (!wallet || $scope.formData.walletId === wallet.id) return;
+        console.debug("[transfer] Using {" + wallet.id + "} wallet");
+        $scope.wallet = wallet;
+        $scope.walletData = wallet.data;
+        $scope.formData.walletId = wallet.id;
+        $scope.onAmountChanged();
       });
   };
 }

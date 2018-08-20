@@ -89,10 +89,16 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
   // Initialize the super class and extend it.
   angular.extend(this, $controller('ESExtensionCtrl', {$scope: $scope}));
 
+  $scope.enter = function(e, state) {
+
+  };
+  $scope.$on('$ionicView.enter', $scope.enter);
+
   /* -- modals -- */
 
   $scope.showNewMessageModal = function(confirm) {
-    return $scope.loadWallet({minData: true})
+
+    $scope.loadWallet({minData: true})
 
       .then(function() {
         UIUtils.loading.hide();
@@ -127,9 +133,10 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
 
     var identities;
 
-    return csWallet.auth({minData: true})
+    return $scope.selectWalletAndAuth()
       .then(function(walletData) {
         UIUtils.loading.hide();
+        if (!walletData) return;
 
         // Not allow for non-member - issue #561
         if (!walletData.isMember) {
@@ -186,9 +193,13 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
     $scope.hideCertificationActionsPopover();
 
     var identities;
-    return csWallet.auth({minData: true})
+    return (csWallet.children.count() ? Modals.showSelectWallet({displayBalance: false}) : $q.when(csWallet))
+      .then(function(wallet) {
+        return wallet.auth({minData: true});
+      })
       .then(function(walletData) {
         UIUtils.loading.hide();
+        if (!walletData) return;
 
         // Not allow for non-member - issue #561
         if (!walletData.isMember) {
@@ -214,10 +225,9 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
             UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATIONS', undefined, {okText: 'COMMON.BTN_SEND'})
           ])
             .then(function(res) {
-              if (!res) return;
-              var keypair = res[0];
-              var confirm = res[1];
-              if (!confirm) return;
+              var keypair = res && res[0];
+              var confirm = res && res[1];
+              if (!keypair || !confirm) return;
               var time = esHttp.date.now(); // use same date for each invitation
               return $q.all(identities.reduce(function(res, identity){
                 return res.concat(
@@ -241,28 +251,40 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
   $scope.askCertification = function() {
     $scope.hideCertificationActionsPopover();
 
-    return csWallet.auth({minData: true})
+    return $scope.selectWalletAndAuth()
       .then(function(walletData) {
         UIUtils.loading.hide();
+        if (!walletData) return;
 
         // Not allow for non-member - issue #561
         if (!walletData.isMember) {
           return UIUtils.alert.error('ERROR.ONLY_MEMBER_CAN_EXECUTE_THIS_ACTION');
         }
-
+        // ask confirmation
         return UIUtils.alert.confirm('WOT.CONFIRM.ASK_CERTIFICATION', undefined, {
-            okText: 'COMMON.BTN_SEND'
-          })
+          okText: 'COMMON.BTN_SEND'
+        })
           .then(function(confirm) {
             if (!confirm) return;
             return esInvitation.send({
                 issuer: walletData.pubkey,
                 recipient: $scope.formData.pubkey,
                 content: [walletData.uid, walletData.pubkey].join('-')
-              }, undefined, 'certification')
+              },
+              {
+                type: 'certification',
+                keypair: walletData.keypair
+              })
+              .then(function() {
+                UIUtils.toast.show('INVITATION.INFO.INVITATION_SENT');
+              })
               .catch(UIUtils.onError('INVITATION.ERROR.SEND_INVITATION_FAILED'));
           });
       });
+  };
+
+  $scope.selectWalletAndAuth = function() {
+    return csWallet.isAuth() ? $q.when(csWallet.data) : csWallet.auth({minData: true});
   };
 
   /* -- Popover -- */
@@ -290,7 +312,6 @@ function ESWotIdentityViewController($scope, $ionicPopover, $q, $controller, UIU
       $scope.certificationActionsPopover.hide();
     }
   };
-
 
   // TODO : for DEV only
   /*$timeout(function() {

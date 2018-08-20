@@ -42,6 +42,7 @@ function Notification(json, markAsReadCallback) {
   if (json.code.startsWith('MEMBER_')) {
     that.avatarIcon = 'ion-person';
     that.icon = 'ion-information-circled positive';
+    that.state = 'app.view_wallet';
   }
 
   // TX

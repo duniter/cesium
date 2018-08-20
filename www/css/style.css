@@ -279,3 +279,6 @@
 .list .item.item-wallet .badge{
   top: 28px !important;
 }
+.list .item.item-wallet {
+  height: 38px;
+}

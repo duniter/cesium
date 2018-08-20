@@ -28,11 +28,12 @@ angular.module('cesium.es.notification.controllers', ['cesium.es.services'])
 
 ;
 
-function NotificationsController($scope, $rootScope, $ionicPopover, $state, $timeout, UIUtils, esHttp, csSettings, csWallet, esNotification) {
+function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtils, esHttp, csSettings, csWallet, esNotification) {
   'ngInject';
 
   var defaultSearchLimit = 40;
 
+  $scope.preventSelect = false;
   $scope.search = {
     loading : true,
     results: null,
@@ -46,9 +47,25 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
     }
   };
 
-  $scope.$on('$ionicView.enter', function() {
+  var wallet;
+
+  $scope.setWallet = function(aWallet) {
+    wallet = aWallet;
+  };
+
+  $scope.$on('$ionicView.enter', function(e, state) {
     if ($scope.search.loading) {
-      $scope.loadWallet({minData: true})
+
+      wallet = (state.stateParams && state.stateParams.id) ? csWallet.children.get(state.stateParams.id) : csWallet;
+      if (!wallet) {
+        UIUtils.alert.error('ERROR.UNKNOWN_WALLET_ID');
+        return $scope.showHome();
+      }
+
+      $scope.loadWallet({
+        wallet: wallet,
+        minData: true
+      })
         .then(function() {
           $scope.load();
           UIUtils.loading.hide();
@@ -71,11 +88,14 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
       return;
     }
 
+    $scope.search.preventSelect = true;
+
     var options = angular.copy($scope.search.options);
     options.from = options.from || from || 0;
     options.size = options.size || size || defaultSearchLimit;
+    options.pubkey = wallet.data.pubkey;
     $scope.search.loading = !silent;
-    return esNotification.load(csWallet.data.pubkey, options)
+    return esNotification.load(options)
       .then(function(res) {
         if (!options.from) {
           $scope.search.results = res || [];
@@ -84,6 +104,7 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
           $scope.search.results = $scope.search.results.concat(res);
         }
         $scope.search.loading = false;
+        $scope.search.preventSelect = false;
         $scope.search.hasMore = $scope.search.results.length >= $scope.search.limit;
         $scope.updateView();
       })
@@ -92,6 +113,7 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
         if (!options.from) {
           $scope.search.results = [];
         }
+        $scope.search.preventSelect = false;
         $scope.search.hasMore = false;
         UIUtils.onError('COMMON.NOTIFICATIONS.LOAD_NOTIFICATIONS_FAILED')(err);
       });
@@ -141,8 +163,11 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
     }
   };
 
-  $scope.select = function(item) {
+  $scope.select = function(event, item) {
 
+    if ($scope.search.loading || event.preventDefault() || $scope.search.preventSelect) return;
+
+    console.log("select", item);
     if (item.markAsRead && typeof item.markAsRead == 'function') {
       $timeout(item.markAsRead);
     }
@@ -225,7 +250,8 @@ function NotificationsController($scope, $rootScope, $ionicPopover, $state, $tim
   esNotification.api.data.on.new($scope, $scope.onNewNotification);
 }
 
-function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, $state) {
+function PopoverNotificationsController($scope, $timeout, $controller, $state,
+                                        UIUtils, csWallet) {
   'ngInject';
 
   // Initialize the super class and extend it.
@@ -236,6 +262,7 @@ function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, 
 
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {
+      $scope.setWallet(csWallet);
       $scope.load();
     }
   });
@@ -251,8 +278,8 @@ function PopoverNotificationsController($scope, $timeout, $controller, UIUtils, 
 
   $scope.$on('popover.hidden', $scope.resetUnreadCount);
 
-  $scope.select = function(notification) {
-    if (!notification) return; // no selection
+  $scope.select = function($event, notification) {
+    if ($event.preventDefault() || !notification) return; // no selection
     if (notification.markAsRead && typeof notification.markAsRead == 'function') notification.markAsRead();
     if (notification.state) {
       $state.go(notification.state, notification.stateParams);

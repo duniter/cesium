@@ -78,6 +78,7 @@
         <br/>
         <button class="button button-raised button-stable  ink"
                 ng-click="renewMembership()">
+          <i class="icon ion-alert-circled assertive"></i>
           <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
         </button>
       </div>
@@ -91,7 +92,7 @@
       </button>
       <div ng-if="formData.requirements.needRenew">
         <br/>
-        <button class="button button-raised button-stable button-small-padding ink"
+        <button class="button button-raised icon-left button-stable button-small-padding ink"
                 ng-click="renewMembership()">
           <i class="icon ion-loop assertive"></i>
           <span class="assertive">{{:locale:'ACCOUNT.BTN_MEMBERSHIP_RENEW' | translate}}</span>
@@ -169,6 +170,17 @@
             <i class="gray icon ion-ios-arrow-right"></i>
           </a>
 
+          <!-- Other wallets -->
+          <a class="item item-icon-left item-icon-right ink"
+             ng-if="isDefaultWallet"
+             ui-sref="app.view_wallets">
+            <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
+            <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
+            <span translate>ACCOUNT.WALLET_LIST.TITLE</span>
+            <span class="badge badge-calm" ng-if="formData.children.length>0">{{:rebind:formData.children.length}}</span>
+            <i class="gray icon ion-ios-arrow-right"></i>
+          </a>
+
           <!-- Events -->
           <span class="item item-divider" ng-if="formData.events.length">
             {{:locale:'ACCOUNT.EVENTS' | translate}}
@@ -182,16 +194,6 @@
             <span trust-as-html="event.message | translate:event.messageParams"></span>
           </div>
 
-          <!-- Other wallets -->
-          <a class="item item-icon-left item-icon-right ink"
-             ng-if="isDefaultWallet"
-             ui-sref="app.view_wallets">
-            <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>
-            <i class="icon-secondary ion-card" style="top: 22px; left: 19px; font-size: 20px; background-color: white; width:17px; height: 14px;"></i>
-            <span translate>ACCOUNT.WALLET_LIST.TITLE</span>
-            <span class="badge badge-calm" ng-if="formData.children.length>0">{{:rebind:formData.children.length}}</span>
-            <i class="gray icon ion-ios-arrow-right"></i>
-          </a>
 
           <cs-extension-point name="general"></cs-extension-point>
 

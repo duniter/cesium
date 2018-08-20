@@ -443,9 +443,16 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
       return function(record, params) {
 
         var wallet = (params && params.wallet || csWallet);
-        delete params.wallet;
+        params = params || {};
+        params.pubkey = params.pubkey || wallet.data.pubkey;
+        var keypair = params.keypair || wallet.data.keypair;
+        // make sure to hide some params
+        if (params) {
+          delete params.wallet;
+          delete params.keypair;
+        }
         return (wallet.isAuth() ? $q.when(wallet.data) : wallet.auth({silent: true, minData: true}))
-          .then(function(walletData) {
+          .then(function() {
             if (options.creationTime && !record.creationTime) {
               record.creationTime = that.date.now();
             }
@@ -457,7 +464,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
             var obj = angular.copy(record);
             delete obj.signature;
             delete obj.hash;
-            obj.issuer = walletData.pubkey;
+            obj.issuer = params.pubkey; // force keypair pubkey
             if (!obj.version) {
               obj.version = 2;
             }
@@ -472,7 +479,7 @@ angular.module('cesium.es.http.services', ['ngResource', 'ngApi', 'cesium.servic
 
             return CryptoUtils.util.hash(str)
               .then(function(hash) {
-                return CryptoUtils.sign(hash, walletData.keypair)
+                return CryptoUtils.sign(hash, keypair)
                   .then(function(signature) {
                     // Prepend hash+signature
                     str = '{"hash":"{0}","signature":"{1}",'.format(hash, signature) + str.substring(1);

@@ -130,8 +130,9 @@
         </label>
       </div>
 
-      <div class="item item-toggle dark">
+      <div class="item item-toggle dark hidden-xs hidden-sm">
         <div class="input-label" translate>SETTINGS.TX_HISTORY_AUTO_REFRESH</div>
+        <h4 class="gray text-wrap" ng-bind-html="'SETTINGS.TX_HISTORY_AUTO_REFRESH_HELP' | translate"></h4>
         <label class="toggle toggle-royal">
           <input type="checkbox" ng-model="formData.walletHistoryAutoRefresh" >
           <div class="track">

@@ -61,9 +61,9 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     useLocalStorage: true, // override to false if no device
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
-    walletHistoryAutoRefresh: true,
+    walletHistoryAutoRefresh: true, // override to false if device
     rememberMe: true,
-    keepAuthIdle: 10 * 60, // 10min - override to false if no device
+    keepAuthIdle: 10 * 60,
     showUDHistory: true,
     httpsMode: false,
     expertMode: false,
@@ -107,6 +107,11 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
   started = false,
   startPromise,
   api = new Api(this, "csSettings");
+
+  // removeIf(no-device)
+  // set defaults for device
+  defaultSettings.walletHistoryAutoRefresh = false;
+  // endRemoveIf(no-device)
 
   var
   reset = function() {
