@@ -1674,7 +1674,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.children = data.children || [];
       var childIndex = _.findIndex(data.children, function(child) {return child.id == id;});
       if (childIndex === -1) {
-        console.warn('Unable to remove child wallet {'+id+'} (not found)');
+        console.warn('[wallet] Unable to remove child wallet {'+id+'} (not found)');
         return;
       }
       // Remove the wallet, and return it

@@ -1,0 +1,21 @@
+<form name="editForm" ng-submit="">
+  <div class="list" ng-init="setEditForm(editForm)">
+    <label class="item item-input"
+           ng-class="{'item-input-error': editForm.$submitted && editForm.name.$invalid}">
+      <input name="name" type="text" placeholder="{{'ACCOUNT.WALLET_LIST.EDIT_POPOVER.NAME_HELP' | translate}}"
+             ng-model="formData.name"
+             ng-minlength="3"
+             required>
+    </label>
+    <div class="form-errors"
+         ng-if="editForm.$submitted && editForm.name.$error"
+         ng-messages="editForm.name.$error">
+      <div class="form-error" ng-message="required">
+        <span translate="ERROR.FIELD_REQUIRED"></span>
+      </div>
+      <div class="form-error" ng-message="minlength">
+        <span translate="ERROR.FIELD_TOO_SHORT"></span>
+      </div>
+    </div>
+  </div>
+</form>

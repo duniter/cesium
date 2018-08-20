@@ -529,7 +529,13 @@
       "TITLE": "secondary wallets",
       "BTN_NEW": "Add a wallet",
       "NO_WALLET": "No secondary wallet",
-      "BTN_DELETE": "Remove a secondary wallet..."
+      "BTN_DELETE": "Remove a secondary wallet...",
+      "BTN_RENAME": "Rename the wallet",
+      "EDIT_POPOVER": {
+        "TITLE": "Rename the wallet",
+        "HELP": "Fill in the new name",
+        "NAME_HELP": "Wallet name"
+      }
     },
     "SECURITY":{
       "ADD_QUESTION" : "Add custom question",

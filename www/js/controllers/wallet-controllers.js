@@ -1374,12 +1374,15 @@ function WalletSecurityModalController($scope, UIUtils, csWallet, $translate){
   };
 }
 
-function WalletListController($scope, $controller, $state, $timeout, $ionicPopover, UIUtils, Modals,
-                              csCurrency, csSettings, csWallet){
+function WalletListController($scope, $controller, $state, $timeout, $q, $translate, $ionicPopover, $ionicPopup,
+                              UIUtils, Modals, csCurrency, csSettings, csWallet){
   'ngInject';
 
   $scope.settings = csSettings.data;
   $scope.listeners = [];
+  $scope.formData = {
+    name: undefined
+  };
 
   // Initialize the super class and extend it.
   angular.extend(this, $controller('WalletSelectModalCtrl', {$scope: $scope, parameters: {}}));
@@ -1414,8 +1417,22 @@ function WalletListController($scope, $controller, $state, $timeout, $ionicPopov
     $scope.showHome();
   };
 
-  $scope.select = function(wallet) {
+  $scope.select = function(event, wallet) {
+    if (event.isDefaultPrevented()) return;
+
     $state.go('app.view_wallet_by_id', {id: wallet.id});
+  };
+
+
+  $scope.editWallet = function(event, wallet) {
+
+    event.preventDefault();
+    return $scope.showEditPopup(wallet)
+      .then(function(newName) {
+        if (!newName) return;
+        wallet.data.name = newName;
+        $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+      });
   };
 
   /* -- modals -- */
@@ -1467,6 +1484,53 @@ function WalletListController($scope, $controller, $state, $timeout, $ionicPopov
         if (!wallet || !wallet.id) return;
         csWallet.children.remove(wallet.id);
       });
+  };
+
+  /* -- popups -- */
+
+  $scope.setEditForm = function(editForm) {
+    $scope.editForm = editForm;
+  };
+
+  $scope.showEditPopup = function(wallet) {
+    return $q(function(resolve, reject) {
+      $translate(['ACCOUNT.WALLET_LIST.EDIT_POPOVER.TITLE', 'ACCOUNT.WALLET_LIST.EDIT_POPOVER.HELP', 'COMMON.BTN_OK', 'COMMON.BTN_CANCEL'])
+        .then(function (translations) {
+          $scope.formData.name = wallet.data.name ||  wallet.data.uid || wallet.data.pubkey.substring(0, 8);
+
+          // Choose UID popup
+          $ionicPopup.show({
+            templateUrl: 'templates/wallet/list/popup_edit_name.html',
+            title: translations['ACCOUNT.WALLET_LIST.EDIT_POPOVER.TITLE'],
+            subTitle: translations['ACCOUNT.WALLET_LIST.EDIT_POPOVER.HELP'],
+            scope: $scope,
+            buttons: [
+              { text: translations['COMMON.BTN_CANCEL'] },
+              {
+                text: translations['COMMON.BTN_OK'],
+                type: 'button-positive',
+                onTap: function(e) {
+                  $scope.editForm.$submitted=true;
+                  if(!$scope.editForm.$valid || !$scope.formData.name) {
+                    //don't allow the user to close unless he enters a name
+                    e.preventDefault();
+                  } else {
+                    return $scope.formData.name;
+                  }
+                }
+              }
+            ]
+          })
+            .then(function(name) {
+              if (!name) { // user cancel
+                delete $scope.formData.name;
+                UIUtils.loading.hide();
+                return;
+              }
+              resolve(name);
+            });
+        });
+    });
   };
 
   /* -- popovers -- */
@@ -1578,7 +1642,7 @@ function WalletSelectModalController($scope, $q, UIUtils, filterTranslations, cs
         $scope.currency = currency.name;
         $scope.loading = false;
         UIUtils.loading.hide();
-        if ($scope.motion.show && $scope.wallets.length > 0) {
+        if ($scope.motion.show && $scope.wallets.length) {
           $scope.motion.show({selector: '.list .item.item-wallet', ink: true});
         }
       })
@@ -1612,6 +1676,9 @@ function WalletSelectModalController($scope, $q, UIUtils, filterTranslations, cs
       }, []))
       .then(function() {
         $scope.loading = false;
+        if (silent) {
+          $scope.$broadcast('$$rebind::' + 'rebind'); // force rebind
+        }
         if ($scope.motion.show) {
           $scope.motion.show({selector: '.list .item.item-wallet', ink: true});
         }

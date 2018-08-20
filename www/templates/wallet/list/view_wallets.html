@@ -41,7 +41,19 @@
 
     </div>
 
-    <ng-include src="'templates/wallet/list/wallets.html'"></ng-include>
+    <div class="center padding" ng-if="loading">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+
+    <div class="center padding gray" ng-if="!loading && !wallets.length">
+      {{:locale:'ACCOUNT.WALLET_LIST.NO_WALLET'|translate}}
+    </div>
+
+    <ion-list ng-if="!loading" class="{{::motion.ionListClass}}">
+      <ng-repeat ng-repeat="wallet in wallets track by wallet.id">
+        <ng-include src="'templates/wallet/list/item_wallet.html'"></ng-include>
+      </ng-repeat>
+    </ion-list>
 
   </ion-content>
 

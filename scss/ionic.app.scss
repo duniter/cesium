@@ -1514,6 +1514,22 @@ $ionicon-var-badge-editable: $ionicon-var-edit + "\00a0";
   }
 }
 
+/*
+* Text
+*/
+
+.text-editable:hover {
+  cursor: pointer;
+  @extend .positive;
+}
+.text-editable:hover:after {
+  @extend .ion;
+  content: $ionicon-var-edit;
+}
+.item h2 .text-editable:hover:after {
+  font-size: 14px;
+}
+
 /**********
    Modals
 **********/

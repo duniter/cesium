@@ -529,7 +529,13 @@
       "TITLE": "Portefeuille secondaires",
       "BTN_NEW": "Ajouter un portefeuille",
       "NO_WALLET": "Aucun portefeuille secondaire",
-      "BTN_DELETE": "Retirer un portefeuille secondaire..."
+      "BTN_DELETE": "Retirer un portefeuille secondaire...",
+      "BTN_RENAME": "Renommer le portefeuille",
+      "EDIT_POPOVER": {
+        "TITLE": "Renommer le portefeuille",
+        "HELP": "Rensignez le nouveau nom",
+        "NAME_HELP": "Nom du portefeuille"
+      }
     },
     "SECURITY": {
       "ADD_QUESTION": "Ajouter une question personnalisée ",
