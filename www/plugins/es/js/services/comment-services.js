@@ -172,7 +172,7 @@ angular.module('cesium.es.comment.services', ['ngResource', 'cesium.services',
             return exports.raw.remove(comment.id)
               .catch(function(err){
                 console.error(err);
-                throw new Error('MARKET.ERROR.FAILED_REMOVE_COMMENT');
+                throw new Error('COMMENTS.ERROR.FAILED_REMOVE_COMMENT');
               });
           }
           else {
