@@ -5,7 +5,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
 .factory('csWallet', function($q, $rootScope, $timeout, $translate, $filter, $ionicHistory, UIUtils,
                               Api, Idle, localStorage, sessionStorage, Modals,
-                              CryptoUtils, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csTx, csCurrency) {
+                              CryptoUtils, csCrypto, BMA, csConfig, csSettings, FileSaver, Blob, csWot, csTx, csCurrency) {
   'ngInject';
 
   var defaultBMA = BMA;
@@ -1570,7 +1570,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
       return $q.all([
           csCurrency.get(),
-          CryptoUtils.generateKeyFileContent(data.keypair,
+          csCrypto.keyfile.generateContent(data.keypair,
             {
               type: format,
               password: function() {

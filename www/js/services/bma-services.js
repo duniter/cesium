@@ -2,7 +2,7 @@
 
 angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.settings.services'])
 
-.factory('BMA', function($q, $window, $rootScope, $timeout, CryptoUtils, Api, Device, csConfig, csSettings, csHttp) {
+.factory('BMA', function($q, $window, $rootScope, $timeout, csCrypto, Api, Device, csConfig, csSettings, csHttp) {
   'ngInject';
 
   function BMA(host, port, useSsl, useCache) {
@@ -728,7 +728,7 @@ angular.module('cesium.bma.services', ['ngApi', 'cesium.http.services', 'cesium.
           var matches = exports.regexp.PUBKEY_WITH_CHECKSUM.exec(uri);
           pubkey = matches[1];
           var checksum = matches[2];
-          var expectedChecksum = CryptoUtils.pkChecksum(pubkey);
+          var expectedChecksum = csCrypto.utils.pkChecksum(pubkey);
           if (checksum != expectedChecksum) throw {message: 'ERROR.PUBKEY_INVALID_CHECKSUM'};
           resolve({
             pubkey: pubkey
