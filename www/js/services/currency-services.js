@@ -282,6 +282,11 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
         });
     }
 
+    // Get time in second (UTC - medianTimeOffset)
+    function getDateNow() {
+      return Math.trunc(new Date().getTime() / 1000) - (data.medianTimeOffset || constants.WELL_KNOWN_CURRENCIES.g1.medianTimeOffset);
+    }
+
     // TODO register new block event, to get new UD value
 
     // Register extension points
@@ -309,6 +314,9 @@ angular.module('cesium.currency.services', ['ngApi', 'cesium.bma.services'])
       blockchain: {
         current: getCurrent,
         lastValid: getLastValidBlock
+      },
+      date: {
+        now: getDateNow
       },
       // api extension
       api: api,

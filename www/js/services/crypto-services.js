@@ -905,7 +905,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
           return reject('Argument [file] is missing');
         }
 
-        console.debug('[crypto] [keypair] reading file: ', file);
+        //console.debug('[crypto] [keypair] reading file: ', file);
         var reader = new FileReader();
         reader.onload = function (event) {
           parseKeyFileContent(event.target.result, options)
@@ -1005,7 +1005,7 @@ angular.module('cesium.crypto.services', ['cesium.utils.services'])
 
         // If not set, resolve password using the given callback
         if (typeof options.password == "function") {
-          console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
+          //console.debug("[crypto] [EWIF] Executing 'options.password()' to resolve the password...");
           options.password = options.password();
           if (!options.password) {
             return $q.reject({message: "Invalid callback result for 'options.password()': must return a promise or a string."});

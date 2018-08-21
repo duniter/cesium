@@ -1049,7 +1049,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
               // Add TX to pendings
               var pendingTx = {
-                time: (Math.floor(moment().utc().valueOf() / 1000)),
+                time: csCurrency.date.now(),
                 amount: -amount,
                 pubkey: destPub,
                 comment: comments,

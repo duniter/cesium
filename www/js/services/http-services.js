@@ -367,9 +367,9 @@ angular.module('cesium.http.services', ['cesium.cache.services'])
 
   }
 
-  // Get time (UTC)
+  // Get time in second (UTC)
   function getDateNow() {
-    return Math.floor(moment().utc().valueOf() / 1000);
+    return Math.trunc(new Date().getTime() / 1000);
   }
 
   function isPositiveInteger(x) {
