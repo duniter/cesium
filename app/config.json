@@ -46,6 +46,7 @@
       "es": {
         "enable": true,
         "askEnable": true,
+        "useRemoteStorage": true,
         "host": "g1.data.duniter.fr",
         "port": 443,
         "fallbackNodes": [
@@ -112,6 +113,7 @@
       "es": {
         "enable": true,
         "askEnable": true,
+        "useRemoteStorage": true,
         "host": "g1.data.duniter.fr",
         "port": 443,
         "fallbackNodes": [
@@ -183,6 +185,7 @@
       "es": {
         "enable": true,
         "askEnable": true,
+        "useRemoteStorage": true,
         "host": "g1.data.le-sou.org",
         "port": 443,
         "fallbackNodes": [
@@ -240,6 +243,7 @@
       "es": {
         "enable": true,
         "askEnable": true,
+        "useRemoteStorage": true,
         "host": "g1-test.data.duniter.fr",
         "port": 443,
         "notifications": {

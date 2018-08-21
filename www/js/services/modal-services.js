@@ -280,4 +280,24 @@ angular.module('cesium.modal.services', [])
     showPassword: showPassword
   };
 
-});
+})
+
+.factory('csPopovers', function($rootScope, $translate, $ionicPopup, $timeout, UIUtils) {
+    'ngInject';
+
+    function showSelectWallet(event, options) {
+      options = options || {};
+      var scope = options.scope && options.scope.$new() || $rootScope.$new(true);
+      scope.parameters = options;
+      delete options.scope;
+      return UIUtils.popover.show(event, angular.merge({
+        templateUrl :'templates/wallet/list/popover_wallets.html',
+        autoremove: true
+      }, options));
+    }
+
+    return {
+      showSelectWallet: showSelectWallet
+    };
+
+  });

@@ -16,21 +16,28 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
   var
     SETTINGS_SAVE_SPEC = {
-      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode', 'logoutIdle'],
+      includes: ['locale', 'showUDHistory', 'useRelative', 'useLocalStorage', 'expertMode', 'logoutIdle', 'blockValidityWindow'],
       excludes: ['timeout', 'cacheTimeMs', 'time', 'login', 'build'],
       plugins: {
         es: {
           excludes: ['enable', 'host', 'port', 'wsPort', 'fallbackNodes']
         }
       },
+      wallet: {
+        includes: ['alertIfUnusedWallet', 'notificationReadTime']
+      },
       helptip: {
         excludes: ['installDocUrl']
+      },
+      notifications: {
+        excludes: ['readTime']
       }
     },
     defaultSettings = angular.merge({
         plugins: {
           es: {
             askEnable: false,
+            useRemoteStorage: true,
             notifications: {
               readTime: true,
               txSent: true,
@@ -208,6 +215,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
 
     var isEnable = that.isEnable();
     if (isEnable && csWallet.isAuth()) {
+      console.log(data);
       if (!wasEnable) {
         onWalletAuth(csWallet.data);
       }
@@ -234,6 +242,11 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
     var filteredData = copyUsingSpec(data, SETTINGS_SAVE_SPEC);
     if (previousRemoteData && angular.equals(filteredData, previousRemoteData)) {
       return $q.when();
+    }
+
+    // Skip remote saving, if remote storage disable
+    if (!csSettings.data.plugins.es.useRemoteStorage) {
+      return storeSettingsLocally();
     }
 
     var time = esHttp.date.now(); // always update time
@@ -266,7 +279,12 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
             // create or update
             return angular.isUndefined(data.time) ?
               that.add(record) :
-              that.update(record, {id: record.issuer});
+              that.update(record, {id: record.issuer})
+                .catch(function(err) {
+                  // update failed: try add
+                  if (err && err.ucode == 404) return that.add(record);
+                  throw err;
+                })
           })
           .then(function() {
             return true;
@@ -277,7 +295,7 @@ angular.module('cesium.es.settings.services', ['cesium.services', 'cesium.es.htt
         // Update settings version, then store (on local store only)
         data.time = time;
         previousRemoteData = filteredData;
-        console.debug('[ES] [settings] Saved user settings in ' + (esHttp.date.now() - time) + 'ms');
+        console.debug('[ES] [settings] Saved user settings remotely in ' + (esHttp.date.now() - time) + 'ms');
         return storeSettingsLocally();
       })
       .catch(function(err) {

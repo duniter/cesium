@@ -110,10 +110,10 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
     UIUtils.loading.show();
 
-    return CryptoUtils.parseWIF_or_EWIF(data, options)
+    return csCrypto.keyfile.parseWIF_or_EWIF(data, options)
       .catch(function(err) {
         if (err && err == 'CANCELLED') return;
-        if (err && err.ucode == CryptoUtils.errorCodes.BAD_PASSWORD) {
+        if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
           // recursive call
           return parseWIF_or_EWIF(data, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
         }
@@ -248,26 +248,6 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return $scope.login;
   };
 
-  $scope.showProfilePopover = function(event) {
-    return UIUtils.popover.show(event, {
-      templateUrl :'templates/common/popover_profile.html',
-      scope: $scope,
-      autoremove: true,
-      afterShow: function(popover) {
-        $scope.profilePopover = popover;
-        $timeout(function() {
-          UIUtils.ink({selector: '#profile-popover .ink, #profile-popover .ink-dark'});
-        }, 100);
-      }
-    });
-  };
-
-  $scope.closeProfilePopover = function() {
-    if ($scope.profilePopover && $scope.profilePopover.isShown()) {
-      $timeout(function(){$scope.profilePopover.hide();});
-    }
-  };
-
   // Load wallet data (after login)
   $scope.loadWalletData = function(options) {
     options = options || {};
@@ -275,13 +255,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return wallet.loadData(options)
 
       .then(function(walletData) {
-        if (walletData) {
-          $rootScope.walletData = walletData;
-          return walletData;
-        }
-        else { // cancel login
-          throw 'CANCELLED';
-        }
+        // cancel login
+        if (!walletData) throw 'CANCELLED';
+        return walletData;
       });
   };
 
@@ -463,11 +439,32 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     return Modals.showHelp(parameters);
   };
 
+
   ////////////////////////////////////////
-  // Change node (expert mode)
+  // Useful popovers
   ////////////////////////////////////////
 
-  $scope.showNodeListPopover = function(event) {
+  $scope.showProfilePopover = function(event) {
+    return UIUtils.popover.show(event, {
+      templateUrl :'templates/common/popover_profile.html',
+      scope: $scope,
+      autoremove: true,
+      afterShow: function(popover) {
+        $scope.profilePopover = popover;
+        $timeout(function() {
+          UIUtils.ink({selector: '#profile-popover .ink, #profile-popover .ink-dark'});
+        }, 100);
+      }
+    });
+  };
+
+  $scope.closeProfilePopover = function() {
+    if ($scope.profilePopover && $scope.profilePopover.isShown()) {
+      $timeout(function(){$scope.profilePopover.hide();});
+    }
+  };
+  // Change peer info
+  $scope.showPeerInfoPopover = function(event) {
     return UIUtils.popover.show(event, {
       templateUrl: 'templates/network/popover_peer_info.html',
       autoremove: true,

@@ -8,25 +8,12 @@ angular.module('cesium.es.modal.services', ['cesium.modal.services', 'cesium.es.
       parameters, {focusFirstInput: true});
   }
 
-  function updateNotificationCountAndReadTime() {
-    csWallet.data.notifications.unreadCount = 0;
-    if (csWallet.data.notifications && csWallet.data.notifications.history.length) {
-      var lastNotification = csWallet.data.notifications.history[0];
-      var readTime = lastNotification ? lastNotification.time : 0;
-      csSettings.data.wallet = csSettings.data.wallet || {};
-      if (readTime && csSettings.data.wallet.notificationReadTime != readTime) {
-        csSettings.data.wallet.notificationReadTime = readTime;
-        csSettings.store();
-      }
-    }
-  }
-
   function showNotificationsPopover(scope, event) {
     return UIUtils.popover.show(event, {
       templateUrl :'plugins/es/templates/common/popover_notification.html',
       scope: scope,
       autoremove: false, // reuse popover
-      afterHidden: updateNotificationCountAndReadTime
+      afterHidden: scope.resetUnreadCount
     })
       .then(function(notification) {
         if (!notification) return; // no selection

@@ -15,6 +15,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     BMA = BMA || defaultBMA;
     var
+    exports,
     constants = {
       // @Deprecated
       OLD_STORAGE_KEY: 'CESIUM_DATA',
@@ -52,7 +53,15 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       data.sigStock = null;
       data.isMember = false;
       data.events = [];
-      data.children = []; // children's wallets
+
+      // children's wallets
+      data.children = [];
+
+      // Encryption (e.g. for children wallet)
+      data.encryption = {
+        enable: false,
+        nonce: null
+      };
 
       resetKeypair();
       resetTxAndSources();
@@ -64,7 +73,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         api.data.raise.init(data);
       }
       else {
-        if (!csSettings.data.useLocalStorage) {
+        if (isDefault() && !csSettings.data.useLocalStorage) {
           csSettings.reset();
         }
         api.data.raise.reset(data);
@@ -102,6 +111,14 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       resetTx();
     },
 
+    isDefault = function(){
+      return id === 'default';
+    },
+
+    isEncrypted = function(){
+      return data.encryption && data.encryption.enable;
+    },
+
     addSource = function(src, sources, sourcesIndexByKey) {
       var srcKey = src.type+':'+src.identifier+':'+src.noffset;
       if (angular.isUndefined(sourcesIndexByKey[srcKey])) {
@@ -123,6 +140,18 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       if (!started) {
         return (startPromise || start())
           .then(function () {
+            return login(options); // loop
+          });
+      }
+
+      var needDecrypt = !isDefault() && isEncrypted();
+      if (needDecrypt) {
+        var parentWallet = exports.parent;
+        return parentWallet.auth()
+          .then(function(parentData) {
+            return decrypt(parentData.keypair);
+          })
+          .then(function() {
             return login(options); // loop
           });
       }
@@ -240,7 +269,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     isLogin = function() {
-      return !!data.pubkey;
+      return !!data.pubkey && !isEncrypted();
     },
 
     auth = function(options) {
@@ -367,19 +396,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             jobs.push(localStorage.put(constants.STORAGE_UID, null));
           }
 
-          // Use local storage for uid - fix #625
-          if (data.children && data.children.length) {
-            var childrenPubkeys = data.children.reduce(function(res, wallet) {
-              return wallet.isLogin() ? res.concat({
-                pubkey: wallet.data.pubkey,
-                name: wallet.data.name
-              }) : res;
-            }, []);
-            jobs.push(localStorage.put(constants.STORAGE_CHILDREN_WALLET, JSON.stringify(childrenPubkeys)));
-          }
-          else {
-            jobs.push(localStorage.put(constants.STORAGE_CHILDREN_WALLET, null));
-          }
+          // Store children wallets
+          jobs.push(storeChildrenWallets());
 
           return $q.all(jobs).then(function() {
             console.debug('[wallet] Saved locally');
@@ -389,8 +407,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
           return $q.all([
             sessionStorage.put(constants.STORAGE_SECKEY, null),
             localStorage.put(constants.STORAGE_PUBKEY, null),
-            localStorage.put(constants.STORAGE_UID, null),
-            localStorage.put(constants.STORAGE_CHILDREN_WALLET, null)
+            localStorage.put(constants.STORAGE_UID, null)
+            // do NOT clean children wallets when logout
+            //localStorage.put(constants.STORAGE_CHILDREN_WALLET, null)
           ]);
         }
       }
@@ -405,6 +424,53 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     },
 
+    storeChildrenWallets = function() {
+      var storageKey = constants.STORAGE_CHILDREN_WALLET + '-' + data.pubkey;
+
+      // No children; remove value
+      if (!data.children || !data.children.length) {
+        return localStorage.put(storageKey, null);
+      }
+
+      // If not auth: skip storage (could not encrypt) = keep old values
+      if (!isAuth()) return $q.when();
+
+      var now = new Date().getTime();
+      console.debug("[wallet] Store children wallets into the local storage...");
+
+      return $q.all([
+        // Get a unique nonce
+        CryptoUtils.util.random_nonce(),
+        // Get box keypair
+        CryptoUtils.box.keypair.fromSignKeypair(data.keypair)
+          .then(function(boxKeypair) {
+            if (!data.keypair.boxSk) {
+              console.log("[wallet] WARN: Add boxkeypair into wallet data");
+              data.keypair.boxSk = boxKeypair.boxSk;
+              data.keypair.boxPk = boxKeypair.boxPk;
+            }
+            return boxKeypair;
+          })
+      ])
+        .then(function(res) {
+          var nonce = res[0];
+          var keypair = res[1];
+
+          return $q.all(
+            _.map(data.children, function(wallet) {
+              return wallet.encrypt(keypair, nonce);
+            })
+          );
+        })
+        .then(function(wallets) {
+          console.log("Encrypted childre wallets: ", wallets);
+          return localStorage.put(storageKey, JSON.stringify(wallets))
+            .then(function() {
+              console.debug("[wallet] {"+wallets.length+"} children wallets stored in "+ (new Date().getTime() - now) +"ms");
+            });
+        });
+    },
+
     restore = function() {
       // Clean old storage
       localStorage.get(constants.OLD_STORAGE_KEY)
@@ -415,14 +481,12 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return  $q.all([
           sessionStorage.get(constants.STORAGE_SECKEY),
           localStorage.get(constants.STORAGE_PUBKEY),
-          localStorage.get(constants.STORAGE_UID),
-          localStorage.get(constants.STORAGE_CHILDREN_WALLET)
+          localStorage.get(constants.STORAGE_UID)
         ])
         .then(function(res) {
           var seckey = res[0];
           var pubkey = res[1];
           var uid = res[2];
-          var childrenStr = res[3];
           if (!pubkey || pubkey == 'null') return;
 
           console.debug('[wallet] Restore {'+pubkey.substring(0,8)+'} from local storage');
@@ -441,27 +505,33 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
             }
           }
 
-          // Children's wallet
-          var children = childrenStr && JSON.parse(childrenStr);
-          var jobs = [];
-          if (children) {
-            _.forEach(children, function(child, index) {
-              console.debug('[wallet] - {'+child.pubkey.substring(0,8)+'} sub wallet');
-              var wallet = service.instance('secondary-' + (index+1));
-              wallet.data.pubkey = child.pubkey;
-              wallet.data.name = child.name;
-              jobs.push(addChildWallet(wallet, {store: false/*skip store*/}));
-            });
-          }
-
           data.pubkey = pubkey;
           data.uid = uid && uid != 'null' ? uid : undefined;
           data.keypair = keypair || {signPk: undefined, signSk: undefined};
 
-          // Call extend api
-          jobs.push(api.data.raisePromise.login(data))
+          var storageChildrenKey = constants.STORAGE_CHILDREN_WALLET + '-' + pubkey;
+          return localStorage.get(storageChildrenKey)
+            .then(function(childrenStr){
+              var jobs = [];
 
-          return $q.all(jobs);
+              // Decrypt children wallet
+              var children = childrenStr && JSON.parse(childrenStr);
+              if (children && children.length) {
+                _.forEach(children, function(child, index) {
+                  var wallet = service.instance('secondary-' + (index+1));
+                  wallet.data.pubkey = child.pubkey;
+                  wallet.data.name = child.name;
+                  wallet.data.encryption.enable = true;
+                  wallet.data.encryption.nonce = child.nonce;
+                  jobs.push(addChildWallet(wallet, {store: false/*skip store*/}));
+                });
+              }
+
+              // Call extend api
+              jobs.push(api.data.raisePromise.login(data));
+
+              return $q.all(jobs);
+            })
         })
         .then(function(){
           return data;
@@ -542,7 +612,8 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     addEvents = function() {
       // Add user events
       if (data.requirements.revoked) {
-        addEvent({type:'warn', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
+        console.log("REVOKED !!");
+        addEvent({type:'info', message: 'ERROR.WALLET_REVOKED', context: 'requirements'});
       }
       else if (data.requirements.pendingRevocation) {
         addEvent({type:'pending', message: 'INFO.REVOCATION_SENT_WAITING_PROCESS', context: 'requirements'});
@@ -566,7 +637,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         else
         {
           if (data.requirements.needCertificationCount > 0) {
-            addEvent({type:'warn', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
+            addEvent({type:'info', message: 'ACCOUNT.WAITING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
           }
           if (data.requirements.willNeedCertificationCount > 0) {
             addEvent({type:'warn', message: 'ACCOUNT.WILL_MISSING_CERTIFICATIONS', messageParams: data.requirements, context: 'requirements'});
@@ -1428,20 +1499,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     getCryptedId = function(record){
       return getkeypairSaveId(record)
-        .then(function() {
-          return CryptoUtils.util.random_nonce();
-        })
+        .then(CryptoUtils.util.random_nonce)
         .then(function(nonce) {
-          record.nonce = nonce;
-          return CryptoUtils.box.pack(record.salt, record.nonce, record.keypair.boxPk, record.keypair.boxSk);
+          record.nonce = CryptoUtils.util.encode_base58(nonce);
+          return $q.all([
+            CryptoUtils.box.pack(record.salt, nonce, record.keypair.boxPk, record.keypair.boxSk),
+            CryptoUtils.box.pack(record.pwd, nonce, record.keypair.boxPk, record.keypair.boxSk)
+          ])
         })
-        .then(function (cypherSalt) {
-          record.salt = cypherSalt;
-          return CryptoUtils.box.pack(record.pwd, record.nonce, record.keypair.boxPk, record.keypair.boxSk);
-        })
-        .then(function (cypherPwd) {
-          record.pwd = cypherPwd;
-          record.nonce = CryptoUtils.util.encode_base58(record.nonce);
+        .then(function (res) {
+          record.salt = res[0];
+          record.pwd = res[1];
           return record;
         });
     },
@@ -1645,24 +1713,24 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
     },
 
     downloadRevocation = function(){
-        return $q.all([
-            csCurrency.get(),
-            getRevocationDocument()
-          ])
-          .then(function(res) {
-            var currency = res[0];
-            var revocation = res[1];
-            var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
-            return $translate('ACCOUNT.SECURITY.REVOCATION_FILENAME', {
-              uid: data.uid,
-              currency: currency.name,
-              pubkey: data.pubkey
-            })
-            .then(function (fileName) {
-              FileSaver.saveAs(revocationFile, fileName);
-            });
+      return $q.all([
+          csCurrency.get(),
+          getRevocationDocument()
+        ])
+        .then(function(res) {
+          var currency = res[0];
+          var revocation = res[1];
+          var revocationFile = new Blob([revocation], {type: 'text/plain; charset=utf-8'});
+          return $translate('ACCOUNT.SECURITY.REVOCATION_FILENAME', {
+            uid: data.uid,
+            currency: currency.name,
+            pubkey: data.pubkey
+          })
+          .then(function (fileName) {
+            FileSaver.saveAs(revocationFile, fileName);
           });
-      },
+        });
+    },
 
     cleanEventsByContext = function(context){
       data.events = data.events.reduce(function(res, event) {
@@ -1673,10 +1741,27 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
 
     addChildWallet = function(wallet, options) {
 
+      // Propage some event to default wallet api
+      /*_.forEach(['init', 'reset'], function(method) {
+        wallet.api.data.on[method]($rootScope, function(data) {
+          api.data.raise[method](data);
+        }, this);
+      });*/
+      _.forEach(['load'], function(method) {
+        wallet.api.data.on[method]($rootScope, function(data, deferred) {
+          deferred = deferred || $q.defer();
+          api.data.raisePromise[method](data)
+            .then(deferred.resolve)
+            .catch(deferred.reject);
+          return deferred.promise;
+        }, this);
+      });
+
+
       // Add data loading listeners
-      wallet.api.data.on.load($rootScope, function(data, deferred) {
+      wallet.api.data.on.reset($rootScope, function(data, deferred) {
         deferred = deferred || $q.defer();
-        api.data.raisePromise.load(data)
+        api.data.raisePromise.reset(data)
           .then(deferred.resolve)
           .catch(deferred.reject);
         return deferred.promise;
@@ -1695,6 +1780,9 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         }
         return deferred.promise;
       }, this);
+
+      // Link to parent
+      wallet.parent = exports; // = self wallet
 
       data.children = data.children || [];
       data.children.push(wallet);
@@ -1719,9 +1807,89 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       return _.find(data.children|| [], function(child) {return child.id == id;});
     },
 
-    getAllChildrenWallet = function() {
-      return data.children;
+    getAllChildrenWalletOLD = function() {
+
+      if (!data.children || !data.children.length) return a.children;
+
+      return data.children.reduce(function(res, wallet) {
+
+      }, []);
     },
+
+    getAllChildrenWallet = function() {
+      var hasEncryptedWallet = _.find(data.children || [], function(wallet) {
+        return wallet.isEncrypted();
+      });
+      if (!hasEncryptedWallet) return $q.when(data.children);
+
+      // Make sure to auth (need to get keypair)
+      if (!isAuth()) return auth().then(getAllChildrenWallet);
+
+      // Get box beypair
+      return CryptoUtils.box.keypair.fromSignKeypair(data.keypair)
+        .then(function(keypair) {
+          // encrypte all encrypted wallet
+          return $q.all(
+            _.map(data.children, function(wallet) {
+              return wallet.decrypt(keypair)
+                .then(function() {
+                  return wallet;
+                });
+            })
+          );
+        });
+    },
+
+    decrypt = function(keypair) {
+      if (!isEncrypted()) return $q.when(data);
+      return CryptoUtils.box.keypair.fromSignKeypair(keypair)
+        .then(function(keypair) {
+          var nonce = CryptoUtils.util.decode_base58(data.encryption.nonce);
+          return  $q.all([
+            CryptoUtils.box.open(data.pubkey, nonce, keypair.boxPk, keypair.boxSk),
+            CryptoUtils.box.open(data.name, nonce, keypair.boxPk, keypair.boxSk)
+          ]);
+        })
+        .then(function(res) {
+          data.pubkey = res[0];
+          data.name = res[1];
+          data.encryption.enable = false;
+          data.encryption.nonce = null;
+          return data;
+        });
+    };
+
+    encrypt = function(keypair, nonce) {
+      // If already encrypt, then reuse previous encryption
+      if (isEncrypted()) return $q.when({
+        pubkey: data.pubkey,
+        name: data.name,
+        nonce: data.encryption.nonce
+      });
+
+      return $q.all([
+        // Get a unique nonce
+        nonce ? $q.when(nonce) : CryptoUtils.util.random_nonce(),
+        // Get box keypair
+        CryptoUtils.box.keypair.fromSignKeypair(keypair)
+      ])
+      .then(function(res) {
+        var nonce = res[0];
+        var keypair = res[1];
+        var nonceStr = CryptoUtils.util.encode_base58(nonce);
+        return $q.all([
+          CryptoUtils.box.pack(data.pubkey, nonce, keypair.boxPk, keypair.boxSk),
+          CryptoUtils.box.pack(data.name, nonce, keypair.boxPk, keypair.boxSk)
+        ])
+        .then(function (cypherRes) {
+          return {
+            pubkey: cypherRes[0],
+            name: cypherRes[1],
+            nonce: nonceStr
+          };
+        });
+      });
+    };
 
     /**
     * De-serialize from JSON string
@@ -1904,7 +2072,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       };
     }
 
-    return {
+    exports = {
       id: id,
       data: data,
       ready: ready,
@@ -1924,13 +2092,17 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
         return data.isMember;
       },
       isDataLoaded : isDataLoaded,
-      isDefault: function() {return id === "default"},
+      isDefault: isDefault,
       isNeverUsed: isNeverUsed,
       isNew: isNew,
       isUserPubkey: isUserPubkey,
       getData: getData,
       loadData: loadData,
       refreshData: refreshData,
+      // encryption
+      decrypt: decrypt,
+      encrypt: encrypt,
+      isEncrypted: isEncrypted,
       // operations
       transfer: transfer,
       transferAll: transferAll,
@@ -1962,6 +2134,7 @@ angular.module('cesium.wallet.services', ['ngApi', 'ngFileSaver', 'cesium.bma.se
       },
       api: api
     };
+    return exports;
   }
 
   service = factory('default', BMA);

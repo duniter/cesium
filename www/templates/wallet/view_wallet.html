@@ -24,19 +24,19 @@
     <div class="positive-900-bg hero" id="wallet-header"
          ng-class="{'hero-qrcode-active': toggleQRCode}">
       <div class="content" ng-if="!loading">
+
         <i class="avatar"
            ng-if=":rebind:!formData.avatar"
            ng-class=":rebind:{'avatar-wallet': !formData.isMember, 'avatar-member': formData.isMember}"></i>
         <i class="avatar"
            ng-if=":rebind:formData.avatar"
            style="background-image: url({{:rebind:formData.avatar.src}})"></i>
-        <ng-if ng-if=":rebind:formData.name">
-          <h3 class="light">{{:rebind:formData.name}}</h3>
-        </ng-if>
-        <ng-if ng-if=":rebind:!formData.name">
-          <h3 class="light" ng-if=":rebind:formData.uid">{{:rebind:formData.uid}}</h3>
-          <h3 class="light" ng-if=":rebind:!formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</h3>
-        </ng-if>
+        <h3 class="light">
+          <ng-if ng-if=":rebind:formData.name">{{:rebind:formData.name}}</ng-if>
+          <ng-if ng-if=":rebind:!formData.name && formData.uid">{{:rebind:formData.uid}}</ng-if>
+          <ng-if ng-if=":rebind:!formData.name && !formData.uid"><i class="ion-key"></i> {{:rebind:formData.pubkey | formatPubkey}}</ng-if>
+        </h3>
+
         <h4 class="assertive"><ng-if ng-if=":rebind:(formData.name || formData.uid) && !formData.isMember" translate>WOT.NOT_MEMBER_PARENTHESIS</ng-if></h4>
       </div>
       <h4 class="content light" ng-if="loading">
@@ -171,7 +171,7 @@
           </a>
 
           <!-- Other wallets -->
-          <a class="item item-icon-left item-icon-right ink"
+          <a class="item item-icon-left item-icon-right ink visible-xs visible-sm"
              ng-if="isDefaultWallet"
              ui-sref="app.view_wallets">
             <i class="icon ion-card " style="top: -5px; left: 22px; font-size: 18px;"></i>

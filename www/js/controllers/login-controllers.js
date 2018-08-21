@@ -7,7 +7,7 @@ angular.module('cesium.login.controllers', ['cesium.services'])
 
 ;
 
-function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
+function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, csCrypto,
                               UIUtils, BMA, Modals, csSettings, Device, parameters) {
   'ngInject';
 
@@ -352,10 +352,10 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils,
           });
       };
 
-    return CryptoUtils.readKeyFile($scope.formData.file, options)
+    return csCrypto.keyfile.read($scope.formData.file, options)
       .catch(function(err) {
         $scope.formData.file.password = undefined;
-        if (err && err.ucode == CryptoUtils.errorCodes.BAD_PASSWORD) {
+        if (err && err.ucode == csCrypto.errorCodes.BAD_PASSWORD) {
           // Recursive call
           return $scope.readKeyFile($scope.formData.file, {withSecret: options.withSecret, error: 'ACCOUNT.SECURITY.KEYFILE.ERROR.BAD_PASSWORD'});
         }

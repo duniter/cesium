@@ -27,6 +27,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     },
     that = this,
     listeners,
+    wsUserEventCloseFn,
     api = new Api(this, 'esNotification')
   ;
 
@@ -235,7 +236,10 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
     data.notifications.warnCount = null;
     data.notifications.time = null;
     // Stop listening notification
-    that.raw.ws.getUserEvent().close();
+    if (wsUserEventCloseFn) {
+      wsUserEventCloseFn();
+      wsUserEventCloseFn = null;
+    }
   }
 
   function onWalletLoad(data, deferred) {
@@ -275,18 +279,25 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
         console.debug('[ES] [notification] Loaded count (' + unreadCount + ') in '+(new Date().getTime()-now)+'ms');
         deferred.resolve(data);
       })
-      .catch(function(err){
-        deferred.reject(err);
-      })
+      .catch(deferred.reject)
 
-      // Listen new events
+
+
+    return deferred.promise;
+  }
+
+  function onWalletLogin(data, deferred) {
+    // Call load
+    return onWalletLoad(data, deferred)
+
+      // then start listening new events
       .then(function(){
         console.debug('[ES] [notification] Starting listen user event...');
-        var userEventWs = that.raw.ws.getUserEvent();
-        listeners.push(userEventWs.close);
-        return userEventWs.on(onNewUserEvent,
-            {pubkey: data.pubkey, locale: csSettings.data.locale.id}
-          )
+        var wsUserEvent = that.raw.ws.getUserEvent();
+        wsUserEvent.on(
+          onNewUserEvent,
+          {pubkey: data.pubkey, locale: csSettings.data.locale.id}
+        )
           .catch(function(err) {
             console.error('[ES] [notification] Unable to listen user event', err);
 
@@ -294,9 +305,8 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
             // And display such connectivity errors in UI
             UIUtils.alert.error('ACCOUNT.ERROR.WS_CONNECTION_FAILED');
           });
+        wsUserEventCloseFn = wsUserEvent.close;
       });
-
-    return deferred.promise;
   }
 
   function countWarnEvents(data){
@@ -309,7 +319,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
   function addListeners() {
     // Listen some events
     listeners = [
-      csWallet.api.data.on.login($rootScope, onWalletLoad, this),
+      csWallet.api.data.on.login($rootScope, onWalletLogin, this),
       csWallet.api.data.on.load($rootScope, onWalletLoad, this),
       csWallet.api.data.on.init($rootScope, onWalletReset, this),
       csWallet.api.data.on.reset($rootScope, onWalletReset, this)
@@ -336,7 +346,7 @@ angular.module('cesium.es.notification.services', ['cesium.platform', 'cesium.es
       console.debug("[ES] [notification] Enable");
       addListeners();
       if (csWallet.isLogin()) {
-        return onWalletLoad(csWallet.data);
+        return onWalletLogin(csWallet.data);
       }
     }
   }

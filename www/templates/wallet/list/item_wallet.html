@@ -37,7 +37,7 @@
     </span>
   </h4>
 
-  <span class="badge" ng-if="formData.displayBalance"
+  <span class="badge" ng-if="formData.showBalance"
         ng-class=":rebind:{'badge-assertive': (walletData.balance <= 0), 'badge-balanced': (walletData.balance > 0) }">
       <span ng-bind-html=":rebind:walletData.balance|formatAmount:{useRelative: true, currency: currency}"></span>
   </span>

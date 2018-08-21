@@ -2,7 +2,7 @@
 angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalprecht.translate', 'cesium.translations'
 ])
 
-  .factory('filterTranslations', function($rootScope, csPlatform, csSettings, csCurrency, $translate) {
+  .factory('filterTranslations', function($rootScope, $q, csPlatform, csSettings, csCurrency, $translate) {
     'ngInject';
 
     var
@@ -47,7 +47,7 @@ angular.module('cesium.filters', ['cesium.config', 'cesium.platform', 'pascalpre
     }
 
     that.ready = function() {
-      if (started) return $q.when(data);
+      if (started) return $q.when();
       return startPromise || that.start();
     };
 

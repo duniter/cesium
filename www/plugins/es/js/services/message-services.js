@@ -75,7 +75,7 @@ angular.module('cesium.es.message.services', ['ngResource', 'cesium.platform',
           deferred.resolve(data);
         })
         .catch(function(err){
-          console.error('Error chile counting message: ' + (err.message ? err.message : err));
+          console.error('Error while counting messages: ' + (err.message ? err.message : err));
           deferred.resolve(data);
         });
       return deferred.promise;

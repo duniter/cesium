@@ -488,8 +488,9 @@
     "PLUGIN_NAME": "Cesium+",
     "PLUGIN_NAME_HELP": "Profils, notifications, messages privés",
     "ENABLE_TOGGLE": "Activer l'extension ?",
+    "ENABLE_REMOTE_STORAGE": "Activer le stockage distant ?",
+    "ENABLE_REMOTE_STORAGE_HELP": "Permet de stockage (chiffré) de vos paramètres sur les noeuds Cesium+",
     "ENABLE_MESSAGE_TOGGLE": "Activer les messages privés ?",
-    "ENABLE_SETTINGS_TOGGLE": "Activer le stockage distant des paramètres ?",
     "PEER": "Addresse du nœud de données",
     "POPUP_PEER": {
       "TITLE" : "Nœud de données",

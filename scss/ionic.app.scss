@@ -1055,10 +1055,21 @@ $screen-menu:                     845px;
 /******
 * Wallet TX view
 *******/
-.view-wallet-tx {
-  .hero {
-    height: 100px;
+@media screen and (max-width: $screen-sm-max) {
+  .view-wallet-tx {
+    .hero {
+      height: 100px;
+    }
   }
+}
+@media screen and (min-width: $screen-md) {
+  .view-wallet-tx {
+    .hero {
+      height: 140px;
+    }
+  }
+}
+.view-wallet-tx {
   /* set 'ion-refresher' background color */
   .refresher-top-bg {
     @extend .refresher-light;

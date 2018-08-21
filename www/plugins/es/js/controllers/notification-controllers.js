@@ -46,6 +46,7 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
       }
     }
   };
+  $scope.listeners = [];
 
   var wallet;
 
@@ -70,6 +71,8 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
           $scope.load();
           UIUtils.loading.hide();
 
+          $scope.addListeners();
+
           // Reset unread counter
           return $timeout(function() {
             $scope.resetUnreadCount();
@@ -83,7 +86,10 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   };
 
   $scope.load = function(from, size, silent) {
-    if (!csWallet.data.pubkey) {
+    // Make sure wallet is init (need by PopoverInvitationCtrl)
+    wallet = wallet || csWallet;
+
+    if (!wallet.data.pubkey) {
       $scope.search.loading = true;
       return;
     }
@@ -127,8 +133,8 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
 
   $scope.markAllAsRead = function() {
     // Make sure to be auth before doing this
-    if (!csWallet.isAuth()) {
-      return csWallet.auth().then(function(){
+    if (!wallet.isAuth()) {
+      return wallet.auth().then(function(){
         UIUtils.loading.hide();
         return $scope.markAllAsRead(); // loop
       });
@@ -140,9 +146,9 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
 
     UIUtils.loading.show()
       .then(function() {
-        csWallet.data.notifications.unreadCount = 0;
+        wallet.data.notifications.unreadCount = 0;
         var lastNotification = $scope.search.results[0];
-        csWallet.data.notifications.readTime = lastNotification ? lastNotification.time : 0;
+        wallet.data.notifications.readTime = lastNotification ? lastNotification.time : 0;
         _.forEach($scope.search.results, function (item) {
           if (item.markAsRead && typeof item.markAsRead == 'function') item.markAsRead();
         });
@@ -152,14 +158,15 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
   };
 
   $scope.resetUnreadCount = function() {
-    if (!csWallet.data.notifications.unreadCount || !$scope.search.results || !$scope.search.results.length) return;
-    csWallet.data.notifications.unreadCount = 0;
+    if (!wallet.data.notifications.unreadCount || !$scope.search.results || !$scope.search.results.length) return;
+    wallet.data.notifications.unreadCount = 0;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!csSettings.data.wallet || csSettings.data.wallet.notificationReadTime != readTime)) {
-      csSettings.data.wallet = csSettings.data.wallet || {};
-      csSettings.data.wallet.notificationReadTime = readTime;
-      csSettings.store();
+    if (readTime && (!wallet.data.notifications.readTime != readTime)) {
+      wallet.data.notifications.readTime = readTime;
+      // TODO: check this !
+      console.log("Resetting notifications readTime to {0}. TODO: check if store wallet is necessary !".format(readTime));
+      wallet.store();
     }
   };
 
@@ -244,10 +251,29 @@ function NotificationsController($scope, $ionicPopover, $state, $timeout, UIUtil
 
   /* -- listeners -- */
 
-  csWallet.api.data.on.logout($scope, $scope.resetData);
-  esHttp.api.node.on.stop($scope, $scope.resetData);
-  esHttp.api.node.on.start($scope, $scope.load);
-  esNotification.api.data.on.new($scope, $scope.onNewNotification);
+  $scope.addListeners = function() {
+    if (!wallet) throw "Controller wallet not set !";
+
+    $scope.listeners = [
+      esHttp.api.node.on.stop($scope, $scope.resetData),
+      esHttp.api.node.on.start($scope, $scope.load),
+      wallet.api.data.on.logout($scope, $scope.resetData)
+    ];
+
+    if (wallet.isDefault()) {
+      // Subscribe to new notification
+      $scope.listeners.push(
+        esNotification.api.data.on.new($scope, $scope.onNewNotification)
+      );
+    }
+  };
+
+  $scope.removeListeners = function() {
+    _.forEach($scope.listeners, function(remove){
+      remove();
+    });
+    $scope.listeners = [];
+  };
 }
 
 function PopoverNotificationsController($scope, $timeout, $controller, $state,
@@ -260,9 +286,12 @@ function PopoverNotificationsController($scope, $timeout, $controller, $state,
   // Disable list motion
   $scope.motion = null;
 
+  // Set the wallet to use
+  $scope.setWallet(csWallet);
+
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {
-      $scope.setWallet(csWallet);
+      $scope.addListeners();
       $scope.load();
     }
   });

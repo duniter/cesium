@@ -175,10 +175,11 @@ function InvitationsController($scope, $q, $ionicPopover, $state, $timeout, UIUt
     if (!$scope.search.results || !$scope.search.results.length) return;
     var lastNotification = $scope.search.results[0];
     var readTime = lastNotification.time ? lastNotification.time : 0;
-    if (readTime && (!csSettings.data.plugins.es.invitations || csSettings.data.plugins.es.invitations.readTime != readTime)) {
-      csSettings.data.plugins.es.invitations = csSettings.data.plugins.es.invitations || {};
-      csSettings.data.plugins.es.invitations.readTime = readTime;
-      csSettings.store();
+    if (readTime && (!wallet.data.invitations.time != readTime)) {
+      wallet.data.invitations.readTime = readTime;
+      // TODO: check this !
+      console.log("Resetting invitations readTime to {0}. TODO: check if store wallet is necessary !".format(readTime));
+      wallet.store();
     }
   };
 
@@ -294,9 +295,7 @@ function PopoverInvitationController($scope, $controller, csWallet) {
 
   $scope.$on('popover.shown', function() {
     if ($scope.search.loading) {
-
       $scope.addListeners();
-
       $scope.load();
     }
   });

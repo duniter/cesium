@@ -1,23 +1,41 @@
 <ion-view left-buttons="leftButtons"
           class="view-wallet-tx">
   <ion-nav-title>
-    <!-- no title-->
+    <!-- no title on large screen-->
+    <span class="visible-xs visible-sm" ng-if="!loading">
+      {{formData.name || formData.uid}} - <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
+    </span>
   </ion-nav-title>
 
   <ion-nav-buttons side="secondary">
     <cs-extension-point name="nav-buttons"></cs-extension-point>
+
+    <button class="button button-icon button-clear icon ion-arrow-down-b visible-xs visible-sm"
+            ng-if="enableSelectWallet"
+            ng-click="showSelectWalletModal()">
+    </button>
   </ion-nav-buttons>
 
   <ion-content scroll="true"
                class="refresher-top-bg refresher-light"
                bind-notifier="{ rebind:settings.useRelative, locale:settings.locale.id}">
 
-    <ion-refresher pulling-text="{{'COMMON.BTN_REFRESH' | translate}}"
+    <ion-refresher pulling-text="{{:locale:'COMMON.BTN_REFRESH' | translate}}"
                    on-refresh="doUpdate(true)">
     </ion-refresher>
 
     <div class="positive-900-bg hero">
       <div class="content" ng-if="!loading">
+        <!-- select wallet button -->
+        <a class="hidden-xs hidden-sm"
+           style="color: lightgray;"
+           ng-if="enableSelectWallet"
+           title="{{:locale:'ACCOUNT.SELECT_WALLET_MODAL.TITLE'|translate}}"
+           ng-click="showSelectWalletPopover($event)">
+           {{formData.name || formData.uid}} - <i class="ion-key"></i> {{formData.pubkey|formatPubkey}}
+          <i class="ion-arrow-down-b"></i>
+        </a>
+
         <h1 class="light">
           <span ng-bind-html=":balance:rebind:formData.balance | formatAmount:{currency: $root.currency.name}"></span>
         </h1>

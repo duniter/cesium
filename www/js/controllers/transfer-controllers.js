@@ -346,11 +346,12 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
               UIUtils.toast.show('INFO.TRANSFER_SENT');
             }, 500);
             return res;
-          })
-          .catch(function(err) {
-            $scope.sending = false;
-            UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
           });
+    })
+    .catch(function(err) {
+      $scope.sending = false;
+      if (err == 'CANCELLED') return; // user cancelled
+      UIUtils.onError('ERROR.SEND_TX_FAILED')(err);
     });
   };
 
@@ -410,7 +411,9 @@ function TransferModalController($scope, $q, $translate, $timeout, $filter, $foc
     if (!$scope.enableSelectWallet) return;
 
     return Modals.showSelectWallet({
-      useRelative: $scope.formData.useRelative
+      useRelative: $scope.formData.useRelative,
+      showDefault: true,
+      showBalance: true
     })
       .then(function(newWallet) {
         if (!newWallet || (wallet && wallet.id === newWallet.id)) return;

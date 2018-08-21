@@ -14,6 +14,17 @@
       </label>
     </div>
 
+    <div class="item item-toggle dark">
+      <div class="input-label" translate>ES_SETTINGS.ENABLE_REMOTE_STORAGE</div>
+      <h4 class="gray" ng-bind-html="'ES_SETTINGS.ENABLE_REMOTE_STORAGE_HELP' | translate"></h4>
+      <label class="toggle toggle-royal">
+        <input type="checkbox" ng-model="formData.useRemoteStorage" >
+        <div class="track">
+          <div class="handle"></div>
+        </div>
+      </label>
+    </div>
+
     <span class="item item-divider" translate>SETTINGS.NETWORK_SETTINGS</span>
 
     <div class="item ink" ng-click="formData.enable && changeEsNode()" ng-disabled="!formData.enable">
