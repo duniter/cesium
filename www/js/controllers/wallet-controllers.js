@@ -55,7 +55,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
           }
         },
         data: {
-          auth: true
+          login: true
         }
       })
 
@@ -105,7 +105,7 @@ angular.module('cesium.wallet.controllers', ['cesium.services', 'cesium.currency
   .controller('PopoverWalletSelectModalCtrl', PopoverWalletSelectModalController)
 ;
 
-function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $translate, $ionicPopover,
+function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state, $translate, $ionicPopover, $location,
                           UIUtils, Modals, csPopovers, BMA, csConfig, csSettings, csWallet, csHelp) {
   'ngInject';
 
@@ -127,6 +127,9 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
 
       $scope.isDefaultWallet = wallet.isDefault();
       $scope.walletId = wallet.id;
+
+      $scope.cleanLocationHref(state);
+
       return $scope.load();
     }
     else {
@@ -668,6 +671,17 @@ function WalletController($scope, $rootScope, $q, $ionicPopup, $timeout, $state,
       });
   };
 
+  // remove '?refresh' from the location URI
+  $scope.cleanLocationHref = function(state) {
+    if (state && state.stateParams && state.stateParams.refresh) {
+      $timeout(function() {
+        var stateParams = angular.copy(state.stateParams);
+        delete stateParams.refresh;
+        delete stateParams.id;
+        $location.search(stateParams).replace();
+      }, 300);
+    }
+  };
 }
 
 
@@ -744,6 +758,7 @@ function WalletTxController($scope, $ionicPopover, $state, $timeout, $location,
       $timeout(function() {
         var stateParams = angular.copy(state.stateParams);
         delete stateParams.refresh;
+        delete stateParams.id;
         $location.search(stateParams).replace();
       }, 300);
     }
@@ -1472,6 +1487,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
       return $scope.load()
         .then(function() {
+          if (!$scope.wallets) return; // user cancel
           $scope.addListeners();
           $scope.showFab('fab-add-wallet');
         });
@@ -1513,36 +1529,37 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
 
   $scope.showNewWalletModal = function() {
 
-      var wallet = csWallet.instance('secondary-' + (csWallet.children.count() + 1));
-      return wallet.login({
-        showNewAccountLink: false,
-        title: 'ACCOUNT.WALLET_LIST.BTN_NEW',
-        // Load data options :
-        minData: true,
-        sources: true,
-        api: false,
-        success: UIUtils.loading.show
-      })
-      .then(function(walletData) {
-        if (!walletData) return;
+    var walletId = csWallet.children.count() + 1;
+    var wallet = csWallet.instance(walletId);
+    return wallet.login({
+      showNewAccountLink: false,
+      title: 'ACCOUNT.WALLET_LIST.BTN_NEW',
+      // Load data options :
+      minData: true,
+      sources: true,
+      api: false,
+      success: UIUtils.loading.show
+    })
+    .then(function(walletData) {
+      if (!walletData) return;
 
-        // Avoid to add main wallet again
-        if (walletData.pubkey === csWallet.data.pubkey) {
+      // Avoid to add main wallet again
+      if (walletData.pubkey === csWallet.data.pubkey) {
+        UIUtils.loading.hide();
+        UIUtils.alert.error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
+        return;
+      }
+
+      return csWallet.api.data.raisePromise.load(wallet.data)
+        // continue, when plugins extension failed (just log in console)
+        .catch(console.error)
+        .then(function() {
+          $scope.listeners.push(wallet.api.data.on.unauth($scope, $scope.updateView));
+          $scope.listeners.push(wallet.api.data.on.auth($scope, $scope.updateView));
+          csWallet.children.add(wallet);
           UIUtils.loading.hide();
-          UIUtils.alert.error('ERROR.COULD_NOT_ADD_MAIN_WALLET');
-          return;
-        }
-
-        return csWallet.api.data.raisePromise.load(wallet.data)
-          // continue, when plugins extension failed (just log in console)
-          .catch(console.error)
-          .then(function() {
-            $scope.listeners.push(wallet.api.data.on.unauth($scope, $scope.updateView));
-            $scope.listeners.push(wallet.api.data.on.auth($scope, $scope.updateView));
-            csWallet.children.add(wallet);
-            UIUtils.loading.hide();
-            $scope.motion.show({selector: '.list .item.item-wallet', ink: true});
-          });
+          $scope.motion.show({selector: '.list .item.item-wallet', ink: true});
+        });
       })
       .catch(function(err) {
         if (err === 'CANCELLED') return;
@@ -1638,7 +1655,7 @@ function WalletListController($scope, $controller, $state, $timeout, $q, $transl
   /* -- listeners -- */
 
   $scope.addListeners = function() {
-    if (csSettings.data.walletHistoryAutoRefresh) {
+    if (csSettings.data.walletHistoryAutoRefresh && $scope.wallets) {
 
       var listeners = [
         // Update on new block
@@ -1752,6 +1769,11 @@ function WalletSelectModalController($scope, $q, $timeout, UIUtils, filterTransl
         $scope.updateView();
       })
       .catch(function(err) {
+        if (err && err === 'CANCELLED') {
+          $scope.loading = true;
+          $scope.cancel();
+          throw err;
+        }
         $scope.loading = false;
         UIUtils.onError('ERROR.LOAD_WALLET_LIST_FAILED')(err);
       });

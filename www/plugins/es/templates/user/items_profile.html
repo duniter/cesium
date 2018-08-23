@@ -1,8 +1,8 @@
-<div ng-if="!formData.profile && !formData.name"
+<div ng-if="!formData.profile"
      class="item gray" translate>PROFILE.NO_PROFILE_DEFINED</div>
 
 <!-- name -->
-<div class="item" ng-if="formData.name && showName">
+<div class="item" ng-if="formData.profile && formData.name && showName">
   <span class="gray" translate>PROFILE.TITLE</span>
   <h3>{{formData.name}}</h3>
 </div>

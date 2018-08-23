@@ -80,8 +80,9 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
       .then($scope.load)
       .catch(function(err){
         if (err == 'CANCELLED') {
-          return $scope.close()
-            .then(UIUtils.loading.hide);
+          UIUtils.loading.hide(10);
+          $scope.cancel();
+          return;
         }
         UIUtils.onError('PROFILE.ERROR.LOAD_PROFILE_FAILED')(err);
       });
@@ -318,11 +319,22 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
 
   $scope.cancel = function() {
     $scope.dirty = false; // force not saved
-    $scope.close();
+    if (wallet.isDefault()) {
+      $ionicHistory.nextViewOptions({
+        historyRoot: true
+      });
+      return $state.go('app.view_wallet');
+    }
+    else {
+      return $state.go('app.view_wallet_by_id', {id: wallet.id});
+    }
   };
 
   $scope.close = function() {
     if (wallet.isDefault()) {
+      $ionicHistory.nextViewOptions({
+        historyRoot: true
+      });
       return $state.go('app.view_wallet', {refresh: true});
     }
     else {
@@ -387,9 +399,13 @@ function ESViewEditProfileController($scope, $q, $timeout, $state, $focus, $tran
                 // removeIf(no-device)
                 UIUtils.loading.show();
                 // endRemoveIf(no-device)
-                return esProfile.remove(walletData.pubkey)
+                return esProfile.remove(walletData.pubkey, {
+                    wallet: wallet
+                  })
                   .then(function () {
-                    walletData.name=null;
+                    if (wallet.isDefault()) {
+                      walletData.name=null; // keep local name, on children wallets
+                    }
                     walletData.profile = null;
                     walletData.avatar = null;
                     console.debug('[ES] [profile] Successfully deleted');

@@ -26,6 +26,7 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
   $scope.showMethods = angular.isDefined(parameters.showMethods) ? parameters.showMethods : true;
   $scope.showNewAccountLink = angular.isDefined(parameters.showNewAccountLink) ? parameters.showNewAccountLink : true;
   $scope.expectedPubkey = parameters.expectedPubkey;
+  $scope.expectedUid = parameters.uid;
 
   $scope.scryptParamsValues = _.keys(CryptoUtils.constants.SCRYPT_PARAMS)
     .reduce(function(res, key) {
@@ -73,9 +74,8 @@ function LoginModalController($scope, $timeout, $q, $ionicPopover, CryptoUtils, 
 
   // Login form submit
   $scope.doLogin = function() {
-    if(!$scope.form.$valid) {
-      return;
-    }
+    if(!$scope.form.$valid) return;
+
     // removeIf(no-device)
     Device.keyboard.close();
     // endRemoveIf(no-device)

@@ -438,9 +438,10 @@
   },
   "AUTH": {
     "TITLE": "<i class=\"icon ion-locked\"></i> Authentification",
-    "METHOD_LABEL": "Méthode d'authentification",
     "BTN_AUTH": "S'authentifier",
-    "SCRYPT_FORM_HELP": "Veuillez vous authentifier :"
+    "GENERAL_HELP": "Veuillez vous authentifier :",
+    "EXPECTED_UID_HELP": "Veuillez vous authentifier sur le compte <i class=\"ion-person\"></i> {{uid}} :",
+    "EXPECTED_PUBKEY_HELP": "Veuillez vous authentifier sur le portefeuille <i class=\"ion-key\"></i> {{pubkey|formatPubkey}} :"
   },
   "ACCOUNT": {
     "TITLE": "Mon compte",

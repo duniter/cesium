@@ -1,6 +1,6 @@
 
-  <div class="item item-text-wrap">
-    <p  ng-bind-html="isAuth ? 'AUTH.SCRYPT_FORM_HELP': 'LOGIN.SCRYPT_FORM_HELP'|translate"></p>
+  <div class="item item-text-wrap" ng-if="!isAuth">
+    <p  ng-bind-html="'LOGIN.SCRYPT_FORM_HELP'|translate"></p>
   </div>
 
   <!-- avoid web browser to fill password automatically -->

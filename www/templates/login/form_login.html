@@ -19,6 +19,11 @@
        </div>
      </div>
 
+     <div class="item item-text-wrap" ng-if="::isAuth">
+       <p ng-if="::expectedPubkey" ng-bind-html="::expectedUid ? 'AUTH.EXPECTED_UID_HELP' : 'AUTH.EXPECTED_PUBKEY_HELP' |translate: {uid: expectedUid, pubkey: expectedPubkey}"></p>
+       <p ng-if="::!expectedPubkey" ng-bind-html="::'AUTH.GENERAL_HELP'|translate"></p>
+     </div>
+
       <!-- Form content, depending of the login method -->
       <div ng-switch-when="SCRYPT_DEFAULT">
         <ng-include src="'templates/login/form_scrypt.html'"></ng-include>

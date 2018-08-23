@@ -429,9 +429,8 @@
    },
    "AUTH": {
      "TITLE": "<i class=\"icon ion-locked\"></i> Autenticazione",
-     "METHOD_LABEL": "Metodo di autenticazione",
      "BTN_AUTH": "Autenticarsi",
-     "SCRYPT_FORM_HELP": "Autenticati :"
+     "GENERAL_HELP": "Autenticati :"
    },
    "ACCOUNT": {
      "TITLE": "Mio conto",

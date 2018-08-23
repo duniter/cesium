@@ -250,6 +250,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Load wallet data (after login)
   $scope.loadWalletData = function(options) {
+
+    console.warn("[app-controller] DEPRECATED  - Please use csWallet.load() instead of $scope.loadWalletData()", new Error());
+
     options = options || {};
     var wallet = options.wallet || csWallet;
     return wallet.loadData(options)
@@ -263,6 +266,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
 
   // Login and load wallet
   $scope.loadWallet = function(options) {
+
+    console.warn("[app-controller] DEPRECATED  - Please use csWallet.loginOrLoad() instead of $scope.loadWallet()", new Error());
 
     // Make sure the platform is ready
     if (!csPlatform.isStarted()) {
@@ -393,9 +398,9 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
   };
 
   // add listener on wallet event
-  csWallet.api.data.on.login($scope, function(walletData, deferred) {
+  csWallet.api.data.on.login($scope, function(data, deferred) {
     $scope.login = true;
-    $rootScope.walletData = walletData || {};
+    $rootScope.walletData = data || {};
     return deferred ? deferred.resolve() : $q.when();
   });
   csWallet.api.data.on.logout($scope, function() {
@@ -403,10 +408,8 @@ function AppController($scope, $rootScope, $state, $ionicSideMenuDelegate, $q, $
     $rootScope.walletData = {};
   });
   csWallet.api.data.on.auth($scope, function(data, deferred) {
-    deferred = deferred || $q.defer();
     $scope.auth = true;
-    deferred.resolve();
-    return deferred.promise;
+    return deferred ? deferred.resolve() : $q.when();
   });
   csWallet.api.data.on.unauth($scope, function() {
     $scope.auth = false;

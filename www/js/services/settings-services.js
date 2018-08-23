@@ -59,6 +59,7 @@ angular.module('cesium.settings.services', ['ngApi', 'cesium.config'])
     timeWarningExpireMembership: 2592000 * 2 /*=2 mois*/,
     timeWarningExpire: 2592000 * 3 /*=3 mois*/,
     useLocalStorage: true, // override to false if no device
+    useLocalStorageEncryption: true,
     walletHistoryTimeSecond: 30 * 24 * 60 * 60 /*30 days*/,
     walletHistorySliceSecond: 5 * 24 * 60 * 60 /*download using 5 days slice*/,
     walletHistoryAutoRefresh: true, // override to false if device
